@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1275D2C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6901E5D2CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfGBP1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:27:08 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:36947 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfGBP1H (ORCPT
+        id S1726413AbfGBP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:27:07 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:35785 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfGBP1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Jul 2019 11:27:07 -0400
-Received: by mail-io1-f71.google.com with SMTP id j18so19241790ioj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:27:06 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id w17so19237568iom.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:27:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Oirv5tvI28Y/2P5/D//E+9UIAiSWk3he7f7mxriBA74=;
-        b=iqvqMpY9cZuAh9591t0SwZSfmTD5Dnv802JqJQcE4Q/niQGcAZFSydekX/tK4jmm3m
-         PWhhMt0Y1TXTJtibvRXYvMtNw9MjHbM3UL/GSKEbuH5CtrZpyltM93ty/rmW3owWE2VV
-         5JST69BiKuBwcx7jc0JQcLhANbFKkv6IETzlB7VaBvCyqUxh1F1e7t7z5nkyuVtAjBp5
-         ld5qeKwzQlJG7lH5oGdQVHsEpJgIR13Tb6tdN+V7moWwvh71jmDoGem59+YYcRmuP1x5
-         /LpzC5bL4all2JxALE6nv8H7oXQW6+K99NHV0jHSeWDCE7w0PtwZjd3glLsv9ufGKRLw
-         cnXA==
-X-Gm-Message-State: APjAAAUHpRrxtR70FbQ9/yWzkjJZtc8Jwt6T3XMwdyDL2sfIKAdutv7r
-        DrImbitbUJR7wim9/XwRDt8aMO5PYj/befMHRGx/GGirUF5K
-X-Google-Smtp-Source: APXvYqxv7gu3pohlc+pqZedRwSU1QtjtXvFgV65KO/my/6TNLIFWUpJYb7nr2EHYtPwt+AXGX/E7tONzTUI3iR4Wl++AExbA3uMe
+        bh=0X3TCO1su/kGqXMIRUoaNL5vt0ixUM5T6mGPngF8Nvc=;
+        b=Wb5elxey4WS5z6BKQ94FzDPskeEytIsqWy9tZmBCB1oXzZoAyknAMyJoI8pLni/Qbv
+         8anh//GYbyH17F2YXrfnkz+qXPdpAoI/5bskUpowv7AoB/XXwi7BXvOeeJge7otnyG38
+         nywtqEuN6/RKfCc2eZ/EyNOC6nEuWfiTLrYbiTLy9ynVqVdXcNLeTC/kk548psqlGXxv
+         PJLxq5+iUmhy6ekWZGQrjpRQ269Ci8O1urYWR3iaLpwPxRzvMkuq0wgQw85Ts91Br/pw
+         xpCq3G8asw15y/EbgZXLkmdIseRYspqt65TXADMTwgeLTPf/uRmrHEU2PeJ2ubYSgyWB
+         FR3A==
+X-Gm-Message-State: APjAAAURa0ZRHG3Zc+gD53x9KsXIxNc0pg6AOn3FJpB72DL/FZkrM4cS
+        ArfHJkUHE583u+t1KwQ846FRqYKEAvVzLnZFxYgtk93CL6iu
+X-Google-Smtp-Source: APXvYqxcRzXZZ5aOvB/tQXfy8kQwcP/ODUzWbM5JT8tLzIyegjNyREyloqqVxALzNn2X0WSa56IC0ckTkRcyKO+05HQ7on/CzRFc
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8f99:: with SMTP id l25mr1214309iol.92.1562081226426;
+X-Received: by 2002:a5d:8447:: with SMTP id w7mr34696184ior.197.1562081226696;
  Tue, 02 Jul 2019 08:27:06 -0700 (PDT)
 Date:   Tue, 02 Jul 2019 08:27:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c93d5058cb46073@google.com>
-Subject: INFO: task hung in blkdev_issue_flush (2)
-From:   syzbot <syzbot+e7624af9c1ef3b617512@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, idryomov@gmail.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sagi@grimberg.me, snitzer@redhat.com,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-        wgh@torlan.ru, zkabelac@redhat.com
+Message-ID: <000000000000a0b1df058cb460c8@google.com>
+Subject: WARNING in sisusb_send_bulk_msg/usb_submit_urb
+From:   syzbot <syzbot+23be03b56c5259385d79@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,134 +49,87 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    6fbc7275 Linux 5.2-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1218ee83a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6451f0da3d42d53
-dashboard link: https://syzkaller.appspot.com/bug?extid=e7624af9c1ef3b617512
+HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a4cb55a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
+dashboard link: https://syzkaller.appspot.com/bug?extid=23be03b56c5259385d79
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13105d6da00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120c261ba00000
-
-The bug was bisected to:
-
-commit a32e236eb93e62a0f692e79b7c3c9636689559b9
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri Aug 3 19:22:09 2018 +0000
-
-     Partially revert "block: fail op_is_write() requests to read-only  
-partitions"
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fc732ba00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12fc732ba00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fc732ba00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123963d9a00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e7624af9c1ef3b617512@syzkaller.appspotmail.com
-Fixes: a32e236eb93e ("Partially revert "block: fail op_is_write() requests  
-to read-only partitions"")
+Reported-by: syzbot+23be03b56c5259385d79@syzkaller.appspotmail.com
 
-INFO: task syz-executor485:8568 blocked for more than 143 seconds.
-       Not tainted 5.2.0-rc7 #46
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor485 D28528  8568   8564 0x00004004
-Call Trace:
-  context_switch kernel/sched/core.c:2818 [inline]
-  __schedule+0x7cb/0x1560 kernel/sched/core.c:3445
-  schedule+0xa8/0x260 kernel/sched/core.c:3509
-  schedule_timeout+0x717/0xc50 kernel/time/timer.c:1783
-  io_schedule_timeout+0x26/0x80 kernel/sched/core.c:5119
-  do_wait_for_common kernel/sched/completion.c:83 [inline]
-  __wait_for_common kernel/sched/completion.c:104 [inline]
-  wait_for_common_io kernel/sched/completion.c:121 [inline]
-  wait_for_completion_io+0x29c/0x440 kernel/sched/completion.c:169
-  submit_bio_wait+0x11d/0x1c0 block/bio.c:1003
-  blkdev_issue_flush+0x20d/0x300 block/blk-flush.c:449
-  blkdev_fsync+0x95/0xd0 fs/block_dev.c:687
-  vfs_fsync_range+0x141/0x230 fs/sync.c:197
-  vfs_fsync fs/sync.c:211 [inline]
-  do_fsync+0x54/0xa0 fs/sync.c:221
-  __do_sys_fdatasync fs/sync.c:234 [inline]
-  __se_sys_fdatasync fs/sync.c:232 [inline]
-  __x64_sys_fdatasync+0x36/0x50 fs/sync.c:232
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x449749
-Code: Bad RIP value.
-RSP: 002b:00007fa817de2ce8 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
-RAX: ffffffffffffffda RBX: 00000000006dac58 RCX: 0000000000449749
-RDX: 0000000000449749 RSI: 0000000000000000 RDI: 0000000000000009
-RBP: 00000000006dac50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac5c
-R13: 00007fff567b6b5f R14: 00007fa817de39c0 R15: 20c49ba5e353f7cf
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1043:
-  #0: 00000000f7c610b3 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5149
-2 locks held by rsyslogd/8451:
-  #0: 00000000dfc1566f (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
-fs/file.c:801
-  #1: 0000000054220207 (&rq->lock){-.-.}, at: rq_lock  
-kernel/sched/sched.h:1168 [inline]
-  #1: 0000000054220207 (&rq->lock){-.-.}, at: __schedule+0x1f5/0x1560  
-kernel/sched/core.c:3397
-2 locks held by getty/8541:
-  #0: 000000004ff543bd (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000002a3905f3 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8542:
-  #0: 000000006e67fcec (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000ee71e4f3 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8543:
-  #0: 00000000bd0907a0 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000000876abce (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8544:
-  #0: 00000000710d6f7d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000af289586 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8545:
-  #0: 000000003399e62d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000ee97f91a (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8546:
-  #0: 00000000ff2274c6 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000b96c5a9f (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-2 locks held by getty/8547:
-  #0: 000000005165f028 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000e89d5b4a (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1043 Comm: khungtaskd Not tainted 5.2.0-rc7 #46
+usb 6-1: USB2VGA dongle found at address 2
+usb 6-1: Allocated 8 output buffers
+------------[ cut here ]------------
+usb 6-1: BOGUS urb xfer, pipe 3 != type 1
+WARNING: CPU: 0 PID: 12 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc6+ #13
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0x9b7/0xec0 kernel/hung_task.c:289
-  kthread+0x354/0x420 kernel/kthread.c:255
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  panic+0x292/0x6c9 kernel/panic.c:219
+  __warn.cold+0x20/0x4b kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 78 db e8 fd 4c 89 f7 e8 a0 36 13 ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 80 23 1a 86 e8 03 a0 be fd <0f> 0b e9 20 f4  
+ff ff e8 4c db e8 fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881d9e0ed28 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3c1d97
+RBP: ffff8881d0662f00 R08: ffff8881d9df9800 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000003
+R13: ffff8881d3c5ebe8 R14: ffff8881c70d11a0 R15: ffff8881d0670700
+  sisusb_bulkout_msg drivers/usb/misc/sisusbvga/sisusb.c:238 [inline]
+  sisusb_send_bulk_msg.constprop.0+0x88a/0x1030  
+drivers/usb/misc/sisusbvga/sisusb.c:393
+  sisusb_send_bridge_packet.constprop.0+0x11c/0x240  
+drivers/usb/misc/sisusbvga/sisusb.c:581
+  sisusb_do_init_gfxdevice+0x8a/0x450  
+drivers/usb/misc/sisusbvga/sisusb.c:2137
+  sisusb_init_gfxdevice+0xe0/0x18d0 drivers/usb/misc/sisusbvga/sisusb.c:2237
+  sisusb_probe+0x924/0xbcb drivers/usb/misc/sisusbvga/sisusb.c:3122
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10  
-arch/x86/include/asm/irqflags.h:60
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -187,6 +139,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
