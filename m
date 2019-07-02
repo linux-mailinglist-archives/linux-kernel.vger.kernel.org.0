@@ -2,60 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16485DA82
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66DAA5DA97
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfGCBOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:14:25 -0400
-Received: from verein.lst.de ([213.95.11.211]:46852 "EHLO verein.lst.de"
+        id S1727477AbfGCBSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:18:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbfGCBOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:14:25 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9F50E68B20; Wed,  3 Jul 2019 00:47:31 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 00:47:31 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Weiny, Ira" <ira.weiny@intel.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: dev_pagemap related cleanups v4
-Message-ID: <20190702224731.GA23841@lst.de>
-References: <20190701062020.19239-1-hch@lst.de> <20190701082517.GA22461@lst.de> <20190702184201.GO31718@mellanox.com> <2807E5FD2F6FDA4886F6618EAC48510E79DEA747@CRSMSX101.amr.corp.intel.com>
+        id S1727398AbfGCBSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:18:06 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A97D02190F;
+        Tue,  2 Jul 2019 22:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562107688;
+        bh=jgEb1b30euRG5UhMxm9wUOKRlQBuytXTtWrKG046N4M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=swV5j0FD7SXKbbH9o0nqIzNjH0j2QMqF1OQL1ZJj89P4Z3qK9Esni6llI366SN5Se
+         SNoV4p4FkH94Bxa5I2sAVxJagoytmnzCie5kUcmQzIIRh/SfoajFtaFticWSdWZKln
+         lI7X3t6Lydi4eU9yJeQnJ8R9UIyiWeyyFlHFiasY=
+Subject: Re: [PATCH][next] selftests/x86: fix spelling mistake "FAILT" ->
+ "FAIL"
+To:     Colin Ian King <colin.king@canonical.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
+References: <20190701130431.13391-1-colin.king@canonical.com>
+ <CALCETrVo0rJVxsYvo=abDfFCZHBuCiB0coSBXoDeP_emSZgESg@mail.gmail.com>
+ <6e5a9bed-4f7f-4851-0421-2b440ff1f584@kernel.org>
+ <9ba791d5-0d67-9834-90e9-e1dca307d386@kernel.org>
+ <0031e09b-e309-3976-09b1-dc8d10365aee@canonical.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <aec8c4b5-a82a-74c0-f60f-869786e4a2fa@kernel.org>
+Date:   Tue, 2 Jul 2019 16:48:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2807E5FD2F6FDA4886F6618EAC48510E79DEA747@CRSMSX101.amr.corp.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <0031e09b-e309-3976-09b1-dc8d10365aee@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:45:34PM +0000, Weiny, Ira wrote:
-> > 
-> > On Mon, Jul 01, 2019 at 10:25:17AM +0200, Christoph Hellwig wrote:
-> > > And I've demonstrated that I can't send patch series..  While this has
-> > > all the right patches, it also has the extra patches already in the
-> > > hmm tree, and four extra patches I wanted to send once this series is
-> > > merged.  I'll give up for now, please use the git url for anything
-> > > serious, as it contains the right thing.
-> > 
-> > Okay, I sorted it all out and temporarily put it here:
-> > 
-> > https://github.com/jgunthorpe/linux/commits/hmm
-> > 
-> > Bit involved job:
-> > - Took Ira's v4 patch into hmm.git and confirmed it matches what
-> >   Andrew has in linux-next after all the fixups
+On 7/2/19 4:42 PM, Colin Ian King wrote:
+> On 02/07/2019 20:25, shuah wrote:
+>> On 7/2/19 8:22 AM, shuah wrote:
+>>> On 7/1/19 11:48 AM, Andy Lutomirski wrote:
+>>>> On Mon, Jul 1, 2019 at 6:04 AM Colin King <colin.king@canonical.com>
+>>>> wrote:
+>>>>>
+>>>>> From: Colin Ian King <colin.king@canonical.com>
+>>>>>
+>>>>> There is an spelling mistake in an a test error message. Fix it.
+>>>>>
+>>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>>>> ---
+>>>>>    tools/testing/selftests/x86/test_vsyscall.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/x86/test_vsyscall.c
+>>>>> b/tools/testing/selftests/x86/test_vsyscall.c
+>>>>> index 4602326b8f5b..a4f4d4cf22c3 100644
+>>>>> --- a/tools/testing/selftests/x86/test_vsyscall.c
+>>>>> +++ b/tools/testing/selftests/x86/test_vsyscall.c
+>>>>> @@ -451,7 +451,7 @@ static int test_vsys_x(void)
+>>>>>                   printf("[OK]\tExecuting the vsyscall page failed:
+>>>>> #PF(0x%lx)\n",
+>>>>>                          segv_err);
+>>>>>           } else {
+>>>>> -               printf("[FAILT]\tExecution failed with the wrong
+>>>>> error: #PF(0x%lx)\n",
+>>>>> +               printf("[FAIL]\tExecution failed with the wrong
+>>>>> error: #PF(0x%lx)\n",
+>>>>>                          segv_err);
+>>>>>                   return 1;
+>>>>>           }
+>>>>> -- 
+>>>>> 2.20.1
+>>>>>
+>>>>
+>>>> Acked-by: Andy Lutomirski <luto@kernel.org>
+>>>>
+>>>
+>>> Thanks Andy!
+>>>
+>>> I will queue this up for 5.3
+>>>
+>>> -- Shuah
+>>>
+>>
+>> Hi Colin,
+>>
+>> Checkpatch warning on this. Probably failed on the original patch.
+>> Could you please fix the checkpatch warn, and send v2.
 > 
-> Looking at the final branch seems good.
+> If I split the line, I get another checkpatch warning:
+> 
+> "WARNING: quoted string split across lines"
+> 
+> Either way checkpatch emits a warning. The convention is to not break
+> literal strings, and the line is only a few chars over the 80 char
+> boundary, so the V1 of the patch is the way it should be IMHO.
+> 
 
-Looks good to me as well.
+As such this existed before your patch. I will apply v1.
+
+thanks,
+-- Shuah
