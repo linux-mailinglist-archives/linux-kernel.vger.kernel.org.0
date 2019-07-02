@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D59C5CA7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:04:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F3F5CAD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:08:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfGBIEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:04:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50434 "EHLO mail.kernel.org"
+        id S1728422AbfGBIIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:08:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727814AbfGBIEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:04:46 -0400
+        id S1728399AbfGBIIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:08:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF05321479;
-        Tue,  2 Jul 2019 08:04:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A74AB2184B;
+        Tue,  2 Jul 2019 08:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054685;
-        bh=qlNER7IGKMqQxQpXoyyqHoszXTk+HOmLOJ3OAVrexkk=;
+        s=default; t=1562054898;
+        bh=14ukgQom7JtUl1cIW/opqbVyCji9tdCo6pVFLxIp2SI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0fJnz3k5nY1w0agC+aifDEYQOXkkc8Khdxgl2Q1l2wzF/N0FX8PT7yZTY0QGTq9h
-         S21+v/e8WlGoSY48WAVTxElNbDVV86Me9gFSXIR+69iuFi+7fh9USjXsfvh+i7cSOT
-         ilvWRAa0azNor86oB6VvbBP3fIu7BYhr/cqt3HnU=
+        b=cRImkELOFgB/iEYf948xU4czDzMOw/wXk4HFj0eLG9kcR6k9fNIZaKU3BJOSP47VJ
+         /ZlfetkjFLxxIg+tSfdcWyCxqi3y4FlPabYQp9oZFCb/cn8VhpzEJBaD6KKBRM5jSd
+         S72siOR/pc+Tz1AHYQO6z9egV99LoY4X9tSriW78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com,
-        syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com,
-        syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com,
-        syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com,
-        syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com,
-        syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 55/55] tipc: pass tunnel dev as NULL to udp_tunnel(6)_xmit_skb
-Date:   Tue,  2 Jul 2019 10:02:03 +0200
-Message-Id: <20190702080126.904780432@linuxfoundation.org>
+        stable@vger.kernel.org, Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.19 63/72] bpf: lpm_trie: check left child of last leftmost node for NULL
+Date:   Tue,  2 Jul 2019 10:02:04 +0200
+Message-Id: <20190702080127.900689440@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,90 +44,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Jonathan Lemon <jonathan.lemon@gmail.com>
 
-commit c3bcde026684c62d7a2b6f626dc7cf763833875c upstream.
+commit da2577fdd0932ea4eefe73903f1130ee366767d2 upstream.
 
-udp_tunnel(6)_xmit_skb() called by tipc_udp_xmit() expects a tunnel device
-to count packets on dev->tstats, a perpcu variable. However, TIPC is using
-udp tunnel with no tunnel device, and pass the lower dev, like veth device
-that only initializes dev->lstats(a perpcu variable) when creating it.
+If the leftmost parent node of the tree has does not have a child
+on the left side, then trie_get_next_key (and bpftool map dump) will
+not look at the child on the right.  This leads to the traversal
+missing elements.
 
-Later iptunnel_xmit_stats() called by ip(6)tunnel_xmit() thinks the dev as
-a tunnel device, and uses dev->tstats instead of dev->lstats. tstats' each
-pointer points to a bigger struct than lstats, so when tstats->tx_bytes is
-increased, other percpu variable's members could be overwritten.
+Lookup is not affected.
 
-syzbot has reported quite a few crashes due to fib_nh_common percpu member
-'nhc_pcpu_rth_output' overwritten, call traces are like:
+Update selftest to handle this case.
 
-  BUG: KASAN: slab-out-of-bounds in rt_cache_valid+0x158/0x190
-  net/ipv4/route.c:1556
-    rt_cache_valid+0x158/0x190 net/ipv4/route.c:1556
-    __mkroute_output net/ipv4/route.c:2332 [inline]
-    ip_route_output_key_hash_rcu+0x819/0x2d50 net/ipv4/route.c:2564
-    ip_route_output_key_hash+0x1ef/0x360 net/ipv4/route.c:2393
-    __ip_route_output_key include/net/route.h:125 [inline]
-    ip_route_output_flow+0x28/0xc0 net/ipv4/route.c:2651
-    ip_route_output_key include/net/route.h:135 [inline]
-  ...
+Reproducer:
 
-or:
+ bpftool map create /sys/fs/bpf/lpm type lpm_trie key 6 \
+     value 1 entries 256 name test_lpm flags 1
+ bpftool map update pinned /sys/fs/bpf/lpm key  8 0 0 0  0   0 value 1
+ bpftool map update pinned /sys/fs/bpf/lpm key 16 0 0 0  0 128 value 2
+ bpftool map dump   pinned /sys/fs/bpf/lpm
 
-  kasan: GPF could be caused by NULL-ptr deref or user memory access
-  RIP: 0010:dst_dev_put+0x24/0x290 net/core/dst.c:168
-    <IRQ>
-    rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:200 [inline]
-    free_fib_info_rcu+0x2e1/0x490 net/ipv4/fib_semantics.c:217
-    __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-    rcu_do_batch kernel/rcu/tree.c:2437 [inline]
-    invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
-    rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
-  ...
+Returns only 1 element. (2 expected)
 
-The issue exists since tunnel stats update is moved to iptunnel_xmit by
-Commit 039f50629b7f ("ip_tunnel: Move stats update to iptunnel_xmit()"),
-and here to fix it by passing a NULL tunnel dev to udp_tunnel(6)_xmit_skb
-so that the packets counting won't happen on dev->tstats.
-
-Reported-by: syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com
-Reported-by: syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com
-Reported-by: syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com
-Reported-by: syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com
-Reported-by: syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com
-Reported-by: syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com
-Fixes: 039f50629b7f ("ip_tunnel: Move stats update to iptunnel_xmit()")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b471f2f1de8b ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE")
+Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/udp_media.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ kernel/bpf/lpm_trie.c                      |    9 ++++--
+ tools/testing/selftests/bpf/test_lpm_map.c |   41 ++++++++++++++++++++++++++---
+ 2 files changed, 45 insertions(+), 5 deletions(-)
 
---- a/net/tipc/udp_media.c
-+++ b/net/tipc/udp_media.c
-@@ -176,7 +176,6 @@ static int tipc_udp_xmit(struct net *net
- 			goto tx_error;
- 		}
- 
--		skb->dev = rt->dst.dev;
- 		ttl = ip4_dst_hoplimit(&rt->dst);
- 		udp_tunnel_xmit_skb(rt, ub->ubsock->sk, skb, src->ipv4.s_addr,
- 				    dst->ipv4.s_addr, 0, ttl, 0, src->port,
-@@ -195,10 +194,9 @@ static int tipc_udp_xmit(struct net *net
- 		if (err)
- 			goto tx_error;
- 		ttl = ip6_dst_hoplimit(ndst);
--		err = udp_tunnel6_xmit_skb(ndst, ub->ubsock->sk, skb,
--					   ndst->dev, &src->ipv6,
--					   &dst->ipv6, 0, ttl, 0, src->port,
--					   dst->port, false);
-+		err = udp_tunnel6_xmit_skb(ndst, ub->ubsock->sk, skb, NULL,
-+					   &src->ipv6, &dst->ipv6, 0, ttl, 0,
-+					   src->port, dst->port, false);
- #endif
+--- a/kernel/bpf/lpm_trie.c
++++ b/kernel/bpf/lpm_trie.c
+@@ -676,9 +676,14 @@ find_leftmost:
+ 	 * have exact two children, so this function will never return NULL.
+ 	 */
+ 	for (node = search_root; node;) {
+-		if (!(node->flags & LPM_TREE_NODE_FLAG_IM))
++		if (node->flags & LPM_TREE_NODE_FLAG_IM) {
++			node = rcu_dereference(node->child[0]);
++		} else {
+ 			next_node = node;
+-		node = rcu_dereference(node->child[0]);
++			node = rcu_dereference(node->child[0]);
++			if (!node)
++				node = rcu_dereference(next_node->child[1]);
++		}
  	}
- 	return err;
+ do_copy:
+ 	next_key->prefixlen = next_node->prefixlen;
+--- a/tools/testing/selftests/bpf/test_lpm_map.c
++++ b/tools/testing/selftests/bpf/test_lpm_map.c
+@@ -573,13 +573,13 @@ static void test_lpm_get_next_key(void)
+ 
+ 	/* add one more element (total two) */
+ 	key_p->prefixlen = 24;
+-	inet_pton(AF_INET, "192.168.0.0", key_p->data);
++	inet_pton(AF_INET, "192.168.128.0", key_p->data);
+ 	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
+ 
+ 	memset(key_p, 0, key_size);
+ 	assert(bpf_map_get_next_key(map_fd, NULL, key_p) == 0);
+ 	assert(key_p->prefixlen == 24 && key_p->data[0] == 192 &&
+-	       key_p->data[1] == 168 && key_p->data[2] == 0);
++	       key_p->data[1] == 168 && key_p->data[2] == 128);
+ 
+ 	memset(next_key_p, 0, key_size);
+ 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
+@@ -592,7 +592,7 @@ static void test_lpm_get_next_key(void)
+ 
+ 	/* Add one more element (total three) */
+ 	key_p->prefixlen = 24;
+-	inet_pton(AF_INET, "192.168.128.0", key_p->data);
++	inet_pton(AF_INET, "192.168.0.0", key_p->data);
+ 	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
+ 
+ 	memset(key_p, 0, key_size);
+@@ -628,6 +628,41 @@ static void test_lpm_get_next_key(void)
+ 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
+ 	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
+ 	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1);
++
++	memcpy(key_p, next_key_p, key_size);
++	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
++	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
++	       next_key_p->data[1] == 168 && next_key_p->data[2] == 128);
++
++	memcpy(key_p, next_key_p, key_size);
++	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
++	assert(next_key_p->prefixlen == 16 && next_key_p->data[0] == 192 &&
++	       next_key_p->data[1] == 168);
++
++	memcpy(key_p, next_key_p, key_size);
++	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == -1 &&
++	       errno == ENOENT);
++
++	/* Add one more element (total five) */
++	key_p->prefixlen = 28;
++	inet_pton(AF_INET, "192.168.1.128", key_p->data);
++	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
++
++	memset(key_p, 0, key_size);
++	assert(bpf_map_get_next_key(map_fd, NULL, key_p) == 0);
++	assert(key_p->prefixlen == 24 && key_p->data[0] == 192 &&
++	       key_p->data[1] == 168 && key_p->data[2] == 0);
++
++	memset(next_key_p, 0, key_size);
++	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
++	assert(next_key_p->prefixlen == 28 && next_key_p->data[0] == 192 &&
++	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1 &&
++	       next_key_p->data[3] == 128);
++
++	memcpy(key_p, next_key_p, key_size);
++	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
++	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
++	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1);
+ 
+ 	memcpy(key_p, next_key_p, key_size);
+ 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
 
 
