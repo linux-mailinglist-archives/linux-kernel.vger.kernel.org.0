@@ -2,92 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22185D506
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 564B65DA5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfGBRJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 13:09:55 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40017 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfGBRJy (ORCPT
+        id S1727336AbfGCBJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:09:58 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37699 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:09:54 -0400
-Received: by mail-io1-f66.google.com with SMTP id n5so38729306ioc.7;
-        Tue, 02 Jul 2019 10:09:54 -0700 (PDT)
+        Tue, 2 Jul 2019 21:09:58 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t76so626431oih.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fqaJi0HrAK4+dk3eMEGg3q9k+ySNsfHxhG2IP9d4UEs=;
-        b=AVTZR9N4fUw9Rrth0jwcYm+mer+PVCcsHJlQbUWbkebZAGe6S0bsqdJ2WC2VpYZ7OC
-         e6A3Az1SaumtPiznF/a16IrnPY1Y+9kKOSh4QtrGrp5fXq3rVJ+AIDYVnGBLMcACNBYL
-         BIyrfH5EgMdhFAo3jb+hRIwPFnBChAtmB+i1wo41CtcqC+V8EFdc4lHisj+VkuZqC3AP
-         MXBH0+UlYDeHOeEP67NpZTU1b0FcWVOJ5QI7P6D/jin8usF0OYNKgLTFOKKfv908OyhT
-         9MIb/3xfjEAk7tPgOqr3CBPNmu3h3Y7nubuhGlDj5KJMGAJZKvn5HMfWjYwJqUv9FgKX
-         CSuw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XdfQkc10ZEHgoDK1SNLlrirAzmY3Oa6pflTI/YkyqLs=;
+        b=lhYC3RAwDyVnsu9qutRDpMePchtvZtnds0Au+8BDVd355z2kcvCxxoUeLKjoKsqljz
+         0nmLPHcuV4BsV31lBWyb6mlGmxOpTzAUBz3C6sba5YMsicyvHffJNot/FkRrgQ3yleek
+         oCMyTMO8UPmvAvc2f4O1rOTb61xIvaciq0FTM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fqaJi0HrAK4+dk3eMEGg3q9k+ySNsfHxhG2IP9d4UEs=;
-        b=ItCEjj2lcHWJUuIxMZQy/kDrvKv3BaM4la+Jw/9DSWma2o/TYbdql0+EZxe+taworl
-         Tcc39LphcTEtV98YOOSIeYgjFWk711j6w7udOcClt23ggnmSq/uxueKbzGXHV3tU1dQ9
-         zlsKrfys4r9ND04p61WGMd9DPfcUsgRfvpRcIiLhodLH/+PW8S1XAjqTJLj+Ud1vh2s9
-         M9KDUXLfIRjd+5XAj42nj74zc3bXBO64Uu2GWimxbP62R6KA4aa/iDp36cgnOj4bGsLB
-         vXEFM2uqCyk+thMOG3i9RQMbSFmnwGxsJ1cPVEWOVwpSFMpujFeJqX8RgH1ZHdtJr1Yq
-         Sc0Q==
-X-Gm-Message-State: APjAAAVJRKjoTwZdQ08DjspJogn3npriKYwMw55x0QacUP1MC+662Ssd
-        5gC2oAlwp4AraF6iKFM8eovXOVO+tQCjMHFlyrM=
-X-Google-Smtp-Source: APXvYqxnE/1cmrQUM28RI827W1EzrQ/YJ3EPJcW0btqKWfjxAt/uEzHidZYDJ5JH7Hc2zy6sNje0jpAisnfX9c2LPAE=
-X-Received: by 2002:a6b:b987:: with SMTP id j129mr31360848iof.166.1562087393986;
- Tue, 02 Jul 2019 10:09:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XdfQkc10ZEHgoDK1SNLlrirAzmY3Oa6pflTI/YkyqLs=;
+        b=LKMpLr/Iq0n40ptxXRtTgyWkQFqMoGBfAdnN1+gdqQ0StV8Zx8Q9QM826YP7iRie/j
+         zRGwGudqVwhAZSjrW5NAuyj3gydq2boeezB39F4IhAPCQ3fs0pS/LR0s4wTS0ReBeThM
+         my220iuiu/r+Amg4wi6cDGp2pDBHLBwEuv1+TrxIfQQR/3SJ+kk/sB3/gsiW12DwQpR4
+         5F5/iPgIUUz7hd6L1aOOvI0oBNhQ6W5Gc9MX4mOuh7Omx0JJqAsdQz6uEn0uz6xGAjkp
+         3BG1mqlxZ0gUUEIOCsFF1kjgn8A47BP2CZ6sM7jadKAEPsq+iWjSSAk+3ByJhmEPms11
+         cuOQ==
+X-Gm-Message-State: APjAAAWfreYtvAZGTUJS5IEkUm/g9VGs4nJuGtf6kPJeq7JjUGJ8wfdE
+        FZbq4yePXRIkG3yYitd3Ps0seJDifZs=
+X-Google-Smtp-Source: APXvYqyxHmfAgHSytPsWrix4p+ZJ6+jIhYHj/U+jxRorMiv/9wt4TCSDHqnkrKqjPvgxgFZ/tzVnIA==
+X-Received: by 2002:a65:500d:: with SMTP id f13mr32057264pgo.151.1562101458715;
+        Tue, 02 Jul 2019 14:04:18 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p23sm6217pfn.10.2019.07.02.14.04.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 14:04:14 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 10:11:58 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usercopy: Remove HARDENED_USERCOPY_PAGESPAN
+Message-ID: <201907021009.3CF9EBB4@keescook>
+References: <201905101341.A17DDD7@keescook>
 MIME-Version: 1.0
-References: <20190702154419.20812-1-robdclark@gmail.com> <20190702154419.20812-4-robdclark@gmail.com>
-In-Reply-To: <20190702154419.20812-4-robdclark@gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 2 Jul 2019 11:09:43 -0600
-Message-ID: <CAOCk7NrXko8xR1Ovg6HrP2ZpS83mjZoOWdae-mq_QJMRzeENLQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/bridge: ti-sn65dsi86: correct dsi mode_flags
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201905101341.A17DDD7@keescook>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 9:46 AM Rob Clark <robdclark@gmail.com> wrote:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> Noticed while comparing register dump of how bootloader configures DSI
-> vs how kernel configures.  It seems the bridge still works either way,
-> but fixing this clears the 'CHA_DATATYPE_ERR' error status bit.
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index a6f27648c015..c8fb45e7b06d 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -342,8 +342,7 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge)
->         /* TODO: setting to 4 lanes always for now */
->         dsi->lanes = 4;
->         dsi->format = MIPI_DSI_FMT_RGB888;
-> -       dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-> -                         MIPI_DSI_MODE_EOT_PACKET | MIPI_DSI_MODE_VIDEO_HSE;
-> +       dsi->mode_flags = MIPI_DSI_MODE_VIDEO;
+On Fri, May 10, 2019 at 01:43:36PM -0700, Kees Cook wrote:
+> This feature continues to cause more problems than it solves[1]. Its
+> intention was to check the bounds of page-allocator allocations by using
+> __GFP_COMP, for which we would need to find all missing __GFP_COMP
+> markings. This work has been on hold and there is an argument[2]
+> that such markings are not even the correct signal for checking for
+> same-allocation pages. Instead of depending on BROKEN, this just removes
+> it entirely. It can be trivially reverted if/when a better solution for
+> tracking page allocator sizes is found.
+> 
+> [1] https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg37479.html
+> [2] https://lkml.kernel.org/r/20190415022412.GA29714@bombadil.infradead.org
+> 
+> Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Did you check this against the datasheet?  Per my reading, EOT_PACKET
-and VIDEO_HSE appear valid.  I don't know about VIDEO_SYNC_PULSE.
+So, after looking at this more, I think I'm going to keep this patch,
+and we can add new sanity checks on a per-Page flag check. (See below.)
+
+Andrew, can you apply this to -mm please?
+
+> ---
+>  mm/usercopy.c    | 67 ------------------------------------------------
+>  security/Kconfig | 11 --------
+>  2 files changed, 78 deletions(-)
+> 
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index 14faadcedd06..15dc1bf03303 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -159,70 +159,6 @@ static inline void check_bogus_address(const unsigned long ptr, unsigned long n,
+>  		usercopy_abort("null address", NULL, to_user, ptr, n);
+>  }
+>  
+> -/* Checks for allocs that are marked in some way as spanning multiple pages. */
+> -static inline void check_page_span(const void *ptr, unsigned long n,
+> -				   struct page *page, bool to_user)
+> -{
+> -#ifdef CONFIG_HARDENED_USERCOPY_PAGESPAN
+> -	const void *end = ptr + n - 1;
+> -	struct page *endpage;
+> -	bool is_reserved, is_cma;
+> -
+> -	/*
+> -	 * Sometimes the kernel data regions are not marked Reserved (see
+> -	 * check below). And sometimes [_sdata,_edata) does not cover
+> -	 * rodata and/or bss, so check each range explicitly.
+> -	 */
+> -
+> -	/* Allow reads of kernel rodata region (if not marked as Reserved). */
+> -	if (ptr >= (const void *)__start_rodata &&
+> -	    end <= (const void *)__end_rodata) {
+> -		if (!to_user)
+> -			usercopy_abort("rodata", NULL, to_user, 0, n);
+> -		return;
+> -	}
+> -
+> -	/* Allow kernel data region (if not marked as Reserved). */
+> -	if (ptr >= (const void *)_sdata && end <= (const void *)_edata)
+> -		return;
+> -
+> -	/* Allow kernel bss region (if not marked as Reserved). */
+> -	if (ptr >= (const void *)__bss_start &&
+> -	    end <= (const void *)__bss_stop)
+> -		return;
+> -
+> -	/* Is the object wholly within one base page? */
+> -	if (likely(((unsigned long)ptr & (unsigned long)PAGE_MASK) ==
+> -		   ((unsigned long)end & (unsigned long)PAGE_MASK)))
+> -		return;
+> -
+> -	/* Allow if fully inside the same compound (__GFP_COMP) page. */
+> -	endpage = virt_to_head_page(end);
+> -	if (likely(endpage == page))
+> -		return;
+> -
+> -	/*
+> -	 * Reject if range is entirely either Reserved (i.e. special or
+> -	 * device memory), or CMA. Otherwise, reject since the object spans
+> -	 * several independently allocated pages.
+> -	 */
+> -	is_reserved = PageReserved(page);
+> -	is_cma = is_migrate_cma_page(page);
+> -	if (!is_reserved && !is_cma)
+> -		usercopy_abort("spans multiple pages", NULL, to_user, 0, n);
+> -
+> -	for (ptr += PAGE_SIZE; ptr <= end; ptr += PAGE_SIZE) {
+> -		page = virt_to_head_page(ptr);
+> -		if (is_reserved && !PageReserved(page))
+> -			usercopy_abort("spans Reserved and non-Reserved pages",
+> -				       NULL, to_user, 0, n);
+> -		if (is_cma && !is_migrate_cma_page(page))
+> -			usercopy_abort("spans CMA and non-CMA pages", NULL,
+> -				       to_user, 0, n);
+> -	}
+> -#endif
+> -}
+> -
+>  static inline void check_heap_object(const void *ptr, unsigned long n,
+>  				     bool to_user)
+>  {
+> @@ -236,9 +172,6 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+>  	if (PageSlab(page)) {
+>  		/* Check slab allocator for flags and size. */
+>  		__check_heap_object(ptr, n, page, to_user);
+> -	} else {
+> -		/* Verify object does not incorrectly span multiple pages. */
+> -		check_page_span(ptr, n, page, to_user);
+>  	}
+
+In the future, instead of this catch-all "else", we can add things like:
+
+	} else if (PageCompound(page)) {
+		... do some check for compound pages ...
+	} else if (PageReserved(page))
+		... etc ...
+	}
+
+But for 5.3, I think we need to just entirely drop the PAGESPAN thing.
+
+-Kees
+
+>  }
+>  
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 353cfef71d4e..8392647f5a4c 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -176,17 +176,6 @@ config HARDENED_USERCOPY_FALLBACK
+>  	  Booting with "slab_common.usercopy_fallback=Y/N" can change
+>  	  this setting.
+>  
+> -config HARDENED_USERCOPY_PAGESPAN
+> -	bool "Refuse to copy allocations that span multiple pages"
+> -	depends on HARDENED_USERCOPY
+> -	depends on EXPERT
+> -	help
+> -	  When a multi-page allocation is done without __GFP_COMP,
+> -	  hardened usercopy will reject attempts to copy it. There are,
+> -	  however, several cases of this in the kernel that have not all
+> -	  been removed. This config is intended to be used only while
+> -	  trying to find such users.
+> -
+>  config FORTIFY_SOURCE
+>  	bool "Harden common str/mem functions against buffer overflows"
+>  	depends on ARCH_HAS_FORTIFY_SOURCE
+> -- 
+> 2.17.1
+> 
+> 
+> -- 
+> Kees Cook
+
+-- 
+Kees Cook
