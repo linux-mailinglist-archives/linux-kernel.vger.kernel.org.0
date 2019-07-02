@@ -2,91 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DE45D6EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C91B5D735
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfGBTc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 15:32:26 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43609 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfGBTc0 (ORCPT
+        id S1727055AbfGBTvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 15:51:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36696 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfGBTvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 15:32:26 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f25so8170141pgv.10;
-        Tue, 02 Jul 2019 12:32:25 -0700 (PDT)
+        Tue, 2 Jul 2019 15:51:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n4so96827wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 12:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g4cCYujEQzeh4PUwQfoS5O/VeQWPTq9nHlDkD9HoLjs=;
+        b=URMgG1bTe3xaN/40CLTX41HuA2XKSeaj2XFYGO+nnYLCM4rMzwQsy7vgdDqq17hIEh
+         ivBndVQeO8/YJaQ6t45CZbN/m9ZSQahtVJu3QOSr46sdA5Z1w4QrgTvwTqZnKiROBz+x
+         ZJhv1DHSQ2/Hz29nMwoqjDzmL6E3+mZKtEJ4GIaUrTkRh4xz72Ipsj3HR1T9XX/fsfXs
+         SjK3JeE4pJvE1S7NlJyXadfC3tLJdKiDtwJBvV9XIbrObKe4mdwxUAL+bIEVtJ0075fr
+         JOIQNVyBbm0U18ctXd3TYlU34C6mNLCG7oGZMp31VokGXKNXioIY9Dv10MYDBqIS+msv
+         IR2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/l7tQXDVVs21mlFttWTKF5GQ9EhRP7J1hjh79A4b/Lg=;
-        b=iID4vGin5rQQbD+cClMm5N4VlFD4pYbHnKJLXuVQP6KTQIEA2Jrja2CZkorOtg5Rfb
-         j1OFL8X9GTL7Wub+pdSJAUc/LMyZFuZyXNqjKtcmvn2kkccgh1VHKQCjGK1ka99UYMfx
-         0AaTpaHmXfPl3/sFWKwpLANDXsZSIKyeo/32bAqUG5G3c2VehiGXsiHcm9Yh4NaGBD/G
-         5UlGt1e+mR5hlto29Hr2xzYRTTaIUm9H0da4Aew3Y6d2oF+FR71mJggtlzL3GMpxrdzV
-         8KF6Xyj8Y16MxU7ihs0OlzJQUpqK+uHaTryLSagr6OGEuzzqggZMT6dN0dISP7WdCR21
-         RGrg==
-X-Gm-Message-State: APjAAAVKwZgx2Bf7adUHNnXv+AR9/cL+ItAXHjwQjV85UNBu9XY6ObTm
-        RzQQ/xxvI/iGdbe1BAUw36o=
-X-Google-Smtp-Source: APXvYqzoUS5zJ+xTX5NbkJdjVUZSxiNHQHVsO8Ipj0tgdZzVFGsvMM8bgNOViPm05YgEuKg38RZy8g==
-X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr7526225pjn.134.1562095945194;
-        Tue, 02 Jul 2019 12:32:25 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id v3sm14307182pfm.188.2019.07.02.12.32.23
+        bh=g4cCYujEQzeh4PUwQfoS5O/VeQWPTq9nHlDkD9HoLjs=;
+        b=tPNCLBY5Y6cxD6NMplWaZZ7Yj80GNyjbNKBaozQVH+enVtY61HjDFO2zPTvObRdzaE
+         eO3SieRImOmSqgbB2wjK00GCRBfIvxaqlcxjcKf0AcbAfmEZBPeEogC4rHbBZovtkYwJ
+         HDQaM7sw3i1YOxdkl6R2KXnlXDYc2MeMEPapwFvYFHqUGlpuNaODHD+O5hHSOIl9CgJm
+         HlFon6s5vqgZCyIPZUQyUjm6LU/dXwwGnp8xxnUaujMNTcWXLBpKtIBrRfYZHLX1ZUeF
+         cARehT9DngQN5zjnvNf3Y548TJFLMaQhiYFj54+mPmFUkQmLZMUeHEwcApCQlsomdFif
+         EHqw==
+X-Gm-Message-State: APjAAAUUhd615JXXXjN9acwTyW+nF0mu39ZippwrAGIL+YmNT0ZyS5Fk
+        KMyzEUj3aOJEuB7xTUsa3TYJ+8qzPnYcXw==
+X-Google-Smtp-Source: APXvYqzq2QwExvLbyQs7Q4LyO/uIEH+2/zAG2xocN8TZreqGuvJNLoNnk9RfPU5MDFBS1jpc/zSrCQ==
+X-Received: by 2002:a5d:4309:: with SMTP id h9mr11136838wrq.221.1562097100156;
+        Tue, 02 Jul 2019 12:51:40 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id j132sm56961wmj.21.2019.07.02.12.51.38
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 12:32:23 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id BEC0140251; Tue,  2 Jul 2019 19:32:22 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 19:32:22 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Cc:     Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ebiederm@xmission.com, pbonzini@redhat.com,
-        viro@zeniv.linux.org.uk, adobriyan@gmail.com,
-        mingfangsen@huawei.com, wangxiaogang3@huawei.com,
-        "Zhoukang (A)" <zhoukang7@huawei.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH next] sysctl: add proc_dointvec_jiffies_minmax to limit
- the min/max write value
-Message-ID: <20190702193222.GP19023@42.do-not-panic.com>
-References: <032e024f-2b1b-a980-1b53-d903bc8db297@huawei.com>
- <3e421384-a9cb-e534-3370-953c56883516@huawei.com>
- <d5138655-41a8-0177-ae0d-c4674112bf56@huawei.com>
- <201905150945.C9D1F811F@keescook>
- <dd40ae3b-8e0a-2d55-d402-6f261a6c0e09@huawei.com>
+        Tue, 02 Jul 2019 12:51:39 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 21:51:38 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] Documentation/filesystems: add binderfs
+Message-ID: <20190702195137.xk476tr2fp44vmsn@brauner.io>
+References: <20190111134100.24095-1-christian@brauner.io>
+ <20190114172401.018afb9c@lwn.net>
+ <20190702175729.GF1729@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dd40ae3b-8e0a-2d55-d402-6f261a6c0e09@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190702175729.GF1729@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 11:27:51PM +0800, Zhiqiang Liu wrote:
-> > On Wed, May 15, 2019 at 10:53:55PM +0800, Zhiqiang Liu wrote:
-> >>>> In proc_dointvec_jiffies func, the write value is only checked
-> >>>> whether it is larger than INT_MAX. If the write value is less
-> >>>> than zero, it can also be successfully writen in the data.
+On Tue, Jul 02, 2019 at 10:57:29AM -0700, Matthew Wilcox wrote:
+> On Mon, Jan 14, 2019 at 05:24:01PM -0700, Jonathan Corbet wrote:
+> > On Fri, 11 Jan 2019 14:40:59 +0100
+> > Christian Brauner <christian@brauner.io> wrote:
+> > > This documents the Android binderfs filesystem used to dynamically add and
+> > > remove binder devices that are private to each instance.
 > > 
-> > This appears to be "be design", but I see many "unsigned int" users
-> > that might be tricked into giant values... (for example, see
-> > net/netfilter/nf_conntrack_standalone.c)
-> > 
-> > Should proc_dointvec_jiffies() just be fixed to disallow negative values
-> > entirely? Looking at the implementation, it seems to be very intentional
-> > about accepting negative values.
-> > 
-> > However, when I looked through a handful of proc_dointvec_jiffies()
-> > users, it looks like they're all expecting a positive value. Many in the
-> > networking subsystem are, in fact, writing to unsigned long variables,
-> > as I mentioned.
-> > 
-> I totally agree with you. And I also cannot find an scenario that expects
-> negative values. Consideing the "negative" scenario may be exist, I add the
-> proc_dointvec_jiffies_minmax like proc_dointvec_minmax.
+> > You didn't add it to index.rst, so it won't actually become part of the
+> > docs build.
+> 
+> I think you added it in the wrong place.
+> 
+> From 8167b80c950834da09a9204b6236f238197c197b Mon Sep 17 00:00:00 2001
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Date: Tue, 2 Jul 2019 13:54:38 -0400
+> Subject: [PATCH] docs: Move binderfs to admin-guide
+> 
+> The documentation is more appropriate for the administrator than for
+> the internal kernel API section it is currently in.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-If no negative values exist, and there is no real point to it, then just
-rename the existing one and update the docs.
+Don't feel very strong about where this ends up. :)
 
-  Luis
+Acked-by: Christian Brauner <christian@brauner.io>
+
+> ---
+>  .../{filesystems => admin-guide}/binderfs.rst          |  0
+>  Documentation/admin-guide/index.rst                    |  1 +
+>  Documentation/filesystems/index.rst                    | 10 ----------
+>  3 files changed, 1 insertion(+), 10 deletions(-)
+>  rename Documentation/{filesystems => admin-guide}/binderfs.rst (100%)
+> 
+> diff --git a/Documentation/filesystems/binderfs.rst b/Documentation/admin-guide/binderfs.rst
+> similarity index 100%
+> rename from Documentation/filesystems/binderfs.rst
+> rename to Documentation/admin-guide/binderfs.rst
+> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+> index 8001917ee012..24fbe0568eff 100644
+> --- a/Documentation/admin-guide/index.rst
+> +++ b/Documentation/admin-guide/index.rst
+> @@ -70,6 +70,7 @@ configure specific aspects of kernel behavior to your liking.
+>     ras
+>     bcache
+>     ext4
+> +   binderfs
+>     pm/index
+>     thunderbolt
+>     LSM/index
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> index 1131c34d77f6..970c0a3ec377 100644
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@ -31,13 +31,3 @@ filesystem implementations.
+>  
+>     journalling
+>     fscrypt
+> -
+> -Filesystem-specific documentation
+> -=================================
+> -
+> -Documentation for individual filesystem types can be found here.
+> -
+> -.. toctree::
+> -   :maxdepth: 2
+> -
+> -   binderfs.rst
+> -- 
+> 2.20.1
+> 
