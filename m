@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAFC5DA01
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 394345DA09
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfGCA7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:59:02 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37699 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfGCA7C (ORCPT
+        id S1727480AbfGCA7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:59:30 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34452 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbfGCA7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:59:02 -0400
-Received: by mail-oi1-f193.google.com with SMTP id t76so608769oih.4;
-        Tue, 02 Jul 2019 17:59:01 -0700 (PDT)
+        Tue, 2 Jul 2019 20:59:30 -0400
+Received: by mail-oi1-f195.google.com with SMTP id l12so626994oil.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:59:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TCrBHpvs2bjlY0tZQ78kB/teoCTIaxox5gIgv2Zg7MM=;
-        b=CuI2IgTXX842IlAyxReyqFM1sRgD7KsYh/dPgH6QAHgmHFKOPh7/a3W6pU8NOrWD0i
-         r0HgT9QAhB3P0L/SWdmy2QahcMIkNdOT9sM4bcNQi4Ow67paIGHcnPZqpW4yB3lDIPYr
-         3LvXJK+WTzqu0K9DtXHI7rFi97IFGrcgRoSResKlOVMBTEYfPmMfxpIT9k+/4uJ1yP8z
-         HPI5nCrJ5EzIiMBe7xemYcyUYwvaQdSLLELy1yUsDPMaZfgnz3HGUWHwT8mgyNVshEBb
-         ruxaz1jL4/BjMVUXqdAUlRklzGjyHeKoZ/I+J8ZcWABIvPw0KHcl3yLKYqpM3asVZDIp
-         CZgg==
+        bh=u5UwRiHjXkEAlhFHmvxN8ePNlS4fXC/47jr2WEGpIzo=;
+        b=OuN/4ptiyR+plJoUbh14HMfrLiUOlvumFP0tzROycbsFqfygYxNO3xqFi028k9qP6U
+         2hsxYQ/2r3+ffTRQvqv/sCf8RYf+3AvuvLqH7ogDKbeVFyv/k7MsfBkCxG4uRyEvLytD
+         3hBMhCKOWYcfttKhsfT8Y19T3NlQHBTeuu1o3bC0SKi1LDuyTUAXjHnls8TPzw595KLC
+         nNTom92Iwyk5ROjrmSXSDkHChpxbNbnGWGRWyw3laBL4fIp/E7U50dYgr8AGkfNKV1ux
+         j9NiIvFe4orlhguGifJ7Su4YhO973/sL8kBVtipoBIsWxN1zYFyjnK/YO/aROHHw66yH
+         203w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TCrBHpvs2bjlY0tZQ78kB/teoCTIaxox5gIgv2Zg7MM=;
-        b=GtqPsYVqQG1GIEcfbhyCT37s4m+muGPBuAoyKX1PSDtJ6bN2ikU4lVR8UXCm+ykZaP
-         2QzN9ej9gcxfUsr04h9DxVk7qDVdyEZp6SWDu6q9HUjr7CRhF3R+ggO1coEn1beSEZlR
-         AHV1+2yA64iG9GqRVSDrYryTsMH0OqCEMVrpzUQ/zYOEPzaE1fmb/6UAwIbw3gV9KWoe
-         qZodJN1i/BoLSxwX2Y4KUNyeRz8JhbY/2voj/76Bv9ne2xKpPeu1ia0zprr/OEFKj+pd
-         yFHDrnpWJsNB3btb4Gixb1af99K9nZfyspv+bJM75XOPxcBbPdbVFdjqC6mieSWXGsMw
-         NY5g==
-X-Gm-Message-State: APjAAAVheCBvlaZjxSL0ddNQFfeRDe9ZW0lzpNCnxhNxzJIhyzPkElGH
-        KgLQPuIdzm1ttGagJeYVVVHttDYCsLp/BO3uFf+ymcX5
-X-Google-Smtp-Source: APXvYqwmd7VMNZTet4EgIbGsgiX7YKyruChF5ByKLBpLAB5R3TkByx3a5jpZ7+k3zDWzGsAg0iUnSr7TbRx2PMhG4lo=
-X-Received: by 2002:aca:4306:: with SMTP id q6mr4696022oia.39.1562109386381;
- Tue, 02 Jul 2019 16:16:26 -0700 (PDT)
+        bh=u5UwRiHjXkEAlhFHmvxN8ePNlS4fXC/47jr2WEGpIzo=;
+        b=lMc2rHrX0vbWrbwqFOwW6MV5TLFiKcBYIZFHjaTQvhjVp89uj1G16fThUi5mcc4rID
+         petsUt8Oku6EbDTDYMHwHElUSQ1hkWqjFpDWobQx8kqbZOTozTGwdgxCtot3VDYBvhtP
+         eH57MudtS0JCOplxao0xlnVjhI1dtCnGDN+iZLpBU4RGc126y9GyLIm5PjMjqX5bBL4E
+         fv6h32+d9U5OBFNBk9sxwrrmBLiZMsqWXdVIMwOcIGiuVZTnC9bW3G+Rd1ANqy7VWVeI
+         Fpfw8rDlRki3dceg4BHUgR4crvfmp4vgMXHe7/2goaMVhUYW38a+W0r1EazQh11K7EOQ
+         VIxQ==
+X-Gm-Message-State: APjAAAUpP3df9weKQGtScW/bsVCjHaAsppKrgu7soxHaLxE7mKBpWe4q
+        6Wx5EI9hF9sFMeZErU9pJ+8rwPHhN5+WlPy8tNQUGETi
+X-Google-Smtp-Source: APXvYqyLlYpHy9+AMc/X38t5BFMinZJQ01XTqDg0vHmjdWTN0eXoTzXdkzMkhqYvcnewmJArWXl9rZoSGD4d6S4ISik=
+X-Received: by 2002:aca:ec82:: with SMTP id k124mr4183998oih.73.1562109479302;
+ Tue, 02 Jul 2019 16:17:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-5-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-5-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:16:15 +0200
-Message-ID: <CAFBinCA1gUUbEj=++1rGcFQ1RdyxSheofAo=TKw3-UaenFAcug@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        amergnat@baylibre.com
+References: <20190701062020.19239-1-hch@lst.de> <20190701082517.GA22461@lst.de>
+ <20190702184201.GO31718@mellanox.com>
+In-Reply-To: <20190702184201.GO31718@mellanox.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 2 Jul 2019 16:17:48 -0700
+Message-ID: <CAPcyv4iWXJ-c7LahPD=Qt4RuDNTU7w_8HjsitDuj3cxngzb56g@mail.gmail.com>
+Subject: Re: dev_pagemap related cleanups v4
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc Alexandre Mergnat
-
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Tue, Jul 2, 2019 at 11:42 AM Jason Gunthorpe <jgg@mellanox.com> wrote:
 >
-> Add a setup() callback in the eeclk structure, to call an optional
-> call() function at end of eeclk probe to setup clocks.
+> On Mon, Jul 01, 2019 at 10:25:17AM +0200, Christoph Hellwig wrote:
+> > And I've demonstrated that I can't send patch series..  While this
+> > has all the right patches, it also has the extra patches already
+> > in the hmm tree, and four extra patches I wanted to send once
+> > this series is merged.  I'll give up for now, please use the git
+> > url for anything serious, as it contains the right thing.
 >
-> It's used for the G12A clock controller to setup the CPU clock notifiers.
+> Okay, I sorted it all out and temporarily put it here:
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-this will probably work fine, but I want do double check first
+> https://github.com/jgunthorpe/linux/commits/hmm
+>
+> Bit involved job:
+> - Took Ira's v4 patch into hmm.git and confirmed it matches what
+>   Andrew has in linux-next after all the fixups
+> - Checked your github v4 and the v3 that hit the mailing list were
+>   substantially similar (I never did get a clean v4) and largely
+>   went with the github version
+> - Based CH's v4 series on -rc7 and put back the removal hunk in swap.c
+>   so it compiles
+> - Merge'd CH's series to hmm.git and fixed all the conflicts with Ira
+>   and Ralph's patches (such that swap.c remains unchanged)
+> - Added Dan's ack's and tested-by's
 
-are we planning to get rid of meson-eeclk (mid-term)?
-Alex has some patches to get rid of all these IN_PREFIX logic.
-I'm asking because if we want to get rid of meson-eeclk it may be the
-time to do so now to have less logic to migrate later on
+Looks good. Test merge (with some collisions, see below) also passes
+my test suite.
 
+>
+> I think this fairly closely follows what was posted to the mailing
+> list.
+>
+> As it was more than a simple 'git am', I'll let it sit on github until
+> I hear OK's then I'll move it to kernel.org's hmm.git and it will hit
+> linux-next. 0-day should also run on this whole thing from my github.
+>
+> What I know is outstanding:
+>  - The conflicting ARM patches, I understand Andrew will handle these
+>    post-linux-next
+>  - The conflict with AMD GPU in -next, I am waiting to hear from AMD
 
-Martin
+Just a heads up that this also collides with the "sub-section" patches
+in Andrew's tree. The resolution is straightforward, mostly just
+colliding updates to arch_{add,remove}_memory() call sites in
+kernel/memremap.c and collisions with pgmap_altmap() usage.
