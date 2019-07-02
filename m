@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F075CAE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813FF5CAC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbfGBIJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:09:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56924 "EHLO mail.kernel.org"
+        id S1728308AbfGBIHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:07:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbfGBIJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:09:09 -0400
+        id S1728297AbfGBIHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:07:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85FED20665;
-        Tue,  2 Jul 2019 08:09:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 991B721479;
+        Tue,  2 Jul 2019 08:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054949;
-        bh=RSOkxXSyZ2sNkeOzn5fr775UMm1wxH2xyAEoEIewI0U=;
+        s=default; t=1562054859;
+        bh=3KVJGkIrX5Yw69arPwOamrCH2QLo1Lg2uer/BTJA54g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=deJNS07DoWhq6sucpkLontge4OBuzXB+8rBfr+C2lUsTl+omgdBKb/zbgkygpU3pA
-         sfbGBdr/iJRTUVrLWtikydTRPPfNMgxPtRJlQ8F0lHiF/hxXYL+567uhGf9wDw8mje
-         VFk/EwlxFNFgKfHX4BKDMPIJf3gKTN9D8sxzZBVU=
+        b=qe0LZmTNK6Snf0TA95WQrQmvnGjnqy6SAu1Rce0RlOjluf3ArTuWH41ze9VHcm2MC
+         GdPUl/uTZbRRafnEe/QayRrbwavFLba0+QdgOeByZg24QMBNDr0kxRvqQzSIHX7xEt
+         hHn1cp+uMlyLWbf+Osl2wgXumEgA1vF1lhz1MvEM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
-        Jan Luebbe <jlu@pengutronix.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 16/43] fs/proc/array.c: allow reporting eip/esp for all coredumping threads
-Date:   Tue,  2 Jul 2019 10:01:56 +0200
-Message-Id: <20190702080124.632413849@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roland Hii <roland.king.guan.hii@intel.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 56/72] net: stmmac: set IC bit when transmitting frames with HW timestamp
+Date:   Tue,  2 Jul 2019 10:01:57 +0200
+Message-Id: <20190702080127.502451969@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,48 +46,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Roland Hii <roland.king.guan.hii@intel.com>
 
-commit cb8f381f1613cafe3aec30809991cd56e7135d92 upstream.
+[ Upstream commit d0bb82fd60183868f46c8ccc595a3d61c3334a18 ]
 
-0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in /proc/PID/stat")
-stopped reporting eip/esp and fd7d56270b52 ("fs/proc: Report eip/esp in
-/prod/PID/stat for coredumping") reintroduced the feature to fix a
-regression with userspace core dump handlers (such as minicoredumper).
+When transmitting certain PTP frames, e.g. SYNC and DELAY_REQ, the
+PTP daemon, e.g. ptp4l, is polling the driver for the frame transmit
+hardware timestamp. The polling will most likely timeout if the tx
+coalesce is enabled due to the Interrupt-on-Completion (IC) bit is
+not set in tx descriptor for those frames.
 
-Because PF_DUMPCORE is only set for the primary thread, this didn't fix
-the original problem for secondary threads.  Allow reporting the eip/esp
-for all threads by checking for PF_EXITING as well.  This is set for all
-the other threads when they are killed.  coredump_wait() waits for all the
-tasks to become inactive before proceeding to invoke a core dumper.
+This patch will ignore the tx coalesce parameter and set the IC bit
+when transmitting PTP frames which need to report out the frame
+transmit hardware timestamp to user space.
 
-Link: http://lkml.kernel.org/r/87y32p7i7a.fsf@linutronix.de
-Link: http://lkml.kernel.org/r/20190522161614.628-1-jlu@pengutronix.de
-Fixes: fd7d56270b526ca3 ("fs/proc: Report eip/esp in /prod/PID/stat for coredumping")
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Reported-by: Jan Luebbe <jlu@pengutronix.de>
-Tested-by: Jan Luebbe <jlu@pengutronix.de>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix multi-queue races")
+Signed-off-by: Roland Hii <roland.king.guan.hii@intel.com>
+Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
+Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/proc/array.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -448,7 +448,7 @@ static int do_task_stat(struct seq_file
- 		 * a program is not able to use ptrace(2) in that case. It is
- 		 * safe because the task has stopped executing permanently.
- 		 */
--		if (permitted && (task->flags & PF_DUMPCORE)) {
-+		if (permitted && (task->flags & (PF_EXITING|PF_DUMPCORE))) {
- 			if (try_get_task_stack(task)) {
- 				eip = KSTK_EIP(task);
- 				esp = KSTK_ESP(task);
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2938,12 +2938,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
+ 
+ 	/* Manage tx mitigation */
+ 	tx_q->tx_count_frames += nfrags + 1;
+-	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
++	if (likely(priv->tx_coal_frames > tx_q->tx_count_frames) &&
++	    !(priv->synopsys_id >= DWMAC_CORE_4_00 &&
++	    (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
++	    priv->hwts_tx_en)) {
++		stmmac_tx_timer_arm(priv, queue);
++	} else {
++		tx_q->tx_count_frames = 0;
+ 		stmmac_set_tx_ic(priv, desc);
+ 		priv->xstats.tx_set_ic_bit++;
+-		tx_q->tx_count_frames = 0;
+-	} else {
+-		stmmac_tx_timer_arm(priv, queue);
+ 	}
+ 
+ 	skb_tx_timestamp(skb);
+@@ -3157,12 +3160,15 @@ static netdev_tx_t stmmac_xmit(struct sk
+ 	 * element in case of no SG.
+ 	 */
+ 	tx_q->tx_count_frames += nfrags + 1;
+-	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
++	if (likely(priv->tx_coal_frames > tx_q->tx_count_frames) &&
++	    !(priv->synopsys_id >= DWMAC_CORE_4_00 &&
++	    (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
++	    priv->hwts_tx_en)) {
++		stmmac_tx_timer_arm(priv, queue);
++	} else {
++		tx_q->tx_count_frames = 0;
+ 		stmmac_set_tx_ic(priv, desc);
+ 		priv->xstats.tx_set_ic_bit++;
+-		tx_q->tx_count_frames = 0;
+-	} else {
+-		stmmac_tx_timer_arm(priv, queue);
+ 	}
+ 
+ 	skb_tx_timestamp(skb);
 
 
