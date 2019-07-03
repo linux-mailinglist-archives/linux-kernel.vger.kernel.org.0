@@ -2,65 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4245E66F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D175E672
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfGCOUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:20:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfGCOUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:20:49 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F47C21881;
-        Wed,  3 Jul 2019 14:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562163648;
-        bh=z+ceB3wIw2kFLTpFQ/DuTnqEHlSgoBJLYsU0/PM4rVw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T4gcmT7AzNF+/+X+C1zP1wccnSIWXIXb6RN3zmRbL5pG18qE3EQUo1/2Q0wRH56Mb
-         Is/oGwE3tmZ29jswNXVC8DT6Kn0w1bj6vneC0Xyrd/3MLyi7+zO2pYbAcivKaeo28R
-         DLwPKKiA+J8ZG2W+hdUgTvGEYyCJQ8mtQt1g3M6I=
-Date:   Wed, 3 Jul 2019 10:20:47 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH AUTOSEL 5.1 11/51] ASoC: sun4i-codec: fix first delay on
- Speaker
-Message-ID: <20190703142047.GX11506@sasha-vm>
-References: <20190626034117.23247-1-sashal@kernel.org>
- <20190626034117.23247-11-sashal@kernel.org>
- <20190626103741.GU5316@sirena.org.uk>
+        id S1727068AbfGCOVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:21:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43365 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfGCOVj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:21:39 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63ELMvt3323943
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:21:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63ELMvt3323943
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163683;
+        bh=zPqhRTGu08XGjm36KmZWL9Y87AmN2NgNsl31/bmIUdg=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=LooM9MmxJpPJZ6qmGJebnWOQ51YfnuYEdCCFKrzdIP3+w12314WyjowDaKCn/ZIVF
+         dRrL6t8gaifpygTuRx+rvXY94nV6JIpqAZ0/zBQh8xo4Wt0qifaZ/GKSiQmDbtcwxu
+         RTDIPH7w9qiO/R4eR/YWOuFPe4kn6LYR1UW1811PRNpunHArOLcLUH+jP9CTr37iH/
+         4TxhtC4eMDfAttipbXHiurxvlcgRXVS0rlyNtw+KS1BzKX6ZVrOvIzfFgVaKWJnyFO
+         8hdZ3/FyERorfB5NU6ghxOKjKVxLQtRYJtdvT362w+hfgsD8YMYBxdsaXdsokAd8wT
+         aByVly5H64r3w==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63ELMws3323940;
+        Wed, 3 Jul 2019 07:21:22 -0700
+Date:   Wed, 3 Jul 2019 07:21:22 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-f2siadtp3hb5o0l1w7bvd8bk@git.kernel.org>
+Cc:     hpa@zytor.com, adrian.hunter@intel.com, mingo@kernel.org,
+        namhyung@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, tglx@linutronix.de, jolsa@kernel.org
+Reply-To: acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
+          adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
+          tglx@linutronix.de, ak@linux.intel.com,
+          linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf metricgroup: Use strsep()
+Git-Commit-ID: 80e9073f1f4473639d585b89ebc9130bb47920e8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190626103741.GU5316@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 11:37:41AM +0100, Mark Brown wrote:
->On Tue, Jun 25, 2019 at 11:40:27PM -0400, Sasha Levin wrote:
->> From: Georgii Staroselskii <georgii.staroselskii@emlid.com>
->>
->> [ Upstream commit 1f2675f6655838aaf910f911fd0abc821e3ff3df ]
->>
->> Allwinner DAC seems to have a delay in the Speaker audio routing. When
->> playing a sound for the first time, the sound gets chopped. On a second
->> play the sound is played correctly. After some time (~5s) the issue gets
->> back.
->
->This is inserting a big delay in the startup and might disrupt some
->production system.
+Commit-ID:  80e9073f1f4473639d585b89ebc9130bb47920e8
+Gitweb:     https://git.kernel.org/tip/80e9073f1f4473639d585b89ebc9130bb47920e8
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 26 Jun 2019 11:21:47 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 26 Jun 2019 11:31:43 -0300
 
-But that would be a problem upstream as well, no?
+perf metricgroup: Use strsep()
 
---
-Thanks,
-Sasha
+No change in behaviour intended, trivial optimization done by avoiding
+looking for spaces in 'g' right after setting it to "No_group".
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-f2siadtp3hb5o0l1w7bvd8bk@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/metricgroup.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index a0cf3cd95ced..90cd84e2a503 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -308,10 +308,9 @@ void metricgroup__print(bool metrics, bool metricgroups, char *filter,
+ 				struct mep *me;
+ 				char *s;
+ 
++				g = skip_spaces(g);
+ 				if (*g == 0)
+ 					g = "No_group";
+-				while (isspace(*g))
+-					g++;
+ 				if (filter && !strstr(g, filter))
+ 					continue;
+ 				if (raw)
