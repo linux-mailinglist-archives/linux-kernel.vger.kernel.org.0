@@ -2,136 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBE65DEFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0CC5DF06
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfGCHjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:39:03 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39164 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfGCHjD (ORCPT
+        id S1727299AbfGCHje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:39:34 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44084 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbfGCHjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:39:03 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p24so1019909lfo.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:39:01 -0700 (PDT)
+        Wed, 3 Jul 2019 03:39:31 -0400
+Received: by mail-oi1-f196.google.com with SMTP id e189so1241835oib.11
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:39:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2Wp52PBXKgmN1eJSawD7UHQEQNJnFNq41D1U5ZiE5Bo=;
-        b=Xh1pMxs44/cvgbIPdlvqWFnxIJ8en8yjJHAJY6KuWeq1CEy3k59s8hTBuaV/uvBt3m
-         ycpPeoODSURlw/yRgrS9/Ix2TTPYntmr15kL0HXjEBAHulbR0XvdXSwImep3KZ0jLT6X
-         xTkSmgo0jYD7TQosCD70j71q3pejld6xQVHya/IukRJm4km2mbLSsSnNzkY9CLXVAbZ5
-         0YS8qFpA0RjSPWjfTu8/nVmGbQ1PtI8oOMysnJSZb2Vdg3P95jdot7hY+X1M9Hs47pr0
-         F2PcCz6fK0JvmGwcEVYXEgRU5iqE+h0xid1o2dDSun7EagnjIf1nf0tmqTHNq8QWjhDP
-         3SuA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w+ONtwKrr9MoAxJy3nzYyZYaZtN7tZSEZElIWhYkH6s=;
+        b=rv8/eydRATgo4XLG7QYMsUNM6tIoAfjMBeIEw526lP66oRfS1YEvpduOSz0u7nibUl
+         nb76zfYHzWEFwMrqiGxJbb+vcHmiIHpS7tFjZ2ltXqaYUkFhKztC9otdCyajFbmp/N/u
+         VMJK38E3H+WyuHIeRFz7e3AmhIHOJr6kz2xOYRbsaMFVBGxPXF1Lys2N4W6Z70E8i8/C
+         MuzeQrOzkxXI/3PPnh42oDJmnOXbrx8nT/8lVQLr3qTTlR6i2SN2J59cRwl6JJmgamuw
+         loUICPT9wT9KTrXh97PDSBDor1LhPYL9aH+2dXN/tcH4XWDVKf9Ish5qOZvC3rqpl4n7
+         KlcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=2Wp52PBXKgmN1eJSawD7UHQEQNJnFNq41D1U5ZiE5Bo=;
-        b=mYNIsd3jfOBcQBlHRQlZpiwmKVL4Y4xC/MD6mcyGyDI3V+DjC8oLq9hzDeHL5cVF8T
-         ywyGYLoEwWubVB96Cqpz34LdkFzP/zAuSS/mUSgT+eKVC97Km4DufXj61Ug1aBXFjWca
-         ZLCTYDvWmHn+IrNv8nqB+DW9sx0oMvStcHiY3JVaiWWFaIfyYMYGtd71USbeMkdUkKzg
-         UkFMjkucdQOgQwLp1gO84HM1MSTFHnoH7bORenh0Z/RvTBZRVXNV1ZfmT2Nh5wITOA2k
-         MiG2vR2YSpqK0ry7rRWcdvRgNHQ/Zd2HUlBOKsG8OTJ6BfK0Ma5QA6sNUnwt984MrxBk
-         8jFw==
-X-Gm-Message-State: APjAAAX/J3NektIB4VDae4EsTuM77ZTdHtyoAZ8dQE0eBUbNK80TIG4Q
-        CKvQLYCp/5p0hpEKPp6g+dFC9A==
-X-Google-Smtp-Source: APXvYqwM0R72JZGl28dY5apLp/0qpK7E8sI9lybonc8uNIDSvz67trZs+adr4gBSsGpVXl3/NyBo2A==
-X-Received: by 2002:ac2:42ca:: with SMTP id n10mr5174666lfl.121.1562139540856;
-        Wed, 03 Jul 2019 00:39:00 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id h129sm263683lfd.74.2019.07.03.00.38.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Jul 2019 00:39:00 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 10:38:58 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
-        ast@kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
-        daniel@iogearbox.net, jakub.kicinski@netronome.com,
-        john.fastabend@gmail.com
-Subject: Re: [PATCH v5 net-next 6/6] net: ethernet: ti: cpsw: add XDP support
-Message-ID: <20190703073857.GA2927@khorivan>
-Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
-        grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
-        ast@kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
-        daniel@iogearbox.net, jakub.kicinski@netronome.com,
-        john.fastabend@gmail.com
-References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
- <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
- <20190703092603.66f36914@carbon>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w+ONtwKrr9MoAxJy3nzYyZYaZtN7tZSEZElIWhYkH6s=;
+        b=sRsQpub41zYg4gVvANf2rPbb/XsWsfDoW4Am27p9K4TtvYde94pXatMXnqsTxK5RGs
+         h3QmMdLeZUXZCl6FZS9cwp6F3uppTUe+7n/HnuDSUZi4/WFgIfranhFlEaP0suG4MvyG
+         lE0SXnz3GZamKNdGK8MQsKPts4Hd6kC1RZXELIo4876Sp8qEgUiUQPIE7aK+bVobYTAz
+         40s4acBPrmdkEmsIkRjsc9wA4uKhWt6QvU0ON7NKff2O6q6EPyRypyTchOSIdBmRzo3P
+         uPbtqhB4yvekA4KQ5pm3p4MliS7nVnsJUvcOZ1UYXYqq8E5YvnBnSIcPuj+fsPiXJsKD
+         gdMg==
+X-Gm-Message-State: APjAAAU2nIoFyxIirMnFxqzhEKvaZiDlCaAwOv7nkRtiAEVIc+Z5kDSr
+        RtuJi2V6QvaJ6tv+YHyTwFUJdjJaCL4IV7T5ts6C3g==
+X-Google-Smtp-Source: APXvYqxN4JBehPtSNVFvMgeIctFw8U6GM1tPTFUqjq+7Uz2D6J3GcSi6Tcqvx53ETCvfY/YyDqrTPsjGLQzG92y6q3s=
+X-Received: by 2002:aca:574e:: with SMTP id l75mr5705600oib.2.1562139570860;
+ Wed, 03 Jul 2019 00:39:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190703092603.66f36914@carbon>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190627120208.4661-1-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20190627120208.4661-1-codrin.ciubotariu@microchip.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Wed, 3 Jul 2019 15:39:19 +0800
+Message-ID: <CA+Px+wXBBgeWbjZ5uQmwJgn+d=ZE-N0aehitog7==ak3GDxMsQ@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: codecs: ad193x: Group register
+ initialization at probe
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     ALSA development <alsa-devel@alsa-project.org>,
+        linux-kernel@vger.kernel.org, lars@metafoo.de,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 09:26:03AM +0200, Jesper Dangaard Brouer wrote:
->
->On Sun, 30 Jun 2019 20:23:48 +0300 Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
->
->> Add XDP support based on rx page_pool allocator, one frame per page.
->> Page pool allocator is used with assumption that only one rx_handler
->> is running simultaneously. DMA map/unmap is reused from page pool
->> despite there is no need to map whole page.
->>
->> Due to specific of cpsw, the same TX/RX handler can be used by 2
->> network devices, so special fields in buffer are added to identify
->> an interface the frame is destined to. Thus XDP works for both
->> interfaces, that allows to test xdp redirect between two interfaces
->> easily. Aslo, each rx queue have own page pools, but common for both
->> netdevs.
->
->Looking at the details what happen when a single RX-queue can receive
->into multiple net_device'es.  I realize that this driver will
->violate/kill some of the "hidden"/implicit RX-bulking that the
->XDP_REDIRECT code depend on for performance.
->
->Specifically, it violate this assumption:
-> https://github.com/torvalds/linux/blob/v5.2-rc7/kernel/bpf/devmap.c#L324-L329
->
->	/* Ingress dev_rx will be the same for all xdp_frame's in
->	 * bulk_queue, because bq stored per-CPU and must be flushed
->	 * from net_device drivers NAPI func end.
->	 */
->	if (!bq->dev_rx)
->		bq->dev_rx = dev_rx;
->
->This drivers "NAPI func end", can have received into multiple
->net_devices, before it's NAPI cycle ends.  Thus, violating this code
->assumption.
-). I said, I moved to be per device in rx_handler. It violates nothing.
+On Thu, Jun 27, 2019 at 8:05 PM Codrin Ciubotariu
+<codrin.ciubotariu@microchip.com> wrote:
+> +struct ad193x_reg_default {
+> +       unsigned int reg;
+> +       unsigned int val;
+> +};
+You probably don't need to define this.  There is a struct
+reg_sequence in regmap.h.
 
->
->Knowing all xdp_frame's in the bulk queue is from the same net_device,
->can be used to further optimize XDP.  E.g. the dev->netdev_ops->ndo_xdp_xmit()
->call don't take fully advantage of this, yet.  If we merge this driver,
->it will block optimizations in this area.
->
->NACK
+> +
+> +/* codec register values to set after reset */
+> +static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
+> +{
+> +       const struct ad193x_reg_default reg_init[] = {
+> +               {  0, 0x99 },   /* PLL_CLK_CTRL0: pll input: mclki/xi 12.288Mhz */
+> +               {  1, 0x04 },   /* PLL_CLK_CTRL1: no on-chip Vref */
+> +               {  2, 0x40 },   /* DAC_CTRL0: TDM mode */
+> +               {  4, 0x1A },   /* DAC_CTRL2: 48kHz de-emphasis, unmute dac */
+> +               {  5, 0x00 },   /* DAC_CHNL_MUTE: unmute DAC channels */
+> +       };
+> +       const struct ad193x_reg_default reg_adc_init[] = {
+> +               { 14, 0x03 },   /* ADC_CTRL0: high-pass filter enable */
+> +               { 15, 0x43 },   /* ADC_CTRL1: sata delay=1, adc aux mode */
+> +       };
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(reg_init); i++)
+> +               regmap_write(ad193x->regmap, reg_init[i].reg, reg_init[i].val);
+> +
+> +       if (ad193x_has_adc(ad193x)) {
+> +               for (i = 0; i < ARRAY_SIZE(reg_adc_init); i++) {
+> +                       regmap_write(ad193x->regmap, reg_adc_init[i].reg,
+> +                                    reg_adc_init[i].val);
+> +               }
+> +       }
+And you could use regmap_multi_reg_write( ) to substitute the two for-loops.
 
-Jesper,
-
-Seems I said that I moved it to flush, that does
-dev->netdev_ops->ndo_xdp_xmit(), to rx_handler, so that it's done per device,
-so device is knows per each flush.
-
-In the code, I hope everyone can see ..., after each flush dev_rx is cleared
-to 0. So no any impact on it.
-
-As for me, it's very not clear and strange decision.
-
--- 
-Regards,
-Ivan Khoronzhuk
+See https://mailman.alsa-project.org/pipermail/alsa-devel/2019-June/151090.html
+as an example.  It also has some reg initializations in component
+probe( ).
