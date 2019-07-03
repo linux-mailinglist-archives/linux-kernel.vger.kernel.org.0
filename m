@@ -2,83 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6A35DDD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 07:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 260605DDD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 07:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfGCFz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 01:55:29 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37844 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfGCFz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 01:55:29 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 131so1022281ljf.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 22:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p9G7dahqqLBvpWifetVIRcTe56P9tGwywaRmRI7DVfM=;
-        b=WarTlUlnWaTK3MA99/Eo051DVjcu20CodKEPYS65TJisSvxsw78y3F7ulzzkOCDRuP
-         7JLRlmfDNMOYtEMrVkmMTckvpYu8O/pZkDVKsFgt5RK8du2XOA/r1SkwyajYIw1xKKCn
-         5zQJiGasB1K7g6R6NHs08k6nLqhMoHOda3Rio0FL8uPeHB/1VdUskxNHuCgQloRfvIYH
-         HhGN5KBWFTKPyQXdKqZO77vgALn1KQpid4RTKA6PFdzy0BZmwVLTpyBuLkSyNz5bQET2
-         7RReYiAPMe1BoKcE5VmOicBWENLCIAFcAUheORMcAmsQuKITwV0rBqcT1ZeoxOr2m/EA
-         S6qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p9G7dahqqLBvpWifetVIRcTe56P9tGwywaRmRI7DVfM=;
-        b=e2m8WCBfvVErSIMot1+v/o7FS0U7FLI3MUhLTHLNMy4F+0zZ7r9O89bKBYSLw/k4ho
-         gLVRpumiA9wp1dVC3SCf/PO9GOor4lpKTWUzO3muA2QhFFcVwoFyxbpeKrq20gI6HFsa
-         Rw9NHCwkvQdXMuHuQM4PNGcr681t8+J24XVoC3fex70bo1yCVtPjnUWAbnXcNQ2d1R78
-         JQTb4t0KzRa5GX7yOf8bE6ibhNRCcOjUkgwEnMuGBRwdRTiAiq3cbJ1xS2enFGe24jjw
-         7QkfUjUX4hixJUvb/58VOVOwBr9DyUHCGeYMqm3dgVGyu86PVYbb+g24TzQFge+4FhDA
-         sovg==
-X-Gm-Message-State: APjAAAX73ujLnO7NsTqW1geJ1HAFAxzuWSowQgFLUg7uMmtHBzqQcIrA
-        hVoxx8D4ay2Wk7nkonMVsgfEttPBOaPacarHphE=
-X-Google-Smtp-Source: APXvYqxbYWrWiGbrJerEdqPo1pfbe/idItfy/Bn8xk0BK95BO1LruB1YeM1oZ4jyeNbc7V2VFV/xNXdxvPvz22kFobw=
-X-Received: by 2002:a2e:86cc:: with SMTP id n12mr19527958ljj.146.1562133327468;
- Tue, 02 Jul 2019 22:55:27 -0700 (PDT)
+        id S1727012AbfGCFxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 01:53:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8130 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725927AbfGCFxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 01:53:21 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 60FD3EDEC9C4AF337995;
+        Wed,  3 Jul 2019 13:53:18 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 3 Jul 2019 13:53:10 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Guan Xuetao <gxt@pku.edu.cn>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        GuanXuetao <gxt@mprc.pku.edu.cn>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH] unicore32: dma: fix to pass correct device identity to free_irq()
+Date:   Wed, 3 Jul 2019 05:59:43 +0000
+Message-ID: <20190703055943.141542-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190702005122.41036-1-henryburns@google.com> <CALvZod5Fb+2mR_KjKq06AHeRYyykZatA4woNt_K5QZNETvw4nw@mail.gmail.com>
- <CAGQXPTjU0xAWCLTWej8DdZ5TbH91m8GzeiCh5pMJLQajtUGu_g@mail.gmail.com>
- <20190702141930.e31bf1c07a77514d976ef6e2@linux-foundation.org> <CAGQXPTiONoPARFTep-kzECtggS+zo2pCivbvPEakRF+qqq9SWA@mail.gmail.com>
-In-Reply-To: <CAGQXPTiONoPARFTep-kzECtggS+zo2pCivbvPEakRF+qqq9SWA@mail.gmail.com>
-From:   Vitaly Wool <vitalywool@gmail.com>
-Date:   Wed, 3 Jul 2019 07:54:29 +0200
-Message-ID: <CAMJBoFPDKZScs-uKSH-YggE5Jqocb6e74FdCPTOGnO5qfUXd2Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/z3fold.c: Lock z3fold page before __SetPageMovable()
-To:     Henry Burns <henryburns@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vitaly Vul <vitaly.vul@sony.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Xidong Wang <wangxidong_97@163.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 12:18 AM Henry Burns <henryburns@google.com> wrote:
->
-> On Tue, Jul 2, 2019 at 2:19 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 1 Jul 2019 18:16:30 -0700 Henry Burns <henryburns@google.com> wrote:
-> >
-> > > Cc: Vitaly Wool <vitalywool@gmail.com>, Vitaly Vul <vitaly.vul@sony.com>
-> >
-> > Are these the same person?
-> I Think it's the same person, but i wasn't sure which email to include
-> because one was
-> in the list of maintainers and I had contacted the other earlier.
+free_irq() expects the same device identity that was passed to
+corresponding request_irq(), otherwise the IRQ is not freed.
 
-This is the same person, it's the transliteration done differently
-that caused this :)
+Fixes: 10c9c10c3151 ("unicore32 core architecture: mm related: consistent device DMA handling")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ arch/unicore32/kernel/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-~Vitaly
+diff --git a/arch/unicore32/kernel/dma.c b/arch/unicore32/kernel/dma.c
+index 7a0e2d4d6077..2b8666f8a37d 100644
+--- a/arch/unicore32/kernel/dma.c
++++ b/arch/unicore32/kernel/dma.c
+@@ -169,7 +169,7 @@ int __init puv3_init_dma(void)
+ 	ret = request_irq(IRQ_DMAERR, dma_err_handler, 0, "DMAERR", NULL);
+ 	if (ret) {
+ 		printk(KERN_CRIT "Can't register IRQ for DMAERR\n");
+-		free_irq(IRQ_DMA, "DMA");
++		free_irq(IRQ_DMA, NULL);
+ 		return ret;
+ 	}
+
+
+
