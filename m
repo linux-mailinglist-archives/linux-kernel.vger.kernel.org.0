@@ -2,170 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A975DB0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 349115DB1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:48:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfGCBmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:42:07 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:41841 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726329AbfGCBmG (ORCPT
+        id S1727208AbfGCBsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:48:22 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39971 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:42:06 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7C8252026A;
-        Tue,  2 Jul 2019 21:42:05 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 02 Jul 2019 21:42:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        6iMTUaaizD8KI2RsIcyBSJADq/ZjHbcx9ocwHE4/HvA=; b=L2NSC7tqTMTvdvaT
-        i091LhDbbR2HTaIByIeb55CbQLbp3Iq49P+FF9RDJK+/fLsk6qQ2XEHZZfWvI8gY
-        CZRiCCl++6MgZXeaaMhr0CDvnRBVZiw55ppt77iXuM9KpGkDjwMkM4gbYRnuiiDF
-        bVokw+IFMmq+2kSBxL/poplyVg0OKvdzuPPKIg+rV0w0XUMGou9SPO/30obQz6Yu
-        MsVq/t6LqM0TCH7q7hMwaekXT/VtW1m/8hyA5fDkORWf0qKnzsQICbXodUGg0kPa
-        gXjqhpFeXgCMikY0hUN7KZzWSVE3djK0ynRQBkPSWLnVR78aSV+9EkizVVZ9fw2V
-        nnwhOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=6iMTUaaizD8KI2RsIcyBSJADq/ZjHbcx9ocwHE4/H
-        vA=; b=TQZ5cIrXXnri9Xs16QNOMwn8t1BZhch9wQiauuAYaFfnwUivmO/iENKUd
-        x+FhG7onPZF69nFpyxVRY11zLEjGb7PndHli9MQfVC8mTh30Md0iiy/h/Fquf/rC
-        PXqXSrzUWIJLf9e1SbgGD1oBPD80J08nsovLar/4pflNWwsAGx8Ztkr8oFoqWAlf
-        ZF0O4ObC1k95tJY+2BB2cz35G5sSmPmYSEgD3fXYdvz6rNQUJGQSJTSpZ69tsS5u
-        BJiCrYEghny22QZJZZetauWR1PI+zU2XPHBzUJgDK3zDlRBDobbUEtRkMMafKZMK
-        fq65V/ZWh3r7faZ3md5lqdDj8dGdw==
-X-ME-Sender: <xms:7AccXabb9Yot5WPVf0e5rMz9fbiPu01IDkh66dTWRb7bdkxERcBv5Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrvdelgdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
-    dujeegrdeiudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgif
-    rdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:7AccXRqfMiBknFzxY38detRH96kvnckyjRz5YZlyioGXPhJtaiaTmg>
-    <xmx:7AccXf8GIirsBqFT_OAktMeXL_jo5cmyzpLieJ84SVP--488HRubWw>
-    <xmx:7AccXQ8e2SZMp-Qls0qssnKRqefxSImobbXM28h0Tqe7X-lzjZIf-g>
-    <xmx:7QccXfqe5kI5GmrXC2KfVwZvkasC9jEN_MsRNRQ0OdAubijLXE_kEw>
-Received: from pluto.themaw.net (unknown [118.208.174.61])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3E476380075;
-        Tue,  2 Jul 2019 21:42:04 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by pluto.themaw.net (Postfix) with ESMTP id 8277D1C014E;
-        Wed,  3 Jul 2019 09:42:00 +0800 (AWST)
-Message-ID: <e9c60b25a1df6dfaec1f5613845695d6416bea0d.camel@themaw.net>
-Subject: Re: [PATCH 4/6] vfs: Allow mount information to be queried by
- fsinfo() [ver #15]
-From:   Ian Kent <raven@themaw.net>
-To:     christian@brauner.io, David Howells <dhowells@redhat.com>,
-        viro@zeniv.linux.org.uk
-Cc:     mszeredi@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 03 Jul 2019 09:42:00 +0800
-In-Reply-To: <2daf229272884deaf139be510f5842f0689c18a6.camel@themaw.net>
-References: <156173681842.14728.9331700785061885270.stgit@warthog.procyon.org.uk>
-         <156173685496.14728.9606180227161368035.stgit@warthog.procyon.org.uk>
-         <8c70abf248d5ac07f334730af70d64235185b109.camel@themaw.net>
-         <2daf229272884deaf139be510f5842f0689c18a6.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Tue, 2 Jul 2019 21:48:21 -0400
+Received: by mail-ot1-f67.google.com with SMTP id e8so612828otl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/lRiznl/b3k1Ie9ScyJ4jBFeaEoI2ZI3USYbKQfR1J0=;
+        b=zQMpxxLGrM0XjdsgBPT6ATLcrb7qA9zfpedH99WHA29nFWVTZMn5gYEGkwE/NO+j58
+         O0GelD0oUhq/t5UuQIzLN40ZYkRP2zzc1N3lAkXaYN9SpFI6oXBDfRYUYW0DDL7N5Irl
+         PT0IswXptUa0vycB9GEwZibK3zlJafP0FDM+ksQm3Eur3ySQZwANF62OBiy4caGXFFEz
+         8QPTMYNIwkiFEzQ2hfjAKMDgj9RuvrXBgl2U6TQF3njQH25/FcQL80t57ieCV/qnWoLd
+         Hmf7MuHoNwUEoProeXVs3712q03rie79FXvO9UhNfh702kuBuyTYFuf81Laf6+Jnq97N
+         h3BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/lRiznl/b3k1Ie9ScyJ4jBFeaEoI2ZI3USYbKQfR1J0=;
+        b=d/x5E3dpTglDrq0dz3b6uiELB1rPIas/gdD28J9R6+LqykZuPczhpLD+cuMmnMtG3p
+         CqF+DzVWnyIS6LArrKEAbC4zknAWhP5pSX1rPIt2AO0YszZXUIrP7qwzw8PF0Fmy1+dM
+         Cq/Hx1zMVLGGsdQWm4i1Wg2sHvMWlNgREDl658OK+1+g2jWRV0skrKDMSoNLS78WefCj
+         zSCvgFygPEz4LS5FHn7aiw5FEGAQqlgE0f7Bza780W3FmWyWijUB5Vho+ArGBKdneinj
+         VLD6lqPYfDiLWSzaIWM/MlBXvBDhRDM7bKQwnzDl/cg5eAAqaFFNG/bMKoOgW17ftUmU
+         +wnw==
+X-Gm-Message-State: APjAAAWc2JnI9/yS82hVFkDf2S37CEw5+HRh6vjE9yGwi9vJ2iSMzksR
+        GpQTJZnaXb4yRP9w684YxXIQOg==
+X-Google-Smtp-Source: APXvYqyH/Q87O4oDhQWm0UZHg0a9eu6n/1GxkkIumbyNvNvII6KOW/H5NXHLQOuBpr2GbdpYym7ZGg==
+X-Received: by 2002:a9d:61d8:: with SMTP id h24mr6357738otk.53.1562118501240;
+        Tue, 02 Jul 2019 18:48:21 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id p2sm313927otl.59.2019.07.02.18.48.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 18:48:20 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 09:48:08 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Changbin Du <changbin.du@intel.com>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 00/11] perf: Fix errors detected by Smatch
+Message-ID: <20190703014808.GC6852@leoy-ThinkPad-X240s>
+References: <20190702103420.27540-1-leo.yan@linaro.org>
+ <20190702110743.GA12694@krava>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702110743.GA12694@krava>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-03 at 09:24 +0800, Ian Kent wrote:
-> On Wed, 2019-07-03 at 09:09 +0800, Ian Kent wrote:
-> > Hi Christian,
+On Tue, Jul 02, 2019 at 01:07:43PM +0200, Jiri Olsa wrote:
+> On Tue, Jul 02, 2019 at 06:34:09PM +0800, Leo Yan wrote:
+> > When I used static checker Smatch for perf building, the main target is
+> > to check if there have any potential issues in Arm cs-etm code.  So
+> > finally I get many reporting for errors/warnings.
 > > 
-> > About the propagation attributes you mentioned ...
+> > I used below command for using static checker with perf building:
+> > 
+> >   # make VF=1 CORESIGHT=1 -C tools/perf/ \
+> >     CHECK="/root/Work/smatch/smatch --full-path" \
+> >     CC=/root/Work/smatch/cgcc | tee smatch_reports.txt
+> > 
+> > I reviewed the errors one by one, if I understood some of these errors
+> > so changed the code as I can, this patch set is the working result; but
+> > still leave some errors due to I don't know what's the best way to fix
+> > it.  There also have many inconsistent indenting warnings.  So I firstly
+> > send out this patch set and let's see what's the feedback from public
+> > reviewing.
+> > 
+> > Leo Yan (11):
+> >   perf report: Smatch: Fix potential NULL pointer dereference
+> >   perf stat: Smatch: Fix use-after-freed pointer
+> >   perf top: Smatch: Fix potential NULL pointer dereference
+> >   perf annotate: Smatch: Fix dereferencing freed memory
+> >   perf trace: Smatch: Fix potential NULL pointer dereference
+> >   perf hists: Smatch: Fix potential NULL pointer dereference
+> >   perf map: Smatch: Fix potential NULL pointer dereference
+> >   perf session: Smatch: Fix potential NULL pointer dereference
+> >   perf intel-bts: Smatch: Fix potential NULL pointer dereference
+> >   perf intel-pt: Smatch: Fix potential NULL pointer dereference
+> >   perf cs-etm: Smatch: Fix potential NULL pointer dereference
 > 
-> Umm ... how did you work out if a mount is unbindable from proc
-> mountinfo?
+> from quick look it all looks good to me, nice tool ;-)
 > 
-> I didn't notice anything that could be used for that when I was
-> looking at this.
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Oh wait, fs/proc_namespace.c:show_mountinfo() has:
-        if (IS_MNT_UNBINDABLE(r))
-                seq_puts(m, " unbindable");
+Thanks for reviewing, Jiri.
 
-I missed that, probably because I didn't have any unbindable mounts
-at the time I was looking at it, oops!
+@Arnaldo, Just want to check, will you firstly pick up 01~05, 07,
+08/11 patches if you think they are okay?  Or you want to wait me to
+spin new patch set with all patches after I gather all comments?
 
-That's missing and probably should be added too.
+Thanks,
+Leo Yan
 
-> 
-> > On Fri, 2019-06-28 at 16:47 +0100, David Howells wrote:
+> >  tools/perf/builtin-report.c    |  4 ++--
+> >  tools/perf/builtin-stat.c      |  2 +-
+> >  tools/perf/builtin-top.c       |  8 ++++++--
+> >  tools/perf/builtin-trace.c     |  5 +++--
+> >  tools/perf/ui/browsers/hists.c | 13 +++++++++----
+> >  tools/perf/util/annotate.c     |  6 ++----
+> >  tools/perf/util/cs-etm.c       |  2 +-
+> >  tools/perf/util/intel-bts.c    |  5 ++---
+> >  tools/perf/util/intel-pt.c     |  5 ++---
+> >  tools/perf/util/map.c          |  7 +++++--
+> >  tools/perf/util/session.c      |  3 +++
+> >  11 files changed, 36 insertions(+), 24 deletions(-)
 > > 
-> > snip ...
+> > -- 
+> > 2.17.1
 > > 
-> > > +
-> > > +#ifdef CONFIG_FSINFO
-> > > +int fsinfo_generic_mount_info(struct path *path, struct fsinfo_kparams
-> > > *params)
-> > > +{
-> > > +	struct fsinfo_mount_info *p = params->buffer;
-> > > +	struct super_block *sb;
-> > > +	struct mount *m;
-> > > +	struct path root;
-> > > +	unsigned int flags;
-> > > +
-> > > +	if (!path->mnt)
-> > > +		return -ENODATA;
-> > > +
-> > > +	m = real_mount(path->mnt);
-> > > +	sb = m->mnt.mnt_sb;
-> > > +
-> > > +	p->f_sb_id		= sb->s_unique_id;
-> > > +	p->mnt_id		= m->mnt_id;
-> > > +	p->parent_id		= m->mnt_parent->mnt_id;
-> > > +	p->change_counter	= atomic_read(&m->mnt_change_counter);
-> > > +
-> > > +	get_fs_root(current->fs, &root);
-> > > +	if (path->mnt == root.mnt) {
-> > > +		p->parent_id = p->mnt_id;
-> > > +	} else {
-> > > +		rcu_read_lock();
-> > > +		if (!are_paths_connected(&root, path))
-> > > +			p->parent_id = p->mnt_id;
-> > > +		rcu_read_unlock();
-> > > +	}
-> > > +	if (IS_MNT_SHARED(m))
-> > > +		p->group_id = m->mnt_group_id;
-> > > +	if (IS_MNT_SLAVE(m)) {
-> > > +		int master = m->mnt_master->mnt_group_id;
-> > > +		int dom = get_dominating_id(m, &root);
-> > > +		p->master_id = master;
-> > > +		if (dom && dom != master)
-> > > +			p->from_id = dom;
-> > 
-> > This provides information about mount propagation (well mostly).
-> > 
-> > My understanding of this was that:
-> > "If a mount is propagation private (or slave) the group_id will
-> > be zero otherwise it's propagation shared and it's group id will
-> > be non-zero.
-> > 
-> > If a mount is propagation slave and propagation peers exist then
-> > the mount field mnt_master will be non-NULL. Then mnt_master
-> > (slave's master) can be used to set master_id. If the group id
-> > of the propagation source is not that of the master then set
-> > the from_id group as well."
-> > 
-> > This parallels the way in which these values are reported in
-> > the proc pseudo file system.
-> > 
-> > Perhaps adding flags as well as setting the fields would be
-> > useful too, since interpreting the meaning of the structure
-> > fields isn't obvious, ;)
-> > 
-> > David, Al, thoughts?
-> > 
-> > Ian
-
