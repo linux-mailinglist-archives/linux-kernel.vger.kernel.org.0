@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD575E6F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 860285E6F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfGCOja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:39:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49165 "EHLO
+        id S1727099AbfGCOkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:40:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39923 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfGCOja (ORCPT
+        with ESMTP id S1725847AbfGCOkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:39:30 -0400
+        Wed, 3 Jul 2019 10:40:10 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63Ecn263328826
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EdYSC3329150
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:38:49 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63Ecn263328826
+        Wed, 3 Jul 2019 07:39:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EdYSC3329150
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562164730;
-        bh=3UIigSOAi48ycbenztV1QQogmvq2oriwdEcHfBJDfPk=;
+        s=2019061801; t=1562164775;
+        bh=9UO2tseUPI+6EDIOvnGezrt9XxIG+YSJbodqrs0fvYQ=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=PvvijpnAaC9LSnSDictaM34fMXGBdCpBAYl4qq/dehlgZfzFlR8T3IR42JGHUw0yK
-         544StyYiJ2XLic/rXpwLUrpEKC4WLgvLlroER58/GeCtW/cDpg67+eAODX/s9/VDFN
-         l2MBTP4x1zrrhvJv2R/T0JY9gGYyohUsOJfwkWadi7BMq1i3FmbZZt/aTgwP872C6u
-         m9j43xpEAVFsoxvFneTxLA5lxP8ODIxICSgz7655TykJ3fqwRcTnnbWqFmLsa2E06b
-         BEQukBETfrerzUdWvWz22Ee0OTtbCaK32dbFJKImYEMv4A2jfAsSqg5BGJB1torOR8
-         Jo2ftDlJBX1og==
+        b=ZvRqjHpSTfSID79l5nEc13nsov/klFz5pwzbTRoJYq4mQ5xD0dtdP30rDvwSTeyog
+         rcAkU1sYLwH9ReCd2LmifCUgT8y6XvUZS0UYQ4wSOlgV33JRn2aL3cXTXgvQMJg+dN
+         HOBS+A8Ut37psiPdOYYUvaesyhgfhh9ycFFV8zeuEsrw6KlkNaYUB0x70Ag6vWAqis
+         s5m2E69/GsiWWI5U6KU1D3ltHC3IcxGGTFGIv0DRaozvUMPA8qIHEsixpHelv2U+G3
+         bO51LrzKsXocOgt2K68beSNAJKWguRT3S8g2S1R2gCHSFOtv3xNqHjCJoRmsxUT2fq
+         dXwrXAGZ9OUvw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EcmPt3328823;
-        Wed, 3 Jul 2019 07:38:48 -0700
-Date:   Wed, 3 Jul 2019 07:38:48 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EdY8H3329147;
+        Wed, 3 Jul 2019 07:39:34 -0700
+Date:   Wed, 3 Jul 2019 07:39:34 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for John Garry <tipbot@zytor.com>
-Message-ID: <tip-57cc732479bac2a3cbd759fb07188657c871d5c1@git.kernel.org>
-Cc:     zhangshaokun@hisilicon.com, tglx@linutronix.de, acme@redhat.com,
-        will.deacon@arm.com, alexander.shishkin@linux.intel.com,
-        john.garry@huawei.com, mathieu.poirier@linaro.org,
-        mark.rutland@arm.com, ben@decadent.org.uk,
-        kan.liang@linux.intel.com, mingo@kernel.org,
-        brueckner@linux.ibm.com, ak@linux.intel.com, namhyung@kernel.org,
-        peterz@infradead.org, hpa@zytor.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, tmricht@linux.ibm.com
-Reply-To: tmricht@linux.ibm.com, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, hpa@zytor.com, peterz@infradead.org,
-          namhyung@kernel.org, ak@linux.intel.com, brueckner@linux.ibm.com,
-          mingo@kernel.org, kan.liang@linux.intel.com, ben@decadent.org.uk,
-          mark.rutland@arm.com, mathieu.poirier@linaro.org,
-          alexander.shishkin@linux.intel.com, john.garry@huawei.com,
-          will.deacon@arm.com, tglx@linutronix.de, acme@redhat.com,
-          zhangshaokun@hisilicon.com
-In-Reply-To: <1561732552-143038-3-git-send-email-john.garry@huawei.com>
-References: <1561732552-143038-3-git-send-email-john.garry@huawei.com>
+Message-ID: <tip-8f5b703add99473b59b4a38a6b66afbafc29d92e@git.kernel.org>
+Cc:     tmricht@linux.ibm.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, ben@decadent.org.uk, hpa@zytor.com,
+        mathieu.poirier@linaro.org, zhangshaokun@hisilicon.com,
+        kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, mingo@kernel.org, will.deacon@arm.com,
+        namhyung@kernel.org, tglx@linutronix.de, john.garry@huawei.com,
+        ak@linux.intel.com, acme@redhat.com, mark.rutland@arm.com,
+        brueckner@linux.ibm.com
+Reply-To: mathieu.poirier@linaro.org, zhangshaokun@hisilicon.com,
+          tmricht@linux.ibm.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, ben@decadent.org.uk, hpa@zytor.com,
+          acme@redhat.com, mark.rutland@arm.com, brueckner@linux.ibm.com,
+          kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
+          mingo@kernel.org, jolsa@kernel.org, namhyung@kernel.org,
+          will.deacon@arm.com, tglx@linutronix.de, john.garry@huawei.com,
+          ak@linux.intel.com
+In-Reply-To: <1561732552-143038-4-git-send-email-john.garry@huawei.com>
+References: <1561732552-143038-4-git-send-email-john.garry@huawei.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf jevents: Add support for Hisi hip08 DDRC PMU
+Subject: [tip:perf/core] perf jevents: Add support for Hisi hip08 HHA PMU
  aliasing
-Git-Commit-ID: 57cc732479bac2a3cbd759fb07188657c871d5c1
+Git-Commit-ID: 8f5b703add99473b59b4a38a6b66afbafc29d92e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -73,58 +73,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  57cc732479bac2a3cbd759fb07188657c871d5c1
-Gitweb:     https://git.kernel.org/tip/57cc732479bac2a3cbd759fb07188657c871d5c1
+Commit-ID:  8f5b703add99473b59b4a38a6b66afbafc29d92e
+Gitweb:     https://git.kernel.org/tip/8f5b703add99473b59b4a38a6b66afbafc29d92e
 Author:     John Garry <john.garry@huawei.com>
-AuthorDate: Fri, 28 Jun 2019 22:35:50 +0800
+AuthorDate: Fri, 28 Jun 2019 22:35:51 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 2 Jul 2019 16:08:15 -0300
 
-perf jevents: Add support for Hisi hip08 DDRC PMU aliasing
+perf jevents: Add support for Hisi hip08 HHA PMU aliasing
 
-Add support for Hisi hip08 DDRC PMU aliasing. We can now do something like
-this:
+Add support for Hisi hip08 HHA PMU aliasing.
 
-$perf list
-
-[snip]
-
-uncore ddrc:
-  uncore_hisi_ddrc.act_cmd
-       [DDRC active commands. Unit: hisi_sccl,ddrc]
-  uncore_hisi_ddrc.flux_rcmd
-       [DDRC read commands. Unit: hisi_sccl,ddrc]
-  uncore_hisi_ddrc.flux_wcmd
-       [DDRC write commands. Unit: hisi_sccl,ddrc]
-  uncore_hisi_ddrc.flux_wr
-       [DDRC precharge commands. Unit: hisi_sccl,ddrc]
-  uncore_hisi_ddrc.rnk_chg
-       [DDRC rank commands. Unit: hisi_sccl,ddrc]
-  uncore_hisi_ddrc.rw_chg
-       [DDRC read and write changes. Unit: hisi_sccl,ddrc]
-
-Performance counter stats for 'system wide':
-
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc0]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc1]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc2]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc3]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc0]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc1]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc3]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc1]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc2]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc3]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc0]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc1]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc2]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc0]
-            20,421      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc2]
-                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc3]
-
-       1.001559011 seconds time elapsed
-
-The kernel driver is in drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+The kernel driver is in drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -142,72 +102,79 @@ Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1561732552-143038-3-git-send-email-john.garry@huawei.com
+Link: http://lkml.kernel.org/r/1561732552-143038-4-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../arch/arm64/hisilicon/hip08/uncore-ddrc.json    | 44 ++++++++++++++++++++++
+ .../arch/arm64/hisilicon/hip08/uncore-hha.json     | 51 ++++++++++++++++++++++
  tools/perf/pmu-events/jevents.c                    |  1 +
- 2 files changed, 45 insertions(+)
+ 2 files changed, 52 insertions(+)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
 new file mode 100644
-index 000000000000..0d1556fcdffe
+index 000000000000..447d3064de90
 --- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
-@@ -0,0 +1,44 @@
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+@@ -0,0 +1,51 @@
 +[
 +   {
++	    "EventCode": "0x00",
++	    "EventName": "uncore_hisi_hha.rx_ops_num",
++	    "BriefDescription": "The number of all operations received by the HHA",
++	    "PublicDescription": "The number of all operations received by the HHA",
++	    "Unit": "hisi_sccl,hha",
++   },
++   {
++	    "EventCode": "0x01",
++	    "EventName": "uncore_hisi_hha.rx_outer",
++	    "BriefDescription": "The number of all operations received by the HHA from another socket",
++	    "PublicDescription": "The number of all operations received by the HHA from another socket",
++	    "Unit": "hisi_sccl,hha",
++   },
++   {
 +	    "EventCode": "0x02",
-+	    "EventName": "uncore_hisi_ddrc.flux_wcmd",
-+	    "BriefDescription": "DDRC write commands",
-+	    "PublicDescription": "DDRC write commands",
-+	    "Unit": "hisi_sccl,ddrc",
++	    "EventName": "uncore_hisi_hha.rx_sccl",
++	    "BriefDescription": "The number of all operations received by the HHA from another SCCL in this socket",
++	    "PublicDescription": "The number of all operations received by the HHA from another SCCL in this socket",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +   {
-+	    "EventCode": "0x03",
-+	    "EventName": "uncore_hisi_ddrc.flux_rcmd",
-+	    "BriefDescription": "DDRC read commands",
-+	    "PublicDescription": "DDRC read commands",
-+	    "Unit": "hisi_sccl,ddrc",
++	    "EventCode": "0x1c",
++	    "EventName": "uncore_hisi_hha.rd_ddr_64b",
++	    "BriefDescription": "The number of read operations sent by HHA to DDRC which size is 64 bytes",
++	    "PublicDescription": "The number of read operations sent by HHA to DDRC which size is 64bytes",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +   {
-+	    "EventCode": "0x04",
-+	    "EventName": "uncore_hisi_ddrc.flux_wr",
-+	    "BriefDescription": "DDRC precharge commands",
-+	    "PublicDescription": "DDRC precharge commands",
-+	    "Unit": "hisi_sccl,ddrc",
++	    "EventCode": "0x1d",
++	    "EventName": "uncore_hisi_hha.wr_dr_64b",
++	    "BriefDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
++	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +   {
-+	    "EventCode": "0x05",
-+	    "EventName": "uncore_hisi_ddrc.act_cmd",
-+	    "BriefDescription": "DDRC active commands",
-+	    "PublicDescription": "DDRC active commands",
-+	    "Unit": "hisi_sccl,ddrc",
++	    "EventCode": "0x1e",
++	    "EventName": "uncore_hisi_hha.rd_ddr_128b",
++	    "BriefDescription": "The number of read operations sent by HHA to DDRC which size is 128 bytes",
++	    "PublicDescription": "The number of read operations sent by HHA to DDRC which size is 128 bytes",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +   {
-+	    "EventCode": "0x06",
-+	    "EventName": "uncore_hisi_ddrc.rnk_chg",
-+	    "BriefDescription": "DDRC rank commands",
-+	    "PublicDescription": "DDRC rank commands",
-+	    "Unit": "hisi_sccl,ddrc",
-+   },
-+   {
-+	    "EventCode": "0x07",
-+	    "EventName": "uncore_hisi_ddrc.rw_chg",
-+	    "BriefDescription": "DDRC read and write changes",
-+	    "PublicDescription": "DDRC read and write changes",
-+	    "Unit": "hisi_sccl,ddrc",
++	    "EventCode": "0x1f",
++	    "EventName": "uncore_hisi_hha.wr_ddr_128b",
++	    "BriefDescription": "The number of write operations sent by HHA to DDRC which size is 128 bytes",
++	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 128 bytes",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +]
 diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index a1184ea64cc6..d5997741f1d8 100644
+index d5997741f1d8..3c95affd85a4 100644
 --- a/tools/perf/pmu-events/jevents.c
 +++ b/tools/perf/pmu-events/jevents.c
-@@ -236,6 +236,7 @@ static struct map {
- 	{ "CPU-M-CF", "cpum_cf" },
+@@ -237,6 +237,7 @@ static struct map {
  	{ "CPU-M-SF", "cpum_sf" },
  	{ "UPI LL", "uncore_upi" },
-+	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
+ 	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
++	{ "hisi_sccl,hha", "hisi_sccl,hha" },
  	{}
  };
  
