@@ -2,187 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C8015EB6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0015EB86
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfGCSSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:18:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39512 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726430AbfGCSSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:18:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 91152AE62;
-        Wed,  3 Jul 2019 18:18:52 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id DEA40E0159; Wed,  3 Jul 2019 20:18:51 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 20:18:51 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 06/15] ethtool: netlink bitset handling
-Message-ID: <20190703181851.GP20101@unicorn.suse.cz>
-References: <cover.1562067622.git.mkubecek@suse.cz>
- <cb614bebee1686293127194e8f7ced72955c7c7f.1562067622.git.mkubecek@suse.cz>
- <20190703114933.GW2250@nanopsycho>
+        id S1727185AbfGCSZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:25:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:6475 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbfGCSZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:25:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 11:25:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
+   d="scan'208";a="315655248"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 03 Jul 2019 11:25:45 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id A021258060A;
+        Wed,  3 Jul 2019 11:25:45 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v3 1/7] PCI/ATS: Fix pci_prg_resp_pasid_required()
+ dependency issues
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+References: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <a0534c2ec69e0d7e03c4da3e8d539e8591a5686c.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190703175654.GN128603@google.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <a2ff2b65-3e7c-6aad-22d8-3a17dd4074b1@linux.intel.com>
+Date:   Wed, 3 Jul 2019 11:23:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703114933.GW2250@nanopsycho>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190703175654.GN128603@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 01:49:33PM +0200, Jiri Pirko wrote:
-> Tue, Jul 02, 2019 at 01:50:09PM CEST, mkubecek@suse.cz wrote:
-> >diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
-> >index 97c369aa290b..4636682c551f 100644
-> >--- a/Documentation/networking/ethtool-netlink.txt
-> >+++ b/Documentation/networking/ethtool-netlink.txt
-> >@@ -73,6 +73,67 @@ set, the behaviour is the same as (or closer to) the behaviour before it was
-> > introduced.
-> > 
-> > 
-> >+Bit sets
-> >+--------
-> >+
-> >+For short bitmaps of (reasonably) fixed length, standard NLA_BITFIELD32 type
-> >+is used. For arbitrary length bitmaps, ethtool netlink uses a nested attribute
-> >+with contents of one of two forms: compact (two binary bitmaps representing
-> >+bit values and mask of affected bits) and bit-by-bit (list of bits identified
-> >+by either index or name).
-> >+
-> >+Compact form: nested (bitset) atrribute contents:
-> >+
-> >+    ETHTOOL_A_BITSET_LIST	(flag)		no mask, only a list
-> >+    ETHTOOL_A_BITSET_SIZE	(u32)		number of significant bits
-> >+    ETHTOOL_A_BITSET_VALUE	(binary)	bitmap of bit values
-> >+    ETHTOOL_A_BITSET_MASK	(binary)	bitmap of valid bits
-> >+
-> >+Value and mask must have length at least ETHTOOL_A_BITSET_SIZE bits rounded up
-> >+to a multiple of 32 bits. They consist of 32-bit words in host byte order,
-> 
-> Looks like the blocks are similar to NLA_BITFIELD32. Why don't you user
-> nested array of NLA_BITFIELD32 instead?
+Hi,
 
-That would mean a layout like
+On 7/3/19 10:56 AM, Bjorn Helgaas wrote:
+> On Thu, Jun 20, 2019 at 01:38:42PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> Since pci_prg_resp_pasid_required() function has dependency on both
+>> PASID and PRI, define it only if both CONFIG_PCI_PRI and
+>> CONFIG_PCI_PASID config options are enabled.
+> This is likely just confusion on my part, but I don't understand what
+> you're doing here.
+>
+> pci_prg_resp_pasid_required() does not actually *depend* on the
+> CONFIG_PCI_PRI config symbol.
 
-  4 bytes of attr header
-  4 bytes of value
-  4 bytes of mask
-  4 bytes of attr header
-  4 bytes of value
-  4 bytes of mask
-  ...
+pci_prg_resp_pasid_required() function internally reads the PRI status 
+register to get the status of PASID required bit.
 
-i.e. interleaved headers, words of value and words of mask. Having value
-and mask contiguous looks cleaner to me. Also, I can quickly check the
-sizes without iterating through a (potentially long) array.
+FILE:drivers/pci/ats.c
 
-> >+words ordered from least significant to most significant (i.e. the same way as
-> >+bitmaps are passed with ioctl interface).
-> >+
-> >+For compact form, ETHTOOL_A_BITSET_SIZE and ETHTOOL_A_BITSET_VALUE are
-> >+mandatory.  Similar to BITFIELD32, a compact form bit set requests to set bits
-> 
-> Double space^^
+419         pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
+420
+421         if (status & PCI_PRI_STATUS_PASID)
 
-Hm, I have to learn how to tell vim not to do that with "gq".
+Since pci_prg_resp_pasid_required()  function is only used if 
+CONFIG_PCI_PASID is enabled, and since it also has internal PCI_PRI 
+dependency, I have protected it with both CONFIG_PCI_PASID and 
+CONFIG_PCI_PRI ifdefs.
 
-> >+in the mask to 1 (if the bit is set in value) or 0 (if not) and preserve the
-> >+rest. If ETHTOOL_A_BITSET_LIST is present, there is no mask and bitset
-> >+represents a simple list of bits.
-> 
-> Okay, that is a bit confusing. Why not to rename to something like:
-> ETHTOOL_A_BITSET_NO_MASK (flag)
-> ?
+>
+> It is currently compiled only if CONFIG_PCI_ATS=y (which controls
+> compilation of the entire ats.c) and CONFIG_PCI_PASID=y (since it's
+> within #ifdef CONFIG_PCI_PASID).
+>
+> pci_prg_resp_pasid_required() is called by attach_device()
+> (amd_iommu.c), which is only compiled if CONFIG_AMD_IOMMU=y, and that
+> selects PCI_PRI.
+pci_prg_resp_pasid_required() is also called by intel_iommu.c, and 
+enabling CONFIG_INTEL_IOMMU does not enable PCI_PRI/PCI_PASID by default.
+>
+> It is also called by iommu_enable_dev_iotlb() (intel-iommu.c).  That
+> file is compiled if CONFIG_INTEL_IOMMU=y and the call itself is inside
+> #ifdef CONFIG_INTEL_IOMMU_SVM.  But I don't see the PCI_PRI connection
+> here.
+>
+> If this is just to limit the visibility, say that.  But I don't think
+> that's really a good reason.  The chain of config symbols seems a
+> little too complicated.
+>
+>> Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required()
+>> interface.")
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/pci/ats.c       | 10 ++++++----
+>>   include/linux/pci-ats.h | 12 +++++++++---
+>>   2 files changed, 15 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+>> index 97c08146534a..f9eeb7db0db3 100644
+>> --- a/drivers/pci/ats.c
+>> +++ b/drivers/pci/ats.c
+>> @@ -395,6 +395,8 @@ int pci_pasid_features(struct pci_dev *pdev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_pasid_features);
+>>   
+>> +#ifdef CONFIG_PCI_PRI
+>> +
+>>   /**
+>>    * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
+>>    *				 status.
+>> @@ -402,10 +404,8 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
+>>    *
+>>    * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
+>>    *
+>> - * Even though the PRG response PASID status is read from PRI Status
+>> - * Register, since this API will mainly be used by PASID users, this
+>> - * function is defined within #ifdef CONFIG_PCI_PASID instead of
+>> - * CONFIG_PCI_PRI.
+>> + * Since this API has dependency on both PRI and PASID, protect it
+>> + * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
+>>    */
+>>   int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   {
+>> @@ -425,6 +425,8 @@ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
+>>   
+>> +#endif
+>> +
+>>   #define PASID_NUMBER_SHIFT	8
+>>   #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
+>>   /**
+>> diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+>> index 1ebb88e7c184..1a0bdaee2f32 100644
+>> --- a/include/linux/pci-ats.h
+>> +++ b/include/linux/pci-ats.h
+>> @@ -40,7 +40,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
+>>   void pci_restore_pasid_state(struct pci_dev *pdev);
+>>   int pci_pasid_features(struct pci_dev *pdev);
+>>   int pci_max_pasids(struct pci_dev *pdev);
+>> -int pci_prg_resp_pasid_required(struct pci_dev *pdev);
+>>   
+>>   #else  /* CONFIG_PCI_PASID */
+>>   
+>> @@ -67,11 +66,18 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
+>>   	return -EINVAL;
+>>   }
+>>   
+>> +#endif /* CONFIG_PCI_PASID */
+>> +
+>> +#if defined(CONFIG_PCI_PRI) && defined(CONFIG_PCI_PASID)
+>> +
+>> +int pci_prg_resp_pasid_required(struct pci_dev *pdev);
+>> +
+>> +#else /* CONFIG_PCI_PASID && CONFIG_PCI_PRI */
+>> +
+>>   static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   {
+>>   	return 0;
+>>   }
+>> -#endif /* CONFIG_PCI_PASID */
+>> -
+>> +#endif
+>>   
+>>   #endif /* LINUX_PCI_ATS_H*/
+>> -- 
+>> 2.21.0
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-From the logical point of view, it's used for lists - list of link
-modes, list of netdev features, list of timestamping modes etc.
-
-The point is that in userspace requests, we sometimes want to change
-some values (enable A, disable B), sometimes to define the list of
-values to be set (I want (only) A, C and E to be enabled). In kernel
-replies, sometimes there is a natural value/mask pairing (e.g.
-advertised and supported link modes, enabled and supported WoL modes)
-but often there is just one bitmap.
-
-> >+Kernel bit set length may differ from userspace length if older application is
-> >+used on newer kernel or vice versa. If userspace bitmap is longer, an error is
-> >+issued only if the request actually tries to set values of some bits not
-> >+recognized by kernel.
-> >+
-> >+Bit-by-bit form: nested (bitset) attribute contents:
-> >+
-> >+    ETHTOOL_A_BITSET_LIST	(flag)		no mask, only a list
-> >+    ETHTOOL_A_BITSET_SIZE	(u32)		number of significant bits
-> >+    ETHTOOL_A_BITSET_BIT	(nested)	array of bits
-> >+	ETHTOOL_A_BITSET_BIT+   (nested)	one bit
-> >+	    ETHTOOL_A_BIT_INDEX	(u32)		bit index (0 for LSB)
-> >+	    ETHTOOL_A_BIT_NAME	(string)	bit name
-> >+	    ETHTOOL_A_BIT_VALUE	(flag)		present if bit is set
-> >+
-> >+Bit size is optional for bit-by-bit form. ETHTOOL_A_BITSET_BITS nest can only
-> >+contain ETHTOOL_A_BITS_BIT attributes but there can be an arbitrary number of
-> >+them.  A bit may be identified by its index or by its name. When used in
-> >+requests, listed bits are set to 0 or 1 according to ETHTOOL_A_BIT_VALUE, the
-> >+rest is preserved. A request fails if index exceeds kernel bit length or if
-> >+name is not recognized.
-> >+
-> >+When ETHTOOL_A_BITSET_LIST flag is present, bitset is interpreted as a simple
-> >+bit list. ETHTOOL_A_BIT_VALUE attributes are not used in such case. Bit list
-> >+represents a bitmap with listed bits set and the rest zero.
-> >+
-> >+In requests, application can use either form. Form used by kernel in reply is
-> >+determined by a flag in flags field of request header. Semantics of value and
-> >+mask depends on the attribute. General idea is that flags control request
-> >+processing, info_mask control which parts of the information are returned in
-> >+"get" request and index identifies a particular subcommand or an object to
-> >+which the request applies.
-> 
-> This is quite complex and confusing. Having the same API for 2 APIs is
-> odd. The API should be crystal clear, easy to use.
-> 
-> Why can't you have 2 commands, one working with bit arrays only, one
-> working with strings? Something like:
-> X_GET
->    ETHTOOL_A_BITS (nested)
->       ETHTOOL_A_BIT_ARRAY (BITFIELD32)
-> X_NAMES_GET
->    ETHTOOL_A_BIT_NAMES (nested)
-> 	ETHTOOL_A_BIT_INDEX
-> 	ETHTOOL_A_BIT_NAME
-> 
-> For set, you can also have multiple cmds:
-> X_SET  - to set many at once, by bit index
->    ETHTOOL_A_BITS (nested)
->       ETHTOOL_A_BIT_ARRAY (BITFIELD32)
-> X_ONE_SET   - to set one, by bit index
->    ETHTOOL_A_BIT_INDEX
->    ETHTOOL_A_BIT_VALUE
-> X_ONE_SET   - to set one, by name
->    ETHTOOL_A_BIT_NAME
->    ETHTOOL_A_BIT_VALUE
-
-This looks as if you assume there is nothing except the bitset in the
-message but that is not true. Even with your proposed breaking of
-current groups, you would still have e.g. 4 bitsets in reply to netdev
-features query, 3 in timestamping info GET request and often bitsets
-combined with other data (e.g. WoL modes and optional WoL password).
-If you wanted to further refine the message granularity to the level of
-single parameters, we might be out of message type ids already.
-
-Unless you want to forget about structured data completely and turn
-everything into tunables - but that's rather scary idea.
-
-Michal
