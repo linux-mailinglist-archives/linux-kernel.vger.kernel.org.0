@@ -2,135 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB475E3AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F675E3A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:17:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfGCMS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:18:57 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:57023 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCMS5 (ORCPT
+        id S1726966AbfGCMRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:17:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33644 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCMRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:18:57 -0400
-Received: from [192.168.1.110] ([95.114.150.241]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MFbmS-1hkIsC3VvC-00H6cu; Wed, 03 Jul 2019 14:16:55 +0200
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <mmarek@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Daniel Jonsson <danijons@student.chalmers.se>,
-        Andrzej Wasowski <wasowski@itu.dk>
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de>
- <20160825201919.GE3296@wotan.suse.de>
- <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
- <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
- <20190627045052.GA7594@lst.de>
- <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <40f70582-c16a-7de0-cfd6-c7d5ff9ead71@metux.net>
-Date:   Wed, 3 Jul 2019 14:16:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 3 Jul 2019 08:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hc324U3gAsxTQ/xr9GNXQHJJuTwkj9Ztqk5d0xFNlFU=; b=Xj2zv+NLMKqcrDj7CARx0zOVI
+        jJK06jsuo+7e0kGWyVsxlo9JpCRcFvB70RUcxc76zUpG5U8ZMGyFvIObD6VE1TsfdpdgsvZhGdWFZ
+        3vKAdB1dzqzis3/L2txNhzx46f8QXrWRy0dYKjBKiFxHq3dZAxgiQCItF9xKq7V/WZXyz+Pxa6gC9
+        lxaJgQUtqqeiKyI1pjLnOiLEvaDiKkW/mQc6JeWowqfBpEQcuiPXAoV1PhCVx+RpVimMl2NcX+Q7n
+        fDLBWQsDHhwFnZcYUCn75x+jq0vtuq8cF1nAbAOALi8y6bGYnc4QT8GquQ/xpHG8pqAEUvHzvSFVu
+        a4VGSS+pA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hieCl-0000Gy-GK; Wed, 03 Jul 2019 12:17:43 +0000
+Date:   Wed, 3 Jul 2019 05:17:43 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Boaz Harrosh <openosd@gmail.com>, stable@vger.kernel.org,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190703121743.GH1729@bombadil.infradead.org>
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:W1x9k6V+ILJLTptyvRZZehGm7oOh188B4CLlH8SDPNOMPl6mkgL
- jwh0gmXALvMKQ4QkJaDBduAejwvFFp99TX7tMmfPMp6/Dpi0tkOW5Vc2SXzFeZqTGvmGb5Y
- HAYYNuC6Zdm3DbpjV5aoBc0pQCIBGck52IAZ0AwhayVJboHeRay4HUUcqSLO1Wf8jbO9wk1
- 0SCzRRtgb7tB0OH4MzTsQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WAtJgcwxvoU=:0kmEfqi451hPUIuRJpYyTG
- a4GnD3P2+1ZySKAR+DRfEbJgyVBnoylrvqvBwRReBdXZpfdeKejKNy3yUDAFD/7K5kXXFauYg
- UhzsEPInu3J1+7YyfAosnCb+hog0ydu0KyACei8pcZv1lfeffilhFcokmwQa9V1Deys0c7+81
- 1m+4LCKd1KxM9gVP699lhg8zFJddDWYVL3Y0+HcRBQXUYQ15r/jcozg8tGRfq2SRPfFdCYrNX
- SZ3ZDEEVP5Bf8g6lyEDiR/LfdaM9BBM6d4WPU8vdS4myU1mYEuzGm8YJI87RvYv+ngHEvzlNr
- tBjknxuzp56tuWOi+vuaCU/Cr4g9zAkdMfrlHrXNsovVHtMONkLPQAydDzvQK6WnW2kCm0m40
- AeZxso0aibZqL/e48hYl/o4/ne4oe7aJihzWdOknbn4dfCW8Ee6BDTxLC6VvAJnwi03bb5UWb
- 2eom04i8VSqMCzLjw72ZIb0Vp8DXbYA2tkR0q8IXBGxTk5ijHGXqWCaU10TyF18Foaiwa5mwT
- Dvx6tqdMfkyWaz3LM4wU0XeHurVba/ZFK/iYtD4FumEc8yUseDNoe8qR7pIOxMivxAbvCzgRn
- Has1Um8+1KKg/fmi253tN7Ie8lreycS5eGqFKk+jqlWvFYzjxBKSk4tEx+k3Hencsm/KzkRwT
- GRUt6KTYYgS9LNoDVeSH37fwr3MRgTvqa39ybtVakFxB/X99d8YuWLvQzYNrKSCuW2hnoxB6a
- a13bmJgK7Yj2qw9kJLymTcKC7AH3GNmVyGabQMc8x5cBqEB8PiBezdDgtdE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.06.19 20:40, Luis Chamberlain wrote:
+On Wed, Jul 03, 2019 at 12:24:54AM -0700, Dan Williams wrote:
+> This fix may increase waitqueue contention, but a fix for that is saved
+> for a larger rework. In the meantime this fix is suitable for -stable
+> backports.
 
-Hi folks,
-
-> The solution puts forward a mechanism to add a kconfig_symb where we> are 100% certain we have a direct module --> config mapping.
-Okay, but IIRC this will add more boilerplate those modules.
-
-And I wonder whether target binaries are the right place for those
-things at all - IMHO that's something one wants to derive from the
-source code  / .config's. At least in the cases I'm imagining, I don't
-even have an actual kernel running on the corresponding target yet.
-(eg. in crosscompile situations)
-
-OTOH, a more pressing problem for me is identifying the right drivers
-and corresponding config options (usually plural, as certain subsystems
-have to be enabled, too) by hardware information like DT, ACPI, DMI,
-PCI, etc. For now, I have to do that manually, which is pretty time
-consuming.
-
-In embedded world, we often have scenarios where we want a really
-minimal kernel, but need to enable/disable certain hi-level peripherals
-in the middle of the project (eg. "oh, we also need ethernet, but we
-wanna drop usb"). There we'll have to find out what actual chip is,
-its corresponding driver, required subsystems, etc, and also kick off
-everything we don't need anymore.
-
-I've thought about implementing some actual dependency tracking
-(at least recording the auto-enabled symbols), but didn't expect that
-to become practically usable anytime soon, so I went for a different
-approach: writing a little tool that allows modeling hilevel features
-and corresponding (potentially board-specific) config syms, so the whole
-.config for certain board and usecase can be autogenerated by just some
-small meta-configuration:
-
-   https://github.com/metux/kmct
-
-Maybe this could also help for your usecase ?
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+I think this is too big for what it is; just the two-line patch to stop
+incorporating the low bits of the PTE would be more appropriate.
