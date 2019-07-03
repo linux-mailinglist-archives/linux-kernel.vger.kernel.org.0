@@ -2,181 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E2A5EE00
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E345EE07
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 23:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfGCU7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:59:43 -0400
-Received: from mail-eopbgr20068.outbound.protection.outlook.com ([40.107.2.68]:3438
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727391AbfGCU7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:59:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8l34xPK1ENwFo+vU3ZrImWB+9FvYzYicyTDcI7YCSPQ=;
- b=oV0CsNCG/xhovuKXgCc6V3/QJIECYTuhZ/mI3cIoDw+9hda5z0nsYswoX1zT/XSVMtavq0mV4W1JFFWiW+QkG5PRsp+fjiDrxvf4Ep6/sVPFWgr6OM1vNCpaOS6v35V7suH6rYJD+bYS5urz+UEDBk+UUhHchG2j4W9N9ztPwAI=
-Received: from VE1PR04MB6463.eurprd04.prod.outlook.com (20.179.233.20) by
- VE1PR04MB6464.eurprd04.prod.outlook.com (20.179.233.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Wed, 3 Jul 2019 20:59:37 +0000
-Received: from VE1PR04MB6463.eurprd04.prod.outlook.com
- ([fe80::a5ca:7c9c:6b18:eb0a]) by VE1PR04MB6463.eurprd04.prod.outlook.com
- ([fe80::a5ca:7c9c:6b18:eb0a%6]) with mapi id 15.20.2032.019; Wed, 3 Jul 2019
- 20:59:37 +0000
-From:   Roy Pledge <roy.pledge@nxp.com>
-To:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     Roy Pledge <roy.pledge@nxp.com>
-Subject: [PATCH v2 7/7] soc/fsl/qbman: Update device tree with reserved memory
-Thread-Topic: [PATCH v2 7/7] soc/fsl/qbman: Update device tree with reserved
- memory
-Thread-Index: AQHVMeI56zAwyfNlCka3bcuWCdBEJA==
-Date:   Wed, 3 Jul 2019 20:59:37 +0000
-Message-ID: <1562187548-32261-8-git-send-email-roy.pledge@nxp.com>
-References: <1562187548-32261-1-git-send-email-roy.pledge@nxp.com>
-In-Reply-To: <1562187548-32261-1-git-send-email-roy.pledge@nxp.com>
-Reply-To: Roy Pledge <roy.pledge@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: SN6PR15CA0005.namprd15.prod.outlook.com
- (2603:10b6:805:16::18) To VE1PR04MB6463.eurprd04.prod.outlook.com
- (2603:10a6:803:11d::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=roy.pledge@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [72.142.119.78]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1974ab8d-a9dd-4a7e-6d1b-08d6fff95bf7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6464;
-x-ms-traffictypediagnostic: VE1PR04MB6464:
-x-microsoft-antispam-prvs: <VE1PR04MB646465C46DEC0A8EA8BEF97886FB0@VE1PR04MB6464.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 00872B689F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(39860400002)(346002)(366004)(136003)(189003)(199004)(14454004)(2501003)(81156014)(81166006)(4326008)(478600001)(305945005)(8676002)(2906002)(7736002)(50226002)(476003)(486006)(2616005)(446003)(25786009)(11346002)(3450700001)(86362001)(2201001)(68736007)(44832011)(36756003)(66946007)(26005)(66476007)(66556008)(64756008)(73956011)(71200400001)(71190400001)(66066001)(53936002)(6116002)(52116002)(386003)(6506007)(66446008)(8936002)(256004)(102836004)(186003)(99286004)(6486002)(5660300002)(110136005)(316002)(3846002)(6436002)(43066004)(6512007)(6636002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6464;H:VE1PR04MB6463.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bmfwSjLg0I0SAXb5GVXJr7E4v6/Nx12AEwcS9uKBjaKuO/foqlEdfzLkt3IQUGd7Xogkp83N4N8qHZnQ9BfzRISwlQkUtTnCn44NWGf2pT8AEQoixmC+6pOLMKix45oaWNBcTsMAJIZcHDyA/lEiMrsDc6LIeS5buwgScjeThccDfMm9UNRKCak+HpnasfD/vnVLAX/6GRoCYvRoYaX7d3XSJmqNOBiLzgaxSZplZsqnf6cjxs4TpyKkxNmu88LuXLdigyjFrR0IcLnDBYlY+1zfGKGKQRINd/Z7bBlviDAoGtfNMo87qeGaNPFvlp51qGmmWzOtTSKvizarE3iTbA6Hc4ZvWjo47aJ70MJidqNsvAcvH2vpK5tbubY2eVS2NVYLfWMjrrhbaAltO5mKRcFinZFU4eHXchIk4rkSw9g=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727262AbfGCVBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 17:01:17 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52382 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbfGCVBQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 17:01:16 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s3so3588805wms.2;
+        Wed, 03 Jul 2019 14:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O5mjHEyyQQkiLh5Up22wt5nKlLtgmdpJScImI/v8OHE=;
+        b=KuQRKQQMiUyn/mEYHP8l7RfGi82CVVDVV8Ef1SC+fEeanNO9oSq1e+Eog4pEHXKTIA
+         zjKTTX9glenJDaMz1YqmpRKM1Qlteqju555xYy/tRjjiq3Gw2wxfxvr58CKxnkTKe9d2
+         OJihtY8+TvWcAhw2eXr2BazXDg3+emDwZJiZtPOjjvQbNaEYTXBNjMQo5CN3yjUdB4Oe
+         2Njm+wYvS/b7cisXrRgI3fvZ5KwgU+1CKwcKnlVOnfS2FtNYxL5xwlIZTs8IR94pzHr9
+         XGuEq7ipXvetUe0BqPlNVSjzss6jrgsSF3YDSOLJwoRUN2S0bS2KfVHkA/ErTxeXXnAB
+         /p1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O5mjHEyyQQkiLh5Up22wt5nKlLtgmdpJScImI/v8OHE=;
+        b=lIQORgBkvgQXANQ9yg+GTEpGY+Lefd4pyWzDNl4/0Sqiq45LLDGzWxmicrnxekrlcH
+         JckitOjypeMYRM2Gk1FPyMaCcj6D9AXIRYNzIxiiXna4zRNi24sfXd7lhIpsbU9+YHmb
+         pa6CnEHMr8GbAAJoS0XLRagXNBxDTCg04hKBx9NpvwKPbSp+pgILu12BsqEn/Du/jNAX
+         NjK6/0WLAItwSXsrmprXK9iy0fkRLU6TlUCZasUMPWuyLu1CeeY02g0uZALRWyDb4yq9
+         HEJfFJg0yCiEzM7fAo+IznKgcGPwEzb+YYRZYmwJtHoZXRsfFqCFfWfVUcriDAhrw6fV
+         ls/w==
+X-Gm-Message-State: APjAAAUQCLGQ8CFDlThh42NHHmtohIwFy6dZ6zp6GvgQA1svbtjDPnhL
+        sYuRE4nmBdHvXz2tVrLL1h8=
+X-Google-Smtp-Source: APXvYqw7nza0CIx11VSOyLu+1b7J9ZLTIPdsFXw/RRAoWGk33ZrGVGtvuDADudw9OdBwYTs1L18H/Q==
+X-Received: by 2002:a1c:630a:: with SMTP id x10mr9912693wmb.113.1562187674357;
+        Wed, 03 Jul 2019 14:01:14 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:4503:872e:8227:c4e0? (p200300EA8BD60C004503872E8227C4E0.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:4503:872e:8227:c4e0])
+        by smtp.googlemail.com with ESMTPSA id o4sm3241406wmh.35.2019.07.03.14.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 14:01:13 -0700 (PDT)
+Subject: Re: [PATCH v2 4/7] net: phy: realtek: Enable accessing RTL8211E
+ extension pages
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190703193724.246854-1-mka@chromium.org>
+ <20190703193724.246854-4-mka@chromium.org>
+ <dd7a569b-41e4-5925-88fc-227e69c82f67@gmail.com>
+ <20190703203650.GF250418@google.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <98326ec2-6e90-fd3a-32f5-cf0db26c31a9@gmail.com>
+Date:   Wed, 3 Jul 2019 23:01:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1974ab8d-a9dd-4a7e-6d1b-08d6fff95bf7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2019 20:59:37.8153
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: roy.pledge@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6464
+In-Reply-To: <20190703203650.GF250418@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using the reserved memory node in the device tree there are
-two options - dynamic or static. If a dynamic allocation was
-selected (where the kernel selects the address for the allocation)
-convert it to a static allocation by inserting the reg property.
-This will ensure the same memory is reused after a kexec()
+On 03.07.2019 22:36, Matthias Kaehlcke wrote:
+> On Wed, Jul 03, 2019 at 10:12:12PM +0200, Heiner Kallweit wrote:
+>> On 03.07.2019 21:37, Matthias Kaehlcke wrote:
+>>> The RTL8211E has extension pages, which can be accessed after
+>>> selecting a page through a custom method. Add a function to
+>>> modify bits in a register of an extension page and a helper for
+>>> selecting an ext page.
+>>>
+>>> rtl8211e_modify_ext_paged() is inspired by its counterpart
+>>> phy_modify_paged().
+>>>
+>>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>>> ---
+>>> Changes in v2:
+>>> - assign .read/write_page handlers for RTL8211E
+>>
+>> Maybe this was planned, but it's not part of the patch.
+> 
+> Oops, it was definitely there when I tested ... I guess this got
+> somehow lost when changing the patch order and resolving minor
+> conflicts, seems like I only build tested after that :/
+> 
+RTL8211E also supports normal pages (reg 0x1f = page).
+See e.g. rtl8168e_2_hw_phy_config in the r8169 driver, this network
+chip has an integrated RTL8211E PHY. There settings on page 3 and 5
+are done.
+Therefore I would prefer to use .read/write_page for normal paging
+in all Realtek PHY drivers. Means the code here would remain as it
+is and just the changelog would need to be fixed.
 
-Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
----
- drivers/soc/fsl/qbman/dpaa_sys.c | 60 ++++++++++++++++++++++++------------=
-----
- 1 file changed, 36 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/soc/fsl/qbman/dpaa_sys.c b/drivers/soc/fsl/qbman/dpaa_=
-sys.c
-index 3e0a7f3..9dd8bb5 100644
---- a/drivers/soc/fsl/qbman/dpaa_sys.c
-+++ b/drivers/soc/fsl/qbman/dpaa_sys.c
-@@ -37,41 +37,53 @@
- int qbman_init_private_mem(struct device *dev, int idx, dma_addr_t *addr,
- 				size_t *size)
- {
--	int ret;
- 	struct device_node *mem_node;
--	u64 size64;
- 	struct reserved_mem *rmem;
-+	struct property *prop;
-+	int len, err;
-+	__be32 *res_array;
-=20
--	ret =3D of_reserved_mem_device_init_by_idx(dev, dev->of_node, idx);
--	if (ret) {
--		dev_err(dev,
--			"of_reserved_mem_device_init_by_idx(%d) failed 0x%x\n",
--			idx, ret);
--		return -ENODEV;
--	}
--	mem_node =3D of_parse_phandle(dev->of_node, "memory-region", 0);
--	if (mem_node) {
--		ret =3D of_property_read_u64(mem_node, "size", &size64);
--		if (ret) {
--			dev_err(dev, "of_address_to_resource fails 0x%x\n",
--			        ret);
--			return -ENODEV;
--		}
--		*size =3D size64;
--	} else {
-+	mem_node =3D of_parse_phandle(dev->of_node, "memory-region", idx);
-+	if (!mem_node) {
- 		dev_err(dev, "No memory-region found for index %d\n", idx);
- 		return -ENODEV;
- 	}
-=20
- 	rmem =3D of_reserved_mem_lookup(mem_node);
-+	if (!rmem) {
-+		dev_err(dev, "of_reserved_mem_lookup() returned NULL\n");
-+		return -ENODEV;
-+	}
- 	*addr =3D rmem->base;
-+	*size =3D rmem->size;
-=20
- 	/*
--	 * Disassociate the reserved memory area from the device
--	 * because a device can only have one DMA memory area. This
--	 * should be fine since the memory is allocated and initialized
--	 * and only ever accessed by the QBMan device from now on
-+	 * Check if the reg property exists - if not insert the node
-+	 * so upon kexec() the same memory region address will be preserved.
-+	 * This is needed because QBMan HW does not allow the base address/
-+	 * size to be modified once set.
- 	 */
--	of_reserved_mem_device_release(dev);
-+	prop =3D of_find_property(mem_node, "reg", &len);
-+	if (!prop) {
-+		prop =3D devm_kzalloc(dev, sizeof(*prop), GFP_KERNEL);
-+		if (!prop)
-+			return -ENOMEM;
-+		prop->value =3D res_array =3D devm_kzalloc(dev, sizeof(__be32) * 4,
-+						       GFP_KERNEL);
-+		if (!prop->value)
-+			return -ENOMEM;
-+		res_array[0] =3D cpu_to_be32(upper_32_bits(*addr));
-+		res_array[1] =3D cpu_to_be32(lower_32_bits(*addr));
-+		res_array[2] =3D cpu_to_be32(upper_32_bits(*size));
-+		res_array[3] =3D cpu_to_be32(lower_32_bits(*size));
-+		prop->length =3D sizeof(__be32) * 4;
-+		prop->name =3D devm_kstrdup(dev, "reg", GFP_KERNEL);
-+		if (!prop->name)
-+			return -ENOMEM;
-+		err =3D of_add_property(mem_node, prop);
-+		if (err)
-+			return err;
-+	}
-+
- 	return 0;
- }
---=20
-2.7.4
-
+>>> - use phy_select_page() and phy_restore_page(), get rid of
+>>>   rtl8211e_restore_page()
+>>> - s/rtl821e_select_ext_page/rtl8211e_select_ext_page/
+>>> - updated commit message
+>>> ---
+>>>  drivers/net/phy/realtek.c | 42 +++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 42 insertions(+)
+>>>
+>>> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+>>> index eb815cbe1e72..9cd6241e2a6d 100644
+>>> --- a/drivers/net/phy/realtek.c
+>>> +++ b/drivers/net/phy/realtek.c
+>>> @@ -27,6 +27,9 @@
+>>>  #define RTL821x_EXT_PAGE_SELECT			0x1e
+>>>  #define RTL821x_PAGE_SELECT			0x1f
+>>>  
+>>> +#define RTL8211E_EXT_PAGE			7
+>>> +#define RTL8211E_EPAGSR				0x1e
+>>> +
+>>>  /* RTL8211E page 5 */
+>>>  #define RTL8211E_EEE_LED_MODE1			0x05
+>>>  #define RTL8211E_EEE_LED_MODE2			0x06
+>>> @@ -58,6 +61,44 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
+>>>  	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
+>>>  }
+>>>  
+>>> +static int rtl8211e_select_ext_page(struct phy_device *phydev, int page)
+>>> +{
+>>> +	int ret, oldpage;
+>>> +
+>>> +	oldpage = phy_select_page(phydev, RTL8211E_EXT_PAGE);
+>>> +	if (oldpage < 0)
+>>> +		return oldpage;
+>>> +
+>>> +	ret = __phy_write(phydev, RTL8211E_EPAGSR, page);
+>>> +	if (ret)
+>>> +		return phy_restore_page(phydev, page, ret);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int __maybe_unused rtl8211e_modify_ext_paged(struct phy_device *phydev,
+>>> +				    int page, u32 regnum, u16 mask, u16 set)
+>>
+>> This __maybe_unused isn't too nice as you use the function in a subsequent patch.
+> 
+> It's needed to avoid a compiler warning (unless we don't care about
+> that for an interim version), the attribute is removed again in the
+> next patch.
+> 
+OK
