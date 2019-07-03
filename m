@@ -2,121 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 383E05D8F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D4C5D9AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfGCAbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:31:35 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42523 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfGCAbe (ORCPT
+        id S1727388AbfGCAuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:50:19 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:34862 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727099AbfGCAuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:31:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id z25so290971edq.9;
-        Tue, 02 Jul 2019 17:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZXcSaivLBse0FFf2ctO/vkXxTGh9DxaocpQVfdLoLhY=;
-        b=RUqiuvk5AXV5I5ft6eTyLmR+50TxxAHEbh5RUXy9WxrZUs+fYtaZ+E6l8tcroswlKp
-         +BYxwkQTCxhVX2mBpTDi/tnQ6N6iXOk4VJdgCMLecTRQjj0PNLhvRZSFy5qTxAjrUoZr
-         Or2MpOdjjsoTr7SphxentppPilrsV779srsW4zxu72YOawstxJKLcA++bumylNQKRYpD
-         SlnH/WQROmdN3sBj1QjyXZiEYWyZHxaEcITpC6AuLUdC0rJfrKYqisQ5PEpZPUcWBhjI
-         Nuu6ZEqLepGpx0nCV0FrHUrVYirL71OGyt0HeO2g1BDeyGsRkJyh0OJSrFYdm6sWSB/4
-         HlUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZXcSaivLBse0FFf2ctO/vkXxTGh9DxaocpQVfdLoLhY=;
-        b=lcrjBSCe1DsNNTDNzDx1KaNY+bc9X5rxvmS6PZjcMosr4RyiodxUTMenAEUNu1cDCI
-         zGGL9C5Xs+sn2X5B2yk+9enX/A3hckdGxuOCEN5pYFESwgVznsyD3OfUVV4zdQyHrEBC
-         ZvDU9v494IVN0DYeXs7z7+cSTU59Prsdsqf8z+EZpxUQDijolTXHknGyilVQc0pdUEFw
-         CYVnz5ex/Mw5hm1QouhZTKl1iAEymoizxTdfyMmDU+WAmWQR9ehdS811cszmwHXH7uR6
-         wwIghSDAc4OhDfLmnN7DpFDKJcNSwHuzuW71Ik+tLKahnfZxqQOZUEfjJ7t7ISpgjuLA
-         QKmg==
-X-Gm-Message-State: APjAAAW9qiQRn83FjfyzeQY2BoaNb14yN7UNNyCBwO5p3PmNer5crxHz
-        6yiE77sBhTtBIbWXFCGbSe0=
-X-Google-Smtp-Source: APXvYqyhSetE6h0usazNMfHOe7nFs1mK2xvZFfe4TNf39deATvRUohuXWV9wNHAOZ9jhCerU1FXCcg==
-X-Received: by 2002:a17:906:8053:: with SMTP id x19mr31237606ejw.306.1562112290271;
-        Tue, 02 Jul 2019 17:04:50 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
-        by smtp.gmail.com with ESMTPSA id k11sm159289edq.54.2019.07.02.17.04.47
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 17:04:49 -0700 (PDT)
-Subject: Re: pagecache locking
-To:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190613183625.GA28171@kmo-pixel>
- <20190613235524.GK14363@dread.disaster.area>
- <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
- <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
- <20190617224714.GR14363@dread.disaster.area>
- <CAHk-=wiR3a7+b0cUN45hGp1dvFh=s1i1OkVhoP7CivJxKqsLFQ@mail.gmail.com>
- <CAOQ4uxjqQjrCCt=ixgdUYjBJvKLhw4R9NeMZOB_s2rrWvoDMBw@mail.gmail.com>
- <20190619103838.GB32409@quack2.suse.cz>
- <20190619223756.GC26375@dread.disaster.area>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <3f394239-f532-23eb-9ff1-465f7d1f3cb4@gmail.com>
-Date:   Wed, 3 Jul 2019 03:04:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 2 Jul 2019 20:50:18 -0400
+Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
+        by mx0a-00190b01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6306Sx4010435;
+        Wed, 3 Jul 2019 01:11:12 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=jan2016.eng;
+ bh=NBhp0VNKqsN8dR0Rg+MFGXOHNBagdyx9X/DM8wfLcf4=;
+ b=Qfmw8rq2YnE7ynSepSyR5vfsAcWLcD+GfT9TIsaXwBE31fWdxW+1ttuyRZcE99t0CjZX
+ OWBNaF10zftvthk5Un1Ho9cMyS5qrWd0OAfevyBap3OB80DHXlrNv5g3sTsJ8+KQnY9X
+ a8L+L+4I7uP7uHxet83E+lNx8H5WLdmERlXhKe6qDzwjll/sczS0x7Pbfov0wVkk9zXY
+ CgHMNjPqI3SNRjZLdon8S+PXPn9sVOyCi85AKN9N7iuNIGikcYrAPgoJUJKKN55XF4xp
+ rS7zsgbyWqso3B76rnqqMqfOjf34y8xZXy/p7LDn8zRAXnBj+XLZVnwDtSVuOt6HXB94 lQ== 
+Received: from prod-mail-ppoint3 (prod-mail-ppoint3.akamai.com [96.6.114.86] (may be forged))
+        by mx0a-00190b01.pphosted.com with ESMTP id 2tft0ddefx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jul 2019 01:11:12 +0100
+Received: from pps.filterd (prod-mail-ppoint3.akamai.com [127.0.0.1])
+        by prod-mail-ppoint3.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x6302MSK021891;
+        Tue, 2 Jul 2019 20:11:11 -0400
+Received: from email.msg.corp.akamai.com ([172.27.123.34])
+        by prod-mail-ppoint3.akamai.com with ESMTP id 2te3b09eb1-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 02 Jul 2019 20:11:10 -0400
+Received: from USMA1EX-CAS1.msg.corp.akamai.com (172.27.123.30) by
+ usma1ex-dag1mb4.msg.corp.akamai.com (172.27.123.104) with Microsoft SMTP
+ Server (TLS) id 15.0.1473.3; Tue, 2 Jul 2019 20:10:49 -0400
+Received: from igorcastle.kendall.corp.akamai.com (172.29.170.135) by
+ USMA1EX-CAS1.msg.corp.akamai.com (172.27.123.30) with Microsoft SMTP Server
+ id 15.0.1473.3 via Frontend Transport; Tue, 2 Jul 2019 20:10:49 -0400
+Received: by igorcastle.kendall.corp.akamai.com (Postfix, from userid 29659)
+        id A151C61D57; Tue,  2 Jul 2019 20:10:47 -0400 (EDT)
+From:   Igor Lubashev <ilubashe@akamai.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        James Morris <jmorris@namei.org>,
+        Igor Lubashev <ilubashe@akamai.com>
+Subject: [PATCH 0/3] perf: Use capabilities instead of uid and euid
+Date:   Tue, 2 Jul 2019 20:10:02 -0400
+Message-ID: <1562112605-6235-1-git-send-email-ilubashe@akamai.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190619223756.GC26375@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907020268
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907020269
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/06/2019 01:37, Dave Chinner wrote:
-<>
-> 
-> I'd prefer it doesn't get lifted to the VFS because I'm planning on
-> getting rid of it in XFS with range locks. i.e. the XFS_MMAPLOCK is
-> likely to go away in the near term because a range lock can be
-> taken on either side of the mmap_sem in the page fault path.
-> 
-<>
-Sir Dave
+Kernel is using capabilities instead of uid and euid to restrict access to
+kernel pointers and tracing facilities.  This patch series updates the perf to
+better match the security model used by the kernel.
 
-Sorry if this was answered before. I am please very curious. In the zufs
-project I have an equivalent rw_MMAPLOCK that I _read_lock on page_faults.
-(Read & writes all take read-locks ...)
-The only reason I have it is because of lockdep actually.
+This series enables instructions in Documentation/admin-guide/perf-security.rst
+to actually work, even when kernel.perf_event_paranoid=2 and
+kernel.kptr_restrict=1.
 
-Specifically for those xfstests that mmap a buffer then direct_IO in/out
-of that buffer from/to another file in the same FS or the same file.
-(For lockdep its the same case).
-I would be perfectly happy to recursively _read_lock both from the top
-of the page_fault at the DIO path, and under in the page_fault. I'm
-_read_locking after all. But lockdep is hard to convince. So I stole the
-xfs idea of having an rw_MMAPLOCK. And grab yet another _write_lock at
-truncate/punch/clone time when all mapping traversal needs to stop for
-the destructive change to take place. (Allocations are done another way
-and are race safe with traversal)
+The series consists of three patches:
 
-How do you intend to address this problem with range-locks? ie recursively
-taking the same "lock"? because if not for the recursive-ity and lockdep I would
-not need the extra lock-object per inode.
+  01: perf: Add capability-related utilities
+    Add utility functions to check capabilities and perf_event_paranoid checks.
 
-Thanks
-Boaz
+  02: perf: Use CAP_SYS_ADMIN with perf_event_paranoid checks
+    Replace the use of euid==0 with a check for CAP_SYS_ADMIN whenever
+    perf_event_paranoid level is verified.
+
+  03: perf: Use CAP_SYSLOG with kptr_restrict checks
+    Replace the use of uid and euid with a check for CAP_SYSLOG when
+    kptr_restrict is verified (similar to kernel/kallsyms.c and lib/vsprintf.c).
+    Consult perf_event_paranoid when kptr_restrict==0 (see kernel/kallsyms.c).
+
+I tested this by following Documentation/admin-guide/perf-security.rst
+guidelines and setting sysctls:
+
+   kernel.perf_event_paranoid=2
+   kernel.kptr_restrict=1
+
+As an unpriviledged user who is in perf_users group (setup via instructions
+above), I executed:
+   perf record -a -- sleep 1
+
+Without the patch, perf record did not capture any kernel functions.
+With the patch, perf included all kernel funcitons.
+
+Igor Lubashev (3):
+  perf: Add capability-related utilities
+  perf: Use CAP_SYS_ADMIN with perf_event_paranoid checks
+  perf: Use CAP_SYSLOG with kptr_restrict checks
+
+ tools/perf/Makefile.config           |  2 +-
+ tools/perf/arch/arm/util/cs-etm.c    |  3 ++-
+ tools/perf/arch/arm64/util/arm-spe.c |  3 ++-
+ tools/perf/arch/x86/util/intel-bts.c |  3 ++-
+ tools/perf/arch/x86/util/intel-pt.c  |  2 +-
+ tools/perf/util/Build                |  1 +
+ tools/perf/util/cap.c                | 24 ++++++++++++++++++++++++
+ tools/perf/util/cap.h                | 10 ++++++++++
+ tools/perf/util/event.h              |  1 +
+ tools/perf/util/evsel.c              |  2 +-
+ tools/perf/util/python-ext-sources   |  1 +
+ tools/perf/util/symbol.c             | 15 +++++++++++----
+ tools/perf/util/util.c               |  9 +++++++++
+ 13 files changed, 66 insertions(+), 10 deletions(-)
+ create mode 100644 tools/perf/util/cap.c
+ create mode 100644 tools/perf/util/cap.h
+
+-- 
+2.7.4
+
