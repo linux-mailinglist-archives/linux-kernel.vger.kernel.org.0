@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE1A5D8D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A97115D8C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfGCAaC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 20:30:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:56863 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727287AbfGCA36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:29:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 17:20:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,444,1557212400"; 
-   d="scan'208";a="184617637"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Jul 2019 17:20:53 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 2 Jul 2019 17:20:53 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 2 Jul 2019 17:20:52 -0700
-Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 2 Jul 2019 17:20:52 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.124]) by
- CRSMSX103.amr.corp.intel.com ([169.254.4.76]) with mapi id 14.03.0439.000;
- Tue, 2 Jul 2019 18:20:50 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>
-Subject: Re: [PATCH] selftests/x86/fsgsbase: Fix some test case bugs
-Thread-Topic: [PATCH] selftests/x86/fsgsbase: Fix some test case bugs
-Thread-Index: AQHVMR6idqkf2SQVKkywk8XhSQW+kaa4bKyA
-Date:   Wed, 3 Jul 2019 00:20:49 +0000
-Message-ID: <77F4123B-C10E-4EC0-AD2B-F7F3223BA3BA@intel.com>
-References: <46e6a60f8992fd54da12203e820c35daadaeffb5.1562103506.git.luto@kernel.org>
-In-Reply-To: <46e6a60f8992fd54da12203e820c35daadaeffb5.1562103506.git.luto@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.252.192.184]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <DCB9B83EF095F141AEB935CC0833E756@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1727232AbfGCA2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:28:30 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33962 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbfGCA23 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:28:29 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s49so322577edb.1;
+        Tue, 02 Jul 2019 17:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
+        b=c0Orqe6NQBE+sHLXT5J5nmlLtMemzO5waTwx4hEj7Bl04/hl6C0P+6hPRYDEAfph90
+         kg1ZVytJWoslu+wvzvpUmTJPGiWopB+CqjCPc1Ge/93q2IP0ruxhLtlIhl9ed5+hAqt5
+         /04yd0PyFdt0vekPpPo4dFYgQoX6r20BGdXRZhU33xxOAymQ9VLEdjBkSUPX4Ohh4xaK
+         oeKBpm1hXGBKA61bwDXLWcFXYxJKHcfDwnjVubiVNIz/V5hs0Bw4n8t7dH6rTZ7TISUi
+         8mAGclvqyCqY9XkLjYY0ydocBF0Zn5lUOoodMkb+gzJ84nYE5DlVPwzL6wE4hw5zTVn7
+         NnOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
+        b=m1quNqkNMIdkPgcBHittKTv5Ykk16LxXkEtft1qw4SIdIpd1As8bUm5H/MPIsWbuVW
+         5iDyNyVkBqyowa12CsL+g/RkAdC3u2qVklMFerSERexeZC9NS/e8CV7D1EeTH4HSGTso
+         ZKmoCs/3obLYMdZJqNCR23Ru1yaMw72fIk5XlndXEqJDYlO9FWf1QXrKPqnqZu9BLX1w
+         5T37MktAZtp+DaqkCXcPRGeaI0NzLub7voc+ozvgGCmYv506UClX6Ixfx1UQR/Yd1QM+
+         MX1k9VqAJUkgoVvanth59MXeGxDb4hU41cM6hq2owxaGFcoG8NVMttnfDvyiVuexfbuW
+         mQaA==
+X-Gm-Message-State: APjAAAWzSwxBgVJkVU2aawStGXYi+/H0LQgZfpPVJECaLY9p4vjFNxeu
+        /vyfyUWFWlR1YBiT5bzh6xs=
+X-Google-Smtp-Source: APXvYqw0ZksS0YC+pGL/ouOk9KhOw5LGAqS0CHttjy+Br4pM+v+dICQr6KzW3wmEDGg0H++t5zQLow==
+X-Received: by 2002:aa7:c692:: with SMTP id n18mr38211777edq.220.1562113372104;
+        Tue, 02 Jul 2019 17:22:52 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.gmail.com with ESMTPSA id b19sm113853eje.80.2019.07.02.17.22.50
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 17:22:51 -0700 (PDT)
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org>
+ <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org>
+ <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org>
+ <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+ <20190702033410.GB1729@bombadil.infradead.org>
+ <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
+Date:   Wed, 3 Jul 2019 03:22:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On Jul 2, 2019, at 14:38, Andy Lutomirski <luto@kernel.org> wrote:
+On 02/07/2019 18:37, Dan Williams wrote:
+<>
 > 
-> @@ -494,16 +489,24 @@ static void test_ptrace_write_gsbase(void)
-> 		 * selector value is changed or not by the GSBASE write in
-> 		 * a ptracer.
-> 		 */
-> -		if (gs != 0x7) {
-> +		if (gs != *shared_scratch) {
-> 			nerrs++;
-> 			printf("[FAIL]\tGS changed to %lx\n", gs);
+> I'd be inclined to do the brute force fix of not trying to get fancy
+> with separate PTE/PMD waitqueues and then follow on with a more clever
+> performance enhancement later. Thoughts about that?
+> 
 
-There is one more point to be fixed like this.
-So, this diff also needs to be applied:
+Sir Dan
 
-diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
-index de8c80a..c9da4c5 100644
---- a/tools/testing/selftests/x86/fsgsbase.c
-+++ b/tools/testing/selftests/x86/fsgsbase.c
-@@ -472,7 +472,7 @@ static void test_ptrace_write_gsbase(void)
- 
-                gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
- 
--               if (gs != 0x7) {
-+               if (gs != *shared_scratch) {
-                        nerrs++;
-                        printf("[FAIL]\tGS is not prepared with nonzero\n");
-                        goto END;
+I do not understand how separate waitqueues are any performance enhancement?
+The all point of the waitqueues is that there is enough of them and the hash
+function does a good radomization spread to effectively grab a single locker
+per waitqueue unless the system is very contended and waitqueues are shared.
+Which is good because it means you effectively need a back pressure to the app.
+(Because pmem IO is mostly CPU bound with no long term sleeps I do not think
+ you will ever get to that situation)
 
-Thanks for the cleanup & the fix!
+So the way I understand it having twice as many waitqueues serving two types
+will be better performance over all then, segregating the types each with half
+the number of queues.
+
+(Regardless of the above problem of where the segregation is not race clean)
+
+Thanks
+Boaz
