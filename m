@@ -2,60 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8697F5DECE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EED4B5DED0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfGCHYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:24:04 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50623 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfGCHYD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:24:03 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hiZcW-00054f-3V; Wed, 03 Jul 2019 09:24:00 +0200
-Date:   Wed, 3 Jul 2019 09:24:00 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andi Kleen <andi@firstfloor.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [PATCH] x86/fpu: Fix nofxsr regression
-Message-ID: <20190703072359.du7znh63cw4fyvpc@linutronix.de>
-References: <20190702213958.33291-1-andi@firstfloor.org>
- <alpine.DEB.2.21.1907030013130.1802@nanos.tec.linutronix.de>
+        id S1727282AbfGCHYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:24:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726327AbfGCHYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:24:20 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2DB321881;
+        Wed,  3 Jul 2019 07:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562138659;
+        bh=oKLiX+noAGMAX3ZpKVTLVn9b2ZYDuHOziGSU1+gstKU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rLh+yYfz/nRaPHeiqDg1glKx2Cy7AtwWnvYxbfuMNcfK/3479K8YaolFNL6iG88uI
+         es8AkxUt8kfHyiJ7ZeDugjBOxhcT2XdH2URPgNC+NYOxXbSatRdLqXMuwESPtDbM/b
+         AuKCcRQ/T+sE5VamnY7oazoPR3EFPjSYuHPfRTJw=
+Date:   Wed, 3 Jul 2019 09:24:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH 5.1 51/55] bpf, arm64: use more scalable stadd over ldxr
+ / stxr loop in xadd
+Message-ID: <20190703072416.GD3033@kroah.com>
+References: <20190702080124.103022729@linuxfoundation.org>
+ <20190702080126.728030225@linuxfoundation.org>
+ <20190703020200.GR11506@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907030013130.1802@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190703020200.GR11506@sasha-vm>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-03 00:17:17 [+0200], Thomas Gleixner wrote:
-> On Tue, 2 Jul 2019, Andi Kleen wrote:
-> >  
-> > -	if (cmdline_find_option_bool(boot_command_line, "nofxsr")) {
-> > +	if (!IS_ENABLED(CONFIG_64BIT) &&
-> > +		cmdline_find_option_bool(boot_command_line, "nofxsr")) {
-> > +		fpu__xstate_clear_all_cpu_caps();
-> >  		setup_clear_cpu_cap(X86_FEATURE_FXSR);
-> >  		setup_clear_cpu_cap(X86_FEATURE_FXSR_OPT);
-> >  		setup_clear_cpu_cap(X86_FEATURE_XMM);
+On Tue, Jul 02, 2019 at 10:02:00PM -0400, Sasha Levin wrote:
+> On Tue, Jul 02, 2019 at 10:01:59AM +0200, Greg Kroah-Hartman wrote:
+> > From: Daniel Borkmann <daniel@iogearbox.net>
+> > 
+> > commit 34b8ab091f9ef57a2bb3c8c8359a0a03a8abf2f9 upstream.
+> > 
+> > Since ARMv8.1 supplement introduced LSE atomic instructions back in 2016,
+> > lets add support for STADD and use that in favor of LDXR / STXR loop for
+> > the XADD mapping if available. STADD is encoded as an alias for LDADD with
+> > XZR as the destination register, therefore add LDADD to the instruction
+> > encoder along with STADD as special case and use it in the JIT for CPUs
+> > that advertise LSE atomics in CPUID register. If immediate offset in the
+> > BPF XADD insn is 0, then use dst register directly instead of temporary
+> > one.
+> > 
+> > Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> > Acked-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
-> This is a mixture of disabling features explicitely and having the
-> dependencies in cpuid-deps. Even 2 of the existing ones are pointless
-> because clear(FXSR) already clears the other two.
-> 
-> Why not make XSAVE depend on XMM or whatever is the right dependency?
+> This one has a fix upstream: c5e2edeb01ae9ffbdde95bdcdb6d3614ba1eb195
+> ("arm64: insn: Fix ldadd instruction encoding").
 
-I have something half way done.
+Good catch, now queued up, thanks.
 
-> Thanks,
-> 
-> 	tglx
-
-Sebastian
+greg k-h
