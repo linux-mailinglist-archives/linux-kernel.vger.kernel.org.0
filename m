@@ -2,65 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CED7C5D961
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 383E05D8F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbfGCAmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:42:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46206 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCAmS (ORCPT
+        id S1727186AbfGCAbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:31:35 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42523 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726930AbfGCAbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:42:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8D5D66025A; Wed,  3 Jul 2019 00:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562112231;
-        bh=Ehzb5REbZ1sAGqR0DY72rQI/Hyw2RX9/t1g57kj00rs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PHnDSrVDwfgQJgf0I+W+KiUM86AS4rE6Fy2Av270knbxo+bEBYplTz/ZCPQuEe2I4
-         fNzPDwaSZmBiKo5VrP0sRQRLEYzURkM4UWHUZJhyn8FZwrHSNghuSX7UHfV8XAd558
-         BbrAULrw8EBM7HOh+AHyh++3rcGV3X4HoXZMpYAc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: collinsd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 257F66025A;
-        Wed,  3 Jul 2019 00:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562112230;
-        bh=Ehzb5REbZ1sAGqR0DY72rQI/Hyw2RX9/t1g57kj00rs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YkMHRIYLA5V46KlIhru4A3fnsbCSkndtSW9zs2Cjaim0N2J64OYjzq8THiO9uc63G
-         pjPnWHJwm0B583nkQzsUveSzVv0Jwe2j5cWQBRKv6eBvXzKhEPU3zEIbNuGVe7J29W
-         0dOSvKmHAXUZVMS609/mKWBo3oXa1snC9A6dFOjs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 257F66025A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v3 0/4] Solve postboot supplier cleanup and optimize probe
- ordering
-To:     Saravana Kannan <saravanak@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-References: <20190702004811.136450-1-saravanak@google.com>
-From:   David Collins <collinsd@codeaurora.org>
-Message-ID: <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
-Date:   Tue, 2 Jul 2019 17:03:49 -0700
+        Tue, 2 Jul 2019 20:31:34 -0400
+Received: by mail-ed1-f65.google.com with SMTP id z25so290971edq.9;
+        Tue, 02 Jul 2019 17:31:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZXcSaivLBse0FFf2ctO/vkXxTGh9DxaocpQVfdLoLhY=;
+        b=RUqiuvk5AXV5I5ft6eTyLmR+50TxxAHEbh5RUXy9WxrZUs+fYtaZ+E6l8tcroswlKp
+         +BYxwkQTCxhVX2mBpTDi/tnQ6N6iXOk4VJdgCMLecTRQjj0PNLhvRZSFy5qTxAjrUoZr
+         Or2MpOdjjsoTr7SphxentppPilrsV779srsW4zxu72YOawstxJKLcA++bumylNQKRYpD
+         SlnH/WQROmdN3sBj1QjyXZiEYWyZHxaEcITpC6AuLUdC0rJfrKYqisQ5PEpZPUcWBhjI
+         Nuu6ZEqLepGpx0nCV0FrHUrVYirL71OGyt0HeO2g1BDeyGsRkJyh0OJSrFYdm6sWSB/4
+         HlUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZXcSaivLBse0FFf2ctO/vkXxTGh9DxaocpQVfdLoLhY=;
+        b=lcrjBSCe1DsNNTDNzDx1KaNY+bc9X5rxvmS6PZjcMosr4RyiodxUTMenAEUNu1cDCI
+         zGGL9C5Xs+sn2X5B2yk+9enX/A3hckdGxuOCEN5pYFESwgVznsyD3OfUVV4zdQyHrEBC
+         ZvDU9v494IVN0DYeXs7z7+cSTU59Prsdsqf8z+EZpxUQDijolTXHknGyilVQc0pdUEFw
+         CYVnz5ex/Mw5hm1QouhZTKl1iAEymoizxTdfyMmDU+WAmWQR9ehdS811cszmwHXH7uR6
+         wwIghSDAc4OhDfLmnN7DpFDKJcNSwHuzuW71Ik+tLKahnfZxqQOZUEfjJ7t7ISpgjuLA
+         QKmg==
+X-Gm-Message-State: APjAAAW9qiQRn83FjfyzeQY2BoaNb14yN7UNNyCBwO5p3PmNer5crxHz
+        6yiE77sBhTtBIbWXFCGbSe0=
+X-Google-Smtp-Source: APXvYqyhSetE6h0usazNMfHOe7nFs1mK2xvZFfe4TNf39deATvRUohuXWV9wNHAOZ9jhCerU1FXCcg==
+X-Received: by 2002:a17:906:8053:: with SMTP id x19mr31237606ejw.306.1562112290271;
+        Tue, 02 Jul 2019 17:04:50 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.gmail.com with ESMTPSA id k11sm159289edq.54.2019.07.02.17.04.47
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 17:04:49 -0700 (PDT)
+Subject: Re: pagecache locking
+To:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel>
+ <20190613235524.GK14363@dread.disaster.area>
+ <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
+ <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
+ <20190617224714.GR14363@dread.disaster.area>
+ <CAHk-=wiR3a7+b0cUN45hGp1dvFh=s1i1OkVhoP7CivJxKqsLFQ@mail.gmail.com>
+ <CAOQ4uxjqQjrCCt=ixgdUYjBJvKLhw4R9NeMZOB_s2rrWvoDMBw@mail.gmail.com>
+ <20190619103838.GB32409@quack2.suse.cz>
+ <20190619223756.GC26375@dread.disaster.area>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <3f394239-f532-23eb-9ff1-465f7d1f3cb4@gmail.com>
+Date:   Wed, 3 Jul 2019 03:04:45 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190702004811.136450-1-saravanak@google.com>
+In-Reply-To: <20190619223756.GC26375@dread.disaster.area>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,58 +87,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Saravana,
-
-On 7/1/19 5:48 PM, Saravana Kannan wrote:
-...
-> TODO:
-> - For the case of consumer child sub-nodes being added by a parent
->   device after late_initcall_sync we might be able to address that by
->   recursively parsing all child nodes and adding all their suppliers as
->   suppliers of the parent node too. The parent probe will add the
->   children before its probe is completed and that will prevent the
->   supplier's sync_state from being executed before the children are
->   probed.
+On 20/06/2019 01:37, Dave Chinner wrote:
+<>
 > 
-> But I'll write that part once I see how this series is received.
+> I'd prefer it doesn't get lifted to the VFS because I'm planning on
+> getting rid of it in XFS with range locks. i.e. the XFS_MMAPLOCK is
+> likely to go away in the near term because a range lock can be
+> taken on either side of the mmap_sem in the page fault path.
+> 
+<>
+Sir Dave
 
-I don't think that this scheme will work in all cases.  It can also lead
-to probing deadlock.
+Sorry if this was answered before. I am please very curious. In the zufs
+project I have an equivalent rw_MMAPLOCK that I _read_lock on page_faults.
+(Read & writes all take read-locks ...)
+The only reason I have it is because of lockdep actually.
 
-Here is an example:
+Specifically for those xfstests that mmap a buffer then direct_IO in/out
+of that buffer from/to another file in the same FS or the same file.
+(For lockdep its the same case).
+I would be perfectly happy to recursively _read_lock both from the top
+of the page_fault at the DIO path, and under in the page_fault. I'm
+_read_locking after all. But lockdep is hard to convince. So I stole the
+xfs idea of having an rw_MMAPLOCK. And grab yet another _write_lock at
+truncate/punch/clone time when all mapping traversal needs to stop for
+the destructive change to take place. (Allocations are done another way
+and are race safe with traversal)
 
-Three DT devices (top level A with subnodes B and C):
-/A
-/A/B
-/A/C
-C is a consumer of B.
+How do you intend to address this problem with range-locks? ie recursively
+taking the same "lock"? because if not for the recursive-ity and lockdep I would
+not need the extra lock-object per inode.
 
-When device A is created, a search of its subnodes will find the link from
-C to B.  Since device B hasn't been created yet, of_link_to_suppliers()
-will fail and add A to the wait_for_suppliers list.  This will cause the
-probe of A to fail with -EPROBE_DEFER (thanks to the check in
-device_links_check_suppliers()).  As a result device B will not be created
-and device A will never probe.
-
-You could try to resolve this situation by detecting the cycle and *not*
-adding A to the wait_for_suppliers list.  However, that would get us back
-to the problem we had before.  A would be allowed to probe which would
-then result in devices being added for B and C.  If the device for B is
-added before C, then it would be allowed to immediately probe and
-(assuming this all takes place after late_initcall_sync thanks to modules)
-its sync_state() callback would be called since no consumer devices are
-linked to B.
-
-Please note that to change this example from theoretical to practical,
-replace "A" with apps_rsc, "B" with pmi8998-rpmh-regulators, and "C" with
-pm8998-rpmh-regulators in [1].
-
-Take care,
-David
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-mtp.dts?h=v5.2-rc7#n55
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
+Boaz
