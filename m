@@ -2,244 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40D35E3D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2EE5E3EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfGCM0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:26:30 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33582 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfGCM00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:26:26 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so2610865wru.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 05:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JILUVyhQViuGdxVU7msStBtHX6blqTuLXOnzbseIUxY=;
-        b=15DE6QGNII0vC99FAxzXL/XNAKOz1spvux5aiNDajerPemkY0N0Yvhp2NZCZ56aXTd
-         V2F1xuct6cDSpr46JtcIMfT0bY+qWkhe+ryMJyyN3VyCojjWzkFD36pkScxrT6gquK2Z
-         mNf6E4S6+B9Vjc3sY/l4IQ40/p5dnlRb044FAl8PI7y18/lcpTNGk2LBS1A4BV2d5VkC
-         UVkkVb7iyhWRM4GL6g9a1XzJi/zV/bzZ3psfBINcuReBkawJoee3Vf9yBnestkcfkdaZ
-         Rji7UjMscG4KTSfq2gpJBzs8UNT7oFgw3yE4242/k0j/r450VClhz57RXPNJt3Rba9cJ
-         gcng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JILUVyhQViuGdxVU7msStBtHX6blqTuLXOnzbseIUxY=;
-        b=dkgxeHl1kfKh59ZROBZk87/A8mZfOS0F3+rK5Sex/hzLTqUxtdFV42xZytzhT+AIl5
-         WaHzZVLMX3ELDYA0NLpyDRPFAL4WP+J8zUPnH9lD4sB6HRqOjhYn3yt2Dqa6YGhg/ROV
-         W91Oa+xl/zPxJGyK0e5J2B/ok68s8R8DaYWMKFcMHK/S63Pnj3p3dFoHuggyeUMSXFp4
-         pxFKpiWICoAaPM3kv8p7bw1AVeqAzRYKjYGbtobNO6Z0tew8muC/CK2XiWYo+FgK1dRg
-         6MxP34eD/kxAM1C7ul7+UsAlq1Xofw22k9dc/Ibq3vcAgb4vCJA+uxXodf9zqDP5WdFm
-         yovQ==
-X-Gm-Message-State: APjAAAXMI+0fOJ4+fVaeHdBhWvHhaGhirCwKHLFJxxMZbX4XeEZEpRoN
-        s0MH8tSx27mQlcER37/fIgUI7w==
-X-Google-Smtp-Source: APXvYqw/fJylWhA1wOFDAASQ7snUTEyMNdcCC+ljsbuq5ZdsSzk61cFVRouS0SUaOm+SNLZ6a3mjPA==
-X-Received: by 2002:a5d:4ecc:: with SMTP id s12mr29803490wrv.157.1562156784072;
-        Wed, 03 Jul 2019 05:26:24 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id v67sm2868132wme.24.2019.07.03.05.26.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 05:26:23 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: meson: axg-audio: add g12a reset support
-Date:   Wed,  3 Jul 2019 14:26:14 +0200
-Message-Id: <20190703122614.3579-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190703122614.3579-1-jbrunet@baylibre.com>
-References: <20190703122614.3579-1-jbrunet@baylibre.com>
+        id S1726870AbfGCM3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:29:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfGCM3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 08:29:17 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F323218A0;
+        Wed,  3 Jul 2019 12:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562156955;
+        bh=1k8nq4Q0NeVILTBK4iUOGo3VkIXJAUuSe1jLV0Lo4K4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=0QzbESUe9CoR1drJzAlRUR9FQm64ewc4vYgUjmgRvi7zQazG7CSGYTNQa1tgmISpH
+         KYxtTDsbGa65HAi8bKJqh8eE4R7i2/R0B/T1WaBkiFLKAOpNijC6z5Sjkaj347OCQY
+         kOPqDEp6kGEn35ErqF/CiLqQ3m5UvbUHY0NEHTp4=
+Date:   Wed, 3 Jul 2019 14:29:12 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.14.132
+Message-ID: <20190703122912.GA3831@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the g12a, the register space dedicated to the audio clock also
-provides some resets. Let the clock controller register a reset
-provider as well for this SoC family.
 
-the axg SoC family does not appear to provide this feature.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg-audio.c | 107 +++++++++++++++++++++++++++++++++-
- drivers/clk/meson/axg-audio.h |   1 +
- 2 files changed, 106 insertions(+), 2 deletions(-)
+I'm announcing the release of the 4.14.132 kernel.
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 8028ff6f6610..ce163bd03aad 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
- #include "axg-audio.h"
-@@ -916,6 +917,84 @@ static int axg_register_clk_hw_inputs(struct device *dev,
- 	return 0;
- }
- 
-+struct axg_audio_reset_data {
-+	struct reset_controller_dev rstc;
-+	struct regmap *map;
-+	unsigned int offset;
-+};
-+
-+static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
-+					unsigned long id,
-+					unsigned int *reg,
-+					unsigned int *bit)
-+{
-+	unsigned int stride = regmap_get_reg_stride(rst->map);
-+
-+	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
-+	*reg += rst->offset;
-+	*bit = id % (stride * BITS_PER_BYTE);
-+}
-+
-+static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_update_bits(rst->map, offset, BIT(bit),
-+			assert ? BIT(bit) : 0);
-+
-+	return 0;
-+}
-+
-+static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int val, offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_read(rst->map, offset, &val);
-+
-+	return !!(val & BIT(bit));
-+}
-+
-+static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, true);
-+}
-+
-+static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, false);
-+}
-+
-+static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	int ret;
-+
-+	ret = axg_audio_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return axg_audio_reset_deassert(rcdev, id);
-+}
-+
-+static const struct reset_control_ops axg_audio_rstc_ops = {
-+	.assert = axg_audio_reset_assert,
-+	.deassert = axg_audio_reset_deassert,
-+	.reset = axg_audio_reset_toggle,
-+	.status = axg_audio_reset_status,
-+};
-+
- static const struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -925,12 +1004,15 @@ static const struct regmap_config axg_audio_regmap_cfg = {
- 
- struct audioclk_data {
- 	struct clk_hw_onecell_data *hw_onecell_data;
-+	unsigned int reset_offset;
-+	unsigned int reset_num;
- };
- 
- static int axg_audio_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct audioclk_data *data;
-+	struct axg_audio_reset_data *rst;
- 	struct regmap *map;
- 	struct resource *res;
- 	void __iomem *regs;
-@@ -1005,8 +1087,27 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
--					   data->hw_onecell_data);
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					data->hw_onecell_data);
-+	if (ret)
-+		return ret;
-+
-+	/* Stop here if there is no reset */
-+	if (!data->reset_num)
-+		return 0;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->map = map;
-+	rst->offset = data->reset_offset;
-+	rst->rstc.nr_resets = data->reset_num;
-+	rst->rstc.ops = &axg_audio_rstc_ops;
-+	rst->rstc.of_node = dev->of_node;
-+	rst->rstc.owner = THIS_MODULE;
-+
-+	return ret = devm_reset_controller_register(dev, &rst->rstc);
- }
- 
- static const struct audioclk_data axg_audioclk_data = {
-@@ -1015,6 +1116,8 @@ static const struct audioclk_data axg_audioclk_data = {
- 
- static const struct audioclk_data g12a_audioclk_data = {
- 	.hw_onecell_data = &g12a_audio_hw_onecell_data,
-+	.reset_offset = AUDIO_SW_RESET,
-+	.reset_num = 26,
- };
- 
- static const struct of_device_id clkc_match_table[] = {
-diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-index 5d972d55d6c7..c00e28b2e1a9 100644
---- a/drivers/clk/meson/axg-audio.h
-+++ b/drivers/clk/meson/axg-audio.h
-@@ -22,6 +22,7 @@
- #define AUDIO_MCLK_F_CTRL	0x018
- #define AUDIO_MST_PAD_CTRL0	0x01c
- #define AUDIO_MST_PAD_CTRL1	0x020
-+#define AUDIO_SW_RESET		0x024
- #define AUDIO_MST_A_SCLK_CTRL0	0x040
- #define AUDIO_MST_A_SCLK_CTRL1	0x044
- #define AUDIO_MST_B_SCLK_CTRL0	0x048
--- 
-2.21.0
+All users of the 4.14 kernel series must upgrade.
 
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Ds=
+ummary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/robust-futexes.txt                      |    3=20
+ Makefile                                              |    2=20
+ arch/arm64/include/asm/futex.h                        |    4=20
+ arch/arm64/include/asm/insn.h                         |    8 +
+ arch/arm64/kernel/insn.c                              |   40 +++++
+ arch/arm64/net/bpf_jit.h                              |    4=20
+ arch/arm64/net/bpf_jit_comp.c                         |   28 ++-
+ arch/x86/kernel/cpu/bugs.c                            |   11 +
+ arch/x86/kernel/cpu/microcode/core.c                  |   15 +-
+ block/bio.c                                           |  131 +++++++++++++=
+-----
+ drivers/infiniband/hw/hfi1/user_sdma.c                |   12 -
+ drivers/infiniband/hw/hfi1/user_sdma.h                |    1=20
+ drivers/md/dm-log-writes.c                            |   23 ++-
+ drivers/misc/eeprom/at24.c                            |  107 ++++++++++----
+ drivers/net/bonding/bond_main.c                       |    2=20
+ drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c |    2=20
+ drivers/net/team/team.c                               |    2=20
+ drivers/net/tun.c                                     |   19 +-
+ drivers/net/usb/qmi_wwan.c                            |    4=20
+ drivers/scsi/vmw_pvscsi.c                             |    6=20
+ fs/9p/acl.c                                           |    2=20
+ fs/binfmt_flat.c                                      |   23 ---
+ fs/nfs/flexfilelayout/flexfilelayoutdev.c             |    2=20
+ fs/proc/array.c                                       |    2=20
+ include/asm-generic/futex.h                           |    8 -
+ include/linux/bio.h                                   |    9 +
+ include/linux/compiler.h                              |    5=20
+ kernel/cpu.c                                          |    3=20
+ kernel/trace/trace_branch.c                           |    4=20
+ mm/mempolicy.c                                        |    2=20
+ mm/page_idle.c                                        |    4=20
+ net/9p/protocol.c                                     |   12 +
+ net/9p/trans_common.c                                 |    1=20
+ net/9p/trans_rdma.c                                   |    7=20
+ net/9p/trans_xen.c                                    |    4=20
+ net/core/sock.c                                       |    3=20
+ net/ipv4/raw.c                                        |    2=20
+ net/ipv4/udp.c                                        |    6=20
+ net/ipv6/udp.c                                        |    4=20
+ net/packet/af_packet.c                                |   23 ++-
+ net/packet/internal.h                                 |    1=20
+ net/sctp/endpointola.c                                |    8 -
+ net/tipc/core.c                                       |   12 -
+ net/tipc/netlink_compat.c                             |   18 ++
+ net/tipc/udp_media.c                                  |    8 -
+ tools/perf/builtin-help.c                             |    2=20
+ tools/perf/ui/tui/helpline.c                          |    2=20
+ tools/perf/util/header.c                              |    2=20
+ 48 files changed, 417 insertions(+), 186 deletions(-)
+
+Adeodato Sim=F3 (1):
+      net/9p: include trans_common.h to fix missing prototype warning.
+
+Alejandro Jimenez (1):
+      x86/speculation: Allow guests to use SSBD even if host does not
+
+Arnaldo Carvalho de Melo (3):
+      perf ui helpline: Use strlcpy() as a shorter form of strncpy() + expl=
+icit set nul
+      perf help: Remove needless use of strncpy()
+      perf header: Fix unchecked usage of strncpy()
+
+Christoph Hellwig (1):
+      block: add a lower-level bio_add_page interface
+
+Colin Ian King (1):
+      mm/page_idle.c: fix oops because end_pfn is larger than max_pfn
+
+Daniel Borkmann (1):
+      bpf, arm64: use more scalable stadd over ldxr / stxr loop in xadd
+
+Dominique Martinet (5):
+      9p/xen: fix check for xenbus_read error in front_probe
+      9p/rdma: do not disconnect on down_interruptible EAGAIN
+      9p: acl: fix uninitialized iattr access
+      9p/rdma: remove useless check in cm_event_handler
+      9p: p9dirent_read: check network-provided name length
+
+Eric Dumazet (1):
+      net/packet: fix memory leak in packet_set_ring()
+
+Fei Li (1):
+      tun: wake up waitqueues after IFF_UP is set
+
+Geert Uytterhoeven (1):
+      cpu/speculation: Warn on unsupported mitigations=3D parameter
+
+Greg Kroah-Hartman (1):
+      Linux 4.14.132
+
+Jan Kara (1):
+      scsi: vmw_pscsi: Fix use-after-free in pvscsi_queue_lck()
+
+Jann Horn (1):
+      fs/binfmt_flat.c: make load_flat_shared_library() work
+
+Jean-Philippe Brucker (1):
+      arm64: insn: Fix ldadd instruction encoding
+
+JingYi Hou (1):
+      net: remove duplicate fetch in sock_getsockopt
+
+John Ogness (1):
+      fs/proc/array.c: allow reporting eip/esp for all coredumping threads
+
+Kristian Evensen (1):
+      qmi_wwan: Fix out-of-bounds read
+
+Martin KaFai Lau (2):
+      bpf: udp: Avoid calling reuseport's bpf_prog from udp_gro
+      bpf: udp: ipv6: Avoid running reuseport's bpf_prog from __udp6_lib_err
+
+Martin Wilck (1):
+      block: bio_iov_iter_get_pages: pin more pages for multi-segment IOs
+
+Mike Marciniszyn (1):
+      IB/hfi1: Close PSM sdma_progress sleep window
+
+Neil Horman (1):
+      af_packet: Block execution of tasks waiting for transmit to complete =
+in AF_PACKET
+
+Roland Hii (1):
+      net: stmmac: fixed new system time seconds value calculation
+
+Sasha Levin (2):
+      Revert "x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP"
+      Revert "compiler.h: update definition of unreachable()"
+
+Stephen Suryaputra (1):
+      ipv4: Use return value of inet_iif() for __raw_v4_lookup in the while=
+ loop
+
+Thomas Gleixner (1):
+      x86/microcode: Fix the microcode load on CPU hotplug for real
+
+Trond Myklebust (1):
+      NFS/flexfiles: Use the correct TCP timeout for flexfiles I/O
+
+Wang Xin (1):
+      eeprom: at24: fix unexpected timeout under high load
+
+Will Deacon (2):
+      arm64: futex: Avoid copying out uninitialised stack in failed cmpxchg=
+()
+      futex: Update comments and docs about return values of arch futex code
+
+Xin Long (4):
+      sctp: change to hold sk after auth shkey is created successfully
+      tipc: change to use register_pernet_device
+      tipc: check msg->req data len in tipc_nl_compat_bearer_disable
+      tipc: pass tunnel dev as NULL to udp_tunnel(6)_xmit_skb
+
+YueHaibing (2):
+      team: Always enable vlan tx offload
+      bonding: Always enable vlan tx offload
+
+zhangyi (F) (1):
+      dm log writes: make sure super sector log updates are written in order
+
+zhong jiang (1):
+      mm/mempolicy.c: fix an incorrect rebind node in mpol_rebind_nodemask
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAl0cn5UACgkQONu9yGCS
+aT7vTBAAzrEzYZei2btZ1BU/bv1RTJWI9/BZk6jOC+U+Boy8Io61TuzvGvvGidzR
+CGA2b1R5bwQdY71MhdbHIz5AdhJvbSc/Tcj0mwU+aZ4F9f466lKDW4dfT6lvCMBm
+wxKUsV08f6xTcqYSCMPsQJT9t4oIakakxUM5gWtAga7euQSoaaXltOxWaPDWbNrm
+oOvfYfE1cDjcxL3rdQYPuOcdbAGfJ/yLwQ4ErSkMYw9GiHTmlqjoDkcXuY98ziJC
+LUL1D0HKwR5RO6OmpResqKGGVKMNvNdKijCjVtqAcRnH6K1tduEFx+XtNAucxMWq
+pr5i1EuyJZiwVBHw7qgZiawA3Eg9185eiG9NMAle4TRVD7gaZDcsVwszMBSyRZUZ
+Ogk34aPfROG9MCS9ujxQHNL0UnEv3yz2XU0pP9tiejRavvuYmHLW8jZoYOqRW/HC
+l6sWz+j/iigesfkn1ZdIPIr1988vfOYmmw+CPnj1yALE/JlzQq4Sz6q0ajl3eOub
+NhPHsEGvl2nYk/wcdv24mskTRX5mbt4fYOsiZfqU4KRNcnKIQEhsriZJF9yFUpf8
+cLLD7FVdWxEkLlfXVNeon9QmYZFglyG+6BoL4Ea7QOkCotqgq28nVbi47EfZDpMG
+pQ9E6Zc8X3K51afx5p9QuOlN3VnSqSmJbfL2QNkswGbTRGe5zOw=
+=ofAN
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
