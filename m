@@ -2,95 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 922575E619
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E65C25E61C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfGCOIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:08:36 -0400
-Received: from foss.arm.com ([217.140.110.172]:48900 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfGCOIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:08:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B1142B;
-        Wed,  3 Jul 2019 07:08:35 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62BAB3F718;
-        Wed,  3 Jul 2019 07:08:34 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 15:08:32 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
- postcore_initcall
-Message-ID: <20190703140832.GD48312@arrakis.emea.arm.com>
-References: <20190526191828.466305460@goodmis.org>
- <20190526191848.266163206@goodmis.org>
- <20190702165008.GC34718@lakrids.cambridge.arm.com>
- <20190703100205.0b58f3bf@gandalf.local.home>
+        id S1727004AbfGCOJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:09:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37409 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCOJd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:09:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63E99Yq3321564
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:09:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63E99Yq3321564
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562162950;
+        bh=1eoJ0QGsrHwgwR2jReijN4Wh3qyj5OE0NS7fZKi35qI=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=vdaC4eMygm5eywbaANreDsXxewnaxwMeYtfoQkweUZHYoHaDWyBIWYFuSfB3VnT1z
+         3lBCbokS3lYExT6e+gkwdAATc42caqtUBcynYwj0i08LCm3n3IuDbXGUJwq70zsC6k
+         d7Ynf1knfZzIb5TjhPREALe1qMgYu/2HDYJ7D7K1az8aoSIrEGmDZq7j/W6TXBl7G3
+         o1fRjdIjyMiO7/sU127hVLWVRqvu/QQHWvP8TWMpJkIauj0ez0CG0HA5sF/tlnVBhw
+         JmjbtA+sntK+JfGUrRj3vRSamaShwaVUM76du066koMXVN603Nr5Fyzipjs8YDwwVa
+         7x4sgPk5+Qs0g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63E99S93321561;
+        Wed, 3 Jul 2019 07:09:09 -0700
+Date:   Wed, 3 Jul 2019 07:09:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-1e567f8tn8m4ii7dy1w9dp39@git.kernel.org>
+Cc:     hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, jolsa@kernel.org, acme@redhat.com,
+          hpa@zytor.com, namhyung@kernel.org, adrian.hunter@intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf ctype: Remove unused 'graph_line' variable
+Git-Commit-ID: 828e27a899156047758628a97eedeb2b8df41670
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190703100205.0b58f3bf@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 10:02:05AM -0400, Steven Rostedt wrote:
-> > On arm64 kprobes depends on the BRK handler we register in
-> > debug_traps_init(), which is an arch_initcall.
-> > 
-> > As of this change, init_krprobes() calls init_test_probes() before
-> > that's registered, so we end up hitting a BRK before we can handle it.
-> 
-> Would something like this help?
-> 
-> -- Steve
-> 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 5471efbeb937..0ca6f53c8505 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
->  extern unsigned long __start_kprobe_blacklist[];
->  extern unsigned long __stop_kprobe_blacklist[];
->  
-> +static bool run_kprobe_tests __initdata;
-> +
->  static int __init init_kprobes(void)
->  {
->  	int i, err = 0;
-> @@ -2286,11 +2288,18 @@ static int __init init_kprobes(void)
->  	kprobes_initialized = (err == 0);
->  
->  	if (!err)
-> -		init_test_probes();
-> +		run_kprobe_tests = true;
->  	return err;
->  }
->  subsys_initcall(init_kprobes);
->  
-> +static int __init run_init_test_probes(void)
-> +{
-> +	if (run_kprobe_tests)
-> +		init_test_probes();
+Commit-ID:  828e27a899156047758628a97eedeb2b8df41670
+Gitweb:     https://git.kernel.org/tip/828e27a899156047758628a97eedeb2b8df41670
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 16:04:17 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 16:04:17 -0300
 
-A return 0 here.
+perf ctype: Remove unused 'graph_line' variable
 
-> +}
-> +module_init(run_init_test_probes);
+Not being used at all anywhere.
 
-This does the trick. I prefer your fix as it leaves the arch code
-unchanged. In case you need it:
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-1e567f8tn8m4ii7dy1w9dp39@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/ctype.c      | 4 ----
+ tools/perf/util/sane_ctype.h | 1 -
+ 2 files changed, 5 deletions(-)
 
-Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Thanks.
-
--- 
-Catalin
+diff --git a/tools/perf/util/ctype.c b/tools/perf/util/ctype.c
+index ee4c1e8ed54b..8d90bf8d0d70 100644
+--- a/tools/perf/util/ctype.c
++++ b/tools/perf/util/ctype.c
+@@ -31,10 +31,6 @@ unsigned char sane_ctype[256] = {
+ 	/* Nothing in the 128.. range */
+ };
+ 
+-const char *graph_line =
+-	"_____________________________________________________________________"
+-	"_____________________________________________________________________"
+-	"_____________________________________________________________________";
+ const char *graph_dotted_line =
+ 	"---------------------------------------------------------------------"
+ 	"---------------------------------------------------------------------"
+diff --git a/tools/perf/util/sane_ctype.h b/tools/perf/util/sane_ctype.h
+index c2b42ff9ff32..894594fdedfb 100644
+--- a/tools/perf/util/sane_ctype.h
++++ b/tools/perf/util/sane_ctype.h
+@@ -2,7 +2,6 @@
+ #ifndef _PERF_SANE_CTYPE_H
+ #define _PERF_SANE_CTYPE_H
+ 
+-extern const char *graph_line;
+ extern const char *graph_dotted_line;
+ extern const char *spaces;
+ extern const char *dots;
