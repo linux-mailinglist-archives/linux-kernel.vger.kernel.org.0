@@ -2,304 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CE25E20B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938525E205
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:28:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfGCK3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 06:29:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33244 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfGCK3G (ORCPT
+        id S1726811AbfGCK22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 06:28:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44903 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfGCK21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 06:29:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=From:Content-Type:MIME-Version:
-        References:Subject:Cc:To:Date:Message-Id:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=V8jm+0gaGgpTzNz4iGV/i3mFan+wp15EVDqd2fvxfbU=; b=wEIreiohSDgx
-        +I25FqrGaJSvepSr4pgrSREMOjN6dOumR8HZlpsiAtLjRqvSsL/5eIycE8oRVBfeUsvE89JzeMlW4
-        X7Smu8XBaiqgX29LKvuL7gFufB9u4Gj3VgYSWlcRH4zapRedvPj8cHHjwRcKlRPxEpTA4BKRvHT0j
-        j5AKVoBbXjLAum9M9+wqdhoYdaLxm6p8LpevLonwoWGTfnKwUrJtux+K4Qzki6cBbaTRhyQP+Vcnz
-        ajWt423JorCcaHDm2L5KjFdTw1fP0yVuSf+MyyjPqrsdYrxWw96FhdiD6Vpvi8rb45pySbUwccByw
-        HbyrOzDTXyvLdlYZpXoY1Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hicV2-0006Fa-A6; Wed, 03 Jul 2019 10:28:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C9D5E2013A3DA; Wed,  3 Jul 2019 12:28:25 +0200 (CEST)
-Message-Id: <20190703102807.588906400@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 03 Jul 2019 12:27:34 +0200
-To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
-        rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
-Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
-        joel@joelfernandes.org, devel@etsukata.com, peterz@infradead.org
-Subject: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
-References: <20190703102731.236024951@infradead.org>
+        Wed, 3 Jul 2019 06:28:27 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e189so1600216oib.11
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 03:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3Mom1ProBR9YeVJzIGAXAqtT65cJ4yLePEcgMF+2h1g=;
+        b=CL/hz4gFm/ysalmbq7Djqj+RlWjsSAw2kXr2MXz8FB/mP/6ldXYShgEs69/vsU2Edt
+         0ZY9uBmBKFRa0eKR86iPXFOskLnbxyGdpmtpQoxF49KRinJAgflls4sZbhtJMFCmRiCZ
+         ady0tjJ9IuDbGRAGbJnaU+DYRgf52RRg3vL2XVUZq+/osKm+2j/dRZWXsROAee3m7hpZ
+         CfnWmUrhICr4ML+bYUOyjq4jxchXEoKai2dbVmg6RaHnmLTKG7ceVItTSnFeKw91omCu
+         fKCpOIGt+eBIjlYFNtFeo93B9Xki2j4xZh2A7z9h9/WP5+qdJ5zYrjBAUM4eQOfepHcu
+         apbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3Mom1ProBR9YeVJzIGAXAqtT65cJ4yLePEcgMF+2h1g=;
+        b=QBqsR6RsKFjvAGZxTFXCAHtqblGDBH+3hD2M2ra2ymcC+8TtFUqiAgfs650zU0v1b4
+         V4kSyFi8vRYeLpDyatNAfbGNl0Q7vS7gC4vO5P1bdhQOzWspcCVSDlKdc03cBOYFLwkL
+         pAJ9nOH3eQ+S4ajyG+2kARPbgPO3ArMe9YFI1j0ANr1FNmc9Lwzg6vVh3rIWbWAmEZkn
+         z1AAHO3jQaqx7/mmL/KjNZL/MRdroPHnBQJsKHSjYoSibNcRnoe4hvviGdyxpSIdqwlI
+         E5/OsW6+lneLU6mCWTsxsna2gSyRVy5FOkeGG2MQ/G8sckiyB389nuE9s2eSXQ7bGvgR
+         udbw==
+X-Gm-Message-State: APjAAAVGa5HUq8+og7Y62Yws2+B291dLTUlND3dMSmDV6Vaoh8mVeOZq
+        aOewaCxS8kDfMdzVFl7/Z4r5HA==
+X-Google-Smtp-Source: APXvYqwriFNHEgJv7zyy3uCTUnmQ8lSSXNvZphE1F6T0g85+yK3ROr16yDzo4S+Gx54iN0m/0eziyw==
+X-Received: by 2002:aca:55c2:: with SMTP id j185mr3106282oib.100.1562149706938;
+        Wed, 03 Jul 2019 03:28:26 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id r9sm718646otc.26.2019.07.03.03.28.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Jul 2019 03:28:26 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 18:28:14 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Changbin Du <changbin.du@intel.com>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 10/11] perf intel-pt: Smatch: Fix potential NULL
+ pointer dereference
+Message-ID: <20190703102814.GF6852@leoy-ThinkPad-X240s>
+References: <20190702103420.27540-1-leo.yan@linaro.org>
+ <20190702103420.27540-11-leo.yan@linaro.org>
+ <cfef1777-141e-4223-e0c1-1a3f3aee1d3c@intel.com>
+ <20190703013553.GB6852@leoy-ThinkPad-X240s>
+ <20190703100032.yx5genhqcrit4z5p@holly.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-From:   root <peterz@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190703100032.yx5genhqcrit4z5p@holly.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Despire the current efforts to read CR2 before tracing happens there
-still exist a number of possible holes:
+On Wed, Jul 03, 2019 at 11:00:32AM +0100, Daniel Thompson wrote:
+> On Wed, Jul 03, 2019 at 09:35:54AM +0800, Leo Yan wrote:
+> > Hi Adrian,
+> > 
+> > On Tue, Jul 02, 2019 at 02:07:40PM +0300, Adrian Hunter wrote:
+> > > On 2/07/19 1:34 PM, Leo Yan wrote:
+> > > > Based on the following report from Smatch, fix the potential
+> > > > NULL pointer dereference check.
+> > > 
+> > > It never is NULL.  Remove the NULL test if you want:
+> > > 
+> > > -	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+> > > +	if (session->itrace_synth_opts->set) {
+> > > 
+> > > But blindly making changes like below is questionable.
+> > 
+> > Thanks for suggestions.
+> > 
+> > I checked report and script commands, as you said, both command will
+> > always set session->itrace_synth_opts.  For these two commands, we can
+> > safely remove the NULL test.
+> > 
+> > Because perf tool contains many sub commands, so I don't have much
+> > confidence it's very safe to remove the NULL test for all cases; e.g.
+> > there have cases which will process aux trace buffer but without
+> > itrace options; for this case, session->itrace_synth_opts might be NULL.
+> > 
+> > For either way (remove NULL test or keep NULL test), I don't want to
+> > introduce regression and extra efforts by my patch.  So want to double
+> > confirm with you for this :)
+> 
+> Review is useful to ensure the chosen solution is correct but
+> unless I missed something the non-regression reasoning here is easy
+> easy. In its original form and despite the check, the code will
+> always dereference session->itrace_synth_opts, therefore removing
+> the check cannot makes things worse.
 
-  idtentry page_fault             do_page_fault           has_error_code=1
-    call error_entry
-      TRACE_IRQS_OFF
-        call trace_hardirqs_off*
-          #PF // modifies CR2
+Fair point and it's smart to connect with function
+itrace_synth_opts__set_default(). :)
 
-      CALL_enter_from_user_mode
-        __context_tracking_exit()
-          trace_user_exit(0)
-            #PF // modifies CR2
+Thanks, Daniel.
 
-    call do_page_fault
-      address = read_cr2(); /* whoopsie */
-
-And similar for i386.
-
-Fix it by pulling the CR2 read into the entry code, before any of that
-stuff gets a chance to run and ruin things.
-
-Ideally we'll clean up the entry code by moving this tracing and
-context tracking nonsense into C some day, but let's not delay fixing
-this longer.
-
-Reported-by: He Zhe <zhe.he@windriver.com>
-Reported-by: Eiichi Tsukata <devel@etsukata.com>
-Debugged-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/entry/entry_32.S       |   25 ++++++++++++++++++++++---
- arch/x86/entry/entry_64.S       |   28 ++++++++++++++--------------
- arch/x86/include/asm/kvm_para.h |    2 +-
- arch/x86/include/asm/traps.h    |    2 +-
- arch/x86/kernel/kvm.c           |    8 ++++----
- arch/x86/mm/fault.c             |   28 ++++++++++------------------
- 6 files changed, 52 insertions(+), 41 deletions(-)
-
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1443,9 +1443,28 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vec
- 
- ENTRY(page_fault)
- 	ASM_CLAC
--	pushl	$do_page_fault
--	ALIGN
--	jmp common_exception
-+	pushl	$0; /* %gs's slot on the stack */
-+
-+	SAVE_ALL switch_stacks=1 skip_gs=1
-+
-+	ENCODE_FRAME_POINTER
-+	UNWIND_ESPFIX_STACK
-+
-+	/* fixup %gs */
-+	GS_TO_REG %ecx
-+	REG_TO_PTGS %ecx
-+	SET_KERNEL_GS %ecx
-+
-+	GET_CR2_INTO(%ecx)			# might clobber %eax
-+
-+	/* fixup orig %eax */
-+	movl	PT_ORIG_EAX(%esp), %edx		# get the error code
-+	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
-+
-+	TRACE_IRQS_OFF
-+	movl	%esp, %eax			# pt_regs pointer
-+	call	do_page_fault
-+	jmp	ret_from_exception
- END(page_fault)
- 
- common_exception:
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -901,7 +901,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
-  * @paranoid == 2 is special: the stub will never switch stacks.  This is for
-  * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
-  */
--.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 ist_offset=0 create_gap=0
-+.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 ist_offset=0 create_gap=0 read_cr2=0
- ENTRY(\sym)
- 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
- 
-@@ -937,18 +937,27 @@ ENTRY(\sym)
- 
- 	.if \paranoid
- 	call	paranoid_entry
-+	/* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
- 	.else
- 	call	error_entry
- 	.endif
- 	UNWIND_HINT_REGS
--	/* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
- 
--	.if \paranoid
-+	.if \read_cr2
-+	GET_CR2_INTO(%rdx);			/* can clobber %rax */
-+	.endif
-+
- 	.if \shift_ist != -1
- 	TRACE_IRQS_OFF_DEBUG			/* reload IDT in case of recursion */
- 	.else
- 	TRACE_IRQS_OFF
- 	.endif
-+
-+	.if \paranoid == 0
-+	testb	$3, CS(%rsp)
-+	jz	.Lfrom_kernel_no_context_tracking_\@
-+	CALL_enter_from_user_mode
-+.Lfrom_kernel_no_context_tracking_\@:
- 	.endif
- 
- 	movq	%rsp, %rdi			/* pt_regs pointer */
-@@ -1180,10 +1189,10 @@ idtentry xenint3		do_int3			has_error_co
- #endif
- 
- idtentry general_protection	do_general_protection	has_error_code=1
--idtentry page_fault		do_page_fault		has_error_code=1
-+idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
- 
- #ifdef CONFIG_KVM_GUEST
--idtentry async_page_fault	do_async_page_fault	has_error_code=1
-+idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
- #endif
- 
- #ifdef CONFIG_X86_MCE
-@@ -1338,18 +1347,9 @@ ENTRY(error_entry)
- 	movq	%rax, %rsp			/* switch stack */
- 	ENCODE_FRAME_POINTER
- 	pushq	%r12
--
--	/*
--	 * We need to tell lockdep that IRQs are off.  We can't do this until
--	 * we fix gsbase, and we should do it before enter_from_user_mode
--	 * (which can take locks).
--	 */
--	TRACE_IRQS_OFF
--	CALL_enter_from_user_mode
- 	ret
- 
- .Lerror_entry_done:
--	TRACE_IRQS_OFF
- 	ret
- 
- 	/*
---- a/arch/x86/include/asm/kvm_para.h
-+++ b/arch/x86/include/asm/kvm_para.h
-@@ -92,7 +92,7 @@ void kvm_async_pf_task_wait(u32 token, i
- void kvm_async_pf_task_wake(u32 token);
- u32 kvm_read_and_reset_pf_reason(void);
- extern void kvm_disable_steal_time(void);
--void do_async_page_fault(struct pt_regs *regs, unsigned long error_code);
-+void do_async_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address);
- 
- #ifdef CONFIG_PARAVIRT_SPINLOCKS
- void __init kvm_spinlock_init(void);
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -81,7 +81,7 @@ struct bad_iret_stack *fixup_bad_iret(st
- void __init trap_init(void);
- #endif
- dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code);
--dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code);
-+dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address);
- dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *regs, long error_code);
- dotraplinkage void do_coprocessor_error(struct pt_regs *regs, long error_code);
- dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code);
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -242,23 +242,23 @@ EXPORT_SYMBOL_GPL(kvm_read_and_reset_pf_
- NOKPROBE_SYMBOL(kvm_read_and_reset_pf_reason);
- 
- dotraplinkage void
--do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
-+do_async_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address)
- {
- 	enum ctx_state prev_state;
- 
- 	switch (kvm_read_and_reset_pf_reason()) {
- 	default:
--		do_page_fault(regs, error_code);
-+		do_page_fault(regs, error_code, address);
- 		break;
- 	case KVM_PV_REASON_PAGE_NOT_PRESENT:
- 		/* page is swapped out by the host. */
- 		prev_state = exception_enter();
--		kvm_async_pf_task_wait((u32)read_cr2(), !user_mode(regs));
-+		kvm_async_pf_task_wait((u32)address, !user_mode(regs));
- 		exception_exit(prev_state);
- 		break;
- 	case KVM_PV_REASON_PAGE_READY:
- 		rcu_irq_enter();
--		kvm_async_pf_task_wake((u32)read_cr2());
-+		kvm_async_pf_task_wake((u32)address);
- 		rcu_irq_exit();
- 		break;
- 	}
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1513,7 +1513,7 @@ NOKPROBE_SYMBOL(do_user_addr_fault);
-  * and the problem, and then passes it off to one of the appropriate
-  * routines.
-  */
--static noinline void
-+static __always_inline void
- __do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
- 		unsigned long address)
- {
-@@ -1528,35 +1528,27 @@ __do_page_fault(struct pt_regs *regs, un
- 	else
- 		do_user_addr_fault(regs, hw_error_code, address);
- }
--NOKPROBE_SYMBOL(__do_page_fault);
- 
--static nokprobe_inline void
--trace_page_fault_entries(unsigned long address, struct pt_regs *regs,
--			 unsigned long error_code)
-+static __always_inline void
-+trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
-+			 unsigned long address)
- {
-+	if (!trace_pagefault_enabled())
-+		return;
-+
- 	if (user_mode(regs))
- 		trace_page_fault_user(address, regs, error_code);
- 	else
- 		trace_page_fault_kernel(address, regs, error_code);
- }
- 
--/*
-- * We must have this function blacklisted from kprobes, tagged with notrace
-- * and call read_cr2() before calling anything else. To avoid calling any
-- * kind of tracing machinery before we've observed the CR2 value.
-- *
-- * exception_{enter,exit}() contains all sorts of tracepoints.
-- */
--dotraplinkage void notrace
--do_page_fault(struct pt_regs *regs, unsigned long error_code)
-+dotraplinkage void
-+do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address)
- {
--	unsigned long address = read_cr2(); /* Get the faulting address */
- 	enum ctx_state prev_state;
- 
- 	prev_state = exception_enter();
--	if (trace_pagefault_enabled())
--		trace_page_fault_entries(address, regs, error_code);
--
-+	trace_page_fault_entries(regs, error_code, address);
- 	__do_page_fault(regs, error_code, address);
- 	exception_exit(prev_state);
- }
-
-
+> PS Of course we do also have to check that
+>    itrace_synth_opts__set_default() isn't a macro... but it isn't.
+> 
+> 
+> > > >   tools/perf/util/intel-pt.c:3200
+> > > >   intel_pt_process_auxtrace_info() error: we previously assumed
+> > > >   'session->itrace_synth_opts' could be null (see line 3196)
+> > > > 
+> > > >   tools/perf/util/intel-pt.c:3206
+> > > >   intel_pt_process_auxtrace_info() warn: variable dereferenced before
+> > > >   check 'session->itrace_synth_opts' (see line 3200)
+> > > > 
+> > > > tools/perf/util/intel-pt.c
+> > > > 3196         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+> > > > 3197                 pt->synth_opts = *session->itrace_synth_opts;
+> > > > 3198         } else {
+> > > > 3199                 itrace_synth_opts__set_default(&pt->synth_opts,
+> > > > 3200                                 session->itrace_synth_opts->default_no_sample);
+> > > >                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > > > 3201                 if (!session->itrace_synth_opts->default_no_sample &&
+> > > > 3202                     !session->itrace_synth_opts->inject) {
+> > > > 3203                         pt->synth_opts.branches = false;
+> > > > 3204                         pt->synth_opts.callchain = true;
+> > > > 3205                 }
+> > > > 3206                 if (session->itrace_synth_opts)
+> > > >                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > > > 3207                         pt->synth_opts.thread_stack =
+> > > > 3208                                 session->itrace_synth_opts->thread_stack;
+> > > > 3209         }
+> > > > 
+> > > > To dismiss the potential NULL pointer dereference, this patch validates
+> > > > the pointer 'session->itrace_synth_opts' before access its elements.
+> > > > 
+> > > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > > ---
+> > > >  tools/perf/util/intel-pt.c | 5 ++---
+> > > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> > > > index 550db6e77968..88b567bdf1f9 100644
+> > > > --- a/tools/perf/util/intel-pt.c
+> > > > +++ b/tools/perf/util/intel-pt.c
+> > > > @@ -3195,7 +3195,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+> > > >  
+> > > >  	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+> > > >  		pt->synth_opts = *session->itrace_synth_opts;
+> > > > -	} else {
+> > > > +	} else if (session->itrace_synth_opts) {
+> > > >  		itrace_synth_opts__set_default(&pt->synth_opts,
+> > > >  				session->itrace_synth_opts->default_no_sample);
+> > > >  		if (!session->itrace_synth_opts->default_no_sample &&
+> > > > @@ -3203,8 +3203,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+> > > >  			pt->synth_opts.branches = false;
+> > > >  			pt->synth_opts.callchain = true;
+> > > >  		}
+> > > > -		if (session->itrace_synth_opts)
+> > > > -			pt->synth_opts.thread_stack =
+> > > > +		pt->synth_opts.thread_stack =
+> > > >  				session->itrace_synth_opts->thread_stack;
+> > > >  	}
+> > > >  
+> > > > 
+> > > 
