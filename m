@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E69A5E693
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F63F5E69A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfGCO1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:27:11 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49045 "EHLO ozlabs.org"
+        id S1727217AbfGCO1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:27:35 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:52124 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727134AbfGCO1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:27:10 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45f3Mv2T8mz9s00; Thu,  4 Jul 2019 00:27:07 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 80e5302e4bc85a6b685b7668c36c6487b5f90e9a
-In-Reply-To: <20190626183801.31247-1-naveen.n.rao@linux.vnet.ibm.com>
-To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] recordmcount: Fix spurious mcount entries on powerpc
-Message-Id: <45f3Mv2T8mz9s00@ozlabs.org>
-Date:   Thu,  4 Jul 2019 00:27:07 +1000 (AEST)
+        id S1726675AbfGCO1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:27:34 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1higEJ-0000cD-5e; Wed, 03 Jul 2019 22:27:27 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1higEF-0000UZ-Ar; Wed, 03 Jul 2019 22:27:23 +0800
+Date:   Wed, 3 Jul 2019 22:27:23 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v5 0/4] *** SUBJECT HERE ***
+Message-ID: <20190703142723.zueylnlwzajpdtvs@gondor.apana.org.au>
+References: <cover.1561360551.git.christophe.leroy@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1561360551.git.christophe.leroy@c-s.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-26 at 18:38:01 UTC, "Naveen N. Rao" wrote:
-> The recent change enabling HAVE_C_RECORDMCOUNT on powerpc started
-> showing the following issue:
+On Mon, Jun 24, 2019 at 07:20:13AM +0000, Christophe Leroy wrote:
+> This series is the last set of fixes for the Talitos driver.
 > 
->   # modprobe kprobe_example
->    ftrace-powerpc: Not expected bl: opcode is 3c4c0001
->    WARNING: CPU: 0 PID: 227 at kernel/trace/ftrace.c:2001 ftrace_bug+0x90/0x318
->    Modules linked in:
->    CPU: 0 PID: 227 Comm: modprobe Not tainted 5.2.0-rc6-00678-g1c329100b942 #2
->    NIP:  c000000000264318 LR: c00000000025d694 CTR: c000000000f5cd30
->    REGS: c000000001f2b7b0 TRAP: 0700   Not tainted  (5.2.0-rc6-00678-g1c329100b942)
->    MSR:  900000010282b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 28228222  XER: 00000000
->    CFAR: c0000000002642fc IRQMASK: 0
->    <snip>
->    NIP [c000000000264318] ftrace_bug+0x90/0x318
->    LR [c00000000025d694] ftrace_process_locs+0x4f4/0x5e0
->    Call Trace:
->    [c000000001f2ba40] [0000000000000004] 0x4 (unreliable)
->    [c000000001f2bad0] [c00000000025d694] ftrace_process_locs+0x4f4/0x5e0
->    [c000000001f2bb90] [c00000000020ff10] load_module+0x25b0/0x30c0
->    [c000000001f2bd00] [c000000000210cb0] sys_finit_module+0xc0/0x130
->    [c000000001f2be20] [c00000000000bda4] system_call+0x5c/0x70
->    Instruction dump:
->    419e0018 2f83ffff 419e00bc 2f83ffea 409e00cc 4800001c 0fe00000 3c62ff96
->    39000001 39400000 386386d0 480000c4 <0fe00000> 3ce20003 39000001 3c62ff96
->    ---[ end trace 4c438d5cebf78381 ]---
->    ftrace failed to modify
->    [<c0080000012a0008>] 0xc0080000012a0008
->     actual:   01:00:4c:3c
->    Initializing ftrace call sites
->    ftrace record flags: 2000000
->     (0)
->     expected tramp: c00000000006af4c
+> We now get a fully clean boot on both SEC1 (SEC1.2 on mpc885) and
+> SEC2 (SEC2.2 on mpc8321E) with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS:
 > 
-> Looking at the relocation records in __mcount_loc showed a few spurious
-> entries:
->   RELOCATION RECORDS FOR [__mcount_loc]:
->   OFFSET           TYPE              VALUE
->   0000000000000000 R_PPC64_ADDR64    .text.unlikely+0x0000000000000008
->   0000000000000008 R_PPC64_ADDR64    .text.unlikely+0x0000000000000014
->   0000000000000010 R_PPC64_ADDR64    .text.unlikely+0x0000000000000060
->   0000000000000018 R_PPC64_ADDR64    .text.unlikely+0x00000000000000b4
->   0000000000000020 R_PPC64_ADDR64    .init.text+0x0000000000000008
->   0000000000000028 R_PPC64_ADDR64    .init.text+0x0000000000000014
+> [    3.385197] bus: 'platform': really_probe: probing driver talitos with device ff020000.crypto
+> [    3.450982] random: fast init done
+> [   12.252548] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos-hsna)
+> [   12.262226] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos-hsna)
+> [   43.310737] Bug in SEC1, padding ourself
+> [   45.603318] random: crng init done
+> [   54.612333] talitos ff020000.crypto: fsl,sec1.2 algorithms registered in /proc/crypto
+> [   54.620232] driver: 'talitos': driver_bound: bound to device 'ff020000.crypto'
 > 
-> The first entry in each section is incorrect. Looking at the relocation
-> records, the spurious entries correspond to the R_PPC64_ENTRY records:
->   RELOCATION RECORDS FOR [.text.unlikely]:
->   OFFSET           TYPE              VALUE
->   0000000000000000 R_PPC64_REL64     .TOC.-0x0000000000000008
->   0000000000000008 R_PPC64_ENTRY     *ABS*
->   0000000000000014 R_PPC64_REL24     _mcount
->   <snip>
+> [    1.193721] bus: 'platform': really_probe: probing driver talitos with device b0030000.crypto
+> [    1.229197] random: fast init done
+> [    2.714920] alg: No test for authenc(hmac(sha224),cbc(aes)) (authenc-hmac-sha224-cbc-aes-talitos)
+> [    2.724312] alg: No test for authenc(hmac(sha224),cbc(aes)) (authenc-hmac-sha224-cbc-aes-talitos-hsna)
+> [    4.482045] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos)
+> [    4.490940] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos-hsna)
+> [    4.500280] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos)
+> [    4.509727] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos-hsna)
+> [    6.631781] random: crng init done
+> [   11.521795] talitos b0030000.crypto: fsl,sec2.2 algorithms registered in /proc/crypto
+> [   11.529803] driver: 'talitos': driver_bound: bound to device 'b0030000.crypto'
 > 
-> The problem is that we are not validating the return value from
-> get_mcountsym() in sift_rel_mcount(). With this entry, mcountsym is 0,
-> but Elf_r_sym(relp) also ends up being 0. Fix this by ensuring mcountsym
-> is valid before processing the entry.
+> v2: dropped patch 1 which was irrelevant due to a rebase weirdness. Added Cc to stable on the 2 first patches.
 > 
-> Fixes: c7d64b560ce80 ("powerpc/ftrace: Enable C Version of recordmcount")
-> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-> Tested-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> v3:
+>  - removed stable reference in patch 1
+>  - reworded patch 1 to include name of patch 2 for the dependency.
+>  - mentionned this dependency in patch 2 as well.
+>  - corrected the Fixes: sha1 in patch 4
+>  
+> v4:
+>  - using scatterwalk_ffwd() instead of opencodying SG list forwarding.
+>  - Added a patch to fix sg_copy_to_buffer() when sg->offset() is greater than PAGE_SIZE,
+>  otherwise sg_copy_to_buffer() fails when the list has been forwarded with scatterwalk_ffwd().
+>  - taken the patch "crypto: talitos - eliminate unneeded 'done' functions at build time"
+>  out of the series because it is independent.
+>  - added a helper to find the header field associated to a request in flush_channe()
+>  
+> v5:
+>  - Replacing the while loop by a direct shift/mask operation, as suggested by Herbert in patch 1.
+> 
+> Christophe Leroy (4):
+>   lib/scatterlist: Fix mapping iterator when sg->offset is greater than
+>     PAGE_SIZE
+>   crypto: talitos - move struct talitos_edesc into talitos.h
+>   crypto: talitos - fix hash on SEC1.
+>   crypto: talitos - drop icv_ool
+> 
+>  drivers/crypto/talitos.c | 102 +++++++++++++++++++----------------------------
+>  drivers/crypto/talitos.h |  28 +++++++++++++
+>  lib/scatterlist.c        |   9 +++--
+>  3 files changed, 74 insertions(+), 65 deletions(-)
 
-Applied to powerpc next, thanks.
-
-https://git.kernel.org/powerpc/c/80e5302e4bc85a6b685b7668c36c6487b5f90e9a
-
-cheers
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
