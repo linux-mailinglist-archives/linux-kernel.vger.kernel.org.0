@@ -2,108 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F42255E126
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F13845E12F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfGCJiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 05:38:06 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44878 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfGCJiG (ORCPT
+        id S1726544AbfGCJm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:42:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:42709 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfGCJm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:38:06 -0400
-Received: by mail-ot1-f66.google.com with SMTP id b7so1631035otl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 02:38:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O3kMFQ8TXN6LpaUUZdQWD8WXwEeJdvT7O5F6HFvQxlc=;
-        b=kCidiH9fEzQQLeOoG+BrvvhoRSHVscvC9xCPjzoCiV9WA9hhQxGMVdAWWFwhqGueFI
-         Xy0v0eg07s/f+yIa7RrHmhoUXXJ3fuhhkKt4mQdfra2GOH7oFgRT7v1ekHHeMS3msLvE
-         OyQzE5vF+oGc+VHA08vWnMWG/8+udMbq1qSb3IEtNAYEIw9PpwWBVEZf2hFddBXbO31H
-         NZ1u75J+ysufW0Vvv1M+LfQyqEY+XUxlcIhB9Ow+qPzOAq6KIqjw4n9NhnZG7nNTpTCr
-         AfmtF4f1qJYXLusAC5yxBB3/qaIIgOH/FccaCARNUBArjhFWPVAhsg4EVFPvWFcHu8QU
-         ML7Q==
-X-Gm-Message-State: APjAAAUFE9Dvx2iWbf8x0b77rdLps4e07LV5TR6DdYIAPPk45hljHJ1K
-        rOuZNWl8DyeSw4TokPkT9ZYcUdXqfe3sKaae4Fs=
-X-Google-Smtp-Source: APXvYqz6JiFFqUgd0LhQug7NEP8TUwMEo3QYMYh9TtL/pZLpMia9BgUoxuxvkhDb5esarP9gWK2rE24QLI0NlElkAW8=
-X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr10542395oto.167.1562146685904;
- Wed, 03 Jul 2019 02:38:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190703071653.2799-1-gregkh@linuxfoundation.org>
- <20190703071653.2799-2-gregkh@linuxfoundation.org> <CAJZ5v0goKqHXfG=nNprMtKTDj02s3U56BOGQTuqajcqVdqqFcw@mail.gmail.com>
- <20190703093233.GA4436@kroah.com>
-In-Reply-To: <20190703093233.GA4436@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 3 Jul 2019 11:37:55 +0200
-Message-ID: <CAJZ5v0homn90GK=j1b4Lk7Lqgji8C+jvi4q79o2_P9790tXdtw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] debugfs: log errors when something goes wrong
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Jul 2019 05:42:27 -0400
+Received: from orion.localdomain ([95.114.150.241]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MZSJa-1i3wZD2yyE-00WZIe; Wed, 03 Jul 2019 11:42:25 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: pl061: drop duplicate printing of device name
+Date:   Wed,  3 Jul 2019 11:42:24 +0200
+Message-Id: <1562146944-4162-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:+1vQXFykhGB75zGAweFB11S8tsj2ZEYSeBTunoSwjvd/la1fZiu
+ WPa5VvnXgVCmc5jksDFYq00k7MgD591Ovr/fvJJE0//WyR5va/3KMrmvIzWfmbU9t6YX+Lr
+ XMPa3ZbZAOqBuqgCtB6mQKozWKOy2Kl/ezjKohSlgv+4IyaRv/ihKVUNXPvKlibFKzk/834
+ nVu1iqnWejSVn66Z4Y+3Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nlK2QIBgKlc=:nn2MuhzPwDMwLQzUdLMClo
+ psgekGUF1LnstZlGhJ6zkiFGj2YNhZzKBLzD7huD//ymk/cfQRKxReMiYf02cIekGc8kY5tys
+ lBBixNq82OPC2BVRhJXzo3e7hcDHZQtVmMK/rJkK3SpHIZalcXjIenyt0LucK3pRSYEsap2Rv
+ sGXQjlOYKx8fEOXSxKefiB9GGU9aldLA6XPTqICn0qR7FpfkDPmfzsR13J0V8eKGFgcfq2CFi
+ naVOpaRtIT740tECrKmDglIFq+EiQPfBl3/54YTtnsEHZIN5mMHsDk3LEJDjg1HsI/6xUwUx+
+ 2NA+YQufYRFF4EPUa4lrMyI66hVkUCl+5MgVUlqkW2SJJANUr/dZyZhGYP5d7Cne5K553ilLT
+ M3cLpknCGVDtcQLnb4/+/bxIM632R4/bGfLLRCLprVm7aRiUjlcU0fy7/II4vFfZZ86ZAhIR+
+ 8x6ci3bG4KzVV77CoHJP63GG7my6YMm0ISlhKMt6ZRrQ2UiKF2ihkG+XRYw9ChBGyly+/Zn7P
+ exPRRhK6ugWECg6gW51XGv6+aMh0dz9mX8ipzaSO44QoPl1X47EFlhn4ADnMu61nrKvR7krXU
+ 7EY4yhj2HzDwDVCxqYdOFpijdbxGIJseLquQ9Ncvab6KkL0orPBWliGMXFOmjt3X7ISSaCQz5
+ NldkobxLqm1sByw1NDe8npXosflTadtLcz1NBqlc1gLn17pf+rpqAoA70XiBUq5oR0eUrbYjD
+ iuI29WLexssXY5R+BB/YU1U1ki4X0/fMs8EUbQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 11:32 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Jul 03, 2019 at 11:10:44AM +0200, Rafael J. Wysocki wrote:
-> > On Wed, Jul 3, 2019 at 9:17 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > As it is not recommended that debugfs calls be checked, it was pointed
-> > > out that major errors should still be logged somewhere so that
-> > > developers and users have a chance to figure out what went wrong.  To
-> > > help with this, error logging has been added to the debugfs core so that
-> > > it is not needed to be present in every individual file that calls
-> > > debugfs.
-> > >
-> > > Reported-by: Mark Brown <broonie@kernel.org>
-> > > Reported-by: Takashi Iwai <tiwai@suse.de>
-> > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >
-> > Generally speaking
-> >
-> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > > ---
-> > >  fs/debugfs/inode.c | 25 ++++++++++++++++++++-----
-> > >  1 file changed, 20 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > > index f04c8475d9a1..7f43c8acfcbf 100644
-> > > --- a/fs/debugfs/inode.c
-> > > +++ b/fs/debugfs/inode.c
-> > > @@ -2,8 +2,9 @@
-> > >  /*
-> > >   *  inode.c - part of debugfs, a tiny little debug file system
-> > >   *
-> > > - *  Copyright (C) 2004 Greg Kroah-Hartman <greg@kroah.com>
-> > > + *  Copyright (C) 2004,2019 Greg Kroah-Hartman <greg@kroah.com>
-> > >   *  Copyright (C) 2004 IBM Inc.
-> > > + *  Copyright (C) 2019 Linux Foundation <gregkh@linuxfoundation.org>
-> > >   *
-> > >   *  debugfs is for people to use instead of /proc or /sys.
-> > >   *  See ./Documentation/core-api/kernel-api.rst for more details.
-> > > @@ -294,8 +295,10 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
-> > >
-> > >         error = simple_pin_fs(&debug_fs_type, &debugfs_mount,
-> > >                               &debugfs_mount_count);
-> > > -       if (error)
-> > > +       if (error) {
-> > > +               pr_err("Unable to pin filesystem for file '%s'\n", name);
-> >
-> > But I'm not sure about the log level here.  Particularly, why would
-> > pr_info() not work?
->
-> It could, but it is an error in that debugfs didn't do what was asked of
-> it.  I really don't care either way, the odds of anyone ever seeing this
-> message is almost none :)
+From: Enrico Weigelt <info@metux.net>
 
-Fair enough.
+The dev_info() call already prints the device name, so there's
+no need to explicitly include it in the message for second time.
+
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/gpio/gpio-pl061.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 84af248..83a44dd 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -349,7 +349,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 		return ret;
+ 
+ 	amba_set_drvdata(adev, pl061);
+-	dev_info(dev, "PL061 GPIO chip %s registered\n", dev_name(dev));
++	dev_info(dev, "PL061 GPIO chip registered\n");
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
+
