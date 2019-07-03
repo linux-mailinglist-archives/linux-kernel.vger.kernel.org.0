@@ -2,127 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1205EC8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C609C5ECA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfGCTMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 15:12:10 -0400
-Received: from cmta17.telus.net ([209.171.16.90]:58686 "EHLO cmta17.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfGCTMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 15:12:09 -0400
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id ikfkhVmzwzEP4ikflhol97; Wed, 03 Jul 2019 13:12:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1562181127; bh=duuBS6rinMa0pwtOKOVf/BFNNO4Ic1/CAz5zHoIh6XA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=qtI1TSvtcp1usB7XvPwIbPFB+xJblM1BUnwhmuMsmTZqt070RQ3+dwZGMYtjr39oQ
-         E4fGlhXQ/bWaYXCQ3aQAyOIkweLECJTWzUPIC952erLEdO0ZBSyMTfJVF0jl0Y/Ag1
-         e0N97hTYpcwQ9Me+/yqIUE3ZBrlFd9aJ6dy8inAMT4RaRF1t+2ODzjrcaOnIzOGHdn
-         cAudzu7E/Btps+bJnZKPAeXiYaT/NBZK5B/S9Tjhn6Q66N5xS+Aprgj5QL8Be8STc8
-         W5HwHEbZO82E4atCv6j5+QPNxLU9yk7mZ7nPvZufcF2jkbV6BAlqmTC8ijMY15k6U/
-         ZhLqiJFl1nmzw==
-X-Telus-Authed: none
-X-Authority-Analysis: v=2.3 cv=cYmsUULM c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
- a=IkcTkHD0fZMA:10 a=FGbulvE0AAAA:8 a=kWJDoAjU50K2MEyS90sA:9 a=QEXdDO2ut3YA:10
- a=svzTaB3SJmTkU8mK-ULk:22
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Daniel Lezcano'" <daniel.lezcano@linaro.org>
-Cc:     <linux-kernel@vger.kernel.org>,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'open list:CPU IDLE TIME MANAGEMENT FRAMEWORK'" 
-        <linux-pm@vger.kernel.org>, <rafael@kernel.org>
-References: <20190620115826.4897-1-daniel.lezcano@linaro.org> <000101d531aa$e00987e0$a01c97a0$@net> <6589a058-c538-fbf3-7761-d43ab8434654@linaro.org>
-In-Reply-To: <6589a058-c538-fbf3-7761-d43ab8434654@linaro.org>
-Subject: RE: [PATCH] cpuidle/drivers/mobile: Add new governor for mobile/embedded systems
-Date:   Wed, 3 Jul 2019 12:12:03 -0700
-Message-ID: <000a01d531d3$3471a060$9d54e120$@net>
+        id S1727011AbfGCTQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 15:16:07 -0400
+Received: from smtprelay0003.hostedemail.com ([216.40.44.3]:35678 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726581AbfGCTQH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 15:16:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 9890718021864;
+        Wed,  3 Jul 2019 19:16:05 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3867:4250:4321:5007:6642:6742:7903:7904:10004:10400:10848:11026:11232:11473:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21451:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
+X-HE-Tag: farm73_34d274a800e47
+X-Filterd-Recvd-Size: 1862
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  3 Jul 2019 19:16:02 +0000 (UTC)
+Message-ID: <2f19693f2f720dcc037465d4ae517fb846c7eb4f.camel@perches.com>
+Subject: Re: [patch v3 1/5] AST2500 DMA UART driver
+From:   Joe Perches <joe@perches.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        "sudheer.v" <open.sudheer@gmail.com>
+Cc:     jslaby@suse.com, joel@jms.id.au, andrew@aj.id.au,
+        benh@kernel.crashing.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        shivahshankar.shankarnarayanrao@aspeedtech.com,
+        shivahshankar@gmail.com, sudheer.veliseti@aspeedtech.com,
+        sudheer veliseti <sudheer.open@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+Date:   Wed, 03 Jul 2019 12:16:01 -0700
+In-Reply-To: <20190703174926.GA12813@kroah.com>
+References: <1561459476-14268-1-git-send-email-open.sudheer@gmail.com>
+         <1561459476-14268-2-git-send-email-open.sudheer@gmail.com>
+         <20190703174926.GA12813@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdUxskNHh9ahYXCXQ82aPBZqjRxmngAFv0oA
-X-CMAE-Envelope: MS4wfF7v91g2X7U5hcjl4wllzOJpv6pIkupad2wCk1AC5zpzSc7M92u9y433Q/ErjieDGGPRW9k70rjyMAS3l85uTGBUfzWaT2FHG0xnnYj2zJzSYVcmwTm0
- DAtxBGAb3Dy5Yb4rdiLuyABzbPlfD/imUJy7UlDVcQvkF6uCQQ95vsJbqxey1NqDmpa9XGPvTqEQrvEOJ99ik9aHSr4R9DQZ3A6pkYuo2mgHwyQ8p4LbjXkS
- +UmQk8SJ4Yw2I8UKkeFxTm/odEeZNYSd1B1B21gA39axctRmlNW9Iwl0t8Swp9EN3Ovts22kc6OHFHKgh3qYX8iC3FmcsQAeCcn3QdNPjv39IrLsSUMnxmWH
- y2lmf9yX9IbjwuVFIZ2+zN8DN6yduw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019.07.03 08:16 Daniel Lezcano wrote:
-> On 03/07/2019 16:23, Doug Smythies wrote:
->> On 2019.06.20 04:58 Daniel Lezcano wrote:
+On Wed, 2019-07-03 at 19:49 +0200, Greg KH wrote:
+> On Tue, Jun 25, 2019 at 04:14:32PM +0530, sudheer.v wrote:
+> > +#define UART_TX_R_POINT(x) (0x40 + (x * 0x20))
+> > +#define UART_TX_W_POINT(x) (0x44 + (x * 0x20))
+> > +#define UART_TX_SDMA_ADDR(x) (0x48 + (x * 0x20))
+> > +#define UART_RX_R_POINT(x) (0x50 + (x * 0x20))
+> > +#define UART_RX_W_POINT(x) (0x54 + (x * 0x20))
+> > +#define UART_RX_SDMA_ADDR(x) (0x58 + (x * 0x20))
+> 
+> Please use a tab to line these up.
 
-...
->> Anyway, I did a bunch of tests and such, but have deleted
->> most from this e-mail, because it's just noise. I'll
->> include just one set:
->> 
->> For a work load that would normally result in a lot of use
->> of shallow idle states (single core pipe-test * 2 cores).
->
-> Can you share the tests and the command lines?
+Also x should be surrounded by parentheses
 
-Yes, give me a few days to repeat the tests and write
-it up properly. I am leaving town in an hour and for a day.
+#define UART_TX_R_POINT(x)	(0x40 + ((x) * 0x20))
 
-It'll be similar to this:
-http://www.smythies.com/~doug/linux/idle/teo8/pipe/index.html
-parent page (which I will do a better version):
-http://www.smythies.com/~doug/linux/idle/teo8/index.html
-...
-
->> I got (all kernel 5.2-rc5 + this patch):
->> 
->> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
->> Processor package power: 40.4 watts; 4.9 uSec/loop
->> 
->> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
->> Processor package power: 34 watts; 5.2 uSec/loop
->> 
->> Idle governor, mobile; CPU frequency scaling: intel-cpufreq/ondemand;
->> Processor package power: 25.9 watts; 11.1 uSec/loop
->> 
->> Idle governor, menu; CPU frequency scaling: intel-cpufreq/ondemand;
->> Processor package power: 34.2 watts; 5.23 uSec/loop
->> 
->> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
->> Maximum CPU frequency limited to 73% to match mobile energy.
->> Processor package power: 25.4 watts; 6.4 uSec/loop
->
-> Ok that's interesting. Thanks for the values.
->
-> The governor can be better by selecting the shallow states, the
-> scheduler has to interact with the governor to give clues about the
-> load, that is identified and will be the next step.
->
-> Is it possible to check with the schedutil governor instead?
-
-Oh, I already have some data, just didn't include it before:
-
-Idle governor, teo; CPU frequency scaling: intel-cpufreq/schedutil;
-Processor package power: 40.4 watts; 4.9 uSec/loop
-
-Idle governor, mobile; CPU frequency scaling: intel-cpufreq/schedutil;
-Processor package power: 12.7 watts; 19.7 uSec/loop
-
-Idle governor, teo; CPU frequency scaling: intel-cpufreq/schedutil;
-Idle states 0-3 disabled (note: Idle state 4 is the deepest on my system)
-Processor package power: 36.9 watts; 8.3 uSec/loop
-In my notes I wrote: "Huh?? I do not understand this result, as I had
-expected more similar to the mobile governor". But I did not investigate.
-
-Anyway, the schedutil test is the one I'll repeat and write up better.
-
-... Doug
+etc...
 
 
