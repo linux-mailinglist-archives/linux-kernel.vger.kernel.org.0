@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7118C5DCEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8F05DCEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfGCD2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 23:28:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        id S1727477AbfGCD2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 23:28:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfGCD2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 23:28:31 -0400
+        id S1727065AbfGCD2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 23:28:38 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BD4621850;
-        Wed,  3 Jul 2019 03:28:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9332B2189F;
+        Wed,  3 Jul 2019 03:28:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562124511;
-        bh=E5HWvXZgTeSKHxIKhqZ/E3l3wGCI1IPSGpHB2y/QAV8=;
+        s=default; t=1562124516;
+        bh=kh1htbmle8QuNO8L1oukcK+e54dA3anpyPlbs9vBagc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WoJa7Iru2ljQE3R5Dx237lQe4g8tSPMFcFlQpuAmUygJ1ue3RnuBbQc4o5HoVJX+L
-         SOihDqDB/DX22YgJFZO3OjPBav1B6kphrS6Tmaf5InsVmiyXN+CbnMtAKqhlKFeGvs
-         KvG8grMKIJlw59KW4m6NXwhHJKdboRhAq9d3j3Y8=
+        b=bkDsVs7CLtHxFfDemD59Sy0dhp9T1MQ93UXpPypJNEvqbhu36B4fpCp1/Xx3MYApm
+         KTyq7lqvvqilYS8BNCp/rVox0+JKA3ltmhkfHQR0Yac3xsL9aA6uBhj4ZrZkri2FZO
+         RI7/km5S2b4Wn9/Dov9J/AV/WPbPgTJBdQDud23E=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -43,9 +43,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 09/18] perf pmu: Support more complex PMU event aliasing
-Date:   Wed,  3 Jul 2019 00:27:37 -0300
-Message-Id: <20190703032746.21692-10-acme@kernel.org>
+Subject: [PATCH 10/18] perf jevents: Add support for Hisi hip08 DDRC PMU aliasing
+Date:   Wed,  3 Jul 2019 00:27:38 -0300
+Message-Id: <20190703032746.21692-11-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703032746.21692-1-acme@kernel.org>
 References: <20190703032746.21692-1-acme@kernel.org>
@@ -58,22 +58,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Garry <john.garry@huawei.com>
 
-The jevent "Unit" field is used for uncore PMU alias definition.
+Add support for Hisi hip08 DDRC PMU aliasing. We can now do something like
+this:
 
-The form uncore_pmu_example_X is supported, where "X" is a wildcard, to
-support multiple instances of the same PMU in a system.
+$perf list
 
-Unfortunately this format not suitable for all uncore PMUs; take the
-Hisi DDRC uncore PMU for example, where the name is in the form
-hisi_scclX_ddrcY.
+[snip]
 
-For for current jevent parsing, we would be required to hardcode an
-uncore alias translation for each possible value of X. This is not
-scalable.
+uncore ddrc:
+  uncore_hisi_ddrc.act_cmd
+       [DDRC active commands. Unit: hisi_sccl,ddrc]
+  uncore_hisi_ddrc.flux_rcmd
+       [DDRC read commands. Unit: hisi_sccl,ddrc]
+  uncore_hisi_ddrc.flux_wcmd
+       [DDRC write commands. Unit: hisi_sccl,ddrc]
+  uncore_hisi_ddrc.flux_wr
+       [DDRC precharge commands. Unit: hisi_sccl,ddrc]
+  uncore_hisi_ddrc.rnk_chg
+       [DDRC rank commands. Unit: hisi_sccl,ddrc]
+  uncore_hisi_ddrc.rw_chg
+       [DDRC read and write changes. Unit: hisi_sccl,ddrc]
 
-Instead, add support for "Unit" field in the form "hisi_sccl,ddrc",
-where we can match by hisi_scclX and ddrcY. Tokens  in Unit field are
-delimited by ','.
+Performance counter stats for 'system wide':
+
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc0]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc1]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc2]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc3]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc0]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc1]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc3]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc1]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc2]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc3]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc0]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl5_ddrc1]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc2]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl7_ddrc0]
+            20,421      uncore_hisi_ddrc.flux_rcmd [hisi_sccl1_ddrc2]
+                 0      uncore_hisi_ddrc.flux_rcmd [hisi_sccl3_ddrc3]
+
+       1.001559011 seconds time elapsed
+
+The kernel driver is in drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -91,78 +118,76 @@ Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1561732552-143038-2-git-send-email-john.garry@huawei.com
-[ Shut up older gcc complianing about the last arg to strtok_r() being uninitialized, set that tmp to NULL ]
+Link: http://lkml.kernel.org/r/1561732552-143038-3-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/pmu.c | 46 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ .../arm64/hisilicon/hip08/uncore-ddrc.json    | 44 +++++++++++++++++++
+ tools/perf/pmu-events/jevents.c               |  1 +
+ 2 files changed, 45 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 8139a1f3ed39..55f4de6442e3 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -701,6 +701,46 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
- 	return map;
- }
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+new file mode 100644
+index 000000000000..0d1556fcdffe
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+@@ -0,0 +1,44 @@
++[
++   {
++	    "EventCode": "0x02",
++	    "EventName": "uncore_hisi_ddrc.flux_wcmd",
++	    "BriefDescription": "DDRC write commands",
++	    "PublicDescription": "DDRC write commands",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++   {
++	    "EventCode": "0x03",
++	    "EventName": "uncore_hisi_ddrc.flux_rcmd",
++	    "BriefDescription": "DDRC read commands",
++	    "PublicDescription": "DDRC read commands",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++   {
++	    "EventCode": "0x04",
++	    "EventName": "uncore_hisi_ddrc.flux_wr",
++	    "BriefDescription": "DDRC precharge commands",
++	    "PublicDescription": "DDRC precharge commands",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++   {
++	    "EventCode": "0x05",
++	    "EventName": "uncore_hisi_ddrc.act_cmd",
++	    "BriefDescription": "DDRC active commands",
++	    "PublicDescription": "DDRC active commands",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++   {
++	    "EventCode": "0x06",
++	    "EventName": "uncore_hisi_ddrc.rnk_chg",
++	    "BriefDescription": "DDRC rank commands",
++	    "PublicDescription": "DDRC rank commands",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++   {
++	    "EventCode": "0x07",
++	    "EventName": "uncore_hisi_ddrc.rw_chg",
++	    "BriefDescription": "DDRC read and write changes",
++	    "PublicDescription": "DDRC read and write changes",
++	    "Unit": "hisi_sccl,ddrc",
++   },
++]
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index a1184ea64cc6..d5997741f1d8 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -236,6 +236,7 @@ static struct map {
+ 	{ "CPU-M-CF", "cpum_cf" },
+ 	{ "CPU-M-SF", "cpum_sf" },
+ 	{ "UPI LL", "uncore_upi" },
++	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
+ 	{}
+ };
  
-+static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
-+{
-+	char *tmp = NULL, *tok, *str;
-+	bool res;
-+
-+	str = strdup(pmu_name);
-+	if (!str)
-+		return false;
-+
-+	/*
-+	 * uncore alias may be from different PMU with common prefix
-+	 */
-+	tok = strtok_r(str, ",", &tmp);
-+	if (strncmp(pmu_name, tok, strlen(tok))) {
-+		res = false;
-+		goto out;
-+	}
-+
-+	/*
-+	 * Match more complex aliases where the alias name is a comma-delimited
-+	 * list of tokens, orderly contained in the matching PMU name.
-+	 *
-+	 * Example: For alias "socket,pmuname" and PMU "socketX_pmunameY", we
-+	 *	    match "socket" in "socketX_pmunameY" and then "pmuname" in
-+	 *	    "pmunameY".
-+	 */
-+	for (; tok; name += strlen(tok), tok = strtok_r(NULL, ",", &tmp)) {
-+		name = strstr(name, tok);
-+		if (!name) {
-+			res = false;
-+			goto out;
-+		}
-+	}
-+
-+	res = true;
-+out:
-+	free(str);
-+	return res;
-+}
-+
- /*
-  * From the pmu_events_map, find the table of PMU events that corresponds
-  * to the current running CPU. Then, add all PMU events from that table
-@@ -731,12 +771,8 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 			break;
- 		}
- 
--		/*
--		 * uncore alias may be from different PMU
--		 * with common prefix
--		 */
- 		if (pmu_is_uncore(name) &&
--		    !strncmp(pname, name, strlen(pname)))
-+		    pmu_uncore_alias_match(pname, name))
- 			goto new_alias;
- 
- 		if (strcmp(pname, name))
 -- 
 2.20.1
 
