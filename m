@@ -2,344 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7641D5EF26
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0155EF2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfGCW1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 18:27:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35892 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfGCW1a (ORCPT
+        id S1727326AbfGCWdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 18:33:55 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39158 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfGCWdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 18:27:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dR8rT6j2M0ly/hhLtGGd/Pl7BP9JO2M9xU7J236aZE4=; b=Q0btV7qNug0FYaQRyhqhr3dpC
-        Sqdvr01db6up1aYCvpUM0mEeFGvu7Q43A1wGQikv/32GhPh1rKMyGTbpPVsOMxaaquHhGZS4q45zI
-        UpUSf7s2/PQ11MaRou3a73NzowXN90P1kX7jgVveuux8Juh4RR85mj/9LUYGyd5tLsOZexziLlsK5
-        YJ0TOvaWT8obuO2nzr0SAGa6O2pIDfgjKQx+dgU8Uy+I/4NdHbMD7TT1UkkpOhWbwtiisulQ6AcKk
-        G+URVE9JSUfbi2yyu1uIgowBU/HKsNENLTZX5OXA4Qv56yOMgtichI7l+b5+LhvpxZt3jt9ne2+tU
-        JnD8U641w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hinin-0003Lf-Lg; Wed, 03 Jul 2019 22:27:25 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] kernel/cpu: hotplug; fix non-SYSFS build errors in
- arch/x86/power/
-Message-ID: <9906a70d-7a4a-03a1-f555-07231570364d@infradead.org>
-Date:   Wed, 3 Jul 2019 15:27:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 3 Jul 2019 18:33:54 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B04AA8060F; Thu,  4 Jul 2019 00:33:39 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 00:33:50 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Alan Cox <alan@llwyncelyn.cymru>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/3] serdev support for n_gsm
+Message-ID: <20190703223350.GA1762@amd>
+References: <20190114012528.2367-1-tony@atomide.com>
+ <20190118115958.GA5532@kroah.com>
+ <20190121105735.GI3691@localhost>
+ <20190121170116.GA5544@atomide.com>
+ <20190124163932.GZ3691@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+In-Reply-To: <20190124163932.GZ3691@localhost>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-Fix link errors when building almost-allmodconfig but CONFIG_SYSFS
-is not set/enabled.
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The missing functions should not be inside #if CONFIG_SYSFS/#endif.
+Hi!
 
-The non-SYSFS stub for __store_smt_control() is no longer needed.
+> and sorry about the reply latency. This is quite a lot to think about.
+>=20
+> I'm also adding Kishon and Mark on CC (e.g. for the phy and ASoC
+> bits).
 
-This is almost all code movement and a little ifdef-fery changes.
+I just wanted to ask... any news here?
 
-Fixes these build errors:
+> > For some user space examples, I have posted scripts to send and receive
+> > SMS at [3], and Pavel has ofono patches [4] below. Seems like we can
+> > also add support to ModemManager along the similar lines. And for the
+> > serdev drivers, those implement standard Linux interfaces for apps
+> > to use.
+> >=20
+> > For PM, about a year ago I tried making things work with a user space
+> > solution and it sucked big time[5]. The power management makes sense
+> > to do in the kernel driver at least in this case as there are shared
+> > GPIO pins between the USB PHY and TS 27.010 UART. The shared GPIOs
+> > are handled by the phy-mapphone-mdm6600 driver.
+> >=20
+> > With the serdev n_gsm MFD driver, the only thing that needs to be done
+> > to idle the modem is to enable autosuspend for the OHCI interface. So
+> > no spefific coordination between various components is needed for PM
+> > beyond that. Things idle just fine using PM runtime.
+>=20
+> Yeah, I don't envy you trying to get this to work (and now I'm getting
+> dragged into it ;) ).
 
-ld: arch/x86/power/cpu.o: in function `hibernate_resume_nonboot_cpu_disable':
-cpu.c:(.text+0x9f4): undefined reference to `cpuhp_smt_enable'
-ld: arch/x86/power/hibernate.o: in function `arch_resume_nosmt':
-hibernate.c:(.text+0x7f7): undefined reference to `cpuhp_smt_enable'
-ld: hibernate.c:(.text+0x809): undefined reference to `cpuhp_smt_disable'
+Yeah, and now I'm in, too. I'd really like to have an useful
+phone. Droid4 seems like best candidate.
 
-Fixes: 98f8cdce1db5 ("cpu/hotplug: Add sysfs state interface")
+> It would really help with a high-level outline of the modem and its
+> components. I've done my best to derive it from these patches and the
+> code you link to, but that info needs to go in the patch descriptions
+> (or cover letter).
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org
----
- kernel/cpu.c |  242 +++++++++++++++++++++++--------------------------
- 1 file changed, 118 insertions(+), 124 deletions(-)
+Are you ready for the crazyness?
 
---- lnx-52-rc7.orig/kernel/cpu.c
-+++ lnx-52-rc7/kernel/cpu.c
-@@ -376,7 +376,7 @@ static void lockdep_release_cpus_lock(vo
- {
- }
- 
--#endif	/* CONFIG_HOTPLUG_CPU */
-+#endif /* CONFIG_HOTPLUG_CPU */
- 
- /*
-  * Architectures that need SMT-specific errata handling during SMT hotplug
-@@ -1892,6 +1892,123 @@ void __cpuhp_remove_state(enum cpuhp_sta
- }
- EXPORT_SYMBOL(__cpuhp_remove_state);
- 
-+#ifdef CONFIG_HOTPLUG_CPU
-+
-+static void cpuhp_offline_cpu_device(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+
-+	dev->offline = true;
-+	/* Tell user space about the state change */
-+	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
-+}
-+
-+static void cpuhp_online_cpu_device(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+
-+	dev->offline = false;
-+	/* Tell user space about the state change */
-+	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
-+}
-+
-+int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
-+{
-+	int cpu, ret = 0;
-+
-+	cpu_maps_update_begin();
-+	for_each_online_cpu(cpu) {
-+		if (topology_is_primary_thread(cpu))
-+			continue;
-+		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
-+		if (ret)
-+			break;
-+		/*
-+		 * As this needs to hold the cpu maps lock it's impossible
-+		 * to call device_offline() because that ends up calling
-+		 * cpu_down() which takes cpu maps lock. cpu maps lock
-+		 * needs to be held as this might race against in kernel
-+		 * abusers of the hotplug machinery (thermal management).
-+		 *
-+		 * So nothing would update device:offline state. That would
-+		 * leave the sysfs entry stale and prevent onlining after
-+		 * smt control has been changed to 'off' again. This is
-+		 * called under the sysfs hotplug lock, so it is properly
-+		 * serialized against the regular offline usage.
-+		 */
-+		cpuhp_offline_cpu_device(cpu);
-+	}
-+	if (!ret)
-+		cpu_smt_control = ctrlval;
-+	cpu_maps_update_done();
-+	return ret;
-+}
-+
-+int cpuhp_smt_enable(void)
-+{
-+	int cpu, ret = 0;
-+
-+	cpu_maps_update_begin();
-+	cpu_smt_control = CPU_SMT_ENABLED;
-+	for_each_present_cpu(cpu) {
-+		/* Skip online CPUs and CPUs on offline nodes */
-+		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
-+			continue;
-+		ret = _cpu_up(cpu, 0, CPUHP_ONLINE);
-+		if (ret)
-+			break;
-+		/* See comment in cpuhp_smt_disable() */
-+		cpuhp_online_cpu_device(cpu);
-+	}
-+	cpu_maps_update_done();
-+	return ret;
-+}
-+
-+#if defined(CONFIG_HOTPLUG_SMT) && defined(CONFIG_SYSFS)
-+static ssize_t
-+__store_smt_control(struct device *dev, struct device_attribute *attr,
-+		    const char *buf, size_t count)
-+{
-+	int ctrlval, ret;
-+
-+	if (sysfs_streq(buf, "on"))
-+		ctrlval = CPU_SMT_ENABLED;
-+	else if (sysfs_streq(buf, "off"))
-+		ctrlval = CPU_SMT_DISABLED;
-+	else if (sysfs_streq(buf, "forceoff"))
-+		ctrlval = CPU_SMT_FORCE_DISABLED;
-+	else
-+		return -EINVAL;
-+
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED)
-+		return -EPERM;
-+
-+	if (cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		return -ENODEV;
-+
-+	ret = lock_device_hotplug_sysfs();
-+	if (ret)
-+		return ret;
-+
-+	if (ctrlval != cpu_smt_control) {
-+		switch (ctrlval) {
-+		case CPU_SMT_ENABLED:
-+			ret = cpuhp_smt_enable();
-+			break;
-+		case CPU_SMT_DISABLED:
-+		case CPU_SMT_FORCE_DISABLED:
-+			ret = cpuhp_smt_disable(ctrlval);
-+			break;
-+		}
-+	}
-+
-+	unlock_device_hotplug();
-+	return ret ? ret : count;
-+}
-+#endif /* CONFIG_HOTPLUG_SMT && CONFIG_SYSFS */
-+
-+#endif /* CONFIG_HOTPLUG_CPU */
-+
- #if defined(CONFIG_SYSFS) && defined(CONFIG_HOTPLUG_CPU)
- static ssize_t show_cpuhp_state(struct device *dev,
- 				struct device_attribute *attr, char *buf)
-@@ -2044,129 +2161,6 @@ static const struct attribute_group cpuh
- 	NULL
- };
- 
--#ifdef CONFIG_HOTPLUG_SMT
--
--static void cpuhp_offline_cpu_device(unsigned int cpu)
--{
--	struct device *dev = get_cpu_device(cpu);
--
--	dev->offline = true;
--	/* Tell user space about the state change */
--	kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
--}
--
--static void cpuhp_online_cpu_device(unsigned int cpu)
--{
--	struct device *dev = get_cpu_device(cpu);
--
--	dev->offline = false;
--	/* Tell user space about the state change */
--	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
--}
--
--int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
--{
--	int cpu, ret = 0;
--
--	cpu_maps_update_begin();
--	for_each_online_cpu(cpu) {
--		if (topology_is_primary_thread(cpu))
--			continue;
--		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
--		if (ret)
--			break;
--		/*
--		 * As this needs to hold the cpu maps lock it's impossible
--		 * to call device_offline() because that ends up calling
--		 * cpu_down() which takes cpu maps lock. cpu maps lock
--		 * needs to be held as this might race against in kernel
--		 * abusers of the hotplug machinery (thermal management).
--		 *
--		 * So nothing would update device:offline state. That would
--		 * leave the sysfs entry stale and prevent onlining after
--		 * smt control has been changed to 'off' again. This is
--		 * called under the sysfs hotplug lock, so it is properly
--		 * serialized against the regular offline usage.
--		 */
--		cpuhp_offline_cpu_device(cpu);
--	}
--	if (!ret)
--		cpu_smt_control = ctrlval;
--	cpu_maps_update_done();
--	return ret;
--}
--
--int cpuhp_smt_enable(void)
--{
--	int cpu, ret = 0;
--
--	cpu_maps_update_begin();
--	cpu_smt_control = CPU_SMT_ENABLED;
--	for_each_present_cpu(cpu) {
--		/* Skip online CPUs and CPUs on offline nodes */
--		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
--			continue;
--		ret = _cpu_up(cpu, 0, CPUHP_ONLINE);
--		if (ret)
--			break;
--		/* See comment in cpuhp_smt_disable() */
--		cpuhp_online_cpu_device(cpu);
--	}
--	cpu_maps_update_done();
--	return ret;
--}
--
--
--static ssize_t
--__store_smt_control(struct device *dev, struct device_attribute *attr,
--		    const char *buf, size_t count)
--{
--	int ctrlval, ret;
--
--	if (sysfs_streq(buf, "on"))
--		ctrlval = CPU_SMT_ENABLED;
--	else if (sysfs_streq(buf, "off"))
--		ctrlval = CPU_SMT_DISABLED;
--	else if (sysfs_streq(buf, "forceoff"))
--		ctrlval = CPU_SMT_FORCE_DISABLED;
--	else
--		return -EINVAL;
--
--	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED)
--		return -EPERM;
--
--	if (cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
--		return -ENODEV;
--
--	ret = lock_device_hotplug_sysfs();
--	if (ret)
--		return ret;
--
--	if (ctrlval != cpu_smt_control) {
--		switch (ctrlval) {
--		case CPU_SMT_ENABLED:
--			ret = cpuhp_smt_enable();
--			break;
--		case CPU_SMT_DISABLED:
--		case CPU_SMT_FORCE_DISABLED:
--			ret = cpuhp_smt_disable(ctrlval);
--			break;
--		}
--	}
--
--	unlock_device_hotplug();
--	return ret ? ret : count;
--}
--
--#else /* !CONFIG_HOTPLUG_SMT */
--static ssize_t
--__store_smt_control(struct device *dev, struct device_attribute *attr,
--		    const char *buf, size_t count)
--{
--	return -ENODEV;
--}
--#endif /* CONFIG_HOTPLUG_SMT */
--
- static const char *smt_states[] = {
- 	[CPU_SMT_ENABLED]		= "on",
- 	[CPU_SMT_DISABLED]		= "off",
+There are two modems in droid 4. I don't care about the LTE one. The
+GSM one is connected with few USB channels, and few multiplexed
+channels over UART.
 
+One of USB channels is standard AT commands.
+One of USB channels is QMI.
+But using USB means big power consumption, so it is better to use
+multiplexed channels over UART.
 
+Few of those look vaguely like AT commands, but voice and sms and
+=2E.. are going over separate channels. One of those contains NMEA data
+(packet in AT lookalike).
+
+> > Sure that's doable. But notice that we actually need to kick the
+> > serdev GNSS interface to get more data. It's not a passive GNSS
+> > data feed in this case. So it's not going to be just a case of
+> > cat /dev/motmdm4 > /dev/ugnss. Without the serdev GNSS driver,
+> > it would be some-custom-app -i /dev/motmdm4 -o /dev/ugnss.
+>=20
+> Yeah, I remember us discussing that briefly off list.
+> =20
+> > And without the n_gsm serdev support, it's a mess of some app
+> > similar to [5] initializing n_gsm, trying to deal with the USB
+> > PHY PM, dealing with Motorola custom packet numbering, kicking
+> > GNSS device, feeding data to /dev/ugnss. Hmm I think I've already
+> > been there just to be able to type AT commands to the modem and
+> > it did not work :)
+>=20
+> It's a mess indeed, but I'd rather see user-space dealing with until we
+> figure out how best to do it in the kernel. ;)
+
+Userspace should be shielded from hardware-specific mess :-(.
+
+> > Anyways, for the serdev kernel drivers, the criteria I've tried
+> > to follow is: "Can this serdev device driver make user space
+> > apps use standard Linux interfaces for the hardware?"
+> >=20
+> > So for the serdev Alsa ASoC driver, user space can use the standard
+> > Alsa interface for setting voice call volume. And for the serdev
+> > GNSS driver, user space can use /dev/gnss0.
+>=20
+> I understand. Both drivers appears to be using AT commands for control.
+> It would be interesting to hear what Mark has to say about the codec
+> driver too. Moving AT handling into the kernel scares me a bit. If we
+> already have a telephony stack to deal with it in user-space, my
+> inclination is to let it continue to handle it.
+
+These "Motorola AT" commands are really a bit different from standard
+AT commands. I was working on userspace, and got something... but
+could not get SMSes to work.
+
+> Modem-managed GNSS is also different from receivers connected directly
+> to the host. It's really the modem that drives the GNSS receiver, and
+> offers a higher-level interface to the host, for example, by buffering
+> output which the host can later request. It may or may not be the
+> kernel's job to periodically poll the modem to recreate an NMEA feed so
+> to speak.
+>=20
+> But the end-result of having it accessible through a standard interface
+> is of course appealing.
+
+We'd really like unified interface for the GPS receivers, please. In
+the Droid4 case, there's separate channel on the UART that has just
+the GPS... so it is really quite similar to normal GPS.
+
+We won't have proper driver for the modem anytime soon, but it would
+be good to be able to use the GPS in the meantime.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0dLU4ACgkQMOfwapXb+vJW5gCgmYIFuIwzONDK9HMxxjeYazDy
+zG0AnAwd55BTAOguHDpuIumZ7Y7CKmmU
+=s0eS
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
