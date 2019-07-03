@@ -2,121 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 078515D9D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D3B5D9E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:56:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfGCAys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:54:48 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:53186 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfGCAym (ORCPT
+        id S1727241AbfGCA4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:56:35 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35466 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCA4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:54:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1562115282; x=1593651282;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Wy7yC5O2tmsY73xSrxj13jbMBblMeVDokHmeqGBlXTw=;
-  b=rc6IiNmvFTTZgqISSh+6pMluu6hlokptQpg8ZvEDhDuZk1eb7c0ZCxa+
-   /tXrJeh1eGliN1MRbdG5/RchB0/eX7IWPUf6I+09pWBRcot8LWO9o2/61
-   gicuZBhI5LDjGvnnS9rqY2j3u8eV1+1OHBCAE3bjvL4wY2V3q6pDnD5iO
-   /kc3ARuzck7lsy2YfVVg1D9KmSLPUGvBqhQk0BzTnmk6J8EHxng00gXkK
-   v1PV2sPZmp8BU6tz3D5Zg1CZ0QMxoIg47E3rX9wJPEOLl4tSRYzXiy0hG
-   pWJPInvo53XONoa8Y3ldhz/bwOshe42+Ll0uLu/VvpFwllvzCeGKRsDIb
-   A==;
-IronPort-SDR: wh5FT19IPbpqFeWdKG1RDdU3c8hVyZQM2ilddF7AepHOYwAGxFSJ5qNMNNGYKNdpJo19LeGa0Q
- hqzGV0XFtIWWQvx9rCGe9NECZ1ifiJUqaObmft4shnT6MjeYsgftqmXjUuuIvNBHcTGmQaK3JT
- jn9UUBQT91bJbYDp5W0oIILekgtlKT104DSgmwEyeNIrLYhn9coBDG93SrqCilLXmYqpjC5sKm
- OROKSt1VfoyOqwypPIPOQF36cc3dPfeHoRLkS2p6lxNdu09fWAapqIvsIgxcv+kMwjjt1CgtRg
- j5o=
-X-IronPort-AV: E=Sophos;i="5.63,445,1557158400"; 
-   d="scan'208";a="113716745"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Jul 2019 08:54:41 +0800
-IronPort-SDR: R96qTjlI+HZzO4zp4OmDPPi6AmCvV0yhj+RhLlx3ufv7WFaVae3WZ3xG8TWcS3MA0PxW0yyN5f
- RwJ7Evd6FkqSJU9mImBEIDAA0gh5mLWcpqxH/dxqbX97n2Sq9HmqEq/bLzrb43KxRtldd+8l/n
- CIYD5TCbBiMwrNkgKCy7K0T9uw4Py6KXMRqEJLqydUQGJ5bJ3qu4ReVziijFkitq3c0GLat8WT
- b7ZQU0uayRWb9H3XsTyjiLGd26YU2hMS4TZ0btLI7/y05TGQujJcMIhjzQeYcSJmK064xdW5Hh
- 5Jng+PQlw1smOLdGH6Al2qIF
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Jul 2019 17:53:42 -0700
-IronPort-SDR: Vas0ZmY2WTLD4D32wsiC0idNWk2cEvWjiEvuKcoTH7iaPOOiiIfGMUfQGFBsTdaEhdnmTm6L9M
- XbHVpKx2ryuFhZ6ghamcNSTUIizdK/F4l4gDpsY8JI79LPmpikqxk9qq/7SmADCrfP4KjCIfuJ
- OTK60S9lo+MUCN++J+E+OgrPCawor07uRnS+OwkPCSb9c1Vxt9gVwOFMyiqCnZx5Z2gE4JDR7H
- dJSz3XOjIAaAMjEGAsPD1cO5dSzzHIcQp8zoMMJAHnGpddrxWh/IkSvrQwS92uc6wkCxq26qjK
- 9M4=
-Received: from risc6-mainframe.sdcorp.global.sandisk.com (HELO risc6-mainframe.int.fusionio.com) ([10.196.157.140])
-  by uls-op-cesaip01.wdc.com with ESMTP; 02 Jul 2019 17:54:41 -0700
-From:   Alistair Francis <alistair.francis@wdc.com>
-To:     linux-riscv@lists.infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, alistair23@gmail.com,
-        Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH RESEND 2/2] riscv/include/uapi: Define a custom __SIGINFO struct for RV32
-Date:   Tue,  2 Jul 2019 17:52:02 -0700
-Message-Id: <20190703005202.7578-3-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190703005202.7578-1-alistair.francis@wdc.com>
-References: <20190703005202.7578-1-alistair.francis@wdc.com>
+        Tue, 2 Jul 2019 20:56:34 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d23so752015qto.2;
+        Tue, 02 Jul 2019 17:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ohmey1Vg9RYAAD1Ed48jjZ7GHK/q9zc8KdCvb9YzKyg=;
+        b=u8Gtpy6jWhl+SHKw2Lmxv2oPwGvPxk04kBDj2/UcV0y2LADhqPIYfIrNEgnMacka1Q
+         FEcjg2uvKEPcOjmysHzPW0S0ljEE919ejk7D7+uN4ecFQ9mCy6rjvuIXAO48NoB+S+KG
+         xOiQ6jkqWECb2q4d6EnFXy0HB8w8SPMZ3MuZy6GpYUdOOHMKVpZ0k4RUEps6uWE3YqaT
+         Sc7mvsLOEsMk+N68dEBxDDXXab/SuJtE2256ICfp4e3/EeyhFBlDb5R3ECRVUEBpc76B
+         z8hoRcFNJv5PxQHbaOuCpNGHnoofBl+FpGDpxc/gnzz8V1xjKJgUedVMl3JhR7RuGijA
+         jZwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ohmey1Vg9RYAAD1Ed48jjZ7GHK/q9zc8KdCvb9YzKyg=;
+        b=Zbflz7sOLNyYPEb2MjzqSAz0SKP3188vGNUXn53yEHIS6DwA+NqppzAcgDlFi/GzMV
+         yrzOPdnYWubv8KfrAgnlwduRfbBobuA4f4qdtsIEGKAn+CllcW1EEAlsCaWrfubOxW8R
+         cNuvD/Km5T4Nv0b9Dhpfs7EFbvjiSqDQL8PujNmap53kXs1HuyguceMR8fKs+wSJVPsL
+         u+PC+6ppuVwfiBP8vyedUj+HYCTAem8RUTEV0cSvbcRN7D5ihI4iUJFfrppUpwXOLm+g
+         htnyN+DLnjkvz0m1njYgXUshvEXMhnAcgtSFnaS/1ht7KUbadEYB9xWkpypbRu+ISue9
+         sobQ==
+X-Gm-Message-State: APjAAAVpDvniXwmkIb8jzFTcI+xyV9L8fB8nmbcmsqXs34LprwJLQZEn
+        cEjbEHGkflaV5WWpNjxbQu29bp2fe1pGu38I6b0=
+X-Google-Smtp-Source: APXvYqztiuteWGCyZsoaHnUThtkJ88Z9Lbno9npjnKvIoAzmCyNgrITmQ0xPKpO1mfd+Qsn9yRVDw9tQiAOQOKhu1AQ=
+X-Received: by 2002:ac8:2b90:: with SMTP id m16mr27485334qtm.384.1562115393802;
+ Tue, 02 Jul 2019 17:56:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190702163715.12649-1-smuchun@gmail.com> <CAJZ5v0jzVG5X8idR7Fy8g6=UPMpZ7eK6A_Uhqrer1aJFY1hX1w@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jzVG5X8idR7Fy8g6=UPMpZ7eK6A_Uhqrer1aJFY1hX1w@mail.gmail.com>
+From:   Muchun Song <smuchun@gmail.com>
+Date:   Wed, 3 Jul 2019 08:56:22 +0800
+Message-ID: <CAPSr9jE6Qfu4NpmDfUrS+hVad2OP+xr00yoJ3k5=e=f7ZKwY+g@mail.gmail.com>
+Subject: Re: [PATCH v2] PM: Move disabling/enabling runtime PM to
+ suspend/resume noirq
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The glibc implementation of siginfo_t results in an allignment of 8 bytes
-for the union _sifields on RV32. The kernel has an allignment of 4 bytes
-for the _sifields union. This results in information being lost when
-glibc parses the siginfo_t struct.
+Rafael J. Wysocki <rafael@kernel.org> =E4=BA=8E2019=E5=B9=B47=E6=9C=883=E6=
+=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=8D=881:54=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, Jul 2, 2019 at 6:37 PM Muchun Song <smuchun@gmail.com> wrote:
+> >
+> > Currently, the PM core disables runtime PM for all devices right after
+> > executing subsystem/driver .suspend_late() callbacks for them and
+> > re-enables it right before executing subsystem/driver .resume_early()
+> > callbacks for them. This may lead to problems when there are two device=
+s
+> > such that the irq handler thread function executed for one of them
+> > depends on runtime PM working for the other. E.g. There are two devices=
+,
+> > one is i2c slave device depends on another device which can be the i2c
+> > adapter device. The slave device can generate system wakeup signals and
+> > is enabled to wake up the system(via call enable_irq_wake()). So, the i=
+rq
+> > of slave device is enabled. If a wakeup signal generate after executing
+> > subsystem/driver .suspend_late() callbacks. Then, the irq handler threa=
+d
+> > function will be called(The irq is requested via request_threaded_irq()=
+)
+> > and the slave device reads data via i2c adapter device(via i2c_transfer=
+()).
+> > In that case, it may be failed to read data because of the runtime PM
+> > disabled.
+> >
+> > It is also analogously for resume. If a wakeup signal generate when the
+> > system is in the sleep state. The irq handler thread function may be
+> > called before executing subsystem/driver .resume_early(). In that case,
+> > it also may be failed to read data because of the runtime PM disabled.
+> >
+>
+> This has been discussed for a number of times, documented and no, I'm
+> not going to apply this patch.
 
-To fix the issue add a pad variable to the struct to avoid allignment
-mismatches.
+Thanks for your reply. I want to know why we can't do that, so where
+can I find the discussion?
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- arch/riscv/include/uapi/asm/siginfo.h | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 arch/riscv/include/uapi/asm/siginfo.h
+> PM-runtime cannot be relied on during the "noirq" stages of suspend
+> and resume, which is why it is disabled by the core in the "late" and
+> "early" stages, respectively.
+>
 
-diff --git a/arch/riscv/include/uapi/asm/siginfo.h b/arch/riscv/include/uapi/asm/siginfo.h
-new file mode 100644
-index 000000000000..0854ad97bf44
---- /dev/null
-+++ b/arch/riscv/include/uapi/asm/siginfo.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _ASM_RISCV_SIGINFO_H
-+#define _ASM_RISCV_SIGINFO_H
-+
-+/* Add a pad element for RISC-V 32-bit. We need this as the
-+ * _sifields union is 8 byte allgined in usperace.
-+ */
-+#if __riscv_xlen == 32
-+#ifndef __ARCH_HAS_SWAPPED_SIGINFO
-+#define __SIGINFO 			\
-+struct {				\
-+	int si_signo;			\
-+	int si_errno;			\
-+	int si_code;			\
-+	int pad;			\
-+	union __sifields _sifields;	\
-+}
-+#else
-+#define __SIGINFO 			\
-+struct {				\
-+	int si_signo;			\
-+	int si_code;			\
-+	int si_errno;			\
-+	int pad;			\
-+	union __sifields _sifields;	\
-+}
-+#endif /* __ARCH_HAS_SWAPPED_SIGINFO */
-+#endif
-+
-+#include <asm-generic/siginfo.h>
-+
-+#endif /* _ASM_RISCV_SIGINFO_H */
--- 
-2.22.0
+What better solution do we have for the example I am talking about
+which is described in the commit message? Thanks.
 
+Yours,
+Muchun
