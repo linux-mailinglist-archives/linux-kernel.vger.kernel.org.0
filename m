@@ -2,95 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3F85DD33
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB8ED5DD38
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:02:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725820AbfGCECA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 00:02:00 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:38144 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725270AbfGCEB7 (ORCPT
+        id S1727114AbfGCECQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 00:02:16 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:53866 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCECC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 00:01:59 -0400
-Received: by mail-pg1-f202.google.com with SMTP id w5so769765pgs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:01:59 -0700 (PDT)
+        Wed, 3 Jul 2019 00:02:02 -0400
+Received: by mail-pg1-f201.google.com with SMTP id u4so748101pgb.20
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Gqg9vEUEQjamw+U2TDRVFbfZNKD/ycSs0XHiqhxGFk8=;
-        b=DUSp5/cDhcH68bi+Nqh/3cwTIsuqcpNTJ4KruX+YPcQUSWG+/5hPHGNhqwkWJb/ah2
-         eJ5HtglThdDRbB5I8iYw5/D69dYJppppopzOO2mSI+BbI92ZgW+wCLu8Xv+h3LRowhz3
-         razdXHDpi/pPWZA2RqaczdEZYVtlzHeYLehQeXztClJk0ylLisPmM9e0hPPOC9ps2vOj
-         NBZcMd8FE0B/tXSKkgo789bUh9lo8LXpT7m8MJCDS17/ksAy/Ql3vLUZ7UdlYbEmPyF8
-         XcIP2jw9ou9HOm3326ze3aPAFnH04OmhJkLwpTTkIP2D4mlEQ2uimSPp+VTY/vyzt2I4
-         M8xg==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=+Bz9EK5nXnCLx3MyMoxYoR0icGFjWu9nXmNokal9mQM=;
+        b=ADj3VWtlBGJk4u5ja3UlOVOUmIjGfBzRceZgHd/JjkItmsL9/IvBWO8SH+vctlhEk4
+         y0Czn5yxio8Pej1EY2pnnCDEOM4qIdwiwa42NoBg7rUITtuhKvv59CkMeZhq+Cu9lqke
+         7/We+NoLCObmzpy4kLqiXY37wH8bB9z9apxSfHrhEOUi3wSDZ6O7G7/h8/YGDkqffy0E
+         vTKU/mLGyqoKN5r07okLNUFNFig2aorpTHLrLtIfPR841tdvuEBcQvetc4tH44yDXPe+
+         LGS1yLh0tGEJe+HLLgEtNniKY2TOjxEkmIRcl+NMI2AaOtMdDGAEtbNOefurcKfku4SL
+         7Syw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Gqg9vEUEQjamw+U2TDRVFbfZNKD/ycSs0XHiqhxGFk8=;
-        b=Kh2Cb1SfJVWmnLInqc4eN0tAZ9n6ZdFOQ+TFC35LMlEjxjNOlFizqHf6KTsJWEoqEC
-         q2ggESClsQSWDVGC6eIB9mtX9tMiLrbpHAZ+6yTAiQWSacwrtRM2aMhRTVlsDHseg2qA
-         dImWiRHORdrdr9LUlrzQVUH2n0k6y11g0mwM7/hW+JchD38s1FXBGsNahrC8V9mqrspH
-         qhq2csChNoDaeBSoKdgFEnGioeX1X83JxopJ4MQBbKggzdZElB/bOz65OfcxjfXMQRDP
-         ykfQV4Chy43mqGuf28CzKlnKNE10/ZC8gfbP0KiKG/Wn1W0sDF2cmrkFOcm3IWoXRTft
-         yweQ==
-X-Gm-Message-State: APjAAAU5rgb3WtDcIu2FEjt8OCVw3MFZ3hNk3/ugSIa+hAxXMqWhDID4
-        KVO35Khr1ha96D1xhZy3hq/DSyMBIEg=
-X-Google-Smtp-Source: APXvYqz8itvyzvB1Vq0/P0tWAt+xsWqpGwm8HIcCNWK36t77P21Vj55S/U3vpny77Lo89mae91rO0A++5zY=
-X-Received: by 2002:a65:43c2:: with SMTP id n2mr15101876pgp.110.1562126518698;
- Tue, 02 Jul 2019 21:01:58 -0700 (PDT)
-Date:   Tue,  2 Jul 2019 21:01:53 -0700
-Message-Id: <20190703040156.56953-1-walken@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=+Bz9EK5nXnCLx3MyMoxYoR0icGFjWu9nXmNokal9mQM=;
+        b=NuZrs+bvPjmxm+8IneZS7ekRVVApgWvAKcxlUh0+MVP3gCrjtzVMAB0qqZr5ytrY/V
+         BLWP3+JVFqRvHbmvU44PZWI59OaRGSIMjv7iNYPcqMXEhlo3D2oX1LGymcCFUP8a4wCY
+         TsFiWiL65iyyUHNF63alIZ6HFh8fRZl17KRMPAtBPlLv647AUD75aZS2UgJNIOmj5WXW
+         uhQSX6eOKUf2SZk/ic9mX0s1EvFOo2mIsXk0X3v1WhqUFzOeMRGI8Ic/ZxbMvwusbqfw
+         JqwScqgBu2zNn3XzezCQVaFEf3dzunsfn7ReShM5xzpPMO4BTu+0sCu+Qd/DnCJ1qi3G
+         P07A==
+X-Gm-Message-State: APjAAAVjtXAbdB03w+LPt6iAxMlvM7cVJGF+7E+NuRiDnkl1Y5iY3DCk
+        7vsfDrFe6P8Xe4bK7FNL2uWjyA2kV9c=
+X-Google-Smtp-Source: APXvYqyvL3tIUNaaMFnL51aAcMnDwF12vdjuZZRdl9romMMrEcJCalpohkrbZ8zEgN7qtjZFCQg3IzQQSfk=
+X-Received: by 2002:a63:1b5c:: with SMTP id b28mr3590819pgm.101.1562126521287;
+ Tue, 02 Jul 2019 21:02:01 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 21:01:54 -0700
+In-Reply-To: <20190703040156.56953-1-walken@google.com>
+Message-Id: <20190703040156.56953-2-walken@google.com>
 Mime-Version: 1.0
+References: <20190703040156.56953-1-walken@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v3 0/3] make RB_DECLARE_CALLBACKS more generic
+Subject: [PATCH v3 1/3] augmented rbtree: add comments for RB_DECLARE_CALLBACKS
+ macro
 From:   Michel Lespinasse <walken@google.com>
 To:     Davidlohr Bueso <dave@stgolabs.net>,
         Peter Zijlstra <peterz@infradead.org>,
         David Howells <dhowells@redhat.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>
+        linux-kernel@vger.kernel.org,
+        Michel Lespinasse <walken@google.com>,
+        Davidlohr Bueso <dbueso@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These changes are intended to make the RB_DECLARE_CALLBACKS macro
-more generic (allowing the aubmented subtree information to be a struct
-instead of a scalar).
+Add a short comment summarizing the arguments to RB_DECLARE_CALLBACKS.
+The arguments are also now capitalized. This copies the style of the
+INTERVAL_TREE_DEFINE macro.
 
-Changes since v2: Left the RBSTATIC and RBNAME arguments first in the
-RB_DECLARE_CALLBACKS and RB_DECLARE_CALLBACKS_MAX macros as suggested
-by Peter Zijlstra.
+No functional changes in this commit, only comments and capitalization.
 
-Changes since v1: I have added a new RB_DECLARE_CALLBACKS_MAX macro,
-which generates augmented rbtree callbacks where the subtree information
-can be expressed as max(f(node)). This covers all current uses, and thus
-makes it easy to do the later RB_DECLARE_CALLBACKS definition change
-as it's only currently used in RB_DECLARE_CALLBACKS_MAX.
+Signed-off-by: Michel Lespinasse <walken@google.com>
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ include/linux/rbtree_augmented.h       | 54 ++++++++++++++++----------
+ tools/include/linux/rbtree_augmented.h | 54 ++++++++++++++++----------
+ 2 files changed, 66 insertions(+), 42 deletions(-)
 
-I have also verified the compiled lib/interval_tree.o and mm/mmap.o
-files to check that they didn't change. This held as expected for
-interval_tree.o; mmap.o did have some changes which could be reverted
-by marking __vma_link_rb as noinline. I did not add such a change to the
-patchset; I felt it was reasonable enough to let the inlining decision
-up to the compiler.
-
-Michel Lespinasse (3):
-  augmented rbtree: add comments for RB_DECLARE_CALLBACKS macro
-  augmented rbtree: add new RB_DECLARE_CALLBACKS_MAX macro
-  augmented rbtree: rework the RB_DECLARE_CALLBACKS macro definition
-
- arch/x86/mm/pat_rbtree.c               | 19 +-----
- drivers/block/drbd/drbd_interval.c     | 29 +--------
- include/linux/interval_tree_generic.h  | 22 +------
- include/linux/rbtree_augmented.h       | 88 ++++++++++++++++++++------
- lib/rbtree_test.c                      | 22 +------
- mm/mmap.c                              | 29 +++++----
- tools/include/linux/rbtree_augmented.h | 88 ++++++++++++++++++++------
- 7 files changed, 163 insertions(+), 134 deletions(-)
-
+diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
+index f1ed3fc80bbb..5923495276e0 100644
+--- a/include/linux/rbtree_augmented.h
++++ b/include/linux/rbtree_augmented.h
+@@ -72,39 +72,51 @@ rb_insert_augmented_cached(struct rb_node *node,
+ 	rb_insert_augmented(node, &root->rb_root, augment);
+ }
+ 
+-#define RB_DECLARE_CALLBACKS(rbstatic, rbname, rbstruct, rbfield,	\
+-			     rbtype, rbaugmented, rbcompute)		\
++/*
++ * Template for declaring augmented rbtree callbacks
++ *
++ * RBSTATIC:    'static' or empty
++ * RBNAME:      name of the rb_augment_callbacks structure
++ * RBSTRUCT:    struct type of the tree nodes
++ * RBFIELD:     name of struct rb_node field within RBSTRUCT
++ * RBTYPE:      type of the RBAUGMENTED field
++ * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
++ * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
++ */
++
++#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
++			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
+ static inline void							\
+-rbname ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
++RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
+ {									\
+ 	while (rb != stop) {						\
+-		rbstruct *node = rb_entry(rb, rbstruct, rbfield);	\
+-		rbtype augmented = rbcompute(node);			\
+-		if (node->rbaugmented == augmented)			\
++		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
++		RBTYPE augmented = RBCOMPUTE(node);			\
++		if (node->RBAUGMENTED == augmented)			\
+ 			break;						\
+-		node->rbaugmented = augmented;				\
+-		rb = rb_parent(&node->rbfield);				\
++		node->RBAUGMENTED = augmented;				\
++		rb = rb_parent(&node->RBFIELD);				\
+ 	}								\
+ }									\
+ static inline void							\
+-rbname ## _copy(struct rb_node *rb_old, struct rb_node *rb_new)		\
++RBNAME ## _copy(struct rb_node *rb_old, struct rb_node *rb_new)		\
+ {									\
+-	rbstruct *old = rb_entry(rb_old, rbstruct, rbfield);		\
+-	rbstruct *new = rb_entry(rb_new, rbstruct, rbfield);		\
+-	new->rbaugmented = old->rbaugmented;				\
++	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
++	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
++	new->RBAUGMENTED = old->RBAUGMENTED;				\
+ }									\
+ static void								\
+-rbname ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
++RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
+ {									\
+-	rbstruct *old = rb_entry(rb_old, rbstruct, rbfield);		\
+-	rbstruct *new = rb_entry(rb_new, rbstruct, rbfield);		\
+-	new->rbaugmented = old->rbaugmented;				\
+-	old->rbaugmented = rbcompute(old);				\
++	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
++	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
++	new->RBAUGMENTED = old->RBAUGMENTED;				\
++	old->RBAUGMENTED = RBCOMPUTE(old);				\
+ }									\
+-rbstatic const struct rb_augment_callbacks rbname = {			\
+-	.propagate = rbname ## _propagate,				\
+-	.copy = rbname ## _copy,					\
+-	.rotate = rbname ## _rotate					\
++RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
++	.propagate = RBNAME ## _propagate,				\
++	.copy = RBNAME ## _copy,					\
++	.rotate = RBNAME ## _rotate					\
+ };
+ 
+ 
+diff --git a/tools/include/linux/rbtree_augmented.h b/tools/include/linux/rbtree_augmented.h
+index 372a539314af..f46c1bf91f64 100644
+--- a/tools/include/linux/rbtree_augmented.h
++++ b/tools/include/linux/rbtree_augmented.h
+@@ -74,39 +74,51 @@ rb_insert_augmented_cached(struct rb_node *node,
+ 	rb_insert_augmented(node, &root->rb_root, augment);
+ }
+ 
+-#define RB_DECLARE_CALLBACKS(rbstatic, rbname, rbstruct, rbfield,	\
+-			     rbtype, rbaugmented, rbcompute)		\
++/*
++ * Template for declaring augmented rbtree callbacks
++ *
++ * RBSTATIC:    'static' or empty
++ * RBNAME:      name of the rb_augment_callbacks structure
++ * RBSTRUCT:    struct type of the tree nodes
++ * RBFIELD:     name of struct rb_node field within RBSTRUCT
++ * RBTYPE:      type of the RBAUGMENTED field
++ * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
++ * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
++ */
++
++#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
++			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
+ static inline void							\
+-rbname ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
++RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
+ {									\
+ 	while (rb != stop) {						\
+-		rbstruct *node = rb_entry(rb, rbstruct, rbfield);	\
+-		rbtype augmented = rbcompute(node);			\
+-		if (node->rbaugmented == augmented)			\
++		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
++		RBTYPE augmented = RBCOMPUTE(node);			\
++		if (node->RBAUGMENTED == augmented)			\
+ 			break;						\
+-		node->rbaugmented = augmented;				\
+-		rb = rb_parent(&node->rbfield);				\
++		node->RBAUGMENTED = augmented;				\
++		rb = rb_parent(&node->RBFIELD);				\
+ 	}								\
+ }									\
+ static inline void							\
+-rbname ## _copy(struct rb_node *rb_old, struct rb_node *rb_new)		\
++RBNAME ## _copy(struct rb_node *rb_old, struct rb_node *rb_new)		\
+ {									\
+-	rbstruct *old = rb_entry(rb_old, rbstruct, rbfield);		\
+-	rbstruct *new = rb_entry(rb_new, rbstruct, rbfield);		\
+-	new->rbaugmented = old->rbaugmented;				\
++	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
++	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
++	new->RBAUGMENTED = old->RBAUGMENTED;				\
+ }									\
+ static void								\
+-rbname ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
++RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
+ {									\
+-	rbstruct *old = rb_entry(rb_old, rbstruct, rbfield);		\
+-	rbstruct *new = rb_entry(rb_new, rbstruct, rbfield);		\
+-	new->rbaugmented = old->rbaugmented;				\
+-	old->rbaugmented = rbcompute(old);				\
++	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
++	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
++	new->RBAUGMENTED = old->RBAUGMENTED;				\
++	old->RBAUGMENTED = RBCOMPUTE(old);				\
+ }									\
+-rbstatic const struct rb_augment_callbacks rbname = {			\
+-	.propagate = rbname ## _propagate,				\
+-	.copy = rbname ## _copy,					\
+-	.rotate = rbname ## _rotate					\
++RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
++	.propagate = RBNAME ## _propagate,				\
++	.copy = RBNAME ## _copy,					\
++	.rotate = RBNAME ## _rotate					\
+ };
+ 
+ 
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
