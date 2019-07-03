@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D175E672
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0435C5E67B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:23:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfGCOVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:21:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43365 "EHLO
+        id S1727033AbfGCOXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:23:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44479 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCOVj (ORCPT
+        with ESMTP id S1726951AbfGCOXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:21:39 -0400
+        Wed, 3 Jul 2019 10:23:19 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63ELMvt3323943
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EM59s3324001
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:21:23 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63ELMvt3323943
+        Wed, 3 Jul 2019 07:22:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EM59s3324001
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562163683;
-        bh=zPqhRTGu08XGjm36KmZWL9Y87AmN2NgNsl31/bmIUdg=;
+        s=2019061801; t=1562163726;
+        bh=0AQywQaIuUi5GdmaT61KcMoN2YXSuYaZQDU7catum5Y=;
         h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=LooM9MmxJpPJZ6qmGJebnWOQ51YfnuYEdCCFKrzdIP3+w12314WyjowDaKCn/ZIVF
-         dRrL6t8gaifpygTuRx+rvXY94nV6JIpqAZ0/zBQh8xo4Wt0qifaZ/GKSiQmDbtcwxu
-         RTDIPH7w9qiO/R4eR/YWOuFPe4kn6LYR1UW1811PRNpunHArOLcLUH+jP9CTr37iH/
-         4TxhtC4eMDfAttipbXHiurxvlcgRXVS0rlyNtw+KS1BzKX6ZVrOvIzfFgVaKWJnyFO
-         8hdZ3/FyERorfB5NU6ghxOKjKVxLQtRYJtdvT362w+hfgsD8YMYBxdsaXdsokAd8wT
-         aByVly5H64r3w==
+        b=B/OOBfW7WTo5v3ZHwOCjb4DNPtuSs4XXXm/Ipg4dLE/pI6QGvXwQnRRGHnbcSslaI
+         S/9/7rQuV3zm1L1ixVuggixeVF0z+wEt+Oz2TSC6+H1doAH+EqW6TeN24rdHBhjUs+
+         MkW19GBCu3dGFqs4kJWU6wXeBAuS+xHDYqrNRuSLmVQEWeWY+iQffZzmoc9wvVJ7dX
+         n67hF5xk38S0xr7Jlf675AxhW5PMLhk+S2XmY0/MZI7P0lDGkUOQ2yEOQ/xc9VK4pq
+         OXZJAVfRKqIWtL0Es1bx1E4RaVRn57TJFySSpTIsc/Urr/XrWdU537a227IYeYql2/
+         pfZdmkphWsF3Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63ELMws3323940;
-        Wed, 3 Jul 2019 07:21:22 -0700
-Date:   Wed, 3 Jul 2019 07:21:22 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EM5Kd3323998;
+        Wed, 3 Jul 2019 07:22:05 -0700
+Date:   Wed, 3 Jul 2019 07:22:05 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-f2siadtp3hb5o0l1w7bvd8bk@git.kernel.org>
-Cc:     hpa@zytor.com, adrian.hunter@intel.com, mingo@kernel.org,
-        namhyung@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, tglx@linutronix.de, jolsa@kernel.org
-Reply-To: acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
-          adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
-          tglx@linutronix.de, ak@linux.intel.com,
-          linux-kernel@vger.kernel.org
+Message-ID: <tip-lcywlfqbi37nhegmhl1ar6wg@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org,
+        ak@linux.intel.com, namhyung@kernel.org, tglx@linutronix.de
+Reply-To: namhyung@kernel.org, tglx@linutronix.de, acme@redhat.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org,
+          ak@linux.intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf metricgroup: Use strsep()
-Git-Commit-ID: 80e9073f1f4473639d585b89ebc9130bb47920e8
+Subject: [tip:perf/core] perf report: Use skip_spaces()
+Git-Commit-ID: 526bbbdd442ce143b52cd6a8b4ee424f9930be0d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,41 +61,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  80e9073f1f4473639d585b89ebc9130bb47920e8
-Gitweb:     https://git.kernel.org/tip/80e9073f1f4473639d585b89ebc9130bb47920e8
+Commit-ID:  526bbbdd442ce143b52cd6a8b4ee424f9930be0d
+Gitweb:     https://git.kernel.org/tip/526bbbdd442ce143b52cd6a8b4ee424f9930be0d
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 26 Jun 2019 11:21:47 -0300
+AuthorDate: Wed, 26 Jun 2019 11:24:37 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 26 Jun 2019 11:31:43 -0300
 
-perf metricgroup: Use strsep()
+perf report: Use skip_spaces()
 
-No change in behaviour intended, trivial optimization done by avoiding
-looking for spaces in 'g' right after setting it to "No_group".
+No change in behaviour intended.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-f2siadtp3hb5o0l1w7bvd8bk@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-lcywlfqbi37nhegmhl1ar6wg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/metricgroup.c | 3 +--
+ tools/perf/builtin-report.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index a0cf3cd95ced..90cd84e2a503 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -308,10 +308,9 @@ void metricgroup__print(bool metrics, bool metricgroups, char *filter,
- 				struct mep *me;
- 				char *s;
- 
-+				g = skip_spaces(g);
- 				if (*g == 0)
- 					g = "No_group";
--				while (isspace(*g))
--					g++;
- 				if (filter && !strstr(g, filter))
- 					continue;
- 				if (raw)
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 91a3762b4211..aef59f318a67 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -941,8 +941,7 @@ parse_time_quantum(const struct option *opt, const char *arg,
+ 		pr_err("time quantum cannot be 0");
+ 		return -1;
+ 	}
+-	while (isspace(*end))
+-		end++;
++	end = skip_spaces(end);
+ 	if (*end == 0)
+ 		return 0;
+ 	if (!strcmp(end, "s")) {
