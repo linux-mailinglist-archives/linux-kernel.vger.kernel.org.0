@@ -2,55 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BC875E714
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 743095E71C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfGCOrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:47:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44450 "EHLO mail.kernel.org"
+        id S1727109AbfGCOsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:48:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfGCOrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:47:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726765AbfGCOsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:48:39 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C254D21871;
-        Wed,  3 Jul 2019 14:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562165266;
-        bh=OaP66Y8meIjVyoMTlK4IL7zpCxYdHt7BS8CN+dX8T/8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wjPtjxGQrs+VWxS/K1tF0Yec7uh0YVNYVfQY3/bcecKX/X4qa6WgF/X6ZzQxOgWuk
-         fOvsyqF2JNWWFvrAHAv2Ae0uDDhGgE9mOR6JJXlhHYLAhxWHqfR8aPYNGl4B0LusE9
-         681BP1CJKciS1c97HjiBucouxJTYixfFO4s4YUAs=
-Date:   Wed, 3 Jul 2019 16:47:44 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     jeyentam <je.yen.tam@ni.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] serial/8250: Add support for NI-Serial
- PXI/PXIe+485 devices
-Message-ID: <20190703144744.GB24961@kroah.com>
-References: <20190703072435.34152-1-je.yen.tam@ni.com>
- <63697b10-98a7-86b7-2513-3eb793ed03c5@metux.net>
+        by mail.kernel.org (Postfix) with ESMTPSA id 98E89218B8;
+        Wed,  3 Jul 2019 14:48:38 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1higYn-0005i4-Nw; Wed, 03 Jul 2019 10:48:37 -0400
+Message-Id: <20190703144837.629823351@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 03 Jul 2019 10:47:44 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Takeshi Misawa <jeliantsurux@gmail.com>
+Subject: [for-linus][PATCH 3/5] tracing: Fix memory leak in tracing_err_log_open()
+References: <20190703144741.181267753@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63697b10-98a7-86b7-2513-3eb793ed03c5@metux.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 03:27:11PM +0200, Enrico Weigelt, metux IT consult wrote:
-> >  /* UART Port Control Register */> -#define NI8430_PORTCON	0x0f> -#define NI8430_PORTCON_TXVR_ENABLE	(1 << 3)
-> Can we have that renaming as a separate patch, to ease review ?
-> 
-> And what about introducing a config sym for the new device specific
-> stuff ? These devices seem to be pretty rare - never seen them in
-> embeded world, where we do need to care of kernel size.
+From: Takeshi Misawa <jeliantsurux@gmail.com>
 
-No, that's not the way this driver works, sorry.
+When tracing_err_log_open() calls seq_open(), allocated memory is not freed.
 
-greg k-h
+kmemleak report:
+
+unreferenced object 0xffff92c0781d1100 (size 128):
+  comm "tail", pid 15116, jiffies 4295163855 (age 22.704s)
+  hex dump (first 32 bytes):
+    00 f0 08 e5 c0 92 ff ff 00 10 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000000d0687d5>] kmem_cache_alloc+0x11f/0x1e0
+    [<000000003e3039a8>] seq_open+0x2f/0x90
+    [<000000008dd36b7d>] tracing_err_log_open+0x67/0x140
+    [<000000005a431ae2>] do_dentry_open+0x1df/0x3a0
+    [<00000000a2910603>] vfs_open+0x2f/0x40
+    [<0000000038b0a383>] path_openat+0x2e8/0x1690
+    [<00000000fe025bda>] do_filp_open+0x9b/0x110
+    [<00000000483a5091>] do_sys_open+0x1ba/0x260
+    [<00000000c558b5fd>] __x64_sys_openat+0x20/0x30
+    [<000000006881ec07>] do_syscall_64+0x5a/0x130
+    [<00000000571c2e94>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fix this by calling seq_release() in tracing_err_log_fops.release().
+
+Link: http://lkml.kernel.org/r/20190628105640.GA1863@DESKTOP
+
+Fixes: 8a062902be725 ("tracing: Add tracing error log")
+Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+Signed-off-by: Takeshi Misawa <jeliantsurux@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 83e08b78dbee..4122ccde6ec2 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -7126,12 +7126,24 @@ static ssize_t tracing_err_log_write(struct file *file,
+ 	return count;
+ }
+ 
++static int tracing_err_log_release(struct inode *inode, struct file *file)
++{
++	struct trace_array *tr = inode->i_private;
++
++	trace_array_put(tr);
++
++	if (file->f_mode & FMODE_READ)
++		seq_release(inode, file);
++
++	return 0;
++}
++
+ static const struct file_operations tracing_err_log_fops = {
+ 	.open           = tracing_err_log_open,
+ 	.write		= tracing_err_log_write,
+ 	.read           = seq_read,
+ 	.llseek         = seq_lseek,
+-	.release	= tracing_release_generic_tr,
++	.release        = tracing_err_log_release,
+ };
+ 
+ static int tracing_buffers_open(struct inode *inode, struct file *filp)
+-- 
+2.20.1
+
+
