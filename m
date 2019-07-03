@@ -2,69 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 671A95ED91
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B245ED86
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbfGCUcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:32:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:60930 "EHLO mga04.intel.com"
+        id S1727109AbfGCUbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:31:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727289AbfGCUcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:32:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 13:32:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,448,1557212400"; 
-   d="scan'208";a="158089428"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga008.jf.intel.com with ESMTP; 03 Jul 2019 13:32:18 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v4 8/8] PCI/DPC: Clear AER registers in EDR mode
-Date:   Wed,  3 Jul 2019 13:29:55 -0700
-Message-Id: <052bd7e4bccabce2051fcfb9878c7ab3f3abdcb6.1562185606.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1562185606.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1562185606.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1726550AbfGCUbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:31:32 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E92C1218A0;
+        Wed,  3 Jul 2019 20:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562185891;
+        bh=8rZJjhlUf/qMBdRLPI5prMW5R8RsnoeRcyV06al/QNE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=igHZO/XeFH2AYZ1UZL9Hr/0DlCMrJobgPYTmblwWmLYpJhrE0ThCPKavzhp8UODlC
+         dltKVf6ekIyFcekgpsHgb2EKKhfzm/UKUp8JEeh9zMBZsnYyG+EmijpcD1zhcqkJ9c
+         lsy2bCVVV3XzCoQn+FNDlTDjcguJ5uJAMU1QUF9c=
+Date:   Wed, 3 Jul 2019 13:31:29 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, chetjain@in.ibm.com,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: Re: [PATCH] crypto: user - prevent operating on larval algorithms
+Message-ID: <20190703203128.GC10080@gmail.com>
+References: <20190701153154.1569c2dc@kitsune.suse.cz>
+ <20190702211700.16526-1-ebiggers@kernel.org>
+ <20190703143057.miqgc7blhjjxjmee@gondor.apana.org.au>
+ <20190703222108.467ec204@kitsune.suse.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190703222108.467ec204@kitsune.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Hi Michal,
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, OS is responsible for clearing the AER
-registers in EDR mode. So clear AER registers in dpc_process_error()
-function.
+On Wed, Jul 03, 2019 at 10:21:08PM +0200, Michal Suchánek wrote:
+> On Wed, 3 Jul 2019 22:30:57 +0800
+> Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> 
+> > On Tue, Jul 02, 2019 at 02:17:00PM -0700, Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > > 
+> > > Michal Suchanek reported [1] that running the pcrypt_aead01 test from
+> > > LTP [2] in a loop and holding Ctrl-C causes a NULL dereference of
+> > > alg->cra_users.next in crypto_remove_spawns(), via crypto_del_alg().
+> > > The test repeatedly uses CRYPTO_MSG_NEWALG and CRYPTO_MSG_DELALG.
+> > > 
+> > > The crash occurs when the instance that CRYPTO_MSG_DELALG is trying to
+> > > unregister isn't a real registered algorithm, but rather is a "test
+> > > larval", which is a special "algorithm" added to the algorithms list
+> > > while the real algorithm is still being tested.  Larvals don't have
+> > > initialized cra_users, so that causes the crash.  Normally pcrypt_aead01
+> > > doesn't trigger this because CRYPTO_MSG_NEWALG waits for the algorithm
+> > > to be tested; however, CRYPTO_MSG_NEWALG returns early when interrupted.
+> > > 
+> 
+> Do you have some way to reproduce this reliably?
+> 
+> I suppose you would have to send a signal to the process for the call
+> to get interrupted, right?
+> 
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/pcie/dpc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+It reproduced pretty reliably for me with what you suggested.  Just typing in
+terminal:
 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 34f4e6ca24df..a04a76d1efe0 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -276,6 +276,10 @@ static void dpc_process_error(struct dpc_dev *dpc)
- 			pci_aer_clear_fatal_status(pdev);
- 	}
- 
-+	/* In EDR mode, OS is responsible for clearing AER registers */
-+	if (dpc->firmware_dpc)
-+		pci_cleanup_aer_error_status_regs(pdev);
-+
- 	/*
- 	 * Irrespective of whether the DPC event is triggered by
- 	 * ERR_FATAL or ERR_NONFATAL, since the link is already down,
--- 
-2.21.0
+	while true; do pcrypt_aead01; done
 
+and then holding Ctrl-C.
+
+If I have time I'll try writing an LTP test that specifically reproduces it.
+Yes, it would involve sending a signal to a thread or process that's executing
+CRYPTO_MSG_NEWALG (unless I find a better way).
+
+- Eric
