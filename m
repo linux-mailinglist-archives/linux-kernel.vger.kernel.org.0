@@ -2,218 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8845E318
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CC05E320
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfGCLth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:49:37 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51498 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfGCLtg (ORCPT
+        id S1727128AbfGCLuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:50:05 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41903 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfGCLuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:49:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so1898088wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 04:49:34 -0700 (PDT)
+        Wed, 3 Jul 2019 07:50:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c2so2434943wrm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 04:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S9V/QrIo8BVJ8mssqOv2wdWJBV+O5Z9tAnibsn5EX+8=;
-        b=2N3nyyTUQiGkSvwmlzHhVkaqTiYdsVtuPqyujhGIIPucaPCRKaTlT70Smsst9aecWe
-         KRlG4k6kmAqoPd4nBszKrVH7Y+npHNUOotxPTtP5x2uNV95LdgRJSVqO5wW32sR/7XbA
-         M7bAXyzoH7rlCZbEP96IiPMllJOxY6nebhUEXm/7qtSiXAMsLcZDYs52XE9OCe2DtkhN
-         bHCzqHSM4ToKIScgme2VmmV+e6qYihRFeAlzzqLfvnuIYERxQxAJFYS42fSFnwuGJIf3
-         TZRF5Tx5hWjm+u+8VlV53dyC3/SxwqxqfB4+OtUH/40x1uTDfM5jadNCDlewvtxJUrqX
-         WwNg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=7uvBYhEU4nI128pEYv9ytFvk53eb5435th+fm03iKcg=;
+        b=DF/MFQ6MyohAUyQB2wmDmAbZiJgzfmk8k3Dx5wuKjOqnkBkYXOacFlm9t/CjjsIh1J
+         evCwgD5PqOt6Z4bxpDCttR3ylIAyjOtAHUi7dIvqKvipf9pyi/1PPUvdPAFZqZkQXvJ1
+         aQ8WAJWotfS9Z3BYLvuExGSceD7EhMpij4qtLo+iA0MRFCoXywBCAt5Wr/6oJTheDqw2
+         BrbbdzdvVOV27geEvbpljdzf6v9ZdWRRmEgWuc3/FUicZrUMMtAphstTsZ5ILoxZHrm3
+         IVER9PwQZ+dBfxWOXghi1GwFz/fhSeBZfWjxT+ee5tjKz+b2oE8Er65AR2SWMfUvR8Md
+         qaSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S9V/QrIo8BVJ8mssqOv2wdWJBV+O5Z9tAnibsn5EX+8=;
-        b=DwgsU2Kgyhu14O9YE/J87L4Ao6pm5i3qrx/CjTIXVgRksGZWjCy8re/XisTKk7EZ3E
-         O89QaYMBqpnQSAQTcrzxIb2/28Nz6ETFPeUW3ny6fn9E6K4/1+ZisDZoZSaCcFVdBrCT
-         H5zpHqcQcehQvF/G3cFXY83+/OI/3zH/AwANFc9bP1CZQInjWF/IJgQ/ZTNJ4G4mvf9q
-         Ip1PdAX0uMcmuxnTu3dIAqIoeEDDR7tqcN97+HifY/F67lB2/CY0wT7UUMMW3oka2Kl2
-         qteelULEKygsgSAKmr13aBRaOvCjWkY4ep+N3IfUMJq2YOd1wRp8gld6s+yc1Vt7h2DJ
-         DWvw==
-X-Gm-Message-State: APjAAAUsrRNJuL60bODnwbj0dLkYuaITvJJ6LpI04QUowI0RU03TAlAL
-        4MA1Rzm1j2po002MdTTc4og=
-X-Google-Smtp-Source: APXvYqyCDqifBl22qNuQX6LoC3NtGrzt7+4Oi3nSvEuHRuRNA+ALGN/g9Pt1jEb7KAT/6qRGlOR1Cw==
-X-Received: by 2002:a1c:d10c:: with SMTP id i12mr7831583wmg.152.1562154574290;
-        Wed, 03 Jul 2019 04:49:34 -0700 (PDT)
-Received: from localhost (ip-213-220-235-213.net.upcbroadband.cz. [213.220.235.213])
-        by smtp.gmail.com with ESMTPSA id v15sm1753328wrt.25.2019.07.03.04.49.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 04:49:34 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 13:49:33 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 06/15] ethtool: netlink bitset handling
-Message-ID: <20190703114933.GW2250@nanopsycho>
-References: <cover.1562067622.git.mkubecek@suse.cz>
- <cb614bebee1686293127194e8f7ced72955c7c7f.1562067622.git.mkubecek@suse.cz>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=7uvBYhEU4nI128pEYv9ytFvk53eb5435th+fm03iKcg=;
+        b=e1VG28mhRmOgUkO+0DdPbGKOWxxz9ZVUhGSsdI7PaATaWTx7JeYyKoa1yDbp3XOkRy
+         /yLmOF7RLcKkdg05UUAq7JcWeSDc3l6T77P64xfGo59LsFxW4Z6F3NiFG3tATFnECiEj
+         /kyp9oF9abGfjiwWiBfr60ofKbs010y2H9Bbh/pmdGZAlkhm62z9Gxl7sMtLdKuyVvKQ
+         yV2dDuYTJnKE5ecc0UO7sbVN9oJhU6rCwTncwozpZ0M2tNJ0kZO0vdBwQUwlLHg9+BL2
+         hzyJDLQ4urW2JtBF1CHqZXOzMZBClHRI8LCQg8xtrizg+9GPsBz/3oszGnq/wKRb1D/Q
+         2FyA==
+X-Gm-Message-State: APjAAAUtQM2M4u3kVSU63wCZiy1AuG5yCAcZR0325CxMO5fzK/3y8Gal
+        zMImK9LlxoX7vyi2QMRrYfVb6g==
+X-Google-Smtp-Source: APXvYqzi0wTHbPFiBrdoZu2OelnCAbLZIwrt4pfCou5ILbK1Fv7JdHGkIwxmjqqLpFmGcgxHUgKUmw==
+X-Received: by 2002:adf:ec12:: with SMTP id x18mr28390898wrn.145.1562154601634;
+        Wed, 03 Jul 2019 04:50:01 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v204sm3152548wma.20.2019.07.03.04.50.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 04:50:01 -0700 (PDT)
+Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu
+ clock change
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        sboyd@codeaurora.org
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20190701091258.3870-1-narmstrong@baylibre.com>
+ <20190701091258.3870-8-narmstrong@baylibre.com>
+ <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <369f5e9b-b02a-5f5c-25a7-49803650e9c5@baylibre.com>
+Date:   Wed, 3 Jul 2019 13:50:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb614bebee1686293127194e8f7ced72955c7c7f.1562067622.git.mkubecek@suse.cz>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tue, Jul 02, 2019 at 01:50:09PM CEST, mkubecek@suse.cz wrote:
->The ethtool netlink code uses common framework for passing arbitrary
->length bit sets to allow future extensions. A bitset can be a list (only
->one bitmap) or can consist of value and mask pair (used e.g. when client
->want to modify only some bits). A bitset can use one of two formats:
->verbose (bit by bit) or compact.
->
->Verbose format consists of bitset size (number of bits), list flag and
->an array of bit nests, telling which bits are part of the list or which
->bits are in the mask and which of them are to be set. In requests, bits
->can be identified by index (position) or by name. In replies, kernel
->provides both index and name. Verbose format is suitable for "one shot"
->applications like standard ethtool command as it avoids the need to
->either keep bit names (e.g. link modes) in sync with kernel or having to
->add an extra roundtrip for string set request (e.g. for private flags).
->
->Compact format uses one (list) or two (value/mask) arrays of 32-bit
->words to store the bitmap(s). It is more suitable for long running
->applications (ethtool in monitor mode or network management daemons)
->which can retrieve the names once and then pass only compact bitmaps to
->save space.
->
->Userspace requests can use either format and ETHTOOL_RF_COMPACT flag in
->request header tells kernel which format to use in reply. Notifications
->always use compact format.
->
->Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
->---
-> Documentation/networking/ethtool-netlink.txt |  61 ++
-> include/uapi/linux/ethtool_netlink.h         |  35 ++
-> net/ethtool/Makefile                         |   2 +-
-> net/ethtool/bitset.c                         | 606 +++++++++++++++++++
-> net/ethtool/bitset.h                         |  40 ++
-> net/ethtool/netlink.h                        |   9 +
-> 6 files changed, 752 insertions(+), 1 deletion(-)
-> create mode 100644 net/ethtool/bitset.c
-> create mode 100644 net/ethtool/bitset.h
->
->diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
->index 97c369aa290b..4636682c551f 100644
->--- a/Documentation/networking/ethtool-netlink.txt
->+++ b/Documentation/networking/ethtool-netlink.txt
->@@ -73,6 +73,67 @@ set, the behaviour is the same as (or closer to) the behaviour before it was
-> introduced.
+On 03/07/2019 01:28, Martin Blumenstingl wrote:
+> Hi Stephen, Hi Neil,
+> 
+> On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> In order to implement clock switching for the CLKID_CPU_CLK and
+>> CLKID_CPUB_CLK, notifiers are added on specific points of the
+>> clock tree :
+>>
+>> cpu_clk / cpub_clk
+>> |   \- cpu_clk_dyn
+>> |      |  \- cpu_clk_premux0
+>> |      |        |- cpu_clk_postmux0
+>> |      |        |    |- cpu_clk_dyn0_div
+>> |      |        |    \- xtal/fclk_div2/fclk_div3
+>> |      |        \- xtal/fclk_div2/fclk_div3
+>> |      \- cpu_clk_premux1
+>> |            |- cpu_clk_postmux1
+>> |            |    |- cpu_clk_dyn1_div
+>> |            |    \- xtal/fclk_div2/fclk_div3
+>> |            \- xtal/fclk_div2/fclk_div3
+>> \ sys_pll / sys1_pll
+>>
+>> This for each cluster, a single one for G12A, two for G12B.
+>>
+>> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
+>> to be used as "parking" clock in a safe clock frequency.
+> it seems that this is one case where the "coordinated clocks" feature
+> would come handy: [0]
+
+We could still migrate over it later on.
+
+> Stephen, do you know if those patches stopped in March or if there's
+> still some ongoing effort to get them ready?
+> 
+> [...]
+>> -/*
+>> - * Internal sys pll emulation configuration parameters
+>> - */
+>> -static const struct reg_sequence g12a_sys_init_regs[] = {
+>> -       { .reg = HHI_SYS_PLL_CNTL1,     .def = 0x00000000 },
+>> -       { .reg = HHI_SYS_PLL_CNTL2,     .def = 0x00000000 },
+>> -       { .reg = HHI_SYS_PLL_CNTL3,     .def = 0x48681c00 },
+>> -       { .reg = HHI_SYS_PLL_CNTL4,     .def = 0x88770290 },
+>> -       { .reg = HHI_SYS_PLL_CNTL5,     .def = 0x39272000 },
+>> -       { .reg = HHI_SYS_PLL_CNTL6,     .def = 0x56540000 },
+>> +static const struct pll_mult_range g12a_sys_pll_mult_range = {
+>> +       .min = 128,
+>> +       .max = 250,
+>>  };
+>>
+>>  static struct clk_regmap g12a_sys_pll_dco = {
+>> @@ -124,14 +118,15 @@ static struct clk_regmap g12a_sys_pll_dco = {
+>>                         .shift   = 29,
+>>                         .width   = 1,
+>>                 },
+>> -               .init_regs = g12a_sys_init_regs,
+>> -               .init_count = ARRAY_SIZE(g12a_sys_init_regs),
+>> +               .range = &g12a_sys_pll_mult_range,
+> Neil, I believe that this should be a separate patch with a
+> description which explains why we don't need the "init regs" anymore
+
+Sure
+
+> 
+>>         },
+>>         .hw.init = &(struct clk_init_data){
+>>                 .name = "sys_pll_dco",
+>> -               .ops = &meson_clk_pll_ro_ops,
+>> +               .ops = &meson_clk_pll_ops,
+>>                 .parent_names = (const char *[]){ IN_PREFIX "xtal" },
+>>                 .num_parents = 1,
+>> +               /* This clock feeds the CPU, avoid disabling it */
+>> +               .flags = CLK_IS_CRITICAL,
+> maybe we should have a separate patch for making the CPU clock tree
+> mutable as well
+
+Indeed
+
+> 
+> [...]
+>> +/* This divider uses bit 26 to take change in account */
+>> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw,
+>> +                                          unsigned long rate,
+>> +                                          unsigned long parent_rate)
+>> +{
+>> +       struct clk_regmap *clk = to_clk_regmap(hw);
+>> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+>> +       unsigned int val;
+>> +       int ret;
+>> +
+>> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
+>> +                             div->flags);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       val = (unsigned int)ret << div->shift;
+>> +
+>> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
+>> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
+>> +
+>> +       return regmap_update_bits(clk->map, div->offset,
+>> +                                 clk_div_mask(div->width) << div->shift |
+>> +                                 SYS_CPU_DYN_ENABLE, val);
+>> +};
+> the public S922X datasheet doesn't mention bit 26
+> do I understand the semantics correctly?:
+> - set SYS_CPU_DYN_ENABLE
+> - update the divider
+> - unset SYS_CPU_DYN_ENABLE
+
+Exact, it's how Amlogic uses it, seems the HW takes the divider value
+only on the "falling edge" of this bit !
+
+> 
+> too bad it's not a gate which we could model with
+> CLK_SET_RATE_GATE/CLK_SET_RATE_UNGATE
+
+Yep, but it only works when I write the new divider value *and* I remove the bit.
+It must be a glitch-free divider mechanism.
+
+Neil
+
 > 
 > 
->+Bit sets
->+--------
->+
->+For short bitmaps of (reasonably) fixed length, standard NLA_BITFIELD32 type
->+is used. For arbitrary length bitmaps, ethtool netlink uses a nested attribute
->+with contents of one of two forms: compact (two binary bitmaps representing
->+bit values and mask of affected bits) and bit-by-bit (list of bits identified
->+by either index or name).
->+
->+Compact form: nested (bitset) atrribute contents:
->+
->+    ETHTOOL_A_BITSET_LIST	(flag)		no mask, only a list
->+    ETHTOOL_A_BITSET_SIZE	(u32)		number of significant bits
->+    ETHTOOL_A_BITSET_VALUE	(binary)	bitmap of bit values
->+    ETHTOOL_A_BITSET_MASK	(binary)	bitmap of valid bits
->+
->+Value and mask must have length at least ETHTOOL_A_BITSET_SIZE bits rounded up
->+to a multiple of 32 bits. They consist of 32-bit words in host byte order,
+> Martin
+> 
+> [0] https://patchwork.kernel.org/patch/10838949/
+> 
 
-Looks like the blocks are similar to NLA_BITFIELD32. Why don't you user
-nested array of NLA_BITFIELD32 instead?
-
-
->+words ordered from least significant to most significant (i.e. the same way as
->+bitmaps are passed with ioctl interface).
->+
->+For compact form, ETHTOOL_A_BITSET_SIZE and ETHTOOL_A_BITSET_VALUE are
->+mandatory.  Similar to BITFIELD32, a compact form bit set requests to set bits
-
-Double space^^
-
-
->+in the mask to 1 (if the bit is set in value) or 0 (if not) and preserve the
->+rest. If ETHTOOL_A_BITSET_LIST is present, there is no mask and bitset
->+represents a simple list of bits.
-
-Okay, that is a bit confusing. Why not to rename to something like:
-ETHTOOL_A_BITSET_NO_MASK (flag)
-?
-
-
->+
->+Kernel bit set length may differ from userspace length if older application is
->+used on newer kernel or vice versa. If userspace bitmap is longer, an error is
->+issued only if the request actually tries to set values of some bits not
->+recognized by kernel.
->+
->+Bit-by-bit form: nested (bitset) attribute contents:
->+
->+    ETHTOOL_A_BITSET_LIST	(flag)		no mask, only a list
->+    ETHTOOL_A_BITSET_SIZE	(u32)		number of significant bits
->+    ETHTOOL_A_BITSET_BIT	(nested)	array of bits
->+	ETHTOOL_A_BITSET_BIT+   (nested)	one bit
->+	    ETHTOOL_A_BIT_INDEX	(u32)		bit index (0 for LSB)
->+	    ETHTOOL_A_BIT_NAME	(string)	bit name
->+	    ETHTOOL_A_BIT_VALUE	(flag)		present if bit is set
->+
->+Bit size is optional for bit-by-bit form. ETHTOOL_A_BITSET_BITS nest can only
->+contain ETHTOOL_A_BITS_BIT attributes but there can be an arbitrary number of
->+them.  A bit may be identified by its index or by its name. When used in
->+requests, listed bits are set to 0 or 1 according to ETHTOOL_A_BIT_VALUE, the
->+rest is preserved. A request fails if index exceeds kernel bit length or if
->+name is not recognized.
->+
->+When ETHTOOL_A_BITSET_LIST flag is present, bitset is interpreted as a simple
->+bit list. ETHTOOL_A_BIT_VALUE attributes are not used in such case. Bit list
->+represents a bitmap with listed bits set and the rest zero.
->+
->+In requests, application can use either form. Form used by kernel in reply is
->+determined by a flag in flags field of request header. Semantics of value and
->+mask depends on the attribute. General idea is that flags control request
->+processing, info_mask control which parts of the information are returned in
->+"get" request and index identifies a particular subcommand or an object to
->+which the request applies.
-
-This is quite complex and confusing. Having the same API for 2 APIs is
-odd. The API should be crystal clear, easy to use.
-
-Why can't you have 2 commands, one working with bit arrays only, one
-working with strings? Something like:
-X_GET
-   ETHTOOL_A_BITS (nested)
-      ETHTOOL_A_BIT_ARRAY (BITFIELD32)
-X_NAMES_GET
-   ETHTOOL_A_BIT_NAMES (nested)
-	ETHTOOL_A_BIT_INDEX
-	ETHTOOL_A_BIT_NAME
-
-For set, you can also have multiple cmds:
-X_SET  - to set many at once, by bit index
-   ETHTOOL_A_BITS (nested)
-      ETHTOOL_A_BIT_ARRAY (BITFIELD32)
-X_ONE_SET   - to set one, by bit index
-   ETHTOOL_A_BIT_INDEX
-   ETHTOOL_A_BIT_VALUE
-X_ONE_SET   - to set one, by name
-   ETHTOOL_A_BIT_NAME
-   ETHTOOL_A_BIT_VALUE
-
-
-[...]
