@@ -2,163 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E085D8BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9715DAF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfGCA2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:28:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbfGCA2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:28:05 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 655FE219BE;
-        Wed,  3 Jul 2019 00:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562112712;
-        bh=pPxcb0LDsgQA0SUglccwz7TppfnSPAMhkWwUGPg2n/U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=i3OgV8IoDaCpBBFL4wfhTmqEmtyTbGAjNPUyQsefF5sUYp/p2urm59EVpDNvfU0hf
-         P5wWdvdoehBE4sUVrqsQKWu3MUGz4xk+f2cM4OSq5b6JOHsHcJnUgIr1WGGmuLnlE6
-         mGtWW9nT/7F0F1Nn6YiNZFmqkbUCIKPVghmxf6NY=
-Date:   Wed, 3 Jul 2019 09:11:47 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     shuah <shuah@kernel.org>
-Cc:     Po-Hsu Lin <po-hsu.lin@canonical.com>, rostedt@goodmis.org,
-        mingo@redhat.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: skip ftrace test if FTRACE was not
- enabled
-Message-Id: <20190703091147.064029248fed5066ea5e5d2b@kernel.org>
-In-Reply-To: <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
-References: <20190702062358.7330-1-po-hsu.lin@canonical.com>
-        <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727482AbfGCBdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:33:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38736 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfGCBdR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:33:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=InWmJ+St41ikI+4rizzZIL6hXVavnsXpRy2fc8t2i50=; b=MTAK0tEofyhdJtOypGTtVMIs8
+        pBHy2O4TbTzCttnhg/LJanmt/XcBTzuDUPmbybPs6Rg0XsO8iYO8naIeHTwjWnTHMDu2KwwH+wcaU
+        UpgnAge56JadzEiab+YsfsJgSwEcUVmsXXLcBg7486V8FIHylCXzlaBxru1QQo4Cxabp8ifS4zC1S
+        WiCo1d2p5b0qBvzQ/Bn1xH/KrrLMTkgiNvjJ+icdIKMQqyrz+o0Zf66g5hdYwzpVJSFWLobFtRLOO
+        6mqp/Zt3/me/Ikt6C503zATKULYzwPjiKZ1shQ0rrnDcVy3RZxqs3bIlRyDOoQLav2NUCrdUOuspl
+        e2I5twPxQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hiSw1-0007NX-MU; Wed, 03 Jul 2019 00:15:41 +0000
+Date:   Tue, 2 Jul 2019 17:15:41 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-hyperv@vger.kernel.org,
+        Jake Oshins <jakeo@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI: hv: fix pci-hyperv build, depends on SYSFS
+Message-ID: <20190703001541.GG1729@bombadil.infradead.org>
+References: <69c25bc3-da00-2758-92ee-13c82b51fc45@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69c25bc3-da00-2758-92ee-13c82b51fc45@infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Po-Hsu Lin,
-
-On Tue, 2 Jul 2019 13:22:26 -0600
-shuah <shuah@kernel.org> wrote:
-
-> Hi Po-Hsu Lin,
+On Tue, Jul 02, 2019 at 04:24:30PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> On 7/2/19 12:23 AM, Po-Hsu Lin wrote:
-> > The ftrace test will need to have CONFIG_FTRACE enabled to make the
-> > ftrace directory available.
-> > 
-> > Add an additional check to skip this test if the CONFIG_FTRACE was not
-> > enabled.
+> Fix build errors when building almost-allmodconfig but with SYSFS
+> not set (not enabled).  Fixes these build errors:
+> 
+> ERROR: "pci_destroy_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+> ERROR: "pci_create_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+> 
+> drivers/pci/slot.o is only built when SYSFS is enabled, so
+> pci-hyperv.o has an implicit dependency on SYSFS.
+> Make that explicit.
 
-Sorry, NAK for config check.
-
-> > 
-> > This will be helpful to avoid a false-positive test result when testing
-> > it directly with the following commad against a kernel that does not
-> > have CONFIG_FTRACE enabled:
-
-Would you know tools/testing/selftests/ftrace/config (and other config files
-in each tests) ?
-
-Since each selftest depends specific configurations, those configs are
-written in config file, and tester must enable it using 
-"scripts/kconfig/merge_config.sh".
-
-We can not check the kernel config in some cases, e.g. distro kernel,
-cross-build kernel, remote build kernel etc. Also, the .config file
-can be a config file for another kernel build.
-
-So please take care of your kernel configuration. If you find any test
-failed even if you enable configs in config file under that test, please
-report it, since that is a bug.
-
-
-Thank you,
-
-> >      make -C tools/testing/selftests TARGETS=ftrace run_tests
-> > 
-> > The test result on an Ubuntu KVM kernel will be changed from:
-> >      selftests: ftrace: ftracetest
-> >      ========================================
-> >      Error: No ftrace directory found
-> >      not ok 1..1 selftests: ftrace: ftracetest [FAIL]
-> > To:
-> 
-> Thanks for the patch.
-> 
-> Check patch fails with the above To:
-> 
-> WARNING: Use a single space after To:
-> #107:
-> To:
-> 
-> ERROR: Unrecognized email address: ''
-> #107:
-> To:
-> 
-> total: 1 errors, 1 warnings, 23 lines checked
-> 
-> 
-> Please fix and send v2.
-> 
-> >      selftests: ftrace: ftracetest
-> >      ========================================
-> >      CONFIG_FTRACE was not enabled, test skipped.
-> >      not ok 1..1 selftests: ftrace: ftracetest [SKIP]
-> > 
-> > Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
-> > ---
-> >   tools/testing/selftests/ftrace/ftracetest | 11 ++++++++++-
-> >   1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> > index 6d5e9e8..6c8322e 100755
-> > --- a/tools/testing/selftests/ftrace/ftracetest
-> > +++ b/tools/testing/selftests/ftrace/ftracetest
-> > @@ -7,6 +7,9 @@
-> >   #  Written by Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-> >   #
-> 
-> Hmm. You havem't cc'ed Masami on this. Adding Masami.
-> 
-> I would think Masami should be on the Signed-off-by as well,
-> since he is the author.
-> 
-> >   
-> > +# Kselftest framework requirement - SKIP code is 4.
-> > +ksft_skip=4
-> > +
-> >   usage() { # errno [message]
-> >   [ ! -z "$2" ] && echo $2
-> >   echo "Usage: ftracetest [options] [testcase(s)] [testcase-directory(s)]"
-> > @@ -139,7 +142,13 @@ parse_opts $*
-> >   
-> >   # Verify parameters
-> >   if [ -z "$TRACING_DIR" -o ! -d "$TRACING_DIR" ]; then
-> > -  errexit "No ftrace directory found"
-> > +  ftrace_enabled=`grep "^CONFIG_FTRACE=y" /lib/modules/$(uname -r)/build/.config`
-> > +  if [ -z "$ftrace_enabled" ]; then
-> > +    echo "CONFIG_FTRACE was not enabled, test skipped."
-> > +    exit $ksft_skip
-> > +  else
-> > +    errexit "No ftrace directory found"
-> > +  fi
-> >   fi
-> >   
-> >   # Preparing logs
-> > 
-> 
-> thanks,
-> -- Shuah
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+I wonder if we shouldn't rather provide no-op versions of
+pci_create|destroy_slot for when SYSFS is not set?
