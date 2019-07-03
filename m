@@ -2,122 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8A65DF46
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AED15DF50
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfGCIEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:04:46 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26448 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726670AbfGCIEq (ORCPT
+        id S1727185AbfGCIJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:09:57 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45414 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfGCIJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:04:46 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x637rQ6P011005;
-        Wed, 3 Jul 2019 10:04:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=Me2aIVtHkOwy84/SxLI2Xnts7qdQwbxVRhp1y4JNm4U=;
- b=xszA75fYJmgBnFtufF/fyMNT8ZY1A4LbSlEKstxr/xjye2iA6Hm+/HSoVN5izM6WFILS
- Fl690awtgTlr3w7LOAlH0Nt6/VDHHIZhyJQ3ICqlhhRjhnttP0dRV+OxNYmu+1avUHRY
- yHxolqUTOGod5kvDpxoYE6qrMnTwGYnk1jnypkgP1bFOiJqW8gxZADRSwSRBNStFteup
- QQPNg0N9J7J1DmGe4sITKKibHagNPzfX0n/E7y9c/iyPLMQNiogQ1QEhS24XPidLgE/X
- b7wPl7nKOj2vjB0g3kKUXOURArS5DX4OXQMu5xQTulab/e6J76r+MElhnp6rbKagEQTW nQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2tdw4a28d7-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 03 Jul 2019 10:04:19 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0858641;
-        Wed,  3 Jul 2019 08:04:15 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AA7E0169F;
-        Wed,  3 Jul 2019 08:04:15 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 3 Jul 2019
- 10:04:15 +0200
-Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 3 Jul 2019 10:04:14
- +0200
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@st.com>, <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <olivier.moysan@st.com>, <jsarha@ti.com>
-Subject: [PATCH] drm/bridge: sii902x: add audio graph card support
-Date:   Wed, 3 Jul 2019 10:04:12 +0200
-Message-ID: <1562141052-26221-1-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 3 Jul 2019 04:09:57 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m23so1342211lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 01:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Ivvl5CCQ3XOn/x5HlCBu4EVnhOHWx5rpHDy0gA4JAE=;
+        b=xmI4XRPd+lQlj68cPzA6JlwRpOXyFjP1HS3BlSaoF2x2081Fvrv4UaFUgervHHaYhU
+         POqzjtzqyn0VdMh42JXX9BmtgL69KfjHSg+r4unjasP98lt9q5aki76/a6Dx/U9yeXDO
+         vqAgRYFYxHAl49vbYOsclcx3i4UxVokDR3O2PljbW1Eb/8vnL48LELy0/dzojKKDA+Ws
+         Qv3fWNIgVopf5/9Qak5nwiWtP+QLRa3V5H0HDyGRCUOJTFFsioR7KBdtM4Rj5NVzm0/i
+         KO26bEgsfqxcHwW06GAuqxTEDPbuoA1xi/IOTqvfYN6x+GPK6cfWXTzCu4u1oS0RaGwW
+         7RZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Ivvl5CCQ3XOn/x5HlCBu4EVnhOHWx5rpHDy0gA4JAE=;
+        b=Hz3L+U7/T3rxetDgn5s0FvcPoZMMWmj4FmYAGGeRfR3wKBuBPeEUMrRm5E0MM4WhZX
+         Ef1zseuZ5IciNjCo9q0p70G7B6mo/H5UlT+lQasZfPAPZID5/TZTUzA4jm0PIoeq4vtg
+         rbn8YN5aGJMSWajqVZlBV4GSGenf+/Rj/giTm229GpQL4PUr/Z6eZX7GUo7c548kkMZ7
+         xYCOUUf2Bqp//4PFcR4ASd1oBRs0E/ZET9C59RHFGLy/oESawnDwVbErAamLqnza8bjz
+         vSWPw8gSjPDqjRWhHmOye/Ju7scGtNuDKdaMw8bP4SB5wCtNDVnKs9N6lHwIdRXPQ9d/
+         TaxQ==
+X-Gm-Message-State: APjAAAW/ppWlkpTbiS1E8Ku4lCjOQSqum5dbyHNNbmt7nv8ABWdOZ7l5
+        1d25xzwcUZXP8vOLX3Y7GSJQa+EDHZ2gbtCYHj7/4w==
+X-Google-Smtp-Source: APXvYqzfT3CXQZE6J3uTELd2zBtuCY22dowAzbU0MVWOjXSOT6h8EXceXwH+MwKG/ftQAKgcCqWQE0vohmtXNlTjjv8=
+X-Received: by 2002:a2e:650a:: with SMTP id z10mr20267672ljb.28.1562141395764;
+ Wed, 03 Jul 2019 01:09:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_02:,,
- signatures=0
+References: <20190628150049.1108048-1-arnd@arndb.de>
+In-Reply-To: <20190628150049.1108048-1-arnd@arndb.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 3 Jul 2019 10:09:44 +0200
+Message-ID: <CACRpkdbcgaNmWkHJpj9bt4bFu+RtWSAtUjwkNDpJj6VsJGyTrw@mail.gmail.com>
+Subject: Re: [PATCH] devres: allow const resource arguments
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement get_dai_id callback of audio HDMI codec
-to support ASoC audio graph card.
-HDMI audio output has to be connected to sii902x port 3.
-get_dai_id callback maps this port to ASoC DAI index 0.
+On Fri, Jun 28, 2019 at 5:00 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- drivers/gpu/drm/bridge/sii902x.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> devm_ioremap_resource() does not currently take 'const' arguments,
+> which results in a warning from the first driver trying to do it
+> anyway:
+>
+> drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
+> drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+>   priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
+>                                                  ^~~~~~~~~~~~~~~~~~~
+>
+> Change the prototype to allow it, as there is no real reason not to.
+>
+> Fixes: 9bb2e0452508 ("gpio: amd: Make resource struct const")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index dd7aa466b280..daf9ef3cd817 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -158,6 +158,8 @@
- 
- #define SII902X_I2C_BUS_ACQUISITION_TIMEOUT_MS	500
- 
-+#define SII902X_AUDIO_PORT_INDEX		3
-+
- struct sii902x {
- 	struct i2c_client *i2c;
- 	struct regmap *regmap;
-@@ -690,11 +692,32 @@ static int sii902x_audio_get_eld(struct device *dev, void *data,
- 	return 0;
- }
- 
-+static int sii902x_audio_get_dai_id(struct snd_soc_component *component,
-+				    struct device_node *endpoint)
-+{
-+	struct of_endpoint of_ep;
-+	int ret;
-+
-+	ret = of_graph_parse_endpoint(endpoint, &of_ep);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * HDMI sound should be located at reg = <3>
-+	 * Return expected DAI index 0.
-+	 */
-+	if (of_ep.port == SII902X_AUDIO_PORT_INDEX)
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static const struct hdmi_codec_ops sii902x_audio_codec_ops = {
- 	.hw_params = sii902x_audio_hw_params,
- 	.audio_shutdown = sii902x_audio_shutdown,
- 	.digital_mute = sii902x_audio_digital_mute,
- 	.get_eld = sii902x_audio_get_eld,
-+	.get_dai_id = sii902x_audio_get_dai_id,
- };
- 
- static int sii902x_audio_codec_init(struct sii902x *sii902x,
--- 
-2.7.4
+Patch applied with Greg's and Enrico's ACKs.
 
+Yours,
+Linus Walleij
