@@ -2,118 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F655D94B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A1E5D967
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfGCAkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:40:20 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45559 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfGCAkU (ORCPT
+        id S1727278AbfGCAml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:42:41 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36702 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfGCAml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:40:20 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j19so640752qtr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:40:19 -0700 (PDT)
+        Tue, 2 Jul 2019 20:42:41 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r6so506873oti.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=4BtV39KjV7sDRMWmrXQvT/nf8DtHimxpqWMrsA8yZ8g=;
-        b=CQdsRFF171jO5+/s1qAUI1rgCzyTzJDs9gZOQMPyPjnK2ayU+zBw/Y1zuHJcS3Aqaa
-         DOee7yY43BfLZd8G3dM1yUpHgG+YIbD8ROTNtVfGY52fSj7ya5Ed3OQroTo8Cz47Xh/E
-         dsaGad6apPp+ZEq3MUye/V3Lzt0F7FRJxgyu40Nim3+roBef6y/zVuOZO/ydtLb1/7AV
-         V8+ae4mRJHOin7xdq2VTx5cmL15S+2G3Ry0hVPR8zpWJTpk/CBENGKyWw6bmiU1kCm0N
-         0AxXt/FTvuMJ1c1JkMO+FwHTrYgADhhuWJSrhkbmeqEKELzouSnt6TgRV1MAj0P94Sef
-         4LpA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0AGSyMvf0zexOMokX4EpC11/R6d7poyoJeo3TShyztM=;
+        b=QWyJjuDYJNyB44jlcWkT2Do84tRKoTgiiRWbe8c+iRWLpEQXaFEgT0w9ZSZH2Cs9Tf
+         NgpgZ8pPPSpSGIZa0MJeB+dtoragQ2H4oPc7bonqaiiNZhCo2ZOJ7wWuogIDhfx9e4s/
+         ZfZgI41C2VLSea49134z094gXVVtjlcxZP9bHzuIY6XmQJlEzTwh4QKqYp1GvIhzTBqP
+         C0rfgeI6tqW1a8lFZkStsJB+FEkRAIaU3kaEYBQPQGtfGa8CabE6/0FtfDI1lC7Xc0F+
+         6+LCGjufHIildbzfwK5DH2jwZiLcBGxTCOHmP+FN42+bD0bPJuwOEVfltIw786Xw5ebf
+         Gk3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=4BtV39KjV7sDRMWmrXQvT/nf8DtHimxpqWMrsA8yZ8g=;
-        b=gZkP6IL4sG8qMdLtqllF89PMV44vs46HFgwwn04A9shhVa4fOY4+x/0vDgDciU08SY
-         xEE6pXqcd1puUXbVpm/tKKVFB7Vwc5b5a8jlN6CgGJMaSWpfyjyaz5q3wXKCU9H/l2TV
-         1HPzLJWIhrVWNSzpQUyEle/Y+nXz8GbHTa6D35fzBjqTydRwKdewexR2Ut1CXSW+8cIf
-         g434yyiChkFOfJl/HBFOEQoEmXmFa46hiuHTgTx2eMj708lY0WeBjXNtKOXnXS0AQKED
-         8lPAq+ya66my0YZx1bp4z280wmbPkkD9y72OWJgDOQqeNZ+cCbg9MsstvokyE5xCDywL
-         MaiQ==
-X-Gm-Message-State: APjAAAXEy+1wcjo9lkgI2cMNwscGDaKesKnLCvuxsOuF6qaZE3v5bxzV
-        Dwkb/0pcuJ5ftxiXYb7DnYMldQ==
-X-Google-Smtp-Source: APXvYqxS8kYtvbzapj/eH76oDHlldzxbfNicv6tPtHys9nj2jiUMbU6r2kzPJt0X+uutHWhL+5s2Hg==
-X-Received: by 2002:ac8:2b14:: with SMTP id 20mr28665349qtu.295.1562114419416;
-        Tue, 02 Jul 2019 17:40:19 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id c18sm220886qkm.78.2019.07.02.17.40.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 17:40:19 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 17:40:14 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Ilya Maximets <i.maximets@samsung.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH bpf] xdp: fix race on generic receive path
-Message-ID: <20190702174014.005a3166@cakuba.netronome.com>
-In-Reply-To: <20190702143634.19688-1-i.maximets@samsung.com>
-References: <CGME20190702143639eucas1p2b168c68c35b70aac75cad6c72ccc81ad@eucas1p2.samsung.com>
-        <20190702143634.19688-1-i.maximets@samsung.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0AGSyMvf0zexOMokX4EpC11/R6d7poyoJeo3TShyztM=;
+        b=W0uXxpdT0MiHTijrpMKCfM9ihAbVhgXfhVnbIfOpUzrCN48ZL93lXsF/Wdvneh5fnJ
+         hBwOrFLStv9xXsv3oIBLtPsWy2xWu5XyXfjy9WEepnpAKKvSn+EINf93N2dJmhufiOrv
+         D89VeOQNw2+Lcj/iVhlEwk+cCeZ0UILlnfzl6ZZMLTv/Skj6C1CF0DOCp1rdcAQwkxp9
+         V6IcFkVzKKWhawmQNaMOuwNnpykEIOr98Rv5BV+cl4TkvVcnxKRSRZUJsYKzYDb5i+EI
+         kibXenSHx7zVoNyw3X/ahhPtMxMXshZmEk4PUoZO4w87M30APsuQlO09kiJpVSiuzfPz
+         TFeQ==
+X-Gm-Message-State: APjAAAVtkpz+Es9WSNIbV0RRyrQn0hSH/o65QYIO8d+UGKBAOYTgnfKN
+        qEwP/24K4mz48F3aHgV/QM3f47aaK8uMUBjJCPiG3g==
+X-Google-Smtp-Source: APXvYqwt/AruSNRNxTjRUQk6hQeRuA06O8pI4+Ci7eZfCus0eFiY7ywxyleud1COJr+2irFyLNDBtxvmvCpYM8UHPzM=
+X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr25111745otn.247.1562114560450;
+ Tue, 02 Jul 2019 17:42:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org> <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org> <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org> <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+ <20190702033410.GB1729@bombadil.infradead.org> <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
+ <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
+In-Reply-To: <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 2 Jul 2019 17:42:28 -0700
+Message-ID: <CAPcyv4ihQ9djQvgnqZoTLRH3CwFhpWK_uUrmWSLH_3-Fi1g1qw@mail.gmail.com>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+To:     Boaz Harrosh <openosd@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  2 Jul 2019 17:36:34 +0300, Ilya Maximets wrote:
-> Unlike driver mode, generic xdp receive could be triggered
-> by different threads on different CPU cores at the same time
-> leading to the fill and rx queue breakage. For example, this
-> could happen while sending packets from two processes to the
-> first interface of veth pair while the second part of it is
-> open with AF_XDP socket.
-> 
-> Need to take a lock for each generic receive to avoid race.
-> 
-> Fixes: c497176cb2e4 ("xsk: add Rx receive functions and poll support")
-> Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
+On Tue, Jul 2, 2019 at 5:23 PM Boaz Harrosh <openosd@gmail.com> wrote:
+>
+> On 02/07/2019 18:37, Dan Williams wrote:
+> <>
+> >
+> > I'd be inclined to do the brute force fix of not trying to get fancy
+> > with separate PTE/PMD waitqueues and then follow on with a more clever
+> > performance enhancement later. Thoughts about that?
+> >
+>
+> Sir Dan
+>
+> I do not understand how separate waitqueues are any performance enhancement?
+> The all point of the waitqueues is that there is enough of them and the hash
+> function does a good radomization spread to effectively grab a single locker
+> per waitqueue unless the system is very contended and waitqueues are shared.
 
-> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-> index a14e8864e4fa..19f41d2b670c 100644
-> --- a/net/xdp/xsk.c
-> +++ b/net/xdp/xsk.c
-> @@ -119,17 +119,22 @@ int xsk_generic_rcv(struct xdp_sock *xs, struct xdp_buff *xdp)
->  {
->  	u32 metalen = xdp->data - xdp->data_meta;
->  	u32 len = xdp->data_end - xdp->data;
-> +	unsigned long flags;
->  	void *buffer;
->  	u64 addr;
->  	int err;
->  
-> -	if (xs->dev != xdp->rxq->dev || xs->queue_id != xdp->rxq->queue_index)
-> -		return -EINVAL;
-> +	spin_lock_irqsave(&xs->rx_lock, flags);
+Right, the fix in question limits the input to the hash calculation by
+masking the input to always be 2MB aligned.
 
-Why _irqsave, rather than _bh?
+> Which is good because it means you effectively need a back pressure to the app.
+> (Because pmem IO is mostly CPU bound with no long term sleeps I do not think
+>  you will ever get to that situation)
+>
+> So the way I understand it having twice as many waitqueues serving two types
+> will be better performance over all then, segregating the types each with half
+> the number of queues.
 
-> +	if (xs->dev != xdp->rxq->dev || xs->queue_id != xdp->rxq->queue_index) {
-> +		err = -EINVAL;
-> +		goto out_unlock;
-> +	}
->  
->  	if (!xskq_peek_addr(xs->umem->fq, &addr) ||
->  	    len > xs->umem->chunk_size_nohr - XDP_PACKET_HEADROOM) {
-> -		xs->rx_dropped++;
-> -		return -ENOSPC;
-> +		err = -ENOSPC;
-> +		goto out_drop;
->  	}
->  
->  	addr += xs->umem->headroom;
+Yes, but the trick is how to manage cases where someone waiting on one
+type needs to be woken up by an event on the other. So all I'm saying
+it lets live with more hash collisions until we can figure out a race
+free way to better scale waitqueue usage.
 
+>
+> (Regardless of the above problem of where the segregation is not race clean)
+>
+> Thanks
+> Boaz
