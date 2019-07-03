@@ -2,133 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3814F5EC02
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 724985EBE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfGCSxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:53:31 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34581 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCSxa (ORCPT
+        id S1727270AbfGCSp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:45:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57546 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCSpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:53:30 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m29so2883090qtu.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ag64teZVzLgzhFHw838DwskIKJMH8sytfjo0gih9s74=;
-        b=lY5Cz6Dwq3tuK627jXknuGB72hyzdZLRX32qIaFinH3OPVJzGvtrjp4cMSmkZvLt1o
-         b9BPXYPD1kpfRx7y35XrfWBXCNXZR5fPxtIA8Zqun6KvZAiD0yri84rdvhdkrPbLyANK
-         oEMuPtdMuC9EdgUWlMi6X1OL1JrC+T9BEzUE1CF9KWi0MZtEcYtF1cNuzwGAqJjewnFm
-         KwI69MEQ1gh3BPL73rOiqqyD6h6zzYWxNgfnevPYOEtMv7h0n7pKeXyyIO7Zw2VJtoyv
-         s7wE4Ek1bd9rzbJCuMq8oECimJKx0sT5kzk/Yqd34qRi/Y+UZrfIdQMYnarZ4UAdnrd1
-         3s5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ag64teZVzLgzhFHw838DwskIKJMH8sytfjo0gih9s74=;
-        b=InPmHUCr515HsgJoN7otxtBqWZv0UXYW+/NIrz23WgCXmKRpfIQ0FCZu+TfTEQ1Tff
-         rYyWXIwJB/IklNfgaPkhA0fmXdSGa2DHqwCv3rDLov0PdTemsd8TqtOCI4vXONxOvSxK
-         o/s6xJ2eE9EZ4qGIhUdTzabaK/DwSujceXNrWOqCkepvajcguBN6E7iEkFj3TeIPJzhu
-         NYrSvMDiHxMnUolrzZV+lZBeOquxd5MOw06iQXMogHvJR1teU9AvkSfcsIL6GgGfbMA3
-         DgEL7VwfVM/KAmhK6N42611a4AuEalwAIzmU/dtRt4QdNA0V4fKZxYBxozY5iNaaG8tl
-         awPQ==
-X-Gm-Message-State: APjAAAU48etXD7VrgeIseyKnU4D/t7+AdNYZNhUW1ZNA7CZ/wceWZQGl
-        24oNjd6NYRIS8LOL6dt2MweFUcaGbh8=
-X-Google-Smtp-Source: APXvYqxjDVXPEEZJiTxktdMBN6QlLesr3wBNxSdPVRUUQsrXa7K2UFXmD+asUP6taPYUEpAWsk/2cA==
-X-Received: by 2002:a0c:983b:: with SMTP id c56mr34311430qvd.131.1562180008940;
-        Wed, 03 Jul 2019 11:53:28 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.209.182])
-        by smtp.gmail.com with ESMTPSA id d123sm1309369qkb.94.2019.07.03.11.53.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 11:53:28 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7149D41153; Wed,  3 Jul 2019 15:43:46 -0300 (-03)
-Date:   Wed, 3 Jul 2019 15:43:46 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Changbin Du <changbin.du@intel.com>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 04/11] perf annotate: Smatch: Fix dereferencing freed
- memory
-Message-ID: <20190703184346.GE10740@kernel.org>
-References: <20190702103420.27540-1-leo.yan@linaro.org>
- <20190702103420.27540-5-leo.yan@linaro.org>
+        Wed, 3 Jul 2019 14:45:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UYUSkq3MaywALpKQmbkqpd/XlsTvFn81MlHwxqWXibw=; b=m8HcPZ2yeJKhNSw16f2U4gwi8
+        VaTgheKcvNfXeBOBmB/SsYKOJeJUuVqHvJ0+uwDyysD4GPpY3lM+PzTEkWhtLBBoggskp9VkHUsIk
+        UyGPHDBv6lN6uVl40S7pfVGSDzMGXP3klgrtrx8i65i7XXeXSanBjwMihL5tpASfXcWHKK8049WC9
+        4COYj4vK4P48hgNN3U8YbS8v6zZFinYOWgiAEjZk+THHb3vMXSTjZKjFTltedrmFPS6mdsp2vG2Cv
+        lBShDGZVA77KiqJ0Ogl95z9sCHe597CJXw4e4rhrDdE12lmFKK4fpGmHckcPOwKSG/n3t9UTbQVja
+        DEmxCAQ0g==;
+Received: from rap-us.hgst.com ([199.255.44.250] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hikFa-00079g-W0; Wed, 03 Jul 2019 18:45:03 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: hmm_range_fault related fixes and legacy API removal
+Date:   Wed,  3 Jul 2019 11:44:57 -0700
+Message-Id: <20190703184502.16234-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702103420.27540-5-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jul 02, 2019 at 06:34:13PM +0800, Leo Yan escreveu:
-> Based on the following report from Smatch, fix the potential
-> dereferencing freed memory check.
-> 
->   tools/perf/util/annotate.c:1125
->   disasm_line__parse() error: dereferencing freed memory 'namep'
-> 
-> tools/perf/util/annotate.c
-> 1100 static int disasm_line__parse(char *line, const char **namep, char **rawp)
-> 1101 {
-> 1102         char tmp, *name = ltrim(line);
-> 
-> [...]
-> 
-> 1114         *namep = strdup(name);
-> 1115
-> 1116         if (*namep == NULL)
-> 1117                 goto out_free_name;
-> 
-> [...]
-> 
-> 1124 out_free_name:
-> 1125         free((void *)namep);
->                           ^^^^^
-> 1126         *namep = NULL;
->              ^^^^^^
-> 1127         return -1;
-> 1128 }
-> 
-> If strdup() fails to allocate memory space for *namep, we don't need to
-> free memory with pointer 'namep', which is resident in data structure
-> disasm_line::ins::name; and *namep is NULL pointer for this failure, so
-> it's pointless to assign NULL to *namep again.
+Hi Jérôme, Ben and Jason,
 
-Applied, with this extra comment:
-
-
-Committer note:
-
-Freeing namep, which is the address of the first entry of the 'struct
-ins' that is the first member of struct disasm_line would in fact free
-that disasm_line instance, if it was allocated via malloc/calloc, which,
-later, would a dereference of freed memory.
+below is a series against the hmm tree which fixes up the mmap_sem
+locking in nouveau and while at it also removes leftover legacy HMM APIs
+only used by nouveau.
