@@ -2,241 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DA65DCF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBC55DCF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:28:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfGCD3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 23:29:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbfGCD3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 23:29:09 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70FC8218BA;
-        Wed,  3 Jul 2019 03:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562124548;
-        bh=fFP8/xQpsCr50gT3UsgaVb/LRww2jtZsKaXMPRHhOGE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVXS0zS0+c3R1csdFK5enbds2nwmERMrK2du5o8GgSuabzJugVvejXHOsxu60cpU4
-         I7MhMWN3SRUyQ38xcSF3sHBf9Q3AjWfEMqk/ylsMwexkWvzAkQ9pYHVy3X5FRreCya
-         SmD0Dm1kXEcq3oHY4qkEGtgsYK4cZPSFqA+m3FH8=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Mariano Pache <npache@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Yarygin <yarygin@linux.vnet.ibm.com>,
-        Ali Raza <alirazabhutta.10@gmail.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Joe Mario <jmario@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        Orran Krieger <okrieger@redhat.com>,
-        Ramkumar Ramachandra <artagnon@gmail.com>,
-        Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 18/18] perf script: Allow specifying the files to process guest samples
-Date:   Wed,  3 Jul 2019 00:27:46 -0300
-Message-Id: <20190703032746.21692-19-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703032746.21692-1-acme@kernel.org>
-References: <20190703032746.21692-1-acme@kernel.org>
+        id S1727379AbfGCD2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 23:28:19 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:49023 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727349AbfGCD2O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 23:28:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TVvMc2s_1562124490;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TVvMc2s_1562124490)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 03 Jul 2019 11:28:10 +0800
+Subject: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
+ statistic
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+Message-ID: <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
+Date:   Wed, 3 Jul 2019 11:28:10 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch introduced numa locality statistic, which try to imply
+the numa balancing efficiency per memory cgroup.
 
-The 'perf kvm' command set up things so that we can record, report, top,
-etc, but not 'script', so make 'perf script' be able to process samples
-by allowing to pass guest kallsyms, vmlinux, modules, etc, and if at
-least one of those is provided, set perf_guest to true so that guest
-samples get properly resolved.
+By doing 'cat /sys/fs/cgroup/memory/CGROUP_PATH/memory.numa_stat', we
+see new output line heading with 'locality', the format is:
 
-Testing it:
+  locality 0%~29% 30%~39% 40%~49% 50%~59% 60%~69% 70%~79% 80%~89%
+90%~100%
 
-  # perf kvm --guest --guestkallsyms /wb/rhel6.kallsyms --guestmodules /wb/rhel6.modules record -e cycles:Gk
-^C[ perf record: Woken up 7 times to write data ]
-  [ perf record: Captured and wrote 3.602 MB perf.data.guest (10492 samples) ]
+interval means that on a task's last numa balancing, the percentage
+of accessing local pages, which we called numa balancing locality.
 
-  #
-  # perf evlist -i perf.data.guest
-cycles:Gk
-  # perf evlist -v -i perf.data.guest
-cycles:Gk: size: 112, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD, read_format: ID, disabled: 1, inherit: 1, exclude_user: 1, exclude_hv: 1, mmap: 1, comm: 1, freq: 1, task: 1, sample_id_all: 1, exclude_host: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-  #
-  # perf kvm --guestkallsyms /wb/rhel6.kallsyms --guestmodules /wb/rhel6.modules report --stdio -s sym | head -30
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  #
-  # Total Lost Samples: 0
-  #
-  # Samples: 10K of event 'cycles:Gk'
-  # Event count (approx.): 2434201408
-  #
-  # Overhead  Symbol
-  # ........  ..............................................
-  #
-      11.93%  [g] avtab_search_node
-       3.95%  [g] sidtab_context_to_sid
-       2.41%  [g] n_tty_write
-       2.20%  [g] _spin_unlock_irqrestore
-       1.37%  [g] _aesni_dec4
-       1.33%  [g] kmem_cache_alloc
-       1.07%  [g] native_write_cr0
-       0.99%  [g] kfree
-       0.95%  [g] _spin_lock
-       0.91%  [g] __memset
-       0.87%  [g] schedule
-       0.83%  [g] _spin_lock_irqsave
-       0.76%  [g] __kmalloc
-       0.67%  [g] avc_has_perm_noaudit
-       0.66%  [g] kmem_cache_free
-       0.65%  [g] glue_xts_crypt_128bit
-       0.59%  [g] __d_lookup
-       0.59%  [g] __audit_syscall_exit
-       0.56%  [g] __memcpy
-  #
+And the number means inside the cgroup, how many micro seconds tasks
+with that locality are running, for example:
 
-Then, when trying to use perf script to generate a python script and
-then process the events after adding a python hook for non-tracepoint
-events:
+  locality 15393 21259 13023 44461 21247 17012 28496 145402
 
-  # perf script -i perf.data.guest -g python
-  generated Python script: perf-script.py
-  # vim perf-script.py
-  # tail -2 perf-script.py
-  def process_event(param_dict):
-        print(param_dict["symbol"])
-  #
-  # perf script -i perf.data.guest -s perf-script.py  | head
-  in trace_begin
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  vmx_vmexit
-  231
-  #
+the first number means that this cgroup have some tasks with 0~29%
+locality executed 15393 ms.
 
-We'd see just the vmx_vmexit, i.e. the samples from the guest don't show
-up.
+By monitoring the increment, we can check if the workload of a
+particular
+cgroup is doing well with numa, when most of the tasks are running with
+locality 0~29%, then something is wrong with your numa policy.
 
-After this patch:
-
-  # perf script --guestkallsyms /wb/rhel6.kallsyms --guestmodules /wb/rhel6.modules -i perf.data.guest -s perf-script.py 2> /dev/null | head -30
-  in trace_begin
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  save_args
-  do_timer
-  drain_array
-  inode_permission
-  avc_has_perm_noaudit
-  run_timer_softirq
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  apic_timer_interrupt
-  kvm_guest_apic_eoi_write
-  run_posix_cpu_timers
-  _spin_lock
-  handle_pte_fault
-  rcu_irq_enter
-  delay_tsc
-  delay_tsc
-  native_read_tsc
-  apic_timer_interrupt
-  sys_open
-  internal_add_timer
-  list_del
-  rcu_exit_nohz
-  #
-
-Jiri Olsa noticed we need to set 'perf_guest' to true if we want to
-process guest samples and I made it be set if one of the guest files
-settings get set via the command line options added in this patch, that
-match those present in the 'perf kvm' command.
-
-We probably want to have 'perf record', 'perf report' etc to notice that
-there are guest samples and do the right thing, which is to look for
-files with some suffix that make it be associated with the guest used to
-collect the samples, i.e. if a vmlinux file is passed, we can get the
-build-id from it, if not some other identifier or simply looking for
-"kallsyms.guest", for instance, in the current directory.
-
-Reported-by: Mariano Pache <npache@redhat.com>
-Tested-by: Mariano Pache <npache@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Yarygin <yarygin@linux.vnet.ibm.com>
-Cc: Ali Raza <alirazabhutta.10@gmail.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Mario <jmario@redhat.com>
-Cc: Larry Woodman <lwoodman@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Orran Krieger <okrieger@redhat.com>
-Cc: Ramkumar Ramachandra <artagnon@gmail.com>
-Cc: Yunlong Song <yunlong.song@huawei.com>
-Link: https://lkml.kernel.org/n/tip-d54gj64rerlxcqsrod05biwn@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
 ---
- tools/perf/builtin-script.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ include/linux/memcontrol.h | 36 +++++++++++++++++++++++++++++++
+ include/linux/sched.h      |  8 ++++++-
+ kernel/sched/debug.c       |  7 ++++++
+ kernel/sched/fair.c        |  9 ++++++++
+ mm/memcontrol.c            | 53 ++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 112 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 520e5b6b9ef9..2f6232f1bfdc 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3522,6 +3522,15 @@ int cmd_script(int argc, const char **argv)
- 		   "Time span of interest (start,stop)"),
- 	OPT_BOOLEAN(0, "inline", &symbol_conf.inline_name,
- 		    "Show inline function"),
-+	OPT_STRING(0, "guestmount", &symbol_conf.guestmount, "directory",
-+		   "guest mount directory under which every guest os"
-+		   " instance has a subdir"),
-+	OPT_STRING(0, "guestvmlinux", &symbol_conf.default_guest_vmlinux_name,
-+		   "file", "file saving guest os vmlinux"),
-+	OPT_STRING(0, "guestkallsyms", &symbol_conf.default_guest_kallsyms,
-+		   "file", "file saving guest os /proc/kallsyms"),
-+	OPT_STRING(0, "guestmodules", &symbol_conf.default_guest_modules,
-+		   "file", "file saving guest os /proc/modules"),
- 	OPT_END()
- 	};
- 	const char * const script_subcommands[] = { "record", "report", NULL };
-@@ -3541,6 +3550,16 @@ int cmd_script(int argc, const char **argv)
- 	argc = parse_options_subcommand(argc, argv, options, script_subcommands, script_usage,
- 			     PARSE_OPT_STOP_AT_NON_OPTION);
- 
-+	if (symbol_conf.guestmount ||
-+	    symbol_conf.default_guest_vmlinux_name ||
-+	    symbol_conf.default_guest_kallsyms ||
-+	    symbol_conf.default_guest_modules) {
-+		/*
-+		 * Enable guest sample processing.
-+		 */
-+		perf_guest = true;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 2cbce1fe7780..0a30d14c9f43 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -174,6 +174,25 @@ enum memcg_kmem_state {
+ 	KMEM_ONLINE,
+ };
+
++#ifdef CONFIG_NUMA_BALANCING
++
++enum memcg_numa_locality_interval {
++	PERCENT_0_29,
++	PERCENT_30_39,
++	PERCENT_40_49,
++	PERCENT_50_59,
++	PERCENT_60_69,
++	PERCENT_70_79,
++	PERCENT_80_89,
++	PERCENT_90_100,
++	NR_NL_INTERVAL,
++};
++
++struct memcg_stat_numa {
++	u64 locality[NR_NL_INTERVAL];
++};
++
++#endif
+ #if defined(CONFIG_SMP)
+ struct memcg_padding {
+ 	char x[0];
+@@ -313,6 +332,10 @@ struct mem_cgroup {
+ 	struct list_head event_list;
+ 	spinlock_t event_list_lock;
+
++#ifdef CONFIG_NUMA_BALANCING
++	struct memcg_stat_numa __percpu *stat_numa;
++#endif
++
+ 	struct mem_cgroup_per_node *nodeinfo[0];
+ 	/* WARNING: nodeinfo must be the last member here */
+ };
+@@ -795,6 +818,14 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ void mem_cgroup_split_huge_fixup(struct page *head);
+ #endif
+
++#ifdef CONFIG_NUMA_BALANCING
++extern void memcg_stat_numa_update(struct task_struct *p);
++#else
++static inline void memcg_stat_numa_update(struct task_struct *p)
++{
++}
++#endif
++
+ #else /* CONFIG_MEMCG */
+
+ #define MEM_CGROUP_ID_SHIFT	0
+@@ -1131,6 +1162,11 @@ static inline
+ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
+ {
+ }
++
++static inline void memcg_stat_numa_update(struct task_struct *p)
++{
++}
++
+ #endif /* CONFIG_MEMCG */
+
+ /* idx can be of type enum memcg_stat_item or node_stat_item */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 907808f1acc5..eb26098de6ea 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1117,8 +1117,14 @@ struct task_struct {
+ 	 * scan window were remote/local or failed to migrate. The task scan
+ 	 * period is adapted based on the locality of the faults with different
+ 	 * weights depending on whether they were shared or private faults
++	 *
++	 * 0 -- remote faults
++	 * 1 -- local faults
++	 * 2 -- page migration failure
++	 * 3 -- remote page accessing
++	 * 4 -- local page accessing
+ 	 */
+-	unsigned long			numa_faults_locality[3];
++	unsigned long			numa_faults_locality[5];
+
+ 	unsigned long			numa_pages_migrated;
+ #endif /* CONFIG_NUMA_BALANCING */
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index f7e4579e746c..473e6b7a1b8d 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -849,6 +849,13 @@ static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+ 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
+ 			task_node(p), task_numa_group_id(p));
+ 	show_numa_stats(p, m);
++	SEQ_printf(m, "faults_locality local=%lu remote=%lu failed=%lu ",
++			p->numa_faults_locality[1],
++			p->numa_faults_locality[0],
++			p->numa_faults_locality[2]);
++	SEQ_printf(m, "lhit=%lu rhit=%lu\n",
++			p->numa_faults_locality[4],
++			p->numa_faults_locality[3]);
+ 	mpol_put(pol);
+ #endif
+ }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 036be95a87e9..b32304817eeb 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -23,6 +23,7 @@
+ #include "sched.h"
+
+ #include <trace/events/sched.h>
++#include <linux/memcontrol.h>
+
+ /*
+  * Targeted preemption latency for CPU-bound tasks:
+@@ -2449,6 +2450,12 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
+ 	p->numa_faults[task_faults_idx(NUMA_MEMBUF, mem_node, priv)] += pages;
+ 	p->numa_faults[task_faults_idx(NUMA_CPUBUF, cpu_node, priv)] += pages;
+ 	p->numa_faults_locality[local] += pages;
++	/*
++	 * We want to have the real local/remote page access statistic
++	 * here, so use 'mem_node' which is the real residential node of
++	 * page after migrate_misplaced_page().
++	 */
++	p->numa_faults_locality[3 + !!(mem_node == numa_node_id())] += pages;
+ }
+
+ static void reset_ptenuma_scan(struct task_struct *p)
+@@ -2625,6 +2632,8 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+ 	if (!curr->mm || (curr->flags & PF_EXITING) || work->next != work)
+ 		return;
+
++	memcg_stat_numa_update(curr);
++
+ 	/*
+ 	 * Using runtime rather than walltime has the dual advantage that
+ 	 * we (mostly) drive the selection from busy threads and that the
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index b3f67a6b6527..2edf3f5ac4b9 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -58,6 +58,7 @@
+ #include <linux/file.h>
+ #include <linux/tracehook.h>
+ #include <linux/seq_buf.h>
++#include <linux/cpuset.h>
+ #include "internal.h"
+ #include <net/sock.h>
+ #include <net/ip.h>
+@@ -3562,10 +3563,53 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
+ 		seq_putc(m, '\n');
+ 	}
+
++#ifdef CONFIG_NUMA_BALANCING
++	seq_puts(m, "locality");
++	for (nr = 0; nr < NR_NL_INTERVAL; nr++) {
++		int cpu;
++		u64 sum = 0;
++
++		for_each_possible_cpu(cpu)
++			sum += per_cpu(memcg->stat_numa->locality[nr], cpu);
++
++		seq_printf(m, " %u", jiffies_to_msecs(sum));
++	}
++	seq_putc(m, '\n');
++#endif
++
+ 	return 0;
+ }
+ #endif /* CONFIG_NUMA */
+
++#ifdef CONFIG_NUMA_BALANCING
++
++void memcg_stat_numa_update(struct task_struct *p)
++{
++	struct mem_cgroup *memcg;
++	unsigned long remote = p->numa_faults_locality[3];
++	unsigned long local = p->numa_faults_locality[4];
++	unsigned long idx = -1;
++
++	if (mem_cgroup_disabled())
++		return;
++
++	if (remote || local) {
++		idx = ((local * 10) / (remote + local)) - 2;
++		/* 0~29% in one slot for cache align */
++		if (idx < PERCENT_0_29)
++			idx = PERCENT_0_29;
++		else if (idx >= NR_NL_INTERVAL)
++			idx = NR_NL_INTERVAL - 1;
 +	}
 +
- 	data.path  = input_name;
- 	data.force = symbol_conf.force;
- 
++	rcu_read_lock();
++	memcg = mem_cgroup_from_task(p);
++	if (idx != -1)
++		this_cpu_inc(memcg->stat_numa->locality[idx]);
++	rcu_read_unlock();
++}
++#endif
++
+ static const unsigned int memcg1_stats[] = {
+ 	MEMCG_CACHE,
+ 	MEMCG_RSS,
+@@ -4641,6 +4685,9 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
+
+ 	for_each_node(node)
+ 		free_mem_cgroup_per_node_info(memcg, node);
++#ifdef CONFIG_NUMA_BALANCING
++	free_percpu(memcg->stat_numa);
++#endif
+ 	free_percpu(memcg->vmstats_percpu);
+ 	free_percpu(memcg->vmstats_local);
+ 	kfree(memcg);
+@@ -4679,6 +4726,12 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 	if (!memcg->vmstats_percpu)
+ 		goto fail;
+
++#ifdef CONFIG_NUMA_BALANCING
++	memcg->stat_numa = alloc_percpu(struct memcg_stat_numa);
++	if (!memcg->stat_numa)
++		goto fail;
++#endif
++
+ 	for_each_node(node)
+ 		if (alloc_mem_cgroup_per_node_info(memcg, node))
+ 			goto fail;
 -- 
-2.20.1
+2.14.4.44.g2045bb6
 
