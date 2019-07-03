@@ -2,146 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0D275DA88
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E085D8BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfGCBQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:16:49 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:40998 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726150AbfGCBQt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:16:49 -0400
-Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
-        by m0050102.ppops.net-00190b01. (8.16.0.27/8.16.0.27) with SMTP id x6306Stb031558;
-        Wed, 3 Jul 2019 01:10:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=jan2016.eng;
- bh=vhdroY72bGDWw4TJQf6mIBF5mLDW5ZnW83laxKxW0O8=;
- b=GI9/HJ/sX4q65adr3ojIlYnaH7gx7z+Ol2AoDu5eGNYHByt9LnkLbniiMaDeL+9m9Nhw
- lmxlKqixFxa00vLIEOQ42tZpkckrTuKUU1zF2hPvoDd24c0DAhivRPrqE72kGeYl9VoL
- 1IrXJja+WDpCIhT7xTWIBcM1/vzXqIZzjtS/WJxNlFI7vigBFmM1VLB0q/moIVHhRFMR
- 0IimNoPKlBO8WztjzZp2mvLLPY+/zONnUwtQ7NBoJQP30wNcKOo8vlDA4HvDlHZN4MX7
- MqNnmQsxzh5+/sW7Djx8iIFyKDxGg45C6lxmx94s291Ebkp5JvUjxmwAAViVbR8pwt2P 8A== 
-Received: from prod-mail-ppoint2 (prod-mail-ppoint2.akamai.com [184.51.33.19] (may be forged))
-        by m0050102.ppops.net-00190b01. with ESMTP id 2tg8vp231q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 Jul 2019 01:10:51 +0100
-Received: from pps.filterd (prod-mail-ppoint2.akamai.com [127.0.0.1])
-        by prod-mail-ppoint2.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x6302JOx014179;
-        Tue, 2 Jul 2019 20:10:50 -0400
-Received: from email.msg.corp.akamai.com ([172.27.123.30])
-        by prod-mail-ppoint2.akamai.com with ESMTP id 2te3awrp2k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jul 2019 20:10:50 -0400
-Received: from USMA1EX-CAS2.msg.corp.akamai.com (172.27.123.31) by
- usma1ex-dag1mb1.msg.corp.akamai.com (172.27.123.101) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Tue, 2 Jul 2019 20:10:49 -0400
-Received: from igorcastle.kendall.corp.akamai.com (172.29.170.135) by
- USMA1EX-CAS2.msg.corp.akamai.com (172.27.123.31) with Microsoft SMTP Server
- id 15.0.1473.3 via Frontend Transport; Tue, 2 Jul 2019 20:10:49 -0400
-Received: by igorcastle.kendall.corp.akamai.com (Postfix, from userid 29659)
-        id A68C461E45; Tue,  2 Jul 2019 20:10:47 -0400 (EDT)
-From:   Igor Lubashev <ilubashe@akamai.com>
-To:     <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        James Morris <jmorris@namei.org>,
-        Igor Lubashev <ilubashe@akamai.com>
-Subject: [PATCH 3/3] perf: Use CAP_SYSLOG with kptr_restrict checks
-Date:   Tue, 2 Jul 2019 20:10:05 -0400
-Message-ID: <1562112605-6235-4-git-send-email-ilubashe@akamai.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562112605-6235-1-git-send-email-ilubashe@akamai.com>
-References: <1562112605-6235-1-git-send-email-ilubashe@akamai.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907020268
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907020269
+        id S1727220AbfGCA2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:28:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbfGCA2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:28:05 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 655FE219BE;
+        Wed,  3 Jul 2019 00:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562112712;
+        bh=pPxcb0LDsgQA0SUglccwz7TppfnSPAMhkWwUGPg2n/U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=i3OgV8IoDaCpBBFL4wfhTmqEmtyTbGAjNPUyQsefF5sUYp/p2urm59EVpDNvfU0hf
+         P5wWdvdoehBE4sUVrqsQKWu3MUGz4xk+f2cM4OSq5b6JOHsHcJnUgIr1WGGmuLnlE6
+         mGtWW9nT/7F0F1Nn6YiNZFmqkbUCIKPVghmxf6NY=
+Date:   Wed, 3 Jul 2019 09:11:47 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     shuah <shuah@kernel.org>
+Cc:     Po-Hsu Lin <po-hsu.lin@canonical.com>, rostedt@goodmis.org,
+        mingo@redhat.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: skip ftrace test if FTRACE was not
+ enabled
+Message-Id: <20190703091147.064029248fed5066ea5e5d2b@kernel.org>
+In-Reply-To: <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
+References: <20190702062358.7330-1-po-hsu.lin@canonical.com>
+        <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel is using CAP_SYSLOG capcbility instead of uid==0 and euid==0 when
-checking kptr_restrict. Make perf do the same.
+Hi Po-Hsu Lin,
 
-Also, the kernel is a more restrictive than "no restrictions" in case of
-kptr_restrict==0, so add the same logic to perf.
+On Tue, 2 Jul 2019 13:22:26 -0600
+shuah <shuah@kernel.org> wrote:
 
-Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
----
- tools/perf/util/symbol.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+> Hi Po-Hsu Lin,
+> 
+> On 7/2/19 12:23 AM, Po-Hsu Lin wrote:
+> > The ftrace test will need to have CONFIG_FTRACE enabled to make the
+> > ftrace directory available.
+> > 
+> > Add an additional check to skip this test if the CONFIG_FTRACE was not
+> > enabled.
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 5cbad55cd99d..fd68dae3f58e 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -4,6 +4,7 @@
- #include <stdlib.h>
- #include <stdio.h>
- #include <string.h>
-+#include <linux/capability.h>
- #include <linux/kernel.h>
- #include <linux/mman.h>
- #include <linux/time64.h>
-@@ -15,8 +16,10 @@
- #include <inttypes.h>
- #include "annotate.h"
- #include "build-id.h"
-+#include "cap.h"
- #include "util.h"
- #include "debug.h"
-+#include "event.h"
- #include "machine.h"
- #include "map.h"
- #include "symbol.h"
-@@ -889,7 +892,11 @@ bool symbol__restricted_filename(const char *filename,
- {
- 	bool restricted = false;
- 
--	if (symbol_conf.kptr_restrict) {
-+	/* Per kernel/kallsyms.c:
-+	 * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
-+	 */
-+	if (symbol_conf.kptr_restrict ||
-+	    (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))) {
- 		char *r = realpath(filename, NULL);
- 
- 		if (r != NULL) {
-@@ -2100,9 +2107,9 @@ static bool symbol__read_kptr_restrict(void)
- 		char line[8];
- 
- 		if (fgets(line, sizeof(line), fp) != NULL)
--			value = ((geteuid() != 0) || (getuid() != 0)) ?
--					(atoi(line) != 0) :
--					(atoi(line) == 2);
-+			value = perf_cap__capable(CAP_SYSLOG) ?
-+					(atoi(line) >= 2) :
-+					(atoi(line) != 0);
- 
- 		fclose(fp);
- 	}
+Sorry, NAK for config check.
+
+> > 
+> > This will be helpful to avoid a false-positive test result when testing
+> > it directly with the following commad against a kernel that does not
+> > have CONFIG_FTRACE enabled:
+
+Would you know tools/testing/selftests/ftrace/config (and other config files
+in each tests) ?
+
+Since each selftest depends specific configurations, those configs are
+written in config file, and tester must enable it using 
+"scripts/kconfig/merge_config.sh".
+
+We can not check the kernel config in some cases, e.g. distro kernel,
+cross-build kernel, remote build kernel etc. Also, the .config file
+can be a config file for another kernel build.
+
+So please take care of your kernel configuration. If you find any test
+failed even if you enable configs in config file under that test, please
+report it, since that is a bug.
+
+
+Thank you,
+
+> >      make -C tools/testing/selftests TARGETS=ftrace run_tests
+> > 
+> > The test result on an Ubuntu KVM kernel will be changed from:
+> >      selftests: ftrace: ftracetest
+> >      ========================================
+> >      Error: No ftrace directory found
+> >      not ok 1..1 selftests: ftrace: ftracetest [FAIL]
+> > To:
+> 
+> Thanks for the patch.
+> 
+> Check patch fails with the above To:
+> 
+> WARNING: Use a single space after To:
+> #107:
+> To:
+> 
+> ERROR: Unrecognized email address: ''
+> #107:
+> To:
+> 
+> total: 1 errors, 1 warnings, 23 lines checked
+> 
+> 
+> Please fix and send v2.
+> 
+> >      selftests: ftrace: ftracetest
+> >      ========================================
+> >      CONFIG_FTRACE was not enabled, test skipped.
+> >      not ok 1..1 selftests: ftrace: ftracetest [SKIP]
+> > 
+> > Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+> > ---
+> >   tools/testing/selftests/ftrace/ftracetest | 11 ++++++++++-
+> >   1 file changed, 10 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> > index 6d5e9e8..6c8322e 100755
+> > --- a/tools/testing/selftests/ftrace/ftracetest
+> > +++ b/tools/testing/selftests/ftrace/ftracetest
+> > @@ -7,6 +7,9 @@
+> >   #  Written by Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+> >   #
+> 
+> Hmm. You havem't cc'ed Masami on this. Adding Masami.
+> 
+> I would think Masami should be on the Signed-off-by as well,
+> since he is the author.
+> 
+> >   
+> > +# Kselftest framework requirement - SKIP code is 4.
+> > +ksft_skip=4
+> > +
+> >   usage() { # errno [message]
+> >   [ ! -z "$2" ] && echo $2
+> >   echo "Usage: ftracetest [options] [testcase(s)] [testcase-directory(s)]"
+> > @@ -139,7 +142,13 @@ parse_opts $*
+> >   
+> >   # Verify parameters
+> >   if [ -z "$TRACING_DIR" -o ! -d "$TRACING_DIR" ]; then
+> > -  errexit "No ftrace directory found"
+> > +  ftrace_enabled=`grep "^CONFIG_FTRACE=y" /lib/modules/$(uname -r)/build/.config`
+> > +  if [ -z "$ftrace_enabled" ]; then
+> > +    echo "CONFIG_FTRACE was not enabled, test skipped."
+> > +    exit $ksft_skip
+> > +  else
+> > +    errexit "No ftrace directory found"
+> > +  fi
+> >   fi
+> >   
+> >   # Preparing logs
+> > 
+> 
+> thanks,
+> -- Shuah
+
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
