@@ -2,71 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624A95E630
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE6355E635
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGCONd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:13:33 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34463 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfGCONd (ORCPT
+        id S1727109AbfGCOOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:14:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43031 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfGCOO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:13:33 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w9so3031837wmd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 07:13:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ceMV6gREtUAH3s1rcTbUar/B6JUKROFXvDiwuyYeGXY=;
-        b=k5r1tFD6zELecHdyQ5L+y6zPZL27e7+fY6sNs8SPhQGFYM0rmOZYoKegJKsoz3bJ4h
-         GcvzbxxZVUIP8S1fnj10asudWDX0wUDRrUOxJWUUjhJubweYfCu36qsMjswJdOLXeRTF
-         63WgwTLHNWppNo+HxEfgzTxsKEhu4kcOfDHb2+py1y/mPeL6i8pC7aoaphf4mZiScv0d
-         o11F63E3KTYPGqZaCj8FkS7sB5Ck1UItXvQ75JYT87eKz9nRHXxEOz+YkgVMz/2r5N3Y
-         2VNsv3m3SgcocvQrWLlMOpj3gP/ly9Ysu53CxtA37YXhksdZisI0TnmkKP121yHfTRPO
-         cHXQ==
-X-Gm-Message-State: APjAAAUjpOwfPIVHEUSrlSFBr0VmLXknCyj88RZuBbdaPoQVz80T7iRK
-        JEaf8/fLRQxLxw2pCvr6ovlk+g==
-X-Google-Smtp-Source: APXvYqzNc25USnquIIueAfxvqHocNLi2CDXyM4EEc7JEs2GM3KQJc87l+CG6bfH/8feI9wY5hiX4JA==
-X-Received: by 2002:a7b:cb08:: with SMTP id u8mr8054265wmj.167.1562163210995;
-        Wed, 03 Jul 2019 07:13:30 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:6c1d:63cc:b81d:e1a9? ([2001:b07:6468:f312:6c1d:63cc:b81d:e1a9])
-        by smtp.gmail.com with ESMTPSA id o4sm2442172wmh.35.2019.07.03.07.13.30
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 07:13:30 -0700 (PDT)
-Subject: Re: [PATCH v4 1/2] KVM: LAPIC: Optimize timer latency consider world
- switch time
-To:     Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <1560474949-20497-1-git-send-email-wanpengli@tencent.com>
- <1560474949-20497-2-git-send-email-wanpengli@tencent.com>
- <CANRm+CzUvTTOuYhsGErSDxdNSmxVr7o8d66DF0KOk4v3Meajmg@mail.gmail.com>
- <CANRm+Cw0vmqi4s4HhnMqs=hZZixHmU87CGO_ujTGoN_Osjx76g@mail.gmail.com>
- <CANRm+Cz9Lc5rA7-2yLLX7wiemM-gdvWvQQdGVrvkYanYO9TwgA@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <18fd2372-45d8-0bff-79e7-373a8b7d129c@redhat.com>
-Date:   Wed, 3 Jul 2019 16:13:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 3 Jul 2019 10:14:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EE7uv3322356
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:14:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EE7uv3322356
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163248;
+        bh=rflzOIBYdVCFbiPWca9hbxn5xuBeXPVnxM+9qirSjyI=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=OSDFpWbVOG8P75Oceo7I7UprRYnl0iehFS2TbXzi5sNdqS/apcEsRx8jdeA6DIHw6
+         FC6PvVUltGYYXSW0X31ozUeqSjRMO1Iuw/8dHkNF8v12ll+k58OMqYyPRFWZ9VgLcC
+         GG26P1L1JZknZ9Z97TQSTGuM4n1Cisbh4XH1s3jo0ZxjzXb9H7rR0GRRUM9ek6MqdB
+         +6WO1cEyVEN6cWvtbh72VN17IU4M5kk9oVZOXmN9yNsPy3J+SWz1icthwFl3Kcz13g
+         9274GsRbaJnPsTpuJsiCH9ErSFUZwypfqjO/DPaX9HWGoXfr1eL4z7TrF6dSCFelSS
+         rp6LDcaAknMLw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EE7QL3322353;
+        Wed, 3 Jul 2019 07:14:07 -0700
+Date:   Wed, 3 Jul 2019 07:14:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-wlzwken4psiat4zvfbvaoqiw@git.kernel.org>
+Cc:     mingo@kernel.org, namhyung@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+        tglx@linutronix.de, adrian.hunter@intel.com
+Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
+          namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+          adrian.hunter@intel.com, acme@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Remove old baggage that is
+ util/include/linux/ctype.h
+Git-Commit-ID: 9f3926e08c26607a0dd5b1bc8a8aa1d03f72fcdc
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CANRm+Cz9Lc5rA7-2yLLX7wiemM-gdvWvQQdGVrvkYanYO9TwgA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/19 02:48, Wanpeng Li wrote:
-> Hi Paolo, how about this patchset? Patch 2/2 is easy to take, do you
-> have more concern about patch 1/2?
+Commit-ID:  9f3926e08c26607a0dd5b1bc8a8aa1d03f72fcdc
+Gitweb:     https://git.kernel.org/tip/9f3926e08c26607a0dd5b1bc8a8aa1d03f72fcdc
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 18:19:33 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 18:31:12 -0300
 
-I don't know.  It seems somewhat hard to tune and in cyclictest it only
-happens for preemption_timer=N.  Are you using preemption_timer=N
-together with the LAPIC-timer-on-service-CPU patches?
+perf tools: Remove old baggage that is util/include/linux/ctype.h
 
-Paolo
+It was just including a ../util.h that wasn't even there:
+
+  $ cat tools/perf/util/include/linux/../util.h
+  cat: tools/perf/util/include/linux/../util.h: No such file or directory
+  $
+
+This would make kallsyms.h get util.h somehow and then files including
+it would get util.h defined stuff, a mess, fix it.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-wlzwken4psiat4zvfbvaoqiw@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/lib/symbol/kallsyms.h           | 1 -
+ tools/perf/util/include/linux/ctype.h | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/tools/lib/symbol/kallsyms.h b/tools/lib/symbol/kallsyms.h
+index bd988f7b18d4..2b238f181d97 100644
+--- a/tools/lib/symbol/kallsyms.h
++++ b/tools/lib/symbol/kallsyms.h
+@@ -3,7 +3,6 @@
+ #define __TOOLS_KALLSYMS_H_ 1
+ 
+ #include <elf.h>
+-#include <linux/ctype.h>
+ #include <linux/types.h>
+ 
+ #ifndef KSYM_NAME_LEN
+diff --git a/tools/perf/util/include/linux/ctype.h b/tools/perf/util/include/linux/ctype.h
+deleted file mode 100644
+index a53d4ee1e0b7..000000000000
+--- a/tools/perf/util/include/linux/ctype.h
++++ /dev/null
+@@ -1 +0,0 @@
+-#include "../util.h"
