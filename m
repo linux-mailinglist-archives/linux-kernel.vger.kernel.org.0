@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0C75E458
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D2D5E482
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfGCMsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:48:04 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:59666 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbfGCMsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:48:01 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 6C7B22079D;
-        Wed,  3 Jul 2019 14:47:59 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 583F5206B9;
-        Wed,  3 Jul 2019 14:47:59 +0200 (CEST)
-Subject: Re: [PATCH v1] media: si2168: Refactor command setup code
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Brad Love <brad@nextdimension.cc>
-References: <6a8f9a5b-2e88-8c26-440b-76af0d91eda6@free.fr>
- <20190702095109.GC22408@latitude>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <6a644c94-f979-b656-472b-c7fe9303e08c@free.fr>
-Date:   Wed, 3 Jul 2019 14:47:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727480AbfGCMtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:49:04 -0400
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:46986 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfGCMtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 08:49:03 -0400
+Received: by mail-wr1-f53.google.com with SMTP id n4so2632068wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 05:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=FuvWmI2Ac2pIZhwnDICxrWfsRIUJnwbmAdcXZhrnIuk=;
+        b=RVVGw0F7gOGZQ4TEpiyVQ85EpiJgXCb6jLFkfKamOa6QYuyFWojlAQNggohYTdzr2d
+         9q2ep+cHOl6daAeiE6MSXobfTG5aGX49Tvu2IO5enl0jIOe6+Fyc7YPKt62Lp3z//l+t
+         5afqY4Jrp15R8g77nUuJE0zNLnB+tFRaJJvPrdtgVU2z1eELcxW59gMb5Oc4lSJZx/bT
+         yrhnSvteITwxxjIIy0k5vLmKmkPekYMDBmwxbyS+P7F+r3r29MkFd6jsS4TkM4huPNnH
+         M1SHjrbF1o55wajA4Td86/gDNbl3yNNhwWYJOd8Rqh38DRdqqOeBuQVLho6nh0gafS1M
+         9Y8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=FuvWmI2Ac2pIZhwnDICxrWfsRIUJnwbmAdcXZhrnIuk=;
+        b=S3oGYT4c1WHryKeYKWgQBJ2LvsojZiExnCYGEjdY1h6FfcrX0gpwSRbpYUAGyGX8EB
+         FeLDZD77Fc6GTV00qwSJPbn+o8Wp+8DYplYFNReKoS4DGqeCAvXwk8zWLFWGzVYCA3gw
+         SVGLh8RSa1/9vIWSTcHDhKN3r7zYFnWovwAT4jnD/bUTsmAs01LoKxcPQFSpTMTF5NeB
+         X7jHOn9FCf31YAeZ4ldZ/94aBtR/pce/MEIUVBYAEwOOMXplKOw2bUYHtNgzjYt4AHb3
+         9p1gmFQ3AG+725Mg/HhAWRNEtgARzEuwj518ZrKeH8f9vTp9px3iAhz/8aYQrO7iUVgb
+         knig==
+X-Gm-Message-State: APjAAAVaBgdQSswpDGAU5pBGa5xm6y7MRN0ZYr6jp+GWWWToK5h3SstN
+        zd9+yTlyCMLKH0qiH10sKQsNcg==
+X-Google-Smtp-Source: APXvYqyDAfOGOAjcImm7vz1haXRMsa83iykN2nsIK77a4bhegzF3S2j2rg4Wk9JFZ82wUNU8F7il6Q==
+X-Received: by 2002:adf:b64b:: with SMTP id i11mr29086502wre.205.1562158140924;
+        Wed, 03 Jul 2019 05:49:00 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id q1sm1504594wmq.25.2019.07.03.05.49.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 05:49:00 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     khilman@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [RFC/RFT v3 09/14] arm64: dts: move common G12A & G12B modes to meson-g12-common.dtsi
+In-Reply-To: <e49bfb8f-23e9-c834-62c7-a40528a2ef06@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-10-narmstrong@baylibre.com> <CAFBinCA537EV9kzz+5syaF1Q-stTJ4no+NBdcYD3QL-FJSoWfQ@mail.gmail.com> <e49bfb8f-23e9-c834-62c7-a40528a2ef06@baylibre.com>
+Date:   Wed, 03 Jul 2019 14:48:59 +0200
+Message-ID: <1jlfxf7078.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190702095109.GC22408@latitude>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Jul  3 14:47:59 2019 +0200 (CEST)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/2019 11:51, Jonathan Neuschäfer wrote:
+On Wed 03 Jul 2019 at 13:51, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> On Mon, Jul 01, 2019 at 01:44:09PM +0200, Marc Gonzalez wrote:
+> On 03/07/2019 01:54, Martin Blumenstingl wrote:
+>> Hi Neil,
+>> 
+[...]
+>> does it make sense to name this file "meson-g12a-g12b-sm1-common.dtsi" instead?
+>> do you know whether there will be a successor to G12B and what it's
+>> code-name will be?
 >
->> By refactoring the command setup code, we can let the compiler
->> determine the size of each command.
-> 
-> I like the idea, it definitely saves some code.
-> 
-> The conversion also looks correct.
-> 
->> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->> ---
->>  drivers/media/dvb-frontends/si2168.c | 142 ++++++++-------------------
->>  1 file changed, 41 insertions(+), 101 deletions(-)
->>
->> diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
->> index 168c503e9154..19398f041c79 100644
->> --- a/drivers/media/dvb-frontends/si2168.c
->> +++ b/drivers/media/dvb-frontends/si2168.c
->> @@ -11,6 +11,12 @@
->>  
->>  static const struct dvb_frontend_ops si2168_ops;
->>  
->> +#define CMD_SETUP(cmd, __args, __rlen) do {	\
->> +	int wlen = sizeof(__args) - 1;		\
->> +	memcpy(cmd.args, __args, wlen);		\
->> +	cmd.wlen = wlen; cmd.rlen = __rlen;	\
->> +} while (0)
-> 
-> It would be nice for casual readers to have a little comment here, that
-> explains (briefly) what this macro does, and what the arguments mean,
-> and their types.
+> meson-g12a-g12b-sm1-common seems a bit long to me...
 
-Just a bit of background.
++1 ... and what if the generation after that is compatible as well ? We
+extend the name again ? Such naming scheme does not scale.
 
-A macro is required /at some point/ because arrays "decay" into pointers
-when used as function arguments.
+meson-g12-common.dtsi looks good to me. IMO, The fact the sm1 dtsi includes
+the file is enough to understand that sm1 derive from the g12a/b
 
-Come to think of it, I'm really not a fan of "large" macro functions.
-I'll outline a different option in v2.
-
-
-> Why cmd rather than __cmd? This seems inconsistent.
-
-Note: I hate using underscores in macro argument names, but they clashed
-with the struct field names. There was no such clash for 'cmd'.
-
-
-> The wlen local variable can be avoided by a bit of suffling:
-> 
-> 	#define CMD_SETUP(cmd, __args, __rlen) do {	\
-> 		cmd.rlen = __rlen;			\
-> 		cmd.wlen = sizeof(__args) - 1;		\
-> 		memcpy(cmd.args, __args, cmd.wlen);	\
-> 	} while (0)
-
-Do you think it is important to avoid a local variable?
-
-
->> Not sure where to store the macro. Maybe include/media/dvb_frontend.h?
-> 
-> Then include/media/dvb_frontend.h would contain information about the
-> private structs of a few (two) drivers. This doesn't seem like a good
-> idea to me.
-
-You're right. I found a better place.
-
-Regards.
+>
+> We don't have naming of the future SoCs, since SM1 is only available on
+> prototypes yet.
+>
+> Neil
+>
+>> 
+>> 
+>> Martin
+>> 
