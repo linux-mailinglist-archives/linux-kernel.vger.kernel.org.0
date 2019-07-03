@@ -2,109 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C145E651
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DCA5E657
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfGCORV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:17:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:49192 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfGCORU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:17:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A2DD2B;
-        Wed,  3 Jul 2019 07:17:20 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 363A63F718;
-        Wed,  3 Jul 2019 07:17:18 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 15:17:15 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: Re: [PATCHv5 03/20] PCI: mobiveil: Correct the returned error number
-Message-ID: <20190703141715.GB26804@e121166-lin.cambridge.arm.com>
-References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com>
- <20190412083635.33626-4-Zhiqiang.Hou@nxp.com>
+        id S1727086AbfGCOSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:18:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60599 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCOSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:18:10 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EHnIj3323021
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:17:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EHnIj3323021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163470;
+        bh=6lAI1sG1g75nJSYuKpqVd3oXQpCcWlyhv0uvn40JhGE=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=uGnymoAEFpmhp7EZ+NSApeoZqRbOfHdjKqVcfKYbf5AfEk1+6sqJkyb7ezDvrz0dt
+         1dmRbLDo3d9MsYaXC5SHpzhFmUfSN0kzFQs9BQX4RHWHq6dDAkFzjJ3JdmQpgNmiqU
+         8nX5AthmgNFHdP3jNyu6mqJqQxrXWVGpd37wk4laQHpcLuIwSeqKfdjE7IoF0GGm5B
+         t7NSxWSOKzEqppvJ3BRsOq9OaTMQ+a/mESc0+LV8EtP2r8diNIp+5uS+GzjjSYZ/Ca
+         UUz4bibDWF0ylqwp5kCTIRkSuNnTX3LWyaj+wgAKZtZvD5XIT1rl3+DeXGZvOZswEi
+         zAjBqLs+6gN6A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EHnUC3323018;
+        Wed, 3 Jul 2019 07:17:49 -0700
+Date:   Wed, 3 Jul 2019 07:17:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ncpvp4eelf8fqhuy29uv56z9@git.kernel.org>
+Cc:     acme@redhat.com, ak@linux.intel.com, mingo@kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com
+Reply-To: mingo@kernel.org, namhyung@kernel.org, ak@linux.intel.com,
+          acme@redhat.com, jolsa@kernel.org, hpa@zytor.com,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Use recently introduced skip_spaces()
+Git-Commit-ID: 810826acd122ed859e238bf1555a09b326c8fe23
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190412083635.33626-4-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 08:35:30AM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> 
-> This patch corrects the returned error number by convention,
-> and removes an unnecessary error check.
+Commit-ID:  810826acd122ed859e238bf1555a09b326c8fe23
+Gitweb:     https://git.kernel.org/tip/810826acd122ed859e238bf1555a09b326c8fe23
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 21:28:49 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 21:28:49 -0300
 
-Two distinct changes, two patches, please split and repost.
+perf stat: Use recently introduced skip_spaces()
 
-Lorenzo
+No change in behaviour.
 
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-> Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-> ---
-> V5:
->  - Corrected and retouched the subject and changelog.
-> 
->  drivers/pci/controller/pcie-mobiveil.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-> index b87471f08a40..563210e731d3 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -819,7 +819,7 @@ static int mobiveil_pcie_init_irq_domain(struct mobiveil_pcie *pcie)
->  
->  	if (!pcie->intx_domain) {
->  		dev_err(dev, "Failed to get a INTx IRQ domain\n");
-> -		return -ENODEV;
-> +		return -ENOMEM;
->  	}
->  
->  	raw_spin_lock_init(&pcie->intx_mask_lock);
-> @@ -845,11 +845,9 @@ static int mobiveil_pcie_probe(struct platform_device *pdev)
->  	/* allocate the PCIe port */
->  	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
->  	if (!bridge)
-> -		return -ENODEV;
-> +		return -ENOMEM;
->  
->  	pcie = pci_host_bridge_priv(bridge);
-> -	if (!pcie)
-> -		return -ENOMEM;
->  
->  	pcie->pdev = pdev;
->  
-> @@ -866,7 +864,7 @@ static int mobiveil_pcie_probe(struct platform_device *pdev)
->  						    &pcie->resources, &iobase);
->  	if (ret) {
->  		dev_err(dev, "Getting bridge resources failed\n");
-> -		return -ENOMEM;
-> +		return ret;
->  	}
->  
->  	/*
-> -- 
-> 2.17.1
-> 
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-ncpvp4eelf8fqhuy29uv56z9@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/stat-display.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index 992e327bce85..ce993d29cca5 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -1,5 +1,6 @@
+ #include <stdio.h>
+ #include <inttypes.h>
++#include <linux/string.h>
+ #include <linux/time64.h>
+ #include <math.h>
+ #include "color.h"
+@@ -215,9 +216,7 @@ static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
+ 	while (isdigit(*ends) || *ends == '.')
+ 		ends++;
+ 	*ends = 0;
+-	while (isspace(*unit))
+-		unit++;
+-	fprintf(out, "%s%s%s%s", config->csv_sep, vals, config->csv_sep, unit);
++	fprintf(out, "%s%s%s%s", config->csv_sep, vals, config->csv_sep, skip_spaces(unit));
+ }
+ 
+ /* Filter out some columns that don't work well in metrics only mode */
