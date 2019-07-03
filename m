@@ -2,104 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E3265E6DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5869B5E6E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfGCOhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:37:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfGCOhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:37:18 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FC6A21871;
-        Wed,  3 Jul 2019 14:37:17 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 10:37:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
- postcore_initcall
-Message-ID: <20190703103715.32579c25@gandalf.local.home>
-In-Reply-To: <20190703102504.13344555@gandalf.local.home>
-References: <20190526191828.466305460@goodmis.org>
-        <20190526191848.266163206@goodmis.org>
-        <20190702165008.GC34718@lakrids.cambridge.arm.com>
-        <20190703100205.0b58f3bf@gandalf.local.home>
-        <20190703140832.GD48312@arrakis.emea.arm.com>
-        <20190703102402.1319b928@gandalf.local.home>
-        <20190703102504.13344555@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727239AbfGCOhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:37:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49771 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCOhi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:37:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EbGOE3328604
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:37:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EbGOE3328604
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562164637;
+        bh=0TglNZ76Idl1FaNDZVMBLCeud0yjzx5WinfO7wQJE8w=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=uvd8aHcf0qbemm5f7fUzTq6mVu2WpQxGgKARKOWpUNAsMpiHK/N/F8xfMHxijzhXy
+         hMkVkL+h8DdBwBOP+ct//xsrxkhh2uJb15eLWolHP1LAHLVmARszL9+PxgZnT9IgH2
+         WVgZd7DpN6urxA5LwrrdQYhsFANcdsu0I2kC3cawUGhosKWChyz3qfYsPZUBMQlbR0
+         OTTw27LlqVx5QCqrSAaPj/PN7PjzVIAmTfYp3/KknE1DmiM+yuC1KlLNxKw5nfAlcl
+         Hjji72ZxNBO6yehzaqMF5n1YX4MVmbgjcCS17we5HHL6NtcoGHk3sXJI2A8uBNrKeo
+         IiyTV1wgGQrLg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EbGPN3328601;
+        Wed, 3 Jul 2019 07:37:16 -0700
+Date:   Wed, 3 Jul 2019 07:37:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-c8f7bc1a080b081a178bff20356cb7575d385f84@git.kernel.org>
+Cc:     tglx@linutronix.de, kan.liang@linux.intel.com,
+        peterz@infradead.org, jolsa@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        yao.jin@linux.intel.com, acme@redhat.com, yao.jin@intel.com,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org
+Reply-To: jolsa@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, peterz@infradead.org,
+          kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
+          mingo@kernel.org, hpa@zytor.com, yao.jin@intel.com,
+          acme@redhat.com, yao.jin@linux.intel.com, ak@linux.intel.com
+In-Reply-To: <1561713784-30533-8-git-send-email-yao.jin@linux.intel.com>
+References: <1561713784-30533-8-git-send-email-yao.jin@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf diff: Documentation -c cycles option
+Git-Commit-ID: c8f7bc1a080b081a178bff20356cb7575d385f84
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This would be the official patch:
+Commit-ID:  c8f7bc1a080b081a178bff20356cb7575d385f84
+Gitweb:     https://git.kernel.org/tip/c8f7bc1a080b081a178bff20356cb7575d385f84
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Fri, 28 Jun 2019 17:23:04 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 2 Jul 2019 13:20:51 -0300
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH] kprobes: Run init_test_probes() later in boot up
+perf diff: Documentation -c cycles option
 
-It was reported that the moving of the kprobe initialization earlier in the
-boot process caused arm64 to crash. This was due to arm64 depending on the
-BRK handler being registered first, but the init_test_probes() can be called
-before that happens.
+Documentation the new computation selection 'cycles'.
 
-By moving the init_test_probes() to later in the boot process, the BRK
-handler is now guaranteed to be initialized before init_test_probes() is
-called.
+ v4:
+ ---
+ Change the column 'Block cycles diff [start:end]' to
+ '[Program Block Range] Cycles Diff'
 
-Link: http://lkml.kernel.org/r/20190702165008.GC34718@lakrids.cambridge.arm.com
-
-Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1561713784-30533-8-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- kernel/kprobes.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/perf-diff.txt | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 5471efbeb937..5a6ecd7bfd73 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
- extern unsigned long __start_kprobe_blacklist[];
- extern unsigned long __stop_kprobe_blacklist[];
+diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
+index facd91e4e945..d5cc15e651cf 100644
+--- a/tools/perf/Documentation/perf-diff.txt
++++ b/tools/perf/Documentation/perf-diff.txt
+@@ -90,9 +90,10 @@ OPTIONS
  
-+static bool run_kprobe_tests __initdata;
+ -c::
+ --compute::
+-        Differential computation selection - delta, ratio, wdiff, delta-abs
+-        (default is delta-abs).  Default can be changed using diff.compute
+-        config option.  See COMPARISON METHODS section for more info.
++        Differential computation selection - delta, ratio, wdiff, cycles,
++        delta-abs (default is delta-abs).  Default can be changed using
++        diff.compute config option.  See COMPARISON METHODS section for
++        more info.
+ 
+ -p::
+ --period::
+@@ -280,6 +281,16 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
+     - WEIGHT-A being the weight of the data file
+     - WEIGHT-B being the weight of the baseline data file
+ 
++cycles
++~~~~~~
++If specified the '[Program Block Range] Cycles Diff' column is displayed.
++It displays the cycles difference of same program basic block amongst
++two perf.data. The program basic block is the code between two branches.
 +
- static int __init init_kprobes(void)
- {
- 	int i, err = 0;
-@@ -2286,11 +2288,19 @@ static int __init init_kprobes(void)
- 	kprobes_initialized = (err == 0);
- 
- 	if (!err)
--		init_test_probes();
-+		run_kprobe_tests = true;
- 	return err;
- }
- subsys_initcall(init_kprobes);
- 
-+static int __init run_init_test_probes(void)
-+{
-+	if (run_kprobe_tests)
-+		init_test_probes();
-+	return 0;
-+}
-+module_init(run_init_test_probes);
++'[Program Block Range]' indicates the range of a program basic block.
++Source line is reported if it can be found otherwise uses symbol+offset
++instead.
 +
- #ifdef CONFIG_DEBUG_FS
- static void report_probe(struct seq_file *pi, struct kprobe *p,
- 		const char *sym, int offset, char *modname, struct kprobe *pp)
--- 
-2.20.1
-
+ SEE ALSO
+ --------
+ linkperf:perf-record[1], linkperf:perf-report[1]
