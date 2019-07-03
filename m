@@ -2,141 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D4805EF28
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 822E85EF23
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfGCW1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 18:27:35 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39367 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfGCW1c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 18:27:32 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so3604049otq.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 15:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D2V6DzWpvWTZUVXRvfBLQmJzwket1ppQ/Sc433n2/Nc=;
-        b=mmVJrnqCbKv1e50NHEEmq1OoZcpLFVzXU1X0qha21y2dJYbJVVyXKBEbwD21H0Mkgw
-         h/pzQH1i/cFTXLvSSY6Y7n59RwLUZcrCmeuukwEY4k/Lo9bGBRLuZNkIgrPHl1HS03AC
-         OWUDKWQRtkeieoHAoX0gRZwbxw3WnSvdRASvuTP6kW5aM813Tt/j5PdUafTZPbKKbMra
-         gKgMcDSUa4+X34/vSWbaD/LaTsKT+LwlKVKKr6kkhh/t3Uxtz323Sa0VnxegvVnRsiu+
-         vPk5h/fsjfGfJb/7UkUDTYIOl5rREmnWwt90bN88b56oX7k2sb9B7ix0LvIfbyyJKanU
-         jZuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D2V6DzWpvWTZUVXRvfBLQmJzwket1ppQ/Sc433n2/Nc=;
-        b=bZJ+cw1RWC/v2iXDYMQhZgjz7+QzqNxyi/Y7kXdBNCpNjHP02Tuaiksq8GQ9XTr1qE
-         ASgOK3lOZHyUOx7+o8HDIrLgWgmcx0nI6oEvDcI9WlHX4DDqgmmVgnjiZNdUPgK13XJh
-         tSED3yTDzUHVHNxPsreierKR99v9yYf4rYwnarr6CesWufYUluCSFjOfzzcS7T1YEs6h
-         DWeZ0J+ApIkgK8onFurYBKowsJFkjjDn36urToHGigmCGwZxW5pV4my+hpOAgdkzuAkI
-         BVeO9KttQ6ZoeOqENARNp2Abs46oG8NruV9vs3JK5hHHHzeOP8qnzGOXV7EVDiENdj3K
-         HWgw==
-X-Gm-Message-State: APjAAAWXnnaQp2P7kGtssP5uM7rgoFfgjk8GqQljdQMPBhV35IYggM2/
-        Wyh2bzvQuTGVPkprmuaNdRS511dgl3IrlqjJx+Eykw==
-X-Google-Smtp-Source: APXvYqyeTTr+WvpeAKpXyj3063djbPHVPYZg4Jf5vvwk7ke/KotikoqN8p0GhSt6ugm8Gb7SQ9BHig9URCNweka4tb0=
-X-Received: by 2002:a9d:6d06:: with SMTP id o6mr27558240otp.225.1562192851493;
- Wed, 03 Jul 2019 15:27:31 -0700 (PDT)
+        id S1727400AbfGCW1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 18:27:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726988AbfGCW1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 18:27:02 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42BF3218BA
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2019 22:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562192821;
+        bh=54TJQdnmI9JIs7sWIgYE9UCADvIt2r39ssBw13F7Kc8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wr6r8hn0+u4xuDAmaFtOooZkqTaLMD5/MjU59XcM7mVU/EX15u1jID8nIi9mAfv3B
+         Yoea+eS8UJlTXSUZXM5Es/Vw7xSnhQdeJQEgONaMnO0ztzFUdaSBvsVPm3UBXwM/NK
+         vmqa8UC1cqXJig+N2OKGY5cuJlPPRXtQA4snemcg=
+Received: by mail-wm1-f42.google.com with SMTP id c6so3995767wml.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 15:27:01 -0700 (PDT)
+X-Gm-Message-State: APjAAAWkmq1nSM6npEfdqsmPQTbZeMwYeOs9top4quCDEo0Z3VM1pkMz
+        owN11obWGGzzAh4aRBL2m3+YOK+CHf21zURhA+DZwg==
+X-Google-Smtp-Source: APXvYqxF3U2OW9rexTtLNZvPFG3EuT8YJk1XnSYqRuywgPoqAC8039SaP1Ldg02xrhCtt1keIB6RuDIfAF2nAeEOrFs=
+X-Received: by 2002:a7b:c149:: with SMTP id z9mr879318wmi.0.1562192819761;
+ Wed, 03 Jul 2019 15:26:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190702004811.136450-1-saravanak@google.com> <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
- <CAGETcx--+3BNjYZ6cgirNr_uZjU0464UHSUcaVHh_uTO2yWTCQ@mail.gmail.com>
-In-Reply-To: <CAGETcx--+3BNjYZ6cgirNr_uZjU0464UHSUcaVHh_uTO2yWTCQ@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 3 Jul 2019 15:26:46 -0700
-Message-ID: <CAGETcx_by9aShONfSAR8rfhC69nBzeEhrZSHhOb7HuUBeCu=JA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Solve postboot supplier cleanup and optimize probe ordering
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>
+References: <20190703102731.236024951@infradead.org> <20190703102807.588906400@infradead.org>
+ <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com> <20190703220057.GJ3402@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190703220057.GJ3402@hirez.programming.kicks-ass.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 3 Jul 2019 15:26:47 -0700
+X-Gmail-Original-Message-ID: <CALCETrUEsKt=CyM634Lp265hjJg0Jm==gvN_-_UwGp9S6Mt=MA@mail.gmail.com>
+Message-ID: <CALCETrUEsKt=CyM634Lp265hjJg0Jm==gvN_-_UwGp9S6Mt=MA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 5:59 PM Saravana Kannan <saravanak@google.com> wrote:
+On Wed, Jul 3, 2019 at 3:01 PM Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> On Tue, Jul 2, 2019 at 5:03 PM David Collins <collinsd@codeaurora.org> wrote:
+> On Wed, Jul 03, 2019 at 01:27:09PM -0700, Andy Lutomirski wrote:
+> > On Wed, Jul 3, 2019 at 3:28 AM root <peterz@infradead.org> wrote:
+>
+> > > @@ -1338,18 +1347,9 @@ ENTRY(error_entry)
+> > >         movq    %rax, %rsp                      /* switch stack */
+> > >         ENCODE_FRAME_POINTER
+> > >         pushq   %r12
+> > > -
+> > > -       /*
+> > > -        * We need to tell lockdep that IRQs are off.  We can't do this until
+> > > -        * we fix gsbase, and we should do it before enter_from_user_mode
+> > > -        * (which can take locks).
+> > > -        */
+> > > -       TRACE_IRQS_OFF
 > >
-> > Hello Saravana,
-> >
-> > On 7/1/19 5:48 PM, Saravana Kannan wrote:
-> > ...
-> > > TODO:
-> > > - For the case of consumer child sub-nodes being added by a parent
-> > >   device after late_initcall_sync we might be able to address that by
-> > >   recursively parsing all child nodes and adding all their suppliers as
-> > >   suppliers of the parent node too. The parent probe will add the
-> > >   children before its probe is completed and that will prevent the
-> > >   supplier's sync_state from being executed before the children are
-> > >   probed.
+> > This hunk looks wrong.  Am I missing some other place that handles the
+> > case where we enter from kernel mode and IRQs were on?
+>
+> > > -   CALL_enter_from_user_mode
+> > >     ret
 > > >
-> > > But I'll write that part once I see how this series is received.
-> >
-> > I don't think that this scheme will work in all cases.  It can also lead
-> > to probing deadlock.
-> >
-> > Here is an example:
-> >
-> > Three DT devices (top level A with subnodes B and C):
-> > /A
-> > /A/B
-> > /A/C
-> > C is a consumer of B.
-> >
-> > When device A is created, a search of its subnodes will find the link from
-> > C to B.  Since device B hasn't been created yet, of_link_to_suppliers()
-> > will fail and add A to the wait_for_suppliers list.  This will cause the
-> > probe of A to fail with -EPROBE_DEFER (thanks to the check in
-> > device_links_check_suppliers()).  As a result device B will not be created
-> > and device A will never probe.
-> >
-> > You could try to resolve this situation by detecting the cycle and *not*
-> > adding A to the wait_for_suppliers list.  However, that would get us back
-> > to the problem we had before.  A would be allowed to probe which would
-> > then result in devices being added for B and C.  If the device for B is
-> > added before C, then it would be allowed to immediately probe and
-> > (assuming this all takes place after late_initcall_sync thanks to modules)
-> > its sync_state() callback would be called since no consumer devices are
-> > linked to B.
-> >
-> > Please note that to change this example from theoretical to practical,
-> > replace "A" with apps_rsc, "B" with pmi8998-rpmh-regulators, and "C" with
-> > pm8998-rpmh-regulators in [1].
+> > >  .Lerror_entry_done:
+> > > -   TRACE_IRQS_OFF
+> > >     ret
+> > >
+> > >     /*
 >
-> Interesting use case.
->
-> First, to clarify my TODO: I was initially thinking of the recursive
-> "up-heritance" of suppliers from child to parent to handle cases where
-> the supplier is a device from some other top level device (or its
-> child). My thinking has evolved a bit on that. I think the parent
-> needs to inherit only from it's immediate children and not its
-> grandchildren (the child is responsible for handling grandchildren
-> suppliers). I'll also have to make sure I don't try to create a link
-> from a parent device to one of its child device nodes (should be easy
-> to check).
->
-> Anyway, going back to your case, for dependencies between child nodes
-> of a parent, can't the parent just populate them in the right order?
-> You can loop through the children and add them in multiple stages.
->
-> I'll continue to think if I can come up with anything nicer on the
-> drivers, but even if we can't come up with anything better, we can
-> still make sync_state() work.
+> Did you perchance mean to complain about the .Lerror_entry_done one?
 
-There's actually a much better way to handle this case where you won't
-have to handle ordering on the driver side. I just need to add one or
-two patches to my patch series. I'll send that out sometime next week.
+Yes, duh.
 
+I would suggest compiling with DEBUG_LOCKDEP and running perf and the
+x86 selftests.  IIRC that's what catches most of the IRQ flag tracing
+errors.
 
--Saravana
+>
+> Because I'm not seeing how the one before CALL_enter_from_user_mode can
+> ever be from-kernel.
+>
+> But yes, that .Lerror_entry_done one looks fishy.
