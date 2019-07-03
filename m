@@ -2,89 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F2495DFB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB135DED7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbfGCIXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:23:52 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:50272 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727045AbfGCIXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:23:51 -0400
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x637KZHH032571;
-        Wed, 3 Jul 2019 02:25:20 -0500
-Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2tgcwpt56c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 Jul 2019 02:25:20 -0500
-Received: from us-aus-exch1.ni.corp.natinst.com (us-aus-exch1.ni.corp.natinst.com [130.164.68.11])
-        by us-aus-skprod2.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x637PJaS004425
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 3 Jul 2019 02:25:19 -0500
-Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
- us-aus-exch1.ni.corp.natinst.com (130.164.68.11) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Wed, 3 Jul 2019 02:25:19 -0500
-Received: from my-pen-rd9.apac.corp.natinst.com (130.164.49.7) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Wed, 3 Jul 2019 02:25:18 -0500
-From:   jeyentam <je.yen.tam@ni.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        jeyentam <je.yen.tam@ni.com>
-Subject: [PATCH V2 2/2] PCI: Add NI-Serial PXI/PXIe+485 device IDs
-Date:   Wed, 3 Jul 2019 00:25:16 -0700
-Message-ID: <20190703072516.34199-1-je.yen.tam@ni.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727207AbfGCH0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:26:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:14659 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbfGCH0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:26:13 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2A123083391;
+        Wed,  3 Jul 2019 07:26:12 +0000 (UTC)
+Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CCF680F70;
+        Wed,  3 Jul 2019 07:26:05 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 09:26:03 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
+        ast@kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH v5 net-next 6/6] net: ethernet: ti: cpsw: add XDP
+ support
+Message-ID: <20190703092603.66f36914@carbon>
+In-Reply-To: <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
+References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
+        <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_02:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 03 Jul 2019 07:26:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add NI PXIe-RS232, PXI-RS485 and PXIe-RS485 device IDs.
 
-Signed-off-by: jeyentam <je.yen.tam@ni.com>
----
- include/linux/pci_ids.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Sun, 30 Jun 2019 20:23:48 +0300 Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 70e86148cb1e..7fad4794789f 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1027,7 +1027,9 @@
- #define PCI_DEVICE_ID_SUN_TOMATILLO	0xa801
- #define PCI_DEVICE_ID_SUN_CASSINI	0xabba
- 
-+/* NI-Serial Device IDs */
- #define PCI_VENDOR_ID_NI		0x1093
-+/* NI PXI(e) RS-232 Devices */
- #define PCI_DEVICE_ID_NI_PCI2322	0xd130
- #define PCI_DEVICE_ID_NI_PCI2324	0xd140
- #define PCI_DEVICE_ID_NI_PCI2328	0xd150
-@@ -1052,6 +1054,16 @@
- #define PCI_DEVICE_ID_NI_PCI8432_2322	0x70ea
- #define PCI_DEVICE_ID_NI_PXI8432_2324	0x70ec
- #define PCI_DEVICE_ID_NI_PCI8432_2324	0x70ee
-+#define PCIE_DEVICE_ID_NI_PXIE8430_2328	0x74C2
-+#define PCIE_DEVICE_ID_NI_PXIE8430_23216	0x74C1
-+/* NI PXI(e) RS-485 Devices */
-+#define PCI_DEVICE_ID_NI_PXI8431_4852	0x7081
-+#define PCI_DEVICE_ID_NI_PXI8431_4854	0x70DE
-+#define PCI_DEVICE_ID_NI_PXI8431_4858	0x70E3
-+#define PCI_DEVICE_ID_NI_PXI8433_4852	0x70E9
-+#define PCI_DEVICE_ID_NI_PXI8433_4854	0x70ED
-+#define PCIE_DEVICE_ID_NI_PXIE8431_4858	0x74C4
-+#define PCIE_DEVICE_ID_NI_PXIE8431_48516	0x74C3
- 
- #define PCI_VENDOR_ID_CMD		0x1095
- #define PCI_DEVICE_ID_CMD_643		0x0643
+> Add XDP support based on rx page_pool allocator, one frame per page.
+> Page pool allocator is used with assumption that only one rx_handler
+> is running simultaneously. DMA map/unmap is reused from page pool
+> despite there is no need to map whole page.
+> 
+> Due to specific of cpsw, the same TX/RX handler can be used by 2
+> network devices, so special fields in buffer are added to identify
+> an interface the frame is destined to. Thus XDP works for both
+> interfaces, that allows to test xdp redirect between two interfaces
+> easily. Aslo, each rx queue have own page pools, but common for both
+> netdevs.
+
+Looking at the details what happen when a single RX-queue can receive
+into multiple net_device'es.  I realize that this driver will
+violate/kill some of the "hidden"/implicit RX-bulking that the
+XDP_REDIRECT code depend on for performance.
+
+Specifically, it violate this assumption:
+ https://github.com/torvalds/linux/blob/v5.2-rc7/kernel/bpf/devmap.c#L324-L329
+
+	/* Ingress dev_rx will be the same for all xdp_frame's in
+	 * bulk_queue, because bq stored per-CPU and must be flushed
+	 * from net_device drivers NAPI func end.
+	 */
+	if (!bq->dev_rx)
+		bq->dev_rx = dev_rx;
+
+This drivers "NAPI func end", can have received into multiple
+net_devices, before it's NAPI cycle ends.  Thus, violating this code
+assumption.
+
+Knowing all xdp_frame's in the bulk queue is from the same net_device,
+can be used to further optimize XDP.  E.g. the dev->netdev_ops->ndo_xdp_xmit()
+call don't take fully advantage of this, yet.  If we merge this driver,
+it will block optimizations in this area.
+
+NACK
+
 -- 
-2.17.1
-
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
