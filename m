@@ -2,97 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01025EFBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 01:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C926A5EFC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 01:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfGCXq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 19:46:28 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:49771 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfGCXq2 (ORCPT
+        id S1727451AbfGCXtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 19:49:33 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46811 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfGCXtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 19:46:28 -0400
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x63NkMsr028613;
-        Thu, 4 Jul 2019 08:46:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x63NkMsr028613
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562197583;
-        bh=rJ6iT0au4ngG40wf1ctFNsLJ/Vpo/OHLwWrHUVVL5n0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pBRcwDlq9QFS40kSn8o+W7JGHIB79v1LZjAh3vvRvVw8IrJ6O2xZ/cIv0hfHjJ3lu
-         BBcuNtOlojoeFW36HV75idpBRFfMseVcxkOKBmROLyZJ0pP482hPlEG4i8whHyNq6Z
-         6NuKc8rQbEAF5UNrDPSJhV7Sr0TzhZV7lRirDE1dIVIj9o3+6k2/PAiqFf6FQYVBwb
-         0o3oPO1SPmEtPo1/KCbwsWC9AynWROzjRkBj3g/yQUQtld2dX6rDtoczTStdnns+Ps
-         WFvU00oSs4KkBeHvTrTF6xHujq2xbZE/ER0eDlnfGb2bnMPYXVLyO45/utiBaHgyqc
-         5413gbq4asObg==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id r3so897047vsr.13;
-        Wed, 03 Jul 2019 16:46:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAWOWXuuD0GcZyguIysmxKxgOi9g0nieHWJ616ZEnifL8dJYFHvo
-        hAiGNSAgQlxmFTKWYpvCs1zE7V2kBEitW1UD3lE=
-X-Google-Smtp-Source: APXvYqygjbgdBLzYA0azdr6k7nnoESGst/swxhWFdByz3nqGXi0UFBizFXN+MN+2HjMPTCzfmxg0UBCFEEo0oK19Z7I=
-X-Received: by 2002:a67:f495:: with SMTP id o21mr19975775vsn.54.1562197582238;
- Wed, 03 Jul 2019 16:46:22 -0700 (PDT)
+        Wed, 3 Jul 2019 19:49:32 -0400
+Received: by mail-ot1-f68.google.com with SMTP id z23so4181639ote.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 16:49:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=iYkGpwMXKxVNcmLKnQld70dQP6ASPjx6Ir+lpUcmRbeaCLNxvoPbZdbtjpO+02wvjj
+         4tt7dBbmpdK6C8YBbjvVzu3cwBQcNieJfp8BGuljGCzf4UV3p0y1a0xoDDPFf59llgJx
+         ZF+XMXns7N33mPqM7xg9zWd+Zn/ATL2/KT2E4HmjygdfzKpchJsj0afaC4tu3HrbCyXt
+         r58+DTDBJm83/3mL48DbPH1FNyKFNWK/4JHrlFZuysD3qniRz7OfQXZyESyxivDAoI3x
+         5qWKQx/gkT5jtoLDoVsV1KiShI/GyqNT0/hGdD3YpUaRQUe/NV8P0y3lmgnFGVo9s2+8
+         BKdw==
+X-Gm-Message-State: APjAAAXOP9cWicD/uv4X5/JBkUCRToqhw5IE3y6Ie7mHk++t+UzItdCu
+        +TN4snShckxGS2Qwy8lCpV5QTWen
+X-Google-Smtp-Source: APXvYqxEbFi5posAe2vKH3wHGzt+E6AjNnOUpt4KA77N6dTLlE/YyRtTIGKg7Wa3P92Zgd5G0pxitg==
+X-Received: by 2002:a9d:65ca:: with SMTP id z10mr32303635oth.334.1562197772109;
+        Wed, 03 Jul 2019 16:49:32 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id n106sm1409132ota.31.2019.07.03.16.49.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 16:49:31 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] nvmet: Fix use-after-free bug when a port is
+ removed
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Stephen Bates <sbates@raithlin.com>
+References: <20190703230304.22905-1-logang@deltatee.com>
+ <20190703230304.22905-2-logang@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <87f99bda-3e94-2d49-2ef1-4537433c5e3f@grimberg.me>
+Date:   Wed, 3 Jul 2019 16:49:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190627191448.110756-1-natechancellor@gmail.com>
-In-Reply-To: <20190627191448.110756-1-natechancellor@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 4 Jul 2019 08:45:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATekKUTPvx4ywj_8yDLR8=Awmo6JKj5b-FBBF=EE+S-nw@mail.gmail.com>
-Message-ID: <CAK7LNATekKUTPvx4ywj_8yDLR8=Awmo6JKj5b-FBBF=EE+S-nw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Add ability to test Clang's integrated assembler
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Dmitry Golovin <dima@golovin.in>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190703230304.22905-2-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 4:15 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> There are some people interested in experimenting with Clang's
-> integrated assembler. To make it easy to do so without source
-> modification, allow the user to specify 'AS=clang' as part of the
-> make command to avoid adding '-no-integrated-as' to the {A,C}FLAGS.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/577
-> Suggested-by: Dmitry Golovin <dima@golovin.in>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Applied to linux-kbuild. Thanks.
-
-
-
-> ---
->  Makefile | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Makefile b/Makefile
-> index 5102b2bbd224..d77481129339 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -527,7 +527,9 @@ endif
->  ifneq ($(GCC_TOOLCHAIN),)
->  CLANG_FLAGS    += --gcc-toolchain=$(GCC_TOOLCHAIN)
->  endif
-> +ifeq ($(shell $(AS) --version 2>&1 | head -n 1 | grep clang),)
->  CLANG_FLAGS    += -no-integrated-as
-> +endif
->  CLANG_FLAGS    += -Werror=unknown-warning-option
->  KBUILD_CFLAGS  += $(CLANG_FLAGS)
->  KBUILD_AFLAGS  += $(CLANG_FLAGS)
-> --
-> 2.22.0
->
-
-
---
-Best Regards
-Masahiro Yamada
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
