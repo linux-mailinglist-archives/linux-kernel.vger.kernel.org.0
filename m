@@ -2,110 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3122F5DE27
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C751B5DE35
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfGCGj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 02:39:58 -0400
-Received: from chill.innovation.ch ([216.218.245.220]:53722 "EHLO
-        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfGCGj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:39:57 -0400
-Date:   Tue, 2 Jul 2019 23:39:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch 85CEE64013F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
-        s=default; t=1562135996;
-        bh=waAA9bz7u8vTcqSxfkBH3kI4fMWrMyh3e4aqengWgPg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=arld3s3oUiDqM0POunjuNaXZx1LPmOkmuIEDUZXuHuMRO1KtTYegdWtFteYdleykz
-         bnaGCYFRvBegnM7u77hhw5jcfUO7jlOGJ3XyTQvUuUkDt+/VX/v0jhALYCPr5LQ6dx
-         hnr9d7rU5vpxvfwPUXKAcTWQr+zI8Me+aKrpZljnLwlTgJcbOTOM1udKcq4yf9WZC8
-         pV5DyQGdBM3yJRW7B/Ra+oM6J8cGZqG0AlL36KkBchVyOfKSkHBXGuuch0u7GQxLES
-         q/3qQ39Dsk2rFuR2x/dEmf/TxLh6aIOUspIeinHPT/OYmMqP4NUSJp/HWbZGFQDwgB
-         g8eUiEpsgEk/Q==
-From:   "Life is hard, and then you die" <ronald@innovation.ch>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Federico Lorenzi <federico@travelground.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/2] drm/bridge: sil_sii8620: make remote control
- optional.
-Message-ID: <20190703063956.GA32102@innovation.ch>
-References: <20190419081926.13567-1-ronald@innovation.ch>
- <20190419081926.13567-2-ronald@innovation.ch>
- <CGME20190702135052eucas1p11e2621af0514505789c7947b84cf133c@eucas1p1.samsung.com>
- <2d0fe94c-a2c9-a8f6-967f-c33b53e86518@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d0fe94c-a2c9-a8f6-967f-c33b53e86518@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727086AbfGCGvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 02:51:19 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:39264 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbfGCGvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:51:18 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 04AED200353;
+        Wed,  3 Jul 2019 08:51:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9C79F20001E;
+        Wed,  3 Jul 2019 08:51:12 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E9FD0402E1;
+        Wed,  3 Jul 2019 14:51:06 +0800 (SGT)
+From:   shengjiu.wang@nxp.com
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, broonie@kernel.org, alsa-devel@alsa-project.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/2] recover the channel swap after xrun
+Date:   Wed,  3 Jul 2019 14:42:03 +0800
+Message-Id: <cover.1562136119.git.shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-On Tue, Jul 02, 2019 at 03:50:49PM +0200, Andrzej Hajda wrote:
-> On 19.04.2019 10:19, Ronald Tschalär wrote:
-> > commit d6abe6df706c (drm/bridge: sil_sii8620: do not have a dependency
-> > of RC_CORE) changed the driver to select both RC_CORE and INPUT.
-> > However, this causes problems with other drivers, in particular an input
-> > driver that depends on MFD_INTEL_LPSS_PCI (to be added in a separate
-> > commit):
-> > 
-> >   drivers/clk/Kconfig:9:error: recursive dependency detected!
-> >   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
-> >   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
-> >   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
-> >   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
-> >   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
-> >   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
-> >   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
-> >   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
-> > 
-> > According to the docs and general consensus, select should only be used
-> > for non user-visible symbols, but both RC_CORE and INPUT are
-> > user-visible. Furthermore almost all other references to INPUT
-> > throughout the kernel config are depends, not selects. For this reason
-> > the first part of this change reverts commit d6abe6df706c.
-> > 
-> > In order to address the original reason for commit d6abe6df706c, namely
-> > that not all boards use the remote controller functionality and hence
-> > should not need have to deal with RC_CORE, the second part of this
-> > change now makes the remote control support in the driver optional and
-> > contingent on RC_CORE being defined. And with this the hard dependency
-> > on INPUT also goes away as that is only needed if RC_CORE is defined
-> > (which in turn already depends on INPUT).
-> > 
-> > CC: Inki Dae <inki.dae@samsung.com>
-> > CC: Andrzej Hajda <a.hajda@samsung.com>
-> > CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
-> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> 
-> 
-> Apparently this patch was not queued to kernel yet. If there are no
-> objections I will queue it via drm-misc-next tree tomorrow.
+recover the channel swap after xrun
 
-If this patch set won't be queued for 5.3 then I guess that would be a
-good idea.
+Shengjiu Wang (2):
+  ASoC: fsl_esai: Wrap some operations to be functions
+  ASoC: fsl_esai: recover the channel swap after xrun
 
-But may I ask what is preventing this patch set from being queued for
-upstream, so I can try and fix whatever the issue is?
+ sound/soc/fsl/fsl_esai.c | 267 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 194 insertions(+), 73 deletions(-)
+
+Changes in v2
+- add one patch for wrap operations to functions.
+- fix some coding style issue
 
 
-  Cheers,
-
-  Ronald
+-- 
+2.21.0
 
