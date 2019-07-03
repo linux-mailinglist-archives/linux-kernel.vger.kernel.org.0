@@ -2,101 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4A05D8E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C118B5D8FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfGCAak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:30:40 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:37345 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfGCAaj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:30:39 -0400
-Received: by mail-pg1-f173.google.com with SMTP id g15so230567pgi.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:30:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vn+LAxBJO7zxGvZ7qZMhFP9o+nyZP9kSApnr8HWEFrc=;
-        b=I0LWxM6dylxeZ05/nj4aoBN7X/RCZTrN0PJSydzFd4UPU814KFD5BpK9lx9/rhjLXR
-         Q8OqzdSdZJsCu3sBlmNq9VhRx2w/mHhbIE+vp4in58fCSfUVcTsh6/nwoWnobprAr6F9
-         n5BFK0sxGgzxKkKho2sDVVZ1d5DCeR8mE2kvciHRn9wLMJ8JXBhJHgMlkXIzRFB68dLT
-         pS/lQ9xWfByyLNgPHkp0I1k49SUKuyEre4Et/0ediDaJlpnIEqsLQk8jmMXCeJ1FG4vf
-         BvE2DP/GXPNLnxvmWjXjo/ixOzpcId1eF6L6G7YFzc3L7HQCDzGjBythsulUwNPr1gok
-         iMRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vn+LAxBJO7zxGvZ7qZMhFP9o+nyZP9kSApnr8HWEFrc=;
-        b=qUJn6uWQUkSwIcVHYAJ1CDa6Cx1GPCGluvMLFy1k3ulLWw3RV4j2dSjQHb5iJFyZwa
-         +C0IHHlQZjbANM2En8bSv0BnEO+SHgbcamAAcO3hMnOtYFzH+uJvpAwqYgW+F77r0iHI
-         dom2Bnk8YTJwurlrsdmIhFiMfmMAhy5Z/7c4wuoxYcEZLT5z3zuzbJKadsKFpGLK6lBf
-         MTcM+FWlPupGOLqwHkb7b0AYEuBNXskTOaFEFfbTbzi0qgCh215vymXn7dLoO8u0t8uj
-         vuAT5C8+QLLzEKRgc4V90KWipQJ+RKxnbQBrB3FFGTw0WGfKqGb3CWzTQwE14Awvbn1j
-         14rA==
-X-Gm-Message-State: APjAAAX23FaSNwGGtsvBybujIykqlPDAyB2d1eLIY7kd7yU0KtDWwezm
-        JBuOkN4Taz0Y6WT4WQAMFHs7DGuGSYQjIJpZekNpiQ==
-X-Google-Smtp-Source: APXvYqx4jRLXTTfaBDu7oGjvQW1U3ugxjFYp6X0Mz+GfQZNQV4p/VDfNSi0vrPKvUv6EI5VN2dgK5l31VVxhLL6S4Fg=
-X-Received: by 2002:a63:52:: with SMTP id 79mr33023414pga.381.1562113838414;
- Tue, 02 Jul 2019 17:30:38 -0700 (PDT)
+        id S1727203AbfGCAcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:32:51 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56996 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726736AbfGCAcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:32:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 17:32:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,445,1557212400"; 
+   d="scan'208";a="315414213"
+Received: from unknown (HELO [10.239.196.136]) ([10.239.196.136])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2019 17:32:48 -0700
+Subject: Re: [PATCH v6 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
+        jingqi.liu@intel.com
+References: <20190621055747.17060-1-tao3.xu@intel.com>
+ <20190621055747.17060-3-tao3.xu@intel.com>
+From:   Tao Xu <tao3.xu@intel.com>
+Message-ID: <121358d9-f330-da38-aae3-bd194aee75b0@intel.com>
+Date:   Wed, 3 Jul 2019 08:32:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
- <20190702220739.GJ32547@worktop.programming.kicks-ass.net>
-In-Reply-To: <20190702220739.GJ32547@worktop.programming.kicks-ass.net>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 2 Jul 2019 17:30:27 -0700
-Message-ID: <CAKwvOdk_faiFKC=hQ0beus5S_kcC0D3=k2rnja1wE_yMhCgPTw@mail.gmail.com>
-Subject: Re: objtool warnings in prerelease clang-9
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kees Cook <keescook@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Craig Topper <craig.topper@intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Stephen Hines <srhines@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190621055747.17060-3-tao3.xu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 3:07 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
->
-> Hi Nick,
->
-> That is good news; and I'll strive to read the email in more detail
-> in the morning when there is a better chance of me actually
-> understanding some of it :-)
->
-> But his here is something I felt needed clarification:
->
-> On Tue, Jul 02, 2019 at 01:53:51PM -0700, Nick Desaulniers wrote:
-> > Of interest are the disassembled __jump_table entries; in groups of
-> > three, there is a group for which the second element is duplicated
-> > with a previous group.  This is bad because (as explained by Peter in
-> > https://lkml.org/lkml/2019/6/27/118) the triples are in the form (code
-> > location, jump target, pointer to key).  Duplicate or repeated jump
-> > targets are unexpected, and will lead to incorrect control flow after
-> > patching such code locations.
->
-> > Also, the jump target should be 0x7 bytes ahead of the location, IIUC.
->
-> Even if you mean 'at least' I'm fairly sure this is not correct. The
-> instruction at the 'code location' is either a jmp.d32 or a nop5 (both 5
-> bytes). The target must (obviously) be at an instruction boundary, but
-> really can be anywhere (it is compiler generated after all).
->
+Ping ;)
+On 6/21/2019 1:57 PM, Tao Xu wrote:
+> UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
+> to determines the maximum time in TSC-quanta that the processor can reside
+> in either C0.1 or C0.2.
+> 
+> This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
+> IA32_UMWAIT_CONTROL between host and guest. The variable
+> mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
+> this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
+> 
+> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Tao Xu <tao3.xu@intel.com>
+> ---
+> 
+> Changes in v6:
+> 	add check msr_info->host_initiated in get/set msr(Xiaoyao)
+> 	restore the atomic_switch_umwait_control_msr()(Xiaoyao)
+> 	rebase the patch because the kernel dependcy patch updated to
+> 	v5: https://lkml.org/lkml/2019/6/19/972
+> ---
+>   arch/x86/kernel/cpu/umwait.c |  3 ++-
+>   arch/x86/kvm/vmx/vmx.c       | 33 +++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/vmx.h       |  3 +++
+>   arch/x86/kvm/x86.c           |  1 +
+>   4 files changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
+> index 4b2aff7b2d4d..db5c193ef136 100644
+> --- a/arch/x86/kernel/cpu/umwait.c
+> +++ b/arch/x86/kernel/cpu/umwait.c
+> @@ -15,7 +15,8 @@
+>    * MSR value. By default, umwait max time is 100000 in TSC-quanta and C0.2
+>    * is enabled
+>    */
+> -static u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLED);
+> +u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLED);
+> +EXPORT_SYMBOL_GPL(umwait_control_cached);
+>   
+>   /*
+>    * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index b35bfac30a34..0d81cb9b96cf 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1679,6 +1679,13 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   #endif
+>   	case MSR_EFER:
+>   		return kvm_get_msr_common(vcpu, msr_info);
+> +	case MSR_IA32_UMWAIT_CONTROL:
+> +		if (!msr_info->host_initiated &&
+> +		    !guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +			return 1;
+> +
+> +		msr_info->data = vmx->msr_ia32_umwait_control;
+> +		break;
+>   	case MSR_IA32_SPEC_CTRL:
+>   		if (!msr_info->host_initiated &&
+>   		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+> @@ -1841,6 +1848,17 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   			return 1;
+>   		vmcs_write64(GUEST_BNDCFGS, data);
+>   		break;
+> +	case MSR_IA32_UMWAIT_CONTROL:
+> +		if (!msr_info->host_initiated &&
+> +		    !guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +			return 1;
+> +
+> +		/* The reserved bit IA32_UMWAIT_CONTROL[1] should be zero */
+> +		if (data & BIT_ULL(1))
+> +			return 1;
+> +
+> +		vmx->msr_ia32_umwait_control = data;
+> +		break;
+>   	case MSR_IA32_SPEC_CTRL:
+>   		if (!msr_info->host_initiated &&
+>   		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+> @@ -4126,6 +4144,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>   	vmx->rmode.vm86_active = 0;
+>   	vmx->spec_ctrl = 0;
+>   
+> +	vmx->msr_ia32_umwait_control = 0;
+> +
+>   	vcpu->arch.microcode_version = 0x100000000ULL;
+>   	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
+>   	kvm_set_cr8(vcpu, 0);
+> @@ -6339,6 +6359,16 @@ static void atomic_switch_perf_msrs(struct vcpu_vmx *vmx)
+>   					msrs[i].host, false);
+>   }
+>   
+> +static void atomic_switch_umwait_control_msr(struct vcpu_vmx *vmx)
+> +{
+> +	if (vmx->msr_ia32_umwait_control != umwait_control_cached)
+> +		add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
+> +			vmx->msr_ia32_umwait_control,
+> +			umwait_control_cached, false);
+> +	else
+> +		clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
+> +}
+> +
+>   static void vmx_arm_hv_timer(struct vcpu_vmx *vmx, u32 val)
+>   {
+>   	vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, val);
+> @@ -6447,6 +6477,9 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>   
+>   	atomic_switch_perf_msrs(vmx);
+>   
+> +	if (guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +		atomic_switch_umwait_control_msr(vmx);
+> +
+>   	vmx_update_hv_timer(vcpu);
+>   
+>   	/*
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 61128b48c503..8485bec7c38a 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -14,6 +14,8 @@
+>   extern const u32 vmx_msr_index[];
+>   extern u64 host_efer;
+>   
+> +extern u32 umwait_control_cached;
+> +
+>   #define MSR_TYPE_R	1
+>   #define MSR_TYPE_W	2
+>   #define MSR_TYPE_RW	3
+> @@ -194,6 +196,7 @@ struct vcpu_vmx {
+>   #endif
+>   
+>   	u64		      spec_ctrl;
+> +	u64		      msr_ia32_umwait_control;
+>   
+>   	u32 vm_entry_controls_shadow;
+>   	u32 vm_exit_controls_shadow;
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 83aefd759846..4480de459bf4 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1138,6 +1138,7 @@ static u32 msrs_to_save[] = {
+>   	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
+>   	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
+>   	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+> +	MSR_IA32_UMWAIT_CONTROL,
+>   };
+>   
+>   static unsigned num_msrs_to_save;
+> 
 
-Got it.  Issue should be fixed outright with:
-https://reviews.llvm.org/D64101 (I figured out how to fix the loop
-unroller, so now we can proceed with the optimization instead of the
-base conservative case).
--- 
-Thanks,
-~Nick Desaulniers
