@@ -2,370 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E7E35E698
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E69A5E693
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfGCO12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:27:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39571 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfGCO12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:27:28 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63ER7rE3326680
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:27:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63ER7rE3326680
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562164028;
-        bh=McYLpXrJrlX9iePh8nqMzOHEHzqvYSsuIaWlQ5cPbM4=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=yrkEJOmVOb0B3QVShxCHcjl/H3jeScDpqWf6PdJc3DQrt7vq/4K7hDaiipPwubCVc
-         LMriljkBhWC/6LmlQ0RIpsNcAKJ2/Jo5fdj8rw0eqxcyo0hIKZDL/W/VoniXbVlySe
-         +ZR17vELUx33nerwN94etedETBxuj6qqTuaBPqDiMVmPyLk+XVWnlE5N8vQN+rvOYD
-         UG34yjE7mbdkV14jRWcKXdhnnJa9m6rRSRIXf5sidIGkB4Uqu6nG65e+ubhYDDALQs
-         whutsFrTS/e2EZPZLC073TaYm/wL1rc3A2XZ0Z8j8t1sAKpauLuoM/edOCy22Eq3fx
-         +UOUclQhHPsZA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63ER7BN3326677;
-        Wed, 3 Jul 2019 07:27:07 -0700
-Date:   Wed, 3 Jul 2019 07:27:07 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-j479s1ive9h75w5lfg16jroz@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
-        adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        mhiramat@kernel.org
-Reply-To: namhyung@kernel.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-          mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-          acme@redhat.com, hpa@zytor.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib: Move argv_{split,free} from
- tools/perf/util/
-Git-Commit-ID: 9c10548c42219e961279826c2763a0e32dc056b9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        id S1727185AbfGCO1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:27:11 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:49045 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727134AbfGCO1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:27:10 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 45f3Mv2T8mz9s00; Thu,  4 Jul 2019 00:27:07 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 80e5302e4bc85a6b685b7668c36c6487b5f90e9a
+In-Reply-To: <20190626183801.31247-1-naveen.n.rao@linux.vnet.ibm.com>
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] recordmcount: Fix spurious mcount entries on powerpc
+Message-Id: <45f3Mv2T8mz9s00@ozlabs.org>
+Date:   Thu,  4 Jul 2019 00:27:07 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9c10548c42219e961279826c2763a0e32dc056b9
-Gitweb:     https://git.kernel.org/tip/9c10548c42219e961279826c2763a0e32dc056b9
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 26 Jun 2019 15:27:58 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 1 Jul 2019 22:50:40 -0300
+On Wed, 2019-06-26 at 18:38:01 UTC, "Naveen N. Rao" wrote:
+> The recent change enabling HAVE_C_RECORDMCOUNT on powerpc started
+> showing the following issue:
+> 
+>   # modprobe kprobe_example
+>    ftrace-powerpc: Not expected bl: opcode is 3c4c0001
+>    WARNING: CPU: 0 PID: 227 at kernel/trace/ftrace.c:2001 ftrace_bug+0x90/0x318
+>    Modules linked in:
+>    CPU: 0 PID: 227 Comm: modprobe Not tainted 5.2.0-rc6-00678-g1c329100b942 #2
+>    NIP:  c000000000264318 LR: c00000000025d694 CTR: c000000000f5cd30
+>    REGS: c000000001f2b7b0 TRAP: 0700   Not tainted  (5.2.0-rc6-00678-g1c329100b942)
+>    MSR:  900000010282b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 28228222  XER: 00000000
+>    CFAR: c0000000002642fc IRQMASK: 0
+>    <snip>
+>    NIP [c000000000264318] ftrace_bug+0x90/0x318
+>    LR [c00000000025d694] ftrace_process_locs+0x4f4/0x5e0
+>    Call Trace:
+>    [c000000001f2ba40] [0000000000000004] 0x4 (unreliable)
+>    [c000000001f2bad0] [c00000000025d694] ftrace_process_locs+0x4f4/0x5e0
+>    [c000000001f2bb90] [c00000000020ff10] load_module+0x25b0/0x30c0
+>    [c000000001f2bd00] [c000000000210cb0] sys_finit_module+0xc0/0x130
+>    [c000000001f2be20] [c00000000000bda4] system_call+0x5c/0x70
+>    Instruction dump:
+>    419e0018 2f83ffff 419e00bc 2f83ffea 409e00cc 4800001c 0fe00000 3c62ff96
+>    39000001 39400000 386386d0 480000c4 <0fe00000> 3ce20003 39000001 3c62ff96
+>    ---[ end trace 4c438d5cebf78381 ]---
+>    ftrace failed to modify
+>    [<c0080000012a0008>] 0xc0080000012a0008
+>     actual:   01:00:4c:3c
+>    Initializing ftrace call sites
+>    ftrace record flags: 2000000
+>     (0)
+>     expected tramp: c00000000006af4c
+> 
+> Looking at the relocation records in __mcount_loc showed a few spurious
+> entries:
+>   RELOCATION RECORDS FOR [__mcount_loc]:
+>   OFFSET           TYPE              VALUE
+>   0000000000000000 R_PPC64_ADDR64    .text.unlikely+0x0000000000000008
+>   0000000000000008 R_PPC64_ADDR64    .text.unlikely+0x0000000000000014
+>   0000000000000010 R_PPC64_ADDR64    .text.unlikely+0x0000000000000060
+>   0000000000000018 R_PPC64_ADDR64    .text.unlikely+0x00000000000000b4
+>   0000000000000020 R_PPC64_ADDR64    .init.text+0x0000000000000008
+>   0000000000000028 R_PPC64_ADDR64    .init.text+0x0000000000000014
+> 
+> The first entry in each section is incorrect. Looking at the relocation
+> records, the spurious entries correspond to the R_PPC64_ENTRY records:
+>   RELOCATION RECORDS FOR [.text.unlikely]:
+>   OFFSET           TYPE              VALUE
+>   0000000000000000 R_PPC64_REL64     .TOC.-0x0000000000000008
+>   0000000000000008 R_PPC64_ENTRY     *ABS*
+>   0000000000000014 R_PPC64_REL24     _mcount
+>   <snip>
+> 
+> The problem is that we are not validating the return value from
+> get_mcountsym() in sift_rel_mcount(). With this entry, mcountsym is 0,
+> but Elf_r_sym(relp) also ends up being 0. Fix this by ensuring mcountsym
+> is valid before processing the entry.
+> 
+> Fixes: c7d64b560ce80 ("powerpc/ftrace: Enable C Version of recordmcount")
+> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+> Tested-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-tools lib: Move argv_{split,free} from tools/perf/util/
+Applied to powerpc next, thanks.
 
-This came from the kernel lib/argv_split.c, so move it to
-tools/lib/argv_split.c, to get it closer to the kernel structure.
+https://git.kernel.org/powerpc/c/80e5302e4bc85a6b685b7668c36c6487b5f90e9a
 
-We need to audit the usage of argv_split() to figure out if it is really
-necessary to do have one allocation per argv[] entry, looking at one of
-its users I guess that is not the case and we probably are even leaking
-those allocations by not using argv_free() judiciously, for later.
-
-With this we further remove stuff from tools/perf/util/, reducing the
-perf specific codebase and encouraging other tools/ code to use these
-routines so as to keep the style and constructs used with the kernel.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-j479s1ive9h75w5lfg16jroz@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/linux/string.h |   3 ++
- tools/lib/argv_split.c       | 100 +++++++++++++++++++++++++++++++++++++++++++
- tools/perf/MANIFEST          |   1 +
- tools/perf/util/Build        |   5 +++
- tools/perf/util/string.c     |  91 ---------------------------------------
- tools/perf/util/string2.h    |   2 -
- 6 files changed, 109 insertions(+), 93 deletions(-)
-
-diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
-index a76d4df10435..980cb9266718 100644
---- a/tools/include/linux/string.h
-+++ b/tools/include/linux/string.h
-@@ -7,6 +7,9 @@
- 
- void *memdup(const void *src, size_t len);
- 
-+char **argv_split(const char *str, int *argcp);
-+void argv_free(char **argv);
-+
- int strtobool(const char *s, bool *res);
- 
- /*
-diff --git a/tools/lib/argv_split.c b/tools/lib/argv_split.c
-new file mode 100644
-index 000000000000..0a58ccf3f761
---- /dev/null
-+++ b/tools/lib/argv_split.c
-@@ -0,0 +1,100 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Helper function for splitting a string into an argv-like array.
-+ */
-+
-+#include <stdlib.h>
-+#include <linux/kernel.h>
-+#include <linux/ctype.h>
-+#include <linux/string.h>
-+
-+static const char *skip_arg(const char *cp)
-+{
-+	while (*cp && !isspace(*cp))
-+		cp++;
-+
-+	return cp;
-+}
-+
-+static int count_argc(const char *str)
-+{
-+	int count = 0;
-+
-+	while (*str) {
-+		str = skip_spaces(str);
-+		if (*str) {
-+			count++;
-+			str = skip_arg(str);
-+		}
-+	}
-+
-+	return count;
-+}
-+
-+/**
-+ * argv_free - free an argv
-+ * @argv - the argument vector to be freed
-+ *
-+ * Frees an argv and the strings it points to.
-+ */
-+void argv_free(char **argv)
-+{
-+	char **p;
-+	for (p = argv; *p; p++) {
-+		free(*p);
-+		*p = NULL;
-+	}
-+
-+	free(argv);
-+}
-+
-+/**
-+ * argv_split - split a string at whitespace, returning an argv
-+ * @str: the string to be split
-+ * @argcp: returned argument count
-+ *
-+ * Returns an array of pointers to strings which are split out from
-+ * @str.  This is performed by strictly splitting on white-space; no
-+ * quote processing is performed.  Multiple whitespace characters are
-+ * considered to be a single argument separator.  The returned array
-+ * is always NULL-terminated.  Returns NULL on memory allocation
-+ * failure.
-+ */
-+char **argv_split(const char *str, int *argcp)
-+{
-+	int argc = count_argc(str);
-+	char **argv = calloc(argc + 1, sizeof(*argv));
-+	char **argvp;
-+
-+	if (argv == NULL)
-+		goto out;
-+
-+	if (argcp)
-+		*argcp = argc;
-+
-+	argvp = argv;
-+
-+	while (*str) {
-+		str = skip_spaces(str);
-+
-+		if (*str) {
-+			const char *p = str;
-+			char *t;
-+
-+			str = skip_arg(str);
-+
-+			t = strndup(p, str-p);
-+			if (t == NULL)
-+				goto fail;
-+			*argvp++ = t;
-+		}
-+	}
-+	*argvp = NULL;
-+
-+out:
-+	return argv;
-+
-+fail:
-+	argv_free(argv);
-+	return NULL;
-+}
-diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
-index aac4c755d81b..6a5de44b2de9 100644
---- a/tools/perf/MANIFEST
-+++ b/tools/perf/MANIFEST
-@@ -7,6 +7,7 @@ tools/lib/traceevent
- tools/lib/api
- tools/lib/bpf
- tools/lib/subcmd
-+tools/lib/argv_split.c
- tools/lib/ctype.c
- tools/lib/hweight.c
- tools/lib/rbtree.c
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index b4dc6112138f..d3408a463060 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -20,6 +20,7 @@ perf-y += parse-events.o
- perf-y += perf_regs.o
- perf-y += path.o
- perf-y += print_binary.o
-+perf-y += argv_split.o
- perf-y += rbtree.o
- perf-y += libstring.o
- perf-y += bitmap.o
-@@ -209,6 +210,10 @@ $(OUTPUT)util/kallsyms.o: ../lib/symbol/kallsyms.c FORCE
- 	$(call rule_mkdir)
- 	$(call if_changed_dep,cc_o_c)
- 
-+$(OUTPUT)util/argv_split.o: ../lib/argv_split.c FORCE
-+	$(call rule_mkdir)
-+	$(call if_changed_dep,cc_o_c)
-+
- $(OUTPUT)util/bitmap.o: ../lib/bitmap.c FORCE
- 	$(call rule_mkdir)
- 	$(call if_changed_dep,cc_o_c)
-diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
-index 9b7fbb0cbecd..52603876c548 100644
---- a/tools/perf/util/string.c
-+++ b/tools/perf/util/string.c
-@@ -69,97 +69,6 @@ out_err:
- 	return -1;
- }
- 
--static const char *skip_arg(const char *cp)
--{
--	while (*cp && !isspace(*cp))
--		cp++;
--
--	return cp;
--}
--
--static int count_argc(const char *str)
--{
--	int count = 0;
--
--	while (*str) {
--		str = skip_spaces(str);
--		if (*str) {
--			count++;
--			str = skip_arg(str);
--		}
--	}
--
--	return count;
--}
--
--/**
-- * argv_free - free an argv
-- * @argv - the argument vector to be freed
-- *
-- * Frees an argv and the strings it points to.
-- */
--void argv_free(char **argv)
--{
--	char **p;
--	for (p = argv; *p; p++) {
--		free(*p);
--		*p = NULL;
--	}
--
--	free(argv);
--}
--
--/**
-- * argv_split - split a string at whitespace, returning an argv
-- * @str: the string to be split
-- * @argcp: returned argument count
-- *
-- * Returns an array of pointers to strings which are split out from
-- * @str.  This is performed by strictly splitting on white-space; no
-- * quote processing is performed.  Multiple whitespace characters are
-- * considered to be a single argument separator.  The returned array
-- * is always NULL-terminated.  Returns NULL on memory allocation
-- * failure.
-- */
--char **argv_split(const char *str, int *argcp)
--{
--	int argc = count_argc(str);
--	char **argv = calloc(argc + 1, sizeof(*argv));
--	char **argvp;
--
--	if (argv == NULL)
--		goto out;
--
--	if (argcp)
--		*argcp = argc;
--
--	argvp = argv;
--
--	while (*str) {
--		str = skip_spaces(str);
--
--		if (*str) {
--			const char *p = str;
--			char *t;
--
--			str = skip_arg(str);
--
--			t = strndup(p, str-p);
--			if (t == NULL)
--				goto fail;
--			*argvp++ = t;
--		}
--	}
--	*argvp = NULL;
--
--out:
--	return argv;
--
--fail:
--	argv_free(argv);
--	return NULL;
--}
--
- /* Character class matching */
- static bool __match_charclass(const char *pat, char c, const char **npat)
- {
-diff --git a/tools/perf/util/string2.h b/tools/perf/util/string2.h
-index 2696c3fcd780..708805f5573e 100644
---- a/tools/perf/util/string2.h
-+++ b/tools/perf/util/string2.h
-@@ -11,8 +11,6 @@ extern const char *graph_dotted_line;
- extern const char *dots;
- 
- s64 perf_atoll(const char *str);
--char **argv_split(const char *str, int *argcp);
--void argv_free(char **argv);
- bool strglobmatch(const char *str, const char *pat);
- bool strglobmatch_nocase(const char *str, const char *pat);
- bool strlazymatch(const char *str, const char *pat);
+cheers
