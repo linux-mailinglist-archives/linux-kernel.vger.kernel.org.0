@@ -2,106 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D465E2AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60675E2B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfGCLO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:14:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13730 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726605AbfGCLO6 (ORCPT
+        id S1727045AbfGCLRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:17:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51773 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfGCLRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:14:58 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x63BDGYu096305
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Jul 2019 07:14:57 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tgseymrbt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 07:14:56 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 3 Jul 2019 12:14:54 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Jul 2019 12:14:51 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x63BEpOK52953218
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Jul 2019 11:14:51 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3397A405C;
-        Wed,  3 Jul 2019 11:14:50 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3C8CA405B;
-        Wed,  3 Jul 2019 11:14:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.77])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Jul 2019 11:14:49 +0000 (GMT)
-Subject: Re: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
- ima_show_template_data_ascii()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "'Markus Elfring'" <Markus.Elfring@web.de>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
+        Wed, 3 Jul 2019 07:17:32 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hidGS-0003Fo-LE; Wed, 03 Jul 2019 13:17:28 +0200
+Date:   Wed, 3 Jul 2019 13:17:28 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Date:   Wed, 03 Jul 2019 07:14:39 -0400
-In-Reply-To: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
-References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
-         <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19070311-0008-0000-0000-000002F96C24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070311-0009-0000-0000-00002266B96B
-Message-Id: <1562152479.4774.18.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=800 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907030135
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v5.0.21-rt15
+Message-ID: <20190703111728.cnvki7zcqbiteveh@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-03 at 09:16 +0000, David Laight wrote:
+Dear RT folks!
 
-> > diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> > index 9fe0ef7f91e2..05636e9b19b1 100644
-> > --- a/security/integrity/ima/ima_template_lib.c
-> > +++ b/security/integrity/ima/ima_template_lib.c
-> > @@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
-> >  	case DATA_FMT_DIGEST_WITH_ALGO:
-> >  		buf_ptr = strnchr(field_data->data, buflen, ':');
-> >  		if (buf_ptr != field_data->data)
-> > -			seq_printf(m, "%s", field_data->data);
-> > +			seq_puts(m, field_data->data);
-> > 
-> >  		/* skip ':' and '\0' */
-> >  		buf_ptr += 2;
-> 
-> That code looks highly suspect!
-> It uses a bounded scan then assumes a '\0' terminated string.
-> It then adds 2 to a potentially NULL pointer.
+I'm pleased to announce the v5.0.21-rt15 patch set. 
 
-The code here is used for displaying the IMA measurement list, that
-the kernel itself created.  Protecting the in kernel memory from
-attack is a different problem.  Refer to Igor Stoppa's write once
-memory pools.
+Changes since v5.0.21-rt14:
 
-Mimi
+  - Revert the replacement patch for wait_for_completion() and use the
+    old patch again. The alternative version caused a regression as
+    reported by Arve Barsnes, Corey Minyard, Kurt Kanzenbach and Steven
+    Rostedt.
 
+Known issues
+     - rcutorture is currently broken on -RT. Reported by Juri Lelli.
+
+The delta patch against v5.0.21-rt14 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/incr/patch-5.0.21-rt14-rt15.patch.xz
+
+You can get this release via the git tree at:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v5.0.21-rt15
+
+The RT patch against v5.0.21 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/older/patch-5.0.21-rt15.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/older/patches-5.0.21-rt15.tar.xz
+
+Sebastian
+
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index 2ac63a13d26d3..21ae66cd41d30 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -61,13 +61,11 @@ struct swait_queue_head {
+ struct swait_queue {
+ 	struct task_struct	*task;
+ 	struct list_head	task_list;
+-	unsigned int		remove;
+ };
+ 
+ #define __SWAITQUEUE_INITIALIZER(name) {				\
+ 	.task		= current,					\
+ 	.task_list	= LIST_HEAD_INIT((name).task_list),		\
+-	.remove		= 1,						\
+ }
+ 
+ #define DECLARE_SWAITQUEUE(name)					\
+diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+index 755a580849781..49c14137988ea 100644
+--- a/kernel/sched/completion.c
++++ b/kernel/sched/completion.c
+@@ -72,12 +72,12 @@ do_wait_for_common(struct completion *x,
+ 	if (!x->done) {
+ 		DECLARE_SWAITQUEUE(wait);
+ 
+-		__prepare_to_swait(&x->wait, &wait);
+ 		do {
+ 			if (signal_pending_state(state, current)) {
+ 				timeout = -ERESTARTSYS;
+ 				break;
+ 			}
++			__prepare_to_swait(&x->wait, &wait);
+ 			__set_current_state(state);
+ 			raw_spin_unlock_irq(&x->wait.lock);
+ 			timeout = action(timeout);
+diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
+index e2c3d2691edf1..c58068d2ee06c 100644
+--- a/kernel/sched/swait.c
++++ b/kernel/sched/swait.c
+@@ -28,8 +28,7 @@ void swake_up_locked(struct swait_queue_head *q)
+ 
+ 	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
+ 	wake_up_process(curr->task);
+-	if (curr->remove)
+-		list_del_init(&curr->task_list);
++	list_del_init(&curr->task_list);
+ }
+ EXPORT_SYMBOL(swake_up_locked);
+ 
+@@ -78,8 +77,7 @@ void swake_up_all(struct swait_queue_head *q)
+ 		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+ 
+ 		wake_up_state(curr->task, TASK_NORMAL);
+-		if (curr->remove)
+-			list_del_init(&curr->task_list);
++		list_del_init(&curr->task_list);
+ 
+ 		if (list_empty(&tmp))
+ 			break;
+diff --git a/localversion-rt b/localversion-rt
+index 08b3e75841adc..18777ec0c27d4 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt14
++-rt15
