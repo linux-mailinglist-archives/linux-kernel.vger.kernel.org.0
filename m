@@ -2,102 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECE4C5EDA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6604F5EDAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfGCUej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:34:39 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56122 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfGCUeg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:34:36 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hilxa-0008FU-Gu; Wed, 03 Jul 2019 22:34:34 +0200
-Date:   Wed, 3 Jul 2019 22:34:33 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nadav Amit <namit@vmware.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Feng Tang <feng.tang@intel.com>
-Subject: Re: [patch 16/18] x86/apic: Convert 32bit to IPI shorthand static
- key
-In-Reply-To: <1DC35A28-DEBC-4A46-AC35-3AADD23AA40D@vmware.com>
-Message-ID: <alpine.DEB.2.21.1907032213250.1802@nanos.tec.linutronix.de>
-References: <20190703105431.096822793@linutronix.de> <20190703105917.044463061@linutronix.de> <1DC35A28-DEBC-4A46-AC35-3AADD23AA40D@vmware.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727444AbfGCUfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:35:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43944 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727340AbfGCUfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:35:00 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 434955944C;
+        Wed,  3 Jul 2019 20:34:55 +0000 (UTC)
+Received: from x1.home (ovpn-116-83.phx2.redhat.com [10.3.116.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E4FC18248;
+        Wed,  3 Jul 2019 20:34:52 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 14:34:51 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc:     <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        <kevin.tian@intel.com>
+Subject: Re: [PATCH v7 3/6] vfio/type1: Update iova list on detach
+Message-ID: <20190703143451.0ae4e9f7@x1.home>
+In-Reply-To: <20190626151248.11776-4-shameerali.kolothum.thodi@huawei.com>
+References: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
+        <20190626151248.11776-4-shameerali.kolothum.thodi@huawei.com>
+Organization: Red Hat
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 03 Jul 2019 20:35:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nadav,
+On Wed, 26 Jun 2019 16:12:45 +0100
+Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
 
-On Wed, 3 Jul 2019, Nadav Amit wrote:
-> > On Jul 3, 2019, at 3:54 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > void default_send_IPI_all(int vector)
-> > {
-> > -	if (apic_ipi_shorthand_off || vector == NMI_VECTOR) {
-> > +	if (static_branch_likely(&apic_use_ipi_shorthand)) {
-> > 		apic->send_IPI_mask(cpu_online_mask, vector);
-> > 	} else {
-> > 		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
+> Get a copy of iova list on _group_detach and try to update the list.
+> On success replace the current one with the copy. Leave the list as
+> it is if update fails.
 > 
-> It may be better to check the static-key in native_send_call_func_ipi() (and
-> other callers if there are any), and remove all the other checks in
-> default_send_IPI_all(), x2apic_send_IPI_mask_allbutself(), etc.
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 91 +++++++++++++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index b6bfdfa16c33..e872fb3a0f39 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1873,12 +1873,88 @@ static void vfio_sanity_check_pfn_list(struct vfio_iommu *iommu)
+>  	WARN_ON(iommu->notifier.head);
+>  }
+>  
+> +/*
+> + * Called when a domain is removed in detach. It is possible that
+> + * the removed domain decided the iova aperture window. Modify the
+> + * iova aperture with the smallest window among existing domains.
+> + */
+> +static void vfio_iommu_aper_expand(struct vfio_iommu *iommu,
+> +				   struct list_head *iova_copy)
+> +{
+> +	struct vfio_domain *domain;
+> +	struct iommu_domain_geometry geo;
+> +	struct vfio_iova *node;
+> +	dma_addr_t start = 0;
+> +	dma_addr_t end = (dma_addr_t)~0;
+> +
+> +	list_for_each_entry(domain, &iommu->domain_list, next) {
+> +		iommu_domain_get_attr(domain->domain, DOMAIN_ATTR_GEOMETRY,
+> +				      &geo);
+> +		if (geo.aperture_start > start)
+> +			start = geo.aperture_start;
+> +		if (geo.aperture_end < end)
+> +			end = geo.aperture_end;
+> +	}
+> +
+> +	/* Modify aperture limits. The new aper is either same or bigger */
+> +	node = list_first_entry(iova_copy, struct vfio_iova, list);
+> +	node->start = start;
+> +	node = list_last_entry(iova_copy, struct vfio_iova, list);
+> +	node->end = end;
+> +}
+> +
+> +/*
+> + * Called when a group is detached. The reserved regions for that
+> + * group can be part of valid iova now. But since reserved regions
+> + * may be duplicated among groups, populate the iova valid regions
+> + * list again.
+> + */
+> +static int vfio_iommu_resv_refresh(struct vfio_iommu *iommu,
+> +				   struct list_head *iova_copy)
+> +{
+> +	struct vfio_domain *d;
+> +	struct vfio_group *g;
+> +	struct vfio_iova *node;
+> +	dma_addr_t start, end;
+> +	LIST_HEAD(resv_regions);
+> +	int ret;
+> +
+> +	list_for_each_entry(d, &iommu->domain_list, next) {
+> +		list_for_each_entry(g, &d->group_list, next)
+> +			iommu_get_group_resv_regions(g->iommu_group,
+> +						     &resv_regions);
 
-That makes sense. Should have thought about that myself, but hunting that
-APIC emulation issue was affecting my brain obviously :)
- 
->  void native_send_call_func_ipi(const struct cpumask *mask)
+Need to account for failure case here too.
+
+> +	}
+> +
+> +	if (list_empty(&resv_regions))
+> +		return 0;
+> +
+> +	node = list_first_entry(iova_copy, struct vfio_iova, list);
+> +	start = node->start;
+> +	node = list_last_entry(iova_copy, struct vfio_iova, list);
+> +	end = node->end;
+> +
+> +	/* purge the iova list and create new one */
+> +	vfio_iommu_iova_free(iova_copy);
+> +
+> +	ret = vfio_iommu_aper_resize(iova_copy, start, end);
+> +	if (ret)
+> +		goto done;
+> +
+> +	/* Exclude current reserved regions from iova ranges */
+> +	ret = vfio_iommu_resv_exclude(iova_copy, &resv_regions);
+> +done:
+> +	vfio_iommu_resv_free(&resv_regions);
+> +	return ret;
+> +}
+> +
+>  static void vfio_iommu_type1_detach_group(void *iommu_data,
+>  					  struct iommu_group *iommu_group)
 >  {
-> -	cpumask_var_t allbutself;
-> -
-> -	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
-> -		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
-> -		return;
-> +	int cpu, this_cpu = smp_processor_id();
-> +	bool allbutself = true;
-> +	bool self = false;
-> +
-> +	for_each_cpu_and_not(cpu, cpu_online_mask, mask) {
-> +
-> +		if (cpu != this_cpu) {
-> +			allbutself = false;
-> +			break;
-> +		}
-> +		self = true;
-
-That accumulates to a large iteration in the worst case. 
-
+>  	struct vfio_iommu *iommu = iommu_data;
+>  	struct vfio_domain *domain;
+>  	struct vfio_group *group;
+> +	bool iova_copy_fail;
+> +	LIST_HEAD(iova_copy);
+>  
+>  	mutex_lock(&iommu->lock);
+>  
+> @@ -1901,6 +1977,12 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
+>  		}
 >  	}
 >  
-> -	cpumask_copy(allbutself, cpu_online_mask);
-> -	__cpumask_clear_cpu(smp_processor_id(), allbutself);
-> -
-> -	if (cpumask_equal(mask, allbutself) &&
-> +	if (allbutself && !self &&
->  	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
+> +	/*
+> +	 * Get a copy of iova list. If success, use copy to update the
+> +	 * list and to replace the current one.
+> +	 */
+> +	iova_copy_fail = !!vfio_iommu_iova_get_copy(iommu, &iova_copy);
+> +
+>  	list_for_each_entry(domain, &iommu->domain_list, next) {
+>  		group = find_iommu_group(domain, iommu_group);
+>  		if (!group)
+> @@ -1926,10 +2008,19 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
+>  			iommu_domain_free(domain->domain);
+>  			list_del(&domain->next);
+>  			kfree(domain);
+> +			if (!iova_copy_fail && !list_empty(&iommu->domain_list))
+> +				vfio_iommu_aper_expand(iommu, &iova_copy);
+>  		}
+>  		break;
+>  	}
+>  
+> +	if (!iova_copy_fail && !list_empty(&iommu->domain_list)) {
+> +		if (!vfio_iommu_resv_refresh(iommu, &iova_copy))
+> +			vfio_iommu_iova_insert_copy(iommu, &iova_copy);
+> +		else
+> +			vfio_iommu_iova_free(&iova_copy);
+> +	}
 
-Hmm. I overlooked that one. Need to take a deeper look.
+The iova_copy_fail and list_empty tests are rather ugly, could we avoid
+them by pushing the tests to the expand and refresh functions?  ie. it
+looks like vfio_iommu_aper_expand() could test list_empty(iova_copy),
+the list_for_each on domain_list doesn't need special handling.  Same
+for vfio_iommu_resv_refresh().  This would also fix the bug above that
+I think we don't free iova_copy if domain_list becomes empty during
+this operation.  Thanks,
 
->  		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
->  	else
->  		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
-
-Let me think about it for a while.
-
-Thanks,
-
-	tglx
+Alex
