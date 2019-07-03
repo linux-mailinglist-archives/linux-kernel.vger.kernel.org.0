@@ -2,109 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2005EECB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 23:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489635EED5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 23:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfGCVtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 17:49:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:56685 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCVtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:49:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fF9z1y9kz9s8m;
-        Thu,  4 Jul 2019 07:49:11 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562190551;
-        bh=ogYrAdqmBL5sV/Ifv2mvi7wFD/kypvfY6pwW/9HHGMY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YnADNR5aXZq0RBozBxpyZRbBUhE18DQHskZE8/xRalMseUrvh7vA43ympqxzEm348
-         UBrkTnRCkrpl+pDakNk5nStyIHeI80uyW9lqSmWrbF6x2cOo1J+eu9r9cVzvBGMtAT
-         HxWpSZt0jyHwErnXuvnuulUjaYB4/UyIBBTuSO6QmPx49S78f2PTL3J0HVR3RjYzsj
-         9WBHrzV5jq5ubwXCT1/yM/8coPxhR4CDobL17fR1bCzVORjy9T43jC5zRVz+Pt4zWk
-         DrFYwaE9g86F0zAvRQswD8bfXmbZ6xMgSIbjc90ApRApxA16uKmD0BmoTDH4a7KCyo
-         nzwl0bIfG1rDA==
-Date:   Thu, 4 Jul 2019 07:49:08 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Fixes tags need some work in the kvm tree
-Message-ID: <20190704074908.5fb3d184@canb.auug.org.au>
+        id S1727403AbfGCVvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 17:51:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60244 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfGCVvg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 17:51:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZbA9KwVcttCbnvX3vkkEhRhS2gc/db618QfIxsAyRR4=; b=uYi5BifZnsHyKM9VVXWgGtvI7
+        Uj14MK76lhxLh952LvTu8srnvZVU01S8YB04BoNbV267huFN/uPr63ONtipgyM8htE6RZvAFBbrlo
+        1lPsFEu2h8VBr+XedkdNV/Y3WJ19WdczYOlv43xq1Bc1yRPNEXm4XELUGWe4FRJHc2bGZ1p4QWsCU
+        Yu7PXkUxC/gQZvYBiteSQMp9NCOAW2cP2BQkcXxOjHxQiTuYKtcceIZpbZRIApGvSlVSGuHnS1tyw
+        qAzkEoVLaOfMsUHZHsZ025ftfQ5oMw0ii/hnMzfpvAJnthRPTscx7JDHwnKEd8KIOwvRgzNkYUmQL
+        DI+2Khm9w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hin9s-0000uj-TE; Wed, 03 Jul 2019 21:51:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7ACBD202173E0; Wed,  3 Jul 2019 23:51:18 +0200 (CEST)
+Date:   Wed, 3 Jul 2019 23:51:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
+        luto@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
+        joel@joelfernandes.org, devel@etsukata.com
+Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
+Message-ID: <20190703215118.GI3402@hirez.programming.kicks-ass.net>
+References: <20190703102731.236024951@infradead.org>
+ <20190703102807.588906400@infradead.org>
+ <20190703202231.GI16275@worktop.programming.kicks-ass.net>
+ <20190703162942.63c750a3@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.bYtCXpIAYKBGltV7yY8X/U"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190703162942.63c750a3@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.bYtCXpIAYKBGltV7yY8X/U
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 03, 2019 at 04:29:42PM -0400, Steven Rostedt wrote:
+> On Wed, 3 Jul 2019 22:22:31 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Wed, Jul 03, 2019 at 12:27:34PM +0200, root wrote:
+> > > Despire the current efforts to read CR2 before tracing happens there
+> > > still exist a number of possible holes:
+> > > 
+> > >   idtentry page_fault             do_page_fault           has_error_code=1
+> > >     call error_entry
+> > >       TRACE_IRQS_OFF
+> > >         call trace_hardirqs_off*
+> > >           #PF // modifies CR2
+> > > 
+> > >       CALL_enter_from_user_mode
+> > >         __context_tracking_exit()
+> > >           trace_user_exit(0)
+> > >             #PF // modifies CR2
+> > > 
+> > >     call do_page_fault
+> > >       address = read_cr2(); /* whoopsie */
+> > > 
+> > > And similar for i386.
+> > > 
+> > > Fix it by pulling the CR2 read into the entry code, before any of that
+> > > stuff gets a chance to run and ruin things.
+> > > 
+> > > Ideally we'll clean up the entry code by moving this tracing and
+> > > context tracking nonsense into C some day, but let's not delay fixing
+> > > this longer.
+> > >   
+> > 
+> > > @@ -1180,10 +1189,10 @@ idtentry xenint3		do_int3			has_error_co
+> > >  #endif
+> > >  
+> > >  idtentry general_protection	do_general_protection	has_error_code=1
+> > > -idtentry page_fault		do_page_fault		has_error_code=1
+> > > +idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
+> > >  
+> > >  #ifdef CONFIG_KVM_GUEST
+> > > -idtentry async_page_fault	do_async_page_fault	has_error_code=1
+> > > +idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
+> > >  #endif  
+> > 
+> > While going over the various idt handlers, I found that we probably also
+> > need read_cr2 on do_double_fault(), otherwise it is susceptible to the
+> > same problem.
+> > 
+> 
+> BTW, do you plan on making this for stable? Even though it's rather
+> invasive. Or should we just apply the band-aids first, have them
+> backported to stable, and then put this change on top of them for
+> upstream?
 
-Hi all,
+So I don't particularly care about stable; and the band-aids
+(trace_irqs_off_cr2) is known broken so I really don't see the point.
 
-In commit
-
-  e8a70bd4e925 ("KVM: nVMX: allow setting the VMFUNC controls MSR")
-
-Fixes tag
-
-  Fixes: 27c42a1bb ("KVM: nVMX: Enable VMFUNC for the L1 hypervisor", 2017-=
-08-03)
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - The trailing date is unexpected.
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-In commit
-
-  6defc591846d ("KVM: nVMX: include conditional controls in /dev/kvm KVM_GE=
-T_MSRS")
-
-Fixes tag
-
-  Fixes: 1389309c811 ("KVM: nVMX: expose VMX capabilities for nested hyperv=
-isors to userspace", 2018-02-26)
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - The trailing date is unexpected.
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.bYtCXpIAYKBGltV7yY8X/U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dItQACgkQAVBC80lX
-0Gwv5wf9FteVffOioPU1RApnBCZ95sSTsrIv9feDYWWXcAB6wtw7eDLCrczS3Uda
-+rT2sPpC9gkgsJXX6BnQ01FjOhbg1I8QTBTp9yJtOWNLxNxTlz94Vwz7YBmwjMCo
-SRPyLE4TUVGnb7v+T9Ge1AWHhQ1EgsU+l5JAGdiGIfzJ1m1NU1c3Xb172DBey1Pk
-VsuOwXbAjDE7YnL5PZF0dGDcqUly1SQ+CkB439DWf5YVutMCQLVP8cvKaHS3gyIS
-eq+po8CUylXVFVB/jjD03FGIyPDXBDAnHmqcgoQryxyQTy5XFnr/uB5GTLxXOZ9A
-kaOBIrrXWuirTQgGdSUYq0QedIq4+g==
-=zY54
------END PGP SIGNATURE-----
-
---Sig_/.bYtCXpIAYKBGltV7yY8X/U--
+That said, these patches should apply to most recent kernels (post PTI)
+without too much rejects.
