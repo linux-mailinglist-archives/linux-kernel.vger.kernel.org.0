@@ -2,146 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 349115DB1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E67D75DB27
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfGCBsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:48:22 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39971 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGCBsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:48:21 -0400
-Received: by mail-ot1-f67.google.com with SMTP id e8so612828otl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/lRiznl/b3k1Ie9ScyJ4jBFeaEoI2ZI3USYbKQfR1J0=;
-        b=zQMpxxLGrM0XjdsgBPT6ATLcrb7qA9zfpedH99WHA29nFWVTZMn5gYEGkwE/NO+j58
-         O0GelD0oUhq/t5UuQIzLN40ZYkRP2zzc1N3lAkXaYN9SpFI6oXBDfRYUYW0DDL7N5Irl
-         PT0IswXptUa0vycB9GEwZibK3zlJafP0FDM+ksQm3Eur3ySQZwANF62OBiy4caGXFFEz
-         8QPTMYNIwkiFEzQ2hfjAKMDgj9RuvrXBgl2U6TQF3njQH25/FcQL80t57ieCV/qnWoLd
-         Hmf7MuHoNwUEoProeXVs3712q03rie79FXvO9UhNfh702kuBuyTYFuf81Laf6+Jnq97N
-         h3BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/lRiznl/b3k1Ie9ScyJ4jBFeaEoI2ZI3USYbKQfR1J0=;
-        b=d/x5E3dpTglDrq0dz3b6uiELB1rPIas/gdD28J9R6+LqykZuPczhpLD+cuMmnMtG3p
-         CqF+DzVWnyIS6LArrKEAbC4zknAWhP5pSX1rPIt2AO0YszZXUIrP7qwzw8PF0Fmy1+dM
-         Cq/Hx1zMVLGGsdQWm4i1Wg2sHvMWlNgREDl658OK+1+g2jWRV0skrKDMSoNLS78WefCj
-         zSCvgFygPEz4LS5FHn7aiw5FEGAQqlgE0f7Bza780W3FmWyWijUB5Vho+ArGBKdneinj
-         VLD6lqPYfDiLWSzaIWM/MlBXvBDhRDM7bKQwnzDl/cg5eAAqaFFNG/bMKoOgW17ftUmU
-         +wnw==
-X-Gm-Message-State: APjAAAWc2JnI9/yS82hVFkDf2S37CEw5+HRh6vjE9yGwi9vJ2iSMzksR
-        GpQTJZnaXb4yRP9w684YxXIQOg==
-X-Google-Smtp-Source: APXvYqyH/Q87O4oDhQWm0UZHg0a9eu6n/1GxkkIumbyNvNvII6KOW/H5NXHLQOuBpr2GbdpYym7ZGg==
-X-Received: by 2002:a9d:61d8:: with SMTP id h24mr6357738otk.53.1562118501240;
-        Tue, 02 Jul 2019 18:48:21 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
-        by smtp.gmail.com with ESMTPSA id p2sm313927otl.59.2019.07.02.18.48.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 18:48:20 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 09:48:08 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Changbin Du <changbin.du@intel.com>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 00/11] perf: Fix errors detected by Smatch
-Message-ID: <20190703014808.GC6852@leoy-ThinkPad-X240s>
-References: <20190702103420.27540-1-leo.yan@linaro.org>
- <20190702110743.GA12694@krava>
+        id S1727377AbfGCBuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:50:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8127 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726635AbfGCBuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:50:22 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DDF6D6EFFC114F1A5550;
+        Wed,  3 Jul 2019 09:50:19 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 3 Jul 2019
+ 09:50:13 +0800
+Subject: Re: [PATCH] staging: erofs: fix LZ4 limited bounced page mis-reuse
+To:     Gao Xiang <hsiangkao@aol.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Du Wei <weidu.du@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+References: <20190630185846.16624-1-hsiangkao@aol.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <dbd9e23d-3e76-8281-81f3-48680b4d0b9d@huawei.com>
+Date:   Wed, 3 Jul 2019 09:50:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702110743.GA12694@krava>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190630185846.16624-1-hsiangkao@aol.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 01:07:43PM +0200, Jiri Olsa wrote:
-> On Tue, Jul 02, 2019 at 06:34:09PM +0800, Leo Yan wrote:
-> > When I used static checker Smatch for perf building, the main target is
-> > to check if there have any potential issues in Arm cs-etm code.  So
-> > finally I get many reporting for errors/warnings.
-> > 
-> > I used below command for using static checker with perf building:
-> > 
-> >   # make VF=1 CORESIGHT=1 -C tools/perf/ \
-> >     CHECK="/root/Work/smatch/smatch --full-path" \
-> >     CC=/root/Work/smatch/cgcc | tee smatch_reports.txt
-> > 
-> > I reviewed the errors one by one, if I understood some of these errors
-> > so changed the code as I can, this patch set is the working result; but
-> > still leave some errors due to I don't know what's the best way to fix
-> > it.  There also have many inconsistent indenting warnings.  So I firstly
-> > send out this patch set and let's see what's the feedback from public
-> > reviewing.
-> > 
-> > Leo Yan (11):
-> >   perf report: Smatch: Fix potential NULL pointer dereference
-> >   perf stat: Smatch: Fix use-after-freed pointer
-> >   perf top: Smatch: Fix potential NULL pointer dereference
-> >   perf annotate: Smatch: Fix dereferencing freed memory
-> >   perf trace: Smatch: Fix potential NULL pointer dereference
-> >   perf hists: Smatch: Fix potential NULL pointer dereference
-> >   perf map: Smatch: Fix potential NULL pointer dereference
-> >   perf session: Smatch: Fix potential NULL pointer dereference
-> >   perf intel-bts: Smatch: Fix potential NULL pointer dereference
-> >   perf intel-pt: Smatch: Fix potential NULL pointer dereference
-> >   perf cs-etm: Smatch: Fix potential NULL pointer dereference
+On 2019/7/1 2:58, Gao Xiang wrote:
+> From: Gao Xiang <gaoxiang25@huawei.com>
 > 
-> from quick look it all looks good to me, nice tool ;-)
+> Like all lz77-based algrithms, lz4 has a dynamically populated
+> ("sliding window") dictionary and the maximum lookback distance
+> is 65535. Therefore the number of bounced pages could be limited
+> by erofs based on this property.
 > 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> However, just now we observed some lz4 sequences in the extreme
+> case cannot be decompressed correctly after this feature is enabled,
+> the root causes after analysis are clear as follows:
+> 1) max bounced pages should be 17 rather than 16 pages;
+> 2) considering the following case, the broken implementation
+>    could reuse unsafely in advance (in other words, reuse it
+>    less than a safe distance),
+>    0 1 2 ... 16 17 18 ... 33 34
+>    b             p  b         b
+>    note that the bounce page that we are concerned was allocated
+>    at 0, and it reused at 18 since page 17 exists, but it mis-reused
+>    at 34 in advance again, which causes decompress failure.
+> 
+> This patch resolves the issue by introducing a bitmap to mark
+> whether the page in the same position of last round is a bounced
+> page or not, and a micro stack data structure to store all
+> available bounced pages.
+> 
+> Fixes: 7fc45dbc938a ("staging: erofs: introduce generic decompression backend")
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>  drivers/staging/erofs/decompressor.c | 50 ++++++++++++++++------------
+>  1 file changed, 28 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
+> index 80f1f39719ba..1fb0abb98dff 100644
+> --- a/drivers/staging/erofs/decompressor.c
+> +++ b/drivers/staging/erofs/decompressor.c
+> @@ -13,7 +13,7 @@
+>  #define LZ4_DISTANCE_MAX 65535	/* set to maximum value by default */
+>  #endif
+>  
+> -#define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
+> +#define LZ4_MAX_DISTANCE_PAGES	(DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE) + 1)
+>  #ifndef LZ4_DECOMPRESS_INPLACE_MARGIN
+>  #define LZ4_DECOMPRESS_INPLACE_MARGIN(srcsize)  (((srcsize) >> 8) + 32)
+>  #endif
+> @@ -35,19 +35,28 @@ static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
+>  	const unsigned int nr =
+>  		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
+>  	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
+> -	unsigned long unused[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
+> -					  BITS_PER_LONG)] = { 0 };
+> +	unsigned long bounced[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
+> +					   BITS_PER_LONG)] = { 0 };
+>  	void *kaddr = NULL;
+> -	unsigned int i, j, k;
+> +	unsigned int i, j, top;
+>  
+> -	for (i = 0; i < nr; ++i) {
+> +	top = 0;
+> +	for (i = j = 0; i < nr; ++i, ++j) {
+>  		struct page *const page = rq->out[i];
+> +		struct page *victim;
+>  
+> -		j = i & (LZ4_MAX_DISTANCE_PAGES - 1);
+> -		if (availables[j])
+> -			__set_bit(j, unused);
+> +		if (j >= LZ4_MAX_DISTANCE_PAGES)
+> +			j = 0;
+> +
+> +		/* 'valid' bounced can only be tested after a complete round */
+> +		if (test_bit(j, bounced)) {
+> +			DBG_BUGON(i < LZ4_MAX_DISTANCE_PAGES);
+> +			DBG_BUGON(top >= LZ4_MAX_DISTANCE_PAGES);
+> +			availables[top++] = rq->out[i - LZ4_MAX_DISTANCE_PAGES];
 
-Thanks for reviewing, Jiri.
+Maybe we can change 'i - LZ4_MAX_DISTANCE_PAGES' to 'j' directly for better
+readability.
 
-@Arnaldo, Just want to check, will you firstly pick up 01~05, 07,
-08/11 patches if you think they are okay?  Or you want to wait me to
-spin new patch set with all patches after I gather all comments?
+Otherwise, it looks good to me.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-Leo Yan
 
-> >  tools/perf/builtin-report.c    |  4 ++--
-> >  tools/perf/builtin-stat.c      |  2 +-
-> >  tools/perf/builtin-top.c       |  8 ++++++--
-> >  tools/perf/builtin-trace.c     |  5 +++--
-> >  tools/perf/ui/browsers/hists.c | 13 +++++++++----
-> >  tools/perf/util/annotate.c     |  6 ++----
-> >  tools/perf/util/cs-etm.c       |  2 +-
-> >  tools/perf/util/intel-bts.c    |  5 ++---
-> >  tools/perf/util/intel-pt.c     |  5 ++---
-> >  tools/perf/util/map.c          |  7 +++++--
-> >  tools/perf/util/session.c      |  3 +++
-> >  11 files changed, 36 insertions(+), 24 deletions(-)
-> > 
-> > -- 
-> > 2.17.1
-> > 
+> +		}
+>  
+>  		if (page) {
+> +			__clear_bit(j, bounced);
+>  			if (kaddr) {
+>  				if (kaddr + PAGE_SIZE == page_address(page))
+>  					kaddr += PAGE_SIZE;
+> @@ -59,27 +68,24 @@ static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
+>  			continue;
+>  		}
+>  		kaddr = NULL;
+> +		__set_bit(j, bounced);
+>  
+> -		k = find_first_bit(unused, LZ4_MAX_DISTANCE_PAGES);
+> -		if (k < LZ4_MAX_DISTANCE_PAGES) {
+> -			j = k;
+> -			get_page(availables[j]);
+> +		if (top) {
+> +			victim = availables[--top];
+> +			get_page(victim);
+>  		} else {
+> -			DBG_BUGON(availables[j]);
+> -
+>  			if (!list_empty(pagepool)) {
+> -				availables[j] = lru_to_page(pagepool);
+> -				list_del(&availables[j]->lru);
+> -				DBG_BUGON(page_ref_count(availables[j]) != 1);
+> +				victim = lru_to_page(pagepool);
+> +				list_del(&victim->lru);
+> +				DBG_BUGON(page_ref_count(victim) != 1);
+>  			} else {
+> -				availables[j] = alloc_pages(GFP_KERNEL, 0);
+> -				if (!availables[j])
+> +				victim = alloc_pages(GFP_KERNEL, 0);
+> +				if (!victim)
+>  					return -ENOMEM;
+>  			}
+> -			availables[j]->mapping = Z_EROFS_MAPPING_STAGING;
+> +			victim->mapping = Z_EROFS_MAPPING_STAGING;
+>  		}
+> -		rq->out[i] = availables[j];
+> -		__clear_bit(j, unused);
+> +		rq->out[i] = victim;
+>  	}
+>  	return kaddr ? 1 : 0;
+>  }
+> 
