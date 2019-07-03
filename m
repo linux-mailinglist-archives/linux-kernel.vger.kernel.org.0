@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4FD5DF13
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A04F05DF2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfGCHmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:42:15 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42168 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfGCHmO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:42:14 -0400
-Received: by mail-qt1-f195.google.com with SMTP id s15so1454212qtk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vbcXnianh87vXEjFT9B3w4NaWyc5uSKsAaNy2YUdSho=;
-        b=dxP42nkV2Pahhr14oxk8h1+yFAtHKvsqK+i/hKWRTlIRRlRO5mFwJG9ui1MB8rtU01
-         sYBVHMMi8p89rlPnckYovpljhcmbRZ4OQRlLOvW6H/7OHl3KAogXVqLzGOQCoiFt55ei
-         f8pjU9lYEX7VRj04zhgxmYjCT4rICFJuuMGUyWSW7TClIYf535dZ5VJAi8skgOzIREJ3
-         m03y2w8s9hV7MBbsYwP59mI6vCoIycMafoNg10QoZMr+HEbKVS17+nW3aES4NDjsMMGv
-         SETeuUCeyOOlMJZoNazL/PITVGLR6bc/9zoUO2zpuWCq+hGalbrJpS7fuVPmMaVHbQJv
-         H/0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vbcXnianh87vXEjFT9B3w4NaWyc5uSKsAaNy2YUdSho=;
-        b=V4SGwb1hzRU0/ScKI1wSB0pyyL8s/bJC7hvsbdEVDLDf/LEXJ6MhiKvprEp/EB1vMj
-         g4xMNzviEYhqh3ygaRZ2ILAH9aSuFYDsPoqswEq/lB4iZUD91m3Qxx1/cww0cAM6IGd5
-         SbOPq+x98sVqMCN4NIQlCDNTAF9w64X88rQkXAqdZ0Ant6fFRc7EsPGPj5tz1qjNuVi+
-         QQbbm8FMDsn7Vb97oPJQX9PkMnb9Geld2PWoVm0J7niQreRG3K/xpjFdjlo5/BnZqFMQ
-         Zkq/c8IOp8CupVmcDBwvq7ul7BY+vV4oepNsusSTBjHxOosBbj7E2dVczsIH5wH3m9oH
-         LddA==
-X-Gm-Message-State: APjAAAV9UcltByj7HVojZDynUbfSsc/WAUQBKcdHfjVkhtr8hJ5Ugp63
-        Dui4UisHywuVF+B2KDZdUvYJXrJT6lUUCCsPVe3UiQ==
-X-Google-Smtp-Source: APXvYqw2helkZ3RMQLGNhGXrJACkePG5udZckFLg9KzZq3HT+da0RblRTkPUzH2vRKtJZ1SuWZitoxREttaJ45NLpCw=
-X-Received: by 2002:a0c:d4d0:: with SMTP id y16mr29761996qvh.191.1562139733812;
- Wed, 03 Jul 2019 00:42:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190627095247.8792-1-chiu@endlessm.com> <CAD8Lp44R0a1=fVi=fGv69w1ppdcaFV01opkdkhaX-eJ=K=tYeA@mail.gmail.com>
- <4c99866e-55b7-8852-c078-6b31dce21ee4@gmail.com>
-In-Reply-To: <4c99866e-55b7-8852-c078-6b31dce21ee4@gmail.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Wed, 3 Jul 2019 15:42:02 +0800
-Message-ID: <CAD8Lp47mWH1-VsZaHr6_qmSU2EEOr9tQJ3CUhfi_JkQGgKpegA@mail.gmail.com>
-Subject: Re: [PATCH] rtl8xxxu: Fix wifi low signal strength issue of RTL8723BU
-To:     Jes Sorensen <jes.sorensen@gmail.com>
-Cc:     Chris Chiu <chiu@endlessm.com>, Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
+        id S1727188AbfGCH4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:56:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35528 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726670AbfGCH4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:56:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BC276AF10;
+        Wed,  3 Jul 2019 07:56:03 +0000 (UTC)
+Message-ID: <1562139729.5819.28.camel@suse.com>
+Subject: Re: KASAN: use-after-free Read in cpia2_usb_disconnect
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com>,
+        keescook@chromium.org, andreyknvl@google.com,
+        syzkaller-bugs@googlegroups.com, mchehab@kernel.org,
+        tglx@linutronix.de, sakari.ailus@linux.intel.com,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org, hverkuil-cisco@xs4all.nl
+Date:   Wed, 03 Jul 2019 09:42:09 +0200
+In-Reply-To: <0000000000006d7e14058cbc6545@google.com>
+References: <0000000000006d7e14058cbc6545@google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 8:42 PM Jes Sorensen <jes.sorensen@gmail.com> wrote:
-> We definitely don't want to bring over the vendor code, since it's a
-> pile of spaghetti, but we probably need to get something sorted. This
-> went down the drain when the bluetooth driver was added without taking
-> it into account - long after this driver was merged.
+Am Dienstag, den 02.07.2019, 18:01 -0700 schrieb syzbot:
+> syzbot has found a reproducer for the following crash on:
+> 
+> HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11e19043a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0c90fc937c84f97d0aa6
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147d42eda00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104c268ba00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
+> 
+> cpia2: Message: count = 1, register[0] = 0x0
+> cpia2: Unexpected error: -19
+> ==================================================================
+> BUG: KASAN: use-after-free in cpia2_usb_disconnect+0x1a4/0x1c0  
+> drivers/media/usb/cpia2/cpia2_usb.c:898
+> Read of size 8 at addr ffff8881cf6c4e50 by task kworker/1:1/22
 
-Yeah, I didn't mean bring over quite so literally.. Chris is studying
-it and figuring out the neatest way to reimplement the required bits.
+Please try this:
 
-As for the relationship with bluetooth.. actually the bug that Chris
-is working on here is that the rtl8xxxu wifi signal is totally
-unusable *until* the bluetooth driver is loaded.
-Once the bluetooth driver is loaded, at the point of bluetooth
-firmware upload, the rtl8xxxu signal magiaclly strength becomes good.
-I think this is consistent with other rtl8xxxu problem reports that we
-saw lying around, although they had not been diagnosed in so much
-detail.
-The rtl8723bu vendor driver does not suffer this problem, it works
-fine with or without the bluetooth driver in place.
+From a0a73298fc23acb95e7b6487e960be707563eb34 Mon Sep 17 00:00:00 2001
+From: Oliver Neukum <oneukum@suse.com>
+Date: Wed, 8 May 2019 12:36:40 +0200
+Subject: [PATCH] cpia2_usb: first wake up, then free in disconnect
 
-Daniel
+Kasan reported a use after free in cpia2_usb_disconnect()
+It first freed everything and then woke up those waiting.
+The reverse order is correct.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
+Fixes: 6c493f8b28c67 ("[media] cpia2: major overhaul to get it in a working state again")
+---
+ drivers/media/usb/cpia2/cpia2_usb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
+index e5d8dee38fe4..44bd7e5ad3eb 100644
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -902,7 +902,6 @@ static void cpia2_usb_disconnect(struct usb_interface *intf)
+ 	cpia2_unregister_camera(cam);
+ 	v4l2_device_disconnect(&cam->v4l2_dev);
+ 	mutex_unlock(&cam->v4l2_lock);
+-	v4l2_device_put(&cam->v4l2_dev);
+ 
+ 	if(cam->buffers) {
+ 		DBG("Wakeup waiting processes\n");
+@@ -911,6 +910,8 @@ static void cpia2_usb_disconnect(struct usb_interface *intf)
+ 		wake_up_interruptible(&cam->wq_stream);
+ 	}
+ 
++	v4l2_device_put(&cam->v4l2_dev);
++
+ 	LOG("CPiA2 camera disconnected.\n");
+ }
+ 
+-- 
+2.16.4
+
