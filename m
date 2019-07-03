@@ -2,86 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA69C5E247
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A6D5E250
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfGCKnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 06:43:42 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:40633 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfGCKnl (ORCPT
+        id S1726743AbfGCKrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 06:47:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46746 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfGCKrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 06:43:41 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 2A99E100AF5F7;
-        Wed,  3 Jul 2019 12:43:39 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id CCA622F790B; Wed,  3 Jul 2019 12:43:38 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 12:43:38 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     "Sa, Nuno" <Nuno.Sa@analog.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "kernel@martin.sperl.org" <kernel@martin.sperl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "wahrenst@gmx.net" <wahrenst@gmx.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "eric@anholt.net" <eric@anholt.net>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
-Message-ID: <20190703104338.m5vfkbyq4fhqmjh4@wunner.de>
-References: <20190628123023.4696-1-nuno.sa@analog.com>
- <1b932c61-982b-aae0-1fef-3c574e7d17eb@gmx.net>
- <20190628190022.vya4h2lihm6x2xpb@wunner.de>
- <54323339606a36febc6a8633a8d3a7db84b975c4.camel@analog.com>
- <20190701115506.42rr4o4hbuvwytjc@wunner.de>
- <42a533cbf1e47ab8c8a44c5e865ec15193a2e956.camel@analog.com>
+        Wed, 3 Jul 2019 06:47:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 85181607DE; Wed,  3 Jul 2019 10:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562150839;
+        bh=EAJJi3gmJ59kawq1tWepQWDrFAsUgd0cWTVqW/judU4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WK27Jb9pkWRSAxcPsRmy5QIWoQupZzOYKc7Jc6Zm/2f8cyFJpClrwCtDxld4k++Cd
+         t2/95dRl7oAstI5/iFUdaJDJEiTOkWIT4+j0R800ByPERVpHwzO4HejV6CdCV21bKj
+         gS1ptQkWUrSKYDsNEDPrJ3Fv6cx77tbvTRXTN7gc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.43.141] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5CF766025A;
+        Wed,  3 Jul 2019 10:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562150839;
+        bh=EAJJi3gmJ59kawq1tWepQWDrFAsUgd0cWTVqW/judU4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WK27Jb9pkWRSAxcPsRmy5QIWoQupZzOYKc7Jc6Zm/2f8cyFJpClrwCtDxld4k++Cd
+         t2/95dRl7oAstI5/iFUdaJDJEiTOkWIT4+j0R800ByPERVpHwzO4HejV6CdCV21bKj
+         gS1ptQkWUrSKYDsNEDPrJ3Fv6cx77tbvTRXTN7gc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CF766025A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH 2/2] opp: Manage empty OPP tables with clk handle
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     vireshk@kernel.org, sboyd@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20190702043643.1746-1-rnayak@codeaurora.org>
+ <20190702043643.1746-2-rnayak@codeaurora.org>
+ <20190703085026.xe3hwxqah76b7np3@vireshk-i7>
+ <95cf4e44-d57a-9aa4-40ce-3b7013e10813@codeaurora.org>
+ <20190703094746.l354nwp2gwuwhiu4@vireshk-i7>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <c8e42b38-8ce0-c02c-98d3-6d6598dc3fad@codeaurora.org>
+Date:   Wed, 3 Jul 2019 16:17:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42a533cbf1e47ab8c8a44c5e865ec15193a2e956.camel@analog.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190703094746.l354nwp2gwuwhiu4@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 02:21:21PM +0000, Sa, Nuno wrote:
-> On Mon, 2019-07-01 at 13:55 +0200, Lukas Wunner wrote:
-> > I see.  In that case, try:
-> > 
-> >  	/* handle all the 3-wire mode */
-> > -	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf))
-> > +	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf != ctlr->dummy_rx))
-> >  		cs |= BCM2835_SPI_CS_REN;
-> >  	else
-> >  		cs &= ~BCM2835_SPI_CS_REN;
+
+
+On 7/3/2019 3:17 PM, Viresh Kumar wrote:
+> On 03-07-19, 14:41, Rajendra Nayak wrote:
+>> []..
+>>>
+>>> Explain the rationale behind this code here in a comment.
+>>>
+>>>> +	if (!_get_opp_count(opp_table)) {
+>>>> +		ret = _generic_set_opp_clk_only(dev, clk, freq);
+>>>> +		goto put_opp_table;
+>>>> +	}
+>>>> +
+>>>>    	temp_freq = old_freq;
+>>>>    	old_opp = _find_freq_ceil(opp_table, &temp_freq);
+>>>>    	if (IS_ERR(old_opp)) {
+>>>
+>>> Also, rebase over the OPP branch please:
+>>
+>> thanks, I will fix/rebase and repost,
+>> in the meantime while I was testing this a little more I realized I also need
+>> something like the change below to avoid a refcount mismatch WARN when empty OPP
+>> table is removed using dev_pm_opp_of_remove_table()
+>>
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index fa7d4d6d37b3..20128a88baf2 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -2118,7 +2118,8 @@ void _dev_pm_opp_find_and_remove_table(struct device *dev)
+>>                  return;
+>>          }
+>> -       _put_opp_list_kref(opp_table);
+>> +       if (_get_opp_count(opp_table))
+>> +               _put_opp_list_kref(opp_table);
+>>          /* Drop reference taken by _find_opp_table() */
+>>          dev_pm_opp_put_opp_table(opp_table);
+>>
+>> Does this look like a good way to fix it?
 > 
-> This worked fine. Also, I did a quick backport of the state of your
-> driver's (both spi-bcm2835 and bcm2835-dma) in revpi_staging and it
-> also worked fine with my device.
-> So, as far as I understand, the above suggestion (or my patch) is not
-> intended to be upstreamed, right? It is just a temporary fix that I can
-> use while your patchset gets upstream.
+> No. If an OPP table only has dynamic OPPs, this will still generate
+> warning. Below is the fix I would suggest. Please test it, I haven't
+> tested it at all :)
 
-Thanks for testing.  I've just submitted the above as a fix for 5.3.
-(Actually with a small change, the check for (tfr->rx_buf) needs to
-be preserved in case DMA is disabled.)
+thanks, yes, this seems to work.
 
-The patch can be backported to 5.2 and older stable kernels if "ctlr"
-is replaced by "master", we can inform Greg about that once the patch
-lands in Linus' tree.  And I've amended my patch set to revert this
-patch when dropping MUST_RX.
-
-Thanks,
-
-Lukas
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
