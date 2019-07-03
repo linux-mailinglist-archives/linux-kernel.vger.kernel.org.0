@@ -2,69 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5BA5EE94
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 23:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CC75EE9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 23:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfGCVdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 17:33:35 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:52380 "EHLO vps0.lunn.ch"
+        id S1727286AbfGCVgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 17:36:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:57851 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCVdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:33:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=DwOQ1VhqzOlKO8GcPOTAjm30bxi+tef4PCN5in+ERJQ=; b=4D1D82b7l3oxNLiNgWPNJH70tZ
-        av10Vp1R7e8O4us3SP9fUgWsEl4zL0VLCWoNZOouCgsIC7YKPWeIxAYBF7g5VKcf1QOaSXe7kx9AO
-        T/LacQKMGHL+qLmc7wObJvUsSswpjRlmIh0wfEXC+66B4ewmezgzopsoxdDhTlEFCkIU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1himsZ-0008CN-3n; Wed, 03 Jul 2019 23:33:27 +0200
-Date:   Wed, 3 Jul 2019 23:33:27 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/7] dt-bindings: net: Add bindings for Realtek PHYs
-Message-ID: <20190703213327.GH18473@lunn.ch>
-References: <20190703193724.246854-1-mka@chromium.org>
- <CAL_JsqJdBAMPc1sZJfL7V9cxGgCb4GWwRokwJDmac5L2AO2-wg@mail.gmail.com>
+        id S1726821AbfGCVgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 17:36:00 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fDtj5jF5z9s4V;
+        Thu,  4 Jul 2019 07:35:57 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562189757;
+        bh=gaBAshq7g2CAcmEA00uzMl3h+Mf9XAVfkh9upGhr/V0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=rDOmQVwlABF7Jqt2UjhchmUbsP8E0gefJT9DqX11pwLNuFzCagSom2uatNIf8lDR+
+         OLBCxTSh+g2+w/ZQEuxo+Xhs1A8vwfOQt2SMYGF8VlafTjzXNvlvNOWx6MB4Ha4jtO
+         pT5VwKWQkNeiDHPx+yWNy1kJD+n4udRqNQF+g+d+SeuaRUZ+qCtYbFXUgBbvBGaviL
+         4BHYBTlizJD8RW5Mpv/JfEIOA+CmHpeFt41fHMoi8xhdWoFJHnOq2XJbga3v7S9KuD
+         ynXouXukCwiLczyeINMIWM5pUSuuvMJ5qxHGGUBn1aGul4xJekycOTAVUXzRUr6kMn
+         suFqytQsfvalQ==
+Date:   Thu, 4 Jul 2019 07:35:56 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the dma-mapping tree
+Message-ID: <20190704073556.11865317@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJdBAMPc1sZJfL7V9cxGgCb4GWwRokwJDmac5L2AO2-wg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9pptVeHwnWnZUOG_IkMXl4/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I think if we're going to have custom properties for phys, we should
-> have a compatible string to at least validate whether the custom
-> properties are even valid for the node.
+--Sig_/9pptVeHwnWnZUOG_IkMXl4/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob
+Hi all,
 
-What happens with other enumerable busses where a compatible string is
-not used?
+In commit
 
-The Ethernet PHY subsystem will ignore the compatible string and load
-the driver which fits the enumeration data. Using the compatible
-string only to get the right YAML validator seems wrong. I would
-prefer adding some other property with a clear name indicates its is
-selecting the validator, and has nothing to do with loading the
-correct driver. And it can then be used as well for USB and PCI
-devices etc.
+  f80b90f8caba ("MIPS: only select ARCH_HAS_UNCACHED_SEGMENT for non-cohere=
+nt platforms")
 
-	Andrew
+Fixes tag
 
+  Fixes: 2e96e04d25 ("MIPS: use the generic uncached segment support in dma=
+-direct")
 
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9pptVeHwnWnZUOG_IkMXl4/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dH7wACgkQAVBC80lX
+0GyvJgf+PhEttclwbWOAsdsN7P+FBifnDuZ4GO2E45M52ZDH/c6iEnUlYupl2Iak
+VuKcGU3X9nil26/dRdA9RE1mWcRSO+5q9brfZps6VeOxu8XzUuT9tJSjXN3StctN
+q0UAwYBogMvAGFLCh8umTTknTYYiLqNoEbZX/atUQaHE0gnRviR3fsaTjUdmZ3ht
+zR1XLXibePc2fWl+9S6lL4MpWzcKCqRiG3HZUBuD0Kgm+Wls1VUWEWQr/6RZCtjL
+I9lo9R3hFlVxa0NhwnSFGy/f2O5crNzWltI7qlnv+rmnCsqIrql+HDCle1VFWuzF
+RlkWRTk2xWqzHyt5ktB7sZirhNgLcA==
+=P5zz
+-----END PGP SIGNATURE-----
+
+--Sig_/9pptVeHwnWnZUOG_IkMXl4/--
