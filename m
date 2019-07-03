@@ -2,73 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF4AE5EDD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A66535EDCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfGCUsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:48:43 -0400
-Received: from mga05.intel.com ([192.55.52.43]:7212 "EHLO mga05.intel.com"
+        id S1727345AbfGCUrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbfGCUsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:48:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 13:48:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,448,1557212400"; 
-   d="scan'208";a="172258102"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Jul 2019 13:48:38 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v4 7/7] PCI: Skip Enhanced Allocation (EA) initialization for VF device
-Date:   Wed,  3 Jul 2019 13:46:24 -0700
-Message-Id: <defa049210d43fa42bdb1cec93495e4038f00d88.1562172836.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1562172836.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1562172836.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1726550AbfGCUrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:47:05 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BF1218A3;
+        Wed,  3 Jul 2019 20:47:03 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 16:47:01 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     root <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
+Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
+Message-ID: <20190703164701.54ef979a@gandalf.local.home>
+In-Reply-To: <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
+References: <20190703102731.236024951@infradead.org>
+        <20190703102807.588906400@infradead.org>
+        <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Wed, 3 Jul 2019 13:27:09 -0700
+Andy Lutomirski <luto@kernel.org> wrote:
 
-As per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced Allocation
-Capability. So skip pci_ea_init() for virtual devices.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Suggested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/pci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> > @@ -1180,10 +1189,10 @@ idtentry xenint3                do_int3                 has_error_co
+> >  #endif
+> >
+> >  idtentry general_protection    do_general_protection   has_error_code=1
+> > -idtentry page_fault            do_page_fault           has_error_code=1
+> > +idtentry page_fault            do_page_fault           has_error_code=1        read_cr2=1
+> >
+> >  #ifdef CONFIG_KVM_GUEST
+> > -idtentry async_page_fault      do_async_page_fault     has_error_code=1
+> > +idtentry async_page_fault      do_async_page_fault     has_error_code=1        read_cr2=1
+> >  #endif
+> >
+> >  #ifdef CONFIG_X86_MCE
+> > @@ -1338,18 +1347,9 @@ ENTRY(error_entry)
+> >         movq    %rax, %rsp                      /* switch stack */
+> >         ENCODE_FRAME_POINTER
+> >         pushq   %r12
+> > -
+> > -       /*
+> > -        * We need to tell lockdep that IRQs are off.  We can't do this until
+> > -        * we fix gsbase, and we should do it before enter_from_user_mode
+> > -        * (which can take locks).
+> > -        */
+> > -       TRACE_IRQS_OFF  
+> 
+> This hunk looks wrong.  Am I missing some other place that handles the
+> case where we enter from kernel mode and IRQs were on?
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 8abc843b1615..c299ab470351 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2986,6 +2986,13 @@ void pci_ea_init(struct pci_dev *dev)
- 	int offset;
- 	int i;
- 
-+	/*
-+	 * Per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced
-+	 * Allocation Capability.
-+	 */
-+	if (dev->is_virtfn)
-+		return;
-+
- 	/* find PCI EA capability in list */
- 	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
- 	if (!ea)
--- 
-2.21.0
+Yeah, looks like we might be missing a TRACE_IRQS_OFF from the
+from_usermode_stack_switch path.
 
+-- Steve
