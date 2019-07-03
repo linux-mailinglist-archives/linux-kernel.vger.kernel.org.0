@@ -2,63 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3ABF5DE4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84D325DE52
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfGCG4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 02:56:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42086 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726490AbfGCG4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:56:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84525AF84;
-        Wed,  3 Jul 2019 06:56:32 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 08:56:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-Message-ID: <20190703065628.GK978@dhcp22.suse.cz>
-References: <20190702183730.14461-1-longman@redhat.com>
+        id S1727198AbfGCG4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 02:56:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:39196 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726684AbfGCG4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:56:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE7C02B;
+        Tue,  2 Jul 2019 23:56:43 -0700 (PDT)
+Received: from [10.162.42.95] (p8cg001049571a15.blr.arm.com [10.162.42.95])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02E933F718;
+        Tue,  2 Jul 2019 23:58:34 -0700 (PDT)
+Subject: Re: [PATCH] mm/page_isolate: change the prototype of
+ undo_isolate_page_range()
+To:     Pingfan Liu <kernelfans@gmail.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>, Qian Cai <cai@lca.pw>,
+        linux-kernel@vger.kernel.org
+References: <1562075604-8979-1-git-send-email-kernelfans@gmail.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <ada46116-9c87-86ce-9015-351700439ea3@arm.com>
+Date:   Wed, 3 Jul 2019 12:27:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702183730.14461-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1562075604-8979-1-git-send-email-kernelfans@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 02-07-19 14:37:30, Waiman Long wrote:
-> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
-> file to shrink the slab by flushing all the per-cpu slabs and free
-> slabs in partial lists. This applies only to the root caches, though.
-> 
-> Extends this capability by shrinking all the child memcg caches and
-> the root cache when a value of '2' is written to the shrink sysfs file.
 
-Why do we need a new value for this functionality? I would tend to think
-that skipping memcg caches is a bug/incomplete implementation. Or is it
-a deliberate decision to cover root caches only?
--- 
-Michal Hocko
-SUSE Labs
+
+On 07/02/2019 07:23 PM, Pingfan Liu wrote:
+> undo_isolate_page_range() never fails, so no need to return value.
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Qian Cai <cai@lca.pw>
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
