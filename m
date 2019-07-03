@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6426D5EBDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1455EBE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfGCSpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:45:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57560 "EHLO
+        id S1727249AbfGCSp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:45:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57562 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727095AbfGCSpK (ORCPT
+        with ESMTP id S1727099AbfGCSpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:45:10 -0400
+        Wed, 3 Jul 2019 14:45:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pfzb7DKQGxSim4j5P5NViAehCYDnD7twhlehxZF4/mk=; b=RuEQvC5Szk3Lm7vVbLr+MfSSqa
-        XBkXs0IYy8wwiP8zUJ+sptGQCbIJgaonwPKADc6EYKfe8cyLXuX6OJAXDLaSAqo00fEJgivMA8G9r
-        Jp3rCAEIlz5o5MUoRMlgjCGuRlKGShwoKhkln491IBgIkVFD2jgvlsNTOIVjVI9KsBedL8bGACTAc
-        Y6LiYyZQM8WHHYqbip9c8930hWAY1B3O4CF9CFWJhVXPoSCnctq2177N1Vc5lVbLit4yJeQh82Csg
-        Uw0Xc8TeK5lNphU2JBlRLkMw4VS923+E5sYbHWFj/v3i0IpK3DbzoSl+Hs3Td3pWdzq4YCGK8hnn6
-        B82DJdiA==;
+        bh=6gkdMJihz+BKdhYSYDXoVp/HUiw1Ip+q05LF7yiN7rY=; b=ucKTI3Jt8HPKO6aQAQZ7BDiOrL
+        JA4m8aEc2YkLhNz0//fOAOG6Y8t08qWufStZFGqAnWYxKPOi0a76+qnTmd5O02jnsQMB5pruHubyf
+        /2+F0XgKJFWuWREiSjqaFDrVOJKlrABvu7R9hLTeiH+ikhD5ICmo7sxkL1FVc71ucDmxQPaEFEyXT
+        Ibj/z7a8efuY6jJeoXi/uVQ2G5dcgrA2Efgd5ddEDS4sqPaWFIEnuaEOAns4nwG8p0iebCG9bj478
+        2Tqro3odGJdmIAeBqlMIQ3X+fYxnvypX3SWREdvaaSH7rNfG4Y+OliRWm7B5/p0tE6DBihH2aXHBw
+        So0kvONg==;
 Received: from rap-us.hgst.com ([199.255.44.250] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hikFb-0007Gl-TU; Wed, 03 Jul 2019 18:45:03 +0000
+        id 1hikFc-0007IN-2j; Wed, 03 Jul 2019 18:45:04 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Ben Skeggs <bskeggs@redhat.com>
 Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] nouveau: unlock mmap_sem on all errors from nouveau_range_fault
-Date:   Wed,  3 Jul 2019 11:45:01 -0700
-Message-Id: <20190703184502.16234-5-hch@lst.de>
+Subject: [PATCH 5/5] mm: remove the legacy hmm_pfn_* APIs
+Date:   Wed,  3 Jul 2019 11:45:02 -0700
+Message-Id: <20190703184502.16234-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703184502.16234-1-hch@lst.de>
 References: <20190703184502.16234-1-hch@lst.de>
@@ -47,63 +47,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently nouveau_svm_fault expects nouveau_range_fault to never unlock
-mmap_sem, but the latter unlocks it for a random selection of error
-codes. Fix this up by always unlocking mmap_sem for non-zero return
-values in nouveau_range_fault, and only unlocking it in the caller
-for successful returns.
+Switch the one remaining user in nouveau over to its replacement,
+and remove all the wrappers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_svm.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
+ include/linux/hmm.h                    | 34 --------------------------
+ 2 files changed, 1 insertion(+), 35 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-index e831f4184a17..c0cf7aeaefb3 100644
---- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -500,8 +500,10 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range,
- 	ret = hmm_range_register(range, mirror,
- 				 range->start, range->end,
- 				 PAGE_SHIFT);
--	if (ret)
-+	if (ret) {
-+		up_read(&range->vma->vm_mm->mmap_sem);
- 		return (int)ret;
-+	}
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+index 42c026010938..b9ced2e61667 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+@@ -844,7 +844,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
+ 		struct page *page;
+ 		uint64_t addr;
  
- 	if (!hmm_range_wait_until_valid(range, NOUVEAU_RANGE_FAULT_TIMEOUT)) {
- 		/*
-@@ -515,15 +517,14 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range,
+-		page = hmm_pfn_to_page(range, range->pfns[i]);
++		page = hmm_device_entry_to_page(range, range->pfns[i]);
+ 		if (page == NULL)
+ 			continue;
  
- 	ret = hmm_range_fault(range, block);
- 	if (ret <= 0) {
--		if (ret == -EBUSY || !ret) {
--			/* Same as above, drop mmap_sem to match old API. */
--			up_read(&range->vma->vm_mm->mmap_sem);
--			ret = -EBUSY;
--		} else if (ret == -EAGAIN)
-+		if (ret == 0)
- 			ret = -EBUSY;
-+		if (ret != -EAGAIN)
-+			up_read(&range->vma->vm_mm->mmap_sem);
- 		hmm_range_unregister(range);
- 		return ret;
- 	}
-+
- 	return 0;
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 657606f48796..cdcd78627393 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -290,40 +290,6 @@ static inline uint64_t hmm_device_entry_from_pfn(const struct hmm_range *range,
+ 		range->flags[HMM_PFN_VALID];
  }
  
-@@ -718,8 +719,8 @@ nouveau_svm_fault(struct nvif_notify *notify)
- 						NULL);
- 			svmm->vmm->vmm.object.client->super = false;
- 			mutex_unlock(&svmm->mutex);
-+			up_read(&svmm->mm->mmap_sem);
- 		}
--		up_read(&svmm->mm->mmap_sem);
- 
- 		/* Cancel any faults in the window whose pages didn't manage
- 		 * to keep their valid bit, or stay writeable when required.
+-/*
+- * Old API:
+- * hmm_pfn_to_page()
+- * hmm_pfn_to_pfn()
+- * hmm_pfn_from_page()
+- * hmm_pfn_from_pfn()
+- *
+- * This are the OLD API please use new API, it is here to avoid cross-tree
+- * merge painfullness ie we convert things to new API in stages.
+- */
+-static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
+-					   uint64_t pfn)
+-{
+-	return hmm_device_entry_to_page(range, pfn);
+-}
+-
+-static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
+-					   uint64_t pfn)
+-{
+-	return hmm_device_entry_to_pfn(range, pfn);
+-}
+-
+-static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
+-					 struct page *page)
+-{
+-	return hmm_device_entry_from_page(range, page);
+-}
+-
+-static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
+-					unsigned long pfn)
+-{
+-	return hmm_device_entry_from_pfn(range, pfn);
+-}
+-
+ /*
+  * Mirroring: how to synchronize device page table with CPU page table.
+  *
 -- 
 2.20.1
 
