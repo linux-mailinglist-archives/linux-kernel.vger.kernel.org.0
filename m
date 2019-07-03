@@ -2,119 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1455EBE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3151E5EBEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:46:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfGCSp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:45:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57562 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfGCSpJ (ORCPT
+        id S1727101AbfGCSqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:46:53 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36513 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCSqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:45:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6gkdMJihz+BKdhYSYDXoVp/HUiw1Ip+q05LF7yiN7rY=; b=ucKTI3Jt8HPKO6aQAQZ7BDiOrL
-        JA4m8aEc2YkLhNz0//fOAOG6Y8t08qWufStZFGqAnWYxKPOi0a76+qnTmd5O02jnsQMB5pruHubyf
-        /2+F0XgKJFWuWREiSjqaFDrVOJKlrABvu7R9hLTeiH+ikhD5ICmo7sxkL1FVc71ucDmxQPaEFEyXT
-        Ibj/z7a8efuY6jJeoXi/uVQ2G5dcgrA2Efgd5ddEDS4sqPaWFIEnuaEOAns4nwG8p0iebCG9bj478
-        2Tqro3odGJdmIAeBqlMIQ3X+fYxnvypX3SWREdvaaSH7rNfG4Y+OliRWm7B5/p0tE6DBihH2aXHBw
-        So0kvONg==;
-Received: from rap-us.hgst.com ([199.255.44.250] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hikFc-0007IN-2j; Wed, 03 Jul 2019 18:45:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] mm: remove the legacy hmm_pfn_* APIs
-Date:   Wed,  3 Jul 2019 11:45:02 -0700
-Message-Id: <20190703184502.16234-6-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703184502.16234-1-hch@lst.de>
-References: <20190703184502.16234-1-hch@lst.de>
+        Wed, 3 Jul 2019 14:46:52 -0400
+Received: by mail-qk1-f193.google.com with SMTP id g18so3663496qkl.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lxu8VUMKdHDWmo8g651uclV2QTSciyGC6y+pb/rVSnA=;
+        b=LcrCBtv0ZLyYgyWByF03aD3dLFbITDwQ1iSk30xGE3IhRzWt5t1cWtvKTGuSak9Ac1
+         quTV3uebdg2gbweRYhm/FLETgusswD3ACUx5Jp7wyeDzi/4MgZJI5nQNtHzYXmGViOLA
+         1aD4NTa7kMGsGryyYAfTMCyd7CcCDAXDjiZJhPjjR1xSm/5lAVeSJFEjJZapJfQfTVAn
+         rkKPnVnzu8UZgRolZzWrcKM3QWca9yP4REnXyY9uqXM6p5fSTHmoK3sI0rQRRZUjcsRD
+         EtYmCcEKrC6pWoGvdbTsC5Zgu4IcSDW2fq4MbgFGwlID1ZWslqA795FQevvT0yvubwLu
+         wBpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lxu8VUMKdHDWmo8g651uclV2QTSciyGC6y+pb/rVSnA=;
+        b=IgnQfNsHpLxaS4b9+WzuIkT+ApZ9Aqk4flLQ1/bYsK/88zjmeQtKtMupibHAJZ+LiX
+         J3sDjrNSAlVV2h43QRHbRuRl6C4eF2i2Nbnhilj86SCPeenrK4PiTd2AQk7PDtZSLCWB
+         FOddjB6vadMCaqHW0U68tVwEg6i65Sv1zFBjbCboSRLnxuGBkG0V8OC4tMT9fGs3IRSy
+         SVzXEfwsom1cyNi3WkJKVhQvFuix/JXSDvGTX3Co+NS0x2AdMGC7u2SZZ2S9Uk3Bb1IY
+         0zTztuqBYvUOsHtp43HyLnun4G+ydoRXUu5FUNBgg657AZ1XHNvu9LMc02fClfic2qZF
+         iAYg==
+X-Gm-Message-State: APjAAAUSnKmFn9mgn9JTJu8eIuFH6JxJrgDhQdz/8iG0kMT9uViljjWf
+        2QbWcdkd34MAGN7R/JWuI5s=
+X-Google-Smtp-Source: APXvYqzDpt++1yhZV/LZqaA/Mo161b2L7HhcxUJ5L6Nvz8+pmH1ZynDUyuCrcHkK0BTItHD+miOUTw==
+X-Received: by 2002:a37:4dc6:: with SMTP id a189mr31364013qkb.41.1562179611820;
+        Wed, 03 Jul 2019 11:46:51 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.209.182])
+        by smtp.gmail.com with ESMTPSA id u7sm1402263qta.82.2019.07.03.11.46.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 11:46:51 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id CAA0141154; Wed,  3 Jul 2019 15:46:06 -0300 (-03)
+Date:   Wed, 3 Jul 2019 15:46:06 -0300
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Changbin Du <changbin.du@intel.com>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 05/11] perf trace: Smatch: Fix potential NULL pointer
+ dereference
+Message-ID: <20190703184606.GF10740@kernel.org>
+References: <20190702103420.27540-1-leo.yan@linaro.org>
+ <20190702103420.27540-6-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702103420.27540-6-leo.yan@linaro.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the one remaining user in nouveau over to its replacement,
-and remove all the wrappers.
+Em Tue, Jul 02, 2019 at 06:34:14PM +0800, Leo Yan escreveu:
+> Based on the following report from Smatch, fix the potential
+> NULL pointer dereference check.
+> 
+>   tools/perf/builtin-trace.c:1044
+>   thread_trace__new() error: we previously assumed 'ttrace' could be
+>   null (see line 1041).
+> 
+> tools/perf/builtin-trace.c
+> 1037 static struct thread_trace *thread_trace__new(void)
+> 1038 {
+> 1039         struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+> 1040
+> 1041         if (ttrace)
+> 1042                 ttrace->files.max = -1;
+> 1043
+> 1044         ttrace->syscall_stats = intlist__new(NULL);
+>              ^^^^^^^^
+> 1045
+> 1046         return ttrace;
+> 1047 }
+> 
+> This patch directly returns NULL when fail to allocate memory for
+> ttrace; this can avoid potential NULL pointer dereference.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
----
- drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
- include/linux/hmm.h                    | 34 --------------------------
- 2 files changed, 1 insertion(+), 35 deletions(-)
+I did it slightly different, to avoid having two return lines, and that
+is what most other constructors (foo__new()) do in tools/perf/, kept
+your changeset comment and patch authorship, thanks.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-index 42c026010938..b9ced2e61667 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-@@ -844,7 +844,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
- 		struct page *page;
- 		uint64_t addr;
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d0eb7224dd36..e3fc9062f136 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1038,10 +1038,10 @@ static struct thread_trace *thread_trace__new(void)
+ {
+ 	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
  
--		page = hmm_pfn_to_page(range, range->pfns[i]);
-+		page = hmm_device_entry_to_page(range, range->pfns[i]);
- 		if (page == NULL)
- 			continue;
+-	if (ttrace)
++	if (ttrace) {
+ 		ttrace->files.max = -1;
+-
+-	ttrace->syscall_stats = intlist__new(NULL);
++		ttrace->syscall_stats = intlist__new(NULL);
++	}
  
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 657606f48796..cdcd78627393 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -290,40 +290,6 @@ static inline uint64_t hmm_device_entry_from_pfn(const struct hmm_range *range,
- 		range->flags[HMM_PFN_VALID];
+ 	return ttrace;
  }
- 
--/*
-- * Old API:
-- * hmm_pfn_to_page()
-- * hmm_pfn_to_pfn()
-- * hmm_pfn_from_page()
-- * hmm_pfn_from_pfn()
-- *
-- * This are the OLD API please use new API, it is here to avoid cross-tree
-- * merge painfullness ie we convert things to new API in stages.
-- */
--static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_page(range, pfn);
--}
--
--static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_pfn(range, pfn);
--}
--
--static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
--					 struct page *page)
--{
--	return hmm_device_entry_from_page(range, page);
--}
--
--static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
--					unsigned long pfn)
--{
--	return hmm_device_entry_from_pfn(range, pfn);
--}
--
- /*
-  * Mirroring: how to synchronize device page table with CPU page table.
-  *
--- 
-2.20.1
-
