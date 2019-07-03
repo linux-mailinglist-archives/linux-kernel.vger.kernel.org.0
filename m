@@ -2,88 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 256225E7E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2EDD5E7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfGCPd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:33:28 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:52601 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbfGCPd1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:33:27 -0400
-Received: by mail-vs1-f73.google.com with SMTP id g189so84149vsc.19
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 08:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=/6bGHYyTFS2kttBBEjE3ja94SSfbSSxkJ0m3sfLvbLw=;
-        b=d1g6PiIIpFcSBKhxLW3TWAoUq5UUCQsATCOVnwBRhz9/DsRsQ+xuaKrbjWo6HTjFof
-         KOu3qqTOz/u+lec6BcwCxvSeBVunH9TXhDw7o3rhYAVLrJ56qHWPOZ0RKz2mbTS/V3nZ
-         9UO9kxCq8Zya6zrmOQku4WgYGtMXaJCdsRKm7TqCN2GSwFlNXkO20igq4WB181zqOWFE
-         NK/S0HBVtjNnQMJuHUnIcAHI5/Oc5g9gSVRQph9LckzC6FysJMxmjPrIC172wYrrFQi1
-         3B64QHwv8VfK6TQ+XYw6Yd5rRZOBDw0MuDo7wRq9rJ0lF9g3MHM0eTrEVR8RY+gburuH
-         K2EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=/6bGHYyTFS2kttBBEjE3ja94SSfbSSxkJ0m3sfLvbLw=;
-        b=cGmi4u8J4oPWpLFD6czIs1277ykrWcW+IR471o4aKuCST+T8R1n6MjO/vDTHUKSJQo
-         nsn2dB0APijShfOBLn4o2fELYUDK6BNhfzZcYONikyS93n1TqXtfQTx278MJxuYt00Uf
-         RJ4l/1HbuG/6cZpZHgUMD7JeWN6/aCcSuIel8w5KFDaCe96qXZN1jRzPI6Bg85mi9WKv
-         GP8U5GZWE2gzS8dw+ocfBsoOFAXaZIC7DOQc359kCAcv1EUB4qHf5pTUghlXYbmnUA8L
-         m7fpgNYmqp2VrlwYOeOcmRCD0EXIqSAuM3icmHeaWeaeII5PfoQnGd9X9GwoCGmAZI4b
-         L4lQ==
-X-Gm-Message-State: APjAAAW3o3PYyXO4TMfrXcR50OXRhQ8Jy3/QrHkKZmwWN2DvdsgMLgPj
-        PedrAmjqlZhAxS+5RywUCteR3+hG1lKTpy4=
-X-Google-Smtp-Source: APXvYqzrwdQGhOseYcg6xIM5JSFjAPspBRD77M05eXm8kqyCNWugf7glng5Xz6BJwUhoi80Y+lROqLL9UM9h8Y4=
-X-Received: by 2002:ac5:c5a8:: with SMTP id f8mr4107446vkl.80.1562168006316;
- Wed, 03 Jul 2019 08:33:26 -0700 (PDT)
-Date:   Wed,  3 Jul 2019 23:33:20 +0800
-Message-Id: <20190703153320.203523-1-oceanchen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v3] f2fs: avoid out-of-range memory access
-From:   Ocean Chen <oceanchen@google.com>
-To:     jaegeuk@kernel.org, yuchao0@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Cc:     oceanchen@google.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1726915AbfGCPeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 11:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfGCPeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:34:31 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DE392184C;
+        Wed,  3 Jul 2019 15:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562168070;
+        bh=f4B8WeG5XaSaTowaf4i88T69sN+OF2OOJodh5xJS0Bo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M6M7sZBu1YIVvwGE2Au8SNll8VXIuiSN48Zg487+1aC6P6JkFDY9k9spExJUx8EOC
+         ND7Jo2KUiSIVRHFODVCmKnOBfFDLSxKXftJtzjuJ/v9SGmjQGLhCbjg5IscUp7zVLk
+         38wqZ0T11ZlnqBZ8NgS0RWXPZrgWR472yDowaxNk=
+Date:   Wed, 3 Jul 2019 17:34:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 0/4] intel_th: Fixes for v5.2
+Message-ID: <20190703153428.GA14543@kroah.com>
+References: <20190621161930.60785-1-alexander.shishkin@linux.intel.com>
+ <87sgrnta0g.fsf@ashishki-desk.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgrnta0g.fsf@ashishki-desk.ger.corp.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk_off might over 512 due to fs corrupt and should
-be checked before being used.
-Use ENTRIES_IN_SUM to protect invalid memory access.
+On Wed, Jul 03, 2019 at 06:26:07PM +0300, Alexander Shishkin wrote:
+> Alexander Shishkin <alexander.shishkin@linux.intel.com> writes:
+> 
+> > Hi Greg,
+> 
+> Hi Greg,
+> 
+> > Here are the fixes I have for v5.2 cycle: two gcc warnings, one dma mapping
+> > issue and a new PCI ID. All issues were introduced in the same cycle, so no
+> > -stable involvement.
+> >
+> > All patches are aiaiai-clean. Signed git tag below. Individual patches in
+> > follow-up emails. Please consider pulling or applying. Thanks!
+> 
+> Just in case this got buried under other email.
 
---
-v2:
-- fix typo
-v3:
-- check blk_off before being used
---
-Signed-off-by: Ocean Chen <oceanchen@google.com>
----
- fs/f2fs/segment.c | 3 +++
- 1 file changed, 3 insertions(+)
+It did, but it is in good company :)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8dee063c833f..c3eae3239345 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3401,6 +3401,9 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- 		if (seg_i->alloc_type == SSR)
- 			blk_off = sbi->blocks_per_seg;
- 
-+                if (blk_off >= ENTRIES_IN_SUM)
-+                  return -EFAULT;
-+
- 		for (j = 0; j < blk_off; j++) {
- 			struct f2fs_summary *s;
- 			s = (struct f2fs_summary *)(kaddr + offset);
--- 
-2.22.0.410.gd8fdbe21b5-goog
+thanks,
 
+greg k-h
