@@ -2,109 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10FDB5EF5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 01:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D2F25EF68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 01:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfGCXCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 19:02:22 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41560 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727432AbfGCXCU (ORCPT
+        id S1727508AbfGCXCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 19:02:53 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61215 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbfGCXCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 19:02:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id q4so1931047pgj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 16:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vxC6cpJeD3A10tWWsNE37FjIALjzLREnlwwa6KDygFo=;
-        b=KoFbuYFaOMgz+CA9HtkLNTvAr+pabLlsPrLFWh8/CDrvglaCWGGLw4Pnxd6skHFk9D
-         q3Vow7aYTiXXFCeiDRL8qO677+a7piMs8y1uZhje39FRkVgbfJ0BDZ+RweMNQAxf5gWi
-         dXTZ2iVaBDwYMJGt3iTUEcM1C9Zfdf2BI1S3A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vxC6cpJeD3A10tWWsNE37FjIALjzLREnlwwa6KDygFo=;
-        b=l8Ym0uIO7PmQHAfL2B1ESghx6+h26d1cQrQ6P4gtOSaS4HE3Opuk7q9Oh26w7IcpvP
-         h5LmYHoDWSBJtkahhYXWuzVS0WIqR1vEUle2Lga1ePDGZ0Owz1WpGYHASuOo3ETK25Uo
-         W1PSBudXO9oGsb12iG7+6f8hr5RbFkHJkEyfRqCQLyo2QfMU2CpmnsdTSFbsntoTk2os
-         nzA+K6OsvryMToLsn3O2bwpoKNbjBj+yk+gfYVcOy5U00fUwoZ6kvx99AVenW/nEkKqY
-         NQP92glkC1BPv5q/yV9mR5LSta89Fyt0VaG89fK2KfkAK5qLGGX+QRdIVaCL6pp/t3/B
-         uVWA==
-X-Gm-Message-State: APjAAAVyFWMOQob8HKgk8D2t/Ecp4i21ZOvAI14iqJ1P+o2bq7nBBRAP
-        zo/aLK6XUKs4Rar+ldbXDmCFg140NjU=
-X-Google-Smtp-Source: APXvYqyG7F1sqItbURwJvHhS/2DarvFHk2VbgTA5dTpR7guaFyZ6mbPUxyay/cbBh1DPeX4KcfiwJA==
-X-Received: by 2002:a17:90a:cf8f:: with SMTP id i15mr14955387pju.110.1562194939953;
-        Wed, 03 Jul 2019 16:02:19 -0700 (PDT)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
-        by smtp.gmail.com with ESMTPSA id t8sm4245171pfq.31.2019.07.03.16.02.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 16:02:19 -0700 (PDT)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v5 4/4] drm/mtk: add panel orientation property
-Date:   Wed,  3 Jul 2019 16:02:10 -0700
-Message-Id: <20190703230210.85342-5-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190703230210.85342-1-dbasehore@chromium.org>
-References: <20190703230210.85342-1-dbasehore@chromium.org>
+        Wed, 3 Jul 2019 19:02:53 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 8010e3fd10758b8f; Thu, 4 Jul 2019 01:02:49 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] ACPI: PM: Unexport acpi_device_get_power()
+Date:   Thu, 04 Jul 2019 01:02:49 +0200
+Message-ID: <1970901.ZntFDt4DbR@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This inits the panel orientation property for the mediatek dsi driver
-if the panel orientation (connector.display_info.panel_orientation) is
-not DRM_MODE_PANEL_ORIENTATION_UNKNOWN.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+Using acpi_device_get_power() outside of ACPI device initialization
+and ACPI sysfs is problematic due to the way in which power resources
+are handled by it, so unexport it and add a paragraph explaining the
+pitfalls to its kerneldoc comment.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b91c4616644a..2920458ae2fb 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -790,10 +790,18 @@ static int mtk_dsi_create_connector(struct drm_device *drm, struct mtk_dsi *dsi)
- 			DRM_ERROR("Failed to attach panel to drm\n");
- 			goto err_connector_cleanup;
- 		}
-+
-+		ret = drm_connector_init_panel_orientation_property(&dsi->conn);
-+		if (ret) {
-+			DRM_ERROR("Failed to init panel orientation\n");
-+			goto err_panel_detach;
-+		}
- 	}
+On top of the linux-next branch in the linux-pm.git tree.
+
+---
+ drivers/acpi/device_pm.c |    6 +++++-
+ drivers/acpi/internal.h  |    7 +++++++
+ include/acpi/acpi_bus.h  |    1 -
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+
+Index: linux-pm/drivers/acpi/device_pm.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/device_pm.c
++++ linux-pm/drivers/acpi/device_pm.c
+@@ -66,6 +66,11 @@ static int acpi_dev_pm_explicit_get(stru
+  * This function does not update the device's power.state field, but it may
+  * update its parent's power.state field (when the parent's power state is
+  * unknown and the device's power state turns out to be D0).
++ *
++ * Also, it does not update power resource reference counters to ensure that
++ * the power state returned by it will be persistent and it may return a power
++ * state shallower than previously set by acpi_device_set_power() for @device
++ * (if that power state depends on any power resources).
+  */
+ int acpi_device_get_power(struct acpi_device *device, int *state)
+ {
+@@ -130,7 +135,6 @@ int acpi_device_get_power(struct acpi_de
  
  	return 0;
+ }
+-EXPORT_SYMBOL(acpi_device_get_power);
  
-+err_panel_detach:
-+	drm_panel_detach(dsi->panel);
- err_connector_cleanup:
- 	drm_connector_cleanup(&dsi->conn);
- 	return ret;
--- 
-2.22.0.410.gd8fdbe21b5-goog
+ static int acpi_dev_pm_explicit_set(struct acpi_device *adev, int state)
+ {
+Index: linux-pm/include/acpi/acpi_bus.h
+===================================================================
+--- linux-pm.orig/include/acpi/acpi_bus.h
++++ linux-pm/include/acpi/acpi_bus.h
+@@ -506,7 +506,6 @@ int acpi_bus_get_status(struct acpi_devi
+ 
+ int acpi_bus_set_power(acpi_handle handle, int state);
+ const char *acpi_power_state_string(int state);
+-int acpi_device_get_power(struct acpi_device *device, int *state);
+ int acpi_device_set_power(struct acpi_device *device, int state);
+ int acpi_bus_init_power(struct acpi_device *device);
+ int acpi_device_fix_up_power(struct acpi_device *device);
+Index: linux-pm/drivers/acpi/internal.h
+===================================================================
+--- linux-pm.orig/drivers/acpi/internal.h
++++ linux-pm/drivers/acpi/internal.h
+@@ -139,8 +139,15 @@ int acpi_power_get_inferred_state(struct
+ int acpi_power_on_resources(struct acpi_device *device, int state);
+ int acpi_power_transition(struct acpi_device *device, int state);
+ 
++/* --------------------------------------------------------------------------
++                              Device Power Management
++   -------------------------------------------------------------------------- */
++int acpi_device_get_power(struct acpi_device *device, int *state);
+ int acpi_wakeup_device_init(void);
+ 
++/* --------------------------------------------------------------------------
++                                  Processor
++   -------------------------------------------------------------------------- */
+ #ifdef CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC
+ void acpi_early_processor_set_pdc(void);
+ #else
+
+
 
