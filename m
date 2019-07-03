@@ -2,201 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC4A5E6BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FBEE5E6C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfGCObA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:31:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47884 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725830AbfGCObA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:31:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F3C80AD76;
-        Wed,  3 Jul 2019 14:30:58 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 16:30:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kuo-Hsin Yang <vovoy@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] mm: vmscan: scan anonymous pages on file refaults
-Message-ID: <20190703143057.GQ978@dhcp22.suse.cz>
-References: <20190628111627.GA107040@google.com>
- <20190701081038.GA83398@google.com>
+        id S1727119AbfGCObn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:31:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45129 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfGCObn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:31:43 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EVTUX3327509
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:31:29 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EVTUX3327509
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562164290;
+        bh=Yw4bKg9NQiQDGNsE8NvApjjYe94H5QZQrNn/Wjl1cMw=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=vYYIIC9PAnVRCowv5QnZimLjGntstgoOdJwUJeTIvM1sPPaBJuYuvQfriLkmCnK8j
+         2JkPsKTPbPslY//PKwMpL3vfk0WoF44SqPzOKLxWy6ZTrIRGUQkTKscq4nypWlgO7R
+         gbEoWHbB+2+WhvnZaR8ESEUJ/z4ce59uUoMzQCLjTDAYf/z3nkCNnbcDNrSQIkzFob
+         NEow0DFDG0FiZSmTq6/lvgGvgkCol+douq8PKiNdvT4+9m6egL7Zq14hHy0h/WVWNv
+         ootiZcn0bmFc+6LTPQGQ8NKAKBLQVkjOZ1VZjbyoIEIiIKJ8eh9vMbz0lHepVESE1V
+         AOhuRAUlAooQw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EVT2v3327504;
+        Wed, 3 Jul 2019 07:31:29 -0700
+Date:   Wed, 3 Jul 2019 07:31:29 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Luke Mujica <tipbot@zytor.com>
+Message-ID: <tip-prgnwmaoo1pv9zz4vnv1bjaj@git.kernel.org>
+Cc:     acme@redhat.com, jolsa@redhat.com, lukemujica@google.com,
+        tglx@linutronix.de, irogers@google.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        nums@google.com, eranian@google.com
+Reply-To: nums@google.com, eranian@google.com, mingo@kernel.org,
+          lukemujica@google.com, tglx@linutronix.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, irogers@google.com,
+          acme@redhat.com, jolsa@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf jevents: Use nonlocal include statements in
+ pmu-events.c
+Git-Commit-ID: 06c642c0e9fceafd16b1a4c80d44b1c09e282215
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190701081038.GA83398@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 01-07-19 16:10:38, Kuo-Hsin Yang wrote:
-> When file refaults are detected and there are many inactive file pages,
-> the system never reclaim anonymous pages, the file pages are dropped
-> aggressively when there are still a lot of cold anonymous pages and
-> system thrashes.  This issue impacts the performance of applications
-> with large executable, e.g. chrome.
-> 
-> With this patch, when file refault is detected, inactive_list_is_low()
-> always returns true for file pages in get_scan_count() to enable
-> scanning anonymous pages.
-> 
-> The problem can be reproduced by the following test program.
-> 
-> ---8<---
-> void fallocate_file(const char *filename, off_t size)
-> {
-> 	struct stat st;
-> 	int fd;
-> 
-> 	if (!stat(filename, &st) && st.st_size >= size)
-> 		return;
-> 
-> 	fd = open(filename, O_WRONLY | O_CREAT, 0600);
-> 	if (fd < 0) {
-> 		perror("create file");
-> 		exit(1);
-> 	}
-> 	if (posix_fallocate(fd, 0, size)) {
-> 		perror("fallocate");
-> 		exit(1);
-> 	}
-> 	close(fd);
-> }
-> 
-> long *alloc_anon(long size)
-> {
-> 	long *start = malloc(size);
-> 	memset(start, 1, size);
-> 	return start;
-> }
-> 
-> long access_file(const char *filename, long size, long rounds)
-> {
-> 	int fd, i;
-> 	volatile char *start1, *end1, *start2;
-> 	const int page_size = getpagesize();
-> 	long sum = 0;
-> 
-> 	fd = open(filename, O_RDONLY);
-> 	if (fd == -1) {
-> 		perror("open");
-> 		exit(1);
-> 	}
-> 
-> 	/*
-> 	 * Some applications, e.g. chrome, use a lot of executable file
-> 	 * pages, map some of the pages with PROT_EXEC flag to simulate
-> 	 * the behavior.
-> 	 */
-> 	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
-> 		      fd, 0);
-> 	if (start1 == MAP_FAILED) {
-> 		perror("mmap");
-> 		exit(1);
-> 	}
-> 	end1 = start1 + size / 2;
-> 
-> 	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
-> 	if (start2 == MAP_FAILED) {
-> 		perror("mmap");
-> 		exit(1);
-> 	}
-> 
-> 	for (i = 0; i < rounds; ++i) {
-> 		struct timeval before, after;
-> 		volatile char *ptr1 = start1, *ptr2 = start2;
-> 		gettimeofday(&before, NULL);
-> 		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
-> 			sum += *ptr1 + *ptr2;
-> 		gettimeofday(&after, NULL);
-> 		printf("File access time, round %d: %f (sec)\n", i,
-> 		       (after.tv_sec - before.tv_sec) +
-> 		       (after.tv_usec - before.tv_usec) / 1000000.0);
-> 	}
-> 	return sum;
-> }
-> 
-> int main(int argc, char *argv[])
-> {
-> 	const long MB = 1024 * 1024;
-> 	long anon_mb, file_mb, file_rounds;
-> 	const char filename[] = "large";
-> 	long *ret1;
-> 	long ret2;
-> 
-> 	if (argc != 4) {
-> 		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS\n");
-> 		exit(0);
-> 	}
-> 	anon_mb = atoi(argv[1]);
-> 	file_mb = atoi(argv[2]);
-> 	file_rounds = atoi(argv[3]);
-> 
-> 	fallocate_file(filename, file_mb * MB);
-> 	printf("Allocate %ld MB anonymous pages\n", anon_mb);
-> 	ret1 = alloc_anon(anon_mb * MB);
-> 	printf("Access %ld MB file pages\n", file_mb);
-> 	ret2 = access_file(filename, file_mb * MB, file_rounds);
-> 	printf("Print result to prevent optimization: %ld\n",
-> 	       *ret1 + ret2);
-> 	return 0;
-> }
-> ---8<---
-> 
-> Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the
-> program fills ram with 2048 MB memory, access a 200 MB file for 10
-> times.  Without this patch, the file cache is dropped aggresively and
-> every access to the file is from disk.
-> 
->   $ ./thrash 2048 200 10
->   Allocate 2048 MB anonymous pages
->   Access 200 MB file pages
->   File access time, round 0: 2.489316 (sec)
->   File access time, round 1: 2.581277 (sec)
->   File access time, round 2: 2.487624 (sec)
->   File access time, round 3: 2.449100 (sec)
->   File access time, round 4: 2.420423 (sec)
->   File access time, round 5: 2.343411 (sec)
->   File access time, round 6: 2.454833 (sec)
->   File access time, round 7: 2.483398 (sec)
->   File access time, round 8: 2.572701 (sec)
->   File access time, round 9: 2.493014 (sec)
-> 
-> With this patch, these file pages can be cached.
-> 
->   $ ./thrash 2048 200 10
->   Allocate 2048 MB anonymous pages
->   Access 200 MB file pages
->   File access time, round 0: 2.475189 (sec)
->   File access time, round 1: 2.440777 (sec)
->   File access time, round 2: 2.411671 (sec)
->   File access time, round 3: 1.955267 (sec)
->   File access time, round 4: 0.029924 (sec)
->   File access time, round 5: 0.000808 (sec)
->   File access time, round 6: 0.000771 (sec)
->   File access time, round 7: 0.000746 (sec)
->   File access time, round 8: 0.000738 (sec)
->   File access time, round 9: 0.000747 (sec)
+Commit-ID:  06c642c0e9fceafd16b1a4c80d44b1c09e282215
+Gitweb:     https://git.kernel.org/tip/06c642c0e9fceafd16b1a4c80d44b1c09e282215
+Author:     Luke Mujica <lukemujica@google.com>
+AuthorDate: Tue, 25 Jun 2019 10:31:22 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 1 Jul 2019 22:50:42 -0300
 
-How does the reclaim behave with workloads with file backed data set
-not fitting into the memory? Aren't we going to to swap a lot -
-something that the heuristic is protecting from?
+perf jevents: Use nonlocal include statements in pmu-events.c
 
-> Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
-> Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
-> Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: <stable@vger.kernel.org> # 4.12+
+Change pmu-events.c to not use local include statements. The code that
+creates the include statements for pmu-events.c is in jevents.c.
 
--- 
-Michal Hocko
-SUSE Labs
+pmu-events.c is a generated file, and for build systems that put
+generated files in a separate directory, include statements with local
+pathing cannot find non-generated files.
+
+Signed-off-by: Luke Mujica <lukemujica@google.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: https://lkml.kernel.org/n/tip-prgnwmaoo1pv9zz4vnv1bjaj@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/pmu-events/jevents.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 58f77fd0f59f..a1184ea64cc6 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -841,7 +841,7 @@ static void create_empty_mapping(const char *output_file)
+ 		_Exit(1);
+ 	}
+ 
+-	fprintf(outfp, "#include \"../../pmu-events/pmu-events.h\"\n");
++	fprintf(outfp, "#include \"pmu-events/pmu-events.h\"\n");
+ 	print_mapping_table_prefix(outfp);
+ 	print_mapping_table_suffix(outfp);
+ 	fclose(outfp);
+@@ -1096,7 +1096,7 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	/* Include pmu-events.h first */
+-	fprintf(eventsfp, "#include \"../../pmu-events/pmu-events.h\"\n");
++	fprintf(eventsfp, "#include \"pmu-events/pmu-events.h\"\n");
+ 
+ 	/*
+ 	 * The mapfile allows multiple CPUids to point to the same JSON file,
