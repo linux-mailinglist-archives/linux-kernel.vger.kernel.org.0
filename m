@@ -2,65 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E195D9EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED7C5D961
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfGCA5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:57:44 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43314 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfGCA5o (ORCPT
+        id S1727244AbfGCAmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:42:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46206 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCAmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:57:44 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w79so580480oif.10;
-        Tue, 02 Jul 2019 17:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=obK8pqGpp6ppUzwFxaYhNaIwmhJYhgnzTyLxnEMEbaE=;
-        b=Lgk8HxN2TeaySbNH6ob4UW9Y1FU9ezn/XZX87/sUbY5sGJwYYW09z7LGrLbcskZrtF
-         h+DBGDabYukmYv22IrZ+49itPNoy9cnyYJwXzXiW6ASg/lvgOvgV9xy8WSmeF0czH39O
-         EMhCzMJeDIXushtAdpqBdCjnDi4NMWsS0JZhxKSR2ci7IHbGYrw9WaE3uF7v9RYIQGF8
-         ll2bePKQibxC4pnFOZQyZC/NqU6LO7Ln0PNYeNQN9TP1H3SQfRxU8G0AJF4w0TFfuyph
-         rybCk3984T+iyvQRkaFh2kGxXryzzYsKtkAkcoIxKP07Jik8Z4QS54FQbbJbr97+pmZH
-         aDFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=obK8pqGpp6ppUzwFxaYhNaIwmhJYhgnzTyLxnEMEbaE=;
-        b=KrhuICVHZ6nc6RKL7cYhsgxGx+f7BZ5x2cFB7fm/WJDUTgaQpotawioD9hlV3/XkiC
-         /fu3KpdvrmRnNJYl19f/gUSIBUFPVHmko5bSAAX65Ovp4hiAsH7Jg80FwrHiFI4i/hrG
-         rPyXyiPpabL0yp3BD2IyaLsDPjmRINMnSzsXg1nuXe/+t8NDzMSr5Md9rnTtgKhSiILm
-         3xD0GZ9qz0ibKIrBeeSDHJEqGrGawJX4vWUIhfdLKC4mfanmvMCSPJR7jgeHsKbOWfET
-         ViQo8U/IIFR5+PtVk81wZ1H5WyTiNBeCcpYPAxLNa1dQ+uQPs+K/D06WGt98lj2oZ25p
-         KaBg==
-X-Gm-Message-State: APjAAAVehs3ygn9kpC8we7gzWOZlZ0UuZANcEJm0ZAvNmNRCP8+jobmE
-        7x1b+gJyG46kwRRs3ZEUG4Ml/sJVaqHyhLmTWScVoBbr
-X-Google-Smtp-Source: APXvYqzsU+VOw/pRzHZkbj7mE4hstsvnVzXhxSZSDwcHEbGK6duR2ysmseQ7VOXaagjXgGDyInbFMOecV+o3mcRZ56Y=
-X-Received: by 2002:aca:4306:: with SMTP id q6mr4781191oia.39.1562112106480;
- Tue, 02 Jul 2019 17:01:46 -0700 (PDT)
+        Tue, 2 Jul 2019 20:42:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8D5D66025A; Wed,  3 Jul 2019 00:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562112231;
+        bh=Ehzb5REbZ1sAGqR0DY72rQI/Hyw2RX9/t1g57kj00rs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PHnDSrVDwfgQJgf0I+W+KiUM86AS4rE6Fy2Av270knbxo+bEBYplTz/ZCPQuEe2I4
+         fNzPDwaSZmBiKo5VrP0sRQRLEYzURkM4UWHUZJhyn8FZwrHSNghuSX7UHfV8XAd558
+         BbrAULrw8EBM7HOh+AHyh++3rcGV3X4HoXZMpYAc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: collinsd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 257F66025A;
+        Wed,  3 Jul 2019 00:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562112230;
+        bh=Ehzb5REbZ1sAGqR0DY72rQI/Hyw2RX9/t1g57kj00rs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YkMHRIYLA5V46KlIhru4A3fnsbCSkndtSW9zs2Cjaim0N2J64OYjzq8THiO9uc63G
+         pjPnWHJwm0B583nkQzsUveSzVv0Jwe2j5cWQBRKv6eBvXzKhEPU3zEIbNuGVe7J29W
+         0dOSvKmHAXUZVMS609/mKWBo3oXa1snC9A6dFOjs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 257F66025A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v3 0/4] Solve postboot supplier cleanup and optimize probe
+ ordering
+To:     Saravana Kannan <saravanak@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+References: <20190702004811.136450-1-saravanak@google.com>
+From:   David Collins <collinsd@codeaurora.org>
+Message-ID: <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
+Date:   Tue, 2 Jul 2019 17:03:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-6-narmstrong@baylibre.com>
-In-Reply-To: <20190701104705.18271-6-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 02:01:35 +0200
-Message-ID: <CAFBinCBTbCf=haP=YmkmtvAxD6hgq32LPMg=OkRF3P_p+okqeQ@mail.gmail.com>
-Subject: Re: [RFC 05/11] dt-bindings: soc: amlogic: clk-measure: Add SM1 compatible
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190702004811.136450-1-saravanak@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 12:49 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add the Amlogic SM1 Compatible for the clk-measurer IP.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hello Saravana,
+
+On 7/1/19 5:48 PM, Saravana Kannan wrote:
+...
+> TODO:
+> - For the case of consumer child sub-nodes being added by a parent
+>   device after late_initcall_sync we might be able to address that by
+>   recursively parsing all child nodes and adding all their suppliers as
+>   suppliers of the parent node too. The parent probe will add the
+>   children before its probe is completed and that will prevent the
+>   supplier's sync_state from being executed before the children are
+>   probed.
+> 
+> But I'll write that part once I see how this series is received.
+
+I don't think that this scheme will work in all cases.  It can also lead
+to probing deadlock.
+
+Here is an example:
+
+Three DT devices (top level A with subnodes B and C):
+/A
+/A/B
+/A/C
+C is a consumer of B.
+
+When device A is created, a search of its subnodes will find the link from
+C to B.  Since device B hasn't been created yet, of_link_to_suppliers()
+will fail and add A to the wait_for_suppliers list.  This will cause the
+probe of A to fail with -EPROBE_DEFER (thanks to the check in
+device_links_check_suppliers()).  As a result device B will not be created
+and device A will never probe.
+
+You could try to resolve this situation by detecting the cycle and *not*
+adding A to the wait_for_suppliers list.  However, that would get us back
+to the problem we had before.  A would be allowed to probe which would
+then result in devices being added for B and C.  If the device for B is
+added before C, then it would be allowed to immediately probe and
+(assuming this all takes place after late_initcall_sync thanks to modules)
+its sync_state() callback would be called since no consumer devices are
+linked to B.
+
+Please note that to change this example from theoretical to practical,
+replace "A" with apps_rsc, "B" with pmi8998-rpmh-regulators, and "C" with
+pm8998-rpmh-regulators in [1].
+
+Take care,
+David
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-mtp.dts?h=v5.2-rc7#n55
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
