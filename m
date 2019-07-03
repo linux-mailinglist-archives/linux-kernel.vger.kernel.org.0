@@ -2,87 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 874D55DA06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 969705DA10
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfGCA7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:59:16 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33737 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfGCA7Q (ORCPT
+        id S1727309AbfGCBAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:00:32 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38468 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGCBAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:59:16 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j190so362123ywb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:59:15 -0700 (PDT)
+        Tue, 2 Jul 2019 21:00:32 -0400
+Received: by mail-ot1-f68.google.com with SMTP id d17so528065oth.5
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:00:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wIf3s/qpqMqc2ju4HSpCa9loV1PYd9khtmiRlahKfMw=;
-        b=pPp129mGMAgZmQQqFW2wfGEyipUebLHwGsceAtgrBF3rmcputVE6yLkvSQzI5+Umpe
-         ozwXEefLssoK6is8zIDlkwY/8KxjUGg4mFuSKbFB26uy43eFMyRjUtyFLV2PXbRIXp4S
-         nXHtGaazQ+NoOvr/kGLrfL86ynZ5+JPT39vV8UPPVwpByVSniduvE865bw+oh4sDDk8e
-         jZ+tHN3OsCR6DZ27o/h80jb8FFe8FqUFoAO21NfwxBXtyuAwby9BaxyIDkmG6v6CBDrB
-         xMZdvZ8g4jOQzQlCof9FvROv5TZ+hPQySu6YgAIUvgtORBagVLpLL4A6t2rIK8irYDYe
-         USHg==
+        bh=IScLyBXmZGGQsg6YA+cbexUtHiw0BDkrJFGTmkdmngg=;
+        b=VMIxp3GShJJ/mN1EIIno9K4EiTWxB1WzC+kchDIN4KPW5q3pTD+fDKHqGZo9kBhNuy
+         A7+lCno6kZdyolLkrhb5pvcMnYSutsIw4wvIkklE0lyBWKABdN76U+bxj69/D/SARfhO
+         BHU7XxtoNJTW68uPJ9HQDugNLTeyhdhMvtwN8RQEnc15+Fzgq5LqCHzS/DTx9kzMWJPg
+         PkIGWFt81cEswUIJkjjJJR+8RmCHQUC2NeYaACpLQOndB7z6Z/qUc7VxUeIk4UQd0hO6
+         aIxBMk2KZP857aor8fXbHLusNcpXMYEleDIfcL4xTvGWxqXWf3oNBdxasNX2v3ZhB4Rv
+         /fGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wIf3s/qpqMqc2ju4HSpCa9loV1PYd9khtmiRlahKfMw=;
-        b=EqsF7bKmZuGq5igVsL24Oln8YtBAe9v8UNv9Oc4vsvIHExfU0jjBpFDzcdj8Nwytru
-         H3ZsAe0klsHxXSfeOWI60HQITtXmfXiokXR1gqrRB46LuhTBQskG7tEYDSEXfICVEwqp
-         otIFsyemSsKLg1dOwXi7cuUIOIJitmLajvz5PrAGnEF7w9ARe/xhDZvNmoElbyBff3rp
-         j5kdqZwWDzw+1LOakC3Tus7/DN6L1H0avb3W8X0ouDo6io/f6qcs7IFD90+pogoV3n3W
-         vvnG2aM+WgKL88GkObP3yr/fUBImdhRx+6r5gLTI0iv3vslqIPRnYQgKMqHrxqXO8NVV
-         o40w==
-X-Gm-Message-State: APjAAAVXfcEqFK7kQQdG44awnP+5OznS59IClit1dHXDRK3v6XvlcxWU
-        8EzJKPVp4sKuzUA7xd2jtXA8fnd+SKSsIxeu72aVxQ==
-X-Google-Smtp-Source: APXvYqxK5DEkk2kHSda+WF/FAeUHPkw6wKzo7ZmZsBWNCRYS9CdUUUng7zhdFAAYidX2Li7ETs1OA9wyePtHHTyX7VI=
-X-Received: by 2002:a81:ae5d:: with SMTP id g29mr19968749ywk.398.1562115554994;
- Tue, 02 Jul 2019 17:59:14 -0700 (PDT)
+        bh=IScLyBXmZGGQsg6YA+cbexUtHiw0BDkrJFGTmkdmngg=;
+        b=c18mTZzK3ptUtpvC2xSxvbBUfi34CkMciHwX3RlKjuGI9hmIyKCRYPcs7OGWcX0hks
+         G3rWrwgbC/jyyb+6ElPYdaLHdmga9QBuHHvJax3ANc4aksfhy70npBEGl3Yyo3v6yrWI
+         0D7vcoicUhg9gYmvNpLYaN1oGpjj9Bdj80OggvrtPhLBGHzQg3rJjvax8KfcrP+Bewc3
+         nqTt53dmPPXtGEfRtZ6CasxwD2yKZrmcpIcncUpdfqSVKHVrwuqdWLGXLnSx7iCvUk5n
+         pMYdtoiacK/a8YCZd2yg51nwNLYma7EzQFJiaX+g2gwoqm4MKSFg9VL+6Lm7LEB5j+34
+         FAKQ==
+X-Gm-Message-State: APjAAAWW60snslVNbeLUEhIv6OmXcVIfFzgKjQPJejIgQfxPrvZUsP2U
+        ogjEn3es9hb0dsIcCNjlxs2ems1q/5yC92MLQ0XuLQ==
+X-Google-Smtp-Source: APXvYqyPI6XRNaSODwAVCZ8Gc8HPl67W6T/qAFtS0xWcBeqdGKTuUhcBKnapNO9tkjp6ZTxN3P4uER5w6Q805SsZc4E=
+X-Received: by 2002:a9d:6d06:: with SMTP id o6mr22963590otp.225.1562115630968;
+ Tue, 02 Jul 2019 18:00:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190702233538.52793-1-henryburns@google.com>
-In-Reply-To: <20190702233538.52793-1-henryburns@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Tue, 2 Jul 2019 17:59:03 -0700
-Message-ID: <CALvZod7udORRrz7wzQPRa2Eya5TfrVh9kG037GKsAsSkRJPx7Q@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/z3fold.c: Lock z3fold page before __SetPageMovable()
-To:     Henry Burns <henryburns@google.com>
-Cc:     Vitaly Wool <vitalywool@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vitaly Vul <vitaly.vul@sony.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Xidong Wang <wangxidong_97@163.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Rientjes <rientjes@google.com>, stable@vger.kernel.org
+References: <20190702004811.136450-1-saravanak@google.com> <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
+In-Reply-To: <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 2 Jul 2019 17:59:54 -0700
+Message-ID: <CAGETcx--+3BNjYZ6cgirNr_uZjU0464UHSUcaVHh_uTO2yWTCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Solve postboot supplier cleanup and optimize probe ordering
+To:     David Collins <collinsd@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 4:35 PM Henry Burns <henryburns@google.com> wrote:
+On Tue, Jul 2, 2019 at 5:03 PM David Collins <collinsd@codeaurora.org> wrote:
 >
-> Following zsmalloc.c's example we call trylock_page() and unlock_page().
-> Also make z3fold_page_migrate() assert that newpage is passed in locked,
-> as per the documentation.
+> Hello Saravana,
 >
-> Link: http://lkml.kernel.org/r/20190702005122.41036-1-henryburns@google.com
-> Signed-off-by: Henry Burns <henryburns@google.com>
-> Suggested-by: Vitaly Wool <vitalywool@gmail.com>
-> Acked-by: Vitaly Wool <vitalywool@gmail.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Vitaly Vul <vitaly.vul@sony.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Xidong Wang <wangxidong_97@163.com>
-> Cc: Jonathan Adams <jwadams@google.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> On 7/1/19 5:48 PM, Saravana Kannan wrote:
+> ...
+> > TODO:
+> > - For the case of consumer child sub-nodes being added by a parent
+> >   device after late_initcall_sync we might be able to address that by
+> >   recursively parsing all child nodes and adding all their suppliers as
+> >   suppliers of the parent node too. The parent probe will add the
+> >   children before its probe is completed and that will prevent the
+> >   supplier's sync_state from being executed before the children are
+> >   probed.
+> >
+> > But I'll write that part once I see how this series is received.
+>
+> I don't think that this scheme will work in all cases.  It can also lead
+> to probing deadlock.
+>
+> Here is an example:
+>
+> Three DT devices (top level A with subnodes B and C):
+> /A
+> /A/B
+> /A/C
+> C is a consumer of B.
+>
+> When device A is created, a search of its subnodes will find the link from
+> C to B.  Since device B hasn't been created yet, of_link_to_suppliers()
+> will fail and add A to the wait_for_suppliers list.  This will cause the
+> probe of A to fail with -EPROBE_DEFER (thanks to the check in
+> device_links_check_suppliers()).  As a result device B will not be created
+> and device A will never probe.
+>
+> You could try to resolve this situation by detecting the cycle and *not*
+> adding A to the wait_for_suppliers list.  However, that would get us back
+> to the problem we had before.  A would be allowed to probe which would
+> then result in devices being added for B and C.  If the device for B is
+> added before C, then it would be allowed to immediately probe and
+> (assuming this all takes place after late_initcall_sync thanks to modules)
+> its sync_state() callback would be called since no consumer devices are
+> linked to B.
+>
+> Please note that to change this example from theoretical to practical,
+> replace "A" with apps_rsc, "B" with pmi8998-rpmh-regulators, and "C" with
+> pm8998-rpmh-regulators in [1].
 
-We need a "Fixes" tag.
+Interesting use case.
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+First, to clarify my TODO: I was initially thinking of the recursive
+"up-heritance" of suppliers from child to parent to handle cases where
+the supplier is a device from some other top level device (or its
+child). My thinking has evolved a bit on that. I think the parent
+needs to inherit only from it's immediate children and not its
+grandchildren (the child is responsible for handling grandchildren
+suppliers). I'll also have to make sure I don't try to create a link
+from a parent device to one of its child device nodes (should be easy
+to check).
+
+Anyway, going back to your case, for dependencies between child nodes
+of a parent, can't the parent just populate them in the right order?
+You can loop through the children and add them in multiple stages.
+
+I'll continue to think if I can come up with anything nicer on the
+drivers, but even if we can't come up with anything better, we can
+still make sync_state() work.
+
+Cheers,
+Saravana
+
+>
+> Take care,
+> David
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-mtp.dts?h=v5.2-rc7#n55
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
