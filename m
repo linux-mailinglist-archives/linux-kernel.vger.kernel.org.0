@@ -2,299 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC8D5EBF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA6E35EBF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfGCStk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:49:40 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39710 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCStj (ORCPT
+        id S1727031AbfGCStf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:49:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:32774 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfGCStf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:49:39 -0400
-Received: by mail-io1-f66.google.com with SMTP id r185so7281142iod.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vOJHNxNrUJcbXPhBSJt8NjTBq3wVRWhORLzxlkFU3q4=;
-        b=Qn107EmQi5+WtL32SSZno+UhKn1noDIhaJ3Q9PRGiLqIq11TBxjmFrmHJD72fg26OH
-         yXvaYUzjThNkVud2D6CLA9hwx2cB+aEKxUEZflZtShCszSxK7AY/HqVF7AIQfaSpKKcq
-         aN1Y3ZXKk7QyfnRlcEuZw6XD6i0XYHKaSOY0uHMzJsvBgJzYKeNX0DtxvYSGa1d5aB0h
-         eGSDdNMmXGa7D0VvLsNbR9x7rXllAypoGCtrPQ0Js4IVgw7n1FPZ+noTYtiGI+x0Ejfe
-         GdG5mHFJ82Ep625i2HJP5kr3M8tkls4IaAwlviNlSvMW4PJsEaOj9Xn3hjpxmT0eLnED
-         f0aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vOJHNxNrUJcbXPhBSJt8NjTBq3wVRWhORLzxlkFU3q4=;
-        b=Uyb/hpWR15keO24EYC+ned0rHINMPURw9smY9bGRYqPKTaP/ewhZvyzlCkJNIo50ph
-         dI/Tp6wXbU8UeUn3quQJzmQYRT2AEKAG509LNOddhroEpnk/rDrGHir8+n9l/+2KpNI1
-         6Z+dHyHZ5sx6gp1O5t406bs4c8cPlVsZoG5oXYhp4GGtdyiAu+rwTscFA0NVHd8jPtS4
-         BZiGGzSSLDlgzgl870Vx+/ApvehEos75ngoSah7JM1ai1oAr90gSo+wzo0qSaCqqtyzb
-         1wWHIZP1AuRo6IAi4qAYeCwbYWhFv5YsDhHvEbrTrzx7el5ZIi9dwXNmYb72kKO4gJE0
-         1YUg==
-X-Gm-Message-State: APjAAAV1yRDWmqaxMwoyJgLYndugYIiG9yS7IwQtBZFrQMknq4BlUr8Q
-        mdbY1bW/X/WGmOfC3uiu2ZcfmADpAOqHjZ6kcQs=
-X-Google-Smtp-Source: APXvYqy3IxIBWg41G8y4QBK3sFV53uGtKBID9xEbGBJ7bVNOSiz+qncVjaqPBysyqbDnlC8ZgxVNT4XVrJo7PyRnfv4=
-X-Received: by 2002:a02:c95a:: with SMTP id u26mr42314268jao.15.1562179778024;
- Wed, 03 Jul 2019 11:49:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190702141903.1131-1-kraxel@redhat.com> <20190702141903.1131-9-kraxel@redhat.com>
-In-Reply-To: <20190702141903.1131-9-kraxel@redhat.com>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Wed, 3 Jul 2019 11:49:27 -0700
-Message-ID: <CAPaKu7QP=A2kV_kqcT20Pmc831HviaBJN1RpOFoa=V1g6SmE_g@mail.gmail.com>
-Subject: Re: [PATCH v6 08/18] drm/virtio: rework virtio_gpu_execbuffer_ioctl fencing
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Jul 2019 14:49:35 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8A6F61412A8A3;
+        Wed,  3 Jul 2019 11:49:34 -0700 (PDT)
+Date:   Wed, 03 Jul 2019 11:49:33 -0700 (PDT)
+Message-Id: <20190703.114933.2138129118204643808.davem@davemloft.net>
+To:     liuyonglong@huawei.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, salil.mehta@huawei.com,
+        yisen.zhuang@huawei.com, shiju.jose@huawei.com
+Subject: Re: [PATCH net] net: hns: add support for vlan TSO
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1562152350-14244-1-git-send-email-liuyonglong@huawei.com>
+References: <1562152350-14244-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 03 Jul 2019 11:49:34 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 7:19 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Rework fencing workflow, starting with virtio_gpu_execbuffer_ioctl.
-> Stop using ttm helpers, use the virtio_gpu_array_* helpers (which work
-> on the reservation objects directly) instead.
->
-> New workflow:
->
->  (1) All gem objects needed by a command are added to a
->      virtio_gpu_object_array.
->  (2) All reservation objects will be locked (virtio_gpu_array_lock_resv).
->  (3) virtio_gpu_fence_emit() completes fence initialization.
->  (4) fence gets added to the objects, reservation objects are unlocked
->      (virtio_gpu_array_add_fence, virtio_gpu_array_unlock_resv).
->  (5) virtio command is submitted to the host.
->  (6) The completion callback (virtio_gpu_dequeue_ctrl_func)
->      will drop object references and free virtio_gpu_object_array.
->
-> v6: rewrite most of the patch.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h   |  6 ++-
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 56 +++++++++-----------------
->  drivers/gpu/drm/virtio/virtgpu_vq.c    | 21 +++++++---
->  3 files changed, 38 insertions(+), 45 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index abb078a5dedf..98511d1dfff2 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -121,9 +121,9 @@ struct virtio_gpu_vbuffer {
->
->         char *resp_buf;
->         int resp_size;
-> -
->         virtio_gpu_resp_cb resp_cb;
->
-> +       struct virtio_gpu_object_array *objs;
->         struct list_head list;
->  };
->
-> @@ -318,7 +318,9 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
->                                             uint32_t resource_id);
->  void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->                            void *data, uint32_t data_size,
-> -                          uint32_t ctx_id, struct virtio_gpu_fence *fence);
-> +                          uint32_t ctx_id,
-> +                          struct virtio_gpu_object_array *objs,
-> +                          struct virtio_gpu_fence *fence);
->  void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
->                                           uint32_t resource_id, uint32_t ctx_id,
->                                           uint64_t offset, uint32_t level,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 0caff3fa623e..9735d7e5899b 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -105,16 +105,11 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->         struct drm_virtgpu_execbuffer *exbuf = data;
->         struct virtio_gpu_device *vgdev = dev->dev_private;
->         struct virtio_gpu_fpriv *vfpriv = drm_file->driver_priv;
-> -       struct drm_gem_object *gobj;
->         struct virtio_gpu_fence *out_fence;
-> -       struct virtio_gpu_object *qobj;
->         int ret;
->         uint32_t *bo_handles = NULL;
->         void __user *user_bo_handles = NULL;
-> -       struct list_head validate_list;
-> -       struct ttm_validate_buffer *buflist = NULL;
-> -       int i;
-> -       struct ww_acquire_ctx ticket;
-> +       struct virtio_gpu_object_array *buflist = NULL;
->         struct sync_file *sync_file;
->         int in_fence_fd = exbuf->fence_fd;
->         int out_fence_fd = -1;
-> @@ -155,15 +150,10 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->                         return out_fence_fd;
->         }
->
-> -       INIT_LIST_HEAD(&validate_list);
->         if (exbuf->num_bo_handles) {
-> -
->                 bo_handles = kvmalloc_array(exbuf->num_bo_handles,
-> -                                          sizeof(uint32_t), GFP_KERNEL);
-> -               buflist = kvmalloc_array(exbuf->num_bo_handles,
-> -                                          sizeof(struct ttm_validate_buffer),
-> -                                          GFP_KERNEL | __GFP_ZERO);
-> -               if (!bo_handles || !buflist) {
-> +                                           sizeof(uint32_t), GFP_KERNEL);
-> +               if (!bo_handles) {
->                         ret = -ENOMEM;
->                         goto out_unused_fd;
->                 }
-> @@ -175,25 +165,21 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->                         goto out_unused_fd;
->                 }
->
-> -               for (i = 0; i < exbuf->num_bo_handles; i++) {
-> -                       gobj = drm_gem_object_lookup(drm_file, bo_handles[i]);
-> -                       if (!gobj) {
-> -                               ret = -ENOENT;
-> -                               goto out_unused_fd;
-> -                       }
-> -
-> -                       qobj = gem_to_virtio_gpu_obj(gobj);
-> -                       buflist[i].bo = &qobj->tbo;
-> -
-> -                       list_add(&buflist[i].head, &validate_list);
-> +               buflist = virtio_gpu_array_from_handles(drm_file, bo_handles,
-> +                                                       exbuf->num_bo_handles);
-> +               if (!buflist) {
-> +                       ret = -ENOENT;
-> +                       goto out_unused_fd;
->                 }
->                 kvfree(bo_handles);
->                 bo_handles = NULL;
->         }
->
-> -       ret = virtio_gpu_object_list_validate(&ticket, &validate_list);
-> -       if (ret)
-> -               goto out_free;
-> +       if (buflist) {
-> +               ret = virtio_gpu_array_lock_resv(buflist);
-> +               if (ret)
-> +                       goto out_unused_fd;
-> +       }
->
->         buf = memdup_user(u64_to_user_ptr(exbuf->command), exbuf->size);
->         if (IS_ERR(buf)) {
-> @@ -220,24 +206,18 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->         }
->
->         virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
-> -                             vfpriv->ctx_id, out_fence);
-> -
-> -       ttm_eu_fence_buffer_objects(&ticket, &validate_list, &out_fence->f);
-> -
-> -       /* fence the command bo */
-> -       virtio_gpu_unref_list(&validate_list);
-> -       kvfree(buflist);
-> +                             vfpriv->ctx_id, buflist, out_fence);
->         return 0;
->
->  out_memdup:
->         kfree(buf);
->  out_unresv:
-> -       ttm_eu_backoff_reservation(&ticket, &validate_list);
-> -out_free:
-> -       virtio_gpu_unref_list(&validate_list);
-> +       if (buflist)
-> +               virtio_gpu_array_unlock_resv(buflist);
->  out_unused_fd:
->         kvfree(bo_handles);
-> -       kvfree(buflist);
-> +       if (buflist)
-> +               virtio_gpu_array_put_free(buflist);
->
->         if (out_fence_fd >= 0)
->                 put_unused_fd(out_fence_fd);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index 6c1a90717535..dbe329801e84 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -191,7 +191,7 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
->         } while (!virtqueue_enable_cb(vgdev->ctrlq.vq));
->         spin_unlock(&vgdev->ctrlq.qlock);
->
-> -       list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
-> +       list_for_each_entry(entry, &reclaim_list, list) {
->                 resp = (struct virtio_gpu_ctrl_hdr *)entry->resp_buf;
->
->                 trace_virtio_gpu_cmd_response(vgdev->ctrlq.vq, resp);
-> @@ -218,14 +218,18 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
->                 }
->                 if (entry->resp_cb)
->                         entry->resp_cb(vgdev, entry);
-> -
-> -               list_del(&entry->list);
-> -               free_vbuf(vgdev, entry);
->         }
->         wake_up(&vgdev->ctrlq.ack_queue);
->
->         if (fence_id)
->                 virtio_gpu_fence_event_process(vgdev, fence_id);
-> +
-> +       list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
-> +               if (entry->objs)
-> +                       virtio_gpu_array_put_free(entry->objs);
-> +               list_del(&entry->list);
-> +               free_vbuf(vgdev, entry);
-> +       }
->  }
->
->  void virtio_gpu_dequeue_cursor_func(struct work_struct *work)
-> @@ -337,6 +341,10 @@ static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
->
->         if (fence)
->                 virtio_gpu_fence_emit(vgdev, hdr, fence);
-> +       if (vbuf->objs) {
-> +               virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-> +               virtio_gpu_array_unlock_resv(vbuf->objs);
-> +       }
-This is with the spinlock held.  Maybe we should move the
-virtio_gpu_array_unlock_resv call out of the critical section.
+From: Yonglong Liu <liuyonglong@huawei.com>
+Date: Wed, 3 Jul 2019 19:12:30 +0800
 
-I am actually more concerned about virtio_gpu_array_add_fence, but it
-is also harder to move.  Should we add a kref to the object array?
+> The hip07 chip support vlan TSO, this patch adds NETIF_F_TSO
+> and NETIF_F_TSO6 flags to vlan_features to improve the
+> performance after adding vlan to the net ports.
+> 
+> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 
-This bothers me because I recently ran into a CPU-bound game with very
-bad lock contention here.
-
->         rc = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf);
->         spin_unlock(&vgdev->ctrlq.qlock);
->         return rc;
-> @@ -939,7 +947,9 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
->
->  void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->                            void *data, uint32_t data_size,
-> -                          uint32_t ctx_id, struct virtio_gpu_fence *fence)
-> +                          uint32_t ctx_id,
-> +                          struct virtio_gpu_object_array *objs,
-> +                          struct virtio_gpu_fence *fence)
->  {
->         struct virtio_gpu_cmd_submit *cmd_p;
->         struct virtio_gpu_vbuffer *vbuf;
-> @@ -949,6 +959,7 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->
->         vbuf->data_buf = data;
->         vbuf->data_size = data_size;
-> +       vbuf->objs = objs;
->
->         cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_SUBMIT_3D);
->         cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
-> --
-> 2.18.1
->
+Applied, thank you.
