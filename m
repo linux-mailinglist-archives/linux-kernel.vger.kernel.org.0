@@ -2,76 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 620675EA89
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 19:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A05B5EA8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 19:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfGCRf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 13:35:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:53878 "EHLO foss.arm.com"
+        id S1727032AbfGCRgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 13:36:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35000 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbfGCRf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 13:35:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C437344;
-        Wed,  3 Jul 2019 10:35:28 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A38253F718;
-        Wed,  3 Jul 2019 10:35:25 -0700 (PDT)
-Subject: Re: [RFC v2 12/14] arm64/lib: asid: Allow user to update the context
- under the lock
-To:     Julien Grall <julien.grall@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        julien.thierry@arm.com, suzuki.poulose@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <20190620130608.17230-1-julien.grall@arm.com>
- <20190620130608.17230-13-julien.grall@arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <c5d1257c-b522-152f-cb2f-d23fd8110609@arm.com>
-Date:   Wed, 3 Jul 2019 18:35:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726574AbfGCRgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:36:07 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 838887FDCA;
+        Wed,  3 Jul 2019 17:35:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8F1EC1001B35;
+        Wed,  3 Jul 2019 17:35:47 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed,  3 Jul 2019 19:35:52 +0200 (CEST)
+Date:   Wed, 3 Jul 2019 19:35:47 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Hugh Dickins <hughd@google.com>,
+        Peter Zijlstra <peterz@infradead.org>, Qian Cai <cai@lca.pw>,
+        hch@lst.de, gkohli@codeaurora.org, mingo@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: fix a crash in do_task_dead()
+Message-ID: <20190703173546.GB21672@redhat.com>
+References: <1559161526-618-1-git-send-email-cai@lca.pw>
+ <20190530080358.GG2623@hirez.programming.kicks-ass.net>
+ <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
+ <20190603123705.GB3419@hirez.programming.kicks-ass.net>
+ <ddf9ee34-cd97-a62b-6e91-6b4511586339@kernel.dk>
+ <alpine.LSU.2.11.1906301542410.1105@eggly.anvils>
+ <97d2f5cc-fe98-f28e-86ce-6fbdeb8b67bd@kernel.dk>
+ <20190702150615.1dfbbc2345c1c8f4d2a235c0@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20190620130608.17230-13-julien.grall@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702150615.1dfbbc2345c1c8f4d2a235c0@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 03 Jul 2019 17:36:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julien,
+On 07/02, Andrew Morton wrote:
 
-On 20/06/2019 14:06, Julien Grall wrote:
-> Some users of the ASID allocator (e.g VMID) will require to update the
-> context when a new ASID is generated. This has to be protected by a lock
-> to prevent concurrent modification.
+> On Mon, 1 Jul 2019 08:22:32 -0600 Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> Rather than introducing yet another lock, it is possible to re-use the
-> allocator lock for that purpose. This patch introduces a new callback
-> that will be call when updating the context.
+> > Andrew, can you queue Oleg's patch for 5.2? You can also add my:
+> > 
+> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Sure.  Although things are a bit of a mess.  Oleg, can we please have a
+> clean resend with signoffs and acks, etc?
 
-You're using this later in the series to mask out the generation from the atomic64 to
-leave just the vmid.
+OK, will do tomorrow. This cleanup can be improved, we can avoid get/put_task_struct
+altogether, but need to recheck.
 
-Where does this concurrent modification happen? The value is only written if we have a
-rollover, and while its active the only bits that could change are the generation.
-(subsequent vCPUs that take the slow path for the same VM will see the updated generation
-and skip the new_context call)
+Oleg.
 
-If we did the generation filtering in update_vmid() after the call to
-asid_check_context(), what would go wrong?
-It happens more often than is necessary and would need a WRITE_ONCE(), but the vmid can't
-change until we become preemptible and another vCPU gets a chance to make its vmid active.
-
-This thing is horribly subtle, so I'm sure I've missed something here!
-
-I can't see where the arch code's equivalent case is. It also filters the generation out
-of the atomic64 in cpu_do_switch_mm(). This happens with interrupts masked so we can't
-re-schedule and set another asid as 'active'. KVM's equivalent is !preemptible.
-
-
-Thanks,
-
-James
