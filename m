@@ -2,218 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC045ECF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461855ECFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfGCTwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 15:52:32 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34442 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfGCTwc (ORCPT
+        id S1727117AbfGCTxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 15:53:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50470 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfGCTxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 15:52:32 -0400
-Received: by mail-io1-f67.google.com with SMTP id k8so7824558iot.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 12:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L4H4TOfyLAfsMNQ6KlYVmN2d3wCdPkK9USRqsxEO8Ys=;
-        b=PbX/zorGSn1qwb4ZpcKi4XK3kHpCF9c68JDwzqSzG2LSIzadqTkeAKy28E38rLK+Ew
-         EZBJcopVJO9X476DfsouDX8FomhOtrETgkx3KMGKr96SNEtkNJe3EKBsnL4bwri9x2Q2
-         DhEBa3QnWAxo9r4wkqmp9TiAUgLIWSvdGZm/3Mg7cjbDIKzvdQNdyEynHZoNholrX60l
-         25NvVzruc1Z6DE372tfzeb11HVoFfUBqd07c8P1rV+yvNVQ9MmMXR0/wnS+rvvcAWlDS
-         BkkqwqmjMQUkdvBxJS46cQd2CSXD05GD2S/Qa1Ey+PB1qjWgHy5OMT5VO9peoOlkW63R
-         5Wsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L4H4TOfyLAfsMNQ6KlYVmN2d3wCdPkK9USRqsxEO8Ys=;
-        b=TlpBbw6R9VRI7qtqYmWuI7FXvGxQph70WVe8USKfnKc92d3s+NqzN14PHaxmOPJIPo
-         pfsElkry7kbGUcB9NPgK5COMHKmmY0QSdPNln8LfG+XXxJcvSeRQ8mVhM4TKJtJc+tDD
-         FTLCiNjDt2oWOwB/ROUPeKWdXO258FHj7DvIw1fqle8zrgmq/u8A73MYMe0rHG4tTT4o
-         bZ/+1hcj1nhYrmmY4pMrhekFuhIopAderuh7SxMjnzK3ewasfQzXtsmhqcCtvZ2yDDGe
-         Vh5jrOL6TcJxMdnesaS1g1IULAmghHEx3Wv6Ros1zeUPI4Vma6L1Npd5CsyyOslFW3OI
-         fL7g==
-X-Gm-Message-State: APjAAAWRb2cwP3MFFXtM9wuemKLheK1woX+CraW1HSFSniIPNXA+3/wI
-        qfsHpa6Y/mXVXx4MuuIBfTtizFwVzmCLKBqDiM8=
-X-Google-Smtp-Source: APXvYqyg6L2E9fD6xiWEGNYlIX9RYdd1Rysp6RIq1uwMBpZNhy+YqsXx/duJBEZ1ZHBSgYyU1RZvHzcsXybl184Z8II=
-X-Received: by 2002:a05:6602:104:: with SMTP id s4mr33493624iot.200.1562183550911;
- Wed, 03 Jul 2019 12:52:30 -0700 (PDT)
+        Wed, 3 Jul 2019 15:53:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vqmc8HmxSdsdZnmxVteLD7yTFn26ShwrILrKMFB1/Tc=; b=rbCs6946skmxDkFEn5TfgPylE
+        laGOaLKGnO9S5VL454/xNsm3WwPwWIxPnLXto3FC4YWiMtUACCGPfVKtUUu7ZQEoCcvzVCPYexAVn
+        j6GiW1iesIW/RVOjEEwWjG0FX6M/rb/g8ZbhSnfDEJTwS1Tui7BejMq18AjlomFkn364bPFv9jm2V
+        DmW58ErGlBOZjRgk8n1ehE3LmaSBh6IVZ7624NgU0HPj5ow+CdVOVaf8EKci5a924fPxNz34M9wlr
+        KZ4LJPC2P98XGM/fucAuOVB/0lObjFzajE9o4w2Jcca+TuXZFrFGFP4hUs7MhuGrqTADdnBUaR1PD
+        FfDHBxtWQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hilJO-0006Fu-TK; Wed, 03 Jul 2019 19:53:02 +0000
+Date:   Wed, 3 Jul 2019 12:53:02 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190703195302.GJ1729@bombadil.infradead.org>
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190703121743.GH1729@bombadil.infradead.org>
+ <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190702141903.1131-1-kraxel@redhat.com> <20190702141903.1131-8-kraxel@redhat.com>
- <CAPaKu7TJ1RgL_CjGnieE1hOOXnT-ECRk67ntRCPTFiv+EmrX4Q@mail.gmail.com>
-In-Reply-To: <CAPaKu7TJ1RgL_CjGnieE1hOOXnT-ECRk67ntRCPTFiv+EmrX4Q@mail.gmail.com>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Wed, 3 Jul 2019 12:52:19 -0700
-Message-ID: <CAPaKu7RFd4EVsV8VbNtNbVv2cPmSbpQ7pkBPpbbeUDz+i=nEfQ@mail.gmail.com>
-Subject: Re: [PATCH v6 07/18] drm/virtio: add virtio_gpu_object_array & helpers
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 11:31 AM Chia-I Wu <olvaffe@gmail.com> wrote:
->
-> On Tue, Jul 2, 2019 at 7:19 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+On Wed, Jul 03, 2019 at 10:01:37AM -0700, Dan Williams wrote:
+> On Wed, Jul 3, 2019 at 5:17 AM Matthew Wilcox <willy@infradead.org> wrote:
 > >
-> > Some helper functions to manage an array of gem objects.
+> > On Wed, Jul 03, 2019 at 12:24:54AM -0700, Dan Williams wrote:
+> > > This fix may increase waitqueue contention, but a fix for that is saved
+> > > for a larger rework. In the meantime this fix is suitable for -stable
+> > > backports.
 > >
-> > v6:
-> >  - add ticket to struct virtio_gpu_object_array.
-> >  - add virtio_gpu_array_{lock,unlock}_resv helpers.
-> >  - add virtio_gpu_array_add_fence helper.
-> > v5: some small optimizations (Chia-I Wu).
-> > v4: make them virtio-private instead of generic helpers.
-> >
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  drivers/gpu/drm/virtio/virtgpu_drv.h | 17 ++++++
-> >  drivers/gpu/drm/virtio/virtgpu_gem.c | 83 ++++++++++++++++++++++++++++
-> >  2 files changed, 100 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> > index 07f6001ea91e..abb078a5dedf 100644
-> > --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> > +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> > @@ -84,6 +84,12 @@ struct virtio_gpu_object {
-> >  #define gem_to_virtio_gpu_obj(gobj) \
-> >         container_of((gobj), struct virtio_gpu_object, gem_base)
-> >
-> > +struct virtio_gpu_object_array {
-> > +       struct ww_acquire_ctx ticket;
-> > +       u32 nents, total;
-> > +       struct drm_gem_object *objs[];
-> > +};
-> > +
-> >  struct virtio_gpu_vbuffer;
-> >  struct virtio_gpu_device;
-> >
-> > @@ -251,6 +257,17 @@ int virtio_gpu_mode_dumb_mmap(struct drm_file *file_priv,
-> >                               struct drm_device *dev,
-> >                               uint32_t handle, uint64_t *offset_p);
-> >
-> > +struct virtio_gpu_object_array *virtio_gpu_array_alloc(u32 nents);
-> > +struct virtio_gpu_object_array*
-> > +virtio_gpu_array_from_handles(struct drm_file *drm_file, u32 *handles, u32 nents);
-> > +void virtio_gpu_array_add_obj(struct virtio_gpu_object_array *objs,
-> > +                             struct drm_gem_object *obj);
-> > +int virtio_gpu_array_lock_resv(struct virtio_gpu_object_array *objs);
-> > +void virtio_gpu_array_unlock_resv(struct virtio_gpu_object_array *objs);
-> > +void virtio_gpu_array_add_fence(struct virtio_gpu_object_array *objs,
-> > +                               struct dma_fence *fence);
-> > +void virtio_gpu_array_put_free(struct virtio_gpu_object_array *objs);
-> > +
-> >  /* virtio vg */
-> >  int virtio_gpu_alloc_vbufs(struct virtio_gpu_device *vgdev);
-> >  void virtio_gpu_free_vbufs(struct virtio_gpu_device *vgdev);
-> > diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> > index 9c9ad3b14080..e88df5e06d06 100644
-> > --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-> > +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> > @@ -169,3 +169,86 @@ void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
-> >                                                 qobj->hw_res_handle);
-> >         virtio_gpu_object_unreserve(qobj);
-> >  }
-> > +
-> > +struct virtio_gpu_object_array *virtio_gpu_array_alloc(u32 nents)
-> > +{
-> > +       struct virtio_gpu_object_array *objs;
-> > +       size_t size = sizeof(*objs) + sizeof(objs->objs[0]) * nents;
-> > +
-> > +       objs = kmalloc(size, GFP_KERNEL);
-> > +       if (!objs)
-> > +               return NULL;
-> > +
-> > +       objs->nents = 0;
-> > +       objs->total = nents;
-> > +       return objs;
-> > +}
-> > +
-> > +static void virtio_gpu_array_free(struct virtio_gpu_object_array *objs)
-> > +{
-> > +       kfree(objs);
-> > +}
-> > +
-> > +struct virtio_gpu_object_array*
-> > +virtio_gpu_array_from_handles(struct drm_file *drm_file, u32 *handles, u32 nents)
-> > +{
-> > +       struct virtio_gpu_object_array *objs;
-> > +       u32 i;
-> > +
-> > +       objs = virtio_gpu_array_alloc(nents);
-> > +       if (!objs)
-> > +               return NULL;
-> > +
-> > +       for (i = 0; i < nents; i++) {
-> > +               objs->nents = i;
-> This line can be moved into the if-block just below.
-> > +               objs->objs[i] = drm_gem_object_lookup(drm_file, handles[i]);
-> > +               if (!objs->objs[i]) {
-> > +                       virtio_gpu_array_put_free(objs);
-> > +                       return NULL;
-> > +               }
-> > +       }
-> > +       objs->nents = i;
-> > +       return objs;
-> > +}
-> > +
-> > +void virtio_gpu_array_add_obj(struct virtio_gpu_object_array *objs,
-> > +                             struct drm_gem_object *obj)
-> > +{
-> > +       if (WARN_ON_ONCE(objs->nents == objs->total))
-> > +               return;
-> > +
-> > +       drm_gem_object_get(obj);
-> > +       objs->objs[objs->nents] = obj;
-> > +       objs->nents++;
-> > +}
-> > +
-> > +int virtio_gpu_array_lock_resv(struct virtio_gpu_object_array *objs)
-> > +{
-> > +       return drm_gem_lock_reservations(objs->objs, objs->nents,
-> > +                                        &objs->ticket);
-Unlike in other drivers where an "object array" is only needed in
-execbuffer, we will use this in several places, and often with only 1
-object in the array.  Can we special case that and do a quick
-reservation_object_lock?
+> > I think this is too big for what it is; just the two-line patch to stop
+> > incorporating the low bits of the PTE would be more appropriate.
+> 
+> Sufficient, yes, "appropriate", not so sure. All those comments about
+> pmd entry size are stale after this change.
 
-> > +}
-> > +
-> > +void virtio_gpu_array_unlock_resv(struct virtio_gpu_object_array *objs)
-> > +{
-> > +       drm_gem_unlock_reservations(objs->objs, objs->nents,
-> > +                                   &objs->ticket);
-> > +}
-> > +
-> > +void virtio_gpu_array_add_fence(struct virtio_gpu_object_array *objs,
-> > +                               struct dma_fence *fence)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < objs->nents; i++)
-> > +               reservation_object_add_excl_fence(objs->objs[i]->resv,
-> > +                                                 fence);
-> > +}
-> > +
-> > +void virtio_gpu_array_put_free(struct virtio_gpu_object_array *objs)
-> > +{
-> > +       u32 i;
-> > +
-> > +       for (i = 0; i < objs->nents; i++)
-> > +               drm_gem_object_put_unlocked(objs->objs[i]);
-> > +       virtio_gpu_array_free(objs);
-> > +}
-> > --
-> > 2.18.1
-> >
+But then they'll have to be put back in again.  This seems to be working
+for me, although I doubt I'm actually hitting the edge case that rocksdb
+hits:
+
+diff --git a/fs/dax.c b/fs/dax.c
+index 2e48c7ebb973..e77bd6aef10c 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -198,6 +198,10 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+  * if it did.
+  *
+  * Must be called with the i_pages lock held.
++ *
++ * If the xa_state refers to a larger entry, then it may return a locked
++ * smaller entry (eg a PTE entry) without waiting for the smaller entry
++ * to be unlocked.
+  */
+ static void *get_unlocked_entry(struct xa_state *xas)
+ {
+@@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
+ 	for (;;) {
+ 		entry = xas_find_conflict(xas);
+ 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+-				!dax_is_locked(entry))
++				!dax_is_locked(entry) ||
++				dax_entry_order(entry) < xas_get_order(xas))
+ 			return entry;
+ 
+ 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+@@ -253,8 +258,12 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ 
+ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+ {
+-	/* If we were the only waiter woken, wake the next one */
+-	if (entry)
++	/*
++	 * If we were the only waiter woken, wake the next one.
++	 * Do not wake anybody if the entry is locked; that indicates
++	 * we weren't woken.
++	 */
++	if (entry && !dax_is_locked(entry))
+ 		dax_wake_entry(xas, entry, false);
+ }
+ 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 052e06ff4c36..b17289d92af4 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1529,6 +1529,27 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
+ #endif
+ }
+ 
++/**
++ * xas_get_order() - Get the order of the entry being operated on.
++ * @xas: XArray operation state.
++ *
++ * Return: The order of the entry.
++ */
++static inline unsigned int xas_get_order(const struct xa_state *xas)
++{
++	unsigned int order = xas->xa_shift;
++
++#ifdef CONFIG_XARRAY_MULTI
++	unsigned int sibs = xas->xa_sibs;
++
++	while (sibs) {
++		order++;
++		sibs /= 2;
++	}
++#endif
++	return order;
++}
++
+ /**
+  * xas_set_update() - Set up XArray operation state for a callback.
+  * @xas: XArray operation state.
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 7df4f7f395bf..af024477ec93 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -95,6 +95,17 @@ static noinline void check_xa_err(struct xarray *xa)
+ //	XA_BUG_ON(xa, xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) != -EINVAL);
+ }
+ 
++static noinline void check_xas_order(struct xarray *xa)
++{
++	XA_STATE(xas, xa, 0);
++	unsigned int i;
++
++	for (i = 0; i < sizeof(long) * 8; i++) {
++		xas_set_order(&xas, 0, i);
++		XA_BUG_ON(xa, xas_get_order(&xas) != i);
++	}
++}
++
+ static noinline void check_xas_retry(struct xarray *xa)
+ {
+ 	XA_STATE(xas, xa, 0);
+@@ -1583,6 +1594,7 @@ static DEFINE_XARRAY(array);
+ static int xarray_checks(void)
+ {
+ 	check_xa_err(&array);
++	check_xas_order(&array);
+ 	check_xas_retry(&array);
+ 	check_xa_load(&array);
+ 	check_xa_mark(&array);
