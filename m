@@ -2,177 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A60E75DB66
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 04:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8DAB5DC5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 04:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfGCCPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 22:15:11 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:38384 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGCCPL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:15:11 -0400
-Received: by mail-yb1-f194.google.com with SMTP id j199so413076ybg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 19:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z4kMOk/YYzNxvAMqof3qlRcj1ufp2J+QyDPgodF1yYw=;
-        b=iiyk7YEyFrfAkR7pTRXiVD380NzL8vxQaZ5+hcIAoDw8iJj34N1vSqKt3RjK7FLWK8
-         sAr5CPS96YlWyP4DXsI+bThnor8HI1cGdNCE7pqsLVNRUwGFPRYlU+oUgkeA+xLLaOsI
-         /j5mjzgdAAm9CP2keT5PwNmCW0T8wLsJJfI9xkjsHIL2JkM0Y2fuLQ7Y4Z/njqMRsClD
-         xSatZ0GZukQYYbdL3LJdwWQ4hqgm41WmnVlbCQmBs8x7CCCZfH7HadMOT/o8wgBzh6bR
-         o7IehN1cuVpQEJOQoXYwQDulFpOtqzsz6u+NDEPDNUpj7Pb8Wquk9+klhVAdKul9kcOm
-         ZGQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z4kMOk/YYzNxvAMqof3qlRcj1ufp2J+QyDPgodF1yYw=;
-        b=cmr6NJwT4pgpXXr1kI5P5hZkvFOvwHyHn3GtDaHE6y8AGD+wNzn/iE41t2kLiT3HNr
-         8ejHKcwMScaTLa/z2qM/Ih0Nos1fWPVNsI5MLUjyLin82xTBpfbGoS2hFvTL3LIcP2hN
-         rvyM+cnvBqYyMKEXruGOflhiE31aEBHlUTEao5ENl6KpVBt5fBTgqSB31MqqF6iSzvs/
-         /I6j8NS7Jha10dsZ8NUdIe6fxiMCLY+2Y37ayVYKTN28HvhXomRXzCqVexVkHXSh5U5n
-         9HH8+9brZrjdugnytnJZmNo6jXC346sk9508FTeNNvNtmAbvDiXGHphoi3o36RUxyXgR
-         5aSA==
-X-Gm-Message-State: APjAAAWiukWdHKx9zQ7kWDhKlZaHvs8Mbbmy/Q1V1/DwlJHdfN3GzTIz
-        mbr5/QNhWEaLAFXaDj5jbWNAwlpRhgnQDjbe5o1NFA==
-X-Google-Smtp-Source: APXvYqx7+iYUlqDRuTHGsvqA9MgRxUZb/kkMYyWX2diA7ofyI42/WUrm/i42jjWqEXZ17jaHNf0hU48mcQ9DI9HFo5Y=
-X-Received: by 2002:a25:8109:: with SMTP id o9mr19519413ybk.132.1562120109299;
- Tue, 02 Jul 2019 19:15:09 -0700 (PDT)
+        id S1728336AbfGCCWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 22:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727703AbfGCCPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:15:46 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96561218A3;
+        Wed,  3 Jul 2019 02:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562120145;
+        bh=ALO5GQgjFEmrI84YIJBgdTgdTHVt7LTl74XEQehwXBE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lZytB2HuEtGGVgkXdmq9wvvCS2hot1zXl7dYfIwLfnSKVjTxVpvknHDgQQtq6LlYU
+         0VNv6CViMsX6ztOfkEJ0+lFQmGTQPDiUpHD3Ly0+4gd4s0mZEDng+WcnPzTNZhW6d4
+         Pl8QRG3x2+HgJO9ETZhpbiCtEgP6/jrrHprz6JAU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sergej Benilov <sergej.benilov@googlemail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 20/39] sis900: fix TX completion
+Date:   Tue,  2 Jul 2019 22:14:55 -0400
+Message-Id: <20190703021514.17727-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
+References: <20190703021514.17727-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190702075819.34787-1-walken@google.com> <20190702075819.34787-3-walken@google.com>
- <20190702160913.ptg4p2jyb6ih43hb@linux-r8p5>
-In-Reply-To: <20190702160913.ptg4p2jyb6ih43hb@linux-r8p5>
-From:   Michel Lespinasse <walken@google.com>
-Date:   Tue, 2 Jul 2019 19:14:55 -0700
-Message-ID: <CANN689HVDJXKEwB80yPAVwvRwnV4HfiucQVAho=dupKM_iKozw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] augmented rbtree: add new RB_DECLARE_CALLBACKS_MAX macro
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 9:09 AM Davidlohr Bueso <dave@stgolabs.net> wrote:
->
-> On Tue, 02 Jul 2019, Michel Lespinasse wrote:
->
-> >diff --git a/arch/x86/mm/pat_rbtree.c b/arch/x86/mm/pat_rbtree.c
-> >index fa16036fa592..2afad8e869fc 100644
-> >--- a/arch/x86/mm/pat_rbtree.c
-> >+++ b/arch/x86/mm/pat_rbtree.c
-> >@@ -54,23 +54,10 @@ static u64 get_subtree_max_end(struct rb_node *node)
-> >       return ret;
-> > }
-> >
-> >-static u64 compute_subtree_max_end(struct memtype *data)
-> >-{
-> >-      u64 max_end = data->end, child_max_end;
-> >-
-> >-      child_max_end = get_subtree_max_end(data->rb.rb_right);
-> >-      if (child_max_end > max_end)
-> >-              max_end = child_max_end;
-> >-
-> >-      child_max_end = get_subtree_max_end(data->rb.rb_left);
-> >-      if (child_max_end > max_end)
-> >-              max_end = child_max_end;
-> >-
-> >-      return max_end;
-> >-}
-> >+#define NODE_END(node) ((node)->end)
-> >
-> >-RB_DECLARE_CALLBACKS(static, memtype_rb_augment_cb, struct memtype, rb,
-> >-                   u64, subtree_max_end, compute_subtree_max_end)
-> >+RB_DECLARE_CALLBACKS_MAX(struct memtype, rb, u64, subtree_max_end, NODE_END,
-> >+                       static, memtype_rb_augment_cb)
->
-> (unrelated to this patch)
->
-> So fyi I've recently been looking at having the whole pat_rbtree use the (generic)
-> interval tree api, which would mean less code and more optimized. Of course,
-> unfortunately they aren't 100% compatible. Fundamentally the concept of overlaps
-> are different (pat_rbtree is does not consider overlap when 'node->start == end' -
-> same for the test to the right of the node). Thus for example interval_tree_iter_first()
-> won't necessarily return the same node as memtype_rb_lowest_match(). Similarly,
-> inserting a node with key collisions will have differences wrt what path to take;
-> equal 'start' in pat will go to the left, interval_tree to the right. All this,
-> I suspect, is inherited from how pat used to work with rbtree+list.
->
-> So generic ones cannot be used and if we just use INTERVAL_TREE_DEFINE template for
-> pat and add the ad-hoc code does not make sense wrt cleanup, nor do we get the
-> optimizations. We could of course, add them manually (by using cached rbtrees, for
-> example) and forget about interval_tree altogether; just seems a shame.
+From: Sergej Benilov <sergej.benilov@googlemail.com>
 
-Ehhh, I have my own list of gripes about interval tree (I'm
-responsible for some of these too):
+[ Upstream commit 8ac8a01092b2added0749ef937037bf1912e13e3 ]
 
-- The majority of interval tree users (though either the
-interval_tree.h or the interval_tree_generic.h API) do not store any
-overlapping intervals, and as such they really don't have any reason
-to use an augmented rbtree in the first place. This seems to be true
-for at least drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c,
-drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c, drivers/gpu/drm/drm_mm.c,
-drivers/gpu/drm/radeon/radeon_mn.c,
-drivers/infiniband/hw/usnic/usnic_uiom_interval_tree.c, and probably
-(not 100% sure) also drivers/infiniband/hw/hfi1/mmu_rb.c and
-drivers/vhost/vhost.c. I think the reason they do that is because they
-like to have the auto-generated insert / remove / iter functions
-rather than writing their own as they would have to do through the
-base rbtree API. Not necessarily a huge problem but it is annoying
-when working on inteval tree to consider that the data structure is
-not optimal for most of its users.
+Since commit 605ad7f184b60cfaacbc038aa6c55ee68dee3c89 "tcp: refine TSO autosizing",
+outbound throughput is dramatically reduced for some connections, as sis900
+is doing TX completion within idle states only.
 
-- The intervals are represented as [start, last], where most
-everything else in the kernel uses [start, end[ (with last == end -
-1). The reason it was done that way was for stabbing queries - I
-thought these would be nicer to represent as a [stab, stab] interval
-rather than [stab, stab+1[. But, things didn't turn out that way
-because of huge pages, and we end up with stabbing queries in the
-[stab, stab + page_size - 1] format, at which point we could just as
-easily go for [stab, stab + page_size[ representation. Having looked
-into it, my understanding is that *all* current users of the interval
-tree API would be better served if the intervals were represented as
-[start, end[ like everywhere else in the kernel.
+Make TX completion happen after every transmitted packet.
 
-- interval_tree_generic.h refers to interval_tree.h as being the
-generic one. I think this is quite confusing. To me
-interval_tree_generic is the generic implementation (it works with any
-scalar ITTYPE), and interval_tree.h is the specialized version (it
-works with unsigned long keys only). Fun fact, interval_tree.[c,h] was
-initially only meant as sample / test code - I thought everyone would
-use the generic version. Not a big deal, it's probably better for
-everyone to use the specialized version when applicable (unless they
-don't really need overlapping intervals in the first place, but that's
-a separate gripe).
+Test:
+netperf
 
-- I don't like that interval tree API forces rb_leftmost caching on
-its users. I'm not sure what was the use case that motivated it, but I
-don' think it's a relevant optimization for most users - I can only
-see a benefit if people are frequently calling the iter_first function
-with a search interval that is to the left of the leftmost entry, and
-that doesn't seem to be relevant to the general case (in the general
-case, maintaining leftmost has a O(1) cost and its benefit is only
-expected to show up in 1/N cases, ....)
+before patch:
+> netperf -H remote -l -2000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
-Going back to your specific pat_rbtree.c comment, I think using
-interval trees could still work. The issue with end is the typical one
-([start, last] vs [start, end[) which can be worked around by
-adjusting the end by 1 (still hate having to do that though). The
-issue with insertion order may possibly not matter, as
-memtype_rb_check_conflict verifies that any overlapping ranges will
-have the same configured memory type. So maybe the order doesn't
-matter in the end ??? Not 100% sure about that one.
+ 87380 327680 327680    253.44      0.06
 
-Do you have any comments on the above gripes and do you think they
-would be worth addressing ?
+after patch:
+> netperf -H remote -l -10000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
+ 87380 327680 327680    5.38       14.89
+
+Thx to Dave Miller and Eric Dumazet for helpful hints
+
+Signed-off-by: Sergej Benilov <sergej.benilov@googlemail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/sis/sis900.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/ethernet/sis/sis900.c b/drivers/net/ethernet/sis/sis900.c
+index 67f9bb6e941b..9b036c857b1d 100644
+--- a/drivers/net/ethernet/sis/sis900.c
++++ b/drivers/net/ethernet/sis/sis900.c
+@@ -1057,7 +1057,7 @@ sis900_open(struct net_device *net_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
+ 
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
+ 
+@@ -1578,7 +1578,7 @@ static void sis900_tx_timeout(struct net_device *net_dev)
+ 	sw32(txdp, sis_priv->tx_ring_dma);
+ 
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ }
+ 
+ /**
+@@ -1618,7 +1618,7 @@ sis900_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 			spin_unlock_irqrestore(&sis_priv->lock, flags);
+ 			return NETDEV_TX_OK;
+ 	}
+-	sis_priv->tx_ring[entry].cmdsts = (OWN | skb->len);
++	sis_priv->tx_ring[entry].cmdsts = (OWN | INTR | skb->len);
+ 	sw32(cr, TxENA | sr32(cr));
+ 
+ 	sis_priv->cur_tx ++;
+@@ -1674,7 +1674,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 	do {
+ 		status = sr32(isr);
+ 
+-		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|RxORN|RxERR|RxOK)) == 0)
++		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|TxDESC|RxORN|RxERR|RxOK)) == 0)
+ 			/* nothing intresting happened */
+ 			break;
+ 		handled = 1;
+@@ -1684,7 +1684,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 			/* Rx interrupt */
+ 			sis900_rx(net_dev);
+ 
+-		if (status & (TxURN | TxERR | TxIDLE))
++		if (status & (TxURN | TxERR | TxIDLE | TxDESC))
+ 			/* Tx interrupt */
+ 			sis900_finish_xmit(net_dev);
+ 
+@@ -1896,8 +1896,8 @@ static void sis900_finish_xmit (struct net_device *net_dev)
+ 
+ 		if (tx_status & OWN) {
+ 			/* The packet is not transmitted yet (owned by hardware) !
+-			 * Note: the interrupt is generated only when Tx Machine
+-			 * is idle, so this is an almost impossible case */
++			 * Note: this is an almost impossible condition
++			 * in case of TxDESC ('descriptor interrupt') */
+ 			break;
+ 		}
+ 
+@@ -2473,7 +2473,7 @@ static int sis900_resume(struct pci_dev *pci_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
+ 
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
+ 
 -- 
-Michel "Walken" Lespinasse
-A program is never fully debugged until the last user dies.
+2.20.1
+
