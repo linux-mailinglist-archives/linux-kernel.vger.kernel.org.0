@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C267C5DCFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE24F5DCF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 05:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfGCD3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 23:29:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57140 "EHLO mail.kernel.org"
+        id S1727570AbfGCD3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 23:29:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727065AbfGCD3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 23:29:00 -0400
+        id S1727537AbfGCD3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 23:29:05 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D077218B6;
-        Wed,  3 Jul 2019 03:28:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01A6A218A5;
+        Wed,  3 Jul 2019 03:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562124539;
-        bh=PneQkg/1LoiWhbHo/3kRwa199moyjmS6osDZ1+b+hS4=;
+        s=default; t=1562124543;
+        bh=kYNNnTVusaKzqFKhMtG1xMqObGAGIPB0g+azlIzMGwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kvd+ENDB7zDqW2Ebb0df8TU5h7q7TI/vwu2+wQFaLnHAY8ORUcvHD9Ck8VpaF+FQU
-         +vAiNDdbt9+E/1fVg775cgDCnM1RgDFJtrfT9jrGsIj1dPwde80nZpsyEkCS98cXSU
-         cUEMt1yDkxVGW1oTWgqrMd42duFX4WFk7ibgfM/8=
+        b=oDI/LywGOReWG32PEigvwpFMLn0T3fLjKccpR0OAPvsgQ6p7GGUZYgR9jJLYUET65
+         Hy0uujKonrve0x9bU7EPx8+wkMngaTEcF/kkXY1A+UK4/tPrq8dy3jpHRzZNjeeJk5
+         FraIzgGxNKuPyXSG60TFMse82VJjg+OV2b9v+n8M=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sandipan Das <sandipan@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 16/18] perf tools metric: Don't include duration_time in group
-Date:   Wed,  3 Jul 2019 00:27:44 -0300
-Message-Id: <20190703032746.21692-17-acme@kernel.org>
+Subject: [PATCH 17/18] perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
+Date:   Wed,  3 Jul 2019 00:27:45 -0300
+Message-Id: <20190703032746.21692-18-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703032746.21692-1-acme@kernel.org>
 References: <20190703032746.21692-1-acme@kernel.org>
@@ -44,64 +51,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 
-The Memory_BW metric generates groups including duration_time, which
-maps to a software event.
+'probe libc's inet_pton & backtrace it with ping' testcase sometimes
+fails on powerpc because distro ping binary does not have symbol
+information and thus it prints "[unknown]" function name in the
+backtrace.
 
-For some reason this makes the group always not count.
+Accept "[unknown]" as valid function name for powerpc as well.
 
-Always put duration_time outside a group when generating metrics.  It's
-always the same time, so no need to group it.
+ # perf test -v "probe libc's inet_pton & backtrace it with ping"
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190628220737.13259-3-andi@firstfloor.org
+Before:
+
+  59: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 79695
+  ping 79718 [077] 96483.787025: probe_libc:inet_pton: (7fff83a754c8)
+  7fff83a754c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
+  7fff83a2b7a0 gaih_inet.constprop.7+0x1020
+  (/usr/lib64/power9/libc-2.28.so)
+  7fff83a2c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
+  1171830f4 [unknown] (/usr/bin/ping)
+  FAIL: expected backtrace entry
+  ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+  got "1171830f4 [unknown] (/usr/bin/ping)"
+  test child finished with -1
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: FAILED!
+
+After:
+
+  59: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 79085
+  ping 79108 [045] 96400.214177: probe_libc:inet_pton: (7fffbb9654c8)
+  7fffbb9654c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
+  7fffbb91b7a0 gaih_inet.constprop.7+0x1020
+  (/usr/lib64/power9/libc-2.28.so)
+  7fffbb91c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
+  132e830f4 [unknown] (/usr/bin/ping)
+  test child finished with 0
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: Ok
+
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Reviewed-by: Kim Phillips <kim.phillips@amd.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sandipan Das <sandipan@linux.ibm.com>
+Fixes: 1632936480a5 ("perf tests: Fix record+probe_libc_inet_pton.sh without ping's debuginfo")
+Link: http://lkml.kernel.org/r/1561630614-3216-1-git-send-email-s1seetee@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/metricgroup.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 7d36435fa84c..d8164574cb16 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -409,6 +409,7 @@ static int metricgroup__add_metric(const char *metric, struct strbuf *events,
- 			const char **ids;
- 			int idnum;
- 			struct egroup *eg;
-+			bool no_group = false;
- 
- 			pr_debug("metric expr %s for %s\n", pe->metric_expr, pe->metric_name);
- 
-@@ -419,11 +420,25 @@ static int metricgroup__add_metric(const char *metric, struct strbuf *events,
- 				strbuf_addf(events, ",");
- 			for (j = 0; j < idnum; j++) {
- 				pr_debug("found event %s\n", ids[j]);
-+				/*
-+				 * Duration time maps to a software event and can make
-+				 * groups not count. Always use it outside a
-+				 * group.
-+				 */
-+				if (!strcmp(ids[j], "duration_time")) {
-+					if (j > 0)
-+						strbuf_addf(events, "}:W,");
-+					strbuf_addf(events, "duration_time");
-+					no_group = true;
-+					continue;
-+				}
- 				strbuf_addf(events, "%s%s",
--					j == 0 ? "{" : ",",
-+					j == 0 || no_group ? "{" : ",",
- 					ids[j]);
-+				no_group = false;
- 			}
--			strbuf_addf(events, "}:W");
-+			if (!no_group)
-+				strbuf_addf(events, "}:W");
- 
- 			eg = malloc(sizeof(struct egroup));
- 			if (!eg) {
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 9b7632ff70aa..f12a4e217968 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -45,7 +45,7 @@ trace_libc_inet_pton_backtrace() {
+ 		eventattr='max-stack=4'
+ 		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+ 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+-		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
++		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
 -- 
 2.20.1
 
