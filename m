@@ -2,168 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BFA15E9F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 19:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A745E9DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 19:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfGCRCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 13:02:22 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:54271 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbfGCRCT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 13:02:19 -0400
-Received: by mail-qk1-f202.google.com with SMTP id i196so3717736qke.20
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 10:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=ld5qNoKshdyRmavLPGoPc6BR++OK/w6IRlR9/ebcOn4=;
-        b=TZrCGi3jcqjHluRGRqVScSH3nnF0ngfzc7kFNydCQYZVuwuUp9YebJ1FMq1bxqWMB2
-         tHhtCnnfbK7nhfIkJVSbdsly1Sb2uJEw63ORMMbMjGr+rgwFeja8VYmU9bIvdijewmMB
-         skRF5jPJjA2NhKt8fyeSp1jCTaAEYa1NkzzKxF1iRkEaRFI3/EQRfY+F+d+TlRIsPdAv
-         IzoPvqZd+U6VyoEB4zaqJQ0v0zehg1PHAldRx3VPq/5pID7CAoImHt+9f8+LdaSB4iK/
-         jfZo3e5+EO4pm+3WJra8HHkX2pcDrI7PQWAwwDh+lDqqDiUn/6Y+hvW1lnoMzw3cM47K
-         dJnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ld5qNoKshdyRmavLPGoPc6BR++OK/w6IRlR9/ebcOn4=;
-        b=fjYUBQDxzvfBTtifKuT1MHOLzItrCsLCDZ4s+H3MbG+DgWf2TBt6iwW/bkfFPBSG4z
-         MOetX8PKnsYZ73TSMi5RgK2JrNFvp7Vj2Q7gA2ggv8dG//FohHLLlhMvpQbhlnq9lLir
-         aZEUWYP0MaZdQQeG4hXIirpYeA7bJy2xU/hmi416BKh7NTU4JgbwgU6PoSA+amu0yGnL
-         SpaY+2E/UeZrpUfJuvvXOk2HpEmh55WeGu2b+lto2YuBlvuO6FdvWQGrWAvqje0AiBKq
-         BqWceRoZSTKavMFTfKD1kd8i5hqungRPZd1HqKOgjgOr82j6//plOzasFx65gO9HdY5r
-         YA/w==
-X-Gm-Message-State: APjAAAUWFMe+73XA8va/ih5LHSwJRHntHqDxGkDMJnezJhQTPGRK6uP9
-        xkWkv0Izv4onmIUKt47B1Wfc3Ajf4Gzi
-X-Google-Smtp-Source: APXvYqzUJWgXSVAR31qVHYmLDhXP3MkV6i2uPSVDio5Wx5fkOVznYsw7k/Ij5SbCILaDCrihlPc/nePm9qGy
-X-Received: by 2002:ac8:6958:: with SMTP id n24mr32368355qtr.360.1562173338277;
- Wed, 03 Jul 2019 10:02:18 -0700 (PDT)
-Date:   Wed,  3 Jul 2019 10:01:18 -0700
-In-Reply-To: <20190703170118.196552-1-brianvv@google.com>
-Message-Id: <20190703170118.196552-7-brianvv@google.com>
-Mime-Version: 1.0
-References: <20190703170118.196552-1-brianvv@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH bpf-next RFC v3 6/6] selftests/bpf: add test to measure
- performance of BPF_MAP_DUMP
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Brian Vazquez <brianvv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727137AbfGCRBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 13:01:45 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:36968 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfGCRBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:01:42 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hiidX-0000CZ-9D; Wed, 03 Jul 2019 11:01:42 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hiidV-0005bl-VX; Wed, 03 Jul 2019 11:01:38 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed,  3 Jul 2019 11:01:34 -0600
+Message-Id: <20190703170136.21515-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, sbates@raithlin.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
+        autolearn_force=no version=3.4.2
+Subject: [PATCH 0/2]  Fix use-after-free bug when ports are removed
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This tests compares the amount of time that takes to read an entire
-table of 100K elements on a bpf hashmap using both BPF_MAP_DUMP and
-BPF_MAP_GET_NEXT_KEY + BPF_MAP_LOOKUP_ELEM.
+Hey,
 
-Signed-off-by: Brian Vazquez <brianvv@google.com>
----
- tools/testing/selftests/bpf/test_maps.c | 65 +++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+NVME target ports can be removed while there are still active
+controllers. Largely this is fine, except some admin commands
+can access the req->port (for example, id-ctrl uses the port's
+inline date size as part of it's response). This was found
+while testing with KASAN.
 
-diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
-index b19ba6aa8e36..786d0e340aed 100644
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -18,6 +18,7 @@
- #include <sys/socket.h>
- #include <netinet/in.h>
- #include <linux/bpf.h>
-+#include <linux/time64.h>
- 
- #include <bpf/bpf.h>
- #include <bpf/libbpf.h>
-@@ -388,6 +389,69 @@ static void test_hashmap_dump(void)
- 	close(fd);
- }
- 
-+static void test_hashmap_dump_perf(void)
-+{
-+	int fd, i, max_entries = 100000;
-+	uint64_t key, value, next_key;
-+	bool next_key_valid = true;
-+	void *buf;
-+	u32 buf_len, entries;
-+	int j = 0;
-+	int clk_id = CLOCK_MONOTONIC;
-+	struct timespec begin, end;
-+	long long time_spent, dump_time_spent;
-+	double res;
-+	int tests[] = {1, 2, 230, 5000, 73000, 100000, 234567};
-+	int test_len = ARRAY_SIZE(tests);
-+	const int elem_size = sizeof(key) + sizeof(value);
-+
-+	fd = helper_fill_hashmap(max_entries);
-+	// Alloc memory considering the largest buffer
-+	buf = malloc(elem_size * tests[test_len-1]);
-+	assert(buf != NULL);
-+
-+test:
-+	entries = tests[j];
-+	buf_len = elem_size*tests[j];
-+	j++;
-+	clock_gettime(clk_id, &begin);
-+	errno = 0;
-+	i = 0;
-+	while (errno == 0) {
-+		bpf_map_dump(fd, !i ? NULL : &key,
-+				  buf, &buf_len);
-+		if (errno)
-+			break;
-+		if (!i)
-+			key = *((uint64_t *)(buf + buf_len - elem_size));
-+		i += buf_len / elem_size;
-+	}
-+	clock_gettime(clk_id, &end);
-+	assert(i  == max_entries);
-+	dump_time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+			  end.tv_nsec - begin.tv_nsec;
-+	next_key_valid = true;
-+	clock_gettime(clk_id, &begin);
-+	assert(bpf_map_get_next_key(fd, NULL, &key) == 0);
-+	for (i = 0; next_key_valid; i++) {
-+		next_key_valid = bpf_map_get_next_key(fd, &key, &next_key) == 0;
-+		assert(bpf_map_lookup_elem(fd, &key, &value) == 0);
-+		key = next_key;
-+	}
-+	clock_gettime(clk_id, &end);
-+	time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+		     end.tv_nsec - begin.tv_nsec;
-+	res = (1-((double)dump_time_spent/time_spent))*100;
-+	printf("buf_len_%u:\t %llu entry-by-entry: %llu improvement %lf\n",
-+	       entries, dump_time_spent, time_spent, res);
-+	assert(i  == max_entries);
-+
-+	if (j < test_len)
-+		goto test;
-+	free(buf);
-+	close(fd);
-+}
-+
- static void test_hashmap_zero_seed(void)
- {
- 	int i, first, second, old_flags;
-@@ -1748,6 +1812,7 @@ static void run_all_tests(void)
- 	test_hashmap_walk(0, NULL);
- 	test_hashmap_zero_seed();
- 	test_hashmap_dump();
-+	test_hashmap_dump_perf();
- 
- 	test_arraymap(0, NULL);
- 	test_arraymap_percpu(0, NULL);
--- 
-2.22.0.410.gd8fdbe21b5-goog
+Two patches follow which disconnect active controllers when the
+ports are removed for loop and rdma. I'm not sure if fc has the
+same issue and have no way to test this.
 
+Alternatively, we could add reference counting to the struct port,
+but I think this is a more involved change and could be done later
+after we fix the bug quickly.
+
+Thanks,
+
+Logan
+
+--
+
+Logan Gunthorpe (2):
+  nvmet-loop: Fix use-after-free bug when a port is removed
+  nvmet-rdma: Fix use-after-free bug when a port is removed
+
+ drivers/nvme/target/loop.c | 11 +++++++++++
+ drivers/nvme/target/rdma.c | 16 ++++++++++++++++
+ 2 files changed, 27 insertions(+)
+
+--
+2.20.1
