@@ -2,96 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB4C5ED6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A3F45ED7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfGCUWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:22:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33190 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfGCUWw (ORCPT
+        id S1727159AbfGCU2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:28:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42269 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfGCU2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:22:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LHuU3D+fxSQW20MsWAA8+d++JN4yA+fv7e++zT2VJjs=; b=BBbp390lSGDgNpxrKMWWzkELR
-        5sam5VSbPB6R87R6j53kvxR3ihcTTpi8qb6vjPVQsUq6O4xg+cqS9xDRUISQo4+UnutSJG7wz1T+u
-        CPsqq3nCHrVhqjBteB2wYDlZSTkiSNPtmHKhxuSv1jSAs1i0NhW7+NtzLWr+mijAB6Fc8X623tovd
-        OfkChIY6iAw6PL/mTumz7Mq5c9pR4rnaLsY3BxYFs0fpoE1Ug0vaOZR1i+1VSSA672NfCHu8vSiSR
-        F/Mw2/uzWCYuyVALQMntHs+buP2PoRYSjU3d+4ykavctRteGXvBP5aIqlRqGs9/Q3UwxWQ+ONIiYw
-        kxBEqt9KA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hilly-0001YM-MQ; Wed, 03 Jul 2019 20:22:34 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CBB299802C5; Wed,  3 Jul 2019 22:22:31 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 22:22:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
-        rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
-Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
-        joel@joelfernandes.org, devel@etsukata.com
-Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
-Message-ID: <20190703202231.GI16275@worktop.programming.kicks-ass.net>
-References: <20190703102731.236024951@infradead.org>
- <20190703102807.588906400@infradead.org>
+        Wed, 3 Jul 2019 16:28:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a10so3130089wrp.9;
+        Wed, 03 Jul 2019 13:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IDdbRLiXCB65ziZYGfUuZK0iXp9TkXgdisLvBRs8jaY=;
+        b=mCC5Njw7GStxXaKNTXARfVVNIV+nFsxO6MmEi+jNoVd8mNoh1//b8pnNh4PLjz+6wF
+         JBwW4E0zD6yjqS4DBwkqXjjNnHpDn9sbUZS05NGKW5NtHl8rVtix9gyf3k4cSeePmmTd
+         OYnP6nkSuxw13YpLr1+g35oK1zTuqtBEBT3dVnr/lg0cwXq7oMFMObMbLwp4SqXGPX0X
+         7OrJcyfj8Z7KoynzP3qqGMOk9fF8cQqffO6ZiRcamEZE7duWOsXUX+ab0lPr0kr1hAGg
+         Pq295HlsHLgwsFhpfuvQa4Dq+O/IFRhDBhWdhvCfhZKb4xa6yN0RbWz0OW9Y6Jh+ZtxF
+         IRmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IDdbRLiXCB65ziZYGfUuZK0iXp9TkXgdisLvBRs8jaY=;
+        b=rtwshVG1AYOQ/2Uqfjs66K1ZBt0zpmBaC1cq1845TQyrs9vnK+2WY89Zvsu2SfNLn1
+         69h0AqfO92OycxSoFckhanNBNaU3B46/pSHrlgoi3ccrqJ+LPLgM2IJc6npF7bKOOGXr
+         VaKHxlJXx1n4BM1h9Q96r2aGk+gAugwudSfax3L7wb+mKRh9rXQ6kkMErvBIU5e97VEm
+         hVtnI6JWkNedvkXTDTcEWtaBBtq3/V7Dgt4tMQpEOxY5ixLhGcMlzJpbcZCPwRKkHSw9
+         7017zNG44hB5N/zd+sUeu90rvOZ6/qlwojIfsn/sA0QuZUxHuZ6VtcKw6E3dsCcHEmIu
+         2SRQ==
+X-Gm-Message-State: APjAAAUsW208/tqGzN6NrWG0IhRUtHFJfSpdRCs1QLltLi1dgFDHTypp
+        gGONZSgOpbh+1Yj1Ps3Na/ykNZKj
+X-Google-Smtp-Source: APXvYqwbIo6riFOMJ1u6NjGAiNONXGCGelLqGoX9+1HEMIKIld8vupONM7TtIn9RDWkbcpr4UulPoQ==
+X-Received: by 2002:adf:a55b:: with SMTP id j27mr24033584wrb.154.1562185710395;
+        Wed, 03 Jul 2019 13:28:30 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:4503:872e:8227:c4e0? (p200300EA8BD60C004503872E8227C4E0.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:4503:872e:8227:c4e0])
+        by smtp.googlemail.com with ESMTPSA id f204sm5096570wme.18.2019.07.03.13.28.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 13:28:29 -0700 (PDT)
+Subject: Re: [PATCH v2 6/7] dt-bindings: net: realtek: Add property to
+ configure LED mode
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190703193724.246854-1-mka@chromium.org>
+ <20190703193724.246854-6-mka@chromium.org>
+ <e7fa2c8c-d53e-2480-d239-e2c0b362dc4f@gmail.com>
+Message-ID: <f25dedfc-d961-f278-3e55-9f0574557f84@gmail.com>
+Date:   Wed, 3 Jul 2019 22:22:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703102807.588906400@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e7fa2c8c-d53e-2480-d239-e2c0b362dc4f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 12:27:34PM +0200, root wrote:
-> Despire the current efforts to read CR2 before tracing happens there
-> still exist a number of possible holes:
+On 03.07.2019 22:13, Heiner Kallweit wrote:
+> On 03.07.2019 21:37, Matthias Kaehlcke wrote:
+>> The LED behavior of some Realtek PHYs is configurable. Add the
+>> property 'realtek,led-modes' to specify the configuration of the
+>> LEDs.
+>>
+>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>> Changes in v2:
+>> - patch added to the series
+>> ---
+>>  .../devicetree/bindings/net/realtek.txt         |  9 +++++++++
+>>  include/dt-bindings/net/realtek.h               | 17 +++++++++++++++++
+>>  2 files changed, 26 insertions(+)
+>>  create mode 100644 include/dt-bindings/net/realtek.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/realtek.txt b/Documentation/devicetree/bindings/net/realtek.txt
+>> index 71d386c78269..40b0d6f9ee21 100644
+>> --- a/Documentation/devicetree/bindings/net/realtek.txt
+>> +++ b/Documentation/devicetree/bindings/net/realtek.txt
+>> @@ -9,6 +9,12 @@ Optional properties:
+>>  
+>>  	SSC is only available on some Realtek PHYs (e.g. RTL8211E).
+>>  
+>> +- realtek,led-modes: LED mode configuration.
+>> +
+>> +	A 0..3 element vector, with each element configuring the operating
+>> +	mode of an LED. Omitted LEDs are turned off. Allowed values are
+>> +	defined in "include/dt-bindings/net/realtek.h".
+>> +
+>>  Example:
+>>  
+>>  mdio0 {
+>> @@ -20,5 +26,8 @@ mdio0 {
+>>  		reg = <1>;
+>>  		realtek,eee-led-mode-disable;
+>>  		realtek,enable-ssc;
+>> +		realtek,led-modes = <RTL8211E_LINK_ACTIVITY
+>> +				     RTL8211E_LINK_100
+>> +				     RTL8211E_LINK_1000>;
+>>  	};
+>>  };
+>> diff --git a/include/dt-bindings/net/realtek.h b/include/dt-bindings/net/realtek.h
+>> new file mode 100644
+>> index 000000000000..8d64f58d58f8
+>> --- /dev/null
+>> +++ b/include/dt-bindings/net/realtek.h
+>> @@ -0,0 +1,17 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _DT_BINDINGS_REALTEK_H
+>> +#define _DT_BINDINGS_REALTEK_H
+>> +
+>> +/* LED modes for RTL8211E PHY */
+>> +
+>> +#define RTL8211E_LINK_10		1
+>> +#define RTL8211E_LINK_100		2
+>> +#define RTL8211E_LINK_1000		4
+>> +#define RTL8211E_LINK_10_100		3
+>> +#define RTL8211E_LINK_10_1000		5
+>> +#define RTL8211E_LINK_100_1000		6
+>> +#define RTL8211E_LINK_10_100_1000	7
+>> +
+>> +#define RTL8211E_LINK_ACTIVITY		(1 << 16)
 > 
->   idtentry page_fault             do_page_fault           has_error_code=1
->     call error_entry
->       TRACE_IRQS_OFF
->         call trace_hardirqs_off*
->           #PF // modifies CR2
+> I don't see where this is used.
 > 
->       CALL_enter_from_user_mode
->         __context_tracking_exit()
->           trace_user_exit(0)
->             #PF // modifies CR2
-> 
->     call do_page_fault
->       address = read_cr2(); /* whoopsie */
-> 
-> And similar for i386.
-> 
-> Fix it by pulling the CR2 read into the entry code, before any of that
-> stuff gets a chance to run and ruin things.
-> 
-> Ideally we'll clean up the entry code by moving this tracing and
-> context tracking nonsense into C some day, but let's not delay fixing
-> this longer.
-> 
+Clear now, disregard my comment.
 
-> @@ -1180,10 +1189,10 @@ idtentry xenint3		do_int3			has_error_co
->  #endif
->  
->  idtentry general_protection	do_general_protection	has_error_code=1
-> -idtentry page_fault		do_page_fault		has_error_code=1
-> +idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
->  
->  #ifdef CONFIG_KVM_GUEST
-> -idtentry async_page_fault	do_async_page_fault	has_error_code=1
-> +idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
->  #endif
-
-While going over the various idt handlers, I found that we probably also
-need read_cr2 on do_double_fault(), otherwise it is susceptible to the
-same problem.
-
+>> +
+>> +#endif
+>>
+> 
 
