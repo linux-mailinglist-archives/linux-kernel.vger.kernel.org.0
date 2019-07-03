@@ -2,178 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88DCB5DB22
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD2F5E16A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:53:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfGCBuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:50:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:59472 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGCBuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:50:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 18:50:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,445,1557212400"; 
-   d="scan'208";a="184630185"
-Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Jul 2019 18:50:02 -0700
-From:   Voon Weifeng <weifeng.voon@intel.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Kweh Hock Leong <hock.leong.kweh@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>
-Subject: [PATCH v1 net-next] net: stmmac: enable clause 45 mdio support
-Date:   Wed,  3 Jul 2019 17:50:04 +0800
-Message-Id: <1562147404-4371-1-git-send-email-weifeng.voon@intel.com>
-X-Mailer: git-send-email 1.9.1
+        id S1726977AbfGCJxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:53:51 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:38337 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfGCJxv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 05:53:51 -0400
+Received: from [192.168.1.110] ([95.114.150.241]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MYvPq-1i4UQO1u6a-00UvZs; Wed, 03 Jul 2019 11:53:48 +0200
+Subject: Re: [PATCH] fs/seq_file: Replace a seq_printf() call by seq_puts() in
+ seq_hex_dump()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
+Date:   Wed, 3 Jul 2019 11:53:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:xiC9aC0SXQUwA+BYVt/+cV5O9DXdVDss0yAIx+MA2irR0N/sKsm
+ udBlm60BA5MbOe92vuTq4Qt3CHgj6T+u2bceMRInHA27d/jhvjAD3DeH5KutUKXwt+tLYep
+ QdblIoLPF2rdW/drmNZeV+qy7YXWSajmZ8+rL8bQFq7VTL1W0abzuK0cij6Qf+XH1GEir40
+ kyRDkF1zIp2Ne74uoBkOQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aPL7KJiS+uI=:7S7IBlN8EoVT6GT1IlIKwA
+ o12t/oiXZ0KNqic8DlaUWj/Org71srYU03+4+GFF/dqevDPvGGbubRHtcE2+GdaxFotH6DUBm
+ sftkTKR7YXHAyDLPAX5wUGQt9IQFXOIQ/8fwocN8i9cAeXDvuLZ1hgsLo0IR6lqKyAdUp83OD
+ Gd+Skw2CG+VTgfg6EDktkIDczBP7hj5Rv0jGmdj95wteby4rUo4clq9o+6ZyO8DcJpAp+B9Of
+ A+gXm8RyVlzBhYyzBScR6vFRaPjHIKso3LGWcY++CWFLq8SeKc8zFr5moGuSPDs5oWrXgZP8s
+ /glNL1Ka+kTuqx9h297iRDHVHezCSUeDHyIBm3exgs8nTLpwI9s1e0aZOKO46BV21gbsGzye7
+ hbOl5A+UQRjFcVADjfSTgccapUQ53DM5AlQJlxEnDrPC3MRChfLbMj5Slts54QLuy6BSqYS2m
+ y002WGW5kHjCgpgomdSUkHczm3i79jIBpdbFkVhBhg+eR5kjOng7wiT9vdFScM2f31nACvBzT
+ xDfQCbw6MXb+twLPqBD4f2viePHc/cGSPXzelRkrGg+aPftF86kiqWbJgIRmpEUnBPexdaaFq
+ Fv3uzrlGtsLE9bagQqWa21/Xuijy4kEQymMphQFvC3dXIkUKq8sZa8ypopLl9R62/ge6davtZ
+ D4QPyAIjqvowjJ26I7ngOIBwiH0SQZh5W/tvNhLES9yEItSOVPFaFuiRx+osA8gcLDVdw41Vs
+ /JQ5f6OQovUAp9WNjXrf1IlnTneUvD45u2SA74H839mWdij/18A9yU1iozg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kweh Hock Leong <hock.leong.kweh@intel.com>
+On 02.07.19 18:38, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 Jul 2019 18:28:10 +0200
+> 
+> A string which did not contain a data format specification should be put
+> into a sequence. Thus use the corresponding function “seq_puts”.
 
-DWMAC4 is capable to support clause 45 mdio communication.
-This patch enable the feature on stmmac_mdio_write() and
-stmmac_mdio_read() by following phy_write_mmd() and
-phy_read_mmd() mdiobus read write implementation format.
+Looks good, but have you checked whether "m" could ever be NULL and
+whether seq_puts() has a check for that ?
 
-Reviewed-by: Li, Yifan <yifan2.li@intel.com>
-Signed-off-by: Kweh Hock Leong <hock.leong.kweh@intel.com>
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: Weifeng Voon <weifeng.voon@intel.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index 18cadf0b0d66..b9edb18769f2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -24,11 +24,27 @@
- 
- #define MII_BUSY 0x00000001
- #define MII_WRITE 0x00000002
-+#define MII_DATA_MASK GENMASK(15, 0)
- 
- /* GMAC4 defines */
- #define MII_GMAC4_GOC_SHIFT		2
-+#define MII_GMAC4_REG_ADDR_SHIFT	16
- #define MII_GMAC4_WRITE			(1 << MII_GMAC4_GOC_SHIFT)
- #define MII_GMAC4_READ			(3 << MII_GMAC4_GOC_SHIFT)
-+#define MII_GMAC4_C45E			BIT(1)
-+
-+static void stmmac_mdio_c45_setup(struct stmmac_priv *priv, int phyreg,
-+				  u32 *val, u32 *data)
-+{
-+	unsigned int reg_shift = priv->hw->mii.reg_shift;
-+	unsigned int reg_mask = priv->hw->mii.reg_mask;
-+
-+	*val |= MII_GMAC4_C45E;
-+	*val &= ~reg_mask;
-+	*val |= ((phyreg >> MII_DEVADDR_C45_SHIFT) << reg_shift) & reg_mask;
-+
-+	*data |= (phyreg & MII_REGADDR_C45_MASK) << MII_GMAC4_REG_ADDR_SHIFT;
-+}
- 
- /* XGMAC defines */
- #define MII_XGMAC_SADDR			BIT(18)
-@@ -155,22 +171,26 @@ static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
- 	struct stmmac_priv *priv = netdev_priv(ndev);
- 	unsigned int mii_address = priv->hw->mii.addr;
- 	unsigned int mii_data = priv->hw->mii.data;
--	u32 v;
--	int data;
- 	u32 value = MII_BUSY;
-+	int data = 0;
-+	u32 v;
- 
- 	value |= (phyaddr << priv->hw->mii.addr_shift)
- 		& priv->hw->mii.addr_mask;
- 	value |= (phyreg << priv->hw->mii.reg_shift) & priv->hw->mii.reg_mask;
- 	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
- 		& priv->hw->mii.clk_csr_mask;
--	if (priv->plat->has_gmac4)
-+	if (priv->plat->has_gmac4) {
- 		value |= MII_GMAC4_READ;
-+		if (phyreg & MII_ADDR_C45)
-+			stmmac_mdio_c45_setup(priv, phyreg, &value, &data);
-+	}
- 
- 	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
- 			       100, 10000))
- 		return -EBUSY;
- 
-+	writel(data, priv->ioaddr + mii_data);
- 	writel(value, priv->ioaddr + mii_address);
- 
- 	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-@@ -178,7 +198,7 @@ static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
- 		return -EBUSY;
- 
- 	/* Read the data from the MII data register */
--	data = (int)readl(priv->ioaddr + mii_data);
-+	data = (int)readl(priv->ioaddr + mii_data) & MII_DATA_MASK;
- 
- 	return data;
- }
-@@ -198,8 +218,9 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
- 	struct stmmac_priv *priv = netdev_priv(ndev);
- 	unsigned int mii_address = priv->hw->mii.addr;
- 	unsigned int mii_data = priv->hw->mii.data;
--	u32 v;
- 	u32 value = MII_BUSY;
-+	int data = phydata;
-+	u32 v;
- 
- 	value |= (phyaddr << priv->hw->mii.addr_shift)
- 		& priv->hw->mii.addr_mask;
-@@ -207,10 +228,13 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
- 
- 	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
- 		& priv->hw->mii.clk_csr_mask;
--	if (priv->plat->has_gmac4)
-+	if (priv->plat->has_gmac4) {
- 		value |= MII_GMAC4_WRITE;
--	else
-+		if (phyreg & MII_ADDR_C45)
-+			stmmac_mdio_c45_setup(priv, phyreg, &value, &data);
-+	} else {
- 		value |= MII_WRITE;
-+	}
- 
- 	/* Wait until any existing MII operation is complete */
- 	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-@@ -218,7 +242,7 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
- 		return -EBUSY;
- 
- 	/* Set the MII address register to write */
--	writel(phydata, priv->ioaddr + mii_data);
-+	writel(data, priv->ioaddr + mii_data);
- 	writel(value, priv->ioaddr + mii_address);
- 
- 	/* Wait until any existing MII operation is complete */
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index d0af7d37fdf9..1739c6dc470e 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -195,6 +195,8 @@ static inline const char *phy_modes(phy_interface_t interface)
- /* Or MII_ADDR_C45 into regnum for read/write on mii_bus to enable the 21 bit
-    IEEE 802.3ae clause 45 addressing mode used by 10GIGE phy chips. */
- #define MII_ADDR_C45 (1<<30)
-+#define MII_DEVADDR_C45_SHIFT	16
-+#define MII_REGADDR_C45_MASK	GENMASK(15, 0)
- 
- struct device;
- struct phylink;
+--mtx
+
 -- 
-1.9.1
-
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
