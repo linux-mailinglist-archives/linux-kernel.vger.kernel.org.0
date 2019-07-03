@@ -2,89 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D53A5E5CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7385E5D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfGCNyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 09:54:09 -0400
-Received: from mail-eopbgr80085.outbound.protection.outlook.com ([40.107.8.85]:35716
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726255AbfGCNyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 09:54:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ghtVbsMHPGtBZ95j3U48EUaMVh20TgmVWugutbpb8bg=;
- b=BHBR0Hx+HMQOE23oXN+uv5bkVxdqQ1LB5utBLo70lUO0tXpeu7ATtFD4BzO2Dr7Qa+XiaxQfBhBWkJTP+5zU95qh9SdSfeDPwmT49deavYHcWtwmLmLKxmi7sW/d7qrZ0PPvpz3joSa/ZwFkKatAw3MsxzObpV/+ZigELMSR6ag=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB3006.eurprd04.prod.outlook.com (10.170.228.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Wed, 3 Jul 2019 13:54:05 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::d83:14c4:dedb:213b]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::d83:14c4:dedb:213b%5]) with mapi id 15.20.2032.019; Wed, 3 Jul 2019
- 13:54:05 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Horia Geanta <horia.geanta@nxp.com>
-CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/16] crypto: caam - simplify clock initialization
-Thread-Topic: [PATCH v4 02/16] crypto: caam - simplify clock initialization
-Thread-Index: AQHVMXdIXfeYpJiLM0ubBrQgfG+rsA==
-Date:   Wed, 3 Jul 2019 13:54:05 +0000
-Message-ID: <VI1PR04MB5055EFBE9ED3AB87BBA8096AEEFB0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <20190703081327.17505-1-andrew.smirnov@gmail.com>
- <20190703081327.17505-3-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [82.144.34.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1cad2871-6e01-496c-6319-08d6ffbde9c3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB3006;
-x-ms-traffictypediagnostic: VI1PR04MB3006:
-x-microsoft-antispam-prvs: <VI1PR04MB30069ECF4BEDA23F935AF8A9EEFB0@VI1PR04MB3006.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:264;
-x-forefront-prvs: 00872B689F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(346002)(396003)(366004)(189003)(199004)(229853002)(186003)(6506007)(102836004)(26005)(5660300002)(256004)(76176011)(7696005)(54906003)(4744005)(99286004)(74316002)(6436002)(53546011)(9686003)(110136005)(68736007)(7736002)(6116002)(2906002)(305945005)(8936002)(4326008)(3846002)(2501003)(33656002)(446003)(8676002)(81166006)(86362001)(53936002)(6246003)(64756008)(66446008)(66556008)(66476007)(66946007)(44832011)(316002)(66066001)(6636002)(55016002)(81156014)(25786009)(71200400001)(71190400001)(73956011)(52536014)(486006)(478600001)(76116006)(91956017)(476003)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3006;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /AqH5Q5N5qFnqneVIgTi/DrvTzZ4xubtWIwra+4Hp+wq2wwl5vSc0hNaG6wJveVZqFRXOQhPw39HEy27+HC2tej+Cg/KgTIBfB2eZyQNVMOipxEbKbHDNomeCeJBEEZjBs6CdkspXYI352GFriC9YaETETxxERiVbshHDWPMYM0Y/jCMdiduT78//G7oto4cwLW14eP4USWLL4sTD+29wIH6qZVn0wcQz7lkf/6y/LIU1LvoQfq+17AoYt5fwZtZCH7xEXy9plXhKUrQuc7Lqe1aUCYw+tiX66frWQLY1oJW7jwwJcl++HqVZaOJ2mKZTFXLtIADy0vkkDdoPjrUvJAGWDxz/TPJvtvi0yHoSjaEZlj0pkPFt8I0aSw3YbMHCOIoU2spo5wuluqhvg2kiLHuR8gG0Sd+oBpf552IZVg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726988AbfGCN4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 09:56:02 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:20678 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725830AbfGCN4C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 09:56:02 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x63Dt5EO018724;
+        Wed, 3 Jul 2019 08:55:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=PODMain02222019;
+ bh=L90T/GlgU1MaQGyAFE7vEL8Bp6VDhRgZMQRaYBA9ec4=;
+ b=Nj/gDrwaFBX2pdJvGiLpjgRZAUioUtaCgRJYDcmTpJgiquleCI4TqvGwIi7lHBpTg6ZP
+ Rax4PwyGhmj2PNloQLvCP9O+kWoFlsQTCmW3Jm818M8UcvaexmhGPHMcw2St3tWnxcqa
+ v18GNO2MSplkvS0jTP6/pP+yAG98qUaIDR2wlnRKhOz2k0HDO6D1Cm0yYDqDJGD9FNz7
+ JPk/wfi4kXvDo4DctmlUhbbLWecpKxnyucVqX61NRlSE2Il8FVx+7iYLTAiwyd0dCB8A
+ v6K/SBaYEXO4IvvaujHShR+r1TqayrhWNyiXhmRrxFeuOyg+Aqy3wIqmrhqA00BxOqZk fQ== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2te4dr6mnw-1;
+        Wed, 03 Jul 2019 08:55:04 -0500
+Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 5DB74611C8BB;
+        Wed,  3 Jul 2019 08:55:04 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 3 Jul
+ 2019 14:55:03 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Wed, 3 Jul 2019 14:55:03 +0100
+Received: from [198.90.251.101] (edi-sw-dsktp006.ad.cirrus.com [198.90.251.101])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 79B792A1;
+        Wed,  3 Jul 2019 14:55:03 +0100 (BST)
+Subject: Re: [PATCH 30/30] sound/soc: Use kmemdup rather than duplicating its
+ implementation
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190703131842.26082-1-huangfq.daxian@gmail.com>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <547c68b0-f55f-ca1d-c5b3-f6a5f89d93a9@opensource.cirrus.com>
+Date:   Wed, 3 Jul 2019 14:55:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cad2871-6e01-496c-6319-08d6ffbde9c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2019 13:54:05.3962
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3006
+In-Reply-To: <20190703131842.26082-1-huangfq.daxian@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907030170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/3/2019 11:14 AM, Andrey Smirnov wrote:=0A=
-> Simplify clock initialization code by converting it to use clk-bulk,=0A=
-> devres and soc_device_match() match table. No functional change=0A=
-> intended.=0A=
-> =0A=
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>=0A=
-=0A=
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
-=0A=
-This data-driven approach is much easier to understand.=0A=
+On 03/07/19 14:18, Fuqian Huang wrote:
+> kmemdup is introduced to duplicate a region of memory in a neat way.
+> Rather than kmalloc/kzalloc + memset, which the programmer needs to
+> write the size twice (sometimes lead to mistakes), kmemdup improves
+> readability, leads to smaller code and also reduce the chances of mistakes.
+> Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
+> 
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> ---
+>   sound/soc/codecs/wm0010.c             | 4 +---
+>   sound/soc/intel/atom/sst/sst_loader.c | 3 +--
+
+Should be one patch per file as the drivers are not related to each
+other at all, and if one needed a revert you couldn't revert this
+patch because it would revert both drivers.
+
+But apart from that, for wm0010.c:
+Acked-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+
+>   2 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
+> index 727d6703c905..807826f30f58 100644
+> --- a/sound/soc/codecs/wm0010.c
+> +++ b/sound/soc/codecs/wm0010.c
+> @@ -515,7 +515,7 @@ static int wm0010_stage2_load(struct snd_soc_component *component)
+>   	dev_dbg(component->dev, "Downloading %zu byte stage 2 loader\n", fw->size);
+>   
+>   	/* Copy to local buffer first as vmalloc causes problems for dma */
+> -	img = kzalloc(fw->size, GFP_KERNEL | GFP_DMA);
+> +	img = kmemdup(&fw->data[0], fw->size, GFP_KERNEL | GFP_DMA);
+>   	if (!img) {
+>   		ret = -ENOMEM;
+>   		goto abort2;
+> @@ -527,8 +527,6 @@ static int wm0010_stage2_load(struct snd_soc_component *component)
+>   		goto abort1;
+>   	}
+>   
+> -	memcpy(img, &fw->data[0], fw->size);
+> -
+>   	spi_message_init(&m);
+>   	memset(&t, 0, sizeof(t));
+>   	t.rx_buf = out;
+> diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+> index ce11c36848c4..cc95af35c060 100644
+> --- a/sound/soc/intel/atom/sst/sst_loader.c
+> +++ b/sound/soc/intel/atom/sst/sst_loader.c
+> @@ -288,14 +288,13 @@ static int sst_cache_and_parse_fw(struct intel_sst_drv *sst,
+>   {
+>   	int retval = 0;
+>   
+> -	sst->fw_in_mem = kzalloc(fw->size, GFP_KERNEL);
+> +	sst->fw_in_mem = kmemdup(fw->data, fw->size, GFP_KERNEL);
+>   	if (!sst->fw_in_mem) {
+>   		retval = -ENOMEM;
+>   		goto end_release;
+>   	}
+>   	dev_dbg(sst->dev, "copied fw to %p", sst->fw_in_mem);
+>   	dev_dbg(sst->dev, "phys: %lx", (unsigned long)virt_to_phys(sst->fw_in_mem));
+> -	memcpy(sst->fw_in_mem, fw->data, fw->size);
+>   	retval = sst_parse_fw_memcpy(sst, fw->size, &sst->memcpy_list);
+>   	if (retval) {
+>   		dev_err(sst->dev, "Failed to parse fw\n");
+> 
+
