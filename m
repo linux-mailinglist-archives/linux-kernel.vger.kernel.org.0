@@ -2,189 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0385E010
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB4D5E011
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfGCIm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:42:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbfGCIm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:42:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BAA7218A0;
-        Wed,  3 Jul 2019 08:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562143343;
-        bh=RkUibetf62ACzLFBPxDyavpMjq5OFxUImT7HOXl92Fo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QUVmWqwzGJEt+nkoh3V1lPWgiTwA+3qwJhUTaw5j6W5GkBhHVfleO5lSQvBnBd2Mk
-         4LuMP2s5b6GHyC43ztRAxTyGeL4CYixIFu+2T0HxAyQebTdxF9qtw1lDEovsxlxSTZ
-         IkzFZONaDXjPjPJcygLyG7wmttQUe/+90fGMQnRI=
-Date:   Wed, 3 Jul 2019 10:42:20 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     jeyentam <je.yen.tam@ni.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] serial/8250: Add support for NI-Serial
- PXI/PXIe+485 devices
-Message-ID: <20190703084220.GD8996@kroah.com>
-References: <20190703072435.34152-1-je.yen.tam@ni.com>
+        id S1727261AbfGCIm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:42:59 -0400
+Received: from smtprelay0035.hostedemail.com ([216.40.44.35]:35944 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726400AbfGCIm7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:42:59 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 204E2283D;
+        Wed,  3 Jul 2019 08:42:58 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:960:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3870:3871:3872:4321:4605:5007:7904:10004:10226:10400:10848:11232:11658:11914:12296:12297:12679:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21451:21627:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: wing47_36df97e909a43
+X-Filterd-Recvd-Size: 1658
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  3 Jul 2019 08:42:56 +0000 (UTC)
+Message-ID: <be8a97c15249ff8a613910db5792c5bcdc75333c.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: avoid default n
+From:   Joe Perches <joe@perches.com>
+To:     Miles Chen <miles.chen@mediatek.com>,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        wsd_upstream@mediatek.com
+Date:   Wed, 03 Jul 2019 01:42:55 -0700
+In-Reply-To: <20190703083031.2950-1-miles.chen@mediatek.com>
+References: <20190703083031.2950-1-miles.chen@mediatek.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703072435.34152-1-je.yen.tam@ni.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 12:24:35AM -0700, jeyentam wrote:
-> Add support for NI-Serial PXIe-RS232, PXI-RS485 and PXIe-RS485 devices.
+On Wed, 2019-07-03 at 16:30 +0800, Miles Chen wrote:
+> This change reports a warning when "default n" is used.
 > 
-> Signed-off-by: jeyentam <je.yen.tam@ni.com>
-
-I need a "full" name here please.
-
-Also, this patch breaks the build, which is not allowed, and makes me
-wonder how you tested it :(
-
-Please fix up properly and resend.
-
-Also, some comments below:
-
-> ---
->  drivers/tty/serial/8250/8250_pci.c | 293 ++++++++++++++++++++++++++++-
->  1 file changed, 289 insertions(+), 4 deletions(-)
+> I have seen several "remove default n" patches, so I think
+> it might be helpful to add this test in checkpatch.
 > 
-> diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-> index df41397de478..ac8138adea9c 100644
-> --- a/drivers/tty/serial/8250/8250_pci.c
-> +++ b/drivers/tty/serial/8250/8250_pci.c
-> @@ -730,8 +730,16 @@ static int pci_ni8430_init(struct pci_dev *dev)
->  }
->  
->  /* UART Port Control Register */
-> -#define NI8430_PORTCON	0x0f
-> -#define NI8430_PORTCON_TXVR_ENABLE	(1 << 3)
+> tested:
+> WARNING: 'default n' is the default value, no need to write it explicitly.
+> +       default n
 
-Why are you renaming these #defines?
+I don't think this is reasonable as there are
+several uses like:
 
-> +#define NI16550_PCR_OFFSET	0x0f
-> +#define NI16550_PCR_RS422	0x00
-> +#define NI16550_PCR_ECHO_RS485	0x01
-> +#define NI16550_PCR_DTR_RS485	0x02
-> +#define NI16550_PCR_AUTO_RS485	0x03
-> +#define NI16550_PCR_WIRE_MODE_MASK	0x03
-> +#define NI16550_PCR_TXVR_ENABLE_BIT	(1 << 3)
+		default y
+		default n if <foo>
 
-BIT(3)?
+For instance:
 
-> +#define NI16550_PCR_RS485_TERMINATION_BIT	(1 << 6)
+arch/alpha/Kconfig-config ALPHA_WTINT
+arch/alpha/Kconfig-     bool "Use WTINT" if ALPHA_SRM || ALPHA_GENERIC
+arch/alpha/Kconfig-     default y if ALPHA_QEMU
+arch/alpha/Kconfig:     default n if ALPHA_EV5 || ALPHA_EV56 || (ALPHA_EV4 && !ALPHA_LCA)
+arch/alpha/Kconfig:     default n if !ALPHA_SRM && !ALPHA_GENERIC
 
-BIT(6)?
 
-> +#define NI16550_ACR_DTR_AUTO_DTR	(0x2 << 3)
-> +#define NI16550_ACR_DTR_MANUAL_DTR	(0x0 << 3)
->  
->  static int
->  pci_ni8430_setup(struct serial_private *priv,
-> @@ -753,14 +761,127 @@ pci_ni8430_setup(struct serial_private *priv,
->  		return -ENOMEM;
->  
->  	/* enable the transceiver */
-> -	writeb(readb(p + offset + NI8430_PORTCON) | NI8430_PORTCON_TXVR_ENABLE,
-> -	       p + offset + NI8430_PORTCON);
-> +	writeb(readb(p + offset + NI16550_PCR_OFFSET) |
-> +			NI16550_PCR_TXVR_ENABLE_BIT,
-> +			p + offset + NI16550_PCR_OFFSET);
-
-Why indent like this?  Please follow the indentation that used to be
-there.
-
->  
->  	iounmap(p);
->  
->  	return setup_port(priv, port, bar, offset, board->reg_shift);
->  }
->  
-> +static int pci_ni8431_config_rs485(struct uart_port *port,
-> +	struct serial_rs485 *rs485)
-> +{
-> +	u8 pcr, acr;
-> +
-> +	struct uart_8250_port *up;
-> +
-> +	up = container_of(port, struct uart_8250_port, port);
-> +
-> +	acr = up->acr;
-> +
-> +	dev_dbg(port->dev, "ni16550_config_rs485\n");
-
-No need for debugging lines like this, use ftrace please.
-
-> +
-> +	/* "rs485" should be given to us non-NULL. */
-> +	WARN_ON(rs485 == NULL);
-
-Don't crash people's machines, if this can never happen, then no need
-for this line.  If it can happen, test and properly return an error.
-
-> +
-> +	pcr = port->serial_in(port, NI16550_PCR_OFFSET);
-> +	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
-> +
-> +	if (rs485->flags & SER_RS485_ENABLED) {
-> +		/* RS-485 */
-> +		if ((rs485->flags & SER_RS485_RX_DURING_TX) &&
-> +			(rs485->flags & SER_RS485_RTS_ON_SEND)) {
-> +			dev_dbg(port->dev, "Invalid 2-wire mode\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (rs485->flags & SER_RS485_RX_DURING_TX) {
-> +			/* Echo */
-> +			dev_vdbg(port->dev, "2-wire DTR with echo\n");
-> +			pcr |= NI16550_PCR_ECHO_RS485;
-> +			acr |= NI16550_ACR_DTR_MANUAL_DTR;
-> +		} else {
-> +			/* Auto or DTR */
-> +			if (rs485->flags & SER_RS485_RTS_ON_SEND) {
-> +				/* Auto */
-> +				dev_vdbg(port->dev, "2-wire Auto\n");
-> +				pcr |= NI16550_PCR_AUTO_RS485;
-> +				acr |= NI16550_ACR_DTR_AUTO_DTR;
-> +			} else {
-> +				/* DTR-controlled */
-> +				/* No Echo */
-> +				dev_vdbg(port->dev, "2-wire DTR no echo\n");
-> +				pcr |= NI16550_PCR_DTR_RS485;
-> +				acr |= NI16550_ACR_DTR_MANUAL_DTR;
-> +			}
-> +		}
-> +	} else {
-> +		/* RS-422 */
-> +		dev_vdbg(port->dev, "4-wire\n");
-> +		pcr |= NI16550_PCR_RS422;
-> +		acr |= NI16550_ACR_DTR_MANUAL_DTR;
-> +	}
-> +
-> +	dev_dbg(port->dev, "write pcr: 0x%08x\n", pcr);
-> +	port->serial_out(port, NI16550_PCR_OFFSET, pcr);
-> +
-> +	up->acr = acr;
-> +	port->serial_out(port, UART_SCR, UART_ACR);
-> +	port->serial_out(port, UART_ICR, up->acr);
-> +
-> +	/* Update the cache. */
-> +	port->rs485 = *rs485;
-> +
-> +	dev_dbg(port->dev, "ni16550_config_rs485\n");
-
-Again, use ftrace, not dev_dbg() for stuff like this.
-
-thanks,
-
-greg k-h
