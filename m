@@ -2,186 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BBC75E6A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9625E6B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfGCO3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:29:17 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46435 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfGCO3R (ORCPT
+        id S1727248AbfGCOaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:30:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35995 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbfGCOaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:29:17 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1higFx-0003B7-Qx; Wed, 03 Jul 2019 16:29:09 +0200
-Message-ID: <1562164149.4604.9.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/2] media: uapi: Add VP8 stateless decoder API
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     kernel@collabora.com,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        fbuergisser@chromium.org, linux-kernel@vger.kernel.org,
-        Pawel Osciak <posciak@chromium.org>
-Date:   Wed, 03 Jul 2019 16:29:09 +0200
-In-Reply-To: <20190702170016.5210-2-ezequiel@collabora.com>
-References: <20190702170016.5210-1-ezequiel@collabora.com>
-         <20190702170016.5210-2-ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 3 Jul 2019 10:30:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63ETEvY3326977
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:29:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63ETEvY3326977
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562164155;
+        bh=uZpO31xVY2Ag8uoOXFHDUwuOrzNCk5z+2XOby4/sCr4=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Qs5PqRNzIjYYxIlaSXWSGwNYDHqwovExs9fxeqp0y7x8oUrDw4+8Ep4binn0SUU8i
+         72i1hqwwzOdR0iUF8w4JoCfHSuOhjJ7MgQ/nG/aPnvO6fDHez2i5U5d9Okc9odm35Z
+         rOf9LWmQMF9Pl3QGc1kw9Vn4N6mx4d8deRfAXS41TltDezjBZ7l9r/hhiZTRhklelE
+         9hfdMOM4Uul9hGHNu2ylJim05iKQ63fi5fBIfN5rnk1+IR2H+4UHJAZlT/laKFD4s2
+         YxvssncaHLmyNJMumPPARoJY3nbMUO4izaCwdMJGdt0IFpkWTWvGCfK5Bx4qzHBsxm
+         XjA3nNVhDLF0Q==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63ETEeW3326971;
+        Wed, 3 Jul 2019 07:29:14 -0700
+Date:   Wed, 3 Jul 2019 07:29:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-2f87f33f4226523df9c9cc28f9874ea02fcc3d3f@git.kernel.org>
+Cc:     tglx@linutronix.de, ak@linux.intel.com, kan.liang@linux.intel.com,
+        mingo@kernel.org, acme@redhat.com, jolsa@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, ak@linux.intel.com, mingo@kernel.org,
+          kan.liang@linux.intel.com, hpa@zytor.com, acme@redhat.com,
+          jolsa@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190624193711.35241-4-andi@firstfloor.org>
+References: <20190624193711.35241-4-andi@firstfloor.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Fix group lookup for metric group
+Git-Commit-ID: 2f87f33f4226523df9c9cc28f9874ea02fcc3d3f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-02 at 14:00 -0300, Ezequiel Garcia wrote:
-> From: Pawel Osciak <posciak@chromium.org>
-> 
-> Add the parsed VP8 frame pixel format and controls, to be used
-> with the new stateless decoder API for VP8 to provide parameters
-> for accelerator (aka stateless) codecs.
-> 
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> --
-> Changes from v1:
-> * Move 1-bit fields to flags in the respective structures.
-> * Add padding fields to make all structures 8-byte aligned.
-> * Reorder fields where needed to avoid padding as much as possible.
-> * Fix documentation as needed.
-> 
-> Changes from RFC:
-> * Make sure the uAPI has the same size on x86, x86_64, arm and arm64.
-> * Move entropy coder state fields to a struct.
-> * Move key_frame field to the flags.
-> * Remove unneeded first_part_offset field.
-> * Add documentation.
-> ---
->  Documentation/media/uapi/v4l/biblio.rst       |  10 +
->  .../media/uapi/v4l/ext-ctrls-codec.rst        | 323 ++++++++++++++++++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  20 ++
->  drivers/media/v4l2-core/v4l2-ctrls.c          |   8 +
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->  include/media/v4l2-ctrls.h                    |   3 +
->  include/media/vp8-ctrls.h                     | 110 ++++++
->  7 files changed, 475 insertions(+)
->  create mode 100644 include/media/vp8-ctrls.h
-> 
-> diff --git a/Documentation/media/uapi/v4l/biblio.rst b/Documentation/media/uapi/v4l/biblio.rst
-> index 8f4eb8823d82..ad2ff258afa8 100644
-> --- a/Documentation/media/uapi/v4l/biblio.rst
-> +++ b/Documentation/media/uapi/v4l/biblio.rst
-> @@ -395,3 +395,13 @@ colimg
->  :title:     Color Imaging: Fundamentals and Applications
->  
->  :author:    Erik Reinhard et al.
-> +
-> +.. _vp8:
-> +
-> +VP8
-> +===
-> +
-> +
-> +:title:     RFC 6386: "VP8 Data Format and Decoding Guide"
-> +
-> +:author:    J. Bankoski et al.
-> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-codec.rst b/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> index d6ea2ffd65c5..aef335f175cd 100644
-> --- a/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> +++ b/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> @@ -2234,6 +2234,329 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
->      Quantization parameter for a P frame for FWHT. Valid range: from 1
->      to 31.
->  
-> +.. _v4l2-mpeg-vp8:
-> +
-> +``V4L2_CID_MPEG_VIDEO_VP8_FRAME_HEADER (struct)``
-> +    Specifies the frame parameters for the associated VP8 parsed frame data.
-> +    This includes the necessary parameters for
-> +    configuring a stateless hardware decoding pipeline for VP8.
-> +    The bitstream parameters are defined according to :ref:`vp8`.
-> +
-> +    .. note::
-> +
-> +       This compound control is not yet part of the public kernel API and
-> +       it is expected to change.
-> +
-> +.. c:type:: v4l2_ctrl_vp8_frame_header
-> +
-> +.. cssclass:: longtable
-> +
-> +.. tabularcolumns:: |p{5.8cm}|p{4.8cm}|p{6.6cm}|
-> +
-> +.. flat-table:: struct v4l2_ctrl_vp8_frame_header
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - struct :c:type:`v4l2_vp8_segment_header`
-> +      - ``segment_header``
-> +      - Structure with segment-based adjustments metadata.
-> +    * - struct :c:type:`v4l2_vp8_loopfilter_header`
-> +      - ``loopfilter_header``
-> +      - Structure with loop filter level adjustments metadata.
-> +    * - struct :c:type:`v4l2_vp8_quantization_header`
-> +      - ``quant_header``
-> +      - Structure with VP8 dequantization indices metadata.
-> +    * - struct :c:type:`v4l2_vp8_entropy_header`
-> +      - ``entropy_header``
-> +      - Structure with VP8 entropy coder probabilities metadata.
-> +    * - struct :c:type:`v4l2_vp8_entropy_coder_state`
-> +      - ``coder_state``
-> +      - Structure with VP8 entropy coder state.
-> +    * - __u16
-> +      - ``width``
-> +      - The width of the frame. Must be set for all frames.
-> +    * - __u16
-> +      - ``height``
-> +      - The height of the frame. Must be set for all frames.
-> +    * - __u8
-> +      - ``horizontal_scale``
-> +      - Horizontal scaling factor.
-> +    * - __u8
-> +      - ``vertical_scaling factor``
-> +      - Vertical scale.
-> +    * - __u8
-> +      - ``version``
-> +      - Bitstream version.
-> +    * - __u8
-> +      - ``prob_skip_false``
-> +      - Indicates the probability that the macroblock is not skipped.
-> +    * - __u8
-> +      - ``prob_intra``
-> +      - Indicates the probability that a macroblock is intra-predicted.
-> +    * - __u8
-> +      - ``prob_last``
-> +      - Indicates the probability that the last reference frame is used
-> +        for inter-prediction
-> +    * - __u8
-> +      - ``prob_gf``
-> +      - Indicates the probability that the golden reference frame is used
-> +        for inter-prediction
-> +    * - __u8
-> +      - ``num_dct_parts``
-> +      - Number of DCT coefficients partitions.
+Commit-ID:  2f87f33f4226523df9c9cc28f9874ea02fcc3d3f
+Gitweb:     https://git.kernel.org/tip/2f87f33f4226523df9c9cc28f9874ea02fcc3d3f
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Mon, 24 Jun 2019 12:37:10 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 1 Jul 2019 22:50:41 -0300
 
-I assume this must be no larger than 8. Is this mandated by the spec? If
-so, should it be documented here and checked by v4l2-core?
+perf stat: Fix group lookup for metric group
 
-regards
-Philipp
+The metric group code tries to find a group it added earlier in the
+evlist. Fix the lookup to handle groups with partially overlaps
+correctly. When a sub string match fails and we reset the match, we have
+to compare the first element again.
+
+I also renamed the find_evsel function to find_evsel_group to make its
+purpose clearer.
+
+With the earlier changes this fixes:
+
+Before:
+
+  % perf stat -M UPI,IPC sleep 1
+  ...
+         1,032,922      uops_retired.retire_slots #      1.1 UPI
+         1,896,096      inst_retired.any
+         1,896,096      inst_retired.any
+         1,177,254      cpu_clk_unhalted.thread
+
+After:
+
+  % perf stat -M UPI,IPC sleep 1
+  ...
+        1,013,193      uops_retired.retire_slots #      1.1 UPI
+           932,033      inst_retired.any
+           932,033      inst_retired.any          #      0.9 IPC
+         1,091,245      cpu_clk_unhalted.thread
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Fixes: b18f3e365019 ("perf stat: Support JSON metrics in perf stat")
+Link: http://lkml.kernel.org/r/20190624193711.35241-4-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/metricgroup.c | 47 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 35 insertions(+), 12 deletions(-)
+
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index 90cd84e2a503..bc25995255ab 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -85,26 +85,49 @@ struct egroup {
+ 	const char *metric_expr;
+ };
+ 
+-static struct perf_evsel *find_evsel(struct perf_evlist *perf_evlist,
+-				     const char **ids,
+-				     int idnum,
+-				     struct perf_evsel **metric_events)
++static bool record_evsel(int *ind, struct perf_evsel **start,
++			 int idnum,
++			 struct perf_evsel **metric_events,
++			 struct perf_evsel *ev)
++{
++	metric_events[*ind] = ev;
++	if (*ind == 0)
++		*start = ev;
++	if (++*ind == idnum) {
++		metric_events[*ind] = NULL;
++		return true;
++	}
++	return false;
++}
++
++static struct perf_evsel *find_evsel_group(struct perf_evlist *perf_evlist,
++					   const char **ids,
++					   int idnum,
++					   struct perf_evsel **metric_events)
+ {
+ 	struct perf_evsel *ev, *start = NULL;
+ 	int ind = 0;
+ 
+ 	evlist__for_each_entry (perf_evlist, ev) {
++		if (ev->collect_stat)
++			continue;
+ 		if (!strcmp(ev->name, ids[ind])) {
+-			metric_events[ind] = ev;
+-			if (ind == 0)
+-				start = ev;
+-			if (++ind == idnum) {
+-				metric_events[ind] = NULL;
++			if (record_evsel(&ind, &start, idnum,
++					 metric_events, ev))
+ 				return start;
+-			}
+ 		} else {
++			/*
++			 * We saw some other event that is not
++			 * in our list of events. Discard
++			 * the whole match and start again.
++			 */
+ 			ind = 0;
+ 			start = NULL;
++			if (!strcmp(ev->name, ids[ind])) {
++				if (record_evsel(&ind, &start, idnum,
++						 metric_events, ev))
++					return start;
++			}
+ 		}
+ 	}
+ 	/*
+@@ -134,8 +157,8 @@ static int metricgroup__setup_events(struct list_head *groups,
+ 			ret = -ENOMEM;
+ 			break;
+ 		}
+-		evsel = find_evsel(perf_evlist, eg->ids, eg->idnum,
+-				   metric_events);
++		evsel = find_evsel_group(perf_evlist, eg->ids, eg->idnum,
++					 metric_events);
+ 		if (!evsel) {
+ 			pr_debug("Cannot resolve %s: %s\n",
+ 					eg->metric_name, eg->metric_expr);
