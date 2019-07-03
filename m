@@ -2,93 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558B25DE10
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 082295DE13
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfGCG3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 02:29:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39920 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726670AbfGCG3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:29:37 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x636QNKK082508
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Jul 2019 02:29:36 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tgm3edwph-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 02:29:35 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 3 Jul 2019 07:29:34 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Jul 2019 07:29:30 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x636TUd717105342
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Jul 2019 06:29:30 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ECD33AE04D;
-        Wed,  3 Jul 2019 06:29:29 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 454B2AE045;
-        Wed,  3 Jul 2019 06:29:26 +0000 (GMT)
-Received: from [9.85.75.18] (unknown [9.85.75.18])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Jul 2019 06:29:26 +0000 (GMT)
-Subject: Re: [RFC PATCH v2 00/12] Reduce ifdef mess in ptrace
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <cover.1561735587.git.christophe.leroy@c-s.fr>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 3 Jul 2019 11:59:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727065AbfGCGbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 02:31:41 -0400
+Received: from mout.gmx.net ([212.227.17.20]:45227 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbfGCGbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:31:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1562135495;
+        bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
+        h=X-UI-Sender-Class:Date:From:To;
+        b=Br9zQK0IqW8Xzkrrrt7AWQd6aeS7lD5bdkmHBT7hiWyVZGLUbFQT8cLTmjsNYLnH9
+         H2Cs3rF4f0USMjOaSzhi0iteT99ukQ8Tbh8DRoD/EE3q8+usSGrm7bXaxq0kRRmDbW
+         Oat4QKcCIXb117uFs1bHR1Wf/s7mvIz2/+0rQUY4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530.dellerweb.de ([92.116.183.112]) by mail.gmx.com
+ (mrgmx101 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 0MUDXS-1i9TK11pRK-00QwtX; Wed, 03 Jul 2019 08:31:35 +0200
+Date:   Wed, 3 Jul 2019 08:31:32 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Message-ID: <20190703063132.GA27292@ls3530.dellerweb.de>
 MIME-Version: 1.0
-In-Reply-To: <cover.1561735587.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19070306-0020-0000-0000-0000034FB5F4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070306-0021-0000-0000-000021A34AE1
-Message-Id: <0b73b957-a782-5804-9794-a194deb3cc87@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=604 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907030079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Provags-ID: V03:K1:AQMBZt/cS++AdckiN5SwFwqkuUR8cd+lHt0nOMAOU2Ylxk4imVX
+ ZZnvsEWX16Ajm/b1kQAcRIhFGQbH78StHTFUVyu6L1nC7mazZEKH4wo3q1HvLUMe8AhMpHc
+ T6JRfWNYFCII9X9792SE3PL0H199KECb2D6Wwv6KvGGc85oHbIc2L1RJMJNimHfycqy7ueU
+ N+ywnOVQS6m7Y+jK2/8lg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Ghao0HUWzHw=:s3m676f3rTzwv6YsqyQVFW
+ XAOmkiKdSvYClTnmfb8Zg0BFQM2snwyWlOODsuAOgjmp0Ag2HUAl0g5htNbRcuhB4cU5Ktp2P
+ jIHqRuZ6K1YE857wM+pmyTqfqWqfal/NB2/uDqc82kwWZrFfTJ1vAVQmTXBZQzrUvp/Fv8Dtg
+ Q1lbfwyip/uSm12dBkoNo1BGHNXQYqJRdBYN8TTh9x8xKFpw0rCymTShC18++QoQ/SkD9xCPK
+ 94Bs6mqpSDgDfNQNMM65cxXNGd5S+KJZvq/1nj1RAntdSUz3VGe7HX31Fu/BuLXCkFx023LFN
+ TEEAb7MQv54P8x/PPrfga/1b/nnA+zdHcFF3oHr+pgp+Lzn99YhHh7BaK9aJvxwoSeoD7BeE3
+ V4PaglIgxFNrcTBMpBIltXlImQHVb+KGVn1f/JQR723GvtAEvEkFGsBN5iqpVued8XqCilTkP
+ TtSF2YP8Sb6ZWz55tm5JXNi+d79GQUW1Pxj8aizV4+hpLydn6J4hqeh/JO17TBw3YFDTxrQcs
+ Ve2MagLGEAP1FStd20fm9Hjil2A8qpR6EfGoPTAOil9SeombqtktM1MQRKE80KG+R3rX+Q8Tf
+ +lraDCPWxGm3yEQdD/U8ab8o+hnQrz8nf0M9ik/1DXaFPaZJ/Yg4w0OlEOqZsswxLxlDj/P3V
+ 2dmmDic40qMqGDu1Yjd9zG8RHeosqxaJpSTcuVvuBRypWUijz9lL33XVIXCZmh8IEvhVjehxP
+ MBZMNVyx0FvpDeeTuJR6VPCAKOWRPMKBcnTFTOMSiVmGFUoNnzFcJmGA2Tzzdvou/f0hWdtzq
+ p4PKwMFSMV+m7u/x2Fy+T7S4Vw3buWdgJjDGvpoMrYa639GS+d3gfpRaQ+LD2uCCnZdBb5YF1
+ QOJXb3HcO5Dz3TllBLqnV98b1uromNUiFUP8l0k1fneK3hXvctXTBPdKek7tz5zBL+GfeSqHN
+ W2SyCOA5u6F2kGxZJUuu9OLXc4fsATH4rZ3a8dpg7P5wJPOcMr0z+oIWwjXVMiHTQ/hMYeh6X
+ SQzO+tqHPwE4I+scM9hFckXA6AreoAQVM+cS2xyyY46TZsNuiTZAlytOYFi5mn5el4sfP206Z
+ DKqWWUR/NQ3CiiMmTu4kd08DzMUdm+mhQI+/gG66fvRJjBwOJu+GlRxV7gKied6DxcslfAN07
+ Fjnvk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-
-On 6/28/19 9:17 PM, Christophe Leroy wrote:
-> The purpose of this series is to reduce the amount of #ifdefs
-> in ptrace.c
-> 
-> This is a first try. Most of it is done, there are still some #ifdefs that
-> could go away.
-> 
-> Please comment and tell whether it is worth continuing in that direction.
-
-Hi Christopher,
-
-I'm seeing this warning with all the patches.
-
-WARNING: Improper SPDX comment style for 'arch/powerpc/kernel/ptrace/ptrace-view.c', please use '//' instead
-#100: FILE: arch/powerpc/kernel/ptrace/ptrace-view.c:1:
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
