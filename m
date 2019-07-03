@@ -2,91 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B819D5E620
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694595E624
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:11:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfGCOKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:10:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:48946 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbfGCOKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:10:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B3752B;
-        Wed,  3 Jul 2019 07:10:43 -0700 (PDT)
-Received: from [10.162.42.95] (p8cg001049571a15.blr.arm.com [10.162.42.95])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15DD03F718;
-        Wed,  3 Jul 2019 07:10:41 -0700 (PDT)
-Subject: Re: [DRAFT] mm/kprobes: Add generic kprobe_fault_handler() fallback
- definition
-To:     Guenter Roeck <linux@roeck-us.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     akpm@linux-foundation.org
-References: <78863cd0-8cb5-c4fd-ed06-b1136bdbb6ef@arm.com>
- <1561973757-5445-1-git-send-email-anshuman.khandual@arm.com>
- <8c6b9525-5dc5-7d17-cee1-b75d5a5121d6@roeck-us.net>
- <fc68afaa-32e1-a265-aae2-e4a9440f4c95@arm.com>
- <8a5eb5d5-32f0-01cd-b2fe-890ebb98395b@roeck-us.net>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <a0a0e277-ec1a-6c49-4852-c945ad64a1fd@arm.com>
-Date:   Wed, 3 Jul 2019 19:41:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726881AbfGCOLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:11:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56607 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGCOLl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:11:41 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EBIoE3321817
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:11:18 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EBIoE3321817
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163078;
+        bh=AsIwBeoN2MjS/gaZp8CJYL3SJS04CyaVSJkZRrP4VwA=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=kj6dxrM1bZ72isfvmEH9famHWaDuAfBTy/c53PfG7+l5ddZXjXgf7oAjQUXnNEIpr
+         o7ogfs9oSiSiW7tRogqAoaSnfxU5SUPAHsoS65zsaxexjn5aJgGYoOLQSQmXXCtz1b
+         lTfqWmaMKzlKrcPFvI2dIIxZnZgGlbBwMnzRh+fn1Z2UO+dHo8dHGS/Deed8XNNpho
+         6u63B3JqabyjFbsrUvwlQBt7pJpYeL+8coxFIh1f1YZz2Xuwpttb6H7qgXSjibrBG+
+         ArifNf8dHCdV8YsmbIcT5GUAHPA4kjmHlgaFtu9XI0zpFT37ovQT3obRWD3UzSgbiy
+         S3YLVOpQphpJQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EBHoc3321814;
+        Wed, 3 Jul 2019 07:11:17 -0700
+Date:   Wed, 3 Jul 2019 07:11:17 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ioh5sghn3943j0rxg6lb2dgs@git.kernel.org>
+Cc:     adrian.hunter@intel.com, acme@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org, hpa@zytor.com, namhyung@kernel.org,
+        jolsa@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          namhyung@kernel.org, hpa@zytor.com, mingo@kernel.org,
+          tglx@linutronix.de, adrian.hunter@intel.com, acme@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf string: Move 'dots' and 'graph_dotted_line'
+ out of sane_ctype.h
+Git-Commit-ID: 6a9fa4e3bddedc027b691b6470c500d51d04e56c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <8a5eb5d5-32f0-01cd-b2fe-890ebb98395b@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  6a9fa4e3bddedc027b691b6470c500d51d04e56c
+Gitweb:     https://git.kernel.org/tip/6a9fa4e3bddedc027b691b6470c500d51d04e56c
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 17:31:26 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 17:31:26 -0300
 
+perf string: Move 'dots' and 'graph_dotted_line' out of sane_ctype.h
 
-On 07/03/2019 06:29 PM, Guenter Roeck wrote:
-> On 7/2/19 10:35 PM, Anshuman Khandual wrote:
->>
->>
->> On 07/01/2019 06:58 PM, Guenter Roeck wrote:
->>> On 7/1/19 2:35 AM, Anshuman Khandual wrote:
->>>> Architectures like parisc enable CONFIG_KROBES without having a definition
->>>> for kprobe_fault_handler() which results in a build failure. Arch needs to
->>>> provide kprobe_fault_handler() as it is platform specific and cannot have
->>>> a generic working alternative. But in the event when platform lacks such a
->>>> definition there needs to be a fallback.
->>>>
->>>> This adds a stub kprobe_fault_handler() definition which not only prevents
->>>> a build failure but also makes sure that kprobe_page_fault() if called will
->>>> always return negative in absence of a sane platform specific alternative.
->>>>
->>>> While here wrap kprobe_page_fault() in CONFIG_KPROBES. This enables stud
->>>> definitions for generic kporbe_fault_handler() and kprobes_built_in() can
->>>> just be dropped. Only on x86 it needs to be added back locally as it gets
->>>> used in a !CONFIG_KPROBES function do_general_protection().
->>>>
->>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>> ---
->>>> I am planning to go with approach unless we just want to implement a stub
->>>> definition for parisc to get around the build problem for now.
->>>>
->>>> Hello Guenter,
->>>>
->>>> Could you please test this in your parisc setup. Thank you.
->>>>
->>>
->>> With this patch applied on top of next-20190628, parisc:allmodconfig builds
->>> correctly. I scheduled a full build for tonight for all architectures.
->>
->> How did that come along ? Did this pass all build tests ?
->>
-> 
-> Let's say it didn't find any failures related to this patch. I built on top of
-> next-20190701 which was quite badly broken for other reasons. Unfortunately,
-> next-20190702 is much worse, so retesting would not add any value at this time.
-> I'd say go for it.
-> 
-> Guenter
-> 
+Those are not in that file in the git repo, lets move it from there so
+that we get that sane ctype code fully isolated to allow getting it in
+sync either with the git sources or better with the kernel sources
+(include/linux/ctype.h + lib/ctype.h), that way we can use
+check_headers.h to get notified when changes are made in the original
+code so that we can cherry-pick.
 
-Sure thanks, will post it out soon.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-ioh5sghn3943j0rxg6lb2dgs@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-kmem.c    | 1 +
+ tools/perf/builtin-sched.c   | 1 +
+ tools/perf/builtin-top.c     | 1 +
+ tools/perf/util/ctype.c      | 9 ---------
+ tools/perf/util/evsel.c      | 1 +
+ tools/perf/util/sane_ctype.h | 3 ---
+ tools/perf/util/string.c     | 9 +++++++++
+ tools/perf/util/string2.h    | 3 +++
+ 8 files changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+index b80eee455111..b833b03d7195 100644
+--- a/tools/perf/builtin-kmem.c
++++ b/tools/perf/builtin-kmem.c
+@@ -21,6 +21,7 @@
+ #include "util/cpumap.h"
+ 
+ #include "util/debug.h"
++#include "util/string2.h"
+ 
+ #include <linux/kernel.h>
+ #include <linux/rbtree.h>
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 275f2d92a7bf..79577b67c898 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -15,6 +15,7 @@
+ #include "util/thread_map.h"
+ #include "util/color.h"
+ #include "util/stat.h"
++#include "util/string2.h"
+ #include "util/callchain.h"
+ #include "util/time-utils.h"
+ 
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 12b6b15a9675..4ef02e6888ff 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -40,6 +40,7 @@
+ #include "util/cpumap.h"
+ #include "util/xyarray.h"
+ #include "util/sort.h"
++#include "util/string2.h"
+ #include "util/term.h"
+ #include "util/intlist.h"
+ #include "util/parse-branch-options.h"
+diff --git a/tools/perf/util/ctype.c b/tools/perf/util/ctype.c
+index 75c0da59c230..f84ecd9e5329 100644
+--- a/tools/perf/util/ctype.c
++++ b/tools/perf/util/ctype.c
+@@ -30,12 +30,3 @@ unsigned char sane_ctype[256] = {
+ 	A, A, A, A, A, A, A, A, A, A, A, R, R, P, P, 0,		/* 112..127 */
+ 	/* Nothing in the 128.. range */
+ };
+-
+-const char *graph_dotted_line =
+-	"---------------------------------------------------------------------"
+-	"---------------------------------------------------------------------"
+-	"---------------------------------------------------------------------";
+-const char *dots =
+-	"....................................................................."
+-	"....................................................................."
+-	".....................................................................";
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 04c4ed1573cb..4b175166d264 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -35,6 +35,7 @@
+ #include "debug.h"
+ #include "trace-event.h"
+ #include "stat.h"
++#include "string2.h"
+ #include "memswap.h"
+ #include "util/parse-branch-options.h"
+ 
+diff --git a/tools/perf/util/sane_ctype.h b/tools/perf/util/sane_ctype.h
+index a2bb3890864f..c4dce9e3001b 100644
+--- a/tools/perf/util/sane_ctype.h
++++ b/tools/perf/util/sane_ctype.h
+@@ -2,9 +2,6 @@
+ #ifndef _PERF_SANE_CTYPE_H
+ #define _PERF_SANE_CTYPE_H
+ 
+-extern const char *graph_dotted_line;
+-extern const char *dots;
+-
+ /* Sane ctype - no locale, and works with signed chars */
+ #undef isascii
+ #undef isspace
+diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
+index d8bfd0c4d2cb..b18884bd673b 100644
+--- a/tools/perf/util/string.c
++++ b/tools/perf/util/string.c
+@@ -6,6 +6,15 @@
+ 
+ #include "sane_ctype.h"
+ 
++const char *graph_dotted_line =
++	"---------------------------------------------------------------------"
++	"---------------------------------------------------------------------"
++	"---------------------------------------------------------------------";
++const char *dots =
++	"....................................................................."
++	"....................................................................."
++	".....................................................................";
++
+ #define K 1024LL
+ /*
+  * perf_atoll()
+diff --git a/tools/perf/util/string2.h b/tools/perf/util/string2.h
+index 4c68a09b97e8..07fd37568543 100644
+--- a/tools/perf/util/string2.h
++++ b/tools/perf/util/string2.h
+@@ -6,6 +6,9 @@
+ #include <stddef.h>
+ #include <string.h>
+ 
++extern const char *graph_dotted_line;
++extern const char *dots;
++
+ s64 perf_atoll(const char *str);
+ char **argv_split(const char *str, int *argcp);
+ void argv_free(char **argv);
