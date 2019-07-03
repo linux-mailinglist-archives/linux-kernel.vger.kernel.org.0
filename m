@@ -2,144 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF4DE5F0E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 03:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E4365F164
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 04:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfGDBQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 21:16:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35310 "EHLO
+        id S1727237AbfGDCVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 22:21:13 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41052 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfGDBQq (ORCPT
+        with ESMTP id S1727063AbfGDCVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 21:16:46 -0400
+        Wed, 3 Jul 2019 22:21:12 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641Efot123673;
-        Thu, 4 Jul 2019 01:16:08 GMT
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x642JrBE165097;
+        Thu, 4 Jul 2019 02:20:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=HhKAAWVPipFLRo00kLa1NJDWOLc4M9riT3RNfy4Uozs=;
- b=wb7MTWSeBsklCUBYPP99Z2BcF022Vw3ID16E/qh0bdF7nB7k1tlNEWUtZO2/cS8lP0ZD
- yNCz1L07vjhGc0qoJRLasQyOaDbHgOCxOdEXyd54gcfMQIk7DUjJ3oOfVdOfV8Q8vQ5g
- i8oAQpk7tKiO5Ms8vco8jiuHzpem2VPS3mxsJ8bKszx6U4gRSOvfPaUZPpUoY5CD+HiG
- lWK79YzScafjJjT6ivE7ICnc8TpIky7TSX3WmnIewaloynLkKNq42lBpqed0havaSTxq
- fhQ8TDFt8aDTFi2RL3MIclgIj8jVEMcu8L4Bn73q+IsNVF5vPoKkE9TKh9lQsAxuvw0M GA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2te5tbv6s2-1
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=GxqPkKqiaZWF5TAkcRYXZctmYGfXSTCnWlJ2S2zRDMs=;
+ b=WL2upingzcGwz60NTWvpbAb5kvVeh76Dlh4kF1cEZqpFSvCzXDW6ba5ZuTas34O2rytf
+ cdLsBAcrUegNcyrWCO173+wzZBQrXBnBtQkheZyNm9zTGTc4PN0MXQNuw7j8ddaFVdYB
+ Hneca9KFO6HFELWCOST+DTbr5l9VY5d3ZK5gmbH0eQbesCbBIZ2g/djhyT25gfwVk8P1
+ 9KLMqQji/tr/H4GyV2QECDqWoBVKiRUixSSituIg7fv70N/xJmCJEb0qYzofLmpGEdQp
+ lEIdsOgtOWE/ozbwodNfQNFLQ1I/aI7hh+fUcQsMaYz6vID9AAg2G/NasexSIB1BZ5dW aw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2te5tbvaxm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 01:16:08 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641Cceh089845;
-        Thu, 4 Jul 2019 01:16:07 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2tebkv5tdj-1
+        Thu, 04 Jul 2019 02:20:35 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x642IGBk084059;
+        Thu, 4 Jul 2019 02:20:35 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2th5qm1uf2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 01:16:07 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x641G7tj010700;
-        Thu, 4 Jul 2019 01:16:07 GMT
+        Thu, 04 Jul 2019 02:20:35 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x642KSfg021256;
+        Thu, 4 Jul 2019 02:20:28 GMT
 Received: from z2.cn.oracle.com (/10.182.69.87)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 03 Jul 2019 18:16:07 -0700
+        with ESMTP ; Wed, 03 Jul 2019 19:20:27 -0700
 From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v5 4/4] x86/xen: Add "nopv" support for HVM guest
-Date:   Wed,  3 Jul 2019 09:19:38 +0800
-Message-Id: <1562116778-5846-5-git-send-email-zhenzhong.duan@oracle.com>
+Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-hyperv@vger.kernel.org
+Subject: [PATCH v3] locking/spinlocks, paravirt, hyperv: Correct the hv_nopvspin case
+Date:   Wed,  3 Jul 2019 10:23:55 +0800
+Message-Id: <1562120635-9806-1-git-send-email-zhenzhong.duan@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1562116778-5846-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1562116778-5846-1-git-send-email-zhenzhong.duan@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907040013
+ engine=8.0.1-1810050000 definitions=main-1907040029
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907040014
+ definitions=main-1907040029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PVH guest needs PV extentions to work, so "nopv" parameter should be
-ignored for PVH but not for HVM guest.
+With the boot parameter "hv_nopvspin" specified a Hyperv guest should
+not make use of paravirt spinlocks, but behave as if running on bare
+metal. This is not true, however, as the qspinlock code will fall back
+to a test-and-set scheme when it is detecting a hypervisor.
 
-If PVH guest boots up via the Xen-PVH boot entry, xen_pvh is set early,
-we know it's PVH guest and ignore "nopv" parameter directly.
+In order to avoid this disable the virt_spin_lock_key.
 
-If PVH guest boots up via the normal boot entry same as HVM guest, it's
-hard to distinguish PVH and HVM guest at that time.
-
-To handle that case, add a new function xen_hvm_nopv_guest_late_init()
-to detect PVH at a late time and panic itself if nopv enabled for a
-PVH guest.
+Same change for XEN is already in Commit e6fd28eb3522
+("locking/spinlocks, paravirt, xen: Correct the xen_nopvspin case")
 
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
 Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: linux-hyperv@vger.kernel.org
 ---
- arch/x86/xen/enlighten_hvm.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+v3: remove unlikely() as suggested by Sasha
 
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 1756cf7..09a010a 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -231,11 +231,37 @@ bool __init xen_hvm_need_lapic(void)
- 	return true;
- }
+ arch/x86/hyperv/hv_spinlock.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
+index 07f21a0..210495b 100644
+--- a/arch/x86/hyperv/hv_spinlock.c
++++ b/arch/x86/hyperv/hv_spinlock.c
+@@ -64,6 +64,9 @@ __visible bool hv_vcpu_is_preempted(int vcpu)
  
-+static __init void xen_hvm_nopv_guest_late_init(void)
-+{
-+#ifdef CONFIG_XEN_PVH
-+	if (x86_platform.legacy.rtc || !x86_platform.legacy.no_vga)
-+		return;
-+
-+	/* PVH detected. */
-+	xen_pvh = true;
-+
-+	panic("\"nopv\" and \"xen_nopv\" parameters are unsupported in PVH guest.");
-+#endif
-+}
-+
-+
- static uint32_t __init xen_platform_hvm(void)
+ void __init hv_init_spinlocks(void)
  {
- 	if (xen_pv_domain())
- 		return 0;
- 
-+	if (xen_pvh_domain() && nopv) {
-+		/* Guest booting via the Xen-PVH boot entry goes here */
-+		pr_info("\"nopv\" parameter is ignored in PVH guest\n");
-+		nopv = false;
-+	} else if (nopv) {
-+		/*
-+		 * Guest booting via normal boot entry (like via grub2) goes
-+		 * here.
-+		 */
-+		x86_init.hyper.guest_late_init = xen_hvm_nopv_guest_late_init;
-+		return 0;
-+	}
- 	return xen_cpuid_base();
- }
- 
-@@ -268,4 +294,5 @@ static __init void xen_hvm_guest_late_init(void)
- 	.init.init_mem_mapping	= xen_hvm_init_mem_mapping,
- 	.init.guest_late_init	= xen_hvm_guest_late_init,
- 	.runtime.pin_vcpu       = xen_pin_vcpu,
-+	.ignore_nopv            = true,
- };
++	if (!hv_pvspin)
++		static_branch_disable(&virt_spin_lock_key);
++
+ 	if (!hv_pvspin || !apic ||
+ 	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
+ 	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
 -- 
 1.8.3.1
 
