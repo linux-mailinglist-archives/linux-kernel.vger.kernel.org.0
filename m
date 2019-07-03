@@ -2,73 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C4A5DBA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 04:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2BA55DB5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 04:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbfGCCRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 22:17:01 -0400
-Received: from zg8tmtyylji0my4xnjqunzqa.icoremail.net ([162.243.164.74]:60134
-        "HELO zg8tmtyylji0my4xnjqunzqa.icoremail.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1728112AbfGCCQ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:16:58 -0400
-X-Greylist: delayed 380 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 22:16:57 EDT
-Received: from localhost (unknown [111.202.192.3])
-        by email1 (Coremail) with SMTP id AQBjCgDXpmB2Dhxd6PNCAA--.52124S2;
-        Wed, 03 Jul 2019 10:10:18 +0800 (CST)
-From:   Peng Wang <rocking@whu.edu.cn>
-To:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Wang <rocking@whu.edu.cn>
-Subject: [PATCH] cgroup: minor tweak for logic to get cgroup css
-Date:   Wed,  3 Jul 2019 10:07:49 +0800
-Message-Id: <20190703020749.22988-1-rocking@whu.edu.cn>
-X-Mailer: git-send-email 2.19.1
+        id S1727444AbfGCCHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 22:07:55 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2963 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726329AbfGCCHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:07:54 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id BA99EBBF4176F5607A9F;
+        Wed,  3 Jul 2019 10:07:52 +0800 (CST)
+Received: from dggeme716-chm.china.huawei.com (10.1.199.112) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 3 Jul 2019 10:07:52 +0800
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ dggeme716-chm.china.huawei.com (10.1.199.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 3 Jul 2019 10:07:52 +0800
+Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
+ dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1591.008;
+ Wed, 3 Jul 2019 10:07:52 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "sebott@linux.ibm.com" <sebott@linux.ibm.com>,
+        "lukas@wunner.de" <lukas@wunner.de>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mingfangsen <mingfangsen@huawei.com>
+Subject: Re: [PATCH] net: pci: Fix hotplug event timeout with shpchp
+Thread-Topic: [PATCH] net: pci: Fix hotplug event timeout with shpchp
+Thread-Index: AdUxQ4Ot2MsgjZ40Rim/5d9K2wgLog==
+Date:   Wed, 3 Jul 2019 02:07:51 +0000
+Message-ID: <fdbaef22bd774ee49fc58fe13a76bf91@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.184.189.20]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQBjCgDXpmB2Dhxd6PNCAA--.52124S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xry8CF1ftr1UuFWxArykGrg_yoWxCrb_Aw
-        1Iva12gry8Aw1jkr4qgws5XFWkKF4YgF1vvr4UtFy7JFyUtFs8t34fJF15JFsxuFn3XryD
-        JrW3WrykGrn7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-        6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-        CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4U
-        MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-        W8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-        42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUgVyxUUUUU=
-X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We could only handle the case that css exists
-and css_try_get_online() fails.
-
-Signed-off-by: Peng Wang <rocking@whu.edu.cn>
----
- kernel/cgroup/cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index bf9dbffd46b1..a988d77f6c6d 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -488,7 +488,7 @@ static struct cgroup_subsys_state *cgroup_tryget_css(struct cgroup *cgrp,
- 
- 	rcu_read_lock();
- 	css = cgroup_css(cgrp, ss);
--	if (!css || !css_tryget_online(css))
-+	if (css && !css_tryget_online(css))
- 		css = NULL;
- 	rcu_read_unlock();
- 
--- 
-2.19.1
-
+DQpPbiBUdWUsIEp1bCAwMiwgMjAxOSBhdCAwMTozNToxOVBNICswMDAwLCBNaWFvaGUgTGluIHdy
+b3RlOg0KPiA+IEhvdHBsdWcgYSBuZXR3b3JrIGNhcmQgd291bGQgdGFrZSBtb3JlIHRoYW4gNSBz
+ZWNvbmRzIGluIHFlbXUgKyBzaHBjaHAgDQo+ID4gc2NlbmUuIEl04oCZcyBiZWNhdXNlIDUgc2Vj
+b25kcyBkZWxheWVkX3dvcmsgaW4gZnVuYyANCj4NCj4gSSdtIGRyb3BwaW5nIHRoaXMgYmVjYXVz
+ZSBvZiB0aGUgcmVxdWlyZWQgZGVsYXkgcG9pbnRlZCBvdXQgYnkgTHVrYXMuDQo+DQo+IElmIHlv
+dSB0aGluayB3ZSBzdGlsbCBuZWVkIHRvIGRvIHNvbWV0aGluZyBoZXJlLCBwbGVhc2UgY2xhcmlm
+eSB0aGUgc2l0dWF0aW9uLiAgQXJlIHlvdSBob3QtYWRkaW5nPyAgSG90LXN3YXBwaW5nPyAgU2lu
+Y2UgeW91IG1lbnRpb24gYSBwcm90b2NvbCB0aW1lb3V0LCBJIHN1c3BlY3QgdGhlIGxhdHRlciwg
+ZS5nLiwgbWF5YmUgeW91IGhhZCBhbiBleGlzdGluZyBkZXZpY2Ugd2l0aCBjb25uZWN0aW9ucyBh
+bHJlYWR5IG9wZW4sIGFuZCB5b3Ugd2FudCB0byByZXBsYWNlIGl0IHdpdGggYSBuZXcgZGV2aWNl
+DQo+IFdlIGRvIGhhdmUgdG8gcHJlc2VydmUgdGhlIGV4aXN0aW5nIHVzZXIgZXhwZXJpZW5jZSwg
+ZS5nLiwgZGVsYXlzIHRvIGFsbG93IG9wZXJhdG9ycyB0byByZWNvdmVyIGZyb20gbWlzdGFrZW4g
+bGF0Y2ggb3BlbnMgb3IgYnV0dG9uIHByZXNzZXMuICBCdXQgaWYgd2Uga25ldyBtb3JlIGFib3V0
+IHdoYXQgeW91J3JlIHRyeWluZyB0byBkbywgbWF5YmUgd2UgY291bGQgZmlndXJlIG91dCBhbm90
+aGVyIGFwcHJvYWNoLg0KDQpUaGFua3MgZm9yIHlvdXIgcmVwbHkuIEFzIGlzIHNwZWMgcmVxdWly
+ZWQsIHdlIHdvdWxkIHRyeSB0byB3b3JrIGFyb3VuZCBpdC4NCk1hbnkgdGhhbmtzLg0KDQpIYXZl
+IGEgZ29vZCBkYXkuDQpCZXN0IHdpc2hlcy4NCg==
