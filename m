@@ -2,103 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F30A5ECB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E08D5ECC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 21:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfGCTYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 15:24:38 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40980 "EHLO ale.deltatee.com"
+        id S1726988AbfGCT2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 15:28:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCTYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 15:24:38 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hikrp-0002Qw-SO; Wed, 03 Jul 2019 13:24:34 -0600
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>
-Cc:     Stephen Bates <sbates@raithlin.com>
-References: <20190703170136.21515-1-logang@deltatee.com>
- <e88bed6b-c487-e224-1434-ba9912495a33@grimberg.me>
- <c072210c-1f44-2803-4781-15ff6f72a07a@deltatee.com>
- <e7f0ae6e-9a72-0640-12d3-1683f9950a13@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <6344ac00-0102-5cc8-a565-58a715657345@deltatee.com>
-Date:   Wed, 3 Jul 2019 13:24:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726473AbfGCT2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 15:28:16 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49B8620693;
+        Wed,  3 Jul 2019 19:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562182095;
+        bh=4t35n7rE5OqFNPn1iMkzhdmrxUfUzfzBZpTy9xV2/gk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QXV4hrZ5KCqsGLJSNC0aA2hvoam0DFeKfN8XneZg/8CBfmyKECAnwDUcLJ6EQrMg4
+         EY8Ib5UTEcI26QD96qx0sE6WDDaaQ7Uf6pXXX8QCBjBxToOMkcqU3c3wiNafF3Hb3G
+         xWgiZ/i0qnG/F3uPqjOPCzG4WYwFY9XF8dLbbDfw=
+Date:   Wed, 3 Jul 2019 21:28:13 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] driver: core: Allow subsystems to continue deferring
+ probe
+Message-ID: <20190703192813.GA26808@kroah.com>
+References: <20190621151725.20414-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e7f0ae6e-9a72-0640-12d3-1683f9950a13@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, hch@lst.de, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH 0/2] Fix use-after-free bug when ports are removed
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190621151725.20414-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-07-03 1:20 p.m., Sagi Grimberg wrote:
+On Fri, Jun 21, 2019 at 05:17:25PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
->>> Can we handle this in the core instead (also so we'd be consistent
->>> across transports)?
->>
->> Yes, that would be much better if we can sort out some other issues
->> below...
->>
->>> How about this untested patch instead?
->>
->> I've found a couple of problems with the patch:
->>
->> 1) port->subsystems will always be empty before nvmet_disable_port() is
->> called. We'd have to restructure things a little perhaps so that when a
->> subsystem is removed from a port, all the active controllers for that
->> subsys/port combo would be removed.
+> Some subsystems, such as pinctrl, allow continuing to defer probe
+> indefinitely. This is useful for devices that depend on resources
+> provided by devices that are only probed after the init stage.
 > 
-> Yes, that is better.
-
-Ok, if you like this solution I'll try and come up with a patch like
-that. It *may* not be too intrusive compared to the cleanup I suggested
-below.
-
->> 2) loop needs to call flush_workqueue(nvme_delete_wq) somewhere,
->> otherwise there's a small window after the port disappears while
->> commands can still be submitted. We can actually still hit the bug with
->> a tight loop.
+> One example of this can be seen on Tegra, where the DPAUX hardware
+> contains pinmuxing controls for pins that it shares with an I2C
+> controller. The I2C controller is typically used for communication
+> with a monitor over HDMI (DDC). However, other instances of the I2C
+> controller are used to access system critical components, such as a
+> PMIC. The I2C controller driver will therefore usually be a builtin
+> driver, whereas the DPAUX driver is part of the display driver that
+> is loaded from a module to avoid bloating the kernel image with all
+> of the DRM/KMS subsystem.
 > 
-> We could simply flush the workqueue in nvme_loop_delete_ctrl for
-> each controller?
+> In this particular case the pins used by this I2C/DDC controller
+> become accessible very late in the boot process. However, since the
+> controller is only used in conjunction with display, that's not an
+> issue.
 > 
-> Might be an overkill though, and its risking circular locking in case
-> we are going via the fatal error path (work context flushing a different
-> workqueue always annoys lockdep even when its perfectly safe)
+> Unfortunately the driver core currently outputs a warning message
+> when a device fails to get the pinctrl before the end of the init
+> stage. That can be confusing for the user because it may sound like
+> an unwanted error occurred, whereas it's really an expected and
+> harmless situation.
 > 
->> Maybe there's other cleanup that could be done to solve this: it does
->> seem like all three transports need to keep their own lists of open
->> controllers and loops through them to delete them. In theory, that could
->> be made common so there's common code to manage the list per transport
->> which would remove some boiler plate code. If we want to go this route
->> though, I'd suggest using my patches as is for now and doing the cleanup
->> in the next cycle.
+> In order to eliminate this warning, this patch allows callers of the
+> driver_deferred_probe_check_state() helper to specify that they want
+> to continue deferring probe, regardless of whether we're past the
+> init stage or not. All of the callers of that function are updated
+> for the new signature, but only the pinctrl subsystem passes a true
+> value in the new persist parameter if appropriate.
 > 
-> Then please fix tcp as well.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changes in v3:
+> - add new function rather than extend the existing function with flags
 
-Ok, I'll try to send either a destroy controller on subsystem-removal
-patch or I'll resend these with TCP included sometime today or tomorrow.
+Much nicer, thanks for making the changes!
 
-Thanks,
-
-Logan
+greg k-h
