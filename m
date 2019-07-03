@@ -2,60 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7EE85E2B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9115E2A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfGCLP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:15:59 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8135 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726621AbfGCLP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:15:59 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 91DE721F7131172F8F4A;
-        Wed,  3 Jul 2019 19:15:56 +0800 (CST)
-Received: from localhost.localdomain (10.67.165.24) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 3 Jul 2019 19:15:48 +0800
-From:   Yonglong Liu <liuyonglong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
-Subject: [PATCH net] net: hns: add support for vlan TSO
-Date:   Wed, 3 Jul 2019 19:12:30 +0800
-Message-ID: <1562152350-14244-1-git-send-email-liuyonglong@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1726993AbfGCLMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:12:48 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43137 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfGCLMs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 07:12:48 -0400
+Received: by mail-ot1-f66.google.com with SMTP id q10so1900105otk.10;
+        Wed, 03 Jul 2019 04:12:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U7f1EyIiFwc1ziRwMDUFrIFL5oAxoWGW+66zhLCeniw=;
+        b=p67wq8ZtXT9zPWRUNrwoc4LIEMV/4tlLjCOfijWLeEb2GiqqcNi2+wQF8u/OssJdfk
+         7DJMyfH2fKQfeY53GGL1CXcF2+55IhjyWOfZUyw9Y0D3aEP8mddNSSUBoznENzKTGASQ
+         ZM5X+fvKD6osdQK/Y3BF7W6MPjIOUuvGHVYX/uGQ9QuxEZ8wVUkNcEIgHAwVVX1iznOK
+         PSGTYUGZxqeYkxiB/WmRon/0ytXoPhQUiYp/QD5UalNEHN2SGKLejOiskf7QX5gZdSRJ
+         LPeRIM+xUAbieVLvcy7OiUcC7BDu1esNiqyyv6Cqb0xNSOcE/yEskXeRD8JGVXdMuyMw
+         bOKQ==
+X-Gm-Message-State: APjAAAVycMsZZselyhJ/zDQzEHTxozxMnpafM+noa+ksZV/9KrP3+5vW
+        LJlAERO+OgM8E4W6oRRosPEkSopjmQu76J25/vY=
+X-Google-Smtp-Source: APXvYqxFHMr6lDzi0AllC0aFB9PTf+FIR9lUZMObiJ0wMV7PVbFF5coqE7mhBMuA394XW2hUSI7+T7132sn1uQLuN9E=
+X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr10838606oto.167.1562152367825;
+ Wed, 03 Jul 2019 04:12:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.165.24]
-X-CFilter-Loop: Reflected
+References: <156140036490.2951909.1837804994781523185.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <156140042119.2951909.7727308817426477621.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <156140042119.2951909.7727308817426477621.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 3 Jul 2019 13:12:36 +0200
+Message-ID: <CAJZ5v0gzRar8oowUSw0Z9_uofcbZCirmaYFmbjBvDrDAp4W5SA@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] acpi/numa/hmat: Register HMAT at device_initcall level
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hip07 chip support vlan TSO, this patch adds NETIF_F_TSO
-and NETIF_F_TSO6 flags to vlan_features to improve the
-performance after adding vlan to the net ports.
+On Mon, Jun 24, 2019 at 8:34 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> In preparation for registering device-dax instances for accessing EFI
+> specific-purpose memory, arrange for the HMAT registration to occur
+> later in the init process. Critically HMAT initialization needs to occur
+> after e820__reserve_resources_late() which is the point at which the
+> iomem resource tree is populated with "Application Reserved"
+> (IORES_DESC_APPLICATION_RESERVED). e820__reserve_resources_late()
+> happens at subsys_initcall time.
+>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index fe879c0..2235dd5 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -2370,6 +2370,7 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
- 		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
- 			NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
- 			NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6;
-+		ndev->vlan_features |= NETIF_F_TSO | NETIF_F_TSO6;
- 		ndev->max_mtu = MAC_MAX_MTU_V2 -
- 				(ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN);
- 		break;
--- 
-2.8.1
-
+> ---
+>  drivers/acpi/numa/hmat.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> index 2c220cb7b620..1d329c4af3bf 100644
+> --- a/drivers/acpi/numa/hmat.c
+> +++ b/drivers/acpi/numa/hmat.c
+> @@ -671,4 +671,4 @@ static __init int hmat_init(void)
+>         acpi_put_table(tbl);
+>         return 0;
+>  }
+> -subsys_initcall(hmat_init);
+> +device_initcall(hmat_init);
+>
