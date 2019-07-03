@@ -2,268 +2,666 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3425E796
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 325FF5E79E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfGCPQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:16:18 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39383 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCPQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:16:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x4so3257064wrt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 08:16:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jmk3EaUMyH3o2q6hi4mDaqdjnaIaz/WrF9xrUY0fsnc=;
-        b=tcNDm30c25aBara3PT9tDOeGo7Xwh3v1yWsIuGZ6cTG1sScl1UatJE729VVSHK8TPA
-         vGuZJmArZTapZv0iPuCWanf2kU24WnZpMsuYaVBZbgZ+fPdIB1ixwyHlyVHAgxdBAECa
-         eD8baDTWOb66f2qPi0V9OXrNGBW07QG/N9EsCeHbSWGHbFtmaRifM1AbJuZtdXws5/E4
-         nVAIcGuy4YYqJiOkPRgEATQv3u+NiOovedieeG1DHaM2DctfhpEt9MjYpna7gKd0qrgS
-         FM3xKljVOlUuSjAO0FxvWcm9rHM7veHIAUvzha9mOCIllpYxCkaDubFmKPq1H9QRWyaB
-         kgGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Jmk3EaUMyH3o2q6hi4mDaqdjnaIaz/WrF9xrUY0fsnc=;
-        b=TV0x7B+O6RIp2j6mic/nOk76ZXqnuL3Wsp5IL9I9BZd3JPVPFMxFNo0u1QQYD/+TI7
-         ShmYhBfam0Zd7Uf21/gLlrB55TX1+REqXl5Qjx1iL8q2eEbICLLbp6SUI4Jg9BDYDxYS
-         wh0pzsIaS57YooowOMRtoef7Q95wYGsJPS4dKAo9WntdEES5OG1J1J+z5O6NUPWfSdjr
-         YBCfeNcFpJrg/rtCs7TtNe5T7GlmPkXOlKCcYmWbhXfnKrHoVgMcMAtZzmnjfku5dCK9
-         ntnZpuYIJJKrgDLi0qLMooSPzeOG5xJd0ny18Qi+1eG5mb9sDQ+6CkXydGIvEOWEQi+O
-         yu4A==
-X-Gm-Message-State: APjAAAU4SHOzxgJxz5MzBbAI/ZCRdtV+0W9qlYSTgBp9YHPY36fJGVEj
-        nu7C7xl65qfxaX19o/QbSfuFRA==
-X-Google-Smtp-Source: APXvYqwIbZghG9qVYf/8aXWdLBQZCUAfkCyg1h+a3QxlW+26J8iqi9a3RFQw4XXHaTX4H8/kjL/YCg==
-X-Received: by 2002:a5d:4cc3:: with SMTP id c3mr14259408wrt.259.1562166974813;
-        Wed, 03 Jul 2019 08:16:14 -0700 (PDT)
-Received: from [192.168.0.41] (143.197.22.93.rev.sfr.net. [93.22.197.143])
-        by smtp.googlemail.com with ESMTPSA id x20sm2289399wmc.1.2019.07.03.08.16.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 08:16:14 -0700 (PDT)
-Subject: Re: [PATCH] cpuidle/drivers/mobile: Add new governor for
- mobile/embedded systems
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     linux-kernel@vger.kernel.org,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        'Thomas Gleixner' <tglx@linutronix.de>,
-        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
-        "'open list:CPU IDLE TIME MANAGEMENT FRAMEWORK'" 
-        <linux-pm@vger.kernel.org>, rafael@kernel.org
-References: <20190620115826.4897-1-daniel.lezcano@linaro.org>
- <000101d531aa$e00987e0$a01c97a0$@net>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <6589a058-c538-fbf3-7761-d43ab8434654@linaro.org>
-Date:   Wed, 3 Jul 2019 17:16:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726811AbfGCPTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 11:19:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:50626 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbfGCPTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:19:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0B3C344;
+        Wed,  3 Jul 2019 08:19:09 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82E913F718;
+        Wed,  3 Jul 2019 08:19:07 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 16:19:05 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv5 02/20] PCI: mobiveil: Format the code without
+ functionality change
+Message-ID: <20190703151905.GD26804@e121166-lin.cambridge.arm.com>
+References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com>
+ <20190412083635.33626-3-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <000101d531aa$e00987e0$a01c97a0$@net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190412083635.33626-3-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 12, 2019 at 08:35:24AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> 
+> Just format the code without functionality change.
+> 
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> ---
+> V5:
+>  - Retouched the subject.
+> 
+>  drivers/pci/controller/pcie-mobiveil.c | 261 +++++++++++++------------
+>  1 file changed, 137 insertions(+), 124 deletions(-)
 
-Hi Doug,
+Ok, dropping this patch means that everything else should be
+rebased. So what I am going to do:
 
-On 03/07/2019 16:23, Doug Smythies wrote:
-> Hi Daniel,
-> 
-> I tried your "mobile" governor, albeit not on a mobile device.
-> 
-> On 2019.06.20 04:58 Daniel Lezcano wrote:
-> 
-> ...
-> 
->> The mobile governor is a new governor targeting embedded systems
->> running on battery where the energy saving has a higher priority than
->> servers or desktops. This governor aims to save energy as much as
->> possible but with a performance degradation tolerance.
->>
->> In this way, we can optimize the governor for specific mobile workload
->> and more generally embedded systems without impacting other platforms.
-> 
-> I just wanted to observe the lower energy, accepting performance
-> degradation. My workloads may have been inappropriate.
+- I will publish a branch (pci/mobiveil) where I added the patches
+  that are ready to be merged with commit logs rewritten; this patch
+  is part of it but in the final version it must be split as requested.
+- You have to split this patch and the other patches I requested
+  you to split but do NOT modify the patches with my commit logs
+  rewritten in pci/mobiveil, it took me time to rewrite them.
 
-Thanks for trying the governor. It is still basic but will be improved
-step by step regarding clearly identified workload and with more help
-from the scheduler. This is the first phase of the governor providing
-the base bricks.
+If you can manage to rebase patches on pci/mobiveil on top
+of v5.2-rc1, send them separately so that I can merge them
+as a base for the subsequent patches to be applied.
 
->> +
->> +#define EMA_ALPHA_VAL		64
->> +#define EMA_ALPHA_SHIFT		7
->> +#define MAX_RESCHED_INTERVAL_MS	100
->> +
->> +static DEFINE_PER_CPU(struct mobile_device, mobile_devices);
->> +
->> +static int mobile_ema_new(s64 value, s64 ema_old)
->> +{
->> +	if (likely(ema_old))
->> +		return ema_old + (((value - ema_old) * EMA_ALPHA_VAL) >>
->> +				  EMA_ALPHA_SHIFT);
->> +	return value;
->> +}
+If you have any questions please ask, do not post patches
+if there is something that is not clear.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index d55c7e780c6e..b87471f08a40 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -31,38 +31,40 @@
+>   * translation tables are grouped into windows, each window registers are
+>   * grouped into blocks of 4 or 16 registers each
+>   */
+> -#define PAB_REG_BLOCK_SIZE	16
+> -#define PAB_EXT_REG_BLOCK_SIZE	4
+> +#define PAB_REG_BLOCK_SIZE		16
+> +#define PAB_EXT_REG_BLOCK_SIZE		4
+>  
+> -#define PAB_REG_ADDR(offset, win) (offset + (win * PAB_REG_BLOCK_SIZE))
+> -#define PAB_EXT_REG_ADDR(offset, win) (offset + (win * PAB_EXT_REG_BLOCK_SIZE))
+> +#define PAB_REG_ADDR(offset, win)	\
+> +	(offset + (win * PAB_REG_BLOCK_SIZE))
+> +#define PAB_EXT_REG_ADDR(offset, win)	\
+> +	(offset + (win * PAB_EXT_REG_BLOCK_SIZE))
+>  
+> -#define LTSSM_STATUS		0x0404
+> -#define  LTSSM_STATUS_L0_MASK	0x3f
+> -#define  LTSSM_STATUS_L0	0x2d
+> +#define LTSSM_STATUS			0x0404
+> +#define  LTSSM_STATUS_L0_MASK		0x3f
+> +#define  LTSSM_STATUS_L0		0x2d
+>  
+> -#define PAB_CTRL		0x0808
+> -#define  AMBA_PIO_ENABLE_SHIFT	0
+> -#define  PEX_PIO_ENABLE_SHIFT	1
+> -#define  PAGE_SEL_SHIFT	13
+> -#define  PAGE_SEL_MASK		0x3f
+> -#define  PAGE_LO_MASK		0x3ff
+> -#define  PAGE_SEL_OFFSET_SHIFT	10
+> +#define PAB_CTRL			0x0808
+> +#define  AMBA_PIO_ENABLE_SHIFT		0
+> +#define  PEX_PIO_ENABLE_SHIFT		1
+> +#define  PAGE_SEL_SHIFT			13
+> +#define  PAGE_SEL_MASK			0x3f
+> +#define  PAGE_LO_MASK			0x3ff
+> +#define  PAGE_SEL_OFFSET_SHIFT		10
+>  
+> -#define PAB_AXI_PIO_CTRL	0x0840
+> -#define  APIO_EN_MASK		0xf
+> +#define PAB_AXI_PIO_CTRL		0x0840
+> +#define  APIO_EN_MASK			0xf
+>  
+> -#define PAB_PEX_PIO_CTRL	0x08c0
+> -#define  PIO_ENABLE_SHIFT	0
+> +#define PAB_PEX_PIO_CTRL		0x08c0
+> +#define  PIO_ENABLE_SHIFT		0
+>  
+>  #define PAB_INTP_AMBA_MISC_ENB		0x0b0c
+> -#define PAB_INTP_AMBA_MISC_STAT	0x0b1c
+> +#define PAB_INTP_AMBA_MISC_STAT		0x0b1c
+>  #define  PAB_INTP_INTX_MASK		0x01e0
+>  #define  PAB_INTP_MSI_MASK		0x8
+>  
+> -#define PAB_AXI_AMAP_CTRL(win)	PAB_REG_ADDR(0x0ba0, win)
+> -#define  WIN_ENABLE_SHIFT	0
+> -#define  WIN_TYPE_SHIFT	1
+> +#define PAB_AXI_AMAP_CTRL(win)		PAB_REG_ADDR(0x0ba0, win)
+> +#define  WIN_ENABLE_SHIFT		0
+> +#define  WIN_TYPE_SHIFT			1
+>  
+>  #define PAB_EXT_AXI_AMAP_SIZE(win)	PAB_EXT_REG_ADDR(0xbaf0, win)
+>  
+> @@ -70,16 +72,16 @@
+>  #define  AXI_WINDOW_ALIGN_MASK		3
+>  
+>  #define PAB_AXI_AMAP_PEX_WIN_L(win)	PAB_REG_ADDR(0x0ba8, win)
+> -#define  PAB_BUS_SHIFT		24
+> -#define  PAB_DEVICE_SHIFT	19
+> -#define  PAB_FUNCTION_SHIFT	16
+> +#define  PAB_BUS_SHIFT			24
+> +#define  PAB_DEVICE_SHIFT		19
+> +#define  PAB_FUNCTION_SHIFT		16
+>  
+>  #define PAB_AXI_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x0bac, win)
+>  #define PAB_INTP_AXI_PIO_CLASS		0x474
+>  
+> -#define PAB_PEX_AMAP_CTRL(win)	PAB_REG_ADDR(0x4ba0, win)
+> -#define  AMAP_CTRL_EN_SHIFT	0
+> -#define  AMAP_CTRL_TYPE_SHIFT	1
+> +#define PAB_PEX_AMAP_CTRL(win)		PAB_REG_ADDR(0x4ba0, win)
+> +#define  AMAP_CTRL_EN_SHIFT		0
+> +#define  AMAP_CTRL_TYPE_SHIFT		1
+>  
+>  #define PAB_EXT_PEX_AMAP_SIZEN(win)	PAB_EXT_REG_ADDR(0xbef0, win)
+>  #define PAB_PEX_AMAP_AXI_WIN(win)	PAB_REG_ADDR(0x4ba4, win)
+> @@ -87,39 +89,39 @@
+>  #define PAB_PEX_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x4bac, win)
+>  
+>  /* starting offset of INTX bits in status register */
+> -#define PAB_INTX_START	5
+> +#define PAB_INTX_START			5
+>  
+>  /* supported number of MSI interrupts */
+> -#define PCI_NUM_MSI	16
+> +#define PCI_NUM_MSI			16
+>  
+>  /* MSI registers */
+> -#define MSI_BASE_LO_OFFSET	0x04
+> -#define MSI_BASE_HI_OFFSET	0x08
+> -#define MSI_SIZE_OFFSET	0x0c
+> -#define MSI_ENABLE_OFFSET	0x14
+> -#define MSI_STATUS_OFFSET	0x18
+> -#define MSI_DATA_OFFSET	0x20
+> -#define MSI_ADDR_L_OFFSET	0x24
+> -#define MSI_ADDR_H_OFFSET	0x28
+> +#define MSI_BASE_LO_OFFSET		0x04
+> +#define MSI_BASE_HI_OFFSET		0x08
+> +#define MSI_SIZE_OFFSET			0x0c
+> +#define MSI_ENABLE_OFFSET		0x14
+> +#define MSI_STATUS_OFFSET		0x18
+> +#define MSI_DATA_OFFSET			0x20
+> +#define MSI_ADDR_L_OFFSET		0x24
+> +#define MSI_ADDR_H_OFFSET		0x28
+>  
+>  /* outbound and inbound window definitions */
+> -#define WIN_NUM_0		0
+> -#define WIN_NUM_1		1
+> -#define CFG_WINDOW_TYPE	0
+> -#define IO_WINDOW_TYPE		1
+> -#define MEM_WINDOW_TYPE	2
+> -#define IB_WIN_SIZE		((u64)256 * 1024 * 1024 * 1024)
+> -#define MAX_PIO_WINDOWS	8
+> +#define WIN_NUM_0			0
+> +#define WIN_NUM_1			1
+> +#define CFG_WINDOW_TYPE			0
+> +#define IO_WINDOW_TYPE			1
+> +#define MEM_WINDOW_TYPE			2
+> +#define IB_WIN_SIZE			((u64)256 * 1024 * 1024 * 1024)
+> +#define MAX_PIO_WINDOWS			8
+>  
+>  /* Parameters for the waiting for link up routine */
+> -#define LINK_WAIT_MAX_RETRIES	10
+> -#define LINK_WAIT_MIN	90000
+> -#define LINK_WAIT_MAX	100000
+> +#define LINK_WAIT_MAX_RETRIES		10
+> +#define LINK_WAIT_MIN			90000
+> +#define LINK_WAIT_MAX			100000
+>  
+> -#define PAGED_ADDR_BNDRY			0xc00
+> -#define OFFSET_TO_PAGE_ADDR(off)		\
+> +#define PAGED_ADDR_BNDRY		0xc00
+> +#define OFFSET_TO_PAGE_ADDR(off)	\
+>  	((off & PAGE_LO_MASK) | PAGED_ADDR_BNDRY)
+> -#define OFFSET_TO_PAGE_IDX(off)			\
+> +#define OFFSET_TO_PAGE_IDX(off)		\
+>  	((off >> PAGE_SEL_OFFSET_SHIFT) & PAGE_SEL_MASK)
+>  
+>  struct mobiveil_msi {			/* MSI information */
+> @@ -297,14 +299,14 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bus *bus,
+>  					unsigned int devfn, int where)
+>  {
+>  	struct mobiveil_pcie *pcie = bus->sysdata;
+> +	u32 value;
+>  
+>  	if (!mobiveil_pcie_valid_device(bus, devfn))
+>  		return NULL;
+>  
+> -	if (bus->number == pcie->root_bus_nr) {
+> -		/* RC config access */
+> +	/* RC config access */
+> +	if (bus->number == pcie->root_bus_nr)
+>  		return pcie->csr_axi_slave_base + where;
+> -	}
+>  
+>  	/*
+>  	 * EP config access (in Config/APIO space)
+> @@ -312,10 +314,12 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bus *bus,
+>  	 * (BDF) in PAB_AXI_AMAP_PEX_WIN_L0 Register.
+>  	 * Relies on pci_lock serialization
+>  	 */
+> -	csr_writel(pcie, bus->number << PAB_BUS_SHIFT |
+> -			PCI_SLOT(devfn) << PAB_DEVICE_SHIFT |
+> -			PCI_FUNC(devfn) << PAB_FUNCTION_SHIFT,
+> -			PAB_AXI_AMAP_PEX_WIN_L(WIN_NUM_0));
+> +	value = bus->number << PAB_BUS_SHIFT |
+> +		PCI_SLOT(devfn) << PAB_DEVICE_SHIFT |
+> +		PCI_FUNC(devfn) << PAB_FUNCTION_SHIFT;
+> +
+> +	csr_writel(pcie, value, PAB_AXI_AMAP_PEX_WIN_L(WIN_NUM_0));
+> +
+>  	return pcie->config_axi_slave_base + where;
+>  }
+>  
+> @@ -350,22 +354,22 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+>  
+>  	/* Handle INTx */
+>  	if (intr_status & PAB_INTP_INTX_MASK) {
+> -		shifted_status = csr_readl(pcie, PAB_INTP_AMBA_MISC_STAT) >>
+> -			PAB_INTX_START;
+> +		shifted_status = csr_readl(pcie, PAB_INTP_AMBA_MISC_STAT);
+> +		shifted_status >>= PAB_INTX_START;
+>  		do {
+>  			for_each_set_bit(bit, &shifted_status, PCI_NUM_INTX) {
+>  				virq = irq_find_mapping(pcie->intx_domain,
+> -						bit + 1);
+> +							bit + 1);
+>  				if (virq)
+>  					generic_handle_irq(virq);
+>  				else
+> -					dev_err_ratelimited(dev,
+> -						"unexpected IRQ, INT%d\n", bit);
+> +					dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n",
+> +							    bit);
+>  
+>  				/* clear interrupt */
+>  				csr_writel(pcie,
+> -					shifted_status << PAB_INTX_START,
+> -					PAB_INTP_AMBA_MISC_STAT);
+> +					   shifted_status << PAB_INTX_START,
+> +					   PAB_INTP_AMBA_MISC_STAT);
+>  			}
+>  		} while ((shifted_status >> PAB_INTX_START) != 0);
+>  	}
+> @@ -375,8 +379,7 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+>  
+>  	/* handle MSI interrupts */
+>  	while (msi_status & 1) {
+> -		msi_data = readl_relaxed(pcie->apb_csr_base
+> -				+ MSI_DATA_OFFSET);
+> +		msi_data = readl_relaxed(pcie->apb_csr_base + MSI_DATA_OFFSET);
+>  
+>  		/*
+>  		 * MSI_STATUS_OFFSET register gets updated to zero
+> @@ -385,18 +388,18 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+>  		 * two dummy reads.
+>  		 */
+>  		msi_addr_lo = readl_relaxed(pcie->apb_csr_base +
+> -				MSI_ADDR_L_OFFSET);
+> +					    MSI_ADDR_L_OFFSET);
+>  		msi_addr_hi = readl_relaxed(pcie->apb_csr_base +
+> -				MSI_ADDR_H_OFFSET);
+> +					    MSI_ADDR_H_OFFSET);
+>  		dev_dbg(dev, "MSI registers, data: %08x, addr: %08x:%08x\n",
+> -				msi_data, msi_addr_hi, msi_addr_lo);
+> +			msi_data, msi_addr_hi, msi_addr_lo);
+>  
+>  		virq = irq_find_mapping(msi->dev_domain, msi_data);
+>  		if (virq)
+>  			generic_handle_irq(virq);
+>  
+>  		msi_status = readl_relaxed(pcie->apb_csr_base +
+> -				MSI_STATUS_OFFSET);
+> +					   MSI_STATUS_OFFSET);
+>  	}
+>  
+>  	/* Clear the interrupt status */
+> @@ -413,7 +416,7 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+>  
+>  	/* map config resource */
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> -			"config_axi_slave");
+> +					   "config_axi_slave");
+>  	pcie->config_axi_slave_base = devm_pci_remap_cfg_resource(dev, res);
+>  	if (IS_ERR(pcie->config_axi_slave_base))
+>  		return PTR_ERR(pcie->config_axi_slave_base);
+> @@ -421,7 +424,7 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+>  
+>  	/* map csr resource */
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> -			"csr_axi_slave");
+> +					   "csr_axi_slave");
+>  	pcie->csr_axi_slave_base = devm_pci_remap_cfg_resource(dev, res);
+>  	if (IS_ERR(pcie->csr_axi_slave_base))
+>  		return PTR_ERR(pcie->csr_axi_slave_base);
+> @@ -452,7 +455,7 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+>  }
+>  
+>  static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+> -		int pci_addr, u32 type, u64 size)
+> +			       int pci_addr, u32 type, u64 size)
+>  {
+>  	int pio_ctrl_val;
+>  	int amap_ctrl_dw;
+> @@ -465,19 +468,20 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+>  	}
+>  
+>  	pio_ctrl_val = csr_readl(pcie, PAB_PEX_PIO_CTRL);
+> -	csr_writel(pcie,
+> -		pio_ctrl_val | (1 << PIO_ENABLE_SHIFT), PAB_PEX_PIO_CTRL);
+> -	amap_ctrl_dw = csr_readl(pcie, PAB_PEX_AMAP_CTRL(win_num));
+> -	amap_ctrl_dw = (amap_ctrl_dw | (type << AMAP_CTRL_TYPE_SHIFT));
+> -	amap_ctrl_dw = (amap_ctrl_dw | (1 << AMAP_CTRL_EN_SHIFT));
+> +	pio_ctrl_val |= 1 << PIO_ENABLE_SHIFT;
+> +	csr_writel(pcie, pio_ctrl_val, PAB_PEX_PIO_CTRL);
+>  
+> -	csr_writel(pcie, amap_ctrl_dw | lower_32_bits(size64),
+> -		   PAB_PEX_AMAP_CTRL(win_num));
+> +	amap_ctrl_dw = csr_readl(pcie, PAB_PEX_AMAP_CTRL(win_num));
+> +	amap_ctrl_dw |= (type << AMAP_CTRL_TYPE_SHIFT) |
+> +			(1 << AMAP_CTRL_EN_SHIFT) |
+> +			lower_32_bits(size64);
+> +	csr_writel(pcie, amap_ctrl_dw, PAB_PEX_AMAP_CTRL(win_num));
+>  
+>  	csr_writel(pcie, upper_32_bits(size64),
+>  		   PAB_EXT_PEX_AMAP_SIZEN(win_num));
+>  
+>  	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
+> +
+>  	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_PEX_WIN_L(win_num));
+>  	csr_writel(pcie, 0, PAB_PEX_AMAP_PEX_WIN_H(win_num));
+>  }
+> @@ -486,7 +490,8 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+>   * routine to program the outbound windows
+>   */
+>  static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+> -		u64 cpu_addr, u64 pci_addr, u32 config_io_bit, u64 size)
+> +			       u64 cpu_addr, u64 pci_addr,
+> +			       u32 config_io_bit, u64 size)
+>  {
+>  
+>  	u32 value, type;
+> @@ -505,7 +510,7 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+>  	type = config_io_bit;
+>  	value = csr_readl(pcie, PAB_AXI_AMAP_CTRL(win_num));
+>  	csr_writel(pcie, 1 << WIN_ENABLE_SHIFT | type << WIN_TYPE_SHIFT |
+> -			lower_32_bits(size64), PAB_AXI_AMAP_CTRL(win_num));
+> +		   lower_32_bits(size64), PAB_AXI_AMAP_CTRL(win_num));
+>  
+>  	csr_writel(pcie, upper_32_bits(size64), PAB_EXT_AXI_AMAP_SIZE(win_num));
+>  
+> @@ -515,14 +520,14 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+>  	 */
+>  	value = csr_readl(pcie, PAB_AXI_AMAP_AXI_WIN(win_num));
+>  	csr_writel(pcie, cpu_addr & (~AXI_WINDOW_ALIGN_MASK),
+> -			PAB_AXI_AMAP_AXI_WIN(win_num));
+> +		   PAB_AXI_AMAP_AXI_WIN(win_num));
+>  
+>  	value = csr_readl(pcie, PAB_AXI_AMAP_PEX_WIN_H(win_num));
+>  
+>  	csr_writel(pcie, lower_32_bits(pci_addr),
+> -			PAB_AXI_AMAP_PEX_WIN_L(win_num));
+> +		   PAB_AXI_AMAP_PEX_WIN_L(win_num));
+>  	csr_writel(pcie, upper_32_bits(pci_addr),
+> -			PAB_AXI_AMAP_PEX_WIN_H(win_num));
+> +		   PAB_AXI_AMAP_PEX_WIN_H(win_num));
+>  
+>  	pcie->ob_wins_configured++;
+>  }
+> @@ -538,7 +543,9 @@ static int mobiveil_bringup_link(struct mobiveil_pcie *pcie)
+>  
+>  		usleep_range(LINK_WAIT_MIN, LINK_WAIT_MAX);
+>  	}
+> +
+>  	dev_err(&pcie->pdev->dev, "link never came up\n");
+> +
+>  	return -ETIMEDOUT;
+>  }
+>  
+> @@ -551,16 +558,16 @@ static void mobiveil_pcie_enable_msi(struct mobiveil_pcie *pcie)
+>  	msi->msi_pages_phys = (phys_addr_t)msg_addr;
+>  
+>  	writel_relaxed(lower_32_bits(msg_addr),
+> -		pcie->apb_csr_base + MSI_BASE_LO_OFFSET);
+> +		       pcie->apb_csr_base + MSI_BASE_LO_OFFSET);
+>  	writel_relaxed(upper_32_bits(msg_addr),
+> -		pcie->apb_csr_base + MSI_BASE_HI_OFFSET);
+> +		       pcie->apb_csr_base + MSI_BASE_HI_OFFSET);
+>  	writel_relaxed(4096, pcie->apb_csr_base + MSI_SIZE_OFFSET);
+>  	writel_relaxed(1, pcie->apb_csr_base + MSI_ENABLE_OFFSET);
+>  }
+>  
+>  static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>  {
+> -	u32 value, pab_ctrl, type = 0;
+> +	u32 value, pab_ctrl, type;
+>  	int err;
+>  	struct resource_entry *win, *tmp;
+>  
+> @@ -575,26 +582,27 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>  	 * Space
+>  	 */
+>  	value = csr_readl(pcie, PCI_COMMAND);
+> -	csr_writel(pcie, value | PCI_COMMAND_IO | PCI_COMMAND_MEMORY |
+> -		PCI_COMMAND_MASTER, PCI_COMMAND);
+> +	value |= PCI_COMMAND_IO | PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER;
+> +	csr_writel(pcie, value, PCI_COMMAND);
+>  
+>  	/*
+>  	 * program PIO Enable Bit to 1 (and PEX PIO Enable to 1) in PAB_CTRL
+>  	 * register
+>  	 */
+>  	pab_ctrl = csr_readl(pcie, PAB_CTRL);
+> -	csr_writel(pcie, pab_ctrl | (1 << AMBA_PIO_ENABLE_SHIFT) |
+> -		(1 << PEX_PIO_ENABLE_SHIFT), PAB_CTRL);
+> +	pab_ctrl |= (1 << AMBA_PIO_ENABLE_SHIFT) | (1 << PEX_PIO_ENABLE_SHIFT);
+> +	csr_writel(pcie, pab_ctrl, PAB_CTRL);
+>  
+>  	csr_writel(pcie, (PAB_INTP_INTX_MASK | PAB_INTP_MSI_MASK),
+> -		PAB_INTP_AMBA_MISC_ENB);
+> +		   PAB_INTP_AMBA_MISC_ENB);
+>  
+>  	/*
+>  	 * program PIO Enable Bit to 1 and Config Window Enable Bit to 1 in
+>  	 * PAB_AXI_PIO_CTRL Register
+>  	 */
+>  	value = csr_readl(pcie, PAB_AXI_PIO_CTRL);
+> -	csr_writel(pcie, value | APIO_EN_MASK, PAB_AXI_PIO_CTRL);
+> +	value |= APIO_EN_MASK;
+> +	csr_writel(pcie, value, PAB_AXI_PIO_CTRL);
+>  
+>  	/*
+>  	 * we'll program one outbound window for config reads and
+> @@ -605,25 +613,25 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>  
+>  	/* config outbound translation window */
+>  	program_ob_windows(pcie, pcie->ob_wins_configured,
+> -			pcie->ob_io_res->start, 0, CFG_WINDOW_TYPE,
+> -			resource_size(pcie->ob_io_res));
+> +			   pcie->ob_io_res->start, 0, CFG_WINDOW_TYPE,
+> +			   resource_size(pcie->ob_io_res));
+>  
+>  	/* memory inbound translation window */
+>  	program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+>  
+>  	/* Get the I/O and memory ranges from DT */
+>  	resource_list_for_each_entry_safe(win, tmp, &pcie->resources) {
+> -		type = 0;
+>  		if (resource_type(win->res) == IORESOURCE_MEM)
+>  			type = MEM_WINDOW_TYPE;
+> -		if (resource_type(win->res) == IORESOURCE_IO)
+> +		else if (resource_type(win->res) == IORESOURCE_IO)
+>  			type = IO_WINDOW_TYPE;
+> -		if (type) {
+> -			/* configure outbound translation window */
+> -			program_ob_windows(pcie, pcie->ob_wins_configured,
+> -				win->res->start, 0, type,
+> -				resource_size(win->res));
+> -		}
+> +		else
+> +			continue;
+> +
+> +		/* configure outbound translation window */
+> +		program_ob_windows(pcie, pcie->ob_wins_configured,
+> +				   win->res->start, 0, type,
+> +				   resource_size(win->res));
+>  	}
+>  
+>  	/* setup MSI hardware registers */
+> @@ -643,7 +651,8 @@ static void mobiveil_mask_intx_irq(struct irq_data *data)
+>  	mask = 1 << ((data->hwirq + PAB_INTX_START) - 1);
+>  	raw_spin_lock_irqsave(&pcie->intx_mask_lock, flags);
+>  	shifted_val = csr_readl(pcie, PAB_INTP_AMBA_MISC_ENB);
+> -	csr_writel(pcie, (shifted_val & (~mask)), PAB_INTP_AMBA_MISC_ENB);
+> +	shifted_val &= ~mask;
+> +	csr_writel(pcie, shifted_val, PAB_INTP_AMBA_MISC_ENB);
+>  	raw_spin_unlock_irqrestore(&pcie->intx_mask_lock, flags);
+>  }
+>  
+> @@ -658,7 +667,8 @@ static void mobiveil_unmask_intx_irq(struct irq_data *data)
+>  	mask = 1 << ((data->hwirq + PAB_INTX_START) - 1);
+>  	raw_spin_lock_irqsave(&pcie->intx_mask_lock, flags);
+>  	shifted_val = csr_readl(pcie, PAB_INTP_AMBA_MISC_ENB);
+> -	csr_writel(pcie, (shifted_val | mask), PAB_INTP_AMBA_MISC_ENB);
+> +	shifted_val |= mask;
+> +	csr_writel(pcie, shifted_val, PAB_INTP_AMBA_MISC_ENB);
+>  	raw_spin_unlock_irqrestore(&pcie->intx_mask_lock, flags);
+>  }
+>  
+> @@ -672,10 +682,11 @@ static struct irq_chip intx_irq_chip = {
+>  
+>  /* routine to setup the INTx related data */
+>  static int mobiveil_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
+> -		irq_hw_number_t hwirq)
+> +				  irq_hw_number_t hwirq)
+>  {
+>  	irq_set_chip_and_handler(irq, &intx_irq_chip, handle_level_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -692,7 +703,7 @@ static struct irq_chip mobiveil_msi_irq_chip = {
+>  
+>  static struct msi_domain_info mobiveil_msi_domain_info = {
+>  	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> -		MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
+> +		   MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
+>  	.chip	= &mobiveil_msi_irq_chip,
+>  };
+>  
+> @@ -710,7 +721,7 @@ static void mobiveil_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>  }
+>  
+>  static int mobiveil_msi_set_affinity(struct irq_data *irq_data,
+> -		const struct cpumask *mask, bool force)
+> +				     const struct cpumask *mask, bool force)
+>  {
+>  	return -EINVAL;
+>  }
+> @@ -722,7 +733,8 @@ static struct irq_chip mobiveil_msi_bottom_irq_chip = {
+>  };
+>  
+>  static int mobiveil_irq_msi_domain_alloc(struct irq_domain *domain,
+> -		unsigned int virq, unsigned int nr_irqs, void *args)
+> +					 unsigned int virq,
+> +					 unsigned int nr_irqs, void *args)
+>  {
+>  	struct mobiveil_pcie *pcie = domain->host_data;
+>  	struct mobiveil_msi *msi = &pcie->msi;
+> @@ -742,13 +754,13 @@ static int mobiveil_irq_msi_domain_alloc(struct irq_domain *domain,
+>  	mutex_unlock(&msi->lock);
+>  
+>  	irq_domain_set_info(domain, virq, bit, &mobiveil_msi_bottom_irq_chip,
+> -				domain->host_data, handle_level_irq,
+> -				NULL, NULL);
+> +			    domain->host_data, handle_level_irq, NULL, NULL);
+>  	return 0;
+>  }
+>  
+>  static void mobiveil_irq_msi_domain_free(struct irq_domain *domain,
+> -		unsigned int virq, unsigned int nr_irqs)
+> +					 unsigned int virq,
+> +					 unsigned int nr_irqs)
+>  {
+>  	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+>  	struct mobiveil_pcie *pcie = irq_data_get_irq_chip_data(d);
+> @@ -756,12 +768,11 @@ static void mobiveil_irq_msi_domain_free(struct irq_domain *domain,
+>  
+>  	mutex_lock(&msi->lock);
+>  
+> -	if (!test_bit(d->hwirq, msi->msi_irq_in_use)) {
+> +	if (!test_bit(d->hwirq, msi->msi_irq_in_use))
+>  		dev_err(&pcie->pdev->dev, "trying to free unused MSI#%lu\n",
+>  			d->hwirq);
+> -	} else {
+> +	else
+>  		__clear_bit(d->hwirq, msi->msi_irq_in_use);
+> -	}
+>  
+>  	mutex_unlock(&msi->lock);
+>  }
+> @@ -785,12 +796,14 @@ static int mobiveil_allocate_msi_domains(struct mobiveil_pcie *pcie)
+>  	}
+>  
+>  	msi->msi_domain = pci_msi_create_irq_domain(fwnode,
+> -				&mobiveil_msi_domain_info, msi->dev_domain);
+> +						    &mobiveil_msi_domain_info,
+> +						    msi->dev_domain);
+>  	if (!msi->msi_domain) {
+>  		dev_err(dev, "failed to create MSI domain\n");
+>  		irq_domain_remove(msi->dev_domain);
+>  		return -ENOMEM;
+>  	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -801,8 +814,8 @@ static int mobiveil_pcie_init_irq_domain(struct mobiveil_pcie *pcie)
+>  	int ret;
+>  
+>  	/* setup INTx */
+> -	pcie->intx_domain = irq_domain_add_linear(node,
+> -				PCI_NUM_INTX, &intx_domain_ops, pcie);
+> +	pcie->intx_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
+> +						  &intx_domain_ops, pcie);
+>  
+>  	if (!pcie->intx_domain) {
+>  		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+> @@ -917,10 +930,10 @@ MODULE_DEVICE_TABLE(of, mobiveil_pcie_of_match);
+>  static struct platform_driver mobiveil_pcie_driver = {
+>  	.probe = mobiveil_pcie_probe,
+>  	.driver = {
+> -			.name = "mobiveil-pcie",
+> -			.of_match_table = mobiveil_pcie_of_match,
+> -			.suppress_bind_attrs = true,
+> -		},
+> +		.name = "mobiveil-pcie",
+> +		.of_match_table = mobiveil_pcie_of_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+>  };
+>  
+>  builtin_platform_driver(mobiveil_pcie_driver);
+> -- 
+> 2.17.1
 > 
-> Do you have any information as to why these numbers?
->
-> Without any background, the filter seems overly new value weighted to me.
-> It is an infinite impulse response type filter, currently at:
-> 
-> output = 0.5 * old + 0.5 * new.
-> 
-> I tried, but didn't get anything conclusive:
-> 
-> output = 0.875 * old + 0.125 * new.
-> 
-> I did it this way:
-> 
-> #define EMA_ALPHA_VAL           7
-> #define EMA_ALPHA_SHIFT         3
-> #define MAX_RESCHED_INTERVAL_MS 100
-
-Ok, I will have a look at these values.
-
-> static DEFINE_PER_CPU(struct mobile_device, mobile_devices);
-> 
-> static int mobile_ema_new(s64 value, s64 ema_old)
-> {
->         if (likely(ema_old))
->                 return ((ema_old * EMA_ALPHA_VAL) + value) >>
->                                   EMA_ALPHA_SHIFT;
->         return value;
-> }
-> 
-> ...
-> 
->> +	/*
->> +	 * Sum all the residencies in order to compute the total
->> +	 * duration of the idle task.
->> +	 */
->> +	residency = dev->last_residency - s->exit_latency;
-> 
-> What about when the CPU comes out of the idle state before it
-> even gets fully into it? Under such conditions it seems to hold
-> much too hard at idle states that are too deep, to the point
-> where energy goes up while performance goes down.
-
-I'm not sure there is something we can do here :/
-
-
-> Anyway, I did a bunch of tests and such, but have deleted
-> most from this e-mail, because it's just noise. I'll
-> include just one set:
-> 
-> For a work load that would normally result in a lot of use
-> of shallow idle states (single core pipe-test * 2 cores).
-
-Can you share the tests and the command lines?
-
-
-> I got (all kernel 5.2-rc5 + this patch):
-> 
-> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
-> Processor package power: 40.4 watts; 4.9 uSec/loop
-> 
-> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
-> Processor package power: 34 watts; 5.2 uSec/loop
-> 
-> Idle governor, mobile; CPU frequency scaling: intel-cpufreq/ondemand;
-> Processor package power: 25.9 watts; 11.1 uSec/loop
-> 
-> Idle governor, menu; CPU frequency scaling: intel-cpufreq/ondemand;
-> Processor package power: 34.2 watts; 5.23 uSec/loop
-> 
-> Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
-> Maximum CPU frequency limited to 73% to match mobile energy.
-> Processor package power: 25.4 watts; 6.4 uSec/loop
-
-Ok that's interesting. Thanks for the values.
-
-The governor can be better by selecting the shallow states, the
-scheduler has to interact with the governor to give clues about the
-load, that is identified and will be the next step.
-
-Is it possible to check with the schedutil governor instead?
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
