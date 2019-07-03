@@ -2,158 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13F025EDEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1171C5EDF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfGCUz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:55:57 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:37581 "EHLO
+        id S1727308AbfGCU43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:56:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:44615 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfGCUz5 (ORCPT
+        with ESMTP id S1726678AbfGCU41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:55:57 -0400
+        Wed, 3 Jul 2019 16:56:27 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M27Bp-1hgJRq2Gin-002TZ9; Wed, 03 Jul 2019 22:55:31 +0200
+ 1MqbDs-1iMWxP2do8-00masw; Wed, 03 Jul 2019 22:56:03 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Abbott Liu <liuwenliang@huawei.com>,
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Abbott Liu <liuwenliang@huawei.com>,
         linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
         Linus Walleij <linus.walleij@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Stefan Agner <stefan@agner.ch>,
-        Nathan Chancellor <natechancellor@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: [PATCH 1/3] ARM: fix kasan link failures
-Date:   Wed,  3 Jul 2019 22:54:36 +0200
-Message-Id: <20190703205527.955320-1-arnd@arndb.de>
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will@kernel.org>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH 2/3] kasan: disable CONFIG_KASAN_STACK with clang on arm32
+Date:   Wed,  3 Jul 2019 22:54:37 +0200
+Message-Id: <20190703205527.955320-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190703205527.955320-1-arnd@arndb.de>
+References: <20190703205527.955320-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:N0nhNH56c4bAPUvE+lb81hmqvGKzvYovB1gWPnLR0wVZb6l2Cus
- VlcxdC8pK77LU32vdSY3Hh7JVCF2Dn86C7mE5dWcn3mW4hOXnlPLCso1Cp9anA4gdrDrzo5
- Ut7QKtxvDcquKr7d9Bv/USwELBGTW65u6iuQdfFdQsgx+VYAxaDSI2S8DskzTjruoWUa2ES
- iWji7SQpVNS6kv9tSkXzg==
+X-Provags-ID: V03:K1:dVu6TB6bK7PiXC0nWCBWTtH4+VmEpXav81wxunH7qxb9O8LK6xY
+ 9t1OBqgcoNKISokDJOGEmpsK9Olw4WiYxv3R4Yk0VHCPHCwbE5CfGGDvCGKORzYaTcZzpMZ
+ m0fJ4OWUu8fhsgmIFep0j6SXmG5L3NTwAgbpxGDx8Qj04BISYNu2I01zggQ4J9AyAUBAt5n
+ camESeoPyJjNiAUdUlgtA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kkc3pKM7JBI=:7SfM19cEIrMeD+akm/v6F2
- a7GlFineaNLRR0bDHAg64d4H8VDDp7Z9+1z0wPu6ycgl2veXYMIYLK3ymKqKG4KsWypouYG9r
- mtCXBQ4VLnNmtTGxxFuxJdpI3h2zw4v1U8tAUn4YrVtxSPTXfdIvp75IvfpBXX/UvFQyZ1dp3
- U/VKYT/72+IpBEt1wioAoWf3LlbQGf9SBTdADJK+a4xjGSe3fKWyWBteSoLXu6ryzobEgrfT/
- H00WLhhVLscWXXo5mo/pjrrFTjO/7XZo+uTlJcuSiqSfdPcxYtMHz12+C9S/Z+2HGLOq5uVEg
- DQhJ/O0i8wws7dtN346JYXJBuU/miXvgasyL26bSAp6kAWdEvGPuQv4kdmfMsj2Rw9lg5Y0t7
- R3R01XUVVi1aq89YlWjRoLzbt5hAlFIAd9ilTc+/+QVxtDzzPpenqcaqMjFQubTYDYkRT5SOm
- 2tnPirJJacaRkDbQ5bTGJ3Ul32o6ej09+cOCaH0aWrQYPlKKbkU5SGLBNU7s4LARIsVt2Hw4s
- Ii7qWkUVDiwx+d52CbaSbjqmAtNjS+r0w7ri4LGuUhZvHPf08gKYO/WCR80f/kRyUbqfwxENo
- IhhjA/hQkMP7YWhi+VCHHS49JyodFnSForBRio4snDdEmhFwCJpwTHCqNH15yPzgwWJt5lz3z
- AZS6ncqMjqWtz5QOMSnp3u12Dp15VIpniGDr/zVGGmfL/6EJFRba+9xAe2ivD9P0FL/W7RCuG
- awSwZR/Uu8glWMOfQlXU3FQt8a2h94oDitdTGg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BtQ+/a+4hxk=:BXsO/jIoni0w1uZ5xMb/V6
+ h3BmSvC14FIsrbv1u2lvwtgR132tDDF864k1Mm0/o1613vabZUA4IFS/P8E4jRRI6wzptV5lM
+ jniEHTkB7qHeV/3lCntpeY7GYB4gr9Vvv+AKKRatXz3x21fZBGm2/fGSYXAXY+ZYcmSlQRb0Z
+ 3uc+P/LLZG12LdSV4N+0Jdl/ijlnTXia0VndfpbgkK0UMbzs9GaMSjIuFE72esecJiyh9QXlC
+ jNr2Bequ/b5BgqDk6YfU+QnZsfElwGyaURabVnt6B5C4Ohxqk07JXMFYf1RDOphcRy1RG3a7g
+ cX1kSgnBkWa6c7lXaA5Hp4HJ+c0RNNy3WS5G15hdnR29brBeN7LGOMTBv+bUvZj2fKB9A8rcd
+ xDU4aHuOfToN3Mi0jKRBJbkqfK4pL2GQiLvrctVa9OboD57iyUbUJJQxSc64DPWyyv/TwAWg+
+ 4rlCQYskxhnYiA1upHe0T38dZpE4V+pDZ9UUdpPEEC+JaKy0Z7hPP3gDh8UQUk7wDeMlx43Ma
+ Nj2f2RvuW0zBufN7CCC1gzXZZ7yj6LKcva/a4KeZ+T9LAHp/QTc4vBkJmaBeQePNHF7pDF9ty
+ lgByqBiJ5vNeyY0IYOTYOX5SjHBdj73WL+AOjE6+yMAAfu05z4cLAPM2ewhkYRfsv/UNbfGFL
+ 1jdoMMETbefmQEsOxl2/ok8E/gLyIPPUwGrnjqGFE8jZCT2/J0FOdGzP9k7kfPWx7NIPnmgMn
+ vIN90lJ0ZDhmHtW8bJnYoKFXqd3tUJdj5FcRRA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Getting the redirects for memcpy/memmove/memset functions right
-in the decompressor and the efi stub is a bit tricky. Originally
-these were meant to prevent the kasan code from calling itself
-recursively. The decompressor is built without kasan but uses
-the same redirects when CONFIG_KASAN is enabled, except in a few
-cases that now cause link failures:
+The CONFIG_KASAN_STACK symbol tells us whether we should be using the
+asan-stack=1 parameter. On clang-8, this causes explosive kernel stack
+frame growth, so it is currently disabled, hopefully to be turned back
+on when a future clang version is fixed. Examples include
 
-arch/arm/boot/compressed/fdt_rw.o: In function `fdt_set_name':
-fdt_rw.c:(.text+0x3d4): undefined reference to `memcpy'
-arch/arm/boot/compressed/fdt_rw.o: In function `fdt_add_property_':
-fdt_rw.c:(.text+0x121c): undefined reference to `memmove'
-arch/arm/boot/compressed/fdt_rw.o: In function `fdt_splice_':
-fdt_rw.c:(.text+0x1460): undefined reference to `memmove'
-arch/arm/boot/compressed/fdt_ro.o: In function `fdt_get_path':
-fdt_ro.c:(.text+0x1384): undefined reference to `memcpy'
-arch/arm/boot/compressed/fdt_wip.o: In function `fdt_setprop_inplace_namelen_partial':
-fdt_wip.c:(.text+0x48): undefined reference to `memcpy'
-arch/arm/boot/compressed/fdt_wip.o: In function `fdt_setprop_inplace':
-fdt_wip.c:(.text+0x100): undefined reference to `memcpy'
-arch/arm/boot/compressed/fdt.o: In function `fdt_move':
-fdt.c:(.text+0xa04): undefined reference to `memmove'
-arch/arm/boot/compressed/atags_to_fdt.o: In function `atags_to_fdt':
-atags_to_fdt.c:(.text+0x404): undefined reference to `memcpy'
-atags_to_fdt.c:(.text+0x450): undefined reference to `memcpy'
+drivers/media/dvb-frontends/mb86a20s.c:1942:12: error: stack frame size of 4128 bytes in function
+drivers/net/wireless/atmel/atmel.c:1307:5: error: stack frame size of 4928 bytes in function 'atmel_open'
+drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c:1521:1: error: stack frame size of 5440 bytes in function
+drivers/media/i2c/mt9t112.c:670:12: error: stack frame size of 9344 bytes in function 'mt9t112_init_camera'
+drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:185:12: error: stack frame size of 10048 bytes
 
-I tried to make everything use them, but ran into other problems:
+For the 32-bit ARM build, the logic I introduced earlier does
+not work because $(CFLAGS_KASAN_SHADOW) is empty, and we don't add
+those flags.
 
-drivers/firmware/efi/libstub/lib-fdt_sw.stub.o: In function `fdt_create_with_flags':
-fdt_sw.c:(.text+0x34): undefined reference to `__memset'
-arch/arm/boot/compressed/decompress.o: In function `lzo1x_decompress_safe':
-decompress.c:(.text+0x290): undefined reference to `__memset'
-
-This makes all the early boot code not use the redirects, which
-works because we don't sanitize that code.
-
-Setting -D__SANITIZE_ADDRESS__ is a bit confusing here, but it
-does the trick.
+Moving the asan-stack= parameter down fixes this. No idea of any
+of the other parameters should also be moved though.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/boot/compressed/Makefile     | 1 +
- arch/arm/boot/compressed/decompress.c | 2 --
- arch/arm/boot/compressed/libfdt_env.h | 2 --
- drivers/firmware/efi/libstub/Makefile | 3 ++-
- 4 files changed, 3 insertions(+), 5 deletions(-)
+ scripts/Makefile.kasan | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index dcc27fb24fbb..d91c2ded0e3d 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -25,6 +25,7 @@ endif
+diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+index 6410bd22fe38..fc57fcf49722 100644
+--- a/scripts/Makefile.kasan
++++ b/scripts/Makefile.kasan
+@@ -26,10 +26,11 @@ else
+ 	CFLAGS_KASAN := $(CFLAGS_KASAN_SHADOW) \
+ 	 $(call cc-param,asan-globals=1) \
+ 	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
+-	 $(call cc-param,asan-stack=$(CONFIG_KASAN_STACK)) \
+ 	 $(call cc-param,asan-instrument-allocas=1)
+ endif
  
- GCOV_PROFILE		:= n
- KASAN_SANITIZE		:= n
-+CFLAGS_KERNEL += -D__SANITIZE_ADDRESS__
++CFLAGS_KASAN += $(call cc-param,asan-stack=$(CONFIG_KASAN_STACK))
++
+ endif # CONFIG_KASAN_GENERIC
  
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
- KCOV_INSTRUMENT		:= n
-diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
-index 3794fae5f818..aa075d8372ea 100644
---- a/arch/arm/boot/compressed/decompress.c
-+++ b/arch/arm/boot/compressed/decompress.c
-@@ -47,10 +47,8 @@ extern char * strchrnul(const char *, int);
- #endif
- 
- #ifdef CONFIG_KERNEL_XZ
--#ifndef CONFIG_KASAN
- #define memmove memmove
- #define memcpy memcpy
--#endif
- #include "../../../../lib/decompress_unxz.c"
- #endif
- 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 8091efc21407..b36c0289a308 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -19,6 +19,4 @@ typedef __be64 fdt64_t;
- #define fdt64_to_cpu(x)		be64_to_cpu(x)
- #define cpu_to_fdt64(x)		cpu_to_be64(x)
- 
--#undef memset
--
- #endif
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 0460c7581220..fd1d72ea04dd 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fpie $(DISABLE_STACKLEAK_PLUGIN)
- cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fno-builtin -fpic \
--				   $(call cc-option,-mno-single-pic-base)
-+				   $(call cc-option,-mno-single-pic-base) \
-+				   -D__SANITIZE_ADDRESS__
- 
- cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- 
+ ifdef CONFIG_KASAN_SW_TAGS
 -- 
 2.20.0
 
