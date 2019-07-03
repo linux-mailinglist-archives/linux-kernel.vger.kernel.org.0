@@ -2,72 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 161995EDA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050F85EDA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfGCUeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:34:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49682 "EHLO mail.kernel.org"
+        id S1727408AbfGCUeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:34:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51212 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbfGCUeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:34:11 -0400
-Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726833AbfGCUef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:34:35 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE8E6218BA;
-        Wed,  3 Jul 2019 20:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562186050;
-        bh=qyml9S6CXXCCpL8rmU1nbZwbMkGu/5gFSbg4hXJdmVk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mDy/bf8vASrPtcxPCGsYrDPrmJptR+3fVFDdK+pJ6lfOx6XC1AWfQ6PwDzKSWzZQl
-         gD/TzLMCACOhS1cYuR1h7+DiGUBMdKeXlp4Dv6qfrWWlXuolYwHxCbAYeLCBTF2xd4
-         3U6FGaY3hW2obWfWJtXb9VOmDWvcXGGT2oAck2KU=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 4/4] x86/syscalls: Make __X32_SYSCALL_BIT be unsigned long
-Date:   Wed,  3 Jul 2019 13:34:05 -0700
-Message-Id: <99b0d83ad891c67105470a1a6b63243fd63a5061.1562185330.git.luto@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1562185330.git.luto@kernel.org>
-References: <cover.1562185330.git.luto@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id BC912C04D2F7;
+        Wed,  3 Jul 2019 20:34:26 +0000 (UTC)
+Received: from x1.home (ovpn-116-83.phx2.redhat.com [10.3.116.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A46517AB4;
+        Wed,  3 Jul 2019 20:34:18 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 14:34:18 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc:     <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        <kevin.tian@intel.com>
+Subject: Re: [PATCH v7 1/6] vfio/type1: Introduce iova list and add iommu
+ aperture validity check
+Message-ID: <20190703143418.34a0f1c6@x1.home>
+In-Reply-To: <20190626151248.11776-2-shameerali.kolothum.thodi@huawei.com>
+References: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
+        <20190626151248.11776-2-shameerali.kolothum.thodi@huawei.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 03 Jul 2019 20:34:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, it's an int.  This is bizarre.  Fortunately, the code
-using it still works: ~__X32_SYSCALL_BIT is also int, so, if nr is
-unsigned long, then C kindly sign-extends the ~__X32_SYSCALL_BIT
-part, and we actually get the desired value.
 
-This is far more subtle than it deserves to be.  Syscall numbers
-are, for all practical purposes, unsigned long, so make
-__X32_SYSCALL_BIT be unsigned long.
+Welcome back Shameer ;)
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- arch/x86/include/uapi/asm/unistd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 26 Jun 2019 16:12:43 +0100
+Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
 
-diff --git a/arch/x86/include/uapi/asm/unistd.h b/arch/x86/include/uapi/asm/unistd.h
-index 30d7d04d72d6..196fdd02b8b1 100644
---- a/arch/x86/include/uapi/asm/unistd.h
-+++ b/arch/x86/include/uapi/asm/unistd.h
-@@ -3,7 +3,7 @@
- #define _UAPI_ASM_X86_UNISTD_H
- 
- /* x32 syscall flag bit */
--#define __X32_SYSCALL_BIT	0x40000000
-+#define __X32_SYSCALL_BIT	0x40000000UL
- 
- #ifndef __KERNEL__
- # ifdef __i386__
--- 
-2.21.0
+> This introduces an iova list that is valid for dma mappings. Make
+> sure the new iommu aperture window doesn't conflict with the current
+> one or with any existing dma mappings during attach.
+> 
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 181 +++++++++++++++++++++++++++++++-
+>  1 file changed, 177 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index add34adfadc7..970d1ec06aed 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1,4 +1,3 @@
+> -// SPDX-License-Identifier: GPL-2.0-only
+>  /*
+>   * VFIO: IOMMU DMA mapping support for Type1 IOMMU
+>   *
 
+Accidental merge deletion?  Thanks,
+
+Alex
