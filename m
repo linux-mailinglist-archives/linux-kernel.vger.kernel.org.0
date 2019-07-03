@@ -2,121 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 177EA5E46C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0C75E458
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfGCMre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:47:34 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38380 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCMrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:47:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p11so2669592wro.5;
-        Wed, 03 Jul 2019 05:47:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
-        b=fu9RPMVgXVFj4PgV3KF4+X0OrajMT8XRxnmdpd+teMNXTQldmYy+3On3v8YbjNRcoh
-         y8pu8JWKMBygejEkjCVH3FFo7TeUWFChx553OzBSnX7wB17SO+47EMJ25asq7QkekJRS
-         lEmerh2nRBiytWP6hWYZoku/WlMGJmLTtXi4MAqZ+3BWzctnGkUN5K92UzspI6a0gvCe
-         w2s98oiKc0aK9YThQsqY+9Mx/Fd0CP0NKNqfxWpVjuW191RQYzyMeInreFxiLzqT8ZB2
-         +WGt3/jdTI/5XUXWLMgohdHyulxJeidi4kLtVf6eg5Z9CewOrJyC/2f3DLPzGUQQI0gM
-         tXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
-        b=k0U3aESoKtWqiIQMY6rxjgd7/jHC1QoEnH9934TBVkPRinVnvQqKwV/KD/+vIfCoYb
-         0rXVFjZyTdizShANKG4wVTbHBVHt4uKJynB9yFvfUkSjR6xbCiDsbgcIZIXtca/xx7kC
-         KJ0OhH7hyz04Vbi0WxwTJlL37mAvc+ptRn8FushRsDqW/7xFLIASmEcx+hyJh7Zr40iX
-         vnGQTIAqbKwvy4K4rYrbk2vB/YjbV1jIrbBU7tpjARbK4AZP6ufPQCpLeL1OeC7FFy9s
-         dRvYy9iVn8fEpK/YEdnZZCkG5JzfbAi8nF+et1vNKKm74/0zPJrAjAP0DIkGqaD1avgb
-         3qmw==
-X-Gm-Message-State: APjAAAUH2rD5XV19NwrwPUCDanWzQd1qyCeXAfZk4IDcg1RavfWAHRQq
-        p+mr/ziGpY/zYHmD1HSsGg9ETkkBAmo=
-X-Google-Smtp-Source: APXvYqxD6K+0ugAMNC/aj/0XoFB4rhxYFEfIRruIudKKenQi9Fn9L+MVPP9fnwZ3jnR+ZtZPVdDKtA==
-X-Received: by 2002:a5d:5186:: with SMTP id k6mr31267862wrv.30.1562158050417;
-        Wed, 03 Jul 2019 05:47:30 -0700 (PDT)
-Received: from heron.blarg.de (p200300DC6F443A000000000000000FD2.dip0.t-ipconnect.de. [2003:dc:6f44:3a00::fd2])
-        by smtp.gmail.com with ESMTPSA id o24sm5480588wmh.2.2019.07.03.05.47.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 05:47:29 -0700 (PDT)
-From:   Max Kellermann <max.kellermann@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        trond.myklebust@hammerspace.com, bfields@redhat.com,
-        gregkh@linuxfoundation.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, hughd@google.com,
-        anna.schumaker@netapp.com
-Cc:     linux-kernel@vger.kernel.org,
-        Max Kellermann <max.kellermann@gmail.com>
-Subject: [PATCH 4/4] nfs/super: check NFS_CAP_ACLS instead of the NFS version
-Date:   Wed,  3 Jul 2019 14:47:15 +0200
-Message-Id: <20190703124715.4319-4-max.kellermann@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703124715.4319-1-max.kellermann@gmail.com>
-References: <20190703124715.4319-1-max.kellermann@gmail.com>
+        id S1727434AbfGCMsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:48:04 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:59666 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727415AbfGCMsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 08:48:01 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 6C7B22079D;
+        Wed,  3 Jul 2019 14:47:59 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 583F5206B9;
+        Wed,  3 Jul 2019 14:47:59 +0200 (CEST)
+Subject: Re: [PATCH v1] media: si2168: Refactor command setup code
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
+Cc:     Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brad Love <brad@nextdimension.cc>
+References: <6a8f9a5b-2e88-8c26-440b-76af0d91eda6@free.fr>
+ <20190702095109.GC22408@latitude>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <6a644c94-f979-b656-472b-c7fe9303e08c@free.fr>
+Date:   Wed, 3 Jul 2019 14:47:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190702095109.GC22408@latitude>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Jul  3 14:47:59 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sets MS_POSIXACL only if ACL support is really enabled, instead
-of always setting MS_POSIXACL if the NFS protocol version
-theoretically supports ACL.
+On 02/07/2019 11:51, Jonathan Neuschäfer wrote:
 
-The code comment says "We will [apply the umask] ourselves", but that
-happens in posix_acl_create() only if the kernel has POSIX ACL
-support.  Without it, posix_acl_create() is an empty dummy function.
+> On Mon, Jul 01, 2019 at 01:44:09PM +0200, Marc Gonzalez wrote:
+>
+>> By refactoring the command setup code, we can let the compiler
+>> determine the size of each command.
+> 
+> I like the idea, it definitely saves some code.
+> 
+> The conversion also looks correct.
+> 
+>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>> ---
+>>  drivers/media/dvb-frontends/si2168.c | 142 ++++++++-------------------
+>>  1 file changed, 41 insertions(+), 101 deletions(-)
+>>
+>> diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
+>> index 168c503e9154..19398f041c79 100644
+>> --- a/drivers/media/dvb-frontends/si2168.c
+>> +++ b/drivers/media/dvb-frontends/si2168.c
+>> @@ -11,6 +11,12 @@
+>>  
+>>  static const struct dvb_frontend_ops si2168_ops;
+>>  
+>> +#define CMD_SETUP(cmd, __args, __rlen) do {	\
+>> +	int wlen = sizeof(__args) - 1;		\
+>> +	memcpy(cmd.args, __args, wlen);		\
+>> +	cmd.wlen = wlen; cmd.rlen = __rlen;	\
+>> +} while (0)
+> 
+> It would be nice for casual readers to have a little comment here, that
+> explains (briefly) what this macro does, and what the arguments mean,
+> and their types.
 
-So let's not pretend we will apply the umask if we can already know
-that we will never.
+Just a bit of background.
 
-This fixes a problem where the umask is always ignored in the NFS
-client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
-old regression caused by commit 013cdf1088d723 which itself was not
-completely wrong, but failed to consider all the side effects by
-misdesigned VFS code.
+A macro is required /at some point/ because arrays "decay" into pointers
+when used as function arguments.
 
-Signed-off-by: Max Kellermann <max.kellermann@gmail.com>
----
- fs/nfs/super.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Come to think of it, I'm really not a fan of "large" macro functions.
+I'll outline a different option in v2.
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index c27ac96a95bd..e799296941ec 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2343,11 +2343,14 @@ void nfs_fill_super(struct super_block *sb, struct nfs_mount_info *mount_info)
- 	if (data && data->bsize)
- 		sb->s_blocksize = nfs_block_size(data->bsize, &sb->s_blocksize_bits);
- 
--	if (server->nfs_client->rpc_ops->version != 2) {
-+	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
- 		/* The VFS shouldn't apply the umask to mode bits. We will do
- 		 * so ourselves when necessary.
- 		 */
- 		sb->s_flags |= SB_POSIXACL;
-+	}
-+
-+	if (server->nfs_client->rpc_ops->version != 2) {
- 		sb->s_time_gran = 1;
- 		sb->s_export_op = &nfs_export_ops;
- 	}
-@@ -2373,7 +2376,7 @@ static void nfs_clone_super(struct super_block *sb,
- 	sb->s_time_gran = 1;
- 	sb->s_export_op = old_sb->s_export_op;
- 
--	if (server->nfs_client->rpc_ops->version != 2) {
-+	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
- 		/* The VFS shouldn't apply the umask to mode bits. We will do
- 		 * so ourselves when necessary.
- 		 */
--- 
-2.20.1
 
+> Why cmd rather than __cmd? This seems inconsistent.
+
+Note: I hate using underscores in macro argument names, but they clashed
+with the struct field names. There was no such clash for 'cmd'.
+
+
+> The wlen local variable can be avoided by a bit of suffling:
+> 
+> 	#define CMD_SETUP(cmd, __args, __rlen) do {	\
+> 		cmd.rlen = __rlen;			\
+> 		cmd.wlen = sizeof(__args) - 1;		\
+> 		memcpy(cmd.args, __args, cmd.wlen);	\
+> 	} while (0)
+
+Do you think it is important to avoid a local variable?
+
+
+>> Not sure where to store the macro. Maybe include/media/dvb_frontend.h?
+> 
+> Then include/media/dvb_frontend.h would contain information about the
+> private structs of a few (two) drivers. This doesn't seem like a good
+> idea to me.
+
+You're right. I found a better place.
+
+Regards.
