@@ -2,121 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427E25D8E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE1A5D8D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfGCAae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:30:34 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:44681 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfGCAaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:30:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1562113830; x=1593649830;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Wy7yC5O2tmsY73xSrxj13jbMBblMeVDokHmeqGBlXTw=;
-  b=PnPo4QIFCl4xycyFwVj/2AcvUw6ex0XLigKL1lNsn4WfqKtLLUNpOgsg
-   K1kkcH3CG30NLdOKTtiKMeNK7ZbWSr+Cn5jyb8lcI7VumHIfItUGtbfeM
-   ZJ62wx9jw8CZb7kI41GIsYKx/6rmaqw0zufPl0JclLn2nR7SnwEiWQ4rj
-   nuvSS3kG+vO9C0wsE3GujuLtmgFTH4LI8YJTuVGfspchYN9+tN1P/vwQ6
-   D0t86jqtpVAKNL/aZ62FS14SEbYVHfDnNqKSIfsfaNwKhy6vkmekUKrje
-   igbi+UqB57D9rBC/3C0tzrbYltfXpLmkdfXIM6BUvU0pRFvDwo0YtjRMX
-   A==;
-IronPort-SDR: 1P891hBb6x9O1/3WGDYYtPtTpOfbMaVNTAJhLU5rIOJBVcn/vZDm2dj6I1QL+LobYT87HpKV0i
- Aoz/YlCBjNoEWIpTw7uNbAIHGz9mk4rSGD1gusgSrewaDyO6dcSrpslrYgBZR6Iz5uRO3BPdEg
- LU93Y37riV1NqvzMLVrjgE53qabx5gB/z7FOoUB8SzjSMROiAe9c5IXA/hu7nZ5OOesXWRQrk+
- JMbbyxQjSqdGpSywmYyQrpO8maJTKle7ORABpKj3XE8i+x5ejaMuEB4gOQRcnfkO09ihlQwwWC
- gHE=
-X-IronPort-AV: E=Sophos;i="5.63,444,1557158400"; 
-   d="scan'208";a="112096603"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Jul 2019 08:21:25 +0800
-IronPort-SDR: oRlID7VbmY+mxcrY+wVzzQ/KZDSEytidsRl6/1s+u7pC0OIZAqp7VZDYjaEukeCaLrWuvw/aoe
- WZapSjss7sojXQhhI37rfKBjIHKmFtiD6nhKvxDYEXkjHhlp1xjSk48pHO8fljb1skZ++esrPL
- LaSbZq7lWU5gmlO2c6upJtwj6uT5UGo76bWSv5NczKfu+CJflbZF6YfWNT9JmwOJB21K7NgdPs
- YgoTmHG429jE592pZO6s4+W0A9ClMnvTKODHtU/0w+y4M+ggKYjgJ0OCmnTheG+5Y5eIibUrjz
- vRPwJ0qq4CUHQkR0+nbjah2N
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Jul 2019 17:20:26 -0700
-IronPort-SDR: UZDjthIev6GusnpHicyRKLOOvWLP2fQvqt3HwRFRUC0oadg5DnlWcaGsFdEfndiB8WVfKl9IZw
- tGKxdSKGiYNLoHy1gcLpTIjhr/Iq1AKVZHnDKiTzTZkbNxXuR6xecPm8frDbDknAYt2Utzr5bk
- YOd//7/wlsnatwxsEy86yOCSjRIkiqo6UDtAvAq+HffqHSwZtcm1YO+iFrV9rFBhasi0uGV/c8
- YDiVVjL4/RyHDL8xh6/+Ya55tadiIOh9olwty8MwoYWQ0mvpUQvKXDyV5urEID58BpsvXeej24
- P/I=
-Received: from risc6-mainframe.sdcorp.global.sandisk.com (HELO risc6-mainframe.int.fusionio.com) ([10.196.157.140])
-  by uls-op-cesaip01.wdc.com with ESMTP; 02 Jul 2019 17:21:24 -0700
-From:   Alistair Francis <alistair.francis@wdc.com>
-To:     linux-riscv-bounces@lists.infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, alistair23@gmail.com,
-        Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH 2/2] riscv/include/uapi: Define a custom __SIGINFO struct for RV32
-Date:   Tue,  2 Jul 2019 17:18:42 -0700
-Message-Id: <20190703001842.12238-3-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190703001842.12238-1-alistair.francis@wdc.com>
-References: <20190703001842.12238-1-alistair.francis@wdc.com>
+        id S1727314AbfGCAaC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 20:30:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56863 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727287AbfGCA36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:29:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 17:20:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,444,1557212400"; 
+   d="scan'208";a="184617637"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Jul 2019 17:20:53 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 2 Jul 2019 17:20:53 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 2 Jul 2019 17:20:52 -0700
+Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 2 Jul 2019 17:20:52 -0700
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.124]) by
+ CRSMSX103.amr.corp.intel.com ([169.254.4.76]) with mapi id 14.03.0439.000;
+ Tue, 2 Jul 2019 18:20:50 -0600
+From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>
+Subject: Re: [PATCH] selftests/x86/fsgsbase: Fix some test case bugs
+Thread-Topic: [PATCH] selftests/x86/fsgsbase: Fix some test case bugs
+Thread-Index: AQHVMR6idqkf2SQVKkywk8XhSQW+kaa4bKyA
+Date:   Wed, 3 Jul 2019 00:20:49 +0000
+Message-ID: <77F4123B-C10E-4EC0-AD2B-F7F3223BA3BA@intel.com>
+References: <46e6a60f8992fd54da12203e820c35daadaeffb5.1562103506.git.luto@kernel.org>
+In-Reply-To: <46e6a60f8992fd54da12203e820c35daadaeffb5.1562103506.git.luto@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.252.192.184]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DCB9B83EF095F141AEB935CC0833E756@intel.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The glibc implementation of siginfo_t results in an allignment of 8 bytes
-for the union _sifields on RV32. The kernel has an allignment of 4 bytes
-for the _sifields union. This results in information being lost when
-glibc parses the siginfo_t struct.
 
-To fix the issue add a pad variable to the struct to avoid allignment
-mismatches.
+> On Jul 2, 2019, at 14:38, Andy Lutomirski <luto@kernel.org> wrote:
+> 
+> @@ -494,16 +489,24 @@ static void test_ptrace_write_gsbase(void)
+> 		 * selector value is changed or not by the GSBASE write in
+> 		 * a ptracer.
+> 		 */
+> -		if (gs != 0x7) {
+> +		if (gs != *shared_scratch) {
+> 			nerrs++;
+> 			printf("[FAIL]\tGS changed to %lx\n", gs);
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- arch/riscv/include/uapi/asm/siginfo.h | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 arch/riscv/include/uapi/asm/siginfo.h
+There is one more point to be fixed like this.
+So, this diff also needs to be applied:
 
-diff --git a/arch/riscv/include/uapi/asm/siginfo.h b/arch/riscv/include/uapi/asm/siginfo.h
-new file mode 100644
-index 000000000000..0854ad97bf44
---- /dev/null
-+++ b/arch/riscv/include/uapi/asm/siginfo.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _ASM_RISCV_SIGINFO_H
-+#define _ASM_RISCV_SIGINFO_H
-+
-+/* Add a pad element for RISC-V 32-bit. We need this as the
-+ * _sifields union is 8 byte allgined in usperace.
-+ */
-+#if __riscv_xlen == 32
-+#ifndef __ARCH_HAS_SWAPPED_SIGINFO
-+#define __SIGINFO 			\
-+struct {				\
-+	int si_signo;			\
-+	int si_errno;			\
-+	int si_code;			\
-+	int pad;			\
-+	union __sifields _sifields;	\
-+}
-+#else
-+#define __SIGINFO 			\
-+struct {				\
-+	int si_signo;			\
-+	int si_code;			\
-+	int si_errno;			\
-+	int pad;			\
-+	union __sifields _sifields;	\
-+}
-+#endif /* __ARCH_HAS_SWAPPED_SIGINFO */
-+#endif
-+
-+#include <asm-generic/siginfo.h>
-+
-+#endif /* _ASM_RISCV_SIGINFO_H */
--- 
-2.22.0
+diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
+index de8c80a..c9da4c5 100644
+--- a/tools/testing/selftests/x86/fsgsbase.c
++++ b/tools/testing/selftests/x86/fsgsbase.c
+@@ -472,7 +472,7 @@ static void test_ptrace_write_gsbase(void)
+ 
+                gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
+ 
+-               if (gs != 0x7) {
++               if (gs != *shared_scratch) {
+                        nerrs++;
+                        printf("[FAIL]\tGS is not prepared with nonzero\n");
+                        goto END;
 
+Thanks for the cleanup & the fix!
