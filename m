@@ -2,121 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109065E5F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C8545E5F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfGCOCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:02:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbfGCOCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:02:08 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07A47218A3;
-        Wed,  3 Jul 2019 14:02:06 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 10:02:05 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
- postcore_initcall
-Message-ID: <20190703100205.0b58f3bf@gandalf.local.home>
-In-Reply-To: <20190702165008.GC34718@lakrids.cambridge.arm.com>
-References: <20190526191828.466305460@goodmis.org>
-        <20190526191848.266163206@goodmis.org>
-        <20190702165008.GC34718@lakrids.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727102AbfGCODN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:03:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33985 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGCODN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:03:13 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63E2hIP3318473
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:02:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63E2hIP3318473
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562162564;
+        bh=m6ftjh9jiLen9wZRZMjrphqIHAx+1NwhFiXu7nN7In0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=uJgtEcRFqPx/VdKNeJUpbqcMF3U9h9yG92pB5LPOP5oW3ceYlpzD0tSYyJR7kIykt
+         0pRGtJr1fy8H6g74kn8K4QymUni2DV6AhPOje6UWq4cEFLgyVXcHySN9rSoCdeFjlT
+         piaV5xWZrG4oljAOGZYVusQvFCeDy9usswFvPLjXzA4MBe+sHVI7mDBa2AMEspJR5e
+         EQc1xazT/m75isb5bt2Y45Y3flLGiw88qHtMaILy4UNsGlnHuXAfvZnujm5DpTEF0v
+         FRa5QjTmCK2XnLMUCpDbgv7A9MnDBq3hX6AHYlx3nuO35pEsaePtUgtqpmrPE+cPJ7
+         yi2wwTwoug2Rg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63E2g3k3318467;
+        Wed, 3 Jul 2019 07:02:42 -0700
+Date:   Wed, 3 Jul 2019 07:02:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-eb5d854456f5a4ccec6f9681b7196cf056df8cfa@git.kernel.org>
+Cc:     jolsa@redhat.com, adrian.hunter@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com
+Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          acme@redhat.com, mingo@kernel.org, adrian.hunter@intel.com,
+          jolsa@redhat.com
+In-Reply-To: <20190619064429.14940-3-adrian.hunter@intel.com>
+References: <20190619064429.14940-3-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf thread-stack: Eliminate code duplicating
+ thread_stack__pop_ks()
+Git-Commit-ID: eb5d854456f5a4ccec6f9681b7196cf056df8cfa
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 17:50:09 +0100
-Mark Rutland <mark.rutland@arm.com> wrote:
+Commit-ID:  eb5d854456f5a4ccec6f9681b7196cf056df8cfa
+Gitweb:     https://git.kernel.org/tip/eb5d854456f5a4ccec6f9681b7196cf056df8cfa
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Wed, 19 Jun 2019 09:44:29 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 08:47:10 -0300
 
-> On Sun, May 26, 2019 at 03:18:40PM -0400, Steven Rostedt wrote:
-> > From: Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> > Initialize kprobes at postcore_initcall level instead of module_init
-> > since kprobes is not a module, and it depends on only subsystems
-> > initialized in core_initcall.
-> > This will allow ftrace kprobe event to add new events when it is
-> > initializing because ftrace kprobe event is initialized at
-> > later initcall level.
-> > 
-> > Link: http://lkml.kernel.org/r/155851394736.15728.13626739508905120098.stgit@devnote2
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  kernel/kprobes.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > index b1ea30a5540e..54aaaad00a47 100644
-> > --- a/kernel/kprobes.c
-> > +++ b/kernel/kprobes.c
-> > @@ -2289,6 +2289,7 @@ static int __init init_kprobes(void)
-> >  		init_test_probes();
-> >  	return err;
-> >  }
-> > +postcore_initcall(init_kprobes);  
-> 
-> As a heads-up, this is causing boot-time failures on arm64.
+perf thread-stack: Eliminate code duplicating thread_stack__pop_ks()
 
-Thanks for the report.
+Use new function thread_stack__pop_ks() in place of equivalent code.
 
-> 
-> On arm64 kprobes depends on the BRK handler we register in
-> debug_traps_init(), which is an arch_initcall.
-> 
-> As of this change, init_krprobes() calls init_test_probes() before
-> that's registered, so we end up hitting a BRK before we can handle it.
-> 
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20190619064429.14940-3-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/thread-stack.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-Would something like this help?
-
--- Steve
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 5471efbeb937..0ca6f53c8505 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
- extern unsigned long __start_kprobe_blacklist[];
- extern unsigned long __stop_kprobe_blacklist[];
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index 4c826a2e08d8..6ff1ff4d4ce7 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -664,12 +664,9 @@ static int thread_stack__no_call_return(struct thread *thread,
  
-+static bool run_kprobe_tests __initdata;
-+
- static int __init init_kprobes(void)
- {
- 	int i, err = 0;
-@@ -2286,11 +2288,18 @@ static int __init init_kprobes(void)
- 	kprobes_initialized = (err == 0);
+ 	if (ip >= ks && addr < ks) {
+ 		/* Return to userspace, so pop all kernel addresses */
+-		while (thread_stack__in_kernel(ts)) {
+-			err = thread_stack__call_return(thread, ts, --ts->cnt,
+-							tm, ref, true);
+-			if (err)
+-				return err;
+-		}
++		err = thread_stack__pop_ks(thread, ts, sample, ref);
++		if (err)
++			return err;
  
- 	if (!err)
--		init_test_probes();
-+		run_kprobe_tests = true;
- 	return err;
- }
- subsys_initcall(init_kprobes);
+ 		/* If the stack is empty, push the userspace address */
+ 		if (!ts->cnt) {
+@@ -679,12 +676,9 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 		}
+ 	} else if (thread_stack__in_kernel(ts) && ip < ks) {
+ 		/* Return to userspace, so pop all kernel addresses */
+-		while (thread_stack__in_kernel(ts)) {
+-			err = thread_stack__call_return(thread, ts, --ts->cnt,
+-							tm, ref, true);
+-			if (err)
+-				return err;
+-		}
++		err = thread_stack__pop_ks(thread, ts, sample, ref);
++		if (err)
++			return err;
+ 	}
  
-+static int __init run_init_test_probes(void)
-+{
-+	if (run_kprobe_tests)
-+		init_test_probes();
-+}
-+module_init(run_init_test_probes);
-+
- #ifdef CONFIG_DEBUG_FS
- static void report_probe(struct seq_file *pi, struct kprobe *p,
- 		const char *sym, int offset, char *modname, struct kprobe *pp)
-
+ 	if (ts->cnt)
