@@ -2,69 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E8D25EB93
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB3E5EB9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfGCS2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCS2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:28:03 -0400
-Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3429D21881;
-        Wed,  3 Jul 2019 18:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562178482;
-        bh=eBN4mmk5SO6nzUNbiLEwFOz2XI0YOWn48fJDaCxnD7k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ex5vVhMthGRa6AIn+ngehgQ6iAj7cqGauVmiyt7SSm88hrdNt1vDvTaSijYx+KtgE
-         Bqq9u7CRckCp0p3+fG3NXDbnAWl/YUWH3cf8jApOL6f/gb62Vnk8kc220ucd5s0rWG
-         EZmxL3tgujixznxpDR1dtnIo6xaruvxOfSZ6f3mc=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH] selftests/x86: Don't muck with ftrace in mpx_mini_test
-Date:   Wed,  3 Jul 2019 11:28:00 -0700
-Message-Id: <b971a6c04687d4ba1a07bae6c455c2313f91acc0.1562178460.git.luto@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        id S1727179AbfGCSa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:30:29 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:43294 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725933AbfGCSa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:30:29 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x63ITQqx003852;
+        Wed, 3 Jul 2019 21:29:26 +0300
+Date:   Wed, 3 Jul 2019 21:29:26 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Randy Dunlap <rdunlap@infradead.org>
+cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        lvs-devel@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Tree for Jul 3 (netfilter/ipvs/)
+In-Reply-To: <406d9741-68ad-f465-1248-64eef05b1350@infradead.org>
+Message-ID: <alpine.LFD.2.21.1907032126220.3226@ja.home.ssi.bg>
+References: <20190703214900.45e94ae4@canb.auug.org.au> <406d9741-68ad-f465-1248-64eef05b1350@infradead.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="-1463811672-1070578143-1562178566=:3226"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't know why mpx_mini_test tries to reprogram ftrace, but it
-seems rude and it makes the test crash if run as non-root.  Comment
-it out.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Cc: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- tools/testing/selftests/x86/mpx-mini-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+---1463811672-1070578143-1562178566=:3226
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
-index 23ddd453f362..07461ce31d90 100644
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -76,9 +76,9 @@ void trace_me(void)
- 	write_pid_to("common_pid=", TED "exceptions/filter");
- 	write_int_to("", TED "signal/enable", 1);
- 	write_int_to("", TED "exceptions/enable", 1);
--*/
- 	write_pid_to("", "/sys/kernel/debug/tracing/set_ftrace_pid");
- 	write_int_to("", "/sys/kernel/debug/tracing/trace", 0);
-+*/
- }
- 
- #define test_failed() __test_failed(__FILE__, __LINE__)
--- 
-2.21.0
 
+	Hello,
+
+On Wed, 3 Jul 2019, Randy Dunlap wrote:
+
+> On 7/3/19 4:49 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20190702:
+> > 
+> 
+> on i386:
+
+	Oh, well. net/gre.h was included by CONFIG_NF_CONNTRACK, so
+it is failing when CONFIG_NF_CONNTRACK is not used.
+
+	Pablo, should I post v2 or just a fix?
+
+> 
+>   CC      net/netfilter/ipvs/ip_vs_core.o
+> ../net/netfilter/ipvs/ip_vs_core.c: In function ‘ipvs_gre_decap’:
+> ../net/netfilter/ipvs/ip_vs_core.c:1618:22: error: storage size of ‘_greh’ isn’t known
+>   struct gre_base_hdr _greh, *greh;
+>                       ^
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+---1463811672-1070578143-1562178566=:3226--
