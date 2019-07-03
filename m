@@ -2,86 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0115EBD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3814F5EC02
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfGCSpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:45:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36214 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCSpH (ORCPT
+        id S1727008AbfGCSxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:53:31 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34581 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCSxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:45:07 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q26so2507486lfc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:45:06 -0700 (PDT)
+        Wed, 3 Jul 2019 14:53:30 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m29so2883090qtu.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lwL7OY0gNWaqAz8g888XgOT0QU+pPo6Fz6l72ernDnk=;
-        b=J6BqioMGnIUGMgw+WUUWZYDtzcbxXTqWSv7V0mjUaLDgSGZYj2C74mtre0YGgZQHmU
-         B36ldcRLfqX6msPyDZU9viW8pqKFlSCd9dAJJWlwLb7lGNlij6pBCLpHSa1JsN9qPYt1
-         L1CCXATRUrLB6lvLKxeGAgyKxjKcBXAj9N1/tYw5ty5wodmlCeKXImm7qLLjWjXK5WRw
-         mk4h3Q4diWLMb4FskgO5lw6+inNdQz3VPiKC3S7J/9I/OGpjVH0xzAT1xYrQeuYgGxS7
-         kPXZKS5TjsI0Nr/8EIFF4BS3x1atQ4uJukd1PldQnnXNtg0wzLFuSlD5Q+EMuOKShLXE
-         K5zw==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ag64teZVzLgzhFHw838DwskIKJMH8sytfjo0gih9s74=;
+        b=lY5Cz6Dwq3tuK627jXknuGB72hyzdZLRX32qIaFinH3OPVJzGvtrjp4cMSmkZvLt1o
+         b9BPXYPD1kpfRx7y35XrfWBXCNXZR5fPxtIA8Zqun6KvZAiD0yri84rdvhdkrPbLyANK
+         oEMuPtdMuC9EdgUWlMi6X1OL1JrC+T9BEzUE1CF9KWi0MZtEcYtF1cNuzwGAqJjewnFm
+         KwI69MEQ1gh3BPL73rOiqqyD6h6zzYWxNgfnevPYOEtMv7h0n7pKeXyyIO7Zw2VJtoyv
+         s7wE4Ek1bd9rzbJCuMq8oECimJKx0sT5kzk/Yqd34qRi/Y+UZrfIdQMYnarZ4UAdnrd1
+         3s5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lwL7OY0gNWaqAz8g888XgOT0QU+pPo6Fz6l72ernDnk=;
-        b=sviu/fNfkHNAGjNwO1GDAr8KPoUm4dFK/yy+uQ7R1NTOnIB18ciPllT+aE9sdxnVtn
-         55Ocs+gscEixt+B94LBR8UBXGtrKHzvkHGZ41pydA7+lSP9zIUWCBxQjoTbUBww0Q++D
-         y4D7UlBECKXQAKSRxPHRFjT9xfh7VSo7KnA1zySpZZIlFh7xcBOmuRJEH1JDOXZMdJu/
-         Lam+pBcKtARdvwVAcsaFg+J0/NynzSRC+romqLEsvNU20Nk0G7LihCVTisSt1gti2OEt
-         QOXf3qlLUxa8CA7R9sk2Ni6Sqf2xkvk1xRQRa/kkjnLo2zH3joD5boPvIr8NhKRzVg/h
-         r3Mw==
-X-Gm-Message-State: APjAAAV7+o3wyuNqM8bevBJLRpewumhcxkvIVID+HmRKue8W2p1n12rd
-        h0kcKD8L7MPk/HrY/zfmdnYPsJKihWvdVE2DY6w=
-X-Google-Smtp-Source: APXvYqwxQ8LZckgiyHCxN+dUAHtaxvbDiTDnLwmLZL0pp1CCK2qiQvUeMWP5hjpgkk2mJyrfgFGoOc0WqWjqf21Q8IU=
-X-Received: by 2002:ac2:5324:: with SMTP id f4mr2679732lfh.156.1562179505561;
- Wed, 03 Jul 2019 11:45:05 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ag64teZVzLgzhFHw838DwskIKJMH8sytfjo0gih9s74=;
+        b=InPmHUCr515HsgJoN7otxtBqWZv0UXYW+/NIrz23WgCXmKRpfIQ0FCZu+TfTEQ1Tff
+         rYyWXIwJB/IklNfgaPkhA0fmXdSGa2DHqwCv3rDLov0PdTemsd8TqtOCI4vXONxOvSxK
+         o/s6xJ2eE9EZ4qGIhUdTzabaK/DwSujceXNrWOqCkepvajcguBN6E7iEkFj3TeIPJzhu
+         NYrSvMDiHxMnUolrzZV+lZBeOquxd5MOw06iQXMogHvJR1teU9AvkSfcsIL6GgGfbMA3
+         DgEL7VwfVM/KAmhK6N42611a4AuEalwAIzmU/dtRt4QdNA0V4fKZxYBxozY5iNaaG8tl
+         awPQ==
+X-Gm-Message-State: APjAAAU48etXD7VrgeIseyKnU4D/t7+AdNYZNhUW1ZNA7CZ/wceWZQGl
+        24oNjd6NYRIS8LOL6dt2MweFUcaGbh8=
+X-Google-Smtp-Source: APXvYqxjDVXPEEZJiTxktdMBN6QlLesr3wBNxSdPVRUUQsrXa7K2UFXmD+asUP6taPYUEpAWsk/2cA==
+X-Received: by 2002:a0c:983b:: with SMTP id c56mr34311430qvd.131.1562180008940;
+        Wed, 03 Jul 2019 11:53:28 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.209.182])
+        by smtp.gmail.com with ESMTPSA id d123sm1309369qkb.94.2019.07.03.11.53.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 11:53:28 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7149D41153; Wed,  3 Jul 2019 15:43:46 -0300 (-03)
+Date:   Wed, 3 Jul 2019 15:43:46 -0300
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Changbin Du <changbin.du@intel.com>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 04/11] perf annotate: Smatch: Fix dereferencing freed
+ memory
+Message-ID: <20190703184346.GE10740@kernel.org>
+References: <20190702103420.27540-1-leo.yan@linaro.org>
+ <20190702103420.27540-5-leo.yan@linaro.org>
 MIME-Version: 1.0
-References: <20190703001842.12238-1-alistair.francis@wdc.com>
- <20190703001842.12238-3-alistair.francis@wdc.com> <CAK8P3a37GLzp+w6m0SEV+9j_6sH91SuStyAEW-VzuJ5_dUCnZw@mail.gmail.com>
-In-Reply-To: <CAK8P3a37GLzp+w6m0SEV+9j_6sH91SuStyAEW-VzuJ5_dUCnZw@mail.gmail.com>
-From:   Alistair Francis <alistair23@gmail.com>
-Date:   Wed, 3 Jul 2019 11:42:00 -0700
-Message-ID: <CAKmqyKP07futGV1WsZwvqGzeR646eo-ysVy9RCqaSOG-2qhH_g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] riscv/include/uapi: Define a custom __SIGINFO struct
- for RV32
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alistair Francis <alistair.francis@wdc.com>,
-        linux-riscv-bounces@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702103420.27540-5-leo.yan@linaro.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 1:41 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Wed, Jul 3, 2019 at 2:21 AM Alistair Francis
-> <alistair.francis@wdc.com> wrote:
-> >
-> > The glibc implementation of siginfo_t results in an allignment of 8 bytes
-> > for the union _sifields on RV32. The kernel has an allignment of 4 bytes
-> > for the _sifields union. This results in information being lost when
-> > glibc parses the siginfo_t struct.
->
-> I think the problem is that you incorrectly defined clock_t to 64-bit,
-> while it is 32 bit in the kernel. You should fix the clock_t definition
-> instead, it would otherwise cause additional problems.
+Em Tue, Jul 02, 2019 at 06:34:13PM +0800, Leo Yan escreveu:
+> Based on the following report from Smatch, fix the potential
+> dereferencing freed memory check.
+> 
+>   tools/perf/util/annotate.c:1125
+>   disasm_line__parse() error: dereferencing freed memory 'namep'
+> 
+> tools/perf/util/annotate.c
+> 1100 static int disasm_line__parse(char *line, const char **namep, char **rawp)
+> 1101 {
+> 1102         char tmp, *name = ltrim(line);
+> 
+> [...]
+> 
+> 1114         *namep = strdup(name);
+> 1115
+> 1116         if (*namep == NULL)
+> 1117                 goto out_free_name;
+> 
+> [...]
+> 
+> 1124 out_free_name:
+> 1125         free((void *)namep);
+>                           ^^^^^
+> 1126         *namep = NULL;
+>              ^^^^^^
+> 1127         return -1;
+> 1128 }
+> 
+> If strdup() fails to allocate memory space for *namep, we don't need to
+> free memory with pointer 'namep', which is resident in data structure
+> disasm_line::ins::name; and *namep is NULL pointer for this failure, so
+> it's pointless to assign NULL to *namep again.
 
-That is the problem. I assume we want to change the kernel to use a
-64-bit clock_t.
+Applied, with this extra comment:
 
-What I don't understand though is how that impacted this struct, it
-doesn't use clock_t at all, everything in the struct is an int or
-void*.
 
-Alistair
+Committer note:
 
->
->         Arnd
+Freeing namep, which is the address of the first entry of the 'struct
+ins' that is the first member of struct disasm_line would in fact free
+that disasm_line instance, if it was allocated via malloc/calloc, which,
+later, would a dereference of freed memory.
