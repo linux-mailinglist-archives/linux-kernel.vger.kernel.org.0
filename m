@@ -2,47 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EED5D5EB1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3D55EB28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfGCSF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:05:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:53941 "EHLO verein.lst.de"
+        id S1727128AbfGCSGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:06:55 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:59172 "EHLO mail.z3ntu.xyz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCSF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:05:28 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9950C68B05; Wed,  3 Jul 2019 20:05:25 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 20:05:25 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        AlexDeucher <alexander.deucher@amd.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 20/22] mm: move hmm_vma_fault to nouveau
-Message-ID: <20190703180525.GA13703@lst.de>
-References: <20190701062020.19239-21-hch@lst.de> <20190703180356.GB18673@ziepe.ca>
+        id S1726762AbfGCSGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:06:54 -0400
+Received: from localhost.localdomain (80-110-121-20.cgn.dynamic.surfer.at [80.110.121.20])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id CA390C54AE;
+        Wed,  3 Jul 2019 18:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1562177211; bh=rFoC5qULgkgZLGx9OtZLKlFFvNlr0AhFTgrrSrhAbls=;
+        h=From:To:Cc:Subject:Date;
+        b=LTdRQA0HWQbe/oCEDkrpK8V3Ntcka6iyW8oHFAVzCj415zOkGB3oyqa78KMU2QbtI
+         4k2+dk2eKHVm6z4ycEOg68aEuch199qnxDNxXZvky+KNWwra/+d5RJSLIgl/56UHOz
+         viG/4UDB3qPlvOYqKxyjVp+vfVuCWG/D52Wq7zII=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-iio@vger.kernel.org
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        Hannes Schmelzer <hannes.schmelzer@br-automation.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Martijn Braam <martijn@brixit.nl>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        ~martijnbraam/pmos-upstream@lists.sr.ht,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Michael Tretter <m.tretter@pengutronix.de>
+Subject: [PATCH 1/3] dt-bindings: Add vendor prefix for sensortek
+Date:   Wed,  3 Jul 2019 20:05:57 +0200
+Message-Id: <20190703180604.9840-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703180356.GB18673@ziepe.ca>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 03:03:56PM -0300, Jason Gunthorpe wrote:
-> I was thinking about doing exactly this too, but amdgpu started using
-> this already obsolete API in their latest driver :(
-> 
-> So, we now need to get both drivers to move to the modern API.
+Sensortek Technology Corp. produces Proximity Sensors with ALS and
+Accelerometers.
 
-Actually the AMD folks fixed this up after we pointed it out to them,
-so even in linux-next it just is nouveau that needs fixing.
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+This patch series depends on "iio: light: stk3310: Add support for
+stk3335", that's curerntly in linux-next.
+
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 342bb23e0a73..d197c9609ea7 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -813,6 +813,8 @@ patternProperties:
+     description: Semtech Corporation
+   "^sensirion,.*":
+     description: Sensirion AG
++  "^sensortek,.*":
++    description: Sensortek Technology Corporation
+   "^sff,.*":
+     description: Small Form Factor Committee
+   "^sgd,.*":
+-- 
+2.22.0
+
