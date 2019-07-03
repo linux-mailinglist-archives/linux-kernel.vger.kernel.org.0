@@ -2,110 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 776A35E065
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8DE5E06B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfGCI6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:58:54 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37514 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfGCI6x (ORCPT
+        id S1727254AbfGCJBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:01:23 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43404 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbfGCJBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:58:53 -0400
-Received: by mail-ot1-f68.google.com with SMTP id s20so1564247otp.4;
-        Wed, 03 Jul 2019 01:58:53 -0700 (PDT)
+        Wed, 3 Jul 2019 05:01:22 -0400
+Received: by mail-ot1-f65.google.com with SMTP id q10so1538654otk.10;
+        Wed, 03 Jul 2019 02:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lAu76Ghsvr1W5j1QydPulQlx7ZJYjzlKVY1X6/0TpYQ=;
-        b=ZlkWDaRm+F6GwfJacfLPTumk+RVHVPMMeileI2NFwlgWvaiJJa1YnjrCbLUMsIZTUc
-         CKx7yqQmO1MAkEU5RkkY+fqX+pcF6C5bvfgt6DU9YQ6315Rh4ppt4NckuFzlirtXJdW4
-         bXauvIzlfByBCcQCbKj/dQMX+FO4YHk7dgt2BqHQWfBiN2GjTE1Kt7sRE/fpjaJZ233Y
-         7EucpqztgtTjxkJuI2CJoELGbgQ0UsLqicla54UrQ1s6uI5Sm5cP55KZgAMPom6TI6Lh
-         eDV3440fsQsEOPIEVaVO70VowN2JWlXH/Dl/w36YmK4Qx1CW/WuZmpxGGpX8efH5HEaO
-         wt6A==
+        bh=Nqsl7mw8i2F0KpVu3YClsX9awvB+a3f/6kMjL+tSEX0=;
+        b=NBlReOsCEysqP0tKzR7+2SoIMgPZQTbMxjMN3O689cupA+zJC9X7NQ9JzYy95V7Zth
+         khffgZXpyEMVM9zQmRz9cELHlokp1YbTApLv0wpoXlMIcymKqHW183DDIzGRb/9w7Eds
+         QDyARb5iMwDqaKh7m8vX0dkpF+XaJvTBDxFerSPzoZa0Gtnt0srZuDrTT9q6cBr45SCe
+         F8ec5gQqYMTm0jd/rVyPy2xD96AkVQXxthY83d+xzkJoVG/W01+yvxMG1aIdjSopExuN
+         VzXRIhGajp86xxbkNMiSKFJ6G0U3OS1Ncv5k71aGEdus+ltgEb7BfANujqZwT2nKNIeB
+         tGjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lAu76Ghsvr1W5j1QydPulQlx7ZJYjzlKVY1X6/0TpYQ=;
-        b=sHywb0FLb2Z4mxmIKjmDJNsdGWfY6iISqSKrM17DPjAvg1WA3EAzbIWT4oJZNZu0rz
-         aK5bSB3QNB7rgXd8OAEaKPONdddZvkU3pHNuexzXcQvs3efd5cfv3LUHx5P45CU2jmvQ
-         P7Z5sQY+VECCLR04G0s3OMChLGNhqLv6IXIeHg84QUfdNoDTQ5M3HNTxSUgJzqgqk3q1
-         GtmP1ecvEI3kzvFHtG8n/i7j+Uz6VCfOE33QuBbUgXkmQJ3vaHCqVd9o0O3vw9yEGcLM
-         mKGGIHkZxP0s4UGMrMOBQP49pbAtU8ek9G2ra+LTZPG/afQVYZh0DnreHe+JA0GAiTQj
-         QNSw==
-X-Gm-Message-State: APjAAAWQ4LlPiwwViyd3kP8ru8QN5LkYisiDGMdf8AtH/CMM/p53gMEX
-        J0lUSTIOC0/PGEBKKdzV0GMTEafw1x//8JJFvGk=
-X-Google-Smtp-Source: APXvYqzGyUzewzJOLzZnZSEaNzpUQzbtDJSH6yWGpp+2eb3HVLQViI2Tq6G8hX6C+3lTL2C6HmGIAUahYpDsxQUBb1Q=
-X-Received: by 2002:a9d:14a:: with SMTP id 68mr26337864otu.96.1562144332818;
- Wed, 03 Jul 2019 01:58:52 -0700 (PDT)
+        bh=Nqsl7mw8i2F0KpVu3YClsX9awvB+a3f/6kMjL+tSEX0=;
+        b=tAGSAqRlQs/5dXLBvu1Sqcdh0LdjKBghXrIU4GfGy1TuernubL7xiXI0FYWUJBjyxd
+         tCfm7PTulBd3arRNHaiSmBVXgLg4bRruZ9pTLSib9lvPlWKsdqjsd5hPKk4YmlK/A2lw
+         2VRrJZyIOZZPXNqc7JQsbyBCI3LAfFcVWkoQMdT0blc35ayRrD8B7Iy6MRM3hZraxliG
+         b0QVNJhDQAhAOeuEuSsbwor4uj3daGqteRzKa1lbvNDVyYDv+b9DaqibiIXCeqfhOCYE
+         Tho0HRRvgBoV9+tF4ObcMdxy31U5GwvcnY0Myh6wDS9ZmTNSJbDMcP1tQoxEkVj+6MDC
+         dIiw==
+X-Gm-Message-State: APjAAAWR+iJCpQuJrURwkGfa6p0uV9G8zStj0iitkGu358ZrYt4MmhhG
+        GOlgA5nfz/YFsvBR1LeYpnfiooRTczcLJP3/qSw=
+X-Google-Smtp-Source: APXvYqy8nQfsCP9N5UeSronAuP31jlfLFowq8I3R9eP1zf8A8FBjZ25PU/l0s1nJ98KQZ2Cjy6gP0Ktnt+omp6h1XMI=
+X-Received: by 2002:a9d:226c:: with SMTP id o99mr27126789ota.42.1562144481370;
+ Wed, 03 Jul 2019 02:01:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190702203523.2412-1-martin.blumenstingl@googlemail.com>
- <20190702203523.2412-2-martin.blumenstingl@googlemail.com> <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
+References: <20190620175022.29348-1-martin.blumenstingl@googlemail.com>
+ <a7647aea-b3e6-b785-8476-1851f50beff1@synopsys.com> <CAFBinCDDyG_CxW+PB_OrUXfy-aDKSoewC2OyCfGh18N=omSgcQ@mail.gmail.com>
+In-Reply-To: <CAFBinCDDyG_CxW+PB_OrUXfy-aDKSoewC2OyCfGh18N=omSgcQ@mail.gmail.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 10:58:41 +0200
-Message-ID: <CAFBinCCWzLyhzVcqHR0RY9+cSqDZ3EdJEim8SP4Mr2Q3M=OKTg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: phy: add binding for the Lantiq VRX200
- and ARX300 PCIe PHYs
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        John Crispin <john@phrozen.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+Date:   Wed, 3 Jul 2019 11:01:10 +0200
+Message-ID: <CAFBinCD1qj8sNXOK2Pcbz1MAcdvwywPSxQeERNVpmNw=Gmz=Vw@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc2: use a longer AHB idle timeout in dwc2_core_reset()
+To:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>
+Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Schiller <ms@dev.tdt.de>
+        linux-stable <stable@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Wed, Jul 3, 2019 at 1:34 AM Rob Herring <robh+dt@kernel.org> wrote:
+On Mon, Jul 1, 2019 at 7:54 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 >
-> On Tue, Jul 2, 2019 at 2:35 PM Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
+> On Mon, Jun 24, 2019 at 7:41 AM Minas Harutyunyan
+> <Minas.Harutyunyan@synopsys.com> wrote:
 > >
-> > Add the bindings for the PCIe PHY on Lantiq VRX200 and ARX300 SoCs.
-> > The IP block contains settings for the PHY and a PLL.
-> > The PLL mode is configurable through a dedicated #phy-cell in .dts.
+> > On 6/20/2019 9:51 PM, Martin Blumenstingl wrote:
+> > > Use a 10000us AHB idle timeout in dwc2_core_reset() and make it
+> > > consistent with the other "wait for AHB master IDLE state" ocurrences.
+> > >
+> > > This fixes a problem for me where dwc2 would not want to initialize when
+> > > updating to 4.19 on a MIPS Lantiq VRX200 SoC. dwc2 worked fine with
+> > > 4.14.
+> > > Testing on my board shows that it takes 180us until AHB master IDLE
+> > > state is signalled. The very old vendor driver for this SoC (ifxhcd)
+> > > used a 1 second timeout.
+> > > Use the same timeout that is used everywhere when polling for
+> > > GRSTCTL_AHBIDLE instead of using a timeout that "works for one board"
+> > > (180us in my case) to have consistent behavior across the dwc2 driver.
+> > >
+> > > Cc: linux-stable <stable@vger.kernel.org> # 4.19+
+> > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > > ---
 > >
-> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > ---
-> >  .../bindings/phy/lantiq,vrx200-pcie-phy.yaml  | 87 +++++++++++++++++++
-> >  .../dt-bindings/phy/phy-lantiq-vrx200-pcie.h  | 11 +++
-> >  2 files changed, 98 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
-> >  create mode 100644 include/dt-bindings/phy/phy-lantiq-vrx200-pcie.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
-> > new file mode 100644
-> > index 000000000000..b7b222e772d0
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
-> > @@ -0,0 +1,87 @@
-> > +# SPDX-License-Identifier: GPL-2.0
+> > Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+> thank you for reviewing this!
 >
-> The preference is (GPL-2.0 OR BSD-2-Clause) for new bindings.
-to make sure I understand this correctly:
-the license is then only valid for the bindings - is it fine if the
-driver uses GPL-2.0-only?
-
-I don't have any datasheet for these SoCs so all my knowledge is based
-on the GPL-2.0-only driver from the Lantiq board support package
-(called "UGW").
-the .yaml file is 100% my own work so I'm fine with having GPL-2.0 OR
-BSD-2-Clause
-however, that still has to be compatible with my driver, which I chose
-to be GPL-2.0-only because that's the license from the Lantiq board
-support package
+> is there any chance we can get this fix into Linux 5.3? I know that
+> it's too late for 5.2 so I'm fine with skipping that.
+thank you Felipe for queuing this for v5.3!
+for reference, this patch is now in the usb-for-v5.3-part2 tag: [0]
 
 
-Martin
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git/commit/?h=usb-for-v5.3-part2&id=dfc4fdebc5d62ac4e2fe5428e59b273675515fb2
