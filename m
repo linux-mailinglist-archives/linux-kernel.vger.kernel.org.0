@@ -2,182 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD1D25DE2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD275DE38
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbfGCGpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 02:45:36 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42610 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfGCGpf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:45:35 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t28so1109937lje.9
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 23:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ptGTicjFq+J0eTU/VpcxUsmOsp/qaZSNFW8K0GR+TOs=;
-        b=kWifykzpZN5anpXIiQ4YGdylV33AXUn4GyrE0mtZQ50+vZthGp8hOmYzwGAaFUTju/
-         5DmP+TbKSdayBm2W4adywOLUqzuZv2ldPWrpFcUc4oUr3uWIG3tC+oZTIkunY+1HI1Hl
-         I1LQvdxcJEK8TZC4EfOOfwVqjWewrJJyUAnEEkVRYxoLxXdcpyXqjkmtbEey0c/oLSF2
-         jKAMFREDiyC4VRZyQ953d3IohkmgbTG+O9rdLN0dQ9j0FdaOld5pnEPn7H244FRBQqSG
-         L+PpuwWTK0rCWmAI9TRp9eK8EdXAcfnU0FIvWnEFru9hwMQ/DxDvqRt1Ut4VJOFn6hnC
-         hJ4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ptGTicjFq+J0eTU/VpcxUsmOsp/qaZSNFW8K0GR+TOs=;
-        b=cLoE0HKO9me1l70eZYdju+v5x6V9mRIW4zRXRIDHG0uwY0njqWJfbP/ZqvbFa79lGX
-         AZTIdyikTe8WYD+G7z0KoLlpM7GprzIE/56j/Hkd0Mz6+LMWkh7L6RdnNjVZeizmJpVC
-         QTc/X5AUG/XlYbbAQpSHnBK/WbA7agUkEiuZ4uO/NhxHw15Sp2444rmeQ3yr1t9k/sbL
-         QROdC00hpsoel+mbVvWQu8ivtdjUkZDUzO4TS3PBki/HvaxOtuVlqCQCqLGNIPbVm37v
-         gIfDHjbxK8Ut3pyldxy9pUbbdoyAxir/0Ym5w4scL3+I9iPw3MHlEq9F6c2Fna48vW2G
-         XUWQ==
-X-Gm-Message-State: APjAAAUcKe5mvjCUYqsyr6ETLgKXZfwfmgdHjS81vjHasfi2g8W2gdf7
-        dnFkHZ8QDzuSiASzkSZQysBFz8q1dHw1Af6Go/wNrw==
-X-Google-Smtp-Source: APXvYqzHLP5x6CDVK5N1nXarqor8EAB7jH3AjLWnOHwZsb5xNHK5SYSF45C/ETdsoHYS4PNC/AJ0+jRqGmYO2T35c80=
-X-Received: by 2002:a2e:2e18:: with SMTP id u24mr13211024lju.204.1562136332739;
- Tue, 02 Jul 2019 23:45:32 -0700 (PDT)
+        id S1727203AbfGCGvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 02:51:54 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39500 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726684AbfGCGvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:51:54 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 618B85CE45AEB27AABA8;
+        Wed,  3 Jul 2019 14:51:46 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 3 Jul 2019
+ 14:51:36 +0800
+Subject: Re: [PATCH] staging: erofs: fix LZ4 limited bounced page mis-reuse
+To:     Gao Xiang <gaoxiang25@huawei.com>, Gao Xiang <hsiangkao@aol.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Du Wei <weidu.du@huawei.com>, Miao Xie <miaoxie@huawei.com>
+References: <20190630185846.16624-1-hsiangkao@aol.com>
+ <dbd9e23d-3e76-8281-81f3-48680b4d0b9d@huawei.com>
+ <e57f757f-2a61-3c5d-bf06-264cd1d00fef@huawei.com>
+ <570e12d3-985e-3d5a-d7d4-cf0a072442fe@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <9a199c2a-31be-5768-c5bd-dba69b99d99b@huawei.com>
+Date:   Wed, 3 Jul 2019 14:51:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190703011020.151615-1-saravanak@google.com> <20190703011020.151615-7-saravanak@google.com>
-In-Reply-To: <20190703011020.151615-7-saravanak@google.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 3 Jul 2019 08:45:21 +0200
-Message-ID: <CAKfTPtCJFaEfvu3Dnp9WSxQEwSfY=VS+xsoQ+4P+vg7_WL0BAQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] interconnect: Add OPP table support for interconnects
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        daidavid1@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        sibis@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>, kernel-team@android.com,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <570e12d3-985e-3d5a-d7d4-cf0a072442fe@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 at 03:10, Saravana Kannan <saravanak@google.com> wrote:
->
-> Interconnect paths can have different performance points. Now that OPP
-> framework supports bandwidth OPP tables, add OPP table support for
-> interconnects.
->
-> Devices can use the interconnect-opp-table DT property to specify OPP
-> tables for interconnect paths. And the driver can obtain the OPP table for
-> an interconnect path by calling icc_get_opp_table().
+Hi xiang,
 
-The opp table of a path must come from the aggregation of OPP tables
-of the interconnect providers. So such kind of OPP table should be at
-provider level but not at path level.
+On 2019/7/3 14:06, Gao Xiang wrote:
+> Hi Chao,
+> 
+> On 2019/7/3 10:09, Gao Xiang wrote:
+>>
+>>
+>> On 2019/7/3 9:50, Chao Yu wrote:
+>>> On 2019/7/1 2:58, Gao Xiang wrote:
+>>>> From: Gao Xiang <gaoxiang25@huawei.com>
+>>>>
+>>>> Like all lz77-based algrithms, lz4 has a dynamically populated
+>>>> ("sliding window") dictionary and the maximum lookback distance
+>>>> is 65535. Therefore the number of bounced pages could be limited
+>>>> by erofs based on this property.
+>>>>
+>>>> However, just now we observed some lz4 sequences in the extreme
+>>>> case cannot be decompressed correctly after this feature is enabled,
+>>>> the root causes after analysis are clear as follows:
+>>>> 1) max bounced pages should be 17 rather than 16 pages;
+>>>> 2) considering the following case, the broken implementation
+>>>>    could reuse unsafely in advance (in other words, reuse it
+>>>>    less than a safe distance),
+>>>>    0 1 2 ... 16 17 18 ... 33 34
+>>>>    b             p  b         b
+>>>>    note that the bounce page that we are concerned was allocated
+>>>>    at 0, and it reused at 18 since page 17 exists, but it mis-reused
+>>>>    at 34 in advance again, which causes decompress failure.
+>>>>
+>>>> This patch resolves the issue by introducing a bitmap to mark
+>>>> whether the page in the same position of last round is a bounced
+>>>> page or not, and a micro stack data structure to store all
+>>>> available bounced pages.
+>>>>
+>>>> Fixes: 7fc45dbc938a ("staging: erofs: introduce generic decompression backend")
+>>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>>>> ---
+>>>>  drivers/staging/erofs/decompressor.c | 50 ++++++++++++++++------------
+>>>>  1 file changed, 28 insertions(+), 22 deletions(-)
+>>>>
+>>>> diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
+>>>> index 80f1f39719ba..1fb0abb98dff 100644
+>>>> --- a/drivers/staging/erofs/decompressor.c
+>>>> +++ b/drivers/staging/erofs/decompressor.c
+>>>> @@ -13,7 +13,7 @@
+>>>>  #define LZ4_DISTANCE_MAX 65535	/* set to maximum value by default */
+>>>>  #endif
+>>>>  
+>>>> -#define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
+>>>> +#define LZ4_MAX_DISTANCE_PAGES	(DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE) + 1)
+>>>>  #ifndef LZ4_DECOMPRESS_INPLACE_MARGIN
+>>>>  #define LZ4_DECOMPRESS_INPLACE_MARGIN(srcsize)  (((srcsize) >> 8) + 32)
+>>>>  #endif
+>>>> @@ -35,19 +35,28 @@ static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
+>>>>  	const unsigned int nr =
+>>>>  		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
+>>>>  	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
+>>>> -	unsigned long unused[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
+>>>> -					  BITS_PER_LONG)] = { 0 };
+>>>> +	unsigned long bounced[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
+>>>> +					   BITS_PER_LONG)] = { 0 };
+>>>>  	void *kaddr = NULL;
+>>>> -	unsigned int i, j, k;
+>>>> +	unsigned int i, j, top;
+>>>>  
+>>>> -	for (i = 0; i < nr; ++i) {
+>>>> +	top = 0;
+>>>> +	for (i = j = 0; i < nr; ++i, ++j) {
+>>>>  		struct page *const page = rq->out[i];
+>>>> +		struct page *victim;
+>>>>  
+>>>> -		j = i & (LZ4_MAX_DISTANCE_PAGES - 1);
+>>>> -		if (availables[j])
+>>>> -			__set_bit(j, unused);
+>>>> +		if (j >= LZ4_MAX_DISTANCE_PAGES)
+>>>> +			j = 0;
+>>>> +
+>>>> +		/* 'valid' bounced can only be tested after a complete round */
+>>>> +		if (test_bit(j, bounced)) {
+>>>> +			DBG_BUGON(i < LZ4_MAX_DISTANCE_PAGES);
+>>>> +			DBG_BUGON(top >= LZ4_MAX_DISTANCE_PAGES);
+>>>> +			availables[top++] = rq->out[i - LZ4_MAX_DISTANCE_PAGES];
+>>>
+>>> Maybe we can change 'i - LZ4_MAX_DISTANCE_PAGES' to 'j' directly for better
+>>> readability.
+>>
+>> OK, I think they are equivalent as well, will change for readability, retest and resend.
+>> Thanks for your suggestion :)
+> 
+> I tested again and I observed that using j broke the logic and I think we cannot use j
+> to replace i - LZ4_MAX_DISTANCE_PAGES.
+> 
+> Since bounced pages was marked according to the last round rather than the first round,
+> we cannot directly use the first round pages to push into the stack, e.g.
 
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/interconnect/core.c  | 27 ++++++++++++++++++++++++++-
->  include/linux/interconnect.h |  7 +++++++
->  2 files changed, 33 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index 871eb4bc4efc..881bac80bc1e 100644
-> --- a/drivers/interconnect/core.c
-> +++ b/drivers/interconnect/core.c
-> @@ -47,6 +47,7 @@ struct icc_req {
->   */
->  struct icc_path {
->         size_t num_nodes;
-> +       struct opp_table *opp_table;
->         struct icc_req reqs[];
->  };
->
-> @@ -313,7 +314,7 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
->  {
->         struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
->         struct icc_node *src_node, *dst_node;
-> -       struct device_node *np = NULL;
-> +       struct device_node *np = NULL, *opp_node;
->         struct of_phandle_args src_args, dst_args;
->         int idx = 0;
->         int ret;
-> @@ -381,10 +382,34 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
->                 dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
->         mutex_unlock(&icc_lock);
->
-> +       opp_node = of_parse_phandle(np, "interconnect-opp-table", idx);
-> +       if (opp_node) {
-> +               path->opp_table = dev_pm_opp_of_find_table_from_node(opp_node);
-> +               of_node_put(opp_node);
-> +       }
-> +
-> +
->         return path;
->  }
->  EXPORT_SYMBOL_GPL(of_icc_get);
->
-> +/**
-> + * icc_get_opp_table() - Get the OPP table that corresponds to a path
-> + * @path: reference to the path returned by icc_get()
-> + *
-> + * This function will return the OPP table that corresponds to a path handle.
-> + * If the interconnect API is disabled, NULL is returned and the consumer
-> + * drivers will still build. Drivers are free to handle this specifically, but
-> + * they don't have to.
-> + *
-> + * Return: opp_table pointer on success. NULL is returned when the API is
-> + * disabled or the OPP table is missing.
-> + */
-> +struct opp_table *icc_get_opp_table(struct icc_path *path)
-> +{
-> +       return path->opp_table;
-> +}
-> +
->  /**
->   * icc_set_bw() - set bandwidth constraints on an interconnect path
->   * @path: reference to the path returned by icc_get()
-> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-> index dc25864755ba..0c0bc55f0e89 100644
-> --- a/include/linux/interconnect.h
-> +++ b/include/linux/interconnect.h
-> @@ -9,6 +9,7 @@
->
->  #include <linux/mutex.h>
->  #include <linux/types.h>
-> +#include <linux/pm_opp.h>
->
->  /* macros for converting to icc units */
->  #define Bps_to_icc(x)  ((x) / 1000)
-> @@ -28,6 +29,7 @@ struct device;
->  struct icc_path *icc_get(struct device *dev, const int src_id,
->                          const int dst_id);
->  struct icc_path *of_icc_get(struct device *dev, const char *name);
-> +struct opp_table *icc_get_opp_table(struct icc_path *path);
->  void icc_put(struct icc_path *path);
->  int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
->
-> @@ -49,6 +51,11 @@ static inline void icc_put(struct icc_path *path)
->  {
->  }
->
-> +static inline struct opp_table *icc_get_opp_table(struct icc_path *path)
-> +{
-> +       return NULL;
-> +}
-> +
->  static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
->  {
->         return 0;
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+Yes, I can understand that, so the bitmap only indicate page in previous round
+is a new bounced page or a referenced bounced page, using page at last round is
+safe.
+
+Anyway, thanks for the explanation below, and go ahead with current
+implementation. :)
+
+Thanks,
+
+> 
+> 1)
+>     0 1 2 ... 16 17 18 ... 33 34
+>     p             b            b
+> 
+> bounce page could be allocated from rq->out[17], and we could reuse it from rq->out[34], which
+> is not equal to rq->out[0].
+> 
+> 2)
+>     0 1 2 ... 16 17 18  19  ... 33 34 35 36
+>       b              p   b                b
+> allocated in rq->out[1] j = 1, reuse it in rq->out[19] j = 2, reuse it again in rq->out[36] j = 2,
+> which is not equal to rq->out[2].
+> 
+> I think the original patch is ok, and it cannot be replaced to rq->out[j].
+> 
+> Thanks,
+> Gao Xiang
+> 
+>>
+>> Thanks,
+>> Gao Xiang
+>>
+>>>
+>>> Otherwise, it looks good to me.
+>>>
+>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>
+>>> Thanks,
+>>>
+>>>> +		}
+>>>>  
+>>>>  		if (page) {
+>>>> +			__clear_bit(j, bounced);
+>>>>  			if (kaddr) {
+>>>>  				if (kaddr + PAGE_SIZE == page_address(page))
+>>>>  					kaddr += PAGE_SIZE;
+>>>> @@ -59,27 +68,24 @@ static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
+>>>>  			continue;
+>>>>  		}
+>>>>  		kaddr = NULL;
+>>>> +		__set_bit(j, bounced);
+>>>>  
+>>>> -		k = find_first_bit(unused, LZ4_MAX_DISTANCE_PAGES);
+>>>> -		if (k < LZ4_MAX_DISTANCE_PAGES) {
+>>>> -			j = k;
+>>>> -			get_page(availables[j]);
+>>>> +		if (top) {
+>>>> +			victim = availables[--top];
+>>>> +			get_page(victim);
+>>>>  		} else {
+>>>> -			DBG_BUGON(availables[j]);
+>>>> -
+>>>>  			if (!list_empty(pagepool)) {
+>>>> -				availables[j] = lru_to_page(pagepool);
+>>>> -				list_del(&availables[j]->lru);
+>>>> -				DBG_BUGON(page_ref_count(availables[j]) != 1);
+>>>> +				victim = lru_to_page(pagepool);
+>>>> +				list_del(&victim->lru);
+>>>> +				DBG_BUGON(page_ref_count(victim) != 1);
+>>>>  			} else {
+>>>> -				availables[j] = alloc_pages(GFP_KERNEL, 0);
+>>>> -				if (!availables[j])
+>>>> +				victim = alloc_pages(GFP_KERNEL, 0);
+>>>> +				if (!victim)
+>>>>  					return -ENOMEM;
+>>>>  			}
+>>>> -			availables[j]->mapping = Z_EROFS_MAPPING_STAGING;
+>>>> +			victim->mapping = Z_EROFS_MAPPING_STAGING;
+>>>>  		}
+>>>> -		rq->out[i] = availables[j];
+>>>> -		__clear_bit(j, unused);
+>>>> +		rq->out[i] = victim;
+>>>>  	}
+>>>>  	return kaddr ? 1 : 0;
+>>>>  }
+>>>>
+> .
+> 
