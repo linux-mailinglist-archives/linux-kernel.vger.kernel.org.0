@@ -2,102 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CE7F5DF6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD115DF76
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfGCIOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:14:25 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34620 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbfGCIOU (ORCPT
+        id S1727519AbfGCIOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:14:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49315 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbfGCIOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:14:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p10so825100pgn.1;
-        Wed, 03 Jul 2019 01:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=p3NE6eF8wtZSbcEMraRfzpbuJsj8vIEFXgZ9uVdKcjs=;
-        b=MjGvB2vdicUC+rpaKAkXobo4d4VHJRRoHXJfCbyAa/hzEWdvz8mdYPZiIwCB46+imG
-         DDNtYWfLtizE6NhwQmkrSzcMBVXU4z3kRgDuOgPYJ48fVdoo+5smd8lySjs4Rwo+qWf+
-         27L0n6Br7f3GCdtpc1BQTIB0OSQ1odY/rxsJxJSqFkpG3v/RPqn/LrYulYJvC5hA08Y5
-         syancLCDgupxxzz8dlWLIa37qsiuP/0IRh0B1hGGFAnNzt9XGd3JWARku2O0V8VF7PQ5
-         UA4UOCjeclOtCo3XgjuxtatOiJL/NWkqmvGTjMDhbFtXMexUNMOqgMioriSqoD0Q6Pqa
-         JaEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p3NE6eF8wtZSbcEMraRfzpbuJsj8vIEFXgZ9uVdKcjs=;
-        b=Li/KLlhSy2QYL6rkOncx2AM2x4wOr8pRw1pr5rBmosjCIIf59Vx6wt4jqm7RKm6QFb
-         iUHsYiLsOd61JHbrVqtzE74iOUfBVzlPdosR9G5UXOjPgADm4hNrTNZ3yAGd+PYk2/6n
-         NFrG67mCW9PPja/05hajf4CRAq33W3z4kpzO15KrRUhvR2qZV11A/x+O0h9n9zCVZNeP
-         fiJxX/qDzbPOKMIovkj0tpWNA4ngs/6MgR6PjICwY8hXOczxadfgE+gmkVSnwQm8PvDF
-         r6HbZ4xoHEYU/TlQ/wsQ2VJ9+I4QqHaZIw5ucESvxg7YDy6eXuXK7Iu0fduRyXknXzyt
-         GPtg==
-X-Gm-Message-State: APjAAAUtSl3w9PDRSlIpkDKCN9jhLKC1wUgb9YaSn+vMa75sdmyXmyQ5
-        sItP429o61afEN+2fYboVxdi9FFucFM=
-X-Google-Smtp-Source: APXvYqxD0vSuPSwOFaa0ONFk6vM54vgp5nr7d54JfN1Tutz7WSjZUlZ3J8J0UV1Jul9hXde0zjsmFQ==
-X-Received: by 2002:a63:545c:: with SMTP id e28mr36881906pgm.374.1562141659184;
-        Wed, 03 Jul 2019 01:14:19 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id d2sm1445306pgo.0.2019.07.03.01.14.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 01:14:18 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 16/16] crypto: caam - add clock entry for i.MX8MQ
-Date:   Wed,  3 Jul 2019 01:13:27 -0700
-Message-Id: <20190703081327.17505-17-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190703081327.17505-1-andrew.smirnov@gmail.com>
-References: <20190703081327.17505-1-andrew.smirnov@gmail.com>
+        Wed, 3 Jul 2019 04:14:37 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hiaPS-0000QS-Hw; Wed, 03 Jul 2019 08:14:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] staging: rtl8723bs: hal: remove redundant assignment to packetType
+Date:   Wed,  3 Jul 2019 09:14:34 +0100
+Message-Id: <20190703081434.17489-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock entry needed to support i.MX8MQ.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Spencer <christopher.spencer@sea.co.uk>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Local variable packetType is being assigned a value that is never
+read just before a return statement. The assignment is redundant
+and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/crypto/caam/ctrl.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/rtl8723bs/hal/hal_btcoex.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index a354c64ca39d..916b63f4f93b 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -527,6 +527,7 @@ static const struct soc_device_attribute caam_imx_soc_table[] = {
- 	{ .soc_id = "i.MX6UL", .data = &caam_imx6ul_data },
- 	{ .soc_id = "i.MX6*",  .data = &caam_imx6_data },
- 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_data },
-+	{ .soc_id = "i.MX8MQ", .data = &caam_imx7_data },
- 	{ .family = "Freescale i.MX" },
- };
+diff --git a/drivers/staging/rtl8723bs/hal/hal_btcoex.c b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+index 66caf34..2579ac3 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_btcoex.c
++++ b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+@@ -1196,7 +1196,6 @@ void EXhalbtcoutsrc_SpecialPacketNotify(PBTC_COEXIST pBtCoexist, u8 pktType)
+ 	} else if (PACKET_ARP == pktType) {
+ 		packetType = BTC_PACKET_ARP;
+ 	} else {
+-		packetType = BTC_PACKET_UNKNOWN;
+ 		return;
+ 	}
  
 -- 
-2.21.0
+2.7.4
 
