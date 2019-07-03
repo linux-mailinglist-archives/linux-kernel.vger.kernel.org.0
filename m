@@ -2,81 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826265E4F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D2E5E4F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfGCNMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 09:12:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfGCNMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 09:12:40 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92AF1308FEC6;
-        Wed,  3 Jul 2019 13:12:19 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7702C1001B04;
-        Wed,  3 Jul 2019 13:12:13 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <20190703065628.GK978@dhcp22.suse.cz>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <9ade5859-b937-c1ac-9881-2289d734441d@redhat.com>
-Date:   Wed, 3 Jul 2019 09:12:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190703065628.GK978@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 03 Jul 2019 13:12:40 +0000 (UTC)
+        id S1727083AbfGCNM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 09:12:56 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42254 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCNMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 09:12:55 -0400
+Received: by mail-pl1-f194.google.com with SMTP id ay6so1224070plb.9;
+        Wed, 03 Jul 2019 06:12:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fVoZN2N/gGy1uHO1cYmpHsdxlI2S2OOVmSuRyJWF31I=;
+        b=WQ+IjdN6by7xkNz2KpwWw8IqR7X5AvsDUlDmgF0b4Gq4uwtmhIYhMVTJZM2HxgCnA1
+         6mXYncQqrDl+nmOAUzJQHnfWtRWJip1exe/zGpv1X/kax+aa1Jx3JvOmO7CsZSR2YLTW
+         URoPjpj4MuO9NWSq1IN/UfA0GVJG7IzKrQnjxWdGqxGvg9sBAbk2pPA0aiQ9O+ExJOsh
+         M2a2JrvkyxqquWKCIsbgIB54ibHO8+TPFekQF0k7WgZGDEIn5lGbjTH5cHreE2wa73H6
+         SS5jhiXUtLX8K4Lrw/xGUoMaND/lh9aTvwL7u1heyHSMklc4jiBLYPMTWyVSyup2NrI4
+         tdLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fVoZN2N/gGy1uHO1cYmpHsdxlI2S2OOVmSuRyJWF31I=;
+        b=aokxpsVh18UKQS5c6glwHebUOPFpsmDPFqlZyaMLKeM/6NfzxozRdLYwkrYRNd7eox
+         Q6bAXh8bNQVyznNiFjVgHfQvBHS4AqUUiErSGGalgtNnLo+SuQ6erRYYNuQFKLrAkkDt
+         J5dRpOJ2zDzZhTdsdcOJg8YLSKNtJiHS/pQu7vjVxnyNApmWw0UNmoKD6xdGmH0KcSTg
+         BaPbra7HHsvw/0AyeACBAWjmye4uzrKG685dOzm5q/Csxvv0Bsg59Aub76gdixzezjrc
+         6u5l9mZ5/GOGZk0ScVRD8r/4cQw4/QS4S/M2tUz9PfO3cNXVjLgfobGbhnTsxtB0jd8I
+         G/AA==
+X-Gm-Message-State: APjAAAWeObwIUIHpDMnIdgSyXGtU1X/FgAnoM9Ti1MR1a0hAaBSQ+PUL
+        ng4ZpeuPKaO+gKO/l6lthW0=
+X-Google-Smtp-Source: APXvYqzcu4hI5LmkbPBDefu6PwX2r8t2tQg+JR76N5golagykXp+5E/+A/eeKoBSzdelxhGQ+xiV7Q==
+X-Received: by 2002:a17:902:760a:: with SMTP id k10mr39085324pll.83.1562159574618;
+        Wed, 03 Jul 2019 06:12:54 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id 201sm5388870pfz.24.2019.07.03.06.12.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 06:12:53 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fuqian Huang <huangfq.daxian@gmail.com>
+Subject: [PATCH 01/30] ia64/sn: Use kmemdup rather than duplicating its implementation
+Date:   Wed,  3 Jul 2019 21:12:34 +0800
+Message-Id: <20190703131234.24533-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/3/19 2:56 AM, Michal Hocko wrote:
-> On Tue 02-07-19 14:37:30, Waiman Long wrote:
->> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
->> file to shrink the slab by flushing all the per-cpu slabs and free
->> slabs in partial lists. This applies only to the root caches, though.
->>
->> Extends this capability by shrinking all the child memcg caches and
->> the root cache when a value of '2' is written to the shrink sysfs file.
-> Why do we need a new value for this functionality? I would tend to think
-> that skipping memcg caches is a bug/incomplete implementation. Or is it
-> a deliberate decision to cover root caches only?
+kmemdup is introduced to duplicate a region of memory in a neat way.
+Rather than kmalloc/kzalloc + memset, which the programmer needs to
+write the size twice (sometimes lead to mistakes), kmemdup improves
+readability, leads to smaller code and also reduce the chances of mistakes.
+Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
 
-It is just that I don't want to change the existing behavior of the
-current code. It will definitely take longer to shrink both the root
-cache and the memcg caches. If we all agree that the only sensible
-operation is to shrink root cache and the memcg caches together. I am
-fine just adding memcg shrink without changing the sysfs interface
-definition and be done with it.
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+ arch/ia64/sn/kernel/io_acpi_init.c | 8 +++-----
+ arch/ia64/sn/pci/tioce_provider.c  | 3 +--
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-Cheers,
-Longman
+diff --git a/arch/ia64/sn/kernel/io_acpi_init.c b/arch/ia64/sn/kernel/io_acpi_init.c
+index c31fe637b0b4..7f305a468b69 100644
+--- a/arch/ia64/sn/kernel/io_acpi_init.c
++++ b/arch/ia64/sn/kernel/io_acpi_init.c
+@@ -210,13 +210,11 @@ sn_extract_device_info(acpi_handle handle, struct pcidev_info **pcidev_info,
+ 		goto exit;
+ 	}
+ 
+-	pcidev_ptr = kzalloc(sizeof(struct pcidev_info), GFP_KERNEL);
+-	if (!pcidev_ptr)
+-		panic("%s: Unable to alloc memory for pcidev_info", __func__);
+-
+ 	memcpy(&addr, vendor->byte_data, sizeof(struct pcidev_info *));
+ 	pcidev_prom_ptr = __va(addr);
+-	memcpy(pcidev_ptr, pcidev_prom_ptr, sizeof(struct pcidev_info));
++	pcidev_ptr = kmemdup(pcidev_prom_ptr, sizeof(struct pcidev_info), GFP_KERNEL);
++	if (!pcidev_ptr)
++		panic("%s: Unable to alloc memory for pcidev_info", __func__);
+ 
+ 	/* Get the IRQ info */
+ 	irq_info = kzalloc(sizeof(struct sn_irq_info), GFP_KERNEL);
+diff --git a/arch/ia64/sn/pci/tioce_provider.c b/arch/ia64/sn/pci/tioce_provider.c
+index 3bd9abc35485..20360a52ab4d 100644
+--- a/arch/ia64/sn/pci/tioce_provider.c
++++ b/arch/ia64/sn/pci/tioce_provider.c
+@@ -1000,11 +1000,10 @@ tioce_bus_fixup(struct pcibus_bussoft *prom_bussoft, struct pci_controller *cont
+ 	 * Allocate kernel bus soft and copy from prom.
+ 	 */
+ 
+-	tioce_common = kzalloc(sizeof(struct tioce_common), GFP_KERNEL);
++	tioce_common = kmemdup(prom_bussoft, sizeof(struct tioce_common), GFP_KERNEL);
+ 	if (!tioce_common)
+ 		return NULL;
+ 
+-	memcpy(tioce_common, prom_bussoft, sizeof(struct tioce_common));
+ 	tioce_common->ce_pcibus.bs_base = (unsigned long)
+ 		ioremap(REGION_OFFSET(tioce_common->ce_pcibus.bs_base),
+ 			sizeof(struct tioce_common));
+-- 
+2.11.0
 
