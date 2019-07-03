@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF725E085
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719815E09A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfGCJJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 05:09:19 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43012 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfGCJJS (ORCPT
+        id S1727368AbfGCJLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:11:01 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34666 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbfGCJK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:09:18 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w79so1442360oif.10
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 02:09:18 -0700 (PDT)
+        Wed, 3 Jul 2019 05:10:56 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n5so1616835otk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 02:10:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=v9ocQ0y5CtxyEHOYV99/bjcmmQ1fzb/ctPNDmnSi3/0=;
-        b=AVj1pn6UP9O9GNaYYdDTyBxmTCJ62T2/w86+67e0a2dD6KeqGkITGknvMi0X+JJFvJ
-         mkqwJEMX0g57lbn9b6VAFzTyeC55ei7EBDjAg+lagYcmRT+BpkDXhU2PYunEPd4iHog4
-         CMzQk2uL1XtjlEq88ewVnLV8hHAdPIS4CyvpCqt2I+ArZfbyOXA9qxth2NIvws7biaxP
-         +1liIPetCAcOmV03MewRmVxO8qXrncom2EB9uQL84/TthC8alI8tJVQiaPvLssusfwpl
-         A0RRecYLvF/RZxb07mZ0l1r1sO8TTo5oQjUbvaQwWi96+mOLzrDbyYaOyiM8bzULtRoP
-         Mb/Q==
-X-Gm-Message-State: APjAAAU3K2TvuVAq6NS9HDKQXdh+ZpeUxvpjqcWUyUj5dd4BSH4CCHmX
-        liR+aKtvnDuFklOdTa5GDoc7XJLQQVM4gz7Z14g=
-X-Google-Smtp-Source: APXvYqyuBh1YTQk6z2MikBTMYfpl53EmGyvIRqlL614akb0XGpV2n0PuR40tHFZvP0UelhZNve4TXfYLCBdDAhDfODY=
-X-Received: by 2002:aca:5a41:: with SMTP id o62mr6055425oib.110.1562144958083;
- Wed, 03 Jul 2019 02:09:18 -0700 (PDT)
+        bh=DciJ90nh1NzfXcJeF9DL81fOMF6IEI7qQaUbMDoK/ok=;
+        b=D0df0vV3AQOyeU9kHyW9lCS2FPRxLXLZmDF4Tsc8VesjfikKW4b5iQMJ3ENZXTKgsh
+         +1TpgO52ArMlFL48IG84lgekF3KuC2hs4ZUtJjE73eGQ9ioFSpwQte8womsAcq2R7xU4
+         4ioHcFbri4EJ98FpXldGQ+6oba6dqw9ZjiKkQ9IKqvnRdFKR5fBmtLKn2yVjLDPATCnE
+         gy5xMj6exF+mmKAQU1M9XXuY8uu5tZr8JrKxRSbe2kNmv/5sGHHET97ogminCfDRAjHc
+         HyIx76gnT/KQlaTb8GyeMVBvT9Eq9nja38IwhRMoir+sHUoq30QK61ZF+T2gD45Npk8f
+         jYew==
+X-Gm-Message-State: APjAAAWuECMq8/s+AaCsXby6hVOFo1jvE1fue8uX0MSbKelehisW7YhD
+        c+aPQ+cIwFxun/nFQ5ltwVzacDwWEBhd42VGU9I=
+X-Google-Smtp-Source: APXvYqza5e2FicbMKr5dqkoDR8/5pVuhNf2c6MThpTIwKh+O0DLItd1BhWLNz0X1CeBA1OglAGsa7GKg7RMI0hHwSCE=
+X-Received: by 2002:a9d:6a4b:: with SMTP id h11mr13449335otn.266.1562145055618;
+ Wed, 03 Jul 2019 02:10:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190703071653.2799-1-gregkh@linuxfoundation.org>
-In-Reply-To: <20190703071653.2799-1-gregkh@linuxfoundation.org>
+References: <20190703071653.2799-1-gregkh@linuxfoundation.org> <20190703071653.2799-2-gregkh@linuxfoundation.org>
+In-Reply-To: <20190703071653.2799-2-gregkh@linuxfoundation.org>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 3 Jul 2019 11:09:06 +0200
-Message-ID: <CAJZ5v0hA_su=eR5tosY-MMz0CggQ5UG8CvYRp2nmWN=c0OT6=g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] debugfs: provide pr_fmt() macro
+Date:   Wed, 3 Jul 2019 11:10:44 +0200
+Message-ID: <CAJZ5v0goKqHXfG=nNprMtKTDj02s3U56BOGQTuqajcqVdqqFcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] debugfs: log errors when something goes wrong
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -50,41 +50,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Jul 3, 2019 at 9:17 AM Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
-> Use a common "debugfs: " prefix for all pr_* calls in a single place.
+> As it is not recommended that debugfs calls be checked, it was pointed
+> out that major errors should still be logged somewhere so that
+> developers and users have a chance to figure out what went wrong.  To
+> help with this, error logging has been added to the debugfs core so that
+> it is not needed to be present in every individual file that calls
+> debugfs.
 >
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Takashi Iwai <tiwai@suse.de>
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Reported-by: Takashi Iwai <tiwai@suse.de>
 > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
 > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Generally speaking
 
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 > ---
->  fs/debugfs/inode.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  fs/debugfs/inode.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
 >
 > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index acef14ad53db..f04c8475d9a1 100644
+> index f04c8475d9a1..7f43c8acfcbf 100644
 > --- a/fs/debugfs/inode.c
 > +++ b/fs/debugfs/inode.c
-> @@ -9,6 +9,8 @@
+> @@ -2,8 +2,9 @@
+>  /*
+>   *  inode.c - part of debugfs, a tiny little debug file system
+>   *
+> - *  Copyright (C) 2004 Greg Kroah-Hartman <greg@kroah.com>
+> + *  Copyright (C) 2004,2019 Greg Kroah-Hartman <greg@kroah.com>
+>   *  Copyright (C) 2004 IBM Inc.
+> + *  Copyright (C) 2019 Linux Foundation <gregkh@linuxfoundation.org>
+>   *
+>   *  debugfs is for people to use instead of /proc or /sys.
 >   *  See ./Documentation/core-api/kernel-api.rst for more details.
->   */
+> @@ -294,8 +295,10 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
 >
-> +#define pr_fmt(fmt)    "debugfs: " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/fs.h>
->  #include <linux/mount.h>
-> @@ -285,7 +287,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
->         struct dentry *dentry;
->         int error;
+>         error = simple_pin_fs(&debug_fs_type, &debugfs_mount,
+>                               &debugfs_mount_count);
+> -       if (error)
+> +       if (error) {
+> +               pr_err("Unable to pin filesystem for file '%s'\n", name);
+
+But I'm not sure about the log level here.  Particularly, why would
+pr_info() not work?
+
+>                 return ERR_PTR(error);
+> +       }
 >
-> -       pr_debug("debugfs: creating file '%s'\n",name);
-> +       pr_debug("creating file '%s'\n", name);
+>         /* If the parent is not specified, we create it in the root.
+>          * We need the root dentry to do this, which is in the super
+> @@ -309,6 +312,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
+>         dentry = lookup_one_len(name, parent, strlen(name));
+>         if (!IS_ERR(dentry) && d_really_is_positive(dentry)) {
+>                 dput(dentry);
+> +               pr_err("File '%s' already present!\n", name);
+>                 dentry = ERR_PTR(-EEXIST);
+>         }
 >
->         if (IS_ERR(parent))
->                 return parent;
+> @@ -351,8 +355,11 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+>                 return dentry;
+>
+>         inode = debugfs_get_inode(dentry->d_sb);
+> -       if (unlikely(!inode))
+> +       if (unlikely(!inode)) {
+> +               pr_err("out of free dentries, can not create file '%s'\n",
+> +                      name);
+>                 return failed_creating(dentry);
+> +       }
+>
+>         inode->i_mode = mode;
+>         inode->i_private = data;
+> @@ -513,8 +520,11 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+>                 return dentry;
+>
+>         inode = debugfs_get_inode(dentry->d_sb);
+> -       if (unlikely(!inode))
+> +       if (unlikely(!inode)) {
+> +               pr_err("out of free dentries, can not create directory '%s'\n",
+> +                      name);
+>                 return failed_creating(dentry);
+> +       }
+>
+>         inode->i_mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
+>         inode->i_op = &simple_dir_inode_operations;
+> @@ -552,8 +562,11 @@ struct dentry *debugfs_create_automount(const char *name,
+>                 return dentry;
+>
+>         inode = debugfs_get_inode(dentry->d_sb);
+> -       if (unlikely(!inode))
+> +       if (unlikely(!inode)) {
+> +               pr_err("out of free dentries, can not create automount '%s'\n",
+> +                      name);
+>                 return failed_creating(dentry);
+> +       }
+>
+>         make_empty_dir_inode(inode);
+>         inode->i_flags |= S_AUTOMOUNT;
+> @@ -608,6 +621,8 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+>
+>         inode = debugfs_get_inode(dentry->d_sb);
+>         if (unlikely(!inode)) {
+> +               pr_err("out of free dentries, can not create symlink '%s'\n",
+> +                      name);
+>                 kfree(link);
+>                 return failed_creating(dentry);
+>         }
 > --
 > 2.22.0
 >
