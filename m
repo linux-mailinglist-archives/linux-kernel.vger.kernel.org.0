@@ -2,91 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43B675DFBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319675DFC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfGCI0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:26:46 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33343 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfGCI0p (ORCPT
+        id S1727212AbfGCI2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:28:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40361 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbfGCI2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:26:45 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y17so1151787lfe.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 01:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oH+9JEmEdviHn94a7cG/CrP0XnCuvPvdHugovk+1QmU=;
-        b=Yr0j9Ul0MKP0dkHoy9so7SqHZjz9YPD/8RtaQYq/QS7hJpMV/YgCE0T28eXT7jCvlS
-         yQmRZqNvwMQEyd90J4bhV4PHy5Gm9rZDQYOpw2HFGrqYnG13mxGub7/M3rR+pIskS9RH
-         1ZhsY0q7Hm/aXru8eSnmkm75xGDWYmso+K5aSBOYCjI/wj4NuxVFuJ9B+ojMYRnIcO8d
-         ix3snxZ0ZJj71x7B6n368jZ9X6YaizA+Ee6+uCLuReo2lBUjxx1g9henIp9r5WGP0WwN
-         b1C0fz0nbOuKbXmvt7NjhZPWDwy5iWE/yLpyxrSwtom7abqcgKnr4Xu5GbBkbajHu7wK
-         5jhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oH+9JEmEdviHn94a7cG/CrP0XnCuvPvdHugovk+1QmU=;
-        b=ciIQoNHp1C7xfgOP2anCzVNgZ0S2r1NC4tLQjZvJfuOPdQDql3Eb8E26cXbVzsXO3I
-         XwZbCx8OySlJKEH2EbRD8WPx4Xg21ESGL4Iu/R4EK2VPyVdkMuzGCSC0IK+8XbsvjuQf
-         iI0Feh0JNmrzgYVDASFaEYUpeZ18LbVomLwaSXuO+nUWGeRFlHEYSFrz+HDCY0c7J8vA
-         kTJ6RtL1irCzcuahSNZ3qD27W+ar9lJy6m+6YEB6Zxk6UWeb3Y+3wOUV4QF3cLjim29k
-         WlWcjXYHyDBOJmKGszgtWGDqKcldu1W3Nf1GKYXKeddLP5F5MjBetiztDqAnrv2ei4aQ
-         tOww==
-X-Gm-Message-State: APjAAAX/Iqrf2iTtYRZHjEla9udut1ddO2QLJZGk0C4N+PkXGFiem4t+
-        cG7L2p3zS38B9ElR+YKb42Efh2j8EtMW98LxPEPPWw==
-X-Google-Smtp-Source: APXvYqymr6EoLSqXvq3rkC3hBxhdSlL8Q76rBENOFxvbDxQXxxcFrCLNfqvoaHdBizGqM1M/jk306H+kUmo4riz9AkI=
-X-Received: by 2002:ac2:5382:: with SMTP id g2mr16672551lfh.92.1562142403839;
- Wed, 03 Jul 2019 01:26:43 -0700 (PDT)
+        Wed, 3 Jul 2019 04:28:16 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x638S2083205103
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 01:28:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x638S2083205103
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562142483;
+        bh=9UlTJipWCRtOw5/9IBZBryeb5TA2GQdlEvSESszGafI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ySIPEOGI5mK+Gn8qHTjkIwe+1RLMC+ynOGLDKY3Oj54hYncVX+l2VypfxGB3jR1ZV
+         pEhP+SyCOi+cImO3ghDgUDHUkEmFsK7aPal67rswvTYdDvExeWkOCZ+XEd2D+ogxpB
+         1hXI/ihExpKncZ55Ua5XNLX2J0I6dW6Pr9hZBmEeRm9lvtdyYjOODqUt/S+NgYjACQ
+         yhwrPVCBhlDVwIpGEncett0ADrGhFdgWZ7wm0nV3725z2T9hKWUZZ6741YYGsgUM1e
+         Fm7L6iNenqmg5p3kevCCikRonjilJNdJNCyxh3F4Y7Fu8RVMachhgd+tFIzB+xruMZ
+         X+VPsrtTbrMWA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x638S2TQ3205100;
+        Wed, 3 Jul 2019 01:28:02 -0700
+Date:   Wed, 3 Jul 2019 01:28:02 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-32232b350d7cd93cdc65fe5a453e6a40b539e9f9@git.kernel.org>
+Cc:     namit@vmware.com, mingo@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, hpa@zytor.com, bigeasy@linutronix.de,
+        luto@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: luto@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
+          namit@vmware.com, mingo@kernel.org, bigeasy@linutronix.de
+In-Reply-To: <20190701173354.2pe62hhliok2afea@linutronix.de>
+References: <20190701173354.2pe62hhliok2afea@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/ldt: Initialize the context lock for init_mm
+Git-Commit-ID: 32232b350d7cd93cdc65fe5a453e6a40b539e9f9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1561472086-23360-1-git-send-email-neeraju@codeaurora.org>
-In-Reply-To: <1561472086-23360-1-git-send-email-neeraju@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Jul 2019 10:26:32 +0200
-Message-ID: <CACRpkdbfTTnEbCM4R_F_KYN9ys=VwCLQ5d1cYsx9LQOyTd5dwA@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: qcom: Add irq_enable callback for msm gpio
-To:     Neeraj Upadhyay <neeraju@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Srinivas Ramana <sramana@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 4:14 PM Neeraj Upadhyay <neeraju@codeaurora.org> wrote:
+Commit-ID:  32232b350d7cd93cdc65fe5a453e6a40b539e9f9
+Gitweb:     https://git.kernel.org/tip/32232b350d7cd93cdc65fe5a453e6a40b539e9f9
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Mon, 1 Jul 2019 19:33:54 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 3 Jul 2019 10:25:04 +0200
 
-> From: Srinivas Ramana <sramana@codeaurora.org>
->
-> Introduce the irq_enable callback which will be same as irq_unmask
-> except that it will also clear the status bit before unmask.
->
-> This will help in clearing any erroneous interrupts that would
-> have got latched when the interrupt is not in use.
->
-> There may be devices like UART which can use the same gpio line
-> for data rx as well as a wakeup gpio when in suspend. The data that
-> was flowing on the line may latch the interrupt and when we enable
-> the interrupt before going to suspend, this would trigger the
-> unexpected interrupt. This change helps clearing the interrupt
-> so that these unexpected interrupts gets cleared.
->
-> Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
-> Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-> ---
->
-> Changes since v2:
-> - Renamed function to msm_gpio_irq_clear_unmask()
+x86/ldt: Initialize the context lock for init_mm
 
-Patch applied, unless Bjorn complains!
+The mutex mm->context->lock for init_mm is not initialized for init_mm.
+This wasn't a problem because it remained unused. This changed however
+since commit
+	4fc19708b165c ("x86/alternatives: Initialize temporary mm for patching")
 
-Yours,
-Linus Walleij
+Initialize the mutex for init_mm.
+
+Fixes: 4fc19708b165c ("x86/alternatives: Initialize temporary mm for patching")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/20190701173354.2pe62hhliok2afea@linutronix.de
+
+---
+ arch/x86/include/asm/mmu.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index 5ff3e8af2c20..e78c7db87801 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -59,6 +59,7 @@ typedef struct {
+ #define INIT_MM_CONTEXT(mm)						\
+ 	.context = {							\
+ 		.ctx_id = 1,						\
++		.lock = __MUTEX_INITIALIZER(mm.context.lock),		\
+ 	}
+ 
+ void leave_mm(int cpu);
