@@ -2,160 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10425DA1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB01C5DA38
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbfGCBBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:01:47 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41238 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbfGCBBr (ORCPT
+        id S1727327AbfGCBFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:05:03 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:32921 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbfGCBFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:01:47 -0400
-Received: by mail-oi1-f195.google.com with SMTP id g7so595183oia.8;
-        Tue, 02 Jul 2019 18:01:46 -0700 (PDT)
+        Tue, 2 Jul 2019 21:05:03 -0400
+Received: by mail-ed1-f66.google.com with SMTP id i11so377759edq.0;
+        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6/KKy82yrOyc29Ht7hH/jAIFLpMnSWEdvNOCoBZFw1Q=;
-        b=jhKjrysD7F3YEX73eCP0zuxoN6eVgP3fOptbLegmT5vwCHuRLQkMVOkWYkMbzxl5yH
-         MAPKEPsSy88O1W93Pwyqx6t6PdfVij0gqHjeTlllhAT5xXjk4vC0e0xS2YOVznLEohJ0
-         Ol7aRIz74oGk5py35ew6KskxFs0Ciul9PxBuG0YoYFJE1XIJ/VoiQnZYH02UTVhMVqKL
-         sP3hxGTSAew8NrQ9BVm3xIGmkltHe4zXtNxc7+yKFYfDf1ix7rwEtdxEzVegKYG6rfFX
-         HqKH2vVeJXRjHd0nOKULDjPbGIVfyVIBVZ8FF7n3v/uOw7hIcJu/CPMd+U85C+CCnpNl
-         PDzw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
+        b=rBDl/pv0TR7OXoDLtY4qDwH4O3XAyoj4V0fiUbjGY2+xdzLZWxDB/TZMz91zWAQJlx
+         8zBLKP1eFkYs4j9t8Da2yciljUcB9aURJx3yWKCgQzqh66D6c/8XKo5SyexehiKWyNOp
+         ZWrYiq6dCaMItTH8MUNzgLBpTC7SCEuWXRPVvUjJ3B2z/XeOIcg0lCgVCD5f9hyeQDXt
+         mZ7b3IqG9l4uy2f1st4KIqnXHTMMEZdmsemj1i0fq9Y3AWXJ/MHhJJ7Dot+zWlOQOgdn
+         BcDXqV/O64Z5CiU1FS45nsKgYBjhkzK/mdulCD7+pePhPoSvgHgclOTmd+WheWRCDmAe
+         BCoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6/KKy82yrOyc29Ht7hH/jAIFLpMnSWEdvNOCoBZFw1Q=;
-        b=pNNa2BLLH8j0w2xCDeDNwYRmeTAUZ7p912N2tq+K6rD76Zdy4gZX09nSdtl7UzF+Kp
-         BCuwWW+sBtDLfnuHijo94ZtugEHElxVALxdzfCDjxbAk8LA83XBPX4ZC3W+mEpQT8MpD
-         Umx2eK0bK4Xfdu4AwfeyqvskBRc5295O3W9IATTw8kD+Xz0UDsT9TJNzXPT4GGB1jX4c
-         RjTcJMmgpIYW0XNWCM05x3Oy9MN/wp7kRXF1u5QPDKSI7XXBWE8sDSZH/oD1y8uEretZ
-         xeLKSRerPa5fcyuDzxYflCpp5G0GwaQdbiqiG7r2PJKmoHTNp9U92V1ymYvvxRRPnzW8
-         Pgyw==
-X-Gm-Message-State: APjAAAVjuP8qmeyQmSK7y17+f09nZcDSh8f+WZy/4ZBQcVyA6+W/QFpF
-        95dGRf1pNwFLAIAsR4ITF+bF82s+p800gCTonP02bQ==
-X-Google-Smtp-Source: APXvYqz/BvsXGBiKuGtL9K1WWZnAhl10U8iozK1Qx/ukOJphcCT5NdWPIUM19XiKiGta7BHHDLEmcIg8i8/9HNaV+Ks=
-X-Received: by 2002:aca:544b:: with SMTP id i72mr5142037oib.174.1562115706420;
- Tue, 02 Jul 2019 18:01:46 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
+        b=r7CTgElxJYLXXsm61ybKzVBjBzcvA9nIDAX9d6c9BqirffFfjiIWd/Lsg0+Bfc2+eV
+         y5VXzrdL9VUMLUQnEYxL+stD31jbYx6EhWBUoPX4NyB5rrCfhb9Ac1ieuloHaVyi4Gxx
+         6NB48Jd7NJfZatHwZJcWVK49+BrqJT8DxoX4eZCNCtNFS+wOxjs8xDMtJARJ1M0EB9re
+         8rR964zBPzbpT7vlyP4JBgOiDaVjkNrFQKDcE/7xqvI0drdEiLlPS2tx4qxVvMMTMNSR
+         csMqfJ2p+hVButcnxikfTN8UCJrAuNPpgOncGYNt+jeQ76RQYltV8ViHQtta38KK/wRz
+         2Wbg==
+X-Gm-Message-State: APjAAAVdKorEDLo0QlmVJ8atakZJmb+ScuwVmf9SLuLVA1aDVnZt0DsI
+        bchqicUK/dq+VWqibTTa/Hk=
+X-Google-Smtp-Source: APXvYqx42CglJVsr1ZJyV/elcgmcFYXinubcozjroo+1Dkc9XOZY8Eq/do5QH5nMOg/YC2Qtqrn5Gg==
+X-Received: by 2002:aa7:ca54:: with SMTP id j20mr39393692edt.50.1562115901344;
+        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.gmail.com with ESMTPSA id p23sm136538ejl.43.2019.07.02.18.04.59
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 18:05:00 -0700 (PDT)
+Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
+To:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190619082141.GA32409@quack2.suse.cz>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
+Date:   Wed, 3 Jul 2019 04:04:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
- <1fbd236a-f7f9-e66a-e08c-bf2bac901d15@redhat.com> <20190702222330.GB26621@amt.cnet>
- <CANRm+CyBjfa5LsMx87faKUO8XwHkNVrq4+P+vBuFGwjuFC1jxA@mail.gmail.com>
-In-Reply-To: <CANRm+CyBjfa5LsMx87faKUO8XwHkNVrq4+P+vBuFGwjuFC1jxA@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 3 Jul 2019 09:01:39 +0800
-Message-ID: <CANRm+CwtWnfLmwKJSW1o3v2E6WOrKWE-iMo46tKKhERZPe+1VA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] KVM: LAPIC: Implement Exitless Timer
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190619082141.GA32409@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 at 08:47, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> On Wed, 3 Jul 2019 at 06:23, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> >
-> > On Tue, Jul 02, 2019 at 06:38:56PM +0200, Paolo Bonzini wrote:
-> > > On 21/06/19 11:39, Wanpeng Li wrote:
-> > > > Dedicated instances are currently disturbed by unnecessary jitter due
-> > > > to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
-> > > > There is no hardware virtual timer on Intel for guest like ARM. Both
-> > > > programming timer in guest and the emulated timer fires incur vmexits.
-> > > > This patchset tries to avoid vmexit which is incurred by the emulated
-> > > > timer fires in dedicated instance scenario.
-> > > >
-> > > > When nohz_full is enabled in dedicated instances scenario, the unpinned
-> > > > timer will be moved to the nearest busy housekeepers after commit
-> > > > 9642d18eee2cd (nohz: Affine unpinned timers to housekeepers) and commit
-> > > > 444969223c8 ("sched/nohz: Fix affine unpinned timers mess"). However,
-> > > > KVM always makes lapic timer pinned to the pCPU which vCPU residents, the
-> > > > reason is explained by commit 61abdbe0 (kvm: x86: make lapic hrtimer
-> > > > pinned). Actually, these emulated timers can be offload to the housekeeping
-> > > > cpus since APICv is really common in recent years. The guest timer interrupt
-> > > > is injected by posted-interrupt which is delivered by housekeeping cpu
-> > > > once the emulated timer fires.
-> > > >
-> > > > The host admin should fine tuned, e.g. dedicated instances scenario w/
-> > > > nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus
-> > > > for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root
-> > > > mode, ~3% redis performance benefit can be observed on Skylake server.
-> > >
-> > > Marcelo,
-> > >
-> > > does this patch work for you or can you still see the oops?
-> >
-> > Hi Paolo,
-> >
-> > No more oopses with kvm/queue. Can you include:
->
-> Cool, thanks for the confirm, Marcelo!
->
-> >
-> > Index: kvm/arch/x86/kvm/lapic.c
-> > ===================================================================
-> > --- kvm.orig/arch/x86/kvm/lapic.c
-> > +++ kvm/arch/x86/kvm/lapic.c
-> > @@ -124,8 +124,7 @@ static inline u32 kvm_x2apic_id(struct k
-> >
-> >  bool posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
-> >  {
-> > -       return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
-> > -               kvm_hlt_in_guest(vcpu->kvm);
-> > +       return pi_inject_timer && kvm_vcpu_apicv_active(vcpu);
-> >  }
-> >  EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
-> >
-> > However, for some reason (hrtimer subsystems responsability) with cyclictest -i 200
-> > on the guest, the timer runs on the local CPU:
-> >
-> >        CPU 1/KVM-9454  [003] d..2   881.674196: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674200: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d.h.   881.674387: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   881.674393: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674395: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674399: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d.h.   881.674586: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   881.674593: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674595: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674599: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d.h.   881.674787: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   881.674793: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >        CPU 1/KVM-9454  [003] d..2   881.674795: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >
-> > But on boot:
-> >
-> >        CPU 1/KVM-9454  [003] d..2   578.625394: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >           <idle>-0     [000] d.h1   578.626390: apic_timer_fn <-__hrtimer_run_queues
-> >           <idle>-0     [000] d.h1   578.626394: apic_timer_fn<-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   578.626401: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >           <idle>-0     [000] d.h1   578.628397: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   578.628407: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >           <idle>-0     [000] d.h1   578.631403: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   578.631413: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >           <idle>-0     [000] d.h1   578.635409: apic_timer_fn <-__hrtimer_run_queues
-> >        CPU 1/KVM-9454  [003] d..2   578.635419: get_nohz_timer_target: get_nohz_timer_target 3->0
-> >           <idle>-0     [000] d.h1   578.640415: apic_timer_fn <-__hrtimer_run_queues
->
-> You have an idle housekeeping cpu(cpu 0), however, most of
-> housekeeping cpus will be busy in product environment to avoid to
-> waste money. get_nohz_timer_target() will find a busy housekeeping cpu
-> but the timer migration will fail if the timer is the first expiring
-> timer on the new target(as the comments above the function
-> switch_hrtimer_base()). Please try taskset -c 0 stress --cpu 1 on your
-> host, you can observe(through /proc/timer_list) apic_timer_fn running
-> on cpu 0 most of the time and sporadically on local cpu.
+On 19/06/2019 11:21, Jan Kara wrote:
+<>
+> Yes, I have patch to make madvise(MADV_WILLNEED) go through ->fadvise() as
+> well. I'll post it soon since the rest of the series isn't really dependent
+> on it.
+> 
+> 								Honza
+> 
 
-Or if you have a little bigger VM/multiple VMs, the apic_timer_fn from
-all virtual lapics will make a housekeeping cpu busy. :)
+Hi Jan
 
-Regards,
-Wanpeng Li
+Funny I'm sitting on the same patch since LSF last. I need it too for other
+reasons. I have not seen, have you pushed your patch yet?
+(Is based on old v4.20)
+
+~~~~~~~~~
+From fddb38169e33d23060ddd444ba6f2319f76edc89 Mon Sep 17 00:00:00 2001
+From: Boaz Harrosh <boazh@netapp.com>
+Date: Thu, 16 May 2019 20:02:14 +0300
+Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
+
+In the patchset:
+	[b833a3660394] ovl: add ovl_fadvise()
+	[3d8f7615319b] vfs: implement readahead(2) using POSIX_FADV_WILLNEED
+	[45cd0faae371] vfs: add the fadvise() file operation
+
+Amir Goldstein introduced a way for filesystems to overide fadvise.
+Well madvise_willneed is exactly as fadvise_willneed except it always
+returns 0.
+
+In this patch we call the FS vector if it exists.
+
+NOTE: I called vfs_fadvise(..,POSIX_FADV_WILLNEED);
+      (Which is my artistic preference)
+
+I could also selectively call
+	if (file->f_op->fadvise)
+		return file->f_op->fadvise(..., POSIX_FADV_WILLNEED);
+If we fear theoretical side effects. I don't mind either way.
+
+CC: Amir Goldstein <amir73il@gmail.com>
+CC: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Boaz Harrosh <boazh@netapp.com>
+---
+ mm/madvise.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 6cb1ca93e290..6b84ddcaaaf2 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -24,6 +24,7 @@
+ #include <linux/swapops.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/fadvise.h>
+ 
+ #include <asm/tlb.h>
+ 
+@@ -303,7 +304,8 @@ static long madvise_willneed(struct vm_area_struct *vma,
+ 		end = vma->vm_end;
+ 	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+ 
+-	force_page_cache_readahead(file->f_mapping, file, start, end - start);
++	vfs_fadvise(file, start << PAGE_SHIFT, (end - start) << PAGE_SHIFT,
++		    POSIX_FADV_WILLNEED);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
