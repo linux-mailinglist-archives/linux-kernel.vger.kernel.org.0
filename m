@@ -2,106 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 656FF5E670
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4245E66F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfGCOUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:20:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56603 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfGCOUz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:20:55 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EKdW63323631
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:20:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EKdW63323631
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562163640;
-        bh=V88ArdaKmQiuciThqFPoi0Ca4EkeG5dyX7lv+vcl7s4=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=eRN9MQfOk5Sjf8WMcTvK/DCNL+lUwtXYeYXf4sma/qU5yoH1f6bwjOGy8aJiwjR2O
-         9OZ9HijIjwSaDlh4nAl4Iy1IfcHvAlUTIR5ZmQ8uD4ArXHqkl93euOkq9XQEQLr4Fx
-         kMLQ+0CZtPV1mO9oze2pxv3TDhF7bsy9fL0cLVz+c9BcJdWovUWjhgtrsmlsVdm3Go
-         LamIkwv7m9XUy2roEXjxW3NZtruoekTN4m/1eDHLuDrbzFqBJfekqkLYQ4HaBnt3cT
-         Gd/PmocVz8WmUgZue/fyfUcnG81DjWu8zExf9MfFQnSRc5edusLrxozNdCa3al6Q8X
-         rbxGTlg5K5wJg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EKdJT3323627;
-        Wed, 3 Jul 2019 07:20:39 -0700
-Date:   Wed, 3 Jul 2019 07:20:39 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-p9rtamq7lvre9zhti70azfwe@git.kernel.org>
-Cc:     jolsa@kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, mhiramat@kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, adrian.hunter@intel.com, acme@redhat.com,
-          mhiramat@kernel.org, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
-          mingo@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf strfilter: Use skip_spaces()
-Git-Commit-ID: c1fc14cbdcc9455507e5f54109199bfea3af185f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727060AbfGCOUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:20:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbfGCOUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:20:49 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F47C21881;
+        Wed,  3 Jul 2019 14:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562163648;
+        bh=z+ceB3wIw2kFLTpFQ/DuTnqEHlSgoBJLYsU0/PM4rVw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T4gcmT7AzNF+/+X+C1zP1wccnSIWXIXb6RN3zmRbL5pG18qE3EQUo1/2Q0wRH56Mb
+         Is/oGwE3tmZ29jswNXVC8DT6Kn0w1bj6vneC0Xyrd/3MLyi7+zO2pYbAcivKaeo28R
+         DLwPKKiA+J8ZG2W+hdUgTvGEYyCJQ8mtQt1g3M6I=
+Date:   Wed, 3 Jul 2019 10:20:47 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH AUTOSEL 5.1 11/51] ASoC: sun4i-codec: fix first delay on
+ Speaker
+Message-ID: <20190703142047.GX11506@sasha-vm>
+References: <20190626034117.23247-1-sashal@kernel.org>
+ <20190626034117.23247-11-sashal@kernel.org>
+ <20190626103741.GU5316@sirena.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190626103741.GU5316@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c1fc14cbdcc9455507e5f54109199bfea3af185f
-Gitweb:     https://git.kernel.org/tip/c1fc14cbdcc9455507e5f54109199bfea3af185f
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 26 Jun 2019 11:08:10 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 26 Jun 2019 11:31:43 -0300
+On Wed, Jun 26, 2019 at 11:37:41AM +0100, Mark Brown wrote:
+>On Tue, Jun 25, 2019 at 11:40:27PM -0400, Sasha Levin wrote:
+>> From: Georgii Staroselskii <georgii.staroselskii@emlid.com>
+>>
+>> [ Upstream commit 1f2675f6655838aaf910f911fd0abc821e3ff3df ]
+>>
+>> Allwinner DAC seems to have a delay in the Speaker audio routing. When
+>> playing a sound for the first time, the sound gets chopped. On a second
+>> play the sound is played correctly. After some time (~5s) the issue gets
+>> back.
+>
+>This is inserting a big delay in the startup and might disrupt some
+>production system.
 
-perf strfilter: Use skip_spaces()
+But that would be a problem upstream as well, no?
 
-No change in behaviour.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-p9rtamq7lvre9zhti70azfwe@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/strfilter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/strfilter.c b/tools/perf/util/strfilter.c
-index 2c3a2904ebcd..90ea2b209cbb 100644
---- a/tools/perf/util/strfilter.c
-+++ b/tools/perf/util/strfilter.c
-@@ -5,6 +5,7 @@
- 
- #include <errno.h>
- #include <linux/ctype.h>
-+#include <linux/string.h>
- 
- /* Operators */
- static const char *OP_and	= "&";	/* Logical AND */
-@@ -37,8 +38,7 @@ static const char *get_token(const char *s, const char **e)
- {
- 	const char *p;
- 
--	while (isspace(*s))	/* Skip spaces */
--		s++;
-+	s = skip_spaces(s);
- 
- 	if (*s == '\0') {
- 		p = s;
+--
+Thanks,
+Sasha
