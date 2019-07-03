@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF9B5E289
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C62055E280
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfGCLFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:05:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51595 "EHLO
+        id S1727103AbfGCLEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:04:11 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51598 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbfGCLEH (ORCPT
+        with ESMTP id S1726621AbfGCLEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:04:07 -0400
+        Wed, 3 Jul 2019 07:04:09 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hid3W-0002bA-7L; Wed, 03 Jul 2019 13:04:06 +0200
-Message-Id: <20190703105915.692675457@linutronix.de>
+        id 1hid3W-0002bL-UT; Wed, 03 Jul 2019 13:04:07 +0200
+Message-Id: <20190703105915.785771388@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 03 Jul 2019 12:54:33 +0200
+Date:   Wed, 03 Jul 2019 12:54:34 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch 02/18] x86/apic: Soft disable APIC before initializing it
+Subject: [patch 03/18] x86/apic: Make apic_pending_intr_clear() more robust
 References: <20190703105431.096822793@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -34,35 +34,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the APIC was already enabled on entry of setup_local_APIC() then
-disabling it soft via the SPIV register makes a lot of sense.
+In course of developing shorthand based IPI support issues with the
+function which tries to clear eventually pending ISR bits in the local APIC
+were observed.
 
-That masks all LVT entries and brings it into a well defined state.
+  1) O-day testing triggered the WARN_ON() in apic_pending_intr_clear().
 
-Otherwise previously enabled LVTs which are not touched in the setup
-function stay unmasked and might surprise the just booting kernel.
+     This warning is emitted when the function fails to clear pending ISR
+     bits or observes pending IRR bits which are not delivered to the CPU
+     after the stale ISR bit(s) are ACK'ed.
+
+     Unfortunately the function only emits a WARN_ON() and fails to dump
+     the IRR/ISR content. That's useless for debugging.
+
+     Feng added spot on debug printk's which revealed that the stale IRR
+     bit belonged to the APIC timer interrupt vector, but adding ad hoc
+     debug code does not help with sporadic failures in the field.
+
+     Rework the loop so the full IRR/ISR contents are saved and on failure
+     dumped.
+
+  2) The loop termination logic is interesting at best.
+
+     If the machine has no TSC or cpu_khz is not known yet it tries 1
+     million times to ack stale IRR/ISR bits. What?
+
+     With TSC it uses the TSC to calculate the loop termination. It takes a
+     timestamp at entry and terminates the loop when:
+
+     	  (rdtsc() - start_timestamp) >= (cpu_hkz << 10)
+
+     That's roughly one second.
+
+     Both methods are problematic. The APIC has 256 vectors, which means
+     that in theory max. 256 IRR/ISR bits can be set. In practice this is
+     impossible as the first 32 vectors are reserved and not affected and
+     the chance that more than a few bits are set is close to zero.
+
+     With the pure loop based approach the 1 million retries are complete
+     overkill.
+
+     With TSC this can terminate too early in a guest which is running on a
+     heavily loaded host even with only a couple of IRR/ISR bits set. The
+     reason is that after acknowledging the highest priority ISR bit,
+     pending IRRs must get serviced first before the next round of
+     acknowledge can take place as the APIC (real and virtualized) does not
+     honour EOI without a preceeding interrupt on the CPU. And every APIC
+     read/write takes a VMEXIT if the APIC is virtualized. While trying to
+     reproduce the issue 0-day reported it was observed that the guest was
+     scheduled out long enough under heavy load that it terminated after 8
+     iterations.
+
+     Make the loop terminate after 512 iterations. That's plenty enough
+     in any case and does not take endless time to complete.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/apic/apic.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/apic/apic.c |  111 +++++++++++++++++++++++++-------------------
+ 1 file changed, 65 insertions(+), 46 deletions(-)
 
 --- a/arch/x86/kernel/apic/apic.c
 +++ b/arch/x86/kernel/apic/apic.c
-@@ -1493,6 +1493,14 @@ static void setup_local_APIC(void)
- 		return;
- 	}
+@@ -1453,54 +1453,72 @@ static void lapic_setup_esr(void)
+ 			oldvalue, value);
+ }
  
-+	/*
-+	 * If this comes from kexec/kcrash the APIC might be enabled in
-+	 * SPIV. Soft disable it before doing further initialization.
-+	 */
-+	value = apic_read(APIC_SPIV);
-+	value &= ~APIC_SPIV_APIC_ENABLED;
-+	apic_write(APIC_SPIV, value);
++#define APIC_IR_REGS		APIC_ISR_NR
++#define APIC_IR_BITS		(APIC_IR_REGS * 32)
++#define APIC_IR_MAPSIZE		(APIC_IR_BITS / BITS_PER_LONG)
 +
- #ifdef CONFIG_X86_32
- 	/* Pound the ESR really hard over the head with a big hammer - mbligh */
- 	if (lapic_is_integrated() && apic->disable_esr) {
++union apic_ir {
++	unsigned long	map[APIC_IR_MAPSIZE];
++	u32		regs[APIC_IR_REGS];
++};
++
++static bool apic_check_and_ack(union apic_ir *irr, union apic_ir *isr)
++{
++	int i, bit;
++
++	/* Read the IRRs */
++	for (i = 0; i < APIC_IR_REGS; i++)
++		irr->regs[i] = apic_read(APIC_IRR + i * 0x10);
++
++	/* Read the ISRs */
++	for (i = 0; i < APIC_IR_REGS; i++)
++		isr->regs[i] = apic_read(APIC_ISR + i * 0x10);
++
++	/*
++	 * If the ISR map is not empty. ACK the APIC and run another round
++	 * to verify whether a pending IRR has been unblocked and turned
++	 * into a ISR.
++	 */
++	if (!bitmap_empty(isr->map, APIC_IR_BITS)) {
++		/*
++		 * There can be multiple ISR bits set when a high priority
++		 * interrupt preempted a lower priority one. Issue an ACK
++		 * per set bit.
++		 */
++		for_each_set_bit(bit, isr->map, APIC_IR_BITS)
++			ack_APIC_irq();
++		return true;
++	}
++
++	return !bitmap_empty(irr->map, APIC_IR_BITS);
++}
++
++/*
++ * After a crash, we no longer service the interrupts and a pending
++ * interrupt from previous kernel might still have ISR bit set.
++ *
++ * Most probably by now the CPU has serviced that pending interrupt and it
++ * might not have done the ack_APIC_irq() because it thought, interrupt
++ * came from i8259 as ExtInt. LAPIC did not get EOI so it does not clear
++ * the ISR bit and cpu thinks it has already serivced the interrupt. Hence
++ * a vector might get locked. It was noticed for timer irq (vector
++ * 0x31). Issue an extra EOI to clear ISR.
++ *
++ * If there are pending IRR bits they turn into ISR bits after a higher
++ * priority ISR bit has been acked.
++ */
+ static void apic_pending_intr_clear(void)
+ {
+-	long long max_loops = cpu_khz ? cpu_khz : 1000000;
+-	unsigned long long tsc = 0, ntsc;
+-	unsigned int queued;
+-	unsigned long value;
+-	int i, j, acked = 0;
+-
+-	if (boot_cpu_has(X86_FEATURE_TSC))
+-		tsc = rdtsc();
+-	/*
+-	 * After a crash, we no longer service the interrupts and a pending
+-	 * interrupt from previous kernel might still have ISR bit set.
+-	 *
+-	 * Most probably by now CPU has serviced that pending interrupt and
+-	 * it might not have done the ack_APIC_irq() because it thought,
+-	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
+-	 * does not clear the ISR bit and cpu thinks it has already serivced
+-	 * the interrupt. Hence a vector might get locked. It was noticed
+-	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
+-	 */
+-	do {
+-		queued = 0;
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--)
+-			queued |= apic_read(APIC_IRR + i*0x10);
+-
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
+-			value = apic_read(APIC_ISR + i*0x10);
+-			for_each_set_bit(j, &value, 32) {
+-				ack_APIC_irq();
+-				acked++;
+-			}
+-		}
+-		if (acked > 256) {
+-			pr_err("LAPIC pending interrupts after %d EOI\n", acked);
+-			break;
+-		}
+-		if (queued) {
+-			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+-				ntsc = rdtsc();
+-				max_loops = (long long)cpu_khz << 10;
+-				max_loops -= ntsc - tsc;
+-			} else {
+-				max_loops--;
+-			}
+-		}
+-	} while (queued && max_loops > 0);
+-	WARN_ON(max_loops <= 0);
++	union apic_ir irr, isr;
++	unsigned int i;
++
++	/* 512 loops are way oversized and give the APIC a chance to obey. */
++	for (i = 0; i < 512; i++) {
++		if (!apic_check_and_ack(&irr, &isr))
++			return;
++	}
++	/* Dump the IRR/ISR content if that failed */
++	pr_warn("APIC: Stale IRR: %256pb ISR: %256pb\n", irr.map, isr.map);
+ }
+ 
+ /**
+@@ -1573,6 +1591,7 @@ static void setup_local_APIC(void)
+ 	value &= ~APIC_TPRI_MASK;
+ 	apic_write(APIC_TASKPRI, value);
+ 
++	/* Clear eventually stale ISR/IRR bits */
+ 	apic_pending_intr_clear();
+ 
+ 	/*
 
 
