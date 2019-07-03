@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EB85EBE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E735EBE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfGCSpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:45:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57520 "EHLO
+        id S1727153AbfGCSpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:45:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57556 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfGCSpH (ORCPT
+        with ESMTP id S1727094AbfGCSpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:45:07 -0400
+        Wed, 3 Jul 2019 14:45:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XPK7j/nhYPSNHk18lJxr0eWlUo0mNfNPUUeKs4LCTRc=; b=aZ2MSmqHWGdzBWO6EJxpYOa04X
-        rkOZ+JMScGnu4yWDwlFxB39C2SPRFDcqLe7Dp/z0XmphWB6IcXHc9g5dlRPHIwpQXCxtj+ptv86PT
-        H/2f14bm3KweE5cA7cgg/8vIswk/ASZ12Ao9lNsu8f5xDjtzfL3NxD2ubcaSPhXhbsIqpG6LwD0dd
-        TAe8Pj4LW+QVyGJcOcRujk4MCpIGaoxL2WcWtqXC+OTUz82dGOCQqZZZWf1L9myYX4kRb1dhNjDHD
-        r+JDLlNb3K0dqshIVOE+pzLZRaDXTKBWTaXw/DvHcM19MFb3KccsVWspKp0L8bI9lFoFqH4nX4cYE
-        9xyin7wg==;
+        bh=UhdzfqB+ekXr0a76nTnfNFoskUSEXQtkHxxjYnKYjTY=; b=ifXnrPewbD1CglQLGyI4uxM4Bi
+        RiD7ef8pTvkaeGMgCXwRB+w7xVgKJnhfkX+crTc4HemDtKC8PGY0IVIqIxKmUFAqHhXGSGoZ/2yek
+        rVrVS3JUBKDNluj42cUIdoTxc+MabgCeNPn0FMXxdaQ80U8nDF3epvxhGyQh/BPnY/NrZkwfSNH3b
+        SnwTZKxskOMoXVJUq+f0cFgpuylPWmdgEEQVVbdJ2TI5WeVczYMfh0+okClGrDruR9zvWCrK+NaJV
+        cBUlIPRXdxbHtCWgA4WUnvt6l3b1E60wpr03FAneVP1Z97WBVpUVfKV0X+ANJl8KMJ8Q3ueBwXlWe
+        I3UevQmw==;
 Received: from rap-us.hgst.com ([199.255.44.250] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hikFb-0007Dn-EY; Wed, 03 Jul 2019 18:45:03 +0000
+        id 1hikFb-0007FI-Kp; Wed, 03 Jul 2019 18:45:03 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Ben Skeggs <bskeggs@redhat.com>
 Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>
-Subject: [PATCH 2/5] mm: always return EBUSY for invalid ranges in hmm_range_{fault,snapshot}
-Date:   Wed,  3 Jul 2019 11:44:59 -0700
-Message-Id: <20190703184502.16234-3-hch@lst.de>
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH 3/5] mm: move hmm_vma_fault to nouveau
+Date:   Wed,  3 Jul 2019 11:45:00 -0700
+Message-Id: <20190703184502.16234-4-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703184502.16234-1-hch@lst.de>
 References: <20190703184502.16234-1-hch@lst.de>
@@ -49,67 +48,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should not have two different error codes for the same condition.  In
-addition this really complicates the code due to the special handling of
-EAGAIN that drops the mmap_sem due to the FAULT_FLAG_ALLOW_RETRY logic
-in the core vm.
+hmm_vma_fault is marked as a legacy API to get rid of, but seems to suit
+the current nouveau flow.  Move it to the only user in preparation for
+fixing a locking bug involving caller and callee.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
 ---
- Documentation/vm/hmm.rst |  2 +-
- mm/hmm.c                 | 10 ++++------
- 2 files changed, 5 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_svm.c | 54 ++++++++++++++++++++++++++-
+ include/linux/hmm.h                   | 54 ---------------------------
+ 2 files changed, 53 insertions(+), 55 deletions(-)
 
-diff --git a/Documentation/vm/hmm.rst b/Documentation/vm/hmm.rst
-index 7d90964abbb0..710ce1c701bf 100644
---- a/Documentation/vm/hmm.rst
-+++ b/Documentation/vm/hmm.rst
-@@ -237,7 +237,7 @@ The usage pattern is::
-       ret = hmm_range_snapshot(&range);
-       if (ret) {
-           up_read(&mm->mmap_sem);
--          if (ret == -EAGAIN) {
-+          if (ret == -EBUSY) {
-             /*
-              * No need to check hmm_range_wait_until_valid() return value
-              * on retry we will get proper error with hmm_range_snapshot()
-diff --git a/mm/hmm.c b/mm/hmm.c
-index ac238d3f1f4e..3abc2e3c1e9f 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -951,7 +951,7 @@ EXPORT_SYMBOL(hmm_range_unregister);
-  * @range: range
-  * Return: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM invalid
-  *          permission (for instance asking for write and range is read only),
-- *          -EAGAIN if you need to retry, -EFAULT invalid (ie either no valid
-+ *          -EBUSY if you need to retry, -EFAULT invalid (ie either no valid
-  *          vma or it is illegal to access that range), number of valid pages
-  *          in range->pfns[] (from range start address).
-  *
-@@ -972,7 +972,7 @@ long hmm_range_snapshot(struct hmm_range *range)
- 	do {
- 		/* If range is no longer valid force retry. */
- 		if (!range->valid)
--			return -EAGAIN;
-+			return -EBUSY;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+index 9d40114d7949..e831f4184a17 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_svm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+@@ -36,6 +36,13 @@
+ #include <linux/sort.h>
+ #include <linux/hmm.h>
  
- 		vma = find_vma(hmm->mm, start);
- 		if (vma == NULL || (vma->vm_flags & device_vma))
-@@ -1067,10 +1067,8 @@ long hmm_range_fault(struct hmm_range *range, bool block)
++/*
++ * When waiting for mmu notifiers we need some kind of time out otherwise we
++ * could potentialy wait for ever, 1000ms ie 1s sounds like a long time to
++ * wait already.
++ */
++#define NOUVEAU_RANGE_FAULT_TIMEOUT 1000
++
+ struct nouveau_svm {
+ 	struct nouveau_drm *drm;
+ 	struct mutex mutex;
+@@ -475,6 +482,51 @@ nouveau_svm_fault_cache(struct nouveau_svm *svm,
+ 		fault->inst, fault->addr, fault->access);
+ }
  
- 	do {
- 		/* If range is no longer valid force retry. */
--		if (!range->valid) {
--			up_read(&hmm->mm->mmap_sem);
--			return -EAGAIN;
--		}
-+		if (!range->valid)
-+			return -EBUSY;
++static int
++nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range,
++		    bool block)
++{
++	long ret;
++
++	/*
++	 * With the old API the driver must set each individual entries with
++	 * the requested flags (valid, write, ...). So here we set the mask to
++	 * keep intact the entries provided by the driver and zero out the
++	 * default_flags.
++	 */
++	range->default_flags = 0;
++	range->pfn_flags_mask = -1UL;
++
++	ret = hmm_range_register(range, mirror,
++				 range->start, range->end,
++				 PAGE_SHIFT);
++	if (ret)
++		return (int)ret;
++
++	if (!hmm_range_wait_until_valid(range, NOUVEAU_RANGE_FAULT_TIMEOUT)) {
++		/*
++		 * The mmap_sem was taken by driver we release it here and
++		 * returns -EAGAIN which correspond to mmap_sem have been
++		 * drop in the old API.
++		 */
++		up_read(&range->vma->vm_mm->mmap_sem);
++		return -EAGAIN;
++	}
++
++	ret = hmm_range_fault(range, block);
++	if (ret <= 0) {
++		if (ret == -EBUSY || !ret) {
++			/* Same as above, drop mmap_sem to match old API. */
++			up_read(&range->vma->vm_mm->mmap_sem);
++			ret = -EBUSY;
++		} else if (ret == -EAGAIN)
++			ret = -EBUSY;
++		hmm_range_unregister(range);
++		return ret;
++	}
++	return 0;
++}
++
+ static int
+ nouveau_svm_fault(struct nvif_notify *notify)
+ {
+@@ -649,7 +701,7 @@ nouveau_svm_fault(struct nvif_notify *notify)
+ 		range.values = nouveau_svm_pfn_values;
+ 		range.pfn_shift = NVIF_VMM_PFNMAP_V0_ADDR_SHIFT;
+ again:
+-		ret = hmm_vma_fault(&svmm->mirror, &range, true);
++		ret = nouveau_range_fault(&svmm->mirror, &range, true);
+ 		if (ret == 0) {
+ 			mutex_lock(&svmm->mutex);
+ 			if (!hmm_range_unregister(&range)) {
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 6b55e59fd8e3..657606f48796 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -475,60 +475,6 @@ long hmm_range_dma_unmap(struct hmm_range *range,
+ 			 dma_addr_t *daddrs,
+ 			 bool dirty);
  
- 		vma = find_vma(hmm->mm, start);
- 		if (vma == NULL || (vma->vm_flags & device_vma))
+-/*
+- * HMM_RANGE_DEFAULT_TIMEOUT - default timeout (ms) when waiting for a range
+- *
+- * When waiting for mmu notifiers we need some kind of time out otherwise we
+- * could potentialy wait for ever, 1000ms ie 1s sounds like a long time to
+- * wait already.
+- */
+-#define HMM_RANGE_DEFAULT_TIMEOUT 1000
+-
+-/* This is a temporary helper to avoid merge conflict between trees. */
+-static inline int hmm_vma_fault(struct hmm_mirror *mirror,
+-				struct hmm_range *range, bool block)
+-{
+-	long ret;
+-
+-	/*
+-	 * With the old API the driver must set each individual entries with
+-	 * the requested flags (valid, write, ...). So here we set the mask to
+-	 * keep intact the entries provided by the driver and zero out the
+-	 * default_flags.
+-	 */
+-	range->default_flags = 0;
+-	range->pfn_flags_mask = -1UL;
+-
+-	ret = hmm_range_register(range, mirror,
+-				 range->start, range->end,
+-				 PAGE_SHIFT);
+-	if (ret)
+-		return (int)ret;
+-
+-	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
+-		/*
+-		 * The mmap_sem was taken by driver we release it here and
+-		 * returns -EAGAIN which correspond to mmap_sem have been
+-		 * drop in the old API.
+-		 */
+-		up_read(&range->vma->vm_mm->mmap_sem);
+-		return -EAGAIN;
+-	}
+-
+-	ret = hmm_range_fault(range, block);
+-	if (ret <= 0) {
+-		if (ret == -EBUSY || !ret) {
+-			/* Same as above, drop mmap_sem to match old API. */
+-			up_read(&range->vma->vm_mm->mmap_sem);
+-			ret = -EBUSY;
+-		} else if (ret == -EAGAIN)
+-			ret = -EBUSY;
+-		hmm_range_unregister(range);
+-		return ret;
+-	}
+-	return 0;
+-}
+-
+ /* Below are for HMM internal use only! Not to be used by device driver! */
+ static inline void hmm_mm_init(struct mm_struct *mm)
+ {
 -- 
 2.20.1
 
