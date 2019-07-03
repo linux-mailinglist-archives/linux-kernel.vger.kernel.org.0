@@ -2,112 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84675E753
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 776525E75C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfGCPEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:04:04 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44963 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGCPEE (ORCPT
+        id S1727006AbfGCPFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 11:05:32 -0400
+Received: from www62.your-server.de ([213.133.104.62]:53904 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfGCPFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:04:04 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t7so1390993plr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 08:04:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=37hMmTyD0K9QDDKKnPyMk0IHgB8jdOaS9XE3nfECex0=;
-        b=W1ELw492iBqoEtuhoj+Xfh9gtti36WkdD2hXoa2KDWc96yb8UiWQnigeqVyTLuF7ye
-         ONFUjDSltojaY/UFcWhkASwrBe9gb9/TC3pGGR+yWqj/Ub03puBiLQtykpmrZ4tM9ScZ
-         SL7gnwrYsbaxXauGom+a4ug9FcHtfKsStCAxBO3v77VVhio9J5PghtZ5/2p95o8jJPn/
-         8iKAXv8/4Ker46cEHs7n3RFawBSdA+Gtq3sfAYnm3Y3VDuVnTuRMtDFTFEjNC41SJemG
-         NtgvOJ0PGjLGb+dQvLVSAENhUOjQo1x7NQm0EdZlMmyhSRcoQaXgassd/7OX1Aoizock
-         7X2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=37hMmTyD0K9QDDKKnPyMk0IHgB8jdOaS9XE3nfECex0=;
-        b=coVio+DVCBGbVzQIJkDfh/tHxKspXZC/asVY4AgMMjXYPfhpDv4nrZmMdZrrKdGlVh
-         /MJovJ8d6gJtbPigvxxpgKaWlcGgzWiLFSxg3Fdsv90n2YkC7Dwdc0rI+i+Y970L1evw
-         T1qAkLozswEFnObbRX7WO32fmEOyuppEn1s+ibh4O6VxI4T3SiT3Jl8WL8/3/JAyEZPN
-         pYFm1MMeh4GCgPBTe4widm0VJ35vVKiO2EGaQH9flpZNoH6ULhZDM2n+jnrhUmB9fxNV
-         zoHyCqT8DumkgVFE/VLPdzkRCi1DOZMbWiQ8Ycrr9N39luBt3HpV+0FqCj+uAuDZGADt
-         j1/Q==
-X-Gm-Message-State: APjAAAUiTHgP+k8o4cYyY1fla0fB3kLKvw9oFlzJgBGL4UX8bY48nPBe
-        rPU5uXpqZkU8EAB8uwKcCxwQeap8TEFMBOkF
-X-Google-Smtp-Source: APXvYqzm9VoQdSLoR1RbyAFmag38CTXi0djAc26Mp2+tUxGdT79rlo3yhj0j6nK9BOMcpY8de6+dLA==
-X-Received: by 2002:a17:902:d916:: with SMTP id c22mr43738767plz.195.1562166243044;
-        Wed, 03 Jul 2019 08:04:03 -0700 (PDT)
-Received: from google.com ([2401:fa00:fd:2:3217:6d96:9ca7:b98b])
-        by smtp.gmail.com with ESMTPSA id z20sm5179094pfk.72.2019.07.03.08.04.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 08:04:01 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 23:03:55 +0800
-From:   Ocean Chen <oceanchen@google.com>
-To:     yuchao0@huawei.com, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] f2fs: avoid out-of-range memory access
-Message-ID: <20190703150355.GA182283@google.com>
-References: <20190702080503.175149-1-oceanchen@google.com>
- <cfcd3737-3b03-87fe-39e8-566e545cab3a@huawei.com>
+        Wed, 3 Jul 2019 11:05:30 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1higon-0001dI-N1; Wed, 03 Jul 2019 17:05:09 +0200
+Received: from [178.193.45.231] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1higon-0007PN-GI; Wed, 03 Jul 2019 17:05:09 +0200
+Subject: Re: [PATCH bpf v6 0/2] xdp: fix hang while unregistering device bound
+ to xdp socket
+To:     Ilya Maximets <i.maximets@samsung.com>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        xdp-newbies@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+References: <CGME20190628080413eucas1p13f3400f657b4827414737af42f02a57b@eucas1p1.samsung.com>
+ <20190628080407.30354-1-i.maximets@samsung.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ae128ab7-0983-921e-7e56-7f42cb419113@iogearbox.net>
+Date:   Wed, 3 Jul 2019 17:05:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfcd3737-3b03-87fe-39e8-566e545cab3a@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190628080407.30354-1-i.maximets@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25499/Wed Jul  3 10:03:10 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yu Chao,
+On 06/28/2019 10:04 AM, Ilya Maximets wrote:
+> Version 6:
+> 
+>     * Better names for socket state.
+> 
+> Version 5:
+> 
+>     * Fixed incorrect handling of rtnl_lock.
+> 
+> Version 4:
+> 
+>     * 'xdp_umem_clear_dev' exposed to be used while unregistering.
+>     * Added XDP socket state to track if resources already unbinded.
+>     * Splitted in two fixes.
+> 
+> Version 3:
+> 
+>     * Declaration lines ordered from longest to shortest.
+>     * Checking of event type moved to the top to avoid unnecessary
+>       locking.
+> 
+> Version 2:
+> 
+>     * Completely re-implemented using netdev event handler.
+> 
+> Ilya Maximets (2):
+>   xdp: hold device for umem regardless of zero-copy mode
+>   xdp: fix hang while unregistering device bound to xdp socket
+> 
+>  include/net/xdp_sock.h |  5 +++
+>  net/xdp/xdp_umem.c     | 21 +++++-----
+>  net/xdp/xdp_umem.h     |  1 +
+>  net/xdp/xsk.c          | 87 ++++++++++++++++++++++++++++++++++++------
+>  4 files changed, 93 insertions(+), 21 deletions(-)
+> 
 
-The cur_data_segno only was checked in mount process. In terms of
-security concern, it's better to check value before using it. I know the
-risk is low. IMHO, it can be safer.
-BTW, I found we can only check blk_off before for loop instead of
-checking 'j' in each iteratoin.
-
-On Wed, Jul 03, 2019 at 10:07:11AM +0800, Chao Yu wrote:
-> Hi Ocean,
-> 
-> If filesystem is corrupted, it should fail mount due to below check in
-> f2fs_sanity_check_ckpt(), so we are safe in read_compacted_summaries() to access
-> entries[0,blk_off], right?
-> 
-> 	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
-> 		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
-> 			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
-> 			return 1;
-> 
-> Thanks,
-> 
-> On 2019/7/2 16:05, Ocean Chen wrote:
-> > blk_off might over 512 due to fs corrupt.
-> > Use ENTRIES_IN_SUM to protect invalid memory access.
-> > 
-> > v2:
-> > - fix typo
-> > Signed-off-by: Ocean Chen <oceanchen@google.com>
-> > ---
-> >  fs/f2fs/segment.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 8dee063c833f..a5e8af0bd62e 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -3403,6 +3403,8 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
-> >  
-> >  		for (j = 0; j < blk_off; j++) {
-> >  			struct f2fs_summary *s;
-> > +			if (j >= ENTRIES_IN_SUM)
-> > +				return -EFAULT;
-> >  			s = (struct f2fs_summary *)(kaddr + offset);
-> >  			seg_i->sum_blk->entries[j] = *s;
-> >  			offset += SUMMARY_SIZE;
-> > 
+Applied, thanks!
