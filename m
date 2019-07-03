@@ -2,98 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095395E099
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1E45E096
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:10:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbfGCJLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 05:11:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35276 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfGCJK6 (ORCPT
+        id S1727306AbfGCJKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:10:54 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41488 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbfGCJKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:10:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s27so904956pgl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 02:10:57 -0700 (PDT)
+        Wed, 3 Jul 2019 05:10:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 205so1557800ljj.8;
+        Wed, 03 Jul 2019 02:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=As2upjpnu0eNfhcHUKlBkgyy1u4yzbeYFixzSKqaDY4=;
-        b=ObWcSxFyx81NI2OD5AYV1+2zf6+ZncHg9EmE7AwksRacdzCfdlIP0d9ckHlCSk+hAE
-         lkIF1fwAfUwolfL8XdbQ0DqaD6bt2B1+RCqafwyRLeiMOQNEtmTnoR/6nVgXwKXbm9sU
-         uxSk7sytU9XzbuoPWfaw76VZJQcVDVWHZ8tWKtLZL28YnSLgT0hSP9zD11bnACe+24F7
-         GnFTEl6L7+NzdthUoBXS60y3CmnZ9N3bq1xqzwdpXzMQwLoKEITiT6AmxobFJbRpkujk
-         3m+ymw+NthAjrjGNfrbA2ry19Ag6AnfdneyhwF0MwTOfOC5UVUgYLyt69JILg9kL5Zva
-         DKGw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dxK+dS4JuwEveW7RMUn+qtetDdgB8UT3+1wItb58QBs=;
+        b=T7c/MKHL8GJ+xUBAtBdg1dTSdeY78gn7VW80Su2Tp6ouwVZ2+dq4wkl9yDhEAvXKXO
+         iFHx6jGLz7apmjtxrrMp8BQCwxSpH12N+EOth6vF9cuh1j0lBWgjqt/FIhFB4OZ5Xdl9
+         l/T0REPvtUOS0yCHPtW0JE1fAIgl1JTm3iK+4GbfXZRzxhJT/GK06QfVZWTPt42UXNn3
+         rncN7B8y3FpfuKWK6d9H3Ya9OHjWtAg+gYkAW9tl69KCM5HHS7Kiq181+QZ3F0rHnDxn
+         x1nlCT5kiNqlPIS2LhbrToRck6Mp5OU1naQDr7l/m5F/a+t6TC5dJtp99DjcGvluCEs0
+         pBZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=As2upjpnu0eNfhcHUKlBkgyy1u4yzbeYFixzSKqaDY4=;
-        b=mS1RY4gKxVs44DgCrgiutpykZIdbJCjUy2yTQE64c/QnGuYcjokOpMQj6kuiyeqKFp
-         CKezDtY/AONGGGuw1j84Van770/zRPU6rpqv3WEn5e5fhRfC6SVGTWWnlNIyXOleZ5Kp
-         rEpdRT9ZSfH998aGumE7sVK1xUyYbwJZwabdhxglsFhlnz2ykh2JPdgvWNnIEzTTMo1E
-         IEOYsTllGuBgkwT5Nc7jEK+oqNPE7vBC+bVTx6Rbxk28J8dWFTeVPj5w9iBZFDAlOow6
-         FEyUlYST+d2km10mgzWCuE4ATqwGSx38WkCkrt0N2J5ELnu3UeC0LVMmnVO9fwES0npH
-         oeSA==
-X-Gm-Message-State: APjAAAWG850nCANVZwDxHNmsBPKtz5noZ9+M2Nf1z3xjLHqTx7A+0kIi
-        +R3yX7jDtVuYaEGgM1pnplo=
-X-Google-Smtp-Source: APXvYqzFCXmdRw6ALVWTUgHPfy1hOiev9xTr20YFwbNlADqhKzfB6/Es/73il0GfRP7q2dFFqSPcKA==
-X-Received: by 2002:a17:90a:ac14:: with SMTP id o20mr11615624pjq.114.1562145057087;
-        Wed, 03 Jul 2019 02:10:57 -0700 (PDT)
-Received: from Asurada (c-98-248-47-108.hsd1.ca.comcast.net. [98.248.47.108])
-        by smtp.gmail.com with ESMTPSA id x1sm1350046pjo.4.2019.07.03.02.10.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 02:10:56 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 02:10:46 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     shengjiu.wang@nxp.com
-Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
-        broonie@kernel.org, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] ASoC: fsl_esai: Wrap some operations to be
- functions
-Message-ID: <20190703091046.GA8764@Asurada>
-References: <cover.1562136119.git.shengjiu.wang@nxp.com>
- <f57c5a045c6e5491b1bc9831388eab2c88773176.1562136119.git.shengjiu.wang@nxp.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dxK+dS4JuwEveW7RMUn+qtetDdgB8UT3+1wItb58QBs=;
+        b=QyItY5IdKu8kYsQmMJ2vWj2PqUxdxydyMYS0HraY6EHghJa21MxYGWZ1HWYVLUXEfI
+         XZrqXE1UodA2kffeMxmCMveVJMFg0pYJiIrXu1050F9+fPS95NTdJKcHGxhSzJZUrH+U
+         Js60UHHb/YZ+yVXkkIBq6vyp+0ir25AIvUcRn/zuPOYhZjzrw8VXsSbm2GBnwXDUHl2O
+         3MiFdgYDDMq/woyK+dTzRKQbw4LiJXtIll/tUpanHVI6uvWUMBsoRZfQjQKH66ZR69gz
+         vqCtVeb1lWzEtwE7xAQJDjWAQBAYAj8kud+D3Br/H+AJXtOow8+wyniUu1Zk6JKIlmJ/
+         3uFw==
+X-Gm-Message-State: APjAAAWAMBzfyRc6Qa6YYU+0v1IHbwzQ32iYjfSQyuml72IBzjeFL5ko
+        f0yh6iHIVh4Ewktkmlfn154=
+X-Google-Smtp-Source: APXvYqybDJGFRx5l/ZcYbNpgvLzBtneuQMzQdHC6QyEFmzEnD3HR0eH68JHNVbEGCrCuAF8gIpofgQ==
+X-Received: by 2002:a2e:b0ea:: with SMTP id h10mr1928541ljl.50.1562145051967;
+        Wed, 03 Jul 2019 02:10:51 -0700 (PDT)
+Received: from krolik-desktop.lan ([91.238.216.6])
+        by smtp.gmail.com with ESMTPSA id p87sm354745ljp.50.2019.07.03.02.10.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 02:10:51 -0700 (PDT)
+From:   Pawel Dembicki <paweldembicki@gmail.com>
+Cc:     paweldembicki@gmail.com, linus.walleij@linaro.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/4] net: dsa: vsc73xx: Assert reset if iCPU is enabled
+Date:   Wed,  3 Jul 2019 11:10:48 +0200
+Message-Id: <20190703091048.1962-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190701152723.624-4-paweldembicki@gmail.com>
+References: <20190701152723.624-4-paweldembicki@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f57c5a045c6e5491b1bc9831388eab2c88773176.1562136119.git.shengjiu.wang@nxp.com>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good to me, yet two small comments inline.
+Driver allow to use devices with disabled iCPU only.
 
-Please add this to this patch in the next version:
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Some devices have pre-initialised iCPU by bootloader.
+That state make switch unmanaged. This patch force reset
+if device is in unmanaged state. In the result chip lost
+internal firmware from RAM and it can be managed.
 
-On Wed, Jul 03, 2019 at 02:42:04PM +0800, shengjiu.wang@nxp.com wrote:
-> +static int fsl_esai_register_restore(struct fsl_esai *esai_priv)
-> +{
-> +	int ret;
-> +	/* FIFO reset for safety */
-> +	regmap_update_bits(esai_priv->regmap, REG_ESAI_TFCR,
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+---
+Changes in v2:
+- rebase commit after changes 1-3/4 patches
 
-Checkpatch script would probably warn this. Usually we add a blank
-line after variable declarations.
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 36 ++++++++++++--------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
 
-> @@ -866,22 +935,9 @@ static int fsl_esai_probe(struct platform_device *pdev)
->  
->  	dev_set_drvdata(&pdev->dev, esai_priv);
->  
-> -	/* Reset ESAI unit */
-> -	ret = regmap_write(esai_priv->regmap, REG_ESAI_ECR, ESAI_ECR_ERST);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to reset ESAI: %d\n", ret);
-> +	ret = fsl_esai_init(esai_priv);
+diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
+index 10063f31d9a3..4525702faf68 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx-core.c
++++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
+@@ -417,22 +417,8 @@ static int vsc73xx_detect(struct vsc73xx *vsc)
+ 	}
+ 
+ 	if (val == 0xffffffff) {
+-		dev_info(vsc->dev, "chip seems dead, assert reset\n");
+-		gpiod_set_value_cansleep(vsc->reset, 1);
+-		/* Reset pulse should be 20ns minimum, according to datasheet
+-		 * table 245, so 10us should be fine
+-		 */
+-		usleep_range(10, 100);
+-		gpiod_set_value_cansleep(vsc->reset, 0);
+-		/* Wait 20ms according to datasheet table 245 */
+-		msleep(20);
+-
+-		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_SYSTEM, 0,
+-				   VSC73XX_ICPU_MBOX_VAL, &val);
+-		if (val == 0xffffffff) {
+-			dev_err(vsc->dev, "seems not to help, giving up\n");
+-			return -ENODEV;
+-		}
++		dev_info(vsc->dev, "chip seems dead.\n");
++		return -EAGAIN;
+ 	}
+ 
+ 	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_SYSTEM, 0,
+@@ -483,9 +469,8 @@ static int vsc73xx_detect(struct vsc73xx *vsc)
+ 	}
+ 	if (icpu_si_boot_en && !icpu_pi_en) {
+ 		dev_err(vsc->dev,
+-			"iCPU enabled boots from SI, no external memory\n");
+-		dev_err(vsc->dev, "no idea how to deal with this\n");
+-		return -ENODEV;
++			"iCPU enabled boots from PI/SI, no external memory\n");
++		return -EAGAIN;
+ 	}
+ 	if (!icpu_si_boot_en && icpu_pi_en) {
+ 		dev_err(vsc->dev,
+@@ -1158,6 +1143,19 @@ int vsc73xx_probe(struct vsc73xx *vsc)
+ 		msleep(20);
+ 
+ 	ret = vsc73xx_detect(vsc);
++	if (ret == -EAGAIN) {
++		dev_err(vsc->dev,
++			"Chip seams to be out of control. Assert reset and try again.\n");
++		gpiod_set_value_cansleep(vsc->reset, 1);
++		/* Reset pulse should be 20ns minimum, according to datasheet
++		 * table 245, so 10us should be fine
++		 */
++		usleep_range(10, 100);
++		gpiod_set_value_cansleep(vsc->reset, 0);
++		/* Wait 20ms according to datasheet table 245 */
++		msleep(20);
++		ret = vsc73xx_detect(vsc);
++	}
+ 	if (ret) {
+ 		dev_err(dev, "no chip found (%d)\n", ret);
+ 		return -ENODEV;
+-- 
+2.20.1
 
-Could we rename this function to fsl_easi_hw_init() or something
-clear like fsl_esai_register_init? fsl_easi_init() feels like a
-driver init() function to me.
-
-Thank you
-Nicolin
