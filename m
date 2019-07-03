@@ -2,58 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA9F5E65F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3F15E66B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfGCOSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:18:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41582 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726473AbfGCOSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:18:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C2AA1AEBB;
-        Wed,  3 Jul 2019 14:18:46 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 7126AE0159; Wed,  3 Jul 2019 16:18:46 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 16:18:46 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 07/15] ethtool: support for netlink
- notifications
-Message-ID: <20190703141846.GM20101@unicorn.suse.cz>
-References: <cover.1562067622.git.mkubecek@suse.cz>
- <4dcac81783de8686edefa262a1db75f9e961b123.1562067622.git.mkubecek@suse.cz>
- <ea84d738346b96b81550e0fd0a6c715faa323061.camel@sipsolutions.net>
+        id S1727013AbfGCOUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:20:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39465 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfGCOUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:20:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EJEIp3323439
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:19:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EJEIp3323439
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163555;
+        bh=l+g9MQ1EnvRuflAwRD4OCi1i8pjHcUmnIYmOhq0xwEU=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=QVisEJIZT631+BzcWaaYCPhZWLFh0bUu9p7tfhry7kIFjXYITdi7KMUH5VHZEiO/f
+         sdm+Whqo29H3FelYcqlkHIkt37+dGoV1T36Uu8bQzww49HwaKu/Ay/kLIQtg3KWmJj
+         mQ8/LPWiFtdIPPZoD+0xLrex5TSxRny1LoDjaePOAyGRKi0/AFqyTFunRWoDTxTVPH
+         iuBASAQaQ13KQGBexJ3Wfe2ytlzxs2XFwRMOco5s7ws7WVTV7d6AhaLI2He021BfjD
+         hhR3h625HJQ9PQf7stJaJ5730yxeqorV/Lg8QNybEnl9zmRTAE8YZJBUsxYIhEbaLX
+         kPf2IFgIN0O7A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EJDNY3323432;
+        Wed, 3 Jul 2019 07:19:13 -0700
+Date:   Wed, 3 Jul 2019 07:19:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-cpugv7qd5vzhbtvnlydo90jv@git.kernel.org>
+Cc:     hpa@zytor.com, yao.jin@linux.intel.com, namhyung@kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        jolsa@kernel.org, acme@redhat.com
+Reply-To: hpa@zytor.com, yao.jin@linux.intel.com, jolsa@kernel.org,
+          acme@redhat.com, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, mingo@kernel.org, dsahern@gmail.com,
+          namhyung@kernel.org, tglx@linutronix.de
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf time-utils: Use skip_spaces()
+Git-Commit-ID: 9bb5a27ac7958ce11cb02463b5a5f7f160d60916
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <ea84d738346b96b81550e0fd0a6c715faa323061.camel@sipsolutions.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 03:39:54PM +0200, Johannes Berg wrote:
-> On Tue, 2019-07-02 at 13:50 +0200, Michal Kubecek wrote:
-> > 
-> > +static bool ethnl_ok __read_mostly;
-> 
-> Not sure it makes a big difference, but it could probably be
-> __ro_after_init instead?
+Commit-ID:  9bb5a27ac7958ce11cb02463b5a5f7f160d60916
+Gitweb:     https://git.kernel.org/tip/9bb5a27ac7958ce11cb02463b5a5f7f160d60916
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 21:39:18 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 21:39:18 -0300
 
-Yes, that's more fitting; the flag is initialized to false, changes to
-true once ethtool netlink is ready and never changes back. I wasn't
-aware of __ro_after_init annotation.
+perf time-utils: Use skip_spaces()
 
-Michal
+No change in behaviour intended.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-cpugv7qd5vzhbtvnlydo90jv@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/time-utils.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
+index 369fa19dd596..c2abc259b51d 100644
+--- a/tools/perf/util/time-utils.c
++++ b/tools/perf/util/time-utils.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <stdlib.h>
+ #include <string.h>
++#include <linux/string.h>
+ #include <sys/time.h>
+ #include <linux/time64.h>
+ #include <time.h>
+@@ -141,10 +142,7 @@ static int perf_time__parse_strs(struct perf_time_interval *ptime,
+ 	for (i = 0, p = str; i < num - 1; i++) {
+ 		arg = p;
+ 		/* Find next comma, there must be one */
+-		p = strchr(p, ',') + 1;
+-		/* Skip white space */
+-		while (isspace(*p))
+-			p++;
++		p = skip_spaces(strchr(p, ',') + 1);
+ 		/* Skip the value, must not contain space or comma */
+ 		while (*p && !isspace(*p)) {
+ 			if (*p++ == ',') {
