@@ -2,200 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFCD5ED79
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7245ED7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfGCU1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCU1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:27:23 -0400
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20DFF218BA
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2019 20:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562185642;
-        bh=90lPrn9FCOvmaMGoRmz2Ce+oqF+p+Sz/GvLhh72WwM0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mB/Tx34FI8qtSy4nSC82hSafhYohmLQCmPf3uWeb9TPQGmWYQ200lA00jpIlcfn16
-         w30Cf/YTFXZerZNF1CE3ickBkGXYqYpklhOAOBrj+3jMGctEfri1V+y/aqdy5XBVCU
-         O79OBXS7mwNdJOE6dDFpjAUmKX4qfNJ1Ay12Tfa8=
-Received: by mail-wm1-f53.google.com with SMTP id s3so3506828wms.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 13:27:22 -0700 (PDT)
-X-Gm-Message-State: APjAAAWJ8XO4VV9s0RAb6L71mdSOpAkovtm+xQB9+Qs6VgrRcaxvupx2
-        ZCZW9wAMcDUIv5deLncZDaHOSVljOsRBthZafwqi/A==
-X-Google-Smtp-Source: APXvYqxprk8oXGyeht1meo5mZFa2/qRdrSo5hhi/DQIMSl6vgSpNK1o584zTmfiTUO9E2JF8TNnvkuKR/H4lnh1fQ7o=
-X-Received: by 2002:a1c:a942:: with SMTP id s63mr9131647wme.76.1562185640630;
- Wed, 03 Jul 2019 13:27:20 -0700 (PDT)
+        id S1727240AbfGCU2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:28:37 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33334 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfGCU2e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:28:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n9so4252947wru.0;
+        Wed, 03 Jul 2019 13:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4RuuSF1aVRZQhu/zSR3wfaiY2yCCsY50QgpIhgnfugE=;
+        b=ClFSxBUaA1th2NV8PZ4dEtzi3ROWRhZHoClA40CViFyXMWg6/dbYnCTZglTY7LyDcz
+         5IFQLgJjvTwJID+fRDPjciGvp9XaJarOKyN/p3V/+AkfEMObTqV6XUDo8EVIjzGMTyg1
+         v/N7S9PSQgqPKUfPNFwT29abfX7jGrdPCaWLvGkxwodlfjpRYwBePmG9qnn59DNsx9Hr
+         mcTH3mTP6z5tY+POxIJ9cPGnFWaLKZGCQ8sJFH7mlmYzKstTTuWcHWCKxKpyfdPcFQOe
+         Iux379RRzNX5PwZZnrCyL58axAqSvuE9Rj/FotzAxVT/FPS5ZMKNuJ8IIxeaj/5UJeeJ
+         jjbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4RuuSF1aVRZQhu/zSR3wfaiY2yCCsY50QgpIhgnfugE=;
+        b=PgvGTHmi8jXpk4fcXEGUSfV5oJQjMaKUS7YYHY2aJPKRQEFpJSmLMLoOgb0EQZ7Ku/
+         4vNWyXzgSUlMilnrRNMbRYGv0X9i1ZT2Y9j03QErvxlIB9dWAS2mofldAjb1u1D0ck4h
+         0Vg7TAni2nEADmqq7PPone0/IftNNf2M14YHk6yToNIQiq3uCrto+KbjaRaIQUMY9/WH
+         rn7cAungOEfO7o+nMePA8ohrObOY8/4nFlDmayUXXDgE4AMkCV1KIRcPkn8xVd7tCNKt
+         2sYocDXNOTtJ+BqFfuTI/Bh9kVIhFf3HBEkpNfrgJACxH4WjX1y/9VIdNF5xDVat+fgd
+         i2dg==
+X-Gm-Message-State: APjAAAV5E5wqVOpxOumfAKXD2kRmlBYdz1S19gbIxN5Tk/4qPLo0gbHJ
+        9a7wFGEz0QLD+boAqXYCiK0=
+X-Google-Smtp-Source: APXvYqzqp3wkKlJW4bqh5QXHBGeOwR1GBjCj3aoil1HE/EWzT3oA8Hskis7h17iBGR4ZDMHmwsOpAg==
+X-Received: by 2002:adf:82a8:: with SMTP id 37mr7127315wrc.332.1562185711828;
+        Wed, 03 Jul 2019 13:28:31 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:4503:872e:8227:c4e0? (p200300EA8BD60C004503872E8227C4E0.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:4503:872e:8227:c4e0])
+        by smtp.googlemail.com with ESMTPSA id w20sm8256560wra.96.2019.07.03.13.28.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 13:28:31 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] net: phy: realtek: configure RTL8211E LEDs
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190703193724.246854-1-mka@chromium.org>
+ <20190703193724.246854-7-mka@chromium.org>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <189ec367-2085-056b-61a9-90f0044b55ba@gmail.com>
+Date:   Wed, 3 Jul 2019 22:28:17 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190703102731.236024951@infradead.org> <20190703102807.588906400@infradead.org>
-In-Reply-To: <20190703102807.588906400@infradead.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 3 Jul 2019 13:27:09 -0700
-X-Gmail-Original-Message-ID: <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
-Message-ID: <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
-To:     root <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190703193724.246854-7-mka@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 3:28 AM root <peterz@infradead.org> wrote:
->
-> Despire the current efforts to read CR2 before tracing happens there
-> still exist a number of possible holes:
->
->   idtentry page_fault             do_page_fault           has_error_code=1
->     call error_entry
->       TRACE_IRQS_OFF
->         call trace_hardirqs_off*
->           #PF // modifies CR2
->
->       CALL_enter_from_user_mode
->         __context_tracking_exit()
->           trace_user_exit(0)
->             #PF // modifies CR2
->
->     call do_page_fault
->       address = read_cr2(); /* whoopsie */
->
-> And similar for i386.
->
-> Fix it by pulling the CR2 read into the entry code, before any of that
-> stuff gets a chance to run and ruin things.
->
-> Ideally we'll clean up the entry code by moving this tracing and
-> context tracking nonsense into C some day, but let's not delay fixing
-> this longer.
->
-> Reported-by: He Zhe <zhe.he@windriver.com>
-> Reported-by: Eiichi Tsukata <devel@etsukata.com>
-> Debugged-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On 03.07.2019 21:37, Matthias Kaehlcke wrote:
+> Configure the RTL8211E LEDs behavior when the device tree property
+> 'realtek,led-modes' is specified.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  arch/x86/entry/entry_32.S       |   25 ++++++++++++++++++++++---
->  arch/x86/entry/entry_64.S       |   28 ++++++++++++++--------------
->  arch/x86/include/asm/kvm_para.h |    2 +-
->  arch/x86/include/asm/traps.h    |    2 +-
->  arch/x86/kernel/kvm.c           |    8 ++++----
->  arch/x86/mm/fault.c             |   28 ++++++++++------------------
->  6 files changed, 52 insertions(+), 41 deletions(-)
->
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -1443,9 +1443,28 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vec
->
->  ENTRY(page_fault)
->         ASM_CLAC
-> -       pushl   $do_page_fault
-> -       ALIGN
-> -       jmp common_exception
-> +       pushl   $0; /* %gs's slot on the stack */
-> +
-> +       SAVE_ALL switch_stacks=1 skip_gs=1
-> +
-> +       ENCODE_FRAME_POINTER
-> +       UNWIND_ESPFIX_STACK
-> +
-> +       /* fixup %gs */
-> +       GS_TO_REG %ecx
-> +       REG_TO_PTGS %ecx
-> +       SET_KERNEL_GS %ecx
-> +
-> +       GET_CR2_INTO(%ecx)                      # might clobber %eax
-> +
-> +       /* fixup orig %eax */
-> +       movl    PT_ORIG_EAX(%esp), %edx         # get the error code
-> +       movl    $-1, PT_ORIG_EAX(%esp)          # no syscall to restart
-> +
-> +       TRACE_IRQS_OFF
-> +       movl    %esp, %eax                      # pt_regs pointer
-> +       call    do_page_fault
-> +       jmp     ret_from_exception
->  END(page_fault)
->
->  common_exception:
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -901,7 +901,7 @@ apicinterrupt IRQ_WORK_VECTOR                       irq_work
->   * @paranoid == 2 is special: the stub will never switch stacks.  This is for
->   * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
+> Changes in v2:
+> - patch added to the series
+> ---
+>  drivers/net/phy/realtek.c | 63 +++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 61 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> index 45fee4612031..559aec547738 100644
+> --- a/drivers/net/phy/realtek.c
+> +++ b/drivers/net/phy/realtek.c
+> @@ -9,6 +9,7 @@
+>   * Copyright (c) 2004 Freescale Semiconductor, Inc.
 >   */
-> -.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 ist_offset=0 create_gap=0
-> +.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 ist_offset=0 create_gap=0 read_cr2=0
->  ENTRY(\sym)
->         UNWIND_HINT_IRET_REGS offset=\has_error_code*8
->
-> @@ -937,18 +937,27 @@ ENTRY(\sym)
->
->         .if \paranoid
->         call    paranoid_entry
-> +       /* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
->         .else
->         call    error_entry
->         .endif
->         UNWIND_HINT_REGS
-> -       /* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
->
-> -       .if \paranoid
-> +       .if \read_cr2
-> +       GET_CR2_INTO(%rdx);                     /* can clobber %rax */
-> +       .endif
+>  #include <linux/bitops.h>
+> +#include <linux/bits.h>
+>  #include <linux/device.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -35,6 +36,15 @@
+>  #define RTL8211E_EEE_LED_MODE1			0x05
+>  #define RTL8211E_EEE_LED_MODE2			0x06
+>  
+> +/* RTL8211E extension page 44 */
+> +#define RTL8211E_LACR				0x1a
+> +#define RLT8211E_LACR_LEDACTCTRL_SHIFT		4
+> +#define RLT8211E_LACR_LEDACTCTRL_MASK		GENMASK(6, 4)
+> +#define RTL8211E_LCR				0x1c
+> +#define RTL8211E_LCR_LEDCTRL_MASK		(GENMASK(2, 0) | \
+> +						 GENMASK(6, 4) | \
+> +						 GENMASK(10, 8))
 > +
->         .if \shift_ist != -1
->         TRACE_IRQS_OFF_DEBUG                    /* reload IDT in case of recursion */
->         .else
->         TRACE_IRQS_OFF
->         .endif
+>  /* RTL8211E extension page 160 */
+>  #define RTL8211E_SCR				0x1a
+>  #define RTL8211E_SCR_DISABLE_RXC_SSC		BIT(2)
+> @@ -124,6 +134,56 @@ static int rtl8211e_disable_eee_led_mode(struct phy_device *phydev)
+>  	return phy_restore_page(phydev, oldpage, ret);
+>  }
+>  
+> +static int rtl8211e_config_leds(struct phy_device *phydev)
+> +{
+> +	struct device *dev = &phydev->mdio.dev;
+> +	int count, i, oldpage, ret;
+> +	u16 lacr_bits = 0, lcr_bits = 0;
 > +
-> +       .if \paranoid == 0
-> +       testb   $3, CS(%rsp)
-> +       jz      .Lfrom_kernel_no_context_tracking_\@
-> +       CALL_enter_from_user_mode
-> +.Lfrom_kernel_no_context_tracking_\@:
->         .endif
->
->         movq    %rsp, %rdi                      /* pt_regs pointer */
-> @@ -1180,10 +1189,10 @@ idtentry xenint3                do_int3                 has_error_co
->  #endif
->
->  idtentry general_protection    do_general_protection   has_error_code=1
-> -idtentry page_fault            do_page_fault           has_error_code=1
-> +idtentry page_fault            do_page_fault           has_error_code=1        read_cr2=1
->
->  #ifdef CONFIG_KVM_GUEST
-> -idtentry async_page_fault      do_async_page_fault     has_error_code=1
-> +idtentry async_page_fault      do_async_page_fault     has_error_code=1        read_cr2=1
->  #endif
->
->  #ifdef CONFIG_X86_MCE
-> @@ -1338,18 +1347,9 @@ ENTRY(error_entry)
->         movq    %rax, %rsp                      /* switch stack */
->         ENCODE_FRAME_POINTER
->         pushq   %r12
-> -
-> -       /*
-> -        * We need to tell lockdep that IRQs are off.  We can't do this until
-> -        * we fix gsbase, and we should do it before enter_from_user_mode
-> -        * (which can take locks).
-> -        */
-> -       TRACE_IRQS_OFF
+> +	if (!dev->of_node)
+> +		return 0;
+> +
+> +	if (of_property_read_bool(dev->of_node, "realtek,eee-led-mode-disable"))
+> +		rtl8211e_disable_eee_led_mode(phydev);
+> +
+> +	count = of_property_count_elems_of_size(dev->of_node,
+> +						"realtek,led-modes",
+> +						sizeof(u32));
+> +	if (count < 0 || count > 3)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		u32 val;
+> +
+> +		of_property_read_u32_index(dev->of_node,
+> +					   "realtek,led-modes", i, &val);
+> +		lacr_bits |= (u16)(val >> 16) <<
+> +			(RLT8211E_LACR_LEDACTCTRL_SHIFT + i);
 
-This hunk looks wrong.  Am I missing some other place that handles the
-case where we enter from kernel mode and IRQs were on?
+This may be done in an easier to read way:
+
+if (val & RTL8211E_LINK_ACTIVITY)
+	lacr_bits |= BIT(RLT8211E_LACR_LEDACTCTRL_SHIFT + i);
+
+
+> +		lcr_bits |= (u16)(val & 0xf) << (i * 4);
+> +	}
+> +
+> +	oldpage = rtl8211e_select_ext_page(phydev, 44);
+> +	if (oldpage < 0) {
+> +		dev_err(dev, "failed to select extended page: %d\n", oldpage);
+
+In a PHY driver it may be more appropriate to use phydev_err() et al,
+even though effectively it's the same.
+
+> +		goto err;
+> +	}
+> +
+> +	ret = __phy_modify(phydev, RTL8211E_LACR,
+> +			   RLT8211E_LACR_LEDACTCTRL_MASK, lacr_bits);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write LACR reg: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	ret = __phy_modify(phydev, RTL8211E_LCR,
+> +			   RTL8211E_LCR_LEDCTRL_MASK, lcr_bits);
+> +	if (ret)
+> +		dev_err(dev, "failed to write LCR reg: %d\n", ret);
+> +
+> +err:
+> +	return phy_restore_page(phydev, oldpage, ret);
+> +}
+> +
+>  static int rtl8211e_config_init(struct phy_device *phydev)
+>  {
+>  	struct device *dev = &phydev->mdio.dev;
+> @@ -137,8 +197,7 @@ static int rtl8211e_config_init(struct phy_device *phydev)
+>  			dev_err(dev, "failed to enable SSC on RXC: %d\n", ret);
+>  	}
+>  
+> -	if (of_property_read_bool(dev->of_node, "realtek,eee-led-mode-disable"))
+> -		rtl8211e_disable_eee_led_mode(phydev);
+> +	rtl8211e_config_leds(phydev);
+>  
+>  	return 0;
+>  }
+> 
+
