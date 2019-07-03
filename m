@@ -2,161 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F935DF9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A03A45DFC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfGCITc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:19:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8134 "EHLO huawei.com"
+        id S1727338AbfGCI07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:26:59 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8690 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727300AbfGCITb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:19:31 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id BDC86B05E55C4D96440A;
-        Wed,  3 Jul 2019 16:19:29 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 3 Jul 2019 16:19:24 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        "Christoph Lameter" <cl@linux.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH] percpu: Make pcpu_setup_first_chunk() void function
-Date:   Wed, 3 Jul 2019 16:25:52 +0800
-Message-ID: <20190703082552.69951-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727241AbfGCI06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:26:58 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 02220F79422AA3A77CC8;
+        Wed,  3 Jul 2019 16:26:56 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 3 Jul 2019
+ 16:26:49 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ast@kernel.org>, <daniel@iogearbox.net>, <kafai@fb.com>,
+        <songliubraving@fb.com>, <yhs@fb.com>, <sdf@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <bpf@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 bpf-next] bpf: cgroup: Fix build error without CONFIG_NET
+Date:   Wed, 3 Jul 2019 16:26:30 +0800
+Message-ID: <20190703082630.51104-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <fd312c26-db8e-cae3-1c14-869d8e3a62ae@fb.com>
+References: <fd312c26-db8e-cae3-1c14-869d8e3a62ae@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pcpu_setup_first_chunk() will panic or BUG_ON if the are some
-error and doesn't return any error, hence it can be defined to
-return void.
+If CONFIG_NET is not set and CONFIG_CGROUP_BPF=y,
+gcc building fails:
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+kernel/bpf/cgroup.o: In function `cg_sockopt_func_proto':
+cgroup.c:(.text+0x237e): undefined reference to `bpf_sk_storage_get_proto'
+cgroup.c:(.text+0x2394): undefined reference to `bpf_sk_storage_delete_proto'
+kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_getsockopt':
+(.text+0x2a1f): undefined reference to `lock_sock_nested'
+(.text+0x2ca2): undefined reference to `release_sock'
+kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_setsockopt':
+(.text+0x3006): undefined reference to `lock_sock_nested'
+(.text+0x32bb): undefined reference to `release_sock'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Stanislav Fomichev <sdf@fomichev.me>
+Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/ia64/mm/contig.c    |  5 +----
- arch/ia64/mm/discontig.c |  5 +----
- include/linux/percpu.h   |  2 +-
- mm/percpu.c              | 17 ++++++-----------
- 4 files changed, 9 insertions(+), 20 deletions(-)
+v2: use ifdef macro
+---
+ kernel/bpf/cgroup.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
-index d29fb6b9fa33..db09a693f094 100644
---- a/arch/ia64/mm/contig.c
-+++ b/arch/ia64/mm/contig.c
-@@ -134,10 +134,7 @@ setup_per_cpu_areas(void)
- 	ai->atom_size		= PAGE_SIZE;
- 	ai->alloc_size		= PERCPU_PAGE_SIZE;
- 
--	rc = pcpu_setup_first_chunk(ai, __per_cpu_start + __per_cpu_offset[0]);
--	if (rc)
--		panic("failed to setup percpu area (err=%d)", rc);
--
-+	pcpu_setup_first_chunk(ai, __per_cpu_start + __per_cpu_offset[0]);
- 	pcpu_free_alloc_info(ai);
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 76fa007..0a00eac 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -939,6 +939,7 @@ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
  }
- #else
-diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
-index 05490dd073e6..004dee231874 100644
---- a/arch/ia64/mm/discontig.c
-+++ b/arch/ia64/mm/discontig.c
-@@ -245,10 +245,7 @@ void __init setup_per_cpu_areas(void)
- 		gi->cpu_map		= &cpu_map[unit];
- 	}
+ EXPORT_SYMBOL(__cgroup_bpf_run_filter_sysctl);
  
--	rc = pcpu_setup_first_chunk(ai, base);
--	if (rc)
--		panic("failed to setup percpu area (err=%d)", rc);
--
-+	pcpu_setup_first_chunk(ai, base);
- 	pcpu_free_alloc_info(ai);
- }
- #endif
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index 9909dc0e273a..5e76af742c80 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -105,7 +105,7 @@ extern struct pcpu_alloc_info * __init pcpu_alloc_alloc_info(int nr_groups,
- 							     int nr_units);
- extern void __init pcpu_free_alloc_info(struct pcpu_alloc_info *ai);
- 
--extern int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
-+extern void __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
- 					 void *base_addr);
- 
- #ifdef CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 9821241fdede..ad32c3d11ca7 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -2267,12 +2267,9 @@ static void pcpu_dump_alloc_info(const char *lvl,
-  * share the same vm, but use offset regions in the area allocation map.
-  * The chunk serving the dynamic region is circulated in the chunk slots
-  * and available for dynamic allocation like any other chunk.
-- *
-- * RETURNS:
-- * 0 on success, -errno on failure.
-  */
--int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
--				  void *base_addr)
-+void __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
-+				   void *base_addr)
++#ifdef CONFIG_NET
+ static bool __cgroup_bpf_prog_array_is_empty(struct cgroup *cgrp,
+ 					     enum bpf_attach_type attach_type)
  {
- 	size_t size_sum = ai->static_size + ai->reserved_size + ai->dyn_size;
- 	size_t static_size, dyn_size;
-@@ -2457,7 +2454,6 @@ int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
- 
- 	/* we're done */
- 	pcpu_base_addr = base_addr;
--	return 0;
+@@ -1120,6 +1121,7 @@ int __cgroup_bpf_run_filter_getsockopt(struct sock *sk, int level,
+ 	return ret;
  }
+ EXPORT_SYMBOL(__cgroup_bpf_run_filter_getsockopt);
++#endif
  
- #ifdef CONFIG_SMP
-@@ -2710,7 +2706,7 @@ int __init pcpu_embed_first_chunk(size_t reserved_size, size_t dyn_size,
- 	struct pcpu_alloc_info *ai;
- 	size_t size_sum, areas_size;
- 	unsigned long max_distance;
--	int group, i, highest_group, rc;
-+	int group, i, highest_group, rc = 0;
- 
- 	ai = pcpu_build_alloc_info(reserved_size, dyn_size, atom_size,
- 				   cpu_distance_fn);
-@@ -2795,7 +2791,7 @@ int __init pcpu_embed_first_chunk(size_t reserved_size, size_t dyn_size,
- 		PFN_DOWN(size_sum), ai->static_size, ai->reserved_size,
- 		ai->dyn_size, ai->unit_size);
- 
--	rc = pcpu_setup_first_chunk(ai, base);
-+	pcpu_setup_first_chunk(ai, base);
- 	goto out_free;
- 
- out_free_areas:
-@@ -2920,7 +2916,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
- 		unit_pages, psize_str, ai->static_size,
- 		ai->reserved_size, ai->dyn_size);
- 
--	rc = pcpu_setup_first_chunk(ai, vm.addr);
-+	pcpu_setup_first_chunk(ai, vm.addr);
- 	goto out_free_ar;
- 
- enomem:
-@@ -3014,8 +3010,7 @@ void __init setup_per_cpu_areas(void)
- 	ai->groups[0].nr_units = 1;
- 	ai->groups[0].cpu_map[0] = 0;
- 
--	if (pcpu_setup_first_chunk(ai, fc) < 0)
--		panic("Failed to initialize percpu areas.");
-+	pcpu_setup_first_chunk(ai, fc);
- 	pcpu_free_alloc_info(ai);
- }
- 
+ static ssize_t sysctl_cpy_dir(const struct ctl_dir *dir, char **bufp,
+ 			      size_t *lenp)
+@@ -1386,10 +1388,12 @@ static const struct bpf_func_proto *
+ cg_sockopt_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+ 	switch (func_id) {
++#ifdef CONFIG_NET
+ 	case BPF_FUNC_sk_storage_get:
+ 		return &bpf_sk_storage_get_proto;
+ 	case BPF_FUNC_sk_storage_delete:
+ 		return &bpf_sk_storage_delete_proto;
++#endif
+ #ifdef CONFIG_INET
+ 	case BPF_FUNC_tcp_sock:
+ 		return &bpf_tcp_sock_proto;
 -- 
-2.20.1
+2.7.4
+
 
