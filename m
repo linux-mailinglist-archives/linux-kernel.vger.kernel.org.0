@@ -2,109 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD54A5EFDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65DDC5EFB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 01:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfGDAAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 20:00:47 -0400
-Received: from mga05.intel.com ([192.55.52.43]:17869 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727100AbfGDAAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 20:00:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 17:00:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,449,1557212400"; 
-   d="scan'208";a="363198396"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Jul 2019 17:00:44 -0700
-Date:   Thu, 4 Jul 2019 07:44:02 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Ananda Ravuri <ananda.ravuri@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>, Alan Tull <atull@kernel.org>
-Subject: Re: [PATCH 04/15] fpga: dfl: fme: support 512bit data width PR
-Message-ID: <20190703234402.GC15825@hao-dev>
-References: <20190628004951.6202-1-mdf@kernel.org>
- <20190628004951.6202-5-mdf@kernel.org>
- <20190703175601.GA14034@kroah.com>
+        id S1727435AbfGCXpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 19:45:42 -0400
+Received: from mail-eopbgr30060.outbound.protection.outlook.com ([40.107.3.60]:51364
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbfGCXpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 19:45:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pl1N1KKRlbVNZqTDGWye8FUGkTS/iOqd5lQr7gzxj8A=;
+ b=pguTsmTUHbMp0pOuDKu9S0yjYXU1ErJECS42UgBmjc9Y1gNJlFWRQ7qoaNYxvsFn0FTVj8Ch0hk/OCyQCakxeFxDn6cc1sVMb55xRD78lMktF0pSu+OhGK0Nlxu3T5X5baQFQFIWPGhYvgCohDTAG9VmI5+caN1+b+wXhPUG600=
+Received: from DB7PR04MB5051.eurprd04.prod.outlook.com (20.176.234.223) by
+ DB7PR04MB4538.eurprd04.prod.outlook.com (52.135.134.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.16; Wed, 3 Jul 2019 23:45:38 +0000
+Received: from DB7PR04MB5051.eurprd04.prod.outlook.com
+ ([fe80::6c98:1416:8221:bdfc]) by DB7PR04MB5051.eurprd04.prod.outlook.com
+ ([fe80::6c98:1416:8221:bdfc%4]) with mapi id 15.20.2052.010; Wed, 3 Jul 2019
+ 23:45:38 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+CC:     Horia Geanta <horia.geanta@nxp.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 03/16] crypto: caam - move tasklet_init() call down
+Thread-Topic: [PATCH v4 03/16] crypto: caam - move tasklet_init() call down
+Thread-Index: AQHVMXdGY7YVraimN0KG3E6/ZzGQWw==
+Date:   Wed, 3 Jul 2019 23:45:37 +0000
+Message-ID: <DB7PR04MB50517E97A2BE28050E056B90EEFB0@DB7PR04MB5051.eurprd04.prod.outlook.com>
+References: <20190703081327.17505-1-andrew.smirnov@gmail.com>
+ <20190703081327.17505-4-andrew.smirnov@gmail.com>
+ <VI1PR04MB505565EC5520F4820E234A84EEFB0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+ <CAHQ1cqHfBU92g-P7jDfiWtEr0m-kv5Lw9yZcvUEXYg7OyhURfg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [82.144.34.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 919eb507-f56f-48e9-d388-08d700108d0a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4538;
+x-ms-traffictypediagnostic: DB7PR04MB4538:
+x-microsoft-antispam-prvs: <DB7PR04MB453853660A802BEFCBD03C58EEFB0@DB7PR04MB4538.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2449;
+x-forefront-prvs: 00872B689F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(136003)(346002)(39860400002)(376002)(199004)(189003)(33656002)(9686003)(81166006)(71190400001)(81156014)(55016002)(102836004)(26005)(229853002)(53936002)(6916009)(6116002)(8936002)(446003)(54906003)(186003)(316002)(476003)(44832011)(3846002)(68736007)(486006)(71200400001)(6436002)(6506007)(6246003)(7736002)(73956011)(66946007)(305945005)(66446008)(64756008)(66556008)(66476007)(478600001)(86362001)(52536014)(14444005)(256004)(5660300002)(99286004)(53546011)(4326008)(76176011)(66066001)(74316002)(25786009)(76116006)(7696005)(91956017)(14454004)(8676002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4538;H:DB7PR04MB5051.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: MI0znHPPqDgzTngT+HjwgCnoO7iXIrynSPDIz7Ewj2xw5O0HN6j8GmoMSx0Fbnpnep/seZMFkXWsDoIn7t7gK3xf9sGjDmXMYyw0xsyDmyTEPvC9mGOCVP+Sq8Ly+jqqBkpF54+oRwke/bTM2ba67RJvwYYkI/03qWLKj3WkqNpA9FAjABPMfGOD/lvTTrJl4wwMM/PbGecIaorcw6ax6FbZBXrXt88BeDmmCcvUGfN4WtENfkl1EOmRNSzLABW+dp6D8Lkfmuv3VTO1OrDZ0Zt5Vbcr5CnFWwCnPbCPPTU9cfmBo+ZG9hxWMgXS4jaOeO5w0A6acZjmaJDvre+Bp/+nyxWSOOaUQUp7AAT1f2uDxfnXVZ7pToW0McQxF7BSBbH8nIz5JNnbNQk8vZcc3k4WkX3VKkdtGFMzo1+/QPA=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703175601.GA14034@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 919eb507-f56f-48e9-d388-08d700108d0a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2019 23:45:37.9509
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4538
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 07:56:01PM +0200, Greg KH wrote:
-> On Thu, Jun 27, 2019 at 05:49:40PM -0700, Moritz Fischer wrote:
-> > From: Wu Hao <hao.wu@intel.com>
-> > 
-> > In early partial reconfiguration private feature, it only
-> > supports 32bit data width when writing data to hardware for
-> > PR. 512bit data width PR support is an important optimization
-> > for some specific solutions (e.g. XEON with FPGA integrated),
-> > it allows driver to use AVX512 instruction to improve the
-> > performance of partial reconfiguration. e.g. programming one
-> > 100MB bitstream image via this 512bit data width PR hardware
-> > only takes ~300ms, but 32bit revision requires ~3s per test
-> > result.
-> > 
-> > Please note now this optimization is only done on revision 2
-> > of this PR private feature which is only used in integrated
-> > solution that AVX512 is always supported. This revision 2
-> > hardware doesn't support 32bit PR.
-> > 
-> > Signed-off-by: Ananda Ravuri <ananda.ravuri@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> >  drivers/fpga/dfl-fme-main.c |   3 +
-> >  drivers/fpga/dfl-fme-mgr.c  | 113 +++++++++++++++++++++++++++++++-----
-> >  drivers/fpga/dfl-fme-pr.c   |  43 +++++++++-----
-> >  drivers/fpga/dfl-fme.h      |   2 +
-> >  drivers/fpga/dfl.h          |   5 ++
-> >  5 files changed, 135 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
-> > index 086ad2420ade..076d74f6416d 100644
-> > --- a/drivers/fpga/dfl-fme-main.c
-> > +++ b/drivers/fpga/dfl-fme-main.c
-> > @@ -21,6 +21,8 @@
-> >  #include "dfl.h"
-> >  #include "dfl-fme.h"
-> >  
-> > +#define DRV_VERSION	"0.8"
-> > +
-> >  static ssize_t ports_num_show(struct device *dev,
-> >  			      struct device_attribute *attr, char *buf)
-> >  {
-> > @@ -277,3 +279,4 @@ MODULE_DESCRIPTION("FPGA Management Engine driver");
-> >  MODULE_AUTHOR("Intel Corporation");
-> >  MODULE_LICENSE("GPL v2");
-> >  MODULE_ALIAS("platform:dfl-fme");
-> > +MODULE_VERSION(DRV_VERSION);
-> 
-> No, we ripped out these useless "driver version" things all over the
-> place, please do not add them back in again.  They mean nothing and
-> confuse people to no end.
-> 
-> I'll not take this patch, sorry.
-
-Let me remove them from these patches, and generate a new version quickly.
-
-Thanks for the review and comments.
-
-Hao
-
-> 
-> greg k-h
+On 7/3/2019 8:14 PM, Andrey Smirnov wrote:=0A=
+> On Wed, Jul 3, 2019 at 6:51 AM Leonard Crestez <leonard.crestez@nxp.com> =
+wrote:=0A=
+>> On 7/3/2019 11:14 AM, Andrey Smirnov wrote:=0A=
+>>> Move tasklet_init() call further down in order to simplify error path=
+=0A=
+>>> cleanup. No functional change intended.=0A=
+>>>=0A=
+>>> diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c=0A=
+>>> index 4b25b2fa3d02..a7ca2bbe243f 100644=0A=
+>>> --- a/drivers/crypto/caam/jr.c=0A=
+>>> +++ b/drivers/crypto/caam/jr.c=0A=
+>>> @@ -441,15 +441,13 @@ static int caam_jr_init(struct device *dev)=0A=
+>>>=0A=
+>>>        jrp =3D dev_get_drvdata(dev);=0A=
+>>>=0A=
+>>> -     tasklet_init(&jrp->irqtask, caam_jr_dequeue, (unsigned long)dev);=
+=0A=
+>>> -=0A=
+>>>        /* Connect job ring interrupt handler. */=0A=
+>>>        error =3D request_irq(jrp->irq, caam_jr_interrupt, IRQF_SHARED,=
+=0A=
+>>>                            dev_name(dev), dev);=0A=
+>>>        if (error) {=0A=
+>>>                dev_err(dev, "can't connect JobR %d interrupt (%d)\n",=
+=0A=
+>>>                        jrp->ridx, jrp->irq);=0A=
+>>> -             goto out_kill_deq;=0A=
+>>> +             return error;=0A=
+>>>        }=0A=
+>>=0A=
+>> The caam_jr_interrupt handler can schedule the tasklet so it makes sense=
+=0A=
+>> to have it be initialized ahead of request_irq. In theory it's possible=
+=0A=
+>> for an interrupt to be triggered immediately when request_irq is called.=
+=0A=
+>>=0A=
+>> I'm not very familiar with the CAAM ip, can you ensure no interrupts are=
+=0A=
+>> pending in HW at probe time? The "no functional change" part is not obvi=
+ous.=0A=
+>>=0A=
+> =0A=
+> Said tasklet will use both jrp->outring and jrp->entinfo array=0A=
+> initialized after IRQ request call in both versions of the code=0A=
+> (before/after this patch). AFAICT, the only case where this patch=0A=
+> would change initialization safety of the original code is if JR was=0A=
+> scheduled somehow while ORSFx is 0 (no jobs done), which I don't think=0A=
+> is possible.=0A=
+=0A=
+I took a second look at caam_jr_init and there is apparently a whole =0A=
+bunch of other reset/init stuff done after request_irq. For example =0A=
+caam_reset_hw_jr is done after request_irq and masks interrupts?=0A=
+=0A=
+What I'd expect is that request_irq is done last after all other =0A=
+initialization is performed. But I'm not familiar with how CAAM JRs work =
+=0A=
+so feel free to ignore this.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
