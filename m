@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE965ED9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E40F5EDA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfGCUeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727117AbfGCUeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 3 Jul 2019 16:34:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49562 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfGCUeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726656AbfGCUeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Jul 2019 16:34:09 -0400
 Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9DFA218A0;
-        Wed,  3 Jul 2019 20:34:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D163218A3;
+        Wed,  3 Jul 2019 20:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1562186048;
-        bh=X988kz2eLJEdgeKP5PbvA76wFevq0vcVQQV0GAFtt3E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RqbH8bSaINR/QOcNfIvtJLimvQ8CZVibcFZZqbVsjvvdR41J1zNsiB02nUHP4TmBy
-         rQTbbb4jTFMeSyhkgM97NghDzK80VA4VK5CYID1R6/q4FHz9r6Ho0osDB75lU0iICs
-         W1OGE54XXYxwtklu+zks7NFe3EX1SHAQw4TSTqsk=
+        bh=Syx8RsgjST+l3fqOTS3aX5LDnIDUEzopFPEzyXrQvN4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HTsWEbBC6Yx7DcE0Java24HEUFQZHQ4+Je62UEgtUVC0gM3wfS8jVPEDve+jpR5Co
+         0iln5MWitEdFoX9P/wpf7FgipAoahUj4XmdHYEhT/7ApYRlwOprUvl0Hp28Dx5jIFf
+         viEF0DIt6Yg37hjSIKL25OzjWhOeSU+w+dwtONDw=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 0/4] x32 and compat syscall improvements
-Date:   Wed,  3 Jul 2019 13:34:01 -0700
-Message-Id: <cover.1562185330.git.luto@kernel.org>
+Subject: [PATCH 1/4] x86/syscalls: Use the compat versions of rt_sigsuspend() and rt_sigprocmask()
+Date:   Wed,  3 Jul 2019 13:34:02 -0700
+Message-Id: <51643ac3157b5921eae0e172a8a0b1d953e68ebb.1562185330.git.luto@kernel.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1562185330.git.luto@kernel.org>
+References: <cover.1562185330.git.luto@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,38 +41,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series contains a couple of minor cleanups and a major change
-to the way that x32 syscalls work.  We currently have a range of
-syscall numbers starting at 512 that are rather annoying -- they've
-been known to cause security problems for seccomp filter authors who
-don't know about them, and they cause people to think that x86_64
-will run out of syscall numbers after 511 due to a conflict with
-x32.
+I'm working on some code that detects at build time if there's a
+COMPAT_SYSCALL_DEFINE() that is not referenced in the x86 syscall
+tables.  It catches three offenders: rt_sigsuspend(),
+rt_sigprocmask(), and sendfile64().
 
-With this series applied, 512-547 can be just a silly legacy oddity
-just like all the other silly legacy oddities we have, and we can go
-on with our lives without kludges starting at 548 :)
+For rt_sigsuspend() and rt_sigprocmask(), the only potential
+difference between the native and compat versions is that the compat
+version converts the sigset_t, but, on little endian architectures,
+the conversion is a no-op.  This is why they both currently work on
+x86.
 
-Andy Lutomirski (4):
-  x86/syscalls: Use the compat versions of rt_sigsuspend() and
-    rt_sigprocmask()
-  x86/syscalls: Disallow compat entries for all types of 64-bit syscalls
-  x86/syscalls: Split the x32 syscalls into their own table
-  x86/syscalls: Make __X32_SYSCALL_BIT be unsigned long
+To make the code more consistent, and to make my upcoming patches
+work, this patch rewires x86 to use the compat vesions.
 
- arch/x86/entry/common.c                       | 13 +--
- arch/x86/entry/syscall_64.c                   | 25 ++++++
- arch/x86/entry/syscalls/syscall_32.tbl        |  4 +-
- arch/x86/entry/syscalls/syscalltbl.sh         | 35 ++++----
- arch/x86/include/asm/syscall.h                |  4 +
- arch/x86/include/asm/unistd.h                 |  6 --
- arch/x86/include/uapi/asm/unistd.h            |  2 +-
- arch/x86/kernel/asm-offsets_64.c              | 20 +++++
- tools/testing/selftests/x86/Makefile          |  2 +-
- .../testing/selftests/x86/syscall_numbering.c | 89 +++++++++++++++++++
- 10 files changed, 168 insertions(+), 32 deletions(-)
- create mode 100644 tools/testing/selftests/x86/syscall_numbering.c
+sendfile64() is more complicated, and I'll address it separately.
 
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index ad968b7bac72..8e82e0270b24 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -186,11 +186,11 @@
+ 172	i386	prctl			sys_prctl			__ia32_sys_prctl
+ 173	i386	rt_sigreturn		sys_rt_sigreturn		sys32_rt_sigreturn
+ 174	i386	rt_sigaction		sys_rt_sigaction		__ia32_compat_sys_rt_sigaction
+-175	i386	rt_sigprocmask		sys_rt_sigprocmask		__ia32_sys_rt_sigprocmask
++175	i386	rt_sigprocmask		sys_rt_sigprocmask		__ia32_compat_sys_rt_sigprocmask
+ 176	i386	rt_sigpending		sys_rt_sigpending		__ia32_compat_sys_rt_sigpending
+ 177	i386	rt_sigtimedwait		sys_rt_sigtimedwait_time32	__ia32_compat_sys_rt_sigtimedwait_time32
+ 178	i386	rt_sigqueueinfo		sys_rt_sigqueueinfo		__ia32_compat_sys_rt_sigqueueinfo
+-179	i386	rt_sigsuspend		sys_rt_sigsuspend		__ia32_sys_rt_sigsuspend
++179	i386	rt_sigsuspend		sys_rt_sigsuspend		__ia32_compat_sys_rt_sigsuspend
+ 180	i386	pread64			sys_pread64			__ia32_compat_sys_x86_pread
+ 181	i386	pwrite64		sys_pwrite64			__ia32_compat_sys_x86_pwrite
+ 182	i386	chown			sys_chown16			__ia32_sys_chown16
 -- 
 2.21.0
 
