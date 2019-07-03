@@ -2,162 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCE645ED88
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE965ED9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfGCUcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:32:07 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42406 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfGCUcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:32:07 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so1820237plb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 13:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l7QTIU39WbGgNxpqHk/rQWXH658WW2+nXc1D+IbTyqQ=;
-        b=i/PDO53YknvDxsmpUlY5WMTP6lFmxNQVpr7dbtzg14LI26sjTul+WHfmpQsVZ8uvh5
-         /B06lochxNQ3zGnLgAwXjyCwVErxqc1b8yyZhJMbnm4t/g4Ehe/YGRp4Hrx+O27HVkaS
-         ds6E+hxYF4SQl6TxYO1J3pbD9wwwBSsKEOgDw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l7QTIU39WbGgNxpqHk/rQWXH658WW2+nXc1D+IbTyqQ=;
-        b=aRwm5yWiFSTI+pGatBMCdbwKW4S46Fw7tzLPLPatwg3FdUMSRkxXqnmkykwjpoHh80
-         WVn1JpnfbVDbcfqX2B7Q9GMr4dWq+LL1DZAXbLlvcpO933bUDdHUNPhmuUTjxhe7D9kB
-         QUIE02PWKMCcPxy9QlB6tPkOGtRQyJNlpZLcksPWmFdek3HdLIBkZOtruuuafY57QFz/
-         g76CFXBYvhjLBzX/8AasaE9p7vtl2rk7pDxpN8xB2+Nbm9SMgJ0xIZlMLAhvT4S4UxHx
-         xhW+RjcUoQD6Ki1OoLIieiZZ1+Z6WyLCzn8mQzRYzCCMbn+vkmdBx8UorOB79ZttKh6s
-         Gycg==
-X-Gm-Message-State: APjAAAU2c9KPIxxNZoSfix4yvMgr9UWBV/4SjpiGSB7kU9oYfL0ZXFFf
-        niqYGhbjlvkDs9PPz07fxvotqA==
-X-Google-Smtp-Source: APXvYqzAEp++YNnisvcoj6zq4UQd893GB9VfCRudl4/qLynhPsEDXlNKQDyXPS6cxdQnfiExwmtHHg==
-X-Received: by 2002:a17:902:4b:: with SMTP id 69mr43964560pla.89.1562185926577;
-        Wed, 03 Jul 2019 13:32:06 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id g6sm2824380pgh.64.2019.07.03.13.32.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 13:32:06 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 13:32:04 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 2/7] net: phy: realtek: Allow disabling RTL8211E EEE
- LED mode
-Message-ID: <20190703203204.GE250418@google.com>
-References: <20190703193724.246854-1-mka@chromium.org>
- <20190703193724.246854-2-mka@chromium.org>
- <743dda1b-532d-175f-1f87-5d80ba4a2e94@gmail.com>
+        id S1727213AbfGCUeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726581AbfGCUeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:34:09 -0400
+Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9DFA218A0;
+        Wed,  3 Jul 2019 20:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562186048;
+        bh=X988kz2eLJEdgeKP5PbvA76wFevq0vcVQQV0GAFtt3E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RqbH8bSaINR/QOcNfIvtJLimvQ8CZVibcFZZqbVsjvvdR41J1zNsiB02nUHP4TmBy
+         rQTbbb4jTFMeSyhkgM97NghDzK80VA4VK5CYID1R6/q4FHz9r6Ho0osDB75lU0iICs
+         W1OGE54XXYxwtklu+zks7NFe3EX1SHAQw4TSTqsk=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 0/4] x32 and compat syscall improvements
+Date:   Wed,  3 Jul 2019 13:34:01 -0700
+Message-Id: <cover.1562185330.git.luto@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <743dda1b-532d-175f-1f87-5d80ba4a2e94@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series contains a couple of minor cleanups and a major change
+to the way that x32 syscalls work.  We currently have a range of
+syscall numbers starting at 512 that are rather annoying -- they've
+been known to cause security problems for seccomp filter authors who
+don't know about them, and they cause people to think that x86_64
+will run out of syscall numbers after 511 due to a conflict with
+x32.
 
-On Wed, Jul 03, 2019 at 10:09:39PM +0200, Heiner Kallweit wrote:
-> On 03.07.2019 21:37, Matthias Kaehlcke wrote:
-> > EEE LED mode is enabled by default on the RTL8211E. Disable it when
-> > the device tree property 'realtek,eee-led-mode-disable' exists.
-> > 
-> > The magic values to disable EEE LED mode were taken from the RTL8211E
-> > datasheet, unfortunately they are not further documented.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > Changes in v2:
-> > - patch added to the series
-> > ---
-> >  drivers/net/phy/realtek.c | 37 ++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 36 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> > index a669945eb829..eb815cbe1e72 100644
-> > --- a/drivers/net/phy/realtek.c
-> > +++ b/drivers/net/phy/realtek.c
-> > @@ -9,8 +9,9 @@
-> >   * Copyright (c) 2004 Freescale Semiconductor, Inc.
-> >   */
-> >  #include <linux/bitops.h>
-> > -#include <linux/phy.h>
-> >  #include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/phy.h>
-> >  
-> >  #define RTL821x_PHYSR				0x11
-> >  #define RTL821x_PHYSR_DUPLEX			BIT(13)
-> > @@ -26,6 +27,10 @@
-> >  #define RTL821x_EXT_PAGE_SELECT			0x1e
-> >  #define RTL821x_PAGE_SELECT			0x1f
-> >  
-> > +/* RTL8211E page 5 */
-> > +#define RTL8211E_EEE_LED_MODE1			0x05
-> > +#define RTL8211E_EEE_LED_MODE2			0x06
-> > +
-> >  #define RTL8211F_INSR				0x1d
-> >  
-> >  #define RTL8211F_TX_DELAY			BIT(8)
-> > @@ -53,6 +58,35 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
-> >  	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
-> >  }
-> >  
-> > +static int rtl8211e_disable_eee_led_mode(struct phy_device *phydev)
-> > +{
-> 
-> You define return type int but AFAICS the return value is never used,
-> also in subsequent patches.
+With this series applied, 512-547 can be just a silly legacy oddity
+just like all the other silly legacy oddities we have, and we can go
+on with our lives without kludges starting at 548 :)
 
-ok, I'll change it to void
+Andy Lutomirski (4):
+  x86/syscalls: Use the compat versions of rt_sigsuspend() and
+    rt_sigprocmask()
+  x86/syscalls: Disallow compat entries for all types of 64-bit syscalls
+  x86/syscalls: Split the x32 syscalls into their own table
+  x86/syscalls: Make __X32_SYSCALL_BIT be unsigned long
 
-> > +	int ret = 0;
-> > +	int oldpage;
-> > +
-> > +	oldpage = phy_select_page(phydev, 5);
-> > +	if (oldpage < 0)
-> > +		goto out;
-> > +
-> > +	/* write magic values to disable EEE LED mode */
-> > +	ret = __phy_write(phydev, RTL8211E_EEE_LED_MODE1, 0x8b82);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	ret = __phy_write(phydev, RTL8211E_EEE_LED_MODE2, 0x052b);
-> > +
-> > +out:
-> > +	return phy_restore_page(phydev, oldpage, ret);
-> > +}
-> > +
-> > +static int rtl8211e_config_init(struct phy_device *phydev)
-> > +{
-> > +	struct device *dev = &phydev->mdio.dev;
-> > +
-> > +	if (of_property_read_bool(dev->of_node, "realtek,eee-led-mode-disable"))
-> > +		rtl8211e_disable_eee_led_mode(phydev);
-> > +
-> > +	return 0;
-> > +}
-> 
-> I suppose checkpatch complains about the missing empty line.
-> You add it in a later patch, in case of a v3 you could fix that.
+ arch/x86/entry/common.c                       | 13 +--
+ arch/x86/entry/syscall_64.c                   | 25 ++++++
+ arch/x86/entry/syscalls/syscall_32.tbl        |  4 +-
+ arch/x86/entry/syscalls/syscalltbl.sh         | 35 ++++----
+ arch/x86/include/asm/syscall.h                |  4 +
+ arch/x86/include/asm/unistd.h                 |  6 --
+ arch/x86/include/uapi/asm/unistd.h            |  2 +-
+ arch/x86/kernel/asm-offsets_64.c              | 20 +++++
+ tools/testing/selftests/x86/Makefile          |  2 +-
+ .../testing/selftests/x86/syscall_numbering.c | 89 +++++++++++++++++++
+ 10 files changed, 168 insertions(+), 32 deletions(-)
+ create mode 100644 tools/testing/selftests/x86/syscall_numbering.c
 
-Actually checkpatch does not complain, I'll fix it in v3.
+-- 
+2.21.0
 
-Thanks
-
-Matthias
