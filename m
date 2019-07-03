@@ -2,369 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F2E5E678
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6C35E67E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfGCOXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:23:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49799 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCOXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:23:04 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EMlIa3324073
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:22:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EMlIa3324073
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562163768;
-        bh=asRdQDUdVvfJZBDCEK0C3V5Hc2aX1e6s9d/FDulFQdY=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=Lv/iRWgz1rgIc3XYDByT1A6x0K6zBxF0IzHe2EcmC2fAHX0rIi+qq+NyTq69r3gvu
-         axSnh61m4FS4LjWxNvTnu7V0hKb7Dtktm6fj3KnyajZL32u3IY9TbvMt6N51rlWZXv
-         OKKOIHWYn5w+6TWsRIsO5iF6XMEhuqzAdBjO46cLpxoz6XJPKAJL6LfQqYBxpAvLz6
-         pUzYIzQF7hRIOBcbY9zsnp7YWPibTU4gHrdbRuGr6F2xFykIT/BW0ehRHzO/WitVjQ
-         3+jblsrdcUiI20d9VSU4/FMlMvYGXGbjWyBvqVI2XnD3K/Sn1Nw3lteBuzqdJy1JDZ
-         M6JoPJvTYMNwA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EMl3K3324070;
-        Wed, 3 Jul 2019 07:22:47 -0700
-Date:   Wed, 3 Jul 2019 07:22:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-a85lkptkt0ru40irpga8yf54@git.kernel.org>
-Cc:     mingo@kernel.org, jolsa@kernel.org, namhyung@kernel.org,
-        hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
-        acme@redhat.com, andre.goddard@gmail.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, andre.goddard@gmail.com,
-          tglx@linutronix.de, adrian.hunter@intel.com, acme@redhat.com,
-          hpa@zytor.com, namhyung@kernel.org, jolsa@kernel.org,
-          mingo@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Ditch rtrim(), use skip_spaces() to get
- closer to the kernel
-Git-Commit-ID: 328584804edc950fb4608c9a38e396ac71ef22b6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727054AbfGCOX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:23:28 -0400
+Received: from cmta16.telus.net ([209.171.16.89]:46610 "EHLO cmta16.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726652AbfGCOX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:23:27 -0400
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id igAMheaLBJEJsigAOhrMEU; Wed, 03 Jul 2019 08:23:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1562163805; bh=FwIOGSKo/C4MkBroMAyJwpNbnbaRplkoVOhImgKqDU0=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=M/ixJmsw7flgaf4UTEOEVJPoyGWtiP6/24MzpTE5D+4GgidiipMlP96tkJe3qlQMe
+         VJo8sT2afLnhYo0okeVphGkuUzLRWAp/5rIjYJaIPa9YXq/WHU3PXQDJFBgA4/lDYp
+         a9sGyl1YY2cmuZCRn/4iBt7FcziMZhPvBTmzSUYanNleaSah0rzyou7wg9V1YrP2jL
+         TpF41wKJZNUPS4An4oo8I/Pn+GCnFhEzF0HHy6H2zxEVVmu9UJ6jB59eMNQT3t/yb/
+         CG2UqpL2z5C3vwE3DtzQ60jMFrMaZ9Ct4/Huq4fYDB1lFBjrnppe4YeHwWgsFDcY3d
+         8JC/MU4BaGqLQ==
+X-Telus-Authed: none
+X-Authority-Analysis: v=2.3 cv=S/CnP7kP c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
+ a=kj9zAlcOel0A:10 a=zXcWA30KZW6HlxqIn7IA:9 a=CjuIK1q_8ugA:10
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Daniel Lezcano'" <daniel.lezcano@linaro.org>
+Cc:     <linux-kernel@vger.kernel.org>,
+        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'open list:CPU IDLE TIME MANAGEMENT FRAMEWORK'" 
+        <linux-pm@vger.kernel.org>, <rafael@kernel.org>
+References: <20190620115826.4897-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20190620115826.4897-1-daniel.lezcano@linaro.org>
+Subject: RE: [PATCH] cpuidle/drivers/mobile: Add new governor for mobile/embedded systems
+Date:   Wed, 3 Jul 2019 07:23:22 -0700
+Message-ID: <000101d531aa$e00987e0$a01c97a0$@net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdUnX4aMR/4f4gKnR1C+VRSe+MmSrwCgrH+w
+X-CMAE-Envelope: MS4wfGGiQmvKIDYzuHZ2TbxQRzcMKbt6tzlkiAyxa/5fNRBo6c9uVX1cI8AtAZ55hnb8muNPVBuKrK1WvCuQf6R5PR8X4+peNBjYkTpFx6EJ0PB3WIlPbUKT
+ JaTiaJjV031ucuGgHqRvqyb9VKRH5gredccFcKEIwCj0+8chIdgCu1HCU5y9OjPzkb9T8wa8oXE+9vhRSvYVpFbVE60OSa8NSaNTmyqBviYe1u5heBDXFi9g
+ tE2/frp4m8X/p7dODCF7IfLbgUuLeExPSU7YglOsh2NSiGyAspfNVlzWgRn9lmqtsiitkbXYQcAfXPPaKnoFhOjNTl/cJcEf9ChNu7oFrxfswu97qmpXA+1I
+ zsdh9bGM9Sl+1enQT8ZNCVQBOiRSTg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  328584804edc950fb4608c9a38e396ac71ef22b6
-Gitweb:     https://git.kernel.org/tip/328584804edc950fb4608c9a38e396ac71ef22b6
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 26 Jun 2019 11:42:03 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 26 Jun 2019 11:42:03 -0300
+Hi Daniel,
 
-perf tools: Ditch rtrim(), use skip_spaces() to get closer to the kernel
+I tried your "mobile" governor, albeit not on a mobile device.
 
-No change in behaviour, just using the same kernel idiom for such
-operation.
+On 2019.06.20 04:58 Daniel Lezcano wrote:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: André Goddard Rosa <andre.goddard@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-a85lkptkt0ru40irpga8yf54@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-script.c    | 12 ++++++------
- tools/perf/ui/browser.c        |  2 +-
- tools/perf/ui/browsers/hists.c |  2 +-
- tools/perf/ui/gtk/hists.c      |  4 ++--
- tools/perf/ui/stdio/hist.c     |  2 +-
- tools/perf/util/annotate.c     | 10 +++++-----
- tools/perf/util/event.c        |  4 +---
- tools/perf/util/pmu.c          |  3 ++-
- tools/perf/util/stat-display.c |  4 ++--
- tools/perf/util/string.c       | 14 --------------
- tools/perf/util/string2.h      |  4 ++--
- 11 files changed, 23 insertions(+), 38 deletions(-)
+...
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 0131f7a0d48d..520e5b6b9ef9 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2880,7 +2880,7 @@ static int read_script_info(struct script_desc *desc, const char *filename)
- 		return -1;
- 
- 	while (fgets(line, sizeof(line), fp)) {
--		p = ltrim(line);
-+		p = skip_spaces(line);
- 		if (strlen(p) == 0)
- 			continue;
- 		if (*p != '#')
-@@ -2889,19 +2889,19 @@ static int read_script_info(struct script_desc *desc, const char *filename)
- 		if (strlen(p) && *p == '!')
- 			continue;
- 
--		p = ltrim(p);
-+		p = skip_spaces(p);
- 		if (strlen(p) && p[strlen(p) - 1] == '\n')
- 			p[strlen(p) - 1] = '\0';
- 
- 		if (!strncmp(p, "description:", strlen("description:"))) {
- 			p += strlen("description:");
--			desc->half_liner = strdup(ltrim(p));
-+			desc->half_liner = strdup(skip_spaces(p));
- 			continue;
- 		}
- 
- 		if (!strncmp(p, "args:", strlen("args:"))) {
- 			p += strlen("args:");
--			desc->args = strdup(ltrim(p));
-+			desc->args = strdup(skip_spaces(p));
- 			continue;
- 		}
- 	}
-@@ -3008,7 +3008,7 @@ static int check_ev_match(char *dir_name, char *scriptname,
- 		return -1;
- 
- 	while (fgets(line, sizeof(line), fp)) {
--		p = ltrim(line);
-+		p = skip_spaces(line);
- 		if (*p == '#')
- 			continue;
- 
-@@ -3018,7 +3018,7 @@ static int check_ev_match(char *dir_name, char *scriptname,
- 				break;
- 
- 			p += 2;
--			p = ltrim(p);
-+			p = skip_spaces(p);
- 			len = strcspn(p, " \t");
- 			if (!len)
- 				break;
-diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-index 8812c1564995..55ff05a46e0b 100644
---- a/tools/perf/ui/browser.c
-+++ b/tools/perf/ui/browser.c
-@@ -594,7 +594,7 @@ static int ui_browser__color_config(const char *var, const char *value,
- 			break;
- 
- 		*bg = '\0';
--		bg = ltrim(++bg);
-+		bg = skip_spaces(bg + 1);
- 		ui_browser__colorsets[i].bg = bg;
- 		ui_browser__colorsets[i].fg = fg;
- 		return 0;
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 59483bdb0027..04a56114df92 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -1470,7 +1470,7 @@ static int hist_browser__show_hierarchy_entry(struct hist_browser *browser,
- 				int i = 0;
- 
- 				width -= fmt->entry(fmt, &hpp, entry);
--				ui_browser__printf(&browser->b, "%s", ltrim(s));
-+				ui_browser__printf(&browser->b, "%s", skip_spaces(s));
- 
- 				while (isspace(s[i++]))
- 					width++;
-diff --git a/tools/perf/ui/gtk/hists.c b/tools/perf/ui/gtk/hists.c
-index 0c08890f006a..6341c421a8f7 100644
---- a/tools/perf/ui/gtk/hists.c
-+++ b/tools/perf/ui/gtk/hists.c
-@@ -459,7 +459,7 @@ static void perf_gtk__add_hierarchy_entries(struct hists *hists,
- 			advance_hpp(hpp, ret + 2);
- 		}
- 
--		gtk_tree_store_set(store, &iter, col_idx, ltrim(rtrim(bf)), -1);
-+		gtk_tree_store_set(store, &iter, col_idx, trim(bf), -1);
- 
- 		if (!he->leaf) {
- 			hpp->buf = bf;
-@@ -555,7 +555,7 @@ static void perf_gtk__show_hierarchy(GtkWidget *window, struct hists *hists,
- 			first_col = false;
- 
- 			fmt->header(fmt, &hpp, hists, 0, NULL);
--			strcat(buf, ltrim(rtrim(hpp.buf)));
-+			strcat(buf, trim(hpp.buf));
- 		}
- 	}
- 
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index 4b1a6e921d1c..594e56628904 100644
---- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -516,7 +516,7 @@ static int hist_entry__hierarchy_fprintf(struct hist_entry *he,
- 		 * dynamic entries are right-aligned but we want left-aligned
- 		 * in the hierarchy mode
- 		 */
--		printed += fprintf(fp, "%s%s", sep ?: "  ", ltrim(buf));
-+		printed += fprintf(fp, "%s%s", sep ?: "  ", skip_spaces(buf));
- 	}
- 	printed += putc('\n', fp);
- 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 65005ccea232..783e2628cc8e 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -557,7 +557,7 @@ static int mov__parse(struct arch *arch, struct ins_operands *ops, struct map_sy
- 	if (comment == NULL)
- 		return 0;
- 
--	comment = ltrim(comment);
-+	comment = skip_spaces(comment);
- 	comment__symbol(ops->source.raw, comment + 1, &ops->source.addr, &ops->source.name);
- 	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
-@@ -602,7 +602,7 @@ static int dec__parse(struct arch *arch __maybe_unused, struct ins_operands *ops
- 	if (comment == NULL)
- 		return 0;
- 
--	comment = ltrim(comment);
-+	comment = skip_spaces(comment);
- 	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
- 	return 0;
-@@ -1098,7 +1098,7 @@ static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, str
- 
- static int disasm_line__parse(char *line, const char **namep, char **rawp)
- {
--	char tmp, *name = ltrim(line);
-+	char tmp, *name = skip_spaces(line);
- 
- 	if (name[0] == '\0')
- 		return -1;
-@@ -1116,7 +1116,7 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
- 		goto out_free_name;
- 
- 	(*rawp)[0] = tmp;
--	*rawp = ltrim(*rawp);
-+	*rawp = skip_spaces(*rawp);
- 
- 	return 0;
- 
-@@ -1503,7 +1503,7 @@ static int symbol__parse_objdump_line(struct symbol *sym, FILE *file,
- 		return 0;
- 	}
- 
--	tmp = ltrim(parsed_line);
-+	tmp = skip_spaces(parsed_line);
- 	if (*tmp) {
- 		/*
- 		 * Parse hexa addresses followed by ':'
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index d8f8a20543c5..e1d0c5ba1f92 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -158,9 +158,7 @@ static int perf_event__get_comm_ids(pid_t pid, char *comm, size_t len,
- 	if (name) {
- 		char *nl;
- 
--		name += 5;  /* strlen("Name:") */
--		name = ltrim(name);
--
-+		name = skip_spaces(name + 5);  /* strlen("Name:") */
- 		nl = strchr(name, '\n');
- 		if (nl)
- 			*nl = '\0';
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index faa8eb231e1b..38dc0c6e28b8 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/list.h>
- #include <linux/compiler.h>
-+#include <linux/string.h>
- #include <sys/types.h>
- #include <errno.h>
- #include <fcntl.h>
-@@ -1339,7 +1340,7 @@ static void wordwrap(char *s, int start, int max, int corr)
- 			break;
- 		s += wlen;
- 		column += n;
--		s = ltrim(s);
-+		s = skip_spaces(s);
- 	}
- }
- 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index ce993d29cca5..90df41169113 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -212,7 +212,7 @@ static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
- 		return;
- 	}
- 	snprintf(buf, sizeof(buf), fmt, val);
--	ends = vals = ltrim(buf);
-+	ends = vals = skip_spaces(buf);
- 	while (isdigit(*ends) || *ends == '.')
- 		ends++;
- 	*ends = 0;
-@@ -280,7 +280,7 @@ static void print_metric_only_csv(struct perf_stat_config *config __maybe_unused
- 		return;
- 	unit = fixunit(tbuf, os->evsel, unit);
- 	snprintf(buf, sizeof buf, fmt, val);
--	ends = vals = ltrim(buf);
-+	ends = vals = skip_spaces(buf);
- 	while (isdigit(*ends) || *ends == '.')
- 		ends++;
- 	*ends = 0;
-diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
-index d28e723e2790..99a555ea4a9f 100644
---- a/tools/perf/util/string.c
-+++ b/tools/perf/util/string.c
-@@ -318,20 +318,6 @@ char *strxfrchar(char *s, char from, char to)
- 	return s;
- }
- 
--/**
-- * ltrim - Removes leading whitespace from @s.
-- * @s: The string to be stripped.
-- *
-- * Return pointer to the first non-whitespace character in @s.
-- */
--char *ltrim(char *s)
--{
--	while (isspace(*s))
--		s++;
--
--	return s;
--}
--
- /**
-  * rtrim - Removes trailing whitespace from @s.
-  * @s: The string to be stripped.
-diff --git a/tools/perf/util/string2.h b/tools/perf/util/string2.h
-index 07fd37568543..db02059e31c5 100644
---- a/tools/perf/util/string2.h
-+++ b/tools/perf/util/string2.h
-@@ -2,6 +2,7 @@
- #ifndef PERF_STRING_H
- #define PERF_STRING_H
- 
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <stddef.h>
- #include <string.h>
-@@ -22,12 +23,11 @@ static inline bool strisglob(const char *str)
- int strtailcmp(const char *s1, const char *s2);
- char *strxfrchar(char *s, char from, char to);
- 
--char *ltrim(char *s);
- char *rtrim(char *s);
- 
- static inline char *trim(char *s)
- {
--	return ltrim(rtrim(s));
-+	return skip_spaces(rtrim(s));
- }
- 
- char *asprintf_expr_inout_ints(const char *var, bool in, size_t nints, int *ints);
+> The mobile governor is a new governor targeting embedded systems
+> running on battery where the energy saving has a higher priority than
+> servers or desktops. This governor aims to save energy as much as
+> possible but with a performance degradation tolerance.
+>
+> In this way, we can optimize the governor for specific mobile workload
+> and more generally embedded systems without impacting other platforms.
+
+I just wanted to observe the lower energy, accepting performance
+degradation. My workloads may have been inappropriate.
+
+...
+
+> +
+> +#define EMA_ALPHA_VAL		64
+> +#define EMA_ALPHA_SHIFT		7
+> +#define MAX_RESCHED_INTERVAL_MS	100
+> +
+> +static DEFINE_PER_CPU(struct mobile_device, mobile_devices);
+> +
+> +static int mobile_ema_new(s64 value, s64 ema_old)
+> +{
+> +	if (likely(ema_old))
+> +		return ema_old + (((value - ema_old) * EMA_ALPHA_VAL) >>
+> +				  EMA_ALPHA_SHIFT);
+> +	return value;
+> +}
+
+Do you have any information as to why these numbers?
+Without any background, the filter seems overly new value weighted to me.
+It is an infinite impulse response type filter, currently at:
+
+output = 0.5 * old + 0.5 * new.
+
+I tried, but didn't get anything conclusive:
+
+output = 0.875 * old + 0.125 * new.
+
+I did it this way:
+
+#define EMA_ALPHA_VAL           7
+#define EMA_ALPHA_SHIFT         3
+#define MAX_RESCHED_INTERVAL_MS 100
+
+static DEFINE_PER_CPU(struct mobile_device, mobile_devices);
+
+static int mobile_ema_new(s64 value, s64 ema_old)
+{
+        if (likely(ema_old))
+                return ((ema_old * EMA_ALPHA_VAL) + value) >>
+                                  EMA_ALPHA_SHIFT;
+        return value;
+}
+
+...
+
+> +	/*
+> +	 * Sum all the residencies in order to compute the total
+> +	 * duration of the idle task.
+> +	 */
+> +	residency = dev->last_residency - s->exit_latency;
+
+What about when the CPU comes out of the idle state before it
+even gets fully into it? Under such conditions it seems to hold
+much too hard at idle states that are too deep, to the point
+where energy goes up while performance goes down.
+
+Anyway, I did a bunch of tests and such, but have deleted
+most from this e-mail, because it's just noise. I'll
+include just one set:
+
+For a work load that would normally result in a lot of use
+of shallow idle states (single core pipe-test * 2 cores).
+I got (all kernel 5.2-rc5 + this patch):
+
+Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
+Processor package power: 40.4 watts; 4.9 uSec/loop
+
+Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
+Processor package power: 34 watts; 5.2 uSec/loop
+
+Idle governor, mobile; CPU frequency scaling: intel-cpufreq/ondemand;
+Processor package power: 25.9 watts; 11.1 uSec/loop
+
+Idle governor, menu; CPU frequency scaling: intel-cpufreq/ondemand;
+Processor package power: 34.2 watts; 5.23 uSec/loop
+
+Idle governor, teo; CPU frequency scaling: intel-cpufreq/ondemand;
+Maximum CPU frequency limited to 73% to match mobile energy.
+Processor package power: 25.4 watts; 6.4 uSec/loop
+
+... Doug
+
+
