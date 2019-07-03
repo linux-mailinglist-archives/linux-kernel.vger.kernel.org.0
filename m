@@ -2,124 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D876D5E60B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91B05E615
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:07:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbfGCOGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:06:43 -0400
-Received: from cmta17.telus.net ([209.171.16.90]:50038 "EHLO cmta17.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbfGCOGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:06:43 -0400
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id ifuBhTEEDzEP4ifuChmkRq; Wed, 03 Jul 2019 08:06:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1562162801; bh=7AK3lAbPF9IfZtK/nk2VLf17bp+n2IvH1EnM0vORmP0=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=IaL+27ZfIqBmuii6sZ3okVn3xSxjweag474KxqDBMa1FgBhv3K1rSE7CQsgC2taXC
-         q1ScbRrWclDFN6C0E15Nw0iFDCUvYCEscxYVmuGf3Uwdei/qzr4iz/H7e5lW53o0EA
-         IelIl0UsWuYk1UitJDSMzdTM09DZ/YrONwPDxbcnBRp7XpcWCCNbIJQhdiwuDgnZ1+
-         FJJDBOgYBEL+OT0erv1JyxiqAU5VcDABAFTMPfgfJbWIgKq/KoWtzrBltT/SDJ9eg8
-         usKMsHfjkJC5ZaYkeIoibnRYHto825gsy119vpkVC+yC2Du7TwlgovUz38mMHm+2A4
-         1TCMuFTAPN7qQ==
-X-Telus-Authed: none
-X-Authority-Analysis: v=2.3 cv=cYmsUULM c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
- a=IkcTkHD0fZMA:10 a=Ye9q-bpsAAAA:8 a=_UL-ih6NGSuCdm9YO5gA:9 a=QEXdDO2ut3YA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Alan Jenkins'" <alan.christopher.jenkins@gmail.com>
-Cc:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <2ff025f1-9a3e-3eae-452b-ef84824009b4@gmail.com>
-In-Reply-To: <2ff025f1-9a3e-3eae-452b-ef84824009b4@gmail.com>
-Subject: RE: NO_HZ_IDLE causes consistently low cpu "iowait" time (and higher cpu "idle" time)
-Date:   Wed, 3 Jul 2019 07:06:38 -0700
-Message-ID: <000001d531a8$8931b2a0$9b9517e0$@net>
+        id S1727172AbfGCOH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:07:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36065 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbfGCOH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:07:27 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63E70bc3321088
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:07:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63E70bc3321088
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562162821;
+        bh=h30Hhr2WykBofjJ5RMGqhEeXePYe6eO+OK+G+uoIV/k=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=PbrTASXf9tnIF1UVcCdcmC4VfXz7Cj7sIQCGq0YTJ6JwRJ34aWYSVJm/H5eAvSTTy
+         +sSrmNFJKdICNqcXXFA38TW+PZJMq/pA7hH/Ao+PexPRvqpMabkp+fDecu+URRF3GJ
+         46tYHwnQ/ZlWQtBWM0UVISksLQ+506Hra1MG6U8FBjvtjII698T5WW+QHIj/Zj1xt1
+         MiU13ZtBMKXQb36oaxyq0DKXZnLGExdUIkrzMWTDjk/NtPywidyIOTB5bCoES8IGKw
+         JpIklXojtqE7t/5E/SzTkDmOYKnlLViOwepA+S4sR8KGyYbmIZ7+v9yCGkyw8PgOqd
+         g3zrsu+wNUEiA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63E6xG93321082;
+        Wed, 3 Jul 2019 07:06:59 -0700
+Date:   Wed, 3 Jul 2019 07:06:59 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-b9322cab17a1092e2aa7ee2505ecceb0cd5fd685@git.kernel.org>
+Cc:     tglx@linutronix.de, adrian.hunter@intel.com, hpa@zytor.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+        jolsa@redhat.com
+Reply-To: adrian.hunter@intel.com, hpa@zytor.com, tglx@linutronix.de,
+          jolsa@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org
+In-Reply-To: <20190622093248.581-6-adrian.hunter@intel.com>
+References: <20190622093248.581-6-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf db-export: Export synth events
+Git-Commit-ID: b9322cab17a1092e2aa7ee2505ecceb0cd5fd685
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdUwImbbpKczS7J+QT6mtzDQSlV++wBga9sA
-X-CMAE-Envelope: MS4wfLfa/TsVw7qsXoaZUNI35eH5/9QXw8OFOcVUuyGy7kGEXi8HE4vcaj5OKz54NsHJWEe/KYMubp1CqxycGXUfs5oX3M914iOWRqu6t+EqpnbdvBrzcYWZ
- F/aK1XZGYY+Fh0UiXrhTC8fvPTUxIPWeTjBYT6TAYM5q0Qb03V9xDtMO8Lt+v3PyLiQz06Y79b7+bhpGAJ4s7N/CNejp4c1+HGgr+c3sum0bi7kSa1Re+Apq
- vFO9qF0KRddNfey7QNWUCw==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019.07.01 08:34 Alan Jenkins wrote:
+Commit-ID:  b9322cab17a1092e2aa7ee2505ecceb0cd5fd685
+Gitweb:     https://git.kernel.org/tip/b9322cab17a1092e2aa7ee2505ecceb0cd5fd685
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Sat, 22 Jun 2019 12:32:46 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 08:47:10 -0300
 
-> Hi
+perf db-export: Export synth events
 
-Hi,
+Synthesized events are samples but with architecture-specific data
+stored in sample->raw_data. They are identified by attribute type
+PERF_TYPE_SYNTH.  Add a function to export them.
 
-> I tried running a simple test:
->
->     dd if=testfile iflag=direct bs=1M of=/dev/null
->
-> With my default settings, `vmstat 10` shows something like 85% idle time 
-> to 15% iowait time. I have 4 CPUs, so this is much less than one CPU 
-> worth of iowait time.
->
-> If I boot with "nohz=off", I see idle time fall to 75% or below, and 
-> iowait rise to about 25%, equivalent to one CPU.  That is what I had 
-> originally expected.
->
-> (I can also see my expected numbers, if I disable *all* C-states and 
-> force polling using `pm_qos_resume_latency_us` in sysfs).
->
-> The numbers above are from a kernel somewhere around v5.2-rc5.  I saw 
-> the "wrong" results on some previous kernels as well.  I just now 
-> realized the link to NO_HZ_IDLE.[1]
->
-> [1] 
-> https://unix.stackexchange.com/questions/517757/my-basic-assumption-about-system-iowait-does-not-hold/527836#527836
->
-> I did not find any information about this high level of inaccuracy. Can 
-> anyone explain, is this behaviour expected?
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20190622093248.581-6-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../util/scripting-engines/trace-event-python.c    | 46 +++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
-I'm not commenting on expected behaviour or not, just that it is
-inconsistent.
-
->
-> I found several patches that mentioned "iowait" and NO_HZ_IDLE. But if 
-> they described this problem, it was not clear to me.
->
-> I thought this might also be affecting the "IO pressure" values from the 
-> new "pressure stall information"... but I am too confused already, so I 
-> am only asking about iowait at the moment :-).
-
-Using your workload, I confirm inconsistent behaviour for /proc/stat
-(which vmstat uses) between kernels 4.15, 4.16, and 4.17:
-4.15 does what you expect, no matter idle states enabled or disabled.
-4.16 doesn't do what you expect regardless. (although a little erratic.)
->= 4.17 does what you expect with only idle state 0 enabled, and doesn't otherwise.
-
-Actual test data vmstat (/proc/stat) (8 CPUs, 12.5% = 1 CPU)):
-Kernel	idle/iowait %	Idle states >= 1
-4.15		88/12			enabled
-4.15		88/12			disabled
-4.16		99/1			enabled
-4.16		99/1			disabled
-4.17		98/2			enabled
-4.17		88/12			disabled
-
-Note 1: I never booted with "nohz=off" because the tick never turns off for
-idle state 0, which is good enough for testing.
-
-Note 2: Myself, I don't use /proc/stat for idle time statistics. I use:
-/sys/devices/system/cpu/cpu*/cpuidle/state*/time
-And they seem to always be consistent at the higher idle percentage number.
-
-Unless someone has some insight, the next step is kernel bisection,
-once for between kernel 4.15 and 4.16, then again between 4.16 and 4.17.
-The second bisection might go faster with knowledge gained from the first.
-Alan: Can you do kernel bisection? I can only do it starting maybe Friday.
-
-... Doug
-
-
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 6acb379b53ec..112bed65232f 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -112,6 +112,7 @@ struct tables {
+ 	PyObject		*sample_handler;
+ 	PyObject		*call_path_handler;
+ 	PyObject		*call_return_handler;
++	PyObject		*synth_handler;
+ 	bool			db_export_mode;
+ };
+ 
+@@ -947,6 +948,12 @@ static int tuple_set_string(PyObject *t, unsigned int pos, const char *s)
+ 	return PyTuple_SetItem(t, pos, _PyUnicode_FromString(s));
+ }
+ 
++static int tuple_set_bytes(PyObject *t, unsigned int pos, void *bytes,
++			   unsigned int sz)
++{
++	return PyTuple_SetItem(t, pos, _PyBytes_FromStringAndSize(bytes, sz));
++}
++
+ static int python_export_evsel(struct db_export *dbe, struct perf_evsel *evsel)
+ {
+ 	struct tables *tables = container_of(dbe, struct tables, dbe);
+@@ -1105,8 +1112,8 @@ static int python_export_branch_type(struct db_export *dbe, u32 branch_type,
+ 	return 0;
+ }
+ 
+-static int python_export_sample(struct db_export *dbe,
+-				struct export_sample *es)
++static void python_export_sample_table(struct db_export *dbe,
++				       struct export_sample *es)
+ {
+ 	struct tables *tables = container_of(dbe, struct tables, dbe);
+ 	PyObject *t;
+@@ -1141,6 +1148,33 @@ static int python_export_sample(struct db_export *dbe,
+ 	call_object(tables->sample_handler, t, "sample_table");
+ 
+ 	Py_DECREF(t);
++}
++
++static void python_export_synth(struct db_export *dbe, struct export_sample *es)
++{
++	struct tables *tables = container_of(dbe, struct tables, dbe);
++	PyObject *t;
++
++	t = tuple_new(3);
++
++	tuple_set_u64(t, 0, es->db_id);
++	tuple_set_u64(t, 1, es->evsel->attr.config);
++	tuple_set_bytes(t, 2, es->sample->raw_data, es->sample->raw_size);
++
++	call_object(tables->synth_handler, t, "synth_data");
++
++	Py_DECREF(t);
++}
++
++static int python_export_sample(struct db_export *dbe,
++				struct export_sample *es)
++{
++	struct tables *tables = container_of(dbe, struct tables, dbe);
++
++	python_export_sample_table(dbe, es);
++
++	if (es->evsel->attr.type == PERF_TYPE_SYNTH && tables->synth_handler)
++		python_export_synth(dbe, es);
+ 
+ 	return 0;
+ }
+@@ -1477,6 +1511,14 @@ static void set_table_handlers(struct tables *tables)
+ 	SET_TABLE_HANDLER(sample);
+ 	SET_TABLE_HANDLER(call_path);
+ 	SET_TABLE_HANDLER(call_return);
++
++	/*
++	 * Synthesized events are samples but with architecture-specific data
++	 * stored in sample->raw_data. They are exported via
++	 * python_export_sample() and consequently do not need a separate export
++	 * callback.
++	 */
++	tables->synth_handler = get_handler("synth_data");
+ }
+ 
+ #if PY_MAJOR_VERSION < 3
