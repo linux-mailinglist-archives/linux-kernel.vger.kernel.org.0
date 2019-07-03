@@ -2,323 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F185E82E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2655E835
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfGCPxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52498 "EHLO mail.kernel.org"
+        id S1726993AbfGCPyI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 3 Jul 2019 11:54:08 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28237 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbfGCPxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:53:18 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D8BF2189E;
-        Wed,  3 Jul 2019 15:53:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562169197;
-        bh=NILayKOHyuxE5KV15gyzhly6Z3NNMb2elNkejzwzRA4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eGT3mAuEiCW1P+c10jEZLTJGEENPblV3rcMzwTaCC8pUy4bmDVyhcknrP+1axazNW
-         emGtgd76YCBFVy+rI9/EAKX3vM+84UuuYTNK7k1xE8pA1FeTX/KYcIyE0RTrejod8o
-         KwuesTSujQvWDfVFkex6TaY93ednPnvhtpQA78zY=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: support swap file w/ DIO
-Date:   Wed,  3 Jul 2019 08:53:15 -0700
-Message-Id: <20190703155315.69335-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        id S1726955AbfGCPyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:54:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 08:54:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
+   d="scan'208";a="315615600"
+Received: from um.fi.intel.com (HELO localhost) ([10.237.72.63])
+  by orsmga004.jf.intel.com with ESMTP; 03 Jul 2019 08:54:05 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [GIT PULL 1/9] intel_th: msu: Fix unused variable warning on arm64 platform
+In-Reply-To: <20190703154551.GA19371@kroah.com>
+References: <20190627125152.54905-1-alexander.shishkin@linux.intel.com> <20190627125152.54905-2-alexander.shishkin@linux.intel.com> <20190703154551.GA19371@kroah.com>
+Date:   Wed, 03 Jul 2019 18:54:05 +0300
+Message-ID: <87muhvt8pu.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c              | 142 ++++++++++++++++++++++++++++++++++--
- fs/f2fs/f2fs.h              |   5 +-
- include/trace/events/f2fs.h |  11 +--
- 3 files changed, 143 insertions(+), 15 deletions(-)
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 1e2d924e2ea7..6a8db4abdf5f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -14,6 +14,7 @@
- #include <linux/pagevec.h>
- #include <linux/blkdev.h>
- #include <linux/bio.h>
-+#include <linux/swap.h>
- #include <linux/prefetch.h>
- #include <linux/uio.h>
- #include <linux/cleancache.h>
-@@ -54,7 +55,7 @@ static bool __is_cp_guaranteed(struct page *page)
- 
- static enum count_type __read_io_type(struct page *page)
- {
--	struct address_space *mapping = page->mapping;
-+	struct address_space *mapping = page_file_mapping(page);
- 
- 	if (mapping) {
- 		struct inode *inode = mapping->host;
-@@ -1585,7 +1586,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	sector_t block_nr;
- 	int ret = 0;
- 
--	block_in_file = (sector_t)page->index;
-+	block_in_file = (sector_t)page_index(page);
- 	last_block = block_in_file + nr_pages;
- 	last_block_in_file = (i_size_read(inode) + blocksize - 1) >>
- 							blkbits;
-@@ -1618,7 +1619,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 		block_nr = map->m_pblk + block_in_file - map->m_lblk;
- 		SetPageMappedToDisk(page);
- 
--		if (!PageUptodate(page) && !cleancache_get_page(page)) {
-+		if (!PageUptodate(page) && (!PageSwapCache(page) &&
-+					!cleancache_get_page(page))) {
- 			SetPageUptodate(page);
- 			goto confused;
- 		}
-@@ -1716,7 +1718,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 			prefetchw(&page->flags);
- 			list_del(&page->lru);
- 			if (add_to_page_cache_lru(page, mapping,
--						  page->index,
-+						  page_index(page),
- 						  readahead_gfp_mask(mapping)))
- 				goto next_page;
- 		}
-@@ -1740,7 +1742,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 
- static int f2fs_read_data_page(struct file *file, struct page *page)
- {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = page_file_mapping(page)->host;
- 	int ret = -EAGAIN;
- 
- 	trace_f2fs_readpage(page, DATA);
-@@ -1749,7 +1751,8 @@ static int f2fs_read_data_page(struct file *file, struct page *page)
- 	if (f2fs_has_inline_data(inode))
- 		ret = f2fs_read_inline_data(inode, page);
- 	if (ret == -EAGAIN)
--		ret = f2fs_mpage_readpages(page->mapping, NULL, page, 1, false);
-+		ret = f2fs_mpage_readpages(page_file_mapping(page),
-+						NULL, page, 1, false);
- 	return ret;
- }
- 
-@@ -2851,13 +2854,14 @@ int f2fs_release_page(struct page *page, gfp_t wait)
- 
- static int f2fs_set_data_page_dirty(struct page *page)
- {
--	struct address_space *mapping = page->mapping;
--	struct inode *inode = mapping->host;
-+	struct inode *inode = page_file_mapping(page)->host;
- 
- 	trace_f2fs_set_page_dirty(page, DATA);
- 
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
-+	if (PageSwapCache(page))
-+		return __set_page_dirty_nobuffers(page);
- 
- 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
-@@ -2949,6 +2953,126 @@ int f2fs_migrate_page(struct address_space *mapping,
- }
- #endif
- 
-+#ifdef CONFIG_SWAP
-+/* Copied from generic_swapfile_activate() to check any holes */
-+static int check_swap_activate(struct file *swap_file, unsigned int max)
-+{
-+	struct address_space *mapping = swap_file->f_mapping;
-+	struct inode *inode = mapping->host;
-+	unsigned blocks_per_page;
-+	unsigned long page_no;
-+	unsigned blkbits;
-+	sector_t probe_block;
-+	sector_t last_block;
-+	sector_t lowest_block = -1;
-+	sector_t highest_block = 0;
-+
-+	blkbits = inode->i_blkbits;
-+	blocks_per_page = PAGE_SIZE >> blkbits;
-+
-+	/*
-+	 * Map all the blocks into the extent list.  This code doesn't try
-+	 * to be very smart.
-+	 */
-+	probe_block = 0;
-+	page_no = 0;
-+	last_block = i_size_read(inode) >> blkbits;
-+	while ((probe_block + blocks_per_page) <= last_block && page_no < max) {
-+		unsigned block_in_page;
-+		sector_t first_block;
-+
-+		cond_resched();
-+
-+		first_block = bmap(inode, probe_block);
-+		if (first_block == 0)
-+			goto bad_bmap;
-+
-+		/*
-+		 * It must be PAGE_SIZE aligned on-disk
-+		 */
-+		if (first_block & (blocks_per_page - 1)) {
-+			probe_block++;
-+			goto reprobe;
-+		}
-+
-+		for (block_in_page = 1; block_in_page < blocks_per_page;
-+					block_in_page++) {
-+			sector_t block;
-+
-+			block = bmap(inode, probe_block + block_in_page);
-+			if (block == 0)
-+				goto bad_bmap;
-+			if (block != first_block + block_in_page) {
-+				/* Discontiguity */
-+				probe_block++;
-+				goto reprobe;
-+			}
-+		}
-+
-+		first_block >>= (PAGE_SHIFT - blkbits);
-+		if (page_no) {	/* exclude the header page */
-+			if (first_block < lowest_block)
-+				lowest_block = first_block;
-+			if (first_block > highest_block)
-+				highest_block = first_block;
-+		}
-+
-+		page_no++;
-+		probe_block += blocks_per_page;
-+reprobe:
-+		continue;
-+	}
-+	return 0;
-+
-+bad_bmap:
-+	pr_err("swapon: swapfile has holes\n");
-+	return -EINVAL;
-+}
-+
-+static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
-+				sector_t *span)
-+{
-+	struct inode *inode = file_inode(file);
-+	int ret;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
-+		return -EROFS;
-+
-+	ret = f2fs_convert_inline_inode(inode);
-+	if (ret)
-+		return ret;
-+
-+	ret = check_swap_activate(file, sis->max);
-+	if (ret)
-+		return ret;
-+
-+	set_inode_flag(inode, FI_PIN_FILE);
-+	f2fs_precache_extents(inode);
-+	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-+	return 0;
-+}
-+
-+static void f2fs_swap_deactivate(struct file *file)
-+{
-+	struct inode *inode = file_inode(file);
-+
-+	clear_inode_flag(inode, FI_PIN_FILE);
-+}
-+#else
-+static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
-+				sector_t *span)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static void f2fs_swap_deactivate(struct file *file)
-+{
-+}
-+#endif
-+
- const struct address_space_operations f2fs_dblock_aops = {
- 	.readpage	= f2fs_read_data_page,
- 	.readpages	= f2fs_read_data_pages,
-@@ -2961,6 +3085,8 @@ const struct address_space_operations f2fs_dblock_aops = {
- 	.releasepage	= f2fs_release_page,
- 	.direct_IO	= f2fs_direct_IO,
- 	.bmap		= f2fs_bmap,
-+	.swap_activate  = f2fs_swap_activate,
-+	.swap_deactivate = f2fs_swap_deactivate,
- #ifdef CONFIG_MIGRATION
- 	.migratepage    = f2fs_migrate_page,
- #endif
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 761c5a59ef77..17382da7f0bd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1498,7 +1498,7 @@ static inline struct f2fs_sb_info *F2FS_M_SB(struct address_space *mapping)
- 
- static inline struct f2fs_sb_info *F2FS_P_SB(struct page *page)
- {
--	return F2FS_M_SB(page->mapping);
-+	return F2FS_M_SB(page_file_mapping(page));
- }
- 
- static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
-@@ -3683,7 +3683,8 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	if (test_opt(sbi, LFS) && (rw == WRITE) &&
- 				block_unaligned_IO(inode, iocb, iter))
- 		return true;
--	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
-+	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED) &&
-+					!(inode->i_flags & S_SWAPFILE))
- 		return true;
- 
- 	return false;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 53b96f12300c..af79e0c72926 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1028,8 +1028,8 @@ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev		= page->mapping->host->i_sb->s_dev;
--		__entry->ino		= page->mapping->host->i_ino;
-+		__entry->dev		= page_file_mapping(page)->host->i_sb->s_dev;
-+		__entry->ino		= page_file_mapping(page)->host->i_ino;
- 		__entry->index		= page->index;
- 		__entry->old_blkaddr	= fio->old_blkaddr;
- 		__entry->new_blkaddr	= fio->new_blkaddr;
-@@ -1216,10 +1216,11 @@ DECLARE_EVENT_CLASS(f2fs__page,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	= page->mapping->host->i_sb->s_dev;
--		__entry->ino	= page->mapping->host->i_ino;
-+		__entry->dev	= page_file_mapping(page)->host->i_sb->s_dev;
-+		__entry->ino	= page_file_mapping(page)->host->i_ino;
- 		__entry->type	= type;
--		__entry->dir	= S_ISDIR(page->mapping->host->i_mode);
-+		__entry->dir	=
-+			S_ISDIR(page_file_mapping(page)->host->i_mode);
- 		__entry->index	= page->index;
- 		__entry->dirty	= PageDirty(page);
- 		__entry->uptodate = PageUptodate(page);
--- 
-2.19.0.605.g01d371f741-goog
+> On Thu, Jun 27, 2019 at 03:51:44PM +0300, Alexander Shishkin wrote:
+>> From: Shaokun Zhang <zhangshaokun@hisilicon.com>
+>> 
+>> Commit ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
+>> introduced the following warnings on non-x86 architectures, as a result
+>> of reordering the multi mode buffer allocation sequence:
+>> 
+>> > drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
+>> > drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’
+>> > [-Wunused-variable]
+>> > int ret = -ENOMEM, i;
+>> >                    ^
+>> > drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
+>> > drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’
+>> > [-Wunused-variable]
+>> > int i;
+>> >     ^
+>> 
+>> Fix this compiler warning by factoring out set_memory sequences and making
+>> them x86-only.
+>> 
+>> Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+>> Fixes: ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
+>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>> ---
+>>  drivers/hwtracing/intel_th/msu.c | 40 +++++++++++++++++++++-----------
+>>  1 file changed, 27 insertions(+), 13 deletions(-)
+>
+> Does not apply to my tree :(
 
+It's the same one as the one in the fixes series. I just put it here for
+completeness.
+
+Regards,
+--
+Alex
