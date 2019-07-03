@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B695E272
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AC135E279
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfGCLEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:04:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51690 "EHLO
+        id S1727296AbfGCLEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:04:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51698 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbfGCLEQ (ORCPT
+        with ESMTP id S1727179AbfGCLER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:04:16 -0400
+        Wed, 3 Jul 2019 07:04:17 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hid3e-0002db-IR; Wed, 03 Jul 2019 13:04:14 +0200
-Message-Id: <20190703105917.153388644@linutronix.de>
+        id 1hid3f-0002dm-DC; Wed, 03 Jul 2019 13:04:15 +0200
+Message-Id: <20190703105917.246171169@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 03 Jul 2019 12:54:48 +0200
+Date:   Wed, 03 Jul 2019 12:54:49 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch 17/18] x86/apic/flat64: Add conditional IPI shorthands support
+Subject: [patch 18/18] x86/apic/x2apic: Add conditional IPI shorthands support
 References: <20190703105431.096822793@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -39,65 +39,81 @@ enabled. If not use the regular one by one IPI mechanism.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/apic/apic_flat_64.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ arch/x86/kernel/apic/local.h          |    1 +
+ arch/x86/kernel/apic/x2apic_cluster.c |   10 ++++++++--
+ arch/x86/kernel/apic/x2apic_phys.c    |   18 ++++++++++++++++--
+ 3 files changed, 25 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/apic/apic_flat_64.c
-+++ b/arch/x86/kernel/apic/apic_flat_64.c
-@@ -80,7 +80,9 @@ static void flat_send_IPI_allbutself(int
+--- a/arch/x86/kernel/apic/local.h
++++ b/arch/x86/kernel/apic/local.h
+@@ -23,6 +23,7 @@ unsigned int x2apic_get_apic_id(unsigned
+ u32 x2apic_set_apic_id(unsigned int id);
+ int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
+ void x2apic_send_IPI_self(int vector);
++void __x2apic_send_IPI_shorthand(int vector, u32 which);
+ 
+ /* IPI */
+ 
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -82,12 +82,18 @@ x2apic_send_IPI_mask_allbutself(const st
+ 
+ static void x2apic_send_IPI_allbutself(int vector)
  {
- 	int cpu = smp_processor_id();
- 
--	if (IS_ENABLED(CONFIG_HOTPLUG_CPU) || vector == NMI_VECTOR) {
-+	if (static_branch_likely(&apic_use_ipi_shorthand)) {
-+		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
-+	} else {
- 		if (!cpumask_equal(cpu_online_mask, cpumask_of(cpu))) {
- 			unsigned long mask = cpumask_bits(cpu_online_mask)[0];
- 
-@@ -89,18 +91,15 @@ static void flat_send_IPI_allbutself(int
- 
- 			_flat_send_IPI_mask(mask, vector);
- 		}
--	} else if (num_online_cpus() > 1) {
--		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
- 	}
- }
- 
- static void flat_send_IPI_all(int vector)
- {
--	if (vector == NMI_VECTOR) {
--		flat_send_IPI_mask(cpu_online_mask, vector);
--	} else {
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
 +	if (static_branch_likely(&apic_use_ipi_shorthand))
- 		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
--	}
++		__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
 +	else
-+		flat_send_IPI_mask(cpu_online_mask, vector);
++		__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
  }
  
- static unsigned int flat_get_apic_id(unsigned long x)
-@@ -218,12 +217,19 @@ static void physflat_init_apic_ldr(void)
- 
- static void physflat_send_IPI_allbutself(int vector)
+ static void x2apic_send_IPI_all(int vector)
  {
--	default_send_IPI_mask_allbutself_phys(cpu_online_mask, vector);
-+	if (static_branch_likely(&apic_use_ipi_shorthand)) {
-+		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
-+	} else {
-+		default_send_IPI_mask_allbutself_phys(cpu_online_mask, vector);
-+	}
- }
- 
- static void physflat_send_IPI_all(int vector)
- {
--	default_send_IPI_mask_sequence_phys(cpu_online_mask, vector);
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
 +	if (static_branch_likely(&apic_use_ipi_shorthand))
-+		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
++		__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
 +	else
-+		default_send_IPI_mask_sequence_phys(cpu_online_mask, vector);
++		__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
  }
  
- static int physflat_probe(void)
+ static u32 x2apic_calc_apicid(unsigned int cpu)
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -75,12 +75,18 @@ static void
+ 
+ static void x2apic_send_IPI_allbutself(int vector)
+ {
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
++	if (static_branch_likely(&apic_use_ipi_shorthand))
++		__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
++	else
++		__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
+ }
+ 
+ static void x2apic_send_IPI_all(int vector)
+ {
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
++	if (static_branch_likely(&apic_use_ipi_shorthand))
++		__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
++	else
++		__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
+ }
+ 
+ static void init_x2apic_ldr(void)
+@@ -112,6 +118,14 @@ void __x2apic_send_IPI_dest(unsigned int
+ 	native_x2apic_icr_write(cfg, apicid);
+ }
+ 
++void __x2apic_send_IPI_shorthand(int vector, u32 which)
++{
++	unsigned long cfg = __prepare_ICR(which, vector, 0);
++
++	x2apic_wrmsr_fence();
++	native_x2apic_icr_write(cfg, 0);
++}
++
+ unsigned int x2apic_get_apic_id(unsigned long id)
+ {
+ 	return id;
 
 
