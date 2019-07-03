@@ -2,98 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A03A45DFC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 111395DFBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfGCI07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:26:59 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8690 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727241AbfGCI06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:26:58 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 02220F79422AA3A77CC8;
-        Wed,  3 Jul 2019 16:26:56 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 3 Jul 2019
- 16:26:49 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <ast@kernel.org>, <daniel@iogearbox.net>, <kafai@fb.com>,
-        <songliubraving@fb.com>, <yhs@fb.com>, <sdf@google.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 bpf-next] bpf: cgroup: Fix build error without CONFIG_NET
-Date:   Wed, 3 Jul 2019 16:26:30 +0800
-Message-ID: <20190703082630.51104-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <fd312c26-db8e-cae3-1c14-869d8e3a62ae@fb.com>
-References: <fd312c26-db8e-cae3-1c14-869d8e3a62ae@fb.com>
+        id S1727256AbfGCI0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:26:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:8442 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbfGCI0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:26:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 01:26:36 -0700
+X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
+   d="scan'208";a="157893901"
+Received: from mwasko-mobl.ger.corp.intel.com (HELO [10.237.137.181]) ([10.237.137.181])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 03 Jul 2019 01:26:33 -0700
+Subject: Re: [alsa-devel] [PATCH] ALSA: usb-audio: fix Line6 Helix audio
+ format rates
+To:     Takashi Iwai <tiwai@suse.de>, nick83ola <nick83ola@gmail.com>
+Cc:     alsa-devel@alsa-project.org, info@jensverwiebe.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Richard Fontana <rfontana@redhat.com>,
+        Jussi Laako <jussi@sonarnerd.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>
+References: <20190702004439.30131-1-nick83ola@gmail.com>
+ <s5hlfxg4i4r.wl-tiwai@suse.de>
+ <4181a467-5332-c256-5124-513a0343ec70@linux.intel.com>
+ <s5ha7dw4egd.wl-tiwai@suse.de>
+ <CABPh3UMttE1s7oNt0-JLNm2N3wxb-JXBTLzMYZM42ENiy9NC9Q@mail.gmail.com>
+ <s5h36jno8vb.wl-tiwai@suse.de>
+From:   "Wasko, Michal" <michal.wasko@linux.intel.com>
+Message-ID: <38462424-4e2b-bdbd-f7cc-ea94385924e0@linux.intel.com>
+Date:   Wed, 3 Jul 2019 10:26:31 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <s5h36jno8vb.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_NET is not set and CONFIG_CGROUP_BPF=y,
-gcc building fails:
+On 7/3/2019 9:49 AM, Takashi Iwai wrote:
 
-kernel/bpf/cgroup.o: In function `cg_sockopt_func_proto':
-cgroup.c:(.text+0x237e): undefined reference to `bpf_sk_storage_get_proto'
-cgroup.c:(.text+0x2394): undefined reference to `bpf_sk_storage_delete_proto'
-kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_getsockopt':
-(.text+0x2a1f): undefined reference to `lock_sock_nested'
-(.text+0x2ca2): undefined reference to `release_sock'
-kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_setsockopt':
-(.text+0x3006): undefined reference to `lock_sock_nested'
-(.text+0x32bb): undefined reference to `release_sock'
+> On Wed, 03 Jul 2019 09:41:00 +0200,
+> nick83ola wrote:
+>> On Tue 2 Jul 2019, 16:57 Takashi Iwai, <tiwai@suse.de> wrote:
+>>
+>>      On Tue, 02 Jul 2019 17:52:01 +0200,
+>>      Wasko, Michal wrote:
+>>      >
+>>      > On 7/2/2019 4:37 PM, Takashi Iwai wrote:
+>>      > > On Tue, 02 Jul 2019 02:43:14 +0200,
+>>      > > Nicola Lunghi wrote:
+>>      > >> Line6 Helix and HX stomp don't support retrieving
+>>      > >> the number of clock sample rate.
+>>      > >>
+>>      > >> Add a quirk to return the default value of 48Khz.
+>>      > >>
+>>      > >> Signed-off-by: Nicola Lunghi <nick83ola@gmail.com>
+>>      > > It's not particularly good place to put a quirk, but there seems no
+>>      > > other better place, unfortunately.
+>>
+>> If you prefer I can add a function to quirk.c
+> It's OK to place in format.c as a start.
+>
+>>      Is this specific to certain unit
+>>      > > or all I/Os on the device suffer from this problem?
+>>
+>> This is specific to the helix line of line6
+>> There are currently 4 devices in that line that I think shared their firmware
+>> more or less.
+>> Unfortunately I have only one device to test here (but maybe someone else can
+>> add the others)
+> Ah sorry I wasn't clear enough.  What I meant as "unit" is the USB
+> descriptor unit (aka widget), a feature unit, a terminal, whatever.
+> Does this error appear only once at parsing, or does it hit multiple
+> times per device?
+>
+>>      > >
+>>      > > In anyway, if the behavior is expected, we don't need to use
+>>      > > dev_warn() to annoy users unnecessarily.  Replace it with dev_info().
+>>      > >
+>>
+>> Ok
+>>
+>>      > > Also, the code that creates a single 48k entry would be better to be
+>>      > > put into a function for readability.
+>>      > >
+>>      > > Could you resubmit with that change?
+>>      > >
+>>
+>> Yes (in quirks.c or here?)
+>>
+>> Also I suspect that there' s a way to get the clock rates because windows
+>> driver supports getting the rates and switching (and in Mac the device has the
+>> same problem without a custom driver only supports 48khz)
+> It might be some fixed list without inquiries?
+>
+>
+>>      > >
+>>      > > Thanks!
+>>      > >
+>>      > > Takashi
+>>      >
+>>
+>> Thank you
+>>
+>>      > If the listed USB devices do not support sample rate format retrieval
+>>      > then maybe it would be a better idea to perform below check before
+>>      > sending message?
+>>     
+>>      Yes, if we know that it always fails, we don't need to query.
+>>
+>> Sorry I don't understand this :-)
+> Well, the error happens always on your device in the very same way,
+> right?  Then we don't have to send the specific command that leads to
+> an error, but takes the fixed 48k from the beginning.
+>
+>
+>> My idea is that if line6 in the future fixes their code (they are quite active
+>> on the helix line) the call will not fail and we get a proper device without
+>> quirks.
+>> But If the driver fail to get the clock this settings works as a "failsafe"
+>> and get the device working.
+>> I also tried to contact their support but they don't care a lot about Linux
+>> for now :-(
+> The fallback might be good, but I'm not sure whether there are many
+> devices that hit the same problem.  If we encounter more, let's try to
+> make it as a fallback.
+> thanks,
+>
+> Takashi
+Since there is a chance that the issue will be addressed in USB device FW
+thanthe fallback mechanism will make sense. It would cover eventual future
+scenario withdevices that will have the issue fixed.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Suggested-by: Stanislav Fomichev <sdf@fomichev.me>
-Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: use ifdef macro
----
- kernel/bpf/cgroup.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 76fa007..0a00eac 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -939,6 +939,7 @@ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
- }
- EXPORT_SYMBOL(__cgroup_bpf_run_filter_sysctl);
- 
-+#ifdef CONFIG_NET
- static bool __cgroup_bpf_prog_array_is_empty(struct cgroup *cgrp,
- 					     enum bpf_attach_type attach_type)
- {
-@@ -1120,6 +1121,7 @@ int __cgroup_bpf_run_filter_getsockopt(struct sock *sk, int level,
- 	return ret;
- }
- EXPORT_SYMBOL(__cgroup_bpf_run_filter_getsockopt);
-+#endif
- 
- static ssize_t sysctl_cpy_dir(const struct ctl_dir *dir, char **bufp,
- 			      size_t *lenp)
-@@ -1386,10 +1388,12 @@ static const struct bpf_func_proto *
- cg_sockopt_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
- 	switch (func_id) {
-+#ifdef CONFIG_NET
- 	case BPF_FUNC_sk_storage_get:
- 		return &bpf_sk_storage_get_proto;
- 	case BPF_FUNC_sk_storage_delete:
- 		return &bpf_sk_storage_delete_proto;
-+#endif
- #ifdef CONFIG_INET
- 	case BPF_FUNC_tcp_sock:
- 		return &bpf_tcp_sock_proto;
--- 
-2.7.4
-
-
+Michal W.
+>> I will clean this better and resubmit
+>> Thank you
+>> Nick
+>>
+>>      > Have you also considered new function or macro that check device
+>>      > support? This would separate formatfunctionality code from routine
+>>      > that identifies applicable devices- in case if in future more devices
+>>      > will require quirk.
+>>     
+>>      The split can be done later.  It's always hard to know what kind of
+>>      quirk would be needed in future.  If any more devices show the same
+>>      problem, we can reorganize the quirk in a saner way.
+>>
+>>      thanks,
+>>     
+>>      Takashi
+>>
+>>      >
+>>      > Michal W.
+>>      >
+>>      > >> ---
+>>      > >>   sound/usb/format.c | 28 +++++++++++++++++++++++++---
+>>      > >>   1 file changed, 25 insertions(+), 3 deletions(-)
+>>      > >>
+>>      > >> diff --git a/sound/usb/format.c b/sound/usb/format.c
+>>      > >> index c02b51a82775..05442f6ada62 100644
+>>      > >> --- a/sound/usb/format.c
+>>      > >> +++ b/sound/usb/format.c
+>>      > >> @@ -313,10 +313,32 @@ static int parse_audio_format_rates_v2v3(struct
+>>      snd_usb_audio *chip,
+>>      > >>                          tmp, sizeof(tmp));
+>>      > >>            if (ret < 0) {
+>>      > >> -          dev_err(&dev->dev,
+>>      > >> -                  "%s(): unable to retrieve number of sample rates
+>>      (clock %d)\n",
+>>      > >> +          switch (chip->usb_id) {
+>>      > >> +          /* LINE 6 HX pedals don't support getting the clock sample
+>>      rate.
+>>      > >> +           * Set the framerate to 48khz by default
+>>      > >> +           */
+>>      > >> +          case USB_ID(0x0E41, 0x4244): /* HELIX */
+>>      > >> +          case USB_ID(0x0E41, 0x4246): /* HX STOMP */
+>>      > >> +                  dev_warn(&dev->dev,
+>>      > >> +                          "%s(): line6 helix: unable to retrieve
+>>      number of sample rates. Set it to default value (clock %d).\n",
+>>      > >>                            __func__, clock);
+>>      > >> -          goto err;
+>>      > >> +                  fp->nr_rates = 1;
+>>      > >> +                  fp->rate_min = 48000;
+>>      > >> +                  fp->rate_max = 48000;
+>>      > >> +                  fp->rates = SNDRV_PCM_RATE_48000;
+>>      > >> +                  fp->rate_table = kmalloc(sizeof(int), GFP_KERNEL);
+>>      > >> +                  if (!fp->rate_table) {
+>>      > >> +                          ret = -ENOMEM;
+>>      > >> +                          goto err_free;
+>>      > >> +                  }
+>>      > >> +                  fp->rate_table[0] = 48000;
+>>      > >> +                  return 0;
+>>      > >> +          default:
+>>      > >> +                  dev_err(&dev->dev,
+>>      > >> +                          "%s(): unable to retrieve number of sample
+>>      rates (clock %d)\n",
+>>      > >> +                                  __func__, clock);
+>>      > >> +                  goto err;
+>>      > >> +          }
+>>      > >>    }
+>>      > >>            nr_triplets = (tmp[1] << 8) | tmp[0];
+>>      > >> --
+>>      > >> 2.19.1
+>>      > >>
+>>      > >>
+>>      > > _______________________________________________
+>>      > > Alsa-devel mailing list
+>>      > > Alsa-devel@alsa-project.org
+>>      > > https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+>>      > >
+>>      >
+>>
+>>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
