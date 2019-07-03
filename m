@@ -2,144 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 969705DA10
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0643E5DA1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:01:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfGCBAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:00:32 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38468 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfGCBAc (ORCPT
+        id S1727510AbfGCBBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:01:08 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:42907 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbfGCBBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:00:32 -0400
-Received: by mail-ot1-f68.google.com with SMTP id d17so528065oth.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IScLyBXmZGGQsg6YA+cbexUtHiw0BDkrJFGTmkdmngg=;
-        b=VMIxp3GShJJ/mN1EIIno9K4EiTWxB1WzC+kchDIN4KPW5q3pTD+fDKHqGZo9kBhNuy
-         A7+lCno6kZdyolLkrhb5pvcMnYSutsIw4wvIkklE0lyBWKABdN76U+bxj69/D/SARfhO
-         BHU7XxtoNJTW68uPJ9HQDugNLTeyhdhMvtwN8RQEnc15+Fzgq5LqCHzS/DTx9kzMWJPg
-         PkIGWFt81cEswUIJkjjJJR+8RmCHQUC2NeYaACpLQOndB7z6Z/qUc7VxUeIk4UQd0hO6
-         aIxBMk2KZP857aor8fXbHLusNcpXMYEleDIfcL4xTvGWxqXWf3oNBdxasNX2v3ZhB4Rv
-         /fGg==
+        Tue, 2 Jul 2019 21:01:08 -0400
+Received: by mail-io1-f69.google.com with SMTP id f22so666962ioj.9
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:01:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IScLyBXmZGGQsg6YA+cbexUtHiw0BDkrJFGTmkdmngg=;
-        b=c18mTZzK3ptUtpvC2xSxvbBUfi34CkMciHwX3RlKjuGI9hmIyKCRYPcs7OGWcX0hks
-         G3rWrwgbC/jyyb+6ElPYdaLHdmga9QBuHHvJax3ANc4aksfhy70npBEGl3Yyo3v6yrWI
-         0D7vcoicUhg9gYmvNpLYaN1oGpjj9Bdj80OggvrtPhLBGHzQg3rJjvax8KfcrP+Bewc3
-         nqTt53dmPPXtGEfRtZ6CasxwD2yKZrmcpIcncUpdfqSVKHVrwuqdWLGXLnSx7iCvUk5n
-         pMYdtoiacK/a8YCZd2yg51nwNLYma7EzQFJiaX+g2gwoqm4MKSFg9VL+6Lm7LEB5j+34
-         FAKQ==
-X-Gm-Message-State: APjAAAWW60snslVNbeLUEhIv6OmXcVIfFzgKjQPJejIgQfxPrvZUsP2U
-        ogjEn3es9hb0dsIcCNjlxs2ems1q/5yC92MLQ0XuLQ==
-X-Google-Smtp-Source: APXvYqyPI6XRNaSODwAVCZ8Gc8HPl67W6T/qAFtS0xWcBeqdGKTuUhcBKnapNO9tkjp6ZTxN3P4uER5w6Q805SsZc4E=
-X-Received: by 2002:a9d:6d06:: with SMTP id o6mr22963590otp.225.1562115630968;
- Tue, 02 Jul 2019 18:00:30 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=+jAjzkxOy88eEU8Ro2pPWiTTvCPP5IpFAzSx1DNnSMI=;
+        b=bEXj5wHke1nwI9rnBpfwUCfdFXo0Qvpx2szMdrTXAS5oDU/0qFgK5dv0mWi13dAqzD
+         TEUF8EwV8q3G8wi7wEJ+UoGk2Ni9pQWoiVKj6xlM0HGR7bhEJbI9keyzOo0E6hnxrX+D
+         1Ul/Kl/MKgTE2wcmOxLhgYboSkva2oCtaXayQmN2C+UN3bFHxyDH2/uRiK56dlAUDWtC
+         hk+KXYKCG0HdiYhyyYEFYFjB2SZm9ooAPfO5nLkz3m2Lsl7SWQn/6YOyXp5BYjyBxNiO
+         Wxxjw4yndcvCGYkQPD3pcb0gpzblqao3lBaqJfyVGjw/SnzWfF0lYvWo5OxXN4VHfwb+
+         aOFg==
+X-Gm-Message-State: APjAAAXSx8U+7lQxyEGMwbe4XxqX8XC1+MBzS9y0x12UUpzOiSUSs8Y7
+        9dCqKkSEtYD9+x+il2cAXcKSo0ioVcryRuOsRz1tVJKaSG7L
+X-Google-Smtp-Source: APXvYqzjtwIxcClrQ8XIltsZj2funW9a0OSCqz+qgF2HIq0hhl1QFKSyjXAm4ZoAahCxLQd8iP/64TBx7P5Tka13hq8b4LlO4o9H
 MIME-Version: 1.0
-References: <20190702004811.136450-1-saravanak@google.com> <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
-In-Reply-To: <7900c670-5b3a-f950-dec9-70d98d94a84f@codeaurora.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 2 Jul 2019 17:59:54 -0700
-Message-ID: <CAGETcx--+3BNjYZ6cgirNr_uZjU0464UHSUcaVHh_uTO2yWTCQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Solve postboot supplier cleanup and optimize probe ordering
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:a581:: with SMTP id b1mr40177373jam.84.1562115666965;
+ Tue, 02 Jul 2019 18:01:06 -0700 (PDT)
+Date:   Tue, 02 Jul 2019 18:01:06 -0700
+In-Reply-To: <0000000000002e03f40586a3e512@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006d7e14058cbc6545@google.com>
+Subject: Re: KASAN: use-after-free Read in cpia2_usb_disconnect
+From:   syzbot <syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com>
+To:     allison@lohutok.net, andreyknvl@google.com,
+        hverkuil-cisco@xs4all.nl, keescook@chromium.org,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 5:03 PM David Collins <collinsd@codeaurora.org> wrote:
->
-> Hello Saravana,
->
-> On 7/1/19 5:48 PM, Saravana Kannan wrote:
-> ...
-> > TODO:
-> > - For the case of consumer child sub-nodes being added by a parent
-> >   device after late_initcall_sync we might be able to address that by
-> >   recursively parsing all child nodes and adding all their suppliers as
-> >   suppliers of the parent node too. The parent probe will add the
-> >   children before its probe is completed and that will prevent the
-> >   supplier's sync_state from being executed before the children are
-> >   probed.
-> >
-> > But I'll write that part once I see how this series is received.
->
-> I don't think that this scheme will work in all cases.  It can also lead
-> to probing deadlock.
->
-> Here is an example:
->
-> Three DT devices (top level A with subnodes B and C):
-> /A
-> /A/B
-> /A/C
-> C is a consumer of B.
->
-> When device A is created, a search of its subnodes will find the link from
-> C to B.  Since device B hasn't been created yet, of_link_to_suppliers()
-> will fail and add A to the wait_for_suppliers list.  This will cause the
-> probe of A to fail with -EPROBE_DEFER (thanks to the check in
-> device_links_check_suppliers()).  As a result device B will not be created
-> and device A will never probe.
->
-> You could try to resolve this situation by detecting the cycle and *not*
-> adding A to the wait_for_suppliers list.  However, that would get us back
-> to the problem we had before.  A would be allowed to probe which would
-> then result in devices being added for B and C.  If the device for B is
-> added before C, then it would be allowed to immediately probe and
-> (assuming this all takes place after late_initcall_sync thanks to modules)
-> its sync_state() callback would be called since no consumer devices are
-> linked to B.
->
-> Please note that to change this example from theoretical to practical,
-> replace "A" with apps_rsc, "B" with pmi8998-rpmh-regulators, and "C" with
-> pm8998-rpmh-regulators in [1].
+syzbot has found a reproducer for the following crash on:
 
-Interesting use case.
+HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e19043a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c90fc937c84f97d0aa6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147d42eda00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104c268ba00000
 
-First, to clarify my TODO: I was initially thinking of the recursive
-"up-heritance" of suppliers from child to parent to handle cases where
-the supplier is a device from some other top level device (or its
-child). My thinking has evolved a bit on that. I think the parent
-needs to inherit only from it's immediate children and not its
-grandchildren (the child is responsible for handling grandchildren
-suppliers). I'll also have to make sure I don't try to create a link
-from a parent device to one of its child device nodes (should be easy
-to check).
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
 
-Anyway, going back to your case, for dependencies between child nodes
-of a parent, can't the parent just populate them in the right order?
-You can loop through the children and add them in multiple stages.
+cpia2: Message: count = 1, register[0] = 0x0
+cpia2: Unexpected error: -19
+==================================================================
+BUG: KASAN: use-after-free in cpia2_usb_disconnect+0x1a4/0x1c0  
+drivers/media/usb/cpia2/cpia2_usb.c:898
+Read of size 8 at addr ffff8881cf6c4e50 by task kworker/1:1/22
 
-I'll continue to think if I can come up with anything nicer on the
-drivers, but even if we can't come up with anything better, we can
-still make sync_state() work.
+CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #13
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x67/0x231 mm/kasan/report.c:188
+  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
+  kasan_report+0xe/0x20 mm/kasan/common.c:614
+  cpia2_usb_disconnect+0x1a4/0x1c0 drivers/media/usb/cpia2/cpia2_usb.c:898
+  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+  __device_release_driver drivers/base/dd.c:1081 [inline]
+  device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1112
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x460/0xb80 drivers/base/core.c:2274
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2197
+  hub_port_connect drivers/usb/core/hub.c:4940 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1409/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-Cheers,
-Saravana
+Allocated by task 22:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
+  kmalloc include/linux/slab.h:547 [inline]
+  kzalloc include/linux/slab.h:742 [inline]
+  cpia2_init_camera_struct+0x40/0x110  
+drivers/media/usb/cpia2/cpia2_core.c:2176
+  cpia2_usb_probe.cold+0x37/0x45a drivers/media/usb/cpia2/cpia2_usb.c:833
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
->
-> Take care,
-> David
->
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-mtp.dts?h=v5.2-rc7#n55
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Freed by task 22:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
+  slab_free_hook mm/slub.c:1421 [inline]
+  slab_free_freelist_hook mm/slub.c:1448 [inline]
+  slab_free mm/slub.c:2994 [inline]
+  kfree+0xd7/0x280 mm/slub.c:3949
+  v4l2_device_release drivers/media/v4l2-core/v4l2-device.c:55 [inline]
+  kref_put include/linux/kref.h:65 [inline]
+  v4l2_device_put+0x76/0x90 drivers/media/v4l2-core/v4l2-device.c:60
+  cpia2_usb_disconnect+0x79/0x1c0 drivers/media/usb/cpia2/cpia2_usb.c:896
+  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+  __device_release_driver drivers/base/dd.c:1081 [inline]
+  device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1112
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x460/0xb80 drivers/base/core.c:2274
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2197
+  hub_port_connect drivers/usb/core/hub.c:4940 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1409/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881cf6c4400
+  which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 2640 bytes inside of
+  4096-byte region [ffff8881cf6c4400, ffff8881cf6c5400)
+The buggy address belongs to the page:
+page:ffffea00073db000 refcount:1 mapcount:0 mapping:ffff8881dac02600  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 0000000000000000 0000000100000001 ffff8881dac02600
+raw: 0000000000000000 0000000000070007 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881cf6c4d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cf6c4d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881cf6c4e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                  ^
+  ffff8881cf6c4e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cf6c4f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
