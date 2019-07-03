@@ -2,135 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 694875DD41
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3F85DD33
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbfGCEFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 00:05:06 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35524 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfGCEFG (ORCPT
+        id S1725820AbfGCECA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 00:02:00 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:38144 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725270AbfGCEB7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 00:05:06 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so484852pgl.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:05:06 -0700 (PDT)
+        Wed, 3 Jul 2019 00:01:59 -0400
+Received: by mail-pg1-f202.google.com with SMTP id w5so769765pgs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Bm9umS6vs/dbbokDnbGJE7RR1jt4/TW8qx98n8+rRXs=;
-        b=lwp8ivzrlsxLLgRlaT62i3vqrLwkdKgS7nSCUiMXz6cLeSlSGmHtCrk1acO9r4NXgZ
-         fzRiFfltg50O42MTfX838YI6NXHyPqDAMy6U88E2UtGVqiAjFKmYirTmp8pt6EJVZ3Kc
-         zd5JmV2q9PZTe58ovR7q4HVMtLykh5iQ058j0=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Gqg9vEUEQjamw+U2TDRVFbfZNKD/ycSs0XHiqhxGFk8=;
+        b=DUSp5/cDhcH68bi+Nqh/3cwTIsuqcpNTJ4KruX+YPcQUSWG+/5hPHGNhqwkWJb/ah2
+         eJ5HtglThdDRbB5I8iYw5/D69dYJppppopzOO2mSI+BbI92ZgW+wCLu8Xv+h3LRowhz3
+         razdXHDpi/pPWZA2RqaczdEZYVtlzHeYLehQeXztClJk0ylLisPmM9e0hPPOC9ps2vOj
+         NBZcMd8FE0B/tXSKkgo789bUh9lo8LXpT7m8MJCDS17/ksAy/Ql3vLUZ7UdlYbEmPyF8
+         XcIP2jw9ou9HOm3326ze3aPAFnH04OmhJkLwpTTkIP2D4mlEQ2uimSPp+VTY/vyzt2I4
+         M8xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Bm9umS6vs/dbbokDnbGJE7RR1jt4/TW8qx98n8+rRXs=;
-        b=GV48Qk9Ee9aD7VA8VBg3foKqeYo4DPndbV01gfStm/QXhwrWejWdswF5WWdQgoGyg1
-         TDFlKHKMybbG+1sURFlTLV9HF6HH9JjphT2YjsUBTNtyJoxFxSZ0hGmAoFhGXnErp04D
-         EeTKMcUGtxgn7V1MhPTLv7iqfLhrXRvu1IRzXoIolbew91atlzuJMGvu4UV1Aq6xg99M
-         n6ip2PIy63EuJibliXFP/EILnk1IqEGxNL6fq9r30EX4RnrXWty137ewiYnIWAxVA44q
-         iZ4mvAWDFCr12cIX2lnfoejwyNS758oINAVYs639WWv0fFbv+ocxMNlS8RK2NP3NUhzJ
-         q5Cw==
-X-Gm-Message-State: APjAAAUFcObesA4x0GosWVCFXnLhjyI60UuamEQcKnKFM9ncVckmztO3
-        URITL5MKAyKkY4wkAWc1nlwA3w==
-X-Google-Smtp-Source: APXvYqxSlvON1XYRESOb0HHRr/tTmlELefeQMA9+YaZ4lD8Nb2hIdAPpf8KZVxNsWdVkLy7H8dN7ow==
-X-Received: by 2002:a65:42cd:: with SMTP id l13mr5469866pgp.72.1562126705767;
-        Tue, 02 Jul 2019 21:05:05 -0700 (PDT)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id w16sm608327pfj.85.2019.07.02.21.05.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 02 Jul 2019 21:05:05 -0700 (PDT)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v7 3/3] arm64: kexec_file: add rng-seed support
-Date:   Wed,  3 Jul 2019 12:01:39 +0800
-Message-Id: <20190703040135.169843-4-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703040135.169843-1-hsinyi@chromium.org>
-References: <20190703040135.169843-1-hsinyi@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Gqg9vEUEQjamw+U2TDRVFbfZNKD/ycSs0XHiqhxGFk8=;
+        b=Kh2Cb1SfJVWmnLInqc4eN0tAZ9n6ZdFOQ+TFC35LMlEjxjNOlFizqHf6KTsJWEoqEC
+         q2ggESClsQSWDVGC6eIB9mtX9tMiLrbpHAZ+6yTAiQWSacwrtRM2aMhRTVlsDHseg2qA
+         dImWiRHORdrdr9LUlrzQVUH2n0k6y11g0mwM7/hW+JchD38s1FXBGsNahrC8V9mqrspH
+         qhq2csChNoDaeBSoKdgFEnGioeX1X83JxopJ4MQBbKggzdZElB/bOz65OfcxjfXMQRDP
+         ykfQV4Chy43mqGuf28CzKlnKNE10/ZC8gfbP0KiKG/Wn1W0sDF2cmrkFOcm3IWoXRTft
+         yweQ==
+X-Gm-Message-State: APjAAAU5rgb3WtDcIu2FEjt8OCVw3MFZ3hNk3/ugSIa+hAxXMqWhDID4
+        KVO35Khr1ha96D1xhZy3hq/DSyMBIEg=
+X-Google-Smtp-Source: APXvYqz8itvyzvB1Vq0/P0tWAt+xsWqpGwm8HIcCNWK36t77P21Vj55S/U3vpny77Lo89mae91rO0A++5zY=
+X-Received: by 2002:a65:43c2:: with SMTP id n2mr15101876pgp.110.1562126518698;
+ Tue, 02 Jul 2019 21:01:58 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 21:01:53 -0700
+Message-Id: <20190703040156.56953-1-walken@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v3 0/3] make RB_DECLARE_CALLBACKS more generic
+From:   Michel Lespinasse <walken@google.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding "rng-seed" to dtb. It's fine to add this property if original
-fdt doesn't contain it. Since original seed will be wiped after
-read, so use a default size 128 bytes here.
+These changes are intended to make the RB_DECLARE_CALLBACKS macro
+more generic (allowing the aubmented subtree information to be a struct
+instead of a scalar).
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
----
-change log v6->v7:
-* Use stack for rng_seed to avoid allocation failing.
----
- arch/arm64/kernel/machine_kexec_file.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Changes since v2: Left the RBSTATIC and RBNAME arguments first in the
+RB_DECLARE_CALLBACKS and RB_DECLARE_CALLBACKS_MAX macros as suggested
+by Peter Zijlstra.
 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 58871333737a..81b5baad97aa 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -27,6 +27,8 @@
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
- #define FDT_PROP_KASLR_SEED	"kaslr-seed"
-+#define FDT_PROP_RNG_SEED	"rng-seed"
-+#define RNG_SEED_SIZE		128
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
-@@ -102,6 +104,19 @@ static int setup_dtb(struct kimage *image,
- 				FDT_PROP_KASLR_SEED);
- 	}
- 
-+	/* add rng-seed */
-+	if (rng_is_initialized()) {
-+		u8 rng_seed[RNG_SEED_SIZE];
-+		get_random_bytes(rng_seed, RNG_SEED_SIZE);
-+		ret = fdt_setprop(dtb, off, FDT_PROP_RNG_SEED, rng_seed,
-+				RNG_SEED_SIZE);
-+		if (ret)
-+			goto out;
-+	} else {
-+		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
-+				FDT_PROP_RNG_SEED);
-+	}
-+
- out:
- 	if (ret)
- 		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
-@@ -110,7 +125,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd, bootargs and kaslr-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed, and
-+ * rng-seed.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
+Changes since v1: I have added a new RB_DECLARE_CALLBACKS_MAX macro,
+which generates augmented rbtree callbacks where the subtree information
+can be expressed as max(f(node)). This covers all current uses, and thus
+makes it easy to do the later RB_DECLARE_CALLBACKS definition change
+as it's only currently used in RB_DECLARE_CALLBACKS_MAX.
+
+I have also verified the compiled lib/interval_tree.o and mm/mmap.o
+files to check that they didn't change. This held as expected for
+interval_tree.o; mmap.o did have some changes which could be reverted
+by marking __vma_link_rb as noinline. I did not add such a change to the
+patchset; I felt it was reasonable enough to let the inlining decision
+up to the compiler.
+
+Michel Lespinasse (3):
+  augmented rbtree: add comments for RB_DECLARE_CALLBACKS macro
+  augmented rbtree: add new RB_DECLARE_CALLBACKS_MAX macro
+  augmented rbtree: rework the RB_DECLARE_CALLBACKS macro definition
+
+ arch/x86/mm/pat_rbtree.c               | 19 +-----
+ drivers/block/drbd/drbd_interval.c     | 29 +--------
+ include/linux/interval_tree_generic.h  | 22 +------
+ include/linux/rbtree_augmented.h       | 88 ++++++++++++++++++++------
+ lib/rbtree_test.c                      | 22 +------
+ mm/mmap.c                              | 29 +++++----
+ tools/include/linux/rbtree_augmented.h | 88 ++++++++++++++++++++------
+ 7 files changed, 163 insertions(+), 134 deletions(-)
+
 -- 
-2.20.1
+2.22.0.410.gd8fdbe21b5-goog
 
