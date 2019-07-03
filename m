@@ -2,218 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E3CA5DE37
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1D25DE2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 08:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfGCGv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 02:51:26 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:39342 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbfGCGvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:51:21 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ACEC2200351;
-        Wed,  3 Jul 2019 08:51:18 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 19643200349;
-        Wed,  3 Jul 2019 08:51:14 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DED2D402EB;
-        Wed,  3 Jul 2019 14:51:08 +0800 (SGT)
-From:   shengjiu.wang@nxp.com
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org, alsa-devel@alsa-project.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/2] ASoC: fsl_esai: recover the channel swap after xrun
-Date:   Wed,  3 Jul 2019 14:42:05 +0800
-Message-Id: <c29639336b6b32fa781bdddad30287f8b76d5e0b.1562136119.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1562136119.git.shengjiu.wang@nxp.com>
-References: <cover.1562136119.git.shengjiu.wang@nxp.com>
-In-Reply-To: <cover.1562136119.git.shengjiu.wang@nxp.com>
-References: <cover.1562136119.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727025AbfGCGpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 02:45:36 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42610 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfGCGpf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:45:35 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t28so1109937lje.9
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 23:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ptGTicjFq+J0eTU/VpcxUsmOsp/qaZSNFW8K0GR+TOs=;
+        b=kWifykzpZN5anpXIiQ4YGdylV33AXUn4GyrE0mtZQ50+vZthGp8hOmYzwGAaFUTju/
+         5DmP+TbKSdayBm2W4adywOLUqzuZv2ldPWrpFcUc4oUr3uWIG3tC+oZTIkunY+1HI1Hl
+         I1LQvdxcJEK8TZC4EfOOfwVqjWewrJJyUAnEEkVRYxoLxXdcpyXqjkmtbEey0c/oLSF2
+         jKAMFREDiyC4VRZyQ953d3IohkmgbTG+O9rdLN0dQ9j0FdaOld5pnEPn7H244FRBQqSG
+         L+PpuwWTK0rCWmAI9TRp9eK8EdXAcfnU0FIvWnEFru9hwMQ/DxDvqRt1Ut4VJOFn6hnC
+         hJ4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ptGTicjFq+J0eTU/VpcxUsmOsp/qaZSNFW8K0GR+TOs=;
+        b=cLoE0HKO9me1l70eZYdju+v5x6V9mRIW4zRXRIDHG0uwY0njqWJfbP/ZqvbFa79lGX
+         AZTIdyikTe8WYD+G7z0KoLlpM7GprzIE/56j/Hkd0Mz6+LMWkh7L6RdnNjVZeizmJpVC
+         QTc/X5AUG/XlYbbAQpSHnBK/WbA7agUkEiuZ4uO/NhxHw15Sp2444rmeQ3yr1t9k/sbL
+         QROdC00hpsoel+mbVvWQu8ivtdjUkZDUzO4TS3PBki/HvaxOtuVlqCQCqLGNIPbVm37v
+         gIfDHjbxK8Ut3pyldxy9pUbbdoyAxir/0Ym5w4scL3+I9iPw3MHlEq9F6c2Fna48vW2G
+         XUWQ==
+X-Gm-Message-State: APjAAAUcKe5mvjCUYqsyr6ETLgKXZfwfmgdHjS81vjHasfi2g8W2gdf7
+        dnFkHZ8QDzuSiASzkSZQysBFz8q1dHw1Af6Go/wNrw==
+X-Google-Smtp-Source: APXvYqzHLP5x6CDVK5N1nXarqor8EAB7jH3AjLWnOHwZsb5xNHK5SYSF45C/ETdsoHYS4PNC/AJ0+jRqGmYO2T35c80=
+X-Received: by 2002:a2e:2e18:: with SMTP id u24mr13211024lju.204.1562136332739;
+ Tue, 02 Jul 2019 23:45:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190703011020.151615-1-saravanak@google.com> <20190703011020.151615-7-saravanak@google.com>
+In-Reply-To: <20190703011020.151615-7-saravanak@google.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 3 Jul 2019 08:45:21 +0200
+Message-ID: <CAKfTPtCJFaEfvu3Dnp9WSxQEwSfY=VS+xsoQ+4P+vg7_WL0BAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] interconnect: Add OPP table support for interconnects
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        daidavid1@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        sibis@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>, kernel-team@android.com,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Wed, 3 Jul 2019 at 03:10, Saravana Kannan <saravanak@google.com> wrote:
+>
+> Interconnect paths can have different performance points. Now that OPP
+> framework supports bandwidth OPP tables, add OPP table support for
+> interconnects.
+>
+> Devices can use the interconnect-opp-table DT property to specify OPP
+> tables for interconnect paths. And the driver can obtain the OPP table for
+> an interconnect path by calling icc_get_opp_table().
 
-There is chip errata ERR008000, the reference doc is
-(https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf),
+The opp table of a path must come from the aggregation of OPP tables
+of the interconnect providers. So such kind of OPP table should be at
+provider level but not at path level.
 
-The issue is "While using ESAI transmit or receive and
-an underrun/overrun happens, channel swap may occur.
-The only recovery mechanism is to reset the ESAI."
-
-This issue exist in imx3/imx5/imx6(partial) series.
-
-In this commit add a tasklet to handle reset of ESAI
-after xrun happens to recover the channel swap.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_esai.c | 76 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
-
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index 20039ae9893b..8c92e49ad6d8 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -32,6 +32,7 @@
-  * @extalclk: esai clock source to derive HCK, SCK and FS
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-+ * @task: tasklet to handle the reset operation
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -42,6 +43,7 @@
-  * @sck_div: if using PSR/PM dividers for SCKx clock
-  * @slave_mode: if fully using DAI slave mode
-  * @synchronous: if using tx/rx synchronous mode
-+ * @reset_at_xrun: flags for enable reset operaton
-  * @name: driver name
-  */
- struct fsl_esai {
-@@ -53,6 +55,7 @@ struct fsl_esai {
- 	struct clk *extalclk;
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
-+	struct tasklet_struct task;
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -65,6 +68,7 @@ struct fsl_esai {
- 	bool sck_div[2];
- 	bool slave_mode;
- 	bool synchronous;
-+	bool reset_at_xrun;
- 	char name[32];
- };
- 
-@@ -73,8 +77,16 @@ static irqreturn_t esai_isr(int irq, void *devid)
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)devid;
- 	struct platform_device *pdev = esai_priv->pdev;
- 	u32 esr;
-+	u32 saisr;
- 
- 	regmap_read(esai_priv->regmap, REG_ESAI_ESR, &esr);
-+	regmap_read(esai_priv->regmap, REG_ESAI_SAISR, &saisr);
-+
-+	if ((saisr & (ESAI_SAISR_TUE | ESAI_SAISR_ROE)) &&
-+	    esai_priv->reset_at_xrun) {
-+		dev_dbg(&pdev->dev, "reset module for xrun\n");
-+		tasklet_schedule(&esai_priv->task);
-+	}
- 
- 	if (esr & ESAI_ESR_TINIT_MASK)
- 		dev_dbg(&pdev->dev, "isr: Transmission Initialized\n");
-@@ -634,10 +646,17 @@ static void fsl_esai_trigger_start(struct fsl_esai *esai_priv, bool tx)
- 			   ESAI_xSMB_xS_MASK, ESAI_xSMB_xS(mask));
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xSMA(tx),
- 			   ESAI_xSMA_xS_MASK, ESAI_xSMA_xS(mask));
-+
-+	/* Enable Exception interrupt */
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
-+			   ESAI_xCR_xEIE_MASK, ESAI_xCR_xEIE);
- }
- 
- static void fsl_esai_trigger_stop(struct fsl_esai *esai_priv, bool tx)
- {
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
-+			   ESAI_xCR_xEIE_MASK, 0);
-+
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
- 			   tx ? ESAI_xCR_TE_MASK : ESAI_xCR_RE_MASK, 0);
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xSMA(tx),
-@@ -652,6 +671,53 @@ static void fsl_esai_trigger_stop(struct fsl_esai *esai_priv, bool tx)
- 			   ESAI_xFCR_xFR, 0);
- }
- 
-+static void fsl_esai_reset(unsigned long arg)
-+{
-+	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
-+	u32 saisr, tfcr, rfcr;
-+
-+	/* save the registers */
-+	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
-+	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-+
-+	/* stop the tx & rx */
-+	fsl_esai_trigger_stop(esai_priv, 1);
-+	fsl_esai_trigger_stop(esai_priv, 0);
-+
-+	/* reset the esai, and restore the registers */
-+	fsl_esai_init(esai_priv);
-+
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_TCR,
-+			   ESAI_xCR_xPR_MASK,
-+			   ESAI_xCR_xPR);
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_RCR,
-+			   ESAI_xCR_xPR_MASK,
-+			   ESAI_xCR_xPR);
-+
-+	/* restore registers by regcache_sync */
-+	fsl_esai_register_restore(esai_priv);
-+
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_TCR,
-+			   ESAI_xCR_xPR_MASK, 0);
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_RCR,
-+			   ESAI_xCR_xPR_MASK, 0);
-+
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_PRRC,
-+			   ESAI_PRRC_PDC_MASK,
-+			   ESAI_PRRC_PDC(ESAI_GPIO));
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_PCRC,
-+			   ESAI_PCRC_PC_MASK,
-+			   ESAI_PCRC_PC(ESAI_GPIO));
-+
-+	regmap_read(esai_priv->regmap, REG_ESAI_SAISR, &saisr);
-+
-+	/* restart tx / rx, if they already enabled */
-+	if (tfcr & ESAI_xFCR_xFEN)
-+		fsl_esai_trigger_start(esai_priv, 1);
-+	if (rfcr & ESAI_xFCR_xFEN)
-+		fsl_esai_trigger_start(esai_priv, 0);
-+}
-+
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 			    struct snd_soc_dai *dai)
- {
-@@ -856,6 +922,10 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 	esai_priv->pdev = pdev;
- 	snprintf(esai_priv->name, sizeof(esai_priv->name), "%pOFn", np);
- 
-+	if (of_device_is_compatible(np, "fsl,vf610-esai") ||
-+	    of_device_is_compatible(np, "fsl,imx35-esai"))
-+		esai_priv->reset_at_xrun = true;
-+
- 	/* Get the addresses and IRQ */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(&pdev->dev, res);
-@@ -955,6 +1025,9 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	tasklet_init(&esai_priv->task, fsl_esai_reset,
-+		     (unsigned long)esai_priv);
-+
- 	pm_runtime_enable(&pdev->dev);
- 
- 	regcache_cache_only(esai_priv->regmap, true);
-@@ -968,7 +1041,10 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- static int fsl_esai_remove(struct platform_device *pdev)
- {
-+	struct fsl_esai *esai_priv = platform_get_drvdata(pdev);
-+
- 	pm_runtime_disable(&pdev->dev);
-+	tasklet_kill(&esai_priv->task);
- 
- 	return 0;
- }
--- 
-2.21.0
-
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/interconnect/core.c  | 27 ++++++++++++++++++++++++++-
+>  include/linux/interconnect.h |  7 +++++++
+>  2 files changed, 33 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index 871eb4bc4efc..881bac80bc1e 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -47,6 +47,7 @@ struct icc_req {
+>   */
+>  struct icc_path {
+>         size_t num_nodes;
+> +       struct opp_table *opp_table;
+>         struct icc_req reqs[];
+>  };
+>
+> @@ -313,7 +314,7 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+>  {
+>         struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
+>         struct icc_node *src_node, *dst_node;
+> -       struct device_node *np = NULL;
+> +       struct device_node *np = NULL, *opp_node;
+>         struct of_phandle_args src_args, dst_args;
+>         int idx = 0;
+>         int ret;
+> @@ -381,10 +382,34 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+>                 dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
+>         mutex_unlock(&icc_lock);
+>
+> +       opp_node = of_parse_phandle(np, "interconnect-opp-table", idx);
+> +       if (opp_node) {
+> +               path->opp_table = dev_pm_opp_of_find_table_from_node(opp_node);
+> +               of_node_put(opp_node);
+> +       }
+> +
+> +
+>         return path;
+>  }
+>  EXPORT_SYMBOL_GPL(of_icc_get);
+>
+> +/**
+> + * icc_get_opp_table() - Get the OPP table that corresponds to a path
+> + * @path: reference to the path returned by icc_get()
+> + *
+> + * This function will return the OPP table that corresponds to a path handle.
+> + * If the interconnect API is disabled, NULL is returned and the consumer
+> + * drivers will still build. Drivers are free to handle this specifically, but
+> + * they don't have to.
+> + *
+> + * Return: opp_table pointer on success. NULL is returned when the API is
+> + * disabled or the OPP table is missing.
+> + */
+> +struct opp_table *icc_get_opp_table(struct icc_path *path)
+> +{
+> +       return path->opp_table;
+> +}
+> +
+>  /**
+>   * icc_set_bw() - set bandwidth constraints on an interconnect path
+>   * @path: reference to the path returned by icc_get()
+> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+> index dc25864755ba..0c0bc55f0e89 100644
+> --- a/include/linux/interconnect.h
+> +++ b/include/linux/interconnect.h
+> @@ -9,6 +9,7 @@
+>
+>  #include <linux/mutex.h>
+>  #include <linux/types.h>
+> +#include <linux/pm_opp.h>
+>
+>  /* macros for converting to icc units */
+>  #define Bps_to_icc(x)  ((x) / 1000)
+> @@ -28,6 +29,7 @@ struct device;
+>  struct icc_path *icc_get(struct device *dev, const int src_id,
+>                          const int dst_id);
+>  struct icc_path *of_icc_get(struct device *dev, const char *name);
+> +struct opp_table *icc_get_opp_table(struct icc_path *path);
+>  void icc_put(struct icc_path *path);
+>  int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+>
+> @@ -49,6 +51,11 @@ static inline void icc_put(struct icc_path *path)
+>  {
+>  }
+>
+> +static inline struct opp_table *icc_get_opp_table(struct icc_path *path)
+> +{
+> +       return NULL;
+> +}
+> +
+>  static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>  {
+>         return 0;
+> --
+> 2.22.0.410.gd8fdbe21b5-goog
+>
