@@ -2,44 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CC15E692
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 705755E694
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfGCO1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:27:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:52459 "EHLO ozlabs.org"
+        id S1727092AbfGCO1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:27:07 -0400
+Received: from ozlabs.org ([203.11.71.1]:39609 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbfGCO1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:27:02 -0400
+        id S1725944AbfGCO1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:27:05 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45f3Mn0SQ5z9s4V; Thu,  4 Jul 2019 00:27:00 +1000 (AEST)
+        id 45f3Mq1Jzfz9s8m; Thu,  4 Jul 2019 00:27:02 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: f079bb3c5f2978b2c1a13098ab2a8c32e5d1ee3d
-In-Reply-To: <4464516c0b6835b42acc65e088b6d7f88fe886f2.1557235811.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+X-powerpc-patch-commit: 3becd11dffe5d4a7467ebd841172f3e091fbcbd0
+In-Reply-To: <1559767579-7151-1-git-send-email-cai@lca.pw>
+To:     Qian Cai <cai@lca.pw>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/ftrace: Enable C Version of recordmcount
-Message-Id: <45f3Mn0SQ5z9s4V@ozlabs.org>
-Date:   Thu,  4 Jul 2019 00:27:00 +1000 (AEST)
+Cc:     Qian Cai <cai@lca.pw>, sbobroff@linux.ibm.com,
+        linux-kernel@vger.kernel.org, oohall@gmail.com, paulus@samba.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/eeh_cache: fix a W=1 kernel-doc warning
+Message-Id: <45f3Mq1Jzfz9s8m@ozlabs.org>
+Date:   Thu,  4 Jul 2019 00:27:02 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-05-07 at 13:31:38 UTC, Christophe Leroy wrote:
-> Selects HAVE_C_RECORDMCOUNT to use the C version of the recordmcount
-> intead of the old Perl Version of recordmcount.
+On Wed, 2019-06-05 at 20:46:19 UTC, Qian Cai wrote:
+> The opening comment mark "/**" is reserved for kernel-doc comments, so
+> it will generate a warning with "make W=1".
 > 
-> This should improve build time. It also seems like the old Perl Version
-> misses some calls to _mcount that the C version finds.
+> arch/powerpc/kernel/eeh_cache.c:37: warning: cannot understand function
+> prototype: 'struct pci_io_addr_range
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Since this is not a kernel-doc for the struct below, but rather an
+> overview of this source eeh_cache.c, just use the free-form comments
+> kernel-doc syntax instead.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> Acked-by: Russell Currey <ruscur@russell.cc>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/f079bb3c5f2978b2c1a13098ab2a8c32e5d1ee3d
+https://git.kernel.org/powerpc/c/3becd11dffe5d4a7467ebd841172f3e091fbcbd0
 
 cheers
