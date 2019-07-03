@@ -2,114 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595B65EEFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 416755EF04
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfGCWFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 18:05:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38371 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfGCWFa (ORCPT
+        id S1727319AbfGCWIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 18:08:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43017 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbfGCWIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 18:05:30 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 35F328060B; Thu,  4 Jul 2019 00:05:16 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 00:05:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Linus Walleij' <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        Wed, 3 Jul 2019 18:08:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i189so1915131pfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 15:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WjjWRdXySZkjpj26g1Pm4rzHQ2nCZawoM/TZfTFAezI=;
+        b=UxSjmshB/efA5VRE78aPgnfuO/Sq/XiYw8vG5chnT45W8s9eIhSvPBCC/mGRdhQRAM
+         aPD+zvMYLU6QJzAWBsTOmtbTqcGwnfwfDl1uFLrkBkjO6z7a5yH1SyE3GJ6Y5hBtDN+d
+         XZAsuPc8zy95h9yxwn1SR3uls7dO9xvIAB3do=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WjjWRdXySZkjpj26g1Pm4rzHQ2nCZawoM/TZfTFAezI=;
+        b=hlaVP1OeUfNyic6JKxnnqPDkZvguDCWcpHQIvM70d1ooKHfXYNI57hpXR1FZyqN0bR
+         N5I7FJgCWZNPsWaJ404XTUJgdssqoBMrUxFzg+lYwnAwb4MqXn90BK0bspY0hQIoL6nt
+         GwoZ/TvpFI8MJAQDCrJ9lvhf839ixTzJ41ftyKBmBSCzXQAiQlaTcNyfYiNb4FbUBahZ
+         YTj7mNSHd0rcVktaIFIHOeG+AnHdVEJCKEICiO+kCIxDobJrdlYYloqrDrKgzwOa7yD6
+         VmyHkiUIFehSpp21RJ06DCcgx5r8E37dtQffM/rbGdqQ4wfLnLpSRvcDdKQYSgXhHN2y
+         P5DA==
+X-Gm-Message-State: APjAAAWzX1OkDn65RoeuIwO2bLXwt63DMNvUDXtwtuIM760x5/dz3Zvh
+        jGth/bpHNonmCkjc+v4Isy1AtQ==
+X-Google-Smtp-Source: APXvYqyNI7R7rRmSWaIP0fI91rk/hM1ha6x5voe4cvZVNb4VcCHs7IcJLnAucRtMAGfGWBsihbi9aw==
+X-Received: by 2002:a17:90b:8d8:: with SMTP id ds24mr15201077pjb.135.1562191725828;
+        Wed, 03 Jul 2019 15:08:45 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id m16sm3360862pfd.127.2019.07.03.15.08.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 15:08:45 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 15:08:43 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Dmitry Torokhov <dtor@google.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dan Murphy <dmurphy@ti.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-Subject: Various LED complexities was Re: [PATCH v5 05/26] leds: core: Add
- support for composing LED class device names
-Message-ID: <20190703220526.GB876@amd>
-References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
- <20190609190803.14815-6-jacek.anaszewski@gmail.com>
- <CACRpkdYdqKZVKSaQB0THi=iZcRT04EKX2-85__Hw1f53o8vsuw@mail.gmail.com>
- <643e3b10fe9d45b59ed063ffc6d578ff@AcuMS.aculab.com>
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: net: Add bindings for Realtek PHYs
+Message-ID: <20190703220843.GJ250418@google.com>
+References: <20190703193724.246854-1-mka@chromium.org>
+ <CAL_JsqJdBAMPc1sZJfL7V9cxGgCb4GWwRokwJDmac5L2AO2-wg@mail.gmail.com>
+ <20190703213327.GH18473@lunn.ch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vGgW1X5XWziG23Ko"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <643e3b10fe9d45b59ed063ffc6d578ff@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190703213327.GH18473@lunn.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 03, 2019 at 11:33:27PM +0200, Andrew Lunn wrote:
+> > I think if we're going to have custom properties for phys, we should
+> > have a compatible string to at least validate whether the custom
+> > properties are even valid for the node.
+> 
+> Hi Rob
+> 
+> What happens with other enumerable busses where a compatible string is
+> not used?
+> 
+> The Ethernet PHY subsystem will ignore the compatible string and load
+> the driver which fits the enumeration data. Using the compatible
+> string only to get the right YAML validator seems wrong. I would
+> prefer adding some other property with a clear name indicates its is
+> selecting the validator, and has nothing to do with loading the
+> correct driver. And it can then be used as well for USB and PCI
+> devices etc.
 
---vGgW1X5XWziG23Ko
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri 2019-06-28 13:30:30, David Laight wrote:
-> From: Linus Walleij
-> > Sent: 28 June 2019 09:46
-> ...
-> > A problem with LEDs is that it invites bikeshedding because it is too
-> > relateable.
->=20
-> Bikeshedding leds :-)
->=20
-> It also isn't at all clear how to handle bi-colour and tri-colour leds.
-> ISTR the usual interface lets you set the brightness, but more often
-> leds are single brightness but multi-colour.
-> Eg the ethernet 'speed' led which is (usually) off/orange/green.
->=20
-> Changing the brightness either means changing the current or using PWM.
-> Both really require more hardware support than changing colours.
->=20
-> I've done some led driving (for a front panel) from a PLD (small FPGA).
-> As well as the obvious things I did:
-> - dim: 1/8th on at 80Hz.
-> - flash: 1/8th on at 4Hz.
-> - orange: 50-50 red-green at 80Hz on an RGB led.
->=20
-> There was also the 'ethernet activity' led which could either be driven
-> by the hardware, or forced on/off/flash by the driver.
-> If driven by the hardware, the software could read the current state.
->=20
-> None of this really fitted the Linux leds interface.
-
-Well, we are working on some of those :-). But lets discuss that in
-separate threads.
-
-In particular we are working on triggers and RGB LEDs.
-
-bi-color LEDs seem to handled as two separate LEDs. Not much expected
-to change there.
-								=09
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vGgW1X5XWziG23Ko
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0dJqYACgkQMOfwapXb+vK3+gCgip2UEFe6NwueZy1C3k5AeG/n
-otAAnjpPCwHWvYp6ku5OriKI1CkGFCYr
-=31SK
------END PGP SIGNATURE-----
-
---vGgW1X5XWziG23Ko--
+I also have doubts whether a compatible string is the right answer
+here. It's not needed/used by the subsystem, but would it be a
+required property because it's needed for validation?
