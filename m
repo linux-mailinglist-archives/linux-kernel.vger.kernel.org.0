@@ -2,111 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78BE5E6E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F58E5E6E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfGCOhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:37:34 -0400
-Received: from mga05.intel.com ([192.55.52.43]:45840 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfGCOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:37:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 07:37:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
-   d="scan'208";a="157989074"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga008.jf.intel.com with ESMTP; 03 Jul 2019 07:37:29 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1higO0-0006g5-E3; Wed, 03 Jul 2019 17:37:28 +0300
-Date:   Wed, 3 Jul 2019 17:37:28 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mans Rullgard <mans@mansr.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v2 1/2] kernel.h: Update comment about
- simple_strto<foo>() functions
-Message-ID: <20190703143728.GS9224@smile.fi.intel.com>
-References: <20190626093943.49780-1-andriy.shevchenko@linux.intel.com>
- <CAMuHMdWm7ftYNVQfjLdPxvzZQLa6mWQvjE8vGo98-QOGeyjZFQ@mail.gmail.com>
+        id S1727264AbfGCOiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:38:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43685 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCOiC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:38:02 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p13so3086307wru.10
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 07:38:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=lasZq5Fz9C40OGegUP6w040GqTacb+hR2lXsMebzF7Y=;
+        b=g3ts4SQMzif5YJyxyE96um2xJOyYQi4ZNgQwAx7y2MTh2mi9aOHYp1R6uIXhzSKT1O
+         d34yk5AEj5Gwx5hZEBdXIRCB0Yz4FtvuAkV3kKbiBJ0sPSrX3Qg0dpp/n1pq9YFy85oe
+         vXMLVdq2U8C4nTa7tyTaSlDHINY7nauC5kWQD9btOZAM5dfrhLwieCjqSDyYpS/vJ8Ax
+         VERVh6eGAl9VVgrn5YyZdZlIvmPF5ser0MVwnLRm7lzY8iG2oah/20/9bomUfvVk/7IE
+         4P2LHJZicy17Tp5YjQPHpgheq+8Y2RJHbUe/MmUPs9wCLaGVsd8tI/LVNLvVlm8FHy4v
+         3fyA==
+X-Gm-Message-State: APjAAAXmLbIWD2yYZYwRIgBOpRI+OtApKhRfHfjytktmrsgBYqTm+xjH
+        QAcmFBqyjzYlUnBD078T6SCqiw==
+X-Google-Smtp-Source: APXvYqyxOUuSqyGEsNKgUvXXZSh4CQHn/FxV38JZgb7J05BAP5SdkM+B9kCpNpKVuWsmHwb6OiLJKA==
+X-Received: by 2002:a5d:498f:: with SMTP id r15mr1599385wrq.353.1562164681463;
+        Wed, 03 Jul 2019 07:38:01 -0700 (PDT)
+Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id z19sm1672780wmi.7.2019.07.03.07.38.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 07:38:00 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 16:37:59 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: xfs: xfs_log: Change return type from int to void
+Message-ID: <20190703143759.qczx4dnjhslh3gys@pegasus.maiolino.io>
+Mail-Followup-To: Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190702181547.GA11316@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWm7ftYNVQfjLdPxvzZQLa6mWQvjE8vGo98-QOGeyjZFQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190702181547.GA11316@hari-Inspiron-1545>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 01:00:45PM +0200, Geert Uytterhoeven wrote:
-> Hi Andy,
+On Tue, Jul 02, 2019 at 11:45:47PM +0530, Hariprasad Kelam wrote:
+> Change return types of below functions as they never fails
+> xfs_log_mount_cancel
+> xlog_recover_cancel
+> xlog_recover_cancel_intents
 > 
-> On Wed, Jun 26, 2019 at 11:39 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > There were discussions in the past about use cases for
-> > simple_strto<foo>() functions and in some rare cases they have a benefit
-> > on kstrto<foo>() ones.
+> fix below issue reported by coccicheck
+> fs/xfs/xfs_log_recover.c:4886:7-12: Unneeded variable: "error". Return
+> "0" on line 4926
 > 
-> over
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-Will fix.
 
-> > Update a comment to reduce confusing about special use cases.
+Looks ok.
+
+You can add:
+
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+
+> ---
+>  fs/xfs/xfs_log.c         |  8 ++------
+>  fs/xfs/xfs_log.h         |  2 +-
+>  fs/xfs/xfs_log_priv.h    |  2 +-
+>  fs/xfs/xfs_log_recover.c | 12 +++---------
+>  4 files changed, 7 insertions(+), 17 deletions(-)
 > 
-> confusion
-
-Will fix.
-
-> > Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+> index cbaf348..00e9f5c 100644
+> --- a/fs/xfs/xfs_log.c
+> +++ b/fs/xfs/xfs_log.c
+> @@ -769,16 +769,12 @@ xfs_log_mount_finish(
+>   * The mount has failed. Cancel the recovery if it hasn't completed and destroy
+>   * the log.
+>   */
+> -int
+> +void
+>  xfs_log_mount_cancel(
+>  	struct xfs_mount	*mp)
+>  {
+> -	int			error;
+> -
+> -	error = xlog_recover_cancel(mp->m_log);
+> +	xlog_recover_cancel(mp->m_log);
+>  	xfs_log_unmount(mp);
+> -
+> -	return error;
+>  }
+>  
+>  /*
+> diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
+> index f27b1cb..84e0680 100644
+> --- a/fs/xfs/xfs_log.h
+> +++ b/fs/xfs/xfs_log.h
+> @@ -117,7 +117,7 @@ int	  xfs_log_mount(struct xfs_mount	*mp,
+>  			xfs_daddr_t		start_block,
+>  			int		 	num_bblocks);
+>  int	  xfs_log_mount_finish(struct xfs_mount *mp);
+> -int	xfs_log_mount_cancel(struct xfs_mount *);
+> +void	xfs_log_mount_cancel(struct xfs_mount *);
+>  xfs_lsn_t xlog_assign_tail_lsn(struct xfs_mount *mp);
+>  xfs_lsn_t xlog_assign_tail_lsn_locked(struct xfs_mount *mp);
+>  void	  xfs_log_space_wake(struct xfs_mount *mp);
+> diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+> index 8acacbc..b880c23 100644
+> --- a/fs/xfs/xfs_log_priv.h
+> +++ b/fs/xfs/xfs_log_priv.h
+> @@ -418,7 +418,7 @@ xlog_recover(
+>  extern int
+>  xlog_recover_finish(
+>  	struct xlog		*log);
+> -extern int
+> +extern void
+>  xlog_recover_cancel(struct xlog *);
+>  
+>  extern __le32	 xlog_cksum(struct xlog *log, struct xlog_rec_header *rhead,
+> diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+> index 1fc70ac..13d1d3e 100644
+> --- a/fs/xfs/xfs_log_recover.c
+> +++ b/fs/xfs/xfs_log_recover.c
+> @@ -4875,12 +4875,11 @@ xlog_recover_process_intents(
+>   * A cancel occurs when the mount has failed and we're bailing out.
+>   * Release all pending log intent items so they don't pin the AIL.
+>   */
+> -STATIC int
+> +STATIC void
+>  xlog_recover_cancel_intents(
+>  	struct xlog		*log)
+>  {
+>  	struct xfs_log_item	*lip;
+> -	int			error = 0;
+>  	struct xfs_ail_cursor	cur;
+>  	struct xfs_ail		*ailp;
+>  
+> @@ -4920,7 +4919,6 @@ xlog_recover_cancel_intents(
+>  
+>  	xfs_trans_ail_cursor_done(&cur);
+>  	spin_unlock(&ailp->ail_lock);
+> -	return error;
+>  }
+>  
+>  /*
+> @@ -5779,16 +5777,12 @@ xlog_recover_finish(
+>  	return 0;
+>  }
+>  
+> -int
+> +void
+>  xlog_recover_cancel(
+>  	struct xlog	*log)
+>  {
+> -	int		error = 0;
+> -
+>  	if (log->l_flags & XLOG_RECOVERY_NEEDED)
+> -		error = xlog_recover_cancel_intents(log);
+> -
+> -	return error;
+> +		xlog_recover_cancel_intents(log);
+>  }
+>  
+>  #if defined(DEBUG)
+> -- 
+> 2.7.4
 > 
-> > --- a/include/linux/kernel.h
-> > +++ b/include/linux/kernel.h
-> 
-> > @@ -437,7 +435,15 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t
-> >         return kstrtoint_from_user(s, count, base, res);
-> >  }
-> >
-> > -/* Obsolete, do not use.  Use kstrto<foo> instead */
-> > +/*
-> > + * Use kstrto<foo> instead.
-> > + *
-> > + * NOTE: The simple_strto<foo> does not check for overflow and,
-> > + *      depending on the input, may give interesting results.
-> > + *
-> > + * Use these functions if and only if the code will need in place
-> > + * conversion and otherwise looks very ugly. Keep in mind above caveat.
-> 
-> What do you mean by "in place conversion"?
-> The input buffer is const, and not modified by the callee.
-> Do you mean that these functions do not require NUL termination (just
-> after the number), and the characters making up the number don't have to
-> be copied to a separate buffer to make them NUL-terminated?
-
-The second one, could you propose better wording for that?
-
-> > + */
-> >
-> >  extern unsigned long simple_strtoul(const char *,char **,unsigned int);
-> >  extern long simple_strtol(const char *,char **,unsigned int);
-> 
-> Yeah, they're still very useful.
-
-Thanks for review.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Carlos
