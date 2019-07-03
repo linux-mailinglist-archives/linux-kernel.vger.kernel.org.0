@@ -2,121 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC285EEEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31545EEF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 00:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfGCWC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 18:02:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33864 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbfGCWC0 (ORCPT
+        id S1727484AbfGCWD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 18:03:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38800 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727076AbfGCWD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 18:02:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GmIbzmtd8tOzuQLg/EqjNzFkCAF84w76eG2p5TWzhiU=; b=rntZ06uUlfg/5V+8FahH4VKRve
-        0MTWu0xf0b1aqm0wYAYPxxooNt2SSuQ4vvjpnEEOS5h9gKLJ3rgNyZ5EJcPK3FjtJHY4t0WVemkdA
-        y3sGrURy8SD/wfZyHPlvdc4Y0rB7DCzAbOMjatokw8rBtMyajtZFa8eUdnBzSIFtpGf0TICahDuUb
-        Ua5BOTAsjHhBLjVqtdRVsqi5KqQR1r9mDEVMh70w7Ycs+P/S+rHEY+JhB3PREIVP/hBdt+xg9WWli
-        52ZJ6E8O3cpcXHKds0bFgglaJbptoQ5a1RVSGE8FFl75HsRneFOQTkbkPoPjNF808QquF6LjNNhKV
-        Rj9RIUZw==;
-Received: from rap-us.hgst.com ([199.255.44.250] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hinKS-0004Er-Pp; Wed, 03 Jul 2019 22:02:16 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] mm: remove the legacy hmm_pfn_* APIs
-Date:   Wed,  3 Jul 2019 15:02:14 -0700
-Message-Id: <20190703220214.28319-7-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703220214.28319-1-hch@lst.de>
-References: <20190703220214.28319-1-hch@lst.de>
+        Wed, 3 Jul 2019 18:03:27 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x63M1xJU090810
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Jul 2019 18:03:26 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2th3gm2eaj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 18:03:26 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <groug@kaod.org>;
+        Wed, 3 Jul 2019 23:03:24 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Jul 2019 23:03:21 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x63M3Kxh59244590
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 3 Jul 2019 22:03:20 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61C3F5204E;
+        Wed,  3 Jul 2019 22:03:20 +0000 (GMT)
+Received: from bahia.lan (unknown [9.145.70.88])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3330F52052;
+        Wed,  3 Jul 2019 22:03:20 +0000 (GMT)
+Subject: [PATCH] KVM: PPC: Book3S HV: XIVE: Fix typo in comment
+From:   Greg Kurz <groug@kaod.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        trivial@kernel.org
+Date:   Thu, 04 Jul 2019 00:03:19 +0200
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070322-0008-0000-0000-000002F99151
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070322-0009-0000-0000-00002266E117
+Message-Id: <156219139988.578018.1046848908285019838.stgit@bahia.lan>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=929 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907030269
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the one remaining user in nouveau over to its replacement,
-and remove all the wrappers.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: trivial@kernel.org
+Signed-off-by: Greg Kurz <groug@kaod.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
- include/linux/hmm.h                    | 34 --------------------------
- 2 files changed, 1 insertion(+), 35 deletions(-)
+ arch/powerpc/kvm/book3s_xive.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-index 42c026010938..b9ced2e61667 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-@@ -844,7 +844,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
- 		struct page *page;
- 		uint64_t addr;
+diff --git a/arch/powerpc/kvm/book3s_xive.c b/arch/powerpc/kvm/book3s_xive.c
+index 1fcb3d6f1db8..e3169e8bf1fc 100644
+--- a/arch/powerpc/kvm/book3s_xive.c
++++ b/arch/powerpc/kvm/book3s_xive.c
+@@ -501,7 +501,7 @@ static void xive_finish_unmask(struct kvmppc_xive *xive,
+ 	kvmppc_xive_select_irq(state, &hw_num, &xd);
  
--		page = hmm_pfn_to_page(range, range->pfns[i]);
-+		page = hmm_device_entry_to_page(range, range->pfns[i]);
- 		if (page == NULL)
- 			continue;
- 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index fa43a9f53833..bf641bbecc7e 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -290,40 +290,6 @@ static inline uint64_t hmm_device_entry_from_pfn(const struct hmm_range *range,
- 		range->flags[HMM_PFN_VALID];
- }
- 
--/*
-- * Old API:
-- * hmm_pfn_to_page()
-- * hmm_pfn_to_pfn()
-- * hmm_pfn_from_page()
-- * hmm_pfn_from_pfn()
-- *
-- * This are the OLD API please use new API, it is here to avoid cross-tree
-- * merge painfullness ie we convert things to new API in stages.
-- */
--static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_page(range, pfn);
--}
--
--static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_pfn(range, pfn);
--}
--
--static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
--					 struct page *page)
--{
--	return hmm_device_entry_from_page(range, page);
--}
--
--static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
--					unsigned long pfn)
--{
--	return hmm_device_entry_from_pfn(range, pfn);
--}
--
- /*
-  * Mirroring: how to synchronize device page table with CPU page table.
-  *
--- 
-2.20.1
+ 	/*
+-	 * See command in xive_lock_and_mask() concerning masking
++	 * See comment in xive_lock_and_mask() concerning masking
+ 	 * via firmware.
+ 	 */
+ 	if (xd->flags & OPAL_XIVE_IRQ_MASK_VIA_FW) {
 
