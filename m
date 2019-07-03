@@ -2,142 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69BB5E7A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE7005E7B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfGCPUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:20:54 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40352 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCPUx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:20:53 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a93so1426395pla.7;
-        Wed, 03 Jul 2019 08:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=npfUX5g4NBmsetcgst/lwNx2V3HsW1aIbrFYjh+u9+o=;
-        b=alSKkrNqbdr9OhZoF+JB968jD/7tRgD/xcQov7+FUTen/Ddk0DLlixffd5mSiU7rdX
-         wuZ1kN/mSj+LVjPC/UF22/otJMVPWXLvAYXFUgk2PhSGjbASrR9TpLo7pZMMmedn5GQi
-         PisnW3Kx/HJRdyDQhrd3cmxtGv45R04+wlNamvh77uuM/oK01fKHr+BtMgzGxZ3nB8xs
-         nDgKEEJ5nXkjrbvB8JZ7ftAKz7ZiHueNRIp+ZcU5ULyfcAUlCLK3/clhlcs+1C4YfrL9
-         hjAb/hOmmUb3PLtOwtPUo6vgn5fxrrsJG+hNcyi/oFx7HyKEeHvyvTjp09q7Kv4r+kiB
-         wi0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=npfUX5g4NBmsetcgst/lwNx2V3HsW1aIbrFYjh+u9+o=;
-        b=Vw4Al8dvBWV44lJHR0o8dcRy0211rfyB/BlBGvq9TrJXcAnxLX54plMoikCaTj+hdV
-         hYKwFMHmT526Tg6pd7o7qVPLtpNLSQgAF/0O5yxfqTNSz3MXYO7RgH+4+KFSBE58Glad
-         ACa6vGdEpu5sh1w/fNdRQ8i5T8bzN55/u4lNUK6xFEKdsHik2Se1o32gpDsUVu1Kw7Md
-         JyJVxuzWGK04nK10ptjun4kFeJsZaDoLYl5pB6hW0bXhxreLjZJ0liU1Rnxp7Idv/OpH
-         XRDInqjtG/6DExFexfWnJdVo1/fZcIEgQVFATonR8mUAus6M11s1qms087MTuh4SP3JR
-         uy8Q==
-X-Gm-Message-State: APjAAAXJJXgIFi5BDfg1RvjqJPMXJNcbWRpqQLZpkw8kRXOCHT09zuBk
-        Boc5Ru4922tH7doBPl266tC+bgh1Zom/GdSPFjc=
-X-Google-Smtp-Source: APXvYqw9zwX67ErTPi0PgCyAJYOtm7UgoOXqo7N4NhEw1YJtstI0VpEEPjHenFDEyA+XPXs0Sn3xcK40ybUv5JOs1Ks=
-X-Received: by 2002:a17:902:694a:: with SMTP id k10mr42645894plt.255.1562167253133;
- Wed, 03 Jul 2019 08:20:53 -0700 (PDT)
+        id S1727004AbfGCPVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 11:21:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbfGCPVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:21:52 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8DBD8A9DAC;
+        Wed,  3 Jul 2019 15:21:47 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A01B6891C0;
+        Wed,  3 Jul 2019 15:21:16 +0000 (UTC)
+Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
+ caches
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+References: <20190702183730.14461-1-longman@redhat.com>
+ <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
+ <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+ <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <c29ff725-95ba-db4d-944f-d33f5f766cd3@redhat.com>
+Date:   Wed, 3 Jul 2019 11:21:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190703131908.26138-1-huangfq.daxian@gmail.com>
-In-Reply-To: <20190703131908.26138-1-huangfq.daxian@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 3 Jul 2019 18:20:41 +0300
-Message-ID: <CAHp75Vef=H492wUnGWGSu7wg5qTb0Q7Y1VrcM60WK=8ejr=bcQ@mail.gmail.com>
-Subject: Re: [PATCH 19/30] platform/x86: Use kmemdup rather than duplicating
- its implementation
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thinkpad-acpi devel ML <ibm-acpi-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 03 Jul 2019 15:21:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 4:19 PM Fuqian Huang <huangfq.daxian@gmail.com> wrote:
+On 7/2/19 5:33 PM, Andrew Morton wrote:
+> On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
 >
-> kmemdup is introduced to duplicate a region of memory in a neat way.
-> Rather than kmalloc/kzalloc + memset, which the programmer needs to
-> write the size twice (sometimes lead to mistakes), kmemdup improves
-> readability, leads to smaller code and also reduce the chances of mistakes.
-> Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
+>> On 7/2/19 4:03 PM, Andrew Morton wrote:
+>>> On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wrote:
+>>>
+>>>> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
+>>>> file to shrink the slab by flushing all the per-cpu slabs and free
+>>>> slabs in partial lists. This applies only to the root caches, though.
+>>>>
+>>>> Extends this capability by shrinking all the child memcg caches and
+>>>> the root cache when a value of '2' is written to the shrink sysfs file.
+>>> Why?
+>>>
+>>> Please fully describe the value of the proposed feature to or users. 
+>>> Always.
+>> Sure. Essentially, the sysfs shrink interface is not complete. It allows
+>> the root cache to be shrunk, but not any of the memcg caches. 
+> But that doesn't describe anything of value.  Who wants to use this,
+> and why?  How will it be used?  What are the use-cases?
 >
+For me, the primary motivation of posting this patch is to have a way to
+make the number of active objects reported in /proc/slabinfo more
+accurately reflect the number of objects that are actually being used by
+the kernel. When measuring changes in slab objects consumption between
+successive run of a certain workload, I can more easily see the amount
+of increase. Without that, the data will have much more noise and it
+will be harder to see a pattern.
 
-Please, split on driver basis and use correct prefix.
+Cheers,
+Longman
 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  drivers/platform/x86/asus-wmi.c      |  3 +--
->  drivers/platform/x86/thinkpad_acpi.c | 17 +++++++----------
->  2 files changed, 8 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 9b18a184e0aa..472b317ad814 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -260,12 +260,11 @@ static int asus_wmi_evaluate_method_agfn(const struct acpi_buffer args)
->          * Copy to dma capable address otherwise memory corruption occurs as
->          * bios has to be able to access it.
->          */
-> -       input.pointer = kzalloc(args.length, GFP_DMA | GFP_KERNEL);
-> +       input.pointer = kmemdup(args.pointer, args.length, GFP_DMA | GFP_KERNEL);
->         input.length = args.length;
->         if (!input.pointer)
->                 return -ENOMEM;
->         phys_addr = virt_to_phys(input.pointer);
-> -       memcpy(input.pointer, args.pointer, args.length);
->
->         status = asus_wmi_evaluate_method(ASUS_WMI_METHODID_AGFN,
->                                         phys_addr, 0, &retval);
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> index 7bde4640ef34..d379bdf98a0f 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -3647,22 +3647,19 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
->                 goto err_exit;
->
->         /* Set up key map */
-> -       hotkey_keycode_map = kmalloc(TPACPI_HOTKEY_MAP_SIZE,
-> -                                       GFP_KERNEL);
-> -       if (!hotkey_keycode_map) {
-> -               pr_err("failed to allocate memory for key map\n");
-> -               res = -ENOMEM;
-> -               goto err_exit;
-> -       }
-> -
->         keymap_id = tpacpi_check_quirks(tpacpi_keymap_qtable,
->                                         ARRAY_SIZE(tpacpi_keymap_qtable));
->         BUG_ON(keymap_id >= ARRAY_SIZE(tpacpi_keymaps));
->         dbg_printk(TPACPI_DBG_INIT | TPACPI_DBG_HKEY,
->                    "using keymap number %lu\n", keymap_id);
->
-> -       memcpy(hotkey_keycode_map, &tpacpi_keymaps[keymap_id],
-> -               TPACPI_HOTKEY_MAP_SIZE);
-> +       hotkey_keycode_map = kmemdup(&tpacpi_keymaps[keymap_id],
-> +                       TPACPI_HOTKEY_MAP_SIZE, GFP_KERNEL);
-> +       if (!hotkey_keycode_map) {
-> +               pr_err("failed to allocate memory for key map\n");
-> +               res = -ENOMEM;
-> +               goto err_exit;
-> +       }
->
->         input_set_capability(tpacpi_inputdev, EV_MSC, MSC_SCAN);
->         tpacpi_inputdev->keycodesize = TPACPI_HOTKEY_MAP_TYPESIZE;
-> --
-> 2.11.0
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
