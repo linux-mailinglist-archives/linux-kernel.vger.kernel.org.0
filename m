@@ -2,101 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE265DE67
+	by mail.lfdr.de (Postfix) with ESMTP id D3A6F5DE68
 	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfGCHIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727147AbfGCHIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:08:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45434 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726670AbfGCHIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Jul 2019 03:08:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33441 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfGCHIT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:08:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6377KEe3176993
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 00:07:20 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6377KEe3176993
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562137640;
-        bh=AIigXA0nJ1xpXRrsT1JFgh4Vupgap+xlRnwpJjhFiZY=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=x7mlhMamIGWSmx7ytXKucrxFKzgvmelWmYDxGOfsPYNWYIe1pip+fiVmSzxJcBAyF
-         ffxVshad/5FTsmF2V3vSFHqnyv4ghMswtj9vj7HepX3paYhHru/fMUqLQ/aOc+WxyA
-         k4GSgGS3dMaYjWmefshzXuZp8NjzJdkkeFTcaaHHCUvdaHeQq01EnpSeEBdPEIh+Ms
-         HSumNdw2j4eqTPWM3vsNf/Z5DoJNoEhX1z3R+UlZfAbvoo7LyBs4Xn2qBnB0szHYEZ
-         8SM6V69snXP5CE403Su3GwIEbem/+d/rnMOj26UjETHpaTURfSyDjPVyeX3nZwVDnQ
-         MVB4K8dUzaemg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6377JUG3176990;
-        Wed, 3 Jul 2019 00:07:19 -0700
-Date:   Wed, 3 Jul 2019 00:07:19 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-7e8e6816c6495a1168f9a7a50125d82c23e59300@git.kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, hpa@zytor.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mingo@kernel.org, jpoimboe@redhat.com
-Reply-To: rostedt@goodmis.org, tglx@linutronix.de, hpa@zytor.com,
-          peterz@infradead.org, mark.rutland@arm.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          jpoimboe@redhat.com
-In-Reply-To: <alpine.DEB.2.21.1907021750100.1802@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1907021750100.1802@nanos.tec.linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/stacktrace] stacktrace: Use PF_KTHREAD to check for
- kernel threads
-Git-Commit-ID: 7e8e6816c6495a1168f9a7a50125d82c23e59300
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9D3A6B12A;
+        Wed,  3 Jul 2019 07:08:17 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Alistair Francis <alistair.francis@wdc.com>
+Cc:     linux-riscv@lists.infradead.org, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, alistair23@gmail.com
+Subject: Re: [PATCH RESEND 0/2] RISC-V: Handle the siginfo_t offset problem
+References: <20190703005202.7578-1-alistair.francis@wdc.com>
+X-Yow:  Disco oil bussing will create a throbbing naugahide pipeline running
+ straight to the tropics from the rug producing regions
+ and devalue the dollar!
+Date:   Wed, 03 Jul 2019 09:08:17 +0200
+In-Reply-To: <20190703005202.7578-1-alistair.francis@wdc.com> (Alistair
+        Francis's message of "Tue, 2 Jul 2019 17:52:00 -0700")
+Message-ID: <mvmk1czh9y6.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7e8e6816c6495a1168f9a7a50125d82c23e59300
-Gitweb:     https://git.kernel.org/tip/7e8e6816c6495a1168f9a7a50125d82c23e59300
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Tue, 2 Jul 2019 17:53:35 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 3 Jul 2019 09:04:06 +0200
+On Jul 02 2019, Alistair Francis <alistair.francis@wdc.com> wrote:
 
-stacktrace: Use PF_KTHREAD to check for kernel threads
+> In the RISC-V 32-bit glibc port [1] the siginfo_t struct in the kernel
+> doesn't line up with the struct in glibc. In glibc world the _sifields
+> union is 8 byte alligned (although I can't figure out why)
 
-!current->mm is not a reliable indicator for kernel threads as they might
-temporarily use a user mm. Check for PF_KTHREAD instead.
+Try ptype/o in gdb.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1907021750100.1802@nanos.tec.linutronix.de
+Andreas.
 
----
- kernel/stacktrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index 36139de0a3c4..c8d0f05721a1 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -228,7 +228,7 @@ unsigned int stack_trace_save_user(unsigned long *store, unsigned int size)
- 	};
- 
- 	/* Trace user stack if not a kernel thread */
--	if (!current->mm)
-+	if (current->flags & PF_KTHREAD)
- 		return 0;
- 
- 	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
