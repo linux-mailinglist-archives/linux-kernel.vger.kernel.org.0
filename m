@@ -2,68 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 256AC5E5AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 432425E5BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 15:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfGCNpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 09:45:09 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:38540 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfGCNpI (ORCPT
+        id S1726841AbfGCNuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 09:50:23 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55014 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfGCNuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 09:45:08 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1hifZC-0000hr-Hn; Wed, 03 Jul 2019 15:44:58 +0200
-Message-ID: <b3cd61506080143f571d6286223ae33c8bd02c3a.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next v6 06/15] ethtool: netlink bitset handling
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Jiri Pirko <jiri@resnulli.us>, Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 03 Jul 2019 15:44:57 +0200
-In-Reply-To: <20190703114933.GW2250@nanopsycho> (sfid-20190703_134935_025840_EF167268)
-References: <cover.1562067622.git.mkubecek@suse.cz>
-         <cb614bebee1686293127194e8f7ced72955c7c7f.1562067622.git.mkubecek@suse.cz>
-         <20190703114933.GW2250@nanopsycho> (sfid-20190703_134935_025840_EF167268)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Jul 2019 09:50:22 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g135so2297762wme.4;
+        Wed, 03 Jul 2019 06:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YFbVXlxoYz2j0yWH+kl6Asgr36XCltStIn0g6Mr9B8w=;
+        b=Ygibtc7gTh0+cqjA02xazjen9ww1ScHU0j2G5jXkqHMZmtEfu05BjQPbn5MK8Ln+61
+         EjBq/NFluFO5KnsyGCyPHTvG6jM2mN+AuNyfdXhe2J/ZM3vxBHXtf5wIO5o+BPmDwMJm
+         GV/N+F9vOP9DYBk0e+tyqVlWcYoWzf2ll2jyTRte6u6Abnw9ol/A51ankU8DBtFqvSkZ
+         tUVdPEeUbWSyioBh562LebC2aeKKQx6I7jWR984QpIVZ9QyhClxMWERqxk6LLSY8Dca+
+         9w4/V2hPdzZha1HJovwsTBkD75Wijy9EoYcSA+f6OzkkYhuTQXTT/UwvNxaft6i2YiBb
+         wlOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YFbVXlxoYz2j0yWH+kl6Asgr36XCltStIn0g6Mr9B8w=;
+        b=epmGl0mc3LMLPP9t+FQOZ0Mfe0tkWD26YPwc//4kVboh9ZXrfclXAV0LTNs4FS97/I
+         4+Lq/PbMU6kLIy/ifiFRJuaxXOA9BOXjgQdnzIbZAGmoqaL7lOzfC7WRMtSG2N2UDLka
+         lc2SqxlgCN1A+REwDvhUDUxyPH4IcNw9diJuuEpsK3jf1Nwh86AlgJVZLbTN+bZq9Rlw
+         NmGcD5ZYfKcm/iDrSZiJQDFaiBZ5iRDI360n/qe+3ZjSi6NNXa+6aVsdqPvG9FXbMqcc
+         ydDXcZtY8lziYLPX4fmcxWcyFz/wYLcejCxN0utwBOGxqRBx207YkSV8owgWYg1AGmvm
+         ut8w==
+X-Gm-Message-State: APjAAAXV5EEIgLbozquHIjx2K6OY+VKNZbfz6U4e2oi/Bsmk/u2mFOGc
+        tQdg9pz01hHFGGJblSPHzq4=
+X-Google-Smtp-Source: APXvYqwUh87fuoSZF/FPYj+B5TiydkOU+kjZrA/YtS4lovdEJlLn3AcrxHFEkISCsO2az/sjn1zqtQ==
+X-Received: by 2002:a7b:cd04:: with SMTP id f4mr8722390wmj.64.1562161820234;
+        Wed, 03 Jul 2019 06:50:20 -0700 (PDT)
+Received: from puskevit.guest.wlan ([195.142.153.182])
+        by smtp.gmail.com with ESMTPSA id t80sm2669920wmt.26.2019.07.03.06.50.18
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 06:50:19 -0700 (PDT)
+From:   Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+X-Google-Original-From: Fatih ALTINPINAR
+To:     herbert@gondor.apana.org.au
+Cc:     davem@davemloft.net, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+Subject: [PATCH] Crypto: aegis128l: fix a coding stlye issue
+Date:   Wed,  3 Jul 2019 16:49:35 +0300
+Message-Id: <20190703134935.24747-1-fatihaltinpinar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-03 at 13:49 +0200, Jiri Pirko wrote:
-> 
-> > +Value and mask must have length at least ETHTOOL_A_BITSET_SIZE bits rounded up
-> > +to a multiple of 32 bits. They consist of 32-bit words in host byte order,
-> 
-> Looks like the blocks are similar to NLA_BITFIELD32. Why don't you user
-> nested array of NLA_BITFIELD32 instead?
+From: Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
 
-That would seem kind of awkward to use, IMHO.
+Fixed a coding style issue. Removed curly brackets of an one
+line for statement.
 
-Perhaps better to make some kind of generic "arbitrary size bitfield"
-attribute type?
+Signed-of-by: Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+---
+ crypto/aegis128l.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Not really sure we want the complexity with _LIST and _SIZE, since you
-should always be able to express it as _VALUE and _MASK, right?
-
-Trying to think how we should express this best - bitfield32 is just a
-mask/value struct, for arbitrary size I guess we *could* just make it
-kind of a binary with arbitrary length that must be a multiple of 2
-bytes (or 2 u32-bit-words?) and then the first half is the value and the
-second half is the mask? Some more validation would be nicer, but having
-a generic attribute that actually is nested is awkward too.
-
-johannes
-
+diff --git a/crypto/aegis128l.c b/crypto/aegis128l.c
+index 9bca3d619a22..6c70e718c9c4 100644
+--- a/crypto/aegis128l.c
++++ b/crypto/aegis128l.c
+@@ -104,9 +104,8 @@ static void crypto_aegis128l_init(struct aegis_state *state,
+ 	crypto_aegis_block_xor(&state->blocks[6], &crypto_aegis_const[1]);
+ 	crypto_aegis_block_xor(&state->blocks[7], &crypto_aegis_const[0]);
+ 
+-	for (i = 0; i < 10; i++) {
++	for (i = 0; i < 10; i++)
+ 		crypto_aegis128l_update_a(state, &chunk);
+-	}
+ }
+ 
+ static void crypto_aegis128l_ad(struct aegis_state *state,
+-- 
+2.17.1
 
