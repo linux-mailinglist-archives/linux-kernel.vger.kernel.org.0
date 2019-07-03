@@ -2,157 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB01C5DA38
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F52F5DA43
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfGCBFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:05:03 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:32921 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfGCBFD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:05:03 -0400
-Received: by mail-ed1-f66.google.com with SMTP id i11so377759edq.0;
-        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
-        b=rBDl/pv0TR7OXoDLtY4qDwH4O3XAyoj4V0fiUbjGY2+xdzLZWxDB/TZMz91zWAQJlx
-         8zBLKP1eFkYs4j9t8Da2yciljUcB9aURJx3yWKCgQzqh66D6c/8XKo5SyexehiKWyNOp
-         ZWrYiq6dCaMItTH8MUNzgLBpTC7SCEuWXRPVvUjJ3B2z/XeOIcg0lCgVCD5f9hyeQDXt
-         mZ7b3IqG9l4uy2f1st4KIqnXHTMMEZdmsemj1i0fq9Y3AWXJ/MHhJJ7Dot+zWlOQOgdn
-         BcDXqV/O64Z5CiU1FS45nsKgYBjhkzK/mdulCD7+pePhPoSvgHgclOTmd+WheWRCDmAe
-         BCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
-        b=r7CTgElxJYLXXsm61ybKzVBjBzcvA9nIDAX9d6c9BqirffFfjiIWd/Lsg0+Bfc2+eV
-         y5VXzrdL9VUMLUQnEYxL+stD31jbYx6EhWBUoPX4NyB5rrCfhb9Ac1ieuloHaVyi4Gxx
-         6NB48Jd7NJfZatHwZJcWVK49+BrqJT8DxoX4eZCNCtNFS+wOxjs8xDMtJARJ1M0EB9re
-         8rR964zBPzbpT7vlyP4JBgOiDaVjkNrFQKDcE/7xqvI0drdEiLlPS2tx4qxVvMMTMNSR
-         csMqfJ2p+hVButcnxikfTN8UCJrAuNPpgOncGYNt+jeQ76RQYltV8ViHQtta38KK/wRz
-         2Wbg==
-X-Gm-Message-State: APjAAAVdKorEDLo0QlmVJ8atakZJmb+ScuwVmf9SLuLVA1aDVnZt0DsI
-        bchqicUK/dq+VWqibTTa/Hk=
-X-Google-Smtp-Source: APXvYqx42CglJVsr1ZJyV/elcgmcFYXinubcozjroo+1Dkc9XOZY8Eq/do5QH5nMOg/YC2Qtqrn5Gg==
-X-Received: by 2002:aa7:ca54:: with SMTP id j20mr39393692edt.50.1562115901344;
-        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
-        by smtp.gmail.com with ESMTPSA id p23sm136538ejl.43.2019.07.02.18.04.59
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 18:05:00 -0700 (PDT)
-Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
-To:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190619082141.GA32409@quack2.suse.cz>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
-Date:   Wed, 3 Jul 2019 04:04:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727158AbfGCBHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:07:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726150AbfGCBHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:07:34 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AA5C20673;
+        Wed,  3 Jul 2019 01:07:32 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 21:07:30 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     shuah <shuah@kernel.org>, Po-Hsu Lin <po-hsu.lin@canonical.com>,
+        mingo@redhat.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: skip ftrace test if FTRACE was not
+ enabled
+Message-ID: <20190702210730.2c041882@gandalf.local.home>
+In-Reply-To: <20190703091147.064029248fed5066ea5e5d2b@kernel.org>
+References: <20190702062358.7330-1-po-hsu.lin@canonical.com>
+        <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
+        <20190703091147.064029248fed5066ea5e5d2b@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190619082141.GA32409@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/2019 11:21, Jan Kara wrote:
-<>
-> Yes, I have patch to make madvise(MADV_WILLNEED) go through ->fadvise() as
-> well. I'll post it soon since the rest of the series isn't really dependent
-> on it.
+On Wed, 3 Jul 2019 09:11:47 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Hi Po-Hsu Lin,
 > 
-> 								Honza
+> On Tue, 2 Jul 2019 13:22:26 -0600
+> shuah <shuah@kernel.org> wrote:
 > 
+> > Hi Po-Hsu Lin,
+> > 
+> > On 7/2/19 12:23 AM, Po-Hsu Lin wrote:  
+> > > The ftrace test will need to have CONFIG_FTRACE enabled to make the
+> > > ftrace directory available.
+> > > 
+> > > Add an additional check to skip this test if the CONFIG_FTRACE was not
+> > > enabled.  
+> 
+> Sorry, NAK for config check.
 
-Hi Jan
+Agreed, as  my test boxes do not hold the source code of the kernel
+they are running.
 
-Funny I'm sitting on the same patch since LSF last. I need it too for other
-reasons. I have not seen, have you pushed your patch yet?
-(Is based on old v4.20)
+> 
+> > > 
+> > > This will be helpful to avoid a false-positive test result when testing
+> > > it directly with the following commad against a kernel that does not
+> > > have CONFIG_FTRACE enabled:  
+> 
+> Would you know tools/testing/selftests/ftrace/config (and other config files
+> in each tests) ?
+> 
+> Since each selftest depends specific configurations, those configs are
+> written in config file, and tester must enable it using 
+> "scripts/kconfig/merge_config.sh".
+> 
+> We can not check the kernel config in some cases, e.g. distro kernel,
+> cross-build kernel, remote build kernel etc. Also, the .config file
+> can be a config file for another kernel build.
+> 
+> So please take care of your kernel configuration. If you find any test
+> failed even if you enable configs in config file under that test, please
+> report it, since that is a bug.
+> 
+> 
+> Thank you,
+> 
+> > >      make -C tools/testing/selftests TARGETS=ftrace run_tests
+> > > 
+> > > The test result on an Ubuntu KVM kernel will be changed from:
+> > >      selftests: ftrace: ftracetest
+> > >      ========================================
+> > >      Error: No ftrace directory found
+> > >      not ok 1..1 selftests: ftrace: ftracetest [FAIL]
+> > > To:  
+> > 
+> > Thanks for the patch.
+> > 
+> > Check patch fails with the above To:
+> > 
+> > WARNING: Use a single space after To:
+> > #107:
+> > To:
+> > 
+> > ERROR: Unrecognized email address: ''
+> > #107:
+> > To:
+> > 
+> > total: 1 errors, 1 warnings, 23 lines checked
+> > 
+> > 
+> > Please fix and send v2.
+> >   
+> > >      selftests: ftrace: ftracetest
+> > >      ========================================
+> > >      CONFIG_FTRACE was not enabled, test skipped.
+> > >      not ok 1..1 selftests: ftrace: ftracetest [SKIP]
+> > > 
+> > > Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+> > > ---
+> > >   tools/testing/selftests/ftrace/ftracetest | 11 ++++++++++-
+> > >   1 file changed, 10 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> > > index 6d5e9e8..6c8322e 100755
+> > > --- a/tools/testing/selftests/ftrace/ftracetest
+> > > +++ b/tools/testing/selftests/ftrace/ftracetest
+> > > @@ -7,6 +7,9 @@
+> > >   #  Written by Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+> > >   #  
+> > 
+> > Hmm. You havem't cc'ed Masami on this. Adding Masami.
+> > 
+> > I would think Masami should be on the Signed-off-by as well,
+> > since he is the author.
+> >   
+> > >   
+> > > +# Kselftest framework requirement - SKIP code is 4.
+> > > +ksft_skip=4
+> > > +
+> > >   usage() { # errno [message]
+> > >   [ ! -z "$2" ] && echo $2
+> > >   echo "Usage: ftracetest [options] [testcase(s)] [testcase-directory(s)]"
+> > > @@ -139,7 +142,13 @@ parse_opts $*
+> > >   
+> > >   # Verify parameters
+> > >   if [ -z "$TRACING_DIR" -o ! -d "$TRACING_DIR" ]; then
 
-~~~~~~~~~
-From fddb38169e33d23060ddd444ba6f2319f76edc89 Mon Sep 17 00:00:00 2001
-From: Boaz Harrosh <boazh@netapp.com>
-Date: Thu, 16 May 2019 20:02:14 +0300
-Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
+I'm thinking if we didn't find the TRACING_DIR (-z "$TRACING_DIR"
+returns true), then we exit with the skip. I don't believe we should be
+testing ftrace if tracefs isn't even loaded. Or something like:
 
-In the patchset:
-	[b833a3660394] ovl: add ovl_fadvise()
-	[3d8f7615319b] vfs: implement readahead(2) using POSIX_FADV_WILLNEED
-	[45cd0faae371] vfs: add the fadvise() file operation
+	err_ret=1
+	err_skip=4
 
-Amir Goldstein introduced a way for filesystems to overide fadvise.
-Well madvise_willneed is exactly as fadvise_willneed except it always
-returns 0.
+	errexit() {
+	  echo "Error: $1" 1>&2
+	  exit $err_ret
+	}
 
-In this patch we call the FS vector if it exists.
+	[..]
 
-NOTE: I called vfs_fadvise(..,POSIX_FADV_WILLNEED);
-      (Which is my artistic preference)
+	if [ -z "$TRACING_DIR" ]; then
+	  save_err=$err_ret
+	  err_ret=$err_skip
+	  mount -t tracefs nodev /sys/kernel/tracing ||
+	    errexit "kernel does not have tracefs"
+	  err_ret=$save_err
+	  TRACING_DIR="/sys/kernel/tracing"
+	fi
+	if [ ! -d "$TRACING_DIR" ]; then
+	  errexit "tracefs is not a directory?"
+	fi
 
-I could also selectively call
-	if (file->f_op->fadvise)
-		return file->f_op->fadvise(..., POSIX_FADV_WILLNEED);
-If we fear theoretical side effects. I don't mind either way.
+Would something like that work?
 
-CC: Amir Goldstein <amir73il@gmail.com>
-CC: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Boaz Harrosh <boazh@netapp.com>
----
- mm/madvise.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+-- Steve
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 6cb1ca93e290..6b84ddcaaaf2 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -24,6 +24,7 @@
- #include <linux/swapops.h>
- #include <linux/shmem_fs.h>
- #include <linux/mmu_notifier.h>
-+#include <linux/fadvise.h>
- 
- #include <asm/tlb.h>
- 
-@@ -303,7 +304,8 @@ static long madvise_willneed(struct vm_area_struct *vma,
- 		end = vma->vm_end;
- 	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
- 
--	force_page_cache_readahead(file->f_mapping, file, start, end - start);
-+	vfs_fadvise(file, start << PAGE_SHIFT, (end - start) << PAGE_SHIFT,
-+		    POSIX_FADV_WILLNEED);
- 	return 0;
- }
- 
--- 
-2.20.1
+
+> > > -  errexit "No ftrace directory found"
+> > > +  ftrace_enabled=`grep "^CONFIG_FTRACE=y" /lib/modules/$(uname -r)/build/.config`
+> > > +  if [ -z "$ftrace_enabled" ]; then
+> > > +    echo "CONFIG_FTRACE was not enabled, test skipped."
+> > > +    exit $ksft_skip
+> > > +  else
+> > > +    errexit "No ftrace directory found"
+> > > +  fi
+> > >   fi
+> > >   
+> > >   # Preparing logs
+> > >   
+> > 
+> > thanks,
+> > -- Shuah  
+> 
+> 
 
