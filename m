@@ -2,62 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8415DFA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A9585DFA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfGCIUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:20:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49425 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbfGCIUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:20:11 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hiaUr-0000vw-H9; Wed, 03 Jul 2019 08:20:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: max77620: remove redundant assignment to variable ret
-Date:   Wed,  3 Jul 2019 09:20:09 +0100
-Message-Id: <20190703082009.18779-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S1727512AbfGCIUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:20:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727052AbfGCIUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:20:39 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A2B3218A3;
+        Wed,  3 Jul 2019 08:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562142038;
+        bh=M9Kh2ZvkJ9vu25atSN+BcI5yboMlIhTY1BxAY7FIEX8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0z0Ly2Qb3lz9P+2mAWO/PWXzTbfxmz+1Eymx7NcmumF2QWEU6q+5PdT1tzXNZgsHk
+         VxD72i1wyQhC4MTCuQ9vyH5wE4ZWYOe9LleONbDsp+3IXxdkQCpZL10HuxWFm1x6PH
+         UCqxW9w2L9MJWLr0H3OyExDjavxVrpWq5PAgChGE=
+Date:   Wed, 3 Jul 2019 17:20:33 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     shuah <shuah@kernel.org>, Po-Hsu Lin <po-hsu.lin@canonical.com>,
+        mingo@redhat.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: skip ftrace test if FTRACE was not
+ enabled
+Message-Id: <20190703172033.7b575566e6e2f269bcc93cc5@kernel.org>
+In-Reply-To: <20190702231808.36845f83@gandalf.local.home>
+References: <20190702062358.7330-1-po-hsu.lin@canonical.com>
+        <4a44dd22-be88-ce5b-5c9b-6a3759b6c2eb@kernel.org>
+        <20190703091147.064029248fed5066ea5e5d2b@kernel.org>
+        <20190702210730.2c041882@gandalf.local.home>
+        <20190703120953.ba36c8f30a4fb6f62c18808f@kernel.org>
+        <20190702231808.36845f83@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2 Jul 2019 23:18:08 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-The variable ret is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+> On Wed, 3 Jul 2019 12:09:53 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > > Would something like that work?  
+> > 
+> > For older kernel, I think we'd better try to mount debugfs first.
+> 
+> Sure, that's pretty trivial to do. Or what I was thinking, try it if it
+> fails:
+> 
+>  	if [ -z "$TRACING_DIR" ]; then
+>  	  save_err=$err_ret
+>  	  err_ret=$err_skip
+> 	  if mount -t tracefs nodev /sys/kernel/tracing; then
+>  	    TRACING_DIR="/sys/kernel/tracing"
+> 	  elif mount -t debugfs nodev /sys/kernel/debug; then
+>  	    TRACING_DIR="/sys/kernel/debug/tracing"
+> 	  else
+> 	    errexit "debugfs is not configured in this kernel"
+> 	  fi
+> 	  if [ ! -d "$TRACING_DIR" ]; then
+> 	    errexit "ftrace is not configured in this kernel"
+> 	  fi
+>  	  err_ret=$save_err
+>  	fi
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/max77620-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks good to me :)
 
-diff --git a/drivers/regulator/max77620-regulator.c b/drivers/regulator/max77620-regulator.c
-index 2ae2d319321b..8d9731e4052b 100644
---- a/drivers/regulator/max77620-regulator.c
-+++ b/drivers/regulator/max77620-regulator.c
-@@ -467,7 +467,7 @@ static int max77620_regulator_is_enabled(struct regulator_dev *rdev)
- {
- 	struct max77620_regulator *pmic = rdev_get_drvdata(rdev);
- 	int id = rdev_get_id(rdev);
--	int ret = 1;
-+	int ret;
- 
- 	if (pmic->active_fps_src[id] != MAX77620_FPS_SRC_NONE)
- 		return 1;
+Thank you,
+
+> 
+> -- Steve
+
+
 -- 
-2.20.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
