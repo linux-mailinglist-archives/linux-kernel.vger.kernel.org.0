@@ -2,133 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1BE5DA86
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB095DAB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfGCBPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:15:25 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38023 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfGCBPZ (ORCPT
+        id S1727444AbfGCBYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:24:31 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:56265 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726329AbfGCBYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:15:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n11so760796qtl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=liD/9MOuZoViFzGGyLdGUss/Gqo1ol5fJSSMhDITAQY=;
-        b=UnhOZorS3ucGouUUJ6xafrtEEsrX5ysAkBVI/dg0ZDjAor0OxuBA66FjAsrdJzKZqa
-         G3rtRFX3LZwSYqMOBRJdLP9vOEpUJGse5xkqxCgJgkoHH6ZETtC2CglOl4Gz5eFwpqB9
-         QzIxbsAgExukM9P5cCYF4G/pWMgFuyXXXJu+u3Y4bLJtZMGGp8agn2dYu+GgusYFkrY0
-         DjmP1xdzXz714lNjvE40LvuRv89Cq5LlyEdBR8fPDZmzLsUDw9f5zp7ObEGjtZEXBozS
-         GWnd9fyxQj73uY3RTiDeaKO0HgGB35X+h7NDpv4bt5E6fuwbyoqXx5aVYiSemB1oaeTV
-         JcBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=liD/9MOuZoViFzGGyLdGUss/Gqo1ol5fJSSMhDITAQY=;
-        b=a/QsiEs2sZGLW0r/CkwrQtOnelj+RoCaMMlSVPJnMhE3WEF8W/CPknAlHHwUcmVWoP
-         saimTOvtRhjJ2LPYPh0xHXDNETiYQbKzDroinec/b3hEMtmsJ0U+HwiWray9ilkY9kVk
-         7S29st0SnIqsiLp7vX57GMCAT4R9VPlwoxycfyo0uIHw/EPQXVJg8l3Cxk7dI1F7DDml
-         plJpVWMKWO9hQ43YWlXcblm7QxRXb0HMKpQRsWoNFJ2+IvcP19CKXHrsRJPFO3mof1rz
-         GdZV3t4Pwya/+Xic2fZ40ya1RRRpbtX6LryhE/oT7Uvnkt24p88unme182PicLjSKY0G
-         gCcw==
-X-Gm-Message-State: APjAAAV7AYFD8CZYjboI/qRj3kcb+x/Mp/2ChK2dkcOqjScPU8as2Y41
-        IqYfugB6ye2GJPrALAXFBC1SqA==
-X-Google-Smtp-Source: APXvYqxT1ad2sCuVGtqHLhWSofYS4jtico3ZGFHLaY5pqoKGA8G7OYoBujn1EZbSkY3AoMmJOvEP3A==
-X-Received: by 2002:a0c:d91b:: with SMTP id p27mr28714349qvj.236.1562116523841;
-        Tue, 02 Jul 2019 18:15:23 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id a21sm255229qkg.47.2019.07.02.18.15.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 18:15:23 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hiTrm-0004FU-T2; Tue, 02 Jul 2019 22:15:22 -0300
-Date:   Tue, 2 Jul 2019 22:15:22 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v4] mm/swap: Fix release_pages() when releasing devmap
- pages
-Message-ID: <20190703011522.GA15993@ziepe.ca>
-References: <20190605214922.17684-1-ira.weiny@intel.com>
+        Tue, 2 Jul 2019 21:24:31 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id DE3F921FC5;
+        Tue,  2 Jul 2019 21:24:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 02 Jul 2019 21:24:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        pVI22is6JO53wiZeKX9orH1tH3EcKd0M9Qk5pUYGmz0=; b=QItggmVaCyufNw3o
+        /95vT5695PevmXfDp/PHA5E7MaN9KfbMw3ZneCWWL7t0iFS7QOtEoPVlnm2vSlyw
+        C0JUc5byfsYPlgb9FRdODsk2VPWx3FgNtplNDDs/aQDO/KwTMsZQTU0prKgIYzD9
+        xUjtbGaXHE0VWv+BaaSlb5xbOz5COW3WQpSLOY1ZUNjvrn7w76TTXU/aEuGsU5mb
+        Z9u2vMQOVfr2CbXS8lMBesxvBmBlZA0ruD0Do62BkwIJMraGd/yfXMs8KLJoWclf
+        iUlpNf2DLVa53z7+63c2WAjtaUDJvWJ2sXqXhWwV24EzJrQTLnTbF/MlSB9tXpR7
+        0jHyNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=pVI22is6JO53wiZeKX9orH1tH3EcKd0M9Qk5pUYGm
+        z0=; b=ZhFxubvHT1vsXcvj/Zr9QHUi7dK9Zch+ARwj4eFkkl8VOFPiLtvBAsIqF
+        i1skt4q2l4HIUEG7HfYsDvuKeZx50YqathHBNAphVCaUAFrvRNDQnMJicERlOetQ
+        /+FwykjEUSmzXGuuZQ9AuqOC1PnkRUoMAwYP/EvZjXl3x0FVl++0bQ3A6PaKMAI/
+        S2JrPidStsfE+EVWeWGkD41crT4QSgbemXLskxpJuFJqYLb9rJ/ZjrAeieFLaIuA
+        28ys2SkQEV4wq7lIEPeLyObRiJNc+hayqCARi7W2b7YtxNOPtj+FEzPZ1T4YLImT
+        x/hvnWxH2oQqv1oGz6gAuKrtUrHow==
+X-ME-Sender: <xms:zQMcXUULUfoNl5XkFNDfbduOQBYCTJcrzySdOCeV3p1II8AQ_EgP0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrvdelgdeghecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
+    dujeegrdeiudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgif
+    rdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:zQMcXX0C9MJeHilckyGlfFrIzLAd4OnaB85JUH04KZBwzguVQ_Mh5g>
+    <xmx:zQMcXbNRvAePR97KooMz9xXGakAiTUS0IDWeEasKbtySoyiknIKY4w>
+    <xmx:zQMcXa1ya4R0aj5Eq-FdHtKutkQtIaLiurSXNqELyiIR9nGfqnuvCg>
+    <xmx:zQMcXd6yrEzjUC27C7TZgZUtRKCUHX2qkZK4tYEYT0FVO48PENaQyA>
+Received: from pluto.themaw.net (unknown [118.208.174.61])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CE231380083;
+        Tue,  2 Jul 2019 21:24:28 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by pluto.themaw.net (Postfix) with ESMTP id 85D991C014E;
+        Wed,  3 Jul 2019 09:24:25 +0800 (AWST)
+Message-ID: <2daf229272884deaf139be510f5842f0689c18a6.camel@themaw.net>
+Subject: Re: [PATCH 4/6] vfs: Allow mount information to be queried by
+ fsinfo() [ver #15]
+From:   Ian Kent <raven@themaw.net>
+To:     christian@brauner.io, David Howells <dhowells@redhat.com>,
+        viro@zeniv.linux.org.uk
+Cc:     mszeredi@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 03 Jul 2019 09:24:25 +0800
+In-Reply-To: <8c70abf248d5ac07f334730af70d64235185b109.camel@themaw.net>
+References: <156173681842.14728.9331700785061885270.stgit@warthog.procyon.org.uk>
+         <156173685496.14728.9606180227161368035.stgit@warthog.procyon.org.uk>
+         <8c70abf248d5ac07f334730af70d64235185b109.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190605214922.17684-1-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 02:49:22PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Wed, 2019-07-03 at 09:09 +0800, Ian Kent wrote:
+> Hi Christian,
 > 
-> release_pages() is an optimized version of a loop around put_page().
-> Unfortunately for devmap pages the logic is not entirely correct in
-> release_pages().  This is because device pages can be more than type
-> MEMORY_DEVICE_PUBLIC.  There are in fact 4 types, private, public, FS
-> DAX, and PCI P2PDMA.  Some of these have specific needs to "put" the
-> page while others do not.
-> 
-> This logic to handle any special needs is contained in
-> put_devmap_managed_page().  Therefore all devmap pages should be
-> processed by this function where we can contain the correct logic for a
-> page put.
-> 
-> Handle all device type pages within release_pages() by calling
-> put_devmap_managed_page() on all devmap pages.  If
-> put_devmap_managed_page() returns true the page has been put and we
-> continue with the next page.  A false return of
-> put_devmap_managed_page() means the page did not require special
-> processing and should fall to "normal" processing.
-> 
-> This was found via code inspection while determining if release_pages()
-> and the new put_user_pages() could be interchangeable.[1]
-> 
-> [1] https://lore.kernel.org/lkml/20190523172852.GA27175@iweiny-DESK2.sc.intel.com/
-> 
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes from V3:
-> 	Update comment to the one provided by John
-> 
-> Changes from V2:
-> 	Update changelog for more clarity as requested by Michal
-> 	Update comment WRT "failing" of put_devmap_managed_page()
-> 
-> Changes from V1:
-> 	Add comment clarifying that put_devmap_managed_page() can still
-> 	fail.
-> 	Add Reviewed-by tags.
-> 
->  mm/swap.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+> About the propagation attributes you mentioned ...
 
-Andrew,
+Umm ... how did you work out if a mount is unbindable from proc
+mountinfo?
 
-As per the discussion on the hmm thread I took this patch into the
-hmm.git as the conflict that was created with CH's rework was tricky -
-the resolution is simple, but keeping Ira's hunk instead of the delete
-is, IMHO, subtle.
+I didn't notice anything that could be used for that when I was
+looking at this.
 
-Regards, 
-Jason
+> 
+> On Fri, 2019-06-28 at 16:47 +0100, David Howells wrote:
+> 
+> snip ...
+> 
+> > +
+> > +#ifdef CONFIG_FSINFO
+> > +int fsinfo_generic_mount_info(struct path *path, struct fsinfo_kparams
+> > *params)
+> > +{
+> > +	struct fsinfo_mount_info *p = params->buffer;
+> > +	struct super_block *sb;
+> > +	struct mount *m;
+> > +	struct path root;
+> > +	unsigned int flags;
+> > +
+> > +	if (!path->mnt)
+> > +		return -ENODATA;
+> > +
+> > +	m = real_mount(path->mnt);
+> > +	sb = m->mnt.mnt_sb;
+> > +
+> > +	p->f_sb_id		= sb->s_unique_id;
+> > +	p->mnt_id		= m->mnt_id;
+> > +	p->parent_id		= m->mnt_parent->mnt_id;
+> > +	p->change_counter	= atomic_read(&m->mnt_change_counter);
+> > +
+> > +	get_fs_root(current->fs, &root);
+> > +	if (path->mnt == root.mnt) {
+> > +		p->parent_id = p->mnt_id;
+> > +	} else {
+> > +		rcu_read_lock();
+> > +		if (!are_paths_connected(&root, path))
+> > +			p->parent_id = p->mnt_id;
+> > +		rcu_read_unlock();
+> > +	}
+> > +	if (IS_MNT_SHARED(m))
+> > +		p->group_id = m->mnt_group_id;
+> > +	if (IS_MNT_SLAVE(m)) {
+> > +		int master = m->mnt_master->mnt_group_id;
+> > +		int dom = get_dominating_id(m, &root);
+> > +		p->master_id = master;
+> > +		if (dom && dom != master)
+> > +			p->from_id = dom;
+> 
+> This provides information about mount propagation (well mostly).
+> 
+> My understanding of this was that:
+> "If a mount is propagation private (or slave) the group_id will
+> be zero otherwise it's propagation shared and it's group id will
+> be non-zero.
+> 
+> If a mount is propagation slave and propagation peers exist then
+> the mount field mnt_master will be non-NULL. Then mnt_master
+> (slave's master) can be used to set master_id. If the group id
+> of the propagation source is not that of the master then set
+> the from_id group as well."
+> 
+> This parallels the way in which these values are reported in
+> the proc pseudo file system.
+> 
+> Perhaps adding flags as well as setting the fields would be
+> useful too, since interpreting the meaning of the structure
+> fields isn't obvious, ;)
+> 
+> David, Al, thoughts?
+> 
+> Ian
+
