@@ -2,91 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7AD5E1FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E855E20A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 12:29:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfGCKXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 06:23:10 -0400
-Received: from www62.your-server.de ([213.133.104.62]:57778 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbfGCKXK (ORCPT
+        id S1727056AbfGCK2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 06:28:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38016 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbfGCK2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 06:23:10 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hicPq-0001hf-Lz; Wed, 03 Jul 2019 12:23:06 +0200
-Received: from [2a02:1205:5054:6d70:b45c:ec96:516a:e956] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hicPq-000T17-ES; Wed, 03 Jul 2019 12:23:06 +0200
-Subject: Re: [PATCH] bpf, libbpf: Smatch: Fix potential NULL pointer
- dereference
-To:     Leo Yan <leo.yan@linaro.org>, Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20190702102531.23512-1-leo.yan@linaro.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <b834fba1-5b2c-4406-8275-1cf8383655e3@iogearbox.net>
-Date:   Wed, 3 Jul 2019 12:23:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190702102531.23512-1-leo.yan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25499/Wed Jul  3 10:03:10 2019)
+        Wed, 3 Jul 2019 06:28:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=From:Subject:Cc:To:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dKFe6thn0pBSVjx4RI760bAQ7O+n0nRrBKPxLxFI2mA=; b=XSHjKKmzgPH+0AL1Usw4hiTVz
+        2TX3UXrZVbe9XRWfzPFqCmB3UW2blCtotnM41JrQiVnCFJu1gsvj7UMi02MDggJK+7Fu2d23voni2
+        Q3giZB10Wo5rrR4pSimG+7E1kM7IvgSTTQrosuvJnzElekQFg87rrHYZ8g5m164NLqf0m4GLbqNQO
+        3hnM5k9X3uDD/ZqEWiMITFr5c6xR9a+5xgPN4+OeTyHC2slnqv32V7kveoba4kjvSKrFb63iai5TM
+        9asGi/t52k3ZogT9sPQXbnIwIHV4uVy9iShRpZlXCmusq4+ZizBpPFdq5QcJbJeVwLxPocGrOIJcG
+        UgRa54ajw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hicV1-0006sL-IK; Wed, 03 Jul 2019 10:28:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id BE3432026FC16; Wed,  3 Jul 2019 12:28:25 +0200 (CEST)
+Message-Id: <20190703102731.236024951@infradead.org>
+User-Agent: quilt/0.65
+Date:   Wed, 03 Jul 2019 12:27:31 +0200
+To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
+        rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
+Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
+        joel@joelfernandes.org, devel@etsukata.com, peterz@infradead.org
+Subject: [PATCH 0/3] tracing vs CR2
+From:   root <peterz@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2019 12:25 PM, Leo Yan wrote:
-> Based on the following report from Smatch, fix the potential
-> NULL pointer dereference check.
-> 
->   tools/lib/bpf/libbpf.c:3493
->   bpf_prog_load_xattr() warn: variable dereferenced before check 'attr'
->   (see line 3483)
-> 
-> 3479 int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
-> 3480                         struct bpf_object **pobj, int *prog_fd)
-> 3481 {
-> 3482         struct bpf_object_open_attr open_attr = {
-> 3483                 .file           = attr->file,
-> 3484                 .prog_type      = attr->prog_type,
->                                        ^^^^^^
-> 3485         };
-> 
-> At the head of function, it directly access 'attr' without checking if
-> it's NULL pointer.  This patch moves the values assignment after
-> validating 'attr' and 'attr->file'.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/lib/bpf/libbpf.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 197b574406b3..809b633fa3d9 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -3479,10 +3479,7 @@ int bpf_prog_load(const char *file, enum bpf_prog_type type,
->  int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
->  			struct bpf_object **pobj, int *prog_fd)
->  {
-> -	struct bpf_object_open_attr open_attr = {
-> -		.file		= attr->file,
-> -		.prog_type	= attr->prog_type,
-> -	};
+Hi,
 
-Applied, thanks! Fyi, I retained the zeroing of open_attr as otherwise if we ever
-extend struct bpf_object_open_attr in future, we'll easily miss this and pass in
-garbage to bpf_object__open_xattr().
+Eiichi-san re-discovered the bug earlier found by He Zhe which we've failed to
+fix due to getting distracted by discussing how to untangle entry_64.S.
+
+These 3 patches are basically a completion of the initial approach I suggested
+in that earlier thread:
+
+  https://lkml.kernel.org/r/20190320221534.165ab87b@oasis.local.home
+
+Yes, idtentry is a mess, and this doesn't help, but lets fix this now before
+someone else trips over it.
+
+This boots on x86_64 and builds on i386 so it must be perfect. No Xen testing
+what so ever, because I wouldn't know where to begin.
+
