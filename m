@@ -2,96 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8E4C5E3BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5381F5E3CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:25:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfGCMYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:24:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35128 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfGCMYC (ORCPT
+        id S1726718AbfGCMZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:25:46 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43064 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCMZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:24:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tV5Q9vU+tNXeMlXcZgsSk1/vWrS+XQOTNkGpzgJ8SaM=; b=GRizeqOIeAVt/poyWWniKCrW9O
-        HQDXXZypve6C0K/gMwtK2UXRbImtD+Q5eL9fUTqoplsTqLQZiT6ZsuJ2eLIVAet2qqxjswXYIGEgU
-        bUvEEeuTnOACbzDbhuCvRQuHl6g5DrwoYXkLgBOS3JpSvaayVxZ7ZrXbLAg7WAG3YAZihaHKGxnrk
-        xYoDO3xz5xIkkvkyznXrdBMrcu520YDwpBYHu/V7PXekqLAUx+e6fLDLAT83R+ULpNO3EQa+/ukes
-        AmAraVq9Wtf1Qunn8OCKA6AO/t3oiMA93AQDiFv7xC/3t9fwx4Jm1lgNDbqA9TCJTXfkDdmeoE8mn
-        qLv1k1jQ==;
-Received: from [12.46.110.2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hieIq-0002G1-4b; Wed, 03 Jul 2019 12:24:00 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-riscv@lists.infradead.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] mm: stub out all of swapops.h for !CONFIG_MMU
-Date:   Wed,  3 Jul 2019 05:23:59 -0700
-Message-Id: <20190703122359.18200-4-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703122359.18200-1-hch@lst.de>
-References: <20190703122359.18200-1-hch@lst.de>
+        Wed, 3 Jul 2019 08:25:46 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e3so1870849edr.10;
+        Wed, 03 Jul 2019 05:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MPb7Hz/aUpRJZzTZLNZiyzmAnZP9z54WdoZUYMn88X0=;
+        b=vHchkMOvsHv8kCbADBZUi1vqLd4RTY+FiPP9Lcmq+0/ksI+sEADt3BL/B6j1XPh4sv
+         8mVZ5lV2G5n5tMEJRJFIZ0fo979d1UN6QoxOmHlllEUg3J1Pwy2ex1GT3DhC1CpuQtWl
+         2gXnxt80cMG1BqF8rJSpfWYyGXRpHG8QCgnHjyNStOeM3/WYWkFB3oyfCYxA5xm0DUxc
+         x9s6+4ojoKtayGxCeER/E4qGN6dWO2A/1tiAUiMgIpdOyxz3m267eY7/dEf651rPsIzO
+         edygRg5PthgrTVRS6jqy504BnS7OQUcdBI4bM2kXuffv+e/FTrmLzf/3XoY/PuZrOtVf
+         nVRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MPb7Hz/aUpRJZzTZLNZiyzmAnZP9z54WdoZUYMn88X0=;
+        b=WaTyt2AiOLLpx9OGOBXkWzBS2uRUeWXh9GnG9t7ShB4+rjNgxIKbqAfTAr7KGrZ2/6
+         dZ91zYkU6vttlH6uth/3JFxmiZdEtDnTpkdLeyf/6JZhweTCgNHj7AGamCI3lQwPWuzi
+         5eelBRQo3bDDS+R4YBRPLKrnn8khGRywuo2gkoA8FqTi9FaqJDV67vqX1SwyM5XHASss
+         HNVPi2x0v/sThIjp6QGUtrAsm5IoWl+YiS5gzXn8wC2da3YIFZh6QXk235gaflhuQWIX
+         wwOP9QAwJ2kxh0yeSe40o70sTmeFyeqz94hmLeX8eJv2c8bwHqIjwIIQYDMpU82xH8rQ
+         fHOQ==
+X-Gm-Message-State: APjAAAVEs3NyXDflWuablzs55V3eaA63e0DnOCOMyXMr0c6VlZkj0Z9Q
+        xdeIc11l49y3NGMdb8AneQH5e/XnXOlGAh15Vk4=
+X-Google-Smtp-Source: APXvYqwwqBwoR0MKYgtbC2RmXe+Vq0vZxW7XMvoTuUUUmhoh1kZpu2I3IiFIpogQ8NwcLjzrOgckudH6yN1/qTMZEO8=
+X-Received: by 2002:a17:906:3612:: with SMTP id q18mr34803196ejb.278.1562156744041;
+ Wed, 03 Jul 2019 05:25:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190701173907.15494-1-jeffrey.l.hugo@gmail.com> <20190703040843.GA27383@builder>
+In-Reply-To: <20190703040843.GA27383@builder>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 3 Jul 2019 05:25:27 -0700
+Message-ID: <CAF6AEGvwMj+R6KbFYbatx8AuF+5mztc7246ocKXfRWnpphv9NA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/mdp5: Use drm_device for creating gem address space
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The whole header file deals with swap entries and PTEs, none of which
-can exist for nommu builds.  The current nommu ports have lots of
-stubs to allow the inline functions in swapops.h to compile, but
-as none of this functionality is actually used there is no point
-in even providing it.  This way we don't have to provide the stubs
-for the upcoming RISC-V nommu port, and can eventually remove it
-from the existing ports.
+On Tue, Jul 2, 2019 at 9:08 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 01 Jul 10:39 PDT 2019, Jeffrey Hugo wrote:
+>
+> > Creating the msm gem address space requires a reference to the dev where
+> > the iommu is located.  The driver currently assumes this is the same as
+> > the platform device, which breaks when the iommu is outside of the
+> > platform device.  Use the drm_device instead, which happens to always have
+> > a reference to the proper device.
+> >
+> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+>
+> Sorry, but on db820c this patch results in:
+>
+> [   64.803263] msm_mdp 901000.mdp: [drm:mdp5_kms_init [msm]] *ERROR* failed to attach iommu: -19
+>
+> Followed by 3 oopses as we're trying to fail the initialization.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/swapops.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+yeah, that is kinda what I suspected would happen.  I guess to deal
+with how things are hooked up on 8998, perhaps the best thing is to
+first try &pdev->dev, and then if that fails try dev->dev
 
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 4d961668e5fc..b02922556846 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -6,6 +6,8 @@
- #include <linux/bug.h>
- #include <linux/mm_types.h>
- 
-+#ifdef CONFIG_MMU
-+
- /*
-  * swapcache pages are stored in the swapper_space radix tree.  We want to
-  * get good packing density in that tree, so the index should be dense in
-@@ -50,13 +52,11 @@ static inline pgoff_t swp_offset(swp_entry_t entry)
- 	return entry.val & SWP_OFFSET_MASK;
- }
- 
--#ifdef CONFIG_MMU
- /* check whether a pte points to a swap entry */
- static inline int is_swap_pte(pte_t pte)
- {
- 	return !pte_none(pte) && !pte_present(pte);
- }
--#endif
- 
- /*
-  * Convert the arch-dependent pte representation of a swp_entry_t into an
-@@ -375,4 +375,5 @@ static inline int non_swap_entry(swp_entry_t entry)
- }
- #endif
- 
-+#endif /* CONFIG_MMU */
- #endif /* _LINUX_SWAPOPS_H */
--- 
-2.20.1
+BR,
+-R
 
+> Regards,
+> Bjorn
+>
+> > ---
+> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > index 4a60f5fca6b0..1347a5223918 100644
+> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > @@ -702,7 +702,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
+> >       mdelay(16);
+> >
+> >       if (config->platform.iommu) {
+> > -             aspace = msm_gem_address_space_create(&pdev->dev,
+> > +             aspace = msm_gem_address_space_create(dev->dev,
+> >                               config->platform.iommu, "mdp5");
+> >               if (IS_ERR(aspace)) {
+> >                       ret = PTR_ERR(aspace);
+> > --
+> > 2.17.1
+> >
