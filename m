@@ -2,80 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A66535EDCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFDCA5EDE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfGCUrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:47:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCUrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:47:05 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8BF1218A3;
-        Wed,  3 Jul 2019 20:47:03 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 16:47:01 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     root <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
-Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
-Message-ID: <20190703164701.54ef979a@gandalf.local.home>
-In-Reply-To: <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
-References: <20190703102731.236024951@infradead.org>
-        <20190703102807.588906400@infradead.org>
-        <CALCETrVR2_5-=FcJdB3OaKjif9EEzoq+YDhNfPjahVM3JUUrUQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727263AbfGCUx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:53:29 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34790 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbfGCUx3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:53:29 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BBD2F144B3812;
+        Wed,  3 Jul 2019 13:53:28 -0700 (PDT)
+Date:   Wed, 03 Jul 2019 13:53:28 -0700 (PDT)
+Message-Id: <20190703.135328.756462803106168925.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     csully@google.com, sagis@google.com, jonolson@google.com,
+        willemb@google.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] gve: fix -ENOMEM null check on a page allocation
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190703165037.3041-1-colin.king@canonical.com>
+References: <20190703165037.3041-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 03 Jul 2019 13:53:29 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 13:27:09 -0700
-Andy Lutomirski <luto@kernel.org> wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Wed,  3 Jul 2019 17:50:37 +0100
 
-
-> > @@ -1180,10 +1189,10 @@ idtentry xenint3                do_int3                 has_error_co
-> >  #endif
-> >
-> >  idtentry general_protection    do_general_protection   has_error_code=1
-> > -idtentry page_fault            do_page_fault           has_error_code=1
-> > +idtentry page_fault            do_page_fault           has_error_code=1        read_cr2=1
-> >
-> >  #ifdef CONFIG_KVM_GUEST
-> > -idtentry async_page_fault      do_async_page_fault     has_error_code=1
-> > +idtentry async_page_fault      do_async_page_fault     has_error_code=1        read_cr2=1
-> >  #endif
-> >
-> >  #ifdef CONFIG_X86_MCE
-> > @@ -1338,18 +1347,9 @@ ENTRY(error_entry)
-> >         movq    %rax, %rsp                      /* switch stack */
-> >         ENCODE_FRAME_POINTER
-> >         pushq   %r12
-> > -
-> > -       /*
-> > -        * We need to tell lockdep that IRQs are off.  We can't do this until
-> > -        * we fix gsbase, and we should do it before enter_from_user_mode
-> > -        * (which can take locks).
-> > -        */
-> > -       TRACE_IRQS_OFF  
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This hunk looks wrong.  Am I missing some other place that handles the
-> case where we enter from kernel mode and IRQs were on?
+> Currently the check to see if a page is allocated is incorrect
+> and is checking if the pointer page is null, not *page as
+> intended.  Fix this.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Yeah, looks like we might be missing a TRACE_IRQS_OFF from the
-from_usermode_stack_switch path.
-
--- Steve
+Applied.
