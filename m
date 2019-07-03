@@ -2,172 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04485EBE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77E25EBF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfGCSqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:46:35 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41406 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCSqe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:46:34 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 205so3559797ljj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 11:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vCIUPeCCEF+OLz7w98udyRcP/O/Khzz7h89sR5YZeg4=;
-        b=pGPO5o/p8zY1Oc4aPFzsn/Mool+es6Sl/wsHeKtG+4T7hctg/2z6k2jLIpWXJjSMD9
-         7mhnhoZiyom+kOicmb3t+F5QcYtVN4qZr/S1G9PUhNtT9UL3MHWcf0OFmpKDMqnSicg0
-         A7i4opJIwLQBzzpg2lTwrxtwi1Nn6GpdhNh4go8sUJ9tkD4ds+9ojwVootFLPHDdEw2I
-         ZkwBdGLo4wOw9K5+dtPlMTRelWuyWU5X08SdLgpPGAxPslQUmq1zDZUfrTB/uj4Ii517
-         e0DTGmeARSOMj4gybq+qQ0TRyCHo9Upj8pKw42NAKUCHu/wTHrDryJwJaRXW7jP05Em/
-         yt2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vCIUPeCCEF+OLz7w98udyRcP/O/Khzz7h89sR5YZeg4=;
-        b=Cdqo6genagVRNlQeQLLzyqWJD0ueZnussn4RuGkokzvoKAyakOwauBg+tkjjL9L2hP
-         pp7kzdjlRGknTpM6TgkZ5ICabxpkSQArasPMgEdejFdMjN0SX0ZRn1kV6o/6Ff3tTh/1
-         IR6pGUANJEljVwE7DGO116ivTW0NJ+6NgnipqOZPyJRZFNFcnBuz3yFpVvjv3GpTSISn
-         IwBhV1jHRU355OeyYON3Z/FfmqXugztQPR00VAv6kzvxGT4Gynums4iX1JKE9zu6pn2G
-         MCbmRPl4jEZp/ZaWTxc2Wp0fvaxmE40QTeHdz8Tme1WkCuCwTRSqhAJY3s0ZjSgnGcmn
-         nbnQ==
-X-Gm-Message-State: APjAAAUjGfNHcaikv6ZgQ/JJ6S43MHk9BMkwcwMhGXylY7dYQJ815EvT
-        8h4D7J8ZLs/D1p6+IcATwdjg/0PL/UrYDUZe6jwg9w==
-X-Google-Smtp-Source: APXvYqwiem5/n4z8d4zc+GCZEWpVW1sd4VnYulWvpXNjCar1izXohWHI0hwu9Cczfd1wDW2xf9ddEgTiPFBZQtzl+o4=
-X-Received: by 2002:a2e:98d7:: with SMTP id s23mr11048254ljj.179.1562179591897;
- Wed, 03 Jul 2019 11:46:31 -0700 (PDT)
+        id S1727106AbfGCStg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:49:36 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:60126 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfGCStf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:49:35 -0400
+Received: from localhost.localdomain (80-110-121-20.cgn.dynamic.surfer.at [80.110.121.20])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 0074BC642D;
+        Wed,  3 Jul 2019 18:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1562179772; bh=9DizQ8OziyzZDK+fmM5mzABZl479bhqpI8LTwVmMOKE=;
+        h=From:To:Cc:Subject:Date;
+        b=jAVEnO7uq2QTRWst/+QFsN5w8bdWbv4Yu49XUV4jnqn02gYxiZCP5+eUopcycjO0g
+         nC3c2tYhQL4HY3kK28juYm59IkLBCEmq4xwhkkJHrd6EgwmZb2TVIrL3s2769eJ9AC
+         pTGoG5yeYxZ/Ifz0xSAWg5lZAr6+O4hLE1Rk7dzM=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     alsa-devel@alsa-project.org
+Cc:     ~martijnbraam/pmos-upstream@lists.sr.ht,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: sunxi: sun50i-codec-analog: Add earpiece
+Date:   Wed,  3 Jul 2019 20:48:11 +0200
+Message-Id: <20190703184814.27191-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190703050229.GC633@sol.localdomain>
-In-Reply-To: <20190703050229.GC633@sol.localdomain>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Wed, 3 Jul 2019 11:46:20 -0700
-Message-ID: <CAHRSSExd8bKR01010QLcWSotXXeVS5QC7iWvt7Qdz4VRyd-wCA@mail.gmail.com>
-Subject: Re: Reminder: 3 open syzbot bugs in "android/binder" subsystem
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 10:03 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> [This email was generated by a script.  Let me know if you have any suggestions
-> to make it better, or if you want it re-generated with the latest status.]
->
-> Of the currently open syzbot reports against the upstream kernel, I've manually
-> marked 3 of them as possibly being bugs in the "android/binder" subsystem.  I've
-> listed these reports below, sorted by an algorithm that tries to list first the
-> reports most likely to be still valid, important, and actionable.
->
-> Of these 3 bugs, 1 was seen in mainline in the last week.
->
-> Of these 3 bugs, 1 was bisected to a commit from the following person:
->
->         Todd Kjos <tkjos@android.com>
->
-> If you believe a bug is no longer valid, please close the syzbot report by
-> sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
-> original thread, as explained at https://goo.gl/tpsmEJ#status
->
-> If you believe I misattributed a bug to the "android/binder" subsystem, please
-> let me know, and if possible forward the report to the correct people or mailing
-> list.
->
-> Here are the bugs:
->
-> --------------------------------------------------------------------------------
-> Title:              kernel BUG at drivers/android/binder_alloc.c:LINE! (4)
-> Last occurred:      6 days ago
-> Reported:           14 days ago
-> Branches:           Mainline and others
-> Dashboard link:     https://syzkaller.appspot.com/bug?id=bbf40136a49ffaa8ac60906edcbe77f825b2c406
-> Original thread:    https://lkml.kernel.org/lkml/000000000000b6b25b058b96d5c3@google.com/T/#u
->
-> This bug has a C reproducer.
->
-> This bug was bisected to:
->
->         commit bde4a19fc04f5f46298c86b1acb7a4af1d5f138d
->         Author: Todd Kjos <tkjos@android.com>
->         Date:   Fri Feb 8 18:35:20 2019 +0000
->
->           binder: use userspace pointer as base of buffer space
->
-> The original thread for this bug has received 3 replies; the last was 4 days
-> ago.
+This adds the necessary registers and audio routes to play audio using
+the Earpiece, that's supported on the A64.
 
-Fix posted: https://lore.kernel.org/lkml/20190628165012.4841-1-tkjos@google.com/
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+Changes v1 -> v2:
+* Make the earpiece enable register a DAPM widget
+* Adjust the audio routes to include the new Earpiece Amp widget
+* Left/Right Analog Mixer => Left/Right Mixer
 
->
-> If you fix this bug, please add the following tag to the commit:
->     Reported-by: syzbot+3ae18325f96190606754@syzkaller.appspotmail.com
->
-> If you send any email or patch for this bug, please reply to the original
-> thread, which had activity only 4 days ago.  For the git send-email command to
-> use, or tips on how to reply if the thread isn't in your mailbox, see the "Reply
-> instructions" at https://lkml.kernel.org/r/000000000000b6b25b058b96d5c3@google.com
->
-> --------------------------------------------------------------------------------
-> Title:              WARNING in binder_transaction_buffer_release
-> Last occurred:      0 days ago
-> Reported:           43 days ago
-> Branches:           Mainline and others
-> Dashboard link:     https://syzkaller.appspot.com/bug?id=4e0a6a529aef923a8d61c5d20b8fc0605c730138
-> Original thread:    https://lkml.kernel.org/lkml/000000000000afe2c70589526668@google.com/T/#u
+ sound/soc/sunxi/sun50i-codec-analog.c | 50 +++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-Assigned to Hridya Valsaraju (b/134585943)
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index d105c90c3706..6d1de565350e 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -49,6 +49,15 @@
+ #define SUN50I_ADDA_OR_MIX_CTRL_DACR		1
+ #define SUN50I_ADDA_OR_MIX_CTRL_DACL		0
+ 
++#define SUN50I_ADDA_EARPIECE_CTRL0	0x03
++#define SUN50I_ADDA_EARPIECE_CTRL0_EAR_RAMP_TIME	4
++#define SUN50I_ADDA_EARPIECE_CTRL0_ESPSR		0
++
++#define SUN50I_ADDA_EARPIECE_CTRL1	0x04
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_EN	7
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE	6
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESP_VOL	0
++
+ #define SUN50I_ADDA_LINEOUT_CTRL0	0x05
+ #define SUN50I_ADDA_LINEOUT_CTRL0_LEN		7
+ #define SUN50I_ADDA_LINEOUT_CTRL0_REN		6
+@@ -172,6 +181,10 @@ static const DECLARE_TLV_DB_RANGE(sun50i_codec_lineout_vol_scale,
+ 	2, 31, TLV_DB_SCALE_ITEM(-4350, 150, 0),
+ );
+ 
++static const DECLARE_TLV_DB_RANGE(sun50i_codec_earpiece_vol_scale,
++	0, 1, TLV_DB_SCALE_ITEM(TLV_DB_GAIN_MUTE, 0, 1),
++	2, 31, TLV_DB_SCALE_ITEM(-4350, 150, 0),
++);
+ 
+ /* volume / mute controls */
+ static const struct snd_kcontrol_new sun50i_a64_codec_controls[] = {
+@@ -225,6 +238,15 @@ static const struct snd_kcontrol_new sun50i_a64_codec_controls[] = {
+ 		   SUN50I_ADDA_LINEOUT_CTRL0_LEN,
+ 		   SUN50I_ADDA_LINEOUT_CTRL0_REN, 1, 0),
+ 
++	SOC_SINGLE_TLV("Earpiece Playback Volume",
++		       SUN50I_ADDA_EARPIECE_CTRL1,
++		       SUN50I_ADDA_EARPIECE_CTRL1_ESP_VOL, 0x1f, 0,
++		       sun50i_codec_earpiece_vol_scale),
++
++	SOC_SINGLE("Earpiece Playback Switch",
++		   SUN50I_ADDA_EARPIECE_CTRL1,
++		   SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE, 1, 0),
++
+ };
+ 
+ static const char * const sun50i_codec_hp_src_enum_text[] = {
+@@ -257,6 +279,20 @@ static const struct snd_kcontrol_new sun50i_codec_lineout_src[] = {
+ 		      sun50i_codec_lineout_src_enum),
+ };
+ 
++static const char * const sun50i_codec_earpiece_src_enum_text[] = {
++	"DACR", "DACL", "Right Mixer", "Left Mixer",
++};
++
++static SOC_ENUM_SINGLE_DECL(sun50i_codec_earpiece_src_enum,
++			    SUN50I_ADDA_EARPIECE_CTRL0,
++			    SUN50I_ADDA_EARPIECE_CTRL0_ESPSR,
++			    sun50i_codec_earpiece_src_enum_text);
++
++static const struct snd_kcontrol_new sun50i_codec_earpiece_src[] = {
++	SOC_DAPM_ENUM("Earpiece Source Playback Route",
++		      sun50i_codec_earpiece_src_enum),
++};
++
+ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 	/* DAC */
+ 	SND_SOC_DAPM_DAC("Left DAC", NULL, SUN50I_ADDA_MIX_DAC_CTRL,
+@@ -285,6 +321,12 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 			 SND_SOC_NOPM, 0, 0, sun50i_codec_lineout_src),
+ 	SND_SOC_DAPM_OUTPUT("LINEOUT"),
+ 
++	SND_SOC_DAPM_MUX("Earpiece Source Playback Route",
++			 SND_SOC_NOPM, 0, 0, sun50i_codec_earpiece_src),
++	SND_SOC_DAPM_OUT_DRV("Earpiece Amp", SUN50I_ADDA_EARPIECE_CTRL1,
++			     SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_EN, 0, NULL, 0),
++	SND_SOC_DAPM_OUTPUT("EARPIECE"),
++
+ 	/* Microphone inputs */
+ 	SND_SOC_DAPM_INPUT("MIC1"),
+ 
+@@ -388,6 +430,14 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
+ 	{ "Line Out Source Playback Route", "Mono Differential",
+ 		"Right Mixer" },
+ 	{ "LINEOUT", NULL, "Line Out Source Playback Route" },
++
++	/* Earpiece Routes */
++	{ "Earpiece Source Playback Route", "DACL", "Left DAC" },
++	{ "Earpiece Source Playback Route", "DACR", "Right DAC" },
++	{ "Earpiece Source Playback Route", "Left Mixer", "Left Mixer" },
++	{ "Earpiece Source Playback Route", "Right Mixer", "Right Mixer" },
++	{ "Earpiece Amp", NULL, "Earpiece Source Playback Route" },
++	{ "EARPIECE", NULL, "Earpiece Amp" },
+ };
+ 
+ static const struct snd_soc_component_driver sun50i_codec_analog_cmpnt_drv = {
+-- 
+2.22.0
 
->
-> This bug has a syzkaller reproducer only.
->
-> The original thread for this bug has received 2 replies; the last was 20 days
-> ago.
->
-> If you fix this bug, please add the following tag to the commit:
->     Reported-by: syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com
->
-> If you send any email or patch for this bug, please consider replying to the
-> original thread.  For the git send-email command to use, or tips on how to reply
-> if the thread isn't in your mailbox, see the "Reply instructions" at
-> https://lkml.kernel.org/r/000000000000afe2c70589526668@google.com
->
-> --------------------------------------------------------------------------------
-> Title:              possible deadlock in uprobe_clear_state
-> Last occurred:      165 days ago
-> Reported:           202 days ago
-> Branches:           Mainline
-> Dashboard link:     https://syzkaller.appspot.com/bug?id=a1ce9b3da349209c5085bb8c4fee753d68c3697f
-> Original thread:    https://lkml.kernel.org/lkml/00000000000010a9fb057cd14174@google.com/T/#u
->
-> Unfortunately, this bug does not have a reproducer.
->
-> [Note: the uprobe developers think this is a bug in binder, not uprobes.
->  See https://marc.info/?l=linux-kernel&m=155119805728815&w=2
->  for a suggested fix for this bug.]
-
-Just learned about this, but looks like a straightforward fix.
-
->
-> If you fix this bug, please add the following tag to the commit:
->     Reported-by: syzbot+1068f09c44d151250c33@syzkaller.appspotmail.com
->
-> If you send any email or patch for this bug, please consider replying to the
-> original thread.  For the git send-email command to use, or tips on how to reply
-> if the thread isn't in your mailbox, see the "Reply instructions" at
-> https://lkml.kernel.org/r/00000000000010a9fb057cd14174@google.com
->
