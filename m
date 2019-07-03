@@ -2,91 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251055E3DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40D35E3D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfGCM0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:26:36 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40418 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfGCM02 (ORCPT
+        id S1727012AbfGCM0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:26:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33582 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCM00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:26:28 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a21so2204717ljh.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 05:26:26 -0700 (PDT)
+        Wed, 3 Jul 2019 08:26:26 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n9so2610865wru.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 05:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sQ0WKefyL3mNgqdY1lyjmoIdIu/J9QFCMjO3S3QGPlk=;
-        b=VlTAdbPAVv+CgxXkv69g5pFeCgvV1hz0aXP9cXCKpkxBy0CDA9k2xNV7tZf4ewpsRV
-         CfBK3aOdH/umCZArjXpAvTfiQ8qUDknk19sONR2SSCr/nA3INgUVucxl9W+wY6vmD1/1
-         2XTsZQa768kgMRf+smzTYdGdE2fr5kRDxDXNzC/aja8OXl3MOf4dc/C7Tzv0skPj9ArV
-         5KrOwux7PoctX4NlobTCgFwD/MlCdIoWxkCmb3pRJ3vYZg/lujxWop0Kh91LJAc5zJ/4
-         76o1mOESfyyMSBcBY5BoqBxt9n6A8bk0K9hyl10Ujikl/+iQ6dVh+sBvFoluKOD2LqsE
-         EhLA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JILUVyhQViuGdxVU7msStBtHX6blqTuLXOnzbseIUxY=;
+        b=15DE6QGNII0vC99FAxzXL/XNAKOz1spvux5aiNDajerPemkY0N0Yvhp2NZCZ56aXTd
+         V2F1xuct6cDSpr46JtcIMfT0bY+qWkhe+ryMJyyN3VyCojjWzkFD36pkScxrT6gquK2Z
+         mNf6E4S6+B9Vjc3sY/l4IQ40/p5dnlRb044FAl8PI7y18/lcpTNGk2LBS1A4BV2d5VkC
+         UVkkVb7iyhWRM4GL6g9a1XzJi/zV/bzZ3psfBINcuReBkawJoee3Vf9yBnestkcfkdaZ
+         Rji7UjMscG4KTSfq2gpJBzs8UNT7oFgw3yE4242/k0j/r450VClhz57RXPNJt3Rba9cJ
+         gcng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sQ0WKefyL3mNgqdY1lyjmoIdIu/J9QFCMjO3S3QGPlk=;
-        b=QprypZXVyMIhKQbtbQIHGTaj9o89nW2QK7h5SAiMsQs9QAh56pJ6A3zCq3crSzh2Sl
-         cWY6TuI4xUC5T4S6VzHM3WaiybaRNgflTrhQdB0q0KHKu3ES9S6arMNbEcmEt3Y6mqE8
-         P4vpgWffPNuE1tBg+DZrI5MwcSUiy7OoSlLGnBvA5sd+AJ2WTiYAm9rgqpTYQeeqoUE4
-         KiX3GmexwWFWAunyi5OaWkTE3WK0yQEa9oOkUtPcMirzfX/J8toDPIBdixrUsKenqf1u
-         s4Lh3+ODixvqHlJ2DcUhU9Wlt+FFQ7CbvS3BzXlLuIpSPObEmQ1IDyCptUnqCWmuOZEb
-         Q23Q==
-X-Gm-Message-State: APjAAAUzbDGoM7QPKLysvsj86s4BuRyl/dHtNQYlJx9Mc1jR3ZCck4Y1
-        RH2yTXDK59xjby3xUgYiTuzCBPbEc6YImry1MNy/JQ==
-X-Google-Smtp-Source: APXvYqxTxZa9ESbuAcjCDllEi8XVNXyRZ46EbLsEXR4D9x59DgVsMw4Rpmc44K6jDKdIlcu8vkA5MW1BwruYFmuZR8I=
-X-Received: by 2002:a2e:8756:: with SMTP id q22mr3966445ljj.108.1562156786187;
- Wed, 03 Jul 2019 05:26:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JILUVyhQViuGdxVU7msStBtHX6blqTuLXOnzbseIUxY=;
+        b=dkgxeHl1kfKh59ZROBZk87/A8mZfOS0F3+rK5Sex/hzLTqUxtdFV42xZytzhT+AIl5
+         WaHzZVLMX3ELDYA0NLpyDRPFAL4WP+J8zUPnH9lD4sB6HRqOjhYn3yt2Dqa6YGhg/ROV
+         W91Oa+xl/zPxJGyK0e5J2B/ok68s8R8DaYWMKFcMHK/S63Pnj3p3dFoHuggyeUMSXFp4
+         pxFKpiWICoAaPM3kv8p7bw1AVeqAzRYKjYGbtobNO6Z0tew8muC/CK2XiWYo+FgK1dRg
+         6MxP34eD/kxAM1C7ul7+UsAlq1Xofw22k9dc/Ibq3vcAgb4vCJA+uxXodf9zqDP5WdFm
+         yovQ==
+X-Gm-Message-State: APjAAAXMI+0fOJ4+fVaeHdBhWvHhaGhirCwKHLFJxxMZbX4XeEZEpRoN
+        s0MH8tSx27mQlcER37/fIgUI7w==
+X-Google-Smtp-Source: APXvYqw/fJylWhA1wOFDAASQ7snUTEyMNdcCC+ljsbuq5ZdsSzk61cFVRouS0SUaOm+SNLZ6a3mjPA==
+X-Received: by 2002:a5d:4ecc:: with SMTP id s12mr29803490wrv.157.1562156784072;
+        Wed, 03 Jul 2019 05:26:24 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id v67sm2868132wme.24.2019.07.03.05.26.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 05:26:23 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: meson: axg-audio: add g12a reset support
+Date:   Wed,  3 Jul 2019 14:26:14 +0200
+Message-Id: <20190703122614.3579-3-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190703122614.3579-1-jbrunet@baylibre.com>
+References: <20190703122614.3579-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-References: <tip-f3d705d506a2afa6c21c2c728783967e80863b31@git.kernel.org>
-In-Reply-To: <tip-f3d705d506a2afa6c21c2c728783967e80863b31@git.kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Jul 2019 14:26:14 +0200
-Message-ID: <CACRpkdboWWKfaTu=TKqnZgjy4HNWr+fjmQXLBBmePsaDihkbSA@mail.gmail.com>
-Subject: Re: [tip:irq/core] gpio: mb86s7x: Enable ACPI support
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 11:24 AM tip-bot for Ard Biesheuvel
-<tipbot@zytor.com> wrote:
+On the g12a, the register space dedicated to the audio clock also
+provides some resets. Let the clock controller register a reset
+provider as well for this SoC family.
 
-> Committer:  Marc Zyngier <marc.zyngier@arm.com>
-> CommitDate: Wed, 29 May 2019 10:42:19 +0100
->
-> gpio: mb86s7x: Enable ACPI support
->
-> Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
-> support for ACPI GPIO interrupts routed via platform interrupts, by
-> wiring the two together via the to_irq() gpiochip callback.
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+the axg SoC family does not appear to provide this feature.
 
-OK!
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg-audio.c | 107 +++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/axg-audio.h |   1 +
+ 2 files changed, 106 insertions(+), 2 deletions(-)
 
-> +#include "gpiolib.h"
-> +
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 8028ff6f6610..ce163bd03aad 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -12,6 +12,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ 
+ #include "axg-audio.h"
+@@ -916,6 +917,84 @@ static int axg_register_clk_hw_inputs(struct device *dev,
+ 	return 0;
+ }
+ 
++struct axg_audio_reset_data {
++	struct reset_controller_dev rstc;
++	struct regmap *map;
++	unsigned int offset;
++};
++
++static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
++					unsigned long id,
++					unsigned int *reg,
++					unsigned int *bit)
++{
++	unsigned int stride = regmap_get_reg_stride(rst->map);
++
++	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
++	*reg += rst->offset;
++	*bit = id % (stride * BITS_PER_BYTE);
++}
++
++static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
++				unsigned long id, bool assert)
++{
++	struct axg_audio_reset_data *rst =
++		container_of(rcdev, struct axg_audio_reset_data, rstc);
++	unsigned int offset, bit;
++
++	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
++
++	regmap_update_bits(rst->map, offset, BIT(bit),
++			assert ? BIT(bit) : 0);
++
++	return 0;
++}
++
++static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct axg_audio_reset_data *rst =
++		container_of(rcdev, struct axg_audio_reset_data, rstc);
++	unsigned int val, offset, bit;
++
++	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
++
++	regmap_read(rst->map, offset, &val);
++
++	return !!(val & BIT(bit));
++}
++
++static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return axg_audio_reset_update(rcdev, id, true);
++}
++
++static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return axg_audio_reset_update(rcdev, id, false);
++}
++
++static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	int ret;
++
++	ret = axg_audio_reset_assert(rcdev, id);
++	if (ret)
++		return ret;
++
++	return axg_audio_reset_deassert(rcdev, id);
++}
++
++static const struct reset_control_ops axg_audio_rstc_ops = {
++	.assert = axg_audio_reset_assert,
++	.deassert = axg_audio_reset_deassert,
++	.reset = axg_audio_reset_toggle,
++	.status = axg_audio_reset_status,
++};
++
+ static const struct regmap_config axg_audio_regmap_cfg = {
+ 	.reg_bits	= 32,
+ 	.val_bits	= 32,
+@@ -925,12 +1004,15 @@ static const struct regmap_config axg_audio_regmap_cfg = {
+ 
+ struct audioclk_data {
+ 	struct clk_hw_onecell_data *hw_onecell_data;
++	unsigned int reset_offset;
++	unsigned int reset_num;
+ };
+ 
+ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	const struct audioclk_data *data;
++	struct axg_audio_reset_data *rst;
+ 	struct regmap *map;
+ 	struct resource *res;
+ 	void __iomem *regs;
+@@ -1005,8 +1087,27 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-					   data->hw_onecell_data);
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					data->hw_onecell_data);
++	if (ret)
++		return ret;
++
++	/* Stop here if there is no reset */
++	if (!data->reset_num)
++		return 0;
++
++	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
++	if (!rst)
++		return -ENOMEM;
++
++	rst->map = map;
++	rst->offset = data->reset_offset;
++	rst->rstc.nr_resets = data->reset_num;
++	rst->rstc.ops = &axg_audio_rstc_ops;
++	rst->rstc.of_node = dev->of_node;
++	rst->rstc.owner = THIS_MODULE;
++
++	return ret = devm_reset_controller_register(dev, &rst->rstc);
+ }
+ 
+ static const struct audioclk_data axg_audioclk_data = {
+@@ -1015,6 +1116,8 @@ static const struct audioclk_data axg_audioclk_data = {
+ 
+ static const struct audioclk_data g12a_audioclk_data = {
+ 	.hw_onecell_data = &g12a_audio_hw_onecell_data,
++	.reset_offset = AUDIO_SW_RESET,
++	.reset_num = 26,
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
+index 5d972d55d6c7..c00e28b2e1a9 100644
+--- a/drivers/clk/meson/axg-audio.h
++++ b/drivers/clk/meson/axg-audio.h
+@@ -22,6 +22,7 @@
+ #define AUDIO_MCLK_F_CTRL	0x018
+ #define AUDIO_MST_PAD_CTRL0	0x01c
+ #define AUDIO_MST_PAD_CTRL1	0x020
++#define AUDIO_SW_RESET		0x024
+ #define AUDIO_MST_A_SCLK_CTRL0	0x040
+ #define AUDIO_MST_A_SCLK_CTRL1	0x044
+ #define AUDIO_MST_B_SCLK_CTRL0	0x048
+-- 
+2.21.0
 
-But this isn't needed anymore, is it?
-I can try to remember to remove it later though.
-
-Yours,
-Linus Walleij
