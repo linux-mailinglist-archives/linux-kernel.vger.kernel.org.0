@@ -2,404 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A285DF4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7605DEFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfGCIHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:07:36 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:25360 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726670AbfGCIHf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:07:35 -0400
-X-Greylist: delayed 2572 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Jul 2019 04:07:35 EDT
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x637KZHA032571;
-        Wed, 3 Jul 2019 02:24:42 -0500
-Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2tgcwpt53s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 Jul 2019 02:24:42 -0500
-Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
-        by us-aus-skprod2.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x637Of8m004371
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 3 Jul 2019 02:24:41 -0500
-Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Wed, 3 Jul 2019 02:24:41 -0500
-Received: from my-pen-rd9.apac.corp.natinst.com (130.164.49.7) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Wed, 3 Jul 2019 02:24:39 -0500
-From:   jeyentam <je.yen.tam@ni.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        jeyentam <je.yen.tam@ni.com>
-Subject: [PATCH V2 1/2] serial/8250: Add support for NI-Serial PXI/PXIe+485 devices
-Date:   Wed, 3 Jul 2019 00:24:35 -0700
-Message-ID: <20190703072435.34152-1-je.yen.tam@ni.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727249AbfGCHjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:39:15 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5217 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbfGCHjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:39:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 00:39:14 -0700
+X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
+   d="scan'208";a="157884803"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 00:39:11 -0700
+Subject: [PATCH] dax: Fix missed PMD wakeups
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Boaz Harrosh <openosd@gmail.com>, stable@vger.kernel.org,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Wed, 03 Jul 2019 00:24:54 -0700
+Message-ID: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_02:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for NI-Serial PXIe-RS232, PXI-RS485 and PXIe-RS485 devices.
+Ever since the conversion of DAX to the Xarray a RocksDB benchmark has
+been encountering intermittent lockups. In the failing case a thread
+that is taking a PMD-fault is awaiting a wakeup while holding the
+'mmap_sem' for read. As soon as the next mmap() event occurs that tries
+to take the 'mmap_sem' for write it causes ps(1)  and any new 'mmap_sem'
+reader to block.
 
-Signed-off-by: jeyentam <je.yen.tam@ni.com>
+Debug shows that there are no outstanding Xarray entry-lock holders in
+the hang state which indicates that a PTE lock-holder thread caused a
+PMD thread to wait. When the PTE index-lock is released it may wake the
+wrong waitqueue depending on how the index hashes. Brute-force fix this
+by arranging for PTE-aligned indices within a PMD-span to hash to the
+same waitqueue as the PMD-index.
+
+This fix may increase waitqueue contention, but a fix for that is saved
+for a larger rework. In the meantime this fix is suitable for -stable
+backports.
+
+Link: https://lore.kernel.org/linux-fsdevel/CAPcyv4hwHpX-MkUEqxwdTj7wCCZCN4RV-L4jsnuwLGyL_UEG4A@mail>
+Fixes: b15cd800682f ("dax: Convert page fault handlers to XArray")
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Boaz Harrosh <openosd@gmail.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Robert Barror <robert.barror@intel.com>
+Reported-by: Seema Pandit <seema.pandit@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/tty/serial/8250/8250_pci.c | 293 ++++++++++++++++++++++++++++-
- 1 file changed, 289 insertions(+), 4 deletions(-)
+ fs/dax.c |   34 ++++++++++++----------------------
+ 1 file changed, 12 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-index df41397de478..ac8138adea9c 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -730,8 +730,16 @@ static int pci_ni8430_init(struct pci_dev *dev)
+diff --git a/fs/dax.c b/fs/dax.c
+index 9fd908f3df32..592944c522b8 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -144,19 +144,14 @@ struct wait_exceptional_entry_queue {
+ 	struct exceptional_entry_key key;
+ };
+ 
+-static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+-		void *entry, struct exceptional_entry_key *key)
++static wait_queue_head_t *dax_index_waitqueue(struct xa_state *xas,
++		struct exceptional_entry_key *key)
+ {
+ 	unsigned long hash;
+ 	unsigned long index = xas->xa_index;
+ 
+-	/*
+-	 * If 'entry' is a PMD, align the 'index' that we use for the wait
+-	 * queue to the start of that PMD.  This ensures that all offsets in
+-	 * the range covered by the PMD map to the same bit lock.
+-	 */
+-	if (dax_is_pmd_entry(entry))
+-		index &= ~PG_PMD_COLOUR;
++	/* PMD-align the index to ensure PTE events wakeup PMD waiters */
++	index &= ~PG_PMD_COLOUR;
+ 	key->xa = xas->xa;
+ 	key->entry_start = index;
+ 
+@@ -177,17 +172,12 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait,
+ 	return autoremove_wake_function(wait, mode, sync, NULL);
  }
  
- /* UART Port Control Register */
--#define NI8430_PORTCON	0x0f
--#define NI8430_PORTCON_TXVR_ENABLE	(1 << 3)
-+#define NI16550_PCR_OFFSET	0x0f
-+#define NI16550_PCR_RS422	0x00
-+#define NI16550_PCR_ECHO_RS485	0x01
-+#define NI16550_PCR_DTR_RS485	0x02
-+#define NI16550_PCR_AUTO_RS485	0x03
-+#define NI16550_PCR_WIRE_MODE_MASK	0x03
-+#define NI16550_PCR_TXVR_ENABLE_BIT	(1 << 3)
-+#define NI16550_PCR_RS485_TERMINATION_BIT	(1 << 6)
-+#define NI16550_ACR_DTR_AUTO_DTR	(0x2 << 3)
-+#define NI16550_ACR_DTR_MANUAL_DTR	(0x0 << 3)
+-/*
+- * @entry may no longer be the entry at the index in the mapping.
+- * The important information it's conveying is whether the entry at
+- * this index used to be a PMD entry.
+- */
+-static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
++static void dax_wake_index(struct xa_state *xas, bool wake_all)
+ {
+ 	struct exceptional_entry_key key;
+ 	wait_queue_head_t *wq;
  
- static int
- pci_ni8430_setup(struct serial_private *priv,
-@@ -753,14 +761,127 @@ pci_ni8430_setup(struct serial_private *priv,
- 		return -ENOMEM;
+-	wq = dax_entry_waitqueue(xas, entry, &key);
++	wq = dax_index_waitqueue(xas, &key);
  
- 	/* enable the transceiver */
--	writeb(readb(p + offset + NI8430_PORTCON) | NI8430_PORTCON_TXVR_ENABLE,
--	       p + offset + NI8430_PORTCON);
-+	writeb(readb(p + offset + NI16550_PCR_OFFSET) |
-+			NI16550_PCR_TXVR_ENABLE_BIT,
-+			p + offset + NI16550_PCR_OFFSET);
+ 	/*
+ 	 * Checking for locked entry and prepare_to_wait_exclusive() happens
+@@ -222,7 +212,7 @@ static void *get_unlocked_entry(struct xa_state *xas)
+ 				!dax_is_locked(entry))
+ 			return entry;
  
- 	iounmap(p);
+-		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
++		wq = dax_index_waitqueue(xas, &ewait.key);
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+ 		xas_unlock_irq(xas);
+@@ -246,7 +236,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ 	init_wait(&ewait.wait);
+ 	ewait.wait.func = wake_exceptional_entry_func;
  
- 	return setup_port(priv, port, bar, offset, board->reg_shift);
+-	wq = dax_entry_waitqueue(xas, entry, &ewait.key);
++	wq = dax_index_waitqueue(xas, &ewait.key);
+ 	/*
+ 	 * Unlike get_unlocked_entry() there is no guarantee that this
+ 	 * path ever successfully retrieves an unlocked entry before an
+@@ -263,7 +253,7 @@ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+ {
+ 	/* If we were the only waiter woken, wake the next one */
+ 	if (entry)
+-		dax_wake_entry(xas, entry, false);
++		dax_wake_index(xas, false);
  }
  
-+static int pci_ni8431_config_rs485(struct uart_port *port,
-+	struct serial_rs485 *rs485)
-+{
-+	u8 pcr, acr;
-+
-+	struct uart_8250_port *up;
-+
-+	up = container_of(port, struct uart_8250_port, port);
-+
-+	acr = up->acr;
-+
-+	dev_dbg(port->dev, "ni16550_config_rs485\n");
-+
-+	/* "rs485" should be given to us non-NULL. */
-+	WARN_ON(rs485 == NULL);
-+
-+	pcr = port->serial_in(port, NI16550_PCR_OFFSET);
-+	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
-+
-+	if (rs485->flags & SER_RS485_ENABLED) {
-+		/* RS-485 */
-+		if ((rs485->flags & SER_RS485_RX_DURING_TX) &&
-+			(rs485->flags & SER_RS485_RTS_ON_SEND)) {
-+			dev_dbg(port->dev, "Invalid 2-wire mode\n");
-+			return -EINVAL;
-+		}
-+
-+		if (rs485->flags & SER_RS485_RX_DURING_TX) {
-+			/* Echo */
-+			dev_vdbg(port->dev, "2-wire DTR with echo\n");
-+			pcr |= NI16550_PCR_ECHO_RS485;
-+			acr |= NI16550_ACR_DTR_MANUAL_DTR;
-+		} else {
-+			/* Auto or DTR */
-+			if (rs485->flags & SER_RS485_RTS_ON_SEND) {
-+				/* Auto */
-+				dev_vdbg(port->dev, "2-wire Auto\n");
-+				pcr |= NI16550_PCR_AUTO_RS485;
-+				acr |= NI16550_ACR_DTR_AUTO_DTR;
-+			} else {
-+				/* DTR-controlled */
-+				/* No Echo */
-+				dev_vdbg(port->dev, "2-wire DTR no echo\n");
-+				pcr |= NI16550_PCR_DTR_RS485;
-+				acr |= NI16550_ACR_DTR_MANUAL_DTR;
-+			}
-+		}
-+	} else {
-+		/* RS-422 */
-+		dev_vdbg(port->dev, "4-wire\n");
-+		pcr |= NI16550_PCR_RS422;
-+		acr |= NI16550_ACR_DTR_MANUAL_DTR;
-+	}
-+
-+	dev_dbg(port->dev, "write pcr: 0x%08x\n", pcr);
-+	port->serial_out(port, NI16550_PCR_OFFSET, pcr);
-+
-+	up->acr = acr;
-+	port->serial_out(port, UART_SCR, UART_ACR);
-+	port->serial_out(port, UART_ICR, up->acr);
-+
-+	/* Update the cache. */
-+	port->rs485 = *rs485;
-+
-+	dev_dbg(port->dev, "ni16550_config_rs485\n");
-+	return 0;
-+}
-+
-+static int pci_ni8431_setup(struct serial_private *priv,
-+		 const struct pciserial_board *board,
-+		 struct uart_8250_port *uart, int idx)
-+{
-+	u8 pcr, acr;
-+	struct pci_dev *dev = priv->dev;
-+	void __iomem *addr;
-+	unsigned int bar, offset = board->first_offset;
-+
-+	if (idx >= board->num_ports)
-+		return 1;
-+
-+	bar = FL_GET_BASE(board->flags);
-+	offset += idx * board->uart_offset;
-+
-+	addr = pci_ioremap_bar(dev, bar);
-+	if (!addr)
-+		return -ENOMEM;
-+
-+	/* enable the transceiver */
-+	writeb(readb(addr + NI16550_PCR_OFFSET) | NI16550_PCR_TXVR_ENABLE_BIT,
-+		addr + NI16550_PCR_OFFSET);
-+
-+	pcr = readb(addr + NI16550_PCR_OFFSET);
-+	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
-+
-+	/* set wire mode to default RS-422 */
-+	pcr |= NI16550_PCR_RS422;
-+	acr = NI16550_ACR_DTR_MANUAL_DTR;
-+
-+	/* write port configuration to register */
-+	writeb(pcr, addr + NI16550_PCR_OFFSET);
-+
-+	/* access and write to UART acr register */
-+	writeb(UART_ACR, addr + UART_SCR);
-+	writeb(acr, addr + UART_ICR);
-+
-+	uart->port.rs485_config = &pci_ni8431_config_rs485;
-+
-+	iounmap(addr);
-+
-+	return setup_port(priv, uart, bar, offset, board->reg_shift);
-+}
-+
- static int pci_netmos_9900_setup(struct serial_private *priv,
- 				const struct pciserial_board *board,
- 				struct uart_8250_port *port, int idx)
-@@ -1956,6 +2077,87 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.setup		= pci_ni8430_setup,
- 		.exit		= pci_ni8430_exit,
- 	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCIE_DEVICE_ID_NI_PXIE8430_2328,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8430_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCIE_DEVICE_ID_NI_PXIE8430_23216,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8430_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCI_DEVICE_ID_NI_PXI8431_4852,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCI_DEVICE_ID_NI_PXI8431_4854,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCI_DEVICE_ID_NI_PXI8431_4858,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCI_DEVICE_ID_NI_PXI8433_4852,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCI_DEVICE_ID_NI_PXI8433_4854,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCIE_DEVICE_ID_NI_PXIE8431_4858,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_NI,
-+		.device		= PCIE_DEVICE_ID_NI_PXIE8431_48516,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_ni8430_init,
-+		.setup		= pci_ni8431_setup,
-+		.exit		= pci_ni8430_exit,
-+	},
- 	/* Quatech */
- 	{
- 		.vendor		= PCI_VENDOR_ID_QUATECH,
-@@ -2679,6 +2881,13 @@ enum pci_board_num_t {
- 	pbn_ni8430_4,
- 	pbn_ni8430_8,
- 	pbn_ni8430_16,
-+	pbn_ni8430_pxie_8,
-+	pbn_ni8430_pxie_16,
-+	pbn_ni8431_2,
-+	pbn_ni8431_4,
-+	pbn_ni8431_8,
-+	pbn_ni8431_pxie_8,
-+	pbn_ni8431_pxie_16,
- 	pbn_ADDIDATA_PCIe_1_3906250,
- 	pbn_ADDIDATA_PCIe_2_3906250,
- 	pbn_ADDIDATA_PCIe_4_3906250,
-@@ -3320,6 +3529,55 @@ static struct pciserial_board pci_boards[] = {
- 		.uart_offset	= 0x10,
- 		.first_offset	= 0x800,
- 	},
-+	[pbn_ni8430_pxie_16] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 16,
-+		.base_baud	= 3125000,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8430_pxie_8] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 8,
-+		.base_baud	= 3125000,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8431_8] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 8,
-+		.base_baud	= 3686400,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8431_4] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 4,
-+		.base_baud	= 3686400,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8431_2] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 2,
-+		.base_baud	= 3686400,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8431_pxie_16] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 16,
-+		.base_baud	= 3125000,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
-+	[pbn_ni8431_pxie_8] = {
-+		.flags		= FL_BASE0,
-+		.num_ports	= 8,
-+		.base_baud	= 3125000,
-+		.uart_offset	= 0x10,
-+		.first_offset	= 0x800,
-+	},
- 	/*
- 	 * ADDI-DATA GmbH PCI-Express communication cards <info@addi-data.com>
- 	 */
-@@ -5003,6 +5261,33 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PCI8432_2324,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_ni8430_4 },
-+	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_2328,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8430_pxie_8 },
-+	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_23216,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8430_pxie_16 },
-+	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4852,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_2 },
-+	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4854,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_4 },
-+	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4858,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_8 },
-+	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_4858,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_pxie_8 },
-+	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_48516,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_pxie_16 },
-+	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4852,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_2 },
-+	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4854,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
-+		pbn_ni8431_4 },
+ /*
+@@ -281,7 +271,7 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
+ 	old = xas_store(xas, entry);
+ 	xas_unlock_irq(xas);
+ 	BUG_ON(!dax_is_locked(old));
+-	dax_wake_entry(xas, entry, false);
++	dax_wake_index(xas, false);
+ }
  
- 	/*
- 	* ADDI-DATA GmbH communication cards <info@addi-data.com>
--- 
-2.17.1
+ /*
+@@ -522,7 +512,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 
+ 		dax_disassociate_entry(entry, mapping, false);
+ 		xas_store(xas, NULL);	/* undo the PMD join */
+-		dax_wake_entry(xas, entry, true);
++		dax_wake_index(xas, true);
+ 		mapping->nrexceptional--;
+ 		entry = NULL;
+ 		xas_set(xas, index);
+@@ -915,7 +905,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	xas_lock_irq(xas);
+ 	xas_store(xas, entry);
+ 	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
+-	dax_wake_entry(xas, entry, false);
++	dax_wake_index(xas, false);
+ 
+ 	trace_dax_writeback_one(mapping->host, index, count);
+ 	return ret;
 
