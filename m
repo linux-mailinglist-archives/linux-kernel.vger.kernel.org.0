@@ -2,87 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36A605DAD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB855DAF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfGCBaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:30:02 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43049 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfGCBaC (ORCPT
+        id S1727297AbfGCBfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:35:16 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:57932 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727080AbfGCBfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:30:02 -0400
-Received: by mail-qt1-f193.google.com with SMTP id w17so748593qto.10
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=NdF561jXVNweNYUoOJz5cSdmi6GYXNKILSdaVQx92EI=;
-        b=IzMsn6uvAihHWC+xI4jQL5EXSlCpq89Da5vdBU8pF5mhxYLAaPUmIASa2aOAoImI4z
-         ZW13ivkgV55Kn0Z3u8kGsGNRnpgkewwp65DGh2RkUZezPSv7ZlUErLxqX/fHOGzlxuZD
-         VeK914OF8SpXCWrCjwBA5vVyoesm6F5V/zhjuh76NXpWTo6CbaHWisMfBk4yBSikYAJn
-         Z6GcfZje1egcCihtpUjrBHW4MyNIxEU+uuKVtY1QfRyYMKv5r+t+sqoQ4eW25NWYKZ1D
-         59tytOuMwbdGDIi9K+7/qswB5zK5rOp4cet11f1LJ1RpFzCo7h/X8QStr3ZKM6ehuNC8
-         obDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=NdF561jXVNweNYUoOJz5cSdmi6GYXNKILSdaVQx92EI=;
-        b=MjOCrgs+h0dNZLzAxkERVQCh9Bqa0P6ATnv1hjYVkV9eoQIfwwmyapScG3oNvh6j6n
-         NJWzhXF0djAzbcWyRSTyuCzQQNGpsjW4I+//1HRKYURwtaF+QyjA+b39Z/J/kMKKH6Hh
-         aUxH2tGSWYzH3A9lfr/1Bm0Gh1hbFXI+ciNaaBDaQkPopZRlHf8rgg50PLVKjojY7lUs
-         TlOcvagFf6oM5sZ5OQKx/hqbWavkgBffie33mdWsN/jY0pDZiCnwHkMti531xmGO4p6z
-         f/jmPJQQB8rEYixJvsbTZxw2/SXEWxsBGu/RZd0vJTqFpwvrRENIt6CJzUKfBiLbjhb9
-         N/ag==
-X-Gm-Message-State: APjAAAUC76eJPHp8+RO/PRiw3A17iflE3M0Ha+7kTldo66Rbw0ZmaMyN
-        BRwVuzHBOxTWl3D4O/5EnlXBHA==
-X-Google-Smtp-Source: APXvYqzonc3yIGfK+TZvGWD04lDWPLi1g4Tt4GSAnz3bkEJTGn3ZfsU0P9piR1RT0f0L6874RQ59zg==
-X-Received: by 2002:a0c:b2da:: with SMTP id d26mr18574230qvf.48.1562117401188;
-        Tue, 02 Jul 2019 18:30:01 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id d188sm279477qkf.40.2019.07.02.18.29.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 18:30:01 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 18:29:56 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 04/15] ethtool: introduce ethtool netlink
- interface
-Message-ID: <20190702182956.26435d63@cakuba.netronome.com>
-In-Reply-To: <e7fa3ad7e9cf4d7a8f9a2085e3166f7260845b0a.1562067622.git.mkubecek@suse.cz>
-References: <cover.1562067622.git.mkubecek@suse.cz>
-        <e7fa3ad7e9cf4d7a8f9a2085e3166f7260845b0a.1562067622.git.mkubecek@suse.cz>
-Organization: Netronome Systems, Ltd.
+        Tue, 2 Jul 2019 21:35:15 -0400
+X-IronPort-AV: E=Sophos;i="5.63,445,1557158400"; 
+   d="scan'208";a="70587071"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 03 Jul 2019 09:35:13 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id EDFA14CDDD3F;
+        Wed,  3 Jul 2019 09:35:14 +0800 (CST)
+Received: from [10.167.226.33] (10.167.226.33) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Wed, 3 Jul 2019 09:35:19 +0800
+From:   Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Subject: [Problem]testOpenUpgradeLock test failed in nfsv4.0 in 5.2.0-rc7
+To:     <ffilzlnx@mindspring.com>
+CC:     <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Message-ID: <a4ff6e56-09d6-1943-8d71-91eaa418bd1e@cn.fujitsu.com>
+Date:   Wed, 3 Jul 2019 09:34:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.33]
+X-yoursite-MailScanner-ID: EDFA14CDDD3F.ADFC4
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: suyj.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  2 Jul 2019 13:49:59 +0200 (CEST), Michal Kubecek wrote:
-> diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
-> new file mode 100644
-> index 000000000000..97c369aa290b
-> --- /dev/null
-> +++ b/Documentation/networking/ethtool-netlink.txt
-> @@ -0,0 +1,208 @@
-> +                        Netlink interface for ethtool
-> +                        =============================
-> +
-> +
-> +Basic information
-> +-----------------
+Hi Frank
 
-Probably not a blocker for initial merging, but please note a TODO to
-convert the documentation to ReST.
+We tested the pynfs of NFSv4.0 on the latest version of the kernel 
+(5.2.0-rc7).
+I encountered a problem while testing st_lock.testOpenUpgradeLock. The 
+problem is now as follows:
+**************************************************
+LOCK24 st_lock.testOpenUpgradeLock : FAILURE
+            OP_LOCK should return NFS4_OK, instead got
+            NFS4ERR_BAD_SEQID
+**************************************************
+Is this normal?
+
+The case is as follows:
+Def testOpenUpgradeLock(t, env):
+     """Try open, lock, open, downgrade, close
+
+     FLAGS: all lock
+     CODE: LOCK24
+     """
+     c= env.c1
+     C.init_connection()
+     Os = open_sequence(c, t.code, lockowner="lockowner_LOCK24")
+     Os.open(OPEN4_SHARE_ACCESS_READ)
+     Os.lock(READ_LT)
+     Os.open(OPEN4_SHARE_ACCESS_WRITE)
+     Os.unlock()
+     Os.downgrade(OPEN4_SHARE_ACCESS_WRITE)
+     Os.lock(WRITE_LT)
+     Os.close()
+
+After investigation, there was an error in unlock->lock. When unlocking, 
+the lockowner of the file was not released, causing an error when 
+locking again.
+Will nfs4.0 support 1) open-> 2) lock-> 3) unlock-> 4) lock this function?
+
+
+
