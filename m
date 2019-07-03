@@ -2,75 +2,404 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EED4B5DED0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A285DF4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfGCHYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:24:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbfGCHYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:24:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2DB321881;
-        Wed,  3 Jul 2019 07:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562138659;
-        bh=oKLiX+noAGMAX3ZpKVTLVn9b2ZYDuHOziGSU1+gstKU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rLh+yYfz/nRaPHeiqDg1glKx2Cy7AtwWnvYxbfuMNcfK/3479K8YaolFNL6iG88uI
-         es8AkxUt8kfHyiJ7ZeDugjBOxhcT2XdH2URPgNC+NYOxXbSatRdLqXMuwESPtDbM/b
-         AuKCcRQ/T+sE5VamnY7oazoPR3EFPjSYuHPfRTJw=
-Date:   Wed, 3 Jul 2019 09:24:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH 5.1 51/55] bpf, arm64: use more scalable stadd over ldxr
- / stxr loop in xadd
-Message-ID: <20190703072416.GD3033@kroah.com>
-References: <20190702080124.103022729@linuxfoundation.org>
- <20190702080126.728030225@linuxfoundation.org>
- <20190703020200.GR11506@sasha-vm>
+        id S1727179AbfGCIHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:07:36 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:25360 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726670AbfGCIHf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:07:35 -0400
+X-Greylist: delayed 2572 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Jul 2019 04:07:35 EDT
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x637KZHA032571;
+        Wed, 3 Jul 2019 02:24:42 -0500
+Received: from ni.com (skprod2.natinst.com [130.164.80.23])
+        by mx0a-00010702.pphosted.com with ESMTP id 2tgcwpt53s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jul 2019 02:24:42 -0500
+Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
+        by us-aus-skprod2.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x637Of8m004371
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 3 Jul 2019 02:24:41 -0500
+Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Wed, 3 Jul 2019 02:24:41 -0500
+Received: from my-pen-rd9.apac.corp.natinst.com (130.164.49.7) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Wed, 3 Jul 2019 02:24:39 -0500
+From:   jeyentam <je.yen.tam@ni.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        jeyentam <je.yen.tam@ni.com>
+Subject: [PATCH V2 1/2] serial/8250: Add support for NI-Serial PXI/PXIe+485 devices
+Date:   Wed, 3 Jul 2019 00:24:35 -0700
+Message-ID: <20190703072435.34152-1-je.yen.tam@ni.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703020200.GR11506@sasha-vm>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_02:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:02:00PM -0400, Sasha Levin wrote:
-> On Tue, Jul 02, 2019 at 10:01:59AM +0200, Greg Kroah-Hartman wrote:
-> > From: Daniel Borkmann <daniel@iogearbox.net>
-> > 
-> > commit 34b8ab091f9ef57a2bb3c8c8359a0a03a8abf2f9 upstream.
-> > 
-> > Since ARMv8.1 supplement introduced LSE atomic instructions back in 2016,
-> > lets add support for STADD and use that in favor of LDXR / STXR loop for
-> > the XADD mapping if available. STADD is encoded as an alias for LDADD with
-> > XZR as the destination register, therefore add LDADD to the instruction
-> > encoder along with STADD as special case and use it in the JIT for CPUs
-> > that advertise LSE atomics in CPUID register. If immediate offset in the
-> > BPF XADD insn is 0, then use dst register directly instead of temporary
-> > one.
-> > 
-> > Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-> > Acked-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> > Acked-by: Will Deacon <will.deacon@arm.com>
-> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This one has a fix upstream: c5e2edeb01ae9ffbdde95bdcdb6d3614ba1eb195
-> ("arm64: insn: Fix ldadd instruction encoding").
+Add support for NI-Serial PXIe-RS232, PXI-RS485 and PXIe-RS485 devices.
 
-Good catch, now queued up, thanks.
+Signed-off-by: jeyentam <je.yen.tam@ni.com>
+---
+ drivers/tty/serial/8250/8250_pci.c | 293 ++++++++++++++++++++++++++++-
+ 1 file changed, 289 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index df41397de478..ac8138adea9c 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -730,8 +730,16 @@ static int pci_ni8430_init(struct pci_dev *dev)
+ }
+ 
+ /* UART Port Control Register */
+-#define NI8430_PORTCON	0x0f
+-#define NI8430_PORTCON_TXVR_ENABLE	(1 << 3)
++#define NI16550_PCR_OFFSET	0x0f
++#define NI16550_PCR_RS422	0x00
++#define NI16550_PCR_ECHO_RS485	0x01
++#define NI16550_PCR_DTR_RS485	0x02
++#define NI16550_PCR_AUTO_RS485	0x03
++#define NI16550_PCR_WIRE_MODE_MASK	0x03
++#define NI16550_PCR_TXVR_ENABLE_BIT	(1 << 3)
++#define NI16550_PCR_RS485_TERMINATION_BIT	(1 << 6)
++#define NI16550_ACR_DTR_AUTO_DTR	(0x2 << 3)
++#define NI16550_ACR_DTR_MANUAL_DTR	(0x0 << 3)
+ 
+ static int
+ pci_ni8430_setup(struct serial_private *priv,
+@@ -753,14 +761,127 @@ pci_ni8430_setup(struct serial_private *priv,
+ 		return -ENOMEM;
+ 
+ 	/* enable the transceiver */
+-	writeb(readb(p + offset + NI8430_PORTCON) | NI8430_PORTCON_TXVR_ENABLE,
+-	       p + offset + NI8430_PORTCON);
++	writeb(readb(p + offset + NI16550_PCR_OFFSET) |
++			NI16550_PCR_TXVR_ENABLE_BIT,
++			p + offset + NI16550_PCR_OFFSET);
+ 
+ 	iounmap(p);
+ 
+ 	return setup_port(priv, port, bar, offset, board->reg_shift);
+ }
+ 
++static int pci_ni8431_config_rs485(struct uart_port *port,
++	struct serial_rs485 *rs485)
++{
++	u8 pcr, acr;
++
++	struct uart_8250_port *up;
++
++	up = container_of(port, struct uart_8250_port, port);
++
++	acr = up->acr;
++
++	dev_dbg(port->dev, "ni16550_config_rs485\n");
++
++	/* "rs485" should be given to us non-NULL. */
++	WARN_ON(rs485 == NULL);
++
++	pcr = port->serial_in(port, NI16550_PCR_OFFSET);
++	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
++
++	if (rs485->flags & SER_RS485_ENABLED) {
++		/* RS-485 */
++		if ((rs485->flags & SER_RS485_RX_DURING_TX) &&
++			(rs485->flags & SER_RS485_RTS_ON_SEND)) {
++			dev_dbg(port->dev, "Invalid 2-wire mode\n");
++			return -EINVAL;
++		}
++
++		if (rs485->flags & SER_RS485_RX_DURING_TX) {
++			/* Echo */
++			dev_vdbg(port->dev, "2-wire DTR with echo\n");
++			pcr |= NI16550_PCR_ECHO_RS485;
++			acr |= NI16550_ACR_DTR_MANUAL_DTR;
++		} else {
++			/* Auto or DTR */
++			if (rs485->flags & SER_RS485_RTS_ON_SEND) {
++				/* Auto */
++				dev_vdbg(port->dev, "2-wire Auto\n");
++				pcr |= NI16550_PCR_AUTO_RS485;
++				acr |= NI16550_ACR_DTR_AUTO_DTR;
++			} else {
++				/* DTR-controlled */
++				/* No Echo */
++				dev_vdbg(port->dev, "2-wire DTR no echo\n");
++				pcr |= NI16550_PCR_DTR_RS485;
++				acr |= NI16550_ACR_DTR_MANUAL_DTR;
++			}
++		}
++	} else {
++		/* RS-422 */
++		dev_vdbg(port->dev, "4-wire\n");
++		pcr |= NI16550_PCR_RS422;
++		acr |= NI16550_ACR_DTR_MANUAL_DTR;
++	}
++
++	dev_dbg(port->dev, "write pcr: 0x%08x\n", pcr);
++	port->serial_out(port, NI16550_PCR_OFFSET, pcr);
++
++	up->acr = acr;
++	port->serial_out(port, UART_SCR, UART_ACR);
++	port->serial_out(port, UART_ICR, up->acr);
++
++	/* Update the cache. */
++	port->rs485 = *rs485;
++
++	dev_dbg(port->dev, "ni16550_config_rs485\n");
++	return 0;
++}
++
++static int pci_ni8431_setup(struct serial_private *priv,
++		 const struct pciserial_board *board,
++		 struct uart_8250_port *uart, int idx)
++{
++	u8 pcr, acr;
++	struct pci_dev *dev = priv->dev;
++	void __iomem *addr;
++	unsigned int bar, offset = board->first_offset;
++
++	if (idx >= board->num_ports)
++		return 1;
++
++	bar = FL_GET_BASE(board->flags);
++	offset += idx * board->uart_offset;
++
++	addr = pci_ioremap_bar(dev, bar);
++	if (!addr)
++		return -ENOMEM;
++
++	/* enable the transceiver */
++	writeb(readb(addr + NI16550_PCR_OFFSET) | NI16550_PCR_TXVR_ENABLE_BIT,
++		addr + NI16550_PCR_OFFSET);
++
++	pcr = readb(addr + NI16550_PCR_OFFSET);
++	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
++
++	/* set wire mode to default RS-422 */
++	pcr |= NI16550_PCR_RS422;
++	acr = NI16550_ACR_DTR_MANUAL_DTR;
++
++	/* write port configuration to register */
++	writeb(pcr, addr + NI16550_PCR_OFFSET);
++
++	/* access and write to UART acr register */
++	writeb(UART_ACR, addr + UART_SCR);
++	writeb(acr, addr + UART_ICR);
++
++	uart->port.rs485_config = &pci_ni8431_config_rs485;
++
++	iounmap(addr);
++
++	return setup_port(priv, uart, bar, offset, board->reg_shift);
++}
++
+ static int pci_netmos_9900_setup(struct serial_private *priv,
+ 				const struct pciserial_board *board,
+ 				struct uart_8250_port *port, int idx)
+@@ -1956,6 +2077,87 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
+ 		.setup		= pci_ni8430_setup,
+ 		.exit		= pci_ni8430_exit,
+ 	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8430_2328,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8430_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8430_23216,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8430_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4852,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4854,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4858,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8433_4852,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8433_4854,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8431_4858,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8431_48516,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
+ 	/* Quatech */
+ 	{
+ 		.vendor		= PCI_VENDOR_ID_QUATECH,
+@@ -2679,6 +2881,13 @@ enum pci_board_num_t {
+ 	pbn_ni8430_4,
+ 	pbn_ni8430_8,
+ 	pbn_ni8430_16,
++	pbn_ni8430_pxie_8,
++	pbn_ni8430_pxie_16,
++	pbn_ni8431_2,
++	pbn_ni8431_4,
++	pbn_ni8431_8,
++	pbn_ni8431_pxie_8,
++	pbn_ni8431_pxie_16,
+ 	pbn_ADDIDATA_PCIe_1_3906250,
+ 	pbn_ADDIDATA_PCIe_2_3906250,
+ 	pbn_ADDIDATA_PCIe_4_3906250,
+@@ -3320,6 +3529,55 @@ static struct pciserial_board pci_boards[] = {
+ 		.uart_offset	= 0x10,
+ 		.first_offset	= 0x800,
+ 	},
++	[pbn_ni8430_pxie_16] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 16,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8430_pxie_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_4] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 4,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_2] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 2,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_pxie_16] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 16,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_pxie_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
+ 	/*
+ 	 * ADDI-DATA GmbH PCI-Express communication cards <info@addi-data.com>
+ 	 */
+@@ -5003,6 +5261,33 @@ static const struct pci_device_id serial_pci_tbl[] = {
+ 	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PCI8432_2324,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		pbn_ni8430_4 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_2328,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8430_pxie_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_23216,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8430_pxie_16 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4852,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_2 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4854,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_4 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4858,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_4858,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_pxie_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_48516,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_pxie_16 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4852,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_2 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4854,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_4 },
+ 
+ 	/*
+ 	* ADDI-DATA GmbH communication cards <info@addi-data.com>
+-- 
+2.17.1
+
