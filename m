@@ -2,113 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D69A55E72D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87EBC5E731
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfGCOyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46686 "EHLO mail.kernel.org"
+        id S1726977AbfGCOzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:55:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfGCOyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:54:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725847AbfGCOzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:55:16 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E269821882;
-        Wed,  3 Jul 2019 14:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562165639;
-        bh=UgFXVQjqdWzNhDEEXIrom4xBM//5mub8f6kiCfq2ZjE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FKzzdwaR+OFxl12oG32IQfgd7prRrRsrLj2SoN2TMDR2calwqwZGk1dcuFTh7yK+2
-         OrAf/jrVAGdl0j/ZZwygwaZ0X20ObdgzlGfAkBB9ETj8VJzTPWd3cxmjqpHL0Duuca
-         RZ7DfdUj+HHkZsWaIDAuIVOgY8QUEUt0kXZ4Z3n0=
-Date:   Wed, 3 Jul 2019 16:53:57 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] debugfs: log errors when something goes wrong
-Message-ID: <20190703145357.GA15756@kroah.com>
-References: <20190703071653.2799-1-gregkh@linuxfoundation.org>
- <20190703071653.2799-2-gregkh@linuxfoundation.org>
- <CAJZ5v0goKqHXfG=nNprMtKTDj02s3U56BOGQTuqajcqVdqqFcw@mail.gmail.com>
- <20190703093233.GA4436@kroah.com>
- <s5hpnmrmpe1.wl-tiwai@suse.de>
+        by mx1.redhat.com (Postfix) with ESMTPS id A6E4E85545;
+        Wed,  3 Jul 2019 14:55:15 +0000 (UTC)
+Received: from gondolin (dhcp-192-192.str.redhat.com [10.33.192.192])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F11F7C5CA;
+        Wed,  3 Jul 2019 14:55:08 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 16:55:06 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Sebastian Ott <sebott@linux.ibm.com>
+Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/cio: introduce driver_override on the css bus
+Message-ID: <20190703165506.53d3911c.cohuck@redhat.com>
+In-Reply-To: <20190624091740.1d9c6c1d.cohuck@redhat.com>
+References: <20190613110815.17251-1-cohuck@redhat.com>
+        <alpine.LFD.2.21.1906211817010.2388@schleppi>
+        <20190624091740.1d9c6c1d.cohuck@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hpnmrmpe1.wl-tiwai@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 03 Jul 2019 14:55:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 11:35:50AM +0200, Takashi Iwai wrote:
-> On Wed, 03 Jul 2019 11:32:33 +0200,
-> Greg Kroah-Hartman wrote:
-> > 
-> > On Wed, Jul 03, 2019 at 11:10:44AM +0200, Rafael J. Wysocki wrote:
-> > > On Wed, Jul 3, 2019 at 9:17 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > As it is not recommended that debugfs calls be checked, it was pointed
-> > > > out that major errors should still be logged somewhere so that
-> > > > developers and users have a chance to figure out what went wrong.  To
-> > > > help with this, error logging has been added to the debugfs core so that
-> > > > it is not needed to be present in every individual file that calls
-> > > > debugfs.
-> > > >
-> > > > Reported-by: Mark Brown <broonie@kernel.org>
-> > > > Reported-by: Takashi Iwai <tiwai@suse.de>
-> > > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > 
-> > > Generally speaking
-> > > 
-> > > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > 
-> > > > ---
-> > > >  fs/debugfs/inode.c | 25 ++++++++++++++++++++-----
-> > > >  1 file changed, 20 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > > > index f04c8475d9a1..7f43c8acfcbf 100644
-> > > > --- a/fs/debugfs/inode.c
-> > > > +++ b/fs/debugfs/inode.c
-> > > > @@ -2,8 +2,9 @@
-> > > >  /*
-> > > >   *  inode.c - part of debugfs, a tiny little debug file system
-> > > >   *
-> > > > - *  Copyright (C) 2004 Greg Kroah-Hartman <greg@kroah.com>
-> > > > + *  Copyright (C) 2004,2019 Greg Kroah-Hartman <greg@kroah.com>
-> > > >   *  Copyright (C) 2004 IBM Inc.
-> > > > + *  Copyright (C) 2019 Linux Foundation <gregkh@linuxfoundation.org>
-> > > >   *
-> > > >   *  debugfs is for people to use instead of /proc or /sys.
-> > > >   *  See ./Documentation/core-api/kernel-api.rst for more details.
-> > > > @@ -294,8 +295,10 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
-> > > >
-> > > >         error = simple_pin_fs(&debug_fs_type, &debugfs_mount,
-> > > >                               &debugfs_mount_count);
-> > > > -       if (error)
-> > > > +       if (error) {
-> > > > +               pr_err("Unable to pin filesystem for file '%s'\n", name);
-> > > 
-> > > But I'm not sure about the log level here.  Particularly, why would
-> > > pr_info() not work?
-> > 
-> > It could, but it is an error in that debugfs didn't do what was asked of
-> > it.  I really don't care either way, the odds of anyone ever seeing this
-> > message is almost none :)
-> 
-> Yes, that's an obvious error and I see no big reason to hide it.
-> 
-> For both:
->   Reviewed-by: Takashi Iwai <tiwai@suse.de>
+On Mon, 24 Jun 2019 09:17:40 +0200
+Cornelia Huck <cohuck@redhat.com> wrote:
 
-Thanks all for the review, I'll go apply these to my tree now.
+> On Fri, 21 Jun 2019 18:19:36 +0200 (CEST)
+> Sebastian Ott <sebott@linux.ibm.com> wrote:
+> 
+> > On Thu, 13 Jun 2019, Cornelia Huck wrote:  
+> > > Sometimes, we want to control which of the matching drivers
+> > > binds to a subchannel device (e.g. for subchannels we want to
+> > > handle via vfio-ccw).
+> > > 
+> > > For pci devices, a mechanism to do so has been introduced in
+> > > 782a985d7af2 ("PCI: Introduce new device binding path using
+> > > pci_dev.driver_override"). It makes sense to introduce the
+> > > driver_override attribute for subchannel devices as well, so
+> > > that we can easily extend the 'driverctl' tool (which makes
+> > > use of the driver_override attribute for pci).
+> > > 
+> > > Note that unlike pci we still require a driver override to
+> > > match the subchannel type; matching more than one subchannel
+> > > type is probably not useful anyway.
+> > > 
+> > > Signed-off-by: Cornelia Huck <cohuck@redhat.com>    
+> > 
+> > Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
+> > 
+> > Should I take that via our git tree or do you have other patches depending 
+> > on this one?
+> >   
+> 
+> No, this patch is stand-alone; everything else is happening in user
+> space, so taking it via your tree would be great. Thanks!
 
-greg k-h
+Friendly ping (I don't see it on s390/features yet; or is this going
+via some other path?)
