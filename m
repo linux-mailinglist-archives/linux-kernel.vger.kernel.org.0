@@ -2,203 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93DF5E39B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 692D75E36C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfGCMQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:16:18 -0400
-Received: from mgwym02.jp.fujitsu.com ([211.128.242.41]:47951 "EHLO
-        mgwym02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCMQS (ORCPT
+        id S1725830AbfGCMH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:07:56 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40419 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCMHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:16:18 -0400
-X-Greylist: delayed 672 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Jul 2019 08:16:16 EDT
-Received: from yt-mxauth.gw.nic.fujitsu.com (unknown [192.168.229.68]) by mgwym02.jp.fujitsu.com with smtp
-         id 0bb1_053a_ec650080_1383_4091_8876_830a9ebf236a;
-        Wed, 03 Jul 2019 21:05:01 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by yt-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id C192BAC0236
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2019 21:05:00 +0900 (JST)
-Received: from G01JPEXCHKW16.g01.fujitsu.local (G01JPEXCHKW16.g01.fujitsu.local [10.0.194.55])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 6AB37BD67CF;
-        Wed,  3 Jul 2019 21:04:12 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw16 ([10.0.194.55]) with mapi id 14.03.0439.000; Wed, 3 Jul 2019
- 21:04:12 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Viresh Kumar' <viresh.kumar@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        Dave Martin <Dave.Martin@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Okamoto, Takayuki" <tokamoto@jp.fujitsu.com>,
-        "Mizuma, Masayoshi" <masayoshi.mizuma@fujitsu.com>,
-        "Indoh, Takao" <indou.takao@fujitsu.com>,
-        "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Subject: RE: [PATCH V3] KVM: arm64: Implement vq_present() as a macro
-Thread-Topic: [PATCH V3] KVM: arm64: Implement vq_present() as a macro
-Thread-Index: AQHVH3NpPwUf8hPIpUWmAfH1HAJm36a47W0A
-Date:   Wed, 3 Jul 2019 12:04:11 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A78BA95D6@G01JPEXMBKW03>
-References: <be823e68faffc82a6f621c16ce1bd45990d92791.1560160681.git.viresh.kumar@linaro.org>
-In-Reply-To: <be823e68faffc82a6f621c16ce1bd45990d92791.1560160681.git.viresh.kumar@linaro.org>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.18.70.226]
-Content-Type: text/plain; charset="iso-2022-jp"
+        Wed, 3 Jul 2019 08:07:55 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v19so2094943wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 05:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=58+wQHNFY1FZ9kJxcysuLiIfPy4FWwdFF39AnxV0wiw=;
+        b=tSLd8MxkTDIPty1ZVy45elawWaFPNF6Jg+TYasAX7ii2/0G5N+lecXsA1agJGG7Bzj
+         jTwgdSonkOIGaHbx6jnquaosIGpfBZ8Y3e//zVbY0zxRQiJJgwt8IITWTL5c88nVfC79
+         WBDfT9KGTVQa8fGWOmd4MBKFx6l+VbHJ2IGT5pmP3PjoObMo2ZTeVYFCIn0nc1Q4CqIl
+         UsF+Gy+vE4kEyuI/oIs+GSQKgJzE1O/YBWZx91bBoZJFigDpLfKgZDYFgVLdI4ukLrAP
+         cV2AyhrXuRbrYceJ473DrvMJmtIXCxj26Fqgt9cqpd9yZpFmRa7NWLlAz9XNF/2pPL7M
+         ejdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=58+wQHNFY1FZ9kJxcysuLiIfPy4FWwdFF39AnxV0wiw=;
+        b=NeujZcDFswLaOP8D3vgNx0YrN65Hsa37wbQFYGkRuXTMVKdYj3AomyeyGNyjyDz39R
+         8FTdGgR4pNqsPcDxrDhuKUNsm5hmCe1KA9xJ40BFxzpSq7Z2w9Rn+SefVb2/SuU7u62+
+         NdQE9L2z63c5bsWIoI3lizPwJI2yeAAUpqyPqoIIaSJDJwF4gvG44HSIggDyhTT4ppVQ
+         Vw4bd1x8Nn3GvWIgjBTywLgny77rgjGnqDUMpOantIUqC9pq8c4fSOY6S/DofKlimmKn
+         +lC7edgd8VhmxjnVFSTQO+QwwelKvqVfYVemzBZWwLF6YcHnG5BGKbw6SUHighJFYeqC
+         qnXw==
+X-Gm-Message-State: APjAAAUuorBVY6reyjP3jio9+QjeMmDzZPWvHpGl6Rz8tUwj/RxBZfhd
+        O4U2/FHEdGXCAg+exoGGcHJong==
+X-Google-Smtp-Source: APXvYqyBMzzq4idwjAjHjTuoGLGjP+FyAOgZQbzeVCROJZPeqmJuXI+iq9gE/QUUnzONCZaeN9B1FQ==
+X-Received: by 2002:a1c:96c7:: with SMTP id y190mr7250688wmd.87.1562155673832;
+        Wed, 03 Jul 2019 05:07:53 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id z126sm2767638wmb.32.2019.07.03.05.07.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 05:07:53 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 0/2] ASoC: meson: axg-tdm-formatter: add g12a reset
+Date:   Wed,  3 Jul 2019 14:07:47 +0200
+Message-Id: <20190703120749.32341-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-GCONF: 00
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+This patchset add the possibility to provide a reset to the tdm formatter.
+Such reset is available on the g12a SoC family and helps solve a random
+channel output shift when using more than one output lane.
 
-I can't start up KVM guest os with SVE feature with your patch.
-The error message is 
-qemu-system-aarch64: kvm_init_vcpu failed: Invalid argument.
+Jerome Brunet (2):
+  ASoC: meson: axg-tdm-formatter: add reset to the bindings
+    documentation
+  ASoC: meson: axg-tdm-formatter: add reset
 
-My test enviroment.
-kernel  linux-5.2-rc6
-qemu  [Qemu-devel] [PATCH v2 00/14] target/arm/kvm: enable SVE in guests https://lists.gnu.org/archive/html/qemu-devel/2019-06/msg04945.html
-KVM start up option
--machine virt,gic-version=host,accel=kvm \
--cpu host \
--machine type=virt \
--nographic \
--smp 16 \ -m 4096 \
--drive if=none,file=/root/image.qcow2,id=hd0,format=qcow2 \
--device virtio-blk-device,drive=hd0 \
--netdev user,id=mynet0,restrict=off,hostfwd=tcp::38001-:22 \
--device virtio-net-device,netdev=mynet0 \
--bios /root/QEMU_EFI.fd
+ .../sound/amlogic,axg-tdm-formatters.txt      |  6 +++-
+ sound/soc/meson/axg-tdm-formatter.c           | 29 +++++++++++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-sve_vq_available function's return value' type is bool.
-But vq_present is macro, so the value is not only TRUE, FALSE but also some numbers.
-So It failed at 
-if (vq_present(vqs, vq) != sve_vq_available(vq)).
-I think it is nessary to make vq_present macro's value only TRUE and FALSE.
+-- 
+2.21.0
 
-arch/arm64/kvm/guest.c
-static int set_sve_vls(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
-	for (vq = SVE_VQ_MIN; vq <= max_vq; ++vq)
-		if (vq_present(vqs, vq) != sve_vq_available(vq))　// It failed at here.
-			return -EINVAL;
-
-My patch as follows.
-I have started up KVM guest os successfully with SVE feature with this patch.
-
-Could you review and merge my patch?
-
-
-
-Signed-off-by: Zhang Lei <zhang.lei@jp.fujitsu.com>
----
- arch/arm64/kvm/guest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index c2afa79..dfd6264 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -208,7 +208,7 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
-
- #define vq_word(vq) (((vq) - SVE_VQ_MIN) / 64)  #define vq_mask(vq) ((u64)1 << ((vq) - SVE_VQ_MIN) % 64) -#define vq_present(vqs, vq) ((vqs)[vq_word(vq)] & vq_mask(vq))
-+#define vq_present(vqs, vq) (!!((vqs)[vq_word(vq)] & vq_mask(vq)))
-
- static int get_sve_vls(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)  {
---
-1.8.3.1
-
-> -----Original Message-----
-> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
-> Behalf Of Viresh Kumar
-> Sent: Monday, June 10, 2019 7:00 PM
-> To: Marc Zyngier <marc.zyngier@arm.com>; James Morse
-> <james.morse@arm.com>; Julien Thierry <julien.thierry@arm.com>; Suzuki K
-> Pouloze <suzuki.poulose@arm.com>; Catalin Marinas
-> <catalin.marinas@arm.com>; Will Deacon <will.deacon@arm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>; linux-kernel@vger.kernel.org;
-> kvmarm@lists.cs.columbia.edu; Dave Martin <Dave.Martin@arm.com>;
-> linux-arm-kernel@lists.infradead.org
-> Subject: [PATCH V3] KVM: arm64: Implement vq_present() as a macro
-> 
-> This routine is a one-liner and doesn't really need to be function and can be
-> implemented as a macro.
-> 
-> Suggested-by: Dave Martin <Dave.Martin@arm.com>
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> V2->V3:
-> - Pass "vqs" instead of "&vqs" to vq_present().
-> - Added Reviewed-by from Dave.
-> 
-> V1->V2:
-> - The previous implementation was fixing a compilation error that
->   occurred only with old compilers (from 2015) due to a bug in the
->   compiler itself.
-> 
-> - Dave suggested to rather implement this as a macro which made more
->   sense.
-> 
->  arch/arm64/kvm/guest.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index
-> 3ae2f82fca46..ae734fcfd4ea 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -207,13 +207,7 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const
-> struct kvm_one_reg *reg)
-> 
->  #define vq_word(vq) (((vq) - SVE_VQ_MIN) / 64)  #define vq_mask(vq)
-> ((u64)1 << ((vq) - SVE_VQ_MIN) % 64)
-> -
-> -static bool vq_present(
-> -	const u64 (*const vqs)[KVM_ARM64_SVE_VLS_WORDS],
-> -	unsigned int vq)
-> -{
-> -	return (*vqs)[vq_word(vq)] & vq_mask(vq);
-> -}
-> +#define vq_present(vqs, vq) ((vqs)[vq_word(vq)] & vq_mask(vq))
-> 
->  static int get_sve_vls(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
-> { @@ -258,7 +252,7 @@ static int set_sve_vls(struct kvm_vcpu *vcpu, const
-> struct kvm_one_reg *reg)
-> 
->  	max_vq = 0;
->  	for (vq = SVE_VQ_MIN; vq <= SVE_VQ_MAX; ++vq)
-> -		if (vq_present(&vqs, vq))
-> +		if (vq_present(vqs, vq))
->  			max_vq = vq;
-> 
->  	if (max_vq > sve_vq_from_vl(kvm_sve_max_vl)) @@ -272,7 +266,7
-> @@ static int set_sve_vls(struct kvm_vcpu *vcpu, const struct kvm_one_reg
-> *reg)
->  	 * maximum:
->  	 */
->  	for (vq = SVE_VQ_MIN; vq <= max_vq; ++vq)
-> -		if (vq_present(&vqs, vq) != sve_vq_available(vq))
-> +		if (vq_present(vqs, vq) != sve_vq_available(vq))
->  			return -EINVAL;
-> 
->  	/* Can't run with no vector lengths at all: */
-> --
-> 2.21.0.rc0.269.g1a574e7a288b
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
