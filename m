@@ -2,135 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4486F5EBFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A485EC0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 20:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGCSvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 14:51:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54044 "EHLO mx1.redhat.com"
+        id S1727055AbfGCS6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 14:58:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCSvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:51:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726430AbfGCS6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:58:01 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 751483E2B7;
-        Wed,  3 Jul 2019 18:51:48 +0000 (UTC)
-Received: from redhat.com (ovpn-123-166.rdu2.redhat.com [10.10.123.166])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 39A3D3795;
-        Wed,  3 Jul 2019 18:51:43 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 14:51:41 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Gonglei <arei.gonglei@huawei.com>,
-        Jason Wang <jasowang@redhat.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 06/35] crypto: Use kmemdup rather than duplicating its
- implementation
-Message-ID: <20190703145109-mutt-send-email-mst@kernel.org>
-References: <20190703162708.32137-1-huangfq.daxian@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id CCF642080C;
+        Wed,  3 Jul 2019 18:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562180280;
+        bh=h+RD4iVgZwguWMDRYb+cubbg3qlFez2Q7oCEZuMzuaw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CqXfgnx6Xv7I7fed0mofgPcXhd0e82OdTmPZFWzSgKTeWeGRESPXp0qt9cdZc1h89
+         rHaQOjtjlb0lp0Fn5qJ+f8vxjO7bHUyh++BUuMjR4Z8S7gCc32jpGQTA1ISNMFluKV
+         IIXfP8+EcZimY/bbprmSykeMgQHYvlz3tdyCuW0I=
+Date:   Wed, 3 Jul 2019 20:57:58 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Cristina Moraru <cristina.moraru09@gmail.com>,
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <mmarek@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Tejun Heo <tj@kernel.org>,
+        Jej B <James.Bottomley@hansenpartnership.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Daniel Jonsson <danijons@student.chalmers.se>,
+        Andrzej Wasowski <wasowski@itu.dk>
+Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
+Message-ID: <20190703185758.GB14336@kroah.com>
+References: <20160825074313.GC18622@lst.de>
+ <20160825201919.GE3296@wotan.suse.de>
+ <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
+ <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+ <20190627045052.GA7594@lst.de>
+ <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
+ <20190629084257.GA1227@kroah.com>
+ <20190702205106.GR19023@42.do-not-panic.com>
+ <20190703074048.GH3033@kroah.com>
+ <20190703165020.GV19023@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190703162708.32137-1-huangfq.daxian@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 03 Jul 2019 18:51:53 +0000 (UTC)
+In-Reply-To: <20190703165020.GV19023@42.do-not-panic.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 12:27:08AM +0800, Fuqian Huang wrote:
-> kmemdup is introduced to duplicate a region of memory in a neat way.
-> Rather than kmalloc/kzalloc + memcpy, which the programmer needs to
-> write the size twice (sometimes lead to mistakes), kmemdup improves
-> readability, leads to smaller code and also reduce the chances of mistakes.
-> Suggestion to use kmemdup rather than using kmalloc/kzalloc + memcpy.
+On Wed, Jul 03, 2019 at 04:50:20PM +0000, Luis Chamberlain wrote:
+> On Wed, Jul 03, 2019 at 09:40:48AM +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Jul 02, 2019 at 08:51:06PM +0000, Luis Chamberlain wrote:
+> > > On Sat, Jun 29, 2019 at 10:42:57AM +0200, Greg Kroah-Hartman wrote:
+> > > > On Fri, Jun 28, 2019 at 11:40:22AM -0700, Luis Chamberlain wrote:
+> > > > > On Wed, Jun 26, 2019 at 9:51 PM Christoph Hellwig <hch@lst.de> wrote:
+> > > > > >
+> > > > > > On Wed, Jun 26, 2019 at 03:21:08PM -0700, Luis Chamberlain wrote:
+> > > > > > > On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > > > > > > In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
+> > > > > > > > on this, I'm inclined to believe *at least* having some kconfig_symb
+> > > > > > > > exposed for some modules is better than nothing. Christoph are you
+> > > > > > > > totally opposed to this effort until we get a non-reverse engineered
+> > > > > > > > effort in place? It just seems like an extraordinary amount of work
+> > > > > > > > and I'm not quite sure who's volunteering to do it.
+> > > > > > > >
+> > > > > > > > Other stakeholders may benefit from at least having some config -->
+> > > > > > > > module mapping for now. Not just backports or building slimmer
+> > > > > > > > kernels.
+> > > > > > >
+> > > > > > > Christoph, *poke*
+> > > > > >
+> > > > > > Yes, I'm still totally opposed to a half-backed hack like this.
+> > > > > 
+> > > > > The solution puts forward a mechanism to add a kconfig_symb where we
+> > > > > are 100% certain we have a direct module --> config mapping.
+> > > > > 
+> > > > > This is *currently* determined when the streamline_config.pl finds
+> > > > > that an object has only *one* associated config symbol associated. As
+> > > > > Cristina noted, of 62 modules on a running system 58 of them ended up
+> > > > > getting the kconfig_symb assigned, that is 93.5% of all modules on the
+> > > > > system being tested. For the other modules, if they did want this
+> > > > > association, we could allow a way for modules to define their own
+> > > > > KBUILD_KCONF variable so that this could be considered as well, or
+> > > > > they can look at their own kconfig stuff to try to fit the model that
+> > > > > does work. To be clear, the heuristics *can* be updated if there is
+> > > > > confidence in alternative methods for resolution. But since it is
+> > > > > reflective of our current situation, I cannot consider it a hack.
+> > > > > 
+> > > > > This implementation is a reflection of our reality in the kernel, and
+> > > > > as has been discussed in this thread, if we want to correct the gaps
+> > > > > we need to do a lot of work. And *no one* is working towards these
+> > > > > goals.
+> > > > > 
+> > > > > That said, even if you go forward with an intrusive solution like the
+> > > > > one you proposed we could still use the same kconfig_symb...
+> > > > > 
+> > > > > So no, I don't see this as a hack. It's a reflection as to our current
+> > > > > reality. And I cannot see how the kconfig_symb can lie or be
+> > > > > incorrect. So in fact I think that pushing this forward also makes the
+> > > > > problem statement clearer for the future of what semantics needs to be
+> > > > > addressed, and helps us even annotate the problematic areas of the
+> > > > > kernel.
+> > > > > 
+> > > > > What negative aspects do you see with this being merged in practice?
+> > > > 
+> > > > I'm trying to see what the actual problem that you are wanting to solve
+> > > > here with this.  What exactly is it?
+> > > 
+> > > The problem is that there is no current maping of a module to respective
+> > > kconfig symbol.
+> > 
+> > That's because it is not just "one" symbol per module.
 > 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> This is true. But it is not the case for all modules.  In fact it seems
+> its true that most modules do have *one* main symbol.
 
-virtio part:
+You mean "one unique symbol from all other modules", right?
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+That is much different than just "one" symbol, given that almost
+every driver depends on something else being enabled as well (bus type,
+platform type, arch, etc.)
 
+And I would argue, that finding that "one" symbol is easy, just parse
+the Makefiles.  But I would also state that this "one" symbol doesn't
+really help you much as those are the "simple" things.  It's how to
+turn on all of the required symbols to get to that "one" symbol that is
+the hard part.
 
-> ---
-> Changes in v2:
->   - Fix a typo in commit message (memset -> memcpy)
-> 
->  drivers/crypto/caam/caampkc.c              | 11 +++--------
->  drivers/crypto/virtio/virtio_crypto_algs.c |  4 +---
->  2 files changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/crypto/caam/caampkc.c b/drivers/crypto/caam/caampkc.c
-> index fe24485274e1..a03464b4c019 100644
-> --- a/drivers/crypto/caam/caampkc.c
-> +++ b/drivers/crypto/caam/caampkc.c
-> @@ -816,7 +816,7 @@ static int caam_rsa_set_pub_key(struct crypto_akcipher *tfm, const void *key,
->  		return ret;
->  
->  	/* Copy key in DMA zone */
-> -	rsa_key->e = kzalloc(raw_key.e_sz, GFP_DMA | GFP_KERNEL);
-> +	rsa_key->e = kmemdup(raw_key.e, raw_key.e_sz, GFP_DMA | GFP_KERNEL);
->  	if (!rsa_key->e)
->  		goto err;
->  
-> @@ -838,8 +838,6 @@ static int caam_rsa_set_pub_key(struct crypto_akcipher *tfm, const void *key,
->  	rsa_key->e_sz = raw_key.e_sz;
->  	rsa_key->n_sz = raw_key.n_sz;
->  
-> -	memcpy(rsa_key->e, raw_key.e, raw_key.e_sz);
-> -
->  	return 0;
->  err:
->  	caam_rsa_free_key(rsa_key);
-> @@ -920,11 +918,11 @@ static int caam_rsa_set_priv_key(struct crypto_akcipher *tfm, const void *key,
->  		return ret;
->  
->  	/* Copy key in DMA zone */
-> -	rsa_key->d = kzalloc(raw_key.d_sz, GFP_DMA | GFP_KERNEL);
-> +	rsa_key->d = kmemdup(raw_key.d, raw_key.d_sz, GFP_DMA | GFP_KERNEL);
->  	if (!rsa_key->d)
->  		goto err;
->  
-> -	rsa_key->e = kzalloc(raw_key.e_sz, GFP_DMA | GFP_KERNEL);
-> +	rsa_key->e = kmemdup(raw_key.e, raw_key.e_sz, GFP_DMA | GFP_KERNEL);
->  	if (!rsa_key->e)
->  		goto err;
->  
-> @@ -947,9 +945,6 @@ static int caam_rsa_set_priv_key(struct crypto_akcipher *tfm, const void *key,
->  	rsa_key->e_sz = raw_key.e_sz;
->  	rsa_key->n_sz = raw_key.n_sz;
->  
-> -	memcpy(rsa_key->d, raw_key.d, raw_key.d_sz);
-> -	memcpy(rsa_key->e, raw_key.e, raw_key.e_sz);
-> -
->  	caam_rsa_set_priv_key_form(ctx, &raw_key);
->  
->  	return 0;
-> diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
-> index 10f266d462d6..42d19205166b 100644
-> --- a/drivers/crypto/virtio/virtio_crypto_algs.c
-> +++ b/drivers/crypto/virtio/virtio_crypto_algs.c
-> @@ -129,13 +129,11 @@ static int virtio_crypto_alg_ablkcipher_init_session(
->  	 * Avoid to do DMA from the stack, switch to using
->  	 * dynamically-allocated for the key
->  	 */
-> -	uint8_t *cipher_key = kmalloc(keylen, GFP_ATOMIC);
-> +	uint8_t *cipher_key = kmemdup(key, keylen, GFP_ATOMIC);
->  
->  	if (!cipher_key)
->  		return -ENOMEM;
->  
-> -	memcpy(cipher_key, key, keylen);
-> -
->  	spin_lock(&vcrypto->ctrl_lock);
->  	/* Pad ctrl header */
->  	vcrypto->ctrl.header.opcode =
-> -- 
-> 2.11.0
+And conversely, if you disable that "one" symbol, does that also mean
+you can disable the symbols it depended on?  If so, how far back?
+
+And what about functionality?  If my usb-storage device is "enabled" in
+the build, yet all filesystems are not, or the needed dm module is not,
+it is useless.  Hardware requires usually more than one real "symbol" in
+order to work properly, as you know.
+
+And of course, what does this really matter to anyone?  If you build
+"all modules" and you only load the modules you actually use for your
+hardware (based on auto-loading), then your system uses the same amount
+of memory as if you disabled all of the modules you did not need.
+
+Yes, it's faster to build, but is that what you are trying to optimize
+for here?
+
+Anyway, if this is just an acidemic thing, have fun, but I would not be
+adding anything else to the module image that is not really going to be
+useful to anyone.
+
+good luck!
+
+greg k-h
