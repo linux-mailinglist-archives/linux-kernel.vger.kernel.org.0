@@ -2,216 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E26E5DD37
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F97F5DD47
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 06:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfGCECK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 00:02:10 -0400
-Received: from mail-ot1-f73.google.com ([209.85.210.73]:46527 "EHLO
-        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCECH (ORCPT
+        id S1725828AbfGCEIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 00:08:47 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44073 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbfGCEIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 00:02:07 -0400
-Received: by mail-ot1-f73.google.com with SMTP id m16so603199otq.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:02:06 -0700 (PDT)
+        Wed, 3 Jul 2019 00:08:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so468791pgl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 21:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=WDsHmNGWuqrAS4+FRpWsgeaMLhOo2SWwVBu97IvOfUM=;
-        b=dfDrYfXAQPlWOq1lxBT6k0BuqHQrN3BPBCz4kkBIui57GU9Eaq8d3jix9H1Ld+vusl
-         zD9GT+BFSyykRYjnxXQzNBs5SC3NQVxH8EfH2OGrGKwQpshI5vZXx8ay/Dcie27ZVCv1
-         xamZWGDi8zobBm6CYBZhLEW54qu2REEFlnFGspcYps7jANjCbDUnS1t05IVjE8yCpQMy
-         Iq8YQ5E/xdDD4w4Qi1voyYBn8R/NMt/n4UuoseaqalvEwb3hWWTkuZcnvDh7WSubB/Ed
-         1u5iMc5FusoFBvmU2fDULhsCS+EIGkuVlc9grA3N6dgD9p/0q/M4vmKFv7nNzphSXqwC
-         /82A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BOHEn0gshPaD156fAbU+LPgYeovu+KLC6H+rqvqrtq4=;
+        b=thNW3ICbdgjo5v4OnrHC8HngYpGdmRrbNHaD/DbS92CXxHGPR59WaqhuwSzFyBYThW
+         eeip6X5FJ/8DmwPxp53o5qXeCuYst0A/0fKVm9p/ZJJgreL8Mnl7RsLZssD700+4Lgnx
+         BFm4LqDqLsjM7uO/1d7j0A/0n4CcW2Uy8o1oVQgj8vwuTyZDvN/IuUWC2a90f4NZkUIX
+         5gV5QvPA6NVOeNYPJ107ElYM3bm60jG6d9vecux/YZBBMJeS9ixnOJ6J/qa4DnT9MOgK
+         lWlLiZfrNmxIZZb/zvT7kyuNBfFtZqeFaXtcsCkZtrZy1wxGxLBMb2p6cPC4Y+wikg4x
+         bM9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=WDsHmNGWuqrAS4+FRpWsgeaMLhOo2SWwVBu97IvOfUM=;
-        b=LRZZw0rTKg0VUAz4tyeQQODBHGLdgF1KBWkUyEFBPtXRSJHur906yen//HOiMvjFks
-         KCIVW4eTj5FlhS3Qpvf40SkTpeNIhYb3qGwTIyxRJD/GCgDRnxZWrICJCJKoS8xrxnAL
-         HbCi+AP3su417kXQk8vhWJEi/MT1rMi9l5vp/zCwQee0PJrek9kfWILELUZjb67IUuq/
-         A+GlUWnmYzJV1qteMP4smZERUwFzeUCMl7HA6WAoIFeoILkHSTUaTWyXnkSVjQuEarRG
-         f5jwNOkqTmuE+3KyiV8BnIpJ/lKVsCU7eCW5lRdgyZ5YRhIwYoDnnqsoiozB6OGCmf5S
-         ATUQ==
-X-Gm-Message-State: APjAAAXwh6jGluJ9dfXHJOkSWieZ4ogN1vDMpGjaJmn4S6ZfH7YCbf30
-        RRcWJsiA0+XrzYfUs94F+Fh7Ae2S5y4=
-X-Google-Smtp-Source: APXvYqzGUbtTaGIflmhtBdF9TDRbX4UsECPE1+WhXawQ7cSI8p+GY7DqeDHcvq8/wo8jkmp4q/SFm5Ieiu0=
-X-Received: by 2002:aca:d80a:: with SMTP id p10mr5283157oig.105.1562126526458;
- Tue, 02 Jul 2019 21:02:06 -0700 (PDT)
-Date:   Tue,  2 Jul 2019 21:01:56 -0700
-In-Reply-To: <20190703040156.56953-1-walken@google.com>
-Message-Id: <20190703040156.56953-4-walken@google.com>
-Mime-Version: 1.0
-References: <20190703040156.56953-1-walken@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v3 3/3] augmented rbtree: rework the RB_DECLARE_CALLBACKS
- macro definition
-From:   Michel Lespinasse <walken@google.com>
-To:     Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BOHEn0gshPaD156fAbU+LPgYeovu+KLC6H+rqvqrtq4=;
+        b=r9fRvVxkWzJTV/5oXzbtaR5VVB0dfsPlFAvzxagqIDWZUb5oCvUyOgDYAVKUq7p9vB
+         IC+DsUO083A47qBCUsyZr3oX2Cg6Jfi83c5pw1D/ssTMpawvcVwJTAdKWy5RRzKVTXgZ
+         mAIySAK2mh59MbZEtLofZHyhyvg1wkk6L6jvPoVDsgkMTkFaZ6vO9Q52VRlr8XdsTvAX
+         IUp1TXHsEDEdw0uAmkDqzT4E2V3S3paYmyE58dDo1e6ynmi0N3IDbFYTRIAfs9eR+udf
+         zxfQ7119VER44qTcHK2FQ9LdrUejw+lDoD1tyUNwcN/j8e02XQg0gjx0KY7eybUP2QC5
+         GC1Q==
+X-Gm-Message-State: APjAAAVTzQmbgVY5fjy3+J39vqeEGGIJ5jZ8jOza3amWs+E8gBDtBD7p
+        eaNO7nh+WZyb6YwiO8gR7YvXiQ==
+X-Google-Smtp-Source: APXvYqxQq8cU5yTVEx60W1ue5LxeoHrpQ3mjFnp+R6PN/s26w0eINwgwrUDi2TCCpBgj2P6m9+w4ig==
+X-Received: by 2002:a65:44c8:: with SMTP id g8mr34199417pgs.443.1562126926314;
+        Tue, 02 Jul 2019 21:08:46 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f2sm563251pgs.83.2019.07.02.21.08.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 21:08:45 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 21:08:43 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/mdp5: Use drm_device for creating gem address
+ space
+Message-ID: <20190703040843.GA27383@builder>
+References: <20190701173907.15494-1-jeffrey.l.hugo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701173907.15494-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the definition of the RBCOMPUTE function. The propagate
-callback repeatedly calls RBCOMPUTE as it moves from leaf to root.
-it wants to stop recomputing once the augmented subtree information
-doesn't change. This was previously checked using the == operator,
-but that only works when the augmented subtree information is a
-scalar field. This commit modifies the RBCOMPUTE function so that
-it now sets the augmented subtree information instead of returning it,
-and returns a boolean value indicating if the propagate callback
-should stop.
+On Mon 01 Jul 10:39 PDT 2019, Jeffrey Hugo wrote:
 
-The motivation for this change is that I want to introduce augmented rbtree
-uses where the augmented data for the subtree is a struct instead of a scalar.
+> Creating the msm gem address space requires a reference to the dev where
+> the iommu is located.  The driver currently assumes this is the same as
+> the platform device, which breaks when the iommu is outside of the
+> platform device.  Use the drm_device instead, which happens to always have
+> a reference to the proper device.
+> 
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-Signed-off-by: Michel Lespinasse <walken@google.com>
----
- include/linux/rbtree_augmented.h       | 24 ++++++++++++------------
- tools/include/linux/rbtree_augmented.h | 24 ++++++++++++------------
- 2 files changed, 24 insertions(+), 24 deletions(-)
+Sorry, but on db820c this patch results in:
 
-diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
-index c5379d762fa9..b5e1c248d991 100644
---- a/include/linux/rbtree_augmented.h
-+++ b/include/linux/rbtree_augmented.h
-@@ -79,22 +79,19 @@ rb_insert_augmented_cached(struct rb_node *node,
-  * RBNAME:      name of the rb_augment_callbacks structure
-  * RBSTRUCT:    struct type of the tree nodes
-  * RBFIELD:     name of struct rb_node field within RBSTRUCT
-- * RBTYPE:      type of the RBAUGMENTED field
-- * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
-+ * RBAUGMENTED: name of field within RBSTRUCT holding data for subtree
-  * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
-  */
- 
--#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
--			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
-+#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,				\
-+			     RBSTRUCT, RBFIELD, RBAUGMENTED, RBCOMPUTE)	\
- static inline void							\
- RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
- {									\
- 	while (rb != stop) {						\
- 		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
--		RBTYPE augmented = RBCOMPUTE(node);			\
--		if (node->RBAUGMENTED == augmented)			\
-+		if (RBCOMPUTE(node, true))				\
- 			break;						\
--		node->RBAUGMENTED = augmented;				\
- 		rb = rb_parent(&node->RBFIELD);				\
- 	}								\
- }									\
-@@ -111,7 +108,7 @@ RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
- 	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
- 	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
- 	new->RBAUGMENTED = old->RBAUGMENTED;				\
--	old->RBAUGMENTED = RBCOMPUTE(old);				\
-+	RBCOMPUTE(old, false);						\
- }									\
- RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
- 	.propagate = RBNAME ## _propagate,				\
-@@ -134,7 +131,7 @@ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
- 
- #define RB_DECLARE_CALLBACKS_MAX(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	      \
- 				 RBTYPE, RBAUGMENTED, RBCOMPUTE)	      \
--static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
-+static inline bool RBNAME ## _compute_max(RBSTRUCT *node, bool exit)	      \
- {									      \
- 	RBSTRUCT *child;						      \
- 	RBTYPE max = RBCOMPUTE(node);					      \
-@@ -148,10 +145,13 @@ static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
- 		if (child->RBAUGMENTED > max)				      \
- 			max = child->RBAUGMENTED;			      \
- 	}								      \
--	return max;							      \
-+	if (exit && node->RBAUGMENTED == max)				      \
-+		return true;						      \
-+	node->RBAUGMENTED = max;					      \
-+	return false;							      \
- }									      \
--RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,		      \
--		     RBTYPE, RBAUGMENTED, RBNAME ## _compute_max)
-+RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,					      \
-+		     RBSTRUCT, RBFIELD, RBAUGMENTED, RBNAME ## _compute_max)
- 
- 
- #define	RB_RED		0
-diff --git a/tools/include/linux/rbtree_augmented.h b/tools/include/linux/rbtree_augmented.h
-index 10a2f3f8c801..6e21487fe33d 100644
---- a/tools/include/linux/rbtree_augmented.h
-+++ b/tools/include/linux/rbtree_augmented.h
-@@ -81,22 +81,19 @@ rb_insert_augmented_cached(struct rb_node *node,
-  * RBNAME:      name of the rb_augment_callbacks structure
-  * RBSTRUCT:    struct type of the tree nodes
-  * RBFIELD:     name of struct rb_node field within RBSTRUCT
-- * RBTYPE:      type of the RBAUGMENTED field
-- * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
-+ * RBAUGMENTED: name of field within RBSTRUCT holding data for subtree
-  * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
-  */
- 
--#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
--			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
-+#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,				\
-+			     RBSTRUCT, RBFIELD, RBAUGMENTED, RBCOMPUTE)	\
- static inline void							\
- RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
- {									\
- 	while (rb != stop) {						\
- 		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
--		RBTYPE augmented = RBCOMPUTE(node);			\
--		if (node->RBAUGMENTED == augmented)			\
-+		if (RBCOMPUTE(node, true))				\
- 			break;						\
--		node->RBAUGMENTED = augmented;				\
- 		rb = rb_parent(&node->RBFIELD);				\
- 	}								\
- }									\
-@@ -113,7 +110,7 @@ RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
- 	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
- 	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
- 	new->RBAUGMENTED = old->RBAUGMENTED;				\
--	old->RBAUGMENTED = RBCOMPUTE(old);				\
-+	RBCOMPUTE(old, false);						\
- }									\
- RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
- 	.propagate = RBNAME ## _propagate,				\
-@@ -136,7 +133,7 @@ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
- 
- #define RB_DECLARE_CALLBACKS_MAX(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	      \
- 				 RBTYPE, RBAUGMENTED, RBCOMPUTE)	      \
--static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
-+static inline bool RBNAME ## _compute_max(RBSTRUCT *node, bool exit)	      \
- {									      \
- 	RBSTRUCT *child;						      \
- 	RBTYPE max = RBCOMPUTE(node);					      \
-@@ -150,10 +147,13 @@ static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
- 		if (child->RBAUGMENTED > max)				      \
- 			max = child->RBAUGMENTED;			      \
- 	}								      \
--	return max;							      \
-+	if (exit && node->RBAUGMENTED == max)				      \
-+		return true;						      \
-+	node->RBAUGMENTED = max;					      \
-+	return false;							      \
- }									      \
--RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,		      \
--		     RBTYPE, RBAUGMENTED, RBNAME ## _compute_max)
-+RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,					      \
-+		     RBSTRUCT, RBFIELD, RBAUGMENTED, RBNAME ## _compute_max)
- 
- 
- #define	RB_RED		0
--- 
-2.22.0.410.gd8fdbe21b5-goog
+[   64.803263] msm_mdp 901000.mdp: [drm:mdp5_kms_init [msm]] *ERROR* failed to attach iommu: -19
 
+Followed by 3 oopses as we're trying to fail the initialization.
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> index 4a60f5fca6b0..1347a5223918 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> @@ -702,7 +702,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
+>  	mdelay(16);
+>  
+>  	if (config->platform.iommu) {
+> -		aspace = msm_gem_address_space_create(&pdev->dev,
+> +		aspace = msm_gem_address_space_create(dev->dev,
+>  				config->platform.iommu, "mdp5");
+>  		if (IS_ERR(aspace)) {
+>  			ret = PTR_ERR(aspace);
+> -- 
+> 2.17.1
+> 
