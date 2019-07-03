@@ -2,67 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA105DF3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7985B5DF36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 10:00:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbfGCIB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 04:01:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbfGCIB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:01:57 -0400
-Received: from localhost (unknown [122.167.76.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C812D21897;
-        Wed,  3 Jul 2019 08:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562140916;
-        bh=ThdOqIlE3tUWkIZCcSvGSfnftygpU4mdRMsrGkRB824=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GYWQ75vkqGkJRXZ6dih6ItEgb92wHdF8ZCCOyuF3axygjOhqHqmTIb2jAg4FJQyMO
-         MrWvaEwr1wH1x6qy3E1kg8mRdmo6Z75vwTE4+AMN4bcaxafhH/uYvWc70hiwxTZnlX
-         O8X88LouQrPToBR47ovMX8nPVzJBtNteMfpzquKY=
-Date:   Wed, 3 Jul 2019 13:28:48 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     yibin.gong@nxp.com
-Cc:     robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, mark.rutland@arm.com, dan.j.williams@intel.com,
-        angelo@sysam.it, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v5 0/6] add edma2 for i.mx7ulp
-Message-ID: <20190703075848.GR2911@vkoul-mobl>
-References: <20190625094324.19196-1-yibin.gong@nxp.com>
+        id S1727142AbfGCIAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 04:00:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48969 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfGCIAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:00:39 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hiaBv-0007oX-V5; Wed, 03 Jul 2019 08:00:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cobalt: remove redundant assignment to variable data
+Date:   Wed,  3 Jul 2019 09:00:35 +0100
+Message-Id: <20190703080035.13975-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625094324.19196-1-yibin.gong@nxp.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-06-19, 17:43, yibin.gong@nxp.com wrote:
-> From: Robin Gong <yibin.gong@nxp.com>
-> 
-> This patch set add new version of edma for i.mx7ulp, the main changes
-> are as belows:
->  1. only one dmamux.
->  2. another clock dma_clk except dmamux clk.
->  3. 16 independent interrupts instead of only one interrupt for
->     all channels
-> For the first change, need modify fsl-edma-common.c and mcf-edma,
-> so create the first two patches to prepare without any function impact.
-> 
-> For the third change, need request single irq for every channel with
-> the legacy handler. But actually 2 dma channels share one interrupt(16
-> channel interrupts, but 32 channels.),ch0/ch16,ch1/ch17... For now, just
-> simply request irq without IRQF_SHARED flag, since 16 channels are enough
-> on i.mx7ulp whose M4 domain own some peripherals.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied patches 1-5, thanks
+The variable data is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cobalt/cobalt-flash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/cobalt/cobalt-flash.c b/drivers/media/pci/cobalt/cobalt-flash.c
+index ef96e0f956d2..1d3c64b4cf6d 100644
+--- a/drivers/media/pci/cobalt/cobalt-flash.c
++++ b/drivers/media/pci/cobalt/cobalt-flash.c
+@@ -69,7 +69,7 @@ static void flash_copy_to(struct map_info *map, unsigned long to,
+ 
+ 	pr_info("%s: offset 0x%x: length %zu\n", __func__, dest, len);
+ 	while (len) {
+-		u16 data = 0xffff;
++		u16 data;
+ 
+ 		do {
+ 			data = *src << (8 * (dest & 1));
 -- 
-~Vinod
+2.20.1
+
