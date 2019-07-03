@@ -2,196 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75DD55E28F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E21A5E290
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfGCLHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:07:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37924 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfGCLHD (ORCPT
+        id S1727152AbfGCLHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:07:06 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37088 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfGCLHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:07:03 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9BFB128A8B7;
-        Wed,  3 Jul 2019 12:07:01 +0100 (BST)
-Date:   Wed, 3 Jul 2019 13:06:58 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "helmut.grohne@intenta.de" <helmut.grohne@intenta.de>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>
-Subject: Re: [LINUX PATCH v17 2/2] mtd: rawnand: pl353: Add basic driver for
- arm  pl353 smc nand interface
-Message-ID: <20190703130658.2abe5096@collabora.com>
-In-Reply-To: <DM6PR02MB47792A7E700248348DAD9F78AFFB0@DM6PR02MB4779.namprd02.prod.outlook.com>
-References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
-        <20190625044630.31717-2-naga.sureshkumar.relli@xilinx.com>
-        <20190703082544.5b0ea566@collabora.com>
-        <DM6PR02MB47792A7E700248348DAD9F78AFFB0@DM6PR02MB4779.namprd02.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 3 Jul 2019 07:07:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id e5so3780366iok.4
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 04:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=fdkxxqhXgImFAesdfOGnjWu3cUkyFGWTdY0tG7Tg7PK9I9MYXYnFB05hGrpq36TeaU
+         l+cTqwO1jlQLL1lmGwiYCAJWobbKuu3gfn9AmWaPhAfeOHVKopNgo9xFajA6jhZfQxcN
+         XBbJHlIl8HqInS0Qm6zh33wtghICS6mRtisXjYCYeMcd80le/0dfA0wl5DjTz5HRLT+P
+         MBWSJHOoliZFI7ojMebOFZ9wyNAPoBh6LnJRogR1zqnxW3bosoSv5PrlIBDA5CCx+p7f
+         jcnKpZW6ouzCCxNiJJUI/eGSAyk96T7IkzjJSVMDYiHT54a9x8vuFMcIsK4WXbdAEacp
+         GGwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=UaTucl07US5NtXQ4NAkfQu0yz1Il954zYNH2x6D+Dare04P3dQ9V2l+fy4OG6cwQIN
+         JQeKZXhzD8SMKx4jH7AI8lr6NhRXoHlyoJg8IDh+UX/jAmFhZ5VxFCZZqOpzU8ad9DwB
+         i33Ul1+e1cGn1px0fTIv9oXmlJp6/CGM9sfIQ/QtQShBhK6eT6GjF76eJuPeFL5q5xYi
+         0cUkfJrO+YeJ2McDDaTxQz3P0B4+e2wvB0JhX/Ys9D7FBVev2Vt44RwtxEcjjAGCo3R0
+         hfKof8z7BrM0quVIbL47LLCUCbUV+aAYjfl/bMKNdzDBdHZO43LKyhxH+0gtfSZto5d1
+         UsUA==
+X-Gm-Message-State: APjAAAX59hwFYmsPv1TT6u4kYQK+hNidvEozpTh0vapw5Yq8Tjjp1i3l
+        lNkq/CJilmWVIn1xfj0ubJfglLnfZv8FrzlhxE4=
+X-Google-Smtp-Source: APXvYqwppI4nVdYJmrMr3xqkcJdPh8iwvSoSMLOtm98fA2hl6QK/A6/urvXgftNXeRD4tdWqBi4WeWPBAwKlHh/QCkM=
+X-Received: by 2002:a5d:915a:: with SMTP id y26mr9266759ioq.207.1562152024640;
+ Wed, 03 Jul 2019 04:07:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:f4c2:0:0:0:0:0 with HTTP; Wed, 3 Jul 2019 04:07:04 -0700 (PDT)
+Reply-To: joeakaba00@gmail.com
+From:   joe akaba <kouevigathk@gmail.com>
+Date:   Wed, 3 Jul 2019 13:07:04 +0200
+Message-ID: <CAMpCND1JOkN1-2GWiEHW0x3_qzJRpo5LQ9ssS3cg=ZPxoLL0bg@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 08:57:57 +0000
-Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+Good day, dear
 
-> Hi Boris,
-> 
-> Thanks for the review.
-> 
-> > -----Original Message-----
-> > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > Sent: Wednesday, July 3, 2019 11:56 AM
-> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de; richard@nod.at;
-> > dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > vigneshr@ti.com; bbrezillon@kernel.org; yamada.masahiro@socionext.com; linux-
-> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [LINUX PATCH v17 2/2] mtd: rawnand: pl353: Add basic driver for arm pl353
-> > smc nand interface
-> > 
-> > On Mon, 24 Jun 2019 22:46:30 -0600
-> > Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
-> > 
-> >   
-> > > +
-> > > +/**
-> > > + * pl353_nand_exec_op_cmd - Send command to NAND device
-> > > + * @chip:	Pointer to the NAND chip info structure
-> > > + * @subop:	Pointer to array of instructions
-> > > + * Return:	Always return zero
-> > > + */
-> > > +static int pl353_nand_exec_op_cmd(struct nand_chip *chip,
-> > > +				  const struct nand_subop *subop) {
-> > > +	struct mtd_info *mtd = nand_to_mtd(chip);
-> > > +	const struct nand_op_instr *instr;
-> > > +	struct pl353_nfc_op nfc_op = {};
-> > > +	struct pl353_nand_controller *xnfc = to_pl353_nand(chip);
-> > > +	unsigned long cmd_phase_data = 0, end_cmd_valid = 0;
-> > > +	unsigned long end_cmd;
-> > > +	unsigned int op_id, len;
-> > > +	bool reading;
-> > > +	u32 cmdphase_addrflags;
-> > > +
-> > > +	pl353_nfc_parse_instructions(chip, subop, &nfc_op);
-> > > +	instr = nfc_op.data_instr;
-> > > +	op_id = nfc_op.data_instr_idx;
-> > > +	pl353_smc_clr_nand_int();
-> > > +
-> > > +	/* Get the command phase address */
-> > > +	if (nfc_op.cmnds[1] != 0) {
-> > > +		if (nfc_op.cmnds[0] == NAND_CMD_SEQIN)
-> > > +			end_cmd_valid = 0;
-> > > +		else
-> > > +			end_cmd_valid = 1;  
-> > 
-> > You're testing the opcode, again. As I said several times, the  
-> > ->exec_op() implementation should be opcode agnostic, it should just try  
-> > to match sequences of <CMD>-<ADDR>-<DATA> cycles.
-> >   
-> This driver uses common function for all patterns.
-> There was some discussion happened on v8 series 
-> https://lore.kernel.org/patchwork/patch/933639/
-> There the comments from Miquel was to use an optional property In the pattern
-> Matching, so with this approach, based on the command need to update the 
-> end_cmd_valid bit in command phase cycle.
-> So in order to follow that approach, we defined a common pattern matching function
-> And there we are checking the commands.
-> It significantly reduces the code repetition.
+My name is Mr. Joe Akaba ESQ, Working with one of the best
+chambers and I write to inform you about the death of my client who
+dead as a result of an accident with his family .On the 19th day of August
+2017, My late client died as a result of deadly accident without him be
+register any of his family member as next of kin to bank where he deposited
+a huge amount of money and He died with his family and i have searched for
+any other members of his
+nearby relative without any fruitful result and it was when the bank
+here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
+ in line
+with their abandoned property.
 
-That's not what I'm talking about. I'm talking about the explicit
-'nfc_op.cmnds[0] == NAND_CMD_SEQIN' check, which AFAICT, is wrong, or at
-the very least, not future-proof at all.
+This is to bring your attention by seeking your consent to present
+your name as My late client next of Kin to the bank where he
+deposited a huge amount of money before his death Eight million Five
+hundred thousand United State dollar .$8.5 million Usd
 
-Let me see if I understand what end_cmd_valid means: it's supposed to
-be set when the ADDR cycles are followed by a CMD cycle. You don't need
-to check if the first CMD cycle is !SEQIN (AKA start programming a page)
-to know that: just go through the flow of instructions in the subop,
-and check what's coming just after the ADDR instruction.
+I have unsuccessfully made several attempts to locate any of my
+clients extended relatives, but all to no avail. Please i need your urgent
+ respond so that we can move to the bank where the fund is deposited .
 
-> 
-> I understand your concern about not to check any NAND command in the drivers
-> under ->exec_op() implementation.
-> But do you see any issues/impact with this?
-
-Yes, I do. Sorry to say that, but the whole driver is coded with
-specific use-cases (read/write page, read param page, etc) in mind,
-which is exactly what we were trying to avoid when designing
-exec_op(). The goal was to have something that's easily maintainable and
-does not break every time one tests a previously untested chip <->
-controller combination.
-
-> Functionality wise Helmut tested each series and we addressed all the comments in v17 series.
-
-Just because it's been tested does not mean it's ready to be merged,
-sorry.
-
-> 
-> Could you please let me know what do you say?
-> 
-> > > +	}
-> > > +
-> > > +	end_cmd = nfc_op.cmnds[1];
-> > > +
-> > > +	/*
-> > > +	 * The SMC defines two phases of commands when transferring data to or
-> > > +	 * from NAND flash.
-> > > +	 * Command phase: Commands and optional address information are written
-> > > +	 * to the NAND flash.The command and address can be associated with
-> > > +	 * either a data phase operation to write to or read from the array,
-> > > +	 * or a status/ID register transfer.
-> > > +	 * Data phase: Data is either written to or read from the NAND flash.
-> > > +	 * This data can be either data transferred to or from the array,
-> > > +	 * or status/ID register information.
-> > > +	 */
-> > > +	cmdphase_addrflags = ((nfc_op.naddrs << ADDR_CYCLES_SHIFT) |
-> > > +			 (end_cmd_valid << END_CMD_VALID_SHIFT) |
-> > > +			 (COMMAND_PHASE) |
-> > > +			 (end_cmd << END_CMD_SHIFT) |
-> > > +			 (nfc_op.cmnds[0] << START_CMD_SHIFT));
-> > > +
-> > > +	/* Get the data phase address */
-> > > +	end_cmd_valid = 0;
-> > > +
-> > > +	xnfc->dataphase_addrflags = ((0x0 << CLEAR_CS_SHIFT) |
-> > > +			  (end_cmd_valid << END_CMD_VALID_SHIFT) |
-> > > +			  (DATA_PHASE) |
-> > > +			  (end_cmd << END_CMD_SHIFT) |
-> > > +			  (0x0 << ECC_LAST_SHIFT));
-> > > +
-> > > +	/* Command phase AXI Read & Write */
-> > > +	if (nfc_op.naddrs >= 5) {
-> > > +		if (mtd->writesize > PL353_NAND_ECC_SIZE) {
-> > > +			cmd_phase_data = nfc_op.addrs;
-> > > +
-> > > +			/* Another address cycle for devices > 128MiB */
-> > > +			if (chip->options & NAND_ROW_ADDR_3) {  
-> > 
-> > Clearly, none of this belongs in the ->exec_op() implementation. Looks like something related
-> > to page read...  
-> As I mentioned above in comments of pl353_exec_op(), the PL353 SMC
-> Controller uses command phase and data phase.
-> And in the Command phase, command and optional addresses are written to NAND flash.
-> And it is correct as you said, it looks like page reads but it is actually a command phase address
-> update.
-
-You have the exact number of ADDR cycles to issue in the ADDR
-instruction, why do you need to check NAND_ROW_ADDR_3 at all?
+Thanks and regards,
+Barrister Joe Akaba (Esq)
+Principal attorney of
+dominion associates
+chambers barristers & solicitors
+Call +22890-33-26-71
