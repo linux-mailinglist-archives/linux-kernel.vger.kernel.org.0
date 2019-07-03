@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949BB5E270
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F535E283
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 13:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfGCLEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 07:04:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51617 "EHLO
+        id S1727349AbfGCLE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 07:04:59 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51621 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfGCLEK (ORCPT
+        with ESMTP id S1727056AbfGCLEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 07:04:10 -0400
+        Wed, 3 Jul 2019 07:04:13 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hid3Z-0002br-3V; Wed, 03 Jul 2019 13:04:09 +0200
-Message-Id: <20190703105916.190171262@linutronix.de>
+        id 1hid3Z-0002by-I5; Wed, 03 Jul 2019 13:04:09 +0200
+Message-Id: <20190703105916.283724807@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 03 Jul 2019 12:54:38 +0200
+Date:   Wed, 03 Jul 2019 12:54:39 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch 07/18] x86/apic: Move apic_flat_64 header into apic directory
+Subject: [patch 08/18] x86/apic: Consolidate the apic local headers
 References: <20190703105431.096822793@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -34,17 +34,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only used locally.
+Now there are three small local headers. Some contain functions which are
+only used in one source file.
+
+Move all the inlines and declarations into a single local header and the
+inlines which are only used in one source file into that.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/include/asm/apic_flat_64.h  |    8 --------
- arch/x86/kernel/apic/apic_flat_64.c  |    2 +-
- arch/x86/kernel/apic/apic_flat_64.h  |    8 ++++++++
- arch/x86/kernel/apic/apic_numachip.c |    2 +-
- 4 files changed, 10 insertions(+), 10 deletions(-)
+ arch/x86/kernel/apic/apic_flat_64.c   |    3 -
+ arch/x86/kernel/apic/apic_flat_64.h   |    8 ---
+ arch/x86/kernel/apic/apic_numachip.c  |    3 -
+ arch/x86/kernel/apic/bigsmp_32.c      |    2 
+ arch/x86/kernel/apic/ipi.c            |   14 ++++-
+ arch/x86/kernel/apic/ipi.h            |   90 ----------------------------------
+ arch/x86/kernel/apic/local.h          |   63 +++++++++++++++++++++++
+ arch/x86/kernel/apic/probe_32.c       |    3 -
+ arch/x86/kernel/apic/probe_64.c       |    2 
+ arch/x86/kernel/apic/x2apic.h         |    9 ---
+ arch/x86/kernel/apic/x2apic_cluster.c |    2 
+ arch/x86/kernel/apic/x2apic_phys.c    |    3 -
+ 12 files changed, 83 insertions(+), 119 deletions(-)
 
---- a/arch/x86/include/asm/apic_flat_64.h
+--- a/arch/x86/kernel/apic/apic_flat_64.c
++++ b/arch/x86/kernel/apic/apic_flat_64.c
+@@ -15,8 +15,7 @@
+ #include <asm/jailhouse_para.h>
+ #include <asm/apic.h>
+ 
+-#include "apic_flat_64.h"
+-#include "ipi.h"
++#include "local.h"
+ 
+ static struct apic apic_physflat;
+ static struct apic apic_flat;
+--- a/arch/x86/kernel/apic/apic_flat_64.h
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 */
@@ -55,42 +79,274 @@ Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 -
 -#endif
 -
---- a/arch/x86/kernel/apic/apic_flat_64.c
-+++ b/arch/x86/kernel/apic/apic_flat_64.c
-@@ -13,9 +13,9 @@
- #include <linux/acpi.h>
- 
- #include <asm/jailhouse_para.h>
--#include <asm/apic_flat_64.h>
- #include <asm/apic.h>
- 
-+#include "apic_flat_64.h"
- #include "ipi.h"
- 
- static struct apic apic_physflat;
---- /dev/null
-+++ b/arch/x86/kernel/apic/apic_flat_64.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_APIC_FLAT_64_H
-+#define _ASM_X86_APIC_FLAT_64_H
-+
-+extern void flat_init_apic_ldr(void);
-+
-+#endif
-+
 --- a/arch/x86/kernel/apic/apic_numachip.c
 +++ b/arch/x86/kernel/apic/apic_numachip.c
-@@ -16,9 +16,9 @@
- #include <asm/numachip/numachip.h>
- #include <asm/numachip/numachip_csr.h>
+@@ -18,8 +18,7 @@
  
--#include <asm/apic_flat_64.h>
  #include <asm/pgtable.h>
  
-+#include "apic_flat_64.h"
- #include "ipi.h"
+-#include "apic_flat_64.h"
+-#include "ipi.h"
++#include "local.h"
  
  u8 numachip_system __read_mostly;
+ static const struct apic apic_numachip1;
+--- a/arch/x86/kernel/apic/bigsmp_32.c
++++ b/arch/x86/kernel/apic/bigsmp_32.c
+@@ -10,7 +10,7 @@
+ 
+ #include <asm/apic.h>
+ 
+-#include "ipi.h"
++#include "local.h"
+ 
+ static unsigned bigsmp_get_apic_id(unsigned long x)
+ {
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -1,10 +1,20 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ #include <linux/cpumask.h>
++#include <linux/smp.h>
+ 
+-#include <asm/apic.h>
++#include "local.h"
+ 
+-#include "ipi.h"
++static inline int __prepare_ICR2(unsigned int mask)
++{
++	return SET_APIC_DEST_FIELD(mask);
++}
++
++static inline void __xapic_wait_icr_idle(void)
++{
++	while (native_apic_mem_read(APIC_ICR) & APIC_ICR_BUSY)
++		cpu_relax();
++}
+ 
+ void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest)
+ {
+--- a/arch/x86/kernel/apic/ipi.h
++++ /dev/null
+@@ -1,90 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-#ifndef _ASM_X86_IPI_H
+-#define _ASM_X86_IPI_H
+-
+-#ifdef CONFIG_X86_LOCAL_APIC
+-
+-/*
+- * Copyright 2004 James Cleverdon, IBM.
+- *
+- * Generic APIC InterProcessor Interrupt code.
+- *
+- * Moved to include file by James Cleverdon from
+- * arch/x86-64/kernel/smp.c
+- *
+- * Copyrights from kernel/smp.c:
+- *
+- * (c) 1995 Alan Cox, Building #3 <alan@redhat.com>
+- * (c) 1998-99, 2000 Ingo Molnar <mingo@redhat.com>
+- * (c) 2002,2003 Andi Kleen, SuSE Labs.
+- */
+-
+-#include <asm/hw_irq.h>
+-#include <asm/apic.h>
+-#include <asm/smp.h>
+-
+-/*
+- * the following functions deal with sending IPIs between CPUs.
+- *
+- * We use 'broadcast', CPU->CPU IPIs and self-IPIs too.
+- */
+-
+-static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
+-					 unsigned int dest)
+-{
+-	unsigned int icr = shortcut | dest;
+-
+-	switch (vector) {
+-	default:
+-		icr |= APIC_DM_FIXED | vector;
+-		break;
+-	case NMI_VECTOR:
+-		icr |= APIC_DM_NMI;
+-		break;
+-	}
+-	return icr;
+-}
+-
+-static inline int __prepare_ICR2(unsigned int mask)
+-{
+-	return SET_APIC_DEST_FIELD(mask);
+-}
+-
+-static inline void __xapic_wait_icr_idle(void)
+-{
+-	while (native_apic_mem_read(APIC_ICR) & APIC_ICR_BUSY)
+-		cpu_relax();
+-}
+-
+-void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest);
+-
+-/*
+- * This is used to send an IPI with no shorthand notation (the destination is
+- * specified in bits 56 to 63 of the ICR).
+- */
+-void __default_send_IPI_dest_field(unsigned int mask, int vector, unsigned int dest);
+-
+-extern void default_send_IPI_single(int cpu, int vector);
+-extern void default_send_IPI_single_phys(int cpu, int vector);
+-extern void default_send_IPI_mask_sequence_phys(const struct cpumask *mask,
+-						 int vector);
+-extern void default_send_IPI_mask_allbutself_phys(const struct cpumask *mask,
+-							 int vector);
+-
+-extern int no_broadcast;
+-
+-#ifdef CONFIG_X86_32
+-extern void default_send_IPI_mask_sequence_logical(const struct cpumask *mask,
+-							 int vector);
+-extern void default_send_IPI_mask_allbutself_logical(const struct cpumask *mask,
+-							 int vector);
+-extern void default_send_IPI_mask_logical(const struct cpumask *mask,
+-						 int vector);
+-extern void default_send_IPI_allbutself(int vector);
+-extern void default_send_IPI_all(int vector);
+-extern void default_send_IPI_self(int vector);
+-#endif
+-
+-#endif
+-
+-#endif /* _ASM_X86_IPI_H */
+--- /dev/null
++++ b/arch/x86/kernel/apic/local.h
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Historical copyright notices:
++ *
++ * Copyright 2004 James Cleverdon, IBM.
++ * (c) 1995 Alan Cox, Building #3 <alan@redhat.com>
++ * (c) 1998-99, 2000 Ingo Molnar <mingo@redhat.com>
++ * (c) 2002,2003 Andi Kleen, SuSE Labs.
++ */
++#include <asm/apic.h>
++
++/* APIC flat 64 */
++void flat_init_apic_ldr(void);
++
++/* X2APIC */
++int x2apic_apic_id_valid(u32 apicid);
++int x2apic_apic_id_registered(void);
++void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
++unsigned int x2apic_get_apic_id(unsigned long id);
++u32 x2apic_set_apic_id(unsigned int id);
++int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
++void x2apic_send_IPI_self(int vector);
++
++/* IPI */
++static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
++					 unsigned int dest)
++{
++	unsigned int icr = shortcut | dest;
++
++	switch (vector) {
++	default:
++		icr |= APIC_DM_FIXED | vector;
++		break;
++	case NMI_VECTOR:
++		icr |= APIC_DM_NMI;
++		break;
++	}
++	return icr;
++}
++
++void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest);
++
++/*
++ * This is used to send an IPI with no shorthand notation (the destination is
++ * specified in bits 56 to 63 of the ICR).
++ */
++void __default_send_IPI_dest_field(unsigned int mask, int vector, unsigned int dest);
++
++void default_send_IPI_single(int cpu, int vector);
++void default_send_IPI_single_phys(int cpu, int vector);
++void default_send_IPI_mask_sequence_phys(const struct cpumask *mask, int vector);
++void default_send_IPI_mask_allbutself_phys(const struct cpumask *mask, int vector);
++
++extern int no_broadcast;
++
++#ifdef CONFIG_X86_32
++void default_send_IPI_mask_sequence_logical(const struct cpumask *mask, int vector);
++void default_send_IPI_mask_allbutself_logical(const struct cpumask *mask, int vector);
++void default_send_IPI_mask_logical(const struct cpumask *mask, int vector);
++void default_send_IPI_allbutself(int vector);
++void default_send_IPI_all(int vector);
++void default_send_IPI_self(int vector);
++#endif
+--- a/arch/x86/kernel/apic/probe_32.c
++++ b/arch/x86/kernel/apic/probe_32.c
+@@ -8,11 +8,12 @@
+  */
+ #include <linux/export.h>
+ #include <linux/errno.h>
++#include <linux/smp.h>
+ 
+ #include <asm/apic.h>
+ #include <asm/acpi.h>
+ 
+-#include "ipi.h"
++#include "local.h"
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+ #define DEFAULT_SEND_IPI	(1)
+--- a/arch/x86/kernel/apic/probe_64.c
++++ b/arch/x86/kernel/apic/probe_64.c
+@@ -10,7 +10,7 @@
+  */
+ #include <asm/apic.h>
+ 
+-#include "ipi.h"
++#include "local.h"
+ 
+ /*
+  * Check the APIC IDs in bios_cpu_apicid and choose the APIC mode.
+--- a/arch/x86/kernel/apic/x2apic.h
++++ /dev/null
+@@ -1,9 +0,0 @@
+-/* Common bits for X2APIC cluster/physical modes. */
+-
+-int x2apic_apic_id_valid(u32 apicid);
+-int x2apic_apic_id_registered(void);
+-void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
+-unsigned int x2apic_get_apic_id(unsigned long id);
+-u32 x2apic_set_apic_id(unsigned int id);
+-int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
+-void x2apic_send_IPI_self(int vector);
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -7,7 +7,7 @@
+ 
+ #include <asm/apic.h>
+ 
+-#include "x2apic.h"
++#include "local.h"
+ 
+ struct cluster_mask {
+ 	unsigned int	clusterid;
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -3,8 +3,7 @@
+ #include <linux/cpumask.h>
+ #include <linux/acpi.h>
+ 
+-#include "x2apic.h"
+-#include "ipi.h"
++#include "local.h"
+ 
+ int x2apic_phys;
+ 
 
 
