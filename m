@@ -2,54 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 392585F0E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 03:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBF05F0E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 03:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfGDBQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 21:16:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52260 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbfGDBQr (ORCPT
+        id S1727102AbfGDBQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 21:16:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35286 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfGDBQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 21:16:47 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641EI9A034007;
-        Thu, 4 Jul 2019 01:15:59 GMT
+        Wed, 3 Jul 2019 21:16:41 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641EUdk123573;
+        Thu, 4 Jul 2019 01:16:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=8R30P8/VE15uPa2Cd5dwobgt5Ubg1NVPlqUdVRzGKOg=;
- b=PFa7vxlW1+CH/aILqZteNTx4bLTRzCCKfxlUc0pO0k9P6N6FzCrBr2ot3WvgURE9f+Ra
- mpXvtK6hbtuAJrn0CepZRt+szQO2DmQpNdFuyHd3POlkpUne1LAe+EsWKQrLhCX/DQo2
- LlsU8znXbYYmx2OMPJvKWob3JSGNoXynzfPFS93Lqx/BOdLQPnpjkgETMyneOYUzbojN
- WEKblRARQYCw9aRAC48uKdNVHzjaXSVFJKCWAMEmHshiNS1AF1rc2fZGLEgI4RKPryIr
- 1ysZDf1XeyfedeyiA8VNc6PPHjNnfzG/FG6XuEvhwgxd0+aLyyUNX7T2q/7Bwm/0UvdY Fg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2te61q46r4-1
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=YuCOXIRb/dHuU0bztnXWfWAbrWp+ScSgOTP4KoY+oi4=;
+ b=rKZhRLv86J9i1rvrZktSTTZCQ+BL1+OOD2Uqcglx6kQg6n9trrHvxI/Uf6doxbDZQhTr
+ jYZtVLBHXUinpS8X23Frvp5m09GUPCxgYu8l0PRyJ+WmTVLQWrT7D7LE9XxWAFAr13lI
+ R3fzCMbe3hobkdJ1hHcbNbq8vfJv0JKW3/S62JShkqz28p5rAKO46yuR5U9Ykgehrvjp
+ +jLy5FvVnlH75VqnVh7lNngxWh/susHJr1LV6c54vUPtu08usCNmriIK1cTdl2zgTqNl
+ 0dPZLskmwLvOZvOb1eEvRcmSPaoSqfVMw3tUvy7KXkt0RJKucCSHFDhkxMrackcsm5uI Rw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2te5tbv6rm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 01:15:59 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641CfXm100559;
-        Thu, 4 Jul 2019 01:15:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2tebbknp7y-1
+        Thu, 04 Jul 2019 01:16:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x641ChlE039884;
+        Thu, 4 Jul 2019 01:16:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2th5qks8k9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 01:15:58 +0000
+        Thu, 04 Jul 2019 01:16:00 +0000
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x641FvGL010644;
-        Thu, 4 Jul 2019 01:15:57 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x641FxHl017794;
+        Thu, 4 Jul 2019 01:15:59 GMT
 Received: from z2.cn.oracle.com (/10.182.69.87)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 03 Jul 2019 18:15:56 -0700
+        with ESMTP ; Wed, 03 Jul 2019 18:15:59 -0700
 From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
         jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de,
         Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v5 0/4] misc fixes to PV extentions code
-Date:   Wed,  3 Jul 2019 09:19:34 +0800
-Message-Id: <1562116778-5846-1-git-send-email-zhenzhong.duan@oracle.com>
+Subject: [PATCH v5 1/4] x86/xen: Mark xen_hvm_need_lapic() and xen_x2apic_para_available() as __init
+Date:   Wed,  3 Jul 2019 09:19:35 +0800
+Message-Id: <1562116778-5846-2-git-send-email-zhenzhong.duan@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1562116778-5846-1-git-send-email-zhenzhong.duan@oracle.com>
+References: <1562116778-5846-1-git-send-email-zhenzhong.duan@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -66,65 +68,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+.. as they are only called at early bootup stage. In fact, other
+functions in x86_hyper_xen_hvm.init.* are all marked as __init.
 
-In virtualization environment, PV extensions (drivers, interrupts,
-timers, etc) are enabled in the majority of use cases which is the
-best option.
+Unexport xen_hvm_need_lapic as it's never used outside.
 
-However, in some cases (kexec not fully working, benchmarking, etc)
-we want to disable PV extensions. We have xen_nopv for that purpose
-but only for XEN. For a consistent admin experience a common command
-line parameter set across all PV guest implementations is a better
-choice.
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+---
+ arch/x86/include/asm/xen/hypervisor.h | 6 +++---
+ arch/x86/xen/enlighten_hvm.c          | 3 +--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-To achieve this introduce a new 'nopv' parameter which is usable by
-most of PV guest implementation. Due to the limitation of some PV
-guests(XEN PV, XEN PVH and jailhouse), 'nopv' is ignored for XEN PV
-, jailhouse and XEN PVH if booting via Xen-PVH boot entry. If booting
-via normal boot entry(like grub2), PVH guest has to panic itself
-currently.
+diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
+index 39171b3..42e1245 100644
+--- a/arch/x86/include/asm/xen/hypervisor.h
++++ b/arch/x86/include/asm/xen/hypervisor.h
+@@ -44,14 +44,14 @@ static inline uint32_t xen_cpuid_base(void)
+ }
+ 
+ #ifdef CONFIG_XEN
+-extern bool xen_hvm_need_lapic(void);
++extern bool __init xen_hvm_need_lapic(void);
+ 
+-static inline bool xen_x2apic_para_available(void)
++static inline bool __init xen_x2apic_para_available(void)
+ {
+ 	return xen_hvm_need_lapic();
+ }
+ #else
+-static inline bool xen_x2apic_para_available(void)
++static inline bool __init xen_x2apic_para_available(void)
+ {
+ 	return (xen_cpuid_base() != 0);
+ }
+diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
+index 0e75642..ac4943c 100644
+--- a/arch/x86/xen/enlighten_hvm.c
++++ b/arch/x86/xen/enlighten_hvm.c
+@@ -218,7 +218,7 @@ static __init int xen_parse_nopv(char *arg)
+ }
+ early_param("xen_nopv", xen_parse_nopv);
+ 
+-bool xen_hvm_need_lapic(void)
++bool __init xen_hvm_need_lapic(void)
+ {
+ 	if (xen_nopv)
+ 		return false;
+@@ -230,7 +230,6 @@ bool xen_hvm_need_lapic(void)
+ 		return false;
+ 	return true;
+ }
+-EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
+ 
+ static uint32_t __init xen_platform_hvm(void)
+ {
+-- 
+1.8.3.1
 
-While analyzing the PV guest code one bug were found and fixed.
-(Patches 1). It can be applied independent of the functional
-changes, but is kept in the series as the functional changes
-depend on them.
-
-For compatibility reason, "xen_nopv" is keeped and mapped to "nopv",
-this way also avoids an issue with xen_nopv when booting PVH guest.
-
-Build test passes with CONFIG_HYPERVISOR_GUEST enable and disabled.
-I didn't get env to test with jailhouse and Hyperv, the others work
-as expected.
-
-v5:
-PATCH2:
-update patch description per Boris
-add declaration of nopv variable in arch/x86/include/asm/hypervisor.h
-which will be used in PATCH3 and PATCH4
-
-PATCH3 update xen_parse_nopv() per Boris
-PATCH4 add nopv=false per Boris
-Combine PATCH5 into PATCH3
-
-
-v4:
-PATCH5 a new patch to add 'xen_nopv' back per Boris
-
-v3:
-Remove some unrelated patches from patchset as suggested by Tglx
-
-PATCH1 unchanged
-PATCH2 add Reviewed-by
-PATCH3 add Reviewed-by
-PATCH4 rewrite the patch as Jgross found an issue in old patch,
-description is also updated.
-
-
-
-v2:
-PATCH3 use 'ignore_nopv' for PVH/PV guest as suggested by Jgross.
-PATCH5 new added one, specifically for HVM guest
-
-Thanks
-Zhenzhong
