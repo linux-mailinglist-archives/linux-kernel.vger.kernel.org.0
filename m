@@ -2,80 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1C65E3AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 862735E3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 14:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfGCMSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 08:18:07 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32938 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfGCMSH (ORCPT
+        id S1726978AbfGCMYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 08:24:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35122 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbfGCMYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:18:07 -0400
-Received: by mail-qt1-f194.google.com with SMTP id h24so2668101qto.0;
-        Wed, 03 Jul 2019 05:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IjB7eIx91cGzvCzJPmHdtVCISw8X3L0amGAAfmCgnb8=;
-        b=SKS+5XM1x7Q2aAlwFM+0FFl021AbmFPeJWur5gPnzvrcDlOWGesHuHrReXgapS7D6H
-         HvB6jEeOyjTk69U4MugVZAZ8AV3wrWLMTe8QiShPEh1k1RRfV2y74vHiugcdfMyAqKF+
-         69BTwqfDfPbks2mtGThiF7QkN+hKJgAPGzkJfou7gPMSxYS8gdpkGRFTO2xrDwSs81iq
-         1BTfM0VeiE0d4m6JDguO0zhMzQn5pxDsVAIgx+rbaExD/NMkQWTTk7xrCU+Q12X8Q8l+
-         Fm0SVIHSvRXCNZa3zu4QQzPy5pMV9iwjndzM2FYse1EmZlxDkYcWLguuq2vBWtd4OMa0
-         QRMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IjB7eIx91cGzvCzJPmHdtVCISw8X3L0amGAAfmCgnb8=;
-        b=sJLZVxxnWuRyigVAdx36T5tFJqoZi7MD7KFOVcOTpa9zAv7LOW4WtzwsdgyrKnh6mU
-         GixrbcOY+Il2GMXqBJaB5jlFAUonsqyTfBje8yuMQsRLkZB+tI1hJXy/3UVclNDqEr4k
-         dL/E7ed403wgGNDL/Qd7D2dOIfx6fsjX+1sDcvASEpRNW4jxdOhChLbetsCM4zkj9qXS
-         PotcZhtnJZTXCbRNfdTdZRekyQad9yc29VSg7lIYUe3D2/swXmiL+ARcA+eoz/o5S4Ic
-         GX4vokak33dCINvfOhgrIqaQuSAl5MwinDlIJDUgL5lUUWBeErDJiJAQqeyyfpQEWwSU
-         vGaw==
-X-Gm-Message-State: APjAAAU/tc8PYB4/EbpF7HABTyjWqBCAUVGtafvTqH/287F14ZaU/vYV
-        kk/sO4D1qUD6gHZ6njS0Z5Prfd6if3tAgR8pfOnvnlVD
-X-Google-Smtp-Source: APXvYqwGgM5Phb3RLVd4Z4Ax+sqyMgVnOmoG73XQaHgqBxim7OM82B4e7D+F3YtEkaU8KgLKnUOB4WnOnJ6qFelDqsE=
-X-Received: by 2002:aed:38c2:: with SMTP id k60mr28886147qte.83.1562156286006;
- Wed, 03 Jul 2019 05:18:06 -0700 (PDT)
+        Wed, 3 Jul 2019 08:24:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UgSdS+LcNa3zwD10AD2JimuZLbxV3TtpHzyJ+/tBrVk=; b=UDoIDDIDp27kYD+vUzj+WOd/x
+        qA/af8OpWKGlaG58JedwTfNudNtn79jCIY3ilgnX5Zoc2AhrEgKGkFUxN7hpDJ9fIDXLqAvKpfHYl
+        HAGdBt/1N800dvMubfmU101bRoVW9PA09hLi/fQ8ZqRdnfpW96fOXfL4Xi+Rf75jnVUVn2etspIFA
+        j6Oct+3Crt6la+yx0SC6VTJLvHrf0BVjEf7e7ya3u9yxx2Je9wIUbzFv8kIPBIFoWlT1DkW4lDakS
+        uq5EizvrixbNEnUKfqoTsOzemLLaiG3b29Woeij+b45ivwS5VUDT7+0g9asYMNQYsdHVtJ/6mEgXV
+        U5VlSE2FQ==;
+Received: from [12.46.110.2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hieIp-0002Fj-EV; Wed, 03 Jul 2019 12:23:59 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-riscv@lists.infradead.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: nommu fixups
+Date:   Wed,  3 Jul 2019 05:23:56 -0700
+Message-Id: <20190703122359.18200-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
-In-Reply-To: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Wed, 3 Jul 2019 05:17:54 -0700
-Message-ID: <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
-Subject: Re: [PATCH] md-multipath: Replace a seq_printf() call by seq_putc()
- in multipath_status()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-raid <linux-raid@vger.kernel.org>,
-        Shaohua Li <shli@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 5:25 AM Markus Elfring <Markus.Elfring@web.de> wrote=
-:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 Jul 2019 13:07:55 +0200
->
-> A single character (depending on a condition check) should be put
-> into a sequence. Thus use the corresponding function =E2=80=9Cseq_putc=E2=
-=80=9D.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Hi Andrew,
 
-Can you explain why this is necessary?
-
-Thanks,
-Song
+the patches are fixups developed for the RISC-V nommu port.  Can you
+queue them up in -mm?
