@@ -2,110 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A97115D8C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5BF5D8D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfGCA2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:28:30 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33962 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbfGCA23 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:28:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s49so322577edb.1;
-        Tue, 02 Jul 2019 17:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
-        b=c0Orqe6NQBE+sHLXT5J5nmlLtMemzO5waTwx4hEj7Bl04/hl6C0P+6hPRYDEAfph90
-         kg1ZVytJWoslu+wvzvpUmTJPGiWopB+CqjCPc1Ge/93q2IP0ruxhLtlIhl9ed5+hAqt5
-         /04yd0PyFdt0vekPpPo4dFYgQoX6r20BGdXRZhU33xxOAymQ9VLEdjBkSUPX4Ohh4xaK
-         oeKBpm1hXGBKA61bwDXLWcFXYxJKHcfDwnjVubiVNIz/V5hs0Bw4n8t7dH6rTZ7TISUi
-         8mAGclvqyCqY9XkLjYY0ydocBF0Zn5lUOoodMkb+gzJ84nYE5DlVPwzL6wE4hw5zTVn7
-         NnOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
-        b=m1quNqkNMIdkPgcBHittKTv5Ykk16LxXkEtft1qw4SIdIpd1As8bUm5H/MPIsWbuVW
-         5iDyNyVkBqyowa12CsL+g/RkAdC3u2qVklMFerSERexeZC9NS/e8CV7D1EeTH4HSGTso
-         ZKmoCs/3obLYMdZJqNCR23Ru1yaMw72fIk5XlndXEqJDYlO9FWf1QXrKPqnqZu9BLX1w
-         5T37MktAZtp+DaqkCXcPRGeaI0NzLub7voc+ozvgGCmYv506UClX6Ixfx1UQR/Yd1QM+
-         MX1k9VqAJUkgoVvanth59MXeGxDb4hU41cM6hq2owxaGFcoG8NVMttnfDvyiVuexfbuW
-         mQaA==
-X-Gm-Message-State: APjAAAWzSwxBgVJkVU2aawStGXYi+/H0LQgZfpPVJECaLY9p4vjFNxeu
-        /vyfyUWFWlR1YBiT5bzh6xs=
-X-Google-Smtp-Source: APXvYqw0ZksS0YC+pGL/ouOk9KhOw5LGAqS0CHttjy+Br4pM+v+dICQr6KzW3wmEDGg0H++t5zQLow==
-X-Received: by 2002:aa7:c692:: with SMTP id n18mr38211777edq.220.1562113372104;
-        Tue, 02 Jul 2019 17:22:52 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
-        by smtp.gmail.com with ESMTPSA id b19sm113853eje.80.2019.07.02.17.22.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 17:22:51 -0700 (PDT)
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org>
- <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org>
- <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
- <20190702033410.GB1729@bombadil.infradead.org>
- <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
-Date:   Wed, 3 Jul 2019 03:22:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727329AbfGCAaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:30:07 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11554 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727294AbfGCA36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:29:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 17:29:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,445,1557212400"; 
+   d="scan'208";a="315413534"
+Received: from unknown (HELO [10.239.196.136]) ([10.239.196.136])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2019 17:29:55 -0700
+Subject: Re: [PATCH v5 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Xiaoyao Li <xiaoyao.li@linux.intel.com>, rkrcmar@redhat.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, jingqi.liu@intel.com
+References: <20190620084620.17974-1-tao3.xu@intel.com>
+ <20190620084620.17974-3-tao3.xu@intel.com>
+ <b2cfa1d015315c74af6cee1c00185e5c68cfa397.camel@linux.intel.com>
+ <22533924-f7e8-4b50-d5fe-7cbcc9295b53@redhat.com>
+From:   Tao Xu <tao3.xu@intel.com>
+Message-ID: <05d4c029-79f4-e513-1778-a7c245a48ad7@intel.com>
+Date:   Wed, 3 Jul 2019 08:29:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <22533924-f7e8-4b50-d5fe-7cbcc9295b53@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/2019 18:37, Dan Williams wrote:
-<>
+On 7/3/2019 12:37 AM, Paolo Bonzini wrote:
+> On 20/06/19 11:46, Xiaoyao Li wrote:
+>> You cannot put the atomic switch here. What if umwait_control_cached is changed
+>> at runtime? Host kernel patch exposed a sysfs interface to let it happen.
 > 
-> I'd be inclined to do the brute force fix of not trying to get fancy
-> with separate PTE/PMD waitqueues and then follow on with a more clever
-> performance enhancement later. Thoughts about that?
+> Thanks for the review, Xiaoyao.  I agree with both of your remarks.
 > 
+> Paolo
+> 
+Hi paolo,
 
-Sir Dan
-
-I do not understand how separate waitqueues are any performance enhancement?
-The all point of the waitqueues is that there is enough of them and the hash
-function does a good radomization spread to effectively grab a single locker
-per waitqueue unless the system is very contended and waitqueues are shared.
-Which is good because it means you effectively need a back pressure to the app.
-(Because pmem IO is mostly CPU bound with no long term sleeps I do not think
- you will ever get to that situation)
-
-So the way I understand it having twice as many waitqueues serving two types
-will be better performance over all then, segregating the types each with half
-the number of queues.
-
-(Regardless of the above problem of where the segregation is not race clean)
+The issues have been solved in v6 patches, could you help to review v6 
+patches?
 
 Thanks
-Boaz
+
+Tao
+
+>>> +		break;
+>>>   	case MSR_IA32_SPEC_CTRL:
+>>>   		if (!msr_info->host_initiated &&
+>>>   		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+>>> @@ -4126,6 +4148,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool
+>>> init_event)
+>>>   	vmx->rmode.vm86_active = 0;
+>>>   	vmx->spec_ctrl = 0;
+>>>   
+>>> +	vmx->msr_ia32_umwait_control = 0;
+>>> +
+>>>   	vcpu->arch.microcode_version = 0x100000000ULL;
+>>>   	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
+>>>   	kvm_set_cr8(vcpu, 0);
+>>> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+>>> index 61128b48c503..8485bec7c38a 100644
+>>> --- a/arch/x86/kvm/vmx/vmx.h
+>>> +++ b/arch/x86/kvm/vmx/vmx.h
+>>> @@ -14,6 +14,8 @@
+>>>   extern const u32 vmx_msr_index[];
+>>>   extern u64 host_efer;
+>>>   
+>>> +extern u32 umwait_control_cached;
+>>> +
+>>>   #define MSR_TYPE_R	1
+>>>   #define MSR_TYPE_W	2
+>>>   #define MSR_TYPE_RW	3
+>>> @@ -194,6 +196,7 @@ struct vcpu_vmx {
+>>>   #endif
+>>>   
+>>>   	u64		      spec_ctrl;
+>>> +	u64		      msr_ia32_umwait_control;
+>>>   
+>>>   	u32 vm_entry_controls_shadow;
+>>>   	u32 vm_exit_controls_shadow;
+>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>> index 83aefd759846..4480de459bf4 100644
+>>> --- a/arch/x86/kvm/x86.c
+>>> +++ b/arch/x86/kvm/x86.c
+>>> @@ -1138,6 +1138,7 @@ static u32 msrs_to_save[] = {
+>>>   	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
+>>>   	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
+>>>   	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+>>> +	MSR_IA32_UMWAIT_CONTROL,
+>>>   };
+>>>   
+>>>   static unsigned num_msrs_to_save;
+>>
+> 
+
