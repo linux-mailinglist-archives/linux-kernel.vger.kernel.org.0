@@ -2,166 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6ED15E75B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5EA5E766
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 17:07:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfGCPF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 11:05:29 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:48027 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfGCPF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:05:29 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="Nicolas.Ferre@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: o05FCN3Nb76Ada20UnhIjzdEOUWBya41B7HH5THPz27BSUeJXuivGhcHj1m8sPR7/Cz4TaBS/V
- aokBEPiCM0oEG/gmcwJoz0GFJKvHpYvPtx7GToG1BPiND8DMspmTwOjq8Z7YhIQXwLRZ3suk75
- MQw8gSyjHP0f9QTFFaiiILY3aZ+nV/eU1uFXLNBujC/lm2xsu+X0DcGJLbXHJXA9L1JVis2oCA
- pcyIiXEC4KxvSfEOI/d8sH/Uy6+EQOKpdOECq7FXwNUO7aiLPu8gZjPFl34jXzM6Wo9C0dkEzj
- clU=
-X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
-   d="scan'208";a="38310142"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Jul 2019 08:05:28 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 3 Jul 2019 08:05:27 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 3 Jul 2019 08:05:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x/vlT9dvZgZz9KEogC3vPeN+p9x9rIQr4sqlIrOAQ3s=;
- b=wI5ZkT5NlO4Min4+aYzgP/K4Hg7+v/UtkRiF2IHJnG6JNioTmfYujz0UwIgO57GM9pQGu4wnB+uW5byGhn7tt7Z3xXRMdRrst1ZgN3AC/I+hGFisFZT1sd3R7Fu6cYy/P2AWw2OXMzZ7VVoUs4oVkaZx03kqB+2t/qMWCSKOKmY=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1725.namprd11.prod.outlook.com (10.169.237.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Wed, 3 Jul 2019 15:05:25 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::75c6:9864:b5c5:a7e5]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::75c6:9864:b5c5:a7e5%7]) with mapi id 15.20.2032.019; Wed, 3 Jul 2019
- 15:05:24 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <Codrin.Ciubotariu@microchip.com>, <sboyd@kernel.org>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND][PATCH] clk: at91: generated: Truncate divisor to
- GENERATED_MAX_DIV + 1
-Thread-Topic: [RESEND][PATCH] clk: at91: generated: Truncate divisor to
- GENERATED_MAX_DIV + 1
-Thread-Index: AQHVMbC9mVadLuob/kClhqByyH9zfA==
-Date:   Wed, 3 Jul 2019 15:05:24 +0000
-Message-ID: <af07c26e-cef3-f0ff-48ff-68f99ccf4de9@microchip.com>
-References: <20190625091002.27567-1-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20190625091002.27567-1-codrin.ciubotariu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0234.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1e::30) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [213.41.198.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5e866d46-4849-4d5a-ae1c-08d6ffc7e00a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR11MB1725;
-x-ms-traffictypediagnostic: MWHPR11MB1725:
-x-microsoft-antispam-prvs: <MWHPR11MB17250DD530A61A69BD7CF395E0FB0@MWHPR11MB1725.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 00872B689F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(396003)(39860400002)(346002)(189003)(199004)(71200400001)(31686004)(486006)(71190400001)(36756003)(305945005)(81166006)(8936002)(8676002)(81156014)(3846002)(6116002)(72206003)(6486002)(7736002)(4326008)(25786009)(5660300002)(478600001)(256004)(68736007)(66066001)(14454004)(102836004)(6506007)(6436002)(386003)(476003)(66556008)(53936002)(2501003)(6512007)(52116002)(26005)(316002)(99286004)(2201001)(110136005)(76176011)(186003)(446003)(53546011)(6246003)(86362001)(31696002)(54906003)(11346002)(2616005)(66946007)(6636002)(66476007)(66446008)(229853002)(64756008)(73956011)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1725;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nBCmm/WBprWUFAhDMhLAMIPkjvoXrfVyIcJDMQttkFLZUka4YBzLDbbU9WuZb2mnJWQZ2orEwMYiy8OwwchF5iGFHl7g4z/UCaX1T00oZW6mG48OGFqPspKPB5pOU88+3tZrMo8iGdBgiDo1GD2NuK0YVSf7trJLXKcl7bXgkbkN15+OYrlB2MAWSj1zgVaT8o0vlCKDmm7LwvyJ12pxm6oN3asi2/DG01GPZdn4YVqOpZ2hl/CEFjLFxSkUuKXBnKnLmUNkRcRqWy8Zi/yVI32Ah6a8yv+9WC3PGhwW+XdiHRPqCgAtJJb6xYeRWAgzfXT4o7U3XhViqEROm6eaoT9xhYwfNOvozr9A0isF0ln2FeihQdyFNgqcLZuPkwZ0HkLN5/ynJ5kj5qG9MEvIVEH4t6TixapSHyIB3k2DZOE=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <1FD09E8ED1663B4F99671CC1C3F4569B@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726877AbfGCPH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 11:07:27 -0400
+Received: from mout.web.de ([212.227.17.12]:46617 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfGCPH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:07:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1562166440;
+        bh=W9/Rx4pVvriRi525/LkdxtKOCW5OZ0cvPzvzCejQASk=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=Ab74CEnKRsGy52uNXfAMqYJf6pnXnWyxgkT06Ocnp4JJ6WWHW9iEduFA+kApZ4WZk
+         Re03OoWaEmRAC5twyFboaTYwib8UfQVucCSHQgL2Dzpw06DFofzl/G27YE9tC2U1sZ
+         j8otgP7Gl3HG5pwD1G4OXHIxk4Mq6mE07kAPUfhs=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.189.108]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoYjO-1iBjDR3Fd4-00gbhC; Wed, 03
+ Jul 2019 17:07:19 +0200
+To:     linux-nfs@vger.kernel.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/3] NFS: Adjustments for three function implementations
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <cb79bcb1-0fd6-1b7f-c131-5883f09ad105@web.de>
+Date:   Wed, 3 Jul 2019 17:07:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e866d46-4849-4d5a-ae1c-08d6ffc7e00a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2019 15:05:24.7069
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nicolas.ferre@microchip.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1725
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qVT2UpC7cVPsIWHzOSitNSeQfwN6NGKRYe7oGRVJx/o1hNQcXoC
+ 2T4szTrnNwG8D6qJUE010XV7OTrcqmUwPXwZLBVAe3Ps+fgrk54cQg5ZhI2F91iv6aYmJNo
+ n1iazq1WRGbHqlX+DFV4ec320PCBYFkJUq7Wto3NdnIaS+eO6MjPNn9KMJ40r94t908QxzY
+ 8+ae7kIqr84qNXLirnWBQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YGLNHpA1g34=:ItRf8/2+s64XpPDiQToXtR
+ XZD+tS4PafpQCuBccGhvixjpNRuFtT8vAJKTOb2Y6JGXvMM+/XztFO4y702ND6TjKJNhsPXei
+ M1s75tZFit0kwO1WalkCYzl+HRpzkVncUEd725Woa7q+6yXfNjC21wNK7nuV0SfdXMNVWgiFs
+ rP644DOAFU+d4n+XXSpYs35ELbFLYG6rT5xJVuxT3HE3hDqHVN7kaetgIypLD2558zdvCh1R/
+ lXgDAyS14AFRktgupuhMGkGDuO8YRSxujGY/ZmwFwpzUCShMXflZyBFjcfkH7fpqHd9cRAbsM
+ vSXwiGMwooQT8T8Sf3ev70icZc0MESHo1Mq+FtioS0EUAARbZlkIGy8FAnm2T3dCDucKPmNCT
+ qsKjnwwe70d4uTcfWuleWKpfv8No1PGcpY6dU+iufWPtWrK5QyDhNXQcBkwCqfSc42Jy6ZoFr
+ NEYWHIedrm+zZ40NQlu+prTND0tIIoYEU+CzMgOLL4STXHOrMwL6VE08cgYS7hRR4yJ5YMg2o
+ 5f4Y7lz1VCEj2RhGiAMPvns6tkpg3vKdOm96d3maujeR39Gln5QiiDQLeih6QTYdwTlzCmUap
+ oQZJVgnUcjSwWcwE32o5GL9KLs4P/3hzhFnkn6SWKolhuM5EnD9jWif5lkk6CBWqw5e+8orNc
+ UpsTLudkWgSeOVx2tbeDyybM+SkKXCOAh5BVVyvi4HHLatYpIEzzo+3fPncaBET0j6HUWQ7eP
+ yv2ktDLOaMdAuoAu1yTPBJZKncF8/rESchrGaODQC5anWIgd/nop1Yv/+VbbTFC4z5kfeSQhR
+ hywZTMwcQ5+93AIy34PLE8WIW2NtSZA96A2hyHD5KhMZXuQYp+zXyqBy6JrFY48PkH3F7fp0u
+ AkU38SbzwSBNWlVFnej7qnPfff6bBPYAY431Y0bf4MUuRKIQmLIaSBOfbM7Cc9F1czWmWEKpM
+ FfhEvQXseYku6vcX5BJdTYwoaqmY+BRcgjxaZrjA6c9mPAxs7fQnouQVYLbs3eY8NXqb3zlXu
+ wzc02tWBjZcIWLdtyn5rVf/vT+1T+Ug50qjtTurOzGwzcxUDMmZDy0mwJPCW6hnJU5G+27BTv
+ lXKTOzEdm6o4oH3S+WOxQ7icUhvL3q+kt8g
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2019 at 11:10, Codrin Ciubotariu wrote:
-> In clk_generated_determine_rate(), if the divisor is greater than
-> GENERATED_MAX_DIV + 1, then the wrong best_rate will be returned.
-> If clk_generated_set_rate() will be called later with this wrong
-> rate, it will return -EINVAL, so the generated clock won't change
-> its value. Do no let the divisor be greater than GENERATED_MAX_DIV + 1.
->=20
-> Fixes: 8c7aa6328947 ("clk: at91: clk-generated: remove useless divisor lo=
-op")
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> ---
->=20
-> - The email-server was converting my patches to base64, so I resend it
->    using another server;
-> - Added acked-bys from Nicolas and Ludovic;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 Jul 2019 17:02:05 +0200
 
-Stephen,
+A few update suggestions were taken into account
+from static source code analysis.
 
-I don't see this patch in linux-next and we're already late in the=20
-development cycle: aka ping...
+Markus Elfring (3):
+  Use seq_putc() in nfs_show_stats()
+  Replace 16 seq_printf() calls by seq_puts()
+  Three function calls less
 
-Best regards,
-   Nicolas
+ fs/nfs/nfs4xdr.c |  5 +----
+ fs/nfs/super.c   | 53 ++++++++++++++++++++++++------------------------
+ 2 files changed, 27 insertions(+), 31 deletions(-)
 
->=20
->   drivers/clk/at91/clk-generated.c | 2 ++
->   1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-gene=
-rated.c
-> index 5f18847965c1..290cffe35deb 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -146,6 +146,8 @@ static int clk_generated_determine_rate(struct clk_hw=
- *hw,
->   			continue;
->  =20
->   		div =3D DIV_ROUND_CLOSEST(parent_rate, req->rate);
-> +		if (div > GENERATED_MAX_DIV + 1)
-> +			div =3D GENERATED_MAX_DIV + 1;
->  =20
->   		clk_generated_best_diff(req, parent, parent_rate, div,
->   					&best_diff, &best_rate);
->=20
+=2D-
+2.22.0
 
-
---=20
-Nicolas Ferre
