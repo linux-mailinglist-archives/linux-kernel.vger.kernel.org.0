@@ -2,78 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6C255E686
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E825E689
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfGCOZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:25:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45764 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726217AbfGCOZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:25:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26F3BB65F;
-        Wed,  3 Jul 2019 14:25:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B499B1E0D71; Wed,  3 Jul 2019 16:24:57 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 16:24:57 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 23/30] ext2: Use kmemdup rather than duplicating its
- implementation
-Message-ID: <20190703142457.GA26423@quack2.suse.cz>
-References: <20190703131727.25735-1-huangfq.daxian@gmail.com>
+        id S1727138AbfGCOZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:25:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbfGCOZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:25:06 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85E4C21850;
+        Wed,  3 Jul 2019 14:25:05 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 10:25:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
+ postcore_initcall
+Message-ID: <20190703102504.13344555@gandalf.local.home>
+In-Reply-To: <20190703102402.1319b928@gandalf.local.home>
+References: <20190526191828.466305460@goodmis.org>
+        <20190526191848.266163206@goodmis.org>
+        <20190702165008.GC34718@lakrids.cambridge.arm.com>
+        <20190703100205.0b58f3bf@gandalf.local.home>
+        <20190703140832.GD48312@arrakis.emea.arm.com>
+        <20190703102402.1319b928@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703131727.25735-1-huangfq.daxian@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-07-19 21:17:27, Fuqian Huang wrote:
-> kmemdup is introduced to duplicate a region of memory in a neat way.
-> Rather than kmalloc/kzalloc + memset, which the programmer needs to
-> write the size twice (sometimes lead to mistakes), kmemdup improves
-> readability, leads to smaller code and also reduce the chances of mistakes.
-> Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+On Wed, 3 Jul 2019 10:24:02 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Thanks. Added to my tree.
+> On Wed, 3 Jul 2019 15:08:32 +0100
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+> 
+> 
+> > > +static int __init run_init_test_probes(void)
+> > > +{
+> > > +	if (run_kprobe_tests)
+> > > +		init_test_probes();    
+> > 
+> > A return 0 here.  
+> 
+> Will update (would have triggered a failure on my test suite anyway ;-)
+> 
+> >   
+> > > +}
+> > > +module_init(run_init_test_probes);    
+> > 
+> > This does the trick. I prefer your fix as it leaves the arch code
+> > unchanged. In case you need it:
+> > 
+> > Tested-by: Catalin Marinas <catalin.marinas@arm.com>
+> >   
+>
 
-								Honza
+Masami,
 
-> ---
->  fs/ext2/xattr.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-> index 1e33e0ac8cf1..a9c641cd5484 100644
-> --- a/fs/ext2/xattr.c
-> +++ b/fs/ext2/xattr.c
-> @@ -506,11 +506,10 @@ bad_block:		ext2_error(sb, "ext2_xattr_set",
->  
->  			unlock_buffer(bh);
->  			ea_bdebug(bh, "cloning");
-> -			header = kmalloc(bh->b_size, GFP_KERNEL);
-> +			header = kmemdup(HDR(bh), bh->b_size, GFP_KERNEL);
->  			error = -ENOMEM;
->  			if (header == NULL)
->  				goto cleanup;
-> -			memcpy(header, HDR(bh), bh->b_size);
->  			header->h_refcount = cpu_to_le32(1);
->  
->  			offset = (char *)here - bh->b_data;
-> -- 
-> 2.11.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If you give me an Acked-by, I'll add it to my tree.
+
+-- Steve
