@@ -2,94 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AC95ED82
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F935ED8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 22:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfGCU3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 16:29:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48060 "EHLO mail.kernel.org"
+        id S1727248AbfGCUcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 16:32:14 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7617 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfGCU3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 16:29:46 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 590ED218A0;
-        Wed,  3 Jul 2019 20:29:44 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 16:29:42 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
-        luto@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
-        joel@joelfernandes.org, devel@etsukata.com
-Subject: Re: [PATCH 3/3] x86/mm, tracing: Fix CR2 corruption
-Message-ID: <20190703162942.63c750a3@gandalf.local.home>
-In-Reply-To: <20190703202231.GI16275@worktop.programming.kicks-ass.net>
-References: <20190703102731.236024951@infradead.org>
-        <20190703102807.588906400@infradead.org>
-        <20190703202231.GI16275@worktop.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726550AbfGCUcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 16:32:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 13:32:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,448,1557212400"; 
+   d="scan'208";a="158089378"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga008.jf.intel.com with ESMTP; 03 Jul 2019 13:32:12 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v4 0/8] Add Error Disconnect Recover (EDR) support
+Date:   Wed,  3 Jul 2019 13:29:47 -0700
+Message-Id: <cover.1562185606.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 22:22:31 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-> On Wed, Jul 03, 2019 at 12:27:34PM +0200, root wrote:
-> > Despire the current efforts to read CR2 before tracing happens there
-> > still exist a number of possible holes:
-> > 
-> >   idtentry page_fault             do_page_fault           has_error_code=1
-> >     call error_entry
-> >       TRACE_IRQS_OFF
-> >         call trace_hardirqs_off*
-> >           #PF // modifies CR2
-> > 
-> >       CALL_enter_from_user_mode
-> >         __context_tracking_exit()
-> >           trace_user_exit(0)
-> >             #PF // modifies CR2
-> > 
-> >     call do_page_fault
-> >       address = read_cr2(); /* whoopsie */
-> > 
-> > And similar for i386.
-> > 
-> > Fix it by pulling the CR2 read into the entry code, before any of that
-> > stuff gets a chance to run and ruin things.
-> > 
-> > Ideally we'll clean up the entry code by moving this tracing and
-> > context tracking nonsense into C some day, but let's not delay fixing
-> > this longer.
-> >   
-> 
-> > @@ -1180,10 +1189,10 @@ idtentry xenint3		do_int3			has_error_co
-> >  #endif
-> >  
-> >  idtentry general_protection	do_general_protection	has_error_code=1
-> > -idtentry page_fault		do_page_fault		has_error_code=1
-> > +idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
-> >  
-> >  #ifdef CONFIG_KVM_GUEST
-> > -idtentry async_page_fault	do_async_page_fault	has_error_code=1
-> > +idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
-> >  #endif  
-> 
-> While going over the various idt handlers, I found that we probably also
-> need read_cr2 on do_double_fault(), otherwise it is susceptible to the
-> same problem.
-> 
+This patchset adds support for following features:
 
-BTW, do you plan on making this for stable? Even though it's rather
-invasive. Or should we just apply the band-aids first, have them
-backported to stable, and then put this change on top of them for
-upstream?
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
--- Steve
+You can find EDR spec in the following link.
+
+https://members.pcisig.com/wg/PCI-SIG/document/12614
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Kuppuswamy Sathyanarayanan (8):
+  PCI/ACPI: Add _OSC based negotiation support for DPC
+  PCI/ACPI: Expose EDR support via _OSC to BIOS
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Add support for DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+
+ drivers/acpi/pci_root.c         |   9 ++
+ drivers/pci/pci-acpi.c          |  91 +++++++++++++++
+ drivers/pci/pcie/Kconfig        |  10 ++
+ drivers/pci/pcie/aer.c          |   9 --
+ drivers/pci/pcie/dpc.c          | 200 +++++++++++++++++++++++++++++---
+ drivers/pci/pcie/portdrv_core.c |   8 +-
+ drivers/pci/probe.c             |   1 +
+ include/linux/acpi.h            |   4 +-
+ include/linux/pci-acpi.h        |  11 ++
+ include/linux/pci.h             |   1 +
+ 10 files changed, 314 insertions(+), 30 deletions(-)
+
+-- 
+2.21.0
+
