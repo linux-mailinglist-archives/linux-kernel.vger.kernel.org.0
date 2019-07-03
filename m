@@ -2,135 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 253AF5E8E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 18:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D935E8DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 18:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfGCQ2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 12:28:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60400 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfGCQ2v (ORCPT
+        id S1726966AbfGCQ2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 12:28:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33523 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCQ2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 12:28:51 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x63GNbXp139693;
-        Wed, 3 Jul 2019 16:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=x3dC8l4+a2XaaDiZ4nOifBIIVoVWouOgo1NGCO/FuyY=;
- b=i/E58QCRWRHmHs0MmD0OckIG2ji0uCbGKx5HY1vnbj8UKCHhMjQ0zSsTol9uwlOjO3xb
- pegEDGbBAi5taJHjoGQkC0m2qwQNM0fc8z/s0SIl0s+3997PthkvJLn3vTHyr6sPGnyH
- uqFEq9e0NlRIQYHN1zyPLuu0QqFoTui+tANyhdvqA0q10MQuxKa9xLamOV3Tfv1YURzF
- A2TQgoO6OE2qjVScXMHqxqF6k22td3/Ctsu1qrVPFHBXP9jEvm9fIJ5Rcn3+21OD8bMQ
- hiXDbqOve6ukTe121xa/eBaIgX5sxIvAvsh3WtXPTJgOq4eBcAUIAmF9j2J+4C6FLgrl oQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2te5tbthxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Jul 2019 16:27:55 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x63GNIhi101526;
-        Wed, 3 Jul 2019 16:27:55 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2tebamfetq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Jul 2019 16:27:55 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x63GRpUX028428;
-        Wed, 3 Jul 2019 16:27:51 GMT
-Received: from [10.30.3.6] (/213.57.127.2)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 03 Jul 2019 09:27:51 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
-Subject: Re: [PATCH 2/4] kvm: x86: allow set apic and ioapic debug dynamically
-From:   Liran Alon <liran.alon@oracle.com>
-In-Reply-To: <685680d5-f642-0c48-08f2-8c73026ccaf0@redhat.com>
-Date:   Wed, 3 Jul 2019 19:27:47 +0300
-Cc:     Yi Wang <wang.yi59@zte.com.cn>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
-Content-Transfer-Encoding: 7bit
-Message-Id: <076EBA72-1C86-4E9F-8821-2F49645E03CA@oracle.com>
-References: <1561962071-25974-1-git-send-email-wang.yi59@zte.com.cn>
- <1561962071-25974-3-git-send-email-wang.yi59@zte.com.cn>
- <685680d5-f642-0c48-08f2-8c73026ccaf0@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-X-Mailer: Apple Mail (2.3445.4.7)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907030199
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907030199
+        Wed, 3 Jul 2019 12:28:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m4so1520484pgk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 09:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=q6zTyc1nJv74vcvWUitF7l7G4qhmg90JLY7Dww6BU2M=;
+        b=bf5rKFF1VVweUEDVW7/N2C3+96UepGoqntMuJ4l8GRvxYH48sUaPglMQlPBIH/8i2S
+         FU0TPl/G/Z0sVcAdC3x3GOuQ+OeE8U21/fO576KyFmLgdvn2p646emSbQcmqaAW2M0i0
+         jfBrfPrROSgiaSh2UUF/g0AxZ8bzLYhGYgWb6F8gm6fnAFM43OMfX0eUbjcv8FE0+blB
+         7WzuZ3luopqlqQ3CLP+//cnVWFcOdnD8mg6JYjBOEJTSNS+IJ7mXhpVX/ZykYfn3F2Kb
+         BmDJ/ZGJn8QhyQlpD0dkGWCoLyLYFyNkDsMoXbxsy4M9J17gyVbrVTWFm8rNkGTNiCjt
+         YEBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=q6zTyc1nJv74vcvWUitF7l7G4qhmg90JLY7Dww6BU2M=;
+        b=AAaCW9idlngNafTSrz7DNSVHWcz+T/tDpvQkTwdVDYxJy4JRmCBzxMi3xA1ednVPfQ
+         LAgGe0b5XeSfPZAXTW8k5MvYuF9swS50RRWOvEIReQ1JMEJdPJLfIvcZIsdrS6mgKJ+/
+         fJ3nWhm6fF3eBnmCd5xmN1USiz6Q4mg8ACXtfwjdwOtfkf77AghCfJhVIM07pprVSnnz
+         LYRJCMMZ5cr4FuzI4+NrgIMbHlqESZIBK5GQbOCD0IA1pEGaMn3zZRMhunH4Q9YYOCZM
+         h3UF9muqedwJZIFfQ7Pm1P5AxYqzo7vP/ZedduzdYqjEd+jy9Ma39Z1cU7is/YJHd/c7
+         YiNQ==
+X-Gm-Message-State: APjAAAVhwyMw9Zy8sysdGP/Cyq9kIK8bwmkLbsIVtbtm0h44ZlHOYIMI
+        KuMGPCgkr6Mt5u2qwG9FWsc=
+X-Google-Smtp-Source: APXvYqzuBu3lAhBxTAQpWu9qrEW9LmiH0SxWOGf/XoqbG/JYoGdIN8FmDpjEURl3KtjESfKXkb8GMw==
+X-Received: by 2002:a63:1e0b:: with SMTP id e11mr15175199pge.402.1562171313251;
+        Wed, 03 Jul 2019 09:28:33 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id e11sm6589912pfm.35.2019.07.03.09.28.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 09:28:32 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Fuqian Huang <huangfq.daxian@gmail.com>
+Subject: [PATCH v2 10/35] macintosh: Use kmemdup rather than duplicating its implementation
+Date:   Thu,  4 Jul 2019 00:28:21 +0800
+Message-Id: <20190703162821.32322-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+kmemdup is introduced to duplicate a region of memory in a neat way.
+Rather than kmalloc/kzalloc + memcpy, which the programmer needs to
+write the size twice (sometimes lead to mistakes), kmemdup improves
+readability, leads to smaller code and also reduce the chances of mistakes.
+Suggestion to use kmemdup rather than using kmalloc/kzalloc + memcpy.
 
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+Changes in v2:
+  - Fix a typo in commit message (memset -> memcpy)
 
-> On 3 Jul 2019, at 19:23, Paolo Bonzini <pbonzini@redhat.com> wrote:
-> 
-> On 01/07/19 08:21, Yi Wang wrote:
->> There are two *_debug() macros in kvm apic source file:
->> - ioapic_debug, which is disable using #if 0
->> - apic_debug, which is commented
->> 
->> Maybe it's better to control these two macros using CONFIG_KVM_DEBUG,
->> which can be set in make menuconfig.
->> 
->> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
->> ---
->> arch/x86/kvm/ioapic.c | 2 +-
->> arch/x86/kvm/lapic.c  | 5 ++++-
->> 2 files changed, 5 insertions(+), 2 deletions(-)
->> 
->> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
->> index 1add1bc..8099253 100644
->> --- a/arch/x86/kvm/ioapic.c
->> +++ b/arch/x86/kvm/ioapic.c
->> @@ -45,7 +45,7 @@
->> #include "lapic.h"
->> #include "irq.h"
->> 
->> -#if 0
->> +#ifdef CONFIG_KVM_DEBUG
->> #define ioapic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg)
->> #else
->> #define ioapic_debug(fmt, arg...)
->> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
->> index 4924f83..dfff5c6 100644
->> --- a/arch/x86/kvm/lapic.c
->> +++ b/arch/x86/kvm/lapic.c
->> @@ -54,8 +54,11 @@
->> #define PRIu64 "u"
->> #define PRIo64 "o"
->> 
->> -/* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
->> +#ifdef CONFIG_KVM_DEBUG
->> +#define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg)
->> +#else
->> #define apic_debug(fmt, arg...) do {} while (0)
->> +#endif
->> 
->> /* 14 is the version for Xeon and Pentium 8.4.8*/
->> #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
->> 
-> 
-> I would just drop all of them.  I've never used them in years, the kvm
-> tracepoints are enough.
-> 
-> Paolo
+ drivers/macintosh/adbhid.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-As someone who have done many LAPIC/IOAPIC debugging, I tend to agree. :)
-
--Liran
+diff --git a/drivers/macintosh/adbhid.c b/drivers/macintosh/adbhid.c
+index 75482eeab2c4..5d14bebfb58f 100644
+--- a/drivers/macintosh/adbhid.c
++++ b/drivers/macintosh/adbhid.c
+@@ -789,7 +789,8 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
+ 
+ 	switch (default_id) {
+ 	case ADB_KEYBOARD:
+-		hid->keycode = kmalloc(sizeof(adb_to_linux_keycodes), GFP_KERNEL);
++		hid->keycode = kmemdup(adb_to_linux_keycodes,
++			sizeof(adb_to_linux_keycodes), GFP_KERNEL);
+ 		if (!hid->keycode) {
+ 			err = -ENOMEM;
+ 			goto fail;
+@@ -797,8 +798,6 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
+ 
+ 		sprintf(hid->name, "ADB keyboard");
+ 
+-		memcpy(hid->keycode, adb_to_linux_keycodes, sizeof(adb_to_linux_keycodes));
+-
+ 		switch (original_handler_id) {
+ 		default:
+ 			keyboard_type = "<unknown>";
+-- 
+2.11.0
 
