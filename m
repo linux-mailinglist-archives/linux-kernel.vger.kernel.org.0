@@ -2,92 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AA65E634
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A743A5E636
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfGCOO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:14:26 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39239 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfGCOO0 (ORCPT
+        id S1727087AbfGCOPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:15:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48441 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCOPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:14:26 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z23so2580219wma.4
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 07:14:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WEU9J4f4LicY5+G8hi8mfSV2AgtX7u94Zg0dhqNyNTY=;
-        b=NtxZZ137IiBpNdHB6ZWz/ZYhD98kGDXsrJwGEdHb2iYtjX9CG1I9iwtOIbOozfWifH
-         NAru6OC/3kPwsEtS5IKAYITxjoHIFQR+h2ZaAmnn0C1R1F+WNLHyBZdwe6JV9rsX0cjF
-         Q28OspJjqJGA6s1JSA5MwMJ8K6+/eGFHxbIcRR/5xzQfYpOMlQBRL20WjrU9qhcZYm+Q
-         Tpu72CFe0cVXWhILLEHEm9LTfDe9lcTK5hplSXOan/Q7uQJrHIxbF4F8YNMTlOlrqg4x
-         5sAzUM4hf2iuJY0SHTOttKrnjCjVOP8i+KoWaG/Nj3QSZLjn2uajewl69oLyT5gMVGBL
-         culQ==
-X-Gm-Message-State: APjAAAWl0woSPllA25Pl974gvIJBpdfRqzKIXTHliDUufA5/MGwvt9u5
-        E3dXkNL8fpGdN7uj2lIBh8WIsw==
-X-Google-Smtp-Source: APXvYqxWJTH50ot0zo+dXmDmM1jQCcRtivVoVxZbuVBIWGJ9ZjIgNO8eZw3CTYU6sbPTVLyKRiVoDw==
-X-Received: by 2002:a1c:770d:: with SMTP id t13mr8092226wmi.79.1562163263930;
-        Wed, 03 Jul 2019 07:14:23 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:6c1d:63cc:b81d:e1a9? ([2001:b07:6468:f312:6c1d:63cc:b81d:e1a9])
-        by smtp.gmail.com with ESMTPSA id q7sm1819496wrx.6.2019.07.03.07.14.23
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 07:14:23 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] KVM: LAPIC: remove the trailing newline used in
- the fmt parameter of TP_printk
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1560474949-20497-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <b76ce740-69ea-c290-28f8-d2d8a683bdbd@redhat.com>
-Date:   Wed, 3 Jul 2019 16:14:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 3 Jul 2019 10:15:11 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EEofp3322431
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 3 Jul 2019 07:14:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EEofp3322431
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562163291;
+        bh=YhMb3HnppjnPcW38wxF30AgcG6B3xZ7brOcXWbR8RpY=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=MtVzlxRlutE+RQyt0edDPNcpX1gmZUdI3DgkvPENr1XLgootokQfBC9OwhkzRpXS0
+         syhMmA4b2a6MBEdkRQAAglUVNV7CTGOe2IPCHICpYS3D0327yRk4m61O0gN2E+afEH
+         kvaj3mninAqDgYl7OwaFmOQv4HzX4tzv4lt1U2ESTQ8Cn+KHTNglGuX8SI0Klq+mOE
+         3Xonmq9zIaSNXQWYdoDdmr7DZ/5l0rlmTpmD8iIyweGhdjq3zgXF5eK9Z/hWyLt6B5
+         Rx8XhcCzlv3R70mdym3z+mCvl2apkF+Hmr1tteshN0qfDZKX+dmIkGRKQypO4jydSd
+         wQJ16VhnGpUzA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EEnhI3322428;
+        Wed, 3 Jul 2019 07:14:49 -0700
+Date:   Wed, 3 Jul 2019 07:14:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-tirjsmvu4ektw0k7lm8k9lhu@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        mingo@kernel.org, namhyung@kernel.org, jolsa@kernel.org,
+        acme@redhat.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, jolsa@kernel.org,
+          acme@redhat.com, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+          mingo@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Add missing util.h to pick up
+ 'page_size' variable
+Git-Commit-ID: 1b2fc358ddfb1b0915922e441182cda7043f5116
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1560474949-20497-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/19 03:15, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> The trailing newlines will lead to extra newlines in the trace file
-> which looks like the following output, so remove it.
-> 
-> qemu-system-x86-15695 [002] ...1 15774.839240: kvm_hv_timer_state: vcpu_id 0 hv_timer 1
-> 
-> qemu-system-x86-15695 [002] ...1 15774.839309: kvm_hv_timer_state: vcpu_id 0 hv_timer 1
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/trace.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-> index 4d47a26..b5c831e 100644
-> --- a/arch/x86/kvm/trace.h
-> +++ b/arch/x86/kvm/trace.h
-> @@ -1365,7 +1365,7 @@ TRACE_EVENT(kvm_hv_timer_state,
->  			__entry->vcpu_id = vcpu_id;
->  			__entry->hv_timer_in_use = hv_timer_in_use;
->  			),
-> -		TP_printk("vcpu_id %x hv_timer %x\n",
-> +		TP_printk("vcpu_id %x hv_timer %x",
->  			__entry->vcpu_id,
->  			__entry->hv_timer_in_use)
->  );
-> 
+Commit-ID:  1b2fc358ddfb1b0915922e441182cda7043f5116
+Gitweb:     https://git.kernel.org/tip/1b2fc358ddfb1b0915922e441182cda7043f5116
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 25 Jun 2019 18:35:34 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 25 Jun 2019 18:35:34 -0300
 
-Queued 2/2, thanks.
+perf tools: Add missing util.h to pick up 'page_size' variable
 
-Paolo
+Not to depend of getting it indirectly.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-tirjsmvu4ektw0k7lm8k9lhu@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/arm/util/cs-etm.c     | 1 +
+ tools/perf/arch/x86/tests/intel-cqm.c | 1 +
+ tools/perf/arch/x86/util/intel-pt.c   | 1 +
+ tools/perf/perf.c                     | 1 +
+ tools/perf/util/machine.c             | 1 +
+ tools/perf/util/python.c              | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index c6f1ab5499b5..2b83cc8e4796 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -22,6 +22,7 @@
+ #include "../../util/pmu.h"
+ #include "../../util/thread_map.h"
+ #include "../../util/cs-etm.h"
++#include "../../util/util.h"
+ 
+ #include <errno.h>
+ #include <stdlib.h>
+diff --git a/tools/perf/arch/x86/tests/intel-cqm.c b/tools/perf/arch/x86/tests/intel-cqm.c
+index 90a4a8c58a62..94aa0b673b7f 100644
+--- a/tools/perf/arch/x86/tests/intel-cqm.c
++++ b/tools/perf/arch/x86/tests/intel-cqm.c
+@@ -6,6 +6,7 @@
+ #include "evlist.h"
+ #include "evsel.h"
+ #include "arch-tests.h"
++#include "util.h"
+ 
+ #include <signal.h>
+ #include <sys/mman.h>
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index 1869f62a10cd..9804098dcefb 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -25,6 +25,7 @@
+ #include "../../util/auxtrace.h"
+ #include "../../util/tsc.h"
+ #include "../../util/intel-pt.h"
++#include "../../util/util.h"
+ 
+ #define KiB(x) ((x) * 1024)
+ #define MiB(x) ((x) * 1024 * 1024)
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 72df4b6fa36f..2123b3cc4dcf 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -18,6 +18,7 @@
+ #include "util/bpf-loader.h"
+ #include "util/debug.h"
+ #include "util/event.h"
++#include "util/util.h"
+ #include <api/fs/fs.h>
+ #include <api/fs/tracing_path.h>
+ #include <errno.h>
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 17eec39e775e..a0bb05dd008f 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -15,6 +15,7 @@
+ #include "strlist.h"
+ #include "thread.h"
+ #include "vdso.h"
++#include "util.h"
+ #include <stdbool.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 6aa7e2352e16..1e5b6718dcea 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -12,6 +12,7 @@
+ #include "print_binary.h"
+ #include "thread_map.h"
+ #include "mmap.h"
++#include "util.h"
+ 
+ #if PY_MAJOR_VERSION < 3
+ #define _PyUnicode_FromString(arg) \
