@@ -2,107 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49BD5E661
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA9F5E65F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 16:18:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfGCOSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 10:18:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47685 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfGCOSy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:18:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x63EIVxO3323338
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 3 Jul 2019 07:18:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x63EIVxO3323338
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562163512;
-        bh=8xsTt3uqZERadWIavQP7O7dZE77NCzBPlqMH0fFV2Dg=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=WjNUtNjtBuS1XhdExT1QNP5ZwiTrt1eXm311NfHL9LICfwunH//DSOBp4CpFGS13z
-         198hIX+vH2JxaemuyX40YMM6sv6ItkTrDp6Zf67Y7SXTpBPwYV4slcFj3lBYJdtP6Q
-         IsHWlZeqrS2jdw5okEyrbBDiw4ElOHLNMk99Ls/TXjwkH1HZfS/Mbj/jyu9svSp//5
-         BKumebJdujPqsQ/JsSt04GOIsWf03ksNScx/EqHCAHvDSkOiY6dCuUjXUVZ6rVqbSk
-         3j2234o/FwtU2tw6aedksOgPFAWAh0lWJm5Dd1W9e6k00BtuCrCyITl+k7tXpc/Dlv
-         BW9qEsTMjq2mw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x63EIV583323335;
-        Wed, 3 Jul 2019 07:18:31 -0700
-Date:   Wed, 3 Jul 2019 07:18:31 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-0dbfpi70aa66s6mtd8z6p391@git.kernel.org>
-Cc:     eranian@google.com, namhyung@kernel.org, mingo@kernel.org,
-        adrian.hunter@intel.com, tglx@linutronix.de, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          tglx@linutronix.de, acme@redhat.com, hpa@zytor.com,
-          namhyung@kernel.org, mingo@kernel.org, eranian@google.com,
-          adrian.hunter@intel.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf header: Use skip_spaces() in __write_cpudesc()
-Git-Commit-ID: fc6a172600cd54e9b4efeb684daa8464991b6c26
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727123AbfGCOSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 10:18:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41582 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726473AbfGCOSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 10:18:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C2AA1AEBB;
+        Wed,  3 Jul 2019 14:18:46 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 7126AE0159; Wed,  3 Jul 2019 16:18:46 +0200 (CEST)
+Date:   Wed, 3 Jul 2019 16:18:46 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 07/15] ethtool: support for netlink
+ notifications
+Message-ID: <20190703141846.GM20101@unicorn.suse.cz>
+References: <cover.1562067622.git.mkubecek@suse.cz>
+ <4dcac81783de8686edefa262a1db75f9e961b123.1562067622.git.mkubecek@suse.cz>
+ <ea84d738346b96b81550e0fd0a6c715faa323061.camel@sipsolutions.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <ea84d738346b96b81550e0fd0a6c715faa323061.camel@sipsolutions.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fc6a172600cd54e9b4efeb684daa8464991b6c26
-Gitweb:     https://git.kernel.org/tip/fc6a172600cd54e9b4efeb684daa8464991b6c26
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 25 Jun 2019 21:33:14 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 25 Jun 2019 21:34:31 -0300
+On Wed, Jul 03, 2019 at 03:39:54PM +0200, Johannes Berg wrote:
+> On Tue, 2019-07-02 at 13:50 +0200, Michal Kubecek wrote:
+> > 
+> > +static bool ethnl_ok __read_mostly;
+> 
+> Not sure it makes a big difference, but it could probably be
+> __ro_after_init instead?
 
-perf header: Use skip_spaces() in __write_cpudesc()
+Yes, that's more fitting; the flag is initialized to false, changes to
+true once ethtool netlink is ready and never changes back. I wasn't
+aware of __ro_after_init annotation.
 
-No change in behaviour.
-
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-0dbfpi70aa66s6mtd8z6p391@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/header.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index fca9dbaf61ae..1eb15f7517b0 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -13,6 +13,7 @@
- #include <linux/list.h>
- #include <linux/kernel.h>
- #include <linux/bitops.h>
-+#include <linux/string.h>
- #include <linux/stringify.h>
- #include <sys/stat.h>
- #include <sys/utsname.h>
-@@ -416,10 +417,8 @@ static int __write_cpudesc(struct feat_fd *ff, const char *cpuinfo_proc)
- 	while (*p) {
- 		if (isspace(*p)) {
- 			char *r = p + 1;
--			char *q = r;
-+			char *q = skip_spaces(r);
- 			*p = ' ';
--			while (*q && isspace(*q))
--				q++;
- 			if (q != (p+1))
- 				while ((*r++ = *q++));
- 		}
+Michal
