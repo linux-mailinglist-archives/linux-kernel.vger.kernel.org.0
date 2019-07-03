@@ -2,126 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 273465DDC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 07:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F055DDD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 07:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfGCFf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 01:35:56 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50438 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfGCFfz (ORCPT
+        id S1727111AbfGCFyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 01:54:33 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45469 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbfGCFyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 01:35:55 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 703D0886BF;
-        Wed,  3 Jul 2019 17:35:52 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1562132152;
-        bh=KQWnpm9RproF/VxwuhPLKuKDVgFcnFTyTJg/2G04uVU=;
-        h=From:To:CC:Subject:Date;
-        b=oDlYrGwv/RC5Kh5tAamwn7p9oZzOalNOh7k4C/TVa9ipax086Kl0F1vXzTnWO2K5z
-         ffIp82w8FeBWli1zyTN5JFJJysTiKDs+FXmUARSw1mv5y+5n20MVigrRPK6FIOPLrR
-         W/p9LhlIFjnKrrOQeel68boCCAzVRE/sVfjZbrVXKQbg7XXCj0eJmMGfLk7Opyy0I2
-         kfcQiLrx0wAfQyvJT3nm6sGm6LZlY7MGPpGN48uMdKmcSaRsP8f7kRmH/fhmI9eGLK
-         EtikRp4NpgfirpEjXXeewy5B25iTZjwhQESgdoG09HyAsBabB3q+zz1kPqi8gwd3BD
-         X1JiP1Av+Fueg==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d1c3eb70000>; Wed, 03 Jul 2019 17:35:51 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 3 Jul 2019 17:35:47 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Wed, 3 Jul 2019 17:35:47 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: gpio desc flags being lost
-Thread-Topic: gpio desc flags being lost
-Thread-Index: AQHVMWEqVhtjrKesFkiEOodI/qBrrg==
-Date:   Wed, 3 Jul 2019 05:35:46 +0000
-Message-ID: <d4724d7ec8ab4f95884ea947d9467e26@svr-chch-ex1.atlnz.lc>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 3 Jul 2019 01:54:32 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m23so971735lje.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 22:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fodI9RBCNqef8mpe31lNAJ/C8aPx3qCPQdaIULFPQEE=;
+        b=AHbczLFRfqjuasmjmf30Hp49qfV0kAllz4rzpXWdPTIk4/ZlCNK3n/2EkaNRwYdgbz
+         X+cN1RcUD9z36Tgkn2j1xJtIDZYR8Fht7jHZ/tMm4ZcIxsyU60SOhe/boS6RwAnsXUJo
+         X5J8ToDtvEIH/qsrWau/X0ci+4WSMh89blfdBk66hBhOxobWrJ2qD8o9ZcEQGbqHbRBp
+         x98npKojErQCAkBd65rFWVqeJfetB9Eo8/8KJ8O3sa4sy2+ZAFvp8qNadLIbuyNccfhf
+         cp+k5AgU1VUR+Tk6JLRN/QSawNvIrPCeZdT/pV2Yk23NdGrbnxVXdeUMAsgH+KKqWd8L
+         5NUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fodI9RBCNqef8mpe31lNAJ/C8aPx3qCPQdaIULFPQEE=;
+        b=mt1Bmxr7ZybQ7vpwmOL9vcH1EyydBRnUsId0O+hAbBbN/wGTxBde52mQy0QaY55Da8
+         B+wXGqroSkGDc1KMFK6z2UgO7sIdLy+HabtIcgwli6kWhHePiKEWs7oayiDztjNMFJpn
+         txRM2+2pTLY2L7f40dgagHtjZQ5Kv95mhIxIOXbh2984ZestZZWuyDIwMErYhM6NJOfF
+         HZtLwBl8F9EQtORVb62NpWr75FXMMwRGeohR2yBgF068huuxsKzd8YhUbd9Z+mkjNGYV
+         jia0cJ49Grdgv6ZiY3hF0p/yFUHq8MLB/WzGms1h7a6BRakS78IjPQ3KsNVwnK/x33Ei
+         sAKA==
+X-Gm-Message-State: APjAAAXKrNQHp3mkHimcPF4AjoYudfn9cTqmsT7Ly8D2q745fb/p73qG
+        t7orIaPNtQpPtUF38SNtEwT8M6IEMPdZwmV8RQ4=
+X-Google-Smtp-Source: APXvYqwQEFSscdGA01+RoCapFWC3y9tcFL0+T1GOAo2m1WR3EkamuBGmQ24dndljkFKzDHi1wqKgkanBahuRl8HlrgY=
+X-Received: by 2002:a2e:80c8:: with SMTP id r8mr5330522ljg.168.1562133270780;
+ Tue, 02 Jul 2019 22:54:30 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190702005122.41036-1-henryburns@google.com> <CALvZod5Fb+2mR_KjKq06AHeRYyykZatA4woNt_K5QZNETvw4nw@mail.gmail.com>
+ <CAGQXPTjU0xAWCLTWej8DdZ5TbH91m8GzeiCh5pMJLQajtUGu_g@mail.gmail.com>
+ <20190702141930.e31bf1c07a77514d976ef6e2@linux-foundation.org>
+ <CAGQXPTiONoPARFTep-kzECtggS+zo2pCivbvPEakRF+qqq9SWA@mail.gmail.com> <20190702152409.21c6c3787d125d61fb47840a@linux-foundation.org>
+In-Reply-To: <20190702152409.21c6c3787d125d61fb47840a@linux-foundation.org>
+From:   Vitaly Wool <vitalywool@gmail.com>
+Date:   Wed, 3 Jul 2019 07:53:32 +0200
+Message-ID: <CAMJBoFOhXP36L6pZEA-7p24mJweDGe9iYb2fo1nNCxadYHcPzQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/z3fold.c: Lock z3fold page before __SetPageMovable()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Henry Burns <henryburns@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vitaly Vul <vitaly.vul@sony.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Xidong Wang <wangxidong_97@163.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi LinusW, Bartosz,=0A=
-=0A=
-I was debugging something else and I noticed a problem with the gpio =0A=
-framework or the gpio-mmio driver (or both) in 5.2.0-rc6.=0A=
-=0A=
-I have some gpio hogs in my device tree which seem to get requested at =0A=
-startup as expected=0A=
-=0A=
-...=0A=
-GPIO line 456 (sw-reset) hogged as output/low=0A=
-GPIO line 459 (phy-1g-reset) hogged as output/low=0A=
-GPIO line 460 (i2c-reset) hogged as output/low=0A=
-GPIO line 461 (lm81-reset) hogged as output/low=0A=
-GPIO line 462 (phy-led-reset) hogged as output/low=0A=
-GPIO line 448 (pcie-reset) hogged as output/low=0A=
-..=0A=
-=0A=
-I wanted to see what state these lines were in=0A=
-=0A=
-# cat /sys/kernel/debug/gpio=0A=
-gpiochip4: GPIOs 448-455, parent: platform/fffa00029.dev-reset-ctl-2, =0A=
-fffa00029.dev-reset-ctl-2:=0A=
-=0A=
-gpiochip3: GPIOs 456-463, parent: platform/fffa00020.dev-reset-ctl, =0A=
-fffa00020.dev-reset-ctl:=0A=
-=0A=
-I expected the hogs to show up here.=0A=
-=0A=
-# echo 448 >/sys/class/gpio/export=0A=
-=0A=
-Now I'm pretty sure I shouldn't be allowed to do that.=0A=
-=0A=
-# cat /sys/kernel/debug/gpio=0A=
-gpiochip4: GPIOs 448-455, parent: platform/fffa00029.dev-reset-ctl-2, =0A=
-fffa00029.dev-reset-ctl-2:gpio-448 (                    |sysfs =0A=
-     ) in  lo=0A=
-=0A=
-Doing a bit of debugging so far I see that after startup the desc->flags =
-=0A=
-for those gpios is 0. But for the hogged ones it should be 0x800 (or 0x801)=
-.=0A=
-=0A=
-I happen to have a 4.8.17 kernel for the board I'm using. Testing with =0A=
-that seems to be OK.=0A=
-=0A=
-[root@linuxbox ~]# uname -a=0A=
-Linux linuxbox 4.8.17-at1+ #3 SMP Wed Jul 3 05:30:55 UTC 2019 ppc GNU/Linux=
-=0A=
-[root@linuxbox ~]# cat /sys/kernel/debug/gpio=0A=
-gpiochip4: GPIOs 448-455, parent: platform/fffa00029.dev-reset-ctl-2, =0A=
-fffa00029.dev-reset-ctl-2:=0A=
-  gpio-448 (                    |pcie-reset          ) out lo=0A=
-=0A=
-gpiochip3: GPIOs 456-463, parent: platform/fffa00020.dev-reset-ctl, =0A=
-fffa00020.dev-reset-ctl:=0A=
-  gpio-456 (                    |sw-reset            ) out lo=0A=
-  gpio-459 (                    |phy-1g-reset        ) out lo=0A=
-  gpio-460 (                    |i2c-reset           ) out lo=0A=
-  gpio-461 (                    |lm81-reset          ) out lo=0A=
-  gpio-462 (                    |phy-led-reset       ) out lo=0A=
-=0A=
-[root@linuxbox ~]# echo 448 >/sys/class/gpio/export=0A=
-sh: write error: Device or resource busy=0A=
-=0A=
-I'll do some proper bisecting tomorrow, but figured you might want to =0A=
-know sooner rather than later.=0A=
+On Wed, Jul 3, 2019 at 12:24 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Tue, 2 Jul 2019 15:17:47 -0700 Henry Burns <henryburns@google.com> wrote:
+>
+> > > > > > +       if (can_sleep) {
+> > > > > > +               lock_page(page);
+> > > > > > +               __SetPageMovable(page, pool->inode->i_mapping);
+> > > > > > +               unlock_page(page);
+> > > > > > +       } else {
+> > > > > > +               if (!WARN_ON(!trylock_page(page))) {
+> > > > > > +                       __SetPageMovable(page, pool->inode->i_mapping);
+> > > > > > +                       unlock_page(page);
+> > > > > > +               } else {
+> > > > > > +                       pr_err("Newly allocated z3fold page is locked\n");
+> > > > > > +                       WARN_ON(1);
+>
+> The WARN_ON will have already warned in this case.
+>
+> But the whole idea of warning in this case may be undesirable.  We KNOW
+> that the warning will sometimes trigger (yes?).  So what's the point in
+> scaring users?
+
+Well, normally a newly allocated page that we own should not be locked
+by someone else so this is worth a warning IMO. With that said, the
+else branch here appears to be redundant.
+
+~Vitaly
