@@ -2,154 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920515D992
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF71E5D9A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfGCArt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:47:49 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45433 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbfGCArs (ORCPT
+        id S1727212AbfGCAsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:48:52 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32798 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfGCAsv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:47:48 -0400
-Received: by mail-ot1-f68.google.com with SMTP id x21so463604otq.12;
-        Tue, 02 Jul 2019 17:47:47 -0700 (PDT)
+        Tue, 2 Jul 2019 20:48:51 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h10so506297ljg.0;
+        Tue, 02 Jul 2019 17:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YuTGE9OjScXsIDv/VUVR3Fjnrv0ray9iH433TKYeQT0=;
-        b=XEgM91d5cBYb7o4THx0NwhK9lTcNeinngzIa7nALd4ezIBXThOgnwd2UFuU5BaB6io
-         oedxVxMzgx7JFMdjhL31iTxt7oJjdgxqHLNdO09ndrL7kdMLpYoqooen0E6q52IN1Zk0
-         91H98jSYMp0ohM3NlVDKcjckWbjlKhv0DZDDleiFin0kcufgKP86VLzjUy0pt+AcYxpY
-         V/4+eKsWJH307EJkjHjUeaFjs46UVm6cK+ZpfmUTSgPV9BJMyw4gxwOxUii4HG+tHank
-         ozXbXhjs1NQopGEwGiLy7U61TKh0b9UY9QsXqnHQuy4EiX+JTVi+ipK1+mcPmIXjFzhc
-         vYLw==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TWJCP/fEaymOaFdQkCML59yLiwgz6iUoELvQxqYUfdQ=;
+        b=dH9UZMJPZrX5saPr6Hul/qtlv0mwSa063rtp6m+Tu60V+c485syc2p1FuguZnRteDM
+         0nWzpSUQwXX5DV+zihGpxnjUGbv+Hp9/D17TLC8PAWZ1ubFv7Mx2JjGyX2PS23I2EvPt
+         smy0gAB495gfjp0DvpCgSh6vRcvwLoXJehHbl7K0Qll+YwtuGDj9QGsOV5P/zAsesU33
+         DkAAP2ioEA8C7I4ic3uqQYPDnl+bBd6ux3EeepIulDI8+rohzwK/DetuQm2iHnqUy3tj
+         zn+ngimK5MtEezkEDFTeZw/S+zIy6Tb7BAl48UKaiTQ61V+w3gh1KphREG4bamRJ0821
+         WjqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YuTGE9OjScXsIDv/VUVR3Fjnrv0ray9iH433TKYeQT0=;
-        b=hAjjQYkP2KH+EshZCwW+/kXeR6Z3Ygi+MgyPc8sJIkroLJ9LTIcmmhO0c5+aWyl9xY
-         9TJgebTdtMOIE2JXH6ylrqiFWfKEl3BnPAxPEoO9WNiMyAHq3/PCDPOlgrKm5T2isnh3
-         mUtrgXCW9Piu49pCdLlZbIo1Z9Vppy9dYABGn//j6Z7DBgIKq5HwrvNB9S43ROeC9MN5
-         2V71UOh/l27G5FJJEQB9wmt5JD3v3FomD7TgMggHU7Hzak3w97PH6Ar/L+6ria61cU98
-         cI+u5W57dRPuI5+t9xyRB6FRK0SR7zqCXoOWObBkWFBLTiwvciqUT3SHxEfLkz6fgQbv
-         BkAw==
-X-Gm-Message-State: APjAAAVFQG3nswHZZeGnABo5LGo5Tl948qlRopvGme2I5XRMHSzb01mV
-        dLKnP4VaM3ihXm9RLOwGJ0LUUPEELpNu3YzRXpE=
-X-Google-Smtp-Source: APXvYqyL2NteRGqCFICSbenEZkA+OINjvph2blTMNQI+LLmvoIDron6BCh/dRaaNx9tf/ldh3my7ndgc5aI6VDx4h9Y=
-X-Received: by 2002:a9d:4590:: with SMTP id x16mr25082668ote.254.1562114867509;
- Tue, 02 Jul 2019 17:47:47 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TWJCP/fEaymOaFdQkCML59yLiwgz6iUoELvQxqYUfdQ=;
+        b=FQn1Pm+1SZ79fbTJkaIc/qqb4tCqAfSakBeYxmd9mLMvt+rnF4RospZjCNPn5uhmdA
+         UqqqfIddNByI7EOygKVs3DXZU7UnodiJVNf3qpNKg4zTsxKUCHzHREMxWrREVkIKi1FI
+         F1kXWqo8Yhk16flmh48MS2HuZJe1/hD1ggN9OZfjiE2azG3Mc9pF96sZn4hbMSYd+xWS
+         klNLQyccSowdUQOnWeTyoVxva8sDJtvLh2fA3EEpua9OXu4UDen/chUe556GlwBm2ISC
+         emVoPS4lbbgywF8UR7uepHwKBziAxkVR5y5LEJ6/MZP2Tjqympo8HeJ1e40Y3f+sqFcg
+         Agzw==
+X-Gm-Message-State: APjAAAVlLHaB6wg9ycuWWbxMUxwduf42nwx9Y9GNrOvv65tzFLbqe4Wf
+        iBgQNpdUik+Q5q8sIcwfh7cqrqX9
+X-Google-Smtp-Source: APXvYqxJj59E+oUMQaEbbY269e+VK0l4af2KOAsx0cebioGvo9ypvyjI6QKvyFE8oJfNsZmIp6/YFQ==
+X-Received: by 2002:a2e:9f57:: with SMTP id v23mr20122353ljk.138.1562114928255;
+        Tue, 02 Jul 2019 17:48:48 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id v15sm102810lfq.86.2019.07.02.17.48.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 17:48:47 -0700 (PDT)
+Subject: Re: [PATCH v6 07/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190630210019.26914-1-digetx@gmail.com>
+ <20190630210019.26914-8-digetx@gmail.com>
+ <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+ <ba299725-b65b-ce7d-6376-a26918cc985b@gmail.com>
+Message-ID: <d98f16ee-ac43-8f1e-d324-d6e2cfccf3c8@gmail.com>
+Date:   Wed, 3 Jul 2019 03:48:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
- <1fbd236a-f7f9-e66a-e08c-bf2bac901d15@redhat.com> <20190702222330.GB26621@amt.cnet>
-In-Reply-To: <20190702222330.GB26621@amt.cnet>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 3 Jul 2019 08:47:40 +0800
-Message-ID: <CANRm+CyBjfa5LsMx87faKUO8XwHkNVrq4+P+vBuFGwjuFC1jxA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] KVM: LAPIC: Implement Exitless Timer
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ba299725-b65b-ce7d-6376-a26918cc985b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 at 06:23, Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
-> On Tue, Jul 02, 2019 at 06:38:56PM +0200, Paolo Bonzini wrote:
-> > On 21/06/19 11:39, Wanpeng Li wrote:
-> > > Dedicated instances are currently disturbed by unnecessary jitter due
-> > > to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
-> > > There is no hardware virtual timer on Intel for guest like ARM. Both
-> > > programming timer in guest and the emulated timer fires incur vmexits.
-> > > This patchset tries to avoid vmexit which is incurred by the emulated
-> > > timer fires in dedicated instance scenario.
-> > >
-> > > When nohz_full is enabled in dedicated instances scenario, the unpinned
-> > > timer will be moved to the nearest busy housekeepers after commit
-> > > 9642d18eee2cd (nohz: Affine unpinned timers to housekeepers) and commit
-> > > 444969223c8 ("sched/nohz: Fix affine unpinned timers mess"). However,
-> > > KVM always makes lapic timer pinned to the pCPU which vCPU residents, the
-> > > reason is explained by commit 61abdbe0 (kvm: x86: make lapic hrtimer
-> > > pinned). Actually, these emulated timers can be offload to the housekeeping
-> > > cpus since APICv is really common in recent years. The guest timer interrupt
-> > > is injected by posted-interrupt which is delivered by housekeeping cpu
-> > > once the emulated timer fires.
-> > >
-> > > The host admin should fine tuned, e.g. dedicated instances scenario w/
-> > > nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus
-> > > for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root
-> > > mode, ~3% redis performance benefit can be observed on Skylake server.
-> >
-> > Marcelo,
-> >
-> > does this patch work for you or can you still see the oops?
->
-> Hi Paolo,
->
-> No more oopses with kvm/queue. Can you include:
+01.07.2019 22:30, Dmitry Osipenko пишет:
+> 01.07.2019 22:11, Rob Herring пишет:
+>> On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>
+>>
+>> "Convert" implies you delete the old binding doc.
+> 
+> Yes, unfortunately the deletion got lost by accident after rebase and it was already
+> too late when I noticed that. Will be fixed in the next revision.
+> 
+>>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+>>> particular the EMEM configuration description. Hence rename the binding
+>>> to Tegra124 during of the conversion to YAML.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
+>>>  1 file changed, 149 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>> new file mode 100644
+>>> index 000000000000..d18242510295
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>> @@ -0,0 +1,149 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title:
+>>> +  NVIDIA Tegra124 SoC Memory Controller
+>>> +
+>>> +maintainers:
+>>> +  - Jon Hunter <jonathanh@nvidia.com>
+>>> +  - Thierry Reding <thierry.reding@gmail.com>
+>>> +
+>>> +description: |
+>>> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
+>>> +  These are interleaved to provide high performance with the load shared across
+>>> +  two memory channels. The Tegra124 Memory Controller handles memory requests
+>>> +  from internal clients and arbitrates among them to allocate memory bandwidth
+>>> +  for DDR3L and LPDDR3 SDRAMs.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: nvidia,tegra124-mc
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +    description:
+>>> +      Physical base address.
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +    description:
+>>> +      Memory Controller clock.
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: mc
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +    description:
+>>> +      Memory Controller interrupt.
+>>> +
+>>> +  "#reset-cells":
+>>> +    const: 1
+>>> +
+>>> +  "#iommu-cells":
+>>> +    const: 1
+>>> +
+>>> +patternProperties:
+>>> +  ".*":
+>>
+>> Please define a node name or pattern for node names.
+> 
+> There was no pattern specified in the original binding. But I guess the existing
+> upstream device-trees could be used as the source for the pattern.
 
-Cool, thanks for the confirm, Marcelo!
-
->
-> Index: kvm/arch/x86/kvm/lapic.c
-> ===================================================================
-> --- kvm.orig/arch/x86/kvm/lapic.c
-> +++ kvm/arch/x86/kvm/lapic.c
-> @@ -124,8 +124,7 @@ static inline u32 kvm_x2apic_id(struct k
->
->  bool posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
->  {
-> -       return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
-> -               kvm_hlt_in_guest(vcpu->kvm);
-> +       return pi_inject_timer && kvm_vcpu_apicv_active(vcpu);
->  }
->  EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
->
-> However, for some reason (hrtimer subsystems responsability) with cyclictest -i 200
-> on the guest, the timer runs on the local CPU:
->
->        CPU 1/KVM-9454  [003] d..2   881.674196: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674200: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d.h.   881.674387: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   881.674393: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674395: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674399: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d.h.   881.674586: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   881.674593: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674595: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674599: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d.h.   881.674787: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   881.674793: get_nohz_timer_target: get_nohz_timer_target 3->0
->        CPU 1/KVM-9454  [003] d..2   881.674795: get_nohz_timer_target: get_nohz_timer_target 3->0
->
-> But on boot:
->
->        CPU 1/KVM-9454  [003] d..2   578.625394: get_nohz_timer_target: get_nohz_timer_target 3->0
->           <idle>-0     [000] d.h1   578.626390: apic_timer_fn <-__hrtimer_run_queues
->           <idle>-0     [000] d.h1   578.626394: apic_timer_fn<-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   578.626401: get_nohz_timer_target: get_nohz_timer_target 3->0
->           <idle>-0     [000] d.h1   578.628397: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   578.628407: get_nohz_timer_target: get_nohz_timer_target 3->0
->           <idle>-0     [000] d.h1   578.631403: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   578.631413: get_nohz_timer_target: get_nohz_timer_target 3->0
->           <idle>-0     [000] d.h1   578.635409: apic_timer_fn <-__hrtimer_run_queues
->        CPU 1/KVM-9454  [003] d..2   578.635419: get_nohz_timer_target: get_nohz_timer_target 3->0
->           <idle>-0     [000] d.h1   578.640415: apic_timer_fn <-__hrtimer_run_queues
-
-You have an idle housekeeping cpu(cpu 0), however, most of
-housekeeping cpus will be busy in product environment to avoid to
-waste money. get_nohz_timer_target() will find a busy housekeeping cpu
-but the timer migration will fail if the timer is the first expiring
-timer on the new target(as the comments above the function
-switch_hrtimer_base()). Please try taskset -c 0 stress --cpu 1 on your
-host, you can observe(through /proc/timer_list) apic_timer_fn running
-on cpu 0 most of the time and sporadically on local cpu.
-
-Regards,
-Wanpeng Li
+Actually it looks like the use of explicit pattern is not really a good idea because
+device-tree could have node named in a way that it doesn't match the pattern and hence
+dtbs_check silently skips the non-matching nodes. Is there any way to express that
+non-matching nodes shall be rejected?
