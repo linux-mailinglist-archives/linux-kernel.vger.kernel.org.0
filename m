@@ -2,98 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E5D85E983
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 18:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6865E9A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 18:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGCQsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 12:48:53 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43936 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCQsw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 12:48:52 -0400
-Received: by mail-qt1-f195.google.com with SMTP id w17so1203447qto.10;
-        Wed, 03 Jul 2019 09:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yJ/AMqCgjHOX7uREQW2b21H1rv+p0xkV9JezuXq3Lrs=;
-        b=PYCV3Ki+HIxfv3LCSaaOhpNO0ILCQojaCN/Usn1R7wPqtJthrqytqFJ3xAEs5RVllF
-         mcdBg1xGlEmpZV15vV47oY1ANNSVFV8PZqk8k+5J6Ap+moz06KU2dZf93XxMTp9crwOU
-         SbC2rSoy/zfmOE+STsNSaVc26bxGUhMkIFh0OeZwUdllN2mqxZuG3Cflqoaxki6KrQOR
-         UTuZv7+tBucPPxMZw/+l86b+cCSLX3Yt99lCF5r2NuM10pY1R6GrzKUWM/bTStwzrqSE
-         659SFGlMCIgDiUKxk1SUDlpkSmmt4eGi6ULQNjPth35HN0TmSpmkHLFFeEZni/epIC8D
-         Lv2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yJ/AMqCgjHOX7uREQW2b21H1rv+p0xkV9JezuXq3Lrs=;
-        b=nEngJeeZiYolpKUutDaLqpqHHKKGBZHfSfk09qD8reQPitkkojg9wU/VmkNyiiAZFJ
-         7ODPn/XAsc0Wtz1RV03ABiXaAiVXo59XQr3Py+972oGAZ52is1AMVwgo+FI748HLGfvF
-         SwWGqTg1x5M7UZxX89aQqe5Rb5X9reBqFv/nXRzOgWH91reb3D2SB8qUBqtj3nUomayo
-         JX4ZGJwBRtiHtDDXSYm2yUK2mLwAkcABZe8DnXZ3YSq6f0CRJl6uyqWc2rVoL7uEsJhP
-         urGCRJTbWVd2R1d/YLxf8jkwPQiBraZeYTl5QETXGvfxVAI9kUhqEKRWKNH3sH/2Ff6i
-         xntA==
-X-Gm-Message-State: APjAAAUJe+SwlPbB3Lac+m/TOJIkQWtjuLx9QcAPDzzXWXUKHIXEsGNz
-        pwzTYMPXuSSQPSO6tjpVV3As/yL5a4m9yzLMzio=
-X-Google-Smtp-Source: APXvYqzsFr7rYzgO9GtHdozh8mRRL64eWIT7m1KC+EQkslfS3kVovMPn+6YEufGDl076fJM7OZRCZ7UvZS6fd3bvZL4=
-X-Received: by 2002:a0c:c586:: with SMTP id a6mr33611361qvj.177.1562172531460;
- Wed, 03 Jul 2019 09:48:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190703120922eucas1p2d97e3b994425ecdd2dadd13744ac2a77@eucas1p2.samsung.com>
- <20190703120916.19973-1-i.maximets@samsung.com> <CAJ8uoz1Wr+bJrO+HNtSD5b79ych-pNg7BxFiHVhzaMSGGAdqLA@mail.gmail.com>
-In-Reply-To: <CAJ8uoz1Wr+bJrO+HNtSD5b79ych-pNg7BxFiHVhzaMSGGAdqLA@mail.gmail.com>
-From:   William Tu <u9012063@gmail.com>
-Date:   Wed, 3 Jul 2019 09:48:09 -0700
-Message-ID: <CALDO+SYj79zCV9A85OSbMFBQeor_z=ZT305HEoK3YWtCZLeR-A@mail.gmail.com>
-Subject: Re: [PATCH bpf v2] xdp: fix race on generic receive path
-To:     Magnus Karlsson <magnus.karlsson@gmail.com>
-Cc:     Ilya Maximets <i.maximets@samsung.com>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Xdp <xdp-newbies@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727281AbfGCQuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 12:50:04 -0400
+Received: from mout.gmx.net ([212.227.15.15]:44177 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727147AbfGCQtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 12:49:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1562172510;
+        bh=Me1SvsLDyMMGaUAM+H2U6QR3rP8Y3XVwEjAtU6m8VUA=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=MV6Va6oTlm89ruMxAxb87nEE2pPoh3n4vLdyHMS/pwe0XAqsgXSoh6piSJ85L+fZ+
+         sgvmA53g2n+XMMAAp0AJk0bPzDzrj4b4WNENRhxpuD3EyGTX/635+Twttk5ALFoVPE
+         XNxzEw/MJF8MVJWtuWJW4wXKFLb44ksoCMESeWpA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([217.61.158.204]) by mail.gmx.com
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1Mv2xO-1iZJ3G21eS-00r1tZ; Wed, 03 Jul 2019 18:48:30 +0200
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Cc:     Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH v2 0/7] implement poweroff for mt6323/6397
+Date:   Wed,  3 Jul 2019 18:48:15 +0200
+Message-Id: <20190703164822.17924-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
+X-Provags-ID: V03:K1:Q7bwDdrEsaphQYrmHhp90HE//kekmdWGTaievfmTLBQ650JdlG0
+ ZFc89t3IpqF6r+6VIT+crsEBq/Xze1pedGbOYkWYQfBHJcBZWJae3I7ecQ1H/v2yoJF8OpX
+ Pf8SwioVIe5yR86V2HhD2iyrRPnU9EZxKaK/fDp6sj/cNdKzfwD7IhaXPNReS4u11f3x2QB
+ D7KWSsmavk+XqjXkrbOpA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:80cN8sB+jW0=:MrqNVi7o1rXFaCcRKYMpMr
+ w42OIhPPamz4BFUxxD4WMAHwfFtF5Af/vkftOIq7mwDnmmLVjvzpDCY9WCe+26/fmhm9ILqrW
+ FlaWUzNwCyTbmexafmmy0f91BemYMTQny1Fh37Gy7/GX3Xw+J5/nUfZOCJ2exG/XYIluMDmy1
+ 0q4mBFg7UmyUtQO+ytaMzkxVjE2oF/JKKZ5drh/6iOFGqbGHl6EbrcaI0NGLIiQXE3xynUQaY
+ WW1Yre6qDx+HjMJ9Lk5dJMbEI57lMR5YuwgjOebQDEBq6Xe1uYXOrzQR1wkevI09OhmGYYLlT
+ AimTIiXaIOSqccv46iS0RLais/yHBL82Mz0q6lDrlsJNUJsxltDWWK8DBL2OcuT4ruWkeM1ea
+ BRuglTOqIvDTmPPygFhbdvUPT6iPFC7afxNXsGefI4bbjeNhYX6nS0F6cwLQ2LIWga4XZkEZd
+ z6sIuSnVYTe+hqvFwc+wKCzx53SS1hI7i5L0KpagtNitCMJqykKo0ImhRAKAg080rNWownjRu
+ IPF/cHMBG0dPqoq4tjWbz8fm1ABB8geWNY2G5YJw+XustSCnZIeRDuYUn3vntf3hSxyCvx/h6
+ MUbKc6EOnU3cwHaV2hAPdxdQaQVe0v5g5AqlyYzLoEe7LdHwl/8Ck/aMLs/1/dJgRKxLbPsgC
+ UyZqBeY7unxw19J2xnG0Rh0BmWuPeaNKNP+zSqXTSQtW0xKi6IF4r3mcK8qS4aF+fx1jPOjPU
+ FJ/4FPuvumLOfqR2xMCUtQ6ttO9gm7EQrFRiOoerJYoin92K1LI3mvoWpSnTnqjVhQycnPTH1
+ MeV3DKDczqlWEV/1LfDYSeSftVblK3KgGgG4cTpn710t5TFBO5gsiAHq88wJmaWek/LpO45iM
+ lfH96Cnhp+nsfsx6Zf44h1aGTG813Gh62z+M9mCsiiKkDVkBwA8dthC2A5gYrTY8a+bpgDYYq
+ a/PprCwYWXTxAJDQUXN9vx6seI1oJ1RF8Dn4qKzj8/2YFP3OpbfqnIVlrgV52vYoI/gQq8HBW
+ EDEaEam7lcXmITZU6/tZX/iLapG/9XXkG0MhyT4QusnNpUDoDd0WocRAYIjyBDgPfyREQFliV
+ HSgBUVFAVXoG6U=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 6:20 AM Magnus Karlsson
-<magnus.karlsson@gmail.com> wrote:
->
-> On Wed, Jul 3, 2019 at 2:09 PM Ilya Maximets <i.maximets@samsung.com> wrote:
-> >
-> > Unlike driver mode, generic xdp receive could be triggered
-> > by different threads on different CPU cores at the same time
-> > leading to the fill and rx queue breakage. For example, this
-> > could happen while sending packets from two processes to the
-> > first interface of veth pair while the second part of it is
-> > open with AF_XDP socket.
-> >
-> > Need to take a lock for each generic receive to avoid race.
->
-> I measured the performance degradation of rxdrop on my local machine
-> and it went from 2.19 to 2.08, so roughly a 5% drop. I think we can
-> live with this in XDP_SKB mode. If we at some later point in time need
-> to boost performance in this mode, let us look at it then from a
-> broader perspective and find the most low hanging fruit.
->
-> Thanks Ilya for this fix.
->
-> Acked-by: Magnus Karlsson <magnus.karlsson@intel.com>
->
-> > Fixes: c497176cb2e4 ("xsk: add Rx receive functions and poll support")
-> > Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
-> > ---
+mainline-driver does not support mt6323
 
-Tested on my machine and works ok.
-Tested-by: William Tu <u9012063@gmail.com>
+this series adds mt6323 to mt6397-rtc-driver and implement
+power-controller on it.
+
+with this poweroff is working on bananapi-r2
+
+Original Patch from Josef Friedl
+
+changes since v1:
+	- splitted into functional parts
+	- more infos about changes
+
+Josef Friedl (7):
+  docs: dt-bindings: add poweroff
+  rtc: mt6397: move some common definitions into rtc.h
+  rtc: mt6397: improvements of rtc driver
+  mfd: mt6323: some improvements of mt6397-core
+  power: reset: add driver for mt6323 poweroff
+  MAINTAINERS: add Mediatek shutdown drivers
+  arm: dts: mt6323: add keys, power-controller, rtc and codec
+
+ .../devicetree/bindings/mfd/mt6397.txt        |  10 +-
+ .../bindings/power/reset/mt6323-poweroff.txt  |  20 ++++
+ .../devicetree/bindings/rtc/rtc-mt6397.txt    |  29 +++++
+ MAINTAINERS                                   |   7 ++
+ arch/arm/boot/dts/mt6323.dtsi                 |  27 +++++
+ drivers/mfd/mt6397-core.c                     |  40 +++++--
+ drivers/power/reset/Kconfig                   |  10 ++
+ drivers/power/reset/Makefile                  |   1 +
+ drivers/power/reset/mt6323-poweroff.c         |  97 +++++++++++++++
+ drivers/rtc/rtc-mt6397.c                      | 110 ++++--------------
+ include/linux/mfd/mt6397/core.h               |   2 +
+ include/linux/mfd/mt6397/rtc.h                |  71 +++++++++++
+ 12 files changed, 325 insertions(+), 99 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-p=
+oweroff.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+ create mode 100644 drivers/power/reset/mt6323-poweroff.c
+ create mode 100644 include/linux/mfd/mt6397/rtc.h
+
+=2D-
+2.17.1
+
