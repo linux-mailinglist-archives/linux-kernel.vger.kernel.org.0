@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE8F5FB02
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9945FB04
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727908AbfGDPiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:38:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59354 "EHLO
+        id S1727922AbfGDPiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:38:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59357 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbfGDPiM (ORCPT
+        with ESMTP id S1727879AbfGDPiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:38:12 -0400
+        Thu, 4 Jul 2019 11:38:13 -0400
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1hj3oG-0004wg-Aa; Thu, 04 Jul 2019 17:38:08 +0200
+        id 1hj3oG-0004wg-Mu; Thu, 04 Jul 2019 17:38:08 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Gromm <christian.gromm@microchip.com>,
-        devel@driverdev.osuosl.org
-Subject: [PATCH 4/7] staging: most: Use spinlock_t instead of struct spinlock
-Date:   Thu,  4 Jul 2019 17:38:00 +0200
-Message-Id: <20190704153803.12739-5-bigeasy@linutronix.de>
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Subject: [PATCH 5/7] watchdog: ie6xx_wdt: Use spinlock_t instead of struct spinlock
+Date:   Thu,  4 Jul 2019 17:38:01 +0200
+Message-Id: <20190704153803.12739-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
 References: <20190704153803.12739-1-bigeasy@linutronix.de>
@@ -41,57 +41,27 @@ spinlock".
 
 Use spinlock_t for spinlock's definition.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christian Gromm <christian.gromm@microchip.com>
-Cc: devel@driverdev.osuosl.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/staging/most/net/net.c     | 3 +--
- drivers/staging/most/video/video.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/watchdog/ie6xx_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/most/net/net.c b/drivers/staging/most/net/net.c
-index c8a64e2090273..09b604df45e63 100644
---- a/drivers/staging/most/net/net.c
-+++ b/drivers/staging/most/net/net.c
-@@ -69,7 +69,7 @@ struct net_dev_context {
+diff --git a/drivers/watchdog/ie6xx_wdt.c b/drivers/watchdog/ie6xx_wdt.c
+index 508fbefce9f6a..82a8cf61efc2a 100644
+--- a/drivers/watchdog/ie6xx_wdt.c
++++ b/drivers/watchdog/ie6xx_wdt.c
+@@ -66,7 +66,7 @@ MODULE_PARM_DESC(resetmode,
  
- static struct list_head net_devices = LIST_HEAD_INIT(net_devices);
- static struct mutex probe_disc_mt; /* ch->linked = true, most_nd_open */
--static struct spinlock list_lock; /* list_head, ch->linked = false, dev_hold */
-+static DEFINE_SPINLOCK(list_lock); /* list_head, ch->linked = false, dev_hold */
- static struct core_component comp;
- 
- static int skb_to_mamac(const struct sk_buff *skb, struct mbo *mbo)
-@@ -507,7 +507,6 @@ static struct core_component comp = {
- 
- static int __init most_net_init(void)
- {
--	spin_lock_init(&list_lock);
- 	mutex_init(&probe_disc_mt);
- 	return most_register_component(&comp);
- }
-diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
-index adca250062e1b..fcd9e111e8bd0 100644
---- a/drivers/staging/most/video/video.c
-+++ b/drivers/staging/most/video/video.c
-@@ -54,7 +54,7 @@ struct comp_fh {
- };
- 
- static struct list_head video_devices = LIST_HEAD_INIT(video_devices);
--static struct spinlock list_lock;
-+static DEFINE_SPINLOCK(list_lock);
- 
- static inline bool data_ready(struct most_video_dev *mdev)
- {
-@@ -540,7 +540,6 @@ static struct core_component comp = {
- 
- static int __init comp_init(void)
- {
--	spin_lock_init(&list_lock);
- 	return most_register_component(&comp);
- }
- 
+ static struct {
+ 	unsigned short sch_wdtba;
+-	struct spinlock unlock_sequence;
++	spinlock_t unlock_sequence;
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *debugfs;
+ #endif
 -- 
 2.20.1
 
