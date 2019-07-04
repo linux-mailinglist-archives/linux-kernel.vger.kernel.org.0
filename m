@@ -2,119 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6475FB2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78365FBED
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfGDPrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:47:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2546 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727394AbfGDPrD (ORCPT
+        id S1727340AbfGDQeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:34:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59609 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbfGDQeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:47:03 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x64FkjNb001279
-        for <linux-kernel@vger.kernel.org>; Thu, 4 Jul 2019 11:47:02 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2thhn3e8gx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 11:47:02 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 4 Jul 2019 16:47:00 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 4 Jul 2019 16:46:55 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x64FksMH33947800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 4 Jul 2019 15:46:54 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 615D1AE04D;
-        Thu,  4 Jul 2019 15:46:54 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB93BAE051;
-        Thu,  4 Jul 2019 15:46:51 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.72])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  4 Jul 2019 15:46:51 +0000 (GMT)
-Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()"
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Michal Suchanek <msuchanek@suse.de>,
-        linux-integrity@vger.kernel.org
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Thu, 04 Jul 2019 11:46:41 -0400
-In-Reply-To: <1562240882.6165.78.camel@linux.ibm.com>
-References: <20190701131505.17759-1-msuchanek@suse.de>
-         <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
-         <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
-         <1562240882.6165.78.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19070415-0008-0000-0000-000002F9E80F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070415-0009-0000-0000-000022673ADE
-Message-Id: <1562255201.6165.143.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=876 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040200
+        Thu, 4 Jul 2019 12:34:00 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hj4gG-0005eY-DV; Thu, 04 Jul 2019 18:33:56 +0200
+Message-Id: <20190704155145.617706117@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Thu, 04 Jul 2019 17:51:45 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Feng Tang <feng.tang@intel.com>
+Subject: [patch V2 00/25] x86/apic: Support for IPI shorthands
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarkko,
+The recent discussion about using HPET as NMI watchdog made me look into
+IPI shorthand support. Also Nadav wanted to look into shorthands to speed
+up certain TLB operations.
 
-On Thu, 2019-07-04 at 07:48 -0400, Mimi Zohar wrote:
-> On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
-> > On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
-> > > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
-> > >> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
-> > >> following crash:
-> > > 
-> > > Thank you. I think this the right choice for the moment. I fixed
-> > > a trivial checkpatch.pl error and added the mandatory tags. Can
-> > > you check quickly v2 (just posted)?
-> > > 
-> > > I already made it available in my master and next.
-> > 
-> > Could you please wait few days? I would prefer to fix this issue instead
-> > of reverting the whole patch.
-> 
-> Nayna posted a patch late yesterday titled "tpm: fixes uninitialized
-> allocated banks for IBM vtpm driver", which addresses this bug.
+The support for IPI shorthands is rather limited right now and basically
+got rendered useless by making it depend on CPU_HOTPLUG=n.
 
-Now with my review, and with Sachin Sant's and Michal Suchánek
-testing, instead of reverting this patch could you pick up Nayna's
-patch instead?
+The reason for this is that shorthands are broadcasted and in case that not
+all present CPUs have been brought up this might end up with a similar
+effect as the dreaded MCE broadcast.
 
-thanks!
+But this can be handled smarter than just preventing shorthands if CPU
+hotplug is enabled. The kernel already deals with the MCE broadcast issue
+for the 'nosmt' case. It brings up all present CPUs and then shuts down the
+SMT siblings right away after they did the basic initialization and set
+CR4.MCE.
 
-Mimi
+The core CPU hotplug code keeps track of that information already, so it
+can be used to decide whether IPI shorthands can be used safely or not.
+
+If all present CPUs have been brought up at least once it's safe to switch
+to IPI shorthand mode. The switch over is done with a static key and can be
+prevented completely with the existing (so far 32bit only) command line
+option.
+
+As a offlined CPU still receives IPIs the offline code is changed to soft
+disable the local APIC so the offline CPU will not be bothered by shorthand
+based IPIs. In soft disabled state the APIC still handles NMI, INIT, SIPI
+so onlining will work as before.
+
+To support NMI based shorthand IPIs the NMI handler gets a new check right
+at the beginning of the handler code which lets the handler ignore the NMI
+on a offline CPU and not call through the whole spaghetti maze of NMI
+handling.
+
+Soft disabling the local APIC on the offlined CPU unearthed a KVM APIC
+emulation issue which is only relevant for CPU0 hotplug testing. The fix is
+in the KVM tree already, but there is no need to have this dependency here.
+(0-day folks are aware of it).
+
+The APIC setup function has also a few minor issues which are addressed in
+this series as well.
+
+Part of the series is also a consolidation of the APIC code which was
+necessary to not spread all the shorthand implementation details to header
+files etc.
+
+It survived testing on a range of different machines including NMI
+shorthand IPIs. Aside of the KVM APIC issue, which is only relevant in
+combination with CPU0 hotplug testing, there are no known side effects.
+
+Changes vs. V1(https://lkml.kernel.org/r/20190703105431.096822793@linutronix.de)
+
+	- Fix an 11 years old bug in kgdb
+
+	- Move the shorthand decision logic into the callers (Nadav)
+
+	- Make native_send_call_func_ipi() smarter (Nadav)
+
+	- Consolidate more duplicated code 
+
+The series is also available from git:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/ipi
+
+Thanks,
+
+	tglx
+
+8<------------
+ a/arch/x86/include/asm/apic_flat_64.h |    8 -
+ a/arch/x86/include/asm/ipi.h          |  109 ---------------------
+ a/arch/x86/kernel/apic/x2apic.h       |    9 -
+ arch/x86/include/asm/apic.h           |   11 +-
+ arch/x86/include/asm/bugs.h           |    2 
+ arch/x86/include/asm/processor.h      |    2 
+ arch/x86/include/asm/smp.h            |    1 
+ arch/x86/kernel/apic/apic.c           |  157 +++++++++++++++++++------------
+ arch/x86/kernel/apic/apic_flat_64.c   |   66 ++-----------
+ arch/x86/kernel/apic/apic_noop.c      |   18 ---
+ arch/x86/kernel/apic/apic_numachip.c  |    8 -
+ arch/x86/kernel/apic/bigsmp_32.c      |    9 -
+ arch/x86/kernel/apic/ipi.c            |  170 +++++++++++++++++++++++++---------
+ arch/x86/kernel/apic/probe_32.c       |   41 --------
+ arch/x86/kernel/apic/probe_64.c       |   21 ----
+ arch/x86/kernel/apic/x2apic_cluster.c |   20 +---
+ arch/x86/kernel/apic/x2apic_phys.c    |   25 ++---
+ arch/x86/kernel/apic/x2apic_uv_x.c    |   30 +-----
+ arch/x86/kernel/cpu/bugs.c            |    2 
+ arch/x86/kernel/cpu/common.c          |   11 ++
+ arch/x86/kernel/kgdb.c                |    2 
+ arch/x86/kernel/nmi.c                 |    3 
+ arch/x86/kernel/reboot.c              |    7 -
+ arch/x86/kernel/smp.c                 |   44 --------
+ arch/x86/kernel/smpboot.c             |   13 ++
+ b/arch/x86/kernel/apic/local.h        |   68 +++++++++++++
+ include/linux/bitmap.h                |   23 ++++
+ include/linux/cpumask.h               |   16 +++
+ kernel/cpu.c                          |   11 +-
+ lib/bitmap.c                          |   20 ++++
+ 30 files changed, 450 insertions(+), 477 deletions(-)
+
+
 
