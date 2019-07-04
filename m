@@ -2,64 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 167645F531
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC505F515
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfGDJKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 05:10:16 -0400
-Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:10798
-        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727140AbfGDJKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 05:10:15 -0400
-Received: from feckert01.dev.tdt.de (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id 64B5D21592;
-        Thu,  4 Jul 2019 09:02:30 +0000 (UTC)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Eckert.Florian@googlemail.com, info@metux.net,
-        dvhart@infradead.org, andy@infradead.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH 3/3] platform//x86/pcengines-apuv2: update gpio button definition
-Date:   Thu,  4 Jul 2019 11:02:05 +0200
-Message-Id: <20190704090205.19400-4-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190704090205.19400-1-fe@dev.tdt.de>
-References: <20190704090205.19400-1-fe@dev.tdt.de>
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
+        id S1727222AbfGDJEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 05:04:01 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:38931 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727092AbfGDJEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 05:04:00 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fX8V3wTgz9sBp;
+        Thu,  4 Jul 2019 19:03:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562231038;
+        bh=4F5VbdQ8LxgHXvyCHlKP/f3feYzrTEdhPQQacF2QWj8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=S0mHu2gtcJbfIMKWwaFkgnhjhcHz02w1Hr8cWh4vaX6tgu+NGg36wGuvfIlf3q5x8
+         XKKld1sOZsegdgT5Ge1gDKSLu0EA/pHJA6D7lyfWPLXGRlAAq6siatJpGHGK5xv300
+         zRpSoj6zcI/YD/qRZ/xqBOHoa0xlEp7dT8Hfy3CVIE0BQkN2q5B8HOnJSaeft9TJYT
+         wsOw2TOjzda4/Q3yUVLax97W0zJ4bWgDWPkSVHQ6qqaHd9DYgCiLQ2upfwH1KnfzUi
+         uxRyf1I32XXbnPmZEkfDyOZDf0nUX/VfGRaJknwkc1YaJWNhnjU4bAwkQzX6lEgKuK
+         Lrhpoc4BHCjyA==
+Date:   Thu, 4 Jul 2019 19:03:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the hmm tree with the tip tree
+Message-ID: <20190704190352.417a34d1@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FsU1qz/e8tTG=VLC8SCgpPF"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Add the gpio number, so the button subsystem can find the right gpio.
-* Change also the keycode from KEY_SETUP to KEY_RESTART, because it
-  seems more expressive to me and in the Alix-Board, which is the
-  predecessor, there isthis keycode defined too. I think this is also
-  intended by Pcengines. Also many embedded systems defined in the kernel
-  use this key code as well.
+--Sig_/FsU1qz/e8tTG=VLC8SCgpPF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/platform/x86/pcengines-apuv2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi all,
 
-diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
-index d50a50e9d34c..370fd2686d59 100644
---- a/drivers/platform/x86/pcengines-apuv2.c
-+++ b/drivers/platform/x86/pcengines-apuv2.c
-@@ -116,7 +116,8 @@ struct gpiod_lookup_table gpios_led_table = {
- 
- static struct gpio_keys_button apu2_keys_buttons[] = {
- 	{
--		.code			= KEY_SETUP,
-+		.code			= KEY_RESTART,
-+		.gpio			= 508,
- 		.active_low		= 1,
- 		.desc			= "front button",
- 		.type			= EV_KEY,
--- 
-2.11.0
+Today's linux-next merge of the hmm tree got a conflict in:
 
+  include/linux/ioport.h
+
+between commit:
+
+  ae9e13d621d6 ("x86/e820, ioport: Add a new I/O resource descriptor IORES_=
+DESC_RESERVED")
+  5da04cc86d12 ("x86/mm: Rework ioremap resource mapping determination")
+
+from the tip tree and commit:
+
+  25b2995a35b6 ("mm: remove MEMORY_DEVICE_PUBLIC support")
+
+from the hmm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/ioport.h
+index 5db386cfc2d4,a02b290ca08a..000000000000
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@@ -133,16 -132,6 +133,15 @@@ enum=20
+  	IORES_DESC_PERSISTENT_MEMORY		=3D 4,
+  	IORES_DESC_PERSISTENT_MEMORY_LEGACY	=3D 5,
+  	IORES_DESC_DEVICE_PRIVATE_MEMORY	=3D 6,
+- 	IORES_DESC_DEVICE_PUBLIC_MEMORY		=3D 7,
+- 	IORES_DESC_RESERVED			=3D 8,
+++	IORES_DESC_RESERVED			=3D 7,
+ +};
+ +
+ +/*
+ + * Flags controlling ioremap() behavior.
+ + */
+ +enum {
+ +	IORES_MAP_SYSTEM_RAM		=3D BIT(0),
+ +	IORES_MAP_ENCRYPTED		=3D BIT(1),
+  };
+ =20
+  /* helpers to define resources */
+
+--Sig_/FsU1qz/e8tTG=VLC8SCgpPF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dwPgACgkQAVBC80lX
+0GzXGQf9GHUhRhvPVf1qf8emX2ighzE9niFgBa4mP1dtrTgBIBGsY9syVLScaL+s
+7C2H6nBBDYh/tMd+sRJWba9Zyz0eXkHZfQ96PGCky+sciXsAAqINV7XoeBQRcQh/
+fFiTPavyFU6mmayIH6ppAQzkIoL8c27UDqOA8S1zQqaaLd4Wnk9zlpGgokjMoOou
+DE20SVf5jzOWcXUoVUA6QZpxkolqEoaSMMEPseeOeNj8iW42L78KZVUG9CRR9pHc
+9FU+J6LhlkDqENu2oejbBVxcnYgRCYizEu4meW2bHUgvn4aCanidJIUyks5hVJjv
+KEQU/h1yQYhwxTCK9jCll9QSeHwh8w==
+=zKbc
+-----END PGP SIGNATURE-----
+
+--Sig_/FsU1qz/e8tTG=VLC8SCgpPF--
