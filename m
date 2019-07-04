@@ -2,205 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F2F35F5AB
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC3B5F5AC
 	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfGDJdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 05:33:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38851 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbfGDJdG (ORCPT
+        id S1727528AbfGDJeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 05:34:04 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42389 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbfGDJeD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 05:33:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so5359599wmj.3;
-        Thu, 04 Jul 2019 02:33:04 -0700 (PDT)
+        Thu, 4 Jul 2019 05:34:03 -0400
+Received: by mail-lf1-f67.google.com with SMTP id s19so3055586lfb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 02:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vD2wscCUTIxvAcaXu6IxNc1J6EFhwYX7r/38KI9pR+A=;
-        b=j0ZDqOUpfrhRUxEypZP6NYNfLcN5su/X3Se4lbNuQuCfLNkXqr5TLDcxY1vhd25xNq
-         Ic1D0M+DucKf9HblggnpwDrKKCATcFdrQ7zgsdK09CTFodFE1bXbgjM5X2aoQkHmh21K
-         2MbwjfkJzx55ws9QmVN526HKLwesuHmiJK2kWxMGzJZTjXFndOgKRVPJyb4n2nu0DVCl
-         DIWMDl3a14dAgsVLgJ99pXSxBPw2DiMPlMgs0FCX5ngq4ye0OaGpStArVq8gpCzDiJND
-         lq4Kn0UyWxaYAoV6KYTiuNeyUwH/7uQlIPbv7sC0agG5CHTyjaAiqlYmSq4zeHZ++nDP
-         TbyA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bbnl/1QRNnrJXWes6iiR1igoTLtbX1SM4SwlahpOBOQ=;
+        b=V1qAD8fvU9ZlAjdcnAyNCm3heZtBMMaC4+JhDzVY0LxmxrMP+jmTTBkghymnvXaodZ
+         5YqZlX4AHhwZlO1tKnYgWILWu6RBqIftA3kjbAVcfqFlTfue20zQu3qAA76fPohWNNlf
+         MT0iyHjPFwsl3AjcQqxQa/KBpvowBNgIp7fbrZtx2nN/02dQXnI4cQOPLvKg9uvnAoUM
+         e3Eg6vuVnLuiB+lQJMbfi01O2XKaCpSLXI3GPFlyDMh6ppogu2m4E32hRZ0Zqn6+qPep
+         5f7qbG0ZnOnWHimnVvgCuUyfckHUAe0jyw0OQTBchwPg+nvL2rSDtgsfetCdFfFdDZw3
+         5Ozw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=vD2wscCUTIxvAcaXu6IxNc1J6EFhwYX7r/38KI9pR+A=;
-        b=DejbJG1WF6uK0WI9hxSYl/PyRAg//G9i6iqbg+Ha3ZuLJOYqW6HFUHYevFGz0ntxCR
-         VIvWl6N493W5UTMS/7ATQXb61sDqsL5ah2260wNglVZHGx7vnFl5+pETcc+2cQ/ef9sD
-         Qf2ClW8qRMTJhf1Kum6UfI+L/LGl4OpdAOG643HemuMn+9ZY27wWC0MC0kVJcuMWEc3J
-         Y3/MXjQ85sNiX+p6m+/nASm55cnzfY+Go9aPFF4zP65zsMGbHYG7VkY2hARA+lBhrFPM
-         SYOUsOTpP8wILJEpHDmHK4OE+artO9BD22krbQ0Kqu+3CFnndb+pqU6UESfPJPnzMpeo
-         +T1Q==
-X-Gm-Message-State: APjAAAUL8sNxZ6VHHq0JB2ZgqcWawVTcZmfpfY5GVSSxOW3KjL9yG8Ao
-        Wr3nPdF5AIXfjxhAnfjQ61V67yCFwmQ=
-X-Google-Smtp-Source: APXvYqzuzhFqsgGVplP6ATDYoIicFVUCLYT7WgdWgZEfRZpkUpqfibtezWWUXoLWy9SvEpe9FaqCKQ==
-X-Received: by 2002:a1c:2e09:: with SMTP id u9mr11819125wmu.137.1562232783514;
-        Thu, 04 Jul 2019 02:33:03 -0700 (PDT)
-Received: from donizetti.redhat.com (nat-pool-mxp-u.redhat.com. [149.6.153.187])
-        by smtp.gmail.com with ESMTPSA id m9sm4868320wrn.92.2019.07.04.02.33.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 04 Jul 2019 02:33:02 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com, vkuznets@redhat.com
-Subject: [PATCH 5/5] KVM: x86: add tracepoints around __direct_map and FNAME(fetch)
-Date:   Thu,  4 Jul 2019 11:32:56 +0200
-Message-Id: <20190704093256.12989-6-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190704093256.12989-1-pbonzini@redhat.com>
-References: <20190704093256.12989-1-pbonzini@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bbnl/1QRNnrJXWes6iiR1igoTLtbX1SM4SwlahpOBOQ=;
+        b=NT1nlApXdiCi0AIrUb/p+Qagpiw9IDiodw2xI0sWI/i0p81uU3lel3mUqPL/FtVwA7
+         1/9PE2IPsHRBXoIAJUqzDEYMUUD86nqeOGrz4H39wCa+ceHbD3lqlsIxLsHP+92sLBZE
+         MyT+aZPxF+yImaWQC9EdLKJNKlo5ovq/kF5dOwEGXInnc/0I3zdFNZNrQeGCKiY1xJcm
+         UT6gaUCOw3YJ0WihdrN532HbGUUoTVcv99Pm3TVQuSlGCzMStFW3IypB2zSSrn6+USlt
+         O+5QzLG/Aq/ANjqL3eZZ5MsRzcyy0OXTmpc79GeOSBVzKDMnBQnyWX7/XV29Nsc+w6TP
+         haEQ==
+X-Gm-Message-State: APjAAAVW7Z9AHnPjSNOhQVEk4rPlt/Ph8UOaez63hG2PkOlgh2smJevS
+        +v+4LxD+qPTCXcnu3vniGWQ7K2vaWI+yEfi8CwHXMg==
+X-Google-Smtp-Source: APXvYqyVHgB/XdPi+PhglaImDqJX2XrddFQFBQD9AnFh7Ea76Xr7PezvCVQknkOgvBk14iGgIZ9G5OBzJ3hvQcHrGvo=
+X-Received: by 2002:a19:ec15:: with SMTP id b21mr22141110lfa.32.1562232841324;
+ Thu, 04 Jul 2019 02:34:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190628204913.10287-1-riel@surriel.com> <20190628204913.10287-6-riel@surriel.com>
+In-Reply-To: <20190628204913.10287-6-riel@surriel.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 4 Jul 2019 11:33:50 +0200
+Message-ID: <CAKfTPtBOWeEH1T77Cm92R3BfM85ii6mbocidtAPyWN4Vq0q7SA@mail.gmail.com>
+Subject: Re: [PATCH 05/10] sched,fair: remove cfs rqs from leaf_cfs_rq_list
+ bottom up
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mel Gorman <mgorman@techsingularity.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are useful in debugging shadow paging.
+On Fri, 28 Jun 2019 at 22:49, Rik van Riel <riel@surriel.com> wrote:
+>
+> Reducing the overhead of the CPU controller is achieved by not walking
+> all the sched_entities every time a task is enqueued or dequeued.
+>
+> One of the things being checked every single time is whether the cfs_rq
+> is on the rq->leaf_cfs_rq_list.
+>
+> By only removing a cfs_rq from the list once it no longer has children
+> on the list, we can avoid walking the sched_entity hierarchy if the bottom
+> cfs_rq is on the list, once the runqueues have been flattened.
+>
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> ---
+>  kernel/sched/fair.c  | 17 +++++++++++++++++
+>  kernel/sched/sched.h |  1 +
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 63cb40253b26..e41feacc45d9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -286,6 +286,13 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+>
+>         cfs_rq->on_list = 1;
+>
+> +       /*
+> +        * If the tmp_alone_branch cursor was moved, it means a child cfs_rq
+> +        * is already on the list ahead of us.
+> +        */
+> +       if (rq->tmp_alone_branch != &rq->leaf_cfs_rq_list)
+> +               cfs_rq->children_on_list++;
+> +
+>         /*
+>          * Ensure we either appear before our parent (if already
+>          * enqueued) or force our parent to appear after us when it is
+> @@ -311,6 +318,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+>                  * list.
+>                  */
+>                 rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+> +               cfs_rq->tg->parent->cfs_rq[cpu]->children_on_list++;
+>                 return true;
+>         }
+>
+> @@ -359,6 +367,11 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+>                 if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
+>                         rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
+>
+> +               if (cfs_rq->tg->parent) {
+> +                       int cpu = cpu_of(rq);
+> +                       cfs_rq->tg->parent->cfs_rq[cpu]->children_on_list--;
+> +               }
+> +
+>                 list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
+>                 cfs_rq->on_list = 0;
+>         }
+> @@ -7687,6 +7700,10 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+>         if (cfs_rq->avg.util_sum)
+>                 return false;
+>
+> +       /* Remove decayed parents once their decayed children are gone. */
+> +       if (cfs_rq->children_on_list)
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/mmu.c         | 13 ++++-----
- arch/x86/kvm/mmutrace.h    | 59 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/paging_tmpl.h |  2 ++
- 3 files changed, 67 insertions(+), 7 deletions(-)
+I'm not sure that you really need to count whether childrens are on the list.
+Instead you can take advantage of the list ordering and you only have
+to test if the previous cfs_rq in the list is a child. If it's not
+then there is no more child
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 0629a89bb070..6248c39a33ef 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -143,9 +143,6 @@ module_param(dbg, bool, 0644);
- 
- #include <trace/events/kvm.h>
- 
--#define CREATE_TRACE_POINTS
--#include "mmutrace.h"
--
- #define SPTE_HOST_WRITEABLE	(1ULL << PT_FIRST_AVAIL_BITS_SHIFT)
- #define SPTE_MMU_WRITEABLE	(1ULL << (PT_FIRST_AVAIL_BITS_SHIFT + 1))
- 
-@@ -269,9 +266,13 @@ static u64 __read_mostly shadow_nonpresent_or_rsvd_lower_gfn_mask;
- static u8 __read_mostly shadow_phys_bits;
- 
- static void mmu_spte_set(u64 *sptep, u64 spte);
-+static bool is_executable_pte(u64 spte);
- static union kvm_mmu_page_role
- kvm_mmu_calc_root_page_role(struct kvm_vcpu *vcpu);
- 
-+#define CREATE_TRACE_POINTS
-+#include "mmutrace.h"
-+
- 
- static inline bool kvm_available_flush_tlb_with_range(void)
- {
-@@ -3086,10 +3087,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
- 		ret = RET_PF_EMULATE;
- 
- 	pgprintk("%s: setting spte %llx\n", __func__, *sptep);
--	pgprintk("instantiating %s PTE (%s) at %llx (%llx) addr %p\n",
--		 is_large_pte(*sptep)? "2MB" : "4kB",
--		 *sptep & PT_WRITABLE_MASK ? "RW" : "R", gfn,
--		 *sptep, sptep);
-+	trace_kvm_mmu_set_spte(level, gfn, sptep);
- 	if (!was_rmapped && is_large_pte(*sptep))
- 		++vcpu->kvm->stat.lpages;
- 
-@@ -3200,6 +3198,7 @@ static int __direct_map(struct kvm_vcpu *vcpu, gpa_t gpa, int write,
- 	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return RET_PF_RETRY;
- 
-+	trace_kvm_mmu_spte_requested(gpa, level, pfn);
- 	for_each_shadow_entry(vcpu, gpa, it) {
- 		base_gfn = gfn & ~(KVM_PAGES_PER_HPAGE(it.level) - 1);
- 		if (it.level == level)
-diff --git a/arch/x86/kvm/mmutrace.h b/arch/x86/kvm/mmutrace.h
-index dd30dccd2ad5..d8001b4bca05 100644
---- a/arch/x86/kvm/mmutrace.h
-+++ b/arch/x86/kvm/mmutrace.h
-@@ -301,6 +301,65 @@ TRACE_EVENT(
- 		  __entry->kvm_gen == __entry->spte_gen
- 	)
- );
-+
-+TRACE_EVENT(
-+	kvm_mmu_set_spte,
-+	TP_PROTO(int level, gfn_t gfn, u64 *sptep),
-+	TP_ARGS(level, gfn, sptep),
-+
-+	TP_STRUCT__entry(
-+		__field(u64, gfn)
-+		__field(u64, spte)
-+		__field(u64, sptep)
-+		__field(u8, level)
-+		/* These depend on page entry type, so compute them now.  */
-+		__field(bool, r)
-+		__field(bool, x)
-+		__field(u8, u)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->gfn = gfn;
-+		__entry->spte = *sptep;
-+		__entry->sptep = virt_to_phys(sptep);
-+		__entry->level = level;
-+		__entry->r = shadow_present_mask || (__entry->spte & PT_PRESENT_MASK);
-+		__entry->x = is_executable_pte(__entry->spte);
-+		__entry->u = shadow_user_mask ? !!(__entry->spte & shadow_user_mask) : -1;
-+	),
-+
-+	TP_printk("gfn %llx spte %llx (%s%s%s%s) level %d at %llx",
-+		  __entry->gfn, __entry->spte,
-+		  __entry->r ? "r" : "-",
-+		  __entry->spte & PT_WRITABLE_MASK ? "w" : "-",
-+		  __entry->x ? "x" : "-",
-+		  __entry->u == -1 ? "" : (__entry->u ? "u" : "-"),
-+		  __entry->level, __entry->sptep
-+	)
-+);
-+
-+TRACE_EVENT(
-+	kvm_mmu_spte_requested,
-+	TP_PROTO(gpa_t addr, int level, kvm_pfn_t pfn),
-+	TP_ARGS(addr, level, pfn),
-+
-+	TP_STRUCT__entry(
-+		__field(u64, gfn)
-+		__field(u64, pfn)
-+		__field(u8, level)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->gfn = addr >> PAGE_SHIFT;
-+		__entry->pfn = pfn | (__entry->gfn & (KVM_PAGES_PER_HPAGE(level) - 1));
-+		__entry->level = level;
-+	),
-+
-+	TP_printk("gfn %llx pfn %llx level %d",
-+		  __entry->gfn, __entry->pfn, __entry->level
-+	)
-+);
-+
- #endif /* _TRACE_KVMMMU_H */
- 
- #undef TRACE_INCLUDE_PATH
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index f39b381a8b88..e9d110fdcb8e 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -670,6 +670,8 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
- 
- 	base_gfn = gw->gfn;
- 
-+	trace_kvm_mmu_spte_requested(addr, gw->level, pfn);
-+
- 	for (; shadow_walk_okay(&it); shadow_walk_next(&it)) {
- 		clear_sp_write_flooding_count(it.sptep);
- 		base_gfn = gw->gfn & ~(KVM_PAGES_PER_HPAGE(it.level) - 1);
--- 
-2.21.0
+and you can remove the new field children_on_list and inc/dec it
 
+> +               return false;
+> +
+>         return true;
+>  }
+>
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 32978a8de8ce..4f8acbab0fb2 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -557,6 +557,7 @@ struct cfs_rq {
+>          * This list is used during load balance.
+>          */
+>         int                     on_list;
+> +       int                     children_on_list;
+>         struct list_head        leaf_cfs_rq_list;
+>         struct task_group       *tg;    /* group that "owns" this runqueue */
+>
+> --
+> 2.20.1
+>
