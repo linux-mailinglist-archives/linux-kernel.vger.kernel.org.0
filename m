@@ -2,68 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B09FF5F70C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA1C5F716
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbfGDLJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:09:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727436AbfGDLJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:09:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B698AEAF;
-        Thu,  4 Jul 2019 11:09:04 +0000 (UTC)
-Date:   Thu, 4 Jul 2019 13:09:03 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [Question] Should direct reclaim time be bounded?
-Message-ID: <20190704110903.GE5620@dhcp22.suse.cz>
-References: <d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com>
- <20190423071953.GC25106@dhcp22.suse.cz>
- <eac582cf-2f76-4da1-1127-6bb5c8c959e4@oracle.com>
- <04329fea-cd34-4107-d1d4-b2098ebab0ec@suse.cz>
- <dede2f84-90bf-347a-2a17-fb6b521bf573@oracle.com>
- <20190701085920.GB2812@suse.de>
- <80036eed-993d-1d24-7ab6-e495f01b1caa@oracle.com>
- <20190703094325.GB2737@techsingularity.net>
- <571d5557-2153-59ea-334b-8636cc1a49c9@oracle.com>
+        id S1727642AbfGDLKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:10:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbfGDLKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:10:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7D1B53082200;
+        Thu,  4 Jul 2019 11:10:45 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-222.ams2.redhat.com [10.36.116.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3397917B97;
+        Thu,  4 Jul 2019 11:10:44 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 2264311AB5; Thu,  4 Jul 2019 13:10:43 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 13:10:43 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Chia-I Wu <olvaffe@gmail.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/18] drm/virtio: remove ttm calls from in
+ virtio_gpu_object_{reserve,unreserve}
+Message-ID: <20190704111043.5ubc2yjrjphj2iec@sirius.home.kraxel.org>
+References: <20190702141903.1131-1-kraxel@redhat.com>
+ <20190702141903.1131-7-kraxel@redhat.com>
+ <CAPaKu7RfLoB=K__wQd92=S20Mt0uqsfyU9oigr8CQ-=gH6OUuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <571d5557-2153-59ea-334b-8636cc1a49c9@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPaKu7RfLoB=K__wQd92=S20Mt0uqsfyU9oigr8CQ-=gH6OUuA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 04 Jul 2019 11:10:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-07-19 16:54:35, Mike Kravetz wrote:
-> On 7/3/19 2:43 AM, Mel Gorman wrote:
-> > Indeed. I'm getting knocked offline shortly so I didn't give this the
-> > time it deserves but it appears that part of this problem is
-> > hugetlb-specific when one node is full and can enter into this continual
-> > loop due to __GFP_RETRY_MAYFAIL requiring both nr_reclaimed and
-> > nr_scanned to be zero.
-> 
-> Yes, I am not aware of any other large order allocations consistently made
-> with __GFP_RETRY_MAYFAIL.  But, I did not look too closely.  Michal believes
-> that hugetlb pages allocations should use __GFP_RETRY_MAYFAIL.
+  Hi,
 
-Yes. The argument is that this is controlable by an admin and failures
-should be prevented as much as possible. I didn't get to understand
-should_continue_reclaim part of the problem but I have a strong feeling
-that __GFP_RETRY_MAYFAIL handling at that layer is not correct. What
-happens if it is simply removed and we rely only on the retry mechanism
-from the page allocator instead? Does the success rate is reduced
-considerably?
--- 
-Michal Hocko
-SUSE Labs
+> > -       r = ttm_bo_reserve(&bo->tbo, true, false, NULL);
+> > +       r = reservation_object_lock_interruptible(bo->gem_base.resv, NULL);
+> Can you elaborate a bit about how TTM keeps the BOs alive in, for
+> example, virtio_gpu_transfer_from_host_ioctl?  In that function, only
+> three TTM functions are called: ttm_bo_reserve, ttm_bo_validate, and
+> ttm_bo_unreserve.  I am curious how they keep the BO alive.
+
+It can't go away between reserve and unreserve, and I think it also
+can't be evicted then.  Havn't checked how ttm implements that.
+
+cheers,
+  Gerd
+
