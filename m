@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8F55FC2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 033375FC40
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfGDRE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 13:04:28 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46772 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfGDRE1 (ORCPT
+        id S1727313AbfGDRHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 13:07:54 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37527 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfGDRHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 13:04:27 -0400
-Received: by mail-lf1-f67.google.com with SMTP id z15so4629533lfh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 10:04:26 -0700 (PDT)
+        Thu, 4 Jul 2019 13:07:54 -0400
+Received: by mail-qt1-f196.google.com with SMTP id y57so6434762qtk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 10:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=eng.ucsd.edu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=CkgDdHVaxcb9rT/2SredJkmJsQ+Tw2cxRbLdVs3ZeiA=;
-        b=EkpZ6CWGQaSkDtpNkWc7nrNsvAwSQkc2dO5ImphTS+aQsDRNZolMBeZOVh3qGTPyrh
-         hgWP7oT7ncgYt0y0JrnOI6Jzdk7OVEZiCRugORmj+zNXklvb8nVVGACdlE7f7xHtNcr5
-         NHb2XdBo4D4M5WFOmlQmnRjMgdej5qAxUyE7I=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XqfKYWKGSYLgbJr6fPQ+lFHdBqt7mzzp7w7+/NgGtDk=;
+        b=X6NiXeAMF1OwtlTW4QqugOJ53ZeaHYD/sLo9k8HcbCwSQByg/XZqvCY4YZ+NYEl7+p
+         iNzSMGDWZ5tSIXvWCBaZgIICKztGnisde/lW/EA7/5qeHQu+15yWvVUsJRLIZmnz8wha
+         FFQqyPZ2lh/7vbQ1YNZqInN11zwc/aPBlJbKnEheIYIs5DRlEPuNf2j32b7lU2Cr/rcQ
+         96vKhTR4yz256EpG20zwOf0ABEaIZ5Hm7+BC+Ly7ve2P51vGNgxR6r8d9luBnVSDGfnC
+         hecuC40wXSVrpqNgLK4oewKcZuEQsgqJRuOyJclwZzjzgTs41CxzCm22YgsyxzVDu9Bi
+         dJSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=CkgDdHVaxcb9rT/2SredJkmJsQ+Tw2cxRbLdVs3ZeiA=;
-        b=kUoe/NM9tZ6mlYTIqXdd/yG6bOlXJ6jiXoOMII/XyBHSxbpI69IlEMicFiCzJKyBGm
-         yrHQj8W1ik+FejbT5wNPBagxcLAdc1lH+Wy9ByOdDj+oew5oSU3+OQJJvoXfD/XGOkmd
-         0MytzfFQ4Lpfjfmu1r/no2B3XXWHnmuF6aGrRd09l43ZZGlmVI+nMaPepTS/jIEwo1p0
-         jKGqVLDcYnyZ6jLkYz/rOH4yxPhkj+rKOjrkLLhNwLfRrD/BYTL+URyo20tJpsFVinqT
-         h1FeMhL3FP/0wsfEYL3+m7BIHuMvSQ08uglpZgYqqL9XSmO0d9hF4CkqYqUB6EsU1YdV
-         B3WA==
-X-Gm-Message-State: APjAAAUUZYTctccgcLHkHEJAHYVJd3DJQ4rOdq8/Uz1GopoUm7lbktez
-        bpvhaPv/e8P3m93UMydctzRubA==
-X-Google-Smtp-Source: APXvYqyM1tPH60GaHk8KC0Ui0lZkB72TvGONCHNi4u7bt8iK1WTP4DnC3OKxHSeGvK1pepNKRfKHWg==
-X-Received: by 2002:a19:9104:: with SMTP id t4mr5013803lfd.179.1562259865614;
-        Thu, 04 Jul 2019 10:04:25 -0700 (PDT)
-Received: from luke-XPS-13 (77-255-206-190.adsl.inetia.pl. [77.255.206.190])
-        by smtp.gmail.com with ESMTPSA id g4sm985530lfb.31.2019.07.04.10.04.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 04 Jul 2019 10:04:25 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 10:04:22 -0700
-From:   Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
-To:     mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [Linux-kernel-mentee, PATCH] media: dvb_frontend.h: Fix shifting
- signed 32-bit value problem
-Message-ID: <20190704170422.GA25633@luke-XPS-13>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XqfKYWKGSYLgbJr6fPQ+lFHdBqt7mzzp7w7+/NgGtDk=;
+        b=cmObNpR9s5WY2Jv2niZdR7ZHTY+QWD9Ofi2AMsQivyNmRlgjzCMz+VuAZ+2KgfsPJw
+         XsEKlL3T0Kc+pkXC25CZ36wP2kvUZpLn6TNMisDJG6QZBcIoTHwMvaKikvQAtzrY75/A
+         aBD92sBZ2kzeVZFIbHQfepMrDHQW3PY/cPrryu4sJkQHjb3F1kolKbhC17EP3UYLzK+b
+         unVj3jK7bXn/oatyEfEcu1/VYoJj2KvY4VpSMUicJAX9L9gdoJt5+oYr7hNRP48vYB2n
+         kHIHBAQRe9nZXakNkQ8nSYggzSkf1zMALMqNfb3ZOsGYsI5Z+/yvMChE0wKga8a6e/n/
+         m7PQ==
+X-Gm-Message-State: APjAAAV8YhNwVnt6b9V9ooazt2unvg8yikQfWk+zQOjkpjga3dgqczNk
+        CvanaVChs5X4u8BYVHck1TUzuShMYIBMyA==
+X-Google-Smtp-Source: APXvYqxtr+v0L2/2WEquOomQKVdBZ8+LLKmCnbiOU43dpww5W7vo+SURvHo2eSQslH/YdnPX0elgpQ==
+X-Received: by 2002:aed:36c5:: with SMTP id f63mr36872490qtb.239.1562260073519;
+        Thu, 04 Jul 2019 10:07:53 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id b67sm2660401qkd.82.2019.07.04.10.07.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Jul 2019 10:07:53 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hj5D6-000348-Ib; Thu, 04 Jul 2019 14:07:52 -0300
+Date:   Thu, 4 Jul 2019 14:07:52 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/uverbs: remove redundant assignment to variable ret
+Message-ID: <20190704170752.GA11760@ziepe.ca>
+References: <20190704125027.4514-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190704125027.4514-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix DVBFE_ALGO_RECOVERY and DVBFE_ALGO_SEARCH_ERROR to use U cast which
-fixes undefined behavior error by certain compilers. 
+On Thu, Jul 04, 2019 at 01:50:27PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable ret is being initialized with a value that is never
+> read and it is being updated later with a new value. The
+> initialization is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/infiniband/core/uverbs_cmd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
----
- include/media/dvb_frontend.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to for-next, thanks
 
-diff --git a/include/media/dvb_frontend.h b/include/media/dvb_frontend.h
-index f05cd7b94a2c..472fe5871d94 100644
---- a/include/media/dvb_frontend.h
-+++ b/include/media/dvb_frontend.h
-@@ -144,7 +144,7 @@ enum dvbfe_algo {
- 	DVBFE_ALGO_HW			= (1 <<  0),
- 	DVBFE_ALGO_SW			= (1 <<  1),
- 	DVBFE_ALGO_CUSTOM		= (1 <<  2),
--	DVBFE_ALGO_RECOVERY		= (1 << 31)
-+	DVBFE_ALGO_RECOVERY		= (1U << 31)
- };
- 
- /**
-@@ -175,7 +175,7 @@ enum dvbfe_search {
- 	DVBFE_ALGO_SEARCH_FAILED	= (1 <<  2),
- 	DVBFE_ALGO_SEARCH_INVALID	= (1 <<  3),
- 	DVBFE_ALGO_SEARCH_AGAIN		= (1 <<  4),
--	DVBFE_ALGO_SEARCH_ERROR		= (1 << 31),
-+	DVBFE_ALGO_SEARCH_ERROR		= (1U << 31),
- };
- 
- /**
--- 
-2.20.1
-
+Jason
