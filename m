@@ -2,55 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C34F45FAF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDDF15FB01
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbfGDPfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:35:54 -0400
-Received: from 8bytes.org ([81.169.241.247]:34128 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbfGDPfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:35:53 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 460884F1; Thu,  4 Jul 2019 17:35:52 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 17:35:52 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] omap-iommu: no need to check return value of
- debugfs_create functions
-Message-ID: <20190704153551.GG3310@8bytes.org>
-References: <20190704143649.GA11697@kroah.com>
+        id S1727867AbfGDPiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:38:09 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59345 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbfGDPiI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 11:38:08 -0400
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hj3oF-0004wg-9U; Thu, 04 Jul 2019 17:38:07 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/7] Use spinlock_t instead of struct spinlock
+Date:   Thu,  4 Jul 2019 17:37:56 +0200
+Message-Id: <20190704153803.12739-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704143649.GA11697@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 04:36:49PM +0200, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: iommu@lists.linux-foundation.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> Warning, not even test-built, but "should" work :)
+Just a small series to clean up various "struct spinlock" user and make
+them use "spinlock_t" instead.
 
-It almost did :)
+Sebastian
 
-> +	debugfs_create_file("regs", 0400, d, obj, &attrregs_fops);
-> +	debugfs_create_file("tlb", 0400, d, obj, &attrtlb_fops);
-> +	debugfs_create_file("pagetable", 0400, d, obj, &attrpagetable_fops);
 
-The _fops were named without the 'attr' prefix, changed that and it
-compiled. Patch is now applied.
-
-Thanks,
-
-	Joerg
