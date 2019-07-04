@@ -2,108 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3F95F72C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E4FC5F733
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfGDLVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:21:42 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2965 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727436AbfGDLVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:21:41 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 0C9124EBB6BABD9ABB88;
-        Thu,  4 Jul 2019 19:21:40 +0800 (CST)
-Received: from dggeme754-chm.china.huawei.com (10.3.19.100) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 4 Jul 2019 19:21:39 +0800
-Received: from [127.0.0.1] (10.184.212.80) by dggeme754-chm.china.huawei.com
- (10.3.19.100) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 4
- Jul 2019 19:21:38 +0800
-Subject: Re: [PATCH v2] fix use-after-free in perf_sched__lat
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-CC:     Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xiezhipeng1@huawei.com>
-References: <20190508143648.8153-1-liwei391@huawei.com>
- <20190522065555.GA206606@google.com> <20190522110823.GR8945@kernel.org>
- <20190523025011.GC196218@google.com>
-From:   "liwei (GF)" <liwei391@huawei.com>
-Message-ID: <d14c02f2-4962-ad42-697e-224ddb599f43@huawei.com>
-Date:   Thu, 4 Jul 2019 19:21:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727613AbfGDL1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:27:20 -0400
+Received: from us-edge-1.acronis.com ([69.20.59.99]:54032 "EHLO
+        us-edge-1.acronis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbfGDL1U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:27:20 -0400
+X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 07:27:18 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=acronis.com
+        ; s=exim; h=MIME-Version:Content-Transfer-Encoding:Content-Type:Message-ID:
+        Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ebLt+rgN7+eRdUOrhQJKd9HTr215QAx3NpL4JVnj+J8=; b=KP6WW9YUufMfCC1ywYXDnLOq3q
+        fgNT8E2lfEOrE/LW2ounRUZwyldYFc+S8LIhlVsQEeZk63EEvq+1dr4ueTA6M6FNBP8T8YaRXnzkX
+        1rYSUkfgcktdNKXfhLp9x2Y4FL8vkGNdqiPq5bM0nkVp3EI5PxQSZuJ//AStH7K5IgIY=;
+Received: from [91.195.22.121] (helo=ru-ex-2.corp.acronis.com)
+        by us-edge-1.acronis.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <Filipp.Mikoian@acronis.com>)
+        id 1hizoO-0001FI-SQ; Thu, 04 Jul 2019 07:22:00 -0400
+Received: from ru-ex-2.corp.acronis.com (10.250.32.21) by
+ ru-ex-2.corp.acronis.com (10.250.32.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1591.10; Thu, 4 Jul 2019 14:21:57 +0300
+Received: from ru-ex-2.corp.acronis.com ([fe80::3163:6934:fc33:4bd3]) by
+ ru-ex-2.corp.acronis.com ([fe80::3163:6934:fc33:4bd3%4]) with mapi id
+ 15.01.1591.011; Thu, 4 Jul 2019 14:21:57 +0300
+From:   Filipp Mikoian <Filipp.Mikoian@acronis.com>
+To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "jmoyer@redhat.com" <jmoyer@redhat.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: io_uring question
+Thread-Topic: io_uring question
+Thread-Index: AQHVMlktc6wBW1EANEu5MaqUCERTlQ==
+Date:   Thu, 4 Jul 2019 11:21:57 +0000
+Message-ID: <76524892f9c048ea88c7d87295ec85ae@acronis.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.250.3.5]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190523025011.GC196218@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.212.80]
-X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
- dggeme754-chm.china.huawei.com (10.3.19.100)
-X-CFilter-Loop: Reflected
+X-MessageID-Signature: 294ead3f9692afd3605e2efd4a21308e2b740685
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
-I found this issue has not been fixed in mainline now, please take a glance at this.
+Hi dear io_uring developers,
 
-On 2019/5/23 10:50, Namhyung Kim wrote:
-> On Wed, May 22, 2019 at 08:08:23AM -0300, Arnaldo Carvalho de Melo wrote:
->> Em Wed, May 22, 2019 at 03:56:10PM +0900, Namhyung Kim escreveu:
->>> On Wed, May 08, 2019 at 10:36:48PM +0800, Wei Li wrote:
->>>> After thread is added to machine->threads[i].dead in
->>>> __machine__remove_thread, the machine->threads[i].dead is freed
->>>> when calling free(session) in perf_session__delete(). So it get a
->>>> Segmentation fault when accessing it in thread__put().
->>>>
->>>> In this patch, we delay the perf_session__delete until all threads
->>>> have been deleted.
->>>>
->>>> This can be reproduced by following steps:
->>>> 	ulimit -c unlimited
->>>> 	export MALLOC_MMAP_THRESHOLD_=0
->>>> 	perf sched record sleep 10
->>>> 	perf sched latency --sort max
->>>> 	Segmentation fault (core dumped)
->>>>
->>>> Signed-off-by: Zhipeng Xie <xiezhipeng1@huawei.com>
->>>> Signed-off-by: Wei Li <liwei391@huawei.com>
->>>
->>> Acked-by: Namhyung Kim <namhyung@kernel.org>
->>
->> I'll try to analyse this one soon, but my first impression was that we
->> should just grab reference counts when keeping a pointer to those
->> threads instead of keeping _all_ threads alive when supposedly we could
->> trow away unreferenced data structures.
->>
->> But this is just a first impression from just reading the patch
->> description, probably I'm missing something.
-> 
-> No, thread refcounting is fine.  We already did it and threads with the
-> refcount will be accessed only.
-> 
-> But the problem is the head of the list.  After using the thread, the
-> refcount is gone and thread is removed from the list and destroyed.
-> However the head of list is in a struct machine which was freed with
-> session already.
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->>
->> Thanks for providing instructions on readily triggering the segfault.
->>
->> - Arnaldo
-> 
-> .
-> 
+Recently I started playing with io_uring, and the main difference I expecte=
+d
+to see with old AIO(io_submit(), etc.) was submission syscall(io_uring_ente=
+r())
+not blocking in case submission might take long time, e.g. if waiting for a=
+ slot
+in block device request queue is required. AFAIU, 'workers' machinery is us=
+ed
+solely to be able to submit requests in async context, thus not forcing cal=
+ling
+thread to block for a significant time. At worst EAGAIN is expected.
 
-Thanks,
-Wei
+However, when I installed fresh 5.2.0-rc7 kernel on the machine with HDD wi=
+th
+64-requests-deep queue, I noticed significant increase in time spent in
+io_uring_enter() once request queue became full. Below you can find output
+of the program that submits random(in 1GB range) 4K read requests in batche=
+s
+of 32. Though O_DIRECT is used, the same phenomenon is observed when using
+page cache. Source code can be found here:
+https://github.com/Phikimon/io_uring_question
 
+While analyzing stack dump, I found out that IOCB_NOWAIT flag being set
+does not prevent generic_file_read_iter() from calling blkdev_direct_IO(),
+so thread gets stuck for hundreds of milliseconds. However, I am not a
+Linux kernel expert, so I can not be sure this is actually related to the
+mentioned issue.
+
+Is it actually expected that io_uring would sleep in case there is no slot
+in block device's request queue, or is this a bug of current implementation=
+?
+
+root@localhost:~/io_uring# uname -msr
+Linux 5.2.0-rc7 x86_64
+root@localhost:~/io_uring# hdparm -I /dev/sda | grep Model
+Model Number:       Hitachi HTS541075A9E680
+root@localhost:~/io_uring# cat /sys/block/sda/queue/nr_requests
+64
+root@localhost:~/io_uring# ./io_uring_read_blkdev /dev/sda8
+submitted_already =3D   0, submitted_now =3D  32, submit_time =3D     246 u=
+s
+submitted_already =3D  32, submitted_now =3D  32, submit_time =3D     130 u=
+s
+submitted_already =3D  64, submitted_now =3D  32, submit_time =3D  189548 u=
+s
+submitted_already =3D  96, submitted_now =3D  32, submit_time =3D  121542 u=
+s
+submitted_already =3D 128, submitted_now =3D  32, submit_time =3D  128314 u=
+s
+submitted_already =3D 160, submitted_now =3D  32, submit_time =3D  136345 u=
+s
+submitted_already =3D 192, submitted_now =3D  32, submit_time =3D  162320 u=
+s
+root@localhost:~/io_uring# cat pstack_output # This is where process slept
+[<0>] io_schedule+0x16/0x40
+[<0>] blk_mq_get_tag+0x166/0x280
+[<0>] blk_mq_get_request+0xde/0x380
+[<0>] blk_mq_make_request+0x11e/0x5b0
+[<0>] generic_make_request+0x191/0x3c0
+[<0>] submit_bio+0x75/0x140
+[<0>] blkdev_direct_IO+0x3f8/0x4a0
+[<0>] generic_file_read_iter+0xbf/0xdc0
+[<0>] blkdev_read_iter+0x37/0x40
+[<0>] io_read+0xf6/0x180
+[<0>] __io_submit_sqe+0x1cd/0x6a0
+[<0>] io_submit_sqe+0xea/0x4b0
+[<0>] io_ring_submit+0x86/0x120
+[<0>] __x64_sys_io_uring_enter+0x241/0x2d0
+[<0>] do_syscall_64+0x60/0x1a0
+[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[<0>] 0xffffffffffffffff
+
+P.S. There are also several suspicious places in liburing and io_uring's ke=
+rnel
+     part. I'm not sure if these are really bugs, so please point out if an=
+y of
+     them needs a fixing patch. Among them:
+1. Inaccurate handling of errors in liburing/__io_uring_submit(). Because
+   liburing currently does not care about queue head that kernel sets, it c=
+annot
+   know how many entries have been actually consumed. In case e.g.
+   io_uring_enter() returns EAGAIN, and consumes none of the sqes, sq->sqe_=
+head
+   still advances in __io_uring_submit(), this can eventually cause both
+   io_uring_submit() and io_uring_sqe() return 0 forever.
+2. There is also a related issue -- when using IORING_SETUP_SQPOLL, in case
+   polling kernel thread already went to sleep(IORING_SQ_NEED_WAKEUP is set=
+),
+   io_uring_enter() just wakes it up and immediately reports all @to_submit
+   requests are consumed, while this is not true until awaken thread will m=
+anage
+   to handle them. At least this contradicts with man page, which states:
+   > When the system call returns that a certain amount of SQEs have been
+   > consumed and submitted, it's safe to reuse SQE entries in the ring.
+   It is easy to reproduce this bug -- just change e.g. ->offset field in t=
+he
+   SQE immediately after io_uring_enter() successfully returns and you will=
+ see
+   that IO happened on new offset.
+3. Again due to lack of synchronization between io_sq_thread() and
+   io_uring_enter(), in case the ring is full and IORING_SETUP_SQPOLL is us=
+ed,
+   it seems there is no other way for application to wait for slots in SQ t=
+o
+   become available but busy waiting for *sq->khead to advance. Thus from o=
+ne
+   busy waiting thread we get two. Is this the expected behavior? Should th=
+e
+   user of IORING_SETUP_SQPOLL busy wait for slots in SQ?
+4. Minor one: in case sq_thread_idle is set to ridiculously big value(e.g. =
+100
+   sec), kernel watchdog starts reporting this as a bug.
+   > Message from syslogd@centos-linux at Jun 21 20:00:04 ...
+   >  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 21s! [io_uring-sq=
+:10691]
+
+Looking forward to your reply and thank you in advance.=
