@@ -2,77 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B485F731
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E565F736
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfGDLZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:25:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57018 "EHLO mx1.redhat.com"
+        id S1727625AbfGDL2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:28:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727436AbfGDLZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:25:36 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727560AbfGDL2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:28:37 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B00A1882F5;
-        Thu,  4 Jul 2019 11:25:36 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-222.ams2.redhat.com [10.36.116.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 467A759442;
-        Thu,  4 Jul 2019 11:25:35 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 1E36611AB5; Thu,  4 Jul 2019 13:25:34 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 13:25:34 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Chia-I Wu <olvaffe@gmail.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 08/18] drm/virtio: rework virtio_gpu_execbuffer_ioctl
- fencing
-Message-ID: <20190704112534.v7icsuverf7wrbjq@sirius.home.kraxel.org>
-References: <20190702141903.1131-1-kraxel@redhat.com>
- <20190702141903.1131-9-kraxel@redhat.com>
- <CAPaKu7QP=A2kV_kqcT20Pmc831HviaBJN1RpOFoa=V1g6SmE_g@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 51968218A0;
+        Thu,  4 Jul 2019 11:28:35 +0000 (UTC)
+Date:   Thu, 4 Jul 2019 07:28:33 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH v2 00/12] tracing/probe: Add multi-probes per event
+ support
+Message-ID: <20190704072833.4bc17d3c@gandalf.local.home>
+In-Reply-To: <20190704153958.16a97c881aebbc5898b1264e@kernel.org>
+References: <156095682948.28024.14190188071338900568.stgit@devnote2>
+        <20190704153958.16a97c881aebbc5898b1264e@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPaKu7QP=A2kV_kqcT20Pmc831HviaBJN1RpOFoa=V1g6SmE_g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 04 Jul 2019 11:25:36 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On Thu, 4 Jul 2019 15:39:58 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> >         if (fence)
-> >                 virtio_gpu_fence_emit(vgdev, hdr, fence);
-> > +       if (vbuf->objs) {
-> > +               virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-> > +               virtio_gpu_array_unlock_resv(vbuf->objs);
-> > +       }
-> This is with the spinlock held.  Maybe we should move the
-> virtio_gpu_array_unlock_resv call out of the critical section.
+> Hi Steve,
+> 
+> Would you have any comment on this?
+> 
 
-That would bring back the race ...
+Hi Masami,
 
-> I am actually more concerned about virtio_gpu_array_add_fence, but it
-> is also harder to move.  Should we add a kref to the object array?
+It's on my todo list. As today is a US holiday, I'll look at this on
+Monday.
 
-Yep, refcounting would be the other way to fix the race.
+Thanks for the reminder!
 
-> This bothers me because I recently ran into a CPU-bound game with very
-> bad lock contention here.
+-- Steve
 
-Hmm.  Any clue where this comes from?  Multiple threads competing for
-virtio buffers I guess?  Maybe we should have larger virtqueues?
 
-cheers,
-  Gerd
+> Thank you,
+> 
+> On Thu, 20 Jun 2019 00:07:09 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hello,
+> > 
+> > This is the 2nd version of multi-probes per event support on ftrace
+> > and perf-tools.
+> > 
+> > Previous version is here;
+> > https://lkml.org/lkml/2019/5/31/573
+> >   
+> > >From this version, I omitted first 9 patches which has been picked  
+> > to Steve's tree.
+> > In this version, I've fixed some bugs and hardened some unexpected
+> > error cases according to Steve's comment.
+> > Here are changes in this version:
+> > 
+> >  - [1/12] This have below changes. 
+> >     - Warn if the primary trace_probe does not exist.
+> >     - Fix enable_trace_kprobe() to not return error if the any probes
+> >       are "gone" state. If all probes have gone or any other error
+> >       reason, the event can not be enabled and return error.
+> >     - Fix trace_probe_enable() to roll back all enabled uprobe if
+> >       any one of uprobe is failed to enable.
+> >  - [7/12] Swap the checking order of filename for avoiding unexpected
+> >      memory access.
+> > 
+> > 
+> > ====
+> > For trace-event, we can insert same trace-event on several places
+> > on the code, and those can record similar information as a same event
+> > with same format.
+> > 
+> > This series implements similar feature on probe-event. Since the probe
+> > event is based on the compiled binary, sometimes we find that the target
+> > source line is complied into several different addresses, e.g. inlined
+> > function, unrolled loop, etc. In those cases, it is useful to put a
+> > same probe-event on different addresses.
+> > 
+> > With this series, we can append multi probes on one event as below
+> > 
+> >   # echo p:testevent _do_fork r1=%ax r2=%dx > kprobe_events
+> >   # echo p:testevent fork_idle r1=%ax r2=%cx >> kprobe_events
+> >   # kprobe_events
+> >   p:kprobes/testevent _do_fork r1=%ax r2=%dx
+> >   p:kprobes/testevent fork_idle r1=%ax r2=%cx
+> > 
+> > This means testevent is hit on both of _do_fork and fork_idle.
+> > As you can see, the appended event must have same number of arguments
+> > and those must have same 'type' and 'name' as original one. This is like
+> > a function signature, it checks whether the appending event has the same
+> > type and name of event arguments and same probe type, but doesn't care
+> > about the assignment.
+> > 
+> > So, below appending commands will be rejected.
+> > 
+> >   # echo p:testevent _do_fork r1=%ax r2=%dx > kprobe_events
+> >   # echo p:testevent fork_idle r1=%ax >> kprobe_events
+> >   (No 2nd argument)
+> >   # echo p:testevent fork_idle r1=%ax r2=%ax:x8 >> kprobe_events
+> >   (The type of 2nd argument is different)
+> > 
+> > If one inlined code has an argument on a register, but another
+> > inlined code has fixed value (as a result of optimization),
+> > you can also specify the fixed immediate value, e.g.
+> > 
+> >   # echo p:testevent _do_fork r1=%ax r2=%dx > kprobe_events
+> >   # echo p:testevent fork_idle r1=%ax r2=\1 >> kprobe_events
+> > 
+> > 
+> > Thank you,
+> > 
+> > ---
+> > 
+> > Masami Hiramatsu (12):
+> >       tracing/probe: Split trace_event related data from trace_probe
+> >       tracing/dynevent: Delete all matched events
+> >       tracing/dynevent: Pass extra arguments to match operation
+> >       tracing/kprobe: Add multi-probe per event support
+> >       tracing/uprobe: Add multi-probe per uprobe event support
+> >       tracing/kprobe: Add per-probe delete from event
+> >       tracing/uprobe: Add per-probe delete from event
+> >       tracing/probe: Add immediate parameter support
+> >       tracing/probe: Add immediate string parameter support
+> >       selftests/ftrace: Add a testcase for kprobe multiprobe event
+> >       selftests/ftrace: Add syntax error test for immediates
+> >       selftests/ftrace: Add syntax error test for multiprobe
+> > 
+> > 
+> >  Documentation/trace/kprobetrace.rst                |    1 
+> >  Documentation/trace/uprobetracer.rst               |    1 
+> >  kernel/trace/trace.c                               |    8 -
+> >  kernel/trace/trace_dynevent.c                      |   10 +
+> >  kernel/trace/trace_dynevent.h                      |    7 -
+> >  kernel/trace/trace_events_hist.c                   |    4 
+> >  kernel/trace/trace_kprobe.c                        |  241 ++++++++++++++----
+> >  kernel/trace/trace_probe.c                         |  176 +++++++++++--
+> >  kernel/trace/trace_probe.h                         |   67 ++++-
+> >  kernel/trace/trace_uprobe.c                        |  263 +++++++++++++++-----
+> >  tools/testing/selftests/ftrace/test.d/functions    |    2 
+> >  .../ftrace/test.d/kprobe/kprobe_multiprobe.tc      |   35 +++
+> >  .../ftrace/test.d/kprobe/kprobe_syntax_errors.tc   |   15 +
+> >  13 files changed, 665 insertions(+), 165 deletions(-)
+> >  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> > 
+> > --
+> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>  
+> 
+> 
 
