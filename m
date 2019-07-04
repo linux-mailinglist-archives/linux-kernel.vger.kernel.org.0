@@ -2,109 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 807205F1F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4105F1FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725935AbfGDELh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 00:11:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8693 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725766AbfGDELh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 00:11:37 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D969C9A920B5526DD5F2;
-        Thu,  4 Jul 2019 12:11:34 +0800 (CST)
-Received: from [127.0.0.1] (10.65.94.163) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
- 12:11:25 +0800
-Subject: Re: linux-next: build failure after merge of the rdma tree
-From:   wangxi <wangxi11@huawei.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lijun Ou <oulijun@huawei.com>
-References: <20190701141431.5cba95c3@canb.auug.org.au>
- <20190704120235.5914499b@canb.auug.org.au>
- <20190704020418.GC32502@mellanox.com>
- <df072872-d0c3-a030-2237-d275f1147106@huawei.com>
-Message-ID: <1976b003-ed63-2638-b7d2-3d8847b960f8@huawei.com>
-Date:   Thu, 4 Jul 2019 12:10:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1726199AbfGDEVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 00:21:55 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:52344 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbfGDEVz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 00:21:55 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C5764886BF;
+        Thu,  4 Jul 2019 16:21:49 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1562214109;
+        bh=LZbI48iB2U9z3Rx/jxEmYADjQWAtTa0GOJizL3UwLkE=;
+        h=From:To:Cc:Subject:Date;
+        b=Ut8+V1V+8ZldssMdIIqBVLhEC1KJUzU3lowUOvPZzgZAE7V3mdlpKtHeZDaGvB8Yv
+         +fbcmCee4qE9OabKD2PrCXbfZT3QNTRbU9xXRRJnO8wt6Dthsh2yqCbUDRgIYqRXtx
+         C7EHuCsRtpwj+btwKqgWh9b1DqUBsVXo0dWzlz/A0HUwpLkZtfa/pNR8QUFEr9a0Pa
+         vQV33diefCtZ+NBJmRA4iYt59/jxTx+ehu+lldeZlRMh3vZZSRW5F/tykCnlOes70/
+         CuCAe5c6D8STPJCizxwHfdWQFpnXAtX2TN7kUcT2D4ZNschQkAEHrRUx0It8WeIBDw
+         KP4i2nbicvKqw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d1d7edd0000>; Thu, 04 Jul 2019 16:21:49 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 2A3A713EEA1;
+        Thu,  4 Jul 2019 16:21:51 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 8D84F1E0BBE; Thu,  4 Jul 2019 16:21:49 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        ricardo.ribalda@gmail.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2] gpiolib: Preserve desc->flags when setting state
+Date:   Thu,  4 Jul 2019 16:20:27 +1200
+Message-Id: <20190704042027.18966-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <df072872-d0c3-a030-2237-d275f1147106@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.65.94.163]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+desc->flags may already have values set by of_gpiochip_add() so make
+sure that this isn't undone when setting the initial direction.
 
+Fixes: 3edfb7bd76bd1cba ("gpiolib: Show correct direction from the beginn=
+ing")
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-在 2019/7/4 12:07, wangxi 写道:
-> 
-> 
-> 在 2019/7/4 10:04, Jason Gunthorpe 写道:
->> On Thu, Jul 04, 2019 at 12:02:35PM +1000, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> On Mon, 1 Jul 2019 14:14:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>
->>>> Hi all,
->>>>
->>>> After merging the rdma tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/infiniband/hw/hns/hns_roce_ah.o
->>>> see include/linux/module.h for more information
->>> 	.
->>> 	.
->>> 	.
->>>> ERROR: "hns_roce_bitmap_cleanup" [drivers/infiniband/hw/hns/hns_roce_srq.ko] undefined!
->>> 	.
->>> 	.
->>> 	.
->>>> ERROR: "hns_roce_ib_destroy_cq" [drivers/infiniband/hw/hns/hns-roce-hw-v1.ko] undefined!
->>>>
->>>> Presumably caused by commit
->>>>
->>>>   e9816ddf2a33 ("RDMA/hns: Cleanup unnecessary exported symbols")
->>>>
->>>> I have used the rdma tree from next-20190628 for today.
->>>
->>> I am still getting these errors/warnings.
->>
->> I have not got a fixing patch from HNS team.
->>
->> At this late date I will revert the problematic HNS patch tomorrow.
->> There is indeed a mistake, I will append a patch as soon as possible.
-> 
-> The patch sent before has a problem caused by the merge of the local code. The correct one
-> should be as follows :
-> 
-> diff --git a/drivers/infiniband/hw/hns/Makefile b/drivers/infiniband/hw/hns/Makefile
-> index b956cf4..b06125f 100644
-> --- a/drivers/infiniband/hw/hns/Makefile
-> +++ b/drivers/infiniband/hw/hns/Makefile
-> @@ -9,8 +9,8 @@ hns-roce-objs := hns_roce_main.o hns_roce_cmd.o hns_roce_pd.o \
->         hns_roce_cq.o hns_roce_alloc.o hns_roce_db.o hns_roce_srq.o hns_roce_restrack.o
-> 
->  ifdef CONFIG_INFINIBAND_HNS_HIP06
-> -hns-roce-hw-v1-objs := hns_roce_hw_v1.o
-> -obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v1.o $(hns-roce-objs)
-> +hns-roce-hw-v1-objs := hns_roce_hw_v1.o $(hns-roce-objs)
-> +obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v1.o
->  endif
-> 
+Notes:
+    Changes in v2:
+    - add braces to avoid ambiguious else warning
 
-The old patch does have an error and I will append a new patch as soon as possible.
+ drivers/gpio/gpiolib.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
->> Jason
->> .
->>
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e013d417a936..5ac57264171b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1392,12 +1392,13 @@ int gpiochip_add_data_with_key(struct gpio_chip *=
+chip, void *data,
+ 	for (i =3D 0; i < chip->ngpio; i++) {
+ 		struct gpio_desc *desc =3D &gdev->descs[i];
+=20
+-		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+-			desc->flags =3D !chip->get_direction(chip, i) ?
+-					(1 << FLAG_IS_OUT) : 0;
+-		else
+-			desc->flags =3D !chip->direction_input ?
+-					(1 << FLAG_IS_OUT) : 0;
++		if (chip->get_direction && gpiochip_line_is_valid(chip, i)) {
++			if (!chip->get_direction(chip, i))
++				set_bit(FLAG_IS_OUT, &desc->flags);
++		} else {
++			if (!chip->direction_input)
++				set_bit(FLAG_IS_OUT, &desc->flags);
++		}
+ 	}
+=20
+ 	acpi_gpiochip_add(chip);
+--=20
+2.22.0
 
