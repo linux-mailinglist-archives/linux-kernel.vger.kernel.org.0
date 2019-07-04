@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C374C5FDE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 22:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 276825FDE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 22:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfGDUsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 16:48:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33574 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfGDUsC (ORCPT
+        id S1727459AbfGDUsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 16:48:05 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35134 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfGDUsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 16:48:02 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so7817356wru.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 13:48:00 -0700 (PDT)
+        Thu, 4 Jul 2019 16:48:04 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l2so25923wmg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 13:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WdSzEQHqwSMjKum+kGHPxijzUO1SKoGxKn6W7Ura5Us=;
-        b=rifUJEzArqLOPnD8ZH7fBGPGZlYQKW6Y+xG5/47gz13tqIPA1FMz5wfQmDK3dj7aAz
-         +s1Lc86c4MFHU8oMNj4fIpOAYKxzhfRmRVpdRgnDxT6x24cXsmi46onIyPsZBJXR5Mal
-         TdtmwduxunhUIreRvsu8Phs3KXElvRc8+asekNeA0wbQNEs1E4r2CvnbB5i6q7MXifcO
-         UzS6gjhnL9Bn3rucxsoHdcvPlye64pGwFGF5b8HFOs5mp7BzoQVIXem7lxkK0n++NdqG
-         5F3XoB67pgO2FrNbzrSW3Sp2pw3wC9mC6Qlv3WhfIGbQuULKqDF9HZncut/wVthS/vME
-         FdUw==
+        bh=HZLOKYMGayflW0Xxy8TyideR/fv3M68HVeKYr1VPis0=;
+        b=CvLXT7luGMdxLhiW8n2ytDTwfuCFSqpXM6R9xBDQCJorJp/TnDvJQ2lxvkWoij0HFG
+         t6YqpKlmh076m9+r5widszsDYTyQd8CNf1c+rIvccRZ0TEs3PP+atGLEVtjmN7DiyNpE
+         O566V/kvkKsi0ugBSNMfR5LbeYM7jgLWVrCifwJoFfySzBPYg0dOn7VE8BRHYkuZOFRl
+         cC6ZBaplYSifBVHyXGfv4vk50VS0nu6E3z5kpq6Tvq/4suT3k6IynQ3atFJoJHJ0ntbG
+         +6GRim4d1ZvS8FIlaUQ19AXYzhjLfSuHU4eWl3/v6AJBnD1XdD35qWkTxsiUsFsj4TtV
+         rzDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WdSzEQHqwSMjKum+kGHPxijzUO1SKoGxKn6W7Ura5Us=;
-        b=FUmW/2/z3PaQoCpY5aO5w6hwvdKdOs6meIM5P5EXJ/aQgCxAECDlYEHRWj1bG6pT6A
-         NXic4AafcBv6nEdjdwZMlxmb1OW7u8N5WmekFvI5lSM6h5ISyfAe5yzzE99MUhuDzCqi
-         ub4T401Mw9JWL7wQFvHSwZLDxzKnsrEPTvhFqb5OJl46fU02YethTQAnZwrnqt7t8yAL
-         9sEbPLadbIksSzLs4v6f8KuR5VUairJoC0hbY2oW4S9JEbQI23OJESE7tyQZGPGT1taH
-         3im6Fxb22jGupwAVP/NjMlAdUIG8TvJBNZ17bBD+be3WGTUM/eQ4QFaGchQQXr4/WT+Y
-         lNLA==
-X-Gm-Message-State: APjAAAVUrGTUd5dtEs6jTcEcG5o8F4N+uVB+C73Rv9GD4QMK2BNQluns
-        sNE1x9TeHtA0zl4ygfUZtg==
-X-Google-Smtp-Source: APXvYqxbuLQQht91FZVYNE9n31SWDn3CBkcgZaf6PmjzJAuEhmdTySdebLyOl9f5JerA638yM7hVfA==
-X-Received: by 2002:a5d:4a8d:: with SMTP id o13mr271142wrq.350.1562273280196;
-        Thu, 04 Jul 2019 13:48:00 -0700 (PDT)
+        bh=HZLOKYMGayflW0Xxy8TyideR/fv3M68HVeKYr1VPis0=;
+        b=GXrd2EDjCkpnFqLWXSZoQ8hbJljGL3ZWHYFWRLXffkzk1JlTW+UxMV3YMgt+iKzVJF
+         NujuCsUQNnnMmaXgC+DOptiUnWIqFQiZ8z9Y48oukhx3jTvpm9u4IRfjB799VY6VAARq
+         WOZHXDXWEMh40yPE9mbddtClQy0tB979rd3GbK9aDwUmH6hK/SiKvkJrmmDNlvIjdD+2
+         xYKLdrS4A9OTvH6BI+qvScGy2pqS65imFBSvpWVO1ljrAxV5haM/MFCA9eQqC6vKPbqc
+         RIKH1bAu3D7Kcm933+2xUOicJMp9pU72lwCZfwUL08aGwFdnyaCWALZSvQ4mdStOYEzJ
+         Y6Gw==
+X-Gm-Message-State: APjAAAVeAxpj4yWCRvit/HUq+Ni7pt+6Ey7iyupuV5IPR+WhleQET3ou
+        igkL1rHA6Q/esZ51skbxog==
+X-Google-Smtp-Source: APXvYqydB5DebCzLmctfMDON05Bhiw/tMMBVQVYtt/ibGHkR6WuLNDJkLh/m2kSrNvHvZgxy6dHeWA==
+X-Received: by 2002:a1c:2314:: with SMTP id j20mr17431wmj.152.1562273281074;
+        Thu, 04 Jul 2019 13:48:01 -0700 (PDT)
 Received: from localhost.localdomain ([46.53.251.222])
-        by smtp.gmail.com with ESMTPSA id l11sm6042581wrw.97.2019.07.04.13.47.59
+        by smtp.gmail.com with ESMTPSA id l11sm6042581wrw.97.2019.07.04.13.48.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 13:47:59 -0700 (PDT)
+        Thu, 04 Jul 2019 13:48:00 -0700 (PDT)
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, adobriyan@gmail.com
-Subject: [PATCH 2/5] x86_64, -march=native: POPCNT support
-Date:   Thu,  4 Jul 2019 23:47:34 +0300
-Message-Id: <20190704204737.5267-2-adobriyan@gmail.com>
+Subject: [PATCH 3/5] x86_64, -march=native: REP MOVSB support
+Date:   Thu,  4 Jul 2019 23:47:35 +0300
+Message-Id: <20190704204737.5267-3-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190704204737.5267-1-adobriyan@gmail.com>
 References: <20190704204737.5267-1-adobriyan@gmail.com>
@@ -61,87 +61,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Detect POPCNT instruction support and inline hweigth*() functions
-if it is supported by CPU.
+Detect fast REP MOVSB support and use it for page copying.
 
-Detect POPCNT at boot time and conditionally refuse to boot.
+Inline copy_page(), this saves alternative entry and a function call
+overhead which should hopefully improve code generation.
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- arch/x86/include/asm/arch_hweight.h | 24 ++++++++++++++++++++++++
- arch/x86/include/asm/segment.h      |  1 +
- arch/x86/kernel/verify_cpu.S        |  8 ++++++++
- arch/x86/lib/Makefile               |  5 ++++-
- include/linux/bitops.h              |  2 ++
- lib/Makefile                        |  2 ++
- scripts/kconfig/cpuid.c             |  7 +++++++
- scripts/march-native.sh             |  2 ++
- 8 files changed, 50 insertions(+), 1 deletion(-)
+ Makefile                             |  3 +++
+ arch/x86/include/asm/page_64.h       | 13 +++++++++++++
+ arch/x86/kernel/relocate_kernel_64.S | 15 +++++++++++++++
+ arch/x86/kernel/verify_cpu.S         | 12 ++++++++++++
+ arch/x86/lib/Makefile                |  5 ++++-
+ arch/x86/lib/memcpy_64.S             | 13 +++++++++++++
+ arch/x86/platform/pvh/head.S         |  4 ++++
+ scripts/kconfig/cpuid.c              |  9 +++++++++
+ scripts/march-native.sh              |  1 +
+ 9 files changed, 74 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-index ba88edd0d58b..3797aa57baa5 100644
---- a/arch/x86/include/asm/arch_hweight.h
-+++ b/arch/x86/include/asm/arch_hweight.h
-@@ -2,6 +2,28 @@
- #ifndef _ASM_X86_HWEIGHT_H
- #define _ASM_X86_HWEIGHT_H
+diff --git a/Makefile b/Makefile
+index 9b0cfca01997..4422dcf1254b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -606,6 +606,9 @@ endif
+ ifdef CONFIG_MARCH_NATIVE
+ KBUILD_CFLAGS += -march=native
+ endif
++ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++KBUILD_CFLAGS += -mmemcpy-strategy=rep_byte:-1:align,rep_byte:-1:noalign
++endif
  
-+#ifdef CONFIG_MARCH_NATIVE_POPCNT
-+static inline unsigned int __arch_hweight64(uint64_t x)
+ ifeq ($(KBUILD_EXTMOD),)
+ # Objects we will link into vmlinux / subdirs we need to visit
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+index 939b1cff4a7b..051da768273d 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -54,7 +54,20 @@ static inline void clear_page(void *page)
+ 			   : "cc", "memory", "rax", "rcx");
+ }
+ 
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++static __always_inline void copy_page(void *to, void *from)
 +{
-+	return __builtin_popcountll(x);
-+}
-+
-+static inline unsigned int __arch_hweight32(uint32_t x)
-+{
-+	return __builtin_popcount(x);
-+}
-+
-+static inline unsigned int __arch_hweight16(uint16_t x)
-+{
-+	return __builtin_popcount(x);
-+}
-+
-+static inline unsigned int __arch_hweight8(uint8_t x)
-+{
-+	return __builtin_popcount(x);
++	uint32_t len = PAGE_SIZE;
++	asm volatile (
++		"rep movsb"
++		: "+D" (to), "+S" (from), "+c" (len)
++		:
++		: "memory"
++	);
 +}
 +#else
-+
- #include <asm/cpufeatures.h>
- 
- #ifdef CONFIG_64BIT
-@@ -53,3 +75,5 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
- #endif /* CONFIG_X86_32 */
- 
- #endif
-+
+ void copy_page(void *to, void *from);
 +#endif
-diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
-index ac3892920419..d314c6b9b632 100644
---- a/arch/x86/include/asm/segment.h
-+++ b/arch/x86/include/asm/segment.h
-@@ -4,6 +4,7 @@
  
- #include <linux/const.h>
- #include <asm/alternative.h>
-+#include <asm/cpufeatures.h>
+ #endif	/* !__ASSEMBLY__ */
  
- /*
-  * Constructor for a conventional segment GDT (or LDT) entry.
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index c51ccff5cd01..822f7a3d035a 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -266,18 +266,33 @@ swap_pages:
+ 	movq	%rsi, %rax
+ 
+ 	movq	%r10, %rdi
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++	mov	$4096, %ecx
++	rep movsb
++#else
+ 	movl	$512, %ecx
+ 	rep ; movsq
++#endif
+ 
+ 	movq	%rax, %rdi
+ 	movq	%rdx, %rsi
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++	mov	$4096, %ecx
++	rep movsb
++#else
+ 	movl	$512, %ecx
+ 	rep ; movsq
++#endif
+ 
+ 	movq	%rdx, %rdi
+ 	movq	%r10, %rsi
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++	mov	$4096, %ecx
++	rep movsb
++#else
+ 	movl	$512, %ecx
+ 	rep ; movsq
++#endif
+ 
+ 	lea	PAGE_SIZE(%rax), %rsi
+ 	jmp	0b
 diff --git a/arch/x86/kernel/verify_cpu.S b/arch/x86/kernel/verify_cpu.S
-index a024c4f7ba56..a9be8904faa3 100644
+index a9be8904faa3..57b41dafc592 100644
 --- a/arch/x86/kernel/verify_cpu.S
 +++ b/arch/x86/kernel/verify_cpu.S
-@@ -134,6 +134,14 @@ ENTRY(verify_cpu)
- 	movl $1,%eax
- 	ret
- .Lverify_cpu_sse_ok:
-+
-+#ifdef CONFIG_MARCH_NATIVE_POPCNT
-+	mov	$1, %eax
+@@ -142,6 +142,18 @@ ENTRY(verify_cpu)
+ 	jnc	.Lverify_cpu_no_longmode
+ #endif
+ 
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++	xor	%eax, %eax
 +	cpuid
-+	bt	$23, %ecx
++	cmp	$7, %eax
++	jb	.Lverify_cpu_no_longmode
++	mov	$7, %eax
++	xor	%ecx, %ecx
++	cpuid
++	bt	$9, %ebx
 +	jnc	.Lverify_cpu_no_longmode
 +#endif
 +
@@ -149,97 +180,116 @@ index a024c4f7ba56..a9be8904faa3 100644
  	xorl %eax, %eax
  	ret
 diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 5246db42de45..7dc0e71b0ef3 100644
+index 7dc0e71b0ef3..fa24cc717fb1 100644
 --- a/arch/x86/lib/Makefile
 +++ b/arch/x86/lib/Makefile
-@@ -40,7 +40,10 @@ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
- 
--obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
-+obj-y += msr.o msr-reg.o msr-reg-export.o
-+ifneq ($(CONFIG_MARCH_NATIVE_POPCNT),y)
-+	obj-y += hweight.o
+@@ -59,7 +59,10 @@ endif
+ else
+         obj-y += iomap_copy_64.o
+         lib-y += csum-partial_64.o csum-copy_64.o csum-wrappers_64.o
+-        lib-y += clear_page_64.o copy_page_64.o
++        lib-y += clear_page_64.o
++ifneq ($(CONFIG_MARCH_NATIVE_REP_MOVSB),y)
++	lib-y += copy_page_64.o
 +endif
- obj-y += iomem.o
+         lib-y += memmove_64.o memset_64.o
+         lib-y += copy_user_64.o
+ 	lib-y += cmpxchg16b_emu.o
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 92748660ba51..ab5b9662b348 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -17,6 +17,18 @@
  
- ifeq ($(CONFIG_X86_32),y)
-diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-index cf074bce3eb3..655b120bba66 100644
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -7,10 +7,12 @@
- #define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
- #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+ .weak memcpy
  
-+#ifndef CONFIG_MARCH_NATIVE_POPCNT
- extern unsigned int __sw_hweight8(unsigned int w);
- extern unsigned int __sw_hweight16(unsigned int w);
- extern unsigned int __sw_hweight32(unsigned int w);
- extern unsigned long __sw_hweight64(__u64 w);
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++ENTRY(__memcpy)
++ENTRY(memcpy)
++	mov	%rdi, %rax
++	mov	%rdx, %rcx
++	rep movsb
++	ret
++ENDPROC(memcpy)
++ENDPROC(__memcpy)
++EXPORT_SYMBOL(memcpy)
++EXPORT_SYMBOL(__memcpy)
++#else
+ /*
+  * memcpy - Copy a memory block.
+  *
+@@ -183,6 +195,7 @@ ENTRY(memcpy_orig)
+ .Lend:
+ 	retq
+ ENDPROC(memcpy_orig)
 +#endif
  
- /*
-  * Include this here because some architectures need generic_ffs/fls in
-diff --git a/lib/Makefile b/lib/Makefile
-index fb7697031a79..87e7b974cab1 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -112,7 +112,9 @@ obj-$(CONFIG_DEBUG_LOCKING_API_SELFTESTS) += locking-selftest.o
+ #ifndef CONFIG_UML
  
- obj-y += logic_pio.o
+diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
+index 1f8825bbaffb..2737f3e8c021 100644
+--- a/arch/x86/platform/pvh/head.S
++++ b/arch/x86/platform/pvh/head.S
+@@ -64,9 +64,13 @@ ENTRY(pvh_start_xen)
+ 	mov $_pa(pvh_start_info), %edi
+ 	mov %ebx, %esi
+ 	mov _pa(pvh_start_info_sz), %ecx
++#ifdef CONFIG_MARCH_NATIVE_REP_MOVSB
++	rep movsb
++#else
+ 	shr $2,%ecx
+ 	rep
+ 	movsl
++#endif
  
-+ifneq ($(CONFIG_MARCH_NATIVE_POPCNT),y)
- obj-$(CONFIG_GENERIC_HWEIGHT) += hweight.o
-+endif
+ 	mov $_pa(early_stack_end), %esp
  
- obj-$(CONFIG_BTREE) += btree.o
- obj-$(CONFIG_INTERVAL_TREE) += interval_tree.o
 diff --git a/scripts/kconfig/cpuid.c b/scripts/kconfig/cpuid.c
-index 81b292382e26..9efc0d9464d8 100644
+index 9efc0d9464d8..2d78fba1dcc7 100644
 --- a/scripts/kconfig/cpuid.c
 +++ b/scripts/kconfig/cpuid.c
-@@ -43,6 +43,8 @@ static inline void cpuid2(uint32_t eax0, uint32_t ecx0, uint32_t *eax, uint32_t
- 	);
+@@ -44,6 +44,7 @@ static inline void cpuid2(uint32_t eax0, uint32_t ecx0, uint32_t *eax, uint32_t
  }
  
-+static bool popcnt	= false;
-+
+ static bool popcnt	= false;
++static bool rep_movsb	= false;
+ 
  static uint32_t eax0_max;
  
- static void intel(void)
-@@ -52,6 +54,10 @@ static void intel(void)
- 	if (eax0_max >= 1) {
- 		cpuid(1, &eax, &ecx, &edx, &ebx);
- //		printf("%08x %08x %08x %08x\n", eax, ecx, edx, ebx);
-+
-+		if (ecx & (1 << 23)) {
-+			popcnt = true;
-+		}
+@@ -59,6 +60,13 @@ static void intel(void)
+ 			popcnt = true;
+ 		}
  	}
++	if (eax0_max >= 7) {
++		cpuid2(7, 0, &eax, &ecx, &edx, &ebx);
++//		printf("%08x %08x %08x %08x\n", eax, ecx, edx, ebx);
++
++		if (ebx & (1 << 9))
++			rep_movsb = true;
++	}
  }
  
-@@ -72,6 +78,7 @@ int main(int argc, char *argv[])
- 	}
+ int main(int argc, char *argv[])
+@@ -79,6 +87,7 @@ int main(int argc, char *argv[])
  
  #define _(x)	if (streq(opt, #x)) return x ? EXIT_SUCCESS : EXIT_FAILURE
-+	_(popcnt);
+ 	_(popcnt);
++	_(rep_movsb);
  #undef _
  
  	return EXIT_FAILURE;
 diff --git a/scripts/march-native.sh b/scripts/march-native.sh
-index 29a33c80b62b..c3059f93ed2b 100755
+index c3059f93ed2b..87f00cdb8e10 100755
 --- a/scripts/march-native.sh
 +++ b/scripts/march-native.sh
-@@ -41,6 +41,8 @@ COLLECT_GCC_OPTIONS=$(
- )
+@@ -42,6 +42,7 @@ COLLECT_GCC_OPTIONS=$(
  echo "-march=native: $COLLECT_GCC_OPTIONS"
  
-+"$CPUID" popcnt		&& option "CONFIG_MARCH_NATIVE_POPCNT"
-+
+ "$CPUID" popcnt		&& option "CONFIG_MARCH_NATIVE_POPCNT"
++"$CPUID" rep_movsb	&& option "CONFIG_MARCH_NATIVE_REP_MOVSB"
+ 
  for i in $COLLECT_GCC_OPTIONS; do
  	case $i in
- 		*/cc1|-E|-quiet|-v|/dev/null|--param|-fstack-protector*)
 -- 
 2.21.0
 
