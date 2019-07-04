@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 555A75F750
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F095F743
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfGDLqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:46:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2275 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727436AbfGDLp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:45:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 04:45:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,450,1557212400"; 
-   d="scan'208";a="339583474"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga005.jf.intel.com with ESMTP; 04 Jul 2019 04:45:56 -0700
-Date:   Thu, 4 Jul 2019 19:29:13 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>, Alan Tull <atull@kernel.org>
-Subject: Re: [PATCH 06/15] fpga: dfl: fme: add
- DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
-Message-ID: <20190704112913.GA24884@hao-dev>
-References: <20190628004951.6202-1-mdf@kernel.org>
- <20190628004951.6202-7-mdf@kernel.org>
- <20190703180753.GA24723@kroah.com>
- <20190703233058.GA15825@hao-dev>
- <20190704053927.GB347@kroah.com>
- <20190704063106.GA24777@hao-dev>
- <20190704082013.GE6438@kroah.com>
- <20190704085855.GB7391@hao-dev>
- <20190704110449.GC1404@kroah.com>
+        id S1727621AbfGDLg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:36:57 -0400
+Received: from smtp2.infineon.com ([217.10.52.18]:2767 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbfGDLg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:36:57 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 07:36:55 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1562240216; x=1593776216;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=jj7pE5xyI7GKLRZzLxvYqwwU70BVQrx76pcVRLKA4RI=;
+  b=I8myp0XAPwFYWUjtFKYtEWt3h4jGAVEHi+wgjypm5QiARvRvk7TzZTan
+   W3ni6evVIN8maG4nq2whKh7mcSvndPa/tRRJVGi1qWQ7yeyBRkmnSPOhY
+   hlafMmkea33Ogg0cAXvo+p4AspLJ3chtSvyj+mPPSkVkacVhjfTS8EVck
+   Y=;
+IronPort-SDR: IXo7G6x+FN7DENZq6DX7nJou9qS2eXOrvYbwJ9vgXAStjiOzFMQzGFiCywqbwRFxbyoO4qxlD3
+ Ly1phjuUTNTw==
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="6000,8403,9307"; a="5415994"
+X-IronPort-AV: E=Sophos;i="5.63,450,1557180000"; 
+   d="scan'208";a="5415994"
+Received: from unknown (HELO mucxv002.muc.infineon.com) ([172.23.11.17])
+  by smtp2.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 13:29:46 +0200
+Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
+        by mucxv002.muc.infineon.com (Postfix) with ESMTPS;
+        Thu,  4 Jul 2019 13:29:45 +0200 (CEST)
+Received: from [10.154.32.88] (172.23.8.247) by MUCSE708.infineon.com
+ (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1591.10; Thu, 4
+ Jul 2019 13:29:45 +0200
+Subject: Re: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Oshri Alkoby <oshrialkoby85@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <peterhuewe@gmx.de>, <jgg@ziepe.ca>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <oshri.alkoby@nuvoton.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <gcwilson@us.ibm.com>,
+        <kgoldman@us.ibm.com>, <nayna@linux.vnet.ibm.com>,
+        <dan.morav@nuvoton.com>, <tomer.maimon@nuvoton.com>
+References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
+ <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
+From:   Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com>
+Date:   Thu, 4 Jul 2019 13:29:41 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704110449.GC1404@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE716.infineon.com (172.23.7.67) To
+ MUCSE708.infineon.com (172.23.7.82)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 01:04:49PM +0200, Greg KH wrote:
-> On Thu, Jul 04, 2019 at 04:58:55PM +0800, Wu Hao wrote:
-> > > > Hope things could be more clear now. :)
-> > > 
-> > > That's nice for the vfio stuff, but you are just a "normal" driver here.
-> > > You want an ioctl that just does one thing, no arguments, no flags, no
-> > > anything.  No need for a size argument then at all.  These ioctls don't
-> > > even need a structure for them!
-> > > 
-> > > Don't try to be fancy, it's not needed, it's not like you are running
-> > > out of ioctl space...
-> > 
-> > Thanks a lot for the comments and suggestions.
-> > 
-> > That's true, it's a "normal" driver, maybe I overly considered the
-> > extensibility of it. OK, Let me rework this patch to remove argsz from
-> > these two ioctls.
-> > 
-> > What about the existing ioctls for this driver, they have argsz too.
-> > shall I prepare another patch to remove them as well?
-> 
-> I am hoping you actually have users for those ioctls in userspace today?
-> If not, and no one is using them, then yes, please fix those too.
+On 04.07.2019 10:43, Jarkko Sakkinen wrote:
+> Check out tpm_tis_core.c and tpm_tis_spi.c. TPM TIS driver implements
+> that spec so you should only implement a new physical layer.
 
-Yes, we have a few users, not many, e.g. https://github.com/OPAE/opae-sdk
+I had the same thought. Unfortunately, the I2C-TIS specification 
+introduces two relevant changes compared to tpm_tis/tpm_tis_spi:
 
-I believe we may have more users as we are submitting code to make this
-driver more usable.
+1. Locality is not encoded into register addresses anymore, but stored 
+in a separate register.
+2. Several register addresses have changed (but still contain compatible 
+contents).
 
-Let me think about this, if we want to do this clean up, we have to 
-increase the API version to tell everybody, things are changed. If
-finally we decide to do this clean up, that will be a new patch after
-this patchset.
+I'd still prefer not to duplicate all the high-level logic from 
+tpm_tis_core. But this will probably mean to introduce some new 
+interfaces between tpm_tis_core and the physical layers.
 
-Many Thanks for your patient guide and suggestions. :)
+Also, shouldn't the new driver be called tpm_tis_i2c, to group it with 
+all the other (TIS) drivers, that implement a vendor-independent 
+protocol? With tpm_i2c_ptp users might assume that ptp is just another 
+vendor.
 
-Hao
-
-> 
-> thanks,
-> 
-> greg k-h
+Alexander
