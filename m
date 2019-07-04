@@ -2,110 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9105F2B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DC65F2A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfGDGUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:20:54 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59588 "EHLO huawei.com"
+        id S1727324AbfGDGSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:18:01 -0400
+Received: from mail-eopbgr80040.outbound.protection.outlook.com ([40.107.8.40]:30176
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725879AbfGDGUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:20:54 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 45670AA97B57D36471A2;
-        Thu,  4 Jul 2019 14:20:44 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
- 14:20:36 +0800
-Subject: Re: [PATCH RFC 0/3] Support CPU hotplug for ARM64
-To:     Jia He <hejianet@gmail.com>, <rjw@rjwysocki.net>,
-        <catalin.marinas@arm.com>, <james.morse@arm.com>
-CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <guohanjun@huawei.com>,
-        <xiexiuqi@huawei.com>, <huawei.libin@huawei.com>,
-        <john.garry@huawei.com>, <jonathan.cameron@huawei.com>
-References: <1561720392-45907-1-git-send-email-wangxiongfeng2@huawei.com>
- <2b22cf4d-9646-9f20-41ae-cceb83d9791b@gmail.com>
- <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
- <7898e483-a8e4-39a2-358f-8fcf838c242f@gmail.com>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <e9acd13e-2501-4b62-496d-e8a5cb872191@huawei.com>
-Date:   Thu, 4 Jul 2019 14:17:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <7898e483-a8e4-39a2-358f-8fcf838c242f@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1725879AbfGDGSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:18:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uPzfZbM8OzuukWXG8MI+OeDiGGOpEIbYpowB9n9Jlq4=;
+ b=mbkFfmSHyFVvlf674eqXdl4AqTpNS0Y5HfqtPqQyGZe2WtsK9xnLNDikg8EVe6xEbGZ2h5vCb/4pzMepZyHul/o8kLXTtgyd47rW+NGWK9CtUUtfdZUJM1jJRxfemgxQvkmCPtovOLp/Sy8/nFeNb8duJd1qkr+k6KpNgr29wTo=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4637.eurprd08.prod.outlook.com (10.255.27.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Thu, 4 Jul 2019 06:17:57 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1%3]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
+ 06:17:57 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH 0/6] arm/komeda: Add side_by_side support
+Thread-Topic: [PATCH 0/6] arm/komeda: Add side_by_side support
+Thread-Index: AQHVMjA5MDII/vYZmUezDVlIyedfFw==
+Date:   Thu, 4 Jul 2019 06:17:57 +0000
+Message-ID: <20190704061717.6854-1-james.qian.wang@arm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR01CA0070.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::34) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e9f02583-80b4-4f27-affc-08d700475b4b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4637;
+x-ms-traffictypediagnostic: VE1PR08MB4637:
+x-microsoft-antispam-prvs: <VE1PR08MB463796A4283CFACE3D2AD538B3FA0@VE1PR08MB4637.eurprd08.prod.outlook.com>
+nodisclaimer: True
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0088C92887
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(396003)(136003)(39860400002)(346002)(199004)(189003)(99286004)(110136005)(14444005)(36756003)(68736007)(256004)(52116002)(102836004)(26005)(386003)(55236004)(3846002)(6116002)(6506007)(8676002)(5660300002)(103116003)(486006)(2906002)(54906003)(2501003)(186003)(6436002)(81156014)(81166006)(2201001)(476003)(71200400001)(86362001)(305945005)(7736002)(8936002)(478600001)(2616005)(6486002)(66476007)(64756008)(66066001)(66946007)(4326008)(53936002)(50226002)(66446008)(14454004)(316002)(73956011)(66556008)(71190400001)(6512007)(1076003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4637;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: tO5faAHHfsRzx99LlbuSmjtDslv5QdMNGl/PjfYWcBS8qUL/qU5K6Cw66Ir9PeClFe4VIVNb+VW0Nt/+zIBkTWjj9hMbX1Nsi4t/YcWRCZqwYAt0zNlpBe2oVBgyFXHEVaU69cjj+Qhh2I0OO4HRbZjhBi2jtDHWuPzIH4vitSulK5nnBRT5s0ARsjCXZzUbAzl97Fz8xUW/YkL+KC3sf0O29hwLGEblXhyD22/1q4gK4Un2XxY75GONT+plKk6yOeDMU4syHtxTRFa1iBuU/cQEVHs9VXawwRrLQ7uWVvkhMcKsxSEsXxqc/lJmAStWWBVWdYjOtRlfsHI1+EZVYIk5VrI6CIMoV6SWzQkcLRXrU82Zwnztga2toIPe+cNDP3vtOELKqZfs0nwRIolAbMV1cErOng3k/aesFo6mZkE=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9f02583-80b4-4f27-affc-08d700475b4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 06:17:57.7355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4637
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Komeda HW can support side by side, which splits the internal display
+processing to two single halves (LEFT/RIGHT) and handle them by two
+pipelines separately.
 
 
-On 2019/7/4 14:04, Jia He wrote:
-> Hi Xiongfeng
-> 
-> Sorry, I missed your latter mail, you used a emulated SCI interrupt
+James Qian Wang (Arm Technology China) (6):
+  drm/komeda: Add side by side assembling
+  drm/komeda: Add side by side plane_state split
+  drm/komeda: Build side by side display output pipeline
+  drm/komeda: Add side by side support for writeback
+  drm/komeda: Update writeback signal for side_by_side
+  drm/komeda: Expose side_by_side by sysfs/config_id
 
-Yes, I only used a emulated SCI interrupt. My colleague is working on the qemu part.
-He used the GED device in qemu. But there is still some other issues with the qemu
-and he is working on it.
+ .../drm/arm/display/include/malidp_product.h  |   3 +-
+ .../arm/display/komeda/d71/d71_component.c    |   4 +
+ .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  51 ++--
+ .../gpu/drm/arm/display/komeda/komeda_dev.c   |   4 +
+ .../gpu/drm/arm/display/komeda/komeda_dev.h   |   9 +
+ .../gpu/drm/arm/display/komeda/komeda_kms.h   |   8 +
+ .../drm/arm/display/komeda/komeda_pipeline.c  |  50 +++-
+ .../drm/arm/display/komeda/komeda_pipeline.h  |  39 ++-
+ .../display/komeda/komeda_pipeline_state.c    | 277 +++++++++++++++++-
+ .../gpu/drm/arm/display/komeda/komeda_plane.c |   7 +-
+ .../arm/display/komeda/komeda_wb_connector.c  |  11 +-
+ 11 files changed, 417 insertions(+), 46 deletions(-)
 
-> 
-> ---
-> Cheers,
-> Justin (Jia He)
-> 
-> On 2019/7/4 11:26, Xiongfeng Wang wrote:
->> Hi Justin,
->>
->> On 2019/7/4 11:00, Jia He wrote:
->>> Hi Xiongfeng
->>>
->>> It is a little bit awkful that I am also  investigating acpi based cpu hotplug issue silimar with
->>>
->>> your idea. My question is your purpose to implement the vcpu hotplug in arm64 qemu?
->> Yes, my purpose is to implement the vcpu hotplug in arm64 qemu. So that I can add or remove vcpu
->> without shutting down the Guest OS.
->>
->> Thanks,
->> Xiongfeng
->>
->>> Thanks for the ellaboration
->>>
->>> ---
->>> Cheers,
->>> Justin (Jia He)
->>>
->>> On 2019/6/28 19:13, Xiongfeng Wang wrote:
->>>> This patchset mark all the GICC node in MADT as possible CPUs even though it
->>>> is disabled. But only those enabled GICC node are marked as present CPUs.
->>>> So that kernel will initialize some CPU related data structure in advance before
->>>> the CPU is actually hot added into the system. This patchset also implement
->>>> 'acpi_(un)map_cpu()' and 'arch_(un)register_cpu()' for ARM64. These functions are
->>>> needed to enable CPU hotplug.
->>>>
->>>> To support CPU hotplug, we need to add all the possible GICC node in MADT
->>>> including those CPUs that are not present but may be hot added later. Those
->>>> CPUs are marked as disabled in GICC nodes.
->>>>
->>>> Xiongfeng Wang (3):
->>>>     ACPI / scan: evaluate _STA for processors declared via ASL Device
->>>>       statement
->>>>     arm64: mark all the GICC nodes in MADT as possible cpu
->>>>     arm64: Add CPU hotplug support
->>>>
->>>>    arch/arm64/kernel/acpi.c  | 22 ++++++++++++++++++++++
->>>>    arch/arm64/kernel/setup.c | 19 ++++++++++++++++++-
->>>>    arch/arm64/kernel/smp.c   | 11 +++++------
->>>>    drivers/acpi/scan.c       | 12 ++++++++++++
->>>>    4 files changed, 57 insertions(+), 7 deletions(-)
->>>>
->>> .
->>>
-
+--
+2.20.1
