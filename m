@@ -2,134 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458365F639
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2375C5F641
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfGDKCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 06:02:23 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35902 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfGDKCW (ORCPT
+        id S1727573AbfGDKDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 06:03:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:10679 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727385AbfGDKDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:02:22 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k8so2842681plt.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 03:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AHAOh7FBxYQUboNiiix/lSgcCWAvw4RHDpwodpRKdNs=;
-        b=Q2p98X98irjXvs/iO/RhgVHs6Fge85Y5iF373sUnY3qNCrHybAjkpOg2173g30ukn9
-         HceW3sPP1hcjiOirEYf1+2mbxehzwjbOdybYng+r5jcyFlXNsHvgeNL89Q3S+MFrxv12
-         Rg/JCjywQszl4f7Mb90cJMn6Y5sCGTNGVuW0A1qsFWjYht58BcSwfcWaKbWKdYpJhTK+
-         2OL5lza0T8EGCgP+/sjaYM9zJ6O96cbpqVgRV/sFu5KLA9MJEl767XFzWRKGIARGVIGN
-         YVM8rxsGOi8DS9TO2jE10VLDKy3iWLNFkeOLvvZKL7EKKDLLU4bDYr0Aklq71Uabo+FM
-         V/pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AHAOh7FBxYQUboNiiix/lSgcCWAvw4RHDpwodpRKdNs=;
-        b=Ewi5CYe9KAEpMdzYU3bicnKh8BCh4rEYhHFWM/Hy2NFUedxua3U1KvJpvd5wfxIXbh
-         rKL1LQvB6X249CLW/gy/oA/qtpiGjVxHlYSvqSpEIZ9kue0EjG4RqGgDhjfBCpBOYTFj
-         WP/9Sjwiehh3lPCklVmLsIPRFkmQ39QFifgJwfPdF6M99U/2Xa4GuqWa9xCn1QW81vS4
-         rOL/hQVEjuWvfOZAldVwPkO99wcHZJ6yr/F5Vyz4zWD0H6DeMkjRUZPQHsLhH4WxRvtq
-         DdWaigv01uL/bzTxEvoU/0AN5oR5bJqr2islg6yWZHxHLZ1U0PFxJN0j2ORinxFRsO7Z
-         CK/g==
-X-Gm-Message-State: APjAAAXIAeT9X4bfqnAzROibT67HQXelSHteYIYj6ymmJvW4GoEfQS5y
-        oPDqnLZic99Y6DqeW3xC71M=
-X-Google-Smtp-Source: APXvYqyUpSz5kViPDgxvt9wrV2Cyk1yHzTLql9qU6i3mRjiEnK1Vbw4O//g0ryQX4vvxf+WtJC1zCQ==
-X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr46217419plb.316.1562234541812;
-        Thu, 04 Jul 2019 03:02:21 -0700 (PDT)
-Received: from localhost ([218.189.10.173])
-        by smtp.gmail.com with ESMTPSA id w187sm5189791pfb.4.2019.07.04.03.02.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Jul 2019 03:02:21 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 18:02:07 +0800
-From:   Yue Hu <zbestahu@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, yuchao0@huawei.com,
-        linux-kernel@vger.kernel.org, huyue2@yulong.com,
-        linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH RESEND v3] staging: erofs: remove unsupported ->datamode
- check in fill_inline_data()
-Message-ID: <20190704180207.0000374e.zbestahu@gmail.com>
-In-Reply-To: <20190704052649.GA7454@kroah.com>
-References: <20190702025601.7976-1-zbestahu@gmail.com>
-        <20190703162038.GA31307@kroah.com>
-        <20190704095903.0000565e.zbestahu@gmail.com>
-        <20190704052649.GA7454@kroah.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        Thu, 4 Jul 2019 06:03:32 -0400
+X-UUID: e1d4251ec8204cbf9f1ee152e63b0ed9-20190704
+X-UUID: e1d4251ec8204cbf9f1ee152e63b0ed9-20190704
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <ran.bi@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 924325187; Thu, 04 Jul 2019 18:03:17 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n2.mediatek.inc
+ (172.21.101.56) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 4 Jul
+ 2019 18:03:12 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 4 Jul 2019 18:03:09 +0800
+Message-ID: <1562234589.19751.16.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 5/7] power: reset: add driver for mt6323 poweroff
+From:   Ran Bi <ran.bi@mediatek.com>
+To:     Frank Wunderlich <frank-w@public-files.de>
+CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Josef Friedl <josef.friedl@speed.at>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ran Bi <ran.bi@mediatek.com>
+Date:   Thu, 4 Jul 2019 18:03:09 +0800
+In-Reply-To: <20190703164822.17924-6-frank-w@public-files.de>
+References: <20190703164822.17924-1-frank-w@public-files.de>
+         <20190703164822.17924-6-frank-w@public-files.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 5DE4835C1875B5950092AA7126EE354752A756CA69AC4641991F64CEFDA4E85A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 4 Jul 2019 07:26:49 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> On Thu, Jul 04, 2019 at 09:59:03AM +0800, Yue Hu wrote:
-> > On Wed, 3 Jul 2019 18:20:38 +0200
-> > Greg KH <gregkh@linuxfoundation.org> wrote:
-> >   
-> > > On Tue, Jul 02, 2019 at 10:56:01AM +0800, Yue Hu wrote:  
-> > > > From: Yue Hu <huyue2@yulong.com>
-> > > > 
-> > > > Already check if ->datamode is supported in read_inode(), no need to check
-> > > > again in the next fill_inline_data() only called by fill_inode().
-> > > > 
-> > > > Signed-off-by: Yue Hu <huyue2@yulong.com>
-> > > > Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-> > > > Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> > > > ---
-> > > > no change
-> > > > 
-> > > >  drivers/staging/erofs/inode.c | 2 --
-> > > >  1 file changed, 2 deletions(-)    
-> > > 
-> > > This is already in my tree, right?  
-> > 
-> > Seems not, i have received notes about other 2 patches below mergerd:
-> > 
-> > ```note1
-> > This is a note to let you know that I've just added the patch titled
-> > 
-> >     staging: erofs: don't check special inode layout
-> > 
-> > to my staging git tree which can be found at
-> >     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> > in the staging-next branch.
-> > ```
-> > 
-> > ```note2
-> > This is a note to let you know that I've just added the patch titled
-> > 
-> >     staging: erofs: return the error value if fill_inline_data() fails
-> > 
-> > to my staging git tree which can be found at
-> >     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> > in the staging-next branch.
-> > ```
-> > 
-> > No this patch in below link checked:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/log/drivers/staging/erofs?h=staging-testing  
+On Wed, 2019-07-03 at 18:48 +0200, Frank Wunderlich wrote:
+> From: Josef Friedl <josef.friedl@speed.at>
 > 
-> Then if it is not present, it needs to be rebased as it does not apply.
+> Suggested-by: Frank Wunderlich <frank-w@public-files.de>
+> Signed-off-by: Josef Friedl <josef.friedl@speed.at>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  drivers/power/reset/Kconfig           | 10 +++
+>  drivers/power/reset/Makefile          |  1 +
+>  drivers/power/reset/mt6323-poweroff.c | 97 +++++++++++++++++++++++++++
+>  include/linux/mfd/mt6397/core.h       |  2 +
+>  4 files changed, 110 insertions(+)
+>  create mode 100644 drivers/power/reset/mt6323-poweroff.c
 > 
-> Please do so and resend it.
-
-Hm, no need to resend since it's included in another patch below.
-
-ec8c244 staging: erofs: add compacted ondisk compression indexes.
-
-Thanks.
-
+> --
+> 2.17.1
 > 
-> thanks,
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index 980951dff834..492678e22088 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -140,6 +140,16 @@ config POWER_RESET_LTC2952
+>  	  This driver supports an external powerdown trigger and board power
+>  	  down via the LTC2952. Bindings are made in the device tree.
 > 
-> greg k-h
+> +config POWER_RESET_MT6323
+> +       bool "MediaTek MT6323 power-off driver"
+> +       depends on MFD_MT6397
+> +       help
+> +         The power-off driver is responsible for externally shutdown down
+> +         the power of a remote MediaTek SoC MT6323 is connected to through
+> +         controlling a tiny circuit BBPU inside MT6323 RTC.
+> +
+> +         Say Y if you have a board where MT6323 could be found.
+> +
+>  config POWER_RESET_QNAP
+>  	bool "QNAP power-off driver"
+>  	depends on OF_GPIO && PLAT_ORION
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index 0aebee954ac1..94eaceb01d66 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_POWER_RESET_GPIO) += gpio-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+>  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+>  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+> +obj-$(CONFIG_POWER_RESET_MT6323) += mt6323-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QCOM_PON) += qcom-pon.o
+>  obj-$(CONFIG_POWER_RESET_OCELOT_RESET) += ocelot-reset.o
+>  obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
+> diff --git a/drivers/power/reset/mt6323-poweroff.c b/drivers/power/reset/mt6323-poweroff.c
+> new file mode 100644
+> index 000000000000..1caf43d9e46d
+> --- /dev/null
+> +++ b/drivers/power/reset/mt6323-poweroff.c
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Power off through MediaTek PMIC
+> + *
+> + * Copyright (C) 2018 MediaTek Inc.
+> + *
+> + * Author: Sean Wang <sean.wang@mediatek.com>
+> + *
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/mt6397/core.h>
+> +#include <linux/mfd/mt6397/rtc.h>
+> +
+> +struct mt6323_pwrc {
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +	u32 base;
+> +};
+> +
+> +static struct mt6323_pwrc *mt_pwrc;
+> +
+> +static void mt6323_do_pwroff(void)
+> +{
+> +	struct mt6323_pwrc *pwrc = mt_pwrc;
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	regmap_write(pwrc->regmap, pwrc->base + RTC_BBPU, RTC_BBPU_KEY);
+> +	regmap_write(pwrc->regmap, pwrc->base + RTC_WRTGR, 1);
+> +
+> +	ret = regmap_read_poll_timeout(pwrc->regmap,
+> +					pwrc->base + RTC_BBPU, val,
+> +					!(val & RTC_BBPU_CBUSY),
+> +					MTK_RTC_POLL_DELAY_US,
+> +					MTK_RTC_POLL_TIMEOUT);
+> +	if (ret)
+> +		dev_err(pwrc->dev, "failed to write BBPU: %d\n", ret);
+> +
+> +	/* Wait some time until system down, otherwise, notice with a warn */
+> +	mdelay(1000);
+> +
+> +	WARN_ONCE(1, "Unable to power off system\n");
+> +}
+> +
+> +static int mt6323_pwrc_probe(struct platform_device *pdev)
+> +{
+> +	struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
+> +	struct mt6323_pwrc *pwrc;
+> +	struct resource *res;
+> +
+> +	pwrc = devm_kzalloc(&pdev->dev, sizeof(*pwrc), GFP_KERNEL);
+> +	if (!pwrc)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pwrc->base = res->start;
+> +	pwrc->regmap = mt6397_chip->regmap;
+> +	pwrc->dev = &pdev->dev;
+> +	mt_pwrc = pwrc;
+> +
+> +	pm_power_off = &mt6323_do_pwroff;
+
+We had implement MT8173 poweroff function in arm-trusted-firmware's PSCI
+plat_system_off() function. MT8173 SoC is using PMIC MT6397. (Ref:
+https://github.com/ARM-software/arm-trusted-firmware/blob/master/plat/mediatek/mt8173/plat_pm.c and https://github.com/ARM-software/arm-trusted-firmware/blob/master/plat/mediatek/mt8173/drivers/rtc) Do you think it's better to implement poweroff function into arm-trusted-firmware compared to hijack pm_poweroff() function in Kernel? Right now, we are doing the upstream of other PMIC chip like MT6358's poweroff function in arm-trusted-firmware too.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int mt6323_pwrc_remove(struct platform_device *pdev)
+> +{
+> +	if (pm_power_off == &mt6323_do_pwroff)
+> +		pm_power_off = NULL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mt6323_pwrc_dt_match[] = {
+> +	{ .compatible = "mediatek,mt6323-pwrc" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mt6323_pwrc_dt_match);
+> +
+> +static struct platform_driver mt6323_pwrc_driver = {
+> +	.probe          = mt6323_pwrc_probe,
+> +	.remove         = mt6323_pwrc_remove,
+> +	.driver         = {
+> +		.name   = "mt6323-pwrc",
+> +		.of_match_table = mt6323_pwrc_dt_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(mt6323_pwrc_driver);
+> +
+> +MODULE_DESCRIPTION("Poweroff driver for MT6323 PMIC");
+> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/mfd/mt6397/core.h b/include/linux/mfd/mt6397/core.h
+> index 25a95e72179b..652da61e3711 100644
+> --- a/include/linux/mfd/mt6397/core.h
+> +++ b/include/linux/mfd/mt6397/core.h
+> @@ -7,6 +7,8 @@
+>  #ifndef __MFD_MT6397_CORE_H__
+>  #define __MFD_MT6397_CORE_H__
+> 
+> +#include <linux/mutex.h>
+> +
+>  enum mt6397_irq_numbers {
+>  	MT6397_IRQ_SPKL_AB = 0,
+
 
