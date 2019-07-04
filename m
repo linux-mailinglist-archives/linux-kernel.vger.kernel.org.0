@@ -2,186 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F1A5F1F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40FDA5F227
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbfGDEU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 00:20:58 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45112 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfGDEU6 (ORCPT
+        id S1726698AbfGDEXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 00:23:07 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:58908 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725795AbfGDEXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 00:20:58 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j19so6695100qtr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 21:20:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VjvgxdNhPmADUJRmfeTfTeGfFIsk8W3vAlS9rGS+5AM=;
-        b=BnWc5xtMEJsnDCepWNyb5rcilvYtilHQ0QXIGZK9YkG/Pg9Y8eseLWULMKFz3VXCP9
-         cVlZqVBI5XO4GtgimaItxTYUR1dOoJCb8cQuG6KUoF1Su6+F5eKeq0lN1eMslGMK9xPY
-         3MqPpJrCdwR9MmUG6UsFlHWS75zrbatjkKoOgfQUtOv4P6JIn+6h451LqtFDEmd56nqY
-         lBlciWn0EV/aSSQAikypVJs4i+sl4yWWz7xW3G27KSqVODQrLZ56nrKwGtEYYf+xuVWs
-         Q1XS5SYKybuYBkJcagE53Z3YLVRNujRpsQTvPqK1fGFLYXMZsbECiciahprDxlA2bIe3
-         cknA==
-X-Gm-Message-State: APjAAAWFADFK0R324Dt0h9B4YITLcLIGb+OjEsrRT+eWvEh4bmWdU4SC
-        bzLf9+np4RdKJ8pL50xDAHs=
-X-Google-Smtp-Source: APXvYqzMRVfvHpkLgMAQyujeyq9jczN9KYoJEegLcswXWtcHBnEzNE2ycM0Njt2NLU3cr/g3HsJOfA==
-X-Received: by 2002:aed:3ed5:: with SMTP id o21mr33852578qtf.369.1562214057070;
-        Wed, 03 Jul 2019 21:20:57 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:480::d156])
-        by smtp.gmail.com with ESMTPSA id i1sm1911451qtb.7.2019.07.03.21.20.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 21:20:55 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 00:20:53 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] percpu: Make pcpu_setup_first_chunk() void function
-Message-ID: <20190704042053.GA29349@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190703082552.69951-1-wangkefeng.wang@huawei.com>
+        Thu, 4 Jul 2019 00:23:07 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x644KGjD006885;
+        Wed, 3 Jul 2019 21:22:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pfpt0818; bh=M+kOm1nHRZaMKmOJ4g7P8i/VlEnHAGFDNyiQNGAdywY=;
+ b=pavYEwy805sI6T/oi+AlXWds9AU0V6h0scLAtS1CdTLYGT3cJfS7s+eSkx8qTDopP/VQ
+ 9kolRH4L232RvU+oxowVxtE5it+Bdv1gQZgLxcznE+B8kv5mH5I713yxhmHXwyP8g+BB
+ 5vGhlwbPP9aVF6sbKCIMw6Mz6gxTYc2IW7/+PvYHpLp8NaqkIsWA9n0QUWxHuuepKFss
+ XqXC8KG3VQB8u89iVPErDalDPOuVnEzz+fHZt/NN4MM5cDh6UlxTBxCysrFwPq+3xxIM
+ T+0m9mlYeMI8W3oOy65zEqzUcOLkxqODv8psFTeF3VLnfF3elxuguqkTicnBFqV8htju Zw== 
+Received: from sc-exch01.marvell.com ([199.233.58.181])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2th948087u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jul 2019 21:22:50 -0700
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH01.marvell.com
+ (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Wed, 3 Jul
+ 2019 21:22:49 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.53) by
+ SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Wed, 3 Jul 2019 21:22:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=nTt7ATZAP94x8J8M312SqyauOmZRrNGGmzMY66XbQMsHC3spSMM2ILVVG8tw+3y8ss1gqFFLQ39S5sn59udIny0J9iWjVthTlQUjiCeq32Ha0DJIuobB7cFlX3BYo4+yMrA27mNB7bza+nIlS57NKrih8w+rJWIhEji/2KuVb04=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M+kOm1nHRZaMKmOJ4g7P8i/VlEnHAGFDNyiQNGAdywY=;
+ b=T0KY61FmQOtDN+/Yf/K6sxEFrgozhqF4wgmrR+c5WYs8eGAH9VzamWiVF6etzSwKCP8xR58uDKkZsXhVtF1e/GURiYgiJMH/E80SkFrGy1iJubjNl+cj9A6YeQ6y2QF4rQhFqlCTFq+IvWpwQWq2yxWwuDRPBs/o4v+lpzHBM0E=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M+kOm1nHRZaMKmOJ4g7P8i/VlEnHAGFDNyiQNGAdywY=;
+ b=v5dbHDpjqE0guJBSy02HJjTFJkMoTLUsxInQoT8fddken159UxzYbiXf92uRrvXNpRqcwWWZE+BQ7pvNVGkdLEH7roFcmLr7Su0pfi08WOBExLqPLg6EzsT45UQWz8xtIwVD9L38tMBkQ4Vp34I12K507weyB7MsK5iy6YCzpkY=
+Received: from MN2PR18MB3055.namprd18.prod.outlook.com (20.178.255.209) by
+ MN2PR18MB3118.namprd18.prod.outlook.com (10.255.86.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.17; Thu, 4 Jul 2019 04:22:47 +0000
+Received: from MN2PR18MB3055.namprd18.prod.outlook.com
+ ([fe80::9574:8e34:cd99:788f]) by MN2PR18MB3055.namprd18.prod.outlook.com
+ ([fe80::9574:8e34:cd99:788f%4]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
+ 04:22:47 +0000
+From:   Shijith Thotton <sthotton@marvell.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Shijith Thotton <sthotton@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+Subject: [PATCH] genirq: update irq stats from NMI handlers
+Thread-Topic: [PATCH] genirq: update irq stats from NMI handlers
+Thread-Index: AQHVMiAiVz/XkkYfRk2+vKGjBsT7xw==
+Date:   Thu, 4 Jul 2019 04:22:47 +0000
+Message-ID: <1562214115-14022-1-git-send-email-sthotton@marvell.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR08CA0062.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::39) To MN2PR18MB3055.namprd18.prod.outlook.com
+ (2603:10b6:208:ff::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 1.8.3.1
+x-originating-ip: [199.233.59.128]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e5dccded-1151-4e99-9260-08d700374458
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB3118;
+x-ms-traffictypediagnostic: MN2PR18MB3118:
+x-microsoft-antispam-prvs: <MN2PR18MB3118B3D2561843E8A5428D73D9FA0@MN2PR18MB3118.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1443;
+x-forefront-prvs: 0088C92887
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(396003)(376002)(136003)(189003)(199004)(107886003)(486006)(53936002)(6116002)(476003)(71190400001)(2501003)(2616005)(71200400001)(66476007)(14454004)(7736002)(3846002)(26005)(305945005)(73956011)(66946007)(2906002)(66446008)(186003)(66556008)(52116002)(64756008)(6506007)(386003)(102836004)(5660300002)(15650500001)(36756003)(14444005)(316002)(6486002)(6436002)(86362001)(6512007)(81166006)(50226002)(68736007)(8936002)(25786009)(4326008)(99286004)(66066001)(54906003)(8676002)(81156014)(110136005)(478600001)(256004)(4720700003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3118;H:MN2PR18MB3055.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5Gjv0JqHeqeqzCS83hxPa02aibj70IpnmJRk9F9I9PmeneRFnfXLSFovT7h4gFnqRXzU5YKGmZnoEHA2e9mTRvAVJpGRi+9BLRakkhmQlD7C5C/gaS43vSiDpqUe5/DFaioFqA5WCu4yXJqCLFTY2EsReuc5DVVgTP829J4J9ucK1qGtFUiTQvC+07u4W3wXz3F6DduadktLCkBd7weAv9qutouZ3rT9oM27gV9b3gvekfE3sn4pC9EfLoCvhUWH4m3aFm0gnlGUFPce98aZtTMSxG4aGGV1v0R/PulFt0h9uhCt8O/NUZ1P2416rZiyPl7R/MIEmcg5Zsp7s3pX/ulEYssR0tG83ok1IpftQdMrIsS9gnOt0tIDepGJM7Qr2ID1IoEaTCY/eimPdI8RgyLmgNXYFxQBS4ZLUBPUTcc=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703082552.69951-1-wangkefeng.wang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5dccded-1151-4e99-9260-08d700374458
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 04:22:47.2477
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sthotton@marvell.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3118
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 04:25:52PM +0800, Kefeng Wang wrote:
-> pcpu_setup_first_chunk() will panic or BUG_ON if the are some
-> error and doesn't return any error, hence it can be defined to
-> return void.
-> 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->  arch/ia64/mm/contig.c    |  5 +----
->  arch/ia64/mm/discontig.c |  5 +----
->  include/linux/percpu.h   |  2 +-
->  mm/percpu.c              | 17 ++++++-----------
->  4 files changed, 9 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
-> index d29fb6b9fa33..db09a693f094 100644
-> --- a/arch/ia64/mm/contig.c
-> +++ b/arch/ia64/mm/contig.c
-> @@ -134,10 +134,7 @@ setup_per_cpu_areas(void)
->  	ai->atom_size		= page_size;
->  	ai->alloc_size		= percpu_page_size;
->  
-> -	rc = pcpu_setup_first_chunk(ai, __per_cpu_start + __per_cpu_offset[0]);
-> -	if (rc)
-> -		panic("failed to setup percpu area (err=%d)", rc);
-> -
-> +	pcpu_setup_first_chunk(ai, __per_cpu_start + __per_cpu_offset[0]);
->  	pcpu_free_alloc_info(ai);
->  }
->  #else
-> diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
-> index 05490dd073e6..004dee231874 100644
-> --- a/arch/ia64/mm/discontig.c
-> +++ b/arch/ia64/mm/discontig.c
-> @@ -245,10 +245,7 @@ void __init setup_per_cpu_areas(void)
->  		gi->cpu_map		= &cpu_map[unit];
->  	}
->  
-> -	rc = pcpu_setup_first_chunk(ai, base);
-> -	if (rc)
-> -		panic("failed to setup percpu area (err=%d)", rc);
-> -
-> +	pcpu_setup_first_chunk(ai, base);
->  	pcpu_free_alloc_info(ai);
->  }
->  #endif
-> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-> index 9909dc0e273a..5e76af742c80 100644
-> --- a/include/linux/percpu.h
-> +++ b/include/linux/percpu.h
-> @@ -105,7 +105,7 @@ extern struct pcpu_alloc_info * __init pcpu_alloc_alloc_info(int nr_groups,
->  							     int nr_units);
->  extern void __init pcpu_free_alloc_info(struct pcpu_alloc_info *ai);
->  
-> -extern int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
-> +extern void __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
->  					 void *base_addr);
->  
->  #ifdef config_need_per_cpu_embed_first_chunk
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 9821241fdede..ad32c3d11ca7 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -2267,12 +2267,9 @@ static void pcpu_dump_alloc_info(const char *lvl,
->   * share the same vm, but use offset regions in the area allocation map.
->   * the chunk serving the dynamic region is circulated in the chunk slots
->   * and available for dynamic allocation like any other chunk.
-> - *
-> - * returns:
-> - * 0 on success, -errno on failure.
->   */
-> -int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
-> -				  void *base_addr)
-> +void __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
-> +				   void *base_addr)
->  {
->  	size_t size_sum = ai->static_size + ai->reserved_size + ai->dyn_size;
->  	size_t static_size, dyn_size;
-> @@ -2457,7 +2454,6 @@ int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
->  
->  	/* we're done */
->  	pcpu_base_addr = base_addr;
-> -	return 0;
->  }
->  
->  #ifdef config_smp
-> @@ -2710,7 +2706,7 @@ int __init pcpu_embed_first_chunk(size_t reserved_size, size_t dyn_size,
->  	struct pcpu_alloc_info *ai;
->  	size_t size_sum, areas_size;
->  	unsigned long max_distance;
-> -	int group, i, highest_group, rc;
-> +	int group, i, highest_group, rc = 0;
->  
->  	ai = pcpu_build_alloc_info(reserved_size, dyn_size, atom_size,
->  				   cpu_distance_fn);
-> @@ -2795,7 +2791,7 @@ int __init pcpu_embed_first_chunk(size_t reserved_size, size_t dyn_size,
->  		pfn_down(size_sum), ai->static_size, ai->reserved_size,
->  		ai->dyn_size, ai->unit_size);
->  
-> -	rc = pcpu_setup_first_chunk(ai, base);
-> +	pcpu_setup_first_chunk(ai, base);
->  	goto out_free;
->  
->  out_free_areas:
-> @@ -2920,7 +2916,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
->  		unit_pages, psize_str, ai->static_size,
->  		ai->reserved_size, ai->dyn_size);
->  
-> -	rc = pcpu_setup_first_chunk(ai, vm.addr);
-> +	pcpu_setup_first_chunk(ai, vm.addr);
->  	goto out_free_ar;
->  
->  enomem:
-> @@ -3014,8 +3010,7 @@ void __init setup_per_cpu_areas(void)
->  	ai->groups[0].nr_units = 1;
->  	ai->groups[0].cpu_map[0] = 0;
->  
-> -	if (pcpu_setup_first_chunk(ai, fc) < 0)
-> -		panic("failed to initialize percpu areas.");
-> +	pcpu_setup_first_chunk(ai, fc);
->  	pcpu_free_alloc_info(ai);
->  }
->  
-> -- 
-> 2.20.1
-> 
+The NMI handlers handle_percpu_devid_fasteoi_nmi() and
+handle_fasteoi_nmi() added by commit 2dcf1fbcad35 ("genirq: Provide NMI
+handlers") do not update the interrupt counts. Due to that the NMI
+interrupt count does not show up correctly in /proc/interrupts.
 
-Hi Kefeng,
+Update the functions to fix this. With this change, we can see stats of
+the perf NMI interrupts on arm64.
 
-This makes sense to me. I've applied this to for-5.4.
+Fixes: 2dcf1fbcad35 ("genirq: Provide NMI handlers")
 
-Thanks,
-Dennis
+Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+---
+ kernel/irq/chip.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 29d6c7d070b4..88d1e054c6ea 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -748,6 +748,8 @@ void handle_fasteoi_nmi(struct irq_desc *desc)
+ 	unsigned int irq =3D irq_desc_get_irq(desc);
+ 	irqreturn_t res;
+=20
++	kstat_incr_irqs_this_cpu(desc);
++
+ 	trace_irq_handler_entry(irq, action);
+ 	/*
+ 	 * NMIs cannot be shared, there is only one action.
+@@ -962,6 +964,8 @@ void handle_percpu_devid_fasteoi_nmi(struct irq_desc *d=
+esc)
+ 	unsigned int irq =3D irq_desc_get_irq(desc);
+ 	irqreturn_t res;
+=20
++	__kstat_incr_irqs_this_cpu(desc);
++
+ 	trace_irq_handler_entry(irq, action);
+ 	res =3D action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
+ 	trace_irq_handler_exit(irq, action, res);
+--=20
+2.17.0
+
