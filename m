@@ -2,187 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F02F5F196
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 04:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7643C5F19A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 04:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfGDCnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 22:43:42 -0400
-Received: from mail-eopbgr1310091.outbound.protection.outlook.com ([40.107.131.91]:19388
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726964AbfGDCnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 22:43:42 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CJ7GQiao+nOKiveN04jeespWYjpWzmg/JkH92cgKOUr1imD+jk5jHp88Cjq5Du8WEYrZ84To30nh4JdcB+5IqYicY+qV3zYqAdR3AmNDpNR6xip8d6JersERcTWqNyesAra+mOWL0lwfCqT9eUPg+KgCcbZIxiJQCcKZEPTk0dUq92+V0AuTk+1MudJSlKSan+CdIVxOA3Jw6xEozcFYuTrYjnCY57E5aENCF0zDP1GZ+SOwyykgfG/wCE+F2PbYrpHzlYPro+Mvb31t3IC/gi2IgMKE/aHlD2tKkJvxUbCotPmho8zRyrT0Xn4bpXQ6wQBhjJkFfZc/riyjnTmNAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rx6NBnN0opfzdecRJ1qbbqBYOSWjnLft666acyjrrsM=;
- b=Hy553I8IVBsfjt2N8VgQllVph5ARoWGYRUmSGWRoOS04G+7q74fYaLHHUDEhG1uEAlEedbovRhFAbw5eo2bwPxOVP0QxN4yf47vwS++f2dg5S8m1ta0+itCqNKxdYEK4Oipgix7JTGps6BmbVo9YBxA0eV/t+kEkadvsGbN/SJmJyKh1Rb5SjccN19mPUJbWuEDWIkGOERCyrQD+MxbsHReq4FMIJU7u2qEtDo2kRJIQVq0v5/awnRNk3r8OwRNzkIHJLCYDMFffqqKwBYZIxpWx0AfS00L63Klq8oJzlvuQYjyvVVR68PozuInefOvgDd2NQjOvzeqZgkJvbAlWCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microsoft.com;dmarc=pass action=none
- header.from=microsoft.com;dkim=pass header.d=microsoft.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rx6NBnN0opfzdecRJ1qbbqBYOSWjnLft666acyjrrsM=;
- b=ogrUHJhOKP7AByFxNJr4EW1ZeGOYFguGpUX3K7J+vBa4xbVZaoypKeP1Eqzu583xCEgXIOT/hSWsnLWAAmCgAxHXD4rTUOgsqx2zUoifN7LRYL2Apdzwpv3dv/vF56ShIZQDPNZSSXKO+2tJR3d8MFrgCWQFuZFYIt/5pTsYWXo=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0140.APCP153.PROD.OUTLOOK.COM (10.170.188.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.2; Thu, 4 Jul 2019 02:43:33 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::61b3:885f:a7e4:ec0b]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::61b3:885f:a7e4:ec0b%9]) with mapi id 15.20.2073.004; Thu, 4 Jul 2019
- 02:43:33 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "erik.schmauss@intel.com" <erik.schmauss@intel.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Russ Dill <Russ.Dill@ti.com>,
-        Sebastian Capella <sebastian.capella@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>
-CC:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: [PATCH] ACPI: PM: Make acpi_sleep_state_supported() non-static
-Thread-Topic: [PATCH] ACPI: PM: Make acpi_sleep_state_supported() non-static
-Thread-Index: AdUyD/1jbxa9lbVkR4S4rtxqyMrQ3w==
-Date:   Thu, 4 Jul 2019 02:43:32 +0000
-Message-ID: <PU1P153MB0169A260911AACDA861F0029BFFA0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-07-04T02:43:30.0747531Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=59142a4a-ecc0-433a-bd18-ef91209dc589;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:a:418d:2241:ae9c:1f48]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b6761ab1-704f-45cf-d19c-08d7002967dd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:PU1P153MB0140;
-x-ms-traffictypediagnostic: PU1P153MB0140:|PU1P153MB0140:
-x-ms-exchange-purlcount: 3
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB01401E7745A461E8AA0831BBBFFA0@PU1P153MB0140.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(39860400002)(346002)(366004)(376002)(199004)(189003)(86362001)(68736007)(74316002)(73956011)(66946007)(66446008)(64756008)(66556008)(76116006)(4326008)(66476007)(305945005)(2201001)(8676002)(6506007)(102836004)(52536014)(25786009)(110136005)(2501003)(7416002)(7736002)(14454004)(966005)(316002)(22452003)(54906003)(5660300002)(8990500004)(478600001)(55016002)(6116002)(71200400001)(71190400001)(81166006)(10090500001)(10290500003)(33656002)(6436002)(476003)(2906002)(46003)(486006)(99286004)(53936002)(9686003)(6306002)(8936002)(1511001)(81156014)(7696005)(14444005)(186003)(256004)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0140;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hEEMZkwMMmNbHEZ/tnUsAw3cizasDVs1mHffcFIYr3hlNVj8/43awOCHXr7W5ejlB1t64le6yxZcoB3oCoSRrHw4SikDxWsisfcyetmij7DAD4myUsUxrMzlDpoCmMNFeVL9WzZL5T2Jn4GYyQDj5ju4V9phUE7zxdExQJcY2VV0FbV8HadvgDe2o8U1/M2KYrxcJw2RXp4z/r4YPQKl/hir8ILfWUf4vtMH9JcnHXUQx4EJImiBaFrL6T1JjS/IT0itZelQwcRtVW+CCHskKKqT0XUcrxQGfkIAxgxHKwQ9lPZ4PgBt4Y9ZUdWfWHPyl3kdOuQVUS1FiNF0XQjxi3HKpWtRPAPwlx+K+iOJVzZkM3ArxpOaUuorpc45OtgP1ZQk64kjlL14RteJmnedY8ONSoz4bYU4Y0StxDo+rV4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727217AbfGDCrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 22:47:41 -0400
+Received: from ozlabs.org ([203.11.71.1]:49351 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726955AbfGDCrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 22:47:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fMpL5xkVz9s8m;
+        Thu,  4 Jul 2019 12:47:38 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562208458;
+        bh=GVe4xrn2rOWFVcjZMJTJ2pwArPRGQ7EWoXRAyNj6knY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YiGOffgR/+4nR6IKGpQAxRNzGJG1jxoFiqD/4isKY5EgN4zec40nvKEhchD6t2M0v
+         H/bdAGsif9c3/thrfKLllL9GU3lpihZiUy/Fabx3UXasyVUazkevGZ5u6dBLZJ9MZh
+         zuBBT4sdeqkTKqhQ4xxLQJ8jD8F14dL/gXyrix6AQtOdHt34ruv9YL95jM7yfuIN3D
+         6gVXiXr45xh32W0AxF5BsVP3Z4z17XigtPbaRcC7Yc76zJUaDoPQoym+jBa/Csqydk
+         7B0OGAnVM7xxVVa5+7VYw4TkjWFTs83kdjKMkkNgAiJM0/Tpg5mLjMtJzgCyfKmizG
+         TJwsyMV7i500g==
+Date:   Thu, 4 Jul 2019 12:47:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yishai Hadas <yishaih@mellanox.com>
+Subject: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Message-ID: <20190704124738.1e88cb69@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6761ab1-704f-45cf-d19c-08d7002967dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 02:43:32.6187
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: decui@microsoft.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0140
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Kw=JJxg7OagalCIGq8.vbuP"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/Kw=JJxg7OagalCIGq8.vbuP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With some upcoming patches to save/restore the Hyper-V drivers related
-states, a Linux VM running on Hyper-V will be able to hibernate. When
-a Linux VM hibernates, unluckily we must disable the memory hot-add/remove
-and balloon up/down capabilities in the hv_balloon driver
-(drivers/hv/hv_balloon.c), because these can not really work according to
-the design of the related back-end driver on the host.
+Hi all,
 
-By default, Hyper-V does not enable the virtual ACPI S4 state for a VM;
-on recent Hyper-V hosts, the administrator is able to enable the virtual
-ACPI S4 state for a VM, so we hope to use the presence of the virtual ACPI
-S4 state as a hint for hv_balloon to disable the aforementioned
-capabilities. In this way, hibernation will work more reliably, from the
-user's perspective.
+Today's linux-next merge of the mlx5-next tree got a conflict in:
 
-By marking acpi_sleep_state_supported() non-static, we'll be able to
-implement a hv_is_hibernation_supported() API in the always-built-in
-module arch/x86/hyperv/hv_init.c, and the API will be called by hv_balloon.
+  drivers/infiniband/hw/mlx5/cq.c
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
----
+between commit:
 
-Previously I posted a version that tries to export the function:
-https://lkml.org/lkml/2019/6/14/1077, which may be an overkill.
+  e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibili=
+ty")
 
-So I proposed a second patch (which covers this patch and shows how this
-patch will be used): https://lkml.org/lkml/2019/6/19/861
+from the rdma tree and commit:
 
-I explained the situation in detail here: https://lkml.org/lkml/2019/6/21/6=
-3
-(a correction: old Hyper-V hosts can support guest hibernation, but some
-important functionalities in the host's management tool stack are missing).
+  38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
 
-There is no further reply in that discussion, so I'm sending this patch to
-draw people's attention again. :-)
+from the mlx5-next tree.
 
- drivers/acpi/sleep.c    | 2 +-
- include/acpi/acpi_bus.h | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index 8ff08e531443..d1ff303a857a 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -77,7 +77,7 @@ static int acpi_sleep_prepare(u32 acpi_state)
- 	return 0;
- }
-=20
--static bool acpi_sleep_state_supported(u8 sleep_state)
-+bool acpi_sleep_state_supported(u8 sleep_state)
- {
- 	acpi_status status;
- 	u8 type_a, type_b;
-diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-index 31b6c87d6240..3e6563e1a2c0 100644
---- a/include/acpi/acpi_bus.h
-+++ b/include/acpi/acpi_bus.h
-@@ -651,6 +651,12 @@ static inline int acpi_pm_set_bridge_wakeup(struct dev=
-ice *dev, bool enable)
- }
- #endif
-=20
-+#ifdef CONFIG_ACPI_SYSTEM_POWER_STATES_SUPPORT
-+bool acpi_sleep_state_supported(u8 sleep_state);
-+#else
-+bool acpi_sleep_state_supported(u8 sleep_state) { return false; }
-+#endif
-+
- #ifdef CONFIG_ACPI_SLEEP
- u32 acpi_target_system_state(void);
- #else
 --=20
-2.19.1
+Cheers,
+Stephen Rothwell
 
+diff --cc drivers/infiniband/hw/mlx5/cq.c
+index bfe3efdd77d7,4efbbd2fce0c..000000000000
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@@ -891,7 -891,8 +891,8 @@@ int mlx5_ib_create_cq(struct ib_cq *ibc
+  	int entries =3D attr->cqe;
+  	int vector =3D attr->comp_vector;
+  	struct mlx5_ib_dev *dev =3D to_mdev(ibdev);
++ 	u32 out[MLX5_ST_SZ_DW(create_cq_out)];
+ -	struct mlx5_ib_cq *cq;
+ +	struct mlx5_ib_cq *cq =3D to_mcq(ibcq);
+  	int uninitialized_var(index);
+  	int uninitialized_var(inlen);
+  	u32 *cqb =3D NULL;
+
+--Sig_/Kw=JJxg7OagalCIGq8.vbuP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0daMoACgkQAVBC80lX
+0Gy14AgAlHFOm16bEAUrmZltrSXr6+Rt2jBud18OPAcIhwSQ1HFmj7L6vVE6pD5Y
+Wnm4xUuwNkaCZAdSWGID6cJjjOCaYwzPL+eZNpYsyvvauQLq/IqJmPTX90zZNGUL
+owSu6JL57Hg2YnBX9qkduS+0qWY64HKZrqaheDNpo0r1qzY6wLk+Qz3LvB9E2FOu
+mCjNf4HOMlaN3SYR8jlggODS4PTPvXqVpxd6qxg5P9fnT/E6mgBPpsDNcAIrZ0w4
+GRlCpYvABoFgmXdooox7o/YDO1HyY4EkHIxpbFa2vhwilhX1LHBy59Q1PbQr6mnw
+73uk32OliVCJpI/v06f6s7HZmvhULg==
+=Nzdt
+-----END PGP SIGNATURE-----
+
+--Sig_/Kw=JJxg7OagalCIGq8.vbuP--
