@@ -2,113 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951765FD88
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 21:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4390D5FDA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 22:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfGDTu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 15:50:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50150 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfGDTu2 (ORCPT
+        id S1727438AbfGDUDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 16:03:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42174 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfGDUDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 15:50:28 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 67D7A8067F; Thu,  4 Jul 2019 21:50:14 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 21:50:25 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jann Horn <jannh@google.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [RFC PATCH] binfmt_elf: Extract .note.gnu.property from an ELF
- file
-Message-ID: <20190704195024.GA4013@amd>
-References: <20190628172203.797-1-yu-cheng.yu@intel.com>
- <CAG48ez0rHHfcRgiVZf5FP0YOzxsXigvpg6ci790cmiN6PBwkhQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Content-Disposition: inline
-In-Reply-To: <CAG48ez0rHHfcRgiVZf5FP0YOzxsXigvpg6ci790cmiN6PBwkhQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 4 Jul 2019 16:03:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PbOw/ItJGlskEyjwYOEM+EXXsgD+rHwICf2ieYLEgx8=; b=bZA5bQx9zyjOfz8Pok8PbJh67
+        LmbMCyq5NGcq3dSwgt05qeJnGzEwdeBfgv9V2COqxuL0TX/wmtRiFU+HF5R/rUh8IKlbou6+WrwWZ
+        iHVIXhZuiaNCgThkMcLAaz0s+Ky/7koDNs63X9ZsM49t2n5smpqdx8fd6JyAusYrwBaA/ZEvjE73Y
+        V3SP3a8bOk6j7K7MjS4XBOF2YwF//QtAg1zAazf2Y75hlDCNyiAUsGuIgIJthpEqWUrH+yXT1NK6W
+        x6l7fwVQ8Qva8rRmW1hXeOgeFVQ0KdAx7vPsQEXwJqMjrQzUUqcNO/J6pV9+oTN0BQQdV8Fmks4za
+        sOo2kDLKw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hj7wa-0006lB-47; Thu, 04 Jul 2019 20:03:01 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 398762059DEA5; Thu,  4 Jul 2019 22:02:58 +0200 (CEST)
+Message-Id: <20190704195555.580363209@infradead.org>
+User-Agent: quilt/0.65
+Date:   Thu, 04 Jul 2019 21:55:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
+        rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
+Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
+        joel@joelfernandes.org, devel@etsukata.com, peterz@infradead.org
+Subject: [PATCH v2 0/7] Tracing vs CR2 (and cleanups)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Eiichi-san re-discovered the bug earlier found by He Zhe which we've failed to
+fix due to getting distracted by discussing how to untangle entry_64.S.
 
-Hi!
+These 3 patches are basically a completion of the initial approach I suggested
+in that earlier thread:
 
+  https://lkml.kernel.org/r/20190320221534.165ab87b@oasis.local.home
 
-> > +static int scan(u8 *buf, u32 buf_size, int item_size, test_item_fn tes=
-t_item,
-> > +               next_item_fn next_item, u32 *arg, u32 type, u32 *pos)
-> > +{
-> > +       int found =3D 0;
-> > +       u8 *p, *max;
-> > +
-> > +       max =3D buf + buf_size;
-> > +       if (max < buf)
-> > +               return 0;
->=20
-> How can this ever legitimately happen? If it can't, perhaps you meant
-> to put a WARN_ON_ONCE() or something like that here?
-> Also, computing out-of-bounds pointers is UB (section 6.5.6 of C99:
-> "If both the pointer operand and the result point to elements of the
-> same array object, or one past the last element of the array object,
-> the evaluation shall not produce an overflow; otherwise, the behavior
-> is undefined."), and if the addition makes the pointer wrap, that's
-> certainly out of bounds; so I don't think this condition can trigger
-> without UB.
+Since v1:
 
-Kernel assumes sane compiler. We pass flags to get it... C99 does not
-quite apply here.
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+ - idtentry_part 'cleanup'
+ - extra sanity check and comment
+ - read_cr2=1 for do_double_fault
+ - #BP vs IST cleanup
+ - IDTENTRYx() C wrapper
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The thing boots on x86_64 with lockdep on, survives function-trace,
+selftests/x86 and perf-test.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0eWIAACgkQMOfwapXb+vLSMgCcC98TTx9pMIkokJGKGUu3i6ME
-o+AAn3TIA7Pjz5wBcK19BycwV2+shMN6
-=83sj
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
