@@ -2,77 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBE15FC72
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9504C5FC74
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfGDRYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 13:24:00 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36538 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfGDRX7 (ORCPT
+        id S1727599AbfGDRYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 13:24:44 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43999 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbfGDRYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 13:23:59 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so677734wme.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 10:23:58 -0700 (PDT)
+        Thu, 4 Jul 2019 13:24:43 -0400
+Received: by mail-pl1-f195.google.com with SMTP id cl9so3346524plb.10;
+        Thu, 04 Jul 2019 10:24:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=y4voAUiJJKE00AR2uSiAh6BEDQ5M7euB2mZzQvioBBI=;
-        b=AMvBLGrkP3CxUMSu0pr8Ckfnkpodk0l7sqq8Obe/MOQ8WwX1KdepPQ+ppj3izznsRx
-         BPfFUnRlk4/8LeKNLiudk/y7uO4kWDyowv/67oOFxJvhDJHaP0AW+A81dAoIsJk13Ipu
-         qDj5cZoFiDPeAuItKuxoonv77G4RvV0pQxyyXo2fkt0nx+c48mqY0BB3yvRCWIwAZGs6
-         zfSCJGDFcJ0LSua8fwDx9g+k3FsJuG6QOlRJR8pGb2hxqp1WYZMe1J21oA2+UpXMtYqc
-         HQPqW1Si8gyGWg3pJcJ2dOayzk7n9QTGSdtb6TCbnSSIEBUm2QdK4+wROyyMd2CyU+2s
-         d1GQ==
+        bh=55QfSNtbMpn+MJxisNfI6ew+wl/zossrT+kRgSB+uK8=;
+        b=cck1/oH35+TwFzlHwtp8kI9dhL7sa7e0x16TEOFTU8wG1hlmZ2SNQqOFWQuLhrWd8v
+         LULq0Oy78tMkxMBHSeWbuTcylNGO8i2mnHtZIzMGQwp2RrTpnfdSwJWH33HLce1OKxaJ
+         A+X+OO2r6yE58l9QVLe+DiuIESi77WQqLr5Nx3hvq68OSoKTPzSHUo2HhvzkxpVMBkvi
+         DN4yrrmMaCqWsabjAUZyIJ3kN0WlzYtXbthr2DateTQv1FlyNcy4yWtGfDceoBslsGQ7
+         ljvxpI5gGdlH+wAe7TDhDDdmWvQPnV9beCqTq52z+2MYQJHZgoE+6jQ4d6jxTOF7NpZC
+         YJEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y4voAUiJJKE00AR2uSiAh6BEDQ5M7euB2mZzQvioBBI=;
-        b=luUKOR1QzKew/7banKgbbySoZBbvaW+Wc+3Q/TovPIw7g99fEdtREBhYrOyKBB+BJX
-         7d6yHlJOTX/EQyeP/lcODtfzFI0lo2Rrsijxu+z9dCkwVgEL6HOi873pYtYEvGEqk9We
-         NVH/jPKWmnh0S3Sj/tiCJprtRBZB8B6+SX8mFVspzzBHhGUpIw1oP7tMXuBJqgWzaMiz
-         LccEsmcgcdhSsHOTaEZyFD/6oxu11vr2S4nssA3OcqJQurNercT4PIuAaBl1z6GcS3cq
-         IDXY3NphJbWxoBie8q6WrmP2cMvSUeTryKJDIIneXiawqh5+41JJIMgvWzVvZpKarvWr
-         C5jQ==
-X-Gm-Message-State: APjAAAW2zDV31veyoS28AZTsfopf8LCMTFEuf3KHets7d9ZkGwhhBzvO
-        NDtEQq/zKMGT/9jWDAYI9NtoMQ==
-X-Google-Smtp-Source: APXvYqxR4bWTM5Aja4k+CHVHyqNjVnyHlOR72b86JbspolqS1srdqfiF4hRoTqd9BH0wTPlRkH3nnw==
-X-Received: by 2002:a1c:ac81:: with SMTP id v123mr389342wme.145.1562261037825;
-        Thu, 04 Jul 2019 10:23:57 -0700 (PDT)
-Received: from apalos (athedsl-428434.home.otenet.gr. [79.131.225.144])
-        by smtp.gmail.com with ESMTPSA id 2sm2219802wrn.29.2019.07.04.10.23.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 10:23:57 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 20:23:54 +0300
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
-        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
-        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH net-next V2] net: core: page_pool: add user refcnt and
- reintroduce page_pool_destroy
-Message-ID: <20190704172354.GA14255@apalos>
-References: <156225871578.1603.6630229522953924907.stgit@firesoul>
- <20190704171354.GC2923@khorivan>
+        bh=55QfSNtbMpn+MJxisNfI6ew+wl/zossrT+kRgSB+uK8=;
+        b=MrFY2hUvkU8tjruhOJxfiTbdDYn7t902UL8pNlFZK5fRH4QBcJgSER3zJNKLrSA0KL
+         /yR0zEC4gHE2D1oYKEookK3hEKzpHTN2uqglGudADCk1hdDLVWmG3pVAjuzYqFZ10Z7g
+         E6G6JHZkkLTlGwqOd2uCc4qVcCcwqX/B8COsZe1O/JRjgLJW2Ho5KUVNxdXc/lXIGcob
+         ZNSIltj+pBkRBBedcVUTxvKsXr7/OE3K/vPf6W5wijJmaQ9McKII7fgajCYHiOd/OYR5
+         w03yvHXu1OyJd2WOtBIXm8GBKr4RIaZyjKyWdhLo8DAB/IthIaxBrNkZIamjbQPQZG1R
+         YLDA==
+X-Gm-Message-State: APjAAAXpRLgWxc8rmpav1sAi1OLFll796U+OYYMN0G+3NRa0pzzMW6vf
+        DzWwGSIZ6RnOdLqHly5KZuE=
+X-Google-Smtp-Source: APXvYqw070wr57pOgxmvfwOzrmdszFf8Ygs+RZ20bau1tLRpA0P9ugWeweLchEeESdNY9W2e8U3xQA==
+X-Received: by 2002:a17:902:61:: with SMTP id 88mr48065179pla.50.1562261083171;
+        Thu, 04 Jul 2019 10:24:43 -0700 (PDT)
+Received: from localhost.localdomain ([125.142.23.13])
+        by smtp.gmail.com with ESMTPSA id s20sm6739366pfe.169.2019.07.04.10.24.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 04 Jul 2019 10:24:42 -0700 (PDT)
+Date:   Fri, 5 Jul 2019 02:24:37 +0900
+From:   Suwan Kim <suwan.kim027@gmail.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     shuah@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usbip: Implement SG support to vhci
+Message-ID: <20190704172435.GA11673@localhost.localdomain>
+References: <20190624145852.GC7547@localhost.localdomain>
+ <Pine.LNX.4.44L0.1906241322140.1609-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190704171354.GC2923@khorivan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <Pine.LNX.4.44L0.1906241322140.1609-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ivan,
-
+On Mon, Jun 24, 2019 at 01:24:15PM -0400, Alan Stern wrote:
+> On Mon, 24 Jun 2019, Suwan Kim wrote:
 > 
-> Have trouble with inet today...I will pick up it as my changes depend on it.
-> And send probably in couple hours after verification.
-Maybe you'd like to add your signed-off on this one since it was based on your
-patchset?
+> > > > +	hcd->self.sg_tablesize = ~0;
+> > > > +	hcd->self.no_sg_constraint = 1;
+> > > 
+> > > You probably shouldn't do this, for two reasons.  First, sg_tablesize
+> > > of the server's HCD may be smaller than ~0.  If the client's value is
+> > > larger than the server's, a transfer could be accepted on the client
+> > > but then fail on the server because the SG list was too big.
+> 
+> On the other hand, I don't know of any examples where an HCD has 
+> sg_tablesize set to anything other than 0 or ~0.  vhci-hcd might end up 
+> being the only one.
+> 
+> > > Also, you may want to restrict the size of SG transfers even further,
+> > > so that you don't have to allocate a tremendous amount of memory all at
+> > > once on the server.  An SG transfer can be quite large.  I don't know 
+> > > what a reasonable limit would be -- 16 perhaps?
+> > 
+> > Is there any reason why you think that 16 is ok? Or Can I set this
+> > value as the smallest value of all HC? I think that sg_tablesize
+> > cannot be a variable value because vhci interacts with different
+> > machines and all machines has different sg_tablesize value.
+> 
+> I didn't have any good reason for picking 16.  Using the smallest value 
+> of all the HCDs seems like a good idea.
+
+I also have not seen an HCD with a value other than ~0 or 0 except for
+whci which uses 2048, but is not 2048 the maximum value of sg_tablesize?
+If so, ~0 is the minimum value of sg_tablesize that supports SG. Then
+can vhci use ~0 if we don't consider memory pressure of the server?
+
+If all of the HCDs supporting SG have ~0 as sg_tablesize value, I
+think that whether we use an HCD locally or remotely, the degree of
+memory pressure is same in both local and remote usage.
 
 Regards
-/Ilias
+
+Suwan Kim
