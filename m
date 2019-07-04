@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 000755F805
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9083E5F80E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbfGDMZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 08:25:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35554 "EHLO
+        id S1727890AbfGDMZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 08:25:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35562 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727844AbfGDMZI (ORCPT
+        with ESMTP id S1727787AbfGDMZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 08:25:08 -0400
+        Thu, 4 Jul 2019 08:25:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=O6t7DHXPR1LVA6BY9uJ2lKsVFed1OWvtb4Y8mivFETc=; b=Iuuw01M3MhDy
-        PcLmzk6J+d6kCxKqS2Hqj6tafvWoIZfbcaP27sfhKqMTRbsTNBuesWP2S5KG0cqHBUuet2MXnFc2/
-        PaVYDGyygRwDP+LsHpG3ileBhZxwIRC73srP283WEvldMqP4gmp+h22Z8QMIF4c+Pg5yht0e2Dv8o
-        olD9E=;
+        List-Archive; bh=Y/uabhd3emfe7XPsaHIK1+FGOSTXpQE94AD/6SuEfgE=; b=ezkYFefEQmYe
+        rGWCMpdXPmuNyXgIK0V7tI0X0lIFxDRzeovtryDyWogcRzPyGuDo0ycyik4wXYWn2J9/ydRDgn5bc
+        RzJIH5sV6Mx3xtnOPQ7p9zgBEZjSGXwaZyNHhE6YQf6qfYc0ijCh2+/BSSjbaT2PK7lAETMI3INkQ
+        F5gU4=;
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hj0nS-0000jY-4i; Thu, 04 Jul 2019 12:25:06 +0000
+        id 1hj0nS-0000jZ-EO; Thu, 04 Jul 2019 12:25:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7EA6E274388A; Thu,  4 Jul 2019 13:25:05 +0100 (BST)
+        id D03D92743897; Thu,  4 Jul 2019 13:25:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max77650: add MODULE_ALIAS()" to the regulator tree
-In-Reply-To: <20190703084849.9668-1-brgl@bgdev.pl>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: max77620: remove redundant assignment to variable ret" to the regulator tree
+In-Reply-To: <20190703082009.18779-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190704122505.7EA6E274388A@ypsilon.sirena.org.uk>
+Message-Id: <20190704122505.D03D92743897@ypsilon.sirena.org.uk>
 Date:   Thu,  4 Jul 2019 13:25:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: max77650: add MODULE_ALIAS()
+   regulator: max77620: remove redundant assignment to variable ret
 
 has been applied to the regulator tree at
 
@@ -70,30 +71,37 @@ to this mail.
 Thanks,
 Mark
 
-From ba2bf340ade89e71c53273ea115c7872865782c1 Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 3 Jul 2019 10:48:49 +0200
-Subject: [PATCH] regulator: max77650: add MODULE_ALIAS()
+From a3c7c029c3da01645f2db1bf7737668d17c2c78a Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 3 Jul 2019 09:20:09 +0100
+Subject: [PATCH] regulator: max77620: remove redundant assignment to variable
+ ret
 
-Define a MODULE_ALIAS() in the regulator sub-driver for max77650 so that
-the appropriate module gets loaded together with the core mfd driver.
+The variable ret is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Link: https://lore.kernel.org/r/20190703084849.9668-1-brgl@bgdev.pl
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190703082009.18779-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max77650-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/max77620-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
-index e3b28fc68cdb..b79fe93c8edb 100644
---- a/drivers/regulator/max77650-regulator.c
-+++ b/drivers/regulator/max77650-regulator.c
-@@ -452,3 +452,4 @@ module_platform_driver(max77650_regulator_driver);
- MODULE_DESCRIPTION("MAXIM 77650/77651 regulator driver");
- MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:max77650-regulator");
+diff --git a/drivers/regulator/max77620-regulator.c b/drivers/regulator/max77620-regulator.c
+index 2ae2d319321b..8d9731e4052b 100644
+--- a/drivers/regulator/max77620-regulator.c
++++ b/drivers/regulator/max77620-regulator.c
+@@ -467,7 +467,7 @@ static int max77620_regulator_is_enabled(struct regulator_dev *rdev)
+ {
+ 	struct max77620_regulator *pmic = rdev_get_drvdata(rdev);
+ 	int id = rdev_get_id(rdev);
+-	int ret = 1;
++	int ret;
+ 
+ 	if (pmic->active_fps_src[id] != MAX77620_FPS_SRC_NONE)
+ 		return 1;
 -- 
 2.20.1
 
