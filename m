@@ -2,95 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D76D5FB14
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5965FAF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:36:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfGDPj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:39:59 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:36435 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfGDPj6 (ORCPT
+        id S1727826AbfGDPgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:36:04 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37201 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbfGDPgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:39:58 -0400
-X-Greylist: delayed 342 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 11:39:56 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1562254795;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=gou5Zh0HIbQCcM7c2CWEWnJ04+a+qFsD/mEWP+ODjjE=;
-        b=OuyCIoqmsQhbJTbv0dWCKhxJOxfFJ9CnNnTYIoPD7RabOLrTIPqiWSJu0WBN/RMvkI
-        LEQEVp4NzUIxfUl+igoTTETz555+ZoaMH2WyB6N7DtgzreFgvP6rqr7O9QVlOnjMq3tl
-        lAf/eCisAIGpPqaagIs9Br9pYJ+/qHBUDW4ASHlxE70wXSGvlQzZ+48AHbPplswVMnoQ
-        eMEOtd1S+eJcGhYCtgTlrnHI8GYqb1JG1q/K6pBckWwQRrSbevmuNMdgDI2VHzlrV8pV
-        mhYtSU1hjzLpjb2fEnxCfMFgik4rpr4bN60AWkYKbsQ7hFqlcwd45rTMiFA5MB6jx5+3
-        cPFA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp01-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.24 AUTH)
-        with ESMTPSA id h0a328v64FXe11g
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Thu, 4 Jul 2019 17:33:40 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 17:33:40 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        matthias.bgg@kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <100944512.353257.1562254420397@webmail.strato.com>
-In-Reply-To: <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
- <20181116125449.23581-9-matthias.bgg@kernel.org>
- <20181116231522.GA18006@bogus>
- <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
- <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
- <154281878765.88331.10581984256202566195@swboyd.mtv.corp.google.com>
- <458178ac-c0fc-9671-7fc8-ed2d6f61424c@suse.com>
- <154356023767.88331.18401188808548429052@swboyd.mtv.corp.google.com>
- <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
- <1561953318.25914.9.camel@mtksdaap41>
- <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
-Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
- mmsys clocks
+        Thu, 4 Jul 2019 11:36:04 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d15so5835286qkl.4;
+        Thu, 04 Jul 2019 08:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuaFn2pc1K89xSedytgBd1vv5wIzckwD6JixGqi38qI=;
+        b=RTo9jODmJXBeTp30ZT5mc2QLYo6A6mWdZF16gFYXy3eb0JVN0qMmawW+72GZoNd9Le
+         0KqsU1H6f0C+H+TRXzjIsLHDgyMnelE8lf3dwfF89ruv6Qs67ipdOFl6PYJhpnW1k+wg
+         Hffj/LadzBCObYUVzL9aklAXb3Rt+MD3Es06A42tg/tY6sZhs4csBkPkHKTjQsQHSjiY
+         JtHryMHa1VSJJdLU8mc3u6QspoKKSjws/6FdxkMQq9V3XmnuawSQPax28qTSKvCCMK89
+         OU2trKbK4cpdQvmnm/MTFIFoRtWIoVljhBsAUXZctHX4CtDxq244DKtbVzR/6okqplli
+         1oUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuaFn2pc1K89xSedytgBd1vv5wIzckwD6JixGqi38qI=;
+        b=l4NngnSXLSuPEuOtgwOQhsAvlsJlomh3HQSwG+/ORYkwBzkHI2h306MVv+faJpTtCQ
+         RxVAmaVV+tU4d/q2Q/asqULMRWbdo77YYj9hij6qyx4V/26EDEIlN5ghCQYdhjk/TDdV
+         VVbHfwQT2cJmHeHt0n9UUI8F50pkJLK+yRo9ARkNehomrohNDE1NvMYEnGsZnlx4dxUK
+         h9KpEKvR/4NF2ybvHOJ+24up1hD7ktjapC7ZK8jxJiURwWTOw+QsrYporGSpkdQCrR7f
+         88ep4lqOvLvyVkW6wLXB8ZqVNJF/z+ScO/58AcOzMCDxQl684giYUznKQEkPgFvDYDHB
+         BHqg==
+X-Gm-Message-State: APjAAAX8ELcLX09tulU45BPLJlAOhbdo33V2iOp8ccJDyOu/DiPLJ7ZI
+        RKHxWkelWYq8JbnZyxG4GJc=
+X-Google-Smtp-Source: APXvYqzIrzQW3c9POmbRbbKUCB2Zqm8+6j9U8w4dtQL+YKRRyWePhzlkmMqJcJwKkvRW1yxG+WJCXw==
+X-Received: by 2002:a37:ac1a:: with SMTP id e26mr10145679qkm.231.1562254562996;
+        Thu, 04 Jul 2019 08:36:02 -0700 (PDT)
+Received: from localhost.localdomain (pool-72-93-241-64.bstnma.fios.verizon.net. [72.93.241.64])
+        by smtp.gmail.com with ESMTPSA id 67sm2087140qkh.108.2019.07.04.08.36.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 04 Jul 2019 08:36:01 -0700 (PDT)
+From:   Ryan Kennedy <ryan5544@gmail.com>
+To:     gregkh@linuxfoundation.org, mathias.nyman@intel.com,
+        stern@rowland.harvard.edu
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ryan Kennedy <ryan5544@gmail.com>
+Subject: [PATCH 0/2] usb: pci-quirks: AMD PLL quirk fix
+Date:   Thu,  4 Jul 2019 11:35:27 -0400
+Message-Id: <20190704153529.9429-1-ryan5544@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev59
-X-Originating-IP: 85.212.144.69
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series contains a minor fix for the AMD PLL USB quirk plus
+some clean up to the related code.
 
-> On July 4, 2019 at 11:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> You are right, it took far too long for me to respond with a new version of the
-> series. The problem I face is, that I use my mt8173 based chromebook for
-> testing. It needs some downstream patches and broke somewhere between my last
-> email and a few month ago.
+Ryan Kennedy (2):
+  usb: pci-quirks: Correct AMD PLL quirk detection
+  usb: pci-quirks: Minor cleanup for AMD PLL quirk
 
-If that Chromebook is an Acer R13 and you need a working kernel, you may want to have a look at https://github.com/uli/kernel/tree/elm-working-5.2 .
+ drivers/usb/host/ehci-pci.c   |  4 ++--
+ drivers/usb/host/ohci-pci.c   |  2 +-
+ drivers/usb/host/pci-quirks.c | 45 +++++++++++++++++++++--------------
+ drivers/usb/host/pci-quirks.h |  2 +-
+ drivers/usb/host/xhci-pci.c   |  2 +-
+ 5 files changed, 32 insertions(+), 23 deletions(-)
 
-CU
-Uli
+-- 
+2.21.0
+
