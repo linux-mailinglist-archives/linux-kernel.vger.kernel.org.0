@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D70485F1CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F755F1C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfGDD2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 23:28:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40310 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726964AbfGDD2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 23:28:23 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F08F8AD5DDA7AD8D9FE7;
-        Thu,  4 Jul 2019 11:28:20 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
- 11:28:12 +0800
-Subject: Re: [PATCH RFC 0/3] Support CPU hotplug for ARM64
-To:     Jia He <hejianet@gmail.com>, <rjw@rjwysocki.net>,
-        <catalin.marinas@arm.com>, <james.morse@arm.com>
-CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <guohanjun@huawei.com>,
-        <xiexiuqi@huawei.com>, <huawei.libin@huawei.com>,
-        <john.garry@huawei.com>, <jonathan.cameron@huawei.com>
-References: <1561720392-45907-1-git-send-email-wangxiongfeng2@huawei.com>
- <2b22cf4d-9646-9f20-41ae-cceb83d9791b@gmail.com>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
-Date:   Thu, 4 Jul 2019 11:26:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1727229AbfGDD1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 23:27:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59376 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfGDD1a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 23:27:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bfUuotpsA7QM4d+GD8HA3DqaH0YT4JnSqveOPEJHZmE=; b=DYj+iswCGfqMvh6Vcet5Evj0Y
+        GsyD8CyUisYULDtQjbA5vGZ/hNXgspOgh006SQe1+qr7TZT1AYlYjAkdkiYkjFqTvS8LExPkDsSrr
+        uw06xq/QsEuX5TQP7ma8p2d9Mx/iXMiWVC7aIfPC7vnXkkQD9TrdwQwkpdfYAkHIxKz2R1N70Z84l
+        3xhXHDMy3VQY/86p5LEXocdyG1zM5kB6mQK24lQ51xK5okoPAGeaUuzjsH1kNEoroTvfk1i+U9esr
+        G1GFk7RgJtLXqaHP8ZjaorampgpGJFFeAUoYwGLs6Y46p0O2fTKSxrdtPrKaMQi4oYQhBc4pdeaaj
+        BiqQpmSNA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hisPA-0006Hf-Tn; Thu, 04 Jul 2019 03:27:28 +0000
+Date:   Wed, 3 Jul 2019 20:27:28 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190704032728.GK1729@bombadil.infradead.org>
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190703121743.GH1729@bombadil.infradead.org>
+ <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+ <20190703195302.GJ1729@bombadil.infradead.org>
+ <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2b22cf4d-9646-9f20-41ae-cceb83d9791b@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Justin,
+On Wed, Jul 03, 2019 at 02:28:41PM -0700, Dan Williams wrote:
+> On Wed, Jul 3, 2019 at 12:53 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > @@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
+> >         for (;;) {
+> >                 entry = xas_find_conflict(xas);
+> >                 if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+> > -                               !dax_is_locked(entry))
+> > +                               !dax_is_locked(entry) ||
+> > +                               dax_entry_order(entry) < xas_get_order(xas))
+> 
+> Doesn't this potentially allow a locked entry to be returned for a
+> caller that expects all value entries are unlocked?
 
-On 2019/7/4 11:00, Jia He wrote:
-> Hi Xiongfeng
-> 
-> It is a little bit awkful that I am also  investigating acpi based cpu hotplug issue silimar with
-> 
-> your idea. My question is your purpose to implement the vcpu hotplug in arm64 qemu?
+It only allows locked entries to be returned for callers which pass in
+an xas which refers to a PMD entry.  This is fine for grab_mapping_entry()
+because it checks size_flag & is_pte_entry.
 
-Yes, my purpose is to implement the vcpu hotplug in arm64 qemu. So that I can add or remove vcpu
-without shutting down the Guest OS.
+dax_layout_busy_page() only uses 0-order.
+__dax_invalidate_entry() only uses 0-order.
+dax_writeback_one() needs an extra fix:
 
-Thanks,
-Xiongfeng
+                /* Did a PMD entry get split? */
+                if (dax_is_locked(entry))
+                        goto put_unlocked;
 
-> 
-> Thanks for the ellaboration
-> 
-> ---
-> Cheers,
-> Justin (Jia He)
-> 
-> On 2019/6/28 19:13, Xiongfeng Wang wrote:
->> This patchset mark all the GICC node in MADT as possible CPUs even though it
->> is disabled. But only those enabled GICC node are marked as present CPUs.
->> So that kernel will initialize some CPU related data structure in advance before
->> the CPU is actually hot added into the system. This patchset also implement
->> 'acpi_(un)map_cpu()' and 'arch_(un)register_cpu()' for ARM64. These functions are
->> needed to enable CPU hotplug.
->>
->> To support CPU hotplug, we need to add all the possible GICC node in MADT
->> including those CPUs that are not present but may be hot added later. Those
->> CPUs are marked as disabled in GICC nodes.
->>
->> Xiongfeng Wang (3):
->>    ACPI / scan: evaluate _STA for processors declared via ASL Device
->>      statement
->>    arm64: mark all the GICC nodes in MADT as possible cpu
->>    arm64: Add CPU hotplug support
->>
->>   arch/arm64/kernel/acpi.c  | 22 ++++++++++++++++++++++
->>   arch/arm64/kernel/setup.c | 19 ++++++++++++++++++-
->>   arch/arm64/kernel/smp.c   | 11 +++++------
->>   drivers/acpi/scan.c       | 12 ++++++++++++
->>   4 files changed, 57 insertions(+), 7 deletions(-)
->>
-> 
-> .
-> 
+dax_insert_pfn_mkwrite() checks for a mismatch of pte vs pmd.
 
+So I think we're good for all current users.
+
+> > +#ifdef CONFIG_XARRAY_MULTI
+> > +       unsigned int sibs = xas->xa_sibs;
+> > +
+> > +       while (sibs) {
+> > +               order++;
+> > +               sibs /= 2;
+> > +       }
+> 
+> Use ilog2() here?
+
+Thought about it.  sibs is never going to be more than 31, so I don't
+know that it's worth eliminating 5 add/shift pairs in favour of whatever
+the ilog2 instruction is on a given CPU.  In practice, on x86, sibs is
+going to be either 0 (PTEs) or 7 (PMDs).  We could also avoid even having
+this function by passing PMD_ORDER or PTE_ORDER into get_unlocked_entry().
+
+It's probably never going to be noticable in this scenario because it's
+the very last thing checked before we put ourselves on a waitqueue and
+go to sleep.
