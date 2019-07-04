@@ -2,59 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7289E5FBA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C74A5FBA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfGDQUC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 4 Jul 2019 12:20:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59220 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbfGDQUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:20:02 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35FD681F25;
-        Thu,  4 Jul 2019 16:19:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-9.rdu2.redhat.com [10.10.120.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EAD1140FD;
-        Thu,  4 Jul 2019 16:19:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegv_ezsXOLV2f7yd07=T3MenJoMKhu=MBac1-80s0BFg9A@mail.gmail.com>
-References: <CAJfpegv_ezsXOLV2f7yd07=T3MenJoMKhu=MBac1-80s0BFg9A@mail.gmail.com> <20190619123019.30032-1-mszeredi@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/13] vfs: verify param type in vfs_parse_sb_flag()
+        id S1726918AbfGDQTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:19:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37144 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725882AbfGDQTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 12:19:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6F057AF89;
+        Thu,  4 Jul 2019 16:19:11 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 10402DA89D; Thu,  4 Jul 2019 18:19:50 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 18:19:49 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        jthumshirn@suse.de, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] btrfs: Fix build error while LIBCRC32C is module
+Message-ID: <20190704161949.GZ20977@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, YueHaibing <yuehaibing@huawei.com>,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        jthumshirn@suse.de, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <20190702143903.49264-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 04 Jul 2019 17:19:48 +0100
-Message-ID: <11485.1562257188@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 04 Jul 2019 16:20:02 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702143903.49264-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Tue, Jul 02, 2019 at 10:39:03PM +0800, YueHaibing wrote:
+> If CONFIG_BTRFS_FS is y and CONFIG_LIBCRC32C is m,
+> building fails:
+> 
+> fs/btrfs/super.o: In function `btrfs_mount_root':
+> super.c:(.text+0xb7f9): undefined reference to `crc32c_impl'
+> fs/btrfs/super.o: In function `init_btrfs_fs':
+> super.c:(.init.text+0x3465): undefined reference to `crc32c_impl'
+> fs/btrfs/extent-tree.o: In function `hash_extent_data_ref':
+> extent-tree.c:(.text+0xe60): undefined reference to `crc32c'
+> extent-tree.c:(.text+0xe78): undefined reference to `crc32c'
+> extent-tree.c:(.text+0xe8b): undefined reference to `crc32c'
+> fs/btrfs/dir-item.o: In function `btrfs_insert_xattr_item':
+> dir-item.c:(.text+0x291): undefined reference to `crc32c'
+> fs/btrfs/dir-item.o: In function `btrfs_insert_dir_item':
+> dir-item.c:(.text+0x429): undefined reference to `crc32c'
+> 
+> Select LIBCRC32C to fix it.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: d5178578bcd4 ("btrfs: directly call into crypto framework for checksumming")
 
-> Ping?  Have you had a chance of looking at this series?
-
-Yeah, through due to time pressure, I haven't managed to do much with it.
-
-I don't agree with all your changes, and also I'd like them to wait till after
-the branch of mount API filesystem conversions that I've given to Al has had a
-chance to hopefully go in in this merge window, along with whatever changes Al
-has made to it.
-
-Bocsánat,
-David
+Thanks, queued for 5.3.  I hoped we could reduce the config dependencies
+a bit, oh well.
