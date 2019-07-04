@@ -2,77 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF035FE02
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B71935FE0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfGDVCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 17:02:01 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:53414 "EHLO ale.deltatee.com"
+        id S1727516AbfGDVIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 17:08:21 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47461 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfGDVCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 17:02:00 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hj8rW-0003V8-PO; Thu, 04 Jul 2019 15:01:51 -0600
-To:     Max Gurtovoy <maxg@mellanox.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     Stephen Bates <sbates@raithlin.com>
-References: <20190703230304.22905-1-logang@deltatee.com>
- <20190703230304.22905-2-logang@deltatee.com>
- <786259e6-ffed-8db3-74d0-71ed5a760079@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d79a4c2d-9326-2805-b2a2-ca265ab2a717@deltatee.com>
-Date:   Thu, 4 Jul 2019 15:01:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726871AbfGDVIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 17:08:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45frDL267jz9sBp;
+        Fri,  5 Jul 2019 07:08:18 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562274498;
+        bh=uiKym7gdeDlyMdoWAy3bdqHaCGNeEnlC8k+Noqqs0Yw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PKUNdXaXg6FqSKQOpFK/jvd0Jwon/XU7Pz3k704jZr9wWPZo35q+IH0uz/+zMSEoS
+         eRkhnG4fyxCIMY+8iRse7oonn4AGOIxoGmpT4TLPgsG6h7gNNhiSlXMj/dwjcCGmBV
+         Q2IlcMDt0w7GKqxpvkYIwMsyHRrRwzG1eykLKHJdDp6N1Jo4VnYsWWcTnJtN4PM2mk
+         QSFF8dRHVwviQKy+7ddmcR5yCZVWP2NZywdb2N3zm1P3tvR/09a/B0dvGWS5Ct5h1h
+         cHfKs6ZHQ5SZj3Uw3n8+8F5EyylgRfpHBlebJZ7hLgsyEdqFoJ3JA+mf/dyca0WBk7
+         zjY/BrbQ7Trzw==
+Date:   Fri, 5 Jul 2019 07:08:10 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the hmm
+ tree
+Message-ID: <20190705070810.1e01ea9d@canb.auug.org.au>
+In-Reply-To: <20190704132836.GM3401@mellanox.com>
+References: <20190704205536.32740b34@canb.auug.org.au>
+        <20190704125539.GL3401@mellanox.com>
+        <20190704230133.1fe67031@canb.auug.org.au>
+        <20190704132836.GM3401@mellanox.com>
 MIME-Version: 1.0
-In-Reply-To: <786259e6-ffed-8db3-74d0-71ed5a760079@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, sagi@grimberg.me, hch@lst.de, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, maxg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH v2 1/2] nvmet: Fix use-after-free bug when a port is
- removed
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.mdJ876r_5mgmleKxQi6puG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/.mdJ876r_5mgmleKxQi6puG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jason,
 
-On 2019-07-04 3:00 p.m., Max Gurtovoy wrote:
-> Hi Logan,
-> 
-> On 7/4/2019 2:03 AM, Logan Gunthorpe wrote:
->> When a port is removed through configfs, any connected controllers
->> are still active and can still send commands. This causes a
->> use-after-free bug which is detected by KASAN for any admin command
->> that dereferences req->port (like in nvmet_execute_identify_ctrl).
->>
->> To fix this, disconnect all active controllers when a subsystem is
->> removed from a port. This ensures there are no active controllers
->> when the port is eventually removed.
-> 
-> so now we are enforcing controller existence with port configfs, right ?
-> sounds reasonable.
+On Thu, 4 Jul 2019 13:28:41 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> BTW, do you use a script to get these conflicting patch commit ID
+> automatically? It is so helpful to have them.
 
-Correct.
+No, I just use gitk and a bit of searching.  Though often there are not
+many possible commits to search.
 
-> Did you run your patches with other transport (RDMA/TCP/FC) ?
+--=20
+Cheers,
+Stephen Rothwell
 
-Just RDMA and loop. I suppose I could test with TCP but I don't have FC
-hardware.
+--Sig_/.mdJ876r_5mgmleKxQi6puG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Logan
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0earsACgkQAVBC80lX
+0GzS7gf8CTB2erFpQ9ri/9IBqbNwdjk/6yvzDws8bx1+yLuYWdWkGvoAxnjV2Ixu
+uEoGvI+lg1O2AfNWa/NIcy1a8iqBkf/tFm7ZA6P7W1O7AIwp8VVL/rYEbMVe3Qjk
+YlmU/t2cdAFfdfOPMRVbOcbCUrI9llIiqO+BeSM/up6x3NfeJuAl/AQiWwl4EQP9
+u59RW+Im0Byq5SRSH72BmexZlIRaWqlEWMwWddGzkrrmgbX558LBxK+YuocW7+x0
+NgTnZEFv4RMd85Xk58vXvCt+0DtgH+HqdA7bAz8++ccRg8Q0zYoiLWEJivffXnmP
+DMBF2a5n1VXM+O28IqT0ChRuSKB28w==
+=WSr2
+-----END PGP SIGNATURE-----
+
+--Sig_/.mdJ876r_5mgmleKxQi6puG--
