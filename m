@@ -2,40 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C9F5F4C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B753A5F4CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:46:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbfGDIqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53624 "EHLO mail.kernel.org"
+        id S1727311AbfGDIqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:46:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbfGDIqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:46:40 -0400
+        id S1727046AbfGDIqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:46:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABCE8218A0;
-        Thu,  4 Jul 2019 08:46:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B2062189E;
+        Thu,  4 Jul 2019 08:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562229999;
-        bh=1gMIyrG8zz1L+WGLjYc1vTwxG3KfgSDuIVw1K4VZDhs=;
+        s=default; t=1562230007;
+        bh=qtIWUlZhhHDXDpXDtHcNJNcCL7CfAeK4osJtqxlinjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ey4q4tyK5k8N8IQJP5Ft1BVL9Bqo2dA69gHM4fSA1UTtJMRgysawqsaiCACK7GkBd
-         t2z6cFLXdKm/D/tkoa9QzPt+EDnCvhSYEXJKb3GsG8jiSw6ShRHV/p3vByNNDAl5Rq
-         BoJQpokuB7u+hZphY3a5sgR0q2SdB00LNQd6CIQk=
+        b=IG//GIHoNqgkq2z+t6Bjz6KO7Rh5y3z+iamhj72CD8u7+VgFbEQ0q/odyajknog48
+         5LqbvsICZnRrZH4ycDqs2euu9VEXB5phKT1n+K01idiwxvzU188LYcyLAPivSys+/P
+         L1ZTROUNhaCzIfst0WBd3CalPy+wyjiKvH7HqzxA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Gong <richard.gong@linux.intel.com>,
-        Romain Izard <romain.izard.pro@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mans Rullgard <mans@mansr.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 01/11] Platform: add a dev_groups pointer to struct platform_driver
-Date:   Thu,  4 Jul 2019 10:46:07 +0200
-Message-Id: <20190704084617.3602-2-gregkh@linuxfoundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 02/11] uio: uio_fsl_elbc_gpcm: convert platform driver to use dev_groups
+Date:   Thu,  4 Jul 2019 10:46:08 +0200
+Message-Id: <20190704084617.3602-3-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190704084617.3602-1-gregkh@linuxfoundation.org>
 References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
@@ -46,107 +39,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Platform drivers like to add sysfs groups to their device, but right now
-they have to do it "by hand".  The driver core should handle this for
-them, but there is no way to get to the bus-default attribute groups as
-all platform devices are "special and unique" one-off drivers/devices.
+Platform drivers now have the option to have the platform core create
+and remove any needed sysfs attribute files.  So take advantage of that
+and do not register "by hand" a sysfs group of attributes.
 
-To combat this, add a dev_groups pointer to platform_driver which allows
-a platform driver to set up a list of default attributes that will be
-properly created and removed by the platform driver core when a probe()
-function is successful and removed right before the device is unbound.
-
-Cc: Richard Gong <richard.gong@linux.intel.com>
-Cc: Romain Izard <romain.izard.pro@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mans Rullgard <mans@mansr.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/platform.c         | 40 +++++++++++++++++++++------------
- include/linux/platform_device.h |  1 +
- 2 files changed, 27 insertions(+), 14 deletions(-)
+ drivers/uio/uio_fsl_elbc_gpcm.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 713903290385..d81fcd435b52 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -598,6 +598,21 @@ struct platform_device *platform_device_register_full(
- }
- EXPORT_SYMBOL_GPL(platform_device_register_full);
+diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+index 450e2f5c9b43..05a9cb10a419 100644
+--- a/drivers/uio/uio_fsl_elbc_gpcm.c
++++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+@@ -71,6 +71,13 @@ static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
+ static DEVICE_ATTR(reg_br, 0664, reg_show, reg_store);
+ static DEVICE_ATTR(reg_or, 0664, reg_show, reg_store);
  
-+static int platform_drv_remove(struct device *_dev)
-+{
-+	struct platform_driver *drv = to_platform_driver(_dev->driver);
-+	struct platform_device *dev = to_platform_device(_dev);
-+	int ret = 0;
++static struct attribute *uio_fsl_elbc_gpcm_attrs[] = {
++	&dev_attr_reg_br.attr,
++	&dev_attr_reg_or.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(uio_fsl_elbc_gpcm);
 +
-+	if (drv->remove)
-+		ret = drv->remove(dev);
-+	if (drv->dev_groups)
-+		device_remove_groups(_dev, drv->dev_groups);
-+	dev_pm_domain_detach(_dev, true);
-+
-+	return ret;
-+}
-+
- static int platform_drv_probe(struct device *_dev)
+ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ 			char *buf)
  {
- 	struct platform_driver *drv = to_platform_driver(_dev->driver);
-@@ -614,8 +629,18 @@ static int platform_drv_probe(struct device *_dev)
+@@ -411,25 +418,12 @@ static int uio_fsl_elbc_gpcm_probe(struct platform_device *pdev)
+ 	/* store private data */
+ 	platform_set_drvdata(pdev, info);
  
- 	if (drv->probe) {
- 		ret = drv->probe(dev);
--		if (ret)
-+		if (ret) {
- 			dev_pm_domain_detach(_dev, true);
-+			goto out;
-+		}
-+	}
-+	if (drv->dev_groups) {
-+		ret = device_add_groups(_dev, drv->dev_groups);
-+		if (ret) {
-+			platform_drv_remove(_dev);
-+			return ret;
-+		}
-+		kobject_uevent(&_dev->kobj, KOBJ_CHANGE);
- 	}
+-	/* create sysfs files */
+-	ret = device_create_file(priv->dev, &dev_attr_reg_br);
+-	if (ret)
+-		goto out_err3;
+-	ret = device_create_file(priv->dev, &dev_attr_reg_or);
+-	if (ret)
+-		goto out_err4;
+-
+ 	dev_info(priv->dev,
+ 		 "eLBC/GPCM device (%s) at 0x%llx, bank %d, irq=%d\n",
+ 		 priv->name, (unsigned long long)res.start, priv->bank,
+ 		 irq != NO_IRQ ? irq : -1);
  
- out:
-@@ -632,19 +657,6 @@ static int platform_drv_probe_fail(struct device *_dev)
- 	return -ENXIO;
- }
+ 	return 0;
+-out_err4:
+-	device_remove_file(priv->dev, &dev_attr_reg_br);
+-out_err3:
+-	platform_set_drvdata(pdev, NULL);
+-	uio_unregister_device(info);
+ out_err2:
+ 	if (priv->shutdown)
+ 		priv->shutdown(info, true);
+@@ -448,8 +442,6 @@ static int uio_fsl_elbc_gpcm_remove(struct platform_device *pdev)
+ 	struct uio_info *info = platform_get_drvdata(pdev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
  
--static int platform_drv_remove(struct device *_dev)
--{
--	struct platform_driver *drv = to_platform_driver(_dev->driver);
--	struct platform_device *dev = to_platform_device(_dev);
--	int ret = 0;
--
--	if (drv->remove)
--		ret = drv->remove(dev);
--	dev_pm_domain_detach(_dev, true);
--
--	return ret;
--}
--
- static void platform_drv_shutdown(struct device *_dev)
- {
- 	struct platform_driver *drv = to_platform_driver(_dev->driver);
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index cc464850b71e..027f1e1d7af8 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -190,6 +190,7 @@ struct platform_driver {
- 	int (*resume)(struct platform_device *);
- 	struct device_driver driver;
- 	const struct platform_device_id *id_table;
-+	const struct attribute_group **dev_groups;
- 	bool prevent_deferred_probe;
+-	device_remove_file(priv->dev, &dev_attr_reg_or);
+-	device_remove_file(priv->dev, &dev_attr_reg_br);
+ 	platform_set_drvdata(pdev, NULL);
+ 	uio_unregister_device(info);
+ 	if (priv->shutdown)
+@@ -477,6 +469,7 @@ static struct platform_driver uio_fsl_elbc_gpcm_driver = {
+ 	},
+ 	.probe = uio_fsl_elbc_gpcm_probe,
+ 	.remove = uio_fsl_elbc_gpcm_remove,
++	.dev_groups = uio_fsl_elbc_gpcm_groups,
  };
+ module_platform_driver(uio_fsl_elbc_gpcm_driver);
  
 -- 
 2.22.0
