@@ -2,45 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEEA55F801
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA9D5F807
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfGDMZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 08:25:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35292 "EHLO
+        id S1727879AbfGDMZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 08:25:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35710 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbfGDMZB (ORCPT
+        with ESMTP id S1727860AbfGDMZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 08:25:01 -0400
+        Thu, 4 Jul 2019 08:25:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=hfZb/+TAkkRT7t//PaA+oZ9sLytwcv7pG7LhcLvO+as=; b=YBiKN9Ty1Vil
-        r6BmVhutzI777WcVvwCD4jijNaOVNW1+W261XwsDcnU7CQmDd3GIYz6Wkj43WRCIdy0H1824KE9nZ
-        8gdvWOcHRQUkr8VfV8lcQVJWcJB6HsLFxE8WqQdIbPBnU/JGQUUb076SYsiUJ5QW8IOsynE80luJP
-        1P2is=;
+        List-Archive; bh=SDyZBgVgpBivHCPF+m1x0S7wJ18YA/zEjKyDZhRXAu0=; b=tUY6QW89WxBv
+        crMBIl0VnT5UzMboWJVQGLGTzokl+Ex5oJFmVgkojHpOmUOjj5ypKN9vYKwwksHbr82fM72wz8tKC
+        dGQeo2KVgV574zsDKNBIJnhdkaNEUfiqbwK3oqWPfxxc/PfplVHvqQVBYtahogPM4221Y894i89Qr
+        nKKPs=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hj0nG-0000ic-Vf; Thu, 04 Jul 2019 12:24:55 +0000
+        id 1hj0nM-0000jI-9w; Thu, 04 Jul 2019 12:25:00 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 725B0274389B; Thu,  4 Jul 2019 13:24:54 +0100 (BST)
+        id CC975274388A; Thu,  4 Jul 2019 13:24:59 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: axg-tdm-formatter: add reset" to the asoc tree
-In-Reply-To: <20190703120749.32341-3-jbrunet@baylibre.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     akinobu.mita@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, Hulk Robot <hulkci@huawei.com>,
+        jacopo@jmondi.org, khoroshilov@ispras.ru,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, mchehab+samsung@kernel.org,
+        rafael@kernel.org, sakari.ailus@linux.intel.com,
+        wsa+renesas@sang-engineering.com
+Subject: Applied "regmap: select CONFIG_REGMAP while REGMAP_SCCB is set" to the regmap tree
+In-Reply-To: <20190704093553.49904-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190704122454.725B0274389B@ypsilon.sirena.org.uk>
-Date:   Thu,  4 Jul 2019 13:24:54 +0100 (BST)
+Message-Id: <20190704122459.CC975274388A@ypsilon.sirena.org.uk>
+Date:   Thu,  4 Jul 2019 13:24:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-tdm-formatter: add reset
+   regmap: select CONFIG_REGMAP while REGMAP_SCCB is set
 
-has been applied to the asoc tree at
+has been applied to the regmap tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,83 +75,42 @@ to this mail.
 Thanks,
 Mark
 
-From 751bd5db52604f3f71d54dbad82707ef2475b707 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 3 Jul 2019 14:07:49 +0200
-Subject: [PATCH] ASoC: meson: axg-tdm-formatter: add reset
+From eff5a850017193ae879948944be05cc814c29621 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 4 Jul 2019 17:35:53 +0800
+Subject: [PATCH] regmap: select CONFIG_REGMAP while REGMAP_SCCB is set
 
-Add the optional reset line handling which is present on the new SoC
-families, such as the g12a. Triggering this reset is not critical but
-it helps solve a channel shift issue on the g12a.
+REGMAP_SCCB is selected by ov772x and ov9650 drivers,
+but CONFIG_REGMAP may not, so building will fails:
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20190703120749.32341-3-jbrunet@baylibre.com
+rivers/media/i2c/ov772x.c: In function ov772x_probe:
+drivers/media/i2c/ov772x.c:1360:22: error: variable ov772x_regmap_config has initializer but incomplete type
+  static const struct regmap_config ov772x_regmap_config = {
+                      ^~~~~~~~~~~~~
+drivers/media/i2c/ov772x.c:1361:4: error: const struct regmap_config has no member named reg_bits
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 5bbf32217bf9 ("media: ov772x: use SCCB regmap")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190704093553.49904-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-tdm-formatter.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/base/regmap/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/meson/axg-tdm-formatter.c b/sound/soc/meson/axg-tdm-formatter.c
-index 0c6cce5c5773..2e498201139f 100644
---- a/sound/soc/meson/axg-tdm-formatter.c
-+++ b/sound/soc/meson/axg-tdm-formatter.c
-@@ -7,6 +7,7 @@
- #include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/regmap.h>
-+#include <linux/reset.h>
- #include <sound/soc.h>
+diff --git a/drivers/base/regmap/Kconfig b/drivers/base/regmap/Kconfig
+index c8bbf5322720..a4984136c19d 100644
+--- a/drivers/base/regmap/Kconfig
++++ b/drivers/base/regmap/Kconfig
+@@ -4,7 +4,7 @@
+ # subsystems should select the appropriate symbols.
  
- #include "axg-tdm-formatter.h"
-@@ -20,6 +21,7 @@ struct axg_tdm_formatter {
- 	struct clk *lrclk;
- 	struct clk *sclk_sel;
- 	struct clk *lrclk_sel;
-+	struct reset_control *reset;
- 	bool enabled;
- 	struct regmap *map;
- };
-@@ -75,6 +77,24 @@ static int axg_tdm_formatter_enable(struct axg_tdm_formatter *formatter)
- 	if (formatter->enabled)
- 		return 0;
+ config REGMAP
+-	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_I3C)
++	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_SCCB || REGMAP_I3C)
+ 	select IRQ_DOMAIN if REGMAP_IRQ
+ 	bool
  
-+	/*
-+	 * On the g12a (and possibly other SoCs), when a stream using
-+	 * multiple lanes is restarted, it will sometimes not start
-+	 * from the first lane, but randomly from another used one.
-+	 * The result is an unexpected and random channel shift.
-+	 *
-+	 * The hypothesis is that an HW counter is not properly reset
-+	 * and the formatter simply starts on the lane it stopped
-+	 * before. Unfortunately, there does not seems to be a way to
-+	 * reset this through the registers of the block.
-+	 *
-+	 * However, the g12a has indenpendent reset lines for each audio
-+	 * devices. Using this reset before each start solves the issue.
-+	 */
-+	ret = reset_control_reset(formatter->reset);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * If sclk is inverted, invert it back and provide the inversion
- 	 * required by the formatter
-@@ -306,6 +326,15 @@ int axg_tdm_formatter_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	/* Formatter dedicated reset line */
-+	formatter->reset = reset_control_get_optional_exclusive(dev, NULL);
-+	if (IS_ERR(formatter->reset)) {
-+		ret = PTR_ERR(formatter->reset);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get reset: %d\n", ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_component(dev, drv->component_drv,
- 					       NULL, 0);
- }
 -- 
 2.20.1
 
