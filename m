@@ -2,47 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7625F803
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B16005F800
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbfGDMZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 08:25:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35560 "EHLO
+        id S1727827AbfGDMZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 08:25:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35290 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbfGDMZI (ORCPT
+        with ESMTP id S1727771AbfGDMZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 08:25:08 -0400
+        Thu, 4 Jul 2019 08:25:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=t2piQco/34rO5NPq8LJRanMk4uIJB8P/hTUI71H8ppY=; b=ga5cuEyVlwrh
-        FriYe8wYuss7JDo4ER3NbA5RdBMa2saVPB9RD3g4bsMzTog7bXBXNa+anNgaMczLAaEUSx6YqEd7r
-        +7eRLO8Kt4bC3RYtjLG6hDASp/p13Bt9xYRu7NUjEohWVij6/Zsey9JoGVa3/v+jzkQ37QJZYme6C
-        0WFzo=;
+        List-Archive; bh=vFXKWZbVlhtP1uV3m8Dyf6rla7JmlnmBJTS3Fskfk3I=; b=mm0hugq4fRA9
+        ejjmmKIjkCCbP7VOXFMeeNif7zZri8yEK7qmskL8U7p2b+jCRPmiVLtu4JmoSTdofNT5ysqXHwzS/
+        YoaFUueq/YaFHVaf30i0SPNttcVfLhL9NjRpUFUtp8Bj35V6E1mxHhomEcsCse8y8VJrWldu+Zn6Z
+        otkRo=;
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hj0nG-0000iZ-MD; Thu, 04 Jul 2019 12:24:54 +0000
+        id 1hj0nH-0000ig-9E; Thu, 04 Jul 2019 12:24:55 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A6900274389A; Thu,  4 Jul 2019 13:24:53 +0100 (BST)
+        id A00DD274389C; Thu,  4 Jul 2019 13:24:54 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     alsa-devel@alsa-project.org, cheng.shengyu@zte.com.cn,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, wang.yi59@zte.com.cn,
-        xue.zhihong@zte.com.cn
-Subject: Applied "ASoC: audio-graph-card: fix use-after-free in graph_for_each_link" to the asoc tree
-In-Reply-To: <1562229530-8121-1-git-send-email-wen.yang99@zte.com.cn>
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: meson: axg-tdm-formatter: add reset to the bindings documentation" to the asoc tree
+In-Reply-To: <20190703120749.32341-2-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190704122453.A6900274389A@ypsilon.sirena.org.uk>
-Date:   Thu,  4 Jul 2019 13:24:53 +0100 (BST)
+Message-Id: <20190704122454.A00DD274389C@ypsilon.sirena.org.uk>
+Date:   Thu,  4 Jul 2019 13:24:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,11 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: audio-graph-card: fix use-after-free in graph_for_each_link
+   ASoC: meson: axg-tdm-formatter: add reset to the bindings documentation
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -75,55 +73,43 @@ to this mail.
 Thanks,
 Mark
 
-From 1bcc1fd64e4dd903f4d868a9e053986e3b102713 Mon Sep 17 00:00:00 2001
-From: Wen Yang <wen.yang99@zte.com.cn>
-Date: Thu, 4 Jul 2019 16:38:50 +0800
-Subject: [PATCH] ASoC: audio-graph-card: fix use-after-free in
- graph_for_each_link
+From 094380ea2bf9f0fa7d63e67bf500b8c77e8d1910 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 3 Jul 2019 14:07:48 +0200
+Subject: [PATCH] ASoC: meson: axg-tdm-formatter: add reset to the bindings
+ documentation
 
-After calling of_node_put() on the codec_ep and codec_port variables,
-they are still being used, which may result in use-after-free.
-We fix this issue by calling of_node_put() after the last usage.
+Add an optional reset property to the tdm formatter bindings. The
+dedicated reset line is present on some SoC families, such as the g12a.
 
-Fixes: fce9b90c1ab7 ("ASoC: audio-graph-card: cleanup DAI link loop method - step2")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linux-kernel@vger.kernel.org
-Link: https://lore.kernel.org/r/1562229530-8121-1-git-send-email-wen.yang99@zte.com.cn
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20190703120749.32341-2-jbrunet@baylibre.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/audio-graph-card.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/sound/amlogic,axg-tdm-formatters.txt           | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index ec7e673ba475..70ed28d97d49 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -435,9 +435,6 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- 			codec_ep = of_graph_get_remote_endpoint(cpu_ep);
- 			codec_port = of_get_parent(codec_ep);
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
+index 3b94a715a0b9..8835a43edfbb 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
+@@ -15,11 +15,15 @@ Required properties:
+   * "lrclk"    : sample clock
+   * "lrclk_sel": sample clock input multiplexer
  
--			of_node_put(codec_ep);
--			of_node_put(codec_port);
--
- 			/* get convert-xxx property */
- 			memset(&adata, 0, sizeof(adata));
- 			graph_parse_convert(dev, codec_ep, &adata);
-@@ -457,6 +454,9 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- 			else
- 				ret = func_noml(priv, cpu_ep, codec_ep, li);
- 
-+			of_node_put(codec_ep);
-+			of_node_put(codec_port);
+-Example of TDMOUT_A on the A113 SoC:
++Optional property:
++- resets: phandle to the dedicated reset line of the tdm formatter.
 +
- 			if (ret < 0)
- 				return ret;
++Example of TDMOUT_A on the S905X2 SoC:
  
+ tdmout_a: audio-controller@500 {
+ 	compatible = "amlogic,axg-tdmout";
+ 	reg = <0x0 0x500 0x0 0x40>;
++	resets = <&clkc_audio AUD_RESET_TDMOUT_A>;
+ 	clocks = <&clkc_audio AUD_CLKID_TDMOUT_A>,
+ 		 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK>,
+ 		 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK_SEL>,
 -- 
 2.20.1
 
