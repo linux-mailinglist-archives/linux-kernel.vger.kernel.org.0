@@ -2,121 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB535F22A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22CFC5F22E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 06:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfGDEcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 00:32:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfGDEcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 00:32:06 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EE19F3082132;
-        Thu,  4 Jul 2019 04:32:00 +0000 (UTC)
-Received: from [10.72.12.202] (ovpn-12-202.pek2.redhat.com [10.72.12.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B705F968C7;
-        Thu,  4 Jul 2019 04:31:50 +0000 (UTC)
-Subject: Re: [RFC v2] vhost: introduce mdev based hardware vhost backend
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     mst@redhat.com, alex.williamson@redhat.com,
-        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-References: <20190703091339.1847-1-tiwei.bie@intel.com>
- <7b8279b2-aa7e-7adc-eeff-20dfaf4400d0@redhat.com>
- <20190703115245.GA22374@___>
- <64833f91-02cd-7143-f12e-56ab93b2418d@redhat.com> <20190703130817.GA1978@___>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <b01b8e28-8d96-31dd-56f4-ca7793498c55@redhat.com>
-Date:   Thu, 4 Jul 2019 12:31:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727044AbfGDEek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 00:34:40 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:47029 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfGDEej (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 00:34:39 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so816626plz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 21:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7vbppYg/PV/7L5iaCilqYrS88KLuUxXV/tcBcygZ/DM=;
+        b=vSdua536NKvlq/muYod+Jq39qhq9nRhECF2mZYOuyu5lZpriRV/S6tJYaf/Pw9PHZ/
+         lZfpE7zfIuF/+6bGXZkeMn8jkyGBSRQMOOuZUffJGlRZL7Gou+fT1Ojz7VI/nnFKiI7m
+         F5/Cov48q5JztOsOlW9D0/vvuOiRNNPKCdDC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7vbppYg/PV/7L5iaCilqYrS88KLuUxXV/tcBcygZ/DM=;
+        b=J4O0WW/N31aFKszGyHsawE6SH31TnNbuKQ3KvTr78kg63U5+LOs7zkg6MN9KtbgN0C
+         uV9ebo+k0U12a/o18n72TIgEim7d1TKGBtAswLmVjb+JLofcRBNyHCnAnNdTAS3OpxXt
+         gtyGc7lr7b/Q5ntAL1ArPGUrRMP92g8gQziFwF/aTRVfiYmBUqf0XgA0kqwtPuM1mJME
+         N01k7/q6Ox2THjc0AMK75ROs+jJ8Lq3mPhxG5fnkVGZh24Et4SPuvJFRgYhyVv+FkLci
+         OZf35YZ19g5TJgk9ZmFDf57sfTfOIdBha1SIYqYD2aQOriMgAIuenDB2XRqaJygb1HFI
+         /lmw==
+X-Gm-Message-State: APjAAAW8yzHispDvtb9ZpTWAtrBJT4D2+Zo0yvVqrdSt5rh/feMenjYd
+        1VA5v8pC35c5NqVHWLdY6lZQvZxfFW0=
+X-Google-Smtp-Source: APXvYqwVb4pSb+wRU1yNknNpnD1K4ghm+jlabCGwIkOi0NNnKD1g3x6RkZi6gHlb7LQd044e3blFGg==
+X-Received: by 2002:a17:902:a504:: with SMTP id s4mr32822885plq.117.1562214878674;
+        Wed, 03 Jul 2019 21:34:38 -0700 (PDT)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id b24sm3837621pfd.98.2019.07.03.21.34.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 21:34:37 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>, kernel-team@android.com
+Subject: [PATCH] rcuperf: Make rcuperf kernel test more robust for !expedited mode
+Date:   Thu,  4 Jul 2019 00:34:30 -0400
+Message-Id: <20190704043431.208689-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-In-Reply-To: <20190703130817.GA1978@___>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 04 Jul 2019 04:32:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It is possible that the rcuperf kernel test runs concurrently with init
+starting up.  During this time, the system is running all grace periods
+as expedited.  However, rcuperf can also be run for normal GP tests.
+Right now, it depends on a holdoff time before starting the test to
+ensure grace periods start later. This works fine with the default
+holdoff time however it is not robust in situations where init takes
+greater than the holdoff time to finish running. Or, as in my case:
 
-On 2019/7/3 下午9:08, Tiwei Bie wrote:
-> On Wed, Jul 03, 2019 at 08:16:23PM +0800, Jason Wang wrote:
->> On 2019/7/3 下午7:52, Tiwei Bie wrote:
->>> On Wed, Jul 03, 2019 at 06:09:51PM +0800, Jason Wang wrote:
->>>> On 2019/7/3 下午5:13, Tiwei Bie wrote:
->>>>> Details about this can be found here:
->>>>>
->>>>> https://lwn.net/Articles/750770/
->>>>>
->>>>> What's new in this version
->>>>> ==========================
->>>>>
->>>>> A new VFIO device type is introduced - vfio-vhost. This addressed
->>>>> some comments from here:https://patchwork.ozlabs.org/cover/984763/
->>>>>
->>>>> Below is the updated device interface:
->>>>>
->>>>> Currently, there are two regions of this device: 1) CONFIG_REGION
->>>>> (VFIO_VHOST_CONFIG_REGION_INDEX), which can be used to setup the
->>>>> device; 2) NOTIFY_REGION (VFIO_VHOST_NOTIFY_REGION_INDEX), which
->>>>> can be used to notify the device.
->>>>>
->>>>> 1. CONFIG_REGION
->>>>>
->>>>> The region described by CONFIG_REGION is the main control interface.
->>>>> Messages will be written to or read from this region.
->>>>>
->>>>> The message type is determined by the `request` field in message
->>>>> header. The message size is encoded in the message header too.
->>>>> The message format looks like this:
->>>>>
->>>>> struct vhost_vfio_op {
->>>>> 	__u64 request;
->>>>> 	__u32 flags;
->>>>> 	/* Flag values: */
->>>>>     #define VHOST_VFIO_NEED_REPLY 0x1 /* Whether need reply */
->>>>> 	__u32 size;
->>>>> 	union {
->>>>> 		__u64 u64;
->>>>> 		struct vhost_vring_state state;
->>>>> 		struct vhost_vring_addr addr;
->>>>> 	} payload;
->>>>> };
->>>>>
->>>>> The existing vhost-kernel ioctl cmds are reused as the message
->>>>> requests in above structure.
->>>> Still a comments like V1. What's the advantage of inventing a new protocol?
->>> I'm trying to make it work in VFIO's way..
->>>
->>>> I believe either of the following should be better:
->>>>
->>>> - using vhost ioctl,  we can start from SET_VRING_KICK/SET_VRING_CALL and
->>>> extend it with e.g notify region. The advantages is that all exist userspace
->>>> program could be reused without modification (or minimal modification). And
->>>> vhost API hides lots of details that is not necessary to be understood by
->>>> application (e.g in the case of container).
->>> Do you mean reusing vhost's ioctl on VFIO device fd directly,
->>> or introducing another mdev driver (i.e. vhost_mdev instead of
->>> using the existing vfio_mdev) for mdev device?
->> Can we simply add them into ioctl of mdev_parent_ops?
-> Right, either way, these ioctls have to be and just need to be
-> added in the ioctl of the mdev_parent_ops. But another thing we
-> also need to consider is that which file descriptor the userspace
-> will do the ioctl() on. So I'm wondering do you mean let the
-> userspace do the ioctl() on the VFIO device fd of the mdev
-> device?
->
+I modified the rcuperf test locally to also run a thread that did
+preempt disable/enable in a loop. This had the effect of slowing down
+init. The end result was that the "batches:" counter in rcuperf was 0
+causing a division by 0 error in the results. This counter was 0 because
+only expedited GPs seem to happen, not normal ones which led to the
+rcu_state.gp_seq counter remaining constant across grace periods which
+unexpectedly happen to be expedited. The system was running expedited
+RCU all the time because rcu_unexpedited_gp() would not have run yet
+from init.  In other words, the test would concurrently with init
+booting in expedited GP mode.
 
-Yes. Is there any other way btw?
+To fix this properly, let us check if system_state if SYSTEM_RUNNING
+is set before starting the test. The system_state approximately aligns
+with when rcu_unexpedited_gp() is called and works well in practice.
 
-Thanks
+I also tried late_initcall however it is still too early to be
+meaningful for this case.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ kernel/rcu/rcuperf.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index 4513807cd4c4..5a879d073c1c 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -375,6 +375,14 @@ rcu_perf_writer(void *arg)
+ 	if (holdoff)
+ 		schedule_timeout_uninterruptible(holdoff * HZ);
+ 
++	/*
++	 * Wait until rcu_end_inkernel_boot() is called for normal GP tests
++	 * so that RCU is not always expedited for normal GP tests.
++	 * The system_state test is approximate, but works well in practice.
++	 */
++	while (!gp_exp && system_state != SYSTEM_RUNNING)
++		schedule_timeout_uninterruptible(1);
++
+ 	t = ktime_get_mono_fast_ns();
+ 	if (atomic_inc_return(&n_rcu_perf_writer_started) >= nrealwriters) {
+ 		t_rcu_perf_writer_started = t;
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
