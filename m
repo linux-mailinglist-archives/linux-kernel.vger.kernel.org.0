@@ -2,82 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3012A5FA18
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7865F9F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfGDO3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 10:29:40 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:41412 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfGDO3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 10:29:40 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A25E61A05FF;
-        Thu,  4 Jul 2019 16:29:38 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB6C61A05F8;
-        Thu,  4 Jul 2019 16:29:33 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9B0CD402C3;
-        Thu,  4 Jul 2019 22:29:27 +0800 (SGT)
-From:   fugang.duan@nxp.com
-To:     srinivas.kandagatla@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de
-Cc:     gregkh@linuxfoundation.org, kernel@pengutronix.de,
-        festevam@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, fugang.duan@nxp.com
-Subject: [PATCH nvmem 1/1] nvmem: imx: add i.MX8QM platform support
-Date:   Thu,  4 Jul 2019 22:20:32 +0800
-Message-Id: <20190704142032.10745-1-fugang.duan@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727440AbfGDOXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 10:23:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44345 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfGDOXe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 10:23:34 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hj2e1-0004gL-NU; Thu, 04 Jul 2019 14:23:29 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amdgpu/psp: fix incorrect logic when checking asic_type
+Date:   Thu,  4 Jul 2019 15:23:29 +0100
+Message-Id: <20190704142329.22983-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fugang Duan <fugang.duan@nxp.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-i.MX8QM efuse table has some difference with i.MX8QXP platform,
-so add i.MX8QM platform support.
+Currently the check of the asic_type is always returning true because
+of the use of ||.  Fix this by using && instead.  Also break overly
+wide line.
 
-Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+Addresses-Coverity: ("Constant expression result")
+Fixes: dab70ff24db6 ("drm/amdgpu/psp: add psp support for navi14")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/nvmem/imx-ocotp-scu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/imx-ocotp-scu.c b/drivers/nvmem/imx-ocotp-scu.c
-index be2f5f0..0d78ab4 100644
---- a/drivers/nvmem/imx-ocotp-scu.c
-+++ b/drivers/nvmem/imx-ocotp-scu.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+index 527dc371598d..e4afd34e3034 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+@@ -540,7 +540,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
  
- enum ocotp_devtype {
- 	IMX8QXP,
-+	IMX8QM,
- };
+ 	case AMDGPU_UCODE_ID_RLC_G:
+ 		*sram_offset = 0x2000;
+-		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
++		if (adev->asic_type != CHIP_NAVI10 &&
++		    adev->asic_type != CHIP_NAVI14) {
+ 			*sram_addr_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_ADDR);
+ 			*sram_data_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_DATA);
+ 		} else {
+@@ -551,7 +552,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
  
- struct ocotp_devtype_data {
-@@ -39,6 +40,11 @@ static struct ocotp_devtype_data imx8qxp_data = {
- 	.nregs = 800,
- };
- 
-+static struct ocotp_devtype_data imx8qm_data = {
-+	.devtype = IMX8QM,
-+	.nregs = 800,
-+};
-+
- static int imx_sc_misc_otp_fuse_read(struct imx_sc_ipc *ipc, u32 word,
- 				     u32 *val)
- {
-@@ -118,6 +124,7 @@ static struct nvmem_config imx_scu_ocotp_nvmem_config = {
- 
- static const struct of_device_id imx_scu_ocotp_dt_ids[] = {
- 	{ .compatible = "fsl,imx8qxp-scu-ocotp", (void *)&imx8qxp_data },
-+	{ .compatible = "fsl,imx8qm-scu-ocotp", (void *)&imx8qm_data },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, imx_scu_ocotp_dt_ids);
+ 	case AMDGPU_UCODE_ID_SDMA0:
+ 		*sram_offset = 0x0;
+-		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
++		if (adev->asic_type != CHIP_NAVI10 &&
++		    adev->asic_type != CHIP_NAVI14) {
+ 			*sram_addr_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_ADDR);
+ 			*sram_data_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_DATA);
+ 		} else {
 -- 
-2.7.4
+2.20.1
 
