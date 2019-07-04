@@ -2,114 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0137A5FAB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD215FAE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfGDPMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:12:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51790 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfGDPMY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:12:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x64F8w45160027;
-        Thu, 4 Jul 2019 15:11:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=J2yR5u6KiY8S3i26WlPbwZicZznOd9rvYFqBPqXulEc=;
- b=czlZdJs7+gd34nNHXUlV9AOB+31iyg2QSKaLzL+UpBjqj2JDSL+IWT+1BduuMXvvULbA
- vdAL5tkcJD15wwswbHYOdGRy9jY/RWfBTFsIUluDITjsGRT8Ya8cF/ZHhFZBDMLKrqej
- WGt9b0T834VZZQqGYUbCn4vmN7gQvZC/4wE75U2Cpj00aAPy58JXjRQPGjKnaVjW2kFc
- dnoVa1qktKZ0BdfucUhrddiQ1zdk9tMS9bbvI1zLRRCNAN7N96MbFCH5486f9KGq6Str
- p4NbLViO19GGZZSPirwRfrGy1yVb6e4lhj+rwkHuwzUVs8GNCZtvFImaH6ObsZrthre2 Sw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2te5tbybw1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 15:11:54 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x64F7kZf145457;
-        Thu, 4 Jul 2019 15:11:53 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2th5qm3er2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Jul 2019 15:11:53 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x64FBkvv012480;
-        Thu, 4 Jul 2019 15:11:46 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 04 Jul 2019 08:11:45 -0700
-Subject: Re: [Question] Should direct reclaim time be bounded?
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com>
- <20190423071953.GC25106@dhcp22.suse.cz>
- <eac582cf-2f76-4da1-1127-6bb5c8c959e4@oracle.com>
- <04329fea-cd34-4107-d1d4-b2098ebab0ec@suse.cz>
- <dede2f84-90bf-347a-2a17-fb6b521bf573@oracle.com>
- <20190701085920.GB2812@suse.de>
- <80036eed-993d-1d24-7ab6-e495f01b1caa@oracle.com>
- <20190703094325.GB2737@techsingularity.net>
- <571d5557-2153-59ea-334b-8636cc1a49c9@oracle.com>
- <20190704110903.GE5620@dhcp22.suse.cz>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <c801da70-1aa5-666a-615e-852100d6145e@oracle.com>
-Date:   Thu, 4 Jul 2019 08:11:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727797AbfGDPbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:31:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:3318 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727474AbfGDPbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 11:31:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 08:31:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
+   d="scan'208";a="172450290"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2019 08:30:58 -0700
+Date:   Thu, 4 Jul 2019 23:14:17 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fpga: dfl: use driver core functions, not sysfs ones.
+Message-ID: <20190704151416.GA1423@hao-dev>
+References: <20190704055645.GA15471@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190704110903.GE5620@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907040191
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=989 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907040192
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704055645.GA15471@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/19 4:09 AM, Michal Hocko wrote:
-> On Wed 03-07-19 16:54:35, Mike Kravetz wrote:
->> On 7/3/19 2:43 AM, Mel Gorman wrote:
->>> Indeed. I'm getting knocked offline shortly so I didn't give this the
->>> time it deserves but it appears that part of this problem is
->>> hugetlb-specific when one node is full and can enter into this continual
->>> loop due to __GFP_RETRY_MAYFAIL requiring both nr_reclaimed and
->>> nr_scanned to be zero.
->>
->> Yes, I am not aware of any other large order allocations consistently made
->> with __GFP_RETRY_MAYFAIL.  But, I did not look too closely.  Michal believes
->> that hugetlb pages allocations should use __GFP_RETRY_MAYFAIL.
+On Thu, Jul 04, 2019 at 07:56:45AM +0200, Greg Kroah-Hartman wrote:
+> This is a driver, do not call "raw" sysfs functions, instead call driver
+> core ones.  Specifically convert the use of sysfs_create_files() and
+> sysfs_remove_files() to use device_add_groups() and
+> device_remove_groups()
+
+Hi Greg,
+
+Thanks for this patch. It looks good, and works well in my side.
+
+I will follow the same (replace sysfs_create/remove_* with
+device_add/remove_group) to rework my patchset too. Thanks.
+
+Hao
+
 > 
-> Yes. The argument is that this is controlable by an admin and failures
-> should be prevented as much as possible. I didn't get to understand
-> should_continue_reclaim part of the problem but I have a strong feeling
-> that __GFP_RETRY_MAYFAIL handling at that layer is not correct. What
-> happens if it is simply removed and we rely only on the retry mechanism
-> from the page allocator instead? Does the success rate is reduced
-> considerably?
-
-It certainly will be reduced.  I 'think' it will be hard to predict how
-much it will be reduced as this will depend on the state of memory usage
-and fragmentation at the time of the attempt.
-
-I can try to measure this, but I will be a few days due to U.S. holiday.
--- 
-Mike Kravetz
+> Cc: Wu Hao <hao.wu@intel.com>
+> Cc: Alan Tull <atull@kernel.org>
+> Cc: Moritz Fischer <mdf@kernel.org>
+> Cc: linux-fpga@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/fpga/dfl-afu-main.c | 14 ++++++++------
+>  drivers/fpga/dfl-fme-main.c |  7 ++++---
+>  2 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> index 02baa6a227c0..68b4d0874b93 100644
+> --- a/drivers/fpga/dfl-afu-main.c
+> +++ b/drivers/fpga/dfl-afu-main.c
+> @@ -141,10 +141,11 @@ id_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  }
+>  static DEVICE_ATTR_RO(id);
+>  
+> -static const struct attribute *port_hdr_attrs[] = {
+> +static struct attribute *port_hdr_attrs[] = {
+>  	&dev_attr_id.attr,
+>  	NULL,
+>  };
+> +ATTRIBUTE_GROUPS(port_hdr);
+>  
+>  static int port_hdr_init(struct platform_device *pdev,
+>  			 struct dfl_feature *feature)
+> @@ -153,7 +154,7 @@ static int port_hdr_init(struct platform_device *pdev,
+>  
+>  	port_reset(pdev);
+>  
+> -	return sysfs_create_files(&pdev->dev.kobj, port_hdr_attrs);
+> +	return device_add_groups(&pdev->dev, port_hdr_groups);
+>  }
+>  
+>  static void port_hdr_uinit(struct platform_device *pdev,
+> @@ -161,7 +162,7 @@ static void port_hdr_uinit(struct platform_device *pdev,
+>  {
+>  	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
+>  
+> -	sysfs_remove_files(&pdev->dev.kobj, port_hdr_attrs);
+> +	device_remove_groups(&pdev->dev, port_hdr_groups);
+>  }
+>  
+>  static long
+> @@ -214,10 +215,11 @@ afu_id_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  }
+>  static DEVICE_ATTR_RO(afu_id);
+>  
+> -static const struct attribute *port_afu_attrs[] = {
+> +static struct attribute *port_afu_attrs[] = {
+>  	&dev_attr_afu_id.attr,
+>  	NULL
+>  };
+> +ATTRIBUTE_GROUPS(port_afu);
+>  
+>  static int port_afu_init(struct platform_device *pdev,
+>  			 struct dfl_feature *feature)
+> @@ -234,7 +236,7 @@ static int port_afu_init(struct platform_device *pdev,
+>  	if (ret)
+>  		return ret;
+>  
+> -	return sysfs_create_files(&pdev->dev.kobj, port_afu_attrs);
+> +	return device_add_groups(&pdev->dev, port_afu_groups);
+>  }
+>  
+>  static void port_afu_uinit(struct platform_device *pdev,
+> @@ -242,7 +244,7 @@ static void port_afu_uinit(struct platform_device *pdev,
+>  {
+>  	dev_dbg(&pdev->dev, "PORT AFU UInit.\n");
+>  
+> -	sysfs_remove_files(&pdev->dev.kobj, port_afu_attrs);
+> +	device_remove_groups(&pdev->dev, port_afu_groups);
+>  }
+>  
+>  static const struct dfl_feature_ops port_afu_ops = {
+> diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
+> index 086ad2420ade..0be4635583d5 100644
+> --- a/drivers/fpga/dfl-fme-main.c
+> +++ b/drivers/fpga/dfl-fme-main.c
+> @@ -72,12 +72,13 @@ static ssize_t bitstream_metadata_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(bitstream_metadata);
+>  
+> -static const struct attribute *fme_hdr_attrs[] = {
+> +static struct attribute *fme_hdr_attrs[] = {
+>  	&dev_attr_ports_num.attr,
+>  	&dev_attr_bitstream_id.attr,
+>  	&dev_attr_bitstream_metadata.attr,
+>  	NULL,
+>  };
+> +ATTRIBUTE_GROUPS(fme_hdr);
+>  
+>  static int fme_hdr_init(struct platform_device *pdev,
+>  			struct dfl_feature *feature)
+> @@ -89,7 +90,7 @@ static int fme_hdr_init(struct platform_device *pdev,
+>  	dev_dbg(&pdev->dev, "FME cap %llx.\n",
+>  		(unsigned long long)readq(base + FME_HDR_CAP));
+>  
+> -	ret = sysfs_create_files(&pdev->dev.kobj, fme_hdr_attrs);
+> +	ret = device_add_groups(&pdev->dev, fme_hdr_groups);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -100,7 +101,7 @@ static void fme_hdr_uinit(struct platform_device *pdev,
+>  			  struct dfl_feature *feature)
+>  {
+>  	dev_dbg(&pdev->dev, "FME HDR UInit.\n");
+> -	sysfs_remove_files(&pdev->dev.kobj, fme_hdr_attrs);
+> +	device_remove_groups(&pdev->dev, fme_hdr_groups);
+>  }
+>  
+>  static const struct dfl_feature_ops fme_hdr_ops = {
+> -- 
+> 2.22.0
