@@ -2,134 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AF35FDD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 22:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0F85FDDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 22:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfGDUn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 16:43:58 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:57599 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfGDUn6 (ORCPT
+        id S1727267AbfGDUqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 16:46:30 -0400
+Received: from smtprelay0121.hostedemail.com ([216.40.44.121]:46513 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726038AbfGDUqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 16:43:58 -0400
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id E568E100006;
-        Thu,  4 Jul 2019 20:43:37 +0000 (UTC)
-Date:   Thu, 4 Jul 2019 22:43:36 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Frank Wunderlich <frank-w@public-files.de>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Josef Friedl <josef.friedl@speed.at>
-Subject: Re: [PATCH v2 3/7] rtc: mt6397: improvements of rtc driver
-Message-ID: <20190704204336.GJ3692@piout.net>
-References: <20190703164822.17924-1-frank-w@public-files.de>
- <20190703164822.17924-4-frank-w@public-files.de>
+        Thu, 4 Jul 2019 16:46:30 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id C4112180253B0;
+        Thu,  4 Jul 2019 20:46:28 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id E67D818225AF9;
+        Thu,  4 Jul 2019 20:46:27 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3868:3870:3874:4250:4321:5007:6119:6691:7903:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12049:12297:12438:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30064:30070:30083:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: space91_1b23faa223b5f
+X-Filterd-Recvd-Size: 2807
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  4 Jul 2019 20:46:26 +0000 (UTC)
+Message-ID: <f6a4c2b601bb59179cb2e3b8f4d836a1c11379a3.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Added warnings in favor of strscpy().
+From:   Joe Perches <joe@perches.com>
+To:     Nitin Gote <nitin.r.gote@intel.com>, akpm@linux-foundation.org
+Cc:     corbet@lwn.net, apw@canonical.com, keescook@chromium.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Date:   Thu, 04 Jul 2019 13:46:25 -0700
+In-Reply-To: <1562219683-15474-1-git-send-email-nitin.r.gote@intel.com>
+References: <1562219683-15474-1-git-send-email-nitin.r.gote@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703164822.17924-4-frank-w@public-files.de>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/2019 18:48:18+0200, Frank Wunderlich wrote:
-> @@ -271,14 +268,11 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+On Thu, 2019-07-04 at 11:24 +0530, Nitin Gote wrote:
+> Added warnings in checkpatch.pl script to :
 > 
->  	platform_set_drvdata(pdev, rtc);
+> 1. Deprecate strcpy() in favor of strscpy().
+> 2. Deprecate strlcpy() in favor of strscpy().
+> 3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
 > 
-> -	rtc->rtc_dev = devm_rtc_allocate_device(rtc->dev);
-> -	if (IS_ERR(rtc->rtc_dev))
-> -		return PTR_ERR(rtc->rtc_dev);
-> +	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
-> +					mtk_rtc_irq_handler_thread,
-> +					IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
-> +					"mt6397-rtc", rtc);
+> Updated strncpy() section in Documentation/process/deprecated.rst
+> to cover strscpy_pad() case.
 > 
+> Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
 
-This change may lead to a crash and the allocation was intentionally
-placed before the irq request.
+OK, for whatever reason, this when into a spam folder.
 
-> -	ret = request_threaded_irq(rtc->irq, NULL,
-> -				   mtk_rtc_irq_handler_thread,
-> -				   IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
-> -				   "mt6397-rtc", rtc);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
->  			rtc->irq, ret);
-> @@ -287,6 +281,10 @@ static int mtk_rtc_probe(struct platform_device *pdev)
-> 
->  	device_init_wakeup(&pdev->dev, 1);
-> 
-> +	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
-> +	if (IS_ERR(rtc->rtc_dev))
-> +		return PTR_ERR(rtc->rtc_dev);
-> +
->  	rtc->rtc_dev->ops = &mtk_rtc_ops;
-> 
->  	ret = rtc_register_device(rtc->rtc_dev);
-> @@ -302,15 +300,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  	return ret;
->  }
-> 
-> -static int mtk_rtc_remove(struct platform_device *pdev)
-> -{
-> -	struct mt6397_rtc *rtc = platform_get_drvdata(pdev);
-> -
-> -	free_irq(rtc->irq, rtc);
-> -
-> -	return 0;
-> -}
-> -
->  #ifdef CONFIG_PM_SLEEP
->  static int mt6397_rtc_suspend(struct device *dev)
->  {
-> @@ -337,6 +326,7 @@ static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_rtc_suspend,
->  			mt6397_rtc_resume);
-> 
->  static const struct of_device_id mt6397_rtc_of_match[] = {
-> +	{ .compatible = "mediatek,mt6323-rtc", },
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -595,6 +595,11 @@ our %deprecated_apis = (
+>  	"rcu_barrier_sched"			=> "rcu_barrier",
+>  	"get_state_synchronize_sched"		=> "get_state_synchronize_rcu",
+>  	"cond_synchronize_sched"		=> "cond_synchronize_rcu",
+> +	"strcpy"				=> "strscpy",
+> +	"strlcpy"				=> "strscpy",
+> +	"strncpy"				=> "strscpy, strscpy_pad or for
+> +	non-NUL-terminated strings, strncpy() can still be used, but
+> +	destinations should be marked with the __nonstring",
+>  );
 
-Unrelated change, this is not an improvement and must be accompanied by
-a documentation change.
+$ git grep -w strcpy | wc -l
+2239
+$ git grep -w strlcpy | wc -l
+1760
+$ git grep -w strncpy | wc -l
+839
 
->  	{ .compatible = "mediatek,mt6397-rtc", },
->  	{ }
->  };
-> @@ -349,7 +339,6 @@ static struct platform_driver mtk_rtc_driver = {
->  		.pm = &mt6397_pm_ops,
->  	},
->  	.probe	= mtk_rtc_probe,
-> -	.remove = mtk_rtc_remove,
->  };
-> 
->  module_platform_driver(mtk_rtc_driver);
-> --
-> 2.17.1
-> 
+These functions are _really_ commonly used in the kernel.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This should probably be a different %deprecated_string_api
+and these should probably not be emitted at WARN level
+when using command line option -f/--file but at CHECK level
+so that novice script users just don't send bad patches.
+
+Also, perhaps there could be some macro for the relatively
+commonly used
+
+	strscpy(foo, bar, sizeof(foo))
+and
+	strlcpy(foo, bar, sizeof(foo))
+
+so argument 1 doesn't have to be repeated in the sizeof()
+
+Something like:
+
+#define stracpy(to, from)					\
+({								\
+	size_t size = ARRAY_SIZE(to);				\
+	BUILD_BUG_ON(!__same_type(typeof(*to), char));		\
+								\
+	strscpy(to, from, size);				\
+})
+
+
