@@ -2,183 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 194C75F315
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 239725F2DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfGDGrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:47:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:20588 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfGDGrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:47:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 23:47:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,449,1557212400"; 
-   d="scan'208";a="339525582"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jul 2019 23:47:49 -0700
-Date:   Thu, 4 Jul 2019 14:31:06 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>, Alan Tull <atull@kernel.org>
-Subject: Re: [PATCH 06/15] fpga: dfl: fme: add
- DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
-Message-ID: <20190704063106.GA24777@hao-dev>
-References: <20190628004951.6202-1-mdf@kernel.org>
- <20190628004951.6202-7-mdf@kernel.org>
- <20190703180753.GA24723@kroah.com>
- <20190703233058.GA15825@hao-dev>
- <20190704053927.GB347@kroah.com>
+        id S1727513AbfGDGbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:31:19 -0400
+Received: from mail-eopbgr140051.outbound.protection.outlook.com ([40.107.14.51]:46404
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725879AbfGDGbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:31:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ywYIGffmJVJTuipwozQ7D/vOtWbzSjF3LL/JViTvy1o=;
+ b=CTyWgzdcJAKFE8hjeTeHyI2i12ZO8GAQOOa9V/Y2UisXXulL2xZ0IeDZW586Ri9SoSvEbGP3Lcf9I/wmVabKciYjQrykdpaZ3eDo6jpkGE82dDtstlFd+LFj8KcGyF3S9bQKITMzxGrenyWu1/nB9yKUaRgjYt66RmJ6bL88EzE=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4799.eurprd08.prod.outlook.com (10.255.112.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.20; Thu, 4 Jul 2019 06:31:12 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1%3]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
+ 06:31:12 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH 4/6] drm/komeda: Add side by side support for writeback
+Thread-Topic: [PATCH 4/6] drm/komeda: Add side by side support for writeback
+Thread-Index: AQHVMjISfm5NC72300KwQchECXz2IQ==
+Date:   Thu, 4 Jul 2019 06:31:12 +0000
+Message-ID: <20190704063011.7431-5-james.qian.wang@arm.com>
+References: <20190704063011.7431-1-james.qian.wang@arm.com>
+In-Reply-To: <20190704063011.7431-1-james.qian.wang@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR03CA0022.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::34) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: adcb0a9f-c3ab-4507-459b-08d70049353d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4799;
+x-ms-traffictypediagnostic: VE1PR08MB4799:
+x-microsoft-antispam-prvs: <VE1PR08MB4799EBA1DC8248BDC4EBF7C0B3FA0@VE1PR08MB4799.eurprd08.prod.outlook.com>
+nodisclaimer: True
+x-ms-oob-tlc-oobclassifiers: OLM:785;
+x-forefront-prvs: 0088C92887
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(366004)(376002)(346002)(396003)(199004)(189003)(14444005)(256004)(305945005)(8936002)(4326008)(99286004)(36756003)(110136005)(2616005)(486006)(2501003)(5660300002)(2906002)(316002)(3846002)(50226002)(1076003)(102836004)(26005)(55236004)(6116002)(66066001)(446003)(11346002)(52116002)(476003)(7736002)(66946007)(76176011)(66446008)(54906003)(66476007)(73956011)(386003)(64756008)(68736007)(66556008)(6506007)(6486002)(103116003)(186003)(53936002)(478600001)(25786009)(86362001)(6436002)(2201001)(6512007)(14454004)(81156014)(81166006)(8676002)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4799;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hdjKWvaLDRBCSjexCc5iPHlGDROr0Iuf/NvM2fJiZ320j/r6Eop5a5Tw0r+4cY/hoUhEg5w8Q2Tx/uFt+paCxnhpCQhsgXSoYjLVMqgEgVzxPLIwuChYiNOwWe/9zzGw1cM95jWOWSoqy5fDT4beVkEdOWZs13ym9QgznFAszl/7SLF6ssrGU/lrzpoBZNNbejIt9NRwiyM/Yte8SOUU0fux9Non9w34gKemFA7iQl051osWn13BwtpaDrmeWygTPLbw/3N/lSzF1xPcANf0JoCE/Wr+3TSkSThHYYmFTCLQZu2LpOSEjtINWr9CNT+6EaFS3TtWdhhV5kI50wH1Pd2etK3EaFHG8pKPJXNLwIsn6zcl0UQw7IKOin2b1Bi3SSV3DPOPdgidsuDtswVf8WeeKefD+mTCxck/I5kD+Kc=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704053927.GB347@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adcb0a9f-c3ab-4507-459b-08d70049353d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 06:31:12.5213
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4799
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 07:39:27AM +0200, Greg KH wrote:
-> On Thu, Jul 04, 2019 at 07:30:58AM +0800, Wu Hao wrote:
-> > On Wed, Jul 03, 2019 at 08:07:53PM +0200, Greg KH wrote:
-> > > On Thu, Jun 27, 2019 at 05:49:42PM -0700, Moritz Fischer wrote:
-> > > > From: Wu Hao <hao.wu@intel.com>
-> > > > 
-> > > > In order to support virtualization usage via PCIe SRIOV, this patch
-> > > > adds two ioctls under FPGA Management Engine (FME) to release and
-> > > > assign back the port device. In order to safely turn Port from PF
-> > > > into VF and enable PCIe SRIOV, it requires user to invoke this
-> > > > PORT_RELEASE ioctl to release port firstly to remove userspace
-> > > > interfaces, and then configure the PF/VF access register in FME.
-> > > > After disable SRIOV, it requires user to invoke this PORT_ASSIGN
-> > > > ioctl to attach the port back to PF.
-> > > > 
-> > > >  Ioctl interfaces:
-> > > >  * DFL_FPGA_FME_PORT_RELEASE
-> > > >    Release platform device of given port, it deletes port platform
-> > > >    device to remove related userspace interfaces on PF, then
-> > > >    configures PF/VF access mode to VF.
-> > > > 
-> > > >  * DFL_FPGA_FME_PORT_ASSIGN
-> > > >    Assign platform device of given port back to PF, it configures
-> > > >    PF/VF access mode to PF, then adds port platform device back to
-> > > >    re-enable related userspace interfaces on PF.
-> > > 
-> > > Why are you not using the "generic" bind/unbind facility that userspace
-> > > already has for this with binding drivers to devices?  Why a special
-> > > ioctl?
-> > 
-> > Hi Greg,
-> > 
-> > Actually we think it should be safer that making the device invisble than
-> > just unbinding its driver. Looks like user can try to rebind it at any
-> > time and we don't have any method to stop them.
-> 
-> Why do you want to "stop" the user from doing something?  They asked to
-> do it, why prevent it?  If they ask to do something foolish, well, they
-> get to keep the pieces :)
+In side by side mode, the master pipeline writeback the left frame and the
+slave writeback the right part, the data flow as below:
 
-Actually this is for SRIOV support, as we are moving FPGA accelerator from
-PF to VF, so we don't want users to see the FPGA accelerator from PF any
-more. We can't allow user to touch same FPGA accelerator from both PF and
-VF side (it leads to hardware erros).
+  slave.compiz -> slave.wb_layer -> fb (right-part)
+  master.compiz -> master.wb_layer -> fb (left-part)
 
-> 
-> > > > --- a/include/uapi/linux/fpga-dfl.h
-> > > > +++ b/include/uapi/linux/fpga-dfl.h
-> > > > @@ -176,4 +176,36 @@ struct dfl_fpga_fme_port_pr {
-> > > >  
-> > > >  #define DFL_FPGA_FME_PORT_PR	_IO(DFL_FPGA_MAGIC, DFL_FME_BASE + 0)
-> > > >  
-> > > > +/**
-> > > > + * DFL_FPGA_FME_PORT_RELEASE - _IOW(DFL_FPGA_MAGIC, DFL_FME_BASE + 1,
-> > > > + *					struct dfl_fpga_fme_port_release)
-> > > > + *
-> > > > + * Driver releases the port per Port ID provided by caller.
-> > > > + * Return: 0 on success, -errno on failure.
-> > > > + */
-> > > > +struct dfl_fpga_fme_port_release {
-> > > > +	/* Input */
-> > > > +	__u32 argsz;		/* Structure length */
-> > > > +	__u32 flags;		/* Zero for now */
-> > > > +	__u32 port_id;
-> > > > +};
-> > > 
-> > > meta-comment, why do all of your structures for ioctls have argsz?  You
-> > > "know" the size of the structure already, it's part of the ioctl
-> > > definition.  You shouldn't need to also set it again, right?  Otherwise
-> > > ALL Linux ioctls would need something crazy like this.
-> > 
-> > Actually we followed the same method as vfio.
-> 
-> vfio is a protocol on "the wire", right?  Not an ioctl.
-> 
-> > The major purpose should be extendibility, as we really need this to
-> > be sth long term maintainable.
-> 
-> You can't change ioctl structure sizes at any time.
-> 
-> > It really helps, if we add some new members for extentions/enhancement
-> > under the same ioctl.
-> 
-> You don't do that.
-> 
-> > I don't think everybody needs this, but my consideration here is if
-> > newer generations of hardware/specs come with some extentions, I still
-> > hope we can resue these IOCTLs as much as we could, instead of
-> > creating more new ones.
-> 
-> You create new ones, like everyone else does, as you can not change old
-> code.  By trying to "version" structures like this, it's just going to
-> be a nightmare.
+Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
+com>
+---
+ .../drm/arm/display/komeda/komeda_pipeline.h  |  4 ++
+ .../display/komeda/komeda_pipeline_state.c    | 42 +++++++++++++++++++
+ .../arm/display/komeda/komeda_wb_connector.c  |  6 ++-
+ 3 files changed, 51 insertions(+), 1 deletion(-)
 
-Actually i learned this from vfio code here, it's not trying to "version"
-structures, let me copy the comments from vfio header file. It should be
-more clear than above short description from me.
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
+/gpu/drm/arm/display/komeda/komeda_pipeline.h
+index 3358bcea8f7d..9145af3355f4 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+@@ -554,6 +554,10 @@ int komeda_build_wb_split_data_flow(struct komeda_laye=
+r *wb_layer,
+ 				    struct drm_connector_state *conn_st,
+ 				    struct komeda_crtc_state *kcrtc_st,
+ 				    struct komeda_data_flow_cfg *dflow);
++int komeda_build_wb_sbs_data_flow(struct komeda_crtc *kcrtc,
++				  struct drm_connector_state *conn_st,
++				  struct komeda_crtc_state *kcrtc_st,
++				  struct komeda_data_flow_cfg *wb_dflow);
 
- "include/uapi/linux/vfio.h"
+ int komeda_build_display_data_flow(struct komeda_crtc *kcrtc,
+ 				   struct komeda_crtc_state *kcrtc_st);
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+index 4e5c891fbbd4..9fcd3d7cabe5 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+@@ -1349,6 +1349,48 @@ int komeda_build_wb_split_data_flow(struct komeda_la=
+yer *wb_layer,
+ 	return komeda_wb_layer_validate(wb_layer, conn_st, dflow);
+ }
 
- /*
-  * The IOCTL interface is designed for extensibility by embedding the
-  * structure length (argsz) and flags into structures passed between
-  * kernel and userspace.  We therefore use the _IO() macro for these
-  * defines to avoid implicitly embedding a size into the ioctl request.
-  * As structure fields are added, argsz will increase to match and flag
-  * bits will be defined to indicate additional fields with valid data.
-  * It's *always* the caller's responsibility to indicate the size of
-  * the structure passed by setting argsz appropriately.
++/* writeback side by side split data path:
++ *
++ * slave.compiz -> slave.wb_layer - > fb (right-part)
++ * master.compiz -> master.wb_layer -> fb (left-part)
++ */
++int komeda_build_wb_sbs_data_flow(struct komeda_crtc *kcrtc,
++				  struct drm_connector_state *conn_st,
++				  struct komeda_crtc_state *kcrtc_st,
++				  struct komeda_data_flow_cfg *wb_dflow)
++{
++	struct komeda_pipeline *master =3D kcrtc->master;
++	struct komeda_pipeline *slave =3D kcrtc->slave;
++	struct komeda_data_flow_cfg m_dflow, s_dflow;
++	int err;
++
++	if (wb_dflow->en_scaling || wb_dflow->en_img_enhancement) {
++		DRM_DEBUG_ATOMIC("sbs doesn't support WB_scaling\n");
++		return -EINVAL;
++	}
++
++	memcpy(&m_dflow, wb_dflow, sizeof(*wb_dflow));
++	memcpy(&s_dflow, wb_dflow, sizeof(*wb_dflow));
++
++	/* master writeout the left part */
++	m_dflow.in_w >>=3D 1;
++	m_dflow.out_w >>=3D 1;
++	m_dflow.input.component =3D &master->compiz->base;
++
++	/* slave writeout the right part */
++	s_dflow.in_w >>=3D 1;
++	s_dflow.out_w >>=3D 1;
++	s_dflow.in_x +=3D m_dflow.in_w;
++	s_dflow.out_x +=3D m_dflow.out_w;
++	s_dflow.input.component =3D &slave->compiz->base;
++
++	err =3D komeda_wb_layer_validate(master->wb_layer, conn_st, &m_dflow);
++	if (err)
++		return err;
++
++	return komeda_wb_layer_validate(slave->wb_layer, conn_st, &s_dflow);
++}
++
+ /* build display output data flow, the data path is:
+  * compiz -> improc -> timing_ctrlr
   */
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/dri=
+vers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+index c1b0ad22422e..ea584b1e5bd2 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+@@ -45,6 +45,7 @@ komeda_wb_encoder_atomic_check(struct drm_encoder *encode=
+r,
+ 			       struct drm_crtc_state *crtc_st,
+ 			       struct drm_connector_state *conn_st)
+ {
++	struct komeda_crtc *kcrtc =3D to_kcrtc(crtc_st->crtc);
+ 	struct komeda_crtc_state *kcrtc_st =3D to_kcrtc_st(crtc_st);
+ 	struct drm_writeback_job *writeback_job =3D conn_st->writeback_job;
+ 	struct komeda_layer *wb_layer;
+@@ -73,7 +74,10 @@ komeda_wb_encoder_atomic_check(struct drm_encoder *encod=
+er,
+ 	if (err)
+ 		return err;
 
- For example.
-
- struct vfio_device_info {
-        __u32   argsz;
-        __u32   flags;
- #define VFIO_DEVICE_FLAGS_RESET (1 << 0)        /* Device supports reset */
- #define VFIO_DEVICE_FLAGS_PCI   (1 << 1)        /* vfio-pci device */
- #define VFIO_DEVICE_FLAGS_PLATFORM (1 << 2)     /* vfio-platform device */
- #define VFIO_DEVICE_FLAGS_AMBA  (1 << 3)        /* vfio-amba device */
- #define VFIO_DEVICE_FLAGS_CCW   (1 << 4)        /* vfio-ccw device */
- #define VFIO_DEVICE_FLAGS_AP    (1 << 5)        /* vfio-ap device */
-        __u32   num_regions;    /* Max region index + 1 */
-        __u32   num_irqs;       /* Max IRQ index + 1 */
-
-Hope things could be more clear now. :)
-
-Thanks
-Hao
-
-};
-
-> 
-> thanks,
-> 
-> greg k-h
+-	if (dflow.en_split)
++	if (kcrtc->side_by_side)
++		err =3D komeda_build_wb_sbs_data_flow(kcrtc,
++				conn_st, kcrtc_st, &dflow);
++	else if (dflow.en_split)
+ 		err =3D komeda_build_wb_split_data_flow(wb_layer,
+ 				conn_st, kcrtc_st, &dflow);
+ 	else
+--
+2.20.1
