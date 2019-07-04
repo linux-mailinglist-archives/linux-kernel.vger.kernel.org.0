@@ -2,209 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB3705F1D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BFF05F1E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbfGDDc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 23:32:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726964AbfGDDcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 23:32:25 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x643W3S4064352
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Jul 2019 23:32:24 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2th8t9hhdd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:32:24 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Thu, 4 Jul 2019 04:32:22 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 4 Jul 2019 04:32:19 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x643WI8l35062184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 4 Jul 2019 03:32:18 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55361AE056;
-        Thu,  4 Jul 2019 03:32:18 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4EADAE04D;
-        Thu,  4 Jul 2019 03:32:15 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.80.198.40])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  4 Jul 2019 03:32:15 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Suchanek <msuchanek@suse.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH] tpm: fixes uninitialized allocated banks for IBM vtpm driver
-Date:   Wed,  3 Jul 2019 23:32:01 -0400
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19070403-0020-0000-0000-000003500E09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070403-0021-0000-0000-000021A3A88D
-Message-Id: <1562211121-2188-1-git-send-email-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040044
+        id S1727339AbfGDD6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 23:58:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60184 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726696AbfGDD6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 23:58:13 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B9DD30C5827;
+        Thu,  4 Jul 2019 03:58:13 +0000 (UTC)
+Received: from [10.72.12.202] (ovpn-12-202.pek2.redhat.com [10.72.12.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D39D42B07C;
+        Thu,  4 Jul 2019 03:58:02 +0000 (UTC)
+Subject: Re: [PATCH v2 1/3] vsock/virtio: use RCU to avoid use-after-free on
+ the_virtio_vsock
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20190628123659.139576-1-sgarzare@redhat.com>
+ <20190628123659.139576-2-sgarzare@redhat.com>
+ <05311244-ed23-d061-a620-7b83d83c11f5@redhat.com>
+ <20190703104135.wg34dobv64k7u4jo@steredhat>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <07e5bc00-ebde-4dac-d38c-f008fa230b5f@redhat.com>
+Date:   Thu, 4 Jul 2019 11:58:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190703104135.wg34dobv64k7u4jo@steredhat>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 04 Jul 2019 03:58:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nr_allocated_banks and allocated banks are initialized as part of
-tpm_chip_register. Currently, this is done as part of auto startup
-function. However, some drivers, like the ibm vtpm driver, do not run
-auto startup during initialization. This results in uninitialized memory
-issue and causes a kernel panic during boot.
 
-This patch moves the pcr allocation outside the auto startup function
-into tpm_chip_register. This ensures that allocated banks are initialized
-in any case.
+On 2019/7/3 下午6:41, Stefano Garzarella wrote:
+> On Wed, Jul 03, 2019 at 05:53:58PM +0800, Jason Wang wrote:
+>> On 2019/6/28 下午8:36, Stefano Garzarella wrote:
+>>> Some callbacks used by the upper layers can run while we are in the
+>>> .remove(). A potential use-after-free can happen, because we free
+>>> the_virtio_vsock without knowing if the callbacks are over or not.
+>>>
+>>> To solve this issue we move the assignment of the_virtio_vsock at the
+>>> end of .probe(), when we finished all the initialization, and at the
+>>> beginning of .remove(), before to release resources.
+>>> For the same reason, we do the same also for the vdev->priv.
+>>>
+>>> We use RCU to be sure that all callbacks that use the_virtio_vsock
+>>> ended before freeing it. This is not required for callbacks that
+>>> use vdev->priv, because after the vdev->config->del_vqs() we are sure
+>>> that they are ended and will no longer be invoked.
+>>>
+>>> We also take the mutex during the .remove() to avoid that .probe() can
+>>> run while we are resetting the device.
+>>>
+>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>> ---
+>>>    net/vmw_vsock/virtio_transport.c | 67 +++++++++++++++++++++-----------
+>>>    1 file changed, 44 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+>>> index 9c287e3e393c..7ad510ec12e0 100644
+>>> --- a/net/vmw_vsock/virtio_transport.c
+>>> +++ b/net/vmw_vsock/virtio_transport.c
+>>> @@ -65,19 +65,22 @@ struct virtio_vsock {
+>>>    	u32 guest_cid;
+>>>    };
+>>> -static struct virtio_vsock *virtio_vsock_get(void)
+>>> -{
+>>> -	return the_virtio_vsock;
+>>> -}
+>>> -
+>>>    static u32 virtio_transport_get_local_cid(void)
+>>>    {
+>>> -	struct virtio_vsock *vsock = virtio_vsock_get();
+>>> +	struct virtio_vsock *vsock;
+>>> +	u32 ret;
+>>> -	if (!vsock)
+>>> -		return VMADDR_CID_ANY;
+>>> +	rcu_read_lock();
+>>> +	vsock = rcu_dereference(the_virtio_vsock);
+>>> +	if (!vsock) {
+>>> +		ret = VMADDR_CID_ANY;
+>>> +		goto out_rcu;
+>>> +	}
+>>> -	return vsock->guest_cid;
+>>> +	ret = vsock->guest_cid;
+>>> +out_rcu:
+>>> +	rcu_read_unlock();
+>>> +	return ret;
+>>>    }
+>>>    static void virtio_transport_loopback_work(struct work_struct *work)
+>>> @@ -197,14 +200,18 @@ virtio_transport_send_pkt(struct virtio_vsock_pkt *pkt)
+>>>    	struct virtio_vsock *vsock;
+>>>    	int len = pkt->len;
+>>> -	vsock = virtio_vsock_get();
+>>> +	rcu_read_lock();
+>>> +	vsock = rcu_dereference(the_virtio_vsock);
+>>>    	if (!vsock) {
+>>>    		virtio_transport_free_pkt(pkt);
+>>> -		return -ENODEV;
+>>> +		len = -ENODEV;
+>>> +		goto out_rcu;
+>>>    	}
+>>> -	if (le64_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid)
+>>> -		return virtio_transport_send_pkt_loopback(vsock, pkt);
+>>> +	if (le64_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid) {
+>>> +		len = virtio_transport_send_pkt_loopback(vsock, pkt);
+>>> +		goto out_rcu;
+>>> +	}
+>>>    	if (pkt->reply)
+>>>    		atomic_inc(&vsock->queued_replies);
+>>> @@ -214,6 +221,9 @@ virtio_transport_send_pkt(struct virtio_vsock_pkt *pkt)
+>>>    	spin_unlock_bh(&vsock->send_pkt_list_lock);
+>>>    	queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
+>>> +
+>>> +out_rcu:
+>>> +	rcu_read_unlock();
+>>>    	return len;
+>>>    }
+>>> @@ -222,12 +232,14 @@ virtio_transport_cancel_pkt(struct vsock_sock *vsk)
+>>>    {
+>>>    	struct virtio_vsock *vsock;
+>>>    	struct virtio_vsock_pkt *pkt, *n;
+>>> -	int cnt = 0;
+>>> +	int cnt = 0, ret;
+>>>    	LIST_HEAD(freeme);
+>>> -	vsock = virtio_vsock_get();
+>>> +	rcu_read_lock();
+>>> +	vsock = rcu_dereference(the_virtio_vsock);
+>>>    	if (!vsock) {
+>>> -		return -ENODEV;
+>>> +		ret = -ENODEV;
+>>> +		goto out_rcu;
+>>>    	}
+>>>    	spin_lock_bh(&vsock->send_pkt_list_lock);
+>>> @@ -255,7 +267,11 @@ virtio_transport_cancel_pkt(struct vsock_sock *vsk)
+>>>    			queue_work(virtio_vsock_workqueue, &vsock->rx_work);
+>>>    	}
+>>> -	return 0;
+>>> +	ret = 0;
+>>> +
+>>> +out_rcu:
+>>> +	rcu_read_unlock();
+>>> +	return ret;
+>>>    }
+>>>    static void virtio_vsock_rx_fill(struct virtio_vsock *vsock)
+>>> @@ -590,8 +606,6 @@ static int virtio_vsock_probe(struct virtio_device *vdev)
+>>>    	vsock->rx_buf_max_nr = 0;
+>>>    	atomic_set(&vsock->queued_replies, 0);
+>>> -	vdev->priv = vsock;
+>>> -	the_virtio_vsock = vsock;
+>>>    	mutex_init(&vsock->tx_lock);
+>>>    	mutex_init(&vsock->rx_lock);
+>>>    	mutex_init(&vsock->event_lock);
+>>> @@ -613,6 +627,9 @@ static int virtio_vsock_probe(struct virtio_device *vdev)
+>>>    	virtio_vsock_event_fill(vsock);
+>>>    	mutex_unlock(&vsock->event_lock);
+>>> +	vdev->priv = vsock;
+>>> +	rcu_assign_pointer(the_virtio_vsock, vsock);
+>>
+>> You probably need to use rcu_dereference_protected() to access
+>> the_virtio_vsock in the function in order to survive from sparse.
+>>
+> Ooo, thanks!
+>
+> Do you mean when we check if the_virtio_vsock is not null at the beginning of
+> virtio_vsock_probe()?
 
-Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with
-PCR read")
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
----
- drivers/char/tpm/tpm-chip.c | 37 +++++++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm.h      |  1 +
- drivers/char/tpm/tpm1-cmd.c | 12 ------------
- drivers/char/tpm/tpm2-cmd.c |  6 +-----
- 4 files changed, 39 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 8804c9e916fd..958508bb8379 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -550,6 +550,39 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
- 	return hwrng_register(&chip->hwrng);
- }
- 
-+/*
-+ * tpm_pcr_allocation() - initializes the chip allocated banks for PCRs
-+ */
-+static int tpm_pcr_allocation(struct tpm_chip *chip)
-+{
-+	int rc = 0;
-+
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		rc = tpm2_get_pcr_allocation(chip);
-+		if (rc)
-+			goto out;
-+	}
-+
-+	/* Initialize TPM 1.2 */
-+	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-+			GFP_KERNEL);
-+	if (!chip->allocated_banks) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
-+	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
-+	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
-+	chip->nr_allocated_banks = 1;
-+
-+	return 0;
-+out:
-+	if (rc < 0)
-+		rc = -ENODEV;
-+	return rc;
-+}
-+
- /*
-  * tpm_chip_register() - create a character device for the TPM chip
-  * @chip: TPM chip to use.
-@@ -573,6 +606,10 @@ int tpm_chip_register(struct tpm_chip *chip)
- 	if (rc)
- 		return rc;
- 
-+	rc = tpm_pcr_allocation(chip);
-+	if (rc)
-+		return rc;
-+
- 	tpm_sysfs_add_device(chip);
- 
- 	rc = tpm_bios_log_setup(chip);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2cce072f25b5..eabe6b755fa6 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -454,6 +454,7 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
- 			u32 *value, const char *desc);
- 
-+ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
- int tpm2_auto_startup(struct tpm_chip *chip);
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
- unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 85dcf2654d11..ec5f3693c096 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -696,18 +696,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
- 		goto out;
- 	}
- 
--	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
--					GFP_KERNEL);
--	if (!chip->allocated_banks) {
--		rc = -ENOMEM;
--		goto out;
--	}
--
--	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
--	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
--	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
--	chip->nr_allocated_banks = 1;
--
- 	return rc;
- out:
- 	if (rc > 0)
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index e74c5b7b64bf..b4384d0e3741 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -841,7 +841,7 @@ struct tpm2_pcr_selection {
- 	u8  pcr_select[3];
- } __packed;
- 
--static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
-+ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- {
- 	struct tpm2_pcr_selection pcr_selection;
- 	struct tpm_buf buf;
-@@ -1041,10 +1041,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 			goto out;
- 	}
- 
--	rc = tpm2_get_pcr_allocation(chip);
--	if (rc)
--		goto out;
--
- 	rc = tpm2_get_cc_attrs_tbl(chip);
- 
- out:
--- 
-2.20.1
+I mean instead of:
 
+     /* Only one virtio-vsock device per guest is supported */
+     if (the_virtio_vsock) {
+         ret = -EBUSY;
+         goto out;
+     }
+
+you should use:
+
+if (rcu_dereference_protected(the_virtio_vosck, 
+lock_dep_is_held(&the_virtio_vsock_mutex))
+
+...
+
+
+>
+>>> +
+>>>    	mutex_unlock(&the_virtio_vsock_mutex);
+>>>    	return 0;
+>>> @@ -627,6 +644,12 @@ static void virtio_vsock_remove(struct virtio_device *vdev)
+>>>    	struct virtio_vsock *vsock = vdev->priv;
+>>>    	struct virtio_vsock_pkt *pkt;
+>>> +	mutex_lock(&the_virtio_vsock_mutex);
+>>> +
+>>> +	vdev->priv = NULL;
+>>> +	rcu_assign_pointer(the_virtio_vsock, NULL);
+>>
+>> This is still suspicious, can we access the_virtio_vsock through vdev->priv?
+>> If yes, we may still get use-after-free since it was not protected by RCU.
+> We will free the object only after calling the del_vqs(), so we are sure
+> that the vq_callbacks ended and will no longer be invoked.
+> So, IIUC it shouldn't happen.
+
+
+Yes, but any dereference that is not done in vq_callbacks will be very 
+dangerous in the future.
+
+Thanks
+
+
+>
+>> Another more interesting question, I believe we will do singleton for
+>> virtio_vsock structure. Then what's the point of using vdev->priv to access
+>> the_virtio_vsock? It looks to me we can it brings extra troubles for doing
+>> synchronization.
+> I thought about it when I tried to use RCU to stop the worker and I
+> think make sense. Maybe can be another series after this will be merged.
+>
+> @Stefan, what do you think about that?
+>
+> Thanks,
+> Stefano
