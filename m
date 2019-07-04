@@ -2,101 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D9B5FA0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84C95FA1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfGDO05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 10:26:57 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43558 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbfGDO05 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 10:26:57 -0400
-Received: by mail-pl1-f194.google.com with SMTP id cl9so3145041plb.10;
-        Thu, 04 Jul 2019 07:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ea4/rODN6ph1QT9+xWsfxewM+yS9hO6SZGH8wLobuag=;
-        b=QoMthU5EO3/1uHCQ8F7N/qIc7VzqyGCf5AeOFGy5CY5RCYUKBU2whOqjvRkq64PAU5
-         OGRZJFVxwBzwiaUlvHyE533s93MMIoK1+MG6cO3oVujF8me/q/9eQZKE2DvjtidBhNbD
-         m5799fKYBMPo+UZoFXhe+FlQPcFYnUTvmBp/A1uosMMLLsmvDbDD/YB/T0F54xq2jtxD
-         I181vAanD31XZlV+vHlzCYr3if0fTVf8edbp9eMA+l1Gkqk/KDS/W/zwKysWMCN3vAkz
-         EtmESktASX6Df80R/TkZdu4yNdyD7ziwt3s9FrChbH/KCGBloR3nRdVU3q+rPaU6MULZ
-         FM6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ea4/rODN6ph1QT9+xWsfxewM+yS9hO6SZGH8wLobuag=;
-        b=nnJRKLrkl+y7ZiVgMNITCGV/YLJKsMm+S0gAWe6I7AHkRDWXXJ/xBcQCIFWp/X+NXT
-         PBSlhXwSK01sPLl+DUdHAP+y5ysT7Ksd3rzVMSwj82T6B6Ba6IHg/zNEln3AOmw0FKiE
-         r0er0dk0JZCcCUgmncfygRyOAZd7itOEi9kreC4bkhg4N3N69XekEDzuhIJBwIyGbL3E
-         VMp44OKRvCZUPtn8eJ3jsBhOKtvLJNOjlBJ3Ma2xZEV9wf0Zwyyflx/wRW7ww+mR6arD
-         5k4Vi74c50vzGRpdId+OV6T2hZnexp7DxGzKrUkOPh0oS6AyFr4NjuwX7AjWTdntkiZ3
-         gyaA==
-X-Gm-Message-State: APjAAAU/+iluNEu9QSD14silucnVoK2dFmJ91DhIAagZaib1tpjnlGTf
-        N82974rbMvCn40s+1aiBX4Q20SINNgNQm7MHcbg=
-X-Google-Smtp-Source: APXvYqxoD1hHCdHZW9TWHGw5ylN1zuQevVM9I8c5GP4kJf46/EVvQqbekyhYVEhiYnMeyQDA7IjdhWlgh2PBxHx4jnk=
-X-Received: by 2002:a17:902:934a:: with SMTP id g10mr50649963plp.18.1562250416464;
- Thu, 04 Jul 2019 07:26:56 -0700 (PDT)
+        id S1727674AbfGDOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 10:32:04 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54110 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbfGDOcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 10:32:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=WqfUMJML9WSOHiE+CrfUgXW6vEXB3qi3LNfexS8xML0=; b=3v1Lt8NFOhvJOPPSJPTOPzt1RV
+        3f3ZhkET4aT3VtARntPcv8Hwo5Sub5yXo3h8bAQNmIy9vrEvC/lKF4yfV0MUSz+VyTcV4Tcu3Vpag
+        0432dP8eFpEt9Q9BdBKhutojaDf0VW/bi4DfmQAAAsx9gfaPbUVJTKxVrb6igSVph8zc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hj2mB-0004Ep-66; Thu, 04 Jul 2019 16:31:55 +0200
+Date:   Thu, 4 Jul 2019 16:31:55 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org,
+        Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 06/15] ethtool: netlink bitset handling
+Message-ID: <20190704143155.GE13859@lunn.ch>
+References: <cb614bebee1686293127194e8f7ced72955c7c7f.1562067622.git.mkubecek@suse.cz>
+ <20190703114933.GW2250@nanopsycho>
+ <20190703181851.GP20101@unicorn.suse.cz>
+ <20190704080435.GF2250@nanopsycho>
+ <20190704115236.GR20101@unicorn.suse.cz>
+ <6c070d62ffe342f5bc70556ef0f85740d04ae4a3.camel@sipsolutions.net>
+ <20190704121718.GS20101@unicorn.suse.cz>
+ <2f1a8edb0b000b4eb7adcaca0d1fb05fdd73a587.camel@sipsolutions.net>
+ <20190704125315.GT20101@unicorn.suse.cz>
+ <a6fbee05df0efd2528a06922bcb514d321b1a8bc.camel@sipsolutions.net>
 MIME-Version: 1.0
-References: <20190704090205.19400-1-fe@dev.tdt.de> <CAHp75Vcocs=9AwX32ouOWFc+wAduCFv2DT_p4JYPUVV0BumjqA@mail.gmail.com>
- <e2c50449b498c796de8258fac0b0aba6@dev.tdt.de>
-In-Reply-To: <e2c50449b498c796de8258fac0b0aba6@dev.tdt.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 4 Jul 2019 17:26:45 +0300
-Message-ID: <CAHp75VdHPRXgg6YsBM8uAfuM4CBs1HHn1condus6uW5BqC5COg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Update pcengines-apuv2 platform device
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Eckert.Florian@googlemail.com,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6fbee05df0efd2528a06922bcb514d321b1a8bc.camel@sipsolutions.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 4, 2019 at 5:00 PM Florian Eckert <fe@dev.tdt.de> wrote:
->
-> Hello Andy,
->
-> thanks for feedback
->
-> >> This patchset adds the following changes to this pcengines-apuv2
-> >> platform device.
-> >>
-> >
-> > Before doing anything to this driver, what is the plan for previously
-> > upstreamed:
-> >
-> > drivers/leds/leds-apu.c
->
-> I think we can remove the related APU2/APU3 code stuff from this driver.
-> The recently added pcengines-apuv2 driver does *not* support the APU1.
-> So I think we need the related APU1 stuff if we still want to support
-> this board.
+> OK, here I guess I see what you mean. You're saying if ethtool were to
+> send a value/mask of "0..0100/0..0111" you wouldn't know what to do with
+> BIT(4) as long as the kernel knows about that bit?
+> 
+> I guess the difference now is depending on the operation. NLA_BITFIELD32
+> is sort of built on the assumption of having a "toggle" operation. If
+> you want to have a "set to" operation, then you don't really need the
+> selector/mask at all, just the value.
 
-So, I would like to see some unification (since it's material for v5.4
-cycle anyway, we have time).
+I don't think it is as simple as this. User space has a few different
+things it wants to pass to the kernel:
 
-> > arch/x86/platform/geode/alix.c
->
-> I think this is not related because this is a different platform driver.
-> Maybe we should move them to drivers/platform/x86?
+I want to set this bit to 0
+I want to set this bit to 1
+I don't want to change this bit
+In my world view, this bit is unused
 
-You mentioned somewhere ALIx, can you elaborate if these are platforms
-of the same family (PC engines)?
+The kernel has had a long history of trouble with flag bits in system
+calls. It has not validated that unused bits are clear. Meaning when
+you actually want to make use of the unused bits you cannot because
+userspace has been passing random values in them since day 1.
 
-Looking into the code, I think we may unify all three under umbrella
-of one driver if the above is true.
+We need a design which is clear to everybody which bits are unused and
+should be validated as being unused and an error returned if an unused
+bit is actually used. A value and a mask is not sufficient for
+this. We need the length in bits.
 
-
---
-With Best Regards,
-Andy Shevchenko
+      Andrew
