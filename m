@@ -2,102 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBE85F426
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 09:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD395F429
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 09:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfGDHwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 03:52:35 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45846 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfGDHwf (ORCPT
+        id S1727491AbfGDHxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 03:53:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58372 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfGDHxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 03:52:35 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m23so5158188lje.12
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 00:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fvNPF1w0C/lHt8cFlDsYMq1Agd3shTDcWVlw29qHYe0=;
-        b=rarry6Eh+UGj2wtvqX7oBKlZLPOcek9CfKHmrRswMwJrPekFEbUAwF+dI7CTil+TAf
-         BHtbCgAy2Wztu9556XAZH2zLF7NEJniBGSFk9fassdSMWA3x0iRssBkc2mvkJiXt0+bH
-         k2A85JXlG+XC/NISE4qqmjjMXmqcRAS8BF51PghO+hF8mcc9NKTr0ixkq8dxcKO5lpQT
-         MYwRjqAgrLPL1IZSls+AlDlI9lOqhAqZsnvsenLoCLiW2HjI+N7vwt5VPOEK/Wclabe9
-         Na8wWHj6YfandgmrjNSavtNmjCSHAYRPRGM+3KPobGStaLcYNXs/KkY0+kD32mbjter5
-         8KKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fvNPF1w0C/lHt8cFlDsYMq1Agd3shTDcWVlw29qHYe0=;
-        b=HNIvs52qYHU14u2+h4Fto6VUbg30ocOriDlkmKS7SZFVYErlT/EmUoTxSRBzi7sC8F
-         14SRoU21GR0vJ+RASh0C/EH310rQmDf2/gJM5bNAQJ5dlB2Jg4eATyOQH5I8YWZA3TD7
-         YU4NsDA1Nfmhrc+GdNwXobqEC4VwsXRvVTkqOYVZdP3qUralGK68zYsyglXP1j0900fK
-         ZNUgOC3I25b0lVtikSj6JiI3OJd86heM8xMyTwvX087XUgYnKwDX7fzMRMkmaiyNJaOS
-         5zHvC+wCN8DX+4xS/3oUj9UeWRAIhujZPVgWTvXpe6p8rcLssoJLH+SXarOYbgfFBWVH
-         Do4A==
-X-Gm-Message-State: APjAAAXhOZ/a6WEB57BFRuxDkyHiwxbAvSPwBzRsHaGi62KBS8E7g91O
-        UApw35PFEMXStb76TMoPpmToeDXm50fqxLLl04DBxA==
-X-Google-Smtp-Source: APXvYqztiwxXkmmBstrAOqmsCjqAoPSovj8wAWrgmZZ6/7LRVsvTidj759pkddpLOpbhm07zZh/DJ8wwGe1EuNLxNqg=
-X-Received: by 2002:a2e:2c14:: with SMTP id s20mr2103514ljs.54.1562226753487;
- Thu, 04 Jul 2019 00:52:33 -0700 (PDT)
+        Thu, 4 Jul 2019 03:53:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5C24B609CD; Thu,  4 Jul 2019 07:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562226790;
+        bh=QP02RX+s+abAv40zJSQKeAupeAwqDfByWtGOQhkpzYI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mgtpmyOCaZE5ynciK0snZPPCz1ArNV+E02B+bRVW/LCdgQ4tqPBQKZU7zkL3aodZC
+         LUpAe+PB/ow+UklBfYWCISNBeK34lhkuvrDOl2LBt7I12RPR3BoaLsNK5ioK5hBuPD
+         0y7Joh9oJPChhWSPCT68nIxuIQXLjMdIWDdn6jYs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 90B1860746;
+        Thu,  4 Jul 2019 07:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562226789;
+        bh=QP02RX+s+abAv40zJSQKeAupeAwqDfByWtGOQhkpzYI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UfCRovyUB63eQs0AYtn62PvDY3v8N9wUpC0m4wLEAXeMNRTa8O1clQTw3MHeyFFNQ
+         06dhZprHqkzdJMJC0h3pvtmVQ0z6Z8Stb0dqrvFiyUpXl6qiHctfy+gjIqq+wV50pT
+         UsEKj7RyePFA8cjBG50TZKVu10QAaHJ+ANSUZwT8=
 MIME-Version: 1.0
-References: <tip-f3d705d506a2afa6c21c2c728783967e80863b31@git.kernel.org>
- <CACRpkdboWWKfaTu=TKqnZgjy4HNWr+fjmQXLBBmePsaDihkbSA@mail.gmail.com> <be57afd0-5a81-4d79-3ee4-1fb23644f424@arm.com>
-In-Reply-To: <be57afd0-5a81-4d79-3ee4-1fb23644f424@arm.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Jul 2019 09:52:21 +0200
-Message-ID: <CACRpkdbgyWmMM+3L6rjpWr4Z=qu4w6cri3cv0DG51JpFd9Ej4g@mail.gmail.com>
-Subject: Re: [tip:irq/core] gpio: mb86s7x: Enable ACPI support
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 04 Jul 2019 10:53:09 +0300
+From:   merez@codeaurora.org
+To:     Colin King <colin.king@canonical.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wil6210: fix wil_cid_valid with negative cid values
+In-Reply-To: <20190702144026.13013-1-colin.king@canonical.com>
+References: <20190702144026.13013-1-colin.king@canonical.com>
+Message-ID: <787a6680930c6895d8ede457ec543fb7@codeaurora.org>
+X-Sender: merez@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 3:50 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 03/07/2019 13:26, Linus Walleij wrote:
-> > On Wed, Jul 3, 2019 at 11:24 AM tip-bot for Ard Biesheuvel
-> > <tipbot@zytor.com> wrote:
-> >
-> >> Committer:  Marc Zyngier <marc.zyngier@arm.com>
-> >> CommitDate: Wed, 29 May 2019 10:42:19 +0100
-> >>
-> >> gpio: mb86s7x: Enable ACPI support
-> >>
-> >> Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
-> >> support for ACPI GPIO interrupts routed via platform interrupts, by
-> >> wiring the two together via the to_irq() gpiochip callback.
-> >>
-> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> >
-> > OK!
-> >
-> >> +#include "gpiolib.h"
-> >> +
-> >
-> > But this isn't needed anymore, is it?
->
-> You tell me! ;-)
->
-> > I can try to remember to remove it later though.
->
-> Yeah, please send a separate patch. tip is stable, and we can't roll
-> this back.
+On 2019-07-02 17:40, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are several occasions where a negative cid value is passed
+> into wil_cid_valid and this is converted into a u8 causing the
+> range check of cid >= 0 to always succeed.  Fix this by making
+> the cid argument an int to handle any -ve error value of cid.
+> 
+> An example of this behaviour is in wil_cfg80211_dump_station,
+> where cid is assigned -ENOENT if the call to wil_find_cid_by_idx
+> fails, and this -ve value is passed to wil_cid_valid.  I believe
+> that the conversion of -ENOENT to the u8 value 254 which is
+> greater than wil->max_assoc_sta causes wil_find_cid_by_idx to
+> currently work fine, but I think is by luck and not the
+> intended behaviour.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/ath/wil6210/wil6210.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/wil6210/wil6210.h
+> b/drivers/net/wireless/ath/wil6210/wil6210.h
+> index 6f456b311a39..25a1adcb38eb 100644
+> --- a/drivers/net/wireless/ath/wil6210/wil6210.h
+> +++ b/drivers/net/wireless/ath/wil6210/wil6210.h
+> @@ -1144,7 +1144,7 @@ static inline void wil_c(struct wil6210_priv
+> *wil, u32 reg, u32 val)
+>  /**
+>   * wil_cid_valid - check cid is valid
+>   */
+> -static inline bool wil_cid_valid(struct wil6210_priv *wil, u8 cid)
+> +static inline bool wil_cid_valid(struct wil6210_priv *wil, int cid)
+>  {
+>  	return (cid >= 0 && cid < wil->max_assoc_sta);
+>  }
 
-I'll just fix it in the GPIO tree after -rc1.
-Made a personal TODO note!
+Reviewed-by: Maya Erez <merez@codeaurora.org>
 
-Yours,
-Linus Walleij
+-- 
+Maya Erez
+Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
