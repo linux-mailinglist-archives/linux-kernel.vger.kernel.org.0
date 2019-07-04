@@ -2,69 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 368995F99D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E96E5F9B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfGDOGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 10:06:33 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8703 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727363AbfGDOG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 10:06:29 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 035B7F141CD314A737D5;
-        Thu,  4 Jul 2019 22:06:27 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 4 Jul 2019 22:06:18 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 9/9] net: hns3: set maximum length to resp_data_len for exceptional case
-Date:   Thu, 4 Jul 2019 22:04:28 +0800
-Message-ID: <1562249068-40176-10-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562249068-40176-1-git-send-email-tanhuazhong@huawei.com>
-References: <1562249068-40176-1-git-send-email-tanhuazhong@huawei.com>
+        id S1727792AbfGDOHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 10:07:22 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35533 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfGDOHT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 10:07:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c27so6811450wrb.2;
+        Thu, 04 Jul 2019 07:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MvfpCcwP28+TBmBj1O3oyBlPKHN+Je1C3rbxB2DoDSc=;
+        b=A2is8hAeYQZz0wjbz2Th3XTbRIeoNaAluBRG0B2DSDo0JEXXhGAboJ9m7jqJlBLUan
+         xhgtxN0HVVlDwB857d2rVSH7nDSeEBx6eHV5U3K8vavHXgerjwjlXS0fIVSNOcX+UA5J
+         NtJENYskL9ixZbIuwjEURe4wPm71OqgMHri5p+krUpHxw37diSAFzax4s9ebntrWUWdC
+         V+xlObHRnvp9L3xlVAgp1GRvdKCCPDeIgGBp0DBJaQJFWRv8lDzfJYx8uLtKGcYWV379
+         MfrIW65N7rcMCq1P5f+GURCoT79OjPob0zbAdP5ww94+nhTM82BGcQe/C8saiS/CDtzy
+         oJ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=MvfpCcwP28+TBmBj1O3oyBlPKHN+Je1C3rbxB2DoDSc=;
+        b=H7mxLL6A092I5WmXtVdYuALlEXGWtsrOS1ASicEqwvV4BbKkGnh90iKhHpqYO7NdV/
+         lAn/MJe0pHxKBMFSeEShlN76iHWxmQ/bojY9WFwFhSUftCa4wSW/GqxKPmmfH+9zT2sL
+         CY7RWo2QHrJak1IrKD2l4EfnxobOEIaykeIykzR28wuHAEWQmP9MpcHYvdaMVzCpL3lv
+         JvhE6UrMS9FZy7l7zeRaT2oddGHXY81TzybxOIl6pWK6CJuMj9fSsoUx4J9/jesn2aNq
+         uPjxiND/uaVsdsrKniHoN0jMS9gZgClCypwKZxX5MqSA2uwWYiMer4yzb9bm+ECMbBPa
+         U4AA==
+X-Gm-Message-State: APjAAAW0Z/SgBaZFDmmsakk7M4V4BAvEG4hNi29a2nZa3p2iB7ddRkxg
+        52gLN3fia6lHzYRxlJptL115bfnd0cI=
+X-Google-Smtp-Source: APXvYqxk/4aVoqyEb13bwLt2Cf1DTcN4wHc6o3km4sCHW9KFJH3uv9xMvDiD2XtNYSuVvqcDqgtjmw==
+X-Received: by 2002:a5d:53c1:: with SMTP id a1mr3492555wrw.185.1562249237169;
+        Thu, 04 Jul 2019 07:07:17 -0700 (PDT)
+Received: from donizetti.redhat.com (nat-pool-mxp-u.redhat.com. [149.6.153.187])
+        by smtp.gmail.com with ESMTPSA id n5sm4458060wmi.21.2019.07.04.07.07.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 04 Jul 2019 07:07:16 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     jing2.liu@linux.intel.com
+Subject: [PATCH 0/5] KVM: cpuid: cleanups, simplify multi-index CPUID leaves
+Date:   Thu,  4 Jul 2019 16:07:10 +0200
+Message-Id: <20190704140715.31181-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+While reviewing the AVX512_BF16, Jing Liu and I noted that the handling of
+CPUID leaf 7 is quite messy, and in general the handling of multi-index
+CPUID leaves is confusing.  These patches clean the code to prepare
+for adding CPUID leaf 7 subleaf 1.
 
-If HCLGE_MBX_MAX_RESP_DATA_SIZE > HCLGE_MBX_MAX_RESP_DATA_SIZE,
-the memcpy will cause out of memory. So this patch just set
-resp_data_len to the maximum length for this case.
+Paolo Bonzini (5):
+  KVM: cpuid: do_cpuid_ent works on a whole CPUID function
+  KVM: cpuid: extract do_cpuid_7_mask and support multiple subleafs
+  KVM: cpuid: set struct kvm_cpuid_entry2 flags in do_cpuid_1_ent
+  KVM: cpuid: rename do_cpuid_1_ent
+  KVM: cpuid: remove has_leaf_count from struct kvm_cpuid_param
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kvm/cpuid.c | 222 ++++++++++++++++++++++++-------------------
+ 1 file changed, 122 insertions(+), 100 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index 9adeba9..a38ac7c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -29,6 +29,10 @@ static int hclge_gen_resp_to_vf(struct hclge_vport *vport,
- 			"PF fail to gen resp to VF len %d exceeds max len %d\n",
- 			resp_data_len,
- 			HCLGE_MBX_MAX_RESP_DATA_SIZE);
-+		/* If resp_data_len is too long, set the value to max length
-+		 * and return the msg to VF
-+		 */
-+		resp_data_len = HCLGE_MBX_MAX_RESP_DATA_SIZE;
- 	}
- 
- 	hclge_cmd_setup_basic_desc(&desc, HCLGEVF_OPC_MBX_PF_TO_VF, false);
 -- 
-2.7.4
+2.21.0
 
