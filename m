@@ -2,92 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D5495FC67
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C08535FC69
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 19:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfGDRVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 13:21:32 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45807 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbfGDRVc (ORCPT
+        id S1727521AbfGDRVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 13:21:47 -0400
+Received: from sonic312-21.consmr.mail.bf2.yahoo.com ([74.6.128.83]:38279 "EHLO
+        sonic312-21.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727174AbfGDRVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 13:21:32 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f9so7339761wre.12
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 10:21:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I3vzLyxDbkeyBgYQjFOstI8zIrcnQFzyTjp53BtSBHs=;
-        b=o6/dLY+IcqpsVbphLQLqGWlJTHFaw2Xs+m+wZcsWOD+WYTilTQAq6X8iB7PuCPHEVk
-         XW5V8+m9soF535WAxX/blV2fteYtyVQlGmb8Q8OIbiAzYQ5Lg04JO99qvPKXRoLYYhTS
-         0kt/Vw9Pp2vpyI66430TnJ3bAdlWVrZN7UhCrzZBeHJaBQM/vd06HCS2t/GILg673UmJ
-         7wS83TMvl9BT8FG70tV6oIP/nD43PDCFatRqvcWeOELYy4lfB0m8yVgcOKAkkOYVQQ8A
-         8Gr99mQB3Pl8KNGRGxdefRLrMtI4LyZxIVdgHbpjPYNEfXmH0P/RZ3+DVWWF1zBJtO5F
-         LWaw==
-X-Gm-Message-State: APjAAAXosfEK+CQ/b7win446iPTNSnJgbZfpOhi7+z+4p3kcLqyMZTwM
-        /BBVDQXQY2Yfq3u+ViSEmz8=
-X-Google-Smtp-Source: APXvYqwD2Me8YuZCGlupuMqiaUoghPbAWu7tDveNvD9jtjxBGn88QwPyjXD7QamZ646inpksvESAxQ==
-X-Received: by 2002:a5d:5752:: with SMTP id q18mr29539095wrw.337.1562260890178;
-        Thu, 04 Jul 2019 10:21:30 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id w23sm6343835wmi.45.2019.07.04.10.21.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 04 Jul 2019 10:21:29 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     Divya Indi <divya.indi@oracle.com>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Jin <joe.jin@oracle.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: make exported ftrace_set_clr_event non-static
-Date:   Thu,  4 Jul 2019 20:21:10 +0300
-Message-Id: <20190704172110.27041-1-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 4 Jul 2019 13:21:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1562260906; bh=rv+XavkjGt5bQhyBtWMZ3k04LCi26O+Ai7ujWr0MjEU=; h=Date:From:Reply-To:Subject:From:Subject; b=FRY3GC+jVi+t9dDUwT+CR/KWnv1h4QDqG2QBBQL98f/IVlJM6gAyT9mCbNZt3chA5ieZQ4a2aLhiDvDFl0+AGgUKiCya3HCn/B0kBLnddHlPEzV9+S9gxhKkp9JNkIYFFwZ2XmsJx1iirszPWYuBIGKfYqyGKAVxgUAcd3to+ZRFm6rCrMmeRuvzbPZp4Ih1jtxBnJRjT9kN4Yd00H45ZlKxsGZ89HGZdhHi44BQbUrTOHH4oGO6DhldSnvt3kMrk4Vk/kdO9I0SzAGKwEo9vBwxex7F3rGZAv7QmYzcEo08jlkF61LM4PJKU5+5yprsC8U1/48kBE8t4l60JOZoQQ==
+X-YMail-OSG: JkVdZ5QVM1m51Etf.ZDMAhom1hSIJUWZt6zby664FUuj9rsWo2UVYUHTen8CtJa
+ z1QlcCTVWl5T00v6AWnSf1mSphDra69g9FihOfExg_54w_gwSjoZJ1wqW9zxpFNknQXu98O4tNCQ
+ kyeJ.qf4tqeJ4W6IZ7vdrQrD08_xiLNxFKZEm_fldKwmgAT221a8mpStEnl2__xHXnGHsAKbrNH_
+ b2qtUM8q460amvD.RtKMFGx_UUfa5HJD9YM7GRNMyZ5xodIpL44jeWZGWQqJzroxWlUtZxE58ie0
+ uy5vBQLPSZ_vgxEzJKME4mJMmR6SR5YfiQqB18ds6f1YtdelSzuXhUVm60_2k4MUulYxb4DXt_OW
+ f0K1YtO2HRN_8UOHYBEqGwc1ZKN6YtIdmjBAHemso0NaiOmUtGoqIoh.9M1URDXYzQt7LEB6g0JJ
+ nz8OMlobFl6JLg8fYr4c.4qCYHT6Vi0lIPzWFT7nHVPDELgf7C58XJR4isjAqAg5vCM9H4.Ecqsn
+ FWT7BsCh3nIHf7Fu20RxtfDdH7i6BspRMucK8t8cW4_jNIIfF0sIXcqUw4P2B82wpvTFq09MZmfe
+ zqrnW1PTbvoWPu7Wt4ZhHKGuFGwmkM86EGZ3Nfbt9ZzXD5WgN8ieMIJMSvefizqHNxS8uXYOgQtv
+ TJAvj.Aib_9ay0mFMATdfihUTapon21dhH.aCvc0tqvBbZezHQXwjingKA9xa_kOvJPf.hS_VHxt
+ cQDbwTFStajdB0Acy82Vy80QI0JNPItfcc7S39wlb5CHmZe5S_2Too9nURbqA8.3gYzCmDIUXQWH
+ pc5o_kg3TN472ax4uCGqr7VgqHeqyHSsB983.AFNCx0D6HOArZ4BxHwc3uiegjZ4J0Bf4SSYrdps
+ TGNo2T2lmLBY.tANaWOUUxPU.Ir7bySNTJ0f53Y_hpGYHoEvH03mqHLUfGt6Y8dZnybrHQ9JkzRL
+ GzIdu6aw.0OP2re3JBFrl7EQ4b92dBiNRUkciQUPvi1cvTXIksMERDbPupZPSZVl.Kuln9iMaiU0
+ DBHjoqkMJ2x29.ojN8UxI64e6UUyx5kOFkWoXMQtQsrUUlMYXKaaIA6O_008q7tYb32boNLLVd0u
+ JDlkpOufrSE8Hzx4eL9Qm2SHPvQ01c1Rr9qnbhsMFCxu.czVK1aVTQy_62MaSyN10KpVAgMhWLOY
+ RnWxfGQ2VmesdxJcEUGL6zG_0oeYkSOeiL8OnTjksEMN7O9newwKcAaJHZw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Thu, 4 Jul 2019 17:21:46 +0000
+Date:   Thu, 4 Jul 2019 17:21:44 +0000 (UTC)
+From:   b18385@frontiernet.net
+Reply-To: chrisben697@gmail.com
+Message-ID: <639162046.1949287.1562260904521@mail.yahoo.com>
+Subject: hi
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function ftrace_set_clr_event is declared static and marked
-EXPORT_SYMBOL_GPL(), which is at best an odd combination. Because the
-function was decided to be a part of API, this commit removes the static
-attribute and adds the declaration to the header.
 
-Fixes: f45d1225adb04 ("tracing: Kernel access to Ftrace instances")
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- include/linux/trace_events.h | 1 +
- kernel/trace/trace_events.c  | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 8a62731673f7..84bc84f00e8f 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -539,6 +539,7 @@ extern int trace_event_get_offsets(struct trace_event_call *call);
- 
- #define is_signed_type(type)	(((type)(-1)) < (type)1)
- 
-+int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
- int trace_set_clr_event(const char *system, const char *event, int set);
- 
- /*
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 0ce3db67f556..b6b46184f6bf 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -795,7 +795,7 @@ static int __ftrace_set_clr_event(struct trace_array *tr, const char *match,
- 	return ret;
- }
- 
--static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
-+int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
- {
- 	char *event = NULL, *sub = NULL, *match;
- 	int ret;
--- 
-2.21.0
-
+How are you? I hope you're fine, I sent you a message earlier, but there was no response from you, did you receive my first email to you? I urge you to confirm receipt of my previous letter and contact me by email
