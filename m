@@ -2,66 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D2A5FB09
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6829F5FB11
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfGDPic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:38:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59371 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727892AbfGDPiP (ORCPT
+        id S1727849AbfGDPju convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 4 Jul 2019 11:39:50 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:44730 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727454AbfGDPjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:38:15 -0400
-Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hj3oH-0004wg-97; Thu, 04 Jul 2019 17:38:09 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 7/7] gpiolib: Use spinlock_t instead of struct spinlock
-Date:   Thu,  4 Jul 2019 17:38:03 +0200
-Message-Id: <20190704153803.12739-8-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
+        Thu, 4 Jul 2019 11:39:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-213-JZyB4AryN_eHsc0v6lTtEQ-1; Thu, 04 Jul 2019 16:39:41 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 4 Jul 2019 16:39:41 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 4 Jul 2019 16:39:41 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: RE: [PATCH 0/7] Use spinlock_t instead of struct spinlock
+Thread-Topic: [PATCH 0/7] Use spinlock_t instead of struct spinlock
+Thread-Index: AQHVMn59sZSDeWtWa0aQMiKqYxhEN6a6mByg
+Date:   Thu, 4 Jul 2019 15:39:41 +0000
+Message-ID: <4456003dfa654444b8af7b7be9a9c30e@AcuMS.aculab.com>
 References: <20190704153803.12739-1-bigeasy@linutronix.de>
+In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MC-Unique: JZyB4AryN_eHsc0v6lTtEQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For spinlocks the type spinlock_t should be used instead of "struct
-spinlock".
+From:  Sebastian Andrzej Siewior
+> Sent: 04 July 2019 16:38
+> 
+> Just a small series to clean up various "struct spinlock" user and make
+> them use "spinlock_t" instead.
 
-Use spinlock_t for spinlock's definition.
+I thought it was policy to avoid typedefs?
+Probably because you can only define them once.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/gpio/gpiolib.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	David
 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 7a65dad43932c..7c52c2442173e 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -210,7 +210,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				  struct gpio_array *array_info,
- 				  unsigned long *value_bitmap);
- 
--extern struct spinlock gpio_lock;
-+extern spinlock_t gpio_lock;
- extern struct list_head gpio_devices;
- 
- struct gpio_desc {
--- 
-2.20.1
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
