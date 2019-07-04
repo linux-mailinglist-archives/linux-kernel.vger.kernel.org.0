@@ -2,87 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71935FE0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC7765FE0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfGDVIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 17:08:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:47461 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbfGDVIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 17:08:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45frDL267jz9sBp;
-        Fri,  5 Jul 2019 07:08:18 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562274498;
-        bh=uiKym7gdeDlyMdoWAy3bdqHaCGNeEnlC8k+Noqqs0Yw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PKUNdXaXg6FqSKQOpFK/jvd0Jwon/XU7Pz3k704jZr9wWPZo35q+IH0uz/+zMSEoS
-         eRkhnG4fyxCIMY+8iRse7oonn4AGOIxoGmpT4TLPgsG6h7gNNhiSlXMj/dwjcCGmBV
-         Q2IlcMDt0w7GKqxpvkYIwMsyHRrRwzG1eykLKHJdDp6N1Jo4VnYsWWcTnJtN4PM2mk
-         QSFF8dRHVwviQKy+7ddmcR5yCZVWP2NZywdb2N3zm1P3tvR/09a/B0dvGWS5Ct5h1h
-         cHfKs6ZHQ5SZj3Uw3n8+8F5EyylgRfpHBlebJZ7hLgsyEdqFoJ3JA+mf/dyca0WBk7
-         zjY/BrbQ7Trzw==
-Date:   Fri, 5 Jul 2019 07:08:10 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the hmm
- tree
-Message-ID: <20190705070810.1e01ea9d@canb.auug.org.au>
-In-Reply-To: <20190704132836.GM3401@mellanox.com>
-References: <20190704205536.32740b34@canb.auug.org.au>
-        <20190704125539.GL3401@mellanox.com>
-        <20190704230133.1fe67031@canb.auug.org.au>
-        <20190704132836.GM3401@mellanox.com>
+        id S1727539AbfGDVK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 17:10:27 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35062 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfGDVK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 17:10:27 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C4F3C24B;
+        Thu,  4 Jul 2019 23:10:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1562274624;
+        bh=rH5bR+9lFkKtZCDqwCe8OuU9RTZKTQrIQJBkM0CbF3I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FCDjPpeCNkj1EFXAIg9h/NzwKcGsKZmLD7agdaR1+cVt7JK7zHSn1M4g4HlG/aOvH
+         1qGga4AH5et1WH+DOXF7QSWYGsZibj8vneYOfJZVMVbNpsKkcj4Fumwl4JfHAl8Ude
+         A2HXM0xBa6cY8K0LRFVuMfpl4D0sbHRWItMo/Wqo=
+Date:   Fri, 5 Jul 2019 00:10:04 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] drm/bridge: ti-sn65dsi86: add debugfs
+Message-ID: <20190704211004.GH5024@pendragon.ideasonboard.com>
+References: <20190702154419.20812-1-robdclark@gmail.com>
+ <CGME20190702154441epcas2p2cba89e3a84216d9a8da43438a9648e03@epcas2p2.samsung.com>
+ <20190702154419.20812-3-robdclark@gmail.com>
+ <1b56a11c-194d-0eca-4dd1-48e91820eafb@samsung.com>
+ <20190704123511.GG6569@pendragon.ideasonboard.com>
+ <CAF6AEGvYJ6iA5B+thJuBC=pFStuhsn87xrrcWAZyroWj5xKMZA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.mdJ876r_5mgmleKxQi6puG"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGvYJ6iA5B+thJuBC=pFStuhsn87xrrcWAZyroWj5xKMZA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.mdJ876r_5mgmleKxQi6puG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob,
 
-Hi Jason,
+On Thu, Jul 04, 2019 at 06:56:56AM -0700, Rob Clark wrote:
+> On Thu, Jul 4, 2019 at 5:35 AM Laurent Pinchartwrote:
+> > On Thu, Jul 04, 2019 at 02:31:20PM +0200, Andrzej Hajda wrote:
+> > > On 02.07.2019 17:44, Rob Clark wrote:
+> > > > From: Rob Clark <robdclark@chromium.org>
+> > > >
+> > > > Add a debugfs file to show status registers.
+> > > >
+> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > ---
+> > > >  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 42 +++++++++++++++++++++++++++
+> > > >  1 file changed, 42 insertions(+)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > > > index f1a2493b86d9..a6f27648c015 100644
+> > > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > > > @@ -5,6 +5,7 @@
+> > > >   */
+> > > >
+> > > >  #include <linux/clk.h>
+> > > > +#include <linux/debugfs.h>
+> > > >  #include <linux/gpio/consumer.h>
+> > > >  #include <linux/i2c.h>
+> > > >  #include <linux/iopoll.h>
+> > > > @@ -109,6 +110,7 @@ struct ti_sn_bridge {
+> > > >     struct drm_dp_aux               aux;
+> > > >     struct drm_bridge               bridge;
+> > > >     struct drm_connector            connector;
+> > > > +   struct dentry                   *debugfs;
+> > > >     struct device_node              *host_node;
+> > > >     struct mipi_dsi_device          *dsi;
+> > > >     struct clk                      *refclk;
+> > > > @@ -178,6 +180,42 @@ static const struct dev_pm_ops ti_sn_bridge_pm_ops = {
+> > > >     SET_RUNTIME_PM_OPS(ti_sn_bridge_suspend, ti_sn_bridge_resume, NULL)
+> > > >  };
+> > > >
+> > > > +static int status_show(struct seq_file *s, void *data)
+> > > > +{
+> > > > +   struct ti_sn_bridge *pdata = s->private;
+> > > > +   unsigned int reg, val;
+> > > > +
+> > > > +   seq_puts(s, "STATUS REGISTERS:\n");
+> >
+> > NO NEED TO SHOUT :-)
+> >
+> > > > +
+> > > > +   pm_runtime_get_sync(pdata->dev);
+> > > > +
+> > > > +   /* IRQ Status Registers, see Table 31 in datasheet */
+> > > > +   for (reg = 0xf0; reg <= 0xf8; reg++) {
+> > > > +           regmap_read(pdata->regmap, reg, &val);
+> > > > +           seq_printf(s, "[0x%02x] = 0x%08x\n", reg, val);
+> > > > +   }
+> > > > +
+> > > > +   pm_runtime_put(pdata->dev);
+> > > > +
+> > > > +   return 0;
+> > > > +}
+> > > > +
+> > > > +DEFINE_SHOW_ATTRIBUTE(status);
+> > > > +
+> > > > +static void ti_sn_debugfs_init(struct ti_sn_bridge *pdata)
+> > > > +{
+> > > > +   pdata->debugfs = debugfs_create_dir("ti_sn65dsi86", NULL);
+> > >
+> > > If some day we will have board with two such bridges there will be a
+> > > problem.
+> >
+> > Could we use the platform device name for this ?
+> 
+> hmm, yeah, that would solve the 2x bridges issue
+> 
+> > > Anyway:
+> > >
+> > > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> > >
+> > > > +
+> > > > +   debugfs_create_file("status", 0600, pdata->debugfs, pdata,
+> > > > +                   &status_fops);
+> > > > +}
+> > > > +
+> > > > +static void ti_sn_debugfs_remove(struct ti_sn_bridge *pdata)
+> > > > +{
+> > > > +   debugfs_remove_recursive(pdata->debugfs);
+> > > > +   pdata->debugfs = NULL;
+> > > > +}
+> > > > +
+> >
+> > You need to conditionally-compile this based on CONFIG_DEBUG_FS.
+> 
+> Hmm, is that really true?  Debugfs appears to be sufficently stub'd w/
+> inline no-ops in the !CONFIG_DEBUG_FS case
 
-On Thu, 4 Jul 2019 13:28:41 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> BTW, do you use a script to get these conflicting patch commit ID
-> automatically? It is so helpful to have them.
+You're right, my bad. I wonder if the compiler will optimise the above
+two functions out. It might warrant a CONFIG_DEBUG_FS check here for
+that reason, but that's really bikeshedding. So with the 2x bridges
+issue addressed, I think the patch will be good.
 
-No, I just use gitk and a bit of searching.  Though often there are not
-many possible commits to search.
+-- 
+Regards,
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.mdJ876r_5mgmleKxQi6puG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0earsACgkQAVBC80lX
-0GzS7gf8CTB2erFpQ9ri/9IBqbNwdjk/6yvzDws8bx1+yLuYWdWkGvoAxnjV2Ixu
-uEoGvI+lg1O2AfNWa/NIcy1a8iqBkf/tFm7ZA6P7W1O7AIwp8VVL/rYEbMVe3Qjk
-YlmU/t2cdAFfdfOPMRVbOcbCUrI9llIiqO+BeSM/up6x3NfeJuAl/AQiWwl4EQP9
-u59RW+Im0Byq5SRSH72BmexZlIRaWqlEWMwWddGzkrrmgbX558LBxK+YuocW7+x0
-NgTnZEFv4RMd85Xk58vXvCt+0DtgH+HqdA7bAz8++ccRg8Q0zYoiLWEJivffXnmP
-DMBF2a5n1VXM+O28IqT0ChRuSKB28w==
-=WSr2
------END PGP SIGNATURE-----
-
---Sig_/.mdJ876r_5mgmleKxQi6puG--
+Laurent Pinchart
