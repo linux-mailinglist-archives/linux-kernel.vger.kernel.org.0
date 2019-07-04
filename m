@@ -2,190 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8D15F56D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1565F559
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfGDJVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 05:21:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727222AbfGDJVK (ORCPT
+        id S1727286AbfGDJTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 05:19:33 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33614 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbfGDJTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 05:21:10 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x649IEdk023439
-        for <linux-kernel@vger.kernel.org>; Thu, 4 Jul 2019 05:21:09 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2thc8d5rvd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 05:21:08 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
-        Thu, 4 Jul 2019 10:21:06 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 4 Jul 2019 10:21:02 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x649L19l46792912
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 4 Jul 2019 09:21:01 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 456094C04E;
-        Thu,  4 Jul 2019 09:21:01 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B86F14C052;
-        Thu,  4 Jul 2019 09:20:59 +0000 (GMT)
-Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  4 Jul 2019 09:20:59 +0000 (GMT)
-From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org
-Cc:     npiggin@gmail.com, rjw@rjwysocki.net, daniel.lezcano@linaro.org,
-        mpe@ellerman.id.au, ego@linux.vnet.ibm.com, dja@axtens.net,
-        Abhishek Goel <huntbag@linux.vnet.ibm.com>
-Subject: [RFC v3 3/3] cpuidle-powernv : Recompute the idle-state timeouts when state usage is enabled/disabled
-Date:   Thu,  4 Jul 2019 04:18:27 -0500
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190704091827.19555-1-huntbag@linux.vnet.ibm.com>
-References: <20190704091827.19555-1-huntbag@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19070409-0008-0000-0000-000002F9CFF9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070409-0009-0000-0000-000022672115
-Message-Id: <20190704091827.19555-4-huntbag@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040122
+        Thu, 4 Jul 2019 05:19:30 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h24so7378782qto.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 02:19:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UU1LRzgJ9KtlIamPG1rpTOdBbiRt377kXD3IRu4KTEc=;
+        b=WgiZHTN9qZ6nFhuCUpG2LVjkyW3WX5VDZn4TPjBad3pSSXROgjqBp1RCASoCNesZKM
+         uKmDqEW+/vZyuouz5O1CbpKmDHpq7hwd6G9I6i2VnFgXheNpwr9VuM67k6yFhqS0Nxda
+         t2kkB3GVbtz+tlKxd6aKOBM6sI/DHcRznSwyXPHaPQNeW+V20ZId5LiEchdeyP4HD4G1
+         InWh36VgRRFtPKRVPfxoBRTv+5IP97KvQb05+UqZAbKjaFQNWzavpl17tDkOP69sL4N+
+         bvPgwVWmrywkbqOZJytsNfl27XaLTd+7vrR23siorcjR2VjOb8K5CZfzRiBxsakmIHY7
+         y7UA==
+X-Gm-Message-State: APjAAAWwpLPfQQ9zlqsA41v6erOc3/EE5CD3kwd9KJJf2ylWTgpDDKxg
+        suJPIJdFEdA4dl8tboiStjZYPys6Dx/MghUj62wk8IhE34o=
+X-Google-Smtp-Source: APXvYqz9HnBRmgYL+EgQde6QoC+3TNiwekg2y+kqVusM0V3Keg/hNYgvdDkMLVnEv4+p3P8DAILsb6JwSzdx30DpREE=
+X-Received: by 2002:aed:3363:: with SMTP id u90mr2705494qtd.7.1562231969777;
+ Thu, 04 Jul 2019 02:19:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190703005202.7578-1-alistair.francis@wdc.com>
+ <mvmk1czh9y6.fsf@suse.de> <CAKmqyKPn9GBg=n1j-ZpEdCN4Qfi5qfNtEVgpgF8rYRpof4eNDA@mail.gmail.com>
+ <mvmpnmqfepx.fsf@suse.de>
+In-Reply-To: <mvmpnmqfepx.fsf@suse.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 4 Jul 2019 11:19:13 +0200
+Message-ID: <CAK8P3a2NmdoHzFGKrzw4CBYDOBtZHDQCGsWE_L0UbG+w0bGWkA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 0/2] RISC-V: Handle the siginfo_t offset problem
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     Alistair Francis <alistair23@gmail.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The disable callback can be used to compute timeout for other states
-whenever a state is enabled or disabled. We store the computed timeout
-in "timeout" defined in cpuidle state strucure. So, we compute timeout
-only when some state is enabled or disabled and not every time in the
-fast idle path.
-We also use the computed timeout to get timeout for snooze, thus getting
-rid of get_snooze_timeout for snooze loop.
+On Thu, Jul 4, 2019 at 9:20 AM Andreas Schwab <schwab@suse.de> wrote:
+>
+> On Jul 03 2019, Alistair Francis <alistair23@gmail.com> wrote:
+>
+> > On Wed, Jul 3, 2019 at 12:08 AM Andreas Schwab <schwab@suse.de> wrote:
+> >>
+> >> On Jul 02 2019, Alistair Francis <alistair.francis@wdc.com> wrote:
+> >>
+> >> > In the RISC-V 32-bit glibc port [1] the siginfo_t struct in the kernel
+> >> > doesn't line up with the struct in glibc. In glibc world the _sifields
+> >> > union is 8 byte alligned (although I can't figure out why)
+> >>
+> >> Try ptype/o in gdb.
+> >
+> > That's a useful tip, I'll be sure to use that next time.
+>
+> It was a serious note.  If the structs don't line up then there is a
+> mismatch in types that cannot be solved by adding spurious padding.  You
+> need to fix the types instead.
 
-Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
----
- drivers/cpuidle/cpuidle-powernv.c | 35 +++++++++++--------------------
- include/linux/cpuidle.h           |  1 +
- 2 files changed, 13 insertions(+), 23 deletions(-)
+Would it be an option to align all the basic typedefs (off_t, time_t,
+clock_t, ...)
+between glibc and kernel then, and just use the existing
+sysdeps/unix/sysv/linux/generic/bits/typesizes.h after all to avoid
+surprises like this?
 
-diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
-index f51478460..7350f404a 100644
---- a/drivers/cpuidle/cpuidle-powernv.c
-+++ b/drivers/cpuidle/cpuidle-powernv.c
-@@ -45,7 +45,6 @@ struct stop_psscr_table {
- static struct stop_psscr_table stop_psscr_table[CPUIDLE_STATE_MAX] __read_mostly;
- 
- static u64 default_snooze_timeout __read_mostly;
--static bool snooze_timeout_en __read_mostly;
- 
- static u64 forced_wakeup_timeout(struct cpuidle_device *dev,
- 				 struct cpuidle_driver *drv,
-@@ -67,26 +66,13 @@ static u64 forced_wakeup_timeout(struct cpuidle_device *dev,
- 	return 0;
- }
- 
--static u64 get_snooze_timeout(struct cpuidle_device *dev,
--			      struct cpuidle_driver *drv,
--			      int index)
-+static void pnv_disable_callback(struct cpuidle_device *dev,
-+				 struct cpuidle_driver *drv)
- {
- 	int i;
- 
--	if (unlikely(!snooze_timeout_en))
--		return default_snooze_timeout;
--
--	for (i = index + 1; i < drv->state_count; i++) {
--		struct cpuidle_state *s = &drv->states[i];
--		struct cpuidle_state_usage *su = &dev->states_usage[i];
--
--		if (s->disabled || su->disable)
--			continue;
--
--		return s->target_residency * tb_ticks_per_usec;
--	}
--
--	return default_snooze_timeout;
-+	for (i = 0; i < drv->state_count; i++)
-+		drv->states[i].timeout = forced_wakeup_timeout(dev, drv, i);
- }
- 
- static int snooze_loop(struct cpuidle_device *dev,
-@@ -94,16 +80,20 @@ static int snooze_loop(struct cpuidle_device *dev,
- 			int index)
- {
- 	u64 snooze_exit_time;
-+	u64 snooze_timeout = drv->states[index].timeout;
-+
-+	if (!snooze_timeout)
-+		snooze_timeout = default_snooze_timeout;
- 
- 	set_thread_flag(TIF_POLLING_NRFLAG);
- 
- 	local_irq_enable();
- 
--	snooze_exit_time = get_tb() + get_snooze_timeout(dev, drv, index);
-+	snooze_exit_time = get_tb() + snooze_timeout;
- 	ppc64_runlatch_off();
- 	HMT_very_low();
- 	while (!need_resched()) {
--		if (likely(snooze_timeout_en) && get_tb() > snooze_exit_time) {
-+		if (get_tb() > snooze_exit_time) {
- 			/*
- 			 * Task has not woken up but we are exiting the polling
- 			 * loop anyway. Require a barrier after polling is
-@@ -168,7 +158,7 @@ static int stop_loop(struct cpuidle_device *dev,
- 	u64 timeout_tb;
- 	int forced_wakeup = 0;
- 
--	timeout_tb = forced_wakeup_timeout(dev, drv, index);
-+	timeout_tb = drv->states[index].timeout;
- 	if (timeout_tb)
- 		forced_wakeup = set_dec_before_idle(timeout_tb);
- 
-@@ -255,6 +245,7 @@ static int powernv_cpuidle_driver_init(void)
- 	 */
- 
- 	drv->cpumask = (struct cpumask *)cpu_present_mask;
-+	drv->disable_callback = pnv_disable_callback;
- 
- 	return 0;
- }
-@@ -414,8 +405,6 @@ static int powernv_idle_probe(void)
- 		/* Device tree can indicate more idle states */
- 		max_idle_state = powernv_add_idle_states();
- 		default_snooze_timeout = TICK_USEC * tb_ticks_per_usec;
--		if (max_idle_state > 1)
--			snooze_timeout_en = true;
-  	} else
-  		return -ENODEV;
- 
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index 8a0e54bd0..31662b657 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -50,6 +50,7 @@ struct cpuidle_state {
- 	int		power_usage; /* in mW */
- 	unsigned int	target_residency; /* in US */
- 	bool		disabled; /* disabled on all CPUs */
-+	unsigned long long timeout; /* timeout for exiting out of a state */
- 
- 	int (*enter)	(struct cpuidle_device *dev,
- 			struct cpuidle_driver *drv,
--- 
-2.17.1
+As of v2 the functional difference is
 
+-#define __INO_T_TYPE        __ULONGWORD_TYPE
++#define __INO_T_TYPE    __UQUAD_TYPE
+ #define __INO64_T_TYPE        __UQUAD_TYPE
+ #define __MODE_T_TYPE        __U32_TYPE
+-#define __NLINK_T_TYPE        __U32_TYPE
+-#define __OFF_T_TYPE        __SLONGWORD_TYPE
++#define __NLINK_T_TYPE    __UQUAD_TYPE
++#define __OFF_T_TYPE    __SQUAD_TYPE
+ #define __OFF64_T_TYPE        __SQUAD_TYPE
+-#define __RLIM_T_TYPE        __ULONGWORD_TYPE
++#define __RLIM_T_TYPE      __UQUAD_TYPE
+ #define __RLIM64_T_TYPE        __UQUAD_TYPE
+-#define    __BLKCNT_T_TYPE        __SLONGWORD_TYPE
++#define __BLKCNT_T_TYPE    __SQUAD_TYPE
+ #define    __BLKCNT64_T_TYPE    __SQUAD_TYPE
+-#define    __FSBLKCNT_T_TYPE    __ULONGWORD_TYPE
++#define __FSBLKCNT_T_TYPE  __UQUAD_TYPE
+ #define    __FSBLKCNT64_T_TYPE    __UQUAD_TYPE
+-#define    __FSFILCNT_T_TYPE    __ULONGWORD_TYPE
++#define __FSFILCNT_T_TYPE  __UQUAD_TYPE
+ #define    __FSFILCNT64_T_TYPE    __UQUAD_TYPE
+-#define    __FSWORD_T_TYPE        __SWORD_TYPE
++#define __FSWORD_T_TYPE   __SQUAD_TYPE
+-#define __CLOCK_T_TYPE        __SLONGWORD_TYPE
+-#define __TIME_T_TYPE        __SLONGWORD_TYPE
++#define __CLOCK_T_TYPE     __SQUAD_TYPE
++#define __TIME_T_TYPE      __SQUAD_TYPE
+ #define __USECONDS_T_TYPE    __U32_TYPE
+-#define __SUSECONDS_T_TYPE    __SLONGWORD_TYPE
++#define __SUSECONDS_T_TYPE __SQUAD_TYPE
+-#define __BLKSIZE_T_TYPE    __S32_TYPE
++#define __BLKSIZE_T_TYPE   __SQUAD_TYPE
+ #define __FSID_T_TYPE        struct { int __val[2]; }
+ #define __SSIZE_T_TYPE        __SWORD_TYPE
+-#define __SYSCALL_SLONG_TYPE    __SLONGWORD_TYPE
+-#define __SYSCALL_ULONG_TYPE    __ULONGWORD_TYPE
+-#define __CPU_MASK_TYPE     __ULONGWORD_TYPE
++#define __SYSCALL_SLONG_TYPE __SQUAD_TYPE
++#define __SYSCALL_ULONG_TYPE __UQUAD_TYPE
++#define __CPU_MASK_TYPE    __UQUAD_TYPE
+
+-#ifdef __LP64__
+ # define __RLIM_T_MATCHES_RLIM64_T    1
+-#else
+-# define __RLIM_T_MATCHES_RLIM64_T    0
+-#endif
+
++#define __ASSUME_TIME64_SYSCALLS 1
++#define __ASSUME_RLIM64_SYSCALLS 1
+
+Since the sysdeps/unix/sysv/linux/generic/bits/typesizes.h definitions
+generally match the kernel, anything diverging from that has the potential
+of breaking it, so the difference should probably be kept to the absolute
+minimum.
+
+I think these ones are wrong and will cause bugs similar to the clock_t
+issue if they are used with kernel interfaces:
+__NLINK_T_TYPE, __FSWORD_T_TYPE, __CLOCK_T_TYPE,
+__BLKSIZE_T_TYPE, __SYSCALL_ULONG_TYPE,
+__SYSCALL_SLONG_TYPE, __CPU_MASK_TYPE
+
+These are fine as long as they are only used in user space and to
+wrap kernel syscalls, but I think most of them can end up being
+passed to the kernel, so it seems safer not to have rv32 diverge
+without a good reason.
+
+The remaining ones (__INO_T_TYPE, __OFF_T_TYPE, __BLKCNT_T_TYPE,
+__FSBLKCNT_T_TYPE, __FSFILCNT_T_TYPE, __TIME_T_TYPE) all
+follow the pattern where the kernel has an old 32-bit type and a new
+64-bit type, but the kernel tries not to expose the 32-bit interfaces
+to user space on new architectures and only provide the 64-bit
+replacements, but there are a couple of interfaces that never got
+replaced, typically in driver and file system ioctls.
+
+Since glibc already has code to deal with the 64-bit types and that
+is well tested, it would seem safer to me to just #undef the old
+types completely rather than defining them to 64-bit, which would
+make them incompatible with the kernel's types.
+
+       Arnd
