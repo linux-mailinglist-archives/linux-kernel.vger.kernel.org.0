@@ -2,69 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E895FA83
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F755FA91
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfGDPDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:03:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45181 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727066AbfGDPDo (ORCPT
+        id S1727643AbfGDPE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:04:27 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:47088 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727066AbfGDPE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:03:44 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hj3Gv-0007d4-SB; Thu, 04 Jul 2019 15:03:41 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: chipidea: udc: remove redundant assignment to variable retval
-Date:   Thu,  4 Jul 2019 16:03:41 +0100
-Message-Id: <20190704150341.759-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 4 Jul 2019 11:04:26 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 12782C263A;
+        Thu,  4 Jul 2019 15:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1562252666; bh=PAo9PIfhNcKwwl9Dq4k5dVtLOG+3Xoxeinoz/2G+cRY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fjCN0tWGG04dUAErtw3+lTfyoSI1bCYZ1W+tfumt497tAJeXlHTCvXjXWLxORtmi4
+         yXfh0hm7HNGGtcQ6o1SUPI+r/oAFWW/WhzoIb7CCcmkrO2Z31MBMLv9QXfr60L0iFL
+         V85QfjjBvyr1H7MZ39Yv7It51sh1IWofgDC6HtR2wSZ4m0lV+Ds04F2+hDJI1zZ2g0
+         Sh00PHuMlY2A7OU4rDGocObLlvHj90HK+AICMmIRfFasQNWaabU1kRoolcmjRCVt5S
+         JbZG9TSrg7HTFzM2F+63jh53vle+CRvMxIBK38p9Pdxjp7eO972wJ1w8HjYwABzYSh
+         VmrsJ2wO+zWTA==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 81926A005D;
+        Thu,  4 Jul 2019 15:04:23 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 2984E3FC5D;
+        Thu,  4 Jul 2019 17:04:23 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH net-next v2 0/3] net: stmmac: Some improvements and a fix
+Date:   Thu,  4 Jul 2019 17:04:11 +0200
+Message-Id: <cover.1562252534.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Some performace improvements (01/03 and 03/03) and a fix (02/03), all for -next.
 
-The variable retval is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.  Also remove a blank
-line.
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/chipidea/udc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Jose Abreu (3):
+  net: stmmac: Implement RX Coalesce Frames setting
+  net: stmmac: Fix descriptors address being in > 32 bits address space
+  net: stmmac: Introducing support for Page Pool
 
-diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-index 6a5ee8e6da10..053432d79bf7 100644
---- a/drivers/usb/chipidea/udc.c
-+++ b/drivers/usb/chipidea/udc.c
-@@ -1746,12 +1746,11 @@ static int ci_udc_start(struct usb_gadget *gadget,
- 			 struct usb_gadget_driver *driver)
- {
- 	struct ci_hdrc *ci = container_of(gadget, struct ci_hdrc, gadget);
--	int retval = -ENOMEM;
-+	int retval;
- 
- 	if (driver->disconnect == NULL)
- 		return -EINVAL;
- 
--
- 	ci->ep0out->ep.desc = &ctrl_endpt_out_desc;
- 	retval = usb_ep_enable(&ci->ep0out->ep);
- 	if (retval)
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   1 +
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |   8 +-
+ .../net/ethernet/stmicro/stmmac/dwmac1000_dma.c    |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac100_dma.c |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   2 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  12 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |   7 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 215 +++++++--------------
+ 12 files changed, 112 insertions(+), 172 deletions(-)
+
 -- 
-2.20.1
+2.7.4
 
