@@ -2,73 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C7B5F762
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F655F76A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfGDLsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:48:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56750 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727436AbfGDLsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:48:04 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1DDA0C057F3C;
-        Thu,  4 Jul 2019 11:47:58 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-222.ams2.redhat.com [10.36.116.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BE0381001925;
-        Thu,  4 Jul 2019 11:47:57 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id E47B811AB8; Thu,  4 Jul 2019 13:47:56 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 13:47:56 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Chia-I Wu <olvaffe@gmail.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 14/18] drm/virtio: rework
- virtio_gpu_transfer_from_host_ioctl fencing
-Message-ID: <20190704114756.eavkszsgsyymns3m@sirius.home.kraxel.org>
-References: <20190702141903.1131-1-kraxel@redhat.com>
- <20190702141903.1131-15-kraxel@redhat.com>
- <CAPaKu7T3GvYVMueYgJFhADFSFEVbHEdaupw8=mq_+i150a1mLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPaKu7T3GvYVMueYgJFhADFSFEVbHEdaupw8=mq_+i150a1mLA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 04 Jul 2019 11:48:04 +0000 (UTC)
+        id S1727699AbfGDLsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:48:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727669AbfGDLsu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:48:50 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x64BmjmL116942
+        for <linux-kernel@vger.kernel.org>; Thu, 4 Jul 2019 07:48:49 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2thee260r3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 07:48:48 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 4 Jul 2019 12:48:21 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 4 Jul 2019 12:48:16 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x64BmFsV41812092
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 4 Jul 2019 11:48:15 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E0B611C066;
+        Thu,  4 Jul 2019 11:48:15 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1AFEC11C050;
+        Thu,  4 Jul 2019 11:48:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.72])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  4 Jul 2019 11:48:12 +0000 (GMT)
+Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()"
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Michal Suchanek <msuchanek@suse.de>,
+        linux-integrity@vger.kernel.org
+Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Thu, 04 Jul 2019 07:48:02 -0400
+In-Reply-To: <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+References: <20190701131505.17759-1-msuchanek@suse.de>
+         <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
+         <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070411-0012-0000-0000-0000032F3A18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070411-0013-0000-0000-00002168908F
+Message-Id: <1562240882.6165.78.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=747 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907040153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 01:05:12PM -0700, Chia-I Wu wrote:
-> On Tue, Jul 2, 2019 at 7:19 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >
-> > Switch to the virtio_gpu_array_* helper workflow.
-> (just repeating my question on patch 6)
+On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
+> On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
+> > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
+> >> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
+> >> following crash:
+> > 
+> > Thank you. I think this the right choice for the moment. I fixed
+> > a trivial checkpatch.pl error and added the mandatory tags. Can
+> > you check quickly v2 (just posted)?
+> > 
+> > I already made it available in my master and next.
 > 
-> Does this fix the obj refcount issue?  When was the issue introduced?
+> Could you please wait few days? I would prefer to fix this issue instead
+> of reverting the whole patch.
 
-obj refcount should be fine in both old and new code.
+Nayna posted a patch late yesterday titled "tpm: fixes uninitialized
+allocated banks for IBM vtpm driver", which addresses this bug.
 
-old code:
-  drm_gem_object_lookup
-  drm_gem_object_put_unlocked
-
-new code:
-  virtio_gpu_array_from_handles
-  virtio_gpu_array_put_free (in virtio_gpu_dequeue_ctrl_func).
-
-Or did I miss something?
-
-cheers,
-  Gerd
+Mimi
 
