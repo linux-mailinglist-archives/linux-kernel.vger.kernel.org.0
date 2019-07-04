@@ -2,171 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD215FAE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282D25FABE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:18:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfGDPbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:31:02 -0400
-Received: from mga06.intel.com ([134.134.136.31]:3318 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727474AbfGDPbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:31:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 08:31:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
-   d="scan'208";a="172450290"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2019 08:30:58 -0700
-Date:   Thu, 4 Jul 2019 23:14:17 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fpga: dfl: use driver core functions, not sysfs ones.
-Message-ID: <20190704151416.GA1423@hao-dev>
-References: <20190704055645.GA15471@kroah.com>
+        id S1727614AbfGDPS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:18:26 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:41170 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727066AbfGDPS0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 11:18:26 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id DC6DBC0AE0;
+        Thu,  4 Jul 2019 15:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1562253505; bh=srltxvcCNE27p/53vIXTcjaOoxeWYcyt0sOFzbvpfoQ=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=MDRk62j5WsURUzlJA+F0XDEAdFzT+64iMozavHLOOwx+r5kGKMhSdLpgbWKV6LW+u
+         S0q22RzQ667W4xh//Ba1vCVonoOMlwYn3G6nY3jVdcutFW8fMRAqa/oSJMZVvGjxGA
+         HsAoN8/3UpL6SefwVSBeyhnX20nx7m/5xRc/KS3eyu4IEAmRbDJ/mYJorozl7m114e
+         WpEns8d3HQIxoBZsIT9T4z7Q8IWmMWsLftZKRjWaZbqCodXmKE9iCxerO17kUCA7aN
+         YAvM4+BNGf5+zu1qb6YTfxc62VNhUPFAl9TC1n+5wCbZZf/xeficfzKBz09QUTcmz0
+         rs6YkMda+7yfw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 9E4FDA0067;
+        Thu,  4 Jul 2019 15:18:23 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 4 Jul 2019 08:18:23 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 4 Jul 2019 08:18:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OkNNuoLq0RLATA5MIKKj4Xs29f1xTdGnJi7uKUt0++E=;
+ b=AIpasKFGlJJUixm88XSKIllMYBYvQ8jTnoDmUZxyJcW9SThAc8obvJQ3412GAzkZuQmFCcFhUll9B1mtNDtIfLNGYRHDjSDlA53PO4gzg9K3sA/VZGG41HKebTriSkC3jjdWCX+RgMD9XK4D4M0nXlbrYRFEBu+9wmJuHHtMMTQ=
+Received: from BYAPR12MB3269.namprd12.prod.outlook.com (20.179.93.146) by
+ BYAPR12MB2742.namprd12.prod.outlook.com (20.177.125.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.20; Thu, 4 Jul 2019 15:18:19 +0000
+Received: from BYAPR12MB3269.namprd12.prod.outlook.com
+ ([fe80::f5b8:ac6e:ea68:cb1c]) by BYAPR12MB3269.namprd12.prod.outlook.com
+ ([fe80::f5b8:ac6e:ea68:cb1c%4]) with mapi id 15.20.2052.010; Thu, 4 Jul 2019
+ 15:18:19 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Topic: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Index: AQHVMYtq2Zx4WVoG/U2kL8GCK0bP/aa6NZoAgABVQYCAAAb3AIAAAeRQ
+Date:   Thu, 4 Jul 2019 15:18:19 +0000
+Message-ID: <BYAPR12MB32692AA2F18A530D56383739D3FA0@BYAPR12MB3269.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+        <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+        <20190704113916.665de2ec@carbon>
+        <BYAPR12MB326902688C3F40BB3DA6EEEBD3FA0@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <20190704170920.1e81ed6e@carbon>
+In-Reply-To: <20190704170920.1e81ed6e@carbon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 69672202-5818-4cc7-b13e-08d70092d8d1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR12MB2742;
+x-ms-traffictypediagnostic: BYAPR12MB2742:
+x-microsoft-antispam-prvs: <BYAPR12MB2742E1FFCBC0DB6B64D6A0C7D3FA0@BYAPR12MB2742.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0088C92887
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(136003)(39860400002)(199004)(189003)(73956011)(66946007)(66446008)(66476007)(66556008)(64756008)(7736002)(86362001)(6436002)(55016002)(229853002)(8676002)(76116006)(486006)(33656002)(6246003)(53936002)(476003)(76176011)(305945005)(81156014)(81166006)(2906002)(4326008)(14454004)(8936002)(25786009)(66066001)(52536014)(68736007)(110136005)(74316002)(54906003)(9686003)(316002)(5660300002)(186003)(7416002)(6506007)(26005)(478600001)(102836004)(71190400001)(71200400001)(7696005)(4744005)(14444005)(256004)(99286004)(11346002)(446003)(6636002)(6116002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB2742;H:BYAPR12MB3269.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UXMjPlASMAfGpXlf/ywuAow/ETwYoZmHI9x5ncqG+Fq9dQRrPNDpGvIjc8zgvro6DKvXkk3UYjz6dHmnog61tz6adlKifK8TnIPpq99kt3eN/rH1uRDcS2jty64vYwzXAC4cgV02y60248cuj+CXuccegG8W8skwYaKV4RTR6SpITSwi39boLAeZfcrkH+arPC+ZTAjiR7BE/iQpNJP69wVxs9KW9f+foR/1qLLncAT3iNry0AVHe/RAPbQCVE2iv7IzFdFz+gN38VVHG7oBn6yiM8DocZACaXRxk4mRWwSeP67reSCz2DIehFrkzRtah4eM3kkgK/wss4b3cK5nRmCmpb6ruE75uQfLyQj9eDnOcbquhaGbN7nXQmucflJ7oMWHLIBhspqcLy3ukznzBHsXNcaexswexGuyvEiU1mw=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704055645.GA15471@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69672202-5818-4cc7-b13e-08d70092d8d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 15:18:19.8061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: joabreu@synopsys.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2742
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 07:56:45AM +0200, Greg Kroah-Hartman wrote:
-> This is a driver, do not call "raw" sysfs functions, instead call driver
-> core ones.  Specifically convert the use of sysfs_create_files() and
-> sysfs_remove_files() to use device_add_groups() and
-> device_remove_groups()
+From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-Hi Greg,
+> You can just use page_pool_free() (p.s I'm working on reintroducing
+> page_pool_destroy wrapper).  As you say, you will not have in-flight
+> frames/pages in this driver use-case.
 
-Thanks for this patch. It looks good, and works well in my side.
+Well, if I remove the request_shutdown() it will trigger the "API usage=20
+violation" WARN ...
 
-I will follow the same (replace sysfs_create/remove_* with
-device_add/remove_group) to rework my patchset too. Thanks.
-
-Hao
-
-> 
-> Cc: Wu Hao <hao.wu@intel.com>
-> Cc: Alan Tull <atull@kernel.org>
-> Cc: Moritz Fischer <mdf@kernel.org>
-> Cc: linux-fpga@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/fpga/dfl-afu-main.c | 14 ++++++++------
->  drivers/fpga/dfl-fme-main.c |  7 ++++---
->  2 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> index 02baa6a227c0..68b4d0874b93 100644
-> --- a/drivers/fpga/dfl-afu-main.c
-> +++ b/drivers/fpga/dfl-afu-main.c
-> @@ -141,10 +141,11 @@ id_show(struct device *dev, struct device_attribute *attr, char *buf)
->  }
->  static DEVICE_ATTR_RO(id);
->  
-> -static const struct attribute *port_hdr_attrs[] = {
-> +static struct attribute *port_hdr_attrs[] = {
->  	&dev_attr_id.attr,
->  	NULL,
->  };
-> +ATTRIBUTE_GROUPS(port_hdr);
->  
->  static int port_hdr_init(struct platform_device *pdev,
->  			 struct dfl_feature *feature)
-> @@ -153,7 +154,7 @@ static int port_hdr_init(struct platform_device *pdev,
->  
->  	port_reset(pdev);
->  
-> -	return sysfs_create_files(&pdev->dev.kobj, port_hdr_attrs);
-> +	return device_add_groups(&pdev->dev, port_hdr_groups);
->  }
->  
->  static void port_hdr_uinit(struct platform_device *pdev,
-> @@ -161,7 +162,7 @@ static void port_hdr_uinit(struct platform_device *pdev,
->  {
->  	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
->  
-> -	sysfs_remove_files(&pdev->dev.kobj, port_hdr_attrs);
-> +	device_remove_groups(&pdev->dev, port_hdr_groups);
->  }
->  
->  static long
-> @@ -214,10 +215,11 @@ afu_id_show(struct device *dev, struct device_attribute *attr, char *buf)
->  }
->  static DEVICE_ATTR_RO(afu_id);
->  
-> -static const struct attribute *port_afu_attrs[] = {
-> +static struct attribute *port_afu_attrs[] = {
->  	&dev_attr_afu_id.attr,
->  	NULL
->  };
-> +ATTRIBUTE_GROUPS(port_afu);
->  
->  static int port_afu_init(struct platform_device *pdev,
->  			 struct dfl_feature *feature)
-> @@ -234,7 +236,7 @@ static int port_afu_init(struct platform_device *pdev,
->  	if (ret)
->  		return ret;
->  
-> -	return sysfs_create_files(&pdev->dev.kobj, port_afu_attrs);
-> +	return device_add_groups(&pdev->dev, port_afu_groups);
->  }
->  
->  static void port_afu_uinit(struct platform_device *pdev,
-> @@ -242,7 +244,7 @@ static void port_afu_uinit(struct platform_device *pdev,
->  {
->  	dev_dbg(&pdev->dev, "PORT AFU UInit.\n");
->  
-> -	sysfs_remove_files(&pdev->dev.kobj, port_afu_attrs);
-> +	device_remove_groups(&pdev->dev, port_afu_groups);
->  }
->  
->  static const struct dfl_feature_ops port_afu_ops = {
-> diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
-> index 086ad2420ade..0be4635583d5 100644
-> --- a/drivers/fpga/dfl-fme-main.c
-> +++ b/drivers/fpga/dfl-fme-main.c
-> @@ -72,12 +72,13 @@ static ssize_t bitstream_metadata_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(bitstream_metadata);
->  
-> -static const struct attribute *fme_hdr_attrs[] = {
-> +static struct attribute *fme_hdr_attrs[] = {
->  	&dev_attr_ports_num.attr,
->  	&dev_attr_bitstream_id.attr,
->  	&dev_attr_bitstream_metadata.attr,
->  	NULL,
->  };
-> +ATTRIBUTE_GROUPS(fme_hdr);
->  
->  static int fme_hdr_init(struct platform_device *pdev,
->  			struct dfl_feature *feature)
-> @@ -89,7 +90,7 @@ static int fme_hdr_init(struct platform_device *pdev,
->  	dev_dbg(&pdev->dev, "FME cap %llx.\n",
->  		(unsigned long long)readq(base + FME_HDR_CAP));
->  
-> -	ret = sysfs_create_files(&pdev->dev.kobj, fme_hdr_attrs);
-> +	ret = device_add_groups(&pdev->dev, fme_hdr_groups);
->  	if (ret)
->  		return ret;
->  
-> @@ -100,7 +101,7 @@ static void fme_hdr_uinit(struct platform_device *pdev,
->  			  struct dfl_feature *feature)
->  {
->  	dev_dbg(&pdev->dev, "FME HDR UInit.\n");
-> -	sysfs_remove_files(&pdev->dev.kobj, fme_hdr_attrs);
-> +	device_remove_groups(&pdev->dev, fme_hdr_groups);
->  }
->  
->  static const struct dfl_feature_ops fme_hdr_ops = {
-> -- 
-> 2.22.0
+I think this is due to alloc cache only be freed in request_shutdown(),=20
+or I'm having some leak :D
