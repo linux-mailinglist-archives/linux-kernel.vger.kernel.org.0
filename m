@@ -2,176 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F29855F2BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FB35F2C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:24:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfGDGXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:23:06 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43252 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfGDGXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:23:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p13so5219257wru.10
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=N1XKsdt47tH6QX/lfb6DoE+8I5nTHHv5tQJUtJXhYCA=;
-        b=nmNgFZ44105JNKB3xOxWjQpleCZynxu1XzyvGdBOs1f5Gaw9Qkl3ccAaEgUqcfULQm
-         nczeFv3qRpZq4rportapxaNUu/TafZ0m/Rg6zQwlRIk7XX/bSoUVJTDRDr0zzlOhFGLh
-         +p8dEBFYy1FykKU84M4NFCoEupdPZxhv+RxqYWlx1kF88QLosvGeKjAvx0hMgQpeNtMh
-         6Ruu5tsfxf0Tg4BYABw+tkKAp7y2ZcaCR9gNwZWRanQ9oRaXCr1d0Dp2t1Q9WDckorC3
-         aglZwjqDVVJGlqRznaXKDHVXGgD4FMGSydkhyJdBh+52QZBzvEM4J2eU8bUIMIq4yv4n
-         KI8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=N1XKsdt47tH6QX/lfb6DoE+8I5nTHHv5tQJUtJXhYCA=;
-        b=B8yFCbcdaNiIVmXdpMBuHvaUhvLYGYOPbnWBN40JG12ZNGe3CNENuDdg0jBm23FNWd
-         xoYxvZlO2qXjHWNPbTehCjBmijtlK+TtmkWiv4S0Qa7wVp8LkhnAmt/nhltIkuGwEDOU
-         Bd+bm/kZp6vPIJ+spT/Kpc2B9bSYZ2eTMOXygO5PiK7dMohfktS4ARQiuHNvsmepK8hP
-         i8LOhAdlrUySE+FjnmFZBLY3dn5p2Tj4YQ0JAtdQ4aSj5vD3oMDHUV5fj0bGZHpglUSD
-         2rpSCY4hlHyIePNTCf/o7Hz53CzMLNhrXODD99jNU3awJvxUgkBQZCcTd4fO95enBFb7
-         N+mQ==
-X-Gm-Message-State: APjAAAU9v5a9SfxvGWKqDV/sx7/uXNn7fv5C/T6305oSP5aHUVjrBzWw
-        0OKtNxthpCZLeVdJRzAk/AI=
-X-Google-Smtp-Source: APXvYqyRSClWeqWho1TD0jlm3iNpghWLrz2xLC6FSie6MqJ6ZFqcdofgdzZoRnFNpJaDSGb+8WR1PA==
-X-Received: by 2002:adf:eb06:: with SMTP id s6mr3365855wrn.151.1562221381741;
-        Wed, 03 Jul 2019 23:23:01 -0700 (PDT)
-Received: from ogabbay-VM ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id r131sm4373842wmf.4.2019.07.03.23.23.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Jul 2019 23:23:01 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 09:22:59 +0300
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [git pull] habanalabs pull request for kernel 5.3
-Message-ID: <20190704062259.GA1094@ogabbay-VM>
+        id S1727287AbfGDGYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:24:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34007 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfGDGYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:24:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fSch0vTyz9s8m;
+        Thu,  4 Jul 2019 16:24:36 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562221476;
+        bh=Pg+hHwo3P90SWdyoPK+T5JnXAuflVOT3Ua+ayT2IaWs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=d28ylkG/e1CtCgQHs2d5qnIJgPxXjQZoK1AN09BGTzWrlk/lYASu/aKAyDFglH5zt
+         RFCdQ0UdtkYI23r5FxpgEQajslJYPh9xiZPbEFEE1dJA1Dtb7JSUkwZgRv804GmcBn
+         Jgk/TCg3JeLmgk0vC/8Au63GC4Te8ujWCqtn71psYpI2br/aVXWcNbRr6jyAARkZ8l
+         wIr1ZT/Fyz4VSW6DkgDl/mXVcIWFvKH/DaF9efcLT8ASdJ3AvThHj6jWJ3nyPqCYPJ
+         D8ENe+8IMFiXt+B/6urLPWAnT8g09Jdpso/PEYSskvqCbTW4CNCXWx8PcVwGIxnfel
+         +DbmbhXsVkYgQ==
+Date:   Thu, 4 Jul 2019 16:24:35 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the driver-core tree
+Message-ID: <20190704162435.17f405b0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FqycEoYp6=XAIhAU85_Yojy"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg,
+--Sig_/FqycEoYp6=XAIhAU85_Yojy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is the pull request for habanalabs driver for kernel 5.3.
+Hi all,
 
-It mostly contains improvements to the existing code base. Nothing too
-exciting this time.
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Please see the tag message for details on what this pull request contains.
+fs/orangefs/orangefs-debugfs.c: In function 'orangefs_debugfs_init':
+fs/orangefs/orangefs-debugfs.c:193:1: warning: label 'out' defined but not =
+used [-Wunused-label]
+ out:
+ ^~~
+fs/orangefs/orangefs-debugfs.c: In function 'orangefs_kernel_debug_init':
+fs/orangefs/orangefs-debugfs.c:204:17: warning: unused variable 'ret' [-Wun=
+used-variable]
+  struct dentry *ret;
+                 ^~~
 
-Thanks,
-Oded
+Introduced by commit
 
-The following changes since commit 60e8523e2ea18dc0c0cea69d6c1d69a065019062:
+  f095adba36bb ("orangefs: no need to check return value of debugfs_create =
+functions")
 
-  ocxl: Allow contexts to be attached with a NULL mm (2019-07-03 21:29:47 +0200)
+--=20
+Cheers,
+Stephen Rothwell
 
-are available in the Git repository at:
+--Sig_/FqycEoYp6=XAIhAU85_Yojy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-07-04
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to 4e2da0648c0def56103ac5af2df107c966865821:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dm6MACgkQAVBC80lX
+0Gxy1QgAkxwPQfTPO2fMrkE/7J/WbNZPWQM3rAB3gXp0PpjNOi4GZdjX/lt/TYgL
+VF3n9OIpSTh6zS9+0Bv/G4bR0KF3SvPpzTsMq5ELiv5xTGjm5Kmv54EJ/8oe3FL4
+VouRbJs6ApBTe3hxbkZJf/RlRqMXRiSqs6caVORPD4BEmaMNPg4WqViPInJ1oB6m
+wGQFuTeKiNG3KdSxw7JNBjxpdkkQzt2RFKqOTuox+Ww5dk2278XPuMa8hppDE2dW
+bzJqeC19vkc1bLBYUN1twYwdEkfo/zRX766YbMVCQXSYIxPUpLurAb9XijVXz32b
+3m5SrVa0HmoozP5iQJSMDHV7D3kTbg==
+=zWsG
+-----END PGP SIGNATURE-----
 
-  habanalabs: Add busy engines bitmask to HW idle IOCTL (2019-07-01 13:59:45 +0000)
-
-----------------------------------------------------------------
-This tag contains the following changes for kernel 5.3:
-
-- Change the way the device's CPU access the host memory. This allows the
-  driver to use the kernel API of setting DMA mask in a standard way (call
-  it once).
-
-- Add a new debugfs entry to show the status of the internal DMA and
-  compute engines. This is very helpful for debugging in case a command
-  submission get stuck.
-
-- Return to the user a mask of the internal engines indicating their busy
-  state.
-
-- Make sure to restore registers that can be modified by the user to their
-  default values. Only applies to registers that are initialized by the
-  driver.
-
-- Elimination of redundant and dead-code.
-
-- Support memset of the device's memory with size larger then 4GB
-
-- Force the user to set the device to debug mode before configuring the
-  device's coresight infrastructure
-
-- Improve error printing in case of interrupts from the device
-
-----------------------------------------------------------------
-Dalit Ben Zoor (3):
-      habanalabs: make tpc registers secured
-      habanalabs: clear sobs and monitors in context switch
-      habanalabs: restore unsecured registers default values
-
-Oded Gabbay (20):
-      habanalabs: improve a couple of error messages
-      habanalabs: force user to set device debug mode
-      habanalabs: remove dead code in habanalabs_drv.c
-      habanalabs: check to load F/W before boot status
-      habanalabs: remove redundant CB size adjustment
-      habanalabs: remove redundant memory clear
-      habanalabs: change polling functions to macros
-      habanalabs: pass device pointer to asic-specific function
-      habanalabs: support device memory memset > 4GB
-      habanalabs: don't limit packet size for device CPU
-      habanalabs: remove simulator dedicated code
-      habanalabs: add rate-limit to an error message
-      docs/habanalabs: update text for some entries in sysfs
-      habanalabs: initialize device CPU queues after MMU init
-      habanalabs: de-couple MMU and VM module initialization
-      habanalabs: initialize MMU context for driver
-      habanalabs: add MMU mappings for Goya CPU
-      habanalabs: set Goya CPU to use ASIC MMU
-      habanalabs: remove DMA mask hack for Goya
-      habanalabs: add WARN in case of bad MMU mapping
-
-Omer Shpigelman (4):
-      habanalabs: remove redundant CPU checks
-      habanalabs: minor documentation and prints fixes
-      habanalabs: increase PCI ELBI timeout for Palladium
-      habanalabs: print event name for fatal and non-RAZWI events
-
-Tomer Tayar (4):
-      habanalabs: Allow accessing host mapped addresses via debugfs
-      habanalabs: Update the device idle check
-      habanalabs: Add debugfs node for engines status
-      habanalabs: Add busy engines bitmask to HW idle IOCTL
-
- .../ABI/testing/debugfs-driver-habanalabs          |  18 +-
- Documentation/ABI/testing/sysfs-driver-habanalabs  |  42 +-
- drivers/misc/habanalabs/asid.c                     |   2 +-
- drivers/misc/habanalabs/command_submission.c       |  10 +-
- drivers/misc/habanalabs/context.c                  |  11 +-
- drivers/misc/habanalabs/debugfs.c                  |  54 +-
- drivers/misc/habanalabs/device.c                   | 189 +++---
- drivers/misc/habanalabs/firmware_if.c              |  51 +-
- drivers/misc/habanalabs/goya/goya.c                | 635 +++++++++++++++------
- drivers/misc/habanalabs/goya/goyaP.h               |  16 +-
- drivers/misc/habanalabs/goya/goya_security.c       |  16 +
- drivers/misc/habanalabs/habanalabs.h               |  93 ++-
- drivers/misc/habanalabs/habanalabs_drv.c           |  66 ++-
- drivers/misc/habanalabs/habanalabs_ioctl.c         |  11 +-
- drivers/misc/habanalabs/hw_queue.c                 |   2 +-
- .../include/goya/asic_reg/dma_ch_0_masks.h         | 418 ++++++++++++++
- .../habanalabs/include/goya/asic_reg/goya_regs.h   |   1 +
- drivers/misc/habanalabs/memory.c                   |  13 +-
- drivers/misc/habanalabs/mmu.c                      |  20 +-
- drivers/misc/habanalabs/pci.c                      |  10 +-
- drivers/misc/habanalabs/sysfs.c                    |   4 -
- include/uapi/misc/habanalabs.h                     |  30 +-
- 22 files changed, 1249 insertions(+), 463 deletions(-)
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_0_masks.h
+--Sig_/FqycEoYp6=XAIhAU85_Yojy--
