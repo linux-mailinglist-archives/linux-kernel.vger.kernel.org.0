@@ -2,138 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013475F5AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7F45F5BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 11:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfGDJea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 05:34:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:37780 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbfGDJe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 05:34:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87C59344;
-        Thu,  4 Jul 2019 02:34:28 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 158643F703;
-        Thu,  4 Jul 2019 02:34:26 -0700 (PDT)
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [PATCH 4/8] iommu/arm-smmu-v3: Add support for Substream IDs
-To:     Will Deacon <will@kernel.org>
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        jacob.jun.pan@linux.intel.com, joro@8bytes.org,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        eric.auger@redhat.com, iommu@lists.linux-foundation.org,
-        robh+dt@kernel.org, robin.murphy@arm.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
- <20190610184714.6786-5-jean-philippe.brucker@arm.com>
- <20190626180025.g4clm6qnbbna65de@willie-the-truck>
-Message-ID: <104a20b7-ebb1-1569-3f6b-94438b9dbf76@arm.com>
-Date:   Thu, 4 Jul 2019 10:33:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727508AbfGDJgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 05:36:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8141 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727365AbfGDJgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 05:36:10 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 496BCF8FADA4AA0FA4AB;
+        Thu,  4 Jul 2019 17:36:07 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
+ 17:36:01 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <broonie@kernel.org>, <gregkh@linuxfoundation.org>,
+        <rafael@kernel.org>, <akinobu.mita@gmail.com>,
+        <wsa+renesas@sang-engineering.com>, <sakari.ailus@linux.intel.com>,
+        <mchehab+samsung@kernel.org>, <jacopo@jmondi.org>,
+        <khoroshilov@ispras.ru>
+CC:     <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] regmap: select CONFIG_REGMAP while REGMAP_SCCB is set
+Date:   Thu, 4 Jul 2019 17:35:53 +0800
+Message-ID: <20190704093553.49904-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190626180025.g4clm6qnbbna65de@willie-the-truck>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/06/2019 19:00, Will Deacon wrote:
-> On Mon, Jun 10, 2019 at 07:47:10PM +0100, Jean-Philippe Brucker wrote:
->> At the moment, the SMMUv3 driver implements only one stage-1 or stage-2
->> page directory per device. However SMMUv3 allows more than one address
->> space for some devices, by providing multiple stage-1 page directories. In
->> addition to the Stream ID (SID), that identifies a device, we can now have
->> Substream IDs (SSID) identifying an address space. In PCIe, SID is called
->> Requester ID (RID) and SSID is called Process Address-Space ID (PASID).
->>
->> Prepare the driver for SSID support, by adding context descriptor tables
->> in STEs (previously a single static context descriptor). A complete
->> stage-1 walk is now performed like this by the SMMU:
->>
->>       Stream tables          Ctx. tables          Page tables
->>         +--------+   ,------->+-------+   ,------->+-------+
->>         :        :   |        :       :   |        :       :
->>         +--------+   |        +-------+   |        +-------+
->>    SID->|  STE   |---'  SSID->|  CD   |---'  IOVA->|  PTE  |--> IPA
->>         +--------+            +-------+            +-------+
->>         :        :            :       :            :       :
->>         +--------+            +-------+            +-------+
->>
->> Implement a single level of context descriptor table for now, but as with
->> stream and page tables, an SSID can be split to index multiple levels of
->> tables.
->>
->> In all stream table entries, we set S1DSS=SSID0 mode, making translations
->> without an SSID use context descriptor 0. Although it would be possible by
->> setting S1DSS=BYPASS, we don't currently support SSID when user selects
->> iommu.passthrough.
-> 
-> I don't understand your comment here: iommu.passthrough works just as it did
-> before, right, since we set bypass in the STE config field so S1DSS is not
-> relevant?
+REGMAP_SCCB is selected by ov772x and ov9650 drivers,
+but CONFIG_REGMAP may not, so building will fails:
 
-Yes the comment is wrong, or at least unclear. It isn't well defined how
-SSID is supposed to work with iommu.passthrough, but I guess keeping the
-same behavior as non-PASID DMA is what we want (any PASID-tagged DMA
-also bypasses the SMMU.)
+rivers/media/i2c/ov772x.c: In function ov772x_probe:
+drivers/media/i2c/ov772x.c:1360:22: error: variable ov772x_regmap_config has initializer but incomplete type
+  static const struct regmap_config ov772x_regmap_config = {
+                      ^~~~~~~~~~~~~
+drivers/media/i2c/ov772x.c:1361:4: error: const struct regmap_config has no member named reg_bits
 
-In the comment I was referring to another possibility, supporting SVA
-and auxiliary domains even when iommu.passthrough is set. That would
-require allocating context tables and setting S1DSS=BYPASS. But I don't
-think it's a feature anyone needs at the moment.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 5bbf32217bf9 ("media: ov772x: use SCCB regmap")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/base/regmap/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I also notice that SSID0 causes transactions with SSID==0 to
-> abort. Is a PASID of 0 reserved, so this doesn't matter?
+diff --git a/drivers/base/regmap/Kconfig b/drivers/base/regmap/Kconfig
+index c8bbf53..a498413 100644
+--- a/drivers/base/regmap/Kconfig
++++ b/drivers/base/regmap/Kconfig
+@@ -4,7 +4,7 @@
+ # subsystems should select the appropriate symbols.
+ 
+ config REGMAP
+-	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_I3C)
++	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_SCCB || REGMAP_I3C)
+ 	select IRQ_DOMAIN if REGMAP_IRQ
+ 	bool
+ 
+-- 
+2.7.4
 
-Yes, PASID 0 is reserved, we start allocation at 1
 
-> 
->> @@ -1062,33 +1143,90 @@ static u64 arm_smmu_cpu_tcr_to_cd(u64 tcr)
->>  	return val;
->>  }
->>  
->> -static void arm_smmu_write_ctx_desc(struct arm_smmu_device *smmu,
->> -				    struct arm_smmu_s1_cfg *cfg)
->> +static int arm_smmu_write_ctx_desc(struct arm_smmu_domain *smmu_domain,
->> +				   int ssid, struct arm_smmu_ctx_desc *cd)
->>  {
->>  	u64 val;
->> +	bool cd_live;
->> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
->> +	__le64 *cdptr = arm_smmu_get_cd_ptr(&smmu_domain->s1_cfg, ssid);
->>  
->>  	/*
->> -	 * We don't need to issue any invalidation here, as we'll invalidate
->> -	 * the STE when installing the new entry anyway.
->> +	 * This function handles the following cases:
->> +	 *
->> +	 * (1) Install primary CD, for normal DMA traffic (SSID = 0).
->> +	 * (2) Install a secondary CD, for SID+SSID traffic.
->> +	 * (3) Update ASID of a CD. Atomically write the first 64 bits of the
->> +	 *     CD, then invalidate the old entry and mappings.
->> +	 * (4) Remove a secondary CD.
->>  	 */
->> -	val = arm_smmu_cpu_tcr_to_cd(cfg->cd.tcr) |
->> +
->> +	if (!cdptr)
->> +		return -ENOMEM;
->> +
->> +	val = le64_to_cpu(cdptr[0]);
->> +	cd_live = !!(val & CTXDESC_CD_0_V);
->> +
->> +	if (!cd) { /* (4) */
->> +		cdptr[0] = 0;
-> 
-> Should we be using WRITE_ONCE here? (although I notice we don't seem to
-> bother for STEs either...)
-
-Sure, that's safer
-
-Thanks,
-Jean
