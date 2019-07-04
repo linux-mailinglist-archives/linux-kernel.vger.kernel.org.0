@@ -2,92 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0AA5FB8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C945FBA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfGDQMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:12:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39143 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfGDQMH (ORCPT
+        id S1727016AbfGDQTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:19:24 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59558 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbfGDQTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:12:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r21so1724031otq.6;
-        Thu, 04 Jul 2019 09:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cOm/HvLRodK9Gmtg8Pu+nD4Ju+GzARos9DN1PBnngww=;
-        b=ZnLAO5N/cjBNnfi05k8nnzcwqeojnDRLbnWpeFhu55YnIK/VkStqmUt2q0KmoNHK7R
-         326a9gF9U5YXEUtZK4LlrxAdtTRYmi22miuCjj1vKxSTW7sLqWAvrl8I4GXAUOzbrHCu
-         SZsFWfcB89i2UCJgu4VLoD/7iQSwVlmeMihp/gsZVlp8PY8mfVfs5gjRrvab7/3GlOdW
-         lovRk3VYcyt/HC3BP/C2sU2NoCCQMNoPuEu4+4MfHJZDDvqDsWAg5/nNn53VgF+A5Ytn
-         p2leV/a6bbtjmjsJZVw4ZsaKL0ofI/LQzeLbgqNXCkPzCHb+3O7DiJ2xQ3JvGHDziQ0r
-         8rwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cOm/HvLRodK9Gmtg8Pu+nD4Ju+GzARos9DN1PBnngww=;
-        b=o0jdNEpA4njlSSLyMALSs8CfIYngHk0GiAgJmJYKQdvNXvPnxLEZt4LiPmFwgB+yJt
-         LN3leYvf6SMKUQL7LGJH23nxC0RmWFnhDbBuknTv1jx1IuklJki676UYfMvgoGxjPubO
-         6R/csVpmN/TCrVn9OkMRplEgaxrifbiXoa49CeVJkUzZGsOyi31/lXHNkeeMsvC/Qv57
-         MbyPxfpbz7fgTkAJFWKQ+LNoP2Z3KkeV+D+jhunTu6DPzSrmQzYpBMYWQCadwJVkVIy1
-         GtjU/0mn3j0h4sfHec2wMk6uifZsFY4ly4hLYT18mydn85zBO1r7X8tbp/xtSQbLMSaR
-         cE5Q==
-X-Gm-Message-State: APjAAAUMtyYnFat1yNx0uuygz4+DeaVo9MNV780DBpr1gokuRL1X8tu+
-        NQZZa6ZPwfwqL+rTA1Hw8YGa/FQiSqt7rNBNr94=
-X-Google-Smtp-Source: APXvYqy4bWZa64/P36dEj/NLPY1nKF3u7sWYt5t9/HNW6LIUW4IHgRkpNfgNmSRLikr+xC7CPyWf3pdHpn5BOKIhuiQ=
-X-Received: by 2002:a9d:76ce:: with SMTP id p14mr34242454otl.342.1562256726047;
- Thu, 04 Jul 2019 09:12:06 -0700 (PDT)
+        Thu, 4 Jul 2019 12:19:23 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hj4S8-0005Xs-96; Thu, 04 Jul 2019 18:19:20 +0200
+Date:   Thu, 4 Jul 2019 18:19:18 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Shijith Thotton <sthotton@marvell.com>
+cc:     Julien Thierry <julien.thierry@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+Subject: Re: [PATCH] genirq: update irq stats from NMI handlers
+In-Reply-To: <a4ce3800-22f4-72dc-6ff8-75dfed1c377b@marvell.com>
+Message-ID: <alpine.DEB.2.21.1907041818360.1802@nanos.tec.linutronix.de>
+References: <1562214115-14022-1-git-send-email-sthotton@marvell.com> <6adfb296-50f1-9efb-0840-cc8732b8ebf9@arm.com> <a4ce3800-22f4-72dc-6ff8-75dfed1c377b@marvell.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190704133031.28809-1-colin.king@canonical.com>
-In-Reply-To: <20190704133031.28809-1-colin.king@canonical.com>
-From:   Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Date:   Thu, 4 Jul 2019 21:41:27 +0530
-Message-ID: <CAAs364_ht9ubWrkr3qBYKofmCYUSsQPi-Ahqk4D+hG_JpDXreA@mail.gmail.com>
-Subject: Re: [PATCH] staging: greybus: remove redundant assignment to variable is_empty
-To:     Colin King <colin.king@canonical.com>
-Cc:     Mark Greer <mgreer@animalcreek.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 4, 2019 at 7:00 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable is_empty is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/greybus/audio_manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
-> index c2a4af4c1d06..9b19ea9d3fa1 100644
-> --- a/drivers/staging/greybus/audio_manager.c
-> +++ b/drivers/staging/greybus/audio_manager.c
-> @@ -86,7 +86,7 @@ EXPORT_SYMBOL_GPL(gb_audio_manager_remove);
->  void gb_audio_manager_remove_all(void)
->  {
->         struct gb_audio_manager_module *module, *next;
-> -       int is_empty = 1;
-> +       int is_empty;
->
->         down_write(&modules_rwsem);
->
-> --
-> 2.20.1
->
-Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
+On Thu, 4 Jul 2019, Shijith Thotton wrote:
+> On 7/4/19 12:13 AM, Julien Thierry wrote:
+> > Looking at handle_percpu_irq(), I think this might be acceptable. But
+> > does it make sense to only have kstats for percpu NMIs?
+> > 
+> 
+> It would be better to have stats for both.
+> 
+> handle_fasteoi_nmi() can use __kstat_incr_irqs_this_cpu() if below 
+> change can be added to kstat_irqs_cpu().
+> 
+> diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+> index a92b33593b8d..9484e88dabc2 100644
+> --- a/kernel/irq/irqdesc.c
+> +++ b/kernel/irq/irqdesc.c
+> @@ -950,6 +950,11 @@ unsigned int kstat_irqs_cpu(unsigned int irq, int cpu)
+>                          *per_cpu_ptr(desc->kstat_irqs, cpu) : 0;
+>   }
+> 
+> +static bool irq_is_nmi(struct irq_desc *desc)
+> +{
+> +       return desc->istate & IRQS_NMI;
+> +}
+> +
+>   /**
+>    * kstat_irqs - Get the statistics for an interrupt
+>    * @irq:       The interrupt number
+> @@ -967,7 +972,8 @@ unsigned int kstat_irqs(unsigned int irq)
+>          if (!desc || !desc->kstat_irqs)
+>                  return 0;
+>          if (!irq_settings_is_per_cpu_devid(desc) &&
+> -           !irq_settings_is_per_cpu(desc))
+> +           !irq_settings_is_per_cpu(desc) &&
+> +           !irq_is_nmi(desc))
+>              return desc->tot_count;
+> 
+>          for_each_possible_cpu(cpu)
+> 
+> 
+> Thomas,
+> Please suggest a better way if any.
+
+Looks good.
+
+Thanks,
+
+	tglx
