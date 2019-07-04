@@ -2,92 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A0A5F281
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:55:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D24E5F27F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfGDFzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 01:55:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:17596 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfGDFzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 01:55:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 22:55:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,449,1557212400"; 
-   d="scan'208";a="164547665"
-Received: from pedapalapati-ip.iind.intel.com ([10.106.124.123])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Jul 2019 22:55:48 -0700
-From:   Nitin Gote <nitin.r.gote@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     corbet@lwn.net, apw@canonical.com, joe@perches.com,
-        keescook@chromium.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Nitin Gote <nitin.r.gote@intel.com>
-Subject: [PATCH] checkpatch: Added warnings in favor of strscpy().
-Date:   Thu,  4 Jul 2019 11:24:43 +0530
-Message-Id: <1562219683-15474-1-git-send-email-nitin.r.gote@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727229AbfGDFzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 01:55:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36999 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfGDFzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 01:55:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id g15so2374468pgi.4;
+        Wed, 03 Jul 2019 22:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=BX5JDaciana7ktLIahHDZ8Rm/ZU0HX0KyhCu3VI68A8=;
+        b=ES/LWPfND6i8EUl8ALV5oWggRPVLI7ruCB9fs/GvPzxHMIPoN81XcE8xKezsMra/y6
+         dSwtmhsVOcDEDLA3+63LTMxSlFWvNLIzPEdZZiYtQ3E0aqVn5T5Alw1PRyomomnXkJD6
+         8TSPx95eZ4q2HFnM+Y18aqUHNumIeDhdJuw7YW81gRweXQIH3ei5iN4365L5rHuTezoO
+         mbv+3O9cU982/pSlPyZrIJGuMZwxmgH2I//jRmEenMlfFtkEaW8stYKYUR7edjVF4Wln
+         rsVaLY8yfmeSuPwncUDuN/KSvjXMeRrokfWjIUtYnBY04EyiTl/bZoKHY9T/rp7ef961
+         F3RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding;
+        bh=BX5JDaciana7ktLIahHDZ8Rm/ZU0HX0KyhCu3VI68A8=;
+        b=ciZYrl0euWR5Si7HQyo6rI5v/6Bol5RYJy1sxB2a+HxsMiAPmipm2U8xwOQ9Jc7er7
+         VgHa3r3H5CSRlmmUNsgJj73T35YgFyFuraDk3XCkbem4WpC4NewOfehBrNKvAZI6kTmX
+         zD67SgiDyUa+m7+8+uokdY/qSzIdBoqhFDOcXx//rs3Dxbz333vEPBknjR8cuffPTGeD
+         SkAHrS8/+nuyl2KWKrskoc9pPpxLHwl7Sz1ULrZSFDbwyrbnhO8ZnNK7Ga/KGbhxd7Dl
+         ekJCkHX64rbIL7ISv8yT50HG1vesZG5Yjyu3KvScpsNJqmBrWloYGdujvsAkr8puuikH
+         D8Ww==
+X-Gm-Message-State: APjAAAX160oIQ66L3ZBOSxrZJnRcPNbmFE7FyaBySe1Mzr7lVhykJtir
+        AggYfdmOoMG5F/Zop+Oh15wOcLht
+X-Google-Smtp-Source: APXvYqwDEIQv50OOSV4lqbB7mHxRneKKwMjQFsVni/kO8fTksoN52y09PuYbOrKCqczquTT9hKw8LQ==
+X-Received: by 2002:a63:c508:: with SMTP id f8mr10813454pgd.48.1562219731123;
+        Wed, 03 Jul 2019 22:55:31 -0700 (PDT)
+Received: from [0.0.0.0] ([80.240.31.150])
+        by smtp.gmail.com with ESMTPSA id j11sm5792476pfa.2.2019.07.03.22.55.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 22:55:30 -0700 (PDT)
+Subject: Re: [PATCH RFC 0/3] Support CPU hotplug for ARM64
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>, rjw@rjwysocki.net,
+        catalin.marinas@arm.com, james.morse@arm.com
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, guohanjun@huawei.com,
+        xiexiuqi@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com, jonathan.cameron@huawei.com
+References: <1561720392-45907-1-git-send-email-wangxiongfeng2@huawei.com>
+ <2b22cf4d-9646-9f20-41ae-cceb83d9791b@gmail.com>
+ <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
+From:   Jia He <hejianet@gmail.com>
+Organization: ARM
+Message-ID: <adfea83d-fb86-f388-3409-eea9564b938a@gmail.com>
+Date:   Thu, 4 Jul 2019 13:55:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added warnings in checkpatch.pl script to :
+Hi Xiongfeng
 
-1. Deprecate strcpy() in favor of strscpy().
-2. Deprecate strlcpy() in favor of strscpy().
-3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
+On 2019/7/4 11:26, Xiongfeng Wang wrote:
+> Hi Justin,
+>
+> On 2019/7/4 11:00, Jia He wrote:
+>> Hi Xiongfeng
+>>
+>> It is a little bit awkful that I am also  investigating acpi based cpu hotplug issue silimar with
+>>
+>> your idea. My question is your purpose to implement the vcpu hotplug in arm64 qemu?
+> Yes, my purpose is to implement the vcpu hotplug in arm64 qemu. So that I can add or remove vcpu
+> without shutting down the Guest OS.
 
-Updated strncpy() section in Documentation/process/deprecated.rst
-to cover strscpy_pad() case.
+Thanks for the infor, I guess you used GED device in qemu ;-)?
 
-Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
 ---
- This patch is already reviewed by mailing list
- kernel-hardening@lists.openwall.com. Refer below link
- <https://www.openwall.com/lists/kernel-hardening/2019/07/03/4>
-Acked-by: Kees Cook <keescook@chromium.org>
-
- Documentation/process/deprecated.rst | 6 +++---
- scripts/checkpatch.pl                | 5 +++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-index 49e0f64..f564de3 100644
---- a/Documentation/process/deprecated.rst
-+++ b/Documentation/process/deprecated.rst
-@@ -93,9 +93,9 @@ will be NUL terminated. This can lead to various linear read overflows
- and other misbehavior due to the missing termination. It also NUL-pads the
- destination buffer if the source contents are shorter than the destination
- buffer size, which may be a needless performance penalty for callers using
--only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
--(Users of :c:func:`strscpy` still needing NUL-padding will need an
--explicit :c:func:`memset` added.)
-+only NUL-terminated strings. In this case, the safe replacement is
-+:c:func:`strscpy`. If, however, the destination buffer still needs
-+NUL-padding, the safe replacement is :c:func:`strscpy_pad`.
- 
- If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
- still be used, but destinations should be marked with the `__nonstring
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 342c7c7..3d80967 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -595,6 +595,11 @@ our %deprecated_apis = (
- 	"rcu_barrier_sched"			=> "rcu_barrier",
- 	"get_state_synchronize_sched"		=> "get_state_synchronize_rcu",
- 	"cond_synchronize_sched"		=> "cond_synchronize_rcu",
-+	"strcpy"				=> "strscpy",
-+	"strlcpy"				=> "strscpy",
-+	"strncpy"				=> "strscpy, strscpy_pad or for
-+	non-NUL-terminated strings, strncpy() can still be used, but
-+	destinations should be marked with the __nonstring",
- );
- 
- #Create a search pattern for all these strings to speed up a loop below
--- 
-2.7.4
+Cheers,
+Justin (Jia He)
 
