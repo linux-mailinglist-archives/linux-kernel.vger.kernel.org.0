@@ -2,102 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1F755F1C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A34C15F1CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 05:31:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfGDD1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 23:27:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59376 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfGDD1a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 23:27:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bfUuotpsA7QM4d+GD8HA3DqaH0YT4JnSqveOPEJHZmE=; b=DYj+iswCGfqMvh6Vcet5Evj0Y
-        GsyD8CyUisYULDtQjbA5vGZ/hNXgspOgh006SQe1+qr7TZT1AYlYjAkdkiYkjFqTvS8LExPkDsSrr
-        uw06xq/QsEuX5TQP7ma8p2d9Mx/iXMiWVC7aIfPC7vnXkkQD9TrdwQwkpdfYAkHIxKz2R1N70Z84l
-        3xhXHDMy3VQY/86p5LEXocdyG1zM5kB6mQK24lQ51xK5okoPAGeaUuzjsH1kNEoroTvfk1i+U9esr
-        G1GFk7RgJtLXqaHP8ZjaorampgpGJFFeAUoYwGLs6Y46p0O2fTKSxrdtPrKaMQi4oYQhBc4pdeaaj
-        BiqQpmSNA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hisPA-0006Hf-Tn; Thu, 04 Jul 2019 03:27:28 +0000
-Date:   Wed, 3 Jul 2019 20:27:28 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190704032728.GK1729@bombadil.infradead.org>
-References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190703121743.GH1729@bombadil.infradead.org>
- <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
- <20190703195302.GJ1729@bombadil.infradead.org>
- <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+        id S1727291AbfGDDao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 23:30:44 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52848 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726964AbfGDDao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 23:30:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=XuDtY8Dlqs5FD5x3L9E+zII7BIIPv0YBpCA9v+AVhAs=; b=FyqvWdS2bMXo1IsxWUUxMu1D5J
+        wZ8mT2zNe8VO4Q+fYSHJgg1pkAU4DG9rD7DyFR5TKeSVYYmULnyHr49xI3tSrhc4GZ8WIA6ESGFt+
+        cf98l6+JWr5zxSTzj+5IZHMLI5ywUbCBe58UTpGIVVOo8aerYK40ZGhps/iVvYAlfezU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hisSE-0001eb-4K; Thu, 04 Jul 2019 05:30:38 +0200
+Date:   Thu, 4 Jul 2019 05:30:38 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Voon, Weifeng" <weifeng.voon@intel.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        "Ong, Boon Leong" <boon.leong.ong@intel.com>,
+        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>
+Subject: Re: [PATCH v1 net-next] net: stmmac: enable clause 45 mdio support
+Message-ID: <20190704033038.GA6276@lunn.ch>
+References: <1562147404-4371-1-git-send-email-weifeng.voon@intel.com>
+ <20190703140520.GA18473@lunn.ch>
+ <D6759987A7968C4889FDA6FA91D5CBC8147384B6@PGSMSX103.gar.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <D6759987A7968C4889FDA6FA91D5CBC8147384B6@PGSMSX103.gar.corp.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 02:28:41PM -0700, Dan Williams wrote:
-> On Wed, Jul 3, 2019 at 12:53 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > @@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
-> >         for (;;) {
-> >                 entry = xas_find_conflict(xas);
-> >                 if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-> > -                               !dax_is_locked(entry))
-> > +                               !dax_is_locked(entry) ||
-> > +                               dax_entry_order(entry) < xas_get_order(xas))
+On Thu, Jul 04, 2019 at 01:33:16AM +0000, Voon, Weifeng wrote:
+> > > @@ -155,22 +171,26 @@ static int stmmac_mdio_read(struct mii_bus *bus,
+> > int phyaddr, int phyreg)
+> > >  	struct stmmac_priv *priv = netdev_priv(ndev);
+> > >  	unsigned int mii_address = priv->hw->mii.addr;
+> > >  	unsigned int mii_data = priv->hw->mii.data;
+> > > -	u32 v;
+> > > -	int data;
+> > >  	u32 value = MII_BUSY;
+> > > +	int data = 0;
+> > > +	u32 v;
+> > >
+> > >  	value |= (phyaddr << priv->hw->mii.addr_shift)
+> > >  		& priv->hw->mii.addr_mask;
+> > >  	value |= (phyreg << priv->hw->mii.reg_shift) & priv->hw-
+> > >mii.reg_mask;
+> > >  	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
+> > >  		& priv->hw->mii.clk_csr_mask;
+> > > -	if (priv->plat->has_gmac4)
+> > > +	if (priv->plat->has_gmac4) {
+> > >  		value |= MII_GMAC4_READ;
+> > > +		if (phyreg & MII_ADDR_C45)
+> > > +			stmmac_mdio_c45_setup(priv, phyreg, &value, &data);
+> > > +	}
+> > >
+> > >  	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v &
+> > MII_BUSY),
+> > >  			       100, 10000))
+> > >  		return -EBUSY;
+> > >
+> > > +	writel(data, priv->ioaddr + mii_data);
+> > 
+> > That looks odd. Could you explain why it is needed.
+> > 
+> > Thanks
+> > 	Andrew
 > 
-> Doesn't this potentially allow a locked entry to be returned for a
-> caller that expects all value entries are unlocked?
+> Hi Andrew,
+> This mdio c45 support needed to access DWC xPCS which is a Clause-45
 
-It only allows locked entries to be returned for callers which pass in
-an xas which refers to a PMD entry.  This is fine for grab_mapping_entry()
-because it checks size_flag & is_pte_entry.
+I mean it looks odd doing a write to the data register in the middle
+of stmmac_mdio_read().
 
-dax_layout_busy_page() only uses 0-order.
-__dax_invalidate_entry() only uses 0-order.
-dax_writeback_one() needs an extra fix:
-
-                /* Did a PMD entry get split? */
-                if (dax_is_locked(entry))
-                        goto put_unlocked;
-
-dax_insert_pfn_mkwrite() checks for a mismatch of pte vs pmd.
-
-So I think we're good for all current users.
-
-> > +#ifdef CONFIG_XARRAY_MULTI
-> > +       unsigned int sibs = xas->xa_sibs;
-> > +
-> > +       while (sibs) {
-> > +               order++;
-> > +               sibs /= 2;
-> > +       }
-> 
-> Use ilog2() here?
-
-Thought about it.  sibs is never going to be more than 31, so I don't
-know that it's worth eliminating 5 add/shift pairs in favour of whatever
-the ilog2 instruction is on a given CPU.  In practice, on x86, sibs is
-going to be either 0 (PTEs) or 7 (PMDs).  We could also avoid even having
-this function by passing PMD_ORDER or PTE_ORDER into get_unlocked_entry().
-
-It's probably never going to be noticable in this scenario because it's
-the very last thing checked before we put ourselves on a waitqueue and
-go to sleep.
+   Andrew
