@@ -2,132 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB285F46C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CBE5F474
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfGDIRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:17:46 -0400
-Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:2328 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727119AbfGDIRn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:17:43 -0400
-Received: from pps.filterd (m0098778.ppops.net [127.0.0.1])
-        by mx0b-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x648FgwR017332;
-        Thu, 4 Jul 2019 03:17:41 -0500
-Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2059.outbound.protection.outlook.com [104.47.44.59])
-        by mx0b-00010702.pphosted.com with ESMTP id 2tg8maeq02-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 04 Jul 2019 03:17:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector1-nio365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CCuAG5wNuXyOtjv2v97Vzo8UxQj4yRTV9KSjck026io=;
- b=LuLfuFOLWWMIRMflMy1OaF/UwIubK9xBHFuTrG1qXz/tMnQ4jRwAQ14hrQkGhX49AlCZLiBE2CaI53gHgTobAITWfphCrr0lB3IzhQZcuCP+s8VwDco1VRODvjaf7g7hylxzPegzPHIwTgUoOKPaQ8FVQ+9sLeVJ2m1Dzxha09Y=
-Received: from MN2PR04MB5920.namprd04.prod.outlook.com (20.179.21.161) by
- MN2PR04MB6014.namprd04.prod.outlook.com (20.178.249.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Thu, 4 Jul 2019 08:17:38 +0000
-Received: from MN2PR04MB5920.namprd04.prod.outlook.com
- ([fe80::7ca2:1dbc:355d:64c7]) by MN2PR04MB5920.namprd04.prod.outlook.com
- ([fe80::7ca2:1dbc:355d:64c7%5]) with mapi id 15.20.2052.010; Thu, 4 Jul 2019
- 08:17:38 +0000
-From:   Je Yen Tam <je.yen.tam@ni.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] Re: Re: [PATCH V2 2/2] PCI: Add NI-Serial
- PXI/PXIe+485 device IDs
-Thread-Index: AQHVMkDDhpivmOB0MEO3DKqmDzUg26a6HTRw
-Date:   Thu, 4 Jul 2019 08:17:38 +0000
-Message-ID: <MN2PR04MB5920DFD232850F4F2CB28C47B7FA0@MN2PR04MB5920.namprd04.prod.outlook.com>
-References: <20190703072516.34199-1-je.yen.tam@ni.com>
- <20190703083605.GA8996@kroah.com>
- <MN2PR04MB5920BB86A99B1ABF946B2373B7FA0@MN2PR04MB5920.namprd04.prod.outlook.com>
- <20190704081615.GB6438@kroah.com>
-In-Reply-To: <20190704081615.GB6438@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [130.164.75.17]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cdf4dd9c-98ae-403a-fb4b-08d700581409
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB6014;
-x-ms-traffictypediagnostic: MN2PR04MB6014:
-x-microsoft-antispam-prvs: <MN2PR04MB60146522BE1FA78C6FC9D4C2B7FA0@MN2PR04MB6014.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(39860400002)(136003)(199004)(189003)(13464003)(81156014)(9686003)(55016002)(478600001)(256004)(99286004)(53936002)(71200400001)(86362001)(6916009)(8676002)(7696005)(71190400001)(2906002)(52536014)(25786009)(4326008)(68736007)(14454004)(81166006)(5660300002)(8936002)(6506007)(316002)(66946007)(66476007)(76116006)(7736002)(6246003)(186003)(3846002)(64756008)(53546011)(66556008)(66446008)(76176011)(54906003)(229853002)(6436002)(11346002)(476003)(73956011)(26005)(6116002)(446003)(33656002)(102836004)(66066001)(74316002)(486006)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6014;H:MN2PR04MB5920.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: ni.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vZK497JzoLVsMtMihc0leEn1nwm3NFm39RrTtn2q7b+j2vSKsARODjOP+5WLFarKkaHhluedPTxuoLdX+FmydbP0NE3SKvhNg/BDHN5mU8R9HwHFyuDyan5bp9DR5ETQJUpOH/14PvgQvVi7eluf4J8ZRf3B1TrwN0BHkG2kkE0gb9kT/37fWEsb7HhlmgGZ0+wD1GJYWy8lgJOTOSE1yJP1Roqxkb0Clhaqf5CGSzM/zuoN/kTTgQI9DqDSCr+9EoFC3lUYoRVgLs+uC+yjO0xzdbaLcVVoscUy/SeXPVRGZRu6+SCwN/QUMqYfoqBsSAlfWWGXm6xUMxgwxroOC+K0XcuRigEAG1JUSwBmkbS4GYCNzeyIJiOO7RKogt+c85iDgJkNjpcmN/AtvyHvAf/2Kan6SbbU01/S26RSCYc=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726977AbfGDITR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:19:17 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8696 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726679AbfGDITR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:19:17 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 51232D64E59BC7EDB020;
+        Thu,  4 Jul 2019 16:19:14 +0800 (CST)
+Received: from [127.0.0.1] (10.184.52.56) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
+ 16:19:08 +0800
+Subject: Re: [RFC PATCH v2 2/3] arm64: mark all the GICC nodes in MADT as
+ possible cpu
+To:     Jia He <jiakernel2@gmail.com>, <rjw@rjwysocki.net>,
+        <catalin.marinas@arm.com>, <james.morse@arm.com>
+CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <guohanjun@huawei.com>,
+        <xiexiuqi@huawei.com>, <huawei.libin@huawei.com>,
+        <john.garry@huawei.com>, <jonathan.cameron@huawei.com>
+References: <1561776155-38975-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1561776155-38975-3-git-send-email-wangxiongfeng2@huawei.com>
+ <762be90e-7629-ab5e-4c2d-6566b100f2e5@gmail.com>
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Message-ID: <e3bcc250-240e-e2b0-c0d4-d882cf43d255@huawei.com>
+Date:   Thu, 4 Jul 2019 16:18:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdf4dd9c-98ae-403a-fb4b-08d700581409
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 08:17:38.7995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: je.yen.tam@ni.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6014
-Subject: RE: Re: Re: [PATCH V2 2/2] PCI: Add NI-Serial PXI/PXIe+485 device IDs
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=30 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040108
+In-Reply-To: <762be90e-7629-ab5e-4c2d-6566b100f2e5@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.184.52.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: Thursday, July 4, 2019 4:16 PM
-> To: Je Yen Tam <je.yen.tam@ni.com>
-> Cc: linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [EXTERNAL] Re: Re: [PATCH V2 2/2] PCI: Add NI-Serial PXI/PXIe+48=
-5 device
-> IDs
->=20
-> On Thu, Jul 04, 2019 at 06:58:39AM +0000, Je Yen Tam wrote:
-> > > On Wed, Jul 03, 2019 at 12:25:16AM -0700, jeyentam wrote:
-> > > > Add NI PXIe-RS232, PXI-RS485 and PXIe-RS485 device IDs.
-> > > >
-> > > > Signed-off-by: jeyentam <je.yen.tam@ni.com>
-> > > > ---
-> > > >  include/linux/pci_ids.h | 12 ++++++++++++
-> > > >  1 file changed, 12 insertions(+)
-> > >
-> > > You have read the comment at the top of this file, right?  If so, why
-> > > are you adding these entries?
-> >
-> > Yes, but I think these entries should be added in because the NI-Serial=
- PXI
-> > (RS232) device IDs already been defined in this file originally, so now=
- I'm
-> > adding the newly supported NI-Serial PXI (RS485), PXIe (RS232) and PXIe
-> > (RS485) device IDs into here as they are the same product.
->=20
-> No, do not add new device ids to this file, only put them in the single
-> file that needs it.  This file is for device ids that are shared across
-> multiple drivers/files.
->=20
-> You should not need to touch this file at all.
 
-Ok, understood. Will do so.
 
->=20
-> thanks,
->=20
-> greg k-h
+On 2019/7/4 14:46, Jia He wrote:
+> 
+> On 2019/6/29 10:42, Xiongfeng Wang wrote:
+>> We set 'cpu_possible_mask' based on the enabled GICC node in MADT. If
+>> the GICC node is disabled, we will skip initializing the kernel data
+>> structure for that CPU.
+>>
+>> To support CPU hotplug, we need to initialize some CPU related data
+>> structure in advance. This patch mark all the GICC nodes as possible CPU
+>> and only these enabled GICC nodes as present CPU.
+>>
+>> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+>> ---
+>>   arch/arm64/kernel/setup.c |  2 +-
+>>   arch/arm64/kernel/smp.c   | 11 +++++------
+>>   2 files changed, 6 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+>> index 7e541f9..7f4d12a 100644
+>> --- a/arch/arm64/kernel/setup.c
+>> +++ b/arch/arm64/kernel/setup.c
+>> @@ -359,7 +359,7 @@ static int __init topology_init(void)
+>>       for_each_online_node(i)
+>>           register_one_node(i);
+>>   -    for_each_possible_cpu(i) {
+>> +    for_each_online_cpu(i) {
+> 
+> Have you considered the case in non-acpi mode? and setting "maxcpus=n" in host kernel boot
+> 
+> parameters?
 
-Thank you,
-Je Yen
+Thanks for your mention. I haven't considered non-acpi mode. I should add ACPI check in
+'smp_prepare_cpus()'.
+'maxcpus' is check when we actually online the CPU, so I think it is not influenced.
+
+Thanks,
+Xiongfeng
+
+> 
+> ---
+> Cheers,
+> Justin (Jia He)
+> 
+> 
+>>           struct cpu *cpu = &per_cpu(cpu_data.cpu, i);
+>>           cpu->hotpluggable = 1;
+>>           register_cpu(cpu, i);
+>> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+>> index 6dcf960..6d9983c 100644
+>> --- a/arch/arm64/kernel/smp.c
+>> +++ b/arch/arm64/kernel/smp.c
+>> @@ -525,16 +525,14 @@ struct acpi_madt_generic_interrupt *acpi_cpu_get_madt_gicc(int cpu)
+>>   {
+>>       u64 hwid = processor->arm_mpidr;
+>>   -    if (!(processor->flags & ACPI_MADT_ENABLED)) {
+>> -        pr_debug("skipping disabled CPU entry with 0x%llx MPIDR\n", hwid);
+>> -        return;
+>> -    }
+>> -
+>>       if (hwid & ~MPIDR_HWID_BITMASK || hwid == INVALID_HWID) {
+>>           pr_err("skipping CPU entry with invalid MPIDR 0x%llx\n", hwid);
+>>           return;
+>>       }
+>>   +    if (!(processor->flags & ACPI_MADT_ENABLED))
+>> +        pr_debug("disabled CPU entry with 0x%llx MPIDR\n", hwid);
+>> +
+>>       if (is_mpidr_duplicate(cpu_count, hwid)) {
+>>           pr_err("duplicate CPU MPIDR 0x%llx in MADT\n", hwid);
+>>           return;
+>> @@ -755,7 +753,8 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+>>           if (err)
+>>               continue;
+>>   -        set_cpu_present(cpu, true);
+>> +        if ((cpu_madt_gicc[cpu].flags & ACPI_MADT_ENABLED))
+>> +            set_cpu_present(cpu, true);
+>>           numa_store_cpu_info(cpu);
+>>       }
+>>   }
+> 
+
