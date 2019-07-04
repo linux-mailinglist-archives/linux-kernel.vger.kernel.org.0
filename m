@@ -2,66 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C74A5FBA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A845FBAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfGDQTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:19:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37144 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbfGDQTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:19:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6F057AF89;
-        Thu,  4 Jul 2019 16:19:11 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 10402DA89D; Thu,  4 Jul 2019 18:19:50 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 18:19:49 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        jthumshirn@suse.de, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Fix build error while LIBCRC32C is module
-Message-ID: <20190704161949.GZ20977@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, YueHaibing <yuehaibing@huawei.com>,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        jthumshirn@suse.de, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <20190702143903.49264-1-yuehaibing@huawei.com>
+        id S1727128AbfGDQWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:22:22 -0400
+Received: from mx01-fr.bfs.de ([193.174.231.67]:50264 "EHLO mx01-fr.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727044AbfGDQWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 12:22:22 -0400
+Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
+        by mx01-fr.bfs.de (Postfix) with ESMTPS id DA27920218;
+        Thu,  4 Jul 2019 18:22:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1562257334; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jaFxumsbIvgDr1oe7Gu7eEItmhTPfpnc41s1w8Cw8C8=;
+        b=oOz5/INU3oEaMkX8uIJCsxzJMHv+cm/MtyDtpqKDGEfZFTtBX3FBswAPSfdn3kJJsMjhtd
+        Hc2CS0nhd66uaF4cZEJqZofQohfkywmbqwJQtHO6sy0q/2NUlUIgPL76l0osm+2Myu+0/8
+        DpQkPr5p2OF7sCHAH/Xm7e+3OPt1qtkIEoMtecfgDjghxuXjoBMhMER2QQMgbK21Zn/cLM
+        WCFwSPRb9Z6xtwqDDbZpdwq+COl+OSyxhD5rJl7ZzgiQjYjIuuOJ0vwc5+YnxK5muRmlOQ
+        gEz8B/HkVChsUqQN/4VQww02A72N8q/uUbyK7a0DB3IDas170rRZWE/6ljk3sg==
+Received: from [134.92.181.33] (unknown [134.92.181.33])
+        by mail-fr.bfs.de (Postfix) with ESMTPS id 36779BEEBD;
+        Thu,  4 Jul 2019 18:22:13 +0200 (CEST)
+Message-ID: <5D1E27B4.9000003@bfs.de>
+Date:   Thu, 04 Jul 2019 18:22:12 +0200
+From:   walter harms <wharms@bfs.de>
+Reply-To: wharms@bfs.de
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702143903.49264-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+To:     Colin King <colin.king@canonical.com>
+CC:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?B?Q2hyaXN0aWFuIEvDtg==?= =?UTF-8?B?bmln?= 
+        <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/amdgpu/psp: fix incorrect logic when checking
+ asic_type
+References: <20190704142329.22983-1-colin.king@canonical.com>
+In-Reply-To: <20190704142329.22983-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.10
+Authentication-Results: mx01-fr.bfs.de
+X-Spamd-Result: default: False [-3.10 / 7.00];
+         HAS_REPLYTO(0.00)[wharms@bfs.de];
+         TO_DN_SOME(0.00)[];
+         REPLYTO_ADDR_EQ_FROM(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.999,0];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:39:03PM +0800, YueHaibing wrote:
-> If CONFIG_BTRFS_FS is y and CONFIG_LIBCRC32C is m,
-> building fails:
-> 
-> fs/btrfs/super.o: In function `btrfs_mount_root':
-> super.c:(.text+0xb7f9): undefined reference to `crc32c_impl'
-> fs/btrfs/super.o: In function `init_btrfs_fs':
-> super.c:(.init.text+0x3465): undefined reference to `crc32c_impl'
-> fs/btrfs/extent-tree.o: In function `hash_extent_data_ref':
-> extent-tree.c:(.text+0xe60): undefined reference to `crc32c'
-> extent-tree.c:(.text+0xe78): undefined reference to `crc32c'
-> extent-tree.c:(.text+0xe8b): undefined reference to `crc32c'
-> fs/btrfs/dir-item.o: In function `btrfs_insert_xattr_item':
-> dir-item.c:(.text+0x291): undefined reference to `crc32c'
-> fs/btrfs/dir-item.o: In function `btrfs_insert_dir_item':
-> dir-item.c:(.text+0x429): undefined reference to `crc32c'
-> 
-> Select LIBCRC32C to fix it.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: d5178578bcd4 ("btrfs: directly call into crypto framework for checksumming")
 
-Thanks, queued for 5.3.  I hoped we could reduce the config dependencies
-a bit, oh well.
+
+Am 04.07.2019 16:23, schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the check of the asic_type is always returning true because
+> of the use of ||.  Fix this by using && instead.  Also break overly
+> wide line.
+> 
+> Addresses-Coverity: ("Constant expression result")
+> Fixes: dab70ff24db6 ("drm/amdgpu/psp: add psp support for navi14")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> index 527dc371598d..e4afd34e3034 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> @@ -540,7 +540,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
+>  
+>  	case AMDGPU_UCODE_ID_RLC_G:
+>  		*sram_offset = 0x2000;
+> -		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
+> +		if (adev->asic_type != CHIP_NAVI10 &&
+> +		    adev->asic_type != CHIP_NAVI14) {
+>  			*sram_addr_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_ADDR);
+>  			*sram_data_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_DATA);
+>  		} else {
+> @@ -551,7 +552,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
+>  
+>  	case AMDGPU_UCODE_ID_SDMA0:
+>  		*sram_offset = 0x0;
+> -		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
+> +		if (adev->asic_type != CHIP_NAVI10 &&
+> +		    adev->asic_type != CHIP_NAVI14) {
+>  			*sram_addr_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_ADDR);
+>  			*sram_data_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_DATA);
+>  		} else {
+
+
+maybe it is better to use
+		if (adev->asic_type == CHIP_NAVI10 ||
+		    adev->asic_type == CHIP_NAVI14) {
+
+i guess tha was intended here and it is more easy to read.
+ppl are bad in non-non reading.
+
+re,
+ wh
