@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C305FBCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA1D5FBDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfGDQeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:34:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59720 "EHLO
+        id S1727608AbfGDQey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:34:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59725 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbfGDQeJ (ORCPT
+        with ESMTP id S1727407AbfGDQeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 4 Jul 2019 12:34:09 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hj4gQ-0005gz-W4; Thu, 04 Jul 2019 18:34:07 +0200
-Message-Id: <20190704155610.049832295@linutronix.de>
+        id 1hj4gR-0005hk-Tp; Thu, 04 Jul 2019 18:34:07 +0200
+Message-Id: <20190704155610.141968740@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Thu, 04 Jul 2019 17:52:03 +0200
+Date:   Thu, 04 Jul 2019 17:52:04 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch V2 18/25] x86/apic: Provide and use helper for
- send_IPI_allbutself()
+Subject: [patch V2 19/25] cpumask: Implement cpumask_or_equal()
 References: <20190704155145.617706117@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,108 +34,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support IPI shorthands wrap invocations of apic->send_IPI_allbutself()
-in a helper function, so the static key controlling the shorthand mode is
-only in one place.
+The IPI code of x86 needs to evaluate whether the target cpumask is equal
+to the cpu_online_mask or equal except for the calling CPU.
 
-Fixup all callers.
+To replace the current implementation which requires the usage of a
+temporary cpumask, which might involve allocations, add a new function
+which compares a cpumask to the result of two other cpumasks which are
+or'ed together before comparison.
+
+This allows to make the required decision in one go and the calling code
+then can check for the calling CPU being set in the target mask with
+cpumask_test_cpu().
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
 V2: New patch
 ---
- arch/x86/include/asm/apic.h |    2 ++
- arch/x86/kernel/apic/ipi.c  |   12 ++++++++++++
- arch/x86/kernel/kgdb.c      |    2 +-
- arch/x86/kernel/reboot.c    |    7 +------
- arch/x86/kernel/smp.c       |    4 ++--
- 5 files changed, 18 insertions(+), 9 deletions(-)
+ include/linux/bitmap.h  |   23 +++++++++++++++++++++++
+ include/linux/cpumask.h |   14 ++++++++++++++
+ lib/bitmap.c            |   20 ++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -177,6 +177,8 @@ extern void lapic_assign_legacy_vector(u
- extern void lapic_online(void);
- extern void lapic_offline(void);
- 
-+extern void apic_send_IPI_allbutself(unsigned int vector);
-+
- #else /* !CONFIG_X86_LOCAL_APIC */
- static inline void lapic_shutdown(void) { }
- #define local_apic_timer_c2_ok		1
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -50,6 +50,18 @@ void apic_smt_update(void)
- 		static_branch_enable(&apic_use_ipi_shorthand);
- 	}
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -120,6 +120,10 @@ extern int __bitmap_empty(const unsigned
+ extern int __bitmap_full(const unsigned long *bitmap, unsigned int nbits);
+ extern int __bitmap_equal(const unsigned long *bitmap1,
+ 			  const unsigned long *bitmap2, unsigned int nbits);
++extern bool __pure __bitmap_or_equal(const unsigned long *src1,
++				     const unsigned long *src2,
++				     const unsigned long *src3,
++				     unsigned int nbits);
+ extern void __bitmap_complement(unsigned long *dst, const unsigned long *src,
+ 			unsigned int nbits);
+ extern void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
+@@ -321,6 +325,25 @@ static inline int bitmap_equal(const uns
+ 	return __bitmap_equal(src1, src2, nbits);
  }
-+
-+void apic_send_IPI_allbutself(unsigned int vector)
+ 
++/**
++ * bitmap_or_equal - Check whether the or of two bitnaps is equal to a third
++ * @src1:	Pointer to bitmap 1
++ * @src2:	Pointer to bitmap 2 will be or'ed with bitmap 1
++ * @src3:	Pointer to bitmap 3. Compare to the result of *@src1 | *@src2
++ *
++ * Returns: True if (*@src1 | *@src2) == *@src3, false otherwise
++ */
++static inline bool bitmap_or_equal(const unsigned long *src1,
++				   const unsigned long *src2,
++				   const unsigned long *src3,
++				   unsigned int nbits)
 +{
-+	if (num_online_cpus() < 2)
-+		return;
++	if (!small_const_nbits(nbits))
++		return __bitmap_or_equal(src1, src2, src3, nbits);
 +
-+	if (static_branch_likely(&apic_use_ipi_shorthand))
-+		apic->send_IPI_allbutself(vector);
-+	else
-+		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
++	return !(((*src1 | *src2) ^ *src3) & BITMAP_LAST_WORD_MASK(nbits));
 +}
 +
- #endif /* CONFIG_SMP */
- 
- static inline int __prepare_ICR2(unsigned int mask)
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -424,7 +424,7 @@ static void kgdb_disable_hw_debug(struct
-  */
- void kgdb_roundup_cpus(void)
+ static inline int bitmap_intersects(const unsigned long *src1,
+ 			const unsigned long *src2, unsigned int nbits)
  {
--	apic->send_IPI_allbutself(VECTOR_NMI);
-+	apic_send_IPI_allbutself(VECTOR_NMI);
- }
- #endif
- 
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -828,11 +828,6 @@ static int crash_nmi_callback(unsigned i
- 	return NMI_HANDLED;
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -476,6 +476,20 @@ static inline bool cpumask_equal(const s
  }
  
--static void smp_send_nmi_allbutself(void)
--{
--	apic->send_IPI_allbutself(NMI_VECTOR);
--}
--
- /*
-  * Halt all other CPUs, calling the specified function on each of them
-  *
-@@ -861,7 +856,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb
- 	 */
- 	wmb();
+ /**
++ * cpumask_or_equal - *src1p | *src2p == *src3p
++ * @src1p: the first input
++ * @src2p: the second input
++ * @src3p: the third input
++ */
++static inline bool cpumask_or_equal(const struct cpumask *src1p,
++				    const struct cpumask *src2p,
++				    const struct cpumask *src3p)
++{
++	return bitmap_or_equal(cpumask_bits(src1p), cpumask_bits(src2p),
++			       cpumask_bits(src3p), nr_cpumask_bits);
++}
++
++/**
+  * cpumask_intersects - (*src1p & *src2p) != 0
+  * @src1p: the first input
+  * @src2p: the second input
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -59,6 +59,26 @@ int __bitmap_equal(const unsigned long *
+ }
+ EXPORT_SYMBOL(__bitmap_equal);
  
--	smp_send_nmi_allbutself();
-+	apic_send_IPI_allbutself(NMI_VECTOR);
- 
- 	/* Kick CPUs looping in NMI context. */
- 	WRITE_ONCE(crash_ipi_issued, 1);
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -209,7 +209,7 @@ static void native_stop_other_cpus(int w
- 		/* sync above data before sending IRQ */
- 		wmb();
- 
--		apic->send_IPI_allbutself(REBOOT_VECTOR);
-+		apic_send_IPI_allbutself(REBOOT_VECTOR);
- 
- 		/*
- 		 * Don't wait longer than a second if the caller
-@@ -233,7 +233,7 @@ static void native_stop_other_cpus(int w
- 
- 		pr_emerg("Shutting down cpus with NMI\n");
- 
--		apic->send_IPI_allbutself(NMI_VECTOR);
-+		apic_send_IPI_allbutself(NMI_VECTOR);
- 
- 		/*
- 		 * Don't wait longer than a 10 ms if the caller
++bool __bitmap_or_equal(const unsigned long *bitmap1,
++		       const unsigned long *bitmap2,
++		       const unsigned long *bitmap3,
++		       unsigned int bits)
++{
++	unsigned int k, lim = bits / BITS_PER_LONG;
++	unsigned long tmp;
++
++	for (k = 0; k < lim; ++k) {
++		if ((bitmap1[k] | bitmap2[k]) != bitmap3[k])
++			return false;
++	}
++
++	if (!(bits % BITS_PER_LONG))
++		return true;
++
++	tmp = (bitmap1[k] | bitmap2[k]) ^ bitmap3[k];
++	return (tmp & BITMAP_LAST_WORD_MASK(bits)) == 0;
++}
++
+ void __bitmap_complement(unsigned long *dst, const unsigned long *src, unsigned int bits)
+ {
+ 	unsigned int k, lim = BITS_TO_LONGS(bits);
 
 
