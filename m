@@ -2,137 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6695F425
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 09:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2062F5F321
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfGDHwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 03:52:08 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:20626 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726087AbfGDHwI (ORCPT
+        id S1727116AbfGDG6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:58:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34247 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfGDG6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 03:52:08 -0400
-X-Greylist: delayed 3204 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 03:52:07 EDT
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x646uvOj005162;
-        Thu, 4 Jul 2019 01:58:41 -0500
-Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2050.outbound.protection.outlook.com [104.47.37.50])
-        by mx0a-00010702.pphosted.com with ESMTP id 2thbqmg5ha-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 04 Jul 2019 01:58:41 -0500
+        Thu, 4 Jul 2019 02:58:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id w9so4547357wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector1-nio365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tj0dlnp/PVorpElrc/fkekJ98Qvl7E5TOUrYYbxaI0Y=;
- b=i1G+7Xw/DX9pq1Rk2vjPPMcgv7I9BtNx7C3IgUjJsiR0j2E67jzswkbT4WuJ5o8E3vrXu35HzEU1Y6dJGJAyLKvltdtyyKsTM9sAxTbsq5d1Hv0LLZN1YWdfdRw570nvaB0I679ZppYhrOD+ADeB92qi/eCQu3KMLOCwkneWnh8=
-Received: from MN2PR04MB5920.namprd04.prod.outlook.com (20.179.21.161) by
- MN2PR04MB5904.namprd04.prod.outlook.com (20.179.23.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Thu, 4 Jul 2019 06:58:39 +0000
-Received: from MN2PR04MB5920.namprd04.prod.outlook.com
- ([fe80::7ca2:1dbc:355d:64c7]) by MN2PR04MB5920.namprd04.prod.outlook.com
- ([fe80::7ca2:1dbc:355d:64c7%5]) with mapi id 15.20.2052.010; Thu, 4 Jul 2019
- 06:58:39 +0000
-From:   Je Yen Tam <je.yen.tam@ni.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] Re: [PATCH V2 2/2] PCI: Add NI-Serial PXI/PXIe+485
- device IDs
-Thread-Index: AQHVMXB865RUzFDHYki64KPD1/QjN6a4kdOAgAF0UiA=
-Date:   Thu, 4 Jul 2019 06:58:39 +0000
-Message-ID: <MN2PR04MB5920BB86A99B1ABF946B2373B7FA0@MN2PR04MB5920.namprd04.prod.outlook.com>
-References: <20190703072516.34199-1-je.yen.tam@ni.com>
- <20190703083605.GA8996@kroah.com>
-In-Reply-To: <20190703083605.GA8996@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [130.164.75.17]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 65ff0b80-6cf0-4ccc-9fc4-08d7004d0b5d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB5904;
-x-ms-traffictypediagnostic: MN2PR04MB5904:
-x-microsoft-antispam-prvs: <MN2PR04MB59041A4C708F4B9A33D768C1B7FA0@MN2PR04MB5904.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(376002)(346002)(39860400002)(189003)(199004)(26005)(76176011)(7696005)(99286004)(102836004)(6916009)(6436002)(186003)(6116002)(86362001)(6506007)(3846002)(68736007)(25786009)(229853002)(478600001)(14454004)(6246003)(55016002)(9686003)(4326008)(53936002)(54906003)(316002)(8936002)(81156014)(81166006)(8676002)(33656002)(66066001)(486006)(305945005)(7736002)(5660300002)(74316002)(52536014)(2906002)(71200400001)(256004)(11346002)(73956011)(64756008)(66556008)(66476007)(66946007)(66446008)(446003)(71190400001)(76116006)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5904;H:MN2PR04MB5920.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ni.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: URHkMACEs+yob06jTMlA1nupCCAmJc0pdfNJtOTaEtvCts86PJS7VqS3h0eoqwJpKDamT/sjUwPhd0yo3iaqY5svEK0t1E7wCcO5O8/3lpKLh+p7vUQqFQFUr1GVA7bIdBW6x28dXaZueLKYbPtZ504Q5Z1oIYlBDHoV2nup+7Sb7tvVbU8G+F8R70iqOBJLxMjn62sGZhalRsSqYpTTCwMfJhUV2bhRksNI8bTp07oy0XvrSfuui/EfPBVC/OkvIcUmGuOPnk1UhQtsxCkI97s0d66jNzj2Hc66x2pwPbjEO0UTt1UQWyU0PVG4CuaS7aX8VxtZXl6Xr3P/2gXKNJaXmfTnpO4hWuy9f0j6WpnumlnPQEY3fNZHvoRvayXPl8VrVfyPq6Y1pFMYxT1XCHXdI52Um2xJjAHopLaCBSE=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wmbWXidqkuvBIedLHQDdrW1iUlOaCMExfvS6Z0yx96c=;
+        b=PjTtkcA0Tm98JXR/1gLChgQpgCNDQn9ty/SQwOQjrwFcHvR5w4J5GMZ7u5dII4ODJj
+         e9nPkpUAiMDdjreuCnIrMH35rom3OgyTGnpDH+UJDO2gQ9eurAhpEFIYJXpHckZtc+uK
+         R+c/RPrQprBUnxS9KRtgwWaxlebGBtOhqr24WL8HzPkx13FZBehpSG/M3z5b21MF0qgI
+         N/TZzfxbGXXxDc9X5bV8um+0Uk5cGH7VcLJp2QxXGqxKNjMgqXFSApnGgZ4DWF3TaZUF
+         tJqzxkbeg3Zj7bIfmH/VYGZy2V+trpx+7qx3HGFLi22cOYwaya24BEDS/Ejy6yNQwoSu
+         3ksg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wmbWXidqkuvBIedLHQDdrW1iUlOaCMExfvS6Z0yx96c=;
+        b=MIatUlJizhRg0N7DiwGxQyNvtWF0CLgBGyk37G0XzMu0TwsRKpmZjRtNjaa0J77Jrn
+         4q69I9F15nIDd9Ai7lbi3jrGlINPE4zY2CrhV6mQWCxM3a4SxlRg7E/li3Wh/N8WuDl3
+         CSbDBcvlOS5raHp2hr/60WE/Rp407r5mc3hD2t+GNn3nNJdCoz+u9DSbo0jAjBBKOqt+
+         /bk2+PrmHynFcactlbuX6xLe/pVlgoPKyPqdpM+nxY5gLHov4RaQ/eNtVLlj2zXy9hPA
+         z8TyNA2AEOhym6zz5XOLoMQQ+SjU7YKvcTPlyQhJTPfnqDShHmplYWTqHTqsyImiWesE
+         M6Vw==
+X-Gm-Message-State: APjAAAV9MNa77YfEiz4uLflOo9h6+numn4IOJ7U+DfNwr5mAYtDP7+DI
+        94m3GjtiHWZ5hxSTwClwcVY=
+X-Google-Smtp-Source: APXvYqyVIUJqYCwSX2DmikwA8mw510FldQRJsgJuxubH5FuzLi9hR5+ZLhygyCDAeL6uEXIfemythA==
+X-Received: by 2002:a1c:7d08:: with SMTP id y8mr11797994wmc.50.1562223525591;
+        Wed, 03 Jul 2019 23:58:45 -0700 (PDT)
+Received: from ogabbay-VM ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id t6sm5205517wmb.29.2019.07.03.23.58.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Jul 2019 23:58:45 -0700 (PDT)
+Date:   Thu, 4 Jul 2019 09:58:43 +0300
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [git pull v2] habanalabs pull request for kernel 5.3
+Message-ID: <20190704065843.GA21559@ogabbay-VM>
 MIME-Version: 1.0
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ff0b80-6cf0-4ccc-9fc4-08d7004d0b5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 06:58:39.7862
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: je.yen.tam@ni.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5904
-Subject: RE: Re: [PATCH V2 2/2] PCI: Add NI-Serial PXI/PXIe+485 device IDs
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=30 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Wed, Jul 03, 2019 at 12:25:16AM -0700, jeyentam wrote:
-> > Add NI PXIe-RS232, PXI-RS485 and PXIe-RS485 device IDs.
-> >
-> > Signed-off-by: jeyentam <je.yen.tam@ni.com>
-> > ---
-> >  include/linux/pci_ids.h | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
->=20
-> You have read the comment at the top of this file, right?  If so, why=20
-> are you adding these entries?
+Hello Greg,
 
-Yes, but I think these entries should be added in because the NI-Serial PXI=
-=20
-(RS232) device IDs already been defined in this file originally, so now I'm=
-=20
-adding the newly supported NI-Serial PXI (RS485), PXIe (RS232) and PXIe=20
-(RS485) device IDs into here as they are the same product.
+This is v2 of the pull request for habanalabs driver for kernel 5.3.
 
->=20
-> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h index=20
-> > 70e86148cb1e..7fad4794789f 100644
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -1027,7 +1027,9 @@
-> >  #define PCI_DEVICE_ID_SUN_TOMATILLO	0xa801
-> >  #define PCI_DEVICE_ID_SUN_CASSINI	0xabba
-> >
-> > +/* NI-Serial Device IDs */
-> >  #define PCI_VENDOR_ID_NI		0x1093
->=20
-> That's a vendor id, not a serial device id.
+v2 contains the missing sign-off-by tags for the relevant commits.
 
-Yes, will change it to vendor id.
+The commits mostly contains improvements to the existing code base.
+Nothing too exciting this time.
 
->=20
-> thanks,
->=20
-> greg k-h
+Please see the tag message for details on what this pull request contains.
 
+Thanks,
+Oded
 
-Thank you.
-Regards,
-Je Yen Tam
-Staff Software Engineer
-National Instruments=A0
-o=A0=A0 604-3776397
-e=A0=A0 je.yen.tam@ni.com
+The following changes since commit 60e8523e2ea18dc0c0cea69d6c1d69a065019062:
 
+  ocxl: Allow contexts to be attached with a NULL mm (2019-07-03 21:29:47 +0200)
 
+are available in the Git repository at:
+
+  git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-07-04
+
+for you to fetch changes up to e8960ca06bb22d0d84edf246b0bf395e8322e127:
+
+  habanalabs: Add busy engines bitmask to HW idle IOCTL (2019-07-01 13:59:45 +0000)
+
+----------------------------------------------------------------
+This tag contains the following changes for kernel 5.3:
+
+- Change the way the device's CPU access the host memory. This allows the
+  driver to use the kernel API of setting DMA mask in a standard way (call
+  it once).
+
+- Add a new debugfs entry to show the status of the internal DMA and
+  compute engines. This is very helpful for debugging in case a command
+  submission get stuck.
+
+- Return to the user a mask of the internal engines indicating their busy
+  state.
+
+- Make sure to restore registers that can be modified by the user to their
+  default values. Only applies to registers that are initialized by the
+  driver.
+
+- Elimination of redundant and dead-code.
+
+- Support memset of the device's memory with size larger then 4GB
+
+- Force the user to set the device to debug mode before configuring the
+  device's coresight infrastructure
+
+- Improve error printing in case of interrupts from the device
+
+----------------------------------------------------------------
+Dalit Ben Zoor (3):
+      habanalabs: make tpc registers secured
+      habanalabs: clear sobs and monitors in context switch
+      habanalabs: restore unsecured registers default values
+
+Oded Gabbay (20):
+      habanalabs: improve a couple of error messages
+      habanalabs: force user to set device debug mode
+      habanalabs: remove dead code in habanalabs_drv.c
+      habanalabs: check to load F/W before boot status
+      habanalabs: remove redundant CB size adjustment
+      habanalabs: remove redundant memory clear
+      habanalabs: change polling functions to macros
+      habanalabs: pass device pointer to asic-specific function
+      habanalabs: support device memory memset > 4GB
+      habanalabs: don't limit packet size for device CPU
+      habanalabs: remove simulator dedicated code
+      habanalabs: add rate-limit to an error message
+      docs/habanalabs: update text for some entries in sysfs
+      habanalabs: initialize device CPU queues after MMU init
+      habanalabs: de-couple MMU and VM module initialization
+      habanalabs: initialize MMU context for driver
+      habanalabs: add MMU mappings for Goya CPU
+      habanalabs: set Goya CPU to use ASIC MMU
+      habanalabs: remove DMA mask hack for Goya
+      habanalabs: add WARN in case of bad MMU mapping
+
+Omer Shpigelman (4):
+      habanalabs: remove redundant CPU checks
+      habanalabs: minor documentation and prints fixes
+      habanalabs: increase PCI ELBI timeout for Palladium
+      habanalabs: print event name for fatal and non-RAZWI events
+
+Tomer Tayar (4):
+      habanalabs: Allow accessing host mapped addresses via debugfs
+      habanalabs: Update the device idle check
+      habanalabs: Add debugfs node for engines status
+      habanalabs: Add busy engines bitmask to HW idle IOCTL
+
+ .../ABI/testing/debugfs-driver-habanalabs          |  18 +-
+ Documentation/ABI/testing/sysfs-driver-habanalabs  |  42 +-
+ drivers/misc/habanalabs/asid.c                     |   2 +-
+ drivers/misc/habanalabs/command_submission.c       |  10 +-
+ drivers/misc/habanalabs/context.c                  |  11 +-
+ drivers/misc/habanalabs/debugfs.c                  |  54 +-
+ drivers/misc/habanalabs/device.c                   | 189 +++---
+ drivers/misc/habanalabs/firmware_if.c              |  51 +-
+ drivers/misc/habanalabs/goya/goya.c                | 635 +++++++++++++++------
+ drivers/misc/habanalabs/goya/goyaP.h               |  16 +-
+ drivers/misc/habanalabs/goya/goya_security.c       |  16 +
+ drivers/misc/habanalabs/habanalabs.h               |  93 ++-
+ drivers/misc/habanalabs/habanalabs_drv.c           |  66 ++-
+ drivers/misc/habanalabs/habanalabs_ioctl.c         |  11 +-
+ drivers/misc/habanalabs/hw_queue.c                 |   2 +-
+ .../include/goya/asic_reg/dma_ch_0_masks.h         | 418 ++++++++++++++
+ .../habanalabs/include/goya/asic_reg/goya_regs.h   |   1 +
+ drivers/misc/habanalabs/memory.c                   |  13 +-
+ drivers/misc/habanalabs/mmu.c                      |  20 +-
+ drivers/misc/habanalabs/pci.c                      |  10 +-
+ drivers/misc/habanalabs/sysfs.c                    |   4 -
+ include/uapi/misc/habanalabs.h                     |  30 +-
+ 22 files changed, 1249 insertions(+), 463 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_0_masks.h
