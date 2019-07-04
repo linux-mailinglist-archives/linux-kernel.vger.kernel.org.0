@@ -2,89 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295695F748
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556095F766
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfGDLip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:38:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:37417 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbfGDLio (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:38:44 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MMGAg-1hzyic1MGM-00JKWZ; Thu, 04 Jul 2019 13:38:08 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: gyroadc: fix uninitialized return code
-Date:   Thu,  4 Jul 2019 13:37:47 +0200
-Message-Id: <20190704113800.3299636-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:h9aKGiMAS6Xlil+2UxkJhJCnUoDDgR+JZ2AvN4jHsrCx8ckyZuS
- yTEZldLJ/UP6OFu9DOsy4VetZ/N0GFIf9RT57cxc+NW20LzRCQC2iRf4QEYCBTQtaQBnhZs
- Qej58IDikUem+RSWapqZYEEPHFnIdfcBlPm6CdrxZCiXwsHI9nhtiidJFXsoxZ9sssiflqh
- O+kzS9bxP3uF49LI2VnMg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CrZfIuHva64=:k5xMOa0IWCAKm3yNcyNVYf
- dL5/tWOzmLrqTaBpZz3j4i+7oSpo/kGE+TRdCrBIy+mRYkOoR66SojF8+bHRg4tJmlIfTB4bu
- /LJUeYEPmBC3TzvvYEgGQM1F/aYhqm5l3wIzgrv8mrZB5DVaM0wZZMVlPR+vDO7cUXoaH6/VZ
- LbFl4Lm+dMElV2jR36wM/iCSk5x6yf/BD+6XB14vBrcwjcPVSsIVlAg5wKr0CHKYOz9Q9OKZj
- JVd4WiEXAsjI6a69+zqa/CiiaC62QObwPoTbMP1SopA9WfgeAF0BroPsPwspNF4U3vNABxXLj
- 1/lR+ZDvw459rku6B4R1FWzmwbJPJekjIZI5kpmHS4A73dfsSGEUfi0Hh8fzCC6L7h714Tgui
- 3r4gZDBtTkTnyA8TqQiLuHChbrCwxN6tHWWzg4SsRY+kM4f/nTV2Pm+gPijhs0iyT56qjyAkw
- W5KecNpVD7qDDFm1tGLhbIpwko9PXKHQJelmmwNFPyaQyUCWCQbt3voWVUVELVT5OGSN7GSdX
- Ynb7N2FBnyhCOu5U1TFVMFu2XT26DQSA+t84FLiVWnGQftDxeQO3P2wEtATD0rOYnviddIQ5r
- Lyv5E1qOtJUtPG/cDAQNbCZGyftkfo8NkGD4cgLH5Yv9Wnb3rXplqvvNLsQgypquy1CSXBewI
- kuYBADE90oIOKvH/zTSckq/DIM+erVVlYoXIjcSI5TDQwNiCq66CIQg0AOJITqJ2vbVH/yRMN
- g7aB2O8660O6uSLOGvd7Rh67ds0fc0ijiMBmHA==
+        id S1727668AbfGDLsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:48:14 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:55146 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbfGDLsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:48:12 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 25E194A1888AAFC85ED7;
+        Thu,  4 Jul 2019 19:48:08 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x64BloNE014331;
+        Thu, 4 Jul 2019 19:47:50 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070419482011-2086631 ;
+          Thu, 4 Jul 2019 19:48:20 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     pbonzini@redhat.com
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
+        wang.liang82@zte.com.cn
+Subject: [PATCH 0/2] fix likely hint of sched_info_on()
+Date:   Thu, 4 Jul 2019 19:46:13 +0800
+Message-Id: <1562240775-16086-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-04 19:48:20,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-04 19:47:55,
+        Serialize complete at 2019-07-04 19:47:55
+X-MAIL: mse-fl2.zte.com.cn x64BloNE014331
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-9 complains about a blatant uninitialized variable use that
-all earlier compiler versions missed:
+When make defconfig, CONFIG_SCHEDSTATS is set to be y, so
+sched_info_on() is 'likely' to be true. However, some functions
+invoke this function with unlikely hint or use no hint. Let's
+fix this.
 
-drivers/iio/adc/rcar-gyroadc.c:510:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Yi Wang (2):
+  kvm: x86: add likely to sched_info_on()
+  sched: fix unlikely use of sched_info_on()
 
-Return -EINVAL instead here.
+ arch/x86/kvm/cpuid.c | 2 +-
+ kernel/sched/stats.h | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Cc: stable@vger.kernel.org
-Fixes: 059c53b32329 ("iio: adc: Add Renesas GyroADC driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/iio/adc/rcar-gyroadc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index 2d685730f867..aec73cc43e23 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -391,7 +391,7 @@ static int rcar_gyroadc_parse_subdevs(struct iio_dev *indio_dev)
- 			dev_err(dev,
- 				"Channel %i uses different ADC mode than the rest.\n",
- 				reg);
--			return ret;
-+			return -EINVAL;
- 		}
- 
- 		/* Channel is valid, grab the regulator. */
 -- 
-2.20.0
+1.8.3.1
 
