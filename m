@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E335F4CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C715F4DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfGDIq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:46:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53978 "EHLO mail.kernel.org"
+        id S1727458AbfGDIrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:47:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727119AbfGDIqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:46:52 -0400
+        id S1727046AbfGDIqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:46:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5BB5218A0;
-        Thu,  4 Jul 2019 08:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 596202189E;
+        Thu,  4 Jul 2019 08:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562230011;
-        bh=xGwKWc+XzsSOGlAWoFhYB9Bq0hOeFBHzsB5P7i22CiM=;
+        s=default; t=1562230013;
+        bh=8K68pvFL9h+6LZO5F69OG12auCpRKEuDDm/xOnAtw8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1pazu0ayU9DFIcP8846lWW/76SH0dMrV4RFmh8jxinTqQuSgvkwyZSNFNkAkwHgiI
-         aoRTCdMWpULf+Eu5QzLXkLs8GMeEpeRuqgaGy1NCLup+uMMODqf6wkw50x+pGPX1V5
-         8IcQTPEqYBX3+bbox83v/RvcMumYHysQJDDCzT4M=
+        b=QbBP8VG1VFVUwhmefeiJXSmmlNPYPuGYP+6ovUyulJhrnbwwfRC2O/z5Id1uvRDV2
+         WSf0Y75LxmhuI6ohwEJFM7Q9roaJjtkR+SgxQX/xjIbpKqLzeYvk+R05qg3ydQSSx3
+         g+wG2Awi8tL6a/V+jaUI7sd4hOM9oYABWOe2depI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Subject: [PATCH 03/11] serial: sh-sci: use driver core functions, not sysfs ones.
-Date:   Thu,  4 Jul 2019 10:46:09 +0200
-Message-Id: <20190704084617.3602-4-gregkh@linuxfoundation.org>
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 04/11] firmware: arm_scpi: convert platform driver to use dev_groups
+Date:   Thu,  4 Jul 2019 10:46:10 +0200
+Message-Id: <20190704084617.3602-5-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190704084617.3602-1-gregkh@linuxfoundation.org>
 References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
@@ -40,65 +41,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a driver, do not call "raw" sysfs functions, instead call driver
-core ones.  Specifically convert the use of sysfs_create_file() and
-sysfs_remove_file() to use device_create_file() and device_remove_file()
+Platform drivers now have the option to have the platform core create
+and remove any needed sysfs attribute files.  So take advantage of that
+and do not register "by hand" a sysfs group of attributes.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/sh-sci.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/firmware/arm_scpi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index abc705716aa0..69f9072505f7 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3137,14 +3137,10 @@ static int sci_remove(struct platform_device *dev)
+diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
+index 725164b83242..2774ec886d60 100644
+--- a/drivers/firmware/arm_scpi.c
++++ b/drivers/firmware/arm_scpi.c
+@@ -1011,10 +1011,6 @@ static int scpi_probe(struct platform_device *pdev)
+ 				   scpi_info->firmware_version));
+ 	scpi_info->scpi_ops = &scpi_ops;
  
- 	sci_cleanup_single(port);
- 
--	if (port->port.fifosize > 1) {
--		sysfs_remove_file(&dev->dev.kobj,
--				  &dev_attr_rx_fifo_trigger.attr);
--	}
--	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF) {
--		sysfs_remove_file(&dev->dev.kobj,
--				  &dev_attr_rx_fifo_timeout.attr);
--	}
-+	if (port->port.fifosize > 1)
-+		device_remove_file(&dev->dev, &dev_attr_rx_fifo_trigger);
-+	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF)
-+		device_remove_file(&dev->dev, &dev_attr_rx_fifo_timeout);
- 
- 	return 0;
+-	ret = devm_device_add_groups(dev, versions_groups);
+-	if (ret)
+-		dev_err(dev, "unable to create sysfs version group\n");
+-
+ 	return devm_of_platform_populate(dev);
  }
-@@ -3332,19 +3328,17 @@ static int sci_probe(struct platform_device *dev)
- 		return ret;
  
- 	if (sp->port.fifosize > 1) {
--		ret = sysfs_create_file(&dev->dev.kobj,
--				&dev_attr_rx_fifo_trigger.attr);
-+		ret = device_create_file(&dev->dev, &dev_attr_rx_fifo_trigger);
- 		if (ret)
- 			return ret;
- 	}
- 	if (sp->port.type == PORT_SCIFA || sp->port.type == PORT_SCIFB ||
- 	    sp->port.type == PORT_HSCIF) {
--		ret = sysfs_create_file(&dev->dev.kobj,
--				&dev_attr_rx_fifo_timeout.attr);
-+		ret = device_create_file(&dev->dev, &dev_attr_rx_fifo_timeout);
- 		if (ret) {
- 			if (sp->port.fifosize > 1) {
--				sysfs_remove_file(&dev->dev.kobj,
--					&dev_attr_rx_fifo_trigger.attr);
-+				device_remove_file(&dev->dev,
-+						   &dev_attr_rx_fifo_trigger);
- 			}
- 			return ret;
- 		}
+@@ -1033,6 +1029,7 @@ static struct platform_driver scpi_driver = {
+ 	},
+ 	.probe = scpi_probe,
+ 	.remove = scpi_remove,
++	.dev_groups = versions_groups,
+ };
+ module_platform_driver(scpi_driver);
+ 
 -- 
 2.22.0
 
