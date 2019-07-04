@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C715F4DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D395F4D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfGDIrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:47:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
+        id S1727364AbfGDIrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:47:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbfGDIqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:46:54 -0400
+        id S1727342AbfGDIq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:46:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 596202189E;
-        Thu,  4 Jul 2019 08:46:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D2FF218A0;
+        Thu,  4 Jul 2019 08:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562230013;
-        bh=8K68pvFL9h+6LZO5F69OG12auCpRKEuDDm/xOnAtw8o=;
+        s=default; t=1562230016;
+        bh=+ThnAsF1ex2q6upxPj81qdHFANvTESX3zSvvx0uAZlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbBP8VG1VFVUwhmefeiJXSmmlNPYPuGYP+6ovUyulJhrnbwwfRC2O/z5Id1uvRDV2
-         WSf0Y75LxmhuI6ohwEJFM7Q9roaJjtkR+SgxQX/xjIbpKqLzeYvk+R05qg3ydQSSx3
-         g+wG2Awi8tL6a/V+jaUI7sd4hOM9oYABWOe2depI=
+        b=LwlHS41Wnso0LpBSRqAayCTAAQSxRzIJ9aMS+u3QBBCyugWEGNiwA2WGounbLF8yP
+         1sY1LVa18SZC9AibsijFgDl54NygJ3Wb2Cp7V+5v5Uiq+Ot0HI4RypTj704katZ97O
+         dFBBU9LI8cCbvbGydtqMUHPRC1Hm7jFbcIemDefU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 04/11] firmware: arm_scpi: convert platform driver to use dev_groups
-Date:   Thu,  4 Jul 2019 10:46:10 +0200
-Message-Id: <20190704084617.3602-5-gregkh@linuxfoundation.org>
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH 05/11] olpc: x01: convert platform driver to use dev_groups
+Date:   Thu,  4 Jul 2019 10:46:11 +0200
+Message-Id: <20190704084617.3602-6-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190704084617.3602-1-gregkh@linuxfoundation.org>
 References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
@@ -43,38 +47,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Platform drivers now have the option to have the platform core create
 and remove any needed sysfs attribute files.  So take advantage of that
-and do not register "by hand" a sysfs group of attributes.
+and do not register "by hand" a lid sysfs file.
 
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: platform-driver-x86@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/arm_scpi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/x86/platform/olpc/olpc-xo1-sci.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-index 725164b83242..2774ec886d60 100644
---- a/drivers/firmware/arm_scpi.c
-+++ b/drivers/firmware/arm_scpi.c
-@@ -1011,10 +1011,6 @@ static int scpi_probe(struct platform_device *pdev)
- 				   scpi_info->firmware_version));
- 	scpi_info->scpi_ops = &scpi_ops;
+diff --git a/arch/x86/platform/olpc/olpc-xo1-sci.c b/arch/x86/platform/olpc/olpc-xo1-sci.c
+index 25ce1b3b0732..ce1948918dd2 100644
+--- a/arch/x86/platform/olpc/olpc-xo1-sci.c
++++ b/arch/x86/platform/olpc/olpc-xo1-sci.c
+@@ -157,6 +157,12 @@ static ssize_t lid_wake_mode_set(struct device *dev,
+ static DEVICE_ATTR(lid_wake_mode, S_IWUSR | S_IRUGO, lid_wake_mode_show,
+ 		   lid_wake_mode_set);
  
--	ret = devm_device_add_groups(dev, versions_groups);
--	if (ret)
--		dev_err(dev, "unable to create sysfs version group\n");
++static struct attribute *lid_attrs[] = {
++	&dev_attr_lid_wake_mode.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(lid);
++
+ /*
+  * Process all items in the EC's SCI queue.
+  *
+@@ -510,17 +516,8 @@ static int setup_lid_switch(struct platform_device *pdev)
+ 		goto err_register;
+ 	}
+ 
+-	r = device_create_file(&lid_switch_idev->dev, &dev_attr_lid_wake_mode);
+-	if (r) {
+-		dev_err(&pdev->dev, "failed to create wake mode attr: %d\n", r);
+-		goto err_create_attr;
+-	}
 -
- 	return devm_of_platform_populate(dev);
+ 	return 0;
+ 
+-err_create_attr:
+-	input_unregister_device(lid_switch_idev);
+-	lid_switch_idev = NULL;
+ err_register:
+ 	input_free_device(lid_switch_idev);
+ 	return r;
+@@ -528,7 +525,6 @@ static int setup_lid_switch(struct platform_device *pdev)
+ 
+ static void free_lid_switch(void)
+ {
+-	device_remove_file(&lid_switch_idev->dev, &dev_attr_lid_wake_mode);
+ 	input_unregister_device(lid_switch_idev);
  }
  
-@@ -1033,6 +1029,7 @@ static struct platform_driver scpi_driver = {
- 	},
- 	.probe = scpi_probe,
- 	.remove = scpi_remove,
-+	.dev_groups = versions_groups,
+@@ -629,6 +625,7 @@ static struct platform_driver xo1_sci_driver = {
+ 	.remove = xo1_sci_remove,
+ 	.suspend = xo1_sci_suspend,
+ 	.resume = xo1_sci_resume,
++	.dev_groups = lid_groups,
  };
- module_platform_driver(scpi_driver);
  
+ static int __init xo1_sci_init(void)
 -- 
 2.22.0
 
