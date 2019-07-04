@@ -2,142 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E055F65C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE1D5F66B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfGDKNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 06:13:42 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:32774 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727249AbfGDKNm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:13:42 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E5519C0AC0;
-        Thu,  4 Jul 2019 10:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1562235221; bh=MiV6q5HB26oAfh7p67P73WEZBvVfjK2jDRsddh7VuhY=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=EtFVhVhPmkdl0Zfx27sC/0zwpgahRGE0u/Glbx4n3JjHSUQ5dmQpTWOsODJSeTL+0
-         /qz0XbKhCGd0v8JgyF8Y33fTM/cYnV1Ean5MvOzzL72wlemMgWGl3MIF2MbpzDf4O4
-         VcxR60mlsLo2Y+IrFTjMJI+dYvPkVgjgCqQPCfUdiIrb0y/KZFU2PhjZ6/Ydr9WN0B
-         CMoQu7ntfR+wL+bOtmappodqipizDV07p/jWW/kmcQohZpc1NCwi7ZKmzwQk1PS/CY
-         BSRXnS9QxM1w/LSrbaSSzCypLqXOXXvSycJCJa0U28elHrFUuF5ZB9btsNQeU6puyy
-         8o9s6FcM/9jGA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 80C68A0067;
-        Thu,  4 Jul 2019 10:13:39 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 4 Jul 2019 03:13:39 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
- by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 4 Jul 2019 03:13:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=roDmDJe5s5LZPlGJ7kdtWOYs0a+MGkoenVZKnCqIN48=;
- b=DfiQkeB91zKV7m6ndi0CrYK2fXIrVxasWwIsoTAt4RgjsoQY9+y5mC9ItdVBKdk/RBLbBlcYLau41bXN3uHpbeEiYf9OJ3v8l8n4P0jCNaCytcifKcoGb+BBfi9+4L76AC2lC1Gg/YcGzbgIV/Gpjwb1YvzgpRuBULGsugPdF8Y=
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.66.159) by
- BN8PR12MB3572.namprd12.prod.outlook.com (20.178.212.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Thu, 4 Jul 2019 10:13:37 +0000
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::61ef:5598:59e0:fc9d]) by BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::61ef:5598:59e0:fc9d%5]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
- 10:13:37 +0000
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Thread-Topic: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Thread-Index: AQHVMYtq2Zx4WVoG/U2kL8GCK0bP/aa6O3oAgAABAmA=
-Date:   Thu, 4 Jul 2019 10:13:37 +0000
-Message-ID: <BN8PR12MB3266BC5322AADFAC49D9BAFAD3FA0@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
-        <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <20190704120018.4523a119@carbon>
-In-Reply-To: <20190704120018.4523a119@carbon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=joabreu@synopsys.com; 
-x-originating-ip: [83.174.63.141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 76af8e59-5f8f-4d6d-432d-08d7006847a6
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN8PR12MB3572;
-x-ms-traffictypediagnostic: BN8PR12MB3572:
-x-microsoft-antispam-prvs: <BN8PR12MB3572E3E7377D836F6AE4D01AD3FA0@BN8PR12MB3572.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(346002)(39860400002)(376002)(52314003)(199004)(189003)(99286004)(7696005)(33656002)(5660300002)(6246003)(2906002)(486006)(55016002)(6506007)(53936002)(76176011)(305945005)(54906003)(11346002)(6436002)(7736002)(446003)(476003)(66556008)(66066001)(66446008)(64756008)(52536014)(14454004)(74316002)(76116006)(9686003)(478600001)(316002)(66946007)(66476007)(73956011)(110136005)(102836004)(81166006)(4326008)(86362001)(8676002)(71200400001)(7416002)(229853002)(8936002)(25786009)(81156014)(186003)(26005)(256004)(6116002)(3846002)(71190400001)(5024004)(68736007)(6636002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3572;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: D1S33XVp7Xxgc3lxTHi3Y3kDAmFleeh9xoTeI2j2dVvdeyJMyl16RpiUSXGDeJHdr5uEs4CWsCL+VRCrR2j0kB4mGfFNE7VE85MyJyinX4dkGxB4IYZh9m+VSj/r3RqTMVjLYetenMk+n4COCMLFwNh6W6Tax2v+xSgoqmoyryTZvts7aeB+F563yicDsWWAI/aVFvfaTEH9UGYwuOVVdnkWNqbD7LS3eRP4FoPSXxZtFx6cwvezLwdB+dVaf3JOtTuThIx2C2Nb7ZuDAVoMCAhBMl+ygUwQDudRHEUVBaznyHMCexYwm4PBFA6OMdwVCck4Ha7UsWdjjGR6X/xh8Kija2K1fYdld2bGsM1f8Ci7Lh4ekzz1Xra8tCbwDMN8wMRvb3KIOxAZzU6SD30aJbwrzZtbB0o8fhU3HBDarJc=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727549AbfGDKOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 06:14:24 -0400
+Received: from mout.gmx.net ([212.227.17.21]:38011 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727249AbfGDKOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 06:14:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1562235242;
+        bh=QkCJpGFSgUNuFdvdF9lwK624srSCvigRjgWwmebE/P4=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=kRtRCk1NCtawiZKymneKJ1kr1gNqM/POpzAp1+WiyYsvkHS4ZVdXvgrSJE3Pmzvp7
+         Eds2d3AqppDTIvPO6CgXTL/jorARVApABLf9OalSK/oCCFV3m457vG/6D+hrp9Zxwe
+         sULfo90vdoATnobydHtTfVlvJlqoYtwNMNbGTtms=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LiIgB-1iMjTm4Ai3-00nUMT; Thu, 04
+ Jul 2019 12:14:02 +0200
+Date:   Thu, 4 Jul 2019 12:14:01 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Brad Love <brad@nextdimension.cc>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2] media: si2168: Refactor command setup code
+Message-ID: <20190704101401.GG22408@latitude>
+References: <c28a0da0-7264-4d23-94f1-3bd614383843@free.fr>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76af8e59-5f8f-4d6d-432d-08d7006847a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 10:13:37.2413
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: joabreu@synopsys.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3572
-X-OriginatorOrg: synopsys.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tVmo9FyGdCe4F4YN"
+Content-Disposition: inline
+In-Reply-To: <c28a0da0-7264-4d23-94f1-3bd614383843@free.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:wD0VADbn4aMPuFxFWljJEsbuN/IC/v2ewNlb0Sp1w9t1uRtQKl3
+ cvhxKK4wBETkDdq6Y8ZgRS/fa0scWKAqD2sPPrUK4q+Xv9x0obPXwNOVm2YIzX9p+K9eyuT
+ Q91UvOBKWoPckMerhMat7c6wV3ZyfmXnZFtckijopeHHXgprXs6EjcyGcfqO1aB07okex1f
+ k5WxyBlnR4owuDpxwCB+Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:OuPds79/bws=:HUsAkxiPEFy5oWxjUPaiyL
+ Hg9RPnHZ0wpMLcuAcnhl4A2SJkU8S76p+j5m+QbMYj3+yZOg/tC8/5uMg4GxVQC2BahOrLb9m
+ sytMd5Hz84/vGHEzlCV422MYwgpI/G3v3mmMEImfkPZ7mgi9bBgvl6QLe3GDEPuSUTdzfKmIF
+ iD3X9lDgQBO+7wE4OMxpww3fY9k9QB1k74Rrm9hhECyWVZ9a8VpbrDuStPgLnHdjjvu/Pn4aX
+ 3a1GHbvLstOg35ZVAY/ZK2mKv7t0i1ZLQAG7VhsTTFZgaABugllIRCldHUactswXzTHrgVgRJ
+ O6cnk0h9w48Qw8LdhpWXO6p1TFCggF3fuMh4gO+rrLO3+FCl6I37Ked1bu+X5AKqHpeO43gam
+ lLlg3TRySGS+9VUVGuv+b2s3ZENVHxRihfdN5KI/Knd7A8h94e+P2ldiTLD5eYHwM5udHwpA8
+ GxfWaNr0Ezji3ziZXCZKQEJjfcu9IVXdRIEQCD/zm9a1OKsiPQpgUNYzYWJt5uUIiP4fnonSY
+ 1Iw42q8Fd+vesHFNnWZhFou/J/SC4eAp6NqqmrgZjkywM4WR4Q1AY8g/qXXY3oxM9t/DROV6W
+ kc0nsF+HSIcCbzdAKc+atBKQyU55wNr8UdNDUxErtG6rm/Kn9/kraNDKf8fnW4lDTELl+Fa94
+ wVSO/aoMrfYo4km71Y68YacQy1gkrVi9dKJZ3Ymdw1o4u8pk35zuTLRPpHakWzZRNSQY2Pdde
+ p7Cuc7fylRnNdiezaWTZ5wunvqOoR65Z4FYX2jt2pe7qNQdgN0zc5MgOXwGBCiQhdeKDPTveL
+ P0JCHnueUtsEHTEqVx2A/QEiBNj9v2BZQv3ODqofoZ9WTj4uXpsTRzvsGZF0jaYpdhQIE7ODn
+ DhM6r8bIMRm6+ZI0ZUKuqC0n1VpAhTZzxARETEVrG2fme71K1ENW7aXruuiSpR5VONbZzsXIt
+ 69L//JqR4ZD1B/xhlToHe7I++kpm9S31BOGaYtZlJb8S9wYenV5MUQuYoddaSP8E9lLk2Akwg
+ +uB+WpDPiJw8/UE0iE3szXJ4JnsszrH9EPy16p3e6v3ntYOQH7uYv4okRg6xMGU3iJSVt3whw
+ WgVZ9OjnRkWXKk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-> The page_pool DMA mapping cannot be "kept" when page traveling into the
-> network stack attached to an SKB.  (Ilias and I have a long term plan[1]
-> to allow this, but you cannot do it ATM).
+--tVmo9FyGdCe4F4YN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason I recycle the page is this previous call to:
+On Thu, Jul 04, 2019 at 11:58:45AM +0200, Marc Gonzalez wrote:
+> >From ceb5f687f3f7dab2fb9d5b34408d9cf83a0be228 Mon Sep 17 00:00:00 2001
+> From: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Date: Mon, 1 Jul 2019 12:58:31 +0200
+> Subject: [PATCH v2] media: si2168: Refactor command setup code
+>=20
+> Refactor the command setup code, and let the compiler determine
+> the size of each command.
+>=20
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-	skb_copy_to_linear_data()
+Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 
-So, technically, I'm syncing to CPU the page(s) and then memcpy to a=20
-previously allocated SKB ... So it's safe to just recycle the mapping I=20
-think.
 
-Its kind of using bounce buffers and I do see performance gain in this=20
-(I think the reason is because my setup uses swiotlb for DMA mapping).
+Thanks,
+Jonathan Neusch=C3=A4fer
 
-Anyway, I'm open to some suggestions on how to improve this ...
+--tVmo9FyGdCe4F4YN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Also remember that the page_pool requires you driver to do the DMA-sync
-> operation.  I see a dma_sync_single_for_cpu(), but I didn't see a
-> dma_sync_single_for_device() (well, I noticed one getting removed).
-> (For some HW Ilias tells me that the dma_sync_single_for_device can be
-> elided, so maybe this can still be correct for you).
+-----BEGIN PGP SIGNATURE-----
 
-My HW just needs descriptors refilled which are in different coherent=20
-region so I don't see any reason for dma_sync_single_for_device() ...
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl0d0UUACgkQCDBEmo7z
+X9u1Uw//VzQPr9Ez7Z8bLgzo9u7ElCsmMWEjQhAL05Zvk3O5fxZbwlQYuH4cI2Vl
+rfSwXqOyHoL+6IElX20nPNl4wx+QXMPNAVojH/swSbd2ImO36O/WyUB0DLJ3cdE5
+bUhDCIO/egGGQIlgZx5eqhYeFyhTCvcswMBJr5v3bDLyirf9/E+7EzrdR94c9WMW
+ggjlDcU9qh38wIUGS2kX+lZ6TZsP0O9YUV6Ya/K5lyJVJf/beFUSwD3czFFSdqt9
+agjdUJESv6v93VFodIl5TF2Ql8wFy1SwTzCBA4neZKRuCCZk2PdzXtAe1Nxuc0z/
+Id4U17o7bBuHz21MwNkE7E7C9TdEcZfbGUBdKkmlqpLl8vehD6tWVkbQj5EKWcxl
+ZPwKyEiNvPSfgkOQ/VS8TkcRGpjulMw3eglZchnHnkQR0ERON9R7L7eBqYhZm9g+
+USGrySA+1CA9hZ2B6nnZaYRahXshOCn577fHRXH87bGxOHgjaVDrNrIMJrUkDFJw
+IQfyaZk8GDkpf5LF+OBWKXrxg2vYGmzSu8lleY9cFWM1PTBp1M1CfqpiFbcWkDHl
+7SpK5kDRMWdkECunnE/nb3lQ5JlGbA9Tznqzwfna19bxKplc6k0WXtLGlqfAiHqu
+C6puCwGkaUP+i/YLbaWIG90WL8Ja/dQHRLxBgsOYxdTfERTYMKE=
+=0Q/E
+-----END PGP SIGNATURE-----
+
+--tVmo9FyGdCe4F4YN--
