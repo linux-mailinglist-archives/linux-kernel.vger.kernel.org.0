@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0A715FE0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F515FE11
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 23:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfGDVKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 17:10:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60128 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfGDVKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 17:10:15 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hj8zb-0000KI-Vc; Thu, 04 Jul 2019 23:10:12 +0200
-Date:   Thu, 4 Jul 2019 23:10:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-cc:     linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH] cpu/hotplug: Cache number of online CPUs
-In-Reply-To: <1987107359.5048.1562273987626.JavaMail.zimbra@efficios.com>
-Message-ID: <alpine.DEB.2.21.1907042302570.1802@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1907042237010.1802@nanos.tec.linutronix.de> <1987107359.5048.1562273987626.JavaMail.zimbra@efficios.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
+        id S1727342AbfGDVOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 17:14:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbfGDVOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 17:14:00 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11C3021850;
+        Thu,  4 Jul 2019 21:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562274839;
+        bh=L5uTJJm8cS0jNeSEyq9UQDrpRWA/RzoGfVSTvhzwtI0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=L+QKnk1QjgZhVbE+BLtQhirvztvvdNVrrXLB8pJs5cNBFXmtAcyrr2FU/Gr6TYhFG
+         a4RrGuNX9zgnsXHc3yAQk9TvTV7v0/u6KWK1iH3Hr8SvUC+EhKoU6ibelBN/fTzBCf
+         3Yyp+elIXhTbmdvHshxgTH40BD/iCrymubuF9R5g=
+Date:   Thu, 4 Jul 2019 14:13:58 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 0/4] Devmap cleanups + arm64 support
+Message-Id: <20190704141358.495791a385f7dd762cb749c2@linux-foundation.org>
+In-Reply-To: <de2286d9-6f5c-a79c-dcee-de4225aca58a@arm.com>
+References: <cover.1558547956.git.robin.murphy@arm.com>
+        <20190626073533.GA24199@infradead.org>
+        <20190626123139.GB20635@lakrids.cambridge.arm.com>
+        <20190626153829.GA22138@infradead.org>
+        <20190626154532.GA3088@mellanox.com>
+        <20190626203551.4612e12be27be3458801703b@linux-foundation.org>
+        <20190704115324.c9780d01ef6938ab41403bf9@linux-foundation.org>
+        <20190704195934.GA23542@mellanox.com>
+        <de2286d9-6f5c-a79c-dcee-de4225aca58a@arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 4 Jul 2019, Mathieu Desnoyers wrote:
+On Thu, 4 Jul 2019 21:54:36 +0100 Robin Murphy <robin.murphy@arm.com> wrote:
 
-> ----- On Jul 4, 2019, at 4:42 PM, Thomas Gleixner tglx@linutronix.de wrote:
-> 
-> > Revaluating the bitmap wheight of the online cpus bitmap in every
-> > invocation of num_online_cpus() over and over is a pretty useless
-> > exercise. Especially when num_online_cpus() is used in code pathes like the
-> > IPI delivery of x86 or the membarrier code.
+> >> mm-clean-up-is_device__page-definitions.patch
+> >> mm-introduce-arch_has_pte_devmap.patch
+> >> arm64-mm-implement-pte_devmap-support.patch
+> >> arm64-mm-implement-pte_devmap-support-fix.patch
 > > 
-> > Cache the number of online CPUs in the core and just return the cached
-> > variable.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > ---
-> > include/linux/cpumask.h |   16 +++++++---------
-> > kernel/cpu.c            |   16 ++++++++++++++++
-> > 2 files changed, 23 insertions(+), 9 deletions(-)
-> > 
-> > --- a/include/linux/cpumask.h
-> > +++ b/include/linux/cpumask.h
-> > @@ -95,8 +95,13 @@ extern struct cpumask __cpu_active_mask;
-> > #define cpu_present_mask  ((const struct cpumask *)&__cpu_present_mask)
-> > #define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
-> > 
-> > +extern unsigned int __num_online_cpus;
+> > This one we discussed, and I thought we agreed would go to your 'stage
+> > after linux-next' flow (see above). I think the conflict was minor
+> > here.
 > 
-> [...]
-> 
-> > +
-> > +void set_cpu_online(unsigned int cpu, bool online)
-> > +{
-> > +	lockdep_assert_cpus_held();
-> 
-> I don't think it is required that the cpu_hotplug lock is held
-> when reading __num_online_cpus, right ?
+> I can rebase and resend tomorrow if there's an agreement on what exactly 
+> to base it on - I'd really like to get this ticked off for 5.3 if at all 
+> possible.
 
-Errm, that's the update function. And this is better called from a hotplug
-lock held region and not from some random crappy code.
+I took another look.  Yes, it looks like the repairs were simple.
 
-> I would have expected the increment/decrement below to be performed
-> with a WRITE_ONCE(), and use a READ_ONCE() when reading the current
-> value.
-
-What for?
-
-num_online_cpus() is racy today vs. CPU hotplug operations as
-long as you don't hold the hotplug lock.
-
-Thanks,
-
-	tglx
-
-
-
+Let me now try to compile all this...
