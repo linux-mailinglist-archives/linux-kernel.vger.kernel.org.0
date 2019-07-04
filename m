@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16005F800
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEA55F801
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfGDMZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 08:25:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35290 "EHLO
+        id S1727839AbfGDMZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 08:25:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35292 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbfGDMZB (ORCPT
+        with ESMTP id S1727662AbfGDMZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 4 Jul 2019 08:25:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,17 +18,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=vFXKWZbVlhtP1uV3m8Dyf6rla7JmlnmBJTS3Fskfk3I=; b=mm0hugq4fRA9
-        ejjmmKIjkCCbP7VOXFMeeNif7zZri8yEK7qmskL8U7p2b+jCRPmiVLtu4JmoSTdofNT5ysqXHwzS/
-        YoaFUueq/YaFHVaf30i0SPNttcVfLhL9NjRpUFUtp8Bj35V6E1mxHhomEcsCse8y8VJrWldu+Zn6Z
-        otkRo=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=hfZb/+TAkkRT7t//PaA+oZ9sLytwcv7pG7LhcLvO+as=; b=YBiKN9Ty1Vil
+        r6BmVhutzI777WcVvwCD4jijNaOVNW1+W261XwsDcnU7CQmDd3GIYz6Wkj43WRCIdy0H1824KE9nZ
+        8gdvWOcHRQUkr8VfV8lcQVJWcJB6HsLFxE8WqQdIbPBnU/JGQUUb076SYsiUJ5QW8IOsynE80luJP
+        1P2is=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hj0nH-0000ig-9E; Thu, 04 Jul 2019 12:24:55 +0000
+        id 1hj0nG-0000ic-Vf; Thu, 04 Jul 2019 12:24:55 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A00DD274389C; Thu,  4 Jul 2019 13:24:54 +0100 (BST)
+        id 725B0274389B; Thu,  4 Jul 2019 13:24:54 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
@@ -36,10 +36,10 @@ Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: axg-tdm-formatter: add reset to the bindings documentation" to the asoc tree
-In-Reply-To: <20190703120749.32341-2-jbrunet@baylibre.com>
+Subject: Applied "ASoC: meson: axg-tdm-formatter: add reset" to the asoc tree
+In-Reply-To: <20190703120749.32341-3-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190704122454.A00DD274389C@ypsilon.sirena.org.uk>
+Message-Id: <20190704122454.725B0274389B@ypsilon.sirena.org.uk>
 Date:   Thu,  4 Jul 2019 13:24:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-tdm-formatter: add reset to the bindings documentation
+   ASoC: meson: axg-tdm-formatter: add reset
 
 has been applied to the asoc tree at
 
@@ -73,43 +73,83 @@ to this mail.
 Thanks,
 Mark
 
-From 094380ea2bf9f0fa7d63e67bf500b8c77e8d1910 Mon Sep 17 00:00:00 2001
+From 751bd5db52604f3f71d54dbad82707ef2475b707 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 3 Jul 2019 14:07:48 +0200
-Subject: [PATCH] ASoC: meson: axg-tdm-formatter: add reset to the bindings
- documentation
+Date: Wed, 3 Jul 2019 14:07:49 +0200
+Subject: [PATCH] ASoC: meson: axg-tdm-formatter: add reset
 
-Add an optional reset property to the tdm formatter bindings. The
-dedicated reset line is present on some SoC families, such as the g12a.
+Add the optional reset line handling which is present on the new SoC
+families, such as the g12a. Triggering this reset is not critical but
+it helps solve a channel shift issue on the g12a.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20190703120749.32341-2-jbrunet@baylibre.com
+Link: https://lore.kernel.org/r/20190703120749.32341-3-jbrunet@baylibre.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/sound/amlogic,axg-tdm-formatters.txt           | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ sound/soc/meson/axg-tdm-formatter.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
-index 3b94a715a0b9..8835a43edfbb 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.txt
-@@ -15,11 +15,15 @@ Required properties:
-   * "lrclk"    : sample clock
-   * "lrclk_sel": sample clock input multiplexer
+diff --git a/sound/soc/meson/axg-tdm-formatter.c b/sound/soc/meson/axg-tdm-formatter.c
+index 0c6cce5c5773..2e498201139f 100644
+--- a/sound/soc/meson/axg-tdm-formatter.c
++++ b/sound/soc/meson/axg-tdm-formatter.c
+@@ -7,6 +7,7 @@
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ #include <sound/soc.h>
  
--Example of TDMOUT_A on the A113 SoC:
-+Optional property:
-+- resets: phandle to the dedicated reset line of the tdm formatter.
+ #include "axg-tdm-formatter.h"
+@@ -20,6 +21,7 @@ struct axg_tdm_formatter {
+ 	struct clk *lrclk;
+ 	struct clk *sclk_sel;
+ 	struct clk *lrclk_sel;
++	struct reset_control *reset;
+ 	bool enabled;
+ 	struct regmap *map;
+ };
+@@ -75,6 +77,24 @@ static int axg_tdm_formatter_enable(struct axg_tdm_formatter *formatter)
+ 	if (formatter->enabled)
+ 		return 0;
+ 
++	/*
++	 * On the g12a (and possibly other SoCs), when a stream using
++	 * multiple lanes is restarted, it will sometimes not start
++	 * from the first lane, but randomly from another used one.
++	 * The result is an unexpected and random channel shift.
++	 *
++	 * The hypothesis is that an HW counter is not properly reset
++	 * and the formatter simply starts on the lane it stopped
++	 * before. Unfortunately, there does not seems to be a way to
++	 * reset this through the registers of the block.
++	 *
++	 * However, the g12a has indenpendent reset lines for each audio
++	 * devices. Using this reset before each start solves the issue.
++	 */
++	ret = reset_control_reset(formatter->reset);
++	if (ret)
++		return ret;
 +
-+Example of TDMOUT_A on the S905X2 SoC:
+ 	/*
+ 	 * If sclk is inverted, invert it back and provide the inversion
+ 	 * required by the formatter
+@@ -306,6 +326,15 @@ int axg_tdm_formatter_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- tdmout_a: audio-controller@500 {
- 	compatible = "amlogic,axg-tdmout";
- 	reg = <0x0 0x500 0x0 0x40>;
-+	resets = <&clkc_audio AUD_RESET_TDMOUT_A>;
- 	clocks = <&clkc_audio AUD_CLKID_TDMOUT_A>,
- 		 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK>,
- 		 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK_SEL>,
++	/* Formatter dedicated reset line */
++	formatter->reset = reset_control_get_optional_exclusive(dev, NULL);
++	if (IS_ERR(formatter->reset)) {
++		ret = PTR_ERR(formatter->reset);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get reset: %d\n", ret);
++		return ret;
++	}
++
+ 	return devm_snd_soc_register_component(dev, drv->component_drv,
+ 					       NULL, 0);
+ }
 -- 
 2.20.1
 
