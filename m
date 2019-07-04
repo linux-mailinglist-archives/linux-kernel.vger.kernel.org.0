@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41675FBD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836DE5FB38
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfGDQem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:34:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59768 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbfGDQeN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:34:13 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hj4gV-0005jD-Ta; Thu, 04 Jul 2019 18:34:12 +0200
-Message-Id: <20190704155610.718298800@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Thu, 04 Jul 2019 17:52:10 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Feng Tang <feng.tang@intel.com>
-Subject: [patch V2 25/25] x86/apic/x2apic: Implement IPI shorthands support
-References: <20190704155145.617706117@linutronix.de>
+        id S1727869AbfGDPwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:52:25 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54300 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727816AbfGDPwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 11:52:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=svphATbkFOoAAltJuUblfqvoklVJ2Q5WVSnZRTgzpDw=; b=cViTZ/CF344FGf1dtxH/n9m/Ke
+        59YKl369FU2WptLb8GxVK+48MONjUA7ok4zrdOu2D8uxSz/hy8dVytG0l990Hslraf33EI44o331e
+        JB0i7shiAC7PEC9SmVI4eCccso1cymQV/IuV0WOfu/VyxZOKhQWetiQAXhlypz0rI1XU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hj41x-0004lI-Eh; Thu, 04 Jul 2019 17:52:17 +0200
+Date:   Thu, 4 Jul 2019 17:52:17 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Voon, Weifeng" <weifeng.voon@intel.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        "Ong, Boon Leong" <boon.leong.ong@intel.com>,
+        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>
+Subject: Re: [PATCH v1 net-next] net: stmmac: enable clause 45 mdio support
+Message-ID: <20190704155217.GI18473@lunn.ch>
+References: <1562147404-4371-1-git-send-email-weifeng.voon@intel.com>
+ <20190703140520.GA18473@lunn.ch>
+ <D6759987A7968C4889FDA6FA91D5CBC8147384B6@PGSMSX103.gar.corp.intel.com>
+ <20190704033038.GA6276@lunn.ch>
+ <D6759987A7968C4889FDA6FA91D5CBC81473862D@PGSMSX103.gar.corp.intel.com>
+ <20190704135420.GD13859@lunn.ch>
+ <D6759987A7968C4889FDA6FA91D5CBC8147388E0@PGSMSX103.gar.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D6759987A7968C4889FDA6FA91D5CBC8147388E0@PGSMSX103.gar.corp.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All callers of apic->send_IPI_all() and apic->send_IPI_allbutself() contain
-the decision logic for shorthand invocation already and invoke
-send_IPI_mask() if the prereqisites are not satisfied.
+> Yes, the top 16 bit of the data register only valid when C45 is enable.
+> It contains the Register address which MDIO c45 frame intended for.
 
-Implement shorthand support for x2apic.
+I think there is too much passing variables around by reference than
+by value, to make this code easy to understand.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V2: Remove the decision logic now that it is already done in the callers
----
- arch/x86/kernel/apic/local.h          |    1 +
- arch/x86/kernel/apic/x2apic_cluster.c |    4 ++--
- arch/x86/kernel/apic/x2apic_phys.c    |   12 ++++++++++--
- 3 files changed, 13 insertions(+), 4 deletions(-)
+Maybe a better structure would be
 
---- a/arch/x86/kernel/apic/local.h
-+++ b/arch/x86/kernel/apic/local.h
-@@ -23,6 +23,7 @@ unsigned int x2apic_get_apic_id(unsigned
- u32 x2apic_set_apic_id(unsigned int id);
- int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
- void x2apic_send_IPI_self(int vector);
-+void __x2apic_send_IPI_shorthand(int vector, u32 which);
- 
- /* IPI */
- 
---- a/arch/x86/kernel/apic/x2apic_cluster.c
-+++ b/arch/x86/kernel/apic/x2apic_cluster.c
-@@ -82,12 +82,12 @@ x2apic_send_IPI_mask_allbutself(const st
- 
- static void x2apic_send_IPI_allbutself(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
- }
- 
- static void x2apic_send_IPI_all(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
- }
- 
- static u32 x2apic_calc_apicid(unsigned int cpu)
---- a/arch/x86/kernel/apic/x2apic_phys.c
-+++ b/arch/x86/kernel/apic/x2apic_phys.c
-@@ -75,12 +75,12 @@ static void
- 
- static void x2apic_send_IPI_allbutself(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
- }
- 
- static void x2apic_send_IPI_all(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
- }
- 
- static void init_x2apic_ldr(void)
-@@ -112,6 +112,14 @@ void __x2apic_send_IPI_dest(unsigned int
- 	native_x2apic_icr_write(cfg, apicid);
- }
- 
-+void __x2apic_send_IPI_shorthand(int vector, u32 which)
-+{
-+	unsigned long cfg = __prepare_ICR(which, vector, 0);
-+
-+	x2apic_wrmsr_fence();
-+	native_x2apic_icr_write(cfg, 0);
-+}
-+
- unsigned int x2apic_get_apic_id(unsigned long id)
- {
- 	return id;
+static int stmmac_mdion_c45_read(struct stmmac_priv *priv, int phyaddr, int phyreg)
+{
 
+	unsigned int reg_shift = priv->hw->mii.reg_shift;
+	unsigned int reg_mask = priv->hw->mii.reg_mask;
+	u32 mii_addr_val, mii_data_val;
 
+	mii_addr_val = MII_GMAC4_C45E |
+                       ((phyreg >> MII_DEVADDR_C45_SHIFT) << reg_shift) & reg_mask;
+        mii_data_val = (phyreg & MII_REGADDR_C45_MASK) << MII_GMAC4_REG_ADDR_SHIFT;
+
+	writel(mii_data_val, priv->ioaddr + priv->hw->mii_data);
+	writel(mii_addr_val, priv->ioaddr + priv->hw->mii_addrress);
+
+	return (int)readl(priv->ioaddr + mii_data) & MII_DATA_MASK;
+}		   
+
+static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
+{
+
+...
+	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
+ 	   		      100, 10000))
+ 		return -EBUSY;
+
+      if (priv->plat->has_gmac4 && phyreg & MII_ADDR_C45)
+      	return stmmac_mdio_c45_read(priv, phyaddr, phyreg);
+
+	Andrew
