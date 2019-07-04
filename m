@@ -2,69 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 523225FA48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F095FA5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:57:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfGDOqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 10:46:37 -0400
-Received: from mail-ed1-f48.google.com ([209.85.208.48]:46295 "EHLO
-        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727066AbfGDOqh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 10:46:37 -0400
-Received: by mail-ed1-f48.google.com with SMTP id d4so5632649edr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 07:46:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=VdaR0JOprmTANy9krpmiOs07z8GNtZlcwLkZ5w5pjHM=;
-        b=G9lLnZoOuFbqM6AfI3wUyfPeiHWZdCcB3pntgHR1jLMA7Jsa+81e4aJ0LJ6IVlJLuI
-         CWYRPZFBrqzXS8t5z6NL8ar+vwOCPk0BAub5pv6a2z1eKibu+SpJr1mRpCOVAUzorFgx
-         6luUX1CBw7qcR7kuxqb2DscQUvJYSp3ESmv2RGImdL7exSom1NKgHVvGgWcHxX3Foo0g
-         KXxwf/6Es1RIgou2DAKbJ4jqyugZoEgOWMu6zRMBu3t3xNSR/ij0mR63HrQN5EH+9WBN
-         +7z+uZ0kWWkrJCBs+myjpO84gGZdLPB5wnr0DgkbHzMhCw1CnjB9Z29LBgTkDwjTgnsI
-         3uOQ==
-X-Gm-Message-State: APjAAAVp/T6pr7LEzdR4toF/8sFoduugnHHdsD2OXG8rKJ/3bTAsOm1+
-        Vr8YrzFRguE4Vjo4cEuszUPj8GMN
-X-Google-Smtp-Source: APXvYqwnODV5OAf1QXk4F/gkLiU2FERiOwSZDzILiLz8DNa9J+xEiE4zjlmzTfT05vJrP/XU/Yp3cA==
-X-Received: by 2002:a17:906:414:: with SMTP id d20mr41496483eja.275.1562251595432;
-        Thu, 04 Jul 2019 07:46:35 -0700 (PDT)
-Received: from [10.10.2.174] (bran.ispras.ru. [83.149.199.196])
-        by smtp.gmail.com with ESMTPSA id me3sm1116900ejb.21.2019.07.04.07.46.34
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 07:46:34 -0700 (PDT)
-Reply-To: efremov@linux.com
-Subject: Re: [PATCH] torture: remove exporting of internal functions
-To:     paulmck@linux.ibm.com
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-References: <20190704125719.31290-1-efremov@linux.com>
- <20190704141919.GD26519@linux.ibm.com>
-From:   Denis Efremov <efremov@linux.com>
-Message-ID: <e9f3fe8b-7f46-4f00-eec6-17f81ac0ac3e@linux.com>
-Date:   Thu, 4 Jul 2019 17:46:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727474AbfGDO46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 10:56:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:43238 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727314AbfGDO46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 10:56:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71E6428;
+        Thu,  4 Jul 2019 07:56:57 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 880B03F738;
+        Thu,  4 Jul 2019 07:56:53 -0700 (PDT)
+Subject: Re: [RFC v2 11/14] arm64: Move the ASID allocator code in a separate
+ file
+To:     Julien Grall <julien.grall@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        julien.thierry@arm.com, suzuki.poulose@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com
+References: <20190620130608.17230-1-julien.grall@arm.com>
+ <20190620130608.17230-12-julien.grall@arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <3e6c6636-8522-ab4a-0183-ae0198a7a047@arm.com>
+Date:   Thu, 4 Jul 2019 15:56:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190704141919.GD26519@linux.ibm.com>
+In-Reply-To: <20190620130608.17230-12-julien.grall@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Julien,
 
-> I reworked the commit message as follows, so could you please check
-> to make sure that I didn't fold, spindle, or otherwise mutilate
-> something?
+On 20/06/2019 14:06, Julien Grall wrote:
+> We will want to re-use the ASID allocator in a separate context (e.g
+> allocating VMID). So move the code in a new file.
 > 
-> 						Thanx, Paul
+> The function asid_check_context has been moved in the header as a static
+> inline function because we want to avoid add a branch when checking if the
+> ASID is still valid.
 
-Perfect, thanks!
+> diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
+> index 3df63a28856c..b745cf356fe1 100644
+> --- a/arch/arm64/mm/context.c
+> +++ b/arch/arm64/mm/context.c
+> @@ -23,46 +23,21 @@
 
-Denis
+> -#define ASID_FIRST_VERSION(info)	NUM_ASIDS(info)
+
+> diff --git a/arch/arm64/lib/asid.c b/arch/arm64/lib/asid.c
+> new file mode 100644
+> index 000000000000..7252e4fdd5e9
+> --- /dev/null
+> +++ b/arch/arm64/lib/asid.c
+> @@ -0,0 +1,185 @@
+
+> +#define ASID_FIRST_VERSION(info)	(1UL << ((info)->bits))
+
+(oops!)
+
+
+> @@ -344,7 +115,7 @@ static int asids_init(void)
+>  	if (!asid_allocator_init(&asid_info, bits, ASID_PER_CONTEXT,
+>  				 asid_flush_cpu_ctxt))
+>  		panic("Unable to initialize ASID allocator for %lu ASIDs\n",
+> -		      1UL << bits);
+> +		      NUM_ASIDS(&asid_info));
+
+Could this go in the patch that adds NUM_ASIDS()?
+
+
+Thanks,
+
+James
