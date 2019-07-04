@@ -2,149 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B8B5F46D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCE55F469
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfGDIRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:17:45 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40374 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727012AbfGDIRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:17:43 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 29C5538450216D996387;
-        Thu,  4 Jul 2019 16:17:41 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 4 Jul 2019 16:17:34 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>, Chen Gong <gongchen4@huawei.com>
-Subject: [PATCH] f2fs: allocate memory in batch in build_sit_info()
-Date:   Thu, 4 Jul 2019 16:17:30 +0800
-Message-ID: <20190704081730.46414-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1727103AbfGDIRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:17:38 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38724 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfGDIRi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:17:38 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s15so5089957wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 01:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XH1XNSdwRWvb4UhP2BksO/qHU908eKTUW0fWRHawB/Q=;
+        b=185ku0BsILAghMROrADuLcBBnGPoiprj9nHGRKOfuK47a5idfe2rH14OG39Qk64+0m
+         1DFzJkffhFSVCh8oJ+eFOLKs9AkS4v9wqIWgwGlWPbvZyPt3lc1XTWVmz70KTbYOrvCG
+         CukPB9JkaEBTZ09i3SbvAoU0AY43wYHuz5kvCF/ruJ2QlaJ9+xZOsfnSGTakIaqWErjz
+         3rn4nZVPCSXsgZff1xgui5fIn3HKgWzSPmfHzR9hQA/Y6RuvXNFQrQ0bmB0fesrSKOH0
+         jiW6h+aUvSid3ZPFH9HURUkubYAvtuE/7E4kfr24RGl6u4K2lDYSP4Pu6rSobYinsDvV
+         y4Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XH1XNSdwRWvb4UhP2BksO/qHU908eKTUW0fWRHawB/Q=;
+        b=Ri9TPHlWowvXu9aJ8eVUIbHOHkipLCjukCmjgB5tqHwm+PdbdPz41f5xsSRtd9lg6E
+         bgu9wdA1LfJtz7AyRw+8t/9MPKlIVkJdJwCzc9HbUKq0Nd4LMAh3KjE3LDoqAfQecGg0
+         FTkl/SLLiE/+g5D8cnG5oDdgYeTjMjV5yFr4pNr8DKeWiN3iBE9E8ySRoiWzy3IiPWsd
+         BPOxBMy5aluDFFYkpOSLCBK6gjUNX5ieqO9tZ9FqUYelccsIucPPZNI+WtJ216KxI9b8
+         C78A4Z44dwF7bI3WB3zgi5tuBy1OhFMQCKKzTESHrlIuVXfo6kxqgARmgUiZ8jigDomU
+         cwLg==
+X-Gm-Message-State: APjAAAWI01FXlymKUaH3NyWElBM/naRNKlhyh3ZhJKyOwRdlIBFl+ThN
+        5nJhXlHuc38VVq1CZEBVlqX/sA==
+X-Google-Smtp-Source: APXvYqylnR+fBA//GggGkUmj6hYFyVpmLHwSQnbcrEHHMb9c3kfSri1IjOZuf7H2EDdp2qDQDL2yTQ==
+X-Received: by 2002:a1c:345:: with SMTP id 66mr11741201wmd.8.1562228256006;
+        Thu, 04 Jul 2019 01:17:36 -0700 (PDT)
+Received: from localhost (ip-213-220-235-213.net.upcbroadband.cz. [213.220.235.213])
+        by smtp.gmail.com with ESMTPSA id o24sm7730053wmh.2.2019.07.04.01.17.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 04 Jul 2019 01:17:35 -0700 (PDT)
+Date:   Thu, 4 Jul 2019 10:17:35 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 10/15] ethtool: provide string sets with
+ STRSET_GET request
+Message-ID: <20190704081735.GI2250@nanopsycho>
+References: <cover.1562067622.git.mkubecek@suse.cz>
+ <3c30527bef64c030078a1e305613080bb372cbe6.1562067622.git.mkubecek@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c30527bef64c030078a1e305613080bb372cbe6.1562067622.git.mkubecek@suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-build_sit_info() allocate all bitmaps for each segment one by one,
-it's quite low efficiency, this pach changes to allocate large
-continuous memory at a time, and divide it and assign for each bitmaps
-of segment. For large size image, it can expect improving its mount
-speed.
+Tue, Jul 02, 2019 at 01:50:29PM CEST, mkubecek@suse.cz wrote:
 
-Signed-off-by: Chen Gong <gongchen4@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 51 +++++++++++++++++++++--------------------------
- fs/f2fs/segment.h |  1 +
- 2 files changed, 24 insertions(+), 28 deletions(-)
+[...]
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 402fbbbb2d7c..73c803af1f31 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3929,7 +3929,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct sit_info *sit_i;
- 	unsigned int sit_segs, start;
--	char *src_bitmap;
-+	char *src_bitmap, *bitmap;
- 	unsigned int bitmap_size;
- 
- 	/* allocate memory for SIT information */
-@@ -3950,27 +3950,31 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	if (!sit_i->dirty_sentries_bitmap)
- 		return -ENOMEM;
- 
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * 4;
-+#else
-+	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * 3;
-+#endif
-+	sit_i->bitmap = f2fs_kzalloc(sbi, bitmap_size, GFP_KERNEL);
-+	if (!sit_i->bitmap)
-+		return -ENOMEM;
-+
-+	bitmap = sit_i->bitmap;
-+
- 	for (start = 0; start < MAIN_SEGS(sbi); start++) {
--		sit_i->sentries[start].cur_valid_map
--			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
--		sit_i->sentries[start].ckpt_valid_map
--			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
--		if (!sit_i->sentries[start].cur_valid_map ||
--				!sit_i->sentries[start].ckpt_valid_map)
--			return -ENOMEM;
-+		sit_i->sentries[start].cur_valid_map = bitmap;
-+		bitmap += SIT_VBLOCK_MAP_SIZE;
-+
-+		sit_i->sentries[start].ckpt_valid_map = bitmap;
-+		bitmap += SIT_VBLOCK_MAP_SIZE;
- 
- #ifdef CONFIG_F2FS_CHECK_FS
--		sit_i->sentries[start].cur_valid_map_mir
--			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
--		if (!sit_i->sentries[start].cur_valid_map_mir)
--			return -ENOMEM;
-+		sit_i->sentries[start].cur_valid_map_mir = bitmap;
-+		bitmap += SIT_VBLOCK_MAP_SIZE;
- #endif
- 
--		sit_i->sentries[start].discard_map
--			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
--							GFP_KERNEL);
--		if (!sit_i->sentries[start].discard_map)
--			return -ENOMEM;
-+		sit_i->sentries[start].discard_map = bitmap;
-+		bitmap += SIT_VBLOCK_MAP_SIZE;
- 	}
- 
- 	sit_i->tmp_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
-@@ -4440,21 +4444,12 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
- static void destroy_sit_info(struct f2fs_sb_info *sbi)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
--	unsigned int start;
- 
- 	if (!sit_i)
- 		return;
- 
--	if (sit_i->sentries) {
--		for (start = 0; start < MAIN_SEGS(sbi); start++) {
--			kvfree(sit_i->sentries[start].cur_valid_map);
--#ifdef CONFIG_F2FS_CHECK_FS
--			kvfree(sit_i->sentries[start].cur_valid_map_mir);
--#endif
--			kvfree(sit_i->sentries[start].ckpt_valid_map);
--			kvfree(sit_i->sentries[start].discard_map);
--		}
--	}
-+	if (sit_i->sentries)
-+		kvfree(sit_i->bitmap);
- 	kvfree(sit_i->tmp_map);
- 
- 	kvfree(sit_i->sentries);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 2fd53462fa27..4d171b489130 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -226,6 +226,7 @@ struct sit_info {
- 	block_t sit_base_addr;		/* start block address of SIT area */
- 	block_t sit_blocks;		/* # of blocks used by SIT area */
- 	block_t written_valid_blocks;	/* # of valid blocks in main area */
-+	char *bitmap;			/* all bitmaps pointer */
- 	char *sit_bitmap;		/* SIT bitmap pointer */
- #ifdef CONFIG_F2FS_CHECK_FS
- 	char *sit_bitmap_mir;		/* SIT bitmap mirror */
--- 
-2.18.0.rc1
 
+>@@ -87,6 +89,64 @@ enum {
+> 	ETHTOOL_A_BITSET_MAX = (__ETHTOOL_A_BITSET_CNT - 1)
+
+You don't need "()". Same for the others below.
+
+
+> };
+> 
+>+/* string sets */
+>+
+>+enum {
+>+	ETHTOOL_A_STRING_UNSPEC,
+>+	ETHTOOL_A_STRING_INDEX,			/* u32 */
+>+	ETHTOOL_A_STRING_VALUE,			/* string */
+>+
+>+	/* add new constants above here */
+>+	__ETHTOOL_A_STRING_CNT,
+>+	ETHTOOL_A_STRING_MAX = (__ETHTOOL_A_STRING_CNT - 1)
+>+};
+>+
+>+enum {
+>+	ETHTOOL_A_STRINGS_UNSPEC,
+>+	ETHTOOL_A_STRINGS_STRING,		/* nest - _A_STRINGS_* */
+>+
+>+	/* add new constants above here */
+>+	__ETHTOOL_A_STRINGS_CNT,
+>+	ETHTOOL_A_STRINGS_MAX = (__ETHTOOL_A_STRINGS_CNT - 1)
+>+};
+>+
+>+enum {
+>+	ETHTOOL_A_STRINGSET_UNSPEC,
+>+	ETHTOOL_A_STRINGSET_ID,			/* u32 */
+>+	ETHTOOL_A_STRINGSET_COUNT,		/* u32 */
+>+	ETHTOOL_A_STRINGSET_STRINGS,		/* nest - _A_STRINGS_* */
+>+
+>+	/* add new constants above here */
+>+	__ETHTOOL_A_STRINGSET_CNT,
+>+	ETHTOOL_A_STRINGSET_MAX = (__ETHTOOL_A_STRINGSET_CNT - 1)
+>+};
+>+
+>+/* STRSET */
+>+
+>+enum {
+>+	ETHTOOL_A_STRSET_UNSPEC,
+>+	ETHTOOL_A_STRSET_HEADER,		/* nest - _A_HEADER_* */
+>+	ETHTOOL_A_STRSET_STRINGSETS,		/* nest - _A_STRINGSETS_* */
+>+
+>+	/* add new constants above here */
+>+	__ETHTOOL_A_STRSET_CNT,
+>+	ETHTOOL_A_STRSET_MAX = (__ETHTOOL_A_STRSET_CNT - 1)
+>+};
+>+
+>+enum {
+>+	ETHTOOL_A_STRINGSETS_UNSPEC,
+>+	ETHTOOL_A_STRINGSETS_STRINGSET,		/* nest - _A_STRINGSET_* */
+>+
+>+	/* add new constants above here */
+>+	__ETHTOOL_A_STRINGSETS_CNT,
+>+	ETHTOOL_A_STRINGSETS_MAX = (__ETHTOOL_A_STRINGSETS_CNT - 1)
+>+};
+>+
+
+[...]	
+
+
+>+	nla_for_each_nested(attr, nest, rem) {
+>+		u32 id;
+>+
+>+		if (WARN_ONCE(nla_type(attr) != ETHTOOL_A_STRINGSETS_STRINGSET,
+>+			      "unexpected attrtype %u in ETHTOOL_A_STRSET_STRINGSETS\n",
+>+			      nla_type(attr)))
+>+			return -EINVAL;
+>+
+>+		ret = strset_get_id(attr, &id, extack);
+>+		if (ret < 0)
+>+			return ret;
+>+		if (ret >= ETH_SS_COUNT) {
+>+			NL_SET_ERR_MSG_ATTR(extack, attr,
+>+					    "unknown string set id");
+>+			return -EOPNOTSUPP;
+>+		}
+>+
+>+		data->req_ids |= (1U << id);
+
+You don't need "()" here either.
+
+[...]
