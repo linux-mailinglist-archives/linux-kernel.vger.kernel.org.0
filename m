@@ -2,79 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CBE5F739
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 555A75F750
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbfGDL2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:28:54 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33048 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727554AbfGDL2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:28:53 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id C9F5594D590F9653AB2D;
-        Thu,  4 Jul 2019 12:28:51 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 4 Jul
- 2019 12:28:49 +0100
-Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()"
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Michal Suchanek <msuchanek@suse.de>,
-        <linux-integrity@vger.kernel.org>
-CC:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "David Howells" <dhowells@redhat.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-References: <20190701131505.17759-1-msuchanek@suse.de>
- <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
-Date:   Thu, 4 Jul 2019 13:28:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727600AbfGDLqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:46:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:2275 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbfGDLp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:45:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 04:45:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,450,1557212400"; 
+   d="scan'208";a="339583474"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga005.jf.intel.com with ESMTP; 04 Jul 2019 04:45:56 -0700
+Date:   Thu, 4 Jul 2019 19:29:13 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Zhang Yi Z <yi.z.zhang@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>, Alan Tull <atull@kernel.org>
+Subject: Re: [PATCH 06/15] fpga: dfl: fme: add
+ DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
+Message-ID: <20190704112913.GA24884@hao-dev>
+References: <20190628004951.6202-1-mdf@kernel.org>
+ <20190628004951.6202-7-mdf@kernel.org>
+ <20190703180753.GA24723@kroah.com>
+ <20190703233058.GA15825@hao-dev>
+ <20190704053927.GB347@kroah.com>
+ <20190704063106.GA24777@hao-dev>
+ <20190704082013.GE6438@kroah.com>
+ <20190704085855.GB7391@hao-dev>
+ <20190704110449.GC1404@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704110449.GC1404@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
-> On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
->> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
->> following crash:
+On Thu, Jul 04, 2019 at 01:04:49PM +0200, Greg KH wrote:
+> On Thu, Jul 04, 2019 at 04:58:55PM +0800, Wu Hao wrote:
+> > > > Hope things could be more clear now. :)
+> > > 
+> > > That's nice for the vfio stuff, but you are just a "normal" driver here.
+> > > You want an ioctl that just does one thing, no arguments, no flags, no
+> > > anything.  No need for a size argument then at all.  These ioctls don't
+> > > even need a structure for them!
+> > > 
+> > > Don't try to be fancy, it's not needed, it's not like you are running
+> > > out of ioctl space...
+> > 
+> > Thanks a lot for the comments and suggestions.
+> > 
+> > That's true, it's a "normal" driver, maybe I overly considered the
+> > extensibility of it. OK, Let me rework this patch to remove argsz from
+> > these two ioctls.
+> > 
+> > What about the existing ioctls for this driver, they have argsz too.
+> > shall I prepare another patch to remove them as well?
 > 
-> Thank you. I think this the right choice for the moment. I fixed
-> a trivial checkpatch.pl error and added the mandatory tags. Can
-> you check quickly v2 (just posted)?
+> I am hoping you actually have users for those ioctls in userspace today?
+> If not, and no one is using them, then yes, please fix those too.
+
+Yes, we have a few users, not many, e.g. https://github.com/OPAE/opae-sdk
+
+I believe we may have more users as we are submitting code to make this
+driver more usable.
+
+Let me think about this, if we want to do this clean up, we have to 
+increase the API version to tell everybody, things are changed. If
+finally we decide to do this clean up, that will be a new patch after
+this patchset.
+
+Many Thanks for your patient guide and suggestions. :)
+
+Hao
+
 > 
-> I already made it available in my master and next.
-
-Could you please wait few days? I would prefer to fix this issue instead
-of reverting the whole patch.
-
-Thanks
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+> thanks,
+> 
+> greg k-h
