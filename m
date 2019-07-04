@@ -2,76 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6585F2CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B68F5F2CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfGDG1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:27:51 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725879AbfGDG1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:27:50 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E32053DD455490766B38;
-        Thu,  4 Jul 2019 14:27:47 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
- 14:27:38 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <dvhart@infradead.org>, <andy@infradead.org>,
-        <linus.walleij@linaro.org>, <rdunlap@infradead.org>,
-        <info@metux.net>
-CC:     <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] platform/x86: Fix PCENGINES_APU2 Kconfig warning
-Date:   Thu, 4 Jul 2019 14:27:25 +0800
-Message-ID: <20190704062725.50400-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727348AbfGDG17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfGDG17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:27:59 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9992421850;
+        Thu,  4 Jul 2019 06:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562221678;
+        bh=N2XXHkGwjIDYSWFPldcogFR7T90EltyDN1A8ixT4iAs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IajMpTxvQdieihszIioDkhkftkA+GyeaXsmP/AIlIsrIiixrs0z+cXOHwyXLA8C2S
+         ZacrJNI46bYEwLHAoYYeIMIqjFVYER3sRrz6XtdFF2kEA5uDsK9RlDv3iOcjSIIZMA
+         a+5HXDiqWkfwyfUWvUbpRtM0jqtPExxValunROoQ=
+Date:   Thu, 4 Jul 2019 09:27:54 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yishai Hadas <yishaih@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Message-ID: <20190704062754.GG4727@mtr-leonro.mtl.com>
+References: <20190704124738.1e88cb69@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704124738.1e88cb69@canb.auug.org.au>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix Kconfig warning for PCENGINES_APU2 symbol:
+On Thu, Jul 04, 2019 at 12:47:38PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>
+>   drivers/infiniband/hw/mlx5/cq.c
+>
+> between commit:
+>
+>   e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibility")
+>
+> from the rdma tree and commit:
+>
+>   38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
+>
+> from the mlx5-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/infiniband/hw/mlx5/cq.c
+> index bfe3efdd77d7,4efbbd2fce0c..000000000000
+> --- a/drivers/infiniband/hw/mlx5/cq.c
+> +++ b/drivers/infiniband/hw/mlx5/cq.c
+> @@@ -891,7 -891,8 +891,8 @@@ int mlx5_ib_create_cq(struct ib_cq *ibc
+>   	int entries = attr->cqe;
+>   	int vector = attr->comp_vector;
+>   	struct mlx5_ib_dev *dev = to_mdev(ibdev);
+> + 	u32 out[MLX5_ST_SZ_DW(create_cq_out)];
+>  -	struct mlx5_ib_cq *cq;
+>  +	struct mlx5_ib_cq *cq = to_mcq(ibcq);
+>   	int uninitialized_var(index);
+>   	int uninitialized_var(inlen);
+>   	u32 *cqb = NULL;
 
-WARNING: unmet direct dependencies detected for GPIO_AMD_FCH
-  Depends on [n]: GPIOLIB [=n] && HAS_IOMEM [=y]
-  Selected by [y]:
-  - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT [=y] && INPUT_KEYBOARD [=y] && LEDS_CLASS [=y]
+Thanks, it looks good.
 
-WARNING: unmet direct dependencies detected for KEYBOARD_GPIO_POLLED
-  Depends on [n]: !UML && INPUT [=y] && INPUT_KEYBOARD [=y] && GPIOLIB [=n]
-  Selected by [y]:
-  - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT [=y] && INPUT_KEYBOARD [=y] && LEDS_CLASS [=y]
-
-Add GPIOLIB dependency to fix it.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: f8eb0235f659 ("x86: pcengines apuv2 gpio/leds/keys platform driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/platform/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 8c8bd45..2409d26 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1322,7 +1322,7 @@ config HUAWEI_WMI
- 
- config PCENGINES_APU2
- 	tristate "PC Engines APUv2/3 front button and LEDs driver"
--	depends on INPUT && INPUT_KEYBOARD
-+	depends on INPUT && INPUT_KEYBOARD && GPIOLIB
- 	depends on LEDS_CLASS
- 	select GPIO_AMD_FCH
- 	select KEYBOARD_GPIO_POLLED
--- 
-2.7.4
 
 
