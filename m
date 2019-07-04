@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF76D5F4D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DF05F4C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfGDIrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54492 "EHLO mail.kernel.org"
+        id S1727267AbfGDIqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfGDIrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:47:08 -0400
+        id S1727046AbfGDIqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:46:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A113F218A6;
-        Thu,  4 Jul 2019 08:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 626A0218A6;
+        Thu,  4 Jul 2019 08:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562230027;
-        bh=9kr+WquUsx/ezUvWIT9JMoBqrRGzTuebO01ejx6/NRw=;
+        s=default; t=1562230001;
+        bh=/nscaZ8tOKoA1xhpKbG/KBNAKedrtqbPGjp5wJ1TSpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2TR1gRN+oqWdeQDSWJvCKh7HzTKLd6dE8gajijp4mu1AYkPuXfIlFWNHNkf3Fk426
-         XcZJ74dIURrNuzD004fFCALLfWCZSt8ElpRqi2KKTRbXuYF/9pufzkJtKve9vg8odo
-         +w5WYKJKuOX7MVh4ZmcbYP+gZkbz3XTG2rLVlNeY=
+        b=I+DCsUahJo9iDLvMN0Xcu4HnNamjXiAT94J/+uj5N3iNe97RaB4mbBXXducoiirEQ
+         9SeyP2XeHF8q+au1V8zq5T3zJ5GQXBFD9ndhdnYrrDIQRlPEFKdmUcbbvpsZ3DwoIv
+         P5TLC/YESUEnwbFOB7AJWeQG22osfis4URZS4F78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 09/11] video: fbdev: sm501fb: convert platform driver to use dev_groups
-Date:   Thu,  4 Jul 2019 10:46:15 +0200
-Message-Id: <20190704084617.3602-10-gregkh@linuxfoundation.org>
+Subject: [PATCH 10/11] input: keyboard: gpio_keys: convert platform driver to use dev_groups
+Date:   Thu,  4 Jul 2019 10:46:16 +0200
+Message-Id: <20190704084617.3602-11-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190704084617.3602-1-gregkh@linuxfoundation.org>
 References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
@@ -50,81 +50,47 @@ Cc: dri-devel@lists.freedesktop.org
 Cc: linux-fbdev@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sm501fb.c | 37 +++++++++--------------------------
- 1 file changed, 9 insertions(+), 28 deletions(-)
+ drivers/input/keyboard/gpio_keys.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
-index dde52d027416..c633ee76a73d 100644
---- a/drivers/video/fbdev/sm501fb.c
-+++ b/drivers/video/fbdev/sm501fb.c
-@@ -1274,6 +1274,14 @@ static ssize_t sm501fb_debug_show_pnl(struct device *dev,
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 6cd199e8a370..1f6547440edb 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -354,10 +354,7 @@ static struct attribute *gpio_keys_attrs[] = {
+ 	&dev_attr_disabled_switches.attr,
+ 	NULL,
+ };
+-
+-static const struct attribute_group gpio_keys_attr_group = {
+-	.attrs = gpio_keys_attrs,
+-};
++ATTRIBUTE_GROUPS(gpio_keys);
  
- static DEVICE_ATTR(fbregs_pnl, 0444, sm501fb_debug_show_pnl, NULL);
- 
-+static struct attribute *sm501fb_attrs[] = {
-+	&dev_attr_crt_src.attr,
-+	&dev_attr_fbregs_pnl.attr,
-+	&dev_attr_fbregs_crt.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(sm501fb);
-+
- /* acceleration operations */
- static int sm501fb_sync(struct fb_info *info)
+ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
  {
-@@ -2016,33 +2024,9 @@ static int sm501fb_probe(struct platform_device *pdev)
- 		goto err_started_crt;
- 	}
+@@ -856,13 +853,6 @@ static int gpio_keys_probe(struct platform_device *pdev)
  
--	/* create device files */
--
--	ret = device_create_file(dev, &dev_attr_crt_src);
--	if (ret)
--		goto err_started_panel;
--
--	ret = device_create_file(dev, &dev_attr_fbregs_pnl);
--	if (ret)
--		goto err_attached_crtsrc_file;
--
--	ret = device_create_file(dev, &dev_attr_fbregs_crt);
--	if (ret)
--		goto err_attached_pnlregs_file;
--
- 	/* we registered, return ok */
- 	return 0;
+ 	fwnode_handle_put(child);
  
--err_attached_pnlregs_file:
--	device_remove_file(dev, &dev_attr_fbregs_pnl);
+-	error = devm_device_add_group(dev, &gpio_keys_attr_group);
+-	if (error) {
+-		dev_err(dev, "Unable to export keys/switches, error: %d\n",
+-			error);
+-		return error;
+-	}
 -
--err_attached_crtsrc_file:
--	device_remove_file(dev, &dev_attr_crt_src);
--
--err_started_panel:
--	unregister_framebuffer(info->fb[HEAD_PANEL]);
--	sm501_free_init_fb(info, HEAD_PANEL);
--
- err_started_crt:
- 	unregister_framebuffer(info->fb[HEAD_CRT]);
- 	sm501_free_init_fb(info, HEAD_CRT);
-@@ -2072,10 +2056,6 @@ static int sm501fb_remove(struct platform_device *pdev)
- 	struct fb_info	   *fbinfo_crt = info->fb[0];
- 	struct fb_info	   *fbinfo_pnl = info->fb[1];
+ 	error = input_register_device(input);
+ 	if (error) {
+ 		dev_err(dev, "Unable to register input device, error: %d\n",
+@@ -1025,6 +1015,7 @@ static void gpio_keys_shutdown(struct platform_device *pdev)
+ }
  
--	device_remove_file(&pdev->dev, &dev_attr_fbregs_crt);
--	device_remove_file(&pdev->dev, &dev_attr_fbregs_pnl);
--	device_remove_file(&pdev->dev, &dev_attr_crt_src);
--
- 	sm501_free_init_fb(info, HEAD_CRT);
- 	sm501_free_init_fb(info, HEAD_PANEL);
- 
-@@ -2233,6 +2213,7 @@ static int sm501fb_resume(struct platform_device *pdev)
- #endif
- 
- static struct platform_driver sm501fb_driver = {
-+	.dev_groups	= sm501fb_groups,
- 	.probe		= sm501fb_probe,
- 	.remove		= sm501fb_remove,
- 	.suspend	= sm501fb_suspend,
+ static struct platform_driver gpio_keys_device_driver = {
++	.dev_groups	= gpio_keys_groups,
+ 	.probe		= gpio_keys_probe,
+ 	.shutdown	= gpio_keys_shutdown,
+ 	.driver		= {
 -- 
 2.22.0
 
