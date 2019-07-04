@@ -2,82 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 739F85FBF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94ABD5FC01
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfGDQgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:36:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39708 "EHLO mx1.suse.de"
+        id S1727311AbfGDQki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:40:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40190 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726038AbfGDQgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:36:42 -0400
+        id S1726880AbfGDQki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 12:40:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E4F22AEF5;
-        Thu,  4 Jul 2019 16:36:40 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 1ACAFDA89D; Thu,  4 Jul 2019 18:37:21 +0200 (CEST)
-Date:   Thu, 4 Jul 2019 18:37:21 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: fix memory leak of path on error return path
-Message-ID: <20190704163721.GA20977@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Colin King <colin.king@canonical.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190702141028.11566-1-colin.king@canonical.com>
+        by mx1.suse.de (Postfix) with ESMTP id F0586AEF5;
+        Thu,  4 Jul 2019 16:40:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 936671E3F56; Thu,  4 Jul 2019 18:40:36 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 18:40:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+Message-ID: <20190704164036.GG31037@quack2.suse.cz>
+References: <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org>
+ <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org>
+ <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org>
+ <20190701121119.GE31621@quack2.suse.cz>
+ <20190703154700.GI1729@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190702141028.11566-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20190703154700.GI1729@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 03:10:28PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed 03-07-19 08:47:00, Matthew Wilcox wrote:
+> On Mon, Jul 01, 2019 at 02:11:19PM +0200, Jan Kara wrote:
+> > BTW, looking into the xarray code, I think I found another difference
+> > between the old radix tree code and the new xarray code that could cause
+> > issues. In the old radix tree code if we tried to insert PMD entry but
+> > there was some PTE entry in the covered range, we'd get EEXIST error back
+> > and the DAX fault code relies on this. I don't see how similar behavior is
+> > achieved by xas_store()...
 > 
-> Currently if the allocation of roots or tmp_ulist fails the error handling
-> does not free up the allocation of path causing a memory leak. Fix this by
-> freeing path with a call to btrfs_free_path before taking the error return
-> path.
+> Are you referring to this?
 > 
-> Addresses-Coverity: ("Resource leak")
+> -               entry = dax_make_locked(0, size_flag | DAX_EMPTY);
+> -
+> -               err = __radix_tree_insert(&mapping->i_pages, index,
+> -                               dax_entry_order(entry), entry);
+> -               radix_tree_preload_end();
+> -               if (err) {
+> -                       xa_unlock_irq(&mapping->i_pages);
+> -                       /*
+> -                        * Our insertion of a DAX entry failed, most likely
+> -                        * because we were inserting a PMD entry and it
+> -                        * collided with a PTE sized entry at a different
+> -                        * index in the PMD range.  We haven't inserted
+> -                        * anything into the radix tree and have no waiters to
+> -                        * wake.
+> -                        */
+> -                       return ERR_PTR(err);
+> -               }
 
-Does this have an id, that coverity uses?
+Mostly yes.
 
-> Fixes: 5911c8fe05c5 ("btrfs: fiemap: preallocate ulists for btrfs_check_shared")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/btrfs/extent_io.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 1eb671c16ff1..d7f37a33d597 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4600,6 +4600,7 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  	tmp_ulist = ulist_alloc(GFP_KERNEL);
->  	if (!roots || !tmp_ulist) {
->  		ret = -ENOMEM;
-> +		btrfs_free_path(path);
+> If so, that can't happen any more because we no longer drop the i_pages
+> lock while the entry is NULL, so the entry is always locked while the
+> i_pages lock is dropped.
 
-This fixes only one leak, therere are more that I spotted while
-reviewing this patch. The gotos from the while-loop jump to
-out_free_list but that leave the path behind.
+Ah, I have misinterpretted what xas_find_conflict() does. I'm sorry for the
+noise. I find it somewhat unfortunate that xas_find_conflict() will not
+return in any way the index where it has found the conflicting entry. We
+could then use it for the wait logic as well and won't have to resort to
+some masking tricks...
 
-That's why the exit block is a better place for the cleanups. This
-requires proper nesting of the cleanup calls, that's slightly
-inconvenient in this case. The free_path is before call to
-unlock_extent_cached so when the ordre is switched and free_path moved
-to out_free_ulist, then all the leaks are addressed in one go.
+								Honza
 
-Bummer that the leaks escaped sight of original patch author (me), 2
-reviewers and now 1 fix reviewer.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
