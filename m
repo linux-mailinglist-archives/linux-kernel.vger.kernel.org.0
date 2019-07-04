@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D875B5F062
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 057005F053
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfGDAhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 20:37:50 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:49937 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfGDAhr (ORCPT
+        id S1727410AbfGDAhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 20:37:54 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:56250 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbfGDAhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 20:37:47 -0400
-Received: by mail-pg1-f202.google.com with SMTP id 30so2571430pgk.16
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 17:37:46 -0700 (PDT)
+        Wed, 3 Jul 2019 20:37:51 -0400
+Received: by mail-pf1-f202.google.com with SMTP id i26so2497044pfo.22
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 17:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XlrqH678HDR84yo41rM73BaaQaGuXs9XZZneq4FOZeY=;
-        b=ffmju7yr7gRfaJbHZ/EKKmVncl8VlWULQaThQY06zll3+6WpQG6lpGZ4OPQmMivptS
-         8hDYradWvLpP2Ynet+Ye7uV0kLczbf6RFD8mFVTANX2yg7wM9YbXidQ/FQZgq07MWegb
-         OGw9om8WRHzmMMnObSBGoIx3ybtRj+V2h+ffEXd5lxF3Nc0UTcEdl8L3/UVHObrq7Hpr
-         pb1JvhsO78qMQnHwg/Ed80IloOa6WYSoqzkmmaIisIDaOlJlxgcTtQcFCed7VfZAR09f
-         b9pzfPkA2sw/PBcf5XMV0Aycvwei2GOmUX9h6Qyralx5M52IFq4n3EvX8Bsm6682vUXZ
-         cuVQ==
+        bh=lgb7c0kk4AIlDFKq2h34ExMTr7WoEQbcibudQeY2BwQ=;
+        b=bJ2B8In3BYK2xzAP0aCf1pWz++CGQglPJSQerpYPHi4eE94VKaoZahLuBupljJ2Q3Z
+         crGhzgFMJ3XKGJ3uYM2IqZlFN/A8U1j6M+NnmE7LKn+CFBDVOaT9od38VqFxuxXaStSi
+         yYU2R9POF0QN/sWYrlHPa8x2jYfrWARBuKcqozHQAVN8HN51eGiAU9wVRGFqodKfxCpo
+         GehNdkXD8U5atn4idR3tE+xubwWy8NdpEoQLrHcCJil9w06mTynEAN+kjaInKOsiPlOq
+         BJUruUTaDs2rhIF9AhbHO7WoFNkUDX1cWz5r10rYDg8xf2rl7ljUJn65OecOFhCXuaWa
+         Ip5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XlrqH678HDR84yo41rM73BaaQaGuXs9XZZneq4FOZeY=;
-        b=mOaOB2ki69Jx9gkbEU0r7BrG/pFqzaGORorSFn9YO1Ok37h4CNhWGdgqkgy2TK6SeG
-         Gx5YPastZUuM5oY9KnKHiClVT6/XS803PZkDpbaAZSE963fCKlnxXnhlB2T8q7XusLJG
-         eWMil65luL6jlhz+ZDlMcNpK7T6j8NSbKMqsGvlqheAJtTWnZuHutBINILDkiIFJV6D6
-         GrYAJeY/sGLzJNBMOk8ypRsWRyqbcBTBGD7gQRiXIdXR3Fc2xLCgXFH3/VHi8SJdgBB4
-         qjp7VhgPwXWiz2QlpuTgm341/OsIxTsukhaFEGSCzo3RvUfNNkBHECbsKLad3Iboa1za
-         FkdQ==
-X-Gm-Message-State: APjAAAUlrRAOn56iSRLH9tmUwW6QlN0i3qCfkhU69yE31O79aMeqlqNi
-        OeZh4PB1k0MeMTqouePCGe0lTGFN2RG+iG1UF7rGNA==
-X-Google-Smtp-Source: APXvYqzEyrStQtoN+0MmqxKcoxkpwGwMdPWPCVJ2v+rt7FevA703DgZaVQugKeZ2rVGA0cnHCH+IEhNvyiDaQ8b6b05Cdg==
-X-Received: by 2002:a63:1b07:: with SMTP id b7mr39423299pgb.133.1562200665901;
- Wed, 03 Jul 2019 17:37:45 -0700 (PDT)
-Date:   Wed,  3 Jul 2019 17:36:03 -0700
+        bh=lgb7c0kk4AIlDFKq2h34ExMTr7WoEQbcibudQeY2BwQ=;
+        b=HpeQxxf0Qzb78ZaUJSxh8fN/oioxVlam22qmhtbRDIdo4PJr5vbLUACD46FZWD73l/
+         gBndmQByZDAokBilWv9bBdXhw+pi48YNUOcWtl+bjjyfqQ4V4jAhnA/EcmhU+QHZrYRX
+         /zmVY+x231FPqH/CRSujX/aepApsa//IY6VYovswJlwIh6DqiGPosUFCyXb5n7OJ0Nw+
+         VStxvjvcV+pOE4AqZz0jV2hI9lDGzZrihP6f3lXgkj00xg+yWJ+5+1R5Tfl5cxJiLKWd
+         S4/y746lQdzTXv3jc3mfqGwZn57XeL2Z1KzV4B1aNKCkuUyaS+rRqVEcldLDdjMX3YVU
+         4nZQ==
+X-Gm-Message-State: APjAAAUsOH+ndmFQIXw9YOb1sy3ROaob0h5mLog9qAHyAJ5gxP87liWn
+        YHEdEiIc/1EHUPSF9S6D/z/kR5Z0O0gyRJX1lM4IIg==
+X-Google-Smtp-Source: APXvYqz7F+G8hUIBCTSQDlIfqajYD26eMP+irgR2HNN6cYO7HU5ebFd0Z1l8yAtbgyOUP1e8ZKinVoWXBdMwtwNc57o6og==
+X-Received: by 2002:a63:d002:: with SMTP id z2mr6770352pgf.364.1562200670093;
+ Wed, 03 Jul 2019 17:37:50 -0700 (PDT)
+Date:   Wed,  3 Jul 2019 17:36:04 -0700
 In-Reply-To: <20190704003615.204860-1-brendanhiggins@google.com>
-Message-Id: <20190704003615.204860-7-brendanhiggins@google.com>
+Message-Id: <20190704003615.204860-8-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20190704003615.204860-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v6 06/18] kbuild: enable building KUnit
+Subject: [PATCH v6 07/18] kunit: test: add initial tests
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
         jpoimboe@redhat.com, keescook@google.com,
@@ -72,41 +72,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KUnit is a new unit testing framework for the kernel and when used is
-built into the kernel as a part of it. Add KUnit to the root Kconfig and
-Makefile to allow it to be actually built.
+Add a test for string stream along with a simpler example.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- Kconfig  | 2 ++
- Makefile | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ kunit/Kconfig              | 21 +++++++++
+ kunit/Makefile             |  4 ++
+ kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
+ kunit/string-stream-test.c | 75 ++++++++++++++++++++++++++++++++
+ 4 files changed, 188 insertions(+)
+ create mode 100644 kunit/example-test.c
+ create mode 100644 kunit/string-stream-test.c
 
-diff --git a/Kconfig b/Kconfig
-index 48a80beab6853..10428501edb78 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -30,3 +30,5 @@ source "crypto/Kconfig"
- source "lib/Kconfig"
+diff --git a/kunit/Kconfig b/kunit/Kconfig
+index 330ae83527c23..8541ef95b65ad 100644
+--- a/kunit/Kconfig
++++ b/kunit/Kconfig
+@@ -14,4 +14,25 @@ config KUNIT
+ 	  architectures. For more information, please see
+ 	  Documentation/dev-tools/kunit/.
  
- source "lib/Kconfig.debug"
++config KUNIT_TEST
++	bool "KUnit test for KUnit"
++	depends on KUNIT
++	help
++	  Enables the unit tests for the KUnit test framework. These tests test
++	  the KUnit test framework itself; the tests are both written using
++	  KUnit and test KUnit. This option should only be enabled for testing
++	  purposes by developers interested in testing that KUnit works as
++	  expected.
 +
-+source "kunit/Kconfig"
-diff --git a/Makefile b/Makefile
-index fabc127d127f9..44e0d730dd5b6 100644
---- a/Makefile
-+++ b/Makefile
-@@ -991,7 +991,7 @@ endif
- PHONY += prepare0
- 
- ifeq ($(KBUILD_EXTMOD),)
--core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
-+core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/ kunit/
- 
- vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
- 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
++config KUNIT_EXAMPLE_TEST
++	bool "Example test for KUnit"
++	depends on KUNIT
++	help
++	  Enables an example unit test that illustrates some of the basic
++	  features of KUnit. This test only exists to help new users understand
++	  what KUnit is and how it is used. Please refer to the example test
++	  itself, kunit/example-test.c, for more information. This option is
++	  intended for curious hackers who would like to understand how to use
++	  KUnit for kernel development.
++
+ endmenu
+diff --git a/kunit/Makefile b/kunit/Makefile
+index 6ddc622ee6b1c..60a9ea6cb4697 100644
+--- a/kunit/Makefile
++++ b/kunit/Makefile
+@@ -1,3 +1,7 @@
+ obj-$(CONFIG_KUNIT) +=			test.o \
+ 					string-stream.o \
+ 					kunit-stream.o
++
++obj-$(CONFIG_KUNIT_TEST) +=		string-stream-test.o
++
++obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	example-test.o
+diff --git a/kunit/example-test.c b/kunit/example-test.c
+new file mode 100644
+index 0000000000000..f64a829aa441f
+--- /dev/null
++++ b/kunit/example-test.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Example KUnit test to show how to use KUnit.
++ *
++ * Copyright (C) 2019, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <kunit/test.h>
++
++/*
++ * This is the most fundamental element of KUnit, the test case. A test case
++ * makes a set EXPECTATIONs and ASSERTIONs about the behavior of some code; if
++ * any expectations or assertions are not met, the test fails; otherwise, the
++ * test passes.
++ *
++ * In KUnit, a test case is just a function with the signature
++ * `void (*)(struct kunit *)`. `struct kunit` is a context object that stores
++ * information about the current test.
++ */
++static void example_simple_test(struct kunit *test)
++{
++	/*
++	 * This is an EXPECTATION; it is how KUnit tests things. When you want
++	 * to test a piece of code, you set some expectations about what the
++	 * code should do. KUnit then runs the test and verifies that the code's
++	 * behavior matched what was expected.
++	 */
++	KUNIT_EXPECT_EQ(test, 1 + 1, 2);
++}
++
++/*
++ * This is run once before each test case, see the comment on
++ * example_test_suite for more information.
++ */
++static int example_test_init(struct kunit *test)
++{
++	kunit_info(test, "initializing\n");
++
++	return 0;
++}
++
++/*
++ * Here we make a list of all the test cases we want to add to the test suite
++ * below.
++ */
++static struct kunit_case example_test_cases[] = {
++	/*
++	 * This is a helper to create a test case object from a test case
++	 * function; its exact function is not important to understand how to
++	 * use KUnit, just know that this is how you associate test cases with a
++	 * test suite.
++	 */
++	KUNIT_CASE(example_simple_test),
++	{}
++};
++
++/*
++ * This defines a suite or grouping of tests.
++ *
++ * Test cases are defined as belonging to the suite by adding them to
++ * `kunit_cases`.
++ *
++ * Often it is desirable to run some function which will set up things which
++ * will be used by every test; this is accomplished with an `init` function
++ * which runs before each test case is invoked. Similarly, an `exit` function
++ * may be specified which runs after every test case and can be used to for
++ * cleanup. For clarity, running tests in a test suite would behave as follows:
++ *
++ * suite.init(test);
++ * suite.test_case[0](test);
++ * suite.exit(test);
++ * suite.init(test);
++ * suite.test_case[1](test);
++ * suite.exit(test);
++ * ...;
++ */
++static struct kunit_suite example_test_suite = {
++	.name = "example",
++	.init = example_test_init,
++	.test_cases = example_test_cases,
++};
++
++/*
++ * This registers the above test suite telling KUnit that this is a suite of
++ * tests that need to be run.
++ */
++kunit_test_suite(example_test_suite);
+diff --git a/kunit/string-stream-test.c b/kunit/string-stream-test.c
+new file mode 100644
+index 0000000000000..b5641b078b8f6
+--- /dev/null
++++ b/kunit/string-stream-test.c
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit test for struct string_stream.
++ *
++ * Copyright (C) 2019, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <linux/slab.h>
++#include <kunit/test.h>
++#include <kunit/string-stream.h>
++
++static void string_stream_test_empty_on_creation(struct kunit *test)
++{
++	struct string_stream *stream = alloc_string_stream(test);
++
++	KUNIT_EXPECT_TRUE(test, string_stream_is_empty(stream));
++}
++
++static void string_stream_test_not_empty_after_add(struct kunit *test)
++{
++	struct string_stream *stream = alloc_string_stream(test);
++
++	string_stream_add(stream, "Foo");
++
++	KUNIT_EXPECT_FALSE(test, string_stream_is_empty(stream));
++}
++static void string_stream_test_get_string(struct kunit *test)
++{
++	struct string_stream *stream = alloc_string_stream(test);
++	char *output;
++
++	string_stream_add(stream, "Foo");
++	string_stream_add(stream, " %s", "bar");
++
++	output = string_stream_get_string(stream);
++	KUNIT_EXPECT_STREQ(test, output, "Foo bar");
++	kfree(output);
++}
++
++static void string_stream_test_add_and_clear(struct kunit *test)
++{
++	struct string_stream *stream = alloc_string_stream(test);
++	char *output;
++	int i;
++
++	for (i = 0; i < 10; i++)
++		string_stream_add(stream, "A");
++
++	output = string_stream_get_string(stream);
++	KUNIT_EXPECT_STREQ(test, output, "AAAAAAAAAA");
++	KUNIT_EXPECT_EQ(test, stream->length, (size_t)10);
++	KUNIT_EXPECT_FALSE(test, string_stream_is_empty(stream));
++	kfree(output);
++
++	string_stream_clear(stream);
++
++	output = string_stream_get_string(stream);
++	KUNIT_EXPECT_STREQ(test, output, "");
++	KUNIT_EXPECT_TRUE(test, string_stream_is_empty(stream));
++}
++
++static struct kunit_case string_stream_test_cases[] = {
++	KUNIT_CASE(string_stream_test_empty_on_creation),
++	KUNIT_CASE(string_stream_test_not_empty_after_add),
++	KUNIT_CASE(string_stream_test_get_string),
++	KUNIT_CASE(string_stream_test_add_and_clear),
++	{}
++};
++
++static struct kunit_suite string_stream_test_suite = {
++	.name = "string-stream-test",
++	.test_cases = string_stream_test_cases
++};
++kunit_test_suite(string_stream_test_suite);
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
