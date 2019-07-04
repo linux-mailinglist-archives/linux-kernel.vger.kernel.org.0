@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9945FB04
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE0E5FB07
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfGDPiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:38:18 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59357 "EHLO
+        id S1727952AbfGDPi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:38:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59374 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfGDPiN (ORCPT
+        with ESMTP id S1727905AbfGDPiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:38:13 -0400
+        Thu, 4 Jul 2019 11:38:16 -0400
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1hj3oG-0004wg-Mu; Thu, 04 Jul 2019 17:38:08 +0200
+        id 1hj3oH-0004wg-0S; Thu, 04 Jul 2019 17:38:09 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH 5/7] watchdog: ie6xx_wdt: Use spinlock_t instead of struct spinlock
-Date:   Thu,  4 Jul 2019 17:38:01 +0200
-Message-Id: <20190704153803.12739-6-bigeasy@linutronix.de>
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, oss-drivers@netronome.com,
+        netdev@vger.kernel.org
+Subject: [PATCH 6/7] nfp: Use spinlock_t instead of struct spinlock
+Date:   Thu,  4 Jul 2019 17:38:02 +0200
+Message-Id: <20190704153803.12739-7-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
 References: <20190704153803.12739-1-bigeasy@linutronix.de>
@@ -41,27 +41,28 @@ spinlock".
 
 Use spinlock_t for spinlock's definition.
 
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: oss-drivers@netronome.com
+Cc: netdev@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/watchdog/ie6xx_wdt.c | 2 +-
+ drivers/net/ethernet/netronome/nfp/nfp_net.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/ie6xx_wdt.c b/drivers/watchdog/ie6xx_wdt.c
-index 508fbefce9f6a..82a8cf61efc2a 100644
---- a/drivers/watchdog/ie6xx_wdt.c
-+++ b/drivers/watchdog/ie6xx_wdt.c
-@@ -66,7 +66,7 @@ MODULE_PARM_DESC(resetmode,
+diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net.h b/drivers/net/ethernet/netronome/nfp/nfp_net.h
+index df9aff2684ed0..4690363fc5421 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net.h
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net.h
+@@ -392,7 +392,7 @@ struct nfp_net_r_vector {
+ 		struct {
+ 			struct tasklet_struct tasklet;
+ 			struct sk_buff_head queue;
+-			struct spinlock lock;
++			spinlock_t lock;
+ 		};
+ 	};
  
- static struct {
- 	unsigned short sch_wdtba;
--	struct spinlock unlock_sequence;
-+	spinlock_t unlock_sequence;
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *debugfs;
- #endif
 -- 
 2.20.1
 
