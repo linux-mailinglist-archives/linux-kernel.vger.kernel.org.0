@@ -2,111 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14D05F9BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 814D15F9AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 16:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfGDOHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 10:07:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53212 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGDOHY (ORCPT
+        id S1727758AbfGDOHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 10:07:16 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43054 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfGDOHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 10:07:24 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so5878935wms.2;
-        Thu, 04 Jul 2019 07:07:23 -0700 (PDT)
+        Thu, 4 Jul 2019 10:07:14 -0400
+Received: by mail-vs1-f67.google.com with SMTP id j26so2026076vsn.10
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 07:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3gBAtjCyB1jrwqmoh6QmCHwkfZISQRiVeu5oDYjwX/Q=;
-        b=ehHn/PYWRVFpRj+83eCrNV/3QBLL2DW7nvMsj9XWw458nYGRvi9s2l2GMvp4Vissyj
-         vvREul25ttaQoHWHd6L4x/K5PWLGWB3LPb3QckaqkaZVeRSTQ/rcEJrTX12E7oAXjlvA
-         b4TmPcl9IpBKeNq1FO7Va+sS0emrK+2/5T9VqsOEhQLvDAz5YecGt791CeeiJ2RTIg4m
-         EivsERRAyLGupGgXyaR7MWmw76Dhc629IozrAZ/z02mAQDHmUbyKeyiLpIeFvUR7tl6B
-         K5xYIdQybCyEefGP1PVGiBlXPbBlLkRrAOqaKyLjyLLi9bpErwfW/pcU0ViGKnmu+gYq
-         XNiQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P90kgH7q9sXvK86t1MZ4NbDsLn806eYSQE5PzlGAARc=;
+        b=j1zYiDtki+YMl3ZvtZfvAuXTVlnDEStPBOtdkF9p0fPM6M7w/NBp1I1IRhHkSlnwyV
+         GNTq9Em5g0gy+EkPxBhdvgbjqiI8YanKTJQqDEHlcKzUkIAUIiHyFJmSJNhES7QrQRX1
+         j+5NDsgt/HY91cb34ryr7d1jgY3YDBZ+d1HElKoIikbOhI4KXWXVdlgP718Ig/4ROk9t
+         iK/9AZib5cCpism8EIWqxizf4z6obLgGkbMtipU8ltVCVXU++1jDeGcvTBBAd7vNF9xm
+         yQGRZsX2IXTLUilJe40E2WELAq4UufVd32hJH5tlAkMWNJGRuS3qM2Xg8ZaRCxL9PYIL
+         oiqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=3gBAtjCyB1jrwqmoh6QmCHwkfZISQRiVeu5oDYjwX/Q=;
-        b=akK55PSkFB6YKQk8RJ/3QkfXhbqml3rjI6dGeeXxq9YghG5JAaLfADumeqhHx6eRgM
-         LB2gm5h6okPXnB4+VJSpHrN9l2vtwO26M1vNvUo3B5nsM09CHjp/gkZeCyZAX7HQfHsw
-         Mc1AbEoM4p5NN1dU6DKOoKqoPi4Pl+hhxPmReTfj1hm2p3O1Aulpw1zIUq7HvaTPzVon
-         5zK8kNW0qJn3je1VG7Mj2D/nMDcGXSW0wHWYOo5sbB9xjbBKBndYeQX3tGnDH87y6N+P
-         zJsg6i9It3vttOrjEzvhbAfzzBbihKfHyDhr3Q6kfZP6yeRQH/nITkxsx6m0q6iXjdX0
-         wUBg==
-X-Gm-Message-State: APjAAAUjnLaQiZfwkZWVIs8Dw/nNHzrGB6QxoGy0EPvUBvZvLnSfPesN
-        KeVYqlpRXOwVzkrJkFH1MA4J0Lm1gfc=
-X-Google-Smtp-Source: APXvYqzA0oGvMnlxC+wQBSZY14og5z8OQCs7HbzUrr6q4tHQOfzS/Sp/SFmYQeUsEo61JH0ZfsheaA==
-X-Received: by 2002:a7b:c774:: with SMTP id x20mr12619743wmk.30.1562249242148;
-        Thu, 04 Jul 2019 07:07:22 -0700 (PDT)
-Received: from donizetti.redhat.com (nat-pool-mxp-u.redhat.com. [149.6.153.187])
-        by smtp.gmail.com with ESMTPSA id n5sm4458060wmi.21.2019.07.04.07.07.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 04 Jul 2019 07:07:21 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     jing2.liu@linux.intel.com
-Subject: [PATCH 5/5] KVM: cpuid: remove has_leaf_count from struct kvm_cpuid_param
-Date:   Thu,  4 Jul 2019 16:07:15 +0200
-Message-Id: <20190704140715.31181-6-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190704140715.31181-1-pbonzini@redhat.com>
-References: <20190704140715.31181-1-pbonzini@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P90kgH7q9sXvK86t1MZ4NbDsLn806eYSQE5PzlGAARc=;
+        b=Cs8dm8fysttLGb7bRBsDoLYvq7sMx3nAQAR+Oz7c30sHOYCb23UVDskpf6YJdINAPo
+         15dg0/JtIXkj/rdbVS2l4sQqFA013BfpYlK45qBMZO/wwE8STcTgfxCItpsHjgm5bIB2
+         biiNCZxpBYCNH2CnWBWL/P5I9VbGigHbwuEtp3l7lg1fLNA2ZFXUM/IJVLfeIvUZ42a4
+         CbfOdaoOyp7Jzg1/2465HOi2MevRtAjDJm0R6CM30hrN0nxef3Q9mZfeb1fovuIIvcYS
+         tBWGf5D6Gjea+orKiNP6AFaIMQzR5dBqn0LQJbcKwsRikGiOcgXDzRTjlzqVKE4FG7iO
+         OEkw==
+X-Gm-Message-State: APjAAAXHToMoHiku3eZWKq3uXEBsGmMWDts0EaQjf7JUXYPofDGvZc2w
+        VbmcAk/NCaCJokj3UT/N/2deVpLo5ighdI00AxiUmQ==
+X-Google-Smtp-Source: APXvYqxEoMd69cp5VHkgPtoEdfoRftzObUi4NGy1EBTWFUhvcqSK1+G87cS5PjbAiMBLFILHt22+c+yDiA4fc0F9Iao=
+X-Received: by 2002:a67:7fd8:: with SMTP id a207mr21712067vsd.85.1562249233840;
+ Thu, 04 Jul 2019 07:07:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190703170150.32548-1-efremov@linux.com>
+In-Reply-To: <20190703170150.32548-1-efremov@linux.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Thu, 4 Jul 2019 15:07:22 +0100
+Message-ID: <CACvgo52N5v07qA_afJfw7vo1X6_Gt4cGqBZn3eBzQtokndjWxA@mail.gmail.com>
+Subject: Re: [PATCH] drm/client: remove the exporting of drm_client_close
+To:     Denis Efremov <efremov@linux.com>
+Cc:     =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The has_leaf_count member was originally added for KVM's paravirtualization
-CPUID leaves.  However, since then the leaf count _has_ been added to those
-leaves as well, so we can drop that special case.
+On Thu, 4 Jul 2019 at 08:27, Denis Efremov <efremov@linux.com> wrote:
+>
+> The function drm_client_close is declared as static and marked as
+> EXPORT_SYMBOL. It's a bit confusing for an internal function to be
+> exported. The area of visibility for such function is its .c file
+> and all other modules. Other *.c files of the same module can't use it,
+> despite all other modules can. Relying on the fact that this is the
+> internal function and it's not a crucial part of the API, the patch
+> removes the EXPORT_SYMBOL marking of drm_client_close.
+>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/cpuid.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+Nice one:
+Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index d403695f2f3b..243613bf5978 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -791,7 +791,6 @@ static int do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 func,
- 
- struct kvm_cpuid_param {
- 	u32 func;
--	bool has_leaf_count;
- 	bool (*qualifier)(const struct kvm_cpuid_param *param);
- };
- 
-@@ -835,11 +834,10 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
- 	int limit, nent = 0, r = -E2BIG, i;
- 	u32 func;
- 	static const struct kvm_cpuid_param param[] = {
--		{ .func = 0, .has_leaf_count = true },
--		{ .func = 0x80000000, .has_leaf_count = true },
--		{ .func = 0xC0000000, .qualifier = is_centaur_cpu, .has_leaf_count = true },
-+		{ .func = 0 },
-+		{ .func = 0x80000000 },
-+		{ .func = 0xC0000000, .qualifier = is_centaur_cpu },
- 		{ .func = KVM_CPUID_SIGNATURE },
--		{ .func = KVM_CPUID_FEATURES },
- 	};
- 
- 	if (cpuid->nent < 1)
-@@ -869,9 +867,6 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
- 		if (r)
- 			goto out_free;
- 
--		if (!ent->has_leaf_count)
--			continue;
--
- 		limit = cpuid_entries[nent - 1].eax;
- 		for (func = ent->func + 1; func <= limit && nent < cpuid->nent && r == 0; ++func)
- 			r = do_cpuid_func(&cpuid_entries[nent], func,
--- 
-2.21.0
+Out of curiosity: Did you use some tool to spot this?
 
+-Emil
