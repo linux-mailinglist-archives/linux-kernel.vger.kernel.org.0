@@ -2,126 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 725E05F41B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 09:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7325F428
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 09:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbfGDHtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 03:49:12 -0400
-Received: from mail-eopbgr60045.outbound.protection.outlook.com ([40.107.6.45]:45390
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        id S1727459AbfGDHxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 03:53:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8140 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725945AbfGDHtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 03:49:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bg3YVZyZix9ibFcYWOAmR1P6Nh6H6haGJXEGrezCKN0=;
- b=MNlvGOO1bE3gwqoiyFfMX5odP8T+TWf78MbA83x0OAD/GJt9aK4yiMkabyBGFRCZ1Wtv4OHc0r4HwAg6lsU+phZs4bX5n99clwnjuGwiMzfMaoQboWr9WzKV0rsyRHrFoy/bzsEU0+ModE6TGHFKOzC1r7FX4uiD3tYO2ipyPfU=
-Received: from DB7PR04MB5051.eurprd04.prod.outlook.com (20.176.234.223) by
- DB7PR04MB4185.eurprd04.prod.outlook.com (52.134.111.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.16; Thu, 4 Jul 2019 07:49:07 +0000
-Received: from DB7PR04MB5051.eurprd04.prod.outlook.com
- ([fe80::6c98:1416:8221:bdfc]) by DB7PR04MB5051.eurprd04.prod.outlook.com
- ([fe80::6c98:1416:8221:bdfc%4]) with mapi id 15.20.2052.010; Thu, 4 Jul 2019
- 07:49:07 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend opp
-Thread-Topic: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend
- opp
-Thread-Index: AQHVMjEDVn995bhE70i5OsdReRFRhA==
-Date:   Thu, 4 Jul 2019 07:49:07 +0000
-Message-ID: <DB7PR04MB50519C02D90675070F21501DEEFA0@DB7PR04MB5051.eurprd04.prod.outlook.com>
-References: <20190704061403.8249-1-Anson.Huang@nxp.com>
- <20190704061403.8249-2-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [82.144.34.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f05be104-3873-4909-9548-08d700541803
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4185;
-x-ms-traffictypediagnostic: DB7PR04MB4185:
-x-microsoft-antispam-prvs: <DB7PR04MB41851512C4255B5A3548A931EEFA0@DB7PR04MB4185.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2399;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(39860400002)(376002)(366004)(396003)(199004)(189003)(33656002)(9686003)(71190400001)(81156014)(81166006)(102836004)(26005)(229853002)(446003)(55016002)(53936002)(6116002)(8936002)(316002)(54906003)(71200400001)(186003)(110136005)(476003)(44832011)(486006)(3846002)(91956017)(6436002)(7416002)(478600001)(68736007)(76116006)(73956011)(6506007)(15650500001)(6246003)(4744005)(7736002)(66946007)(305945005)(64756008)(66446008)(66556008)(66476007)(86362001)(14444005)(256004)(5660300002)(4326008)(2501003)(99286004)(53546011)(52536014)(76176011)(66066001)(74316002)(25786009)(7696005)(14454004)(8676002)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4185;H:DB7PR04MB5051.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PRJDAL7OvTH5whHzKkeF/40C9fZaeEpPHcI9fzXDbyWGVTmzg8YmFbx9mWBlwatAcZFEn9dpR6rdKRucH83HyO0+3kgnGgKWgdA8UThJaaPeLQC46dIcAAxA5wmYxgS/Y7N4sMlXg1h2avH58VK0EA91JNC5ZVIarVFqwCR84jep+WVFoEdU5x+1+9iKgih0U6rpSYtyPRA9SSH2A1H8kwjvGqFDrSgdx81wCfqWUGKbQO4DdR+h5/ngmOMgqQ/AW7k8+pMxXc1sC5LVg5XyjTtrZKTJ9pNVh8M3M6B8980hKuu9HcE93utaqZvKIoy9hCpHEf3tbc6S4sg28Rx1F3ktv6e4ukziKdAHWxjFpU/X2XzjdikA6H9sc8pJyhyOUeBpnxS/2oDiNvdyVXQzuvxq8eUgOIElCuqHotIz4jk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727180AbfGDHxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 03:53:00 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EF7DE4A3A00B8D6F92BC;
+        Thu,  4 Jul 2019 15:52:57 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 4 Jul 2019 15:52:49 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <bhelgaas@google.com>, <lukas@wunner.de>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yaohongbo@huawei.com>, <guohanjun@huawei.com>,
+        <huawei.libin@huawei.com>, <wangxiongfeng2@huawei.com>
+Subject: [RFC PATCH] pciehp: use completion to wait irq_thread 'pciehp_ist'
+Date:   Thu, 4 Jul 2019 15:50:38 +0800
+Message-ID: <1562226638-54134-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f05be104-3873-4909-9548-08d700541803
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 07:49:07.5136
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4185
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/2019 9:23 AM, Anson.Huang@nxp.com wrote:=0A=
-> From: Anson Huang <Anson.Huang@nxp.com>=0A=
-> =0A=
-> Assign highest OPP as suspend OPP to reduce suspend/resume=0A=
-> latency on i.MX8MM.=0A=
-> =0A=
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>=0A=
-> ---=0A=
->   arch/arm64/boot/dts/freescale/imx8mm.dtsi | 1 +=0A=
->   1 file changed, 1 insertion(+)=0A=
-> =0A=
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mm.dtsi=0A=
-> index b11fc5e..3a62407 100644=0A=
-> --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi=0A=
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi=0A=
-> @@ -136,6 +136,7 @@=0A=
->   			opp-microvolt =3D <1000000>;=0A=
->   			opp-supported-hw =3D <0x8>, <0x3>;=0A=
->   			clock-latency-ns =3D <150000>;=0A=
-> +			opp-suspend;=0A=
->   		};=0A=
->   	};=0A=
-=0A=
-What if the highest OPP is unavailable due to speed grading? Ideally we =0A=
-should find a way to suspend at the highest *supported* OPP.=0A=
-=0A=
-Maybe the opp-suspend marking could be assigned from imx-cpufreq-dt =0A=
-driver code?=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
-=0A=
+When I use the following command to power on a slot which has been
+powered off already.
+echo 1 > /sys/bus/pci/slots/22/power
+It prints the following error:
+-bash: echo: write error: No such device
+But the slot is actually powered on and the devices is probed.
+
+In function 'pciehp_sysfs_enable_slot()', we use 'wait_event()' to wait
+until 'ctrl->pending_events' is cleared in 'pciehp_ist()'. But in some
+situation, when 'pciehp_ist()' is woken up on a nearby CPU after
+'pciehp_request' is called, 'ctrl->pending_events' is cleared before we
+go into sleep state. 'wait_event()' will check the condition before
+going into sleep. So we return immediately and '-ENODEV' is return.
+
+This patch use struct completion to wait until irq_thread 'pciehp_ist'
+is completed.
+
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/pci/hotplug/pciehp.h      | 2 +-
+ drivers/pci/hotplug/pciehp_ctrl.c | 8 ++++----
+ drivers/pci/hotplug/pciehp_hpc.c  | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index 8c51a04..f8c3826 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -102,7 +102,7 @@ struct controller {
+ 	struct hotplug_slot hotplug_slot;	/* hotplug core interface */
+ 	struct rw_semaphore reset_lock;
+ 	int request_result;
+-	wait_queue_head_t requester;
++	struct completion requester;
+ };
+ 
+ /**
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index 631ced0..2237793 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -366,9 +366,9 @@ int pciehp_sysfs_enable_slot(struct hotplug_slot *hotplug_slot)
+ 		 * card before the thread wakes up, so initialize to -ENODEV.
+ 		 */
+ 		ctrl->request_result = -ENODEV;
++		reinit_completion(&ctrl->requester);
+ 		pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+-		wait_event(ctrl->requester,
+-			   !atomic_read(&ctrl->pending_events));
++		wait_for_completion(&ctrl->requester);
+ 		return ctrl->request_result;
+ 	case POWERON_STATE:
+ 		ctrl_info(ctrl, "Slot(%s): Already in powering on state\n",
+@@ -399,9 +399,9 @@ int pciehp_sysfs_disable_slot(struct hotplug_slot *hotplug_slot)
+ 	case BLINKINGOFF_STATE:
+ 	case ON_STATE:
+ 		mutex_unlock(&ctrl->state_lock);
++		reinit_completion(&ctrl->requester);
+ 		pciehp_request(ctrl, DISABLE_SLOT);
+-		wait_event(ctrl->requester,
+-			   !atomic_read(&ctrl->pending_events));
++		wait_for_completion(&ctrl->requester);
+ 		return ctrl->request_result;
+ 	case POWEROFF_STATE:
+ 		ctrl_info(ctrl, "Slot(%s): Already in powering off state\n",
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index bd990e3..0a74b48 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -654,7 +654,7 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+ 	up_read(&ctrl->reset_lock);
+ 
+ 	pci_config_pm_runtime_put(pdev);
+-	wake_up(&ctrl->requester);
++	complete(&ctrl->requester);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -862,7 +862,7 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 	mutex_init(&ctrl->ctrl_lock);
+ 	mutex_init(&ctrl->state_lock);
+ 	init_rwsem(&ctrl->reset_lock);
+-	init_waitqueue_head(&ctrl->requester);
++	init_completion(&ctrl->requester);
+ 	init_waitqueue_head(&ctrl->queue);
+ 	INIT_DELAYED_WORK(&ctrl->button_work, pciehp_queue_pushbutton_work);
+ 	dbg_ctrl(ctrl);
+-- 
+1.7.12.4
+
