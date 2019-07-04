@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CF75F76F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54305F77A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 13:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfGDLta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 07:49:30 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39404 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfGDLt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:49:29 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so988537otq.6;
-        Thu, 04 Jul 2019 04:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9xEWPejmpIWFTbFjzce4Zj6zywXXGW0Iij2wHk7f11M=;
-        b=uh9kGeqNrjP7WCSq9SDyONqUKFZX/kAOgxMYZ8PX/EbIQiL+h3mj6KI4JZwsL3WfFA
-         QXfn5zlXvoGgKo76X6Pht2K7QOsG9XgFaz7qnEK1uJ9SNt3PeLzYuYHWKWa6Q7VBaw1u
-         iA93PWh409iVdkBWQxMFlgD830zq4V4k5EN1vp3Sg/HmZJ77+iAckCLfmFFpLaFpICUr
-         3PWTq2DdIWO5C+5fNriHuemqAslZhpjJgsTC6p77KI4x+0pZy8p97gRDYEzFFGHGoLRN
-         MS4wZ5tNq5/WcCIp8N5A0qMvT3v/Bc5VTY6/0DrvehD0qRiAnIrwOmE2XOZ/gveFUbrh
-         onTg==
-X-Gm-Message-State: APjAAAUYb3Grsqjzyz15+cN4aDe7aaiDTGANAiZNKnUb6/brcIyBVJEl
-        mcwRRsPqqkD6CJwSmIHrJWUcIX2TATPvZKWIjYE=
-X-Google-Smtp-Source: APXvYqw/cs2Mt3Js4W2qPvntgiHP6KeISngqlC9yO6L5/qIpIQNg08AZWAXxjh+pIOjaAyKDfibVyqFd7YYIVFmaJGE=
-X-Received: by 2002:a9d:704f:: with SMTP id x15mr13052250otj.297.1562240968938;
- Thu, 04 Jul 2019 04:49:28 -0700 (PDT)
+        id S1727626AbfGDLvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 07:51:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36574 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbfGDLvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 07:51:43 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B854307D85E;
+        Thu,  4 Jul 2019 11:51:43 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-222.ams2.redhat.com [10.36.116.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 13A5A5B2D9;
+        Thu,  4 Jul 2019 11:51:43 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id D51AE11AB8; Thu,  4 Jul 2019 13:51:38 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 13:51:38 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Chia-I Wu <olvaffe@gmail.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 15/18] drm/virtio: rework
+ virtio_gpu_transfer_to_host_ioctl fencing
+Message-ID: <20190704115138.ou77sb3rlrex67tj@sirius.home.kraxel.org>
+References: <20190702141903.1131-1-kraxel@redhat.com>
+ <20190702141903.1131-16-kraxel@redhat.com>
+ <CAPaKu7S0n=E7g0o2e6fEk1YjP+u=tsoV8upw7J=noSx88PgP+A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190704113800.3299636-1-arnd@arndb.de>
-In-Reply-To: <20190704113800.3299636-1-arnd@arndb.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 4 Jul 2019 13:49:17 +0200
-Message-ID: <CAMuHMdXFkF_940-sKCZrx3KxgJU4wA-ezb_gfgHL9J-G1y4mVA@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: gyroadc: fix uninitialized return code
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPaKu7S0n=E7g0o2e6fEk1YjP+u=tsoV8upw7J=noSx88PgP+A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 04 Jul 2019 11:51:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+  Hi,
 
-On Thu, Jul 4, 2019 at 1:38 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> gcc-9 complains about a blatant uninitialized variable use that
-> all earlier compiler versions missed:
->
-> drivers/iio/adc/rcar-gyroadc.c:510:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >         convert_to_hw_box(&box, &args->box);
+> >         if (!vgdev->has_virgl_3d) {
+> >                 virtio_gpu_cmd_transfer_to_host_2d
+> > -                       (vgdev, qobj, offset,
+> > +                       (vgdev, gem_to_virtio_gpu_obj(objs->objs[0]), offset,
+> >                          box.w, box.h, box.x, box.y, NULL);
+> > +               virtio_gpu_array_put_free(objs);
+> Don't we need this in non-3D case as well?
 
-Actually gcc-4.1 warned about that one too ;-)
+No, ...
 
-So either I must have missed that warning when it appeared first,
-or I must have concluded wrongly that it was a false positive.
-Sorry for that...
+> >                 virtio_gpu_cmd_transfer_to_host_3d
+> > -                       (vgdev, qobj,
+> > +                       (vgdev,
+> >                          vfpriv ? vfpriv->ctx_id : 0, offset,
+> > -                        args->level, &box, fence);
+> > -               reservation_object_add_excl_fence(qobj->base.base.resv,
+> > -                                                 &fence->f);
+> > +                        args->level, &box, objs, fence);
 
-> Return -EINVAL instead here.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 059c53b32329 ("iio: adc: Add Renesas GyroADC driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+... 3d case passes the objs list to virtio_gpu_cmd_transfer_to_host_3d,
+so it gets added to the vbuf and released when the command is finished.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+cheers,
+  Gerd
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
