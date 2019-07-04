@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C55C5FBE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C305FBCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfGDQfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:35:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59709 "EHLO
+        id S1727503AbfGDQeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:34:19 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59720 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfGDQeI (ORCPT
+        with ESMTP id S1727400AbfGDQeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:34:08 -0400
+        Thu, 4 Jul 2019 12:34:09 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hj4gQ-0005gl-A1; Thu, 04 Jul 2019 18:34:06 +0200
-Message-Id: <20190704155609.942434688@linutronix.de>
+        id 1hj4gQ-0005gz-W4; Thu, 04 Jul 2019 18:34:07 +0200
+Message-Id: <20190704155610.049832295@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Thu, 04 Jul 2019 17:52:02 +0200
+Date:   Thu, 04 Jul 2019 17:52:03 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch V2 17/25] x86/apic: Add static key to Control IPI shorthands
+Subject: [patch V2 18/25] x86/apic: Provide and use helper for
+ send_IPI_allbutself()
 References: <20190704155145.617706117@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -34,113 +35,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IPI shorthand functionality delivers IPI/NMI broadcasts to all CPUs in
-the system. This can have similar side effects as the MCE broadcasting when
-CPUs are waiting in the BIOS or are offlined.
+To support IPI shorthands wrap invocations of apic->send_IPI_allbutself()
+in a helper function, so the static key controlling the shorthand mode is
+only in one place.
 
-The kernel tracks already the state of offlined CPUs whether they have been
-brought up at least once so that the CR4 MCE bit is set to make sure that
-MCE broadcasts can't brick the machine.
-
-Utilize that information and compare it to the cpu_present_mask. If all
-present CPUs have been brought up at least once then the broadcast side
-effect is mitigated by disabling regular interrupt/IPI delivery in the APIC
-itself and by the cpu_ignore_nmi check at the begin of the NMI handler.
-
-Use a static key to switch between broadcasting via shorthands or sending
-the IPI/NMI one by one.
+Fixup all callers.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/include/asm/apic.h  |    2 ++
- arch/x86/kernel/apic/ipi.c   |   24 +++++++++++++++++++++++-
- arch/x86/kernel/apic/local.h |    6 ++++++
- arch/x86/kernel/cpu/common.c |    2 ++
- 4 files changed, 33 insertions(+), 1 deletion(-)
+V2: New patch
+---
+ arch/x86/include/asm/apic.h |    2 ++
+ arch/x86/kernel/apic/ipi.c  |   12 ++++++++++++
+ arch/x86/kernel/kgdb.c      |    2 +-
+ arch/x86/kernel/reboot.c    |    7 +------
+ arch/x86/kernel/smp.c       |    4 ++--
+ 5 files changed, 18 insertions(+), 9 deletions(-)
 
 --- a/arch/x86/include/asm/apic.h
 +++ b/arch/x86/include/asm/apic.h
-@@ -506,8 +506,10 @@ extern int default_check_phys_apicid_pre
+@@ -177,6 +177,8 @@ extern void lapic_assign_legacy_vector(u
+ extern void lapic_online(void);
+ extern void lapic_offline(void);
  
- #ifdef CONFIG_SMP
- bool apic_id_is_primary_thread(unsigned int id);
-+void apic_smt_update(void);
- #else
- static inline bool apic_id_is_primary_thread(unsigned int id) { return false; }
-+static inline void apic_smt_update(void) { }
- #endif
- 
- extern void irq_enter(void);
++extern void apic_send_IPI_allbutself(unsigned int vector);
++
+ #else /* !CONFIG_X86_LOCAL_APIC */
+ static inline void lapic_shutdown(void) { }
+ #define local_apic_timer_c2_ok		1
 --- a/arch/x86/kernel/apic/ipi.c
 +++ b/arch/x86/kernel/apic/ipi.c
-@@ -5,6 +5,8 @@
- 
- #include "local.h"
- 
-+DEFINE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
-+
- #ifdef CONFIG_SMP
- #ifdef CONFIG_HOTPLUG_CPU
- #define DEFAULT_SEND_IPI	(1)
-@@ -28,7 +30,27 @@ static int __init print_ipi_mode(void)
- 	return 0;
+@@ -50,6 +50,18 @@ void apic_smt_update(void)
+ 		static_branch_enable(&apic_use_ipi_shorthand);
+ 	}
  }
- late_initcall(print_ipi_mode);
--#endif
 +
-+void apic_smt_update(void)
++void apic_send_IPI_allbutself(unsigned int vector)
 +{
-+	/*
-+	 * Do not switch to broadcast mode if:
-+	 * - Disabled on the command line
-+	 * - Only a single CPU is online
-+	 * - Not all present CPUs have been at least booted once
-+	 *
-+	 * The latter is important as the local APIC might be in some
-+	 * random state and a broadcast might cause havoc. That's
-+	 * especially true for NMI broadcasting.
-+	 */
-+	if (apic_ipi_shorthand_off || num_online_cpus() == 1 ||
-+	    !cpumask_equal(cpu_present_mask, &cpus_booted_once_mask)) {
-+		static_branch_disable(&apic_use_ipi_shorthand);
-+	} else {
-+		static_branch_enable(&apic_use_ipi_shorthand);
-+	}
++	if (num_online_cpus() < 2)
++		return;
++
++	if (static_branch_likely(&apic_use_ipi_shorthand))
++		apic->send_IPI_allbutself(vector);
++	else
++		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
 +}
-+#endif /* CONFIG_SMP */
++
+ #endif /* CONFIG_SMP */
  
  static inline int __prepare_ICR2(unsigned int mask)
- {
---- a/arch/x86/kernel/apic/local.h
-+++ b/arch/x86/kernel/apic/local.h
-@@ -7,6 +7,9 @@
-  * (c) 1998-99, 2000 Ingo Molnar <mingo@redhat.com>
-  * (c) 2002,2003 Andi Kleen, SuSE Labs.
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -424,7 +424,7 @@ static void kgdb_disable_hw_debug(struct
   */
-+
-+#include <linux/jump_label.h>
-+
- #include <asm/apic.h>
- 
- /* APIC flat 64 */
-@@ -22,6 +25,9 @@ int x2apic_phys_pkg_id(int initial_apici
- void x2apic_send_IPI_self(int vector);
- 
- /* IPI */
-+
-+DECLARE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
-+
- static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
- 					 unsigned int dest)
+ void kgdb_roundup_cpus(void)
  {
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1888,4 +1888,6 @@ void arch_smt_update(void)
- {
- 	/* Handle the speculative execution misfeatures */
- 	cpu_bugs_smt_update();
-+	/* Check whether IPI broadcasting can be enabled */
-+	apic_smt_update();
+-	apic->send_IPI_allbutself(VECTOR_NMI);
++	apic_send_IPI_allbutself(VECTOR_NMI);
  }
+ #endif
+ 
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -828,11 +828,6 @@ static int crash_nmi_callback(unsigned i
+ 	return NMI_HANDLED;
+ }
+ 
+-static void smp_send_nmi_allbutself(void)
+-{
+-	apic->send_IPI_allbutself(NMI_VECTOR);
+-}
+-
+ /*
+  * Halt all other CPUs, calling the specified function on each of them
+  *
+@@ -861,7 +856,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb
+ 	 */
+ 	wmb();
+ 
+-	smp_send_nmi_allbutself();
++	apic_send_IPI_allbutself(NMI_VECTOR);
+ 
+ 	/* Kick CPUs looping in NMI context. */
+ 	WRITE_ONCE(crash_ipi_issued, 1);
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -209,7 +209,7 @@ static void native_stop_other_cpus(int w
+ 		/* sync above data before sending IRQ */
+ 		wmb();
+ 
+-		apic->send_IPI_allbutself(REBOOT_VECTOR);
++		apic_send_IPI_allbutself(REBOOT_VECTOR);
+ 
+ 		/*
+ 		 * Don't wait longer than a second if the caller
+@@ -233,7 +233,7 @@ static void native_stop_other_cpus(int w
+ 
+ 		pr_emerg("Shutting down cpus with NMI\n");
+ 
+-		apic->send_IPI_allbutself(NMI_VECTOR);
++		apic_send_IPI_allbutself(NMI_VECTOR);
+ 
+ 		/*
+ 		 * Don't wait longer than a 10 ms if the caller
 
 
