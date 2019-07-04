@@ -2,109 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5390B5F84F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7AB35F852
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 14:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfGDMjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 08:39:21 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51012 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbfGDMjU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 08:39:20 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 3C0E028A758
-Message-ID: <6b8d2c435335a81d362d18f23bc4229601b2f512.camel@collabora.com>
-Subject: Re: [PATCH v2 1/2] media: uapi: Add VP8 stateless decoder API
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     kernel@collabora.com,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        fbuergisser@chromium.org, linux-kernel@vger.kernel.org,
-        Pawel Osciak <posciak@chromium.org>
-Date:   Thu, 04 Jul 2019 09:39:10 -0300
-In-Reply-To: <1562164149.4604.9.camel@pengutronix.de>
-References: <20190702170016.5210-1-ezequiel@collabora.com>
-         <20190702170016.5210-2-ezequiel@collabora.com>
-         <1562164149.4604.9.camel@pengutronix.de>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1727786AbfGDMkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 08:40:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727602AbfGDMkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 08:40:10 -0400
+Received: from localhost (unknown [89.205.128.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8648B2082E;
+        Thu,  4 Jul 2019 12:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562244009;
+        bh=Dg6E6spylfkSYzp+dH8xuoGlslv5RTNRs4e7ma6/gxM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kHWoi76spS7D37Em1G1Ol+M/BRzeEKM7UHA3Qx+3I87kXPq9Do7fwcyFYUX1Tl6ic
+         foyeb46xwkST0KD0RxCU587FOWHx5EigV3hKMUGpqkopLOyno+LAueEo3Q7WvfSUPu
+         qUakIsWHxbOS3VZgyHlDNMP6ott3OWjahW0V4aWk=
+Date:   Thu, 4 Jul 2019 14:40:05 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Jul 4
+Message-ID: <20190704124005.GA6733@kroah.com>
+References: <20190704220945.27728dd9@canb.auug.org.au>
+ <20190704222450.021c9d71@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704222450.021c9d71@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
-
-Thanks a lot for reviewing.
-
-On Wed, 2019-07-03 at 16:29 +0200, Philipp Zabel wrote:
-> On Tue, 2019-07-02 at 14:00 -0300, Ezequiel Garcia wrote:
-> > From: Pawel Osciak <posciak@chromium.org>
-> > 
-> > Add the parsed VP8 frame pixel format and controls, to be used
-> > with the new stateless decoder API for VP8 to provide parameters
-> > for accelerator (aka stateless) codecs.
-> > 
-> > Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> > Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> > --
-> > Changes from v1:
-> > * Move 1-bit fields to flags in the respective structures.
-> > * Add padding fields to make all structures 8-byte aligned.
-> > * Reorder fields where needed to avoid padding as much as possible.
-> > * Fix documentation as needed.
-> > 
-> > Changes from RFC:
-> > * Make sure the uAPI has the same size on x86, x86_64, arm and arm64.
-> > * Move entropy coder state fields to a struct.
-> > * Move key_frame field to the flags.
-> > * Remove unneeded first_part_offset field.
-> > * Add documentation.
-> > ---
-> >  Documentation/media/uapi/v4l/biblio.rst       |  10 +
-> >  .../media/uapi/v4l/ext-ctrls-codec.rst        | 323 ++++++++++++++++++
-> >  .../media/uapi/v4l/pixfmt-compressed.rst      |  20 ++
-> >  drivers/media/v4l2-core/v4l2-ctrls.c          |   8 +
-> >  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
-> >  include/media/v4l2-ctrls.h                    |   3 +
-> >  include/media/vp8-ctrls.h                     | 110 ++++++
-> >  7 files changed, 475 insertions(+)
-> >  create mode 100644 include/media/vp8-ctrls.h
-> > 
-[..]
-> > +    * - __u8
-> > +      - ``num_dct_parts``
-> > +      - Number of DCT coefficients partitions.
+On Thu, Jul 04, 2019 at 10:24:50PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> I assume this must be no larger than 8. Is this mandated by the spec? If
-> so, should it be documented here and checked by v4l2-core?
+> This release produces a whole lot (over 200) of this message in my qemu
+> boot tests:
 > 
+> [    1.698497] debugfs: File 'sched' already present!
+> 
+> Introduced by commit
+> 
+>   43e23b6c0b01 ("debugfs: log errors when something goes wrong")
+> 
+> from the driver-core tree.  I assume that the error(?) was already
+> happening, but it is now being reported.
 
-Good catch.
+Ugh.
 
-Yes, it's mandated. The header [1] contains a two-bit field
-called "log2_nbr_of_dct_partitions", so partition count must
-be 1, 2, 4 or 8.
-  
-[1] https://www.rfc-editor.org/rfc/rfc6386.html#section-9.5
+Looks like it's one of the block scheduler, and it seems to be creating
+that directory in the root of debugfs, not in a subdir like it is trying
+to do so.  Odd, let me look into it some more.
 
-I'll add this to the documentation.
+Oh, and I guess we might want to move this down to a 'dev_dbg' message,
+although this is showing that there is a problem here, so it did succeed
+:)
 
-Also, I think this can be checked in std_validate().
+thanks,
 
-Thanks,
-Ezequiel
-
+greg k-h
