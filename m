@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC0DF5F295
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F361E5F291
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfGDGIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:08:24 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34572 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfGDGIW (ORCPT
+        id S1727398AbfGDGI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:08:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46291 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbfGDGIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:08:22 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p17so4938139ljg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:08:21 -0700 (PDT)
+        Thu, 4 Jul 2019 02:08:23 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v24so4881514ljg.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zBhlBYpTN4I+Zp3YmG9RRV1m1SjWxog8Cy7vjAlL+k4=;
-        b=xqZPpE+PwgVA2s54GRPeMXBj0Un5a7zwD9U9yhlxaRiHZ4cW2L+ecAEfyhbaqKd9cE
-         E2DZrQSuCJ11SbBLxYR656cPgbZbDh4U+2i02YKZHPwfx8TBfkZlR1BYqAKIoVcF5dlB
-         oRsFcN0v3VJH2aOOhW3K56vk81mOTmYiz/plNpbSLnlkg4IFFL6HvzbJ3qg8j5wndkVC
-         H0DiJtG+vRHzouYWJY+Qc7p1utZgrlhKNhsXw1+36ztEOUi3h/dFdHZCUsalAjbTIfPh
-         o2GOItYjSQ7+f73xDnRuVpJyVi+guPIx9OC1EfJsNZjnd3Af/Qs0fP2GxBap75A3Vydb
-         kBJA==
+        bh=JBbOD4rj/6MTcJXlkxHvsQxP2TTle1/H3CMZv+6B/V4=;
+        b=Lgc0eqQT/R1b7aB33G0Mii0j7RL/EyMCalrdd4T10q3Jjz5O09wz4zBWC98iXtsiop
+         EchLcnoTN51L/4mAn4u6U946gxTkqRcbtCDb77/uqaUklg0Gj5UGoi2XVEyEeMePmKgn
+         W6o2kyY2vWziIvF1tyT2ONHLwEjhmCI/MKTf6cVumE3fXcylTQR0pvzQrlXhXRwuLLwn
+         3zYkmfvRFsZEbb9aJkUvwEgPBMsDqBjyyJBKnP0LYcH8v3xGTEz4hVY7QYbYLnzUrL9W
+         EfxVPI2R8Jrg6EMOt5lICmMBVnTW+r3KOBN8pHNt1m0Moci5yWYNqVc3jAPpmnEJtwaM
+         wdZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zBhlBYpTN4I+Zp3YmG9RRV1m1SjWxog8Cy7vjAlL+k4=;
-        b=jc1gWj4wZr8pB6fiEXnifdhjNEl4g2t4P7NWBmINmM5oaAZSNWXLfHMZPyOrrPSe9G
-         P84u88/ABACS9sGx/BrSpAsbidEr6oeB5eBvF7WRqL9aF/y6JXPSw/oKO6HVwO2hC/oY
-         /ESWLeFdNgVoo5LxMXPOaTZ/7FMBIVFvAJ2pEp8nHzBX+2GvLpVOvQHc/V7WLTbRUHZn
-         /l+2ExP+IAiePk+XGCmx8fh79D9W37IqnMcNK20KB4Oa5E9qTJecnHpKpINAZZXLEf85
-         eHdevZba+UdvJ7klw2yr3d08in3e4hBPqdrgtuC9g0k62pQXolNFQJEi2mq88yh8+LiB
-         UTpw==
-X-Gm-Message-State: APjAAAVq32RBSsxTekJ79qnuEeuR8EuhAX3nqLNpnZzAowLztFn/Cew7
-        /AX88WYAaAv8DLEMqbwIg7hRLw==
-X-Google-Smtp-Source: APXvYqxZ3nyZdjoAqnMLe04pmS3a9XQUtOLE6Disa0hnxUovsvE+54ynCmtEZncGBwJ1UJBA8pLZeQ==
-X-Received: by 2002:a2e:8007:: with SMTP id j7mr8791384ljg.191.1562220500948;
-        Wed, 03 Jul 2019 23:08:20 -0700 (PDT)
+        bh=JBbOD4rj/6MTcJXlkxHvsQxP2TTle1/H3CMZv+6B/V4=;
+        b=R7s9GCmCTyr8Ykw+EW3BvhW4mevYKbUcbwywnayeh4wBdU+h+e1H/kiYEgjB427OGH
+         TFEYa3BgvZadG/W05BBrdTtr5HB6QvGXHQRUL76eHlWQPK6yigeuwqSurgwguM4G5bRF
+         txlnNgl2pTHiSjQPyHkx2Ji169NmNxLPbtxWIhCCE/R0Ac8LLnXvp8rLwjXDRCQaJHcm
+         xBYs6sUdaFvJKeddCtk2tevwTLAa5SuSlAIgxUF/VY0MCrKa9oah1SSzHt1Uqr+ZyqOQ
+         Fgg6HkbipSJAx3UyCo7E0D+Zm/LjNMMbpCI5N6fP7osMs5S3xBdfLOoZ9nBVKjOAestu
+         x3JQ==
+X-Gm-Message-State: APjAAAVHdMWLV+VClri3S19pgiDpF9bngqzqXmh37Gy9JG2dHDIOxxFN
+        Mycts4svPT/XsCoDTDnJITLS4KPAZHji4Q==
+X-Google-Smtp-Source: APXvYqzZ6BCDAqrYU1giJPNAZ8lJa99B9+Frb2uYcMzIN2R0XBOUIf9/8i9L44wd6Hw6HZ6yfzXASQ==
+X-Received: by 2002:a2e:4e12:: with SMTP id c18mr23606824ljb.211.1562220501712;
+        Wed, 03 Jul 2019 23:08:21 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
         by smtp.gmail.com with ESMTPSA id b4sm710440lfp.33.2019.07.03.23.08.20
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 23:08:20 -0700 (PDT)
+        Wed, 03 Jul 2019 23:08:21 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     gneukum1@gmail.com, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-Subject: [PATCH 2/3] staging: kpc2000: simplify comparison to NULL in dma.c
-Date:   Thu,  4 Jul 2019 08:08:10 +0200
-Message-Id: <20190704060811.10330-3-simon@nikanor.nu>
+Subject: [PATCH 3/3] staging: kpc2000: simplify comparison to NULL in fileops.c
+Date:   Thu,  4 Jul 2019 08:08:11 +0200
+Message-Id: <20190704060811.10330-4-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190704060811.10330-1-simon@nikanor.nu>
 References: <20190704060811.10330-1-simon@nikanor.nu>
@@ -68,31 +68,22 @@ Fixes checkpatch warning "Comparison to NULL could be written [...]".
 
 Signed-off-by: Simon Sandström <simon@nikanor.nu>
 ---
- drivers/staging/kpc2000/kpc_dma/dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/kpc2000/kpc_dma/fileops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/dma.c b/drivers/staging/kpc2000/kpc_dma/dma.c
-index 8092d0cf4a4a..51a4dd534a0d 100644
---- a/drivers/staging/kpc2000/kpc_dma/dma.c
-+++ b/drivers/staging/kpc2000/kpc_dma/dma.c
-@@ -119,7 +119,7 @@ int  setup_dma_engine(struct kpc_dma_device *eng, u32 desc_cnt)
- 	cur = eng->desc_pool_first;
- 	for (i = 1 ; i < eng->desc_pool_cnt ; i++) {
- 		next = dma_pool_alloc(eng->desc_pool, GFP_KERNEL | GFP_DMA, &next_handle);
--		if (next == NULL)
-+		if (!next)
- 			goto done_alloc;
+diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
+index 7feb2fde0db2..48ca88bc6b0b 100644
+--- a/drivers/staging/kpc2000/kpc_dma/fileops.c
++++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
+@@ -247,7 +247,7 @@ int  kpc_dma_open(struct inode *inode, struct file *filp)
+ 	struct dev_private_data *priv;
+ 	struct kpc_dma_device *ldev = kpc_dma_lookup_device(iminor(inode));
  
- 		clear_desc(next);
-@@ -245,7 +245,7 @@ int  count_descriptors_available(struct kpc_dma_device *eng)
+-	if (ldev == NULL)
++	if (!ldev)
+ 		return -ENODEV;
  
- void  clear_desc(struct kpc_dma_descriptor *desc)
- {
--	if (desc == NULL)
-+	if (!desc)
- 		return;
- 	desc->DescByteCount         = 0;
- 	desc->DescStatusErrorFlags  = 0;
+ 	if (!atomic_dec_and_test(&ldev->open_count)) {
 -- 
 2.20.1
 
