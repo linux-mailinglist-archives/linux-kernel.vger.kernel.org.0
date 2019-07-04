@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BCCB5FBCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B44D5FBE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfGDQeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:34:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59672 "EHLO
+        id S1727252AbfGDQfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:35:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59678 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbfGDQeG (ORCPT
+        with ESMTP id S1727363AbfGDQeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:34:06 -0400
+        Thu, 4 Jul 2019 12:34:05 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hj4gN-0005g8-AL; Thu, 04 Jul 2019 18:34:03 +0200
-Message-Id: <20190704155609.543745186@linutronix.de>
+        id 1hj4gO-0005gH-16; Thu, 04 Jul 2019 18:34:04 +0200
+Message-Id: <20190704155609.652485496@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Thu, 04 Jul 2019 17:51:58 +0200
+Date:   Thu, 04 Jul 2019 17:51:59 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>
-Subject: [patch V2 13/25] x86/hotplug: Silence APIC and NMI when CPU is dead
+Subject: [patch V2 14/25] x86/apic: Remove dest argument from
+ __default_send_IPI_shortcut()
 References: <20190704155145.617706117@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -34,166 +35,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support IPI/NMI broadcasting via the shorthand mechanism side
-effects of shorthands need to be mitigated:
+The SDM states:
 
- Shorthand IPIs and NMIs hit all CPUs including unplugged CPUs
+  "The destination shorthand field of the ICR allows the delivery mode to be
+   by-passed in favor of broadcasting the IPI to all the processors on the
+   system bus and/or back to itself (see Section 10.6.1, Interrupt Command
+   Register (ICR)). Three destination shorthands are supported: self, all
+   excluding self, and all including self. The destination mode is ignored
+   when a destination shorthand is used."
 
-Neither of those can be handled on unplugged CPUs for obvious reasons.
-
-It would be trivial to just fully disable the APIC via the enable bit in
-MSR_APICBASE. But that's not possible because clearing that bit on systems
-based on the 3 wire APIC bus would require a hardware reset to bring it
-back as the APIC would lose track of bus arbitration. On systems with FSB
-delivery APICBASE could be disabled, but it has to be guaranteed that no
-interrupt is sent to the APIC while in that state and it's not clear from
-the SDM whether it still responds to INIT/SIPI messages.
-
-Therefore stay on the safe side and switch the APIC into soft disabled mode
-so it won't deliver any regular vector to the CPU.
-
-NMIs are still propagated to the 'dead' CPUs. To mitigate that add a per
-cpu variable which tells the NMI handler to ignore NMIs. Note, this cannot
-use the stop/restart_nmi() magic which is used in the alternatives code. A
-dead CPU cannot invoke nmi_enter() or anything else due to RCU and other
-reasons.
+So there is no point to supply the destination mode to the shorthand
+delivery function.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/include/asm/apic.h      |    1 +
- arch/x86/include/asm/processor.h |    2 ++
- arch/x86/kernel/apic/apic.c      |   35 ++++++++++++++++++++++++-----------
- arch/x86/kernel/nmi.c            |    3 +++
- arch/x86/kernel/smpboot.c        |   13 ++++++++++++-
- 5 files changed, 42 insertions(+), 12 deletions(-)
+ arch/x86/kernel/apic/apic_flat_64.c |    6 ++----
+ arch/x86/kernel/apic/ipi.c          |   15 +++++++--------
+ arch/x86/kernel/apic/local.h        |    2 +-
+ arch/x86/kernel/apic/probe_64.c     |    2 +-
+ 4 files changed, 11 insertions(+), 14 deletions(-)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -136,6 +136,7 @@ extern int lapic_get_maxlvt(void);
- extern void clear_local_APIC(void);
- extern void disconnect_bsp_APIC(int virt_wire_setup);
- extern void disable_local_APIC(void);
-+extern void apic_soft_disable(void);
- extern void lapic_shutdown(void);
- extern void sync_Arb_IDs(void);
- extern void init_bsp_APIC(void);
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -425,6 +425,8 @@ DECLARE_PER_CPU_ALIGNED(struct stack_can
- DECLARE_PER_CPU(struct irq_stack *, softirq_stack_ptr);
- #endif	/* X86_64 */
- 
-+DECLARE_PER_CPU(bool, cpu_ignore_nmi);
-+
- extern unsigned int fpu_kernel_xstate_size;
- extern unsigned int fpu_user_xstate_size;
- 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1155,25 +1155,38 @@ void clear_local_APIC(void)
+--- a/arch/x86/kernel/apic/apic_flat_64.c
++++ b/arch/x86/kernel/apic/apic_flat_64.c
+@@ -90,8 +90,7 @@ static void flat_send_IPI_allbutself(int
+ 			_flat_send_IPI_mask(mask, vector);
+ 		}
+ 	} else if (num_online_cpus() > 1) {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLBUT,
+-					    vector, apic->dest_logical);
++		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
+ 	}
  }
  
- /**
-- * disable_local_APIC - clear and disable the local APIC
-+ * apic_soft_disable - Clears and software disables the local APIC on hotplug
-+ *
-+ * Contrary to disable_local_APIC() this does not touch the enable bit in
-+ * MSR_IA32_APICBASE. Clearing that bit on systems based on the 3 wire APIC
-+ * bus would require a hardware reset as the APIC would lose track of bus
-+ * arbitration. On systems with FSB delivery APICBASE could be disabled,
-+ * but it has to be guaranteed that no interrupt is sent to the APIC while
-+ * in that state and it's not clear from the SDM whether it still responds
-+ * to INIT/SIPI messages. Stay on the safe side and use software disable.
-  */
--void disable_local_APIC(void)
-+void apic_soft_disable(void)
+@@ -100,8 +99,7 @@ static void flat_send_IPI_all(int vector
+ 	if (vector == NMI_VECTOR) {
+ 		flat_send_IPI_mask(cpu_online_mask, vector);
+ 	} else {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLINC,
+-					    vector, apic->dest_logical);
++		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
+ 	}
+ }
+ 
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -16,7 +16,7 @@ static inline void __xapic_wait_icr_idle
+ 		cpu_relax();
+ }
+ 
+-void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest)
++void __default_send_IPI_shortcut(unsigned int shortcut, int vector)
  {
--	unsigned int value;
--
--	/* APIC hasn't been mapped yet */
--	if (!x2apic_mode && !apic_phys)
--		return;
-+	u32 value;
- 
- 	clear_local_APIC();
- 
--	/*
--	 * Disable APIC (implies clearing of registers
--	 * for 82489DX!).
--	 */
-+	/* Soft disable APIC (implies clearing of registers for 82489DX!). */
- 	value = apic_read(APIC_SPIV);
- 	value &= ~APIC_SPIV_APIC_ENABLED;
- 	apic_write(APIC_SPIV, value);
-+}
-+
-+/**
-+ * disable_local_APIC - clear and disable the local APIC
-+ */
-+void disable_local_APIC(void)
-+{
-+	/* APIC hasn't been mapped yet */
-+	if (!x2apic_mode && !apic_phys)
-+		return;
-+
-+	apic_soft_disable();
- 
- #ifdef CONFIG_X86_32
  	/*
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -512,6 +512,9 @@ NOKPROBE_SYMBOL(is_debug_stack);
- dotraplinkage notrace void
- do_nmi(struct pt_regs *regs, long error_code)
- {
-+	if (IS_ENABLED(CONFIG_SMP) && this_cpu_read(cpu_ignore_nmi))
-+		return;
-+
- 	if (this_cpu_read(nmi_state) != NMI_NOT_RUNNING) {
- 		this_cpu_write(nmi_state, NMI_LATCHED);
- 		return;
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -81,6 +81,9 @@
- #include <asm/spec-ctrl.h>
- #include <asm/hw_irq.h>
+ 	 * Subtle. In the case of the 'never do double writes' workaround
+@@ -33,9 +33,10 @@ void __default_send_IPI_shortcut(unsigne
+ 	__xapic_wait_icr_idle();
  
-+/* Flag for the NMI path telling it to ignore the NMI */
-+DEFINE_PER_CPU(bool, cpu_ignore_nmi);
-+
- /* representing HT siblings of each logical CPU */
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
-@@ -252,6 +255,8 @@ static void notrace start_secondary(void
- 	unlock_vector_lock();
- 	cpu_set_state_online(smp_processor_id());
- 	x86_platform.nmi_init();
-+	/* Reenable NMI handling */
-+	this_cpu_write(cpu_ignore_nmi, false);
+ 	/*
+-	 * No need to touch the target chip field
++	 * No need to touch the target chip field. Also the destination
++	 * mode is ignored when a shorthand is used.
+ 	 */
+-	cfg = __prepare_ICR(shortcut, vector, dest);
++	cfg = __prepare_ICR(shortcut, vector, 0);
  
- 	/* enable local interrupts */
- 	local_irq_enable();
-@@ -1524,6 +1529,7 @@ void cpu_disable_common(void)
- 	unlock_vector_lock();
- 	fixup_irqs();
- 	lapic_offline();
-+	this_cpu_write(cpu_ignore_nmi, true);
+ 	/*
+ 	 * Send the IPI. The write to APIC_ICR fires this off.
+@@ -202,8 +203,7 @@ void default_send_IPI_allbutself(int vec
+ 	if (no_broadcast || vector == NMI_VECTOR) {
+ 		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
+ 	} else {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector,
+-					    apic->dest_logical);
++		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
+ 	}
  }
  
- int native_cpu_disable(void)
-@@ -1534,7 +1540,12 @@ int native_cpu_disable(void)
- 	if (ret)
- 		return ret;
+@@ -212,14 +212,13 @@ void default_send_IPI_all(int vector)
+ 	if (no_broadcast || vector == NMI_VECTOR) {
+ 		apic->send_IPI_mask(cpu_online_mask, vector);
+ 	} else {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector,
+-					    apic->dest_logical);
++		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
+ 	}
+ }
  
--	clear_local_APIC();
-+	/*
-+	 * Disable the local APIC. Otherwise IPI broadcasts will reach
-+	 * it. It still responds normally to INIT, NMI, SMI, and SIPI
-+	 * messages.
-+	 */
-+	apic_soft_disable();
- 	cpu_disable_common();
+ void default_send_IPI_self(int vector)
+ {
+-	__default_send_IPI_shortcut(APIC_DEST_SELF, vector, apic->dest_logical);
++	__default_send_IPI_shortcut(APIC_DEST_SELF, vector);
+ }
  
- 	return 0;
+ /* must come after the send_IPI functions above for inlining */
+--- a/arch/x86/kernel/apic/local.h
++++ b/arch/x86/kernel/apic/local.h
+@@ -38,7 +38,7 @@ static inline unsigned int __prepare_ICR
+ 	return icr;
+ }
+ 
+-void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest);
++void __default_send_IPI_shortcut(unsigned int shortcut, int vector);
+ 
+ /*
+  * This is used to send an IPI with no shorthand notation (the destination is
+--- a/arch/x86/kernel/apic/probe_64.c
++++ b/arch/x86/kernel/apic/probe_64.c
+@@ -40,7 +40,7 @@ void __init default_setup_apic_routing(v
+ 
+ void apic_send_IPI_self(int vector)
+ {
+-	__default_send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
++	__default_send_IPI_shortcut(APIC_DEST_SELF, vector);
+ }
+ 
+ int __init default_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
 
 
