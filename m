@@ -2,78 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D212E5F060
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8383D5F0C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfGDAh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 20:37:58 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40445 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfGDAhw (ORCPT
+        id S1727017AbfGDAn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 20:43:57 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:30930 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfGDAn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 20:37:52 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e8so4296136otl.7;
-        Wed, 03 Jul 2019 17:37:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kxKadiwStil9way1kU8jzMyzFN0LuSwbCGE20CmySOI=;
-        b=jjed64kf8UigzT5xPFuCz/Amv7WWAE+6rjJhQtW2VDYH4cmOmzA1vr44kYsoBJTpaz
-         dJmiqSYb2ZTRxwDk5JuHdcjKJ1tt72V4tLsn/8xmWsM/qHhCw/Cr1Qs+zLIW2q8s5iuC
-         MQSfIJ+VsVcLXWy+RUH9ED/MSwMEMEBjK/KP6ffPBTB6e6uWXWZI1ifhvzW58Qyx7Vvr
-         ZN22H0p7boLb9J44FTlPFArT0f5wu4yteSCNHHpkeNr7RTHwux9vATkCmlo8CEGbSew4
-         kx97el09vrfVjyi0FZbZgiXfUR+fVhTswAljsD+iQn2erhsvaOybMBJU1fF8SS6VWd8c
-         arOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kxKadiwStil9way1kU8jzMyzFN0LuSwbCGE20CmySOI=;
-        b=GZNbAhG8AcZHCLBvgKQYZPJTL++tg0X+IJIBWg3JPvxf6pRS0J5DkaFxt1RJdWAcv6
-         UINOVLTMl0NrN3dtjKglmu56T1jV5gd8KLdFIKbBJ8d6hmc5mvep9tqS20oWznIWbWQT
-         y3LAa5GNeTiP76NcRYmBI3GNLgF7IpVciMp91Qxy2D+FWixTupvVGZTJxyhwzlnhFJ4/
-         1sA/8MEvEhDqDgF1i26BQh70rbt4wOxk2EWkSgcj6OsTjKFN7ncFKZQUeVwbx+EKx5UP
-         u5UaxhjcG6aC0vzR6bhNBbhGzMKGW2GuPX+gaDb2ZSQCGIHDih5whw0qau5UbKYo+7MJ
-         a4Ww==
-X-Gm-Message-State: APjAAAWJSl1JNPLnJs4jTfBYbLh3WkFAN8CJsixLDzAPJMalVETjrhs3
-        gpCQwV61xjAp0c26Iwy9z+oY1GDaslJvqIUL1YQ=
-X-Google-Smtp-Source: APXvYqzeYi0PDoaiISTn2M9/7d/KVcBfQ7O2/IKHGPqh7tH9DMLVPheOsLoY4L/bml6SlwrjRhF2NNyFcfJgV6g/VzA=
-X-Received: by 2002:a9d:6959:: with SMTP id p25mr12145726oto.118.1562200672188;
- Wed, 03 Jul 2019 17:37:52 -0700 (PDT)
+        Wed, 3 Jul 2019 20:43:57 -0400
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x640hfs5007948;
+        Thu, 4 Jul 2019 09:43:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x640hfs5007948
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562201022;
+        bh=YEglfdV6gwtLpwefdXYa4i8HSGcTtqk+NU8k5bljqhg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qw5x5vW+HodXAsAM9eWx3LsERWErLbDHquz+/fNNvOizzhYBpWG6Wcg7/DpeJQx94
+         ousyH9k2gTLYlzvRSsSFBjOBLNC8UA78HsYGaBP+YZgg/DdZQWZPixX6la/rEVtUJB
+         rRBlI4we8YDrikrXsG4S3EDpJieEMFpTMqZUtsYB9V1KY1yafQhZ9WgUY3Kt+w/tr2
+         TCFxYZzaTLr3G7upREzePgw9jNb2HTSBFFTabaz0mm48hK64k/QMPApQki6w88MaEl
+         t14mn3q/7pBm/7qd8xyFmeHhpJKjJ3M5Ym6XWod4QDobzripQuwCjCt7/sCMeFX698
+         FbzFHhib2sstQ==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id g124so301546vkd.1;
+        Wed, 03 Jul 2019 17:43:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAUyTLLQOiFNMkHux7LMeJuPlZf9y2gLzwtZFZJOXM06FD/cwrhC
+        sb/0jEg9wXv5SGAIJkITS8RzeEKdzDq30ZAhgnE=
+X-Google-Smtp-Source: APXvYqwTIxDogC/SIRRHuAggdytqIbbtVGJ6ZbmryGi7Bqodet01ybGaLvoRyZFlQniP0SXM6NV/EYHc5F00hR1vxas=
+X-Received: by 2002:a1f:728b:: with SMTP id n133mr1331102vkc.84.1562201021033;
+ Wed, 03 Jul 2019 17:43:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <1560474949-20497-1-git-send-email-wanpengli@tencent.com>
- <1560474949-20497-2-git-send-email-wanpengli@tencent.com> <CANRm+CzUvTTOuYhsGErSDxdNSmxVr7o8d66DF0KOk4v3Meajmg@mail.gmail.com>
- <CANRm+Cw0vmqi4s4HhnMqs=hZZixHmU87CGO_ujTGoN_Osjx76g@mail.gmail.com>
- <CANRm+Cz9Lc5rA7-2yLLX7wiemM-gdvWvQQdGVrvkYanYO9TwgA@mail.gmail.com> <18fd2372-45d8-0bff-79e7-373a8b7d129c@redhat.com>
-In-Reply-To: <18fd2372-45d8-0bff-79e7-373a8b7d129c@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 4 Jul 2019 08:37:44 +0800
-Message-ID: <CANRm+CyykkkvCP0sS6SBOMO_XFYVviOGNcQOMuudGZ3y0y1YQg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] KVM: LAPIC: Optimize timer latency consider world
- switch time
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1560752096-1323-1-git-send-email-Cedric_Hombourger@mentor.com>
+In-Reply-To: <1560752096-1323-1-git-send-email-Cedric_Hombourger@mentor.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 4 Jul 2019 09:43:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASCmZyS11WkUWXLXVWgk-WU5JV=MMw=S6pXAzMhkVJ40Q@mail.gmail.com>
+Message-ID: <CAK7LNASCmZyS11WkUWXLXVWgk-WU5JV=MMw=S6pXAzMhkVJ40Q@mail.gmail.com>
+Subject: Re: [PATCH] builddeb: generate multi-arch friendly linux-libc-dev package
+To:     Cedric Hombourger <Cedric_Hombourger@mentor.com>
+Cc:     isar-users@googlegroups.com,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Riku Voipio <riku.voipio@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 at 22:13, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 03/07/19 02:48, Wanpeng Li wrote:
-> > Hi Paolo, how about this patchset? Patch 2/2 is easy to take, do you
-> > have more concern about patch 1/2?
->
-> I don't know.  It seems somewhat hard to tune and in cyclictest it only
-> happens for preemption_timer=N.  Are you using preemption_timer=N
-> together with the LAPIC-timer-on-service-CPU patches?
+CCed a couple of people.
 
-A 25ns conservative value makes no benefit for cyclictest any more
-even when preemption_timer=N. Btw, maybe it is the time to merge the
-LAPIC-timer-on-service-CPU patches now. :)
+On Mon, Jun 17, 2019 at 3:15 PM Cedric Hombourger
+<Cedric_Hombourger@mentor.com> wrote:
+>
+> Debian-based distributions place libc header files in a machine
+> specific directory (/usr/include/<libc-machine>) instead of
+> /usr/include/asm to support installation of the linux-libc-dev
+> package from multiple architectures. Move headers installed by
+> "make headers_install" accordingly.
+>
+> Signed-off-by: Cedric Hombourger <Cedric_Hombourger@mentor.com>
+> Reviewed-by: Henning Schild <henning.schild@siemens.com>
+> ---
+>  scripts/package/builddeb | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> index b03dd56a4782..8f7afb3a84e9 100755
+> --- a/scripts/package/builddeb
+> +++ b/scripts/package/builddeb
+> @@ -132,6 +132,11 @@ fi
+>  if [ "$ARCH" != "um" ]; then
+>         $MAKE -f $srctree/Makefile headers_check
+>         $MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
+> +       # move asm headers to /usr/include/<libc-machine>/asm to match the structure
+> +       # used by Debian-based distros (to support multi-arch)
+> +       libc_mach=$($CC -dumpmachine)
+> +       mkdir $libc_headers_dir/usr/include/$libc_mach
+> +       mv $libc_headers_dir/usr/include/asm $libc_headers_dir/usr/include/$libc_mach/
+>  fi
+>
+>  # Install the maintainer scripts
 
-Regards,
-Wanpeng Li
+
+I am not sure but,
+I just worried about the backward compatibility...
+Was this previously broken?
+
+I guess debian is using own control file
+instead of the one in upstream kernel.
+So, this is almost a matter for developers, I think.
+
+How did debian-base distros managed this before,
+and will this introduce no breakage?
+
+Ben,
+Could you comment on this?
+
+
+-- 
+Best Regards
+Masahiro Yamada
