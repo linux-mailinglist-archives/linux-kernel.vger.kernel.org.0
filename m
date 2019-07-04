@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89695FB57
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6D85FB59
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:00:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfGDQAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:00:46 -0400
+        id S1727210AbfGDQAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:00:54 -0400
 Received: from mga03.intel.com ([134.134.136.65]:53366 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbfGDQAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:00:42 -0400
+        id S1727087AbfGDQAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 12:00:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 09:00:41 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 09:00:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
-   d="scan'208";a="185016986"
+   d="scan'208";a="185016993"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Jul 2019 09:00:39 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 04 Jul 2019 09:00:41 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
         kan.liang@linux.intel.com, Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH v1 5/7] perf intel-pt: Process options for PEBS event synthesis
-Date:   Thu,  4 Jul 2019 19:00:22 +0300
-Message-Id: <20190704160024.56600-6-alexander.shishkin@linux.intel.com>
+Subject: [PATCH v1 6/7] perf tools: Add aux-source config term
+Date:   Thu,  4 Jul 2019 19:00:23 +0300
+Message-Id: <20190704160024.56600-7-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190704160024.56600-1-alexander.shishkin@linux.intel.com>
 References: <20190704160024.56600-1-alexander.shishkin@linux.intel.com>
@@ -41,93 +41,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Process synth_opts.other_events and attr.aux_source to set up for
-synthesizing PEBs via Intel PT events.
+Expose the aux_source attribute flag to the user to configure, by adding a
+config term 'aux-source'. For events that support it, selection of
+'aux-source' causes the generation of AUX records instead of event records.
+This requires that an AUX area event is also provided.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 23 +++++++++++++++++++++++
- tools/perf/util/intel-pt.c          | 18 ++++++++++++++++++
- 2 files changed, 41 insertions(+)
+ tools/perf/Documentation/perf-record.txt | 2 ++
+ tools/perf/util/evsel.c                  | 3 +++
+ tools/perf/util/evsel.h                  | 2 ++
+ tools/perf/util/parse-events.c           | 8 ++++++++
+ tools/perf/util/parse-events.h           | 1 +
+ tools/perf/util/parse-events.l           | 1 +
+ 6 files changed, 17 insertions(+)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index 9804098dcefb..a776cfcc0705 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -548,6 +548,26 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 					evsel->attr.config);
- }
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 15e0fa87241b..3077f6373dff 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -60,6 +60,8 @@ OPTIONS
+ 	  - 'name' : User defined event name. Single quotes (') may be used to
+ 		    escape symbols in the name from parsing by shell and tool
+ 		    like this: name=\'CPU_CLK_UNHALTED.THREAD:cmask=0x1\'.
++	  - 'aux-source': Generate AUX records instead of events. This requires
++			  that an AUX area event is also provided.
  
-+/*
-+ * Currently, there is not enough information to disambiguate different PEBS
-+ * events, so only allow one.
-+ */
-+static bool intel_pt_too_many_aux_source(struct perf_evlist *evlist)
-+{
-+	struct perf_evsel *evsel;
-+	int aux_source_cnt = 0;
-+
-+	evlist__for_each_entry(evlist, evsel)
-+		aux_source_cnt += !!evsel->attr.aux_source;
-+
-+	if (aux_source_cnt > 1) {
-+		pr_err(INTEL_PT_PMU_NAME " supports at most one event with aux-source\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static int intel_pt_recording_options(struct auxtrace_record *itr,
- 				      struct perf_evlist *evlist,
- 				      struct record_opts *opts)
-@@ -588,6 +608,9 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
- 		return -EINVAL;
- 	}
+           See the linkperf:perf-list[1] man page for more parameters.
  
-+	if (intel_pt_too_many_aux_source(evlist))
-+		return -EINVAL;
-+
- 	if (!opts->full_auxtrace)
- 		return 0;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 899dc189ff2d..ff5fafcff8df 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -832,6 +832,9 @@ static void apply_config_terms(struct perf_evsel *evsel,
+ 			break;
+ 		case PERF_EVSEL__CONFIG_TERM_PERCORE:
+ 			break;
++		case PERF_EVSEL__CONFIG_TERM_AUX_SOURCE:
++			attr->aux_source = term->val.aux_source ? 1 : 0;
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index cad54e8ba522..295d32fd42ba 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -51,6 +51,7 @@ enum term_type {
+ 	PERF_EVSEL__CONFIG_TERM_DRV_CFG,
+ 	PERF_EVSEL__CONFIG_TERM_BRANCH,
+ 	PERF_EVSEL__CONFIG_TERM_PERCORE,
++	PERF_EVSEL__CONFIG_TERM_AUX_SOURCE,
+ };
  
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 470aaae9d930..b8771e073efb 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -2894,6 +2894,22 @@ static int intel_pt_synth_events(struct intel_pt *pt,
- 	return 0;
- }
+ struct perf_evsel_config_term {
+@@ -69,6 +70,7 @@ struct perf_evsel_config_term {
+ 		char	*branch;
+ 		unsigned long max_events;
+ 		bool	percore;
++		bool	aux_source;
+ 	} val;
+ 	bool weak;
+ };
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index cf0b9b81c5aa..1048227f3eda 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -951,6 +951,7 @@ static const char *config_term_names[__PARSE_EVENTS__TERM_TYPE_NR] = {
+ 	[PARSE_EVENTS__TERM_TYPE_NOOVERWRITE]		= "no-overwrite",
+ 	[PARSE_EVENTS__TERM_TYPE_DRV_CFG]		= "driver-config",
+ 	[PARSE_EVENTS__TERM_TYPE_PERCORE]		= "percore",
++	[PARSE_EVENTS__TERM_TYPE_AUX_SOURCE]		= "aux-source",
+ };
  
-+static void intel_pt_setup_pebs_events(struct intel_pt *pt)
-+{
-+	struct perf_evsel *evsel;
-+
-+	if (!pt->synth_opts.other_events)
-+		return;
-+
-+	evlist__for_each_entry(pt->session->evlist, evsel) {
-+		if (evsel->attr.aux_source && evsel->id) {
-+			pt->sample_pebs = true;
-+			pt->pebs_evsel = evsel;
-+			return;
-+		}
-+	}
-+}
-+
- static struct perf_evsel *intel_pt_find_sched_switch(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel;
-@@ -3266,6 +3282,8 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
- 	if (err)
- 		goto err_delete_thread;
+ static bool config_term_shrinked;
+@@ -1071,6 +1072,9 @@ do {									   \
+ 			return -EINVAL;
+ 		}
+ 		break;
++	case PARSE_EVENTS__TERM_TYPE_AUX_SOURCE:
++		CHECK_TYPE_VAL(NUM);
++		break;
+ 	default:
+ 		err->str = strdup("unknown term");
+ 		err->idx = term->err_term;
+@@ -1121,6 +1125,7 @@ static int config_term_tracepoint(struct perf_event_attr *attr,
+ 	case PARSE_EVENTS__TERM_TYPE_MAX_EVENTS:
+ 	case PARSE_EVENTS__TERM_TYPE_OVERWRITE:
+ 	case PARSE_EVENTS__TERM_TYPE_NOOVERWRITE:
++	case PARSE_EVENTS__TERM_TYPE_AUX_SOURCE:
+ 		return config_term_common(attr, term, err);
+ 	default:
+ 		if (err) {
+@@ -1213,6 +1218,9 @@ do {								\
+ 			ADD_CONFIG_TERM(PERCORE, percore,
+ 					term->val.num ? true : false);
+ 			break;
++		case PARSE_EVENTS__TERM_TYPE_AUX_SOURCE:
++			ADD_CONFIG_TERM(AUX_SOURCE, aux_source, term->val.num ? 1 : 0);
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+index f7139e1a2fd3..782195ce8238 100644
+--- a/tools/perf/util/parse-events.h
++++ b/tools/perf/util/parse-events.h
+@@ -76,6 +76,7 @@ enum {
+ 	PARSE_EVENTS__TERM_TYPE_OVERWRITE,
+ 	PARSE_EVENTS__TERM_TYPE_DRV_CFG,
+ 	PARSE_EVENTS__TERM_TYPE_PERCORE,
++	PARSE_EVENTS__TERM_TYPE_AUX_SOURCE,
+ 	__PARSE_EVENTS__TERM_TYPE_NR,
+ };
  
-+	intel_pt_setup_pebs_events(pt);
-+
- 	err = auxtrace_queues__process_index(&pt->queues, session);
- 	if (err)
- 		goto err_delete_thread;
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index ca6098874fe2..399605a64c3d 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -284,6 +284,7 @@ no-inherit		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_NOINHERIT); }
+ overwrite		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_OVERWRITE); }
+ no-overwrite		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_NOOVERWRITE); }
+ percore			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_PERCORE); }
++aux-source		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SOURCE); }
+ ,			{ return ','; }
+ "/"			{ BEGIN(INITIAL); return '/'; }
+ {name_minus}		{ return str(yyscanner, PE_NAME); }
 -- 
 2.20.1
 
