@@ -2,104 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E74055FB49
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8B95FB52
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfGDPzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 11:55:50 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:47323 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726957AbfGDPzu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:55:50 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 9087918E2;
-        Thu,  4 Jul 2019 11:55:46 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 04 Jul 2019 11:55:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=animalcreek.com;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=mesmtp; bh=mPnkcAZw82aZVs9Z9rG4+ggB
-        DTzCBZWCGqYWdqaNVKo=; b=UoKXTf63vhblNFTYDD5ovIuLnfoPRIkcdpE3lDTX
-        pp6uCs71cXKAbTBfaDi2DPqUrONtik3P0RQGNyx+i6k/alDjwtc3mWkBfObiRhfP
-        wywdn4VSdZRg97zey6ECbueW+PTxpFTMVVptQiawFpUqe71zwstTuWP8iRNLhdiA
-        Azg=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=mPnkcA
-        Zw82aZVs9Z9rG4+ggBDTzCBZWCGqYWdqaNVKo=; b=dzUkP6Om+KPVTzCTzYlfku
-        M7nWyC/cKVzyjsFPHkrAkHb76daPECLWsKjlgBcUiiCrWN4IpzK5VDSLV2E7rXxw
-        tCQqoLkTeMxH2fvKcWE0aDtY7OlJ4Dd5CVuY7Om+YbvRd2842eSQdntgNA8XwmBk
-        l+WQj4QM2/4YGZqp9jaYbCzGpAKhS2TN6Vo2j83QgdQziuPY+nVfZ2Bn+zje8c/d
-        aqZMPfO3hLC6/koOm0mjgJpBAo61rLVoZhQ4mYYxCzq5+u4l2chGe82Vr8/fetoe
-        nv3IPtOZvGYP5zbiLC5ZSSTJG8IXJxnPUyVcNzKM0DGawGmrRdWE2er5U+SxuiQg
-        ==
-X-ME-Sender: <xms:gSEeXeSJZ13ZJDRYm6sQZAmbjTgoTtqJTRKVt5mo6hOYiNK66RhmlQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrfedvgdeljecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujghofgesthdtredttdervdenucfhrhhomhepofgrrhhk
-    ucfirhgvvghruceomhhgrhgvvghrsegrnhhimhgrlhgtrhgvvghkrdgtohhmqeenucfkph
-    epieekrddvrdekjedrleehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmghhrvggvrhes
-    rghnihhmrghltghrvggvkhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:gSEeXYCDTULzTwvjWIlqxBWrN2IdBStYQ-OePsOXybw_vFKaNM4x8Q>
-    <xmx:gSEeXW3q0NqpSkm9RprpJqyoSOOrVIsEJeAlPTgtZjvzlUrWaRJUQw>
-    <xmx:gSEeXeXHDI-EbjNhcop2oajjHqtaPOKdY4s2m9TcbOPA57ojRzoUJw>
-    <xmx:giEeXe7g1ZXBuiE6DWNZzHP8LMlFf7jRSL0UpaHDETllnufFqKrrXQ>
-Received: from blue.animalcreek.com (ip68-2-87-95.ph.ph.cox.net [68.2.87.95])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6D81D380088;
-        Thu,  4 Jul 2019 11:55:45 -0400 (EDT)
-Received: by blue.animalcreek.com (Postfix, from userid 1000)
-        id 56FC1A22246; Thu,  4 Jul 2019 08:55:42 -0700 (MST)
-Date:   Thu, 4 Jul 2019 08:55:42 -0700
-From:   Mark Greer <mgreer@animalcreek.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: remove redundant assignment to
- variable is_empty
-Message-ID: <20190704155542.GA28490@animalcreek.com>
-References: <20190704133031.28809-1-colin.king@canonical.com>
+        id S1726794AbfGDQAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:00:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:53366 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbfGDQAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 12:00:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 09:00:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
+   d="scan'208";a="185016921"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Jul 2019 09:00:29 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kan.liang@linux.intel.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v1 0/7] perf, intel: Add support for PEBS output to Intel PT
+Date:   Thu,  4 Jul 2019 19:00:17 +0300
+Message-Id: <20190704160024.56600-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704133031.28809-1-colin.king@canonical.com>
-Organization: Animal Creek Technologies, Inc.
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 02:30:31PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable is_empty is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/greybus/audio_manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
-> index c2a4af4c1d06..9b19ea9d3fa1 100644
-> --- a/drivers/staging/greybus/audio_manager.c
-> +++ b/drivers/staging/greybus/audio_manager.c
-> @@ -86,7 +86,7 @@ EXPORT_SYMBOL_GPL(gb_audio_manager_remove);
->  void gb_audio_manager_remove_all(void)
->  {
->  	struct gb_audio_manager_module *module, *next;
-> -	int is_empty = 1;
-> +	int is_empty;
->  
->  	down_write(&modules_rwsem);
+Hi Peter,
 
-Reviewed-by: Mark Greer <mgreer@animalcreek.com>
+Second attempt at the PEBS-via-PT feature. The previous one is here [1].
+This one depends on the legitimacy including exclusive events (PT, in this
+case) in groups, as I posted earlier [2]. Although, it will work without
+that patch, because this kind of grouping wasn't really disallowed.
+
+The first problem with the previous patchset was bad handling of
+conflicting PEBS events (PEBS->PT and PEBS->DS). This version fails to
+schedule the first conflicting event, thus allowing conflicting events
+to be rotated. This is done in an x86 perf patch 2/7.
+
+The second problem was lack of guarantees that the PT event is scheduled
+together with the PEBS->PT event and that it's the correct PT event. This
+is addressed via grouping. The requirement is that the PEBS event is added
+to a group where there is a PT event, then a link between them in created.
+If that group later is broken down, the PEBS event will fail to schedule.
+This is done in perf core patch 1/7.
+
+The rest of the series (2/7..7/7) are the remaining tooling patches needed
+to enable this are included.
+
+The PEBS feature: output to Intel PT stream instead of the DS area. It's
+theoretically useful in virtualized environments, where DS area can't be
+used. It's also good for those who are interested in instruction trace for
+context of the PEBS events. As PEBS goes, it can provide LBR context with
+all the branch-related information that PT doesn't provide at the moment.
+
+PEBS records are packetized in the PT stream, so instead of extracting
+them in the PMI, we leave it to the perf tool, because real time PT
+decoding is not practical.
+
+[1] https://marc.info/?l=linux-kernel&m=155679423430002
+[2] https://marc.info/?l=linux-kernel&m=156197929026646
+
+Adrian Hunter (5):
+  perf tools: Add aux_source attribute flag
+  perf tools: Add itrace option 'o' to synthesize aux-source events
+  perf intel-pt: Process options for PEBS event synthesis
+  perf tools: Add aux-source config term
+  perf intel-pt: Add brief documentation for PEBS via Intel PT
+
+Alexander Shishkin (2):
+  perf: Allow normal events to be sources of AUX data
+  perf/x86/intel: Support PEBS output to PT
+
+ arch/x86/events/core.c                   | 45 ++++++++++++
+ arch/x86/events/intel/core.c             | 20 ++++++
+ arch/x86/events/intel/ds.c               | 61 +++++++++++++++-
+ arch/x86/events/perf_event.h             | 11 +++
+ arch/x86/include/asm/msr-index.h         |  4 ++
+ include/linux/perf_event.h               | 14 ++++
+ include/uapi/linux/perf_event.h          |  3 +-
+ kernel/events/core.c                     | 92 ++++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h    |  3 +-
+ tools/perf/Documentation/intel-pt.txt    | 15 ++++
+ tools/perf/Documentation/itrace.txt      |  2 +
+ tools/perf/Documentation/perf-record.txt |  2 +
+ tools/perf/arch/x86/util/intel-pt.c      | 23 ++++++
+ tools/perf/util/auxtrace.c               |  4 ++
+ tools/perf/util/auxtrace.h               |  3 +
+ tools/perf/util/evsel.c                  |  4 ++
+ tools/perf/util/evsel.h                  |  2 +
+ tools/perf/util/intel-pt.c               | 18 +++++
+ tools/perf/util/parse-events.c           |  8 +++
+ tools/perf/util/parse-events.h           |  1 +
+ tools/perf/util/parse-events.l           |  1 +
+ 21 files changed, 333 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
+
