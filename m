@@ -2,88 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F361E5F291
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911B35F2C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 08:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfGDGI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 02:08:26 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46291 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfGDGIX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:08:23 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v24so4881514ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 23:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JBbOD4rj/6MTcJXlkxHvsQxP2TTle1/H3CMZv+6B/V4=;
-        b=Lgc0eqQT/R1b7aB33G0Mii0j7RL/EyMCalrdd4T10q3Jjz5O09wz4zBWC98iXtsiop
-         EchLcnoTN51L/4mAn4u6U946gxTkqRcbtCDb77/uqaUklg0Gj5UGoi2XVEyEeMePmKgn
-         W6o2kyY2vWziIvF1tyT2ONHLwEjhmCI/MKTf6cVumE3fXcylTQR0pvzQrlXhXRwuLLwn
-         3zYkmfvRFsZEbb9aJkUvwEgPBMsDqBjyyJBKnP0LYcH8v3xGTEz4hVY7QYbYLnzUrL9W
-         EfxVPI2R8Jrg6EMOt5lICmMBVnTW+r3KOBN8pHNt1m0Moci5yWYNqVc3jAPpmnEJtwaM
-         wdZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JBbOD4rj/6MTcJXlkxHvsQxP2TTle1/H3CMZv+6B/V4=;
-        b=R7s9GCmCTyr8Ykw+EW3BvhW4mevYKbUcbwywnayeh4wBdU+h+e1H/kiYEgjB427OGH
-         TFEYa3BgvZadG/W05BBrdTtr5HB6QvGXHQRUL76eHlWQPK6yigeuwqSurgwguM4G5bRF
-         txlnNgl2pTHiSjQPyHkx2Ji169NmNxLPbtxWIhCCE/R0Ac8LLnXvp8rLwjXDRCQaJHcm
-         xBYs6sUdaFvJKeddCtk2tevwTLAa5SuSlAIgxUF/VY0MCrKa9oah1SSzHt1Uqr+ZyqOQ
-         Fgg6HkbipSJAx3UyCo7E0D+Zm/LjNMMbpCI5N6fP7osMs5S3xBdfLOoZ9nBVKjOAestu
-         x3JQ==
-X-Gm-Message-State: APjAAAVHdMWLV+VClri3S19pgiDpF9bngqzqXmh37Gy9JG2dHDIOxxFN
-        Mycts4svPT/XsCoDTDnJITLS4KPAZHji4Q==
-X-Google-Smtp-Source: APXvYqzZ6BCDAqrYU1giJPNAZ8lJa99B9+Frb2uYcMzIN2R0XBOUIf9/8i9L44wd6Hw6HZ6yfzXASQ==
-X-Received: by 2002:a2e:4e12:: with SMTP id c18mr23606824ljb.211.1562220501712;
-        Wed, 03 Jul 2019 23:08:21 -0700 (PDT)
-Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id b4sm710440lfp.33.2019.07.03.23.08.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 23:08:21 -0700 (PDT)
-From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-To:     gregkh@linuxfoundation.org
-Cc:     gneukum1@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-Subject: [PATCH 3/3] staging: kpc2000: simplify comparison to NULL in fileops.c
-Date:   Thu,  4 Jul 2019 08:08:11 +0200
-Message-Id: <20190704060811.10330-4-simon@nikanor.nu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190704060811.10330-1-simon@nikanor.nu>
-References: <20190704060811.10330-1-simon@nikanor.nu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1727390AbfGDGXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 02:23:19 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53956 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfGDGXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:23:19 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B7F1A20022D;
+        Thu,  4 Jul 2019 08:23:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0156F20054A;
+        Thu,  4 Jul 2019 08:23:08 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 12DF8402C3;
+        Thu,  4 Jul 2019 14:22:56 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
+        daniel.baluta@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
+        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
+        agx@sigxcpu.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] arm64: dts: imx8mq: Assign highest opp as suspend opp
+Date:   Thu,  4 Jul 2019 14:14:02 +0800
+Message-Id: <20190704061403.8249-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch warning "Comparison to NULL could be written [...]".
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Simon Sandström <simon@nikanor.nu>
+Assign highest OPP as suspend OPP to reduce suspend/resume
+latency on i.MX8MQ.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/staging/kpc2000/kpc_dma/fileops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch is based on https://patchwork.kernel.org/patch/11023815/
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index 7feb2fde0db2..48ca88bc6b0b 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -247,7 +247,7 @@ int  kpc_dma_open(struct inode *inode, struct file *filp)
- 	struct dev_private_data *priv;
- 	struct kpc_dma_device *ldev = kpc_dma_lookup_device(iminor(inode));
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 3187428..c61e968 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -171,6 +171,7 @@
+ 			opp-microvolt = <1000000>;
+ 			opp-supported-hw = <0xc>, <0x4>;
+ 			clock-latency-ns = <150000>;
++			opp-suspend;
+ 		};
  
--	if (ldev == NULL)
-+	if (!ldev)
- 		return -ENODEV;
+ 		opp-1500000000 {
+@@ -178,6 +179,7 @@
+ 			opp-microvolt = <1000000>;
+ 			opp-supported-hw = <0x8>, <0x3>;
+ 			clock-latency-ns = <150000>;
++			opp-suspend;
+ 		};
+ 	};
  
- 	if (!atomic_dec_and_test(&ldev->open_count)) {
 -- 
-2.20.1
+2.7.4
 
