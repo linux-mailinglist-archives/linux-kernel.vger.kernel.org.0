@@ -2,198 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1995B5FBC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B125FBFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 18:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfGDQc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 12:32:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56584 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbfGDQc6 (ORCPT
+        id S1727286AbfGDQjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 12:39:19 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54846 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfGDQjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 12:32:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zodjW5Kg1HRKcHIXz7+5/nzLctd0FssqPejVzR5xjNo=; b=ptdhzaPBmYoy
-        Jgo0YKTkqnEIHLLsL39hKKC1MZ6bt7RFLUuZ+9/F6jEFUXbeV7USqwsLND37VKxs0UMVMwx2Sp3h8
-        v4ZQ6akAS+yCStzYHNOYhcKEPbebAUPP6sj7+OdpJiiwknm+APgZHKPnRL5Zd+vPxJ4doNe/5K+vR
-        XeDlI=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hj4fH-0001Hc-Vh; Thu, 04 Jul 2019 16:32:56 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 2611D2742EB1; Thu,  4 Jul 2019 17:32:55 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: implement selector stepping" to the regulator tree
-In-Reply-To: <20190703161035.31808-2-brgl@bgdev.pl>
-X-Patchwork-Hint: ignore
-Message-Id: <20190704163255.2611D2742EB1@ypsilon.sirena.org.uk>
-Date:   Thu,  4 Jul 2019 17:32:55 +0100 (BST)
+        Thu, 4 Jul 2019 12:39:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x64GXtXs024868;
+        Thu, 4 Jul 2019 16:38:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=5+6c9J5hsLXAS3y9QhZ2laqXZP49w96VU6nbreUKrFg=;
+ b=K+/LnDb4B4jkTz2kamodwT13+Opqq+Rwvb16SM+8S9GMvS7u/+iv5YPIPiYnTlzyZn+p
+ lVTUEj9bY2ebxWc5IgAGNXcXekJ38PxBCsCfnEYuaOeWso8qK3Dp3VUVipqVaBrprN0w
+ kmDtB8bPVqs9UDPJDv7m4f6Ftiw+fPqiZlU/hevAFQIxwamdn0Q1YSAZ53sorO/38oqL
+ kiB7VgYSbnI3jpZJWax/5NrI3HGevLDETME80cjx7LgiuHziv2zmCmPPZePS+KDVk9nR
+ IgRX4YKnBXUWlsjATsnTzgGBqjCjOYR4HHP+AaNRR9XPb7ETh2mw9I91oKxbUgZauZb3 Vg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2te5tbymx7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Jul 2019 16:38:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x64GX9gl098425;
+        Thu, 4 Jul 2019 16:36:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2th5qm49at-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Jul 2019 16:36:44 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x64GaZkL023461;
+        Thu, 4 Jul 2019 16:36:35 GMT
+Received: from tomti.i.net-space.pl (/10.175.209.195)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 04 Jul 2019 09:36:35 -0700
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Cc:     bp@alien8.de, corbet@lwn.net, dpsmith@apertussolutions.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, mingo@redhat.com,
+        ross.philipson@oracle.com, tglx@linutronix.de
+Subject: [PATCH v2 0/3] x86/boot: Introduce the kernel_info et consortes
+Date:   Thu,  4 Jul 2019 18:36:09 +0200
+Message-Id: <20190704163612.14311-1-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907040210
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9307 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=721 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907040210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi,
 
-   regulator: implement selector stepping
+Due to very limited space in the setup_header this patch series introduces new
+kernel_info struct which will be used to convey information from the kernel to
+the bootloader. This way the boot protocol can be extended regardless of the
+setup_header limitations. Additionally, the patch series introduces some
+convenience features like the setup_indirect struct and the
+kernel_info.setup_type_max field.
 
-has been applied to the regulator tree at
+Daniel
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
+ Documentation/x86/boot.rst             | 133 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/Makefile                 |   2 +-
+ arch/x86/boot/compressed/Makefile      |   4 +--
+ arch/x86/boot/compressed/kernel_info.S |  16 ++++++++++
+ arch/x86/boot/header.S                 |   3 +-
+ arch/x86/boot/tools/build.c            |   5 +++
+ arch/x86/include/uapi/asm/bootparam.h  |  15 ++++++++-
+ 7 files changed, 173 insertions(+), 5 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 2da8d9473e20a2f6645dcb0cea4848a2c1e83af9 Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 3 Jul 2019 18:10:34 +0200
-Subject: [PATCH] regulator: implement selector stepping
-
-Some regulators require that the requested voltage be reached gradually
-by setting all or some of the intermediate values. Implement a new field
-in the regulator description struct that allows users to specify the
-number of selectors by which the regulator API should step when ramping
-the voltage up/down.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Link: https://lore.kernel.org/r/20190703161035.31808-2-brgl@bgdev.pl
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/core.c         | 63 ++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  6 +++
- 2 files changed, 69 insertions(+)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 9d3ed13b7f12..df82e2a8442a 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3106,6 +3106,66 @@ static int _regulator_call_set_voltage_sel(struct regulator_dev *rdev,
- 	return ret;
- }
- 
-+static int _regulator_set_voltage_sel_step(struct regulator_dev *rdev,
-+					   int uV, int new_selector)
-+{
-+	const struct regulator_ops *ops = rdev->desc->ops;
-+	int diff, old_sel, curr_sel, ret;
-+
-+	/* Stepping is only needed if the regulator is enabled. */
-+	if (!_regulator_is_enabled(rdev))
-+		goto final_set;
-+
-+	if (!ops->get_voltage_sel)
-+		return -EINVAL;
-+
-+	old_sel = ops->get_voltage_sel(rdev);
-+	if (old_sel < 0)
-+		return old_sel;
-+
-+	diff = new_selector - old_sel;
-+	if (diff == 0)
-+		return 0; /* No change needed. */
-+
-+	if (diff > 0) {
-+		/* Stepping up. */
-+		for (curr_sel = old_sel + rdev->desc->vsel_step;
-+		     curr_sel < new_selector;
-+		     curr_sel += rdev->desc->vsel_step) {
-+			/*
-+			 * Call the callback directly instead of using
-+			 * _regulator_call_set_voltage_sel() as we don't
-+			 * want to notify anyone yet. Same in the branch
-+			 * below.
-+			 */
-+			ret = ops->set_voltage_sel(rdev, curr_sel);
-+			if (ret)
-+				goto try_revert;
-+		}
-+	} else {
-+		/* Stepping down. */
-+		for (curr_sel = old_sel - rdev->desc->vsel_step;
-+		     curr_sel > new_selector;
-+		     curr_sel -= rdev->desc->vsel_step) {
-+			ret = ops->set_voltage_sel(rdev, curr_sel);
-+			if (ret)
-+				goto try_revert;
-+		}
-+	}
-+
-+final_set:
-+	/* The final selector will trigger the notifiers. */
-+	return _regulator_call_set_voltage_sel(rdev, uV, new_selector);
-+
-+try_revert:
-+	/*
-+	 * At least try to return to the previous voltage if setting a new
-+	 * one failed.
-+	 */
-+	(void)ops->set_voltage_sel(rdev, old_sel);
-+	return ret;
-+}
-+
- static int _regulator_set_voltage_time(struct regulator_dev *rdev,
- 				       int old_uV, int new_uV)
- {
-@@ -3179,6 +3239,9 @@ static int _regulator_do_set_voltage(struct regulator_dev *rdev,
- 				selector = ret;
- 				if (old_selector == selector)
- 					ret = 0;
-+				else if (rdev->desc->vsel_step)
-+					ret = _regulator_set_voltage_sel_step(
-+						rdev, best_val, selector);
- 				else
- 					ret = _regulator_call_set_voltage_sel(
- 						rdev, best_val, selector);
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 377da2357118..f0d7b0496e54 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -286,6 +286,11 @@ enum regulator_type {
-  * @vsel_range_mask: Mask for register bitfield used for range selector
-  * @vsel_reg: Register for selector when using regulator_regmap_X_voltage_
-  * @vsel_mask: Mask for register bitfield used for selector
-+ * @vsel_step: Specify the resolution of selector stepping when setting
-+ *	       voltage. If 0, then no stepping is done (requested selector is
-+ *	       set directly), if >0 then the regulator API will ramp the
-+ *	       voltage up/down gradually each time increasing/decreasing the
-+ *	       selector by the specified step value.
-  * @csel_reg: Register for current limit selector using regmap set_current_limit
-  * @csel_mask: Mask for register bitfield used for current limit selector
-  * @apply_reg: Register for initiate voltage change on the output when
-@@ -360,6 +365,7 @@ struct regulator_desc {
- 	unsigned int vsel_range_mask;
- 	unsigned int vsel_reg;
- 	unsigned int vsel_mask;
-+	unsigned int vsel_step;
- 	unsigned int csel_reg;
- 	unsigned int csel_mask;
- 	unsigned int apply_reg;
--- 
-2.20.1
+Daniel Kiper (3):
+      x86/boot: Introduce the kernel_info
+      x86/boot: Introduce the setup_indirect
+      x86/boot: Introduce the kernel_info.setup_type_max
 
