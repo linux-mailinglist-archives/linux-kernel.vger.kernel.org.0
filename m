@@ -2,291 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C305F6B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9495F6C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfGDKhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 06:37:05 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:56923 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbfGDKhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:37:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fZCw6Dtpz9s8m;
-        Thu,  4 Jul 2019 20:37:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562236621;
-        bh=whC3mB0E8R6xCRLqcYTosbnTYER6oX7bS7Yn/9Co2Es=;
-        h=Date:From:To:Cc:Subject:From;
-        b=E9savyrjQ51/6cKIpM0OyaoiG6EaOqeL9jkuqgaPCm/BMBEdPkQs1sfTSB6p7Ujfz
-         /JQUHP49xRgBpdeTYLTvanPooxrIvMAFpfmY94FrOpcrPyCdXlodCjoSpvenv/XEWm
-         /A98qWE9bhV3KzvCVa9by6oGtHgj+KdQqhOs8eI56lmgk2RbTZ9o4v9Ix3rzBFLlb6
-         tgS0T2pwobjFnBZNymwxhsbH/C2bU6sQ8TNwEMUad1CkaMGazFEerTvGE1esKad0n6
-         HSZk07FV8sG4U2oPPfFBhdPknHl2ICwWuhKkR5uEu1gcP7x4wbqjhqVx1oK2lE/JK9
-         4KpmZ0A6AFJrw==
-Date:   Thu, 4 Jul 2019 20:36:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: manual merge of the akpm-current tree with the hmm tree
-Message-ID: <20190704203658.1d26d182@canb.auug.org.au>
+        id S1727600AbfGDKki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 06:40:38 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35770 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbfGDKkh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 06:40:37 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d23so7553015qto.2;
+        Thu, 04 Jul 2019 03:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=J75O2ZYm/AIRp38Aj0T7xtVwqkjaGCkxGvM6r7neVEo=;
+        b=svb8eN7znP/WGdtT3CrWT/7VclWevgOLXH+ZMAI+DC5wM3BXGnt/u6lc/RE+8iDWfw
+         liiW9ZYL607XBo6qnD1lpUXoPDUdioXWw/QKbHmoNOlVMnjHgEf/OR6/CNQFnchp65cI
+         JFhf5SKwp/K1XSyb+i76xI+4IWvnfjFE41buuQVjjfCguncDCNHAvrkZzQpLGiJT0kgb
+         JoK7NVI67JRxQFX3fxfRan0bcYG0bOy7TqDV+5zuDFAuy2AeT/9MXv9mR4K7iAxBp8kn
+         b3wSRfUEgsQlsZoVJ7Fsfno3dfay2OdhPT3OkFpDa9U+3h+PoPnKO2Q7RJPE3CTqI7Q4
+         Mpdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J75O2ZYm/AIRp38Aj0T7xtVwqkjaGCkxGvM6r7neVEo=;
+        b=kB8Okg9geItCbpuDjE2ubpSUWnboA5Uk4fWU6OyQ/Qer94kWLp2S4vbXp4ypKrf34e
+         3h9YvbgFT/Cr+3NZ/5D9GROHwbizyXpPht618QWVsZGSDb2U0Yjkua9X2x3LNTqHfwmk
+         a3uwKZETgUjXOs1nvLhdP7iBgWjf44IIo1XzoCmJGJ1IsJo+AGj1ycZkBVwuc6jSEyd4
+         r6Kxxe/vBUBxyZ4UgfftFiDUkhqWQWoxIMaNl0gBRaJ2O8olPn5havmezPGWHur6akbb
+         ldTmnMpoGQlBEmpOmjmPZKG0lhbqL9+S9ft0HBCHMjK2A9oE5z9pr75WMGDku1IUuoXQ
+         Mngg==
+X-Gm-Message-State: APjAAAXwdh1AqRLjM+wSjesbzEYDFM1a9W7gfsZ3J5iqktuYXPddW3jU
+        1s8SR9b/8nnUfJpWAouXCLtatHOW
+X-Google-Smtp-Source: APXvYqz+yPk+2MUL4Psf0OlCLMqisNELh1oDhrrNJ46MfRnYY8Jr2unJvbo1n+PNfKtsECoRc7/Sdg==
+X-Received: by 2002:a0c:d1f0:: with SMTP id k45mr37041274qvh.69.1562236836520;
+        Thu, 04 Jul 2019 03:40:36 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id s7sm980077qtq.8.2019.07.04.03.40.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Jul 2019 03:40:35 -0700 (PDT)
+Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+ <a262cbb3-845c-3ad1-16cc-375a24b9f7e9@gmail.com>
+ <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
+ <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <66b5e81b-d468-e2aa-7336-3d4854c234ab@gmail.com>
+Date:   Thu, 4 Jul 2019 13:40:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oAm8jCFy=m18mDYbv_b1D/6"; protocol="application/pgp-signature"
+In-Reply-To: <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/oAm8jCFy=m18mDYbv_b1D/6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+04.07.2019 10:31, Linus Walleij пишет:
+> On Sat, Jun 29, 2019 at 5:58 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+> 
+>> Oh, also what about GPIO-pinctrl suspend resume ordering .. is it okay that pinctrl
+>> will be resumed after GPIO? Shouldn't a proper pin-muxing be selected at first?
+> 
+> Thierry sent some initial patches about this I think. We need to use
+> device links for this to work properly so he adds support for
+> linking the pinctrl and GPIO devices through the ranges.
+> 
+> For links between pin control handles and their consumers, see also:
+> 036f394dd77f pinctrl: Enable device link creation for pin control
+> c6045b4e3cad pinctrl: stmfx: enable links creations
+> 489b64d66325 pinctrl: stm32: Add links to consumers
+> 
+> I am using STM32 as guinea pig for this, consider adding links also
+> from the Tegra pinctrl. I might simply make these pinctrl consumer
+> to producer links default because I think it makes a lot sense.
 
-Hi all,
+IIUC, currently the plan is to resume pinctrl *after* GPIO for Tegra210 [1]. But this
+contradicts to what was traditionally done for older Tegras where pinctrl was always
+resumed first and apparently it won't work well for the GPIO ranges as well. I think this
+and the other patchsets related to suspend-resume still need some more thought.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
-
-  kernel/memremap.c
-
-between commit:
-
-  514caf23a70f ("memremap: replace the altmap_valid field with a PGMAP_ALTM=
-AP_VALID flag")
-
-from the hmm tree and commit:
-
-  a10a0f39cae6 ("mm/devm_memremap_pages: enable sub-section remap")
-
-from the akpm-current tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/memremap.c
-index bea6f887adad,a0e5f6b91b04..000000000000
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@@ -11,39 -11,39 +11,37 @@@
-  #include <linux/types.h>
-  #include <linux/wait_bit.h>
-  #include <linux/xarray.h>
- -#include <linux/hmm.h>
- =20
-  static DEFINE_XARRAY(pgmap_array);
-- #define SECTION_MASK ~((1UL << PA_SECTION_SHIFT) - 1)
-- #define SECTION_SIZE (1UL << PA_SECTION_SHIFT)
- =20
- -#if IS_ENABLED(CONFIG_DEVICE_PRIVATE)
- -vm_fault_t device_private_entry_fault(struct vm_area_struct *vma,
- -		       unsigned long addr,
- -		       swp_entry_t entry,
- -		       unsigned int flags,
- -		       pmd_t *pmdp)
- +#ifdef CONFIG_DEV_PAGEMAP_OPS
- +DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
- +EXPORT_SYMBOL(devmap_managed_key);
- +static atomic_t devmap_managed_enable;
- +
- +static void devmap_managed_enable_put(void *data)
-  {
- -	struct page *page =3D device_private_entry_to_page(entry);
- -	struct hmm_devmem *devmem;
- +	if (atomic_dec_and_test(&devmap_managed_enable))
- +		static_branch_disable(&devmap_managed_key);
- +}
- =20
- -	devmem =3D container_of(page->pgmap, typeof(*devmem), pagemap);
- +static int devmap_managed_enable_get(struct device *dev, struct dev_pagem=
-ap *pgmap)
- +{
- +	if (!pgmap->ops || !pgmap->ops->page_free) {
- +		WARN(1, "Missing page_free method\n");
- +		return -EINVAL;
- +	}
- =20
- -	/*
- -	 * The page_fault() callback must migrate page back to system memory
- -	 * so that CPU can access it. This might fail for various reasons
- -	 * (device issue, device was unsafely unplugged, ...). When such
- -	 * error conditions happen, the callback must return VM_FAULT_SIGBUS.
- -	 *
- -	 * Note that because memory cgroup charges are accounted to the device
- -	 * memory, this should never fail because of memory restrictions (but
- -	 * allocation of regular system page might still fail because we are
- -	 * out of memory).
- -	 *
- -	 * There is a more in-depth description of what that callback can and
- -	 * cannot do, in include/linux/memremap.h
- -	 */
- -	return devmem->page_fault(vma, addr, page, flags, pmdp);
- +	if (atomic_inc_return(&devmap_managed_enable) =3D=3D 1)
- +		static_branch_enable(&devmap_managed_key);
- +	return devm_add_action_or_reset(dev, devmap_managed_enable_put, NULL);
-  }
- -#endif /* CONFIG_DEVICE_PRIVATE */
- +#else
- +static int devmap_managed_enable_get(struct device *dev, struct dev_pagem=
-ap *pgmap)
- +{
- +	return -EINVAL;
- +}
- +#endif /* CONFIG_DEV_PAGEMAP_OPS */
- =20
-  static void pgmap_array_delete(struct resource *res)
-  {
-@@@ -54,8 -54,14 +52,8 @@@
- =20
-  static unsigned long pfn_first(struct dev_pagemap *pgmap)
-  {
-- 	return (pgmap->res.start >> PAGE_SHIFT) +
- -	const struct resource *res =3D &pgmap->res;
- -	struct vmem_altmap *altmap =3D &pgmap->altmap;
- -	unsigned long pfn;
- -
- -	pfn =3D PHYS_PFN(res->start);
- -	if (pgmap->altmap_valid)
- -		pfn +=3D vmem_altmap_offset(altmap);
- -	return pfn;
-++	return (PHYS_PFN(pgmap->res.start)) +
- +		vmem_altmap_offset(pgmap_altmap(pgmap));
-  }
- =20
-  static unsigned long pfn_end(struct dev_pagemap *pgmap)
-@@@ -101,28 -89,23 +99,23 @@@ static void devm_memremap_pages_release
-  	unsigned long pfn;
-  	int nid;
- =20
- -	pgmap->kill(pgmap->ref);
- +	dev_pagemap_kill(pgmap);
-  	for_each_device_pfn(pfn, pgmap)
-  		put_page(pfn_to_page(pfn));
- -	pgmap->cleanup(pgmap->ref);
- +	dev_pagemap_cleanup(pgmap);
- =20
-  	/* pages are dead and unused, undo the arch mapping */
-- 	align_start =3D res->start & ~(SECTION_SIZE - 1);
-- 	align_size =3D ALIGN(res->start + resource_size(res), SECTION_SIZE)
-- 		- align_start;
--=20
-- 	nid =3D page_to_nid(pfn_to_page(align_start >> PAGE_SHIFT));
-+ 	nid =3D page_to_nid(pfn_to_page(PHYS_PFN(res->start)));
- =20
-  	mem_hotplug_begin();
-  	if (pgmap->type =3D=3D MEMORY_DEVICE_PRIVATE) {
-- 		pfn =3D align_start >> PAGE_SHIFT;
-+ 		pfn =3D PHYS_PFN(res->start);
-  		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
-- 				align_size >> PAGE_SHIFT, NULL);
-+ 				PHYS_PFN(resource_size(res)), NULL);
-  	} else {
-- 		arch_remove_memory(nid, align_start, align_size,
-+ 		arch_remove_memory(nid, res->start, resource_size(res),
- -				pgmap->altmap_valid ? &pgmap->altmap : NULL);
- +				pgmap_altmap(pgmap));
-- 		kasan_remove_zero_shadow(__va(align_start), align_size);
-+ 		kasan_remove_zero_shadow(__va(res->start), resource_size(res));
-  	}
-  	mem_hotplug_done();
- =20
-@@@ -173,64 -146,13 +165,59 @@@ void *devm_memremap_pages(struct devic
-  	};
-  	pgprot_t pgprot =3D PAGE_KERNEL;
-  	int error, nid, is_ram;
- +	bool need_devmap_managed =3D true;
- +
- +	switch (pgmap->type) {
- +	case MEMORY_DEVICE_PRIVATE:
- +		if (!IS_ENABLED(CONFIG_DEVICE_PRIVATE)) {
- +			WARN(1, "Device private memory not supported\n");
- +			return ERR_PTR(-EINVAL);
- +		}
- +		if (!pgmap->ops || !pgmap->ops->migrate_to_ram) {
- +			WARN(1, "Missing migrate_to_ram method\n");
- +			return ERR_PTR(-EINVAL);
- +		}
- +		break;
- +	case MEMORY_DEVICE_FS_DAX:
- +		if (!IS_ENABLED(CONFIG_ZONE_DEVICE) ||
- +		    IS_ENABLED(CONFIG_FS_DAX_LIMITED)) {
- +			WARN(1, "File system DAX not supported\n");
- +			return ERR_PTR(-EINVAL);
- +		}
- +		break;
- +	case MEMORY_DEVICE_DEVDAX:
- +	case MEMORY_DEVICE_PCI_P2PDMA:
- +		need_devmap_managed =3D false;
- +		break;
- +	default:
- +		WARN(1, "Invalid pgmap type %d\n", pgmap->type);
- +		break;
- +	}
- +
- +	if (!pgmap->ref) {
- +		if (pgmap->ops && (pgmap->ops->kill || pgmap->ops->cleanup))
- +			return ERR_PTR(-EINVAL);
- +
- +		init_completion(&pgmap->done);
- +		error =3D percpu_ref_init(&pgmap->internal_ref,
- +				dev_pagemap_percpu_release, 0, GFP_KERNEL);
- +		if (error)
- +			return ERR_PTR(error);
- +		pgmap->ref =3D &pgmap->internal_ref;
- +	} else {
- +		if (!pgmap->ops || !pgmap->ops->kill || !pgmap->ops->cleanup) {
- +			WARN(1, "Missing reference count teardown definition\n");
- +			return ERR_PTR(-EINVAL);
- +		}
- +	}
- =20
- -	if (!pgmap->ref || !pgmap->kill || !pgmap->cleanup) {
- -		WARN(1, "Missing reference count teardown definition\n");
- -		return ERR_PTR(-EINVAL);
- +	if (need_devmap_managed) {
- +		error =3D devmap_managed_enable_get(dev, pgmap);
- +		if (error)
- +			return ERR_PTR(error);
-  	}
- =20
-- 	align_start =3D res->start & ~(SECTION_SIZE - 1);
-- 	align_size =3D ALIGN(res->start + resource_size(res), SECTION_SIZE)
-- 		- align_start;
-- 	align_end =3D align_start + align_size - 1;
--=20
-- 	conflict_pgmap =3D get_dev_pagemap(PHYS_PFN(align_start), NULL);
-+ 	conflict_pgmap =3D get_dev_pagemap(PHYS_PFN(res->start), NULL);
-  	if (conflict_pgmap) {
-  		dev_WARN(dev, "Conflicting mapping in same section\n");
-  		put_dev_pagemap(conflict_pgmap);
-
---Sig_/oAm8jCFy=m18mDYbv_b1D/6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0d1soACgkQAVBC80lX
-0Gyxjgf+LBFAMMUjS+UNbtw3lUuoI4DnEVhgDHevjPiJPmrYuuQYMSQlsC5iBuAH
-8/iPWCxOdHhTQZq4QZmx303bPEAevCxLtGFYF2Q7Xb8/Kj0NeOzGYcUBL1DVLMRM
-YDa7ERRMt9hjPqeE/ujwDufvUyUtdmMcCUFs82tPK2aXgcfRD307isgriJWERSjH
-XHrEjZl/0yqBs5r/vehkCUpCJt8Nx572kHTkowFHCoOJwjdiAPWFmS+die86GapM
-5bEGmPp9eFp+YBrCttkPBOesPSh9q37jk0hQ8rdsifF9lA1sw4BGTKG+l4voYGWd
-diuYSaG1jRv/o48+dutgo7A84xuEpA==
-=9DM8
------END PGP SIGNATURE-----
-
---Sig_/oAm8jCFy=m18mDYbv_b1D/6--
+[1] https://patchwork.kernel.org/patch/11012077/
