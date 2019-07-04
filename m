@@ -2,92 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D24E5F27F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 055525F283
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfGDFzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 01:55:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36999 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfGDFzb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 01:55:31 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g15so2374468pgi.4;
-        Wed, 03 Jul 2019 22:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=BX5JDaciana7ktLIahHDZ8Rm/ZU0HX0KyhCu3VI68A8=;
-        b=ES/LWPfND6i8EUl8ALV5oWggRPVLI7ruCB9fs/GvPzxHMIPoN81XcE8xKezsMra/y6
-         dSwtmhsVOcDEDLA3+63LTMxSlFWvNLIzPEdZZiYtQ3E0aqVn5T5Alw1PRyomomnXkJD6
-         8TSPx95eZ4q2HFnM+Y18aqUHNumIeDhdJuw7YW81gRweXQIH3ei5iN4365L5rHuTezoO
-         mbv+3O9cU982/pSlPyZrIJGuMZwxmgH2I//jRmEenMlfFtkEaW8stYKYUR7edjVF4Wln
-         rsVaLY8yfmeSuPwncUDuN/KSvjXMeRrokfWjIUtYnBY04EyiTl/bZoKHY9T/rp7ef961
-         F3RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding;
-        bh=BX5JDaciana7ktLIahHDZ8Rm/ZU0HX0KyhCu3VI68A8=;
-        b=ciZYrl0euWR5Si7HQyo6rI5v/6Bol5RYJy1sxB2a+HxsMiAPmipm2U8xwOQ9Jc7er7
-         VgHa3r3H5CSRlmmUNsgJj73T35YgFyFuraDk3XCkbem4WpC4NewOfehBrNKvAZI6kTmX
-         zD67SgiDyUa+m7+8+uokdY/qSzIdBoqhFDOcXx//rs3Dxbz333vEPBknjR8cuffPTGeD
-         SkAHrS8/+nuyl2KWKrskoc9pPpxLHwl7Sz1ULrZSFDbwyrbnhO8ZnNK7Ga/KGbhxd7Dl
-         ekJCkHX64rbIL7ISv8yT50HG1vesZG5Yjyu3KvScpsNJqmBrWloYGdujvsAkr8puuikH
-         D8Ww==
-X-Gm-Message-State: APjAAAX160oIQ66L3ZBOSxrZJnRcPNbmFE7FyaBySe1Mzr7lVhykJtir
-        AggYfdmOoMG5F/Zop+Oh15wOcLht
-X-Google-Smtp-Source: APXvYqwDEIQv50OOSV4lqbB7mHxRneKKwMjQFsVni/kO8fTksoN52y09PuYbOrKCqczquTT9hKw8LQ==
-X-Received: by 2002:a63:c508:: with SMTP id f8mr10813454pgd.48.1562219731123;
-        Wed, 03 Jul 2019 22:55:31 -0700 (PDT)
-Received: from [0.0.0.0] ([80.240.31.150])
-        by smtp.gmail.com with ESMTPSA id j11sm5792476pfa.2.2019.07.03.22.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 22:55:30 -0700 (PDT)
-Subject: Re: [PATCH RFC 0/3] Support CPU hotplug for ARM64
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, james.morse@arm.com
-Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, guohanjun@huawei.com,
-        xiexiuqi@huawei.com, huawei.libin@huawei.com,
-        john.garry@huawei.com, jonathan.cameron@huawei.com
-References: <1561720392-45907-1-git-send-email-wangxiongfeng2@huawei.com>
- <2b22cf4d-9646-9f20-41ae-cceb83d9791b@gmail.com>
- <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
-From:   Jia He <hejianet@gmail.com>
-Organization: ARM
-Message-ID: <adfea83d-fb86-f388-3409-eea9564b938a@gmail.com>
-Date:   Thu, 4 Jul 2019 13:55:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <135ee490-a5a6-46c9-208e-81849b20d6b6@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1727294AbfGDF4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 01:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfGDF4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 01:56:36 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3561D21882;
+        Thu,  4 Jul 2019 05:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562219795;
+        bh=ev00zY18elXA5ijjKl+ZTkplSz07vBXTc3V/9aX7YTs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o7bd8laRAY2IHaVCAXtydSA7UYY9V5mOGs3Q70qpbPxifJwPGp8pRVbr4JbfQD1at
+         7lJhN0R0SL3582a/6WsjK6Mj643bVchmFVMK4mPLOdsuRqnrQ29/HP7OWZBXYcvh/p
+         BCsyUY5IgzvSX1GXvWNR8NsYW5PGe4mEQ13fdAbg=
+Date:   Thu, 4 Jul 2019 14:56:31 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/2] ftrace/selftest: Test if set_event/ftrace_pid
+ exists before writing
+Message-Id: <20190704145631.58e78ce0add30b3987ea8845@kernel.org>
+In-Reply-To: <20190703220105.5a5db301@gandalf.local.home>
+References: <20190703194959.596805445@goodmis.org>
+        <20190703195300.408302485@goodmis.org>
+        <20190703160009.31ef5cb7@gandalf.local.home>
+        <20190704105126.355b476f13795cab16727fbc@kernel.org>
+        <20190703220105.5a5db301@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiongfeng
+On Wed, 3 Jul 2019 22:01:05 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 2019/7/4 11:26, Xiongfeng Wang wrote:
-> Hi Justin,
->
-> On 2019/7/4 11:00, Jia He wrote:
->> Hi Xiongfeng
->>
->> It is a little bit awkful that I am also  investigating acpi based cpu hotplug issue silimar with
->>
->> your idea. My question is your purpose to implement the vcpu hotplug in arm64 qemu?
-> Yes, my purpose is to implement the vcpu hotplug in arm64 qemu. So that I can add or remove vcpu
-> without shutting down the Guest OS.
+> On Thu, 4 Jul 2019 10:51:26 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > > > diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+> > > > index 779ec11f61bd..a7b06291e32c 100644
+> > > > --- a/tools/testing/selftests/ftrace/test.d/functions
+> > > > +++ b/tools/testing/selftests/ftrace/test.d/functions
+> > > > @@ -91,8 +91,8 @@ initialize_ftrace() { # Reset ftrace to initial-state
+> > > >      reset_events_filter
+> > > >      reset_ftrace_filter
+> > > >      disable_events
+> > > > -    echo > set_event_pid	# event tracer is always on
+> > > > -    echo > set_ftrace_pid
+> > > > +    [ -f set_event_pid ] && echo > set_event_pid  # event tracer is always on  
+> > > 
+> > > I probably should remove that comment, because I believe that was why
+> > > it wasn't tested :-/  
+> > 
+> > Hmm, OK. I think this comment means "the event tracer is always on if clearing
+> > set_event_pid filter". Would this need to be removed?
+> 
+> When this was added in commit 131f840d5b7 ("selftests: ftrace:
+> Initialize ftrace before each test"), we had this:
+> 
+> +    echo > set_event_pid       # event tracer is always on
+> +    [ -f set_ftrace_filter ] && echo | tee set_ftrace_*
+> +    [ -f set_graph_function ] && echo | tee set_graph_*
+> +    [ -f stack_trace_filter ] && echo > stack_trace_filter
+> +    [ -f kprobe_events ] && echo > kprobe_events
+> +    [ -f uprobe_events ] && echo > uprobe_events
+> 
+> Where set_event_pid is the only file not tested for existence. I
+> figured that comment was the reason for not testing it. If that was the
+> case, then adding a test, I would think we should remove the comment.
 
-Thanks for the infor, I guess you used GED device in qemu ;-)?
+Ah, I see.
 
----
-Cheers,
-Justin (Jia He)
+> 
+> Do you agree?
 
+Yes, I agree with removing it.
+
+Thank you!
+
+> 
+> -- Steve
+> 
+> 
+> > 
+> > Thank you,
+> > 
+> > > 
+> > > -- Steve
+> > > 
+> > >   
+> > > > +    [ -f set_ftrace_pid ] && echo > set_ftrace_pid
+> > > >      [ -f set_ftrace_filter ] && echo | tee set_ftrace_*
+> > > >      [ -f set_graph_function ] && echo | tee set_graph_*
+> > > >      [ -f stack_trace_filter ] && echo > stack_trace_filter  
+> > >   
+> > 
+> > 
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
