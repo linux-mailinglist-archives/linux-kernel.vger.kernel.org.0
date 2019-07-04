@@ -2,65 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6829F5FB11
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA035FB16
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfGDPju convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 4 Jul 2019 11:39:50 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:44730 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727454AbfGDPjt (ORCPT
+        id S1727926AbfGDPkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:40:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46178 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbfGDPkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:39:49 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-213-JZyB4AryN_eHsc0v6lTtEQ-1; Thu, 04 Jul 2019 16:39:41 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 4 Jul 2019 16:39:41 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 4 Jul 2019 16:39:41 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: RE: [PATCH 0/7] Use spinlock_t instead of struct spinlock
-Thread-Topic: [PATCH 0/7] Use spinlock_t instead of struct spinlock
-Thread-Index: AQHVMn59sZSDeWtWa0aQMiKqYxhEN6a6mByg
-Date:   Thu, 4 Jul 2019 15:39:41 +0000
-Message-ID: <4456003dfa654444b8af7b7be9a9c30e@AcuMS.aculab.com>
-References: <20190704153803.12739-1-bigeasy@linutronix.de>
-In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 4 Jul 2019 11:40:40 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hj3qd-0002R9-PK; Thu, 04 Jul 2019 15:40:35 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     QLogic-Storage-Upstream@qlogic.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: bnx2fc: remove redundant assignment to variable rc
+Date:   Thu,  4 Jul 2019 16:40:35 +0100
+Message-Id: <20190704154035.15233-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MC-Unique: JZyB4AryN_eHsc0v6lTtEQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From:  Sebastian Andrzej Siewior
-> Sent: 04 July 2019 16:38
-> 
-> Just a small series to clean up various "struct spinlock" user and make
-> them use "spinlock_t" instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-I thought it was policy to avoid typedefs?
-Probably because you can only define them once.
+The variable rc is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-	David
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index 7796799bf04a..4eb3fe9ed189 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -1893,7 +1893,7 @@ static void bnx2fc_stop(struct bnx2fc_interface *interface)
+ static int bnx2fc_fw_init(struct bnx2fc_hba *hba)
+ {
+ #define BNX2FC_INIT_POLL_TIME		(1000 / HZ)
+-	int rc = -1;
++	int rc;
+ 	int i = HZ;
+ 
+ 	rc = bnx2fc_bind_adapter_devices(hba);
+-- 
+2.20.1
 
