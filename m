@@ -2,84 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4090A5F4A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB525F4B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 10:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfGDIei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 04:34:38 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35650 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfGDIei (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:34:38 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r21so4709132qke.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 01:34:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=++/HKhsN/QQmLM6JQP1fW7J8KtQqaq40rFMcnPScN9I=;
-        b=QRy/VS145q02ewAmxoO+V1Q4m4YchBvIGn1kSzKdgzAIONmb1QfyiOfzyzJ5Q+96Tm
-         XaGfl+lvMYoIT6bia7u3mjsU6LNRgwox7Hi8Lsy/Hd2MnKx9YtjZGk0c4eumZQ48KcQC
-         OYLJIDVWjKwdY0VccRQh0tpxPW7p3M+w7oBvEZq4PwL21ji99pmpJZYB9R32Jps3Eb2o
-         hxt1A/fsl4uslMBltVzsOtzQYCdK1PKGv+pNHUinNxv+aYuVOueO/AWdVWxpa9KQpbWA
-         JaXrUOXLrp78Xvsd866g5uIjOsXZdRED6v5rHpH9M7mbNhM1loqGTkk3n/3SSsoOqhUc
-         k3ww==
-X-Gm-Message-State: APjAAAUWGhyk8HpPn7l67sCZZ/G84hga6s0fkSE42kSjEC+nygreXdZ4
-        iBvVVuQLu73YrdcFj85bbDh68MEHYsNfoe2xYpg=
-X-Google-Smtp-Source: APXvYqz6v7EmV3ngwarEeCmQheK2cppB5SWn6b8d1ITzAPozhijhSTjEbVFH/kwEzCFgZNgcYLW6HoSeSwOry1W386E=
-X-Received: by 2002:a37:ad12:: with SMTP id f18mr33754444qkm.3.1562229277017;
- Thu, 04 Jul 2019 01:34:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190703001842.12238-1-alistair.francis@wdc.com>
- <20190703001842.12238-3-alistair.francis@wdc.com> <CAK8P3a37GLzp+w6m0SEV+9j_6sH91SuStyAEW-VzuJ5_dUCnZw@mail.gmail.com>
- <CAKmqyKP07futGV1WsZwvqGzeR646eo-ysVy9RCqaSOG-2qhH_g@mail.gmail.com>
- <CAK8P3a1zJPiR06uxZ5QVoEyDU64v=oUu_p9X-mULLeXN-som8A@mail.gmail.com> <CAKmqyKMtsQaq9DpfPY=T0pixrH2sntewDz42dTvD5rDcK+ZV0w@mail.gmail.com>
-In-Reply-To: <CAKmqyKMtsQaq9DpfPY=T0pixrH2sntewDz42dTvD5rDcK+ZV0w@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 4 Jul 2019 10:34:20 +0200
-Message-ID: <CAK8P3a36CXf+HGgL=nNYzc-1Qhh=tu6to0opwYjO4fO5KDxUDA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] riscv/include/uapi: Define a custom __SIGINFO struct
- for RV32
-To:     Alistair Francis <alistair23@gmail.com>
-Cc:     Alistair Francis <alistair.francis@wdc.com>,
-        linux-riscv-bounces@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727071AbfGDIlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 04:41:45 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:38346 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbfGDIlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:41:45 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 61BF4188D688A99E751A;
+        Thu,  4 Jul 2019 16:41:41 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x648eZ70068213;
+        Thu, 4 Jul 2019 16:40:35 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070416410469-2082440 ;
+          Thu, 4 Jul 2019 16:41:04 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: audio-graph-card: fix use-after-free in graph_for_each_link
+Date:   Thu, 4 Jul 2019 16:38:50 +0800
+Message-Id: <1562229530-8121-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-04 16:41:04,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-04 16:40:40,
+        Serialize complete at 2019-07-04 16:40:40
+X-MAIL: mse-fl1.zte.com.cn x648eZ70068213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 4, 2019 at 12:18 AM Alistair Francis <alistair23@gmail.com> wrote:
-> On Wed, Jul 3, 2019 at 12:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wed, Jul 3, 2019 at 8:45 PM Alistair Francis <alistair23@gmail.com> wrote:
-> > > What I don't understand though is how that impacted this struct, it
-> > > doesn't use clock_t at all, everything in the struct is an int or
-> > > void*.
-> >
-> > si_utime/si_stime in siginfo are clock_t.
->
-> But they are further down the struct. I just assumed that GCC would
-> align those as required, I guess it aligns the start of the struct to
-> match some 64-bit members which seems strange.
+After calling of_node_put() on the codec_ep and codec_port variables,
+they are still being used, which may result in use-after-free.
+We fix this issue by calling of_node_put() after the last usage.
 
-These are the regular struct alignment rules. Essentially you would
-get something like
+Fixes: fce9b90c1ab7 ("ASoC: audio-graph-card: cleanup DAI link loop method - step2")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
+---
+ sound/soc/generic/audio-graph-card.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-struct s {
-    int a;
-    int b;
-    int c;
-    union {
-         int d;
-         long long e;
-   };
-   int f;
-};
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index e438011..30a4e83 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -421,9 +421,6 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 			codec_ep = of_graph_get_remote_endpoint(cpu_ep);
+ 			codec_port = of_get_parent(codec_ep);
+ 
+-			of_node_put(codec_ep);
+-			of_node_put(codec_port);
+-
+ 			/* get convert-xxx property */
+ 			memset(&adata, 0, sizeof(adata));
+ 			graph_parse_convert(dev, codec_ep, &adata);
+@@ -443,6 +440,9 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 			else
+ 				ret = func_noml(priv, cpu_ep, codec_ep, li);
+ 
++			of_node_put(codec_ep);
++			of_node_put(codec_port);
++
+ 			if (ret < 0)
+ 				return ret;
+ 
+-- 
+2.9.5
 
-Since 'e' has 8 byte alignment, the same is true for the union,
-and putting the union in a struct also requires the same alignment
-for the struct itself, so now you get padding after 'c' and 'f'.
-
-       Arnd
