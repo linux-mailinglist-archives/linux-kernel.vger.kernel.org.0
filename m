@@ -2,99 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 944575F0B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D212E5F060
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 02:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbfGDAiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 20:38:55 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:35696 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbfGDAix (ORCPT
+        id S1727210AbfGDAh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 20:37:58 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40445 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfGDAhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 20:38:53 -0400
-Received: by mail-qt1-f201.google.com with SMTP id y54so1866211qtk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 17:38:52 -0700 (PDT)
+        Wed, 3 Jul 2019 20:37:52 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e8so4296136otl.7;
+        Wed, 03 Jul 2019 17:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oxYjFRyxX3NROXm+Ygmt9JHCAGAtVhFnOyo3OkZfbDU=;
-        b=pFv5mcrDyGgL+dq8XXN+UzV3D859ZKLMwvBZx8cL1G+iv8Gu3Bpp+0tDy7y+eqJdN+
-         Sys/jfOMPIa4Kk480wXC0YSxIJr4WY5NEmKFAbtIyqHPCEL2shC1RGkkrmviAIc9PnSu
-         TXCypRWrWJGDNfUhMWaPu525sXypB8WEC829GXbeLutNsc9f/WyFCZgbd+YcS+3Bt/27
-         ++SN32pVuSx2WX6MEAkXAXS9tJC649L452kf9cFUTF1O3tHvajHrkRSjikLGaYLmS0ab
-         9IJofwcEo1fJd6pCPer9SdnXJXIqGF+iHoAffclBGB8yGVB4sDN+f0jHKqqeZ/ia1nBq
-         8yIw==
+        bh=kxKadiwStil9way1kU8jzMyzFN0LuSwbCGE20CmySOI=;
+        b=jjed64kf8UigzT5xPFuCz/Amv7WWAE+6rjJhQtW2VDYH4cmOmzA1vr44kYsoBJTpaz
+         dJmiqSYb2ZTRxwDk5JuHdcjKJ1tt72V4tLsn/8xmWsM/qHhCw/Cr1Qs+zLIW2q8s5iuC
+         MQSfIJ+VsVcLXWy+RUH9ED/MSwMEMEBjK/KP6ffPBTB6e6uWXWZI1ifhvzW58Qyx7Vvr
+         ZN22H0p7boLb9J44FTlPFArT0f5wu4yteSCNHHpkeNr7RTHwux9vATkCmlo8CEGbSew4
+         kx97el09vrfVjyi0FZbZgiXfUR+fVhTswAljsD+iQn2erhsvaOybMBJU1fF8SS6VWd8c
+         arOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=oxYjFRyxX3NROXm+Ygmt9JHCAGAtVhFnOyo3OkZfbDU=;
-        b=TYzkhpLmAU+EE2H3wmutwAf6z+zNEuHkTvNENvnp+sGbwabli02qNMKVEIj4uej/Dc
-         8tPhOsjD98qNI7UMItYmskjTb9G+jgVEcSQ/zyftMG/GD32bsLQrhJJTlw8ipUElYTDh
-         dq9s1RWQbJWmAqi6lSI1KAkFOu3L9ovxo3sppSY5l9Fu7tbMFEzuRjg6SG9i6oGdlF38
-         bz3E3E/3enXeWipmRj6TzgreuZLVyrQwxmmdWI8ovF3HNEwK5l9WoRTb4KJKc+aaGNS2
-         I7kDX6eloZWVCsi7CJfAjgFfiYWXbt7wY4tjISof525gvaqyoaF9Say0vaWH3eZNMrMz
-         cIaw==
-X-Gm-Message-State: APjAAAXMYzOvzH5eTRXy3DEepe5Ukc/zt2I4OuYHT6T0gyLXCD2M/ZlJ
-        RsY3CqtckI6Gdn7VZfPsbgwGv4XH2KnrOFPku461pA==
-X-Google-Smtp-Source: APXvYqzWy4FbKHHWYOuv608ZWRy81huPhVNFArtBSw25v8dz2nkh4QA//OrB7jPx5C158BeXlhqK6QKVWRPtFRELD79Swg==
-X-Received: by 2002:ac8:1a3c:: with SMTP id v57mr32832048qtj.339.1562200731869;
- Wed, 03 Jul 2019 17:38:51 -0700 (PDT)
-Date:   Wed,  3 Jul 2019 17:36:15 -0700
-In-Reply-To: <20190704003615.204860-1-brendanhiggins@google.com>
-Message-Id: <20190704003615.204860-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190704003615.204860-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v6 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kxKadiwStil9way1kU8jzMyzFN0LuSwbCGE20CmySOI=;
+        b=GZNbAhG8AcZHCLBvgKQYZPJTL++tg0X+IJIBWg3JPvxf6pRS0J5DkaFxt1RJdWAcv6
+         UINOVLTMl0NrN3dtjKglmu56T1jV5gd8KLdFIKbBJ8d6hmc5mvep9tqS20oWznIWbWQT
+         y3LAa5GNeTiP76NcRYmBI3GNLgF7IpVciMp91Qxy2D+FWixTupvVGZTJxyhwzlnhFJ4/
+         1sA/8MEvEhDqDgF1i26BQh70rbt4wOxk2EWkSgcj6OsTjKFN7ncFKZQUeVwbx+EKx5UP
+         u5UaxhjcG6aC0vzR6bhNBbhGzMKGW2GuPX+gaDb2ZSQCGIHDih5whw0qau5UbKYo+7MJ
+         a4Ww==
+X-Gm-Message-State: APjAAAWJSl1JNPLnJs4jTfBYbLh3WkFAN8CJsixLDzAPJMalVETjrhs3
+        gpCQwV61xjAp0c26Iwy9z+oY1GDaslJvqIUL1YQ=
+X-Google-Smtp-Source: APXvYqzeYi0PDoaiISTn2M9/7d/KVcBfQ7O2/IKHGPqh7tH9DMLVPheOsLoY4L/bml6SlwrjRhF2NNyFcfJgV6g/VzA=
+X-Received: by 2002:a9d:6959:: with SMTP id p25mr12145726oto.118.1562200672188;
+ Wed, 03 Jul 2019 17:37:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <1560474949-20497-1-git-send-email-wanpengli@tencent.com>
+ <1560474949-20497-2-git-send-email-wanpengli@tencent.com> <CANRm+CzUvTTOuYhsGErSDxdNSmxVr7o8d66DF0KOk4v3Meajmg@mail.gmail.com>
+ <CANRm+Cw0vmqi4s4HhnMqs=hZZixHmU87CGO_ujTGoN_Osjx76g@mail.gmail.com>
+ <CANRm+Cz9Lc5rA7-2yLLX7wiemM-gdvWvQQdGVrvkYanYO9TwgA@mail.gmail.com> <18fd2372-45d8-0bff-79e7-373a8b7d129c@redhat.com>
+In-Reply-To: <18fd2372-45d8-0bff-79e7-373a8b7d129c@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Thu, 4 Jul 2019 08:37:44 +0800
+Message-ID: <CANRm+CyykkkvCP0sS6SBOMO_XFYVviOGNcQOMuudGZ3y0y1YQg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] KVM: LAPIC: Optimize timer latency consider world
+ switch time
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section.
+On Wed, 3 Jul 2019 at 22:13, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 03/07/19 02:48, Wanpeng Li wrote:
+> > Hi Paolo, how about this patchset? Patch 2/2 is easy to take, do you
+> > have more concern about patch 1/2?
+>
+> I don't know.  It seems somewhat hard to tune and in cyclictest it only
+> happens for preemption_timer=N.  Are you using preemption_timer=N
+> together with the LAPIC-timer-on-service-CPU patches?
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+A 25ns conservative value makes no benefit for cyclictest any more
+even when preemption_timer=N. Btw, maybe it is the time to merge the
+LAPIC-timer-on-service-CPU patches now. :)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 856a7c4f7dcf2..7b4dcae2526c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12727,6 +12727,7 @@ S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+Regards,
+Wanpeng Li
