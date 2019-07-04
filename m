@@ -2,124 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 351A75FAD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E9C5FAE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 17:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfGDP3u convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 4 Jul 2019 11:29:50 -0400
-Received: from mga09.intel.com ([134.134.136.24]:4001 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbfGDP3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 11:29:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 08:29:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
-   d="scan'208";a="166286219"
-Received: from pgsmsx113.gar.corp.intel.com ([10.108.55.202])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Jul 2019 08:29:47 -0700
-Received: from pgsmsx103.gar.corp.intel.com ([169.254.2.4]) by
- pgsmsx113.gar.corp.intel.com ([169.254.6.230]) with mapi id 14.03.0439.000;
- Thu, 4 Jul 2019 23:29:46 +0800
-From:   "Voon, Weifeng" <weifeng.voon@intel.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>
-Subject: RE: [PATCH v1 net-next] net: stmmac: enable clause 45 mdio support
-Thread-Topic: [PATCH v1 net-next] net: stmmac: enable clause 45 mdio support
-Thread-Index: AQHVMUGmUw8CyhUBakCg51utnm9b/6a4aBMAgAFBlaD//59qAIAArWRQgAAA3wCAAJ+BsA==
-Date:   Thu, 4 Jul 2019 15:29:46 +0000
-Message-ID: <D6759987A7968C4889FDA6FA91D5CBC8147388E0@PGSMSX103.gar.corp.intel.com>
-References: <1562147404-4371-1-git-send-email-weifeng.voon@intel.com>
- <20190703140520.GA18473@lunn.ch>
- <D6759987A7968C4889FDA6FA91D5CBC8147384B6@PGSMSX103.gar.corp.intel.com>
- <20190704033038.GA6276@lunn.ch>
- <D6759987A7968C4889FDA6FA91D5CBC81473862D@PGSMSX103.gar.corp.intel.com>
- <20190704135420.GD13859@lunn.ch>
-In-Reply-To: <20190704135420.GD13859@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727810AbfGDPbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 11:31:46 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53420 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfGDPbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 11:31:46 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x15so6139222wmj.3;
+        Thu, 04 Jul 2019 08:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:cc:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=0Xzci8CUbNvBihcDS7Q9xsEhF5+lWnqF471ghR2ZAAM=;
+        b=WANhg2KffhIxcHzBZjyQzNGYdvFl+2SSagDh2j/02zvsNp2peZbUbfqc4qS21kj9C8
+         VMFE0EQDX2kkO0+qI5ed7PvzZLN+3jzrSnomrGXtq5CRkR/cXdw8gv+4PR22jiUFAf9o
+         vDCuzgrqLNLxKWdxO5fP0iT75jJ/8Vuj2yXIhA3rn1lXmZTt1AspV3Txo+SUqMFwLAwt
+         olPDG+0YofaP3WwVgBAh/lDjG3t1C8uA9fEe5vkEgeK9/S7OStVSsYkp0q2dE7u3N3se
+         IysNLa+zTKtdwCThIs6Cg8bY1OihYtov0umvPzIcslA6JdmsX2zGX1/KQewtbVBFEM6K
+         0KZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0Xzci8CUbNvBihcDS7Q9xsEhF5+lWnqF471ghR2ZAAM=;
+        b=RNWrl67FylJ7u1Md6IpBjEwQKRylYP3YRAVZ/KKZx5B/9SHBOyJgBef7Dnyfp9nMgP
+         LIDAx6jJ+FGfem3RV7xlZIbSujFV6fzZmP7xdo73EW7g134PUNc2J58wuKZnlBYZfF9x
+         lLF7V/p77yAH5HZUjv93etXWnv+5Hln43CUGGefwXvCqh8yN4EvQ+jfs3k27h46D5NkC
+         3nEa8+HWp6xwSwdC1+RHA/DE41x5Ub0jP3cL/IRgd+QN447sPxmj05VUJrIBIlwchdqO
+         abAhXil6KlOo9yp4nPba0F8SJTUTSZM0bRcwDbdH61O5f6rsSjXwZPZjicH+Sp94gNkC
+         PtmA==
+X-Gm-Message-State: APjAAAWh6Puvl4KAZ0xJuZdGRTkxYv7WH4ks0C1ZG4/67PCQKfmyUr8j
+        UacDKK3+RB7Z0649i7bB2Sc=
+X-Google-Smtp-Source: APXvYqwKPOB3FIvd6N6wGs1Vemf1h6LmBM+18pTf7PrTeGPbG5S2dAolDTJCU+JsvJT2k3EIvYAizg==
+X-Received: by 2002:a7b:c04f:: with SMTP id u15mr119524wmc.106.1562254303618;
+        Thu, 04 Jul 2019 08:31:43 -0700 (PDT)
+Received: from [192.168.2.202] (pD9E5A1AA.dip0.t-ipconnect.de. [217.229.161.170])
+        by smtp.gmail.com with ESMTPSA id o6sm10324355wra.27.2019.07.04.08.31.42
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Jul 2019 08:31:42 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] input: soc_button_array for newer surface devices
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+References: <20190702003740.75970-1-luzmaximilian@gmail.com>
+ <20190702003740.75970-3-luzmaximilian@gmail.com>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <1d384979-38e8-ccb3-6462-0a8a5380f50d@gmail.com>
+Date:   Thu, 4 Jul 2019 17:31:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190702003740.75970-3-luzmaximilian@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > > > @@ -155,22 +171,26 @@ static int stmmac_mdio_read(struct
-> > > > > > mii_bus *bus,
-> > > > > int phyaddr, int phyreg)
-> > > > > >  	struct stmmac_priv *priv = netdev_priv(ndev);
-> > > > > >  	unsigned int mii_address = priv->hw->mii.addr;
-> > > > > >  	unsigned int mii_data = priv->hw->mii.data;
-> > > > > > -	u32 v;
-> > > > > > -	int data;
-> > > > > >  	u32 value = MII_BUSY;
-> > > > > > +	int data = 0;
-> > > > > > +	u32 v;
-> > > > > >
-> > > > > >  	value |= (phyaddr << priv->hw->mii.addr_shift)
-> > > > > >  		& priv->hw->mii.addr_mask;
-> > > > > >  	value |= (phyreg << priv->hw->mii.reg_shift) & priv->hw-
-> > > > > >mii.reg_mask;
-> > > > > >  	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
-> > > > > >  		& priv->hw->mii.clk_csr_mask;
-> > > > > > -	if (priv->plat->has_gmac4)
-> > > > > > +	if (priv->plat->has_gmac4) {
-> > > > > >  		value |= MII_GMAC4_READ;
-> > > > > > +		if (phyreg & MII_ADDR_C45)
-> > > > > > +			stmmac_mdio_c45_setup(priv, phyreg, &value,
-> &data);
-> > > > > > +	}
-> > > > > >
-> > > > > >  	if (readl_poll_timeout(priv->ioaddr + mii_address,
-> v, !(v &
-> > > > > MII_BUSY),
-> > > > > >  			       100, 10000))
-> > > > > >  		return -EBUSY;
-> > > > > >
-> > > > > > +	writel(data, priv->ioaddr + mii_data);
-> > > > >
-> > > > > That looks odd. Could you explain why it is needed.
-> > > > >
-> > > > > Thanks
-> > > > > 	Andrew
-> > > >
-> > > > Hi Andrew,
-> > > > This mdio c45 support needed to access DWC xPCS which is a
-> > > > Clause-45
-> > >
-> > > I mean it looks odd doing a write to the data register in the middle
-> > > of stmmac_mdio_read().
-> >
-> > MAC is using an indirect access to access mdio devices. In order to
-> > read, the driver needs to write into both mii_data and mii_address to
-> > select c45, read/write command, phy address, address to read, and etc.
-> 
-> Yes, that is all clear. The stmmac_mdio_c45_setup() does part of this
-> setup. There is also a write to mii_address which i snipped out when
-> replying. But why do you need to write to the data registers during a
-> read? C22 does not need this write. Are there some bits in the top of
-> the data register which are relevant to C45?
-> 
+On 7/2/19 2:37 AM, Maximilian Luz wrote:
+> +static int soc_device_check_MSHW0040(struct device *dev)
+> +{
+> +	acpi_handle handle = ACPI_HANDLE(dev);
+> +	union acpi_object *result;
+> +	u64 oem_platform_rev = 0;
+> +	int gpios;
+> +
+> +	// get OEM platform revision
+> +	result = acpi_evaluate_dsm_typed(handle, &MSHW0040_DSM_UUID,
+> +					 MSHW0040_DSM_REVISION,
+> +					 MSHW0040_DSM_GET_OMPR, NULL,
+> +					 ACPI_TYPE_INTEGER);
+> +
+> +	if (result) {
+> +		oem_platform_rev = result->integer.value;
+> +		ACPI_FREE(result);
+> +	}
+> +
+> +	if (oem_platform_rev == 0)
+> +		return -ENODEV;
+> +
+> +	dev_dbg(dev, "OEM Platform Revision %llu\n", oem_platform_rev);
+> +
+> +	/*
+> +	 * We are _really_ expecting GPIOs here. If we do not get any, this
+> +	 * means the GPIO driver has not been loaded yet (which can happen).
+> +	 * Try again later.
+> +	 */
+> +	gpios = gpiod_count(dev, NULL);
+> +	if (gpios < 0)
+> +		return -EAGAIN;
+> +
+> +	return 0;
+> +}
 
-Yes, the top 16 bit of the data register only valid when C45 is enable.
-It contains the Register address which MDIO c45 frame intended for.
+Just had another look at this: Shouldn't the EAGAIN here be
+EPROBE_DEFER?
+
+The reasoning is that we would want to defer probing of the driver if we
+can't get any GPIO pins, since we know that MSHW0040 should have some.
+It has in the past been reported that the driver didn't load properly
+(without this check), since it could happen that the GPIO subsystem
+wasn't quite ready yet when probing.
+
+Best,
+Maximilian
