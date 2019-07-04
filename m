@@ -2,138 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 345DE5F256
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA955F258
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 07:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfGDFjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 01:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46356 "EHLO mail.kernel.org"
+        id S1727245AbfGDFlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 01:41:16 -0400
+Received: from mout.web.de ([212.227.17.11]:49397 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfGDFjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 01:39:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64BBC21882;
-        Thu,  4 Jul 2019 05:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562218769;
-        bh=l5a03sjl2l+bpYmsMzEJCgF/WiLVKn30HEWoyaM68Gs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kx9GCrWZpCqJURDrv6MyxKtWv5zXwNx82aigBZrINlKbl1iT5/ewAvzGSwqbKK7Mv
-         ZUzqlEGkgebmK8z1OHhyP8xRXyAjrpGC1wKAGgb0i6jWW/mqh32Cc9vbA2Ct1iijXd
-         KguDsOmTHYOBrUsg3XicHtiPyWLKsCq4M4oSlv2E=
-Date:   Thu, 4 Jul 2019 07:39:27 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>, Alan Tull <atull@kernel.org>
-Subject: Re: [PATCH 06/15] fpga: dfl: fme: add
- DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
-Message-ID: <20190704053927.GB347@kroah.com>
-References: <20190628004951.6202-1-mdf@kernel.org>
- <20190628004951.6202-7-mdf@kernel.org>
- <20190703180753.GA24723@kroah.com>
- <20190703233058.GA15825@hao-dev>
+        id S1725879AbfGDFlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 01:41:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1562218854;
+        bh=k9TYF9HKZzXLhRxDny7GgaR04jhBQklys5OUyA9vKOo=;
+        h=X-UI-Sender-Class:Subject:Cc:References:To:From:Date:In-Reply-To;
+        b=dy/Qns8rnU32Yh8aTamyG4X4xMplOHlbhE/tYUPzDPo7UKJ1Vu3+b0391sEOFbWan
+         DAJxcALS2uO9nDahC3EshchTNXsHaQNWeYg/EhT2/8PF7GYn9XPQPeteHoanSDc1Op
+         4XZTPpYW1FawwdeWuirADpd03Ps1jollomQmtsS4=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.138.50]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Ljrdd-1iFVHj0fiz-00bvap; Thu, 04
+ Jul 2019 07:40:54 +0200
+Subject: Re: [v2] coccinelle: semantic code search for missing of_node_put
+Cc:     Yi Wang <wang.yi59@zte.com.cn>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+References: <201907041041053843118@zte.com.cn>
+To:     Wen Yang <wen.yang99@zte.com.cn>, cocci@systeme.lip6.fr
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <44be5924-26ca-5106-aa25-3cbc3343aa2c@web.de>
+Date:   Thu, 4 Jul 2019 07:40:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703233058.GA15825@hao-dev>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <201907041041053843118@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:NUL6USSBmBUdj3c+K1ytqEqNyKEsNC0L9lewvJevzjoFCdcoDMy
+ hmUvqTJvetGjOp2mz7Pcn081BmWJT1IU/cXPupJGIOlhGUEieB9dz1xh1neRPtUUUtBnrrg
+ Luz/L0sfXG/lTRK6BpvFsZHRCM1HfS1u+bJFMuv+UZ85DmzSAzMzPBOSvOZxOI/5yCie4XT
+ KKqqHARkWGSh1F4Fygy/A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2RkVUiY/UBM=:q4sMI+xPchVHDgt15IfcNi
+ JUTP/KP61AXKb/5Mg3zCxhr7XT8w/8neyByZniGpQlKfguR5ggI8kDb+1JvRISb2Sp6G0+c15
+ MICTUPzYwEcQlpUylcJp1cipY8RhbRIVaFmo0k5ebnyWSpjK7oSoPLJeMB1fEjenpz8U+VwUd
+ ytjX8BzEfLmDqWoghP4xPoBttxJQVwE6IiNAGyuK5nDPTAODrMmNNjIOWy0RVyH5JTvgPfz6T
+ z2C/utClYG59DQaD2YKXBrkE48LRE9sWAfYN2onVPT8J9wfjwiSABMfyEATkbwdodkdXH/ZxL
+ 5ewDM1zyCGHpEDh3k3/Pha+uN8xlFggaqFq+cWPosT5Oj68XxGSReLCEQLxMoYKeooVO1piTp
+ MkaLTH2UdbDHTrm6OZETGFSQQNaQfJVQkXpTH32GMGEWGsMWZmoeIptvkj2I/uxRruqK8FxKh
+ IbbqUK2rDlLDvJ41uTzgLlMw2E5ocMxH0JrsH2JRUL/OY4XQOF3wve+uLjw6HZxeRaV4yfKdb
+ zr1QXvexB/14kSdXJ+JRIB86ofuxm4jjA7+luvNQc9hTru/zE3iQ86BKdBKmKjXNlGbH2P9ko
+ lgdX+fHebqGHRtHI1YrDp7d/jFwTkegV3Br9iXDXSlOFpUK8X89DljVTj7slJAXqVp+VLSuhm
+ 1cONOFeVv7ioFWbqMdbFriBCnG2R4IOOTtyuQHt46I+BfGTAxX1p8yvw2rl2jlRmbSDysdBRa
+ UI/0XlHuuY1YAIyHL215coSDDExh57B4oS4No9jSxHupyPg/BOwy8Wdt6SDy2eOWfR/FPq9DZ
+ Zr8Dpof9kPDGb+fobOJIvK10Z5/xDole3vWl96Dep4AlQ2/ZBKkjqoSW/BSP7OBfsgqR4jibq
+ hCaN9XYwImZtNGDyX4lh93DVObwWiTRkfNXGAE4m/RMO8MgabBaspBirIor9ltg14IDWIGzK2
+ LYfRcgnxOls5iaay5oDSnjvPLhZpp1dozuJoQCxa0gTrxruGH23MgtVCCBdb+qSXXNf0A37Ve
+ dZV54oJLKOZLMlcxCrCBmJhh+bVrj9QiXJaxhrctfW8bhDif5Rf1tk0pso4FzEnrZAhhl9T5v
+ QdA9RSfAqRUx72YW8neauhPGBK72mF/iyda
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 07:30:58AM +0800, Wu Hao wrote:
-> On Wed, Jul 03, 2019 at 08:07:53PM +0200, Greg KH wrote:
-> > On Thu, Jun 27, 2019 at 05:49:42PM -0700, Moritz Fischer wrote:
-> > > From: Wu Hao <hao.wu@intel.com>
-> > > 
-> > > In order to support virtualization usage via PCIe SRIOV, this patch
-> > > adds two ioctls under FPGA Management Engine (FME) to release and
-> > > assign back the port device. In order to safely turn Port from PF
-> > > into VF and enable PCIe SRIOV, it requires user to invoke this
-> > > PORT_RELEASE ioctl to release port firstly to remove userspace
-> > > interfaces, and then configure the PF/VF access register in FME.
-> > > After disable SRIOV, it requires user to invoke this PORT_ASSIGN
-> > > ioctl to attach the port back to PF.
-> > > 
-> > >  Ioctl interfaces:
-> > >  * DFL_FPGA_FME_PORT_RELEASE
-> > >    Release platform device of given port, it deletes port platform
-> > >    device to remove related userspace interfaces on PF, then
-> > >    configures PF/VF access mode to VF.
-> > > 
-> > >  * DFL_FPGA_FME_PORT_ASSIGN
-> > >    Assign platform device of given port back to PF, it configures
-> > >    PF/VF access mode to PF, then adds port platform device back to
-> > >    re-enable related userspace interfaces on PF.
-> > 
-> > Why are you not using the "generic" bind/unbind facility that userspace
-> > already has for this with binding drivers to devices?  Why a special
-> > ioctl?
-> 
-> Hi Greg,
-> 
-> Actually we think it should be safer that making the device invisble than
-> just unbinding its driver. Looks like user can try to rebind it at any
-> time and we don't have any method to stop them.
+> We will also provide an example written in Python later.
 
-Why do you want to "stop" the user from doing something?  They asked to
-do it, why prevent it?  If they ask to do something foolish, well, they
-get to keep the pieces :)
+Will the code move from the commit description into a file
+for your next patch version?
 
-> > > --- a/include/uapi/linux/fpga-dfl.h
-> > > +++ b/include/uapi/linux/fpga-dfl.h
-> > > @@ -176,4 +176,36 @@ struct dfl_fpga_fme_port_pr {
-> > >  
-> > >  #define DFL_FPGA_FME_PORT_PR	_IO(DFL_FPGA_MAGIC, DFL_FME_BASE + 0)
-> > >  
-> > > +/**
-> > > + * DFL_FPGA_FME_PORT_RELEASE - _IOW(DFL_FPGA_MAGIC, DFL_FME_BASE + 1,
-> > > + *					struct dfl_fpga_fme_port_release)
-> > > + *
-> > > + * Driver releases the port per Port ID provided by caller.
-> > > + * Return: 0 on success, -errno on failure.
-> > > + */
-> > > +struct dfl_fpga_fme_port_release {
-> > > +	/* Input */
-> > > +	__u32 argsz;		/* Structure length */
-> > > +	__u32 flags;		/* Zero for now */
-> > > +	__u32 port_id;
-> > > +};
-> > 
-> > meta-comment, why do all of your structures for ioctls have argsz?  You
-> > "know" the size of the structure already, it's part of the ioctl
-> > definition.  You shouldn't need to also set it again, right?  Otherwise
-> > ALL Linux ioctls would need something crazy like this.
-> 
-> Actually we followed the same method as vfio.
 
-vfio is a protocol on "the wire", right?  Not an ioctl.
+> We first use this script to find out all the function names to be proces=
+sed,
 
-> The major purpose should be extendibility, as we really need this to
-> be sth long term maintainable.
+I am still curious on how the output format selection will become clearer
+for the potentially desired automatic data conversion.
 
-You can't change ioctl structure sizes at any time.
 
-> It really helps, if we add some new members for extentions/enhancement
-> under the same ioctl.
+> and then copy these function names into r1.
 
-You don't do that.
+Would this action be performed by another software build script?
 
-> I don't think everybody needs this, but my consideration here is if
-> newer generations of hardware/specs come with some extentions, I still
-> hope we can resue these IOCTLs as much as we could, instead of
-> creating more new ones.
 
-You create new ones, like everyone else does, as you can not change old
-code.  By trying to "version" structures like this, it's just going to
-be a nightmare.
+>>> +@initialize:python@
+>>> +@@
+>>> +
+>>> +seen =3D set()
+>>> +
+>>> +def add_if_not_present (p1, p2):
+>>
+>> It seems that you would like to use iteration functionality.
 
-thanks,
+I am waiting on another constructive answer for this implementation detail=
+.
 
-greg k-h
+
+>>> +x =3D @p1\(of_find_all_nodes\|
+>>
+>> I would find this SmPL disjunction easier to read without the usage
+>> of extra backslashes.
+>>
+>> +x =3D
+>> +(of_=E2=80=A6
+>> +|of_=E2=80=A6
+>> +)@p1(...);
+>>
+>>
+>> Which sort criteria were applied for the generation of the shown
+>> function name list?
+>
+> As julia pointed out, your current writing is not compiled.
+
+* It can be needed for a while to specify the mentioned position variable
+  at an other place.
+
+* Would you like to adjust the SmPL coding style here?
+
+* Will the application of sort criteria be clarified for such identifier l=
+ists?
+
+
+>>> +if (x =3D=3D NULL || ...) S
+>>> +... when !=3D e =3D (T)x
+>>> +    when !=3D true x =3D=3D NULL
+=E2=80=A6
+> Our previous version used the "when any" clause, so we need
+> "when !=3D true x =3D=3D NULL".
+
+I suggest to reconsider further aspects for such constraints.
+
+
+> We can delete this code exclusion specification  for this version.
+
+I would find another assignment exclusion more appropriate at this place.
+
+Regards,
+Markus
