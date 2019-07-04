@@ -2,64 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE585F6CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2390B5F6BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2019 12:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbfGDKpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 06:45:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:38950 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbfGDKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:45:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40AE52B;
-        Thu,  4 Jul 2019 03:45:06 -0700 (PDT)
-Received: from e110176-lin.kfn.arm.com (unknown [10.50.4.178])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3595E3F703;
-        Thu,  4 Jul 2019 03:45:05 -0700 (PDT)
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     Ofir Drang <ofir.drang@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] checkpatch: add *_NOTIFIER_HEAD as var definition
-Date:   Thu,  4 Jul 2019 13:44:57 +0300
-Message-Id: <20190704104457.30045-1-gilad@benyossef.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727587AbfGDKjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 06:39:20 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60634 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727385AbfGDKjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 06:39:20 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6DD5577DDC701E995BDE;
+        Thu,  4 Jul 2019 18:39:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 4 Jul 2019 18:39:06 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/i915: fix possible memory leak in intel_hdcp_auth_downstream()
+Date:   Thu, 4 Jul 2019 10:45:34 +0000
+Message-ID: <20190704104534.12508-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add *_NOTIFIER_HEAD as variable definition to avoid code like this:
+'ksv_fifo' is malloced in intel_hdcp_auth_downstream() and should be
+freed before leaving from the error handling cases, otherwise it will
+cause memory leak.
 
-ATOMIC_NOTIFIER_HEAD(foo);
-EXPORT_SYMBOL_GPL(foo);
-
-From triggering the the following warning:
-WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
-
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
+ drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes from v1:
-- Better RegExp as suggested by Joe Perches.
+diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
+index bc3a94d491c4..27bd7276a82d 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdcp.c
++++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
+@@ -536,7 +536,8 @@ int intel_hdcp_auth_downstream(struct intel_connector *connector)
+ 
+ 	if (drm_hdcp_check_ksvs_revoked(dev, ksv_fifo, num_downstream)) {
+ 		DRM_ERROR("Revoked Ksv(s) in ksv_fifo\n");
+-		return -EPERM;
++		ret = -EPERM;
++		goto err;
+ 	}
+ 
+ 	/*
 
- scripts/checkpatch.pl | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 342c7c781ba5..9cadda7024ae 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3864,6 +3864,7 @@ sub process {
- 				^.DEFINE_$Ident\(\Q$name\E\)|
- 				^.DECLARE_$Ident\(\Q$name\E\)|
- 				^.LIST_HEAD\(\Q$name\E\)|
-+				^.{$Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
- 				^.(?:$Storage\s+)?$Type\s*\(\s*\*\s*\Q$name\E\s*\)\s*\(|
- 				\b\Q$name\E(?:\s+$Attribute)*\s*(?:;|=|\[|\()
- 			    )/x) {
--- 
-2.21.0
 
