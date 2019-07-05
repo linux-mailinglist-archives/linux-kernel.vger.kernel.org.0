@@ -2,85 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47DE56016A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 924E160180
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfGEH02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 03:26:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37089 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfGEH02 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 03:26:28 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hjIbw-0008RY-9n; Fri, 05 Jul 2019 07:26:24 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V3] btrfs: fix memory leak of path on error return path
-Date:   Fri,  5 Jul 2019 08:26:24 +0100
-Message-Id: <20190705072624.14163-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727974AbfGEHcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 03:32:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbfGEHcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 03:32:06 -0400
+Received: from localhost (unknown [122.167.76.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CCF3218BC;
+        Fri,  5 Jul 2019 07:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562311924;
+        bh=JpmYmVJdeyOKL4gwfK9NXbgVVN4HNKQ6CivC20fWqqs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FnLFo2FLjiZCzplwEuXBb7HQqUmixvzRudP2KPjeGnfV8x4I0jsHtDQv/lsAFHipF
+         MAnfumrro3iJ4+cc8iIPA3TlbhTv17V/+pT+tDVkPJwaoX4qk21v108RuSZOi5V6XR
+         IO/qXGYfvW1qP5de/j1w2S4gsX4vTuHkwnZQHLBg=
+Date:   Fri, 5 Jul 2019 12:58:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Robin Gong <yibin.gong@nxp.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: imx-sdma: fix use-after-free on probe error
+ path
+Message-ID: <20190705072847.GA2911@vkoul-mobl>
+References: <20190624140731.24080-1-TheSven73@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624140731.24080-1-TheSven73@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 24-06-19, 10:07, Sven Van Asbroeck wrote:
+> If probe() fails anywhere beyond the point where
+> sdma_get_firmware() is called, then a kernel oops may occur.
+> 
+> Problematic sequence of events:
+> 1. probe() calls sdma_get_firmware(), which schedules the
+>    firmware callback to run when firmware becomes available,
+>    using the sdma instance structure as the context
+> 2. probe() encounters an error, which deallocates the
+>    sdma instance structure
+> 3. firmware becomes available, firmware callback is
+>    called with deallocated sdma instance structure
+> 4. use after free - kernel oops !
+> 
+> Solution: only attempt to load firmware when we're certain
+> that probe() will succeed. This guarantees that the firmware
+> callback's context will remain valid.
+> 
+> Note that the remove() path is unaffected by this issue: the
+> firmware loader will increment the driver module's use count,
+> ensuring that the module cannot be unloaded while the
+> firmware callback is pending or running.
+> 
+> To: Robin Gong <yibin.gong@nxp.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: dmaengine@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+> ---
+>  drivers/dma/imx-sdma.c | 48 ++++++++++++++++++++++++------------------
+>  1 file changed, 27 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index 99d9f431ae2c..3f0f41d16e1c 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -2096,27 +2096,6 @@ static int sdma_probe(struct platform_device *pdev)
+>  	if (pdata && pdata->script_addrs)
+>  		sdma_add_scripts(sdma, pdata->script_addrs);
+>  
+> -	if (pdata) {
+> -		ret = sdma_get_firmware(sdma, pdata->fw_name);
+> -		if (ret)
+> -			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
+> -	} else {
+> -		/*
+> -		 * Because that device tree does not encode ROM script address,
+> -		 * the RAM script in firmware is mandatory for device tree
+> -		 * probe, otherwise it fails.
+> -		 */
+> -		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
+> -					      &fw_name);
+> -		if (ret)
+> -			dev_warn(&pdev->dev, "failed to get firmware name\n");
+> -		else {
+> -			ret = sdma_get_firmware(sdma, fw_name);
+> -			if (ret)
+> -				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
+> -		}
+> -	}
+> -
+>  	sdma->dma_device.dev = &pdev->dev;
+>  
+>  	sdma->dma_device.device_alloc_chan_resources = sdma_alloc_chan_resources;
+> @@ -2161,6 +2140,33 @@ static int sdma_probe(struct platform_device *pdev)
+>  		of_node_put(spba_bus);
+>  	}
+>  
+> +	/*
+> +	 * Kick off firmware loading as the very last step:
+> +	 * attempt to load firmware only if we're not on the error path, because
+> +	 * the firmware callback requires a fully functional and allocated sdma
+> +	 * instance.
+> +	 */
+> +	if (pdata) {
+> +		ret = sdma_get_firmware(sdma, pdata->fw_name);
+> +		if (ret)
+> +			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
+> +	} else {
+> +		/*
+> +		 * Because that device tree does not encode ROM script address,
+> +		 * the RAM script in firmware is mandatory for device tree
+> +		 * probe, otherwise it fails.
+> +		 */
+> +		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
+> +					      &fw_name);
+> +		if (ret)
+> +			dev_warn(&pdev->dev, "failed to get firmware name\n");
 
-Currently if the allocation of roots or tmp_ulist fails the error handling
-does not free up the allocation of path causing a memory leak. Fix this and
-other similar leaks by moving the call of btrfs_free_path from label out
-to label out_free_ulist.
+if should have braces!
 
-Kudos to David Sterba for spotting the issue in my original fix and suggesting
-the correct way to fix the leak and Anand Jain for spotting a double free
-issue.
+> +		else {
+> +			ret = sdma_get_firmware(sdma, fw_name);
+> +			if (ret)
+> +				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
+> +		}
+> +	}
+> +
+>  	return 0;
+>  
+>  err_register:
+> -- 
+> 2.17.1
 
-Addresses-Coverity: ("Resource leak")
-Fixes: 5911c8fe05c5 ("btrfs: fiemap: preallocate ulists for btrfs_check_shared")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-V2: move the btrfs_free_path to the out_free_ulist label as suggested by
-     David Sterba as the correct fix.
-V3: fix double free as identified Anand Jain
----
+Applied after fixing braces!
 
- fs/btrfs/extent_io.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 1eb671c16ff1..9de119194f8e 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4613,7 +4613,6 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	ret = btrfs_lookup_file_extent(NULL, root, path,
- 			btrfs_ino(BTRFS_I(inode)), -1, 0);
- 	if (ret < 0) {
--		btrfs_free_path(path);
- 		goto out_free_ulist;
- 	} else {
- 		WARN_ON(!ret);
-@@ -4766,11 +4765,11 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		ret = emit_last_fiemap_cache(fieinfo, &cache);
- 	free_extent_map(em);
- out:
--	btrfs_free_path(path);
- 	unlock_extent_cached(&BTRFS_I(inode)->io_tree, start, start + len - 1,
- 			     &cached_state);
- 
- out_free_ulist:
-+	btrfs_free_path(path);
- 	ulist_free(roots);
- 	ulist_free(tmp_ulist);
- 	return ret;
 -- 
-2.20.1
-
+~Vinod
