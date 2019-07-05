@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38F8660A96
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29DB60A77
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfGEQnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 12:43:23 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40709 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728613AbfGEQm3 (ORCPT
+        id S1728545AbfGEQmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 12:42:35 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40718 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbfGEQmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 12:42:29 -0400
-Received: by mail-io1-f66.google.com with SMTP id h6so12147310iom.7;
-        Fri, 05 Jul 2019 09:42:29 -0700 (PDT)
+        Fri, 5 Jul 2019 12:42:32 -0400
+Received: by mail-io1-f65.google.com with SMTP id h6so12147489iom.7;
+        Fri, 05 Jul 2019 09:42:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9TlywxX14ySmHTYN+js2f/7/fr0bdtbmAsh6I7swK/0=;
-        b=X16NUEgcSG6SocyUYk6h30B2Om2JBOo2szofSWuonUFcnAQl+9qfuVI82UaW0DrgEc
-         KoPKB13DllaOsqJn1yrxDLtQ2sASUkwJU0vU7n9JFVaUdZuO/PWYceV3djxXfe38Jy1J
-         qXuaW+PauhqRvbGTGfVkSxBJ1hLosvnnpMXDyStIz/TwVcxZGQZFqY/DmvV14wL4acUh
-         Aoc4uEpkLGBexjPMQKaBnl1+8hijsjJf23yT/7An3PsdP3NgY3V9qXyMAMx7s+ypHBAh
-         b9Til2bOqfBMioJiLlL3rc+8Mbc9CB13tr+ADP8DF5AfRNfzZWDL7+9OtR2c5Z0nz5Kq
-         /hLg==
-X-Gm-Message-State: APjAAAVA6DnJkW5kZt0qEKIIZJrtttxUIKVtPRDVCrqyhj7d8NicEHgI
-        bpyYaxj4lE4ckqjkF0nqSsEZbFM=
-X-Google-Smtp-Source: APXvYqxHWyS0u8xIf/9PqymPEaYm32f/ja9lh5ILK483/3hMdxhqSKzUW9ptROughYD9aVnk66SskA==
-X-Received: by 2002:a5e:990a:: with SMTP id t10mr1765957ioj.182.1562344948712;
-        Fri, 05 Jul 2019 09:42:28 -0700 (PDT)
+        bh=QmMSkEMpERvJyjJRrG5g4f+OapV9H/whTXHG0VCoTaM=;
+        b=bAJ3dJsSEDx37lDcdylhtFwIh+zzgw//9MuFylvBiiSvjLMHFjA3f+aRyu/oRmFSJ6
+         WeCSzXthiWLFFMLj1rq0BqborXHW4OPV6BvGl+fePzpTLC6RsTbuwStFQ/p5P0GsQFgW
+         doTR6zM6Dj0te9P4QgtKgIivDz8XeWCh4iv2fOXHdxIizzcHV6OVOBLqRY7XqV91TMx9
+         uBsHiamciOnPFm3fBWed7O/OOfHXVIZK+ldgCsfeY1U6W0PKJmPO9J3OCKf2s1uCCfcd
+         T9KTY+0zulJ+QnVbb25bNp97n685OLVWSGvqNbkxqQ4DWWWcrAf5+qma1sQbAvjboA5W
+         AwYw==
+X-Gm-Message-State: APjAAAXpydqqNmkC8I5v6HajtIjDGg73uIEyNKxzmqARQJ9waVX9e9ob
+        w8BwUBONEa3qbHl9ZXs0Fw==
+X-Google-Smtp-Source: APXvYqwgijG0bDl9MQ8QMzy7JFWGEXki+c5Gsm88CadBQrl5AZgvMPes1qJpGkDYhMRNkc9YrsNmpg==
+X-Received: by 2002:a02:8a:: with SMTP id 132mr5543519jaa.89.1562344950866;
+        Fri, 05 Jul 2019 09:42:30 -0700 (PDT)
 Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id b8sm6878104ioj.16.2019.07.05.09.42.26
+        by smtp.googlemail.com with ESMTPSA id b8sm6878104ioj.16.2019.07.05.09.42.28
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 09:42:28 -0700 (PDT)
+        Fri, 05 Jul 2019 09:42:30 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -41,69 +41,69 @@ Cc:     linux-kernel@vger.kernel.org,
         Sam Ravnborg <sam@ravnborg.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v3 03/13] dt-bindings: display: Convert armadeus,st0700-adapt panel to DT schema
-Date:   Fri,  5 Jul 2019 10:42:11 -0600
-Message-Id: <20190705164221.4462-4-robh@kernel.org>
+Subject: [PATCH v3 04/13] dt-bindings: display: Convert bananapi,s070wv20-ct16 panel to DT schema
+Date:   Fri,  5 Jul 2019 10:42:12 -0600
+Message-Id: <20190705164221.4462-5-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190705164221.4462-1-robh@kernel.org>
 References: <20190705164221.4462-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the armadeus,st0700-adapt panel binding to DT schema.
+Convert the bananapi,s070wv20-ct16 panel binding to DT schema.
 
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
 Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../display/panel/armadeus,st0700-adapt.txt   |  9 -----
- .../display/panel/armadeus,st0700-adapt.yaml  | 33 +++++++++++++++++++
- 2 files changed, 33 insertions(+), 9 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml
+ .../display/panel/bananapi,s070wv20-ct16.txt  | 12 -------
+ .../display/panel/bananapi,s070wv20-ct16.yaml | 31 +++++++++++++++++++
+ 2 files changed, 31 insertions(+), 12 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml
 
-diff --git a/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
+diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
 deleted file mode 100644
-index a30d63db3c8f..000000000000
---- a/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
+index 35bc0c839f49..000000000000
+--- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
 +++ /dev/null
-@@ -1,9 +0,0 @@
--Armadeus ST0700 Adapt. A Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT with
--an adapter board.
+@@ -1,12 +0,0 @@
+-Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
 -
 -Required properties:
--- compatible: "armadeus,st0700-adapt"
--- power-supply: see panel-common.txt
+-- compatible: should be "bananapi,s070wv20-ct16"
+-- power-supply: see ./panel-common.txt
 -
 -Optional properties:
--- backlight: see panel-common.txt
-diff --git a/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml
+-- enable-gpios: see ./simple-panel.txt
+-- backlight: see ./simple-panel.txt
+-
+-This binding is compatible with the simple-panel binding, which is specified
+-in ./simple-panel.txt.
+diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml
 new file mode 100644
-index 000000000000..a6ade47066b3
+index 000000000000..bbf127fb28f7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml
-@@ -0,0 +1,33 @@
++++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml
+@@ -0,0 +1,31 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/display/panel/armadeus,st0700-adapt.yaml#
++$id: http://devicetree.org/schemas/display/panel/bananapi,s070wv20-ct16.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Armadeus ST0700 Adapter
-+
-+description:
-+  A Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT with an adapter board.
++title: Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
 +
 +maintainers:
-+  - '"Sébastien Szymanski" <sebastien.szymanski@armadeus.com>'
++  - Chen-Yu Tsai <wens@csie.org>
 +  - Thierry Reding <thierry.reding@gmail.com>
 +
 +allOf:
@@ -111,10 +111,11 @@ index 000000000000..a6ade47066b3
 +
 +properties:
 +  compatible:
-+    const: armadeus,st0700-adapt
++    const: bananapi,s070wv20-ct16
 +
 +  power-supply: true
 +  backlight: true
++  enable-gpios: true
 +  port: true
 +
 +additionalProperties: false
