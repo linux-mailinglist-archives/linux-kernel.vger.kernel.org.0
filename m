@@ -2,97 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B66C60ADD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 19:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD27B60AF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 19:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfGERRW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 5 Jul 2019 13:17:22 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37428 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727903AbfGERRW (ORCPT
+        id S1728042AbfGERUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 13:20:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56370 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbfGERUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 13:17:22 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id D0F9928B61B;
-        Fri,  5 Jul 2019 18:17:19 +0100 (BST)
-Date:   Fri, 5 Jul 2019 19:17:16 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 3/9] media: hantro: Constify the control array
-Message-ID: <20190705191716.41ea819e@collabora.com>
-In-Reply-To: <1fdb3115e6f5903b55a915c45bbfdec484842e83.camel@collabora.com>
-References: <20190619121540.29320-1-boris.brezillon@collabora.com>
-        <20190619121540.29320-4-boris.brezillon@collabora.com>
-        <1fdb3115e6f5903b55a915c45bbfdec484842e83.camel@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Fri, 5 Jul 2019 13:20:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=ePFcoJ5m87EvMr2n+NPJawIqXaDiVgO7emTiCfYxa/c=; b=w5y81v1T0+ac
+        1+ok1MB6hi0HaqCQBoU8h2Re9kCl/UXILOhp+D7a+371YTeKfoeEJYYTUuuej3O8vSmZUtn7cJW+O
+        UpzJMk/gC9fH4J+I5X+xHd67jGerlq8mL3Byoq/sJwqmf98l0ACGA7PU4xbj5xOy4dXppQmoml5k7
+        IhFzQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hjRsE-0004ZO-Uw; Fri, 05 Jul 2019 17:19:51 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 730AE2742A10; Fri,  5 Jul 2019 18:19:50 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: SOF: debug: fix possible memory leak in sof_dfsentry_write()" to the asoc tree
+In-Reply-To: <20190705081637.157169-1-weiyongjun1@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190705171950.730AE2742A10@ypsilon.sirena.org.uk>
+Date:   Fri,  5 Jul 2019 18:19:50 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 05 Jul 2019 13:05:10 -0300
-Ezequiel Garcia <ezequiel@collabora.com> wrote:
+The patch
 
-> On Wed, 2019-06-19 at 14:15 +0200, Boris Brezillon wrote:
-> > controls[] is not supposed to be modified at runtime, let's make it
-> > explicit by adding a const specifier.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > ---
-> >  drivers/staging/media/hantro/hantro_drv.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/staging/media/hantro/hantro_drv.c
-> > index 28b0fed89dcb..db49d643ddb7 100644
-> > --- a/drivers/staging/media/hantro/hantro_drv.c
-> > +++ b/drivers/staging/media/hantro/hantro_drv.c
-> > @@ -264,7 +264,7 @@ static const struct v4l2_ctrl_ops hantro_ctrl_ops = {
-> >  	.s_ctrl = hantro_s_ctrl,
-> >  };
-> >  
-> > -static struct hantro_ctrl controls[] = {
-> > +static const struct hantro_ctrl controls[] = {
-> >  	{
-> >  		.id = V4L2_CID_JPEG_COMPRESSION_QUALITY,
-> >  		.codec = HANTRO_JPEG_ENCODER,  
-> 
-> This patch here breaks the build:
-> 
->   CC [M]  drivers/staging/media/hantro/hantro_drv.o
-> /home/zeta/repos/linux/media_tree/drivers/staging/media/hantro/hantro_drv.c: In function ‘hantro_ctrls_setup’:
-> /home/zeta/repos/linux/media_tree/drivers/staging/media/hantro/hantro_drv.c:319:23: error: assignment of member ‘id’ in read-only object
->     controls[i].cfg.id = controls[i].id;
->                        ^
+   ASoC: SOF: debug: fix possible memory leak in sof_dfsentry_write()
 
-Oops, didn't check bisectability.
+has been applied to the asoc tree at
 
-> You can fix it by simply moving it after:
-> 
-> [PATCH 4/9] media: hantro: Simplify the controls creation logic
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
-Yep, I'll do that.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-Boris
+From b90bab3b1b1b6c56dd6f9d5c960932239f36f6d3 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 5 Jul 2019 08:16:37 +0000
+Subject: [PATCH] ASoC: SOF: debug: fix possible memory leak in
+ sof_dfsentry_write()
+
+'string' is malloced in sof_dfsentry_write() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
+
+Fixes: 091c12e1f50c ("ASoC: SOF: debug: add new debugfs entries for IPC flood test")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Link: https://lore.kernel.org/r/20190705081637.157169-1-weiyongjun1@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sof/debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
+index 54bb53bfc81b..2388477a965e 100644
+--- a/sound/soc/sof/debug.c
++++ b/sound/soc/sof/debug.c
+@@ -162,7 +162,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+ 	else
+ 		ret = kstrtoul(string, 0, &ipc_count);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	/* limit max duration/ipc count for flood test */
+ 	if (flood_duration_test) {
+@@ -191,7 +191,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+ 				    "error: debugfs write failed to resume %d\n",
+ 				    ret);
+ 		pm_runtime_put_noidle(sdev->dev);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	/* flood test */
+-- 
+2.20.1
+
