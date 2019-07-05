@@ -2,126 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C013600EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B56BE600F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfGEGNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 02:13:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45796 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727749AbfGEGM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 02:12:59 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 15964AC643E195250C36;
-        Fri,  5 Jul 2019 14:12:57 +0800 (CST)
-Received: from huawei.com (10.67.189.167) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
- 14:12:48 +0800
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-To:     <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <dingtianhong@huawei.com>, <xiaojiangfeng@huawei.com>
-CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <leeyou.li@huawei.com>, <xiekunxun@huawei.com>,
-        <jianping.liu@huawei.com>, <nixiaoming@huawei.com>
-Subject: [PATCH 10/10] net: hisilicon: Add an tx_desc to adapt HI13X1_GMAC
-Date:   Fri, 5 Jul 2019 14:12:42 +0800
-Message-ID: <1562307162-103916-1-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
+        id S1727770AbfGEGPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 02:15:42 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15854 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfGEGPm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 02:15:42 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1eeb0c0001>; Thu, 04 Jul 2019 23:15:40 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 04 Jul 2019 23:15:41 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 04 Jul 2019 23:15:41 -0700
+Received: from [10.24.44.191] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Jul
+ 2019 06:15:38 +0000
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <jonathanh@nvidia.com>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>, <mkumard@nvidia.com>
+References: <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <20190613044352.GC9160@vkoul-mobl.Dlink>
+ <09929edf-ddec-b70e-965e-cbc9ba4ffe6a@nvidia.com>
+ <20190618043308.GJ2962@vkoul-mobl>
+ <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
+ <20190624062609.GV2962@vkoul-mobl>
+ <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+Message-ID: <75be49ac-8461-0798-b673-431ec527d74f@nvidia.com>
+Date:   Fri, 5 Jul 2019 11:45:34 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.167]
-X-CFilter-Loop: Reflected
+In-Reply-To: <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1562307340; bh=uupu10u8U57FrqvgnS4PO2oXDfDg79qXfQJzeJWeUjM=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=C6iECg2xIEcGku37Aprky92wsyMNCnrvzB4XXD73mKb4/wEV0/RLmdnuvV1nSAmGb
+         KfhE49bRt2BMdPre2zp2hEJbq/rxbh+kgcnI9vRa49X7AnOx+PkNTR/Q7ofVstaW17
+         zSN1D28FI6nGEKP256VtAE34mjlPhIpq48X4S3V5bO19Bq1gy1okqLz4sFWe8Pa4OI
+         b8hdF25CdmSGotUFYqczOJD1hXOt1GoSm53m/0LuQuvTEDEhWfpisvR66TRN8sHAFe
+         jslOOqO8ZwjLRvwHUoRRNpxsNuCW6npm/qDsWMTfoD6bcZD75RIs4SqoUgHaAHI7Nz
+         260yfyE6U1wBw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI13X1 changed the offsets and bitmaps for tx_desc
-registers in the same peripheral device on different
-models of the hip04_eth.
+Hi Vinod,
 
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
----
- drivers/net/ethernet/hisilicon/hip04_eth.c | 34 +++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+What are your final thoughts regarding this?
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 780fc46..6256357 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -76,8 +76,15 @@
- /* TX descriptor config */
- #define TX_FREE_MEM			BIT(0)
- #define TX_READ_ALLOC_L3		BIT(1)
--#define TX_FINISH_CACHE_INV		BIT(2)
-+#if defined(CONFIG_HI13X1_GMAC)
-+#define TX_CLEAR_WB			BIT(7)
-+#define TX_RELEASE_TO_PPE		BIT(4)
-+#define TX_FINISH_CACHE_INV		BIT(6)
-+#define TX_POOL_SHIFT			16
-+#else
- #define TX_CLEAR_WB			BIT(4)
-+#define TX_FINISH_CACHE_INV		BIT(2)
-+#endif
- #define TX_L3_CHECKSUM			BIT(5)
- #define TX_LOOP_BACK			BIT(11)
- 
-@@ -124,6 +131,7 @@
- /* buf unit size is cache_line_size, which is 64, so the shift is 6 */
- #define PPE_BUF_SIZE_SHIFT		6
- #define PPE_TX_BUF_HOLD			BIT(31)
-+#define CACHE_LINE_MASK			0x3F
- #else
- #define PPE_CFG_QOS_VMID_GRP_SHIFT	8
- #define PPE_CFG_RX_CTRL_ALIGN_SHIFT	11
-@@ -163,11 +171,22 @@
- #define HIP04_MIN_TX_COALESCE_FRAMES	100
- 
- struct tx_desc {
-+#if defined(CONFIG_HI13X1_GMAC)
-+	u32 reserved1[2];
-+	u32 send_addr;
-+	u16 send_size;
-+	u16 data_offset;
-+	u32 reserved2[7];
-+	u32 cfg;
-+	u32 wb_addr;
-+	u32 reserved3[3];
-+#else
- 	u32 send_addr;
- 	u32 send_size;
- 	u32 next_addr;
- 	u32 cfg;
- 	u32 wb_addr;
-+#endif
- } __aligned(64);
- 
- struct rx_desc {
-@@ -505,11 +524,20 @@ static void hip04_start_tx_timer(struct hip04_priv *priv)
- 
- 	priv->tx_skb[tx_head] = skb;
- 	priv->tx_phys[tx_head] = phys;
--	desc->send_addr = (__force u32)cpu_to_be32(phys);
-+
- 	desc->send_size = (__force u32)cpu_to_be32(skb->len);
-+#if defined(CONFIG_HI13X1_GMAC)
-+	desc->cfg = (__force u32)cpu_to_be32(TX_CLEAR_WB | TX_FINISH_CACHE_INV
-+		| TX_RELEASE_TO_PPE | priv->port << TX_POOL_SHIFT);
-+	desc->data_offset = (__force u32)cpu_to_be32(phys & CACHE_LINE_MASK);
-+	desc->send_addr =  (__force u32)cpu_to_be32(phys & ~CACHE_LINE_MASK);
-+#else
- 	desc->cfg = (__force u32)cpu_to_be32(TX_CLEAR_WB | TX_FINISH_CACHE_INV);
-+	desc->send_addr = (__force u32)cpu_to_be32(phys);
-+#endif
- 	phys = priv->tx_desc_dma + tx_head * sizeof(struct tx_desc);
--	desc->wb_addr = (__force u32)cpu_to_be32(phys);
-+	desc->wb_addr = (__force u32)cpu_to_be32(phys +
-+		offsetof(struct tx_desc, send_addr));
- 	skb_tx_timestamp(skb);
- 
- 	hip04_set_xmit_desc(priv, phys);
--- 
-1.8.5.6
+Thanks,
+Sameer.
+
+>> Where does ADMAIF driver reside in kernel, who configures it for normal
+>> dma txns..?
+> Not yet, we are in the process of upstreaming ADMAIF driver.
+> To describe briefly, audio subsystem is using ALSA SoC(ASoC) layer. 
+> ADMAIF is
+> registered as platform driver and exports DMA functionality. It 
+> registers PCM
+> devices for each Rx/Tx ADMAIF channel. During PCM playback/capture 
+> operations,
+> ALSA callbacks configure DMA channel using API dmaengine_slave_config().
+> RFC patch proposed, is to help populate FIFO_SIZE value as well during 
+> above
+> call, since ADMA requires it.
+>>
+>> Also it wold have helped the long discussion if that part was made clear
+>> rather than talking about peripheral all this time :(
+> Thought it was clear, though should have avoided using 'peripheral' in 
+> the
+> discussions. Sorry for the confusion.
 
