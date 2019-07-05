@@ -2,73 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B06607D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19688607E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfGEO1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 10:27:30 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:36128 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbfGEO1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 10:27:21 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C56611A07CE;
-        Fri,  5 Jul 2019 16:27:19 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B92EA1A07CD;
-        Fri,  5 Jul 2019 16:27:19 +0200 (CEST)
-Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 78BAC204D6;
-        Fri,  5 Jul 2019 16:27:19 +0200 (CEST)
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     ruxandra.radulescu@nxp.com,
-        Razvan Stefanescu <razvan.stefanescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v2 6/6] staging: fsl-dpaa2/ethsw: Add comments to ETHSW_VLAN flags
-Date:   Fri,  5 Jul 2019 17:27:16 +0300
-Message-Id: <1562336836-17119-7-git-send-email-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1562336836-17119-1-git-send-email-ioana.ciornei@nxp.com>
-References: <1562336836-17119-1-git-send-email-ioana.ciornei@nxp.com>
-Reply-to: ioana.ciornei@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727615AbfGEOaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 10:30:55 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:35714 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725763AbfGEOay (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 10:30:54 -0400
+Received: from [109.168.11.45] (port=37718 helo=pc-ceresoli.dev.aim)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1hjPEh-0008XB-NR; Fri, 05 Jul 2019 16:30:51 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-gpio@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/pinctrl: fix compile errors in example code
+Date:   Fri,  5 Jul 2019 16:30:43 +0200
+Message-Id: <20190705143043.1929-1-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
+The code in the example does not build for a few trivial errors: type
+mismatch in callback, missing semicolon. Fix them to help newcomers using
+the example as a starting point.
 
-Document each ETHSW_VLAN flag with the appropriate comment.
-
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
-Changes in v2:
- - none
+ Documentation/driver-api/pinctl.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-index c48783680a05..3ea8a0ad8c10 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-@@ -23,9 +23,13 @@
- /* Number of IRQs supported */
- #define DPSW_IRQ_NUM	2
+diff --git a/Documentation/driver-api/pinctl.rst b/Documentation/driver-api/pinctl.rst
+index 2bb1bc484278..3d2deaf48841 100644
+--- a/Documentation/driver-api/pinctl.rst
++++ b/Documentation/driver-api/pinctl.rst
+@@ -638,8 +638,8 @@ group of pins would work something like this::
+ 	}
  
-+/* Port is member of VLAN */
- #define ETHSW_VLAN_MEMBER	1
-+/* VLAN to be treated as untagged on egress */
- #define ETHSW_VLAN_UNTAGGED	2
-+/* Untagged frames will be assigned to this VLAN */
- #define ETHSW_VLAN_PVID		4
-+/* VLAN configured on the switch */
- #define ETHSW_VLAN_GLOBAL	8
+ 	static int foo_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
+-				unsigned ** const pins,
+-				unsigned * const num_pins)
++				const unsigned ** pins,
++				unsigned * num_pins)
+ 	{
+ 		*pins = (unsigned *) foo_groups[selector].pins;
+ 		*num_pins = foo_groups[selector].num_pins;
+@@ -705,7 +705,7 @@ group of pins would work something like this::
+ 	{
+ 		u8 regbit = (1 << selector + group);
  
- /* Maximum Frame Length supported by HW (currently 10k) */
+-		writeb((readb(MUX)|regbit), MUX)
++		writeb((readb(MUX)|regbit), MUX);
+ 		return 0;
+ 	}
+ 
 -- 
-1.9.1
+2.22.0
 
