@@ -2,119 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA87660668
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 15:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3B96067A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 15:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbfGENPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 09:15:36 -0400
-Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:42790
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727609AbfGENPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 09:15:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h/4kgRACFfZy09xQrYtXc9T2T1sSalDFNr1RDrSEfts=;
- b=lak1gVQAV8A4GHvg/TG3YN9r86EaOMsuEPvIbJeFn1EFoIQH0HyJlurvK/QyFhmE4y/cmUH9qLCASsLKl5bgCiQUf/bGId91uARMGSetKE/WnyGVomryVWnevBljYNn2gOp4kdnx5r9NaKcfQcZoslRzUqq6voesIpBlor7e9zg=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB6815.eurprd05.prod.outlook.com (10.186.162.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Fri, 5 Jul 2019 13:15:31 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.019; Fri, 5 Jul 2019
- 13:15:31 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Xi Wang <wangxi11@huawei.com>, Lijun Ou <oulijun@huawei.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVL8OActCQCeCYN0akJ9eSFAjYnKa5uZGAgAJOTAA=
-Date:   Fri, 5 Jul 2019 13:15:31 +0000
-Message-ID: <20190705131520.GD31525@mellanox.com>
-References: <20190701141431.5cba95c3@canb.auug.org.au>
- <20190704120235.5914499b@canb.auug.org.au>
-In-Reply-To: <20190704120235.5914499b@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YQXPR01CA0102.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:41::31) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c1bec85b-bf7f-430a-f8f7-08d7014adaf1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB6815;
-x-ms-traffictypediagnostic: VI1PR05MB6815:
-x-microsoft-antispam-prvs: <VI1PR05MB681584296378251A5A8F2CE6CFF50@VI1PR05MB6815.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:69;
-x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(376002)(39860400002)(136003)(396003)(366004)(346002)(189003)(199004)(53754006)(14454004)(4326008)(6916009)(54906003)(486006)(3846002)(66066001)(446003)(6436002)(8936002)(5660300002)(1076003)(6116002)(6512007)(316002)(71190400001)(71200400001)(53936002)(476003)(2616005)(4744005)(11346002)(229853002)(6486002)(99286004)(7736002)(186003)(26005)(6506007)(33656002)(102836004)(386003)(52116002)(6246003)(81156014)(8676002)(68736007)(81166006)(478600001)(66446008)(66476007)(36756003)(14444005)(66556008)(256004)(66946007)(64756008)(73956011)(305945005)(76176011)(2906002)(86362001)(25786009)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6815;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lMyewOmfVlZWEKn6pSKluDZw86PQdnzdq29UfyZf0m2OMm1T9VfpJsu1M9p3yxxIppRcWXZJU//iDJVOKBOEUdvjFZlHsPcssO1c5Ree+LMBhhYIsIpwiKRbY6nQX5ta99I9JiCRmd2DRyEZ0Zi1ff0Bn0Y66kFRTsbIIpNCh3iPyW1B96pI1IpmsXVpTgpbSh34BvZkXVEE71C6YiYZn+5ocKZ1T5whoAARJP7f3KpNByUY0uT/6/uUlNLC5b592/PRrscxK6Bnlt6XHZa/1LKIXa7ZEclSQNVd7BpYrZrGDQQtnF1Phk6/cX95QYMJ4NQ4sDcKUGQ39RJ055FZIAkAdGFbZAdRhqQRDDABS97QRuT5iBmjv8uNl4t20ndkpkR+PpjiAsbNkCG0pIb4wphvtTiW5++aA2fHGV3xHxk=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6B0BCA509A633D43BAB88035D9FB41FF@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1729023AbfGENSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 09:18:18 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36582 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728230AbfGENSS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 09:18:18 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so3487224iom.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 06:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=pRtQGOFldLgGE7qJqe1c/CUsqsRLF9F1riuLbw6yyJs=;
+        b=lJIBBAa4dahLP/b9AXN6UgjzFVq0DrkIuIt64/jaRG20TBTpO3CnEPoPccNo6QbN51
+         Rn889prtBvG0KxRt98TgSvQSWsDPFicrLqsuVPEN7IwewqSzO5TvAUG/87lLsqDH5tw4
+         ejt7pCK0lFDN0EOFSf9x3L02OlEYPq3w5ZHv/+z7da0E+d/CNtKw45lIKPhTpZrQ2nYt
+         C6YBCClsw8L58BDpl3mJ2RUk1UnMxKFQPopYvw83EAfI4S1Se/H61yPYj3UQFbsx3nBi
+         lwojRqpap0CC6R14IJyex23CYqqVBmQy5r02PRJG4HhZDR4aoQY2qiQOyJvTapTakmNS
+         sTmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pRtQGOFldLgGE7qJqe1c/CUsqsRLF9F1riuLbw6yyJs=;
+        b=epEqoQlnBdr7tgepFGi0yPuFfggRr6QPNEJYUsuF0lBljePj3L/jPo7nEyHUiLqycE
+         RXSP6hPQj0yrEQJnfnGXI82GNl09im/aMlD08vZw0XpLjyIcO2FTHsFY/mEh9JmTcWEp
+         B0bbToOrmQx4Fu03H3Wyvfx7HBxRx0ABDQKIcgWdJOanuwKVuQMND7+xbkscJ7z/+eOp
+         S258xe/z2WMnRWOnZcnRKoYxypWhGlIpMYbxxP21L/KLUy02onVcUP7axZokgxz+CsjG
+         AP0NRbdXNf3oR5duHwjtoyEO8851gMmEHasiuPtoeCf/+ohjr3t36YycTYas9JWHAlX1
+         4q3A==
+X-Gm-Message-State: APjAAAVsAiABCrrEM35Wd7hUN8w9l1geekm05c/aWiJveO3r4AiI/XQK
+        fv/KG08J2BqU8Chc00NeIGmIhTrY/kC/bFjqrfBHmw==
+X-Google-Smtp-Source: APXvYqwHcTdVO68Zki0+63QSWBONxJLklr7LXnf8O1UNup1dM0NT4WpEphqYVGaOt5adDzriIMut7G9Wn7lr0NEz8U0=
+X-Received: by 2002:a6b:641a:: with SMTP id t26mr4198845iog.3.1562332697230;
+ Fri, 05 Jul 2019 06:18:17 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1bec85b-bf7f-430a-f8f7-08d7014adaf1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 13:15:31.0532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6815
+References: <000000000000d3f34b058c3d5a4f@google.com> <20190626184251.GE3116@mit.edu>
+In-Reply-To: <20190626184251.GE3116@mit.edu>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 5 Jul 2019 15:18:06 +0200
+Message-ID: <CACT4Y+aHgz9cPa7OnVsNeHim72i6zVdjnbvVb0Z1oN2B8QLZqg@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in ext4_write_checks
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        syzbot <syzbot+4bfbbf28a2e50ab07368@syzkaller.appspotmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        David Miller <davem@davemloft.net>, eladr@mellanox.com,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 12:02:35PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Mon, 1 Jul 2019 14:14:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
+On Wed, Jun 26, 2019 at 8:43 PM Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Wed, Jun 26, 2019 at 10:27:08AM -0700, syzbot wrote:
+> > Hello,
 > >
-> > Hi all,
-> >=20
-> > After merging the rdma tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > WARNING: modpost: missing MODULE_LICENSE() in drivers/infiniband/hw/hns=
-/hns_roce_ah.o
-> > see include/linux/module.h for more information
-> 	.
-> 	.
-> 	.
-> > ERROR: "hns_roce_bitmap_cleanup" [drivers/infiniband/hw/hns/hns_roce_sr=
-q.ko] undefined!
-> 	.
-> 	.
-> 	.
-> > ERROR: "hns_roce_ib_destroy_cq" [drivers/infiniband/hw/hns/hns-roce-hw-=
-v1.ko] undefined!
-> >=20
-> > Presumably caused by commit
-> >=20
-> >   e9816ddf2a33 ("RDMA/hns: Cleanup unnecessary exported symbols")
-> >=20
-> > I have used the rdma tree from next-20190628 for today.
->=20
-> I am still getting these errors/warnings.
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org=
+/pu..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1435aaf6a00=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3De5c77f8090a=
+3b96b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D4bfbbf28a2e50=
+ab07368
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11234c41a=
+00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15d7f026a00=
+000
+> >
+> > The bug was bisected to:
+> >
+> > commit 0c81ea5db25986fb2a704105db454a790c59709c
+> > Author: Elad Raz <eladr@mellanox.com>
+> > Date:   Fri Oct 28 19:35:58 2016 +0000
+> >
+> >     mlxsw: core: Add port type (Eth/IB) set API
+>
+> Um, so this doesn't pass the laugh test.
+>
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D10393a89=
+a00000
+>
+> It looks like the automated bisection machinery got confused by two
+> failures getting triggered by the same repro; the symptoms changed
+> over time.  Initially, the failure was:
+>
+> crashed: INFO: rcu detected stall in {sys_sendfile64,ext4_file_write_iter=
+}
+>
+> Later, the failure changed to something completely different, and much
+> earlier (before the test was even started):
+>
+> run #5: basic kernel testing failed: failed to copy test binary to VM: fa=
+iled to run ["scp" "-P" "22" "-F" "/dev/null" "-o" "UserKnownHostsFile=3D/d=
+ev/null" "-o" "BatchMode=3Dyes" "-o" "IdentitiesOnly=3Dyes" "-o" "StrictHos=
+tKeyChecking=3Dno" "-o" "ConnectTimeout=3D10" "-i" "/syzkaller/jobs/linux/w=
+orkdir/image/key" "/tmp/syz-executor216456474" "root@10.128.15.205:./syz-ex=
+ecutor216456474"]: exit status 1
+> Connection timed out during banner exchange
+> lost connection
+>
+> Looks like an opportunity to improve the bisection engine?
 
-It should be fixed now
+Hi Ted,
 
-Regards,
-Jason
+Yes, these infrastructure errors plague bisections episodically.
+That's https://github.com/google/syzkaller/issues/1250
+
+It did not confuse bisection explicitly as it understands that these
+are infrastructure failures rather then a kernel crash, e.g. here you
+may that it correctly identified that this run was OK and started
+bisection in v4.10 v4.9 range besides 2 scp failures:
+
+testing release v4.9
+testing commit 69973b830859bc6529a7a0468ba0d80ee5117826 with gcc (GCC) 5.5.=
+0
+run #0: basic kernel testing failed: failed to copy test binary to VM:
+failed to run ["scp" ...]: exit status 1
+Connection timed out during banner exchange
+run #1: basic kernel testing failed: failed to copy test binary to VM:
+failed to run ["scp" ....]: exit status 1
+Connection timed out during banner exchange
+run #2: OK
+run #3: OK
+run #4: OK
+run #5: OK
+run #6: OK
+run #7: OK
+run #8: OK
+run #9: OK
+# git bisect start v4.10 v4.9
+
+Though, of course, it may confuse bisection indirectly by reducing
+number of tests per commit.
+
+So far I wasn't able to gather any significant info about these
+failures. We gather console logs, but on these runs they are empty.
+It's easy to blame everything onto GCE but I don't have any bit of
+information that would point either way. These failures just appear
+randomly in production and usually in batches...
