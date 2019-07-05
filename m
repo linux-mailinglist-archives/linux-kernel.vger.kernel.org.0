@@ -2,83 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D00CE6041A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D75460424
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfGEKJG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 5 Jul 2019 06:09:06 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47066 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728621AbfGEKI7 (ORCPT
+        id S1728447AbfGEKJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:09:29 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42342 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727459AbfGEKJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:08:59 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D2DE9805FF; Fri,  5 Jul 2019 12:08:46 +0200 (CEST)
-Date:   Fri, 5 Jul 2019 12:08:51 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        jacek.anaszewski@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, jingoohan1@gmail.com,
-        dmurphy@ti.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        tomi.valkeinen@ti.com
-Subject: Re: [PATCH 3/4] backlight: add led-backlight driver
-Message-ID: <20190705100851.zn2jkipj4fxq5we6@devuan>
-References: <20190701151423.30768-1-jjhiblot@ti.com>
- <20190701151423.30768-4-jjhiblot@ti.com>
- <20190702095434.d426lichmaffz7a5@holly.lan>
- <531e237c-b570-5270-6fc3-6629a8bf7acd@ti.com>
- <20190702130434.frbx7jkec27ejbpo@holly.lan>
- <72c45311-c710-dc2d-a6de-68e44ea8436a@ti.com>
- <20190703094457.etmbbjhhssbdkveo@holly.lan>
- <a8886ae9-31ec-de4c-0a83-5f681582a0b9@ti.com>
+        Fri, 5 Jul 2019 06:09:29 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id d4b39f5ac838d316; Fri, 5 Jul 2019 12:09:26 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PM: sleep: Drop dev_pm_skip_next_resume_phases()
+Date:   Fri, 05 Jul 2019 12:09:26 +0200
+Message-ID: <1670687.Ukx42KFMcm@kreacher>
+In-Reply-To: <20190704080120.GH2640@lahna.fi.intel.com>
+References: <2100414.Plmip0uhM5@kreacher> <20190704080120.GH2640@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <a8886ae9-31ec-de4c-0a83-5f681582a0b9@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-> > > > Also still relevant is whether the LED device is being correctly
-> > > > modelled if the act of turning on the LED doesn't, in fact, turn the LED
-> > > > on. Is it *really* a correct implementation of an LED device that
-> > > > setting it to LED_FULL using sysfs doesn't cause it to light up?
-> > > What I understood from the discussion between Rob and Tomi is that the
-> > > child-node of the LED controller should be considered a backlight device,
-> > > not a simple LED. I'm not sure if the sysfs interface is still relevant in
-> > > that case. Maybe it should just be disabled by the backlight driver
-> > > (possible with led_sysfs_disable())
-> > led_sysfs_disable() sounds like a sensible change but that's not quite
-> > what I mean.
+On Thursday, July 4, 2019 10:01:20 AM CEST Mika Westerberg wrote:
+> On Thu, Jul 04, 2019 at 01:05:38AM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > > 
-> > It is more a thought experiment to see if the power control *should* be
-> > implemented by the backlight. Consider what happens if we *don't*
-> > enable CONFIG_BACKLIGHT_LED in the kernel: we would still have an LED
-> > device and it would not work correctly.
+> > After recent hibernation-related changes, there are no more callers
+> > of dev_pm_skip_next_resume_phases() except for the PM core itself
+> > in which it is more straightforward to run the statements from
+> > that function directly, so do that and drop it.
 > > 
-> > In other words I naively expect turning on an LED using the LED API
-> > (any of them, sysfs or kernel) to result in the LED turning on.
-> > Implementing a workaround in the client for what appears to be
-> > something missing in the LED driver strikes me as odd. Why shouldn't
-> > the regulator be managed in the LED driver?
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> I see your point. Indeed having the regulator handled in the LED-core makes
-> sense in a lot of situations
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
-> I'll think about it.
 
-For the record, I also believe regulator and enable gpio should be
-handled in the core.
+Thanks!
 
-									Pavel
-PS please trim down the quoted text.									
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Patch queued for 5.3.
+
+
+
+
