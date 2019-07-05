@@ -2,89 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C33260228
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 727366022D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfGEI35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 04:29:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:60928 "EHLO foss.arm.com"
+        id S1727561AbfGEIbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 04:31:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:35597 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726800AbfGEI35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:29:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA26C2B;
-        Fri,  5 Jul 2019 01:29:56 -0700 (PDT)
-Received: from [10.162.41.127] (p8cg001049571a15.blr.arm.com [10.162.41.127])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2C713F246;
-        Fri,  5 Jul 2019 01:29:54 -0700 (PDT)
-Subject: Re: [PATCH] mm/isolate: Drop pre-validating migrate type in
- undo_isolate_page_range()
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        Qian Cai <cai@lca.pw>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1562307161-30554-1-git-send-email-anshuman.khandual@arm.com>
- <20190705075857.GA28725@linux>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <ae5e183b-c5f7-2a37-2c14-110102ec37ed@arm.com>
-Date:   Fri, 5 Jul 2019 14:00:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727151AbfGEIbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:31:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45g7Nh68pjz9sN4;
+        Fri,  5 Jul 2019 18:31:32 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562315494;
+        bh=+8dEVa9QNOdvFUEq8sFcyzUwGBanjYLMkbOx+A36zCQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=RGGuau4cyOx+l8fccQPOYrb5TKG7k/c0H3bvVb0An2ye43Alf1h/ahqsHqDVMk3Ur
+         hhzFh/DiLLySEmGofyqzAF/AGVQ91ZzhHw/1Ha1Sanb+Pv72Wl9T0ej3JeZ+W7LxjK
+         ht0yDwi962p07TA1R3l/tTY2iYNIXQiFkHpjrBDrWxffpcMS/pQuvIaLTiDgjIb1he
+         RDj2OL3a5g0FMESvya7Z2v7TCpIqHlgdmg/Ji4bQHr+C7aW8DB6GCxhDO9cKXR505j
+         hItiD02spqNJudOaMCQOHoxPC8zEcrnVAmLTMubX3Pu1uvsKz7ch5zluGGDbuqgFaj
+         XAnLEOBkatIbA==
+Date:   Fri, 5 Jul 2019 18:31:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20190705183104.6fb50bd0@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190705075857.GA28725@linux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ny3WjfBqFeBWAOFWZ7JQBF8"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/Ny3WjfBqFeBWAOFWZ7JQBF8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the kbuild tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+In file included from <command-line>:
+include/clocksource/hyperv_timer.h:18:10: fatal error: asm/mshyperv.h: No s=
+uch file or directory
+ #include <asm/mshyperv.h>
+          ^~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  34085aeb5816 ("kbuild: compile-test kernel headers to ensure they are sel=
+f-contained")
+
+interacting with commit
+
+  dd2cb348613b ("clocksource/drivers: Continue making Hyper-V clocksource I=
+SA agnostic")
+
+from the tip tree.
+
+I have added the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 5 Jul 2019 18:17:44 +1000
+Subject: [PATCH] kbuild: only compile test clocksource/hyperv_timer.h on X86
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/Kbuild | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/Kbuild b/include/Kbuild
+index 4f9524d92a75..a7ab060552c2 100644
+--- a/include/Kbuild
++++ b/include/Kbuild
+@@ -29,6 +29,7 @@ header-test-			+=3D acpi/platform/acintel.h
+ header-test-			+=3D acpi/platform/aclinux.h
+ header-test-			+=3D acpi/platform/aclinuxex.h
+ header-test-			+=3D acpi/processor.h
++header-test-$(CONFIG_X86)	+=3D clocksource/hyperv_timer.h
+ header-test-			+=3D clocksource/timer-sp804.h
+ header-test-			+=3D crypto/cast_common.h
+ header-test-			+=3D crypto/internal/cryptouser.h
+--=20
+2.20.1
 
 
-On 07/05/2019 01:29 PM, Oscar Salvador wrote:
-> On Fri, Jul 05, 2019 at 11:42:41AM +0530, Anshuman Khandual wrote:
->> unset_migratetype_isolate() already validates under zone lock that a given
->> page has already been isolated as MIGRATE_ISOLATE. There is no need for
->> another check before. Hence just drop this redundant validation.
->>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Qian Cai <cai@lca.pw>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> Is there any particular reason to do this migratetype pre-check without zone
->> lock before calling unsert_migrate_isolate() ? If not this should be removed.
-> 
-> I have seen this kinda behavior-checks all over the kernel.
-> I guess that one of the main goals is to avoid lock contention, so we check
-> if the page has the right migratetype, and then we check it again under the lock
-> to see whether that has changed.
 
-So the worst case when it becomes redundant might not affect the performance much ?
+--=20
+Cheers,
+Stephen Rothwell
 
-> 
-> e.g: simultaneous calls to undo_isolate_page_range
+--Sig_/Ny3WjfBqFeBWAOFWZ7JQBF8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Right.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> But I am not sure if the motivation behind was something else, as the changelog
-> that added this code was quite modest.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0fCsgACgkQAVBC80lX
+0GzP7gf+IhRYREYoLbajvJ0eJP6dSNxtX7JAt/glEA3NMG4vgp3sxcfYMbLueOhJ
+z6tXnVCZE1UTvSti8dZMLfr4fAtyhnYxxdXHvim5nJXfku47A8vHPHeXWhyClKdl
+wj601UvGNQw7TagngFshKfhzculu0YMDAc4RPOdd+dubhuiUvMzzIVXK/DvWyzB2
+1seRp1jT1cCzjUOLXTzGv9UR3lF2hDPwnh9X37m+JmxxzzZ3PB/wBoxSD7vmVVzv
+N0H5VU7NB6ZUmgHeU9/c8O6I18OHF06R3OulUq2Y0HhHGGzRcJT0TVG7atbNFAZ+
+xTCFATmEb8fT99a5/7/OXnXSq0WEGA==
+=nxCx
+-----END PGP SIGNATURE-----
 
-Agreed.
-
-> 
-> Anyway, how did you come across with this?
-> Do things get speed up without this check? Or what was the motivation to remove it?
-
-Detected this during a code audit. I figured it can help save some cycles. The other
-call site start_isolate_page_range() does not check migrate type because the page
-block is guaranteed to be MIGRATE_ISOLATE ? I am not sure if a non-lock check first
-in this case is actually improving performance. In which case should we just leave
-the check as is ?
+--Sig_/Ny3WjfBqFeBWAOFWZ7JQBF8--
