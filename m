@@ -2,85 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19CB36058D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D2960591
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbfGELsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 07:48:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:64112 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726505AbfGELsf (ORCPT
+        id S1728878AbfGELt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 07:49:27 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34112 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfGELt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 07:48:35 -0400
-X-UUID: 592531b021a04da2953bf1183a89fd02-20190705
-X-UUID: 592531b021a04da2953bf1183a89fd02-20190705
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <lecopzer.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1473552831; Fri, 05 Jul 2019 19:48:30 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 5 Jul 2019 19:48:29 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 5 Jul 2019 19:48:29 +0800
-From:   Lecopzer Chen <lecopzer.chen@mediatek.com>
-To:     <linux-mm@kvack.org>
-CC:     Lecopzer Chen <lecopzer.chen@mediatek.com>,
-        Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>,
-        YJ Chiang <yj.chiang@mediatek.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm/sparse: fix ALIGN() without power of 2 in sparse_buffer_alloc()
-Date:   Fri, 5 Jul 2019 19:48:26 +0800
-Message-ID: <20190705114826.28586-1-lecopzer.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Fri, 5 Jul 2019 07:49:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MnDS828v/2vRSZdCCvSvB68MtPRTzNjF7AtDIX61mDQ=; b=RjzciPUCuY7PxiOgfr28PhK4j
+        g9VVWePCxtpJm2lpWr8f5xQIympzlYuIKN2mkfZm6ioGReWyPBO7xRR4QRO2h2UGKSxEJNtWM74oG
+        X+4L2lfE/Nko4Ab7v8LiNSX1JdhvXDuTp4Bf2Lo91oU9Ndabxe5zOYsEchsIImuYGqIJyu9XNl2DG
+        kzT5wuTQ/0t0VbiMGrA+1fHFb0266FZmM7QrkFDEor6mX2KdqDtCkygclWNpYTc3xTJiqh4zQI2e4
+        sG0Rrv6ue6G86etxZlnxVliP1/0HhYldR0s+gg3tWz/mw3gCRU3C4Pbi+MKH6BuAbxee4ox6XsFAp
+        iLj2ejbeA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hjMiK-0001Rj-Q4; Fri, 05 Jul 2019 11:49:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7C8772026E806; Fri,  5 Jul 2019 13:48:45 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 13:48:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
+Subject: Re: [PATCH v2] sched: fix unlikely use of sched_info_on()
+Message-ID: <20190705114845.GS3402@hirez.programming.kicks-ass.net>
+References: <1562301307-43002-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562301307-43002-1-git-send-email-wang.yi59@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The size argumnet passed into sparse_buffer_alloc() has already
-aligned with PAGE_SIZE or PMD_SIZE.
+On Fri, Jul 05, 2019 at 12:35:07PM +0800, Yi Wang wrote:
+> sched_info_on() is called with unlikely hint, however, the test
+> is to be a constant(1) on which compiler will do nothing when
+> make defconfig, so remove the hint.
+> 
+> Also, fix a lack of {}.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 
-If the size after aligned is not power of 2 (e.g. 0x480000), the
-PTR_ALIGN() will return wrong value.
-Use roundup to round sparsemap_buf up to next multiple of size.
-
-Signed-off-by: Lecopzer Chen <lecopzer.chen@mediatek.com>
-Signed-off-by: Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>
-Cc: YJ Chiang <yj.chiang@mediatek.com>
-Cc: Lecopzer Chen <lecopzer.chen@mediatek.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org
----
- mm/sparse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 2b3b5be85120..dafd130f9a55 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -459,7 +459,7 @@ void * __meminit sparse_buffer_alloc(unsigned long size)
- 	void *ptr = NULL;
- 
- 	if (sparsemap_buf) {
--		ptr = PTR_ALIGN(sparsemap_buf, size);
-+		ptr = (void *) roundup((unsigned long)sparsemap_buf, size);
- 		if (ptr + size > sparsemap_buf_end)
- 			ptr = NULL;
- 		else {
--- 
-2.18.0
-
+Thanks!
