@@ -2,64 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D6AE60217
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CD060229
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfGEIZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 04:25:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38096 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfGEIZ6 (ORCPT
+        id S1727434AbfGEIa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 04:30:27 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37997 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbfGEIa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:25:58 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hjJXW-0005Cx-Oh; Fri, 05 Jul 2019 08:25:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8712: remove redundant assignment to variable res
-Date:   Fri,  5 Jul 2019 09:25:54 +0100
-Message-Id: <20190705082554.15588-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 5 Jul 2019 04:30:27 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r12so7510634edo.5
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 01:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QbM44vAJoF7F4CJFe8D/rdMDdvpEwrpfX/ASCNMAqXA=;
+        b=AI94tmMhDWpYtJmSG9OE2YtmGF4jgP603p1zLogEX94WNdxqWXxqEwxrlkap0wV7Yl
+         ZZRrsbZx4mmXa6AJ4tYAh2jqBqJjFu9u5l/agQqdcx6lc9fHqFA0EU/eN4baePIRYs0K
+         ZXYrsPW7Y5tzH4uUsUdwjuKhodl8pkaIRj+10=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=QbM44vAJoF7F4CJFe8D/rdMDdvpEwrpfX/ASCNMAqXA=;
+        b=G+BqlVciEqe+pcAKlT1P9/V6eVqWsZFr140mJvWr/XW64hNbQJG93T/8aWxB9vHI+C
+         R9+ijL+FthBxGzLmYWoqUFZe4a5xqnLC8TAw2pFyoaRlasN9pt/PiuCmCZW+sWmpCBaQ
+         CYtMFYoWAhCdxqR6AAztIcQuO+Lg+lixtY524CPxBV4m5TIl+DUwqYdZ22YPncxlYGX2
+         4jYVBZDNHHPIbQds2SoHvQp3oSjZNvjVZ+zQRsPb3bcjoHtOKIN1LTA0Qv4eXZvLBTAR
+         fARW4166wwgZTlW0bD0jxkR0U/x9ykxg5IEFWVIQ9eHPoScdNnIYfBmow2qfK/kiOIBK
+         kl9A==
+X-Gm-Message-State: APjAAAWZ4KaCiQorcFQgEgbp9HZ0QO6+cKXhcjFKfRWNAJ7xgujob44j
+        kV8OlWAkbgaSg0r8ofc1INdthA==
+X-Google-Smtp-Source: APXvYqwxQTfCTwjg1Nv3JLxxlgEvpmawVRx0vKkBJIxGnG7RJ1+MqMHZ1WkVfQw3vC+4ikaheGDsmw==
+X-Received: by 2002:a17:906:ce21:: with SMTP id sd1mr2339496ejb.189.1562315425410;
+        Fri, 05 Jul 2019 01:30:25 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id j16sm481089ejq.66.2019.07.05.01.30.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 05 Jul 2019 01:30:24 -0700 (PDT)
+Date:   Fri, 5 Jul 2019 10:30:22 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 0/4] Add HDMI jack support on RK3288
+Message-ID: <20190705083022.GM15868@phenom.ffwll.local>
+Mail-Followup-To: Cheng-Yi Chiang <cychiang@chromium.org>,
+        linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>,
+        dianders@chromium.org, dgreid@chromium.org, tzungbi@chromium.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+References: <20190705042623.129541-1-cychiang@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705042623.129541-1-cychiang@chromium.org>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jul 05, 2019 at 12:26:19PM +0800, Cheng-Yi Chiang wrote:
+> This patch series supports HDMI jack reporting on RK3288, which uses
+> DRM dw-hdmi driver and hdmi-codec codec driver.
+> 
+> The previous discussion about reporting jack status using hdmi-notifier
+> and drm_audio_component is at
+> 
+> https://lore.kernel.org/patchwork/patch/1083027/
+> 
+> The new approach is to use a callback mechanism that is
+> specific to hdmi-codec.
 
-The variable res is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+I think this looks reasonable. There's the entire question of getting rid
+of the platform_device in hdmi_codec an roll our own devices (so that it
+all looks a bit cleaner, like e.g. the cec stuff does). But that can also
+be done in a follow-up (if you can convince reviewers of that).
+-Daniel
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8712/rtl8712_xmit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Cheng-Yi Chiang (4):
+>   ASoC: hdmi-codec: Add an op to set callback function for plug event
+>   drm: bridge: dw-hdmi: Report connector status using callback
+>   ASoC: rockchip_max98090: Add dai_link for HDMI
+>   ASoC: rockchip_max98090: Add HDMI jack support
+> 
+>  .../gpu/drm/bridge/synopsys/dw-hdmi-audio.h   |   3 +
+>  .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   |  10 ++
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  32 ++++-
+>  include/sound/hdmi-codec.h                    |  16 +++
+>  sound/soc/codecs/hdmi-codec.c                 |  52 ++++++++
+>  sound/soc/rockchip/rockchip_max98090.c        | 112 ++++++++++++++----
+>  6 files changed, 201 insertions(+), 24 deletions(-)
+> 
+> -- 
+> 2.22.0.410.gd8fdbe21b5-goog
+> 
 
-diff --git a/drivers/staging/rtl8712/rtl8712_xmit.c b/drivers/staging/rtl8712/rtl8712_xmit.c
-index 307b0e292976..dac79e6dcdcb 100644
---- a/drivers/staging/rtl8712/rtl8712_xmit.c
-+++ b/drivers/staging/rtl8712/rtl8712_xmit.c
-@@ -739,7 +739,7 @@ static void dump_xframe(struct _adapter *padapter,
- 
- int r8712_xmit_direct(struct _adapter *padapter, struct xmit_frame *pxmitframe)
- {
--	int res = _SUCCESS;
-+	int res;
- 
- 	res = r8712_xmitframe_coalesce(padapter, pxmitframe->pkt, pxmitframe);
- 	pxmitframe->pkt = NULL;
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
