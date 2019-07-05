@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB6C160559
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD5560580
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:45:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfGELkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 07:40:21 -0400
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:48014 "EHLO
+        id S1728844AbfGELoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 07:44:55 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:13808 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728087AbfGELkV (ORCPT
+        by vger.kernel.org with ESMTP id S1728720AbfGELoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 07:40:21 -0400
+        Fri, 5 Jul 2019 07:44:54 -0400
 Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65Be6JM015222;
-        Fri, 5 Jul 2019 04:40:06 -0700
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65BiQlb018260;
+        Fri, 5 Jul 2019 04:44:26 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : references : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=proofpoint;
- bh=n712EGstEs78KqPOb2JnDM8Qhzw8IAjFpWH2TroQZIE=;
- b=tC9GYqHKcR/hiukVfNokNbK7obfR0pdRrUZhuQ6oNnplgElYae5nxU3QkzqjOGTycw61
- 4dyhjmb37WjQ6XaqJdiGoaDhM2YxizMy5HIalbA7V5MPH7mHYh68dUqudLwASHbF2NEk
- FXZofAvZS4FQKDGRaFOmJ+80opqYhzECEypgWBvDp+8nRizaNuSjhErEXdlONu0ASd3F
- rudGqGfdmji6ddFCEpaV3I90rR1slM0VvhIWjEkMUkk3DJ2UYpnUuB3jTnKfjqtl+DZR
- 20j4ziGDTZ/wpzDpIyAVHNmN24PrEkkIC1ScmzIkFX8ozJKvkH8ileGa38X2MnXpQHKU Bw== 
+ bh=qKtPKf2TElfESXIz9YSar0KvPQBGqIKAPPYAKgCppCY=;
+ b=euF94Y8038gStwoXv5WBIyA7jlhfYy/7KgovnzAt7gvospT0PM9C0R873U9GaVOhwHCn
+ 03PUvzA/5DIqnl3al8RXf9RFoakwehkmSr5cYqKoDXc4RQqBuAKI7V0OGN9dUXVZW0Td
+ Gx99sjFd25hbZgNO+S7TB/0C8JpfYLnEZM6/3X9wVIEi06bYFiLwTtvSCcCpQyp4FRJn
+ Yr2VLS1UgEXjfaf0uC3EDicDSNffEKyfnvzmA3ISyPB91ripQJa1VPct9p1gRcBYknZK
+ nwjUhKHkpZID8EERS/fpTbAujZVxfx0hVWcNwERyhL5S0l6HH/WXWAgO1cSNL4FRhQYX LA== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2054.outbound.protection.outlook.com [104.47.45.54])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2tgwvj86w2-1
+Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2059.outbound.protection.outlook.com [104.47.42.59])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2tgwvj87b5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 05 Jul 2019 04:40:05 -0700
+        Fri, 05 Jul 2019 04:44:24 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n712EGstEs78KqPOb2JnDM8Qhzw8IAjFpWH2TroQZIE=;
- b=HxiHoLTJRMmqbuWFnBbTDePFByneLr6pjgKa7Fi9dlMswqXbUXNrMIQTP6ImXuN6pxk3qBQxMgmz9bYeOvV4Qw4Q3zHVeP0r7zfcTSr6GG+IyA+xYPCffgwvpF2keo7pOeGe1eSMUDhNt14zY7QglBAiHlYp4lj4ScAS6QzHytw=
+ bh=qKtPKf2TElfESXIz9YSar0KvPQBGqIKAPPYAKgCppCY=;
+ b=Jouz4J47SzC2Qe7s8ORdF9Qu+od8dBaEk5o+rr3eltfcnkG3+sxywF7lSsntLyYpZohc1oUA78hv34k/n/RxwnJ6XV23XpYL6dYeKRWUOCECEAnBXOs+LWPX8yOoGLnsARiYEmhTaFWhF5RwCNoCIRnzb/WFu2RmDhFZ8xTL828=
 Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
  BYAPR07MB5526.namprd07.prod.outlook.com (20.177.231.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Fri, 5 Jul 2019 11:39:57 +0000
+ 15.20.2032.20; Fri, 5 Jul 2019 11:44:15 +0000
 Received: from BYAPR07MB4709.namprd07.prod.outlook.com
  ([fe80::fd8c:399c:929b:33e2]) by BYAPR07MB4709.namprd07.prod.outlook.com
  ([fe80::fd8c:399c:929b:33e2%6]) with mapi id 15.20.2052.010; Fri, 5 Jul 2019
- 11:39:57 +0000
+ 11:44:15 +0000
 From:   Pawel Laszczak <pawell@cadence.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
         "hdegoede@redhat.com" <hdegoede@redhat.com>,
         "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
@@ -63,38 +63,38 @@ Subject: RE: [PATCH v9 2/6] usb:gadget Separated decoding functions from dwc3
  driver.
 Thread-Topic: [PATCH v9 2/6] usb:gadget Separated decoding functions from dwc3
  driver.
-Thread-Index: AQHVMyB8KL4t/wzfvkK+3nlF+Rqn1Ka74vsAgAAAvUA=
-Date:   Fri, 5 Jul 2019 11:39:57 +0000
-Message-ID: <BYAPR07MB4709AAF54E7C58B51FC26D20DDF50@BYAPR07MB4709.namprd07.prod.outlook.com>
+Thread-Index: AQHVMyB8KL4t/wzfvkK+3nlF+Rqn1Ka75lUAgAABDHA=
+Date:   Fri, 5 Jul 2019 11:44:15 +0000
+Message-ID: <BYAPR07MB4709964C1D0AA2A851BF2F55DDF50@BYAPR07MB4709.namprd07.prod.outlook.com>
 References: <1562324238-16655-1-git-send-email-pawell@cadence.com>
  <1562324238-16655-3-git-send-email-pawell@cadence.com>
- <20190705112724.GA4294@kroah.com>
-In-Reply-To: <20190705112724.GA4294@kroah.com>
+ <87tvc0lngz.fsf@linux.intel.com>
+In-Reply-To: <87tvc0lngz.fsf@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctOWIyYTA1NWMtOWYxOS0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDliMmEwNTVkLTlmMTktMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjI1MSIgdD0iMTMyMDY4MDAzOTQ4MjAwNjc3IiBoPSJURlFOMGVaRU1HK1VXM2tkK2JneVBkeHlDTDg9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMzUzNDEwNDctOWYxYS0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDM1MzQxMDQ5LTlmMWEtMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTg2NSIgdD0iMTMyMDY4MDA2NTMyMzIwNjE4IiBoPSJMQmNzbDhITWVzNjZ5ZWgvckovRy9GK1hBMnc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
 x-dg-rorf: 
 x-originating-ip: [185.217.253.59]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b3b48998-9ea3-4719-6fd4-08d7013d81bd
+x-ms-office365-filtering-correlation-id: 4896cc75-f277-4bb8-5fef-08d7013e1b98
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB5526;
 x-ms-traffictypediagnostic: BYAPR07MB5526:
-x-microsoft-antispam-prvs: <BYAPR07MB5526410E5E93434350177FA3DDF50@BYAPR07MB5526.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-microsoft-antispam-prvs: <BYAPR07MB552698EFF6A015481D693DD6DDF50@BYAPR07MB5526.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(36092001)(189003)(199004)(55016002)(76176011)(99286004)(478600001)(229853002)(7416002)(7696005)(2906002)(316002)(33656002)(66066001)(14454004)(66446008)(73956011)(66946007)(64756008)(76116006)(8936002)(68736007)(66556008)(86362001)(8676002)(52536014)(9686003)(66476007)(81156014)(81166006)(5660300002)(6116002)(3846002)(25786009)(6246003)(256004)(102836004)(71190400001)(71200400001)(26005)(6506007)(486006)(53936002)(186003)(446003)(4326008)(6436002)(54906003)(6916009)(7736002)(74316002)(305945005)(11346002)(476003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5526;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(36092001)(189003)(199004)(55016002)(76176011)(99286004)(478600001)(229853002)(7416002)(7696005)(2501003)(2906002)(110136005)(316002)(33656002)(66066001)(14454004)(66446008)(73956011)(66946007)(64756008)(76116006)(8936002)(68736007)(66556008)(86362001)(8676002)(52536014)(9686003)(66476007)(81156014)(81166006)(5660300002)(6116002)(3846002)(25786009)(6246003)(14444005)(256004)(102836004)(71190400001)(71200400001)(26005)(6506007)(486006)(53936002)(186003)(446003)(4326008)(6436002)(54906003)(7736002)(74316002)(305945005)(11346002)(476003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5526;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: cadence.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 87NCGEuQYUrK90lX5nYuBBdprm60S7oa8NFhOEe5tRzAwyFjmBc+zEyM5hHW59733gHShNaQhWWuGCnvT5A7Y6g58G+1IpuIbkZ5md5EpdV36d3VZLI0BRM03Ot4w3DSkEQieCN6M973OwRXps8uWy6LMA9NE22aDljZzPpufQLI4gSLf2T+f/awhd11j8IBH32aOxwfGBze/kxqcM/xdsy2G8OpzS2D6V/6DYKbLeX0t8cuk+4xvdhBi/Zqqmyk9tiGSgD4p5RXSfY4IQe0OS6cfIoip0b6+Pksc2juOYfnlqkavRQnloe4OfGqwB9bqZR2IR7jk6TDKtiVz/DQ7A8lE9H7vEQUv4z0H0s35sir5o+do3dinrbVoB3Hz2K+KS25TCadVvTbKVttENYfSmQadlJeGZYk4w5lov3h+Hs=
+x-microsoft-antispam-message-info: 7zDfogEh4oCTn4ibVPpCwxY8TBB0VWRa1RXMc07SS2VcDm5x9JADLlN+zKqWyNloBdeDGBji1MbjzBVBSYY6ispz2moP4mgfusupbUdBgLcUvw8s6JWw31rdVMKdXv4Wqyr63MZYZdsbKSE9zEkGN0zSXqNYNdcqJB7xcXm5BOHEvx1aGVXWOWpCgH44Wp6ceMa3fS//YYFGiDfekZeAeQAZf0Iiv1KcAaE/obOdCU60MmtUYYaQ/yzORa9xqfo4cvRD5z6eS99L5BbWTEzC2jsDnjCxmC7rLGIKakmE60xQvKnBm1IsqIEckP3JabPc5tDBh+XrZv1CGkHDC5oqBYJYzLkPdqOEJIAoHfsL9Rg/g/L+lTFLZ4DksxsKZGAOETrdhNBZJAyyqrIGTMBFKvWbvrn3vYHC4MOl4Jt0xDI=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3b48998-9ea3-4719-6fd4-08d7013d81bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 11:39:57.5654
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4896cc75-f277-4bb8-5fef-08d7013e1b98
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 11:44:15.6316
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
@@ -111,75 +111,69 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=873 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907050141
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907050142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
->On Fri, Jul 05, 2019 at 11:57:14AM +0100, Pawel Laszczak wrote:
->> Patch moves some decoding functions from driver/usb/dwc3/debug.h driver
->> to driver/usb/gadget/debug.c file. These moved functions include:
->>     dwc3_decode_get_status
->>     dwc3_decode_set_clear_feature
->>     dwc3_decode_set_address
->>     dwc3_decode_get_set_descriptor
->>     dwc3_decode_get_configuration
->>     dwc3_decode_set_configuration
->>     dwc3_decode_get_intf
->>     dwc3_decode_set_intf
->>     dwc3_decode_synch_frame
->>     dwc3_decode_set_sel
->>     dwc3_decode_set_isoch_delay
->>     dwc3_decode_ctrl
->>
->> These functions are used also in inroduced cdns3 driver.
->>
->> All functions prefixes were changed from dwc3 to usb.
->> Also, function's parameters has been extended according to the name
->> of fields in standard SETUP packet.
->> Additionally, patch adds usb_decode_ctrl function to
->> include/linux/usb/gadget.h file.
+>EXTERNAL MAIL
 >
->No it does not :(
-
-I've forgot about this :(=20
-
-It should be include/linux/usb/ch.9.h
-
 >
->> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> ---
->>  drivers/usb/common/Makefile |   5 +
->>  drivers/usb/common/debug.c  | 268 ++++++++++++++++++++++++++++++++++++
->>  drivers/usb/dwc3/debug.h    | 252 ---------------------------------
->>  drivers/usb/dwc3/trace.h    |   2 +-
->>  include/linux/usb/ch9.h     |  25 ++++
->>  5 files changed, 299 insertions(+), 253 deletions(-)
->>  create mode 100644 drivers/usb/common/debug.c
+>
+>Hi,
+>
+>Pawel Laszczak <pawell@cadence.com> writes:
+>> diff --git a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
+>> index da82606be605..d388a3a5ab7e 100644
+>> --- a/include/linux/usb/ch9.h
+>> +++ b/include/linux/usb/ch9.h
+>> @@ -70,4 +70,29 @@ extern enum usb_device_speed usb_get_maximum_speed(st=
+ruct device *dev);
+>>   */
+>>  extern const char *usb_state_string(enum usb_device_state state);
 >>
->> diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
->> index 0a7c45e85481..cdc66b59a6f0 100644
->> --- a/drivers/usb/common/Makefile
->> +++ b/drivers/usb/common/Makefile
->> @@ -5,6 +5,11 @@
->>
->>  obj-$(CONFIG_USB_COMMON)	  +=3D usb-common.o
->>  usb-common-y			  +=3D common.o
+>> +/**
+>> + * usb_decode_ctrl - Returns human readable representation of control r=
+equest.
+>> + * @str: buffer to return a human-readable representation of control re=
+quest.
+>> + *       This buffer should have about 200 bytes.
+>> + * @size: size of str buffer.
+>> + * @bRequestType: matches the USB bmRequestType field
+>> + * @bRequest: matches the USB bRequest field
+>> + * @wValue: matches the USB wValue field (CPU byte order)
+>> + * @wIndex: matches the USB wIndex field (CPU byte order)
+>> + * @wLength: matches the USB wLength field (CPU byte order)
+>> + *
+>> + * Function returns decoded, formatted and human-readable description o=
+f
+>> + * control request packet.
+>> + *
+>> + * The usage scenario for this is for tracepoints, so function as a ret=
+urn
+>> + * use the same value as in parameters. This approach allows to use thi=
+s
+>> + * function in TP_printk
+>> + *
+>> + * Important: wValue, wIndex, wLength parameters before invoking this f=
+unction
+>> + * should be processed by le16_to_cpu macro.
+>> + */
+>> +extern const char *usb_decode_ctrl(char *str, size_t size, __u8 bReques=
+tType,
+>> +				   __u8 bRequest, __u16 wValue, __u16 wIndex,
+>> +				   __u16 wLength);
 >> +
->> +ifneq ($(CONFIG_TRACING),)
->> +	usb-common-y		  +=3D debug.o
->> +endif
 >
->So only enable this if tracing is not emabled?  Or if enabled?  I'm
->confused, isn't there an easier way to write this?
+>where's the stub when !TRACING?
 
-It's checks if CONFIG_TRACING is enable.=20
-It's a common way checking if option is enabled in usb subsystem.=20
-
+Right, I will add=20
+#ifdef	CONFIG_TRACING=20
+	.....
+#endif=20
 >
->thanks,
->
->greg k-h
+>--
+>balbi
