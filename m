@@ -2,111 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297BF5FFF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96EEB5FFF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfGEEKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 00:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725280AbfGEEKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 00:10:08 -0400
-Received: from localhost (unknown [37.142.3.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC53A21852;
-        Fri,  5 Jul 2019 04:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562299807;
-        bh=o3nJicTy+Qjp7G09STgRNAO/lzLw5iVeuJIFKu6cNw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uxQMNM/AZcsCbdxpbp3iTVv59AZe9WzAV267s8w8FeqzB4qpzHnMfsWwyvaylHTxS
-         NTFaOoU3gAihbyOE8cqchTWA8I7Bfbt7lMA7ZGrY3eAv8ZxfFZXUQbN9ovcR3HRCx/
-         JTNiGdwc1QRvZv5pPJodfrmIIzWPs1nBVeWpJHO4=
-Date:   Fri, 5 Jul 2019 07:09:50 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Parav Pandit <pandit.parav@gmail.com>
-Cc:     Dag Moxnes <dag.moxnes@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Parav Pandit <parav@mellanox.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] RDMA/core: Fix race when resolving IP address
-Message-ID: <20190705040950.GO7212@mtr-leonro.mtl.com>
-References: <1561711763-24705-1-git-send-email-dag.moxnes@oracle.com>
- <CAG53R5VQqqr0S6OU+13tcuxcvz922iuqoP-mWbaQERPc48964A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG53R5VQqqr0S6OU+13tcuxcvz922iuqoP-mWbaQERPc48964A@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1725884AbfGEEQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 00:16:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36645 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfGEEQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 00:16:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k8so3970836plt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 21:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DIVzl05bCmHqAQSTOF3kZ/Ym5AufpX9dq9JbDFqM6xA=;
+        b=irbfu9qArbablvA6nbNLTjhMKotjU5R09Zqx9DqYYzjYZz6fd5+MPt/5WZbfkukptH
+         ModvZovWGiIEr+b3EIj5ZiICW7ImUrh3nRwJTahq1LWKcCom1ky/dNd/YJtqmVepFxZ8
+         7AsjoiTxjhRx2Aj53GHp3t5fLh2hoojsAcpKPqb0LR381CH/haWPEyvmmHBz2cAivW99
+         WVXDORQ9Wr97G+nOp9RqBFcimlQK4ne9s+s2+ZgyW2brfU8QICXkVIuoj+gkRZdHXC3l
+         ZmGrtQLaXCzMowk6ehabqxUsVefUs7+VLbWuol4DwWq9rU1zsWApq87yWvwdSTmkzzeM
+         C6nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DIVzl05bCmHqAQSTOF3kZ/Ym5AufpX9dq9JbDFqM6xA=;
+        b=IQIctZBsMjgqPoiU7jHN7/8ac3zJlDAe/wVGvfQj0F/woTjsbh/v89Lw0aOlM4YHcw
+         LxpYFN5oVoLZ4X/2im6s00IFwbEK1rKvqO8gmEK3vx7AilMl+wNk753EFVZIdczqYXUm
+         4YHexrS0uc3ADG//2xcNUcqFau9KsZ7hfwFQklwxyr1Ruy0MVFTtupFB+9Jzi0yzv04t
+         npU1qAgXaoUiX8CChOhtF/vK9isg3nQRHMAzXu9SMHDUvFBP43OmyTXc8PVmprHDL/wt
+         oHqqCzqrEGa+6VKbRvr4tmcrQdT1d1Ebp2aLC+FvCdNk/2sadgNXogsnqDQhuJZsQl/j
+         Yvjw==
+X-Gm-Message-State: APjAAAXiSU2uSb7Vwyns9ba85AbOv5ak5TbtTA+yzmIiM0ucLGnrZgsW
+        IZHSr7CoCt7tTaQm4TBUpA==
+X-Google-Smtp-Source: APXvYqzI9ZcBsR33Wj69OYxhz8Fl3uU52XOagYXuFn3y1+rHU7l+0to8zenOnZia6VzGeJ1Wmt9bLQ==
+X-Received: by 2002:a17:902:f204:: with SMTP id gn4mr2206522plb.3.1562300188420;
+        Thu, 04 Jul 2019 21:16:28 -0700 (PDT)
+Received: from mylaptop.redhat.com ([2408:8207:7821:9e80:eaf2:5f81:4c66:c3d0])
+        by smtp.gmail.com with ESMTPSA id l68sm16328638pjb.8.2019.07.04.21.16.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Jul 2019 21:16:27 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     x86@kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, Qian Cai <cai@lca.pw>,
+        Barret Rhoden <brho@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] x86/numa: carve node online semantics out of alloc_node_data()
+Date:   Fri,  5 Jul 2019 12:15:42 +0800
+Message-Id: <1562300143-11671-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 07:49:06AM +0530, Parav Pandit wrote:
-> On Fri, Jun 28, 2019 at 2:20 PM Dag Moxnes <dag.moxnes@oracle.com> wrote:
-> >
-> > Use neighbour lock when copying MAC address from neighbour data struct
-> > in dst_fetch_ha.
-> >
-> > When not using the lock, it is possible for the function to race with
-> > neigh_update, causing it to copy an invalid MAC address.
-> >
-> > It is possible to provoke this error by calling rdma_resolve_addr in a
-> > tight loop, while deleting the corresponding ARP entry in another tight
-> > loop.
-> >
-> > Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-> > Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> >
-> > ---
-> > v1 -> v2:
-> >    * Modified implementation to improve readability
-> > ---
-> >  drivers/infiniband/core/addr.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> > index 2f7d141598..51323ffbc5 100644
-> > --- a/drivers/infiniband/core/addr.c
-> > +++ b/drivers/infiniband/core/addr.c
-> > @@ -333,11 +333,14 @@ static int dst_fetch_ha(const struct dst_entry *dst,
-> >         if (!n)
-> >                 return -ENODATA;
-> >
-> > -       if (!(n->nud_state & NUD_VALID)) {
-> > +       read_lock_bh(&n->lock);
-> > +       if (n->nud_state & NUD_VALID) {
-> > +               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
-> > +               read_unlock_bh(&n->lock);
-> > +       } else {
-> > +               read_unlock_bh(&n->lock);
-> >                 neigh_event_send(n, NULL);
-> >                 ret = -ENODATA;
-> > -       } else {
-> > -               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
-> >         }
-> >
-> >         neigh_release(n);
-> > --
-> > 2.20.1
-> >
-> Reviewed-by: Parav Pandit <parav@mellanox.com>
->
-> A sample trace such as below in commit message would be good to have.
-> Or the similar one that you noticed with ARP delete sequence.
->
-> neigh_changeaddr()
->   neigh_flush_dev()
->    n->nud_state = NUD_NOARP;
->
-> Having some issues with office outlook, so replying via gmail.
+Node online means either memory online or cpu online. But there is
+requirement to instance a pglist_data, which has neither cpu nor memory
+online (refer to [2/2]).
 
-Your replies from gmail looks much better when you used Outlook - proper
-spacing between quoted text and your reply.
+So carve out the online semantics, and call node_set_online() where either
+memory or cpu is online.
 
-Thanks
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Barret Rhoden <brho@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/mm/numa.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index e6dad60..b48d507 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -213,8 +213,6 @@ static void __init alloc_node_data(int nid)
+ 
+ 	node_data[nid] = nd;
+ 	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+-
+-	node_set_online(nid);
+ }
+ 
+ /**
+@@ -589,6 +587,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+ 			continue;
+ 
+ 		alloc_node_data(nid);
++		node_set_online(nid);
+ 	}
+ 
+ 	/* Dump memblock with node info and return. */
+@@ -760,8 +759,10 @@ void __init init_cpu_to_node(void)
+ 		if (node == NUMA_NO_NODE)
+ 			continue;
+ 
+-		if (!node_online(node))
++		if (!node_online(node)) {
+ 			init_memory_less_node(node);
++			node_set_online(nid);
++		}
+ 
+ 		numa_set_node(cpu, node);
+ 	}
+-- 
+2.7.5
+
