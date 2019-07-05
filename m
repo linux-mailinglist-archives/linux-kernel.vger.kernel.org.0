@@ -2,76 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F98605F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E3E605F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:33:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfGEMen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:34:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8713 "EHLO huawei.com"
+        id S1728508AbfGEMdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:33:14 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8712 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727341AbfGEMem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:34:42 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3A8D35FA08B773A96C8F;
-        Fri,  5 Jul 2019 20:34:38 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
- 20:34:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] gpio: tegra: Fix build error without CONFIG_DEBUG_FS
-Date:   Fri, 5 Jul 2019 20:32:20 +0800
-Message-ID: <20190705123220.54008-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1725601AbfGEMdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 08:33:14 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 02C3EBD676E72E9322B4;
+        Fri,  5 Jul 2019 20:33:12 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
+ 20:33:05 +0800
+Subject: Re: [PATCH] time: compat settimeofday: Validate the values of tv from
+ user
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <john.stultz@linaro.org>, <sboyd@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <zhangxiaoxu5@huawei.com>
+References: <1562318088-37669-1-git-send-email-zhengbin13@huawei.com>
+ <alpine.DEB.2.21.1907051230340.1802@nanos.tec.linutronix.de>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <39dd218b-4fc1-83bd-df2a-3cd69cc90c72@huawei.com>
+Date:   Fri, 5 Jul 2019 20:32:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
+In-Reply-To: <alpine.DEB.2.21.1907051230340.1802@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_DEBUG_FS is not set, building fails:
-
-drivers/gpio/gpio-tegra.c: In function tegra_gpio_probe:
-drivers/gpio/gpio-tegra.c:665:2: error: implicit declaration of function debugfs_create_file;
- did you mean bus_create_file? [-Werror=implicit-function-declaration]
-  debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
-  ^~~~~~~~~~~~~~~~~~~
-  bus_create_file
-drivers/gpio/gpio-tegra.c:666:9: error: tegra_dbg_gpio_fops undeclared (first use in this function);
- did you mean tegra_gpio_pm_ops?
-        &tegra_dbg_gpio_fops);
-         ^~~~~~~~~~~~~~~~~~~
-         tegra_gpio_pm_ops
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: a4de43049a1d ("gpio: tegra: Clean-up debugfs initialisation")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpio/gpio-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 59b99d8..40fd6bd 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -662,8 +662,10 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+#ifdef CONFIG_DEBUG_FS
- 	debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
- 			    &tegra_dbg_gpio_fops);
-+#endif
- 
- 	return 0;
- }
--- 
-2.7.4
-
+On 2019/7/5 20:14, Thomas Gleixner wrote:
+> Zhengbin,
+>
+> On Fri, 5 Jul 2019, zhengbin wrote:
+>
+>> Similar to commit 6ada1fc0e1c4
+>> ("time: settimeofday: Validate the values of tv from user"),
+>> an unvalidated user input is multiplied by a constant, which can result
+>> in an undefined behaviour for large values. While this is validated
+>> later, we should avoid triggering undefined behaviour.
+> I surely agree with the patch, but the argument that this is validated
+> later and we just should avoid UB in general is just wrong.
+>
+> For a wide range of negative tv_usec values the multiplication overflow
+> turns them in positive numbers. So the 'validated later' is not catching
+> the invalid input.
+>
+> So 'should avoid ....' is just the wrong argument here.
+>
+> Validation _is_ required before the multiplication so UB won't turn an
+> invalid value into a valid one.
+>
+> Thanks,
+>
+> 	tglx
+Strongly agree with this, I send a v2 patch, modify the comment?
+>
+> .
+>
 
