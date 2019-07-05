@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106CB60617
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5511760627
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfGEMmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:42:11 -0400
-Received: from mga14.intel.com ([192.55.52.115]:5662 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfGEMmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:42:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 05:42:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,455,1557212400"; 
-   d="scan'208";a="169667533"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 05 Jul 2019 05:42:05 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 05 Jul 2019 15:42:04 +0300
-Date:   Fri, 5 Jul 2019 15:42:04 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
-        lucas.demarchi@intel.com, imre.deak@intel.com,
-        jose.souza@intel.com, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] drm/i915: Remove set but not used variable
- 'intel_dig_port'
-Message-ID: <20190705124204.GO5942@intel.com>
-References: <20190705113138.65880-1-yuehaibing@huawei.com>
+        id S1728780AbfGEMoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:44:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8146 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727665AbfGEMoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 08:44:16 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1D377A7AB501FDE1A7EA;
+        Fri,  5 Jul 2019 20:44:13 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
+ 20:44:12 +0800
+Subject: Re: [PATCH] gpio: tegra: Fix build error without CONFIG_DEBUG_FS
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190705123220.54008-1-yuehaibing@huawei.com>
+ <CAMpxmJVZHJKQ7bbHo=T9R99qguF315bZ=YVRrCdqti2SyzAnDg@mail.gmail.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <74ffe8ea-e6fb-bd2a-42bd-08392eb27c69@huawei.com>
+Date:   Fri, 5 Jul 2019 20:44:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAMpxmJVZHJKQ7bbHo=T9R99qguF315bZ=YVRrCdqti2SyzAnDg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190705113138.65880-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 11:31:38AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On 2019/7/5 20:40, Bartosz Golaszewski wrote:
+> pt., 5 lip 2019 o 14:34 YueHaibing <yuehaibing@huawei.com> napisaÅ‚(a):
+>>
+>> If CONFIG_DEBUG_FS is not set, building fails:
+>>
+>> drivers/gpio/gpio-tegra.c: In function tegra_gpio_probe:
+>> drivers/gpio/gpio-tegra.c:665:2: error: implicit declaration of function debugfs_create_file;
+>>  did you mean bus_create_file? [-Werror=implicit-function-declaration]
+>>   debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
+>>   ^~~~~~~~~~~~~~~~~~~
+>>   bus_create_file
+>> drivers/gpio/gpio-tegra.c:666:9: error: tegra_dbg_gpio_fops undeclared (first use in this function);
+>>  did you mean tegra_gpio_pm_ops?
+>>         &tegra_dbg_gpio_fops);
+>>          ^~~~~~~~~~~~~~~~~~~
+>>          tegra_gpio_pm_ops
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Fixes: a4de43049a1d ("gpio: tegra: Clean-up debugfs initialisation")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/gpio/gpio-tegra.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+>> index 59b99d8..40fd6bd 100644
+>> --- a/drivers/gpio/gpio-tegra.c
+>> +++ b/drivers/gpio/gpio-tegra.c
+>> @@ -662,8 +662,10 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>>                 }
+>>         }
+>>
+>> +#ifdef CONFIG_DEBUG_FS
+>>         debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
+>>                             &tegra_dbg_gpio_fops);
+>> +#endif
+>>
+>>         return 0;
+>>  }
+>> --
+>> 2.7.4
+>>
+>>
 > 
-> drivers/gpu/drm/i915/display/intel_ddi.c: In function 'intel_ddi_get_config':
-> drivers/gpu/drm/i915/display/intel_ddi.c:3774:29: warning:
->  variable 'intel_dig_port' set but not used [-Wunused-but-set-variable]
->   struct intel_digital_port *intel_dig_port;
-> 
-> It is never used, so can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Nack, there are inline stubs for all debugfs functions in
+> ./include/linux/debugfs.h if CONFIG_DEBUG_FS is not selected. Just
+> move the #include <linux/debugfs.h> to the top of the source file.
 
-Applied to drm-intel-next-queued. Thanks for the patch.
+yes, agree this, but 'tegra_dbg_gpio_fops' is still undeclared.
 
-> ---
->  drivers/gpu/drm/i915/display/intel_ddi.c | 2 --
->  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
-> index a4172595c8d8..30e48609db1d 100644
-> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
-> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
-> @@ -3771,7 +3771,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
->  	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
->  	struct intel_crtc *intel_crtc = to_intel_crtc(pipe_config->base.crtc);
->  	enum transcoder cpu_transcoder = pipe_config->cpu_transcoder;
-> -	struct intel_digital_port *intel_dig_port;
->  	u32 temp, flags = 0;
->  
->  	/* XXX: DSI transcoder paranoia */
-> @@ -3810,7 +3809,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
->  	switch (temp & TRANS_DDI_MODE_SELECT_MASK) {
->  	case TRANS_DDI_MODE_SELECT_HDMI:
->  		pipe_config->has_hdmi_sink = true;
-> -		intel_dig_port = enc_to_dig_port(&encoder->base);
->  
->  		pipe_config->infoframes.enable |=
->  			intel_hdmi_infoframes_enabled(encoder, pipe_config);
+> Bart
 > 
+> .
 > 
 
--- 
-Ville Syrjälä
-Intel
