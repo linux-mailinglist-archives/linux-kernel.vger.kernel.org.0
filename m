@@ -2,225 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10DB460145
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79046014C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfGEHKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 03:10:04 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39309 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfGEHKE (ORCPT
+        id S1727870AbfGEHMr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 5 Jul 2019 03:12:47 -0400
+Received: from mailout01.agenturserver.de ([185.15.192.32]:49125 "EHLO
+        mailout01.agenturserver.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725862AbfGEHMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 03:10:04 -0400
-Received: by mail-oi1-f193.google.com with SMTP id m202so6487199oig.6
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 00:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gxBN84xswbhhWfhJZ4vJ56rbkxQJ6uMES8Lq5hzLdBY=;
-        b=mc33cekhckA7wJjQPFB96WQWGU23cxC27TC5cLWhp1tkIGBdYA3u5o1I17M1ckqlQd
-         zFZm1wF32d0kzplRgk9f+FK97QneoXTF+BUYf5NuDMGFDmxhI7P7x6djrqp7Aih7DRb+
-         L0PWOaB0R1SQfDkhqQMvbEzlmLlm62KLmQ6n9n9ryzaaDAQOcPdh71DVU/KfEHOpIU+S
-         maqwuTUWDwen5vjdE19DurUUEl/sqsqu+jbp90i6znc6XdV9POHpZR0mzfmXlA5DIei5
-         4VA1xvTQfzYrzVl8AyFB+X3uvWz0jJfdnYQdjTX0krPFmiuU+ihk42PbP7UvgPeYDJDj
-         cFeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gxBN84xswbhhWfhJZ4vJ56rbkxQJ6uMES8Lq5hzLdBY=;
-        b=WfYFiCUjsHZfLUrXopX6b7SMjlxHe3ESLY+jUzqNE1hqI6fbrQhNKo20erweb/5cnx
-         64hFAK2bTTzZ0jHPpBro/ovuDCMiz0htNWZygWe5a7NvBb3A0eBPeU6ldKJdMQiUp/Kd
-         n0piR1r5dnGiybjEZ4rLyK1oW3j/1kUYYsNj1oN9/yse1nWLxS7oFVqAmFEtzE28fbC0
-         A0fjJ1TqOCDaeDdf5hotDXClxkpY3uLhB331lvhKo8Cy6ZDf5lF6LjkHvDYOukhF5Wbl
-         o91KCHqFDQbbqSTdWfLbLoifOKXz53Lp8PwXnKhIYEFupjMaQf8aTMD7b71FYgAYuBm3
-         Gcag==
-X-Gm-Message-State: APjAAAVqjqB68kAtdgwPG5CB173h9I9hIk9cVjQOsYiLjn2f/9llR1dZ
-        GP1aL3UOxmXW+hGgD7SoBaPgmK7cn6S2UGT/RcRqAg==
-X-Google-Smtp-Source: APXvYqylRoOrXW9piygIdp/MUCNdlQwgFS7OKeAodWKUYf14PwDLt6pn2w/rrprynkga74yQySStlO0D+Em9QWuAc3Q=
-X-Received: by 2002:aca:ecc1:: with SMTP id k184mr1195557oih.82.1562310603045;
- Fri, 05 Jul 2019 00:10:03 -0700 (PDT)
+        Fri, 5 Jul 2019 03:12:46 -0400
+Received: from mail02.agenturserver.de (mail02.internal [172.16.51.35])
+        by mailout01.agenturserver.de (Postfix) with ESMTP id 2BC0166DE1;
+        Fri,  5 Jul 2019 09:12:42 +0200 (CEST)
+Received: from localhost (ac02.internal [172.16.51.82])
+        by mail02.agenturserver.de (Postfix) with ESMTP id 1B8DB807EC;
+        Fri,  5 Jul 2019 09:12:42 +0200 (CEST)
+X-Spam-Level: 
+Received: from mail.agenturserver.de ([172.16.51.35])
+        by localhost (ac02.mittwald.de [172.16.51.82]) (amavisd-new, port 10026)
+        with ESMTP id caKduJbWk4PB; Fri,  5 Jul 2019 09:12:41 +0200 (CEST)
+Received: from karo-electronics.de (unknown [89.1.81.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lw@karo-electronics.de)
+        by mail.agenturserver.de (Postfix) with ESMTPSA;
+        Fri,  5 Jul 2019 09:12:36 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 09:12:35 +0200
+From:   Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+To:     Andy Duan <fugang.duan@nxp.com>
+Cc:     "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH nvmem 1/1] nvmem: imx: correct the fuse word
+ index
+Message-ID: <20190705091235.365b93cb@karo-electronics.de>
+In-Reply-To: <VI1PR0402MB360040318C9FB6656B46C566FFF50@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <20190704142015.10701-1-fugang.duan@nxp.com>
+        <20190704174543.194a0158@karo-electronics.de>
+        <VI1PR0402MB3600D635FF12DC861FAD9BF6FFFA0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+        <VI1PR0402MB360040318C9FB6656B46C566FFF50@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+Organization: Ka-Ro electronics GmbH
 MIME-Version: 1.0
-References: <20190705042623.129541-1-cychiang@chromium.org> <20190705042623.129541-4-cychiang@chromium.org>
-In-Reply-To: <20190705042623.129541-4-cychiang@chromium.org>
-From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Fri, 5 Jul 2019 15:09:52 +0800
-Message-ID: <CA+Px+wXVghbk8k0WE5TEsGRQXx26K0-=h3O7cje-F1phwBGrbQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ASoC: rockchip_max98090: Add dai_link for HDMI
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        ALSA development <alsa-devel@alsa-project.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 5, 2019 at 12:26 PM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
-> diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-> index c5fc24675a33..195309d1225a 100644
-> --- a/sound/soc/rockchip/rockchip_max98090.c
-> +++ b/sound/soc/rockchip/rockchip_max98090.c
->  static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
-> @@ -92,38 +95,59 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+Hi,
+
+On Fri, 5 Jul 2019 02:46:32 +0000 Andy Duan wrote:
+> From: Andy Duan Sent: Friday, July 5, 2019 12:08 AM
+> > From: Lothar Waßmann <LW@KARO-electronics.de> Sent: Thursday, July 4,
+> > 2019 11:46 PM  
+> > > Hi,
+> > >
+> > > On Thu,  4 Jul 2019 22:20:15 +0800 fugang.duan@nxp.com wrote:  
+> > > > From: Fugang Duan <fugang.duan@nxp.com>
+> > > >
+> > > > iMX8 fuse word index represent as one 4-bytes word, it should not be
+> > > > divided by 4.
+> > > >
+> > > > Exp:
+> > > > - MAC0 address layout in fuse:
+> > > > offset 708: MAC[3] MAC[2] MAC[1] MAC[0]
+> > > > offset 709: XX     xx     MAC[5] MAC[4]
+> > > >
+> > > > Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+> > > > ---
+> > > >  drivers/nvmem/imx-ocotp-scu.c | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/nvmem/imx-ocotp-scu.c
+> > > > b/drivers/nvmem/imx-ocotp-scu.c index d9dc482..be2f5f0 100644
+> > > > --- a/drivers/nvmem/imx-ocotp-scu.c
+> > > > +++ b/drivers/nvmem/imx-ocotp-scu.c
+> > > > @@ -71,8 +71,8 @@ static int imx_scu_ocotp_read(void *context,
+> > > > unsigned  
+> > > int offset,  
+> > > >       void *p;
+> > > >       int i, ret;
+> > > >
+> > > > -     index = offset >> 2;
+> > > > -     num_bytes = round_up((offset % 4) + bytes, 4);
+> > > > +     index = offset;
+> > > > +     num_bytes = round_up(bytes, 4);
+> > > >       count = num_bytes >> 2;
+> > > >
+> > > >       if (count > (priv->data->nregs - index)) @@ -100,7 +100,7 @@
+> > > > static int imx_scu_ocotp_read(void *context, unsigned int offset,
+> > > >               buf++;
+> > > >       }
+> > > >
+> > > > -     memcpy(val, (u8 *)p + offset % 4, bytes);
+> > > > +     memcpy(val, (u8 *)p, bytes);
+> > > >
+> > > >       kfree(p);
+> > > >  
+> > > With these changes you could use the 'val' pointer directly as the
+> > > destination for ocotp_read() without need for an intermediate buffer.
+> > >
+> > >
+> > > Lothar Waßmann  
+> > 
+> > You are right, in fact, we can remove "p" and "buf" pointer.
+> > Thanks for your review, I will send out the V2.  
+> 
+> Hi Lothar,
+> 
+> It still need intermediate buffer to read out n words (n * 4 bytes) from eFuse.
+> Because 'val' buffer size is real count parsed from DT, which is not an integer multiple of 4.
+> 
+> For example, cell->bytes is parsed from "reg" property and it is real count like 6.
+>                         fec_mac0: mac@2c4 {
+>                                 reg = <0x2c4 6>;
+>                         }; 
+> 
+> So we have to use intermediate buffer here.
 >
->         ret = snd_soc_dai_set_sysclk(cpu_dai, 0, mclk,
->                                      SND_SOC_CLOCK_OUT);
-> -       if (ret < 0) {
-> -               dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
-> +       if (ret && ret != -ENOTSUPP) {
-> +               dev_err(cpu_dai->dev, "Can't set cpu dai clock %d\n", ret);
->                 return ret;
->         }
->
->         ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
->                                      SND_SOC_CLOCK_IN);
-> -       if (ret < 0) {
-> -               dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
-> +       if (ret && ret != -ENOTSUPP) {
-> +               dev_err(codec_dai->dev, "Can't set codec dai clock %d\n", ret);
->                 return ret;
->         }
-Does it imply: it is acceptable even if they are "not supported"?
+val is a u32 pointer, so legally it cannot point to any buffer whose
+size is not divisible by four!
 
 
->
-> -       return ret;
-> +       return 0;
->  }
->
->  static const struct snd_soc_ops rk_aif1_ops = {
->         .hw_params = rk_aif1_hw_params,
->  };
->
-> -SND_SOC_DAILINK_DEFS(hifi,
-> +SND_SOC_DAILINK_DEFS(analog,
->         DAILINK_COMP_ARRAY(COMP_EMPTY()),
->         DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "HiFi")),
->         DAILINK_COMP_ARRAY(COMP_EMPTY()));
->
-> -static struct snd_soc_dai_link rk_dailink = {
-> -       .name = "max98090",
-> -       .stream_name = "Audio",
-> -       .ops = &rk_aif1_ops,
-> -       /* set max98090 as slave */
-> -       .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-> -               SND_SOC_DAIFMT_CBS_CFS,
-> -       SND_SOC_DAILINK_REG(hifi),
-> +SND_SOC_DAILINK_DEFS(hdmi,
-> +       DAILINK_COMP_ARRAY(COMP_EMPTY()),
-> +       DAILINK_COMP_ARRAY(COMP_CODEC("hdmi-audio-codec.3.auto", "i2s-hifi")),
-> +       DAILINK_COMP_ARRAY(COMP_EMPTY()));
-> +
-> +enum {
-> +       DAILINK_MAX98090,
-> +       DAILINK_HDMI,
-> +};
-> +
-> +/* max98090 and HDMI codec dai_link */
-> +static struct snd_soc_dai_link rk_dailinks[] = {
-> +       [DAILINK_MAX98090] = {
-> +               .name = "max98090",
-> +               .stream_name = "Analog",
-> +               .ops = &rk_aif1_ops,
-> +               /* set max98090 as slave */
-> +               .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-> +                       SND_SOC_DAIFMT_CBS_CFS,
-> +               SND_SOC_DAILINK_REG(analog),
-> +       },
-> +       [DAILINK_HDMI] = {
-> +               .name = "HDMI",
-> +               .stream_name = "HDMI",
-> +               .ops = &rk_aif1_ops,
-> +               .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-> +                       SND_SOC_DAIFMT_CBS_CFS,
-> +               SND_SOC_DAILINK_REG(hdmi),
-> +       }
->  };
->
->  static int rk_98090_headset_init(struct snd_soc_component *component);
-> @@ -136,8 +160,8 @@ static struct snd_soc_aux_dev rk_98090_headset_dev = {
->  static struct snd_soc_card snd_soc_card_rk = {
->         .name = "ROCKCHIP-I2S",
->         .owner = THIS_MODULE,
-> -       .dai_link = &rk_dailink,
-> -       .num_links = 1,
-> +       .dai_link = rk_dailinks,
-> +       .num_links = ARRAY_SIZE(rk_dailinks),
->         .aux_dev = &rk_98090_headset_dev,
->         .num_aux_devs = 1,
->         .dapm_widgets = rk_dapm_widgets,
-> @@ -173,27 +197,48 @@ static int snd_rk_mc_probe(struct platform_device *pdev)
->         int ret = 0;
->         struct snd_soc_card *card = &snd_soc_card_rk;
->         struct device_node *np = pdev->dev.of_node;
-> +       struct device_node *np_analog;
-> +       struct device_node *np_cpu;
-> +       struct of_phandle_args args;
->
->         /* register the soc card */
->         card->dev = &pdev->dev;
->
-> -       rk_dailink.codecs->of_node = of_parse_phandle(np,
-> -                       "rockchip,audio-codec", 0);
-> -       if (!rk_dailink.codecs->of_node) {
-> +       np_analog = of_parse_phandle(np, "rockchip,audio-codec", 0);
-> +       if (!np_analog) {
->                 dev_err(&pdev->dev,
->                         "Property 'rockchip,audio-codec' missing or invalid\n");
->                 return -EINVAL;
->         }
-> +       rk_dailinks[DAILINK_MAX98090].codecs->of_node = np_analog;
-> +
-> +       ret = of_parse_phandle_with_fixed_args(np, "rockchip,audio-codec",
-> +                                              0, 0, &args);
-> +       if (ret) {
-> +               dev_err(&pdev->dev,
-> +                       "Unable to parse property 'rockchip,audio-codec'\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = snd_soc_get_dai_name(
-> +                       &args, &rk_dailinks[DAILINK_MAX98090].codecs->dai_name);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Unable to get codec dai_name\n");
-> +               return ret;
-> +       }
-> +
-> +       np_cpu = of_parse_phandle(np, "rockchip,i2s-controller", 0);
->
-> -       rk_dailink.cpus->of_node = of_parse_phandle(np,
-> -                       "rockchip,i2s-controller", 0);
-> -       if (!rk_dailink.cpus->of_node) {
-> +       if (!np_cpu) {
->                 dev_err(&pdev->dev,
->                         "Property 'rockchip,i2s-controller' missing or invalid\n");
->                 return -EINVAL;
->         }
->
-> -       rk_dailink.platforms->of_node = rk_dailink.cpus->of_node;
-> +       rk_dailinks[DAILINK_MAX98090].cpus->of_node = np_cpu;
-> +       rk_dailinks[DAILINK_MAX98090].platforms->of_node = np_cpu;
-> +       rk_dailinks[DAILINK_HDMI].cpus->of_node = np_cpu;
-> +       rk_dailinks[DAILINK_HDMI].platforms->of_node = np_cpu;
->
->         rk_98090_headset_dev.codec_of_node = of_parse_phandle(np,
->                         "rockchip,headset-codec", 0);
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+Lothar Waßmann
