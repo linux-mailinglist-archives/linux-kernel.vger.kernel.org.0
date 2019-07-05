@@ -2,64 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6160602E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C96602FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfGEJJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:09:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56322 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727503AbfGEJJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:09:15 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CEC26CCE59887E7B56B8;
-        Fri,  5 Jul 2019 17:09:12 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
- 17:09:02 +0800
-From:   zhengbin <zhengbin13@huawei.com>
-To:     <john.stultz@linaro.org>, <tglx@linutronix.de>, <sboyd@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <yi.zhang@huawei.com>, <zhangxiaoxu5@huawei.com>
-Subject: [PATCH] time: compat settimeofday: Validate the values of tv from user
-Date:   Fri, 5 Jul 2019 17:14:48 +0800
-Message-ID: <1562318088-37669-1-git-send-email-zhengbin13@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728209AbfGEJQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:16:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:16234 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727632AbfGEJQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 05:16:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 02:16:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,454,1557212400"; 
+   d="scan'208";a="363551708"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Jul 2019 02:16:38 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 07C2820904; Fri,  5 Jul 2019 12:16:37 +0300 (EEST)
+Date:   Fri, 5 Jul 2019 12:16:37 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Hugues FRUCHET <hugues.fruchet@st.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+Subject: Re: [PATCH v2 0/3] DCMI bridge support
+Message-ID: <20190705091637.b5626yvkycumsp6z@paasikivi.fi.intel.com>
+References: <1560242912-17138-1-git-send-email-hugues.fruchet@st.com>
+ <20190620161721.h3wn4nibomrvriw4@kekkonen.localdomain>
+ <ae097d67-58fe-82d7-78d6-2445664f28db@st.com>
+ <20190626172503.GB6118@pendragon.ideasonboard.com>
+ <b21efe64-7762-308b-c2e5-503589041c35@st.com>
+ <20190627133824.GC5021@pendragon.ideasonboard.com>
+ <20190705075522.o7kuptdy3p3o64l7@paasikivi.fi.intel.com>
+ <20190705080424.GA4994@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705080424.GA4994@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to commit 6ada1fc0e1c4
-("time: settimeofday: Validate the values of tv from user"),
-an unvalidated user input is multiplied by a constant, which can result
-in an undefined behaviour for large values. While this is validated
-later, we should avoid triggering undefined behaviour.
+Hi Laurent,
 
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
----
- kernel/time/time.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Fri, Jul 05, 2019 at 11:04:24AM +0300, Laurent Pinchart wrote:
 
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 7f7d691..5c54ca6 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -251,6 +251,10 @@ COMPAT_SYSCALL_DEFINE2(settimeofday, struct old_timeval32 __user *, tv,
- 	if (tv) {
- 		if (compat_get_timeval(&user_tv, tv))
- 			return -EFAULT;
-+
-+		if (!timeval_valid(&user_tv))
-+			return -EINVAL;
-+
- 		new_ts.tv_sec = user_tv.tv_sec;
- 		new_ts.tv_nsec = user_tv.tv_usec * NSEC_PER_USEC;
- 	}
---
-2.7.4
+...
 
+> > A reasonable compromise would be to add a Kconfig option that allows
+> > enabling MC. This way you can provide backwards compatibility and allow
+> > making use of the full potential of the hardware. That's also why hardware
+> > that may be part of a non-trivial MC pipeline should start with MC-enabled
+> > so we wouldn't run into this.
+> 
+> I really don't like this, as it introduces additional complexity. My
+> recommendation is to go for an MC-centric approach. Going for a video
+> node-centric approach is really shooting oneself in the foot regarding
+> future extensions. But that being said, if there's a strong desire to go
+> for foot self-shooting, the way to go is explained above.
+
+Well, there's nothing that can be done anymore as this has already
+happened: this is an existing driver in the mainline kernel. Unless you
+have a time machine of some sort, of course. :-) The choice is now really
+between breaking existing applications (plain V4L2) and supporting new
+functionality (MC-centric), so if you need both, I don't really see another
+choice than a Kconfig option.
+
+On the other hand, if we know there are no existing users that could not
+support the MC-centric view of the device, we could just change the driver
+API and forget the Kconfig option. It'd be much more simple that way
+indeed. But I don'k know what's the case.
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
