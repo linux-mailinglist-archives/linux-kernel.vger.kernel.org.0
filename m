@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B1A608E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 17:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8C8608ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 17:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfGEPOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 11:14:50 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:45679 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfGEPOu (ORCPT
+        id S1728000AbfGEPO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 11:14:56 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45702 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbfGEPOy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 11:14:50 -0400
-Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x65FEYog003506;
-        Sat, 6 Jul 2019 00:14:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x65FEYog003506
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562339676;
-        bh=TLZp6iyBNM3/w4lOLTuX+yiGDhFcOXm7Hmg3zSZQpk4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtnOwgUYJo9CUGi6k7HB+N9s2s1/CvRxNZMLAP2+o3n7nWrOu+Zn7muQG3Teq4zfK
-         ADZ9cKRY1dG1ab5VZWR9oL4bBO23y28pe0jGeiT9qQ7j9X5SyLmCeEyVLHT3+1kG41
-         9SV7y2B2ctOl8KuhnedRk0c3sHQTI9CoEgGL7OHhNPTHdu8K6hNA3drmtQFINL6d7O
-         Dl4qaNXOabOXFRfhCxvWj2dvWMVfEcy8wYO1dfS4zS1JstpTx8FoV6woR1EFJnAjHG
-         9D//mAhoBsF592n/8wrEosTsGruqSecBq+gW9df6yDACgwNhLE1m0OYUSZOO9gX8mi
-         kpDzR+MuagwCQ==
-X-Nifty-SrcIP: [126.26.94.249]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scripts/tags.sh: remove unused environment variables from comments
-Date:   Sat,  6 Jul 2019 00:14:31 +0900
-Message-Id: <20190705151431.29122-2-yamada.masahiro@socionext.com>
+        Fri, 5 Jul 2019 11:14:54 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y8so38040plr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 08:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LG/wQK5eDhZO2JkmChNMhmQOYOK1XGmyw1rFFuxqroU=;
+        b=fc5wkPe+dcpEqURdBxoMZHkCu7ruRwywX8u94KSlg4PtNUUKv1XNQ2h+hPrPex7hXK
+         VD2FrV3QrNPFHljlLp9iA3TAwyCJpbQfIZMu6IeYhFFbqVNCG+4dRcpTTex9MIDA8isg
+         MFmW4PlzYaU+rHd8q7Ml+nbonIDBGxC7smUnWlWgqx65ULvaH0VoOPEpDYz/AlfiLjSP
+         cas8EcLbYQ59WCanZWRNFY1apouJ4wbEn9R7Px2mQNL9hTgQbIqhPKx99nOoihYL2EXK
+         o64Bn2pewcsOvDIoscJDs8Pw2X+wWGYA4h5uX7U+sSA6S495hfr2tgBdrTazwNhv1WYd
+         NN9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LG/wQK5eDhZO2JkmChNMhmQOYOK1XGmyw1rFFuxqroU=;
+        b=i3bi8AnAPR/KwcwzzCQZHZOZS6S+PMu5KbymAi9eZTc0TpSk386W1rwoDVQJn3f7H9
+         i+YeqWw8JvVXZo5DHe0Vcy76wd1olhYeDWTFkQAxYIPWI7eDL7KfFQ4omBqNroOY0hC/
+         /EmYPmmPMp7WyiEij8ZS3Z/8NbgXzthO7tlM01UDX38i1ZfxMXmdTMWO/2pem1X/8DG5
+         BGYThiywUAmgndvVBuyUENvKZ1GXVMeL3/KtT2E+02s+PYOhb4/9XwXa3cgQWKzawhQF
+         ETTj2FicPup1X4vOMpQ0BttzvFzI57LIp9njWXsM5st/a0cubfTECAmfH0pEXz/ff9W8
+         B5oA==
+X-Gm-Message-State: APjAAAUBlww9bPvW+eOVXVCkBpVNms+nXcfSFVxvdYi7HxfI0vZfFLjE
+        inQZ4WzTnaGMImFnO26x0KJj
+X-Google-Smtp-Source: APXvYqyuyWM051xgjkop2EkbkL9HbE7ns7a3MbZMkVaSgI+NVgtU3F46u+LXPNsBGqLnjeIMdq97bg==
+X-Received: by 2002:a17:902:16f:: with SMTP id 102mr6040122plb.94.1562339693237;
+        Fri, 05 Jul 2019 08:14:53 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:916:7317:a59d:72b6:ef7f:a938])
+        by smtp.gmail.com with ESMTPSA id w3sm8248778pgl.31.2019.07.05.08.14.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 05 Jul 2019 08:14:52 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/5] Add Bitmain BM1880 clock driver
+Date:   Fri,  5 Jul 2019 20:44:35 +0530
+Message-Id: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190705151431.29122-1-yamada.masahiro@socionext.com>
-References: <20190705151431.29122-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This script has no reference to ${ARCH}, ${src}, ${obj}.
+Hello,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+This patchset adds common clock driver for Bitmain BM1880 SoC clock
+controller. The clock controller consists of gate, divider, mux
+and pll clocks with different compositions. Hence, the driver uses
+composite clock structure in place where multiple clocking units are
+combined together.
 
- scripts/tags.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patchset also removes UART fixed clock and sources clocks from clock
+controller for Sophon Edge board where the driver has been validated.
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index f56edeb08739..684db72a8386 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -6,7 +6,7 @@
- # mode may be any of: tags, TAGS, cscope
- #
- # Uses the following environment variables:
--# ARCH, SUBARCH, SRCARCH, srctree, src, obj
-+# SUBARCH, SRCARCH, srctree
- 
- if [ "$KBUILD_VERBOSE" = "1" ]; then
- 	set -x
-@@ -35,7 +35,7 @@ elif [ "${ALLSOURCE_ARCHS}" = "all" ]; then
- 	ALLSOURCE_ARCHS=$(find ${tree}arch/ -mindepth 1 -maxdepth 1 -type d -printf '%f ')
- fi
- 
--# find sources in arch/$ARCH
-+# find sources in arch/$1
- find_arch_sources()
- {
- 	for i in $archincludedir; do
+Thanks,
+Mani
+
+Manivannan Sadhasivam (5):
+  dt-bindings: clock: Add Bitmain BM1880 SoC clock controller binding
+  arm64: dts: bitmain: Add clock controller support for BM1880 SoC
+  arm64: dts: bitmain: Source common clock for UART controllers
+  clk: Add driver for Bitmain BM1880 SoC clock controller
+  MAINTAINERS: Add entry for Bitmain BM1880 SoC clock driver
+
+ .../bindings/clock/bitmain,bm1880-clk.txt     |  47 +
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/bitmain/bm1880-sophon-edge.dts   |   9 -
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  27 +
+ drivers/clk/Kconfig                           |   6 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-bm1880.c                      | 947 ++++++++++++++++++
+ include/dt-bindings/clock/bm1880-clock.h      |  82 ++
+ 8 files changed, 1112 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt
+ create mode 100644 drivers/clk/clk-bm1880.c
+ create mode 100644 include/dt-bindings/clock/bm1880-clock.h
+
 -- 
 2.17.1
 
