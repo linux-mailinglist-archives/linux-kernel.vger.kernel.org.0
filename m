@@ -2,97 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29075602D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6ADC602C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfGEJF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:05:28 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:10710 "EHLO mxhk.zte.com.cn"
+        id S1728070AbfGEJBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:01:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfGEJF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:05:28 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 3FFADCDBDF9F340022F3;
-        Fri,  5 Jul 2019 17:05:26 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x6592mIH083976;
-        Fri, 5 Jul 2019 17:02:48 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070517032560-2109418 ;
-          Fri, 5 Jul 2019 17:03:25 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/prom: fix use-after-free on cpu_to_chip_id()
-Date:   Fri, 5 Jul 2019 17:01:00 +0800
-Message-Id: <1562317260-13492-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-05 17:03:25,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-05 17:02:54,
-        Serialize complete at 2019-07-05 17:02:54
-X-MAIL: mse-fl2.zte.com.cn x6592mIH083976
+        id S1727982AbfGEJBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 05:01:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A75A03092661;
+        Fri,  5 Jul 2019 09:01:11 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-90.ams2.redhat.com [10.36.116.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B3E79D8E9;
+        Fri,  5 Jul 2019 09:01:08 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C971E16E32; Fri,  5 Jul 2019 11:01:05 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 11:01:05 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Chia-I Wu <olvaffe@gmail.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 14/18] drm/virtio: rework
+ virtio_gpu_transfer_from_host_ioctl fencing
+Message-ID: <20190705090105.5ivc4gqgbyczwtpo@sirius.home.kraxel.org>
+References: <20190702141903.1131-1-kraxel@redhat.com>
+ <20190702141903.1131-15-kraxel@redhat.com>
+ <CAPaKu7T3GvYVMueYgJFhADFSFEVbHEdaupw8=mq_+i150a1mLA@mail.gmail.com>
+ <20190704114756.eavkszsgsyymns3m@sirius.home.kraxel.org>
+ <CAPaKu7SXJwDg1uE0qDOYNS6J44UuQUh6m5rpJ3hBtW2tqYmMKA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPaKu7SXJwDg1uE0qDOYNS6J44UuQUh6m5rpJ3hBtW2tqYmMKA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 05 Jul 2019 09:01:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The np variable is still being used after the of_node_put() call,
-which may result in use-after-free.
-We fix this issue by calling of_node_put() after the last usage.
+On Thu, Jul 04, 2019 at 11:55:59AM -0700, Chia-I Wu wrote:
+> On Thu, Jul 4, 2019 at 4:48 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> > On Wed, Jul 03, 2019 at 01:05:12PM -0700, Chia-I Wu wrote:
+> > > On Tue, Jul 2, 2019 at 7:19 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > > >
+> > > > Switch to the virtio_gpu_array_* helper workflow.
+> > > (just repeating my question on patch 6)
+> > >
+> > > Does this fix the obj refcount issue?  When was the issue introduced?
+> >
+> > obj refcount should be fine in both old and new code.
+> >
+> > old code:
+> >   drm_gem_object_lookup
+> >   drm_gem_object_put_unlocked
+> >
+> > new code:
+> >   virtio_gpu_array_from_handles
+> >   virtio_gpu_array_put_free (in virtio_gpu_dequeue_ctrl_func).
+> >
+> > Or did I miss something?
+> In the old code, drm_gem_object_put_unlocked is called before the vbuf
+> using the object is retired.  Isn't that what object array wants to
+> fix?
 
-Fixes: 3eb906c6b6c1 ("powerpc: Make cpu_to_chip_id() available when SMP=n")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/powerpc/kernel/prom.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I think the fence keeps the bo alive.
 
-diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
-index 7159e79..ad87b94 100644
---- a/arch/powerpc/kernel/prom.c
-+++ b/arch/powerpc/kernel/prom.c
-@@ -872,13 +872,15 @@ EXPORT_SYMBOL(of_get_ibm_chip_id);
- int cpu_to_chip_id(int cpu)
- {
- 	struct device_node *np;
-+	int id;
- 
- 	np = of_get_cpu_node(cpu, NULL);
- 	if (!np)
- 		return -1;
- 
-+	id = of_get_ibm_chip_id(np);
- 	of_node_put(np);
--	return of_get_ibm_chip_id(np);
-+	return id;
- }
- EXPORT_SYMBOL(cpu_to_chip_id);
- 
--- 
-2.9.5
+cheers,
+  Gerd
 
