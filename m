@@ -2,155 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1967D6046A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1C0E5FF82
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 04:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfGEK1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:27:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8710 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727358AbfGEK1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:27:00 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 80567AD3204B4059DCDA;
-        Fri,  5 Jul 2019 18:26:43 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 5 Jul 2019 18:26:36 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <luoshaokai@huawei.com>, <cloud.wangxiaoyun@huawei.com>,
-        <xuechaojing@huawei.com>, <chiqijun@huawei.com>,
-        <wulike1@huawei.com>
-Subject: [PATCH net-next] hinic: add fw version query
-Date:   Fri, 5 Jul 2019 02:36:35 +0000
-Message-ID: <20190705023635.5614-1-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727547AbfGECiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 22:38:20 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45001 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfGECiU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 22:38:20 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so6858164edr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 19:38:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8WqY7P7z7HvZSik8uVxR3WylUoD8M+JaJvkcH77K5Dg=;
+        b=WQchioRyA3aqmeERo1eaXSQsOEM//4zGjwiq7Kb/GOU51AO46GbxvIflLyCrUA4F4C
+         d3D5UFlUNCwSY/YH3FXVv6m5JtwrHe/wzt1tdc40ZrCrlHHOw9R/ianEQljyxnEx1PaV
+         1Wvw3feQZjYJc22H0eMUtDcAAeUsU077LI0AhzGM2jbuaGztubZJcnOZkz4IWqbGlMlW
+         gsEKX+MH9ohj2pLivHrpe9XG1av5ILD3SIQdKivrSqpbK6QZwz5RCfpONpb9S5q3lnyD
+         DYRS2HBtsmONknQvG9IqjYK2ZZWY9hEq07S1ExHfYYxjtgo9xliDM+KovbrB2Zghpv1T
+         TDOg==
+X-Gm-Message-State: APjAAAUiS6p8hp5L9rcdZ2RzSnlCyBwWxtmLsNdaEmC+khcWdQ4IbfJp
+        l2Y5neYcgHKq8quhBKuyi5Xtr+zKBnU=
+X-Google-Smtp-Source: APXvYqxWqCwfEi40oADEJNIBu4cpiimXwrzmJ6fVBltbQ2ToRxD9bNU1tsiDSLo8rmqn31poM+Cv1A==
+X-Received: by 2002:a17:906:fae0:: with SMTP id lu32mr1153230ejb.283.1562294298010;
+        Thu, 04 Jul 2019 19:38:18 -0700 (PDT)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id l2sm2131099edn.59.2019.07.04.19.38.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Jul 2019 19:38:16 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id v14so8288744wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 19:38:16 -0700 (PDT)
+X-Received: by 2002:adf:f70b:: with SMTP id r11mr1078942wrp.324.1562294296092;
+ Thu, 04 Jul 2019 19:38:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+References: <20190703184814.27191-1-luca@z3ntu.xyz>
+In-Reply-To: <20190703184814.27191-1-luca@z3ntu.xyz>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 5 Jul 2019 10:38:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64EL-v5YUuWA4t=KUhuwEqML6Co6iosG607_rZhUQ+OLg@mail.gmail.com>
+Message-ID: <CAGb2v64EL-v5YUuWA4t=KUhuwEqML6Co6iosG607_rZhUQ+OLg@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: sunxi: sun50i-codec-analog: Add earpiece
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     Linux-ALSA <alsa-devel@alsa-project.org>,
+        ~martijnbraam/pmos-upstream@lists.sr.ht,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds firmware version query in ethtool -i.
+On Thu, Jul 4, 2019 at 2:49 AM Luca Weiss <luca@z3ntu.xyz> wrote:
+>
+> This adds the necessary registers and audio routes to play audio using
+> the Earpiece, that's supported on the A64.
+>
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
----
- .../net/ethernet/huawei/hinic/hinic_ethtool.c |  8 +++++
- .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |  2 ++
- .../net/ethernet/huawei/hinic/hinic_port.c    | 30 +++++++++++++++++++
- .../net/ethernet/huawei/hinic/hinic_port.h    | 13 ++++++++
- 4 files changed, 53 insertions(+)
+LGTM.
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-index 73a20f01ad4c..60ec48fe4144 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-@@ -117,11 +117,19 @@ static void hinic_get_drvinfo(struct net_device *netdev,
- 			      struct ethtool_drvinfo *info)
- {
- 	struct hinic_dev *nic_dev = netdev_priv(netdev);
-+	u8 mgmt_ver[HINIC_MGMT_VERSION_MAX_LEN] = {0};
- 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
- 	struct hinic_hwif *hwif = hwdev->hwif;
-+	int err;
- 
- 	strlcpy(info->driver, HINIC_DRV_NAME, sizeof(info->driver));
- 	strlcpy(info->bus_info, pci_name(hwif->pdev), sizeof(info->bus_info));
-+
-+	err = hinic_get_mgmt_version(nic_dev, mgmt_ver);
-+	if (err)
-+		return;
-+
-+	snprintf(info->fw_version, sizeof(info->fw_version), "%s", mgmt_ver);
- }
- 
- static void hinic_get_ringparam(struct net_device *netdev,
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-index 984c98f33258..b069045de416 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-@@ -77,6 +77,8 @@ enum hinic_port_cmd {
- 
- 	HINIC_PORT_CMD_FWCTXT_INIT      = 69,
- 
-+	HINIC_PORT_CMD_GET_MGMT_VERSION = 88,
-+
- 	HINIC_PORT_CMD_SET_FUNC_STATE   = 93,
- 
- 	HINIC_PORT_CMD_GET_GLOBAL_QPN   = 102,
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.c b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-index 1bbeb91be808..1e389a004e50 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-@@ -1038,3 +1038,33 @@ int hinic_get_phy_port_stats(struct hinic_dev *nic_dev,
- 
- 	return err;
- }
-+
-+int hinic_get_mgmt_version(struct hinic_dev *nic_dev, u8 *mgmt_ver)
-+{
-+	struct hinic_hwdev *hwdev = nic_dev->hwdev;
-+	struct hinic_version_info up_ver = {0};
-+	struct hinic_hwif *hwif;
-+	struct pci_dev *pdev;
-+	u16 out_size;
-+	int err;
-+
-+	if (!hwdev)
-+		return -EINVAL;
-+
-+	hwif = hwdev->hwif;
-+	pdev = hwif->pdev;
-+
-+	err = hinic_port_msg_cmd(hwdev, HINIC_PORT_CMD_GET_MGMT_VERSION,
-+				 &up_ver, sizeof(up_ver), &up_ver,
-+				 &out_size);
-+	if (err || !out_size || up_ver.status) {
-+		dev_err(&pdev->dev,
-+			"Failed to get mgmt version, err: %d, status: 0x%x, out size: 0x%x\n",
-+			err, up_ver.status, out_size);
-+		return -EINVAL;
-+	}
-+
-+	snprintf(mgmt_ver, HINIC_MGMT_VERSION_MAX_LEN, "%s", up_ver.ver);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.h b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-index 1bc47c7a5c00..56df6c21ca4a 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-@@ -16,7 +16,18 @@
- #define HINIC_RSS_KEY_SIZE	40
- #define HINIC_RSS_INDIR_SIZE	256
- #define HINIC_PORT_STATS_VERSION	0
-+#define HINIC_FW_VERSION_NAME	16
-+#define HINIC_COMPILE_TIME_LEN	20
-+#define HINIC_MGMT_VERSION_MAX_LEN	32
- 
-+struct hinic_version_info {
-+	u8 status;
-+	u8 version;
-+	u8 rsvd[6];
-+
-+	u8 ver[HINIC_FW_VERSION_NAME];
-+	u8 time[HINIC_COMPILE_TIME_LEN];
-+};
- enum hinic_rx_mode {
- 	HINIC_RX_MODE_UC        = BIT(0),
- 	HINIC_RX_MODE_MC        = BIT(1),
-@@ -571,4 +582,6 @@ int hinic_get_vport_stats(struct hinic_dev *nic_dev,
- 
- int hinic_set_rx_vlan_offload(struct hinic_dev *nic_dev, u8 en);
- 
-+int hinic_get_mgmt_version(struct hinic_dev *nic_dev, u8 *mgmt_ver);
-+
- #endif
--- 
-2.17.1
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
