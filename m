@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC2A602F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9081602F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbfGEJOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:14:32 -0400
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:13054 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727565AbfGEJOc (ORCPT
+        id S1728195AbfGEJOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:14:20 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:34790 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726116AbfGEJOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:14:32 -0400
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6596Al2025365;
+        Fri, 5 Jul 2019 05:14:19 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x659Cjbr027270;
         Fri, 5 Jul 2019 02:13:03 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : content-type : content-transfer-encoding :
- mime-version; s=pfpt0818; bh=1fvGHigX+JPbD17m06eLJdyTZyDdNNkwbNVO9U/U+Uw=;
- b=SqOzIjS8/YV+997kE368ssNutPLoKWBKmGBrn6R7KbjR3sU3qQTALlINnYLaDQ7bCA3Q
- U0KvSWlnMMY4B4Tz8Zfc7kcTFifoQNbCH+K0Ji3eMmhLoaLy87t/ivXoVRrHygt6OXUh
- kP9mFelqvLgP1/d8d062FLp5UrySUasMGssW0RR8DtDN4608BSA1SUfjmKHzI9BHTCC7
- YLu6eGIDSvSIJPKfXteromWlJ1H3W7592micSVRHqzVZKNJbBnuDPq8DZImNcwpA66Cl
- 7OTE8G3BMWAsJFM0uIr2n5KlfEXB0JUPz7b6G1bugidjBfyewhM8ZCqevMT2BlQB7Bm6 Xg== 
-Received: from sc-exch03.marvell.com ([199.233.58.183])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2thjyrb616-1
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=6KwH/OINbTUYVnpgVsceuqKTMNjd10YJe0r/22W6naU=;
+ b=CA8nMCpbJkY8FSWVm66WZot2Nw4PgW+HpEVdvqZp1mjHZ2FS3Mos1LjpUPwWudKtgEqH
+ oXxWbVjNJwl6vSiN2ePqv9Y1ft+9BkULtUoXw1FnCWi7q4cSzx0zzpWgx3245Q8/ilIJ
+ WRaNiv3C7UlTnToEgoSYFKpIjRhPDLmVuommW2tq7jP0gcOGRJDPTAjustoxtS/R+8Dj
+ ux8gxgjLwN/mUVKEeNT2FHxKPo0ni1Kl35bZrh/xS/hJPKdDqtFKbMaiUUN/k30nsbcc
+ 8+hcpsL2kbvxpkidIPl+WIFVbjtQLXh/icEd9rwLU/4hKvfsJ7Gd2/ko+fT//vgduEBn vg== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2thv9p1gjd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 05 Jul 2019 02:13:03 -0700
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH03.marvell.com
- (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 5 Jul
- 2019 02:13:01 -0700
+        Fri, 05 Jul 2019 02:13:02 -0700
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 5 Jul
+ 2019 02:13:02 -0700
 Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.50) by
  SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
  15.0.1367.3 via Frontend Transport; Fri, 5 Jul 2019 02:13:01 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1fvGHigX+JPbD17m06eLJdyTZyDdNNkwbNVO9U/U+Uw=;
- b=j7h9ExJglelgMPdnu2pQ1STeeEG92SJC2PwoXPW/PcYQkhsQAkzqPg0bbr5yf4nPoEwHVsgbFfrJQ3LwQxe+LpL+0CQ2n7efxXfm7lk3m3Fm4mDQZOb96Cu85qICWTOrF6BRS1eRGSZf3hNzg1gjRnsZ4o+McwwdG04njV102sY=
+ bh=6KwH/OINbTUYVnpgVsceuqKTMNjd10YJe0r/22W6naU=;
+ b=WlSWzzg5YnBLGM5zkEspglKN9nZwj92PrbhblXKA+0EUmUh+IxCKA7PJYbj+VSLCANN8mNprcZF9OBpYxzQhsXkBhBWSkf0vEVpNO39JG0K+lCtWJ4FmIMOlCm9xBfTAJTwITCLWYdNkgQ9/SuFUE2snTrcw7IXCJhyPiUlMOBs=
 Received: from MWHPR1801MB2030.namprd18.prod.outlook.com (10.164.205.31) by
  MWHPR1801MB1982.namprd18.prod.outlook.com (10.164.205.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Fri, 5 Jul 2019 09:12:55 +0000
+ 15.20.2052.18; Fri, 5 Jul 2019 09:12:56 +0000
 Received: from MWHPR1801MB2030.namprd18.prod.outlook.com
  ([fe80::5a8:540b:6bb7:fa20]) by MWHPR1801MB2030.namprd18.prod.outlook.com
  ([fe80::5a8:540b:6bb7:fa20%7]) with mapi id 15.20.2052.010; Fri, 5 Jul 2019
- 09:12:55 +0000
+ 09:12:56 +0000
 From:   Ganapatrao Kulkarni <gkulkarni@marvell.com>
 To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -58,11 +59,15 @@ CC:     "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
         "rrichter@marvell.coma" <rrichter@marvell.coma>,
         Jan Glauber <jglauber@marvell.com>,
         "gklkml16@gmail.com" <gklkml16@gmail.com>
-Subject: [PATCH v2 0/2] Add CCPI2 PMU support
-Thread-Topic: [PATCH v2 0/2] Add CCPI2 PMU support
-Thread-Index: AQHVMxHU8ANznhvUkUSheWYP9y2KJA==
-Date:   Fri, 5 Jul 2019 09:12:55 +0000
-Message-ID: <1562317967-16329-1-git-send-email-gkulkarni@marvell.com>
+Subject: [PATCH v2 1/2] Documentation: perf: Update documentation for
+ ThunderX2 PMU uncore driver
+Thread-Topic: [PATCH v2 1/2] Documentation: perf: Update documentation for
+ ThunderX2 PMU uncore driver
+Thread-Index: AQHVMxHVvOrB1kmigkmS21Hupx9VJQ==
+Date:   Fri, 5 Jul 2019 09:12:56 +0000
+Message-ID: <1562317967-16329-2-git-send-email-gkulkarni@marvell.com>
+References: <1562317967-16329-1-git-send-email-gkulkarni@marvell.com>
+In-Reply-To: <1562317967-16329-1-git-send-email-gkulkarni@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -74,23 +79,22 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 1.8.3.1
 x-originating-ip: [199.233.59.128]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0bc1f7d-7a41-4620-fc48-08d70128f707
+x-ms-office365-filtering-correlation-id: 22f3a508-f177-4cdb-b2ac-08d70128f77f
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR1801MB1982;
 x-ms-traffictypediagnostic: MWHPR1801MB1982:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MWHPR1801MB1982735BFCD59BD8C48ECF87B2F50@MWHPR1801MB1982.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-microsoft-antispam-prvs: <MWHPR1801MB1982A22D4DD27DA4F70BB0C8B2F50@MWHPR1801MB1982.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
 x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39850400004)(396003)(346002)(136003)(189003)(199004)(14454004)(2616005)(4744005)(6436002)(66066001)(2501003)(4720700003)(36756003)(4326008)(50226002)(256004)(14444005)(478600001)(3846002)(6116002)(966005)(52116002)(7736002)(99286004)(486006)(476003)(6306002)(186003)(6512007)(305945005)(25786009)(26005)(386003)(6506007)(6486002)(102836004)(54906003)(110136005)(71200400001)(71190400001)(5660300002)(53936002)(8936002)(68736007)(316002)(81166006)(86362001)(2201001)(81156014)(73956011)(8676002)(64756008)(66946007)(66556008)(66446008)(2906002)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1801MB1982;H:MWHPR1801MB2030.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39850400004)(396003)(346002)(136003)(189003)(199004)(14454004)(2616005)(446003)(11346002)(6436002)(66066001)(2501003)(4720700003)(36756003)(4326008)(50226002)(256004)(478600001)(3846002)(6116002)(76176011)(52116002)(7736002)(99286004)(486006)(476003)(186003)(6512007)(305945005)(25786009)(26005)(386003)(6506007)(6486002)(102836004)(54906003)(110136005)(71200400001)(71190400001)(5660300002)(53936002)(8936002)(68736007)(316002)(81166006)(86362001)(2201001)(81156014)(73956011)(8676002)(64756008)(66946007)(66556008)(66446008)(2906002)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1801MB1982;H:MWHPR1801MB2030.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: marvell.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KiBH4Ki+SBNtSwq6lQoG3/ZbGpsFbjZoocvMqzn7iU+91du0WrvpQICSSiFeaWrXtzQ571/56BBwAu6ZmONdo+AR1w/qMnDI6ZCu4KV1JJayRnpczpntPKvlK1EccDaa2zRRRQi3BJski2K16zDsw4Yp4e8br/p6l42FOh2Wd7tBldfvxQCu2o65BI56ONnu9CHUjQtC7xNZ99gRVZW/HZrMSCw2JPZzKyvGqW/FAZHgn+gEj6fZ4P2kRu16A7NHZff8qREDCYGK0IwIdIaOLuy1vbHKy+MsrtESa1Hu80nmSrkqxdeuWSHwYEjez87fIJ0H6Sg5hoTM0SwdkzC6BpcHfD464ULBR6VaaKvNrKX2Vcpt90oPXEJZK7Kw8BXtgnRjJ/Ap9l0osqcw27ftuEaeCN83AQsDWW95rmAyZm4=
+x-microsoft-antispam-message-info: de/ra3hEI8vGu31soMslUETblUaz3Qq5GMjHhsQ/auVVqcikRHJ2e5rPG8Tq/SbYzHQoiybLryHlYhIcKwMMZv/YlqIbBnwMkl3pSeMciXV176q/Am95lN+9tY4aZCGR9mWp4D9pa63/Nac2FaE19IvJduH+rixZotcUbiXtVa1dNSpaIILRqUVT2SKMdcZZx5Mrr114oBl7D5BTqL5XAOlJ2sJOC4D32dwOxbj4kW0F+eF6xMg+0OWsmJhlHwalVwfrNIMcMVSXXd9IKMa66Makcjz4PB40Kq2nm0OIB1FRhScvlMPglFfcPQ6wvwtdBZCD/c/T7nfdrIRBiF3/+72bd/YC6JKmU+UZV5zqewNhdH99atL8B7yy6vS7mw/2g17Y/tc8haPFxPzE684PhfoIHstlPIMD0MHT5xIET5Q=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0bc1f7d-7a41-4620-fc48-08d70128f707
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 09:12:55.3988
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22f3a508-f177-4cdb-b2ac-08d70128f77f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 09:12:56.1583
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
@@ -98,31 +102,66 @@ X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: gkulkarni@marvell.com
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1801MB1982
 X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_03:,,
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_04:,,
  signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Cavium Coherent Processor Interconnect (CCPI2) PMU
-support in ThunderX2 Uncore driver.
+Add documentation for Cavium Coherent Processor Interconnect (CCPI2) PMU.
 
-v2: Updated with review comments [1]
+Signed-off-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
+---
+ Documentation/perf/thunderx2-pmu.txt | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-[1] https://lkml.org/lkml/2019/6/14/965
-
-v1: initial patch
-
-Ganapatrao Kulkarni (2):
-  Documentation: perf: Update documentation for ThunderX2 PMU uncore
-    driver
-  drivers/perf: Add CCPI2 PMU support in ThunderX2 UNCORE driver.
-
- Documentation/perf/thunderx2-pmu.txt |  20 ++-
- drivers/perf/thunderx2_pmu.c         | 248 +++++++++++++++++++++++----
- 2 files changed, 225 insertions(+), 43 deletions(-)
-
+diff --git a/Documentation/perf/thunderx2-pmu.txt b/Documentation/perf/thun=
+derx2-pmu.txt
+index dffc57143736..01315b3d4ad9 100644
+--- a/Documentation/perf/thunderx2-pmu.txt
++++ b/Documentation/perf/thunderx2-pmu.txt
+@@ -2,24 +2,26 @@ Cavium ThunderX2 SoC Performance Monitoring Unit (PMU UNC=
+ORE)
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+ The ThunderX2 SoC PMU consists of independent, system-wide, per-socket
+-PMUs such as the Level 3 Cache (L3C) and DDR4 Memory Controller (DMC).
++PMUs such as the Level 3 Cache (L3C), DDR4 Memory Controller (DMC) and
++Cavium Coherent Processor Interconnect (CCPI2).
+=20
+ The DMC has 8 interleaved channels and the L3C has 16 interleaved tiles.
+ Events are counted for the default channel (i.e. channel 0) and prorated
+ to the total number of channels/tiles.
+=20
+-The DMC and L3C support up to 4 counters. Counters are independently
+-programmable and can be started and stopped individually. Each counter
+-can be set to a different event. Counters are 32-bit and do not support
+-an overflow interrupt; they are read every 2 seconds.
++The DMC and L3C support up to 4 counters, while the CCPI2 supports up to 8
++counters. Counters are independently programmable to different events and
++can be started and stopped individually. None of the counters support an
++overflow interrupt. DMC and L3C counters are 32-bit and read every 2 secon=
+ds.
++The CCPI2 counters are 64-bit and assumed not to overflow in normal operat=
+ion.
+=20
+ PMU UNCORE (perf) driver:
+=20
+ The thunderx2_pmu driver registers per-socket perf PMUs for the DMC and
+-L3C devices.  Each PMU can be used to count up to 4 events
+-simultaneously. The PMUs provide a description of their available events
+-and configuration options under sysfs, see
+-/sys/devices/uncore_<l3c_S/dmc_S/>; S is the socket id.
++L3C devices.  Each PMU can be used to count up to 4 (DMC/L3C) or up to 8
++(CCPI2) events simultaneously. The PMUs provide a description of their
++available events and configuration options under sysfs, see
++/sys/devices/uncore_<l3c_S/dmc_S/ccpi2_S/>; S is the socket id.
+=20
+ The driver does not support sampling, therefore "perf record" will not
+ work. Per-task perf sessions are also not supported.
 --=20
 2.17.1
 
