@@ -2,114 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D45E1605E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0142F605DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:25:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfGEMZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:25:57 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:28578 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726765AbfGEMZ5 (ORCPT
+        id S1728760AbfGEMYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:24:53 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38334 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbfGEMYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:25:57 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65CNqYQ030318;
-        Fri, 5 Jul 2019 14:24:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : references : in-reply-to : content-type : content-id :
- content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=EFphJe1CVVP/nzRxA8x6BhXKv/0bjU3/TiVkvgOFPek=;
- b=BYLU4XNoWdTNPUWd8ceyUbCwUOTaR3Zl4KnD/DGwy4jIGIeLB91fgSU0JmDTNPxB+m8B
- snlkGg5ZlGmvMkbPmJtFJx1IBbJSAsrxEj8p2sFSRZ/55OFHIdcJn55lp4s138lzPju/
- 2uKvrqJyrQP7KyltAKDUlXNckkyChpMBpj2exHAtp56yQ6Xe0YEzz3TMiVVDFV6yf+qK
- k4aCeQ/5gDkYiLxkHyPIu3B2qN1jxWF9hWyWQsPcWDqaTiLt5lzuSXvfC2uHYySkX71q
- yoaDFjY2zrcL7+8I9p+xMmvyzjquq0X4bq+uO99TSuQ+S57jzx1ZKE6MeT+G7r4ZXl4C nQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2tdw4ajaab-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Jul 2019 14:24:14 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AB07734;
-        Fri,  5 Jul 2019 12:24:02 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 72FD32C47;
-        Fri,  5 Jul 2019 12:24:02 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 5 Jul
- 2019 14:24:01 +0200
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1473.003; Fri, 5 Jul 2019 14:24:02 +0200
-From:   Philippe CORNU <philippe.cornu@st.com>
-To:     Olivier MOYSAN <olivier.moysan@st.com>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "jonas@kwiboo.se" <jonas@kwiboo.se>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "jsarha@ti.com" <jsarha@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/3] drm/bridge: sii902x: fix missing reference to mclk
- clock
-Thread-Topic: [PATCH 1/3] drm/bridge: sii902x: fix missing reference to mclk
- clock
-Thread-Index: AQHVMO2KR4mZoMb3BkGaiUB8X+1y2qa71auA
-Date:   Fri, 5 Jul 2019 12:24:02 +0000
-Message-ID: <39d9bf8f-a906-7f69-582d-b2996e600c0f@st.com>
-References: <1562082426-14876-1-git-send-email-olivier.moysan@st.com>
- <1562082426-14876-2-git-send-email-olivier.moysan@st.com>
-In-Reply-To: <1562082426-14876-2-git-send-email-olivier.moysan@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DDC1C03DC92D944FA408C2A9B6DAE01F@st.com>
-Content-Transfer-Encoding: base64
+        Fri, 5 Jul 2019 08:24:53 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 9so4554067ple.5
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 05:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n+92+mQnqCZ85omin5e6YlwLAH24rD0pIJUmhGE33hw=;
+        b=YMLUm+Oskz620j3p0Ws9Tub7WR4bn2kIp+Yj5nnbwLmtfu9jCvdDJFNPmaJPD3PuSO
+         QwWHb7Dz0k/IPJUe+7lloYfW2Nv8Xruz52EjVyZnb27KFZOsCemBK0F/xZT7qSw5FBLy
+         efH3BnsIR/XBoyE9ZcOwt+kZGyJjM0KjKVTeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n+92+mQnqCZ85omin5e6YlwLAH24rD0pIJUmhGE33hw=;
+        b=A8IYpnnX8pe2wna2p+Vd84nyUJuQwl2o4MDp2YWkK4MHZRcnBIUJGlfneFicZ/70kZ
+         e1P1RaMu0T5bak+6syYA037ac7YHMGpUIc5HdxE8XCpxtFwFFPG/2k9xVQx0pYf9dztG
+         LwCZ4KeBIoZYC0O6widPPAd0S7Ix69Y1yIIoERFgDnR9w7d/DdL1EJDM71eogcYrAzNZ
+         17p9iFtn6aQWdW1foOBdi5AzilaIuqCiOXlqRnyajZKjGcMU9Iil3WjJ84d57U9MY6UE
+         lssz1srsshu2MW0JTU0aqn8nJBYS4UxiohIykXMkgcUK+3aEKC9OR1y9bp2JpTfa76la
+         6YfQ==
+X-Gm-Message-State: APjAAAVkEkjVpiQd7I7V+hR1uKiGi6V0Qg9fAYFHc/CGyHJwoeYgs1fN
+        0fUVRVs9Pgdq12B5XOLt4Sko9LSixxg=
+X-Google-Smtp-Source: APXvYqz9Zg2BFfwa8+N5Mja9B+tXvwy1K4XGIBLkOS/IhmO07//Bx7qCdd5bXEtvmGP3HnRsd+VGCQ==
+X-Received: by 2002:a17:902:2889:: with SMTP id f9mr5078928plb.230.1562329492204;
+        Fri, 05 Jul 2019 05:24:52 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v23sm8845074pff.185.2019.07.05.05.24.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 05 Jul 2019 05:24:51 -0700 (PDT)
+Date:   Fri, 5 Jul 2019 08:24:50 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH] rcuperf: Make rcuperf kernel test more robust for
+ !expedited mode
+Message-ID: <20190705122450.GA82532@google.com>
+References: <20190704043431.208689-1-joel@joelfernandes.org>
+ <20190704174044.GK26519@linux.ibm.com>
+ <20190705035231.GA31088@X58A-UD3R>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705035231.GA31088@X58A-UD3R>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgT2xpdmllciwNCmFuZCBtYW55IHRoYW5rcyBmb3IgeW91ciBwYXRjaC4NCkkgZG8gbm90IHNl
-ZSBob3cgYXVkaW8gY291bGQgd29yayB3aXRob3V0IHlvdXIgcGF0Y2gsIHNvOg0KUmV2aWV3ZWQt
-Ynk6IFBoaWxpcHBlIENvcm51IDxwaGlsaXBwZS5jb3JudUBzdC5jb20+DQpQaGlsaXBwZSA6LSkN
-Cg0KT24gNy8yLzE5IDU6NDcgUE0sIE9saXZpZXIgTW95c2FuIHdyb3RlOg0KPiBBZGQgZGV2bV9j
-bGtfZ2V0IGNhbGwgdG8gcmV0cmlldmUgcmVmZXJlbmNlIHRvIG1hc3RlciBjbG9jay4NCj4gDQo+
-IEZpeGVzOiBmZjU3ODE2MzRjNDEgKCJkcm0vYnJpZGdlOiBzaWk5MDJ4OiBJbXBsZW1lbnQgSERN
-SSBhdWRpbyBzdXBwb3J0IikNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9saXZpZXIgTW95c2FuIDxv
-bGl2aWVyLm1veXNhbkBzdC5jb20+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-c2lpOTAyeC5jIHwgMSArDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MDJ4LmMgYi9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL3NpaTkwMnguYw0KPiBpbmRleCBkZDdhYTQ2NmIyODAuLjM2YWNjMjU2
-ZTY3ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MDJ4LmMNCj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MDJ4LmMNCj4gQEAgLTc1MCw2ICs3NTAs
-NyBAQCBzdGF0aWMgaW50IHNpaTkwMnhfYXVkaW9fY29kZWNfaW5pdChzdHJ1Y3Qgc2lpOTAyeCAq
-c2lpOTAyeCwNCj4gICAJCXNpaTkwMngtPmF1ZGlvLmkyc19maWZvX3NlcXVlbmNlW2ldIHw9IGF1
-ZGlvX2ZpZm9faWRbaV0gfA0KPiAgIAkJCWkyc19sYW5lX2lkW2xhbmVzW2ldXSB8CVNJSTkwMlhf
-VFBJX0kyU19GSUZPX0VOQUJMRTsNCj4gICANCj4gKwlzaWk5MDJ4LT5hdWRpby5tY2xrID0gZGV2
-bV9jbGtfZ2V0KGRldiwgIm1jbGsiKTsNCj4gICAJaWYgKElTX0VSUihzaWk5MDJ4LT5hdWRpby5t
-Y2xrKSkgew0KPiAgIAkJZGV2X2VycihkZXYsICIlczogTm8gY2xvY2sgKGF1ZGlvIG1jbGspIGZv
-dW5kOiAlbGRcbiIsDQo+ICAgCQkJX19mdW5jX18sIFBUUl9FUlIoc2lpOTAyeC0+YXVkaW8ubWNs
-aykpOw0KPiA=
+On Fri, Jul 05, 2019 at 12:52:31PM +0900, Byungchul Park wrote:
+> On Thu, Jul 04, 2019 at 10:40:44AM -0700, Paul E. McKenney wrote:
+> > On Thu, Jul 04, 2019 at 12:34:30AM -0400, Joel Fernandes (Google) wrote:
+> > > It is possible that the rcuperf kernel test runs concurrently with init
+> > > starting up.  During this time, the system is running all grace periods
+> > > as expedited.  However, rcuperf can also be run for normal GP tests.
+> > > Right now, it depends on a holdoff time before starting the test to
+> > > ensure grace periods start later. This works fine with the default
+> > > holdoff time however it is not robust in situations where init takes
+> > > greater than the holdoff time to finish running. Or, as in my case:
+> > > 
+> > > I modified the rcuperf test locally to also run a thread that did
+> > > preempt disable/enable in a loop. This had the effect of slowing down
+> > > init. The end result was that the "batches:" counter in rcuperf was 0
+> > > causing a division by 0 error in the results. This counter was 0 because
+> > > only expedited GPs seem to happen, not normal ones which led to the
+> > > rcu_state.gp_seq counter remaining constant across grace periods which
+> > > unexpectedly happen to be expedited. The system was running expedited
+> > > RCU all the time because rcu_unexpedited_gp() would not have run yet
+> > > from init.  In other words, the test would concurrently with init
+> > > booting in expedited GP mode.
+> > > 
+> > > To fix this properly, let us check if system_state if SYSTEM_RUNNING
+> > > is set before starting the test. The system_state approximately aligns
+> 
+> Just minor typo..
+> 
+> To fix this properly, let us check if system_state if SYSTEM_RUNNING
+> is set before starting the test. ...
+> 
+> Should be
+> 
+> To fix this properly, let us check if system_state is set to
+> SYSTEM_RUNNING before starting the test. ...
+
+That's a fair point. I wonder if Paul already fixed it up in his tree,
+however I am happy to resend if he hasn't. Paul, how would you like to handle
+this commit log nit?
+
+it is just 'if ..' to 'is SYSTEM_RUNNING'
