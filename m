@@ -2,148 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F7060056
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF91260075
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 07:09:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfGEE7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 00:59:40 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:43914 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfGEE7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 00:59:40 -0400
-Received: by mail-lf1-f51.google.com with SMTP id j29so5433363lfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 21:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=kKf/+SrtXuZZ9BhooOYGoS/tkob02qSoqQSjmjgeu98=;
-        b=S4l+hfbLeIpJ1ZZMHN15qYhVl2CqwkBojbe8Rz6FlDiVrFffTH0bI4GbaXyoZe6qF5
-         7LMXRc/ucfLr4+DUB0wEwkneL6N6fYfXnOpsyhZJJD4TsBpouYM5yv1rvc9Gfuw5Db3I
-         hiv9kyR92w1p85rl+Cledmw8hsWp4CpArSFEq73iPn2k1rbec0SpXRueVNUXAq1aAfti
-         BwLn58S4OSfgtFxIj78BXEiHyn4sv31BOZ2cTKYQtUSDQuDSMLvuhiP7p+4ZYI1M5DTi
-         ZLz/EnF+USEG2WrISmzP58cRrYLMLf5feP55vsOrA9pickknTm30rSB5fFk8ym+nNlQo
-         SVhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=kKf/+SrtXuZZ9BhooOYGoS/tkob02qSoqQSjmjgeu98=;
-        b=k+vOoRnEzsiH3GiQ5Tais1mrOok8F7JDF8bMtopJ61zmX6QxGedyCfzJzExKpAlBJj
-         Gp8zxirBtAhTTKtgrMoUC7G1gP+ZGHh21Ii1bskg0A4aX8E5WqKRetwMOBOnov+jlQu3
-         fRa1Haz70pAPrSuOLnXxU1ZNQ+Pj8EO9a5h95e66x8cgww2+l7nrdX3CC9udnKWkLl6a
-         6gDbcnZGhbfFuIxsnsxWXc7+5cqprXZYeODOFdep4JSvRb6fuAXr7OZFA57Do1xld4RM
-         4Ul7/gbLwxZ4/tFupL0EqZDYXSGYyWCOg+pvm9vIy8ReR9ZHSN05+75drfI7gkv9tLwj
-         xaMQ==
-X-Gm-Message-State: APjAAAW8PbnzXnfvEORgD2FP4TFfFY8d167TiL55LxGa6DOhqK99HWVf
-        pLatZGnp4sUDVQJR5cXblIz2TbJHvkuITt1qagQ0e8Ze
-X-Google-Smtp-Source: APXvYqz5fiFXI3zWEe/3cZzmAteuJXHL2m75Do/6/UKk1uV6im/nizlmjnViJ9yPEO+wH43YmDcev+Ou3p3SIaDL04E=
-X-Received: by 2002:a19:a87:: with SMTP id 129mr920952lfk.98.1562302777990;
- Thu, 04 Jul 2019 21:59:37 -0700 (PDT)
+        id S1725884AbfGEFJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 01:09:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5457 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbfGEFJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 01:09:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 22:09:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,453,1557212400"; 
+   d="scan'208";a="172566750"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2019 22:09:30 -0700
+Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 4 Jul 2019 22:09:30 -0700
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.118]) by
+ ORSMSX157.amr.corp.intel.com ([169.254.9.94]) with mapi id 14.03.0439.000;
+ Thu, 4 Jul 2019 22:09:30 -0700
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mroos@linux.ee" <mroos@linux.ee>,
+        "linux-ia64@lists.kernel.org" <linux-ia64@lists.kernel.org>
+CC:     "namit@vmware.com" <namit@vmware.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [bisected] "mm/vmalloc: Add flag for freeing of special
+ permsissions" corrupts memory on ia64
+Thread-Topic: [bisected] "mm/vmalloc: Add flag for freeing of special
+ permsissions" corrupts memory on ia64
+Thread-Index: AQHVMk6Qsqw8+54B1k+gLs9OsfAihaa78F8A
+Date:   Fri, 5 Jul 2019 05:09:29 +0000
+Message-ID: <096ddb2cfbe83309396c48e75648889cae68e672.camel@intel.com>
+References: <daae57de-1eff-f34a-1348-b872c44a6b4c@linux.ee>
+In-Reply-To: <daae57de-1eff-f34a-1348-b872c44a6b4c@linux.ee>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+x-originating-ip: [10.254.100.26]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AA72A60DEA644D45945FEF66CCB3B920@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 5 Jul 2019 14:59:26 +1000
-Message-ID: <CAPM=9tz2nw3eu-5HXdA9iaMck34pOL=ZZimrVBStK9WUYKsNAQ@mail.gmail.com>
-Subject: [git pull] drm fixes for 5.2 final
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-I skipped last week because there wasn't much worth doing, this week
-got a few more fixes in.
-
-amdgpu:
-- default register value change
-- runpm regression fix
-- fan control fix
-
-i915:
-- fix Ironlake regression
-
-panfrost:
-- fix a double free
-
-virtio:
-- fix a locking bug
-
-imx:
-- crtc disable fixes.
-
-Thanks,
-Dave.
-
-drm-fixes-2019-07-05-1:
-drm imx, i915, amdgpu, panfrost, virtio, etnaviv fixes
-The following changes since commit 4b972a01a7da614b4796475f933094751a295a2f:
-
-  Linux 5.2-rc6 (2019-06-22 16:01:36 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-07-05-1
-
-for you to fetch changes up to a0b2cf792ac9db7bb73e599e516adfb9dca8e60b:
-
-  Merge tag 'imx-drm-fixes-2019-07-04' of
-git://git.pengutronix.de/git/pza/linux into drm-fixes (2019-07-05
-14:51:03 +1000)
-
-----------------------------------------------------------------
-drm imx, i915, amdgpu, panfrost, virtio, etnaviv fixes
-
-----------------------------------------------------------------
-Alex Deucher (1):
-      drm/amdgpu/gfx9: use reset default for PA_SC_FIFO_SIZE
-
-Boris Brezillon (1):
-      drm/panfrost: Fix a double-free error
-
-Chris Wilson (1):
-      drm/i915/ringbuffer: EMIT_INVALIDATE *before* switch context
-
-Dave Airlie (5):
-      Merge tag 'drm-misc-fixes-2019-06-26' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge tag 'drm-fixes-5.2-2019-07-02' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2019-07-03' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'etnaviv/fixes' of
-https://git.pengutronix.de/git/lst/linux into drm-fixes
-      Merge tag 'imx-drm-fixes-2019-07-04' of
-git://git.pengutronix.de/git/pza/linux into drm-fixes
-
-Evan Quan (1):
-      drm/amd/powerplay: use hardware fan control if no powerplay fan table
-
-Gerd Hoffmann (1):
-      drm/virtio: move drm_connector_update_edid_property() call
-
-Lucas Stach (1):
-      drm/etnaviv: add missing failure path to destroy suballoc
-
-Lyude Paul (1):
-      drm/amdgpu: Don't skip display settings in hwmgr_resume()
-
-Robert Beckett (2):
-      drm/imx: notify drm core before sending event during crtc disable
-      drm/imx: only send event on crtc disable if kept disabled
-
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c                 | 19 -------------------
- drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c           |  2 +-
- .../drm/amd/powerplay/hwmgr/process_pptables_v1_0.c   |  4 +++-
- drivers/gpu/drm/amd/powerplay/inc/hwmgr.h             |  1 +
- .../gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c   |  4 ++++
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c                 |  7 +++++--
- drivers/gpu/drm/i915/intel_ringbuffer.c               |  6 +++---
- drivers/gpu/drm/imx/ipuv3-crtc.c                      |  6 +++---
- drivers/gpu/drm/panfrost/panfrost_drv.c               |  2 +-
- drivers/gpu/drm/virtio/virtgpu_vq.c                   |  2 +-
- 10 files changed, 22 insertions(+), 31 deletions(-)
+T24gVGh1LCAyMDE5LTA3LTA0IGF0IDEyOjUzICswMzAwLCBNZWVsaXMgUm9vcyB3cm90ZToNCj4g
+SSBub3RpY2VkIHRoYXQgd2hpbGUgNS4xIHdvcmtzIG9uIG15IEhQIEludGVncml0eSBSWDI2MjAs
+IDUuMi1yYzYNCj4gY3Jhc2hlZCBvbiBib290IG5vbmRldGVybWluaXN0aWNhbGx5Lg0KPiBCaXNl
+Y3RpbmcgaXQgdG9vayBtYW55IHRyaWVzIHNpY2UgaXQgZG9lcyBub3QgaGFwcGVuIG9uIGVhY2gg
+Ym9vdCBhbmQNCj4gd2hlbiBpdCBoYXBwZXMsIHRoZSBzeW1wdG9tcyBhcmUNCj4gZGlmZmVyZW50
+IGVhY2ggdGltZS4gQnV0IG5vdyB0aGUgYmlzZWN0aW9uIGNvbnZlcmdlZCB0bw0KDQpUaGFua3Mg
+Zm9yIHRoZSByZXBvcnQuDQoNClRoaXMgYXJjaCBzZWVtcyBzaW1pbGFyIHRvIHNwYXJjIGluIHRo
+YXQgdGhlcmUgYXJlIG5vIHNldF9tZW1vcnlfKCkNCmltcGxlbWVudGF0aW9ucywgZXhjZXB0IHRo
+YXQgaXQncyBldmVuIHNpbXBsZXIgYmVjYXVzZQ0KZmx1c2hfdGxiX2tlcm5lbF9yYW5nZSgpIGp1
+c3QgY2FsbHMgZmx1c2hfdGxiX2FsbCgpIHNvIHRoZSByYW5nZQ0Kc2hvdWxkbid0IG1hdHRlciBl
+aXRoZXIuIFNvIHRoaXMgY29tbWl0ICpzaG91bGQqIGhhdmUganVzdCBiZWVuIGFkZGluZw0KYSBU
+TEIgZmx1c2gsIHdpdGggbW9zdCBvZiBpdCBub3QgYWZmZWN0aW5nIGlhNjQuDQoNCkZyb20gdGhl
+c2UgbG9ncywgZXNwZWNpYWxseSB0aGUgZmF1bHQgc3RhY2sgdHJhY2VzIGFuZCBCVUcoKSdzLCBp
+dA0Kc2VlbXMgbGlrZSB0aGUgdm1hbGxvYyBtZW1vcnkgbWlnaHQgYmUgdGhlIGFsbG9jYXRpb25z
+IGJlaW5nIGNvcnJ1cHRlZC4NCkFmdGVyIHNjcnV0aW5pemluZyB0aGlzIHNvIG11Y2ggZm9yIHNw
+YXJjLCBvbmx5IHRvIGhhdmUgdGhlIGNhdXNlIGJlDQpzcGFyYydzIFRMQiBmbHVzaCBpbiB0aGUg
+ZW5kLCBJIHdvbmRlciBpZiBzb21ldGhpbmcgc2ltaWxhciBjb3VsZCBiZQ0KaGFwcGVuaW5nIGhl
+cmUuIElmIHRoZSBUTEIgd2Fzbid0IGdldHRpbmcgZmx1c2hlZCBvbiBhbGwgY29yZXMgb3IgaW4N
+CnRoZSB2bWFsbG9jIHJhbmdlIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQsIHRoZSBtb2R1bGUgbG9h
+ZGVyIG1heSBiZQ0KcmVhZGluZyBhbmQgd3JpdGluZyB0byBvbGQgZW50cmllcyBwb2ludGluZyB0
+byByZS1jeWNsZWQgcGFnZXMgYW5kDQpjYXVzZSBzdHJhbmdlIGJlaGF2aW9yIGxpa2UgdGhpcy4N
+Cg0KSSBhbSBvdXQgb2YgdGhlIG9mZmljZSBhbmQgZG9uJ3QgaGF2ZSBhY2Nlc3MgdG8gdGhpcyBo
+YXJkd2FyZSBlaXRoZXIuIEkNCndpbGwgdHJ5IHRvIGZpbmQgc29tZW9uZSBhdCBJbnRlbCB0aGF0
+IGRvZXMgdG8gc3BlZWQgdGhpcyB1cC4gSW4gdGhlDQptZWFudGltZSBJIGNhbiBzZW5kIHlvdSBh
+IGxvZ2dpbmcgcGF0Y2ggdG8gZG8gc29tZSBzYW5pdHkgY2hlY2tzIGlmIHlvdQ0KYXJlIGFibGUg
+dG8gcnVuIGl0Lg0KDQpJIHRoaW5rIEkgZm91bmQgeW91ciBlYXJsaWVyIG1haWwsIGFuZCBpdCBz
+YWlkIDUuMi1yYzEgZGlkIG5vdCBzaG93IHRoZQ0KcHJvYmxlbS4gSSBndWVzcyB0aGlzIHdhc24n
+dCB0aGUgY2FzZSBhZnRlciBmdXJ0aGVyIHRlc3RpbmcsIGJ1dCA1LjENCmNvbnRpbnVlZCB0byBi
+ZSBwcm9ibGVtIGZyZWU/DQoNClRoYW5rcywNCg0KUmljaw0K
