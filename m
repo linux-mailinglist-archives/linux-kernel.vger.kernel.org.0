@@ -2,82 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18347608E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 17:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEABA608EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 17:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfGEPNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 11:13:39 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56984 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbfGEPNj (ORCPT
+        id S1727983AbfGEPOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 11:14:54 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:45678 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfGEPOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 11:13:39 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x65FDZ8Y087596;
-        Fri, 5 Jul 2019 10:13:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562339615;
-        bh=X5SQUumkW58Zgp2FI1ph9B4uenobpRYKTZ55G7V38jk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=CEukuNRy3wkAEheclq4mBFDybaEU9p6Z87439S5jVmmWPEn/eKjWInZ1H1w9W+uyD
-         AOyrO8FSKJCO+1bj71XytWrVcVMEGh61LCcarM7MyLP8ytC/GYTgWPhC/tbhVJ3vI5
-         BIO4bTmTbobu7HJuNu/CXYLBANAStyYosRm+JAnA=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x65FDZB0012878
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 5 Jul 2019 10:13:35 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 5 Jul
- 2019 10:13:35 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 5 Jul 2019 10:13:35 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x65FDYQk095136;
-        Fri, 5 Jul 2019 10:13:34 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RESEND PATCH next v2 6/6] ARM: configs: keystone: enable cpts
-Date:   Fri, 5 Jul 2019 18:12:47 +0300
-Message-ID: <20190705151247.30422-7-grygorii.strashko@ti.com>
+        Fri, 5 Jul 2019 11:14:50 -0400
+Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x65FEYof003506;
+        Sat, 6 Jul 2019 00:14:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x65FEYof003506
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562339676;
+        bh=j1X2qsh6YtfDSqime3qySV5hLLz1eF8cUUX82OnMgDs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rm6csqc1Tk9DadRlazYBhRDKDg4cDmtlXOrmKWA0fRDAOdNVvYRQrxKRTvQCk2ufr
+         02bG5KER/FYeJCNrem0hPapgW5RO7YnI1Y4gRTOiT3zVZgmQ3exZmfChAEVSPUl8dY
+         UEWy5T9beoVNcZkKljuE6SnG5Gp+rc2M50p9pCUjYa2caY5TGwW9HBSCAuN+VIJUpf
+         +pjgTwlV+vmPHGec+S4nlV2StzcxXpg36UnFinsh8w/dnOTQQAZZfOvqt0khgBxvW0
+         rpssVZ/DdWsyeJ3taxJ7dr1zwvEso5jUeAaWxEsMlh01yhAaDvsSE32xQvyvmM344k
+         Oy5RMqP4HMF5Q==
+X-Nifty-SrcIP: [126.26.94.249]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] scripts/tags.sh: drop SUBARCH support for ARM
+Date:   Sat,  6 Jul 2019 00:14:30 +0900
+Message-Id: <20190705151431.29122-1-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190705151247.30422-1-grygorii.strashko@ti.com>
-References: <20190705151247.30422-1-grygorii.strashko@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CPTS support which is present in Network Coprocessor Gigabit
-Ethernet (GbE) Switch Subsystem.
+Our goal is to have more and more sub-architectures to join the
+ARM multi-platform, and support them in a single configuration.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Remove the ARM SUBARCH support because it is ugly.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/configs/keystone_defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/keystone_defconfig b/arch/arm/configs/keystone_defconfig
-index 72fee57aad2f..0b2281407ecf 100644
---- a/arch/arm/configs/keystone_defconfig
-+++ b/arch/arm/configs/keystone_defconfig
-@@ -136,6 +136,7 @@ CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
- CONFIG_TI_KEYSTONE_NETCP=y
- CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
-+CONFIG_TI_CPTS=y
- CONFIG_MARVELL_PHY=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
+ scripts/tags.sh | 36 ++----------------------------------
+ 1 file changed, 2 insertions(+), 34 deletions(-)
+
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index cc991e18f4d1..f56edeb08739 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -41,15 +41,13 @@ find_arch_sources()
+ 	for i in $archincludedir; do
+ 		prune="$prune -wholename $i -prune -o"
+ 	done
+-	find ${tree}arch/$1 $ignore $subarchprune $prune -name "$2" \
+-		-not -type l -print;
++	find ${tree}arch/$1 $ignore $prune -name "$2" -not -type l -print;
+ }
+ 
+ # find sources in arch/$1/include
+ find_arch_include_sources()
+ {
+-	include=$(find ${tree}arch/$1/ $subarchprune \
+-					-name include -type d -print);
++	include=$(find ${tree}arch/$1/ -name include -type d -print);
+ 	if [ -n "$include" ]; then
+ 		archincludedir="$archincludedir $include"
+ 		find $include $ignore -name "$2" -not -type l -print;
+@@ -305,36 +303,6 @@ if [ "${ARCH}" = "um" ]; then
+ 	else
+ 		archinclude=${SUBARCH}
+ 	fi
+-elif [ "${SRCARCH}" = "arm" -a "${SUBARCH}" != "" ]; then
+-	subarchdir=$(find ${tree}arch/$SRCARCH/ -name "mach-*" -type d -o \
+-							-name "plat-*" -type d);
+-	mach_suffix=$SUBARCH
+-	plat_suffix=$SUBARCH
+-
+-	# Special cases when $plat_suffix != $mach_suffix
+-	case $mach_suffix in
+-		"omap1" | "omap2")
+-			plat_suffix="omap"
+-			;;
+-	esac
+-
+-	if [ ! -d ${tree}arch/$SRCARCH/mach-$mach_suffix ]; then
+-		echo "Warning: arch/arm/mach-$mach_suffix/ not found." >&2
+-		echo "         Fix your \$SUBARCH appropriately" >&2
+-	fi
+-
+-	for i in $subarchdir; do
+-		case "$i" in
+-			*"mach-"${mach_suffix})
+-				;;
+-			*"plat-"${plat_suffix})
+-				;;
+-			*)
+-				subarchprune="$subarchprune \
+-						-wholename $i -prune -o"
+-				;;
+-		esac
+-	done
+ fi
+ 
+ remove_structs=
 -- 
 2.17.1
 
