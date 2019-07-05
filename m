@@ -2,129 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0063F605B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0241605CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfGEMJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:09:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727700AbfGEMJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:09:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63664C057F3C;
-        Fri,  5 Jul 2019 12:09:41 +0000 (UTC)
-Received: from [10.36.116.95] (ovpn-116-95.ams2.redhat.com [10.36.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 366B88227E;
-        Fri,  5 Jul 2019 12:09:33 +0000 (UTC)
-Subject: Re: [PATCH v7 2/6] vfio/type1: Check reserve region conflict and
- update iova list
-To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>
-References: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
- <20190626151248.11776-3-shameerali.kolothum.thodi@huawei.com>
- <20190703143427.2d63c15f@x1.home>
- <5FC3163CFD30C246ABAA99954A238FA83F2DDB68@lhreml524-mbs.china.huawei.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <d70c59ec-e837-7697-acb1-c2b5027570ee@redhat.com>
-Date:   Fri, 5 Jul 2019 14:09:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728731AbfGEMPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:15:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39184 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfGEMPr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 08:15:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=j3lgZr5PhIwsop5RCxeelLiraufpXEP7Y5EXfLHxN4Y=; b=hAYQlw4PRYrgwlGaAkQ/4wA7G
+        TP0lpCsujJkEtK292CBw1OMzakLEIfE/1kBviVMFeBl1bil5alPmT7CwQVE0scMA2Yt8zitziOyKx
+        Twvf//bKTdx4ML8P8uJ6VDrcVYIerXzo8AUOHz3OOtquKv+chJ5C+U9LMFILUwu2uDO2M=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hjN4z-0003hS-E5; Fri, 05 Jul 2019 12:12:41 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 459BD2742B0F; Fri,  5 Jul 2019 13:12:40 +0100 (BST)
+Date:   Fri, 5 Jul 2019 13:12:40 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Cheng-Yi Chiang <cychiang@chromium.org>,
+        linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        ALSA development <alsa-devel@alsa-project.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 1/4] ASoC: hdmi-codec: Add an op to set callback function
+ for plug event
+Message-ID: <20190705121240.GA20625@sirena.org.uk>
+References: <20190705042623.129541-1-cychiang@chromium.org>
+ <20190705042623.129541-2-cychiang@chromium.org>
+ <CA+Px+wXtmf9dQQP7ywPLp7Qbbvqau=WnO3qhZ8+qmbJD1gjx+A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA83F2DDB68@lhreml524-mbs.china.huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 05 Jul 2019 12:09:49 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
+In-Reply-To: <CA+Px+wXtmf9dQQP7ywPLp7Qbbvqau=WnO3qhZ8+qmbJD1gjx+A@mail.gmail.com>
+X-Cookie: How you look depends on where you go.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shameer,
 
-On 7/4/19 2:51 PM, Shameerali Kolothum Thodi wrote:
-> 
-> 
->> -----Original Message-----
->> From: kvm-owner@vger.kernel.org [mailto:kvm-owner@vger.kernel.org] On
->> Behalf Of Alex Williamson
->> Sent: 03 July 2019 21:34
->> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
->> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
->> kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
->> iommu@lists.linux-foundation.org; Linuxarm <linuxarm@huawei.com>; John
->> Garry <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>;
->> kevin.tian@intel.com
->> Subject: Re: [PATCH v7 2/6] vfio/type1: Check reserve region conflict and
->> update iova list
->>
->> On Wed, 26 Jun 2019 16:12:44 +0100
->> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
->>
->>> This retrieves the reserved regions associated with dev group and
->>> checks for conflicts with any existing dma mappings. Also update
->>> the iova list excluding the reserved regions.
->>>
->>> Reserved regions with type IOMMU_RESV_DIRECT_RELAXABLE are
->>> excluded from above checks as they are considered as directly
->>> mapped regions which are known to be relaxable.
->>>
->>> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
->>> ---
->>>  drivers/vfio/vfio_iommu_type1.c | 96
->> +++++++++++++++++++++++++++++++++
->>>  1 file changed, 96 insertions(+)
->>>
->>> diff --git a/drivers/vfio/vfio_iommu_type1.c
->> b/drivers/vfio/vfio_iommu_type1.c
->>> index 970d1ec06aed..b6bfdfa16c33 100644
->>> --- a/drivers/vfio/vfio_iommu_type1.c
->>> +++ b/drivers/vfio/vfio_iommu_type1.c
->>> @@ -1559,6 +1641,7 @@ static int vfio_iommu_type1_attach_group(void
->> *iommu_data,
->>>  	phys_addr_t resv_msi_base;
->>>  	struct iommu_domain_geometry geo;
->>>  	LIST_HEAD(iova_copy);
->>> +	LIST_HEAD(group_resv_regions);
->>>
->>>  	mutex_lock(&iommu->lock);
->>>
->>> @@ -1644,6 +1727,13 @@ static int vfio_iommu_type1_attach_group(void
->> *iommu_data,
->>>  		goto out_detach;
->>>  	}
->>>
->>> +	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
->>
->> This can fail and should have an error case.  I assume we'd fail the
->> group attach on failure.  Thanks,
-> 
-> Right. I will add the check. Do you think we should do the same in vfio_iommu_has_sw_msi()
-> as well? (In fact, it looks like iommu_get_group_resv_regions() ret is not checked anywhere in
-> kernel). 
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think the can be the topic of another series. I just noticed that in
-iommu_insert_resv_region(), which is recursive in case ot merge, I
-failed to propagate returned value or recursive calls. This also needs
-to be fixed. I volunteer to work on those changes if you prefer. Just
-let me know.
+On Fri, Jul 05, 2019 at 03:08:37PM +0800, Tzung-Bi Shih wrote:
+> On Fri, Jul 5, 2019 at 12:26 PM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
 
-Thanks
+> > +typedef void (*hdmi_codec_plugged_cb)(struct platform_device *dev,
+> > +                                     bool plugged);
+> > +
 
-Eric
-> 
-> Thanks,
-> Shameer
-> 
-> 
+> The callback prototype is "weird" by struct platform_device.  Is it
+> possible to having snd_soc_component instead of platform_device?
+
+Or if it's got to be a device why not just a generic device so
+we're not tied to a particular bus here?
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0fPrcACgkQJNaLcl1U
+h9CqOgf+J1iCd1w3ReqbJfzVnRPz1davoLs8e6k9u638UeMZX3sVMS9fyeTcQtrX
+XpRecrQsk7CUGoFb2ji0GxnHSXWnEwnIPCRmBzoDwSmsX+33TYQI1aH+m2ZeAgjv
+QqHqk0vNtFAlsttbNMTvbkkkSYAAbOPW8K8AEL54U1X8EJBpqV8ljUj85yDazCou
+SCsQUj0LlLqN6+Gm1LmXH81KdHY06t8i7yxPATgspDLgEJYi4WwdrIyqKAtl+k92
+iAuK8BXYQJO14ZrV/8f0TJbHnrszfO3RJw0UqXdZ4YMvsw0KmrNj9jYv/cL7yD8F
+AUeTwhBtKU+Jd353cqjNMhjYBXwEUg==
+=+Q0m
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
