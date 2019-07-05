@@ -2,132 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5736F6078E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1EE26079C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfGEONR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 10:13:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59526 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbfGEONQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 10:13:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DF9B3082135;
-        Fri,  5 Jul 2019 14:13:11 +0000 (UTC)
-Received: from krava (unknown [10.43.17.81])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B97B782297;
-        Fri,  5 Jul 2019 14:13:06 +0000 (UTC)
-Date:   Fri, 5 Jul 2019 16:13:06 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        id S1727868AbfGEOPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 10:15:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33148 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727841AbfGEOPT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 10:15:19 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65EClo5011417;
+        Fri, 5 Jul 2019 10:14:01 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tj5bhf26p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jul 2019 10:14:01 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x65EDkYp014399;
+        Fri, 5 Jul 2019 10:14:00 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tj5bhf262-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jul 2019 10:14:00 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x65EDt6k024551;
+        Fri, 5 Jul 2019 14:13:59 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma03dal.us.ibm.com with ESMTP id 2tdym7mhvb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jul 2019 14:13:59 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x65EDvvm52560328
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 5 Jul 2019 14:13:57 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1E816A063;
+        Fri,  5 Jul 2019 14:13:57 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0CAB6A04F;
+        Fri,  5 Jul 2019 14:13:56 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Jul 2019 14:13:56 +0000 (GMT)
+Subject: Re: [PATCH] tpm: fixes uninitialized allocated banks for IBM vtpm
+ driver
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
         linux-kernel@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH 1/7] perf: propagate perf_install_in_context errors up
-Message-ID: <20190705141306.GB10777@krava>
-References: <20190702065955.165738-1-irogers@google.com>
- <20190702065955.165738-2-irogers@google.com>
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Michal Suchanek <msuchanek@suse.de>
+References: <1562211121-2188-1-git-send-email-nayna@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <1998ebcf-1521-778f-2c80-55ad2c855023@linux.ibm.com>
+Date:   Fri, 5 Jul 2019 10:13:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702065955.165738-2-irogers@google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 05 Jul 2019 14:13:16 +0000 (UTC)
+In-Reply-To: <1562211121-2188-1-git-send-email-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907050173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 11:59:49PM -0700, Ian Rogers wrote:
-> The current __perf_install_in_context can fail and the error is ignored.
-> Changing __perf_install_in_context can add new failure modes that need
-> errors propagating up. This change prepares for this.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On 7/3/19 11:32 PM, Nayna Jain wrote:
+> The nr_allocated_banks and allocated banks are initialized as part of
+> tpm_chip_register. Currently, this is done as part of auto startup
+> function. However, some drivers, like the ibm vtpm driver, do not run
+> auto startup during initialization. This results in uninitialized memory
+> issue and causes a kernel panic during boot.
+>
+> This patch moves the pcr allocation outside the auto startup function
+> into tpm_chip_register. This ensures that allocated banks are initialized
+> in any case.
+>
+> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with
+> PCR read")
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 > ---
->  kernel/events/core.c | 38 +++++++++++++++++++++++++-------------
->  1 file changed, 25 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 785d708f8553..4faa90f5a934 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2558,11 +2558,12 @@ static int  __perf_install_in_context(void *info)
->   *
->   * Very similar to event_function_call, see comment there.
->   */
-> -static void
-> +static int
->  perf_install_in_context(struct perf_event_context *ctx,
->  			struct perf_event *event,
->  			int cpu)
->  {
-> +	int err;
->  	struct task_struct *task = READ_ONCE(ctx->task);
->  
->  	lockdep_assert_held(&ctx->mutex);
-> @@ -2577,15 +2578,15 @@ perf_install_in_context(struct perf_event_context *ctx,
->  	smp_store_release(&event->ctx, ctx);
->  
->  	if (!task) {
-> -		cpu_function_call(cpu, __perf_install_in_context, event);
-> -		return;
-> +		err = cpu_function_call(cpu, __perf_install_in_context, event);
-> +		return err;
->  	}
->  
->  	/*
->  	 * Should not happen, we validate the ctx is still alive before calling.
->  	 */
->  	if (WARN_ON_ONCE(task == TASK_TOMBSTONE))
-> -		return;
-> +		return 0;
->  
->  	/*
->  	 * Installing events is tricky because we cannot rely on ctx->is_active
-> @@ -2619,8 +2620,9 @@ perf_install_in_context(struct perf_event_context *ctx,
->  	 */
->  	smp_mb();
->  again:
-> -	if (!task_function_call(task, __perf_install_in_context, event))
-> -		return;
-> +	err = task_function_call(task, __perf_install_in_context, event);
-> +	if (err)
-> +		return err;
-
-you need to return in here if task_function_call succeeds and
-continue in case of error, not the other way round, otherwise
-bad things will happen ;-)
-
-jirka
-
->  
->  	raw_spin_lock_irq(&ctx->lock);
->  	task = ctx->task;
-> @@ -2631,7 +2633,7 @@ perf_install_in_context(struct perf_event_context *ctx,
->  		 * against perf_event_exit_task_context().
->  		 */
->  		raw_spin_unlock_irq(&ctx->lock);
-> -		return;
-> +		return 0;
->  	}
->  	/*
->  	 * If the task is not running, ctx->lock will avoid it becoming so,
-> @@ -2643,6 +2645,7 @@ perf_install_in_context(struct perf_event_context *ctx,
->  	}
->  	add_event_to_ctx(event, ctx);
->  	raw_spin_unlock_irq(&ctx->lock);
+>   drivers/char/tpm/tpm-chip.c | 37 +++++++++++++++++++++++++++++++++++++
+>   drivers/char/tpm/tpm.h      |  1 +
+>   drivers/char/tpm/tpm1-cmd.c | 12 ------------
+>   drivers/char/tpm/tpm2-cmd.c |  6 +-----
+>   4 files changed, 39 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 8804c9e916fd..958508bb8379 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -550,6 +550,39 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
+>   	return hwrng_register(&chip->hwrng);
+>   }
+>
+> +/*
+> + * tpm_pcr_allocation() - initializes the chip allocated banks for PCRs
+> + */
+> +static int tpm_pcr_allocation(struct tpm_chip *chip)
+> +{
+> +	int rc = 0;
+> +
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +		rc = tpm2_get_pcr_allocation(chip);
+> +		if (rc)
+> +			goto out;
+> +	}
+> +
+> +	/* Initialize TPM 1.2 */
+> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+> +			GFP_KERNEL);
+> +	if (!chip->allocated_banks) {
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
+> +	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+> +	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
+> +	chip->nr_allocated_banks = 1;
+> +
 > +	return 0;
->  }
->  
->  /*
+> +out:
+> +	if (rc < 0)
+> +		rc = -ENODEV;
 
-SNIP
+
+The old code where you lifted this from said:
+
+out:
+     if (rc > 0)
+         rc = -ENODEV;
+     return rc;
+
+It would not overwrite -ENOMEM with -ENODEV but yours does.
+
+I think the correct fix would be to use:
+
+if (rc > 0)
+
+     rc = -ENODEV;
+
+
+
+
+
+> +	return rc;
+> +}
+> +
+>   /*
+>    * tpm_chip_register() - create a character device for the TPM chip
+>    * @chip: TPM chip to use.
+> @@ -573,6 +606,10 @@ int tpm_chip_register(struct tpm_chip *chip)
+>   	if (rc)
+>   		return rc;
+
+Above this is tpm_chip_stop(chip) because (afaik) none of the following 
+function calls in tpm_chip_register() needed the TPM, but now with 
+tpm_pcr_allocation() you will need to send a command to the TPM. So I 
+would say you should move the tpm_chip_stop() into the error branch 
+visible above and also after the tpm_pcr_allocation().
+
+
+> +	rc = tpm_pcr_allocation(chip);
+tpm_chip_stop(chip);
+> +	if (rc)
+> +		return rc;
+> +
+>   	tpm_sysfs_add_device(chip);
+>
+>   	rc = tpm_bios_log_setup(chip);
+
+
+   Stefan
+
