@@ -2,129 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73CD060229
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C33260228
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfGEIa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 04:30:27 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37997 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbfGEIa1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:30:27 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r12so7510634edo.5
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 01:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QbM44vAJoF7F4CJFe8D/rdMDdvpEwrpfX/ASCNMAqXA=;
-        b=AI94tmMhDWpYtJmSG9OE2YtmGF4jgP603p1zLogEX94WNdxqWXxqEwxrlkap0wV7Yl
-         ZZRrsbZx4mmXa6AJ4tYAh2jqBqJjFu9u5l/agQqdcx6lc9fHqFA0EU/eN4baePIRYs0K
-         ZXYrsPW7Y5tzH4uUsUdwjuKhodl8pkaIRj+10=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=QbM44vAJoF7F4CJFe8D/rdMDdvpEwrpfX/ASCNMAqXA=;
-        b=G+BqlVciEqe+pcAKlT1P9/V6eVqWsZFr140mJvWr/XW64hNbQJG93T/8aWxB9vHI+C
-         R9+ijL+FthBxGzLmYWoqUFZe4a5xqnLC8TAw2pFyoaRlasN9pt/PiuCmCZW+sWmpCBaQ
-         CYtMFYoWAhCdxqR6AAztIcQuO+Lg+lixtY524CPxBV4m5TIl+DUwqYdZ22YPncxlYGX2
-         4jYVBZDNHHPIbQds2SoHvQp3oSjZNvjVZ+zQRsPb3bcjoHtOKIN1LTA0Qv4eXZvLBTAR
-         fARW4166wwgZTlW0bD0jxkR0U/x9ykxg5IEFWVIQ9eHPoScdNnIYfBmow2qfK/kiOIBK
-         kl9A==
-X-Gm-Message-State: APjAAAWZ4KaCiQorcFQgEgbp9HZ0QO6+cKXhcjFKfRWNAJ7xgujob44j
-        kV8OlWAkbgaSg0r8ofc1INdthA==
-X-Google-Smtp-Source: APXvYqwxQTfCTwjg1Nv3JLxxlgEvpmawVRx0vKkBJIxGnG7RJ1+MqMHZ1WkVfQw3vC+4ikaheGDsmw==
-X-Received: by 2002:a17:906:ce21:: with SMTP id sd1mr2339496ejb.189.1562315425410;
-        Fri, 05 Jul 2019 01:30:25 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id j16sm481089ejq.66.2019.07.05.01.30.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 01:30:24 -0700 (PDT)
-Date:   Fri, 5 Jul 2019 10:30:22 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/4] Add HDMI jack support on RK3288
-Message-ID: <20190705083022.GM15868@phenom.ffwll.local>
-Mail-Followup-To: Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>,
-        dianders@chromium.org, dgreid@chromium.org, tzungbi@chromium.org,
-        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-References: <20190705042623.129541-1-cychiang@chromium.org>
+        id S1727342AbfGEI35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 04:29:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:60928 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726800AbfGEI35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:29:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA26C2B;
+        Fri,  5 Jul 2019 01:29:56 -0700 (PDT)
+Received: from [10.162.41.127] (p8cg001049571a15.blr.arm.com [10.162.41.127])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2C713F246;
+        Fri,  5 Jul 2019 01:29:54 -0700 (PDT)
+Subject: Re: [PATCH] mm/isolate: Drop pre-validating migrate type in
+ undo_isolate_page_range()
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <1562307161-30554-1-git-send-email-anshuman.khandual@arm.com>
+ <20190705075857.GA28725@linux>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <ae5e183b-c5f7-2a37-2c14-110102ec37ed@arm.com>
+Date:   Fri, 5 Jul 2019 14:00:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190705042623.129541-1-cychiang@chromium.org>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190705075857.GA28725@linux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 12:26:19PM +0800, Cheng-Yi Chiang wrote:
-> This patch series supports HDMI jack reporting on RK3288, which uses
-> DRM dw-hdmi driver and hdmi-codec codec driver.
-> 
-> The previous discussion about reporting jack status using hdmi-notifier
-> and drm_audio_component is at
-> 
-> https://lore.kernel.org/patchwork/patch/1083027/
-> 
-> The new approach is to use a callback mechanism that is
-> specific to hdmi-codec.
 
-I think this looks reasonable. There's the entire question of getting rid
-of the platform_device in hdmi_codec an roll our own devices (so that it
-all looks a bit cleaner, like e.g. the cec stuff does). But that can also
-be done in a follow-up (if you can convince reviewers of that).
--Daniel
 
-> Cheng-Yi Chiang (4):
->   ASoC: hdmi-codec: Add an op to set callback function for plug event
->   drm: bridge: dw-hdmi: Report connector status using callback
->   ASoC: rockchip_max98090: Add dai_link for HDMI
->   ASoC: rockchip_max98090: Add HDMI jack support
+On 07/05/2019 01:29 PM, Oscar Salvador wrote:
+> On Fri, Jul 05, 2019 at 11:42:41AM +0530, Anshuman Khandual wrote:
+>> unset_migratetype_isolate() already validates under zone lock that a given
+>> page has already been isolated as MIGRATE_ISOLATE. There is no need for
+>> another check before. Hence just drop this redundant validation.
+>>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Qian Cai <cai@lca.pw>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kernel@vger.kernel.org
+>>
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> Is there any particular reason to do this migratetype pre-check without zone
+>> lock before calling unsert_migrate_isolate() ? If not this should be removed.
 > 
->  .../gpu/drm/bridge/synopsys/dw-hdmi-audio.h   |   3 +
->  .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   |  10 ++
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  32 ++++-
->  include/sound/hdmi-codec.h                    |  16 +++
->  sound/soc/codecs/hdmi-codec.c                 |  52 ++++++++
->  sound/soc/rockchip/rockchip_max98090.c        | 112 ++++++++++++++----
->  6 files changed, 201 insertions(+), 24 deletions(-)
-> 
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+> I have seen this kinda behavior-checks all over the kernel.
+> I guess that one of the main goals is to avoid lock contention, so we check
+> if the page has the right migratetype, and then we check it again under the lock
+> to see whether that has changed.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+So the worst case when it becomes redundant might not affect the performance much ?
+
+> 
+> e.g: simultaneous calls to undo_isolate_page_range
+
+Right.
+
+> 
+> But I am not sure if the motivation behind was something else, as the changelog
+> that added this code was quite modest.
+
+Agreed.
+
+> 
+> Anyway, how did you come across with this?
+> Do things get speed up without this check? Or what was the motivation to remove it?
+
+Detected this during a code audit. I figured it can help save some cycles. The other
+call site start_isolate_page_range() does not check migrate type because the page
+block is guaranteed to be MIGRATE_ISOLATE ? I am not sure if a non-lock check first
+in this case is actually improving performance. In which case should we just leave
+the check as is ?
