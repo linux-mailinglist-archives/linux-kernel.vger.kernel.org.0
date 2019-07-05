@@ -2,59 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E225602D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2C81602DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfGEJEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:04:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39566 "EHLO mail.kernel.org"
+        id S1728185AbfGEJGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:06:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50654 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbfGEJEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:04:33 -0400
-Received: from localhost (83-84-126-242.cable.dynamic.v4.ziggo.nl [83.84.126.242])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727441AbfGEJGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 05:06:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90E51218C5;
-        Fri,  5 Jul 2019 09:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562317472;
-        bh=VQbkOn7IFuvTzmG2wEcraG9t0ivU+flYsDDf5txco0Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F2vgdcD1xE0NEdTC7ImGhLkeVwGZbKhLqdMC7aUXUuQfEo3J/FmSq5/zy8TWO4m6h
-         l2TSf59Mjzs9RjEcClaIIp0nxtR3PGx5E6sQJTvOTh4T0pUjsSoT5fHdYuilQQYpZw
-         wtyBLhlESTIZ31TlrG0p0718GYWegFB/f4MfOePE=
-Date:   Fri, 5 Jul 2019 11:04:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     jeyentam <je.yen.tam@ni.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] serial/8250: Add support for NI-Serial PXI/PXIe+485
- devices
-Message-ID: <20190705090422.GA32289@kroah.com>
-References: <20190705083349.44047-1-je.yen.tam@ni.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id CE86F30860A0;
+        Fri,  5 Jul 2019 09:05:55 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-90.ams2.redhat.com [10.36.116.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B3281BC67;
+        Fri,  5 Jul 2019 09:05:54 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 4FE3116E32; Fri,  5 Jul 2019 11:05:53 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 11:05:53 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Chia-I Wu <olvaffe@gmail.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 15/18] drm/virtio: rework
+ virtio_gpu_transfer_to_host_ioctl fencing
+Message-ID: <20190705090553.jx5zcdoxeimojq2i@sirius.home.kraxel.org>
+References: <20190702141903.1131-1-kraxel@redhat.com>
+ <20190702141903.1131-16-kraxel@redhat.com>
+ <CAPaKu7S0n=E7g0o2e6fEk1YjP+u=tsoV8upw7J=noSx88PgP+A@mail.gmail.com>
+ <20190704115138.ou77sb3rlrex67tj@sirius.home.kraxel.org>
+ <CAPaKu7SDwR1TgFQK2XGEbRqSkCO0XZYxGhcjzsAwOH42aOHEEw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190705083349.44047-1-je.yen.tam@ni.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAPaKu7SDwR1TgFQK2XGEbRqSkCO0XZYxGhcjzsAwOH42aOHEEw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 05 Jul 2019 09:06:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 01:33:49AM -0700, jeyentam wrote:
-> Add support for NI-Serial PXIe-RS232, PXI-RS485 and PXIe-RS485 devices.
-> 
-> Signed-off-by: Je Yen Tam <je.yen.tam@ni.com>
-> ---
->  drivers/tty/serial/8250/8250_pci.c | 298 ++++++++++++++++++++++++++++-
->  1 file changed, 294 insertions(+), 4 deletions(-)
+On Thu, Jul 04, 2019 at 12:08:14PM -0700, Chia-I Wu wrote:
+> On Thu, Jul 4, 2019 at 4:51 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> >   Hi,
+> >
+> > > >         convert_to_hw_box(&box, &args->box);
+> > > >         if (!vgdev->has_virgl_3d) {
+> > > >                 virtio_gpu_cmd_transfer_to_host_2d
+> > > > -                       (vgdev, qobj, offset,
+> > > > +                       (vgdev, gem_to_virtio_gpu_obj(objs->objs[0]), offset,
+> > > >                          box.w, box.h, box.x, box.y, NULL);
+> > > > +               virtio_gpu_array_put_free(objs);
+> > > Don't we need this in non-3D case as well?
+> >
+> > No, ...
+> >
+> > > >                 virtio_gpu_cmd_transfer_to_host_3d
+> > > > -                       (vgdev, qobj,
+> > > > +                       (vgdev,
+> > > >                          vfpriv ? vfpriv->ctx_id : 0, offset,
+> > > > -                        args->level, &box, fence);
+> > > > -               reservation_object_add_excl_fence(qobj->base.base.resv,
+> > > > -                                                 &fence->f);
+> > > > +                        args->level, &box, objs, fence);
+> >
+> > ... 3d case passes the objs list to virtio_gpu_cmd_transfer_to_host_3d,
+> > so it gets added to the vbuf and released when the command is finished.
+> Why doesn't this apply to virtio_gpu_cmd_transfer_to_host_2d?
 
-What changed from the previous versions?
+Hmm, yes, makes sense to handle both the same way.
 
-Always put that below the --- line.
+With virgl=off qemu processes the commands from the guest
+synchronously, so it'll work fine as-is.  So you can't hit
+the theoretical race window in practice.  But depending
+on that host-side implementation detail isn't a good idea
+indeed.
 
-Please fix up and send a v4 with that information.
+cheers,
+  Gerd
 
-thanks,
-
-greg k-h
