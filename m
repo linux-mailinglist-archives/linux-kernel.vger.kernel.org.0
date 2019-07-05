@@ -2,98 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFDA4603B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6711C603BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfGEKAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:00:00 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37670 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbfGEJ77 (ORCPT
+        id S1727291AbfGEKC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:02:59 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:38520 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfGEKC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:59:59 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s20so8533173otp.4;
-        Fri, 05 Jul 2019 02:59:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=beyRNtev5O4mJWjS70eIztB/Qoa+o9lbeo95E6keUJY=;
-        b=GxO/ukHzNFjQIbGBKy0lXvUbXviEoFbVcVPa7cV0LfgltvNpIbW+Pm0wNq2hqS9UpD
-         i6xWvMqQnEV0OX7/0EM1islIOzCiS/tPTCkUDE77zTX8sJuS6bbPfZVJdBgS9hnQWX0K
-         Cdo38cEFpIs7p+LHrGwe0mLRNTcCSdAIFFwGVMXk5U6vK4mhqTGAEUvM3oBaPFWguDqa
-         i6a08A+BAv7SwXYjChRYG/Pm2tkoM5RupvFlzH/Z2pylMx+VWadkeR61jQecVl4wa8lW
-         Fmo+4/YPnVHVbeyqbL2H9T38m7EeR2Nyly5ietvR3GVjNEw8Zz+e+Cs4cLPoOyIoXVs6
-         z3iA==
-X-Gm-Message-State: APjAAAXqdwIMiOLDqO68Z/+Jz6WjIk/jKIMOOiGbVwEAcTtbsKkcDgVw
-        4+qOtLUwViLZz68rsB7U73QEmyilY1UL2XoT3jM=
-X-Google-Smtp-Source: APXvYqw67TEYIC1UMzAsnjpjPZTeCtDomLNpsuRUXUnwN0RZoLylieiwvy4aa0ev1vzibsf4I9hvGEWjVJgwD2Kllx0=
-X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr2039247oto.167.1562320798736;
- Fri, 05 Jul 2019 02:59:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000005bf6c3058cde49a7@google.com> <8755905.1UUJr7qOyo@kreacher>
- <CACT4Y+awzZOSAseosiUDvs_zk7hFRuQrrr0LjRmVwesVbF_+aQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+awzZOSAseosiUDvs_zk7hFRuQrrr0LjRmVwesVbF_+aQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 5 Jul 2019 11:59:47 +0200
-Message-ID: <CAJZ5v0h7O7Rpkf1ShV1PphqB__9EQ2MPkZwrU=x_iDvTn+9bQw@mail.gmail.com>
-Subject: Re: linux-next boot error: WARNING in corrupted
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        syzbot <syzbot+de771ae9390dffed7266@syzkaller.appspotmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Len Brown <len.brown@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 5 Jul 2019 06:02:59 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x65A1j3L018855;
+        Fri, 5 Jul 2019 19:01:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x65A1j3L018855
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562320906;
+        bh=Xti9N2uoikpsP8LMl2xLbOM7UsUpmVEcrDR7xeNals8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DAJtJ4z1GTHt6BCACcdqmOamV5V5SCo5vNWy4ncAZHidFuIEhuzka6OGUSkwOu1Rn
+         8Ib1TzBZB6lXOpxml2+M4wZIQlfzrwXKvJDM/KITBGora5Z8FvtYKo4567a3bD62Ap
+         O9rniDQ0MA+5JMQvwvSKf9bECEs0+qogaJF8waoB6DnKdKj0UkGms4NW+7+2EyUDTW
+         TJv77oI63cvToCdMr9UtjF3yh/DIzWVwmzNheqcCEFPACM5XGYGfioGGp3ajqNe2K8
+         Q0Skp4Gv8ES120HlXJtLG5hvo9PZ7GjF6dUXxL8yPAo7soUaef8+MVcWZxs0w61oBc
+         qqLQfO8q5oXQQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+Subject: [PATCH v3 1/2] powerpc/boot: add {get,put}_unaligned_be32 to xz_config.h
+Date:   Fri,  5 Jul 2019 19:01:43 +0900
+Message-Id: <20190705100144.28785-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 5, 2019 at 11:37 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Fri, Jul 5, 2019 at 11:23 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Thursday, July 4, 2019 7:27:04 PM CEST syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    16c474c9 Add linux-next specific files for 20190704
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=17f8b463a00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=983f02aae1ef31b6
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=de771ae9390dffed7266
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+de771ae9390dffed7266@syzkaller.appspotmail.com
-> > >
-> ...
-> > > ------------[ cut here ]------------
-> > > __dev_pm_qos_remove_request() called for unknown object
-> > > WARNING: CPU: 1 PID: 1 at drivers/base/power/qos.c:486
-> > > __dev_pm_qos_remove_request+0x3d3/0x4d0 drivers/base/power/qos.c:486
-> >
-> > Viresh, any chance to look at this?
-> >
-> > I'm a bit concerned about the freq QoS series at this point, may defer pushing it.
->
-> FWIW here is full WARNING since I am hitting it locally too:
+The next commit will make the way of passing CONFIG options more robust.
+Unfortunately, it would uncover another hidden issue; without this
+commit, skiroot_defconfig would be broken like this:
 
-So can you try to revert commits between
+|   WRAP    arch/powerpc/boot/zImage.pseries
+| arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
+| decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
+| decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
+| make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
+| make: *** [arch/powerpc/Makefile;295: zImage] Error 2
 
-0b07ee944701 PM / QOS: Pass request type to dev_pm_qos_{add|remove}_notifier()
+skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
+for ppc, which has never been correctly built before.
 
-and
+I figured out the root cause in lib/decompress_unxz.c:
 
-95c7e46c0f80 cpufreq: Add QoS requests for userspace constraints
+| #ifdef CONFIG_PPC
+| #      define XZ_DEC_POWERPC
+| #endif
 
-inclusive from linux-next (they should revert cleanly) and see if that
-makes the issue go away?
+CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
+is not included except by arch/powerpc/boot/serial.c
+
+XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
+for the bootwrapper.
+
+With the next commit passing CONFIG_PPC correctly, we would realize that
+{get,put}_unaligned_be32 was missing.
+
+Unlike the other decompressors, the ppc bootwrapper duplicates all the
+necessary helpers in arch/powerpc/boot/.
+
+The other architectures define __KERNEL__ and pull in helpers for
+building the decompressors.
+
+If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
+have included <asm/unaligned.h>:
+
+| #ifdef __KERNEL__
+| #       include <linux/xz.h>
+| #       include <linux/kernel.h>
+| #       include <asm/unaligned.h>
+
+However, doing so would cause tons of definition conflicts since the
+bootwrapper has duplicated everything.
+
+I just added copies of {get,put}_unaligned_be32, following the
+bootwrapper coding convention.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v3:
+ - New patch to fix the potential issue of skiroot_defconfig
+
+Changes in v2: None
+
+ arch/powerpc/boot/xz_config.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/powerpc/boot/xz_config.h b/arch/powerpc/boot/xz_config.h
+index e22e5b3770dd..ebfadd39e192 100644
+--- a/arch/powerpc/boot/xz_config.h
++++ b/arch/powerpc/boot/xz_config.h
+@@ -20,10 +20,30 @@ static inline uint32_t swab32p(void *p)
+ 
+ #ifdef __LITTLE_ENDIAN__
+ #define get_le32(p) (*((uint32_t *) (p)))
++#define cpu_to_be32(x) swab32(x)
++static inline u32 be32_to_cpup(const u32 *p)
++{
++	return swab32p((u32 *)p);
++}
+ #else
+ #define get_le32(p) swab32p(p)
++#define cpu_to_be32(x) (x)
++static inline u32 be32_to_cpup(const u32 *p)
++{
++	return *p;
++}
+ #endif
+ 
++static inline uint32_t get_unaligned_be32(const void *p)
++{
++	return be32_to_cpup(p);
++}
++
++static inline void put_unaligned_be32(u32 val, void *p)
++{
++	*((u32 *)p) = cpu_to_be32(val);
++}
++
+ #define memeq(a, b, size) (memcmp(a, b, size) == 0)
+ #define memzero(buf, size) memset(buf, 0, size)
+ 
+-- 
+2.17.1
+
