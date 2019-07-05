@@ -2,143 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C180260B6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 20:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 213A460B79
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 20:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfGESaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 14:30:12 -0400
-Received: from mout.web.de ([212.227.15.14]:33947 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbfGESaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 14:30:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1562351409;
-        bh=oRoF4Y67u/o/9d4l2z4cNBxWdD6InCu64bqMKeG6WWM=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=UJ+MQXfQwFfrmYAnQrolKd06Vtjn0mZjXhIjW2M3WtsIRCOmOX7UcGz41of1gWgCq
-         mPrKY86nqDYcbpWIiU7NxIyLDYcbhECLvsyUGKGdM1CAJWY5Er+kbmzQj6hVVLBbya
-         VOeuklt3ZTc4ZDGMfyH7i8f/M2h3A0TrDNjQ0KIw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.45.164]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MOlTq-1hdOQZ0aZC-0066z9; Fri, 05
- Jul 2019 20:30:09 +0200
-To:     kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] mfd: asic3: One function call less in asic3_irq_probe()
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
-Date:   Fri, 5 Jul 2019 20:30:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727587AbfGESfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 14:35:42 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37657 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfGESfl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 14:35:41 -0400
+Received: by mail-io1-f65.google.com with SMTP id e5so16617936iok.4;
+        Fri, 05 Jul 2019 11:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6RTglQDcnPhYZ6+ia3duitJHDfc8+bEhxKjHNNLaC3E=;
+        b=BZ+9kgdje40skG8QZnBrGGdCq+a5PY3QRB1EP82Bv5D+ASw59GLdJ9nl/CXfWrv2Vb
+         sdF/4tDpTcNbX29P0DW2295h/VzsyaIFf6sv2obahvhi1F+alJ5zWmaIJiJXRPUNeaYy
+         WUaUabgcyn/IxOCELyyu3AD5IKOubFFL1lUj/Z7VEDe8z+Hz4XrYmBQwlw5UdwX4fwjD
+         hC3UH/KOlUIB65U/iiQZL8bXUsDlJ5+vvTWOEFcdI8AoUkJzuUZdhsxDb3zR2QybccWT
+         XnXvDsdZdq+wBp8GJNViKCsoaxzAeoKTh08miWZiKe3mFnjd5j8o0p6REXuo9vGXKrUk
+         Y5Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6RTglQDcnPhYZ6+ia3duitJHDfc8+bEhxKjHNNLaC3E=;
+        b=D7BMyCxtBJELX+zDt+F94st4rB5u1zjNBHjv6JIFDDCHOVFZJWq2dvomTDuv42xYlQ
+         u6E2nKNDJZ/SOPtE/QI3QzZ46RqlLljB9dELRfHlreA1kOHZYNAAlW7h2BNma+ZnETsw
+         q3quJJgSGAkSg0hzIPCTjDvFG6aIi8FqZDcsJg6YRVIuEHOCyfWbj7SXTl3VjAa2KId/
+         L9uFIhQKdwM4xxz/bUhF6lW+Mjy+oPhSVItsrW2lSdb98mMh8K8CWv4VVRxMzrr+imQI
+         wBeDJholW7EpzMBjo4OpAi050ckqoXtuY2YjL86RVgUR54Hr3PnwVeciNAnlJKkiwJJM
+         Q0aA==
+X-Gm-Message-State: APjAAAXGdh7+lmq4Gu6UGr1j1l/58zwORB0SOxacari7JLfkp1lbti9r
+        f/3yysehKVLf/gecBV7g4x2Eoc9/oL01b63yqj8=
+X-Google-Smtp-Source: APXvYqyd73dY/S9t5icoFq7nzm8pi6H5OC2r++hJMBl44SpiTDWX/+NV+P7GLXcL1rKew1ZlNNEFkwyeZXbwgWKdoq0=
+X-Received: by 2002:a02:c95a:: with SMTP id u26mr5888920jao.15.1562351741149;
+ Fri, 05 Jul 2019 11:35:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sbt4yYAA0X7TNULvX7YmfR5oUpqCLYcFsj3HN26gKSQcZqfZV+c
- kRQfhB4exsxm7uxNaR8by+7VZa7SMxAB2OCqWsA37VyeUQ3RuzH8L+jz18H91mCUokUpV+K
- r+Zmh0jkIkFznV2eozw02cISFRECME1G8oDsXVxCaIIVF2QYU7d+ERXHwK/Fcu+WK1EOAiP
- TI8cj7yEHZ0PzNr6NmFfg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bzI/iKHb63g=:JxlnzrFaoSzg4OGBkTH0gy
- /GLv9SuYEYmlHgUw9TpWs3L6TyGw0lX5QsH1Xg5uqXbYTOFVjtgeuE0dD8t9uYSO6n10xZd+B
- xCqDxfu7JxuoyY6o558y39m4AoHWi16NTvajC2Y3i+VeETF0/2kOWIO0JfmicYj8XNlJPN55h
- 6HBzaKOAYs4PMdjhde0ywJWEBB+vG4M1ZEH1SNnHGm5Yl3Tx7ar+FYMXRGHvmzdEyMnEjVSBc
- azIsb1VTCoxnzvbAmGUFIYYW44jF/JlXkrmDACmMG8/AD2L14lIVMJ4sqL1Rw4pNod4dFWOHW
- ZlAOMt6I951cnBCdt/funhakGTO0T0oQ5HyR+Wk36VUCdqZz64rSsq9QjNfSJdWcTKY/d57pm
- BlkxkMgO2OzlQbuL5VC4Va9RmpqNTYeDcZrXw5e3bNdL8/hO4qz1XC6tUu/iCcW+XvaYrGh9/
- hXoxGPtAtfb5N2MXeyS45HT6OnLtCA7+/E72irqvDg0kqoMwqiglpeWcYxH1SqqfKqyq0E/vJ
- RO7T7fWJTDHCoHkzffzaqzHrGhPqbeQoeQ58dVd1DAl/mTtvm7Ue6nCR40/JSIUVBuWyXFTy3
- Cudv1SfSGmjnVsMrTUbwv2QRHpMLRsmOfwRuk9CgUrstKwJaUm2c/YTrEhS9IV6QzUtxLu3pB
- 8EbhC2WoIKAwtQOzLQKwOtS1FlchKWUxtiAs9wq9qurvE+lU96YgypfsJrVQDJfd1nAXmRvvX
- 67tSbzEudCy6SsLFJMOtXzeA3Uta6kQlkj6Qi2lMOQeLjfyILawOkG06xnmSJfQn6q85Jvkyz
- KY7NnSCTIsf3/5hLygMV1hJQcxEHRfDIFZMU0a1hUd3wtml/S7mFssj3XVpZlflO7u3VXtiNx
- m/KbS2t3jtnQGtokOm0dtcbNBQo79JOJOe2hPKU9/a6eAUqLZpLQe54J1JuramfTM3mOo01uD
- tIpgizXIW2FWDfTzKadyxYXB4cVb3j5EuEs7B/NDBTc6fcWUOSTABAJdtYb0YH0nWye9RE4wz
- LVgoXDbw7OKVaHfw2BkpiTw7QsL/6WsQx7rNea5KwbAtDVksqBwSbjmBXxFIK2znjM8s+9+50
- +nH/qKIlYWY3O5D1MFnZc0Rqxfo0D2zHLne
+References: <20190705165450.329-1-jeffrey.l.hugo@gmail.com>
+ <20190705165755.515-1-jeffrey.l.hugo@gmail.com> <20190705172058.GA2788@ravnborg.org>
+In-Reply-To: <20190705172058.GA2788@ravnborg.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 5 Jul 2019 12:35:30 -0600
+Message-ID: <CAOCk7NrVSCt18QfMs+_nW1rDMuhK_dPKWL0roESmwEEy4u3BZQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/panel: simple: Add support for Sharp LD-D5116Z01B panel
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     thierry.reding@gmail.com, Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jul 2019 20:22:26 +0200
+On Fri, Jul 5, 2019 at 11:21 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Jeffrey.
+>
+> Patch looks good, but there is a few fields that are not initialized.
+> Did you forget them, or are they not needed?
 
-Avoid an extra function call by using a ternary operator instead of
-a conditional statement.
+Thanks for the review.  Overlooked some of them.
 
-This issue was detected by using the Coccinelle software.
+>
+> On Fri, Jul 05, 2019 at 09:57:55AM -0700, Jeffrey Hugo wrote:
+> > The Sharp LD-D5116Z01B is a 12.3" eDP panel with a 1920X1280 resolution.
+> >
+> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > ---
+> >  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> > index 5a93c4edf1e4..e6f578667324 100644
+> > --- a/drivers/gpu/drm/panel/panel-simple.c
+> > +++ b/drivers/gpu/drm/panel/panel-simple.c
+> > @@ -2354,6 +2354,29 @@ static const struct panel_desc samsung_ltn140at29_301 = {
+> >       },
+> >  };
+> >
+> > +static const struct drm_display_mode sharp_ld_d5116z01b_mode = {
+> > +     .clock = 168480,
+> > +     .hdisplay = 1920,
+> > +     .hsync_start = 1920 + 48,
+> > +     .hsync_end = 1920 + 48 + 32,
+> > +     .htotal = 1920 + 48 + 32 + 80,
+> > +     .vdisplay = 1280,
+> > +     .vsync_start = 1280 + 3,
+> > +     .vsync_end = 1280 + 3 + 10,
+> > +     .vtotal = 1280 + 3 + 10 + 57,
+> > +     .vrefresh = 60,
+> > +};
+> No .flags? Is it not needed for an eDP panel?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/mfd/asic3.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+The flags don't appear to make sense per my understanding of eDP.
+Therefore I intended .flags to be 0, which it implicitly is because
+this is a static struct.  Would you prefer I explicitly list .flags =
+0?
 
-diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
-index 83b18c998d6f..50f5368fb170 100644
-=2D-- a/drivers/mfd/asic3.c
-+++ b/drivers/mfd/asic3.c
-@@ -401,11 +401,10 @@ static int __init asic3_irq_probe(struct platform_de=
-vice *pdev)
- 	irq_base =3D asic->irq_base;
+>
+> > +
+> > +static const struct panel_desc sharp_ld_d5116z01b = {
+> > +     .modes = &sharp_ld_d5116z01b_mode,
+> > +     .num_modes = 1,
+> > +     .bpc = 8,
+> > +     .size = {
+> > +             .width = 260,
+> > +             .height = 120,
+> > +     },
+> > +};
+> No .bus_format?
 
- 	for (irq =3D irq_base; irq < irq_base + ASIC3_NR_IRQS; irq++) {
--		if (irq < asic->irq_base + ASIC3_NUM_GPIOS)
--			irq_set_chip(irq, &asic3_gpio_irq_chip);
--		else
--			irq_set_chip(irq, &asic3_irq_chip);
--
-+		irq_set_chip(irq,
-+			     (irq < asic->irq_base + ASIC3_NUM_GPIOS)
-+			     ? &asic3_gpio_irq_chip
-+			     : &asic3_irq_chip);
- 		irq_set_chip_data(irq, asic);
- 		irq_set_handler(irq, handle_level_irq);
- 		irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
-=2D-
-2.22.0
+Ah, yes.  Looks like it should be MEDIA_BUS_FMT_RGB888_1X24
+Will fix.
 
+> No .bus_flags?
+
+eDP is differential signaling, so what I see generally doesn't apply,
+but DRM_BUS_FLAG_DATA_MSB_TO_LSB does apply, so I'll add that.
