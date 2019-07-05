@@ -2,178 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD5560580
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD1D6057C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbfGELoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 07:44:55 -0400
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:13808 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728720AbfGELoy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 07:44:54 -0400
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65BiQlb018260;
-        Fri, 5 Jul 2019 04:44:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=qKtPKf2TElfESXIz9YSar0KvPQBGqIKAPPYAKgCppCY=;
- b=euF94Y8038gStwoXv5WBIyA7jlhfYy/7KgovnzAt7gvospT0PM9C0R873U9GaVOhwHCn
- 03PUvzA/5DIqnl3al8RXf9RFoakwehkmSr5cYqKoDXc4RQqBuAKI7V0OGN9dUXVZW0Td
- Gx99sjFd25hbZgNO+S7TB/0C8JpfYLnEZM6/3X9wVIEi06bYFiLwTtvSCcCpQyp4FRJn
- Yr2VLS1UgEXjfaf0uC3EDicDSNffEKyfnvzmA3ISyPB91ripQJa1VPct9p1gRcBYknZK
- nwjUhKHkpZID8EERS/fpTbAujZVxfx0hVWcNwERyhL5S0l6HH/WXWAgO1cSNL4FRhQYX LA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2059.outbound.protection.outlook.com [104.47.42.59])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2tgwvj87b5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 05 Jul 2019 04:44:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
+        id S1728719AbfGELoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 07:44:21 -0400
+Received: from mail-eopbgr60040.outbound.protection.outlook.com ([40.107.6.40]:14338
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727755AbfGELoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 07:44:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qKtPKf2TElfESXIz9YSar0KvPQBGqIKAPPYAKgCppCY=;
- b=Jouz4J47SzC2Qe7s8ORdF9Qu+od8dBaEk5o+rr3eltfcnkG3+sxywF7lSsntLyYpZohc1oUA78hv34k/n/RxwnJ6XV23XpYL6dYeKRWUOCECEAnBXOs+LWPX8yOoGLnsARiYEmhTaFWhF5RwCNoCIRnzb/WFu2RmDhFZ8xTL828=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB5526.namprd07.prod.outlook.com (20.177.231.148) with Microsoft SMTP
+ bh=ywxon0cZ3w+Cahsu1Nlkw8OQ4X796knqtHa+7cJhxPQ=;
+ b=DDP6r46FrCPX3XPq7GGk/uHcfLVq4ieSk9qAL30VBEKuMXVV+3wls9QVzbWRhyb0fVONxzzUI0SEX209t6m84oBrjCHLwJtJHPwuAWXUv/OjM0dqCe6Dxo2WFU8n56gTZTBS2r0QzTvXKm3+MSfMiHSswnWHpatDVNKVg7uOuDo=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4797.eurprd08.prod.outlook.com (10.255.112.23) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Fri, 5 Jul 2019 11:44:15 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::fd8c:399c:929b:33e2]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::fd8c:399c:929b:33e2%6]) with mapi id 15.20.2052.010; Fri, 5 Jul 2019
- 11:44:15 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
+ 15.20.2052.19; Fri, 5 Jul 2019 11:44:16 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::4062:a380:35ba:11d1%3]) with mapi id 15.20.2032.019; Fri, 5 Jul 2019
+ 11:44:16 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v9 2/6] usb:gadget Separated decoding functions from dwc3
- driver.
-Thread-Topic: [PATCH v9 2/6] usb:gadget Separated decoding functions from dwc3
- driver.
-Thread-Index: AQHVMyB8KL4t/wzfvkK+3nlF+Rqn1Ka75lUAgAABDHA=
-Date:   Fri, 5 Jul 2019 11:44:15 +0000
-Message-ID: <BYAPR07MB4709964C1D0AA2A851BF2F55DDF50@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1562324238-16655-1-git-send-email-pawell@cadence.com>
- <1562324238-16655-3-git-send-email-pawell@cadence.com>
- <87tvc0lngz.fsf@linux.intel.com>
-In-Reply-To: <87tvc0lngz.fsf@linux.intel.com>
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH 1/2] drm/komeda: Disable slave pipeline support
+Thread-Topic: [PATCH 1/2] drm/komeda: Disable slave pipeline support
+Thread-Index: AQHVMyb5WQQBB7gGc06vpLjh/Rmuxg==
+Date:   Fri, 5 Jul 2019 11:44:16 +0000
+Message-ID: <20190705114357.17403-1-james.qian.wang@arm.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMzUzNDEwNDctOWYxYS0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDM1MzQxMDQ5LTlmMWEtMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTg2NSIgdD0iMTMyMDY4MDA2NTMyMzIwNjE4IiBoPSJMQmNzbDhITWVzNjZ5ZWgvckovRy9GK1hBMnc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR01CA0034.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3e::22) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4896cc75-f277-4bb8-5fef-08d7013e1b98
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB5526;
-x-ms-traffictypediagnostic: BYAPR07MB5526:
-x-microsoft-antispam-prvs: <BYAPR07MB552698EFF6A015481D693DD6DDF50@BYAPR07MB5526.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-office365-filtering-correlation-id: ebb9a003-5446-40c5-a423-08d7013e1b74
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4797;
+x-ms-traffictypediagnostic: VE1PR08MB4797:
+x-microsoft-antispam-prvs: <VE1PR08MB47976885DB0B09F4AB469CDAB3F50@VE1PR08MB4797.eurprd08.prod.outlook.com>
+nodisclaimer: True
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
 x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(36092001)(189003)(199004)(55016002)(76176011)(99286004)(478600001)(229853002)(7416002)(7696005)(2501003)(2906002)(110136005)(316002)(33656002)(66066001)(14454004)(66446008)(73956011)(66946007)(64756008)(76116006)(8936002)(68736007)(66556008)(86362001)(8676002)(52536014)(9686003)(66476007)(81156014)(81166006)(5660300002)(6116002)(3846002)(25786009)(6246003)(14444005)(256004)(102836004)(71190400001)(71200400001)(26005)(6506007)(486006)(53936002)(186003)(446003)(4326008)(6436002)(54906003)(7736002)(74316002)(305945005)(11346002)(476003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5526;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(366004)(39860400002)(136003)(199004)(189003)(52116002)(53936002)(6512007)(6436002)(66066001)(6506007)(25786009)(386003)(6486002)(478600001)(3846002)(6116002)(2501003)(68736007)(50226002)(99286004)(26005)(36756003)(316002)(4326008)(55236004)(103116003)(102836004)(54906003)(110136005)(186003)(71190400001)(71200400001)(5660300002)(2906002)(7736002)(4744005)(305945005)(14444005)(476003)(2616005)(1076003)(8936002)(66476007)(66556008)(64756008)(66446008)(86362001)(2201001)(8676002)(256004)(486006)(73956011)(66946007)(81166006)(14454004)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4797;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7zDfogEh4oCTn4ibVPpCwxY8TBB0VWRa1RXMc07SS2VcDm5x9JADLlN+zKqWyNloBdeDGBji1MbjzBVBSYY6ispz2moP4mgfusupbUdBgLcUvw8s6JWw31rdVMKdXv4Wqyr63MZYZdsbKSE9zEkGN0zSXqNYNdcqJB7xcXm5BOHEvx1aGVXWOWpCgH44Wp6ceMa3fS//YYFGiDfekZeAeQAZf0Iiv1KcAaE/obOdCU60MmtUYYaQ/yzORa9xqfo4cvRD5z6eS99L5BbWTEzC2jsDnjCxmC7rLGIKakmE60xQvKnBm1IsqIEckP3JabPc5tDBh+XrZv1CGkHDC5oqBYJYzLkPdqOEJIAoHfsL9Rg/g/L+lTFLZ4DksxsKZGAOETrdhNBZJAyyqrIGTMBFKvWbvrn3vYHC4MOl4Jt0xDI=
-Content-Type: text/plain; charset="us-ascii"
+x-microsoft-antispam-message-info: w9gUviPaygeUYefWGNcKEREcHd9lHkr6umm+cStZIvcgwgyBNITS9zwGJnF0n19mcUCHe3s7IJc09kDWWamuXiVMbLr55GoZ4FpS/zThSFQuZJIcP0EqY978yiazt4/fFzs5wvTqKK0I0JFzSiOisobuMzIVM+q34s0ec3SpQocszrjSeoaQ4Qjuh83K1lbhAzkLnt3J1YNVYULU5RHT0LhCM+SSGpGLN5b/2Yjmegyf8eWlIiXDBrJqOjIa4srjuL5x+K5Tb4DYvcYQr4Wx1CvoM9FwPq7OBa4vE6HO3eaExAwXC04NJ02HHtr5JDzMBo3+bevT5LALmGecl+yAxWOYMU6WDTG/yMFxciWS8n6N3iGhKvbPKM3LwZtHV515mgBa/VTgJ+imqhVz93u6QC1VvMy73U+RIqFYgyYYLng=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4896cc75-f277-4bb8-5fef-08d7013e1b98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 11:44:15.6316
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebb9a003-5446-40c5-a423-08d7013e1b74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 11:44:16.4229
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pawell@global.cadence.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5526
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907050142
+X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4797
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since the property slave_planes have been removed, to avoid the resource
+assignment problem in user disable slave pipeline support temporarily.
 
->EXTERNAL MAIL
->
->
->
->Hi,
->
->Pawel Laszczak <pawell@cadence.com> writes:
->> diff --git a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
->> index da82606be605..d388a3a5ab7e 100644
->> --- a/include/linux/usb/ch9.h
->> +++ b/include/linux/usb/ch9.h
->> @@ -70,4 +70,29 @@ extern enum usb_device_speed usb_get_maximum_speed(st=
-ruct device *dev);
->>   */
->>  extern const char *usb_state_string(enum usb_device_state state);
->>
->> +/**
->> + * usb_decode_ctrl - Returns human readable representation of control r=
-equest.
->> + * @str: buffer to return a human-readable representation of control re=
-quest.
->> + *       This buffer should have about 200 bytes.
->> + * @size: size of str buffer.
->> + * @bRequestType: matches the USB bmRequestType field
->> + * @bRequest: matches the USB bRequest field
->> + * @wValue: matches the USB wValue field (CPU byte order)
->> + * @wIndex: matches the USB wIndex field (CPU byte order)
->> + * @wLength: matches the USB wLength field (CPU byte order)
->> + *
->> + * Function returns decoded, formatted and human-readable description o=
-f
->> + * control request packet.
->> + *
->> + * The usage scenario for this is for tracepoints, so function as a ret=
-urn
->> + * use the same value as in parameters. This approach allows to use thi=
-s
->> + * function in TP_printk
->> + *
->> + * Important: wValue, wIndex, wLength parameters before invoking this f=
-unction
->> + * should be processed by le16_to_cpu macro.
->> + */
->> +extern const char *usb_decode_ctrl(char *str, size_t size, __u8 bReques=
-tType,
->> +				   __u8 bRequest, __u16 wValue, __u16 wIndex,
->> +				   __u16 wLength);
->> +
->
->where's the stub when !TRACING?
+Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@arm.=
+com>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Right, I will add=20
-#ifdef	CONFIG_TRACING=20
-	.....
-#endif=20
->
->--
->balbi
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
+/drm/arm/display/komeda/komeda_crtc.c
+index f4400788ab94..8ee879ee3ddc 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+@@ -481,7 +481,7 @@ int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
+ 		master =3D mdev->pipelines[i];
+=20
+ 		crtc->master =3D master;
+-		crtc->slave  =3D komeda_pipeline_get_slave(master);
++		crtc->slave  =3D NULL;
+=20
+ 		if (crtc->slave)
+ 			sprintf(str, "pipe-%d", crtc->slave->id);
+--=20
+2.20.1
+
