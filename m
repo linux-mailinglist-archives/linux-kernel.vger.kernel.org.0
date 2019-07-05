@@ -2,129 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9A1C6002C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EE060038
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:38:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfGEE1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 00:27:04 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42379 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfGEE1E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 00:27:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t132so3685719pgb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 21:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Mt+OhzkdZXuABUeOm3oIQQxV+A0uMRzmq60uCRJmAJE=;
-        b=Hbexc+aCBum/RZ12dI3r5/XyzyiK+MvJQgQ2XO3/HVioP3PM/nCddAlz1xrMohN7M1
-         S0TUfchH1at/5Y1i17XhZAcSUqCKCip2aybO7YsuTVjIwJXSYImaa+d0n/+JHH0FYNkL
-         NI0/aW8eXuQCvg6kpGPrNaIfIBqJ7QUDBMvFM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Mt+OhzkdZXuABUeOm3oIQQxV+A0uMRzmq60uCRJmAJE=;
-        b=FtaXE/yQEiSDhqispDFZYWqn6WF7cMbVUXeqt5cij0AgEQGP88P2koWJvfMv69mmYb
-         NqPzd7YlcmuLXUFxB2SH4tPhPNePWx0zVYtCgO3cNd1euUfHVmrMbLc6wawEULX2xl9f
-         G2hMl2QJwWVdw9cWcp6brchgY6uQDaGyZgxVluZzPv22uXiHed79961aSZ/75vyyZTc/
-         jCbGqpWLTkRDroYdyI25jXFlFvBit1bVM4PgqmFb5r+6kmwKjCvpB2XvzkbBOEW4nl4B
-         Cs8keeDa3mNqtBxw4jawkjz++TrA5A+3GwaCujULM14S/MI1q88aOeasT4/UFlTlSzJu
-         l0Bg==
-X-Gm-Message-State: APjAAAU8+njoTh0Qgms7M5GK8rUsWj4j7rCPVQz7sYImKUaZ2SYQ3W0H
-        kt3n0s3Uf8kvTljYfpaeg+fuA7JmRX0=
-X-Google-Smtp-Source: APXvYqywd4tkamYO1Fai6BvXNjXkhsYojIRkBX4/rKYkl5GdlfV7TnbJIDpy2ZVfWAPldm8d1RwzHA==
-X-Received: by 2002:a17:90a:8d86:: with SMTP id d6mr2081909pjo.94.1562300823498;
-        Thu, 04 Jul 2019 21:27:03 -0700 (PDT)
-Received: from localhost ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id t10sm6811920pjr.13.2019.07.04.21.27.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 21:27:02 -0700 (PDT)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH 4/4] ASoC: rockchip_max98090: Add HDMI jack support
-Date:   Fri,  5 Jul 2019 12:26:23 +0800
-Message-Id: <20190705042623.129541-5-cychiang@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190705042623.129541-1-cychiang@chromium.org>
-References: <20190705042623.129541-1-cychiang@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726069AbfGEEiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 00:38:50 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:49102 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbfGEEit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 00:38:49 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 0161A50E364A3B65FA7B;
+        Fri,  5 Jul 2019 12:38:48 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x654c6d6013878;
+        Fri, 5 Jul 2019 12:38:06 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070512384263-2103364 ;
+          Fri, 5 Jul 2019 12:38:42 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
+        wang.liang82@zte.com.cn
+Subject: [PATCH v2] sched: fix unlikely use of sched_info_on()
+Date:   Fri, 5 Jul 2019 12:35:07 +0800
+Message-Id: <1562301307-43002-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-05 12:38:42,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-05 12:38:12,
+        Serialize complete at 2019-07-05 12:38:12
+X-MAIL: mse-fl2.zte.com.cn x654c6d6013878
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In machine driver, create a jack and let hdmi-codec report jack status.
+sched_info_on() is called with unlikely hint, however, the test
+is to be a constant(1) on which compiler will do nothing when
+make defconfig, so remove the hint.
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Also, fix a lack of {}.
+
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 ---
- sound/soc/rockchip/rockchip_max98090.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+v2: remove the hint rather than replace with likely, and fix a
+coding style.
 
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index 195309d1225a..c0e430ca4d12 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -15,6 +15,7 @@
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
-+#include <sound/hdmi-codec.h>
+ kernel/sched/stats.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index aa0de24..ba683fe 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -157,9 +157,10 @@ static inline void sched_info_dequeued(struct rq *rq, struct task_struct *t)
+ {
+ 	unsigned long long now = rq_clock(rq), delta = 0;
  
- #include "rockchip_i2s.h"
- #include "../codecs/ts3a227e.h"
-@@ -129,6 +130,25 @@ enum {
- 	DAILINK_HDMI,
- };
- 
-+static struct snd_soc_jack rk_hdmi_jack;
-+
-+static int rk_hdmi_init(struct snd_soc_pcm_runtime *runtime)
-+{
-+	struct snd_soc_card *card = runtime->card;
-+	struct snd_soc_component *component = runtime->codec_dai->component;
-+	int ret;
-+
-+	/* enable jack detection */
-+	ret = snd_soc_card_jack_new(card, "HDMI Jack", SND_JACK_LINEOUT,
-+				    &rk_hdmi_jack, NULL, 0);
-+	if (ret) {
-+		dev_err(card->dev, "Can't new HDMI Jack %d\n", ret);
-+		return ret;
+-	if (unlikely(sched_info_on()))
++	if (sched_info_on()) {
+ 		if (t->sched_info.last_queued)
+ 			delta = now - t->sched_info.last_queued;
 +	}
-+
-+	return hdmi_codec_set_jack_detect(component, &rk_hdmi_jack);
-+}
-+
- /* max98090 and HDMI codec dai_link */
- static struct snd_soc_dai_link rk_dailinks[] = {
- 	[DAILINK_MAX98090] = {
-@@ -146,6 +166,7 @@ static struct snd_soc_dai_link rk_dailinks[] = {
- 		.ops = &rk_aif1_ops,
- 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			SND_SOC_DAIFMT_CBS_CFS,
-+		.init = rk_hdmi_init,
- 		SND_SOC_DAILINK_REG(hdmi),
+ 	sched_info_reset_dequeued(t);
+ 	t->sched_info.run_delay += delta;
+ 
+@@ -192,7 +193,7 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
+  */
+ static inline void sched_info_queued(struct rq *rq, struct task_struct *t)
+ {
+-	if (unlikely(sched_info_on())) {
++	if (sched_info_on()) {
+ 		if (!t->sched_info.last_queued)
+ 			t->sched_info.last_queued = rq_clock(rq);
  	}
- };
+@@ -239,7 +240,7 @@ static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
+ static inline void
+ sched_info_switch(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ {
+-	if (unlikely(sched_info_on()))
++	if (sched_info_on())
+ 		__sched_info_switch(rq, prev, next);
+ }
+ 
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+1.8.3.1
 
