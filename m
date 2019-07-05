@@ -2,79 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A1B6603E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B71D6036F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfGEKHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:07:53 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:48564 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbfGEKHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:07:50 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 050C6200703;
-        Fri,  5 Jul 2019 12:07:48 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7D0882006F8;
-        Fri,  5 Jul 2019 12:07:39 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BF38402EB;
-        Fri,  5 Jul 2019 18:07:29 +0800 (SGT)
-From:   Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-To:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        l.subrahmanya@mobiveil.co.in, shawnguo@kernel.org,
-        leoyang.li@nxp.com, lorenzo.pieralisi@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     Mingkai.Hu@nxp.com, Minghuan.Lian@nxp.com, Xiaowei.Bao@nxp.com,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCHv6 28/28] PCI: mobiveil: Fix the potential INTx missing problem
-Date:   Fri,  5 Jul 2019 17:56:56 +0800
-Message-Id: <20190705095656.19191-29-Zhiqiang.Hou@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190705095656.19191-1-Zhiqiang.Hou@nxp.com>
-References: <20190705095656.19191-1-Zhiqiang.Hou@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728141AbfGEJ5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:57:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39702 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbfGEJ5f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 05:57:35 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hjKxk-0003b7-AS; Fri, 05 Jul 2019 09:57:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: cs4281: remove redundant assignment to variable val and remove a goto
+Date:   Fri,  5 Jul 2019 10:57:04 +0100
+Message-Id: <20190705095704.26050-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current INTx process is clear all the recorded INTx after
-each one of the recorded INTx handled, this can result in
-potential INTx missing. This patch change it to only clear the
-handled INTx status.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Acked-by: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
-Tested-by: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+The variable val is being assigned with a value that is never
+read and it is being updated later with a new value. The
+assignment is redundant and can be removed.  Also remove a
+goto statement and a label and replace with a break statement.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-V6:
- - Splited from #10 of v5 patches, no functional change.
+ sound/pci/cs4281.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/pci/controller/pcie-mobiveil.c |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index a5549cf..3ab7d2e 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -372,9 +372,8 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
- 					dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n",
- 							    bit);
+diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
+index a2cce3ecda6f..04c712647853 100644
+--- a/sound/pci/cs4281.c
++++ b/sound/pci/cs4281.c
+@@ -694,7 +694,7 @@ static int snd_cs4281_trigger(struct snd_pcm_substream *substream, int cmd)
  
--				/* clear interrupt */
--				csr_writel(pcie,
--					   shifted_status << PAB_INTX_START,
-+				/* clear interrupt handled */
-+				csr_writel(pcie, 1 << (PAB_INTX_START + bit),
- 					   PAB_INTP_AMBA_MISC_STAT);
- 			}
- 
+ static unsigned int snd_cs4281_rate(unsigned int rate, unsigned int *real_rate)
+ {
+-	unsigned int val = ~0;
++	unsigned int val;
+ 	
+ 	if (real_rate)
+ 		*real_rate = rate;
+@@ -707,9 +707,8 @@ static unsigned int snd_cs4281_rate(unsigned int rate, unsigned int *real_rate)
+ 	case 44100:	return 1;
+ 	case 48000:	return 0;
+ 	default:
+-		goto __variable;
++		break;
+ 	}
+-      __variable:
+ 	val = 1536000 / rate;
+ 	if (real_rate)
+ 		*real_rate = 1536000 / val;
 -- 
-1.7.1
+2.20.1
 
