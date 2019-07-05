@@ -2,78 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F68D60547
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 669836053B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfGEL2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 07:28:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64432 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfGEL2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 07:28:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 04:28:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,454,1557212400"; 
-   d="scan'208";a="339810868"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.189])
-  by orsmga005.jf.intel.com with ESMTP; 05 Jul 2019 04:28:07 -0700
-Message-ID: <45603af2fc8374a90ef9e81a67083395cc9c7190.camel@linux.intel.com>
-Subject: Re: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Oshri Alkobi <oshrialkoby85@gmail.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org,
-        oshri.alkoby@nuvoton.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        gcwilson@us.ibm.com, kgoldman@us.ibm.com, nayna@linux.vnet.ibm.com,
-        dan.morav@nuvoton.com, tomer.maimon@nuvoton.com
-Date:   Fri, 05 Jul 2019 14:28:07 +0300
-In-Reply-To: <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
-References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
-         <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
-         <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com>
-         <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        id S1728657AbfGELZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 07:25:04 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8711 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726523AbfGELZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 07:25:04 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D3D5D6788578AE1B141F;
+        Fri,  5 Jul 2019 19:24:56 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 5 Jul 2019 19:24:48 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <imre.deak@intel.com>, <dhinakaran.pandiyan@intel.com>,
+        <ville.syrjala@linux.intel.com>, <chris@chris-wilson.co.uk>,
+        <manasi.d.navare@intel.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/i915: Remove set but not used variable 'encoder'
+Date:   Fri, 5 Jul 2019 11:31:12 +0000
+Message-ID: <20190705113112.64715-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-04 at 12:48 -0500, Oshri Alkobi wrote:
-> Alex, Jarkko, thank you very much for your feedbacks!
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Please configure your email client to use plain text.
+drivers/gpu/drm/i915/display/intel_dp.c: In function 'intel_dp_set_drrs_state':
+drivers/gpu/drm/i915/display/intel_dp.c:6623:24: warning:
+ variable 'encoder' set but not used [-Wunused-but-set-variable]
 
-> I totally agree, there are some duplications that can be common, indeed it
-> will require some work in tpm_tis_core.
-> Since I believe it is not going to happen soon, I would suggest to examine
-> what duplications can currently be dropped from the new driver, so the kernel
-> will support the PTP I2C interface in the meantime.
-> I will appreciate getting ideas about any tpm_tis_core logic that currently
-> can be used as is by the new drive.
+It's never used, so can be removed.Also remove related
+variable 'dig_port'
 
-I rather wait for a solution that integrates with our mature stack for
-TIS (or these days FIFO) than integrate something half-baked. If you
-want something in, please do right things right.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/i915/display/intel_dp.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-What you are proposing would mean maintaining duplicate stacks forever.
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index 8f7188d71d08..0bdb7ecc5a81 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -6620,8 +6620,6 @@ static void intel_dp_set_drrs_state(struct drm_i915_private *dev_priv,
+ 				    const struct intel_crtc_state *crtc_state,
+ 				    int refresh_rate)
+ {
+-	struct intel_encoder *encoder;
+-	struct intel_digital_port *dig_port = NULL;
+ 	struct intel_dp *intel_dp = dev_priv->drrs.dp;
+ 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc_state->base.crtc);
+ 	enum drrs_refresh_rate_type index = DRRS_HIGH_RR;
+@@ -6636,9 +6634,6 @@ static void intel_dp_set_drrs_state(struct drm_i915_private *dev_priv,
+ 		return;
+ 	}
+ 
+-	dig_port = dp_to_dig_port(intel_dp);
+-	encoder = &dig_port->base;
+-
+ 	if (!intel_crtc) {
+ 		DRM_DEBUG_KMS("DRRS: intel_crtc not initialized\n");
+ 		return;
 
-> Since the TIS is an old specification that mostly defines FIFO for TPM1.2 I
-> would say the name tpm_tis_i2c does not completely reflect its goal. However
-> we really don't have any problem with any name that the group will agree on.
-> Does tpm_ptp_i2c sound better than the current name?
 
-Absolutely not going to use that name. The naming convention is what
-it is for other drivers that are adapt tpm_tis_core to different HW
-interfaces.
-
-/Jarkko
 
