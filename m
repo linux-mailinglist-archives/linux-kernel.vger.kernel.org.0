@@ -2,137 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0E3606AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 15:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29851606C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 15:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfGENhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 09:37:50 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:53805 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfGENht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 09:37:49 -0400
-Received: by mail-wm1-f42.google.com with SMTP id x15so8904353wmj.3;
-        Fri, 05 Jul 2019 06:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=3zwEJgoSUmVe32byVQps8G3aTPiQXc6LZjBXABq8q44=;
-        b=STNcuqyr8wjN732QQ0JivchA5zRC+5J+onxTxiBuN7J+QzTvHanCgqQMz7SL4ebKBJ
-         nW+FcY4gANgnOt2uyCG2gpmNyaPMmKlcEaYQKdL8DCiBt/E56gISV9uj/9lhBzogXBdX
-         vP28nHvBi8ZZWpDn5VSVR+SbQ90gxCuDbBciGz0+Jxe2FL5V4SC6xADlE1qZvFtflqAD
-         ZrzFJ2d19yWB1BuhliMAgvgvyM8I9YOjNQx/5qejTZ39xb1FtjOSZKdu0L8DOo/bDPNR
-         3u6uVJPIOKPdonFoxLggidgGcwryaw0ZA9XmZwZLIs9Bobfm/6g4vfytqYor/ZGLUASC
-         +OJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=3zwEJgoSUmVe32byVQps8G3aTPiQXc6LZjBXABq8q44=;
-        b=WXZA4F3I6a1BUpcT5rwlHe1h6NsVWLkRlkK2vBZvz6LfeZwcIOzLxsApjJJ5tSJ13Y
-         ZIpJJ4Ab8aec+bweiqe9R8dkLGe8o8Jh1svtvX7NuBa8Qt2VS9f/4DMVUQCBcnm4eGgI
-         B+RyRRj4ZwaqKJIw87iUc8ZDO7MEv4m0zHt2NR1md/v96iTPnnp43joX7OSQPC8PDgwE
-         u2GcCLBTOIzx2DDhkJcWAtYIVu13gLi+CLlBl+GnvyYEYY1MTngXybBwgx6FNVCD17aG
-         ++qOyCvD+oPScEKaMjD9FJRvR+C0XcSyTqjGunKwNE+jT6D0aHxa6hhoqkcOg9I/ZZF+
-         eLow==
-X-Gm-Message-State: APjAAAVrlxNgFH0NdVqCI/1dPyDqWOd7b2KKAalJOiTXIe4MtF3opKGe
-        sLbyOYPd0MoD59dnWZE6MZPv9knc
-X-Google-Smtp-Source: APXvYqxwPvjEjuUDkC6y/r7CpVN0m1xZdHiGATz+YFalWzlBkPKAZZPnQEe4s/ybG6e4VkQaIHNfMA==
-X-Received: by 2002:a1c:2314:: with SMTP id j20mr3610354wmj.152.1562333867056;
-        Fri, 05 Jul 2019 06:37:47 -0700 (PDT)
-Received: from [172.16.8.139] (host-89-243-246-11.as13285.net. [89.243.246.11])
-        by smtp.gmail.com with ESMTPSA id z25sm9958744wmf.38.2019.07.05.06.37.45
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Jul 2019 06:37:45 -0700 (PDT)
-Subject: Re: iowait v.s. idle accounting is "inconsistent" - iowait is too low
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Doug Smythies <dsmythies@telus.net>, linux-pm@vger.kernel.org
-References: <2ff025f1-9a3e-3eae-452b-ef84824009b4@gmail.com>
- <000001d531a8$8931b2a0$9b9517e0$@net>
- <e82b9d7c-81e5-dd80-b9c0-f5f065344e2f@gmail.com>
- <20190705113806.GP3402@hirez.programming.kicks-ass.net>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <26e7faef-7223-3ef8-d09c-e382223ce4fa@gmail.com>
-Date:   Fri, 5 Jul 2019 14:37:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728505AbfGENlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 09:41:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:38504 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727702AbfGENlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 09:41:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C082360;
+        Fri,  5 Jul 2019 06:41:43 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B0AF3F718;
+        Fri,  5 Jul 2019 06:41:40 -0700 (PDT)
+Date:   Fri, 5 Jul 2019 14:41:38 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "Lili Deng (Wicresoft North America Ltd)" <v-lide@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>
+Subject: Re: [PATCH v2] PCI: hv: Fix a use-after-free bug in
+ hv_eject_device_work()
+Message-ID: <20190705134138.GB31464@e121166-lin.cambridge.arm.com>
+References: <PU1P153MB0169D420EAB61757DF4B337FBFE70@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-In-Reply-To: <20190705113806.GP3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PU1P153MB0169D420EAB61757DF4B337FBFE70@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2019 12:38, Peter Zijlstra wrote:
-> On Fri, Jul 05, 2019 at 12:25:46PM +0100, Alan Jenkins wrote:
->> Hi, scheduler experts!
->>
->> My cpu "iowait" time appears to be reported incorrectly.  Do you know why
->> this could happen?
-> Because iowait is a magic random number that has no sane meaning.
-> Personally I'd prefer to just delete the whole thing, except ABI :/
->
-> Also see the comment near nr_iowait():
->
-> /*
->   * IO-wait accounting, and how its mostly bollocks (on SMP).
->   *
->   * The idea behind IO-wait account is to account the idle time that we could
->   * have spend running if it were not for IO. That is, if we were to improve the
->   * storage performance, we'd have a proportional reduction in IO-wait time.
->   *
->   * This all works nicely on UP, where, when a task blocks on IO, we account
->   * idle time as IO-wait, because if the storage were faster, it could've been
->   * running and we'd not be idle.
->   *
->   * This has been extended to SMP, by doing the same for each CPU. This however
->   * is broken.
->   *
->   * Imagine for instance the case where two tasks block on one CPU, only the one
->   * CPU will have IO-wait accounted, while the other has regular idle. Even
->   * though, if the storage were faster, both could've ran at the same time,
->   * utilising both CPUs.
->   *
->   * This means, that when looking globally, the current IO-wait accounting on
->   * SMP is a lower bound, by reason of under accounting.
->   *
->   * Worse, since the numbers are provided per CPU, they are sometimes
->   * interpreted per CPU, and that is nonsensical. A blocked task isn't strictly
->   * associated with any one particular CPU, it can wake to another CPU than it
->   * blocked on. This means the per CPU IO-wait number is meaningless.
->   *
->   * Task CPU affinities can make all that even more 'interesting'.
->   */
+On Fri, Jun 21, 2019 at 11:45:23PM +0000, Dexuan Cui wrote:
+> 
+> The commit 05f151a73ec2 itself is correct, but it exposes this
+> use-after-free bug, which is caught by some memory debug options.
+> 
+> Add a Fixes tag to indicate the dependency.
+> 
+> Fixes: 05f151a73ec2 ("PCI: hv: Fix a memory leak in hv_eject_device_work()")
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Cc: stable@vger.kernel.org
+> ---
+> 
+> In v2:
+> Replaced "hpdev->hbus" with "hbus", since we have the new "hbus" variable. [Michael Kelley]
+> 
+>  drivers/pci/controller/pci-hyperv.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
 
-Thanks. I take those as being different problems, but you mean there is 
-not much demand (or point) to "fix" my issue.
+Applied to pci/hv for v5.3, thanks.
 
->  (2) Compare running "dd" with "taskset -c 1":
->
-> %Cpu1  :  0.3 us,  3.0 sy,  0.0 ni, 83.7 id, 12.6 wa,  0.0 hi,  0.3 si,  0.0 st 
+Lorenzo
 
-                                       ^ non-zero idle time for Cpu1, despite the pinned IO hog.
-
-
-The block layer recently decided they could break "disk busy%" reporting 
-for slow devices (mechanical HDD), in order to reduce overheads for fast 
-devices.  This means the summary view in "atop" now lacks any reliable 
-indicator.
-
-I suppose I need to look in "iotop".
-
-The new /proc/pressure/io seems to have caveats related to the iowait 
-issues... it seems even more complex to interpret for this case, and it 
-does not seem to work how I think it does.[1]
-
-Regards
-Alan
-
-[1] 
-https://unix.stackexchange.com/questions/527342/why-does-the-new-linux-pressure-stall-information-for-io-not-show-as-100/
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 808a182830e5..5dadc964ad3b 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -1880,6 +1880,7 @@ static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
+>  static void hv_eject_device_work(struct work_struct *work)
+>  {
+>  	struct pci_eject_response *ejct_pkt;
+> +	struct hv_pcibus_device *hbus;
+>  	struct hv_pci_dev *hpdev;
+>  	struct pci_dev *pdev;
+>  	unsigned long flags;
+> @@ -1890,6 +1891,7 @@ static void hv_eject_device_work(struct work_struct *work)
+>  	} ctxt;
+>  
+>  	hpdev = container_of(work, struct hv_pci_dev, wrk);
+> +	hbus = hpdev->hbus;
+>  
+>  	WARN_ON(hpdev->state != hv_pcichild_ejecting);
+>  
+> @@ -1900,8 +1902,7 @@ static void hv_eject_device_work(struct work_struct *work)
+>  	 * because hbus->pci_bus may not exist yet.
+>  	 */
+>  	wslot = wslot_to_devfn(hpdev->desc.win_slot.slot);
+> -	pdev = pci_get_domain_bus_and_slot(hpdev->hbus->sysdata.domain, 0,
+> -					   wslot);
+> +	pdev = pci_get_domain_bus_and_slot(hbus->sysdata.domain, 0, wslot);
+>  	if (pdev) {
+>  		pci_lock_rescan_remove();
+>  		pci_stop_and_remove_bus_device(pdev);
+> @@ -1909,9 +1910,9 @@ static void hv_eject_device_work(struct work_struct *work)
+>  		pci_unlock_rescan_remove();
+>  	}
+>  
+> -	spin_lock_irqsave(&hpdev->hbus->device_list_lock, flags);
+> +	spin_lock_irqsave(&hbus->device_list_lock, flags);
+>  	list_del(&hpdev->list_entry);
+> -	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
+> +	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+>  
+>  	if (hpdev->pci_slot)
+>  		pci_destroy_slot(hpdev->pci_slot);
+> @@ -1920,7 +1921,7 @@ static void hv_eject_device_work(struct work_struct *work)
+>  	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
+>  	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
+>  	ejct_pkt->wslot.slot = hpdev->desc.win_slot.slot;
+> -	vmbus_sendpacket(hpdev->hbus->hdev->channel, ejct_pkt,
+> +	vmbus_sendpacket(hbus->hdev->channel, ejct_pkt,
+>  			 sizeof(*ejct_pkt), (unsigned long)&ctxt.pkt,
+>  			 VM_PKT_DATA_INBAND, 0);
+>  
+> @@ -1929,7 +1930,9 @@ static void hv_eject_device_work(struct work_struct *work)
+>  	/* For the two refs got in new_pcichild_device() */
+>  	put_pcichild(hpdev);
+>  	put_pcichild(hpdev);
+> -	put_hvpcibus(hpdev->hbus);
+> +	/* hpdev has been freed. Do not use it any more. */
+> +
+> +	put_hvpcibus(hbus);
+>  }
+>  
+>  /**
+> -- 
+> 2.17.1
+> 
