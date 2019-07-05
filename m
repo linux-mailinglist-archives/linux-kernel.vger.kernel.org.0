@@ -2,241 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF61605E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:26:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE0F605E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfGEMZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:25:52 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43476 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfGEMZw (ORCPT
+        id S1728836AbfGEM00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:26:26 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43169 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfGEM00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:25:52 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e3so8086511edr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 05:25:50 -0700 (PDT)
+        Fri, 5 Jul 2019 08:26:26 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w79so7016767oif.10;
+        Fri, 05 Jul 2019 05:26:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sp6o/n6EyLOrj3/DcsUkjbmVbC7RVr0FqOl1AVMUQxE=;
-        b=juUdJDhCXFnJ0I3tvrOBE6o+BNxVkxERdKLMu+waFpCNXRdetjSibdR8/MwI8NUeiZ
-         zd1RWnNgguXBUeuoW6+0QaFuUos1KOMqXrt2uG1sj41V8EB2AdDwzsdhrdti2I56lg59
-         NQFAOykAAoBiSkU9pnUa1fYe9EtGLW/58vYr4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=60adLkZbywPEuKsZCLqNo80zya9muW5FO6I+W0n23fY=;
+        b=gR41PYpJoUr4wNhUj+7pOS/whyCQVlB3Y/FyW0MXD2QyAPmFIaSnPr098/+LTqlkaF
+         UbXq0mYJxABiIJQ3so7RJcyrf3LxVOOhasmetOHb8+QYHEy/2oifmyt+2t4a9mGC2ve1
+         K9Aa3Qr8DFM4YgqrWExIPCc+mCc929pXBJcazbnKwUpHfkH3EY5Zqd/VH6xjqOUklZ7v
+         PB1Nj3kVv/30co+ycIaMtFK+5h/shWiDZ85EQV1w9nfGxSVdLOUe6sbpa8xqYHL8MwQR
+         YsIK6mntMv+DvJywT2Z2CQVtFUAC/NO/9KtXN+AHYh/yx3dXTSBrJdEFgqJ9GvFxzeWn
+         fUDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=sp6o/n6EyLOrj3/DcsUkjbmVbC7RVr0FqOl1AVMUQxE=;
-        b=a2xqG0h7epL6X/XjFlmGF7+j5+dDcfRK2DsjxVoZbWDRYVqRzlRb04sSlD7De0klcQ
-         bex5uV4ygXvkA2w2cB8q5gn91k594V/WElEbE68+qM+lb0SVEHnn+cNIz41UGJxDYJY9
-         IQtm+SMOELHKgHEw5rLv6TAXmkhAedKqwksc1GzRpE/whIGD5ZYa0vtT2XIZvdckZL2o
-         F/PYqzS6CFmw4g816dr/dvLAeBPM4qeovye1DLTJvusLjRpCTkMqXL36+p3mctHc1Pej
-         F05AuFUjpU/pRvvmQN/oWsxz/A60S9ylgNKfFWCGm/8w1RBlcz3fjVTOtrTFmoLXnigC
-         V0rw==
-X-Gm-Message-State: APjAAAWkXIftwBZ6kRiPKXsx8Os4GxyPj8tQk1VsQ5lYRdmc2BSTBnVc
-        ditg2LOsPsDNbwaXx0GHGbHptg==
-X-Google-Smtp-Source: APXvYqyrlGbmN8C47H4iFrm3hb1tSo+V6ad6lMSzqx49wvXnGtJpcxvu8AeEvgWOKwH8fQl+HYOEzA==
-X-Received: by 2002:a50:ec03:: with SMTP id g3mr4172335edr.233.1562329549795;
-        Fri, 05 Jul 2019 05:25:49 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id rv16sm1694956ejb.79.2019.07.05.05.25.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 05:25:49 -0700 (PDT)
-Date:   Fri, 5 Jul 2019 14:25:46 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "sean@poorly.run" <sean@poorly.run>, nd <nd@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ben Davis <Ben.Davis@arm.com>
-Subject: Re: [PATCH 2/2] drm/komeda: Computing layer_split and image_enhancer
- internally
-Message-ID: <20190705122546.GO15868@phenom.ffwll.local>
-Mail-Followup-To: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-        "sean@poorly.run" <sean@poorly.run>, nd <nd@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ben Davis <Ben.Davis@arm.com>
-References: <20190705114427.17456-1-james.qian.wang@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=60adLkZbywPEuKsZCLqNo80zya9muW5FO6I+W0n23fY=;
+        b=oLiCvAz9hyPFyZD7ZxSnBnd0j2t/EXgXyVPvlzwNIeNjLOKvJxn0tv3+9NpFJokLtM
+         DkFi+fL9U81bDKt5T9dPoWlAzwff9HFMQ702WF2+lmYwjJ0GpfMwB1hIHeFQ7kPXkXTM
+         4X4M0HjbI8eHiwgUQESNoUqiAOq/hc1k+gs79UGB2uRVXbPTuAwL1Ud5liDupkvOsG0d
+         fJQtDJ11Tm0KyEBQp7mq/21Mz3+KgytkZMylODU6OVmgzcputCoMsqf6vD2cn28XALbx
+         2LBUB/CsMYm4X7ADaOPeKzP60eInUNbzGFrPRpFPsuku74Qfd5G919A2c5OzwWiC8eCz
+         p2Fg==
+X-Gm-Message-State: APjAAAVEyYsSgFOs2lPbDfoyLooMtMh/PV04HUEPyDZD8CJCCuPXQT91
+        zbK94gPxKQPNaALbPDDc/AijnsPHF8kUNbqd09Q=
+X-Google-Smtp-Source: APXvYqySiSmBKjmMw33BQAZIcvRHSfEaWhuwsnn5aoM4/Gm2bIvNUsuuNGFU+OG8Pfy+n9z73RhZ+f/DsrJ8XacvS3A=
+X-Received: by 2002:aca:cf0f:: with SMTP id f15mr1784578oig.169.1562329584866;
+ Fri, 05 Jul 2019 05:26:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190705114427.17456-1-james.qian.wang@arm.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190624140731.24080-1-TheSven73@gmail.com> <20190705072847.GA2911@vkoul-mobl>
+In-Reply-To: <20190705072847.GA2911@vkoul-mobl>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Fri, 5 Jul 2019 08:26:12 -0400
+Message-ID: <CAGngYiVsUZwCUEsqRk-YtZPGYxsqzHzD7U5GeeHyAa2Yw9Z6WA@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: imx-sdma: fix use-after-free on probe error path
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Robin Gong <yibin.gong@nxp.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        dmaengine@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 11:44:45AM +0000, james qian wang (Arm Technology China) wrote:
-> For layer_split:
-> Enable it if the scaling exceed the accept range of scaler.
-> 
-> For image_enhancer:
-> Enable it if the scaling is a 2x+ scaling
+Hi Vinod,
 
-Imo should be two patches. Aside from that (and with 0 knowledge about the
-hw, just looking at this from a kms/atomic uapi pov):
+On Fri, Jul 5, 2019 at 3:32 AM Vinod Koul <vkoul@kernel.org> wrote:
+>
+> > +             if (ret)
+> > +                     dev_warn(&pdev->dev, "failed to get firmware name\n");
+>
+> if should have braces!
+> Applied after fixing braces!
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+checkpatch.pl output after adding braces:
 
-> 
-> Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@arm.com>
-> ---
->  .../gpu/drm/arm/display/komeda/komeda_pipeline.h  |  3 ++-
->  .../arm/display/komeda/komeda_pipeline_state.c    | 15 ++++++++++++++-
->  drivers/gpu/drm/arm/display/komeda/komeda_plane.c |  8 +-------
->  .../drm/arm/display/komeda/komeda_wb_connector.c  | 10 +---------
->  4 files changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> index fc1b8613385e..a90bcbb3cb23 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> @@ -537,7 +537,8 @@ void komeda_pipeline_disable(struct komeda_pipeline *pipe,
->  void komeda_pipeline_update(struct komeda_pipeline *pipe,
->  			    struct drm_atomic_state *old_state);
->  
-> -void komeda_complete_data_flow_cfg(struct komeda_data_flow_cfg *dflow,
-> +void komeda_complete_data_flow_cfg(struct komeda_layer *layer,
-> +				   struct komeda_data_flow_cfg *dflow,
->  				   struct drm_framebuffer *fb);
->  
->  #endif /* _KOMEDA_PIPELINE_H_*/
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> index 2b415ef2b7d3..709870bdaa4f 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> @@ -784,9 +784,11 @@ komeda_timing_ctrlr_validate(struct komeda_timing_ctrlr *ctrlr,
->  	return 0;
->  }
->  
-> -void komeda_complete_data_flow_cfg(struct komeda_data_flow_cfg *dflow,
-> +void komeda_complete_data_flow_cfg(struct komeda_layer *layer,
-> +				   struct komeda_data_flow_cfg *dflow,
->  				   struct drm_framebuffer *fb)
->  {
-> +	struct komeda_scaler *scaler = layer->base.pipeline->scalers[0];
->  	u32 w = dflow->in_w;
->  	u32 h = dflow->in_h;
->  
-> @@ -803,6 +805,17 @@ void komeda_complete_data_flow_cfg(struct komeda_data_flow_cfg *dflow,
->  
->  	dflow->en_scaling = (w != dflow->out_w) || (h != dflow->out_h);
->  	dflow->is_yuv = fb->format->is_yuv;
-> +
-> +	/* try to enable image enhancer if it is a 2x+ upscaling */
-> +	dflow->en_img_enhancement = dflow->out_w >= 2 * w ||
-> +				    dflow->out_h >= 2 * h;
-> +
-> +	/* try to enable split if scaling exceed the scaler's acceptable
-> +	 * input/output range.
-> +	 */
-> +	if (dflow->en_scaling && scaler)
-> +		dflow->en_split = !in_range(&scaler->hsize, dflow->in_w) ||
-> +				  !in_range(&scaler->hsize, dflow->out_w);
->  }
->  
->  static bool merger_is_available(struct komeda_pipeline *pipe,
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> index 5bb8553cc117..c095af154216 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> @@ -18,7 +18,6 @@ komeda_plane_init_data_flow(struct drm_plane_state *st,
->  			    struct komeda_data_flow_cfg *dflow)
->  {
->  	struct komeda_plane *kplane = to_kplane(st->plane);
-> -	struct komeda_plane_state *kplane_st = to_kplane_st(st);
->  	struct drm_framebuffer *fb = st->fb;
->  	const struct komeda_format_caps *caps = to_kfb(fb)->format_caps;
->  	struct komeda_pipeline *pipe = kplane->layer->base.pipeline;
-> @@ -57,10 +56,7 @@ komeda_plane_init_data_flow(struct drm_plane_state *st,
->  		return -EINVAL;
->  	}
->  
-> -	dflow->en_img_enhancement = !!kplane_st->img_enhancement;
-> -	dflow->en_split = !!kplane_st->layer_split;
-> -
-> -	komeda_complete_data_flow_cfg(dflow, fb);
-> +	komeda_complete_data_flow_cfg(kplane->layer, dflow, fb);
->  
->  	return 0;
->  }
-> @@ -175,8 +171,6 @@ komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
->  
->  	old = to_kplane_st(plane->state);
->  
-> -	new->img_enhancement = old->img_enhancement;
-> -
->  	return &new->base;
->  }
->  
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> index bb8a61f6e9a4..617e1f7b8472 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> @@ -13,7 +13,6 @@ komeda_wb_init_data_flow(struct komeda_layer *wb_layer,
->  			 struct komeda_crtc_state *kcrtc_st,
->  			 struct komeda_data_flow_cfg *dflow)
->  {
-> -	struct komeda_scaler *scaler = wb_layer->base.pipeline->scalers[0];
->  	struct drm_framebuffer *fb = conn_st->writeback_job->fb;
->  
->  	memset(dflow, 0, sizeof(*dflow));
-> @@ -28,14 +27,7 @@ komeda_wb_init_data_flow(struct komeda_layer *wb_layer,
->  	dflow->pixel_blend_mode = DRM_MODE_BLEND_PIXEL_NONE;
->  	dflow->rot = DRM_MODE_ROTATE_0;
->  
-> -	komeda_complete_data_flow_cfg(dflow, fb);
-> -
-> -	/* if scaling exceed the acceptable scaler input/output range, try to
-> -	 * enable split.
-> -	 */
-> -	if (dflow->en_scaling && scaler)
-> -		dflow->en_split = !in_range(&scaler->hsize, dflow->in_w) ||
-> -				  !in_range(&scaler->hsize, dflow->out_w);
-> +	komeda_complete_data_flow_cfg(wb_layer, dflow, fb);
->  
->  	return 0;
->  }
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+WARNING: braces {} are not necessary for single statement blocks
+#102: FILE: drivers/dma/imx-sdma.c:2165:
++ if (ret) {
++ dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
++ }
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+total: 0 errors, 1 warnings, 61 lines checked
