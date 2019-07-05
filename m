@@ -2,112 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F03D60A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2BF260A6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfGEQk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 12:40:29 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36444 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfGEQk3 (ORCPT
+        id S1728599AbfGEQmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 12:42:25 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37169 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfGEQmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 12:40:29 -0400
-Received: by mail-qk1-f195.google.com with SMTP id g18so8319715qkl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 09:40:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t/6ftpa8KEJE9o6IFoYpCHZyzY+Y35BOpCfDAYSShIo=;
-        b=QrlGXo+n9D7RfqENzPoBWhYPPJo4DOGzNfXDJ6gek3sJJ2nxqhKaIOYO3QcD00I6iW
-         AcbDZR3FiGlgKdKa1Ilj3Rwz7SWTdeopaYRNAia4DCf+BlX/KTkKjUnaJj8I66UScgRJ
-         +/ulSBJrmCi3DYYoWFjrmPPrKe+wPX9PTI24cS3yrYpbbF4Fyqm6CD2FH06nRJczSz04
-         gi31/VBd0Kfg0r3RRFpNAaGIRu251/LtkLga/NkTnT3/fhf2hFDiQ0YmfmXp14Pr40wj
-         cTzB9FPH362gM4F7YqAU4BFjh95pp6b2wuV7iyOy/AcPql7m2NxcBfqbsM7mjk5o/zDn
-         loNA==
+        Fri, 5 Jul 2019 12:42:24 -0400
+Received: by mail-io1-f68.google.com with SMTP id e5so15978220iok.4;
+        Fri, 05 Jul 2019 09:42:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t/6ftpa8KEJE9o6IFoYpCHZyzY+Y35BOpCfDAYSShIo=;
-        b=lRZ2dSFCHFNG7K176CUhMgTp5iIJIGkDR8OCyImg+usngIkQAX4aEEPvYeLkbgUj4/
-         d6OAag8hNbj7gGm1qxpg0OOJdjJROhRbD2fUeY0q3FOjiaYuxJsDCEP512uNyl6GfjbY
-         zpyjdhhYGmcIDt85qgwLWV+1hE4f//dwd0oblmMUMRAyNoQhavaMJ6t0G3e9Zb2APt9Y
-         YEEiFc81Adue8RHVXN4e0287v5PQOq+qHpdrYpeu4FzQNeK3uqRtqDWpsUM/0HLI6/zv
-         SRxvqcAiRmeS5Wj0q6szNBzoL399pyEnWj5mFLHMc5eOK8Lj4JBwAZuoGjeb+2QoRfds
-         GJQg==
-X-Gm-Message-State: APjAAAUjmdedPgOl6lLEAL7QZ4auXtj8U6qUm/jdvpNDFOZAhzx4wWtu
-        xwgpx4F+I/UwiwilcxxBZvw=
-X-Google-Smtp-Source: APXvYqwvMysi2jFsaYfZhHAVRTT5IFmPQJA3YpSu2oYgAes+UNdrnvAxUAEVk+7N6i0rwop/DBdHEw==
-X-Received: by 2002:a37:4bc5:: with SMTP id y188mr3548298qka.13.1562344827870;
-        Fri, 05 Jul 2019 09:40:27 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id r26sm3950383qkm.57.2019.07.05.09.40.26
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8nlXZ7u0rxXu0XMq6FG+OHVHwTKfcbW3lBZ9QzezvgQ=;
+        b=sFNqqqzRlAA4SMpiDaVvec20s8KX0ZfFYVnx5NXskiA/YXfMOjI3abxFu7pZ2i3XlW
+         vwdL6MzchTzI7wMlQVpMvo65193c2Mif93/n97yhJvK4lr4nmhtdhg5LmC5RAjUDK8pp
+         mZbCbA+js9weh7ozapfV5tTUWfPSVkhSMoJbtccW58bxWG3GWW2mIzMNRY6XmDk9wTG9
+         XppY9JKwKO3aSmNbm5wX8HsBXrGx1XTLtEcEZVeJTe4QG1GEsPqz9ddCyQwc48avY+Jk
+         f+vcx6YmXYiRaT3xEWbf1SyqgSLFOeBR9v4RHn48+LuOWMWqTfF8af4GbXojefaUA7pI
+         vbnA==
+X-Gm-Message-State: APjAAAU4mMtenbse/ulg9Xa4d2odgScA6xLMNu3H1+noY+ppD66Sxr+k
+        /Fi78a7mWOokagwZ34oJfxwqoyg=
+X-Google-Smtp-Source: APXvYqzM3MTheDkYKqJsDxrjwbKNkXHZsWgJIUt0bbxTWr9csYiLC5zscIL04ZJlvsbcj4gbapjptw==
+X-Received: by 2002:a5d:9f4a:: with SMTP id u10mr4983031iot.243.1562344943338;
+        Fri, 05 Jul 2019 09:42:23 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.252])
+        by smtp.googlemail.com with ESMTPSA id b8sm6878104ioj.16.2019.07.05.09.42.22
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 09:40:27 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 675D740495; Fri,  5 Jul 2019 13:40:25 -0300 (-03)
-Date:   Fri, 5 Jul 2019 13:40:25 -0300
-To:     Numfor Mbiziwo-Tiapo <nums@google.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, songliubraving@fb.com, mbd@fb.com,
-        linux-kernel@vger.kernel.org, irogers@google.com,
-        eranian@google.com
-Subject: Re: [PATCH 2/2] Fix perf-hooks test
-Message-ID: <20190705164025.GB8600@kernel.org>
-References: <20190702173716.181223-1-nums@google.com>
- <20190702173716.181223-2-nums@google.com>
+        Fri, 05 Jul 2019 09:42:22 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v3 00/13] Conversion of panel bindings to DT schema
+Date:   Fri,  5 Jul 2019 10:42:08 -0600
+Message-Id: <20190705164221.4462-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702173716.181223-2-nums@google.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jul 02, 2019 at 10:37:16AM -0700, Numfor Mbiziwo-Tiapo escreveu:
-> The perf-hooks test fails with Address Sanitizer and Memory
-> Sanitizer builds because it purposefully generates a segfault.
-> Checking if these sanitizers are active when running this test
-> will allow the perf-hooks test to pass.
+This series converts the common panel bindings to DT schema format. 
+Besides the conversion of common panel properties, a few panel bindings 
+are converted here as well. These are all the ones with references to 
+panel-common.txt or panel-lvds.txt.
 
-Can you please add to the commit log message, here, the sequence of
-steps needed to build with these sanitizers, so that one can replicate
-the steps and reproduce the results?
+I'll apply the series to drm-misc. One patch from v2 already got applied 
+without its dependency.
 
-- Arnaldo
- 
-> Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
-> ---
->  tools/perf/tests/perf-hooks.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/tools/perf/tests/perf-hooks.c b/tools/perf/tests/perf-hooks.c
-> index a693bcf017ea..524ecba63615 100644
-> --- a/tools/perf/tests/perf-hooks.c
-> +++ b/tools/perf/tests/perf-hooks.c
-> @@ -25,7 +25,12 @@ static void the_hook(void *_hook_flags)
->  	*hook_flags = 1234;
->  
->  	/* Generate a segfault, test perf_hooks__recover */
-> +#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER) || \
-> +defined(THREAD_SANITIZER) || defined(SAFESTACK_SANITIZER)
-> +	raise(SIGSEGV);
-> +#else
->  	*p = 0;
-> +#endif
->  }
->  
->  int test__perf_hooks(struct test *test __maybe_unused, int subtest __maybe_unused)
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
+v3:
+- Consistently list all used properties and add 'additionalProperties: 
+  false'
+
+Rob
+
+Rob Herring (13):
+  dt-bindings: display: Convert common panel bindings to DT schema
+  dt-bindings: display: Convert ampire,am-480272h3tmqw-t01h panel to DT
+    schema
+  dt-bindings: display: Convert armadeus,st0700-adapt panel to DT schema
+  dt-bindings: display: Convert bananapi,s070wv20-ct16 panel to DT
+    schema
+  dt-bindings: display: Convert dlc,dlc0700yzg-1 panel to DT schema
+  dt-bindings: display: Convert pda,91-00156-a0 panel to DT schema
+  dt-bindings: display: Convert raspberrypi,7inch-touchscreen panel to
+    DT schema
+  dt-bindings: display: Convert tfc,s9700rtwv43tr-01b panel to DT schema
+  dt-bindings: display: Convert panel-lvds to DT schema
+  dt-bindings: display: Convert innolux,ee101ia-01 panel to DT schema
+  dt-bindings: display: Convert mitsubishi,aa104xd12 panel to DT schema
+  dt-bindings: display: Convert mitsubishi,aa121td01 panel to DT schema
+  dt-bindings: display: Convert sgd,gktw70sdae4se panel to DT schema
+
+ .../panel/ampire,am-480272h3tmqw-t01h.txt     |  26 ---
+ .../panel/ampire,am-480272h3tmqw-t01h.yaml    |  42 +++++
+ .../display/panel/arm,versatile-tft-panel.txt |   2 +-
+ .../display/panel/armadeus,st0700-adapt.txt   |   9 --
+ .../display/panel/armadeus,st0700-adapt.yaml  |  33 ++++
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  12 --
+ .../display/panel/bananapi,s070wv20-ct16.yaml |  31 ++++
+ .../display/panel/dlc,dlc0700yzg-1.txt        |  13 --
+ .../display/panel/dlc,dlc0700yzg-1.yaml       |  31 ++++
+ .../display/panel/innolux,ee101ia-01d.txt     |   7 -
+ .../display/panel/innolux,ee101ia-01d.yaml    |  31 ++++
+ .../bindings/display/panel/lvds.yaml          | 107 +++++++++++++
+ .../display/panel/mitsubishi,aa104xd12.txt    |  47 ------
+ .../display/panel/mitsubishi,aa104xd12.yaml   |  75 +++++++++
+ .../display/panel/mitsubishi,aa121td01.txt    |  47 ------
+ .../display/panel/mitsubishi,aa121td01.yaml   |  74 +++++++++
+ .../bindings/display/panel/panel-common.txt   | 101 ------------
+ .../bindings/display/panel/panel-common.yaml  | 149 ++++++++++++++++++
+ .../bindings/display/panel/panel-lvds.txt     | 121 --------------
+ .../bindings/display/panel/panel.txt          |   4 -
+ .../display/panel/pda,91-00156-a0.txt         |  14 --
+ .../display/panel/pda,91-00156-a0.yaml        |  31 ++++
+ .../panel/raspberrypi,7inch-touchscreen.txt   |  49 ------
+ .../panel/raspberrypi,7inch-touchscreen.yaml  |  71 +++++++++
+ .../display/panel/sgd,gktw70sdae4se.txt       |  41 -----
+ .../display/panel/sgd,gktw70sdae4se.yaml      |  68 ++++++++
+ .../bindings/display/panel/simple-panel.txt   |  29 +---
+ .../display/panel/tfc,s9700rtwv43tr-01b.txt   |  15 --
+ .../display/panel/tfc,s9700rtwv43tr-01b.yaml  |  33 ++++
+ 29 files changed, 778 insertions(+), 535 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/ampire,am-480272h3tmqw-t01h.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ampire,am-480272h3tmqw-t01h.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lvds.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/pda,91-00156-a0.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/pda,91-00156-a0.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml
 
 -- 
+2.20.1
 
-- Arnaldo
