@@ -2,161 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D47C60037
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E67686003B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 06:40:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbfGEEht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 00:37:49 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36444 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfGEEhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 00:37:48 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z4so6502137qtc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2019 21:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E4tQKZ7fykfnk1s1sWexseP5zItY8m/Ql+ltT8MN+jU=;
-        b=Xl/ZiR/Mp0004403KKrucoOknyIq+kZO0YDx1/1QqKpPxzJ8bpDgbLOGxx0cN8uTgd
-         1RJaxqCE6MylJZh/aTj6LPKB4Rs3veAbHfpLyprVgWAzTRRT6lwZspe1f5hdtp+DYK4z
-         GjH4XKyXEGxm1SF/P/aHRGqNOXrtRrOGZQBulAoAeCiYN6Cr9pf8zV2rQRiFurLn9mA8
-         Nzh484YnMLerf7ORWMlhdJizA31Be4fy6NdYsokCTaIgMjsn1uZlk/4y1FtsBLcyxtB0
-         gqP6gnDfEz9Yu1E+xN4JqdyQyIMa/13kLt0tlWmEufEyrW/fY3AdiyG7ihVwTG5plaEl
-         UC7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E4tQKZ7fykfnk1s1sWexseP5zItY8m/Ql+ltT8MN+jU=;
-        b=ibRfVzIqgIoyiYTXWw0D3dwqQtFXWa2WQC9gtSUN8aTBLhgOi+WVJnuMBFxSmq9xhS
-         OBToDXpqE/aSNiCYme61ry7G2Oledizymrb846brgs3jkAjreVgwFDxw5txlISk8kNhw
-         G+4yU6hAtJ/mmDEj/MyS5PLXYQlm0SmTVVvR1I2yQLylh76i80AWxCmWkJNzIZjridr/
-         DyNkAd9ECstHgzli0ObitwBnD0DFZiF7ffrjDJBG5wXW8BqFASUZSdGNkauCqrK5pz5f
-         w7Wb6sNHOygtXg/ckmGKgBmnjM6Hth/07lit/Am7hy4fQCwHUrkhsX8LLnXc8PmfJv4C
-         R6cw==
-X-Gm-Message-State: APjAAAWVN2bbcsJc0p6Rf0otRNTb9Odz3pzk/pcOObxug2DSTGnf7Q/u
-        QlRMSC7iu5GYz278Cpt/7m/BQACNL1oVbdbSyoworUtO5oI=
-X-Google-Smtp-Source: APXvYqz3TKMBMrMdGFslZiseysb5WUOqwB2TRyRUBYzEK5BDFN/m7nW9LC+nIyAZ5zFnmJJ8bMVSGpr7cgak70nnEYk=
-X-Received: by 2002:a0c:ae5a:: with SMTP id z26mr1466461qvc.65.1562301466888;
- Thu, 04 Jul 2019 21:37:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190704105528.74028-1-chiu@endlessm.com> <CAD8Lp45rYuE5WHx4vSbUhF10hOHam1aBLd52_aDKP8z2eeL4vA@mail.gmail.com>
-In-Reply-To: <CAD8Lp45rYuE5WHx4vSbUhF10hOHam1aBLd52_aDKP8z2eeL4vA@mail.gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Fri, 5 Jul 2019 12:37:34 +0800
-Message-ID: <CAB4CAwd1N=eZaVTSu8CdDTSyw7+gwriJ866t9AoP5YEoHbjEvw@mail.gmail.com>
-Subject: Re: [PATCH v2] rtl8xxxu: Fix wifi low signal strength issue of RTL8723BU
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726555AbfGEEkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 00:40:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbfGEEkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 00:40:06 -0400
+Subject: Re: [GIT] Crypto Fixes for 5.2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562301605;
+        bh=anXgiQzlwWAoucjffgnQSite8ZEZr2YplIVIl/UKK8E=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=zNoj/DpE4fpJ9RnSQaxyeU5kMN4ozxWxZ/KqvTzFBpllfKiFd6D9SywEt986PDOyv
+         aDuFgPWjeu/zp5h6X0CrCqgNMiP/BK9l0jxNFB3g3xWKyqlZSjIvVzGyMPRNZBIAqA
+         LRSMbhCMxnRFXARBpyxatXKEtAL0uK8HIS2nFORA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190705042449.rmzg2rk4janrgeoe@gondor.apana.org.au>
+References: <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+ <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
+ <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
+ <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
+ <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
+ <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
+ <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
+ <20190312045818.bgpiuxogmaxyscdv@gondor.apana.org.au>
+ <20190515060552.ecfwhazt2fnthepg@gondor.apana.org.au>
+ <20190606060324.du5zbk3ju5djkhfe@gondor.apana.org.au>
+ <20190705042449.rmzg2rk4janrgeoe@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190705042449.rmzg2rk4janrgeoe@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+X-PR-Tracked-Commit-Id: 21d4120ec6f5b5992b01b96ac484701163917b63
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ee39d46dcaf8f25894f13236d3d984d9a4d2fd3e
+Message-Id: <156230160517.9557.7664525002945873265.pr-tracker-bot@kernel.org>
+Date:   Fri, 05 Jul 2019 04:40:05 +0000
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 5, 2019 at 11:41 AM Daniel Drake <drake@endlessm.com> wrote:
->
-> On Thu, Jul 4, 2019 at 6:55 PM Chris Chiu <chiu@endlessm.com> wrote:
-> > The WiFi tx power of RTL8723BU is extremely low after booting. So
-> > the WiFi scan gives very limited AP list and it always fails to
-> > connect to the selected AP. This module only supports 1x1 antenna
-> > and the antenna is switched to bluetooth due to some incorrect
-> > register settings.
-> >
-> > Compare with the vendor driver https://github.com/lwfinger/rtl8723bu,
-> > we realized that the 8723bu's enable_rf() does the same thing as
-> > rtw_btcoex_HAL_Initialize() in vendor driver. And it by default
-> > sets the antenna path to BTC_ANT_PATH_BT which we verified it's
-> > the cause of the wifi weak tx power. The vendor driver will set
-> > the antenna path to BTC_ANT_PATH_PTA in the consequent btcoexist
-> > mechanism, by the function halbtc8723b1ant_PsTdma.
->
-> Checking these details in the vendor driver:
-> EXhalbtc8723b1ant_PowerOnSetting sets:
->         pBoardInfo->btdmAntPos = BTC_ANTENNA_AT_AUX_PORT;
->
-> Following the code flow from rtw_btcoex_HAL_Initialize(), this has a
-> bWifiOnly parameter which will ultimately influence the final register
-> value.
-> Continuing the flow, we reach halbtc8723b1ant_SetAntPath() with
-> bInitHwCfg=TRUE, bWifiOff=FALSE. antPosType is set to WIFI in the
-> bWifiOnly case, and BT otherwise.
->
-> I'm assuming that bUseExtSwitch = FALSE (existing rtl8xxxu code also
-> seems to make the same assumption).
-> For the bWifiOnly=FALSE case, it uses BT,
->                     pBtCoexist->fBtcWrite4Byte(pBtCoexist, 0x948, 0x0);
-> and rtl8xxxu seems to do the same - seemingly routing the antenna path
-> for BT only.
->
-> As for halbtc8723b1ant_PsTdma() then being called in a way that causes
-> it to switch to the PTA path a little later, it's more difficult to
-> point out how that happens in an email, but I thin kwe can trust you
-> on that :) There are certainly many callsites that would pass those
-> parameters.
->
-> > +        * Different settings per different antenna position.
-> > +        *      Antenna Position:   | Normal   Inverse
-> > +        * --------------------------------------------------
-> > +        * Antenna switch to BT:    |  0x280,   0x00
-> > +        * Antenna switch to WiFi:  |  0x0,     0x280
-> > +        * Antenna switch to PTA:   |  0x200,   0x80
-> >          */
-> > -       rtl8xxxu_write32(priv, REG_S0S1_PATH_SWITCH, 0x00);
-> > +       rtl8xxxu_write32(priv, REG_S0S1_PATH_SWITCH, 0x80);
->
-> I don't really understand what we mean by an "inverse" antenna and my
-> reading of the vendor driver leads me to another interpretation.
->
-> The logic is based around an antenna position - btdmAntPos. It takes
-> one of two values:
->     BTC_ANTENNA_AT_MAIN_PORT                = 0x1,
->     BTC_ANTENNA_AT_AUX_PORT                = 0x2,
->
-> So the chip has pins to support two antennas - a "main" antenna and an
-> "aux" one.
->
-> We know we're dealing with a single antenna, so the actual module is
-> going to only be using one of those antenna interfaces. If the chip
-> tries to use the other antenna interface, it's effectively not using
-> the antenna. So it's rather important to tell the chip to use the
-> right interface.
->
-> And that's exactly what happens here. btdmAntPos is hardcoded that the
-> antenna is on the aux port for these devices, and this code is telling
-> the chip that this is how things are wired up.
->
-> The alternative way of calling this an antenna inverse (which the
-> vendor driver also does in another section), i.e. "antenna is not
-> connected to the main port but instead it's connected to the other
-> one", seems less clear to me.
->
-I agree with this part. From my past experience working on drivers for
-WiFi access point, there's always a board config to describe how the
-antenna wired up. The driver or firmware will select antennas from
-something like txchainmask/rxchainmask to perform some smart
-antenna and MIMO features. So The antenna position setting is quite
-important for each wifi(MIMO) product because it could have impact on
-the coverage and throughput. Back to the 1x1 rtl8723bu here, I think
-it's the same thing. The antenna position is fixed in the factory and wired
-to the AUX port. Maybe we can just take this antenna settings as the
-default for 8723bu based on the assumption that there will be no other
-antenna configuration.
+The pull request you sent on Fri, 5 Jul 2019 12:24:49 +0800:
 
-Chris
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
 
-> Even if we don't fully understand what's going on here, I'm convinced
-> that your code change is fixing an inconsistency with the vendor
-> driver, and most significantly, making the signal level actually
-> usable on our devices. But if you agree with my interpretation of
-> these values then maybe you could update the comment here!
->
-> Daniel
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ee39d46dcaf8f25894f13236d3d984d9a4d2fd3e
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
