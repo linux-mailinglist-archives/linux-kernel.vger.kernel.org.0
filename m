@@ -2,115 +2,385 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BA160479
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 849D06047E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfGEKaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:30:10 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37529 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfGEKaK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:30:10 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f17so8822303wme.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 03:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MR8qrrLzz1ee0JQetWcmCrqB1Zhi9MpQBveeGBxIzn8=;
-        b=OZa6F+Ua55bJVrO2vEtkAOaJIkayk3hKsgKXfjMjIEqrl21aUvdj0yr81GuNGWuUn+
-         X6okF+VgbwxcQjKD44wbj7XJO1UGOzBsE7A9xQ4xJNVV1KZrBSi7tPSWgxDxC85AI11W
-         qQE9PlaSMJz8oQiQv6nL+hdwDqyWPV9c89RTpvKcvDQCGO2PmOmusRVZ0HowA2bJ9XM9
-         RLR8t3DTMADduoe+uYn4EXsRdQPP08xx6yFfoVE5jXIDpwW4H2M3YwawkXB6c9ZfyJfs
-         rTrXzsguklz4vk8ZCE0AdWTXLGS1JyUpD0U01f4QA9RkiYYPNtr3BeKQitVC+gKSuiyH
-         uVrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MR8qrrLzz1ee0JQetWcmCrqB1Zhi9MpQBveeGBxIzn8=;
-        b=tH+A05cBN+D5nKSy6XHr8ciKNPHX+ygijOEqjqfAJrSNvc7a4Q+AJipmCcMPEzxmGg
-         SlSzj1FJ0uEmLuTHTzV7Gl6AjlUGYs/RdjqGks9k4BtoVfr6B8VwfaVP82Nm0sDMWpUM
-         pqmqFJWYNlhMyu6BVWvi6SRZL5IEOPpApr1ChKL5huNv0ek5nlL05nFQXPtTpmqWwna3
-         Hb+BH3E4RBZcu9D6VsiA3DFB94FB5zUdXdGPIEA1uxMofNxLPSW0OBpVOZTRKxcEoiaL
-         9E/2UHZoOfmaEtdVT4P4L2gIRAN8XK+K013oPfwnlDyLSRCZzqavIt2fgEelmd6KVvGG
-         0R1w==
-X-Gm-Message-State: APjAAAVLYl0+f87zn9PdW7Dv7iQb1cSdo+/g8H8WVm5hwZS3oJatj+e5
-        QJCs5YboKWbRC5/qMcT9hZzJ5g==
-X-Google-Smtp-Source: APXvYqxY2gEpA+xkxp2cQs9p2kb6x6zZLLaKq7ZvIatk9EblUmS/qLnLyEGcoK/mMsScXPadH1rv9w==
-X-Received: by 2002:a1c:acc8:: with SMTP id v191mr2991912wme.177.1562322607796;
-        Fri, 05 Jul 2019 03:30:07 -0700 (PDT)
-Received: from holly.lan (82-132-213-94.dab.02.net. [82.132.213.94])
-        by smtp.gmail.com with ESMTPSA id y10sm5524508wmj.2.2019.07.05.03.30.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 03:30:07 -0700 (PDT)
-Date:   Fri, 5 Jul 2019 11:29:59 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jean-Jacques Hiblot <jjhiblot@ti.com>, jacek.anaszewski@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-        jingoohan1@gmail.com, dmurphy@ti.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        tomi.valkeinen@ti.com
-Subject: Re: [PATCH 0/4] Add a generic driver for LED-based backlight
-Message-ID: <20190705102959.cmqhzpzikqjsydlx@holly.lan>
-References: <20190701151423.30768-1-jjhiblot@ti.com>
- <20190705101434.fw5rpctnqt6dwg6e@devuan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190705101434.fw5rpctnqt6dwg6e@devuan>
-User-Agent: NeoMutt/20180716
+        id S1728380AbfGEKao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728335AbfGEKan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 06:30:43 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A56D620989;
+        Fri,  5 Jul 2019 10:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562322641;
+        bh=vdie7+J+Qf4GNlmeSDn4F1crcE1sfbOq0CuCbskf0vU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Kq4ViJhUXTwy17K6QtkI7Vgvv3oSdL+I0TLtGx+v8EUfeovLTzNfzVXLQgNLninxb
+         qLlMDKh4k7qQItlyyCTgMVv4xap+V6ywI1evbHEnkc1K9O5rl74j9XCgX8/BPQ/gN3
+         o754U8Rqt58OFPXq3KHQSJj8NWK6R4Yt4ZpRe8AE=
+Date:   Fri, 5 Jul 2019 19:30:28 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH] mm/kprobes: Add generic kprobe_fault_handler() fallback
+ definition
+Message-Id: <20190705193028.f9e08fe9cf1ee86bc5c0bb82@kernel.org>
+In-Reply-To: <1562304629-29376-1-git-send-email-anshuman.khandual@arm.com>
+References: <1562304629-29376-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 12:14:34PM +0200, Pavel Machek wrote:
-> On Mon 2019-07-01 17:14:19, Jean-Jacques Hiblot wrote:
-> > This series aims to add a led-backlight driver, similar to pwm-backlight,
-> > but using a LED class device underneath.
-> > 
-> > A few years ago (2015), Tomi Valkeinen posted a series implementing a
-> > backlight driver on top of a LED device:
-> > https://patchwork.kernel.org/patch/7293991/
-> > https://patchwork.kernel.org/patch/7294001/
-> > https://patchwork.kernel.org/patch/7293981/
-> > 
-> > The discussion stopped because Tomi lacked the time to work on it.
-> > 
-> > This series takes it from there and implements the binding that was
-> > discussed in https://patchwork.kernel.org/patch/7293991/. In this new
-> > binding the backlight device is a child of the LED controller instead of
-> > being another platform device that uses a phandle to reference a LED.
+Hi Anshuman,
+
+On Fri,  5 Jul 2019 11:00:29 +0530
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+
+> Architectures like parisc enable CONFIG_KROBES without having a definition
+> for kprobe_fault_handler() which results in a build failure.
+
+Hmm, as far as I can see, kprobe_fault_handler() is closed inside each arch
+specific code. The reason why include/linux/kprobes.h defines
+dummy inline function is only for !CONFIG_KPROBES case.
+
+> Arch needs to
+> provide kprobe_fault_handler() as it is platform specific and cannot have
+> a generic working alternative. But in the event when platform lacks such a
+> definition there needs to be a fallback.
+
+Wait, indeed that each arch need to implement it, but that is for calling
+kprobe->fault_handler() as user expected.
+Hmm, why not fixing those architecture implementations?
+
+> This adds a stub kprobe_fault_handler() definition which not only prevents
+> a build failure but also makes sure that kprobe_page_fault() if called will
+> always return negative in absence of a sane platform specific alternative.
+
+I don't like introducing this complicated macro only for avoiding (not fixing)
+build error. To fix that, kprobes on parisc should implement kprobe_fault_handler
+correctly (and call kprobe->fault_handler).
+
+BTW, even if you need such generic stub, please use a weak function instead
+of macros for every arch headers.
+
+> While here wrap kprobe_page_fault() in CONFIG_KPROBES. This enables stud
+> definitions for generic kporbe_fault_handler() and kprobes_built_in() can
+> just be dropped. Only on x86 it needs to be added back locally as it gets
+> used in a !CONFIG_KPROBES function do_general_protection().
+
+If you want to remove kprobes_built_in(), you should replace it with
+IS_ENABLED(CONFIG_KPROBES), instead of this...
+
+Thank you,
+
 > 
-> Other option would be to have backlight trigger. What are
-> advantages/disadvantages relative to that?
+> Cc: Vineet Gupta <vgupta@synopsys.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Paul Burton <paul.burton@mips.com>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Allison Randal <allison@lohutok.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Enrico Weigelt <info@metux.net>
+> Cc: Richard Fontana <rfontana@redhat.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: x86@kernel.org
+> Cc: linux-snps-arc@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-ia64@vger.kernel.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> 
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arc/include/asm/kprobes.h     |  1 +
+>  arch/arm/include/asm/kprobes.h     |  1 +
+>  arch/arm64/include/asm/kprobes.h   |  1 +
+>  arch/ia64/include/asm/kprobes.h    |  1 +
+>  arch/mips/include/asm/kprobes.h    |  1 +
+>  arch/powerpc/include/asm/kprobes.h |  1 +
+>  arch/s390/include/asm/kprobes.h    |  1 +
+>  arch/sh/include/asm/kprobes.h      |  1 +
+>  arch/sparc/include/asm/kprobes.h   |  1 +
+>  arch/x86/include/asm/kprobes.h     |  6 ++++++
+>  include/linux/kprobes.h            | 32 ++++++++++++++++++------------
+>  11 files changed, 34 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arc/include/asm/kprobes.h b/arch/arc/include/asm/kprobes.h
+> index 2134721dce44..ee8efe256675 100644
+> --- a/arch/arc/include/asm/kprobes.h
+> +++ b/arch/arc/include/asm/kprobes.h
+> @@ -45,6 +45,7 @@ struct kprobe_ctlblk {
+>  	struct prev_kprobe prev_kprobe;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  int kprobe_fault_handler(struct pt_regs *regs, unsigned long cause);
+>  void kretprobe_trampoline(void);
+>  void trap_is_kprobe(unsigned long address, struct pt_regs *regs);
+> diff --git a/arch/arm/include/asm/kprobes.h b/arch/arm/include/asm/kprobes.h
+> index 213607a1f45c..660f877b989f 100644
+> --- a/arch/arm/include/asm/kprobes.h
+> +++ b/arch/arm/include/asm/kprobes.h
+> @@ -38,6 +38,7 @@ struct kprobe_ctlblk {
+>  	struct prev_kprobe prev_kprobe;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  void arch_remove_kprobe(struct kprobe *);
+>  int kprobe_fault_handler(struct pt_regs *regs, unsigned int fsr);
+>  int kprobe_exceptions_notify(struct notifier_block *self,
+> diff --git a/arch/arm64/include/asm/kprobes.h b/arch/arm64/include/asm/kprobes.h
+> index 97e511d645a2..667773f75616 100644
+> --- a/arch/arm64/include/asm/kprobes.h
+> +++ b/arch/arm64/include/asm/kprobes.h
+> @@ -42,6 +42,7 @@ struct kprobe_ctlblk {
+>  	struct kprobe_step_ctx ss_ctx;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  void arch_remove_kprobe(struct kprobe *);
+>  int kprobe_fault_handler(struct pt_regs *regs, unsigned int fsr);
+>  int kprobe_exceptions_notify(struct notifier_block *self,
+> diff --git a/arch/ia64/include/asm/kprobes.h b/arch/ia64/include/asm/kprobes.h
+> index c5cf5e4fb338..c321e8585089 100644
+> --- a/arch/ia64/include/asm/kprobes.h
+> +++ b/arch/ia64/include/asm/kprobes.h
+> @@ -106,6 +106,7 @@ struct arch_specific_insn {
+>  	unsigned short slot;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+>  extern int kprobe_exceptions_notify(struct notifier_block *self,
+>  				    unsigned long val, void *data);
+> diff --git a/arch/mips/include/asm/kprobes.h b/arch/mips/include/asm/kprobes.h
+> index 68b1e5d458cf..d1efe991ea22 100644
+> --- a/arch/mips/include/asm/kprobes.h
+> +++ b/arch/mips/include/asm/kprobes.h
+> @@ -40,6 +40,7 @@ do {									\
+>  
+>  #define kretprobe_blacklist_size 0
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  void arch_remove_kprobe(struct kprobe *p);
+>  int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+>  
+> diff --git a/arch/powerpc/include/asm/kprobes.h b/arch/powerpc/include/asm/kprobes.h
+> index 66b3f2983b22..c94f375ec957 100644
+> --- a/arch/powerpc/include/asm/kprobes.h
+> +++ b/arch/powerpc/include/asm/kprobes.h
+> @@ -84,6 +84,7 @@ struct arch_optimized_insn {
+>  	kprobe_opcode_t *insn;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  extern int kprobe_exceptions_notify(struct notifier_block *self,
+>  					unsigned long val, void *data);
+>  extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+> diff --git a/arch/s390/include/asm/kprobes.h b/arch/s390/include/asm/kprobes.h
+> index b106aa29bf55..0ecaebb78092 100644
+> --- a/arch/s390/include/asm/kprobes.h
+> +++ b/arch/s390/include/asm/kprobes.h
+> @@ -73,6 +73,7 @@ struct kprobe_ctlblk {
+>  void arch_remove_kprobe(struct kprobe *p);
+>  void kretprobe_trampoline(void);
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+>  int kprobe_exceptions_notify(struct notifier_block *self,
+>  	unsigned long val, void *data);
+> diff --git a/arch/sh/include/asm/kprobes.h b/arch/sh/include/asm/kprobes.h
+> index 6171682f7798..637a698393c0 100644
+> --- a/arch/sh/include/asm/kprobes.h
+> +++ b/arch/sh/include/asm/kprobes.h
+> @@ -45,6 +45,7 @@ struct kprobe_ctlblk {
+>  	struct prev_kprobe prev_kprobe;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+>  extern int kprobe_exceptions_notify(struct notifier_block *self,
+>  				    unsigned long val, void *data);
+> diff --git a/arch/sparc/include/asm/kprobes.h b/arch/sparc/include/asm/kprobes.h
+> index bfcaa6326c20..9aa4d25a45a8 100644
+> --- a/arch/sparc/include/asm/kprobes.h
+> +++ b/arch/sparc/include/asm/kprobes.h
+> @@ -47,6 +47,7 @@ struct kprobe_ctlblk {
+>  	struct prev_kprobe prev_kprobe;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  int kprobe_exceptions_notify(struct notifier_block *self,
+>  			     unsigned long val, void *data);
+>  int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+> diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
+> index 5dc909d9ad81..1af2b6db13bd 100644
+> --- a/arch/x86/include/asm/kprobes.h
+> +++ b/arch/x86/include/asm/kprobes.h
+> @@ -101,11 +101,17 @@ struct kprobe_ctlblk {
+>  	struct prev_kprobe prev_kprobe;
+>  };
+>  
+> +#define kprobe_fault_handler kprobe_fault_handler
+>  extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+>  extern int kprobe_exceptions_notify(struct notifier_block *self,
+>  				    unsigned long val, void *data);
+>  extern int kprobe_int3_handler(struct pt_regs *regs);
+>  extern int kprobe_debug_handler(struct pt_regs *regs);
+> +#else
+> +static inline int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+> +{
+> +	return 0;
+> +}
+>  
+>  #endif /* CONFIG_KPROBES */
+>  #endif /* _ASM_X86_KPROBES_H */
+> diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+> index 04bdaf01112c..e106f3018804 100644
+> --- a/include/linux/kprobes.h
+> +++ b/include/linux/kprobes.h
+> @@ -182,11 +182,19 @@ DECLARE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>  /*
+>   * For #ifdef avoidance:
+>   */
+> -static inline int kprobes_built_in(void)
+> +
+> +/*
+> + * Architectures need to override this with their own implementation
+> + * if they care to call kprobe_page_fault(). This will just ensure
+> + * that kprobe_page_fault() returns false when called without having
+> + * a proper platform specific definition for kprobe_fault_handler().
+> + */
+> +#ifndef kprobe_fault_handler
+> +static inline int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+>  {
+> -	return 1;
+> +	return 0;
+>  }
+> -
+> +#endif
+>  #ifdef CONFIG_KRETPROBES
+>  extern void arch_prepare_kretprobe(struct kretprobe_instance *ri,
+>  				   struct pt_regs *regs);
+> @@ -375,14 +383,6 @@ void free_insn_page(void *page);
+>  
+>  #else /* !CONFIG_KPROBES: */
+>  
+> -static inline int kprobes_built_in(void)
+> -{
+> -	return 0;
+> -}
+> -static inline int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+> -{
+> -	return 0;
+> -}
+>  static inline struct kprobe *get_kprobe(void *addr)
+>  {
+>  	return NULL;
+> @@ -458,12 +458,11 @@ static inline bool is_kprobe_optinsn_slot(unsigned long addr)
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_KPROBES
+>  /* Returns true if kprobes handled the fault */
+>  static nokprobe_inline bool kprobe_page_fault(struct pt_regs *regs,
+>  					      unsigned int trap)
+>  {
+> -	if (!kprobes_built_in())
+> -		return false;
+>  	if (user_mode(regs))
+>  		return false;
+>  	/*
+> @@ -476,5 +475,12 @@ static nokprobe_inline bool kprobe_page_fault(struct pt_regs *regs,
+>  		return false;
+>  	return kprobe_fault_handler(regs, trap);
+>  }
+> +#else
+> +static nokprobe_inline bool kprobe_page_fault(struct pt_regs *regs,
+> +					      unsigned int trap)
+> +{
+> +	return false;
+> +}
+> +#endif
+>  
+>  #endif /* _LINUX_KPROBES_H */
+> -- 
+> 2.20.1
+> 
 
-I spent a little time thinking about that during the recent round of
-reviews.
 
-My rough thoughts were that LED triggers would be a good way to
-handle it in the kernel code and would trivially solve a backlight
-composed of multiple LED devices (since all could attach to the same
-trigger). However I think it would be difficult to use the existing DT
-bindings for triggers to express things like brightness curves and to
-handle systems with multiple heads.
-
-I'm not *too* worried about conflict with the existing backlight trigger
-(which isn't actually a backlight... just a hook into the framebuffer
-code to operate a binary LED). People like Daniel Vetter are
-labouring diligently to get rid of the notifier it depends on so turning
-it into a proper backlight device would probably help with that effort.
-
-Anyhow... having thought the above I then shook myself a bit and
-figured it was more important to focus on sane bindings that on what
-the kernel does under the covers to realize them ;-) and decided to keep
-quiet until the next set of bindings is proposed.
-
-However... since you asked...
-
-
-
-Daniel.
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
