@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D701360A8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BF160A89
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 18:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbfGEQnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 12:43:11 -0400
-Received: from mail-io1-f42.google.com ([209.85.166.42]:34422 "EHLO
-        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728690AbfGEQmh (ORCPT
+        id S1728726AbfGEQml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 12:42:41 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36631 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728709AbfGEQmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 12:42:37 -0400
-Received: by mail-io1-f42.google.com with SMTP id k8so20433065iot.1;
-        Fri, 05 Jul 2019 09:42:36 -0700 (PDT)
+        Fri, 5 Jul 2019 12:42:39 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so4772887iom.3;
+        Fri, 05 Jul 2019 09:42:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XS98x+56z0gRiNEek56gSNwAwH+14pgGnF4eQrePkmg=;
-        b=qRmHyiJMq+wAQyJmEuMsc/uX6SAOH1aOwPIL+oix6NEKxxTMfo5UHCPgs0yOZ0CNQC
-         HG7BulH9u11hu3G1fTMWq6IAQh9Bhca4NUlq3xQQQH2KT1k8IxKoWCy2gCcsRxeZVqKT
-         L5BLJtvKc68aSH1ckhlhQI7VBFi+DZot08hJIlGFT1QK0oAlnEsNvZii3ulFCuDVA5vW
-         rNjN2UvXwXyIbu474dwCExmLfNmeBq7JlWsp2n9872Wbaiwb1rbTR68Cg5xA2WiluDwh
-         1VegEKMe3uyWq9xmWoc+s51P+nGb7wvjXR0KNxdc5gID20nam++9OEA/1snNRE1ML5zO
-         k/pw==
-X-Gm-Message-State: APjAAAUNQRXXhpvZ2U2M1joWIzSOeylVS8ycdGAoEfwe37iNdT9CwhDV
-        YCkfLGBTFswNS0rKHEqLYQYJfgk=
-X-Google-Smtp-Source: APXvYqxb4qPpf2440NuEycGWkpJEhmYJgIh5tlmZHPrGm2Bz2vlqn70s1akoqenPe8BuOKMGI+gjdA==
-X-Received: by 2002:a6b:790a:: with SMTP id i10mr4957673iop.150.1562344956206;
-        Fri, 05 Jul 2019 09:42:36 -0700 (PDT)
+        bh=2tWKOZQN5j63GOMW8bPg2YdYLUphNbaDT5/UX97P/uo=;
+        b=OFUU90HEh7wkf/2ctinZpa9cgZRdSl5a6d8ucxAkiUIiDR+ZKcEHHKEBExyOdEw6X8
+         l134KhNcYhva0eW2kt2k19p+82w1HnUtKam4+iegiwkRGPYx5Pn7yr4ndW/zfWJe/H90
+         fApwINc/fPu9GQ6idZaL6xQUEz69vrcy7mqcD7Sab2Kxd0kF8uBOYFqcIfghOyUUFKzO
+         nhlOlicc5fRJcqXMpH+/TaDaAxJ6r8xb7Hweo9F1ezeMYxWpTrLwEpEM6Dro+f6fdV1c
+         qVl9oL5zla1BiJp7upA2cFlrh7Gy3cMYN5+2HL2nPiQyUaKmsoC5qPoeMoNGc0w+pRi3
+         FDlg==
+X-Gm-Message-State: APjAAAXO40SII7FvQiWJKMW1M/12vKfxuBTt56gNzNs4p4l9A9Wdnu60
+        vDc+svP5ntunr8PxzSH69Q==
+X-Google-Smtp-Source: APXvYqx9WdfjM+nTIv22HXckRghmE2QP5JiFVcCPJrnBeuFT1r//qxUAqUxKtMJB63QyW5QCB7T/Qw==
+X-Received: by 2002:a5d:8890:: with SMTP id d16mr2919578ioo.274.1562344958138;
+        Fri, 05 Jul 2019 09:42:38 -0700 (PDT)
 Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id b8sm6878104ioj.16.2019.07.05.09.42.34
+        by smtp.googlemail.com with ESMTPSA id b8sm6878104ioj.16.2019.07.05.09.42.36
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 09:42:35 -0700 (PDT)
+        Fri, 05 Jul 2019 09:42:37 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -41,10 +41,10 @@ Cc:     linux-kernel@vger.kernel.org,
         Sam Ravnborg <sam@ravnborg.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 07/13] dt-bindings: display: Convert raspberrypi,7inch-touchscreen panel to DT schema
-Date:   Fri,  5 Jul 2019 10:42:15 -0600
-Message-Id: <20190705164221.4462-8-robh@kernel.org>
+        Heiko Stuebner <heiko.stuebner@bq.com>
+Subject: [PATCH v3 08/13] dt-bindings: display: Convert tfc,s9700rtwv43tr-01b panel to DT schema
+Date:   Fri,  5 Jul 2019 10:42:16 -0600
+Message-Id: <20190705164221.4462-9-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190705164221.4462-1-robh@kernel.org>
 References: <20190705164221.4462-1-robh@kernel.org>
@@ -55,9 +55,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the raspberrypi,7inch-touchscreen panel binding to DT schema.
+Convert the tfc,s9700rtwv43tr-01b panel binding to DT schema.
 
-Cc: Eric Anholt <eric@anholt.net>
+Cc: Heiko Stuebner <heiko.stuebner@bq.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -65,142 +65,70 @@ Cc: dri-devel@lists.freedesktop.org
 Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../panel/raspberrypi,7inch-touchscreen.txt   | 49 -------------
- .../panel/raspberrypi,7inch-touchscreen.yaml  | 71 +++++++++++++++++++
- 2 files changed, 71 insertions(+), 49 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml
+ .../display/panel/tfc,s9700rtwv43tr-01b.txt   | 15 ---------
+ .../display/panel/tfc,s9700rtwv43tr-01b.yaml  | 33 +++++++++++++++++++
+ 2 files changed, 33 insertions(+), 15 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml
 
-diff --git a/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt b/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt
+diff --git a/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt b/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt
 deleted file mode 100644
-index e9e19c059260..000000000000
---- a/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt
+index dfb572f085eb..000000000000
+--- a/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt
 +++ /dev/null
-@@ -1,49 +0,0 @@
--This binding covers the official 7" (800x480) Raspberry Pi touchscreen
--panel.
+@@ -1,15 +0,0 @@
+-TFC S9700RTWV43TR-01B 7" Three Five Corp 800x480 LCD panel with
+-resistive touch
 -
--This DSI panel contains:
--
--- TC358762 DSI->DPI bridge
--- Atmel microcontroller on I2C for power sequencing the DSI bridge and
--  controlling backlight
--- Touchscreen controller on I2C for touch input
--
--and this binding covers the DSI display parts but not its touch input.
+-The panel is found on TI AM335x-evm.
 -
 -Required properties:
--- compatible:	Must be "raspberrypi,7inch-touchscreen-panel"
--- reg:		Must be "45"
--- port:		See panel-common.txt
+-- compatible: should be "tfc,s9700rtwv43tr-01b"
+-- power-supply: See panel-common.txt
 -
--Example:
+-Optional properties:
+-- enable-gpios: GPIO pin to enable or disable the panel, if there is one
+-- backlight: phandle of the backlight device attached to the panel
 -
--dsi1: dsi@7e700000 {
--	#address-cells = <1>;
--	#size-cells = <0>;
--	<...>
--
--	port {
--		dsi_out_port: endpoint {
--			remote-endpoint = <&panel_dsi_port>;
--		};
--	};
--};
--
--i2c_dsi: i2c {
--	compatible = "i2c-gpio";
--	#address-cells = <1>;
--	#size-cells = <0>;
--	gpios = <&gpio 28 0
--		 &gpio 29 0>;
--
--	lcd@45 {
--		compatible = "raspberrypi,7inch-touchscreen-panel";
--		reg = <0x45>;
--
--		port {
--			panel_dsi_port: endpoint {
--				remote-endpoint = <&dsi_out_port>;
--			};
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml b/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml
+-This binding is compatible with the simple-panel binding, which is specified
+-in simple-panel.txt in this directory.
+diff --git a/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml b/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml
 new file mode 100644
-index 000000000000..22a083f7bc8e
+index 000000000000..9e5994417c12
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml
-@@ -0,0 +1,71 @@
++++ b/Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml
+@@ -0,0 +1,33 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/display/panel/raspberrypi,7inch-touchscreen.yaml#
++$id: http://devicetree.org/schemas/display/panel/tfc,s9700rtwv43tr-01b.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: The official 7" (800x480) Raspberry Pi touchscreen
++title: TFC S9700RTWV43TR-01B 7" Three Five Corp 800x480 LCD panel with resistive touch
 +
 +maintainers:
-+  - Eric Anholt <eric@anholt.net>
++  - Jyri Sarha <jsarha@ti.com>
 +  - Thierry Reding <thierry.reding@gmail.com>
 +
 +description: |+
-+  This DSI panel contains:
++  The panel is found on TI AM335x-evm.
 +
-+  - TC358762 DSI->DPI bridge
-+  - Atmel microcontroller on I2C for power sequencing the DSI bridge and
-+    controlling backlight
-+  - Touchscreen controller on I2C for touch input
-+
-+  and this binding covers the DSI display parts but not its touch input.
++allOf:
++  - $ref: panel-common.yaml#
 +
 +properties:
 +  compatible:
-+    const: raspberrypi,7inch-touchscreen-panel
++    const: tfc,s9700rtwv43tr-01b
 +
-+  reg:
-+    const: 0x45
-+
++  enable-gpios: true
++  backlight: true
 +  port: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - port
 +
 +additionalProperties: false
 +
-+examples:
-+  - |+
-+    dsi1: dsi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      port {
-+        dsi_out_port: endpoint {
-+          remote-endpoint = <&panel_dsi_port>;
-+        };
-+      };
-+    };
-+
-+    i2c_dsi: i2c {
-+      compatible = "i2c-gpio";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      scl-gpios = <&gpio 28 0>;
-+      sda-gpios = <&gpio 29 0>;
-+
-+      lcd@45 {
-+        compatible = "raspberrypi,7inch-touchscreen-panel";
-+        reg = <0x45>;
-+
-+        port {
-+          panel_dsi_port: endpoint {
-+            remote-endpoint = <&dsi_out_port>;
-+          };
-+        };
-+      };
-+    };
++required:
++  - compatible
++  - power-supply
 +
 +...
 -- 
