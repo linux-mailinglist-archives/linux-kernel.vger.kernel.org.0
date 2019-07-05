@@ -2,122 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB3F5FF0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 02:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AC95FF0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 02:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfGEA0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 20:26:43 -0400
-Received: from mail-eopbgr30087.outbound.protection.outlook.com ([40.107.3.87]:63185
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727093AbfGEA0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 20:26:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WGziptvsj5NuUVTGH1rzLHrnPaAuypv9P4eX/Pp1EAU=;
- b=ECL3zQYj0FpA3jFhuDSM7N2Y9edrXBKmmQUTWQ6FwJZL1gYfrz4kKCqzKZPiruRZx53yZNDQD+uauZPghxzC+es3kFFohyEEA55uvzQVE7QqHHCo79cBZdDSwxCBMhW9A95nWdEAyyCs2iza4z4mnJ6qAIBzr7617/R8obA5PDs=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3755.eurprd04.prod.outlook.com (52.134.71.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Fri, 5 Jul 2019 00:26:38 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2052.010; Fri, 5 Jul 2019
- 00:26:38 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 1/2] dt-bindings: reset: imx7: Add support for i.MX8MM
-Thread-Topic: [PATCH V3 1/2] dt-bindings: reset: imx7: Add support for i.MX8MM
-Thread-Index: AQHVMk5T8ePkVlGuXEKfzs7Ixfs7tqa6PluAgADs2ZA=
-Date:   Fri, 5 Jul 2019 00:26:38 +0000
-Message-ID: <DB3PR0402MB39167B9A3CFAE6D8798B3CAEF5F50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190704094416.4757-1-Anson.Huang@nxp.com>
- <1562235363.6641.10.camel@pengutronix.de>
-In-Reply-To: <1562235363.6641.10.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3f3ca13b-04a9-4221-ea51-08d700df7201
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3755;
-x-ms-traffictypediagnostic: DB3PR0402MB3755:
-x-microsoft-antispam-prvs: <DB3PR0402MB37558948A0E7C199FDCA580EF5F50@DB3PR0402MB3755.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(199004)(189003)(305945005)(6436002)(7736002)(478600001)(25786009)(53936002)(99286004)(2501003)(7696005)(26005)(446003)(11346002)(186003)(110136005)(486006)(81166006)(66556008)(8676002)(229853002)(81156014)(256004)(316002)(64756008)(66946007)(66476007)(66446008)(76116006)(476003)(73956011)(74316002)(8936002)(44832011)(2906002)(14444005)(76176011)(6246003)(71200400001)(5660300002)(9686003)(86362001)(55016002)(33656002)(6506007)(71190400001)(68736007)(2201001)(52536014)(14454004)(66066001)(3846002)(6116002)(4326008)(102836004)(7416002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3755;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6jZk33i6j0vGIuTyoG10V9qUbvgqy2ipVxr+TYsa2zWEVUFJS97IF4I0rYgf2zg+6FV0XTYOHuhMSSbWZIZtuKq05VBiYW9wn8azb44CXh0Wn/+L19fuKM/mhezWkdkKvcjoQqv1XMww2AjqJ+tX1mDVImHLlfrjaasqVyaxCEV4HN+27Kzukw9QNEce0n3zOxwOtaODvP75uJtj4cxxHHb0qMESolkAWhMjCTTT2rKQRjz31tl1TkxW0HrbYxvWAGuV7dSCtKcVMd4GoRvlUmNILDl3PKs5/Cs2K1gRn6raD7P4pkmCpNOagQLBSL6k2ImntDwRGgbDcSMVHKzKRPaXmoM6xFI0oZvFAPr6eEgds8Fvnv2IQDl5moqxWjIzNJemTjChpTavBJOdNoihga7oWFvKiy+8zCtr4JxFr3c=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727756AbfGEAaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 20:30:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45362 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfGEAaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 20:30:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 81A66308FE9A;
+        Fri,  5 Jul 2019 00:30:20 +0000 (UTC)
+Received: from [10.72.12.202] (ovpn-12-202.pek2.redhat.com [10.72.12.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E2F499391;
+        Fri,  5 Jul 2019 00:30:08 +0000 (UTC)
+Subject: Re: [RFC v2] vhost: introduce mdev based hardware vhost backend
+To:     Tiwei Bie <tiwei.bie@intel.com>
+Cc:     mst@redhat.com, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+References: <20190703091339.1847-1-tiwei.bie@intel.com>
+ <7b8279b2-aa7e-7adc-eeff-20dfaf4400d0@redhat.com>
+ <20190703115245.GA22374@___>
+ <64833f91-02cd-7143-f12e-56ab93b2418d@redhat.com> <20190703130817.GA1978@___>
+ <b01b8e28-8d96-31dd-56f4-ca7793498c55@redhat.com>
+ <20190704062134.GA21116@___>
+ <c67f628f-e0c1-9a41-6c5d-b6bbda31467d@redhat.com>
+ <20190704070242.GA27369@___>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <513c62ba-3f44-f4cf-3b3d-e0e03b6a6de1@redhat.com>
+Date:   Fri, 5 Jul 2019 08:30:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f3ca13b-04a9-4221-ea51-08d700df7201
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 00:26:38.5320
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3755
+In-Reply-To: <20190704070242.GA27369@___>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 05 Jul 2019 00:30:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFBoaWxpcHANCg0KPiBPbiBUaHUsIDIwMTktMDctMDQgYXQgMTc6NDQgKzA4MDAsIEFuc29u
-Lkh1YW5nQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5n
-QG54cC5jb20+DQo+ID4NCj4gPiBpLk1YOE1NIGNhbiByZXVzZSBpLk1YOE1RJ3MgcmVzZXQgZHJp
-dmVyLCB1cGRhdGUgdGhlIGNvbXBhdGlibGUNCj4gPiBwcm9wZXJ0eSBhbmQgcmVsYXRlZCBpbmZv
-IHRvIHN1cHBvcnQgaS5NWDhNTS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5n
-IDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+IENoYW5nZXMgc2luY2UgVjI6DQo+
-ID4gCS0gQWRkIHNlcGFyYXRlIGxpbmUgZm9yIGkuTVg4TU0gaW4gY2FzZSBhbnl0aGluZyBkaWZm
-ZXJlbnQgbGF0ZXIgZm9yDQo+IGkuTVg4TU0uDQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9yZXNldC9mc2wsaW14Ny1zcmMudHh0IHwgNiArKysrLS0NCj4g
-PiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0K
-PiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVzZXQv
-ZnNsLGlteDctc3JjLnR4dA0KPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3Jlc2V0L2ZzbCxpbXg3LXNyYy50eHQNCj4gPiBpbmRleCAxM2UwOTUxLi5jMjQ4OWU0IDEwMDY0
-NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZXNldC9mc2ws
-aW14Ny1zcmMudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3Jlc2V0L2ZzbCxpbXg3LXNyYy50eHQNCj4gPiBAQCAtOCw2ICs4LDcgQEAgUmVxdWlyZWQgcHJv
-cGVydGllczoNCj4gPiAgLSBjb21wYXRpYmxlOg0KPiA+ICAJLSBGb3IgaS5NWDcgU29DcyBzaG91
-bGQgYmUgImZzbCxpbXg3ZC1zcmMiLCAic3lzY29uIg0KPiA+ICAJLSBGb3IgaS5NWDhNUSBTb0Nz
-IHNob3VsZCBiZSAiZnNsLGlteDhtcS1zcmMiLCAic3lzY29uIg0KPiA+ICsJLSBGb3IgaS5NWDhN
-TSBTb0NzIHNob3VsZCBiZSAiZnNsLGlteDhtbS1zcmMiLCAiZnNsLGlteDhtcS1zcmMiLA0KPiAi
-c3lzY29uIg0KPiA+ICAtIHJlZzogc2hvdWxkIGJlIHJlZ2lzdGVyIGJhc2UgYW5kIGxlbmd0aCBh
-cyBkb2N1bWVudGVkIGluIHRoZQ0KPiA+ICAgIGRhdGFzaGVldA0KPiA+ICAtIGludGVycnVwdHM6
-IFNob3VsZCBjb250YWluIFNSQyBpbnRlcnJ1cHQgQEAgLTQ2LDUgKzQ3LDYgQEAgRXhhbXBsZToN
-Cj4gPg0KPiA+DQo+ID4gIEZvciBsaXN0IG9mIGFsbCB2YWxpZCByZXNldCBpbmRpY2VzIHNlZQ0K
-PiA+IC08ZHQtYmluZGluZ3MvcmVzZXQvaW14Ny1yZXNldC5oPiBmb3IgaS5NWDcgYW5kDQo+ID4g
-LTxkdC1iaW5kaW5ncy9yZXNldC9pbXg4bXEtcmVzZXQuaD4gZm9yIGkuTVg4TVENCj4gPiArPGR0
-LWJpbmRpbmdzL3Jlc2V0L2lteDctcmVzZXQuaD4gZm9yIGkuTVg3LA0KPiA+ICs8ZHQtYmluZGlu
-Z3MvcmVzZXQvaW14OG1xLXJlc2V0Lmg+IGZvciBpLk1YOE1RIGFuZA0KPiA+ICs8ZHQtYmluZGlu
-Z3MvcmVzZXQvaW14OG1xLXJlc2V0Lmg+IGZvciBpLk1YOE1NDQo+IA0KPiBUaGUgbGFzdCBsaW5l
-IGlzIG1pc2xlYWRpbmcsIGFzIHRoYXQgZmlsZSBjb250YWlucyByZXNldCBpbmRpY2VzIHRoYXQg
-YXJlIGludmFsaWQNCj4gZm9yIGkuTVg4TU0uDQoNCldoYXQgaXMgeW91ciBzdWdnZXN0aW9uIGFi
-b3V0IHRoaXMgbGluZT8gSnVzdCBOT1QgY2hhbmdlIGl0PyBPciBhZGRpbmcgYSBuZXcgZmlsZQ0K
-aW14OG1tLXJlc2V0LmggYnV0IHN0aWxsIHVzZSB0aGUgSU1YOE1RX1JFU0VUXyBhcyBwcmVmaXgg
-PyBPciBrZWVwIHdoYXQgSSBjaGFuZ2VkLCBidXQNCmFkZGluZyBzb21lIGNvbW1lbnRzIGluIHRo
-b3NlIG1hY3JvcyB0aGF0IGkuTVg4TU0gZG9lcyBOT1Qgc3VwcG9ydD8NCg0KVGhhbmtzLA0KQW5z
-b24uDQoNCj4gDQo+IHJlZ2FyZHMNCj4gUGhpbGlwcA0K
+
+On 2019/7/4 下午3:02, Tiwei Bie wrote:
+> On Thu, Jul 04, 2019 at 02:35:20PM +0800, Jason Wang wrote:
+>> On 2019/7/4 下午2:21, Tiwei Bie wrote:
+>>> On Thu, Jul 04, 2019 at 12:31:48PM +0800, Jason Wang wrote:
+>>>> On 2019/7/3 下午9:08, Tiwei Bie wrote:
+>>>>> On Wed, Jul 03, 2019 at 08:16:23PM +0800, Jason Wang wrote:
+>>>>>> On 2019/7/3 下午7:52, Tiwei Bie wrote:
+>>>>>>> On Wed, Jul 03, 2019 at 06:09:51PM +0800, Jason Wang wrote:
+>>>>>>>> On 2019/7/3 下午5:13, Tiwei Bie wrote:
+>>>>>>>>> Details about this can be found here:
+>>>>>>>>>
+>>>>>>>>> https://lwn.net/Articles/750770/
+>>>>>>>>>
+>>>>>>>>> What's new in this version
+>>>>>>>>> ==========================
+>>>>>>>>>
+>>>>>>>>> A new VFIO device type is introduced - vfio-vhost. This addressed
+>>>>>>>>> some comments from here:https://patchwork.ozlabs.org/cover/984763/
+>>>>>>>>>
+>>>>>>>>> Below is the updated device interface:
+>>>>>>>>>
+>>>>>>>>> Currently, there are two regions of this device: 1) CONFIG_REGION
+>>>>>>>>> (VFIO_VHOST_CONFIG_REGION_INDEX), which can be used to setup the
+>>>>>>>>> device; 2) NOTIFY_REGION (VFIO_VHOST_NOTIFY_REGION_INDEX), which
+>>>>>>>>> can be used to notify the device.
+>>>>>>>>>
+>>>>>>>>> 1. CONFIG_REGION
+>>>>>>>>>
+>>>>>>>>> The region described by CONFIG_REGION is the main control interface.
+>>>>>>>>> Messages will be written to or read from this region.
+>>>>>>>>>
+>>>>>>>>> The message type is determined by the `request` field in message
+>>>>>>>>> header. The message size is encoded in the message header too.
+>>>>>>>>> The message format looks like this:
+>>>>>>>>>
+>>>>>>>>> struct vhost_vfio_op {
+>>>>>>>>> 	__u64 request;
+>>>>>>>>> 	__u32 flags;
+>>>>>>>>> 	/* Flag values: */
+>>>>>>>>>       #define VHOST_VFIO_NEED_REPLY 0x1 /* Whether need reply */
+>>>>>>>>> 	__u32 size;
+>>>>>>>>> 	union {
+>>>>>>>>> 		__u64 u64;
+>>>>>>>>> 		struct vhost_vring_state state;
+>>>>>>>>> 		struct vhost_vring_addr addr;
+>>>>>>>>> 	} payload;
+>>>>>>>>> };
+>>>>>>>>>
+>>>>>>>>> The existing vhost-kernel ioctl cmds are reused as the message
+>>>>>>>>> requests in above structure.
+>>>>>>>> Still a comments like V1. What's the advantage of inventing a new protocol?
+>>>>>>> I'm trying to make it work in VFIO's way..
+>>>>>>>
+>>>>>>>> I believe either of the following should be better:
+>>>>>>>>
+>>>>>>>> - using vhost ioctl,  we can start from SET_VRING_KICK/SET_VRING_CALL and
+>>>>>>>> extend it with e.g notify region. The advantages is that all exist userspace
+>>>>>>>> program could be reused without modification (or minimal modification). And
+>>>>>>>> vhost API hides lots of details that is not necessary to be understood by
+>>>>>>>> application (e.g in the case of container).
+>>>>>>> Do you mean reusing vhost's ioctl on VFIO device fd directly,
+>>>>>>> or introducing another mdev driver (i.e. vhost_mdev instead of
+>>>>>>> using the existing vfio_mdev) for mdev device?
+>>>>>> Can we simply add them into ioctl of mdev_parent_ops?
+>>>>> Right, either way, these ioctls have to be and just need to be
+>>>>> added in the ioctl of the mdev_parent_ops. But another thing we
+>>>>> also need to consider is that which file descriptor the userspace
+>>>>> will do the ioctl() on. So I'm wondering do you mean let the
+>>>>> userspace do the ioctl() on the VFIO device fd of the mdev
+>>>>> device?
+>>>>>
+>>>> Yes.
+>>> Got it! I'm not sure what's Alex opinion on this. If we all
+>>> agree with this, I can do it in this way.
+>>>
+>>>> Is there any other way btw?
+>>> Just a quick thought.. Maybe totally a bad idea.
+>>
+>> It's not for sure :)
+> Thanks!
+>
+>>
+>>>    I was thinking
+>>> whether it would be odd to do non-VFIO's ioctls on VFIO's device
+>>> fd. So I was wondering whether it's possible to allow binding
+>>> another mdev driver (e.g. vhost_mdev) to the supported mdev
+>>> devices. The new mdev driver, vhost_mdev, can provide similar
+>>> ways to let userspace open the mdev device and do the vhost ioctls
+>>> on it. To distinguish with the vfio_mdev compatible mdev devices,
+>>> the device API of the new vhost_mdev compatible mdev devices
+>>> might be e.g. "vhost-net" for net?
+>>>
+>>> So in VFIO case, the device will be for passthru directly. And
+>>> in VHOST case, the device can be used to accelerate the existing
+>>> virtualized devices.
+>>>
+>>> How do you think?
+>>
+>> If my understanding is correct, there will be no VFIO ioctl if we go for
+>> vhost_mdev?
+> Yeah, exactly. If we go for vhost_mdev, we may have some vhost nodes
+> in /dev similar to what /dev/vfio/* does to handle the $UUID and open
+> the device (e.g. similar to VFIO_GROUP_GET_DEVICE_FD in VFIO). And
+> to setup the device, we can try to reuse the ioctls of the existing
+> kernel vhost as much as possible.
+
+
+Interesting, actually, I've considered something similar. I think there 
+should be no issues other than DMA:
+
+- Need to invent new API for DMA mapping other than SET_MEM_TABLE? 
+(Which is too heavyweight).
+
+- Need to consider a way to co-work with both on chip IOMMU (your 
+proposal should be fine) and scalable IOV.
+
+Thanks
+
+
+>
+> Thanks,
+> Tiwei
+>
+>> Thanks
+>>
+>>
+>>> Thanks,
+>>> Tiwei
+>>>> Thanks
+>>>>
