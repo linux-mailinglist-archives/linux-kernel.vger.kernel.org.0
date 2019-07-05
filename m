@@ -2,109 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E834B60AF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 19:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B8F60AF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 19:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbfGERUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 13:20:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56368 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727878AbfGERUD (ORCPT
+        id S1728080AbfGERVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 13:21:12 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:41740 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfGERVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 13:20:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZYvgaJtA/vLN/2sBvTx/hGFHI/+vgI3j7+3oBAfdL3Y=; b=JQXDMkatoAGl
-        nQEXepd7dITrnfRGRR/RDsj6IR7MdlA0ihmacpjKpLOkPVX3Wtu5woy6JLYQMM4RfF+kjGDzxJIVj
-        9T+Hp9JMWIYOLWIS9pAh379n0+gOnkktoY2SmTM1DimLHAeShyGkddkuICMACSWzojh+Y8ltR2XMQ
-        EZk7A=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hjRsF-0004ZQ-FU; Fri, 05 Jul 2019 17:19:51 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D1D422742B45; Fri,  5 Jul 2019 18:19:50 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: rt5665: remove redundant assignment to variable idx" to the asoc tree
-In-Reply-To: <20190705075303.14692-1-colin.king@canonical.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190705171950.D1D422742B45@ypsilon.sirena.org.uk>
-Date:   Fri,  5 Jul 2019 18:19:50 +0100 (BST)
+        Fri, 5 Jul 2019 13:21:11 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 5CCDD803B4;
+        Fri,  5 Jul 2019 19:21:06 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 19:20:58 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/panel: simple: Add support for Sharp
+ LD-D5116Z01B panel
+Message-ID: <20190705172058.GA2788@ravnborg.org>
+References: <20190705165450.329-1-jeffrey.l.hugo@gmail.com>
+ <20190705165755.515-1-jeffrey.l.hugo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705165755.515-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8
+        a=OJLUmJNqMcVkCySmTlIA:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Jeffrey.
 
-   ASoC: rt5665: remove redundant assignment to variable idx
+Patch looks good, but there is a few fields that are not initialized.
+Did you forget them, or are they not needed?
 
-has been applied to the asoc tree at
+On Fri, Jul 05, 2019 at 09:57:55AM -0700, Jeffrey Hugo wrote:
+> The Sharp LD-D5116Z01B is a 12.3" eDP panel with a 1920X1280 resolution.
+> 
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 5a93c4edf1e4..e6f578667324 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -2354,6 +2354,29 @@ static const struct panel_desc samsung_ltn140at29_301 = {
+>  	},
+>  };
+>  
+> +static const struct drm_display_mode sharp_ld_d5116z01b_mode = {
+> +	.clock = 168480,
+> +	.hdisplay = 1920,
+> +	.hsync_start = 1920 + 48,
+> +	.hsync_end = 1920 + 48 + 32,
+> +	.htotal = 1920 + 48 + 32 + 80,
+> +	.vdisplay = 1280,
+> +	.vsync_start = 1280 + 3,
+> +	.vsync_end = 1280 + 3 + 10,
+> +	.vtotal = 1280 + 3 + 10 + 57,
+> +	.vrefresh = 60,
+> +};
+No .flags? Is it not needed for an eDP panel?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+> +
+> +static const struct panel_desc sharp_ld_d5116z01b = {
+> +	.modes = &sharp_ld_d5116z01b_mode,
+> +	.num_modes = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 260,
+> +		.height = 120,
+> +	},
+> +};
+No .bus_format?
+No .bus_flags?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 590eb2f4ef94cb3f3e73345c6db4de97c9cd539e Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 5 Jul 2019 08:53:03 +0100
-Subject: [PATCH] ASoC: rt5665: remove redundant assignment to variable idx
-
-The variable idx is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190705075303.14692-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/rt5665.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/rt5665.c b/sound/soc/codecs/rt5665.c
-index 87263317085a..c050d84a6916 100644
---- a/sound/soc/codecs/rt5665.c
-+++ b/sound/soc/codecs/rt5665.c
-@@ -1478,7 +1478,7 @@ static int set_dmic_clk(struct snd_soc_dapm_widget *w,
- {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	struct rt5665_priv *rt5665 = snd_soc_component_get_drvdata(component);
--	int pd, idx = -EINVAL;
-+	int pd, idx;
- 
- 	pd = rl6231_get_pre_div(rt5665->regmap,
- 		RT5665_ADDA_CLK_1, RT5665_I2S_PD1_SFT);
--- 
-2.20.1
-
+	Sam
