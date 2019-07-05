@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1561260470
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55A216044E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfGEK1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:27:20 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52366 "EHLO inva020.nxp.com"
+        id S1727841AbfGEKSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:18:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:54275 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbfGEK1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:27:19 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6549B1A0782;
-        Fri,  5 Jul 2019 12:27:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85C6C1A0176;
-        Fri,  5 Jul 2019 12:27:12 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 535FD40297;
-        Fri,  5 Jul 2019 18:27:06 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        leoyang.li@nxp.com
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [PATCH 2/2] Documentation: dt: binding: rtc: add binding for ftm alarm driver
-Date:   Fri,  5 Jul 2019 18:18:00 +0800
-Message-Id: <20190705101800.44561-2-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190705101800.44561-1-biwen.li@nxp.com>
-References: <20190705101800.44561-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726005AbfGEKSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 06:18:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45g9mK4qxCz9sP7;
+        Fri,  5 Jul 2019 20:18:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562321922;
+        bh=yKxB6uT5X93JIEddRU7+mwI4BC3Qt2b5R7HLoCn+R3c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PLSNupLJQxnniWEaMgxcMZsE3lkp4jzWcnqCWWq0C4vWu4MufAiqVPFwIVp31SDP+
+         OrePJMXlokdXMpcCCdO0vCk6mIl/Nx5kDTZa/CC0dJnvJMbY6KOhavdBdMLNZwIJuY
+         rbAbxAMbqKh4qoBgo42SZwJfbWKhKlm5syFPghhly8PBjy0reUXjG855jlr49x2cVX
+         imr12Iqa4oYS+CmjjjSlhhUD5k9ZHgnkoQYODbMMiqBjxghRbQWQq2nqwinOGNQRIZ
+         +UJgnGiWjIpu9GOtN08+bLWdHrYH89Pl4ycQDTHvzRdwIConfk6jGdkNy575r+JZVg
+         vLQzchKzsHFDg==
+Date:   Fri, 5 Jul 2019 20:18:39 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Marco Elver <elver@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190705201839.16001905@canb.auug.org.au>
+In-Reply-To: <CANpmjNN-BYeiKk+S3sK6joknC1dnxUUgCqUPFCJuiYd2xVHWPg@mail.gmail.com>
+References: <20190705184949.13cdd021@canb.auug.org.au>
+        <CANpmjNN-BYeiKk+S3sK6joknC1dnxUUgCqUPFCJuiYd2xVHWPg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ApwHSZZKl8L5b=H1VGvZKpJ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds binding for ftm alarm driver
+--Sig_/ApwHSZZKl8L5b=H1VGvZKpJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
- .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+Hi Marco,
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-new file mode 100644
-index 0000000..0f330b4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-@@ -0,0 +1,33 @@
-+Freescale FlexTimer Module (FTM) Alarm
-+
-+Required properties:
-+
-+- compatible : Should be "fsl,ftm-alarm" or "fsl,<chip>-ftm-alarm", the
-+	       supported chips include
-+	       "fsl,ls1012a-ftm-alarm"
-+	       "fsl,ls1021a-ftm-alarm"
-+	       "fsl,ls1028a-ftm-alarm"
-+	       "fsl,ls1043a-ftm-alarm"
-+	       "fsl,ls1046a-ftm-alarm"
-+	       "fsl,ls1088a-ftm-alarm"
-+	       "fsl,ls208xa-ftm-alarm"
-+- reg : Specifies base physical address and size of the register sets for the
-+  FlexTimer Module and base physical address of IP Powerdown Exception Control
-+  Register.
-+- reg-names: names of the mapped memory regions listed in regs property.
-+  should include the following entries:
-+  "ftm":    Address of the register sets for FlexTimer Module
-+  "pmctrl": Address of IP Powerdown Exception Control register
-+- interrupts : Should be the FlexTimer Module interrupt.
-+- big-endian: If the host controller is big-endian mode, specify this property.
-+  The default endian mode is little-endian.
-+
-+Example:
-+ftm_alarm0: timer@29d0000 {
-+	compatible = "fsl,ls1043a-ftm-alarm";
-+	reg = <0x0 0x29d0000 0x0 0x10000>,
-+	      <0x0 0x1ee2140 0x0 0x4>;
-+	reg-names = "ftm", "pmctrl";
-+	interrupts = <0 86 0x4>;
-+	big-endian;
-+};
--- 
-2.7.4
+On Fri, 5 Jul 2019 11:27:58 +0200 Marco Elver <elver@google.com> wrote:
+>
+> Apologies for the breakage -- thanks for the fix! Shall I send a v+1
+> or will your patch persist?
 
+I assume Andrew will grab it and squash it into the original patch
+before sending it to Linus.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ApwHSZZKl8L5b=H1VGvZKpJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0fI/8ACgkQAVBC80lX
+0Gw6SQf/bpuEgoxGldMVFMYH/XdJSyDKOtxdZYdY8BPRxKXXCALhU36xt9+VN5AK
+/YV9378TdkkPV7MX3Uq05bDqqxBCKJrr3WfpLEr0dus4X5dbTJ9pNNlk6D7f2bD4
+6FNERszdCg8i/g3hkL97TsPxsWfYUfXDAjeYNq1pcM+4sY89n3mcCQix0I7dHzlv
+TCVn6w6LTK8fdhu1eJg/mU2GB5nE4vyWWsvSO1vKUt1nGJSt0jQ0GFuFZwBNSiCf
++MPvKGNbqkxTT46JIBIBk+0Bk9lyY2VpnC91L2ALa6Tpgtcqo7Z2dPvjLM/6ExP9
+uYVYEGhQLAdIk9ic8mK8c7/ogYBEQQ==
+=CpLo
+-----END PGP SIGNATURE-----
+
+--Sig_/ApwHSZZKl8L5b=H1VGvZKpJ--
