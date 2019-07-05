@@ -2,76 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE92600E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEEF1600EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfGEGMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 02:12:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8709 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725827AbfGEGMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 02:12:46 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 978DE2030F86A25F97CB;
-        Fri,  5 Jul 2019 14:12:41 +0800 (CST)
-Received: from huawei.com (10.67.189.167) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 5 Jul 2019
- 14:12:35 +0800
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-To:     <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <dingtianhong@huawei.com>, <xiaojiangfeng@huawei.com>
-CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <leeyou.li@huawei.com>, <xiekunxun@huawei.com>,
-        <jianping.liu@huawei.com>, <nixiaoming@huawei.com>
-Subject: [PATCH 09/10] net: hisilicon: Add an rx_desc to adapt HI13X1_GMAC
-Date:   Fri, 5 Jul 2019 14:12:29 +0800
-Message-ID: <1562307149-103877-1-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.167]
-X-CFilter-Loop: Reflected
+        id S1727971AbfGEGNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 02:13:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:58598 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727753AbfGEGM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 02:12:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE148360;
+        Thu,  4 Jul 2019 23:12:58 -0700 (PDT)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.41.127])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7B6353F246;
+        Thu,  4 Jul 2019 23:14:50 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/isolate: Drop pre-validating migrate type in undo_isolate_page_range()
+Date:   Fri,  5 Jul 2019 11:42:41 +0530
+Message-Id: <1562307161-30554-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI13X1 changed the offsets and bitmaps for rx_desc
-registers in the same peripheral device on different
-models of the hip04_eth.
+unset_migratetype_isolate() already validates under zone lock that a given
+page has already been isolated as MIGRATE_ISOLATE. There is no need for
+another check before. Hence just drop this redundant validation.
 
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Is there any particular reason to do this migratetype pre-check without zone
+lock before calling unsert_migrate_isolate() ? If not this should be removed.
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index c578934..780fc46 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -171,11 +171,20 @@ struct tx_desc {
- } __aligned(64);
- 
- struct rx_desc {
-+#if defined(CONFIG_HI13X1_GMAC)
-+	u32 reserved1[3];
-+	u16 pkt_len;
-+	u16 reserved_16;
-+	u32 reserved2[6];
-+	u32 pkt_err;
-+	u32 reserved3[5];
-+#else
- 	u16 reserved_16;
- 	u16 pkt_len;
- 	u32 reserve1[3];
- 	u32 pkt_err;
- 	u32 reserve2[4];
-+#endif
- };
- 
- struct hip04_priv {
+ mm/page_isolation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index e3638a5bafff..f529d250c8a5 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -243,7 +243,7 @@ int undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+ 	     pfn < end_pfn;
+ 	     pfn += pageblock_nr_pages) {
+ 		page = __first_valid_page(pfn, pageblock_nr_pages);
+-		if (!page || !is_migrate_isolate_page(page))
++		if (!page)
+ 			continue;
+ 		unset_migratetype_isolate(page, migratetype);
+ 	}
 -- 
-1.8.5.6
+2.20.1
 
