@@ -2,143 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA366085D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B05A60871
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:52:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfGEOv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 10:51:58 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43219 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfGEOv6 (ORCPT
+        id S1727796AbfGEOwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 10:52:54 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46975 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbfGEOwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 10:51:58 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c19so886694lfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 07:51:57 -0700 (PDT)
+        Fri, 5 Jul 2019 10:52:54 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c2so3152502plz.13;
+        Fri, 05 Jul 2019 07:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3MvpTP2fFCaQkoA+f5/CTtpJaXvZZnBt/GIh5Twe+DA=;
-        b=GuKnXgcdfHnBxseTuVOzqohK5pv/apckKuFKURCRMLJHjFBV2NQfMuVvKSTB6LCf9I
-         EmUwt7JSggxOQtq0bV8q2RFTsgqCpMyKQy47G1kVTeJvvUSKlw/2VkjXhKRn6IweN6gB
-         rZmgpyBI4B7GD4oZ7BoblZ5DVyQfETZZYytzmKlARlAEQ883E2xtewsSG+aMNUT8Svf4
-         rxqOTALu0JFeC7OewPOQx5UdYy8trHGaVogPvlPMo/Y2D1OY8yC/Yy1p/HCXpGSHuWZw
-         kCLaU2PN1LVIS3nXoO+VHkSVU4Z4/WTcPlyuEoWYs7j+c/KgvVuMPaZFIH5qg632VUYi
-         9gdg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xoxhzo3l05k4IgMr6KE3jnu38RTpgjmGvrGCZA3aEcA=;
+        b=LiM+ok+EGFwhkgz82cP/xLLUElt29O345EseznN/MicVHLl/MNWEYKBjpRfYghG8XW
+         Wch/ETz/pu7mlwBYV7kuEhZFJmYr2ktXNTk4tak9WlnWJ8cagrTFDXWN8C1xR9Pgb0WY
+         2mxOYAVVyLUwqVj+SDdY2NDr14rWlK7F7XX9WLwpc8Ubj9dajW6KPYBKXfR8b9GdVFpu
+         cNSxd8tZKYRaNTF/OuLbjRPbkRPJmLdubm9GJp36zbyr4E8zo6gRPc2/d+zobn7TWZTj
+         WHKHiH+khH20Mljs8V3ETec/Xxc6fE8NcOt4W+oYrNSIXOotIIWjkilQDWLj5prNPRx5
+         l0tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3MvpTP2fFCaQkoA+f5/CTtpJaXvZZnBt/GIh5Twe+DA=;
-        b=KrAcFZb+G6lLVlS3jqgHxSKmYSAahMYn7f2oD0I68v1STYBB3yVkH8sP9UZaYpcCvK
-         0rtFqr73DaihM2CcOvElOtwU9RDAPAXZXY48uAIDEkj/pq2G5zdoBThsFpxbZolJNegE
-         kNGOiYPASY9s0pZPAwh4yuWBTDIcBxBrkwHbD+9OBWCgJhrKp2etY0mDOELh9ncxBsGO
-         8gMFeDFuYteAEa0untyW9VK1qpHYLVgIxU0j9K5yxGesnOGB/H+SUf4DQlTmZcfgcvxp
-         hlLwjQmrU+HZapj2m855+zbfyRCsVhG54vxCKhOBolPmGBOPV6R6nVo//7SLvfF1WvQZ
-         FSuw==
-X-Gm-Message-State: APjAAAUSsqbYlZFEMfO/b+urdMK0EfpX/IuOAwuCgWHul2zMTWx8rCL6
-        zy5bVJdyQ7blBDmfhb0eIFd8P/s+7rwaBvRtW9XejQ==
-X-Google-Smtp-Source: APXvYqyzZ2RdpWIm41fdspUWEa7a3dG7kLIi7ZNR4yCPceZiMZz18vLnqCz+08XeeHZZipwHv+607sTcpv5raV0oZp8=
-X-Received: by 2002:ac2:4a78:: with SMTP id q24mr2086995lfp.59.1562338316187;
- Fri, 05 Jul 2019 07:51:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xoxhzo3l05k4IgMr6KE3jnu38RTpgjmGvrGCZA3aEcA=;
+        b=IUTmY6Ok+ZbPUdMUdUGUtPAX0zfKlZ4UaDgJ2SNClMqEH/LIyDKiBKgMQYqK+NhoOE
+         ifY42/vmE0Hb/sbcEoqXya69KMo9f6HCgG5Io5SCp7dt+pxM1fPy+gZtE2MjDjet3IBU
+         oLHd7SZmKuZb9op9v0YPtWuBin6O82xiQBuYY8zpUpuA6QAqcRVhY8QLo5NSLswGQIPM
+         jCW4AEU15n6AuDwOqfHY2da0T72plHHu7Ur+vrQ4poOo9JoGBK8Ioon4aMtJrapmuBM/
+         CqwgDJCfJK7J9Fh4DuUSx9/sdxQm6qRcB4UlojXMHOz2JTxymMXxoxfSVXQ7MTeyF9Uz
+         c7Bg==
+X-Gm-Message-State: APjAAAUtQsaudLlplOi7EjZZYaaub5zwqhRr+bIs1v6yMywPOjEmygU9
+        XF9svnAugY6wpCOVbg/JfNoj5qSB
+X-Google-Smtp-Source: APXvYqzElcWjWSfQhJjSDaEtp89wjoYoNl78H4pTfWBIIXo+tGVP/gByEaS8foCoXUJyemmTnmGG/g==
+X-Received: by 2002:a17:902:20b:: with SMTP id 11mr6258798plc.78.1562338373216;
+        Fri, 05 Jul 2019 07:52:53 -0700 (PDT)
+Received: from localhost ([2409:8a00:7815:93e0:4a4d:7eff:feb0:5c9a])
+        by smtp.gmail.com with ESMTPSA id f17sm7755070pgv.16.2019.07.05.07.52.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Jul 2019 07:52:52 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+Subject: [PATCH v6 0/2] KVM: LAPIC: Implement Exitless Timer
+Date:   Fri,  5 Jul 2019 22:52:43 +0800
+Message-Id: <1562338365-22789-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190628204913.10287-1-riel@surriel.com> <20190628204913.10287-8-riel@surriel.com>
-In-Reply-To: <20190628204913.10287-8-riel@surriel.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 5 Jul 2019 16:51:45 +0200
-Message-ID: <CAKfTPtDsh-VxTrwuhb88fi-L4j0ODnNOqhoQ=ZC6E8FVV7Kmkw@mail.gmail.com>
-Subject: Re: [PATCH 07/10] sched,cfs: fix zero length timeslice calculation
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mel Gorman <mgorman@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 at 22:49, Rik van Riel <riel@surriel.com> wrote:
->
-> The way the time slice length is currently calculated, not only do high
-> priority tasks get longer time slices than low priority tasks, but due
-> to fixed point math, low priority tasks could end up with a zero length
-> time slice. This can lead to cache thrashing and other inefficiencies.
->
-> Simplify the logic a little bit, and cap the minimum time slice length
-> to sysctl_sched_min_granularity.
->
-> Tasks that end up getting a time slice length too long for their relative
-> priority will simply end up having their vruntime advanced much faster than
-> other tasks, resulting in them receiving time slices less frequently.
->
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> ---
->  kernel/sched/fair.c | 25 ++++++++-----------------
->  1 file changed, 8 insertions(+), 17 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d48bff5118fc..8da2823401ca 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -671,22 +671,6 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
->         return delta;
->  }
->
-> -/*
-> - * The idea is to set a period in which each task runs once.
-> - *
-> - * When there are too many tasks (sched_nr_latency) we have to stretch
-> - * this period because otherwise the slices get too small.
-> - *
-> - * p = (nr <= nl) ? l : l*nr/nl
-> - */
-> -static u64 __sched_period(unsigned long nr_running)
-> -{
-> -       if (unlikely(nr_running > sched_nr_latency))
-> -               return nr_running * sysctl_sched_min_granularity;
-> -       else
-> -               return sysctl_sched_latency;
-> -}
-> -
->  /*
->   * We calculate the wall-time slice from the period by taking a part
->   * proportional to the weight.
-> @@ -695,7 +679,7 @@ static u64 __sched_period(unsigned long nr_running)
->   */
->  static u64 sched_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  {
-> -       u64 slice = __sched_period(cfs_rq->nr_running + !se->on_rq);
-> +       u64 slice = sysctl_sched_latency;
+Dedicated instances are currently disturbed by unnecessary jitter due 
+to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
+There is no hardware virtual timer on Intel for guest like ARM. Both 
+programming timer in guest and the emulated timer fires incur vmexits.
+This patchset tries to avoid vmexit which is incurred by the emulated 
+timer fires in dedicated instance scenario. 
 
-Is the change above and the remove of __sched_period() really needed
-for fixing the null time slice problem ?
-This change impacts how tasks will preempt each other and as a result
-the throughput. It should have it dedicated patch so we can evaluate
-its impact
+When nohz_full is enabled in dedicated instances scenario, the unpinned 
+timer will be moved to the nearest busy housekeepers after commit
+9642d18eee2cd (nohz: Affine unpinned timers to housekeepers) and commit 
+444969223c8 ("sched/nohz: Fix affine unpinned timers mess"). However, 
+KVM always makes lapic timer pinned to the pCPU which vCPU residents, the 
+reason is explained by commit 61abdbe0 (kvm: x86: make lapic hrtimer 
+pinned). Actually, these emulated timers can be offload to the housekeeping 
+cpus since APICv is really common in recent years. The guest timer interrupt 
+is injected by posted-interrupt which is delivered by housekeeping cpu 
+once the emulated timer fires. 
 
->
->         for_each_sched_entity(se) {
->                 struct load_weight *load;
-> @@ -712,6 +696,13 @@ static u64 sched_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
->                 }
->                 slice = __calc_delta(slice, se->load.weight, load);
->         }
-> +
-> +       /*
-> +        * To avoid cache thrashing, run at least sysctl_sched_min_granularity.
-> +        * The vruntime of a low priority task advances faster; those tasks
-> +        * will simply get time slices less frequently.
-> +        */
-> +       slice = max_t(u64, slice, sysctl_sched_min_granularity);
->         return slice;
->  }
->
-> --
-> 2.20.1
->
+The host admin should fine tuned, e.g. dedicated instances scenario w/ 
+nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus 
+for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root  
+mode, ~3% redis performance benefit can be observed on Skylake server.
+
+w/o patchset:
+
+            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Avg time
+
+EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.71us ( +-   1.09% )
+
+w/ patchset:
+
+            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time         Avg time
+
+EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.72us ( +-   4.02% )
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>
+
+v5 -> v6:
+ * don't overwrites whatever the user specified
+ * introduce kvm_can_post_timer_interrupt and kvm_use_posted_timer_interrupt
+ * remove kvm_hlt_in_guest() condition
+ * squash all of 2/3/4 together
+
+v4 -> v5:
+ * update patch description in patch 1/4
+ * feed latest apic->lapic_timer.expired_tscdeadline to kvm_wait_lapic_expire()
+ * squash advance timer handling to patch 2/4
+
+v3 -> v4:
+ * drop the HRTIMER_MODE_ABS_PINNED, add kick after set pending timer
+ * don't posted inject already-expired timer
+
+v2 -> v3:
+ * disarming the vmx preemption timer when posted_interrupt_inject_timer_enabled()
+ * check kvm_hlt_in_guest instead
+
+v1 -> v2:
+ * check vcpu_halt_in_guest
+ * move module parameter from kvm-intel to kvm
+ * add housekeeping_enabled
+ * rename apic_timer_expired_pi to kvm_apic_inject_pending_timer_irqs
+
+
+
+Wanpeng Li (2):
+  KVM: LAPIC: Make lapic timer unpinned
+  KVM: LAPIC: Inject timer interrupt via posted interrupt
+
+ arch/x86/kvm/lapic.c            | 60 +++++++++++++++++++++++++++++------------
+ arch/x86/kvm/lapic.h            |  3 ++-
+ arch/x86/kvm/svm.c              |  2 +-
+ arch/x86/kvm/vmx/vmx.c          |  5 ++--
+ arch/x86/kvm/x86.c              | 12 +++++----
+ arch/x86/kvm/x86.h              |  2 ++
+ include/linux/sched/isolation.h |  2 ++
+ kernel/sched/isolation.c        |  6 +++++
+ 8 files changed, 66 insertions(+), 26 deletions(-)
+
+-- 
+1.8.3.1
+
