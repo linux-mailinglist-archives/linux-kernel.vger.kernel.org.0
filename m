@@ -2,56 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E0BF60321
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A5860324
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfGEJdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:33:24 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40439 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbfGEJdY (ORCPT
+        id S1728276AbfGEJeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 05:34:01 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35398 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728264AbfGEJeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:33:24 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e8so8445572otl.7
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 02:33:23 -0700 (PDT)
+        Fri, 5 Jul 2019 05:34:01 -0400
+Received: by mail-oi1-f196.google.com with SMTP id a127so6736887oii.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 02:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=HROQIJhsY4TQuJdqnfvqx5TwTIiaIY9u98AqrzcTE1U=;
-        b=bcXmhFmtX81Q+N9rH9dDCAKUMfDnSZyX8tMy4JwVU0I03xUNM4oWkTkS9xnhR5KGkA
-         GOEL35PULJqihGmen0bInboR/NNRs7FKMm8H8jxjc9RbPcEOykxXFZPxMKwBsyptaEF+
-         cyucE0b/7d6US6oV2mD0/EP+bXd23muODKzcU6U4dbJKcu9kJoHssSVBeLLElWjn88tJ
-         gFAlZkRMo4WThpBknpJ+KmKpDfH805IS5jRqRGDRIiM67O4hAGel/poQQKDv72w1g7Ui
-         uTzOUQ7GaKJE82xZtRq4D9/axEvuRRDfI3hGCqeMn+jCX+LXlewpOZLL+4/O6BdmKE+y
-         t9rQ==
+        bh=k7JeaJZT9YLEJlXuKXiJcbNBJ0svwTrsoQVxCOdP3dc=;
+        b=mpEnVSRnmeyi+d9CXxwfr5p0t/UtYdJ8mHFSB1cfOuZbfj98idtIUKu9MXbcplNKVm
+         Mb5R7Wmsww3eqzijwq/psqqW3JWGMe3WRYcyQDusKrzaKjotLc/mXzF7sSq/HeMz751a
+         mgKUnUsKzIRJfTnMY3LKNeSUUjr6kyHsPFP3uL7+QPKuhWDonVt3mQk2sM7Ma4nH3g6o
+         CmEkCHrxBn5WM7nvbNXYn8sfPsEY49vZ6+BMTnmOL4ShhnMTfeU584fxtXeBHU5ck1/O
+         4xH/B0kknxH/8HHXnb3kqFSSmbuIakpGcyEa7crP9P+SiqcXM+By/0bDicdQOKYNtuup
+         EjCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HROQIJhsY4TQuJdqnfvqx5TwTIiaIY9u98AqrzcTE1U=;
-        b=uW9xy6QtMXk0c0ekdlmWEJhqhrJF38xMfUHSYBG0BgTmZ4HQYL3JEy3QVXxzm8KXNY
-         OzQyQp801z7MW8zvFsroXItMFodC6V5YdtegdvfydLlFAtzC7xN2VZz7DpydrGI09i7e
-         pQaXGbH6PbXNHwpl7In+Jg6tAUvA1MRzMkmAC5SIcsKggIH9cgdSjVbJ9464YSG/l65e
-         msFwm5LQVodbgM6LpJiqoLvD9WD69cDnrn9w2bW/vy5aB6p/WMP2LcjfyAeQA460NDVl
-         AsIbDzbCBTPLWSNWQNmFn1KSLVnSjU5/8WSwZj9oCqmYUpr1kme1/UPrRx3QMFM/elOi
-         aQ0A==
-X-Gm-Message-State: APjAAAXxb0aK0RobG89g5r9CalQhHLmqOH8hpx8tm2oo3BEs3ka4Obqd
-        M8qnWJBycgBzqpF0zteIC9I1q6e1IE6KSlhX8gFwyA==
-X-Google-Smtp-Source: APXvYqw/93nr/E5l0p2Rqtw78pD8KO36CuASALI3gbDEnX3dng9qRsUPVaIkDy3GbV4sAr9h6a1SE2DYzahy++A3mqw=
-X-Received: by 2002:a9d:2969:: with SMTP id d96mr2138546otb.85.1562319203458;
- Fri, 05 Jul 2019 02:33:23 -0700 (PDT)
+        bh=k7JeaJZT9YLEJlXuKXiJcbNBJ0svwTrsoQVxCOdP3dc=;
+        b=o8ZTSIaOP9H9L+n/ZLH6pqxg91cWfB8D380ftVCOk3NDrbZVtfrQkDaHXqEhovLbEz
+         3ARHIYBkghYApHE0Kf9QKFLOKEYrpCu9WmQnIwb07R2rt6XKalaPjGjgX2iz3nYzGBBk
+         k1b0D/P034lU4M0PC4L730rrnINaMic+1C/H2y3zKILWjFsYdfljQM0dUoULLwPXlNEu
+         kqCD0sDXlW/BjvhBO1sWjwoZ502DIOcRDy0L8bwrNKT8hIR8hrmMWTSskGaF2IN4Y6Cu
+         jZYc96nFIbs4v4Mkeo0nyopCE9/A8LNFUxjCvEhY3U+3feOA2LYr5gWWqlS7optd/yg+
+         13gA==
+X-Gm-Message-State: APjAAAX+ixzrylImiqU9SSV2VBD9Ls0nYQlGlkDqTfJKDaQnkPfMW3L3
+        8L47bJG6HrA8tzqSgqloOD1GMEuhlssp1RO4scX62w==
+X-Google-Smtp-Source: APXvYqxqzTa/ARUTZ5WSojLnyWSxsdX9n6tGNrUqj5cuuqMryH0l/dHnjFBS3EoEGSLjPcrj4i0sVSlI+tSZEvL0CxU=
+X-Received: by 2002:aca:b58b:: with SMTP id e133mr1432573oif.147.1562319240426;
+ Fri, 05 Jul 2019 02:34:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190705093031.18182-1-michael.wu@vatics.com>
-In-Reply-To: <20190705093031.18182-1-michael.wu@vatics.com>
+References: <20190704153803.12739-1-bigeasy@linutronix.de> <20190704153803.12739-8-bigeasy@linutronix.de>
+In-Reply-To: <20190704153803.12739-8-bigeasy@linutronix.de>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 5 Jul 2019 11:33:12 +0200
-Message-ID: <CAMpxmJUzaEREeUxCu2BCV12Huv7K=yeUSKntA5RGMfOQbnxaFg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: fix incorrect IRQ requesting of an active-low lineevent
-To:     Michael Wu <michael.wu@vatics.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, mvp.kutali@gmail.com
+Date:   Fri, 5 Jul 2019 11:33:49 +0200
+Message-ID: <CAMpxmJXZy6S8OLb9iD6zfoFHnhZT4Nc0baxR1hH8YgphaEFOOw@mail.gmail.com>
+Subject: Re: [PATCH 7/7] gpiolib: Use spinlock_t instead of struct spinlock
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,45 +61,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 5 lip 2019 o 11:30 Michael Wu <michael.wu@vatics.com> napisa=C5=82(a):
+czw., 4 lip 2019 o 17:38 Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> napisa=C5=82(a):
 >
-> When a pin is active-low, logical trigger edge should be inverted
-> to match the same interrupt opportunity.
+> For spinlocks the type spinlock_t should be used instead of "struct
+> spinlock".
 >
-> For example, a button pushed trigger falling edge in ACTIVE_HIGH
-> case; in ACTIVE_LOW case, the button pushed trigger rising edge.
-> For user space the IRQ requesting doesn't need to do any
-> modification except to configuring GPIOHANDLE_REQUEST_ACTIVE_LOW.
+> Use spinlock_t for spinlock's definition.
 >
-> Signed-off-by: Michael Wu <michael.wu@vatics.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > ---
->  drivers/gpio/gpiolib.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/gpio/gpiolib.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e013d417a936..b98466a05091 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -956,9 +956,11 @@ static int lineevent_create(struct gpio_device *gdev=
-, void __user *ip)
->         }
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index 7a65dad43932c..7c52c2442173e 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -210,7 +210,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_=
+sleep,
+>                                   struct gpio_array *array_info,
+>                                   unsigned long *value_bitmap);
 >
->         if (eflags & GPIOEVENT_REQUEST_RISING_EDGE)
-> -               irqflags |=3D IRQF_TRIGGER_RISING;
-> +               irqflags |=3D test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
-> +                       IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
->         if (eflags & GPIOEVENT_REQUEST_FALLING_EDGE)
-> -               irqflags |=3D IRQF_TRIGGER_FALLING;
-> +               irqflags |=3D test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
-> +                       IRQ_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
->         irqflags |=3D IRQF_ONESHOT;
+> -extern struct spinlock gpio_lock;
+> +extern spinlock_t gpio_lock;
+>  extern struct list_head gpio_devices;
 >
->         INIT_KFIFO(le->events);
+>  struct gpio_desc {
 > --
-> 2.17.1
+> 2.20.1
 >
 
-Is this something that causes a bug in user-space? Any scenario to reproduc=
-e it?
+Thanks for spotting that!
 
-Bart
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
