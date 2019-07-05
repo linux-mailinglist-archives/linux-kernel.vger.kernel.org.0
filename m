@@ -2,70 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FBA604B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4ED7604B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfGEKrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:47:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45310 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfGEKrj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:47:39 -0400
-Received: by mail-ed1-f68.google.com with SMTP id e2so1119640edi.12
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 03:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=DoHSTsIViAj3V15HGP8GYC0CXF481DVg012HHMRCVGc=;
-        b=U/cWTEHMwRu+MYB7xdi6uxPEx9Kmaf5uC6kNgy3+7RvB6WkpEQB15b7Eyp0Xym28m/
-         32x+0AdMXPT/o4EiKLfD7O5mit57daAucQIp8CiUs21RpIkgNnWLCebDAAxHfngwLDZ6
-         YyoAQ1wurf7QN39hky4kYOO68OW/44A9duiJugidaTyZkPG+haH6YItp+RHHrNIZ3WhS
-         W0vcpHPBTYOtDf3n1bF2Q+5Tr5NewdicgTNgms0/jpCt7+239i5iN8F5E7Ou32aw7Vmn
-         FKgDx0XBq15nl2C0mlVr3AS2P/71rSoOeOvVfq1aeNHbxKFR5z1LbgJ7tlu4tYGYB5hs
-         2r8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=DoHSTsIViAj3V15HGP8GYC0CXF481DVg012HHMRCVGc=;
-        b=PZnNGbWcPU/A8wd7UEWNcG8B0UWNHjuM56qZpfTs2BzBoN05qA6Ety4J3AhldyDSeN
-         hK6J/DFzZNYdA4nbMrioaOcQSQjFANgx1WXTzHYG/S76z8guQDiQO5areaUJ5jAvd8/g
-         KKzyACQKIyeA4/rPawfvgqu9faG2YSD0t2IjpUHA3OY8m8hJlzX+F7fmI+hwn0bKXDLo
-         qTvYYQbiZFwakYjJQgyqXrGQTjmV4HXeMGiOUj5Q6+kSW1yjno5Pfzv3DbU5MdIEn3N1
-         RBnR8J5WH1fZ8kMtnfs21iU3OIE95PIp4HKifKLLcPhmrvWnU2kmUxLl1xGfI2vwihQq
-         03jg==
-X-Gm-Message-State: APjAAAU3dCd21WKuj6jlz2Xec4L4sR16ZS+pWjGejXr/Ouk4nkRWuh1s
-        BPtn5gAvfIBVWHc/AkWPXdJ9GZtpID/YgBMDOeg=
-X-Google-Smtp-Source: APXvYqxiwYfrbr3/8ctMWQ1SJXi/qZRey7gHJP2gIDT7zxH5afjf/epEtIA2FLglPeiuzNFj0bYaHF/NU/IHCFoRi+c=
-X-Received: by 2002:a17:906:4a89:: with SMTP id x9mr2812606eju.141.1562323658040;
- Fri, 05 Jul 2019 03:47:38 -0700 (PDT)
+        id S1728401AbfGEKvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:51:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:35804 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbfGEKvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 06:51:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D92252B;
+        Fri,  5 Jul 2019 03:51:06 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAA563F703;
+        Fri,  5 Jul 2019 03:51:01 -0700 (PDT)
+Subject: Re: [PATCH] remove the initrd resource in /proc/iomem as theinitrdhas
+ freed the reserved memblock.
+To:     huang.junhua@zte.com.cn
+Cc:     wang.yi59@zte.com.cn, catalin.marinas@arm.com, will.deacon@arm.com,
+        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        f.fainelli@gmail.com, logang@deltatee.com, robin.murphy@arm.com,
+        ghackmann@android.com, hannes@cmpxchg.org, david@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, jiang.xuexin@zte.com.cn,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <201907031942125390348@zte.com.cn>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <d25eadb8-266f-6b95-d375-1c2db2144e5f@arm.com>
+Date:   Fri, 5 Jul 2019 11:51:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Reply-To: zia412@outlook.com
-Received: by 2002:a50:b830:0:0:0:0:0 with HTTP; Fri, 5 Jul 2019 03:47:37 -0700 (PDT)
-From:   Ahmed Zama <zaaama250@gmail.com>
-Date:   Fri, 5 Jul 2019 12:47:37 +0200
-X-Google-Sender-Auth: yKjwXbskwi81rRzAe-s3YU7z3P0
-Message-ID: <CAOOCFv2n4RTKmHytBs4Nqa=Zm-AW_d3ypYx6eSjJyFg5V1bfag@mail.gmail.com>
-Subject: OK
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <201907031942125390348@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Hi,
 
-An oil business man made a fixed deposit of =E2=82=AC15 Million Euros  in m=
-y
-bank branch where I am a director and he died with his entire family
-in plane crash  leaving behind no next of kin. I Propose to present
-you as next of kin to claim the fund,if interested contact me with
-your full name, and telephone number to reach you and most
-importantly, a confirmation of acceptance from you.
+(CC: +devicetree list:
+memreserving the initrd, which linux then frees causes a zombie memreserve in all future
+kexec'd kernels)
 
-Your Truly ,
-Ahmed Zama
+On 03/07/2019 12:42, huang.junhua@zte.com.cn wrote:
+>>>> On 02/07/2019 11:34, Yi Wang wrote:
+>>>>> From: Junhua Huang <huang.junhua@zte.com.cn>
+>>>>> The 'commit 50d7ba36b916 ("arm64: export memblock_reserve()d regions via /proc/iomem")'
+>>>>> show the reserved memblock in /proc/iomem. But the initrd's reserved memblock
+>>>>> will be freed in free_initrd_mem(), which executes after the reserve_memblock_reserved_regions().
+>>>>> So there are some incorrect information shown in /proc/iomem. e.g.:
+>>>>> 80000000-bbdfffff : System RAM
+>>>>>   80080000-813effff : Kernel code
+>>>>>   813f0000-8156ffff : reserved
+>>>>>   81570000-817fcfff : Kernel data
+>>>>>   83400000-83ffffff : reserved
+>>>>>   90000000-90004fff : reserved
+>>>>>   b0000000-b2618fff : reserved
+>>>>>   b8c00000-bbbfffff : reserved
+>>>>> In this case, the range from b0000000 to b2618fff is reserved for initrd, which should be
+>>>>> clean from the resource tree after it was freed.
+>>>>
+>>>> (There was some discussion about this over-estimate on the list, but it didn't make it
+>>>> into the commit message.) I think a reserved->free change is fine. If user-space thinks
+>>>> its still reserved nothing bad happens.
+>>
+>>>>> As kexec-tool will collect the iomem reserved info 
+>>>>> and use it in second kernel, which causes error message generated a second time.
+>>
+>>>> What error message?
+>>
+>>> Sorry, it's my mistake. The kexec-tool could not use iomem reserved info in the second kernel.
+>>> The error message I mean is that the initrd reserved memblock region will be shown in 
+>>> second kernel /proc/iomem. But this message comes from the dtb's memreserve node, 
+>>> not the first kernel /proc/iomem.
+>>
+>> This doesn't sound right.
+>> Is kexec-tool spraying anything reserved in /proc/iomem into the DT as memreserve?
+
+> No, it isn't. The kexec-tool could not spray resserved info to DT as memreserve.
+
+(well, it generates the second DT, and it has the reserved /proc/iomem entries on hand)
+
+
+> After we started the kernel from uboot, the /sys/firmware/fdt in this kernel has been add some infos,
+> incluing the dtb memreserve and ramdisk memreserve info.
+
+Aha! Ugh.
+arm64_memblock_init() memblock_reserves() this, as does fdt_init_reserved_mem().
+But then we memblock_free() it in free_initrd_mem().
+
+
+> And then we use this fdt as the kexec dtb, and the second kernel would read 
+> the memreserve node and reserve the memblock.
+
+> So we can see the first kernel initrd reserved info from the second kernel /proc/iomem.
+
+[...]
+
+> This phenomenon is not caused by first kernel /proc/iomem or kexec, but dtb.
+
+Right, so the options are:
+
+(1) Delete the memreserve node from the DT when we free the initrd. I don't think this is
+the sort of thing the kernel should be doing.
+
+(2) Memreserving the initramfs implies 'keepinitrd' on the commandline. The DT has told us
+to "exclude reserved memory from normal usage". If the bootloader didn't mean for us to
+reserve this memory forever, it should drop the memreserve.
+
+(3) kexec-tools determines this memreserve is no longer needed and removes it from the new
+DT. It has the details to do this: /sys/firmware/fdt will show the physical addresses of
+the initramfs. With your patch /proc/iomem will show that this region is regular memory.
+(not covered by any reserved type). This is safe with older kernels.
+
+
+My preference is 2 then 3.
+
+[...]
+
+> I agree. The kexec-tool will use the second-level reserved info to avoid the load address 
+> conflict with the important thing, It is true that if the image load address kexec-tools set 
+> would belong to other important thing, something would go wrong. 
+> So I think we need clean the initrd reserved info from /proc/iomem, it is useless.
+
+If we've freed the memory and we can update that file, sure.
+I think at the time of that patch the assumption was only the arch code does
+memblock_reserve() early, so we never need to update /proc/iomem.
+
+
+Thanks,
+
+James
