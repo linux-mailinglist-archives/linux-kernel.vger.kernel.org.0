@@ -2,62 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6198B6008D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 07:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8961B6008F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 07:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfGEFWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 01:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbfGEFWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 01:22:12 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 229A4218A0;
-        Fri,  5 Jul 2019 05:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562304131;
-        bh=zPc/hFZDW3NZGoz+XDtC9wzD4pBipQw9CknQFsQjFDg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aOAmi0Hewyo2Fwp1kPTVZ8hoRC73tFr4syJEaZfLdpAZ8Hkv3+NPtCWYZ9n0L2zN2
-         KW82P4tH5C11zKMhmFZyKzgNSmTlOhplfCJemZHMSsKECRm3vjAnhgSeqoS7zxvaxI
-         v0j86Xy8SGDNvL/2QrYL/3Fo8couT3SCW88hHyO0=
-Date:   Fri, 5 Jul 2019 07:22:08 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ryan Kennedy <ryan5544@gmail.com>
-Cc:     mathias.nyman@intel.com, stern@rowland.harvard.edu,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: pci-quirks: Correct AMD PLL quirk detection
-Message-ID: <20190705052208.GE15821@kroah.com>
-References: <20190704153529.9429-1-ryan5544@gmail.com>
- <20190704153529.9429-2-ryan5544@gmail.com>
+        id S1727355AbfGEFWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 01:22:48 -0400
+Received: from smtprelay0117.hostedemail.com ([216.40.44.117]:50290 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725983AbfGEFWs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 01:22:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 85F32181D3368;
+        Fri,  5 Jul 2019 05:22:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3867:4321:4605:5007:6119:6742:7903:7904:9121:10004:10400:10848:11232:11233:11657:11658:11914:12297:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14659:14721:21080:21627:30054:30055:30060:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: level75_17cfce2dff144
+X-Filterd-Recvd-Size: 2521
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  5 Jul 2019 05:22:43 +0000 (UTC)
+Message-ID: <5f4680cce78573ecfbbdc0dfca489710581b966f.camel@perches.com>
+Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Michal Wajdeczko <michal.wajdeczko@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Date:   Thu, 04 Jul 2019 22:22:41 -0700
+In-Reply-To: <20190704220931.f1bd2462907901f9e7aca686@linux-foundation.org>
+References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org>
+         <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org>
+         <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com>
+         <20190705131435.58c2be19@canb.auug.org.au>
+         <20190704220931.f1bd2462907901f9e7aca686@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704153529.9429-2-ryan5544@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 11:35:28AM -0400, Ryan Kennedy wrote:
-> The AMD PLL USB quirk is incorrectly enabled on newer Ryzen
-> chipsets. The logic in usb_amd_find_chipset_info currently checks
-> for unaffected chipsets rather than affected ones. This broke
-> once a new chipset was added in e788787ef. It makes more sense
-> to reverse the logic so it won't need to be updated as new
-> chipsets are added. Note that the core of the workaround in
-> usb_amd_quirk_pll does correctly check the chipset.
+On Thu, 2019-07-04 at 22:09 -0700, Andrew Morton wrote:
+> diff(1) doesn't seem to know how to handle a zero-length file.
 > 
-> Signed-off-by: Ryan Kennedy <ryan5544@gmail.com>
-> ---
->  drivers/usb/host/pci-quirks.c | 31 +++++++++++++++++++------------
->  1 file changed, 19 insertions(+), 12 deletions(-)
+> y:/home/akpm> mkdir foo
+> y:/home/akpm> cd foo
+> y:/home/akpm/foo> touch x
+> y:/home/akpm/foo> diff -uN x y
+> y:/home/akpm/foo> date > x
+> y:/home/akpm/foo> diff -uN x y
+> --- x   2019-07-04 21:58:37.815028211 -0700
+> +++ y   1969-12-31 16:00:00.000000000 -0800
+> @@ -1 +0,0 @@
+> -Thu Jul  4 21:58:37 PDT 2019
+> 
+> So when comparing a zero-length file with a non-existent file, diff
+> produces no output.
 
-Should this be backported to stable kernels?
+Why use the -N option ?
 
-thanks,
+$ diff --help
+[...]
+  -N, --new-file                  treat absent files as empty
 
-greg k-h
+otherwise
+
+$ cd $(mktemp -d -p .)
+$ touch x
+$ diff -u x y
+diff: y: No such file or directory
+
+
