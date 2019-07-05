@@ -2,78 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52082601F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFEC601FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfGEIKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 04:10:24 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42570 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbfGEIKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:10:23 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C8AD79C6AC02954968C4;
-        Fri,  5 Jul 2019 16:10:20 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 5 Jul 2019 16:10:11 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: SOF: debug: fix possible memory leak in sof_dfsentry_write()
-Date:   Fri, 5 Jul 2019 08:16:37 +0000
-Message-ID: <20190705081637.157169-1-weiyongjun1@huawei.com>
+        id S1727287AbfGEIRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 04:17:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37942 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfGEIRj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:17:39 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hjJPS-0004Yw-Sd; Fri, 05 Jul 2019 08:17:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] libertas: remove redundant assignment to variable ret
+Date:   Fri,  5 Jul 2019 09:17:34 +0100
+Message-Id: <20190705081734.15292-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'string' is malloced in sof_dfsentry_write() and should be freed
-before leaving from the error handling cases, otherwise it will cause
-memory leak.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 091c12e1f50c ("ASoC: SOF: debug: add new debugfs entries for IPC flood test")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The variable ret is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/sof/debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/libertas/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
-index 54bb53bfc81b..2388477a965e 100644
---- a/sound/soc/sof/debug.c
-+++ b/sound/soc/sof/debug.c
-@@ -162,7 +162,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
- 	else
- 		ret = kstrtoul(string, 0, &ipc_count);
- 	if (ret < 0)
--		return ret;
-+		goto out;
+diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/wireless/marvell/libertas/main.c
+index 5968852b65a7..2233b59cdf44 100644
+--- a/drivers/net/wireless/marvell/libertas/main.c
++++ b/drivers/net/wireless/marvell/libertas/main.c
+@@ -1046,7 +1046,7 @@ int lbs_rtap_supported(struct lbs_private *priv)
+ int lbs_start_card(struct lbs_private *priv)
+ {
+ 	struct net_device *dev = priv->dev;
+-	int ret = -1;
++	int ret;
  
- 	/* limit max duration/ipc count for flood test */
- 	if (flood_duration_test) {
-@@ -191,7 +191,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
- 				    "error: debugfs write failed to resume %d\n",
- 				    ret);
- 		pm_runtime_put_noidle(sdev->dev);
--		return ret;
-+		goto out;
- 	}
- 
- 	/* flood test */
-
-
+ 	/* poke the firmware */
+ 	ret = lbs_setup_firmware(priv);
+-- 
+2.20.1
 
