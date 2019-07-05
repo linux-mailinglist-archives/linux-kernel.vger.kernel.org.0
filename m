@@ -2,63 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C92FF60D71
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 23:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45ADE60D3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 23:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfGEV7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 17:59:47 -0400
-Received: from out12.masterobox.work ([178.156.202.12]:48304 "EHLO
-        slot0.mathewsons.ga" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfGEV7q (ORCPT
+        id S1728247AbfGEVnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 17:43:52 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36198 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfGEVnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 17:59:46 -0400
-X-Greylist: delayed 627 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Jul 2019 17:59:45 EDT
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=mathewsons.ga;
- h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=purchase@mathewsons.ga;
- bh=onxYcir3NvpNjk2I/gjm/O+ljxo=;
- b=WrJB4oBOvLtf3vJ5q/jhIp/iCJ9LZA79ErWVoRlywxdS1dnnKml3C1/o8HtpTnqV6AWoj9Fs2NCg
-   A2V0nwgL2wmDppe9I7BzxzoAoHffjw3DZV6IEVEzziRnQPWroVyi47hkYZ3sJdmTK1o38PZmMFPS
-   Jl23BvZJvJ3CMxykNq+1GgaZTOlh7WUYWkeh3Y+jJQqLAW9ggZJe2R8hrWr1xpW5FdItBfDN/lDI
-   K/xKFL4eB6dY652xai9l2XwajOR+3MyKteKXit+RZ0SOVD32IMiMTZB0pOhAGiNe/cd7j518fsj4
-   GK2Rz1dAAViwG2hrFC2Bf+W/3YZWZQP6Wt9VzA==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=mathewsons.ga;
- b=gcEQmNp1yW+cITpryKFd+qHpvi3ypZ8wm+Hb8BP14n01qWXlOBf72XbxIZTJIN3lUEqcIFJVIi8z
-   +0LHgvpXomaNu3Z70brIJkTHm0Dr9nz1pGNHdaSftalsz0OfhqMWwGyp7pVMmPI9x7syBdVXZlCg
-   CA/mJ7cvSJ1vLKegLxtx6le93tvdntnAVC4UmLmd+UDGjzs01dDL6LfxXLGbYw1UdyECgMhYwlhR
-   vXM30OdWnwh6UEyRdugRq5ibcCD3x8IFKVLhaL04E2TeoyxJHQUC+8utQMJ2BXcIXd7h5ScHQ8Ah
-   OsaZw8ZZtkoPqhnxF/sE5gCdPHhoqQXm9kg6vQ==;
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 5 Jul 2019 17:43:51 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hjVzd-0008F6-2f; Fri, 05 Jul 2019 23:43:45 +0200
+Date:   Fri, 5 Jul 2019 23:43:44 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Feng Tang <feng.tang@intel.com>
+Subject: Re: [patch V2 01/25] x86/kgbd: Use NMI_VECTOR not APIC_DM_NMI
+In-Reply-To: <20190704155608.347938562@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1907052342250.3648@nanos.tec.linutronix.de>
+References: <20190704155145.617706117@linutronix.de> <20190704155608.347938562@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Quotes needed For July Shipments
-To:     Recipients <purchase@mathewsons.ga>
-From:   "Sales -Jpexcc." <purchase@mathewsons.ga>
-Date:   Sat, 06 Jul 2019 00:39:14 +0300
-Reply-To: jpexcc@aol.com
-Message-ID: <0.0.4D.13D.1D53379E5670D72.0@slot0.mathewsons.ga>
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello dear,
- =
+On Thu, 4 Jul 2019, Thomas Gleixner wrote:
 
-We are in the market for your products after meeting at your stand during l=
-ast expo.
- =
+> apic->send_IPI_allbutself() takes a vector number as argument.
+> 
+> APIC_DM_NMI is clearly not a vector number. It's defined to 0x400 which is
+> outside the vector space.
+> 
+> Use NMI_VECTOR instead as that's what it is intended to be.
+> 
+> Fixes: 82da3ff89dc2 ("x86: kgdb support")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+> V2: New patch
+> ---
+>  arch/x86/kernel/kgdb.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/arch/x86/kernel/kgdb.c
+> +++ b/arch/x86/kernel/kgdb.c
+> @@ -424,7 +424,7 @@ static void kgdb_disable_hw_debug(struct
+>   */
+>  void kgdb_roundup_cpus(void)
+>  {
+> -	apic->send_IPI_allbutself(APIC_DM_NMI);
+> +	apic->send_IPI_allbutself(VECTOR_NMI);
 
-Please kindly send us your latest catalog and price list so as to start a n=
-ew project/order as promised during the exhibition. =
+The changelog got it right, but this here needs to be VECTOR_NMI. While I
+didn't 0-day was able to find and turn on the config option ...
 
- =
+/blush
 
-I would appreciate your response about the above details required so we can=
- revert back to you asap.
- =
-
-Kind regards
- =
-
-Rhema Zoeh
