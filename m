@@ -2,139 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4ED7604B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17621604C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfGEKvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:51:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:35804 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfGEKvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:51:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D92252B;
-        Fri,  5 Jul 2019 03:51:06 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAA563F703;
-        Fri,  5 Jul 2019 03:51:01 -0700 (PDT)
-Subject: Re: [PATCH] remove the initrd resource in /proc/iomem as theinitrdhas
- freed the reserved memblock.
-To:     huang.junhua@zte.com.cn
-Cc:     wang.yi59@zte.com.cn, catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
-        f.fainelli@gmail.com, logang@deltatee.com, robin.murphy@arm.com,
-        ghackmann@android.com, hannes@cmpxchg.org, david@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, jiang.xuexin@zte.com.cn,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <201907031942125390348@zte.com.cn>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <d25eadb8-266f-6b95-d375-1c2db2144e5f@arm.com>
-Date:   Fri, 5 Jul 2019 11:51:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728624AbfGEKwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:52:12 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35415 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728526AbfGEKwM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 06:52:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id s27so4156700pgl.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 03:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WIDYV8mZhZsD7MlUb6ge3Loy8e0Hvg52Npd39IL8pBk=;
+        b=A6r3FjjXpjXEra/w1mO6d/azgSTIXPFpkrC3kjmoXr6TETjU1NBUuxK0tPNZUHkDCq
+         L7xFSO1phgxh23m7mxBPI84+W38lrUfesquSP7KwpOz06ipAwT/OlE6u00/19uwql5EA
+         8+V8tqZLmFBLMtmVlbTzy0iFSEJMQ/hE2tAW6i3jfSSn7JMkM6sa1hyih3Y2La5AuvZE
+         8q3Oj5pLxSkhbPJ+y9PEPpDnDH+uvvGfLBA1trT5mW9bpcvOgrQwMOZ08swM9/hAOVhh
+         unRUc/mQrg1+pTrTg+WyqqTjkeoiSg/bgHh93SGs1hAWV9OgbJyIGsslYo6+SnYa8N0f
+         KUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WIDYV8mZhZsD7MlUb6ge3Loy8e0Hvg52Npd39IL8pBk=;
+        b=kUGk6qYcKcpsbp31sTH5CWONYofXOuWJO+YPw57sXL49qd5BGJDG7IDgBmi4SRbY7o
+         uieePyl5GQcXAgb5Ruuv7rgW2cezxKI8yGPaisP9mZBoxGvEwthGx4CAxC2/4W2y7CJI
+         p2p2Z9VWnbRgx4SWd8wbRjf0ZjxAW5AU0anCLzdFqtzrB/pSVFckoBz/PFhAuIfbD1yP
+         O4pcIrWZX9cWttkC/dfh8Nm5JJGhioHwWK8rDS5zfRSrV71L45iTWC/z0nk68eSxNeZA
+         xpwinJ0Kz3uKffIxXJjwXz4pe/FST2nZTSKyBdl8hVV4+dq1bJcOsUANvNCt+GNcU2Zc
+         MEEw==
+X-Gm-Message-State: APjAAAVzO4/wLPGLr3M3tugslIegaLWVNwtrkpPci7Kamp5D5PHUcjYA
+        2IMdCwGkbb/Dp04txDw82uO6Og==
+X-Google-Smtp-Source: APXvYqy+PnEw3OXHK/bWTHHeqhQEqzjrlagWcaChljxZseu9UrJkcCUAQj6aPDplPOalXGy90QaE6g==
+X-Received: by 2002:a63:221c:: with SMTP id i28mr4832526pgi.114.1562323931337;
+        Fri, 05 Jul 2019 03:52:11 -0700 (PDT)
+Received: from localhost ([223.226.51.128])
+        by smtp.gmail.com with ESMTPSA id i124sm22458799pfe.61.2019.07.05.03.52.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Jul 2019 03:52:10 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V7 7/7] cpufreq: Add QoS requests for userspace constraints
+Date:   Fri,  5 Jul 2019 16:21:24 +0530
+Message-Id: <7589f158a5522ff04ba2b63daca77bcdd4952f74.1562323803.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
+In-Reply-To: <0d4c2a013b32bf18d45817011b028918220580f5.1562210705.git.viresh.kumar@linaro.org>
+References: <0d4c2a013b32bf18d45817011b028918220580f5.1562210705.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <201907031942125390348@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This implements QoS requests to manage userspace configuration of min
+and max frequency.
 
-(CC: +devicetree list:
-memreserving the initrd, which linux then frees causes a zombie memreserve in all future
-kexec'd kernels)
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+V6->V7:
+- We can't call dev_pm_qos_remove_request() for a request which was
+  never added. This happened in one of the error paths. Fixed that by
+  allocating the requests only right before we try to add them and also
+  take care of things properly during errors.
 
-On 03/07/2019 12:42, huang.junhua@zte.com.cn wrote:
->>>> On 02/07/2019 11:34, Yi Wang wrote:
->>>>> From: Junhua Huang <huang.junhua@zte.com.cn>
->>>>> The 'commit 50d7ba36b916 ("arm64: export memblock_reserve()d regions via /proc/iomem")'
->>>>> show the reserved memblock in /proc/iomem. But the initrd's reserved memblock
->>>>> will be freed in free_initrd_mem(), which executes after the reserve_memblock_reserved_regions().
->>>>> So there are some incorrect information shown in /proc/iomem. e.g.:
->>>>> 80000000-bbdfffff : System RAM
->>>>>   80080000-813effff : Kernel code
->>>>>   813f0000-8156ffff : reserved
->>>>>   81570000-817fcfff : Kernel data
->>>>>   83400000-83ffffff : reserved
->>>>>   90000000-90004fff : reserved
->>>>>   b0000000-b2618fff : reserved
->>>>>   b8c00000-bbbfffff : reserved
->>>>> In this case, the range from b0000000 to b2618fff is reserved for initrd, which should be
->>>>> clean from the resource tree after it was freed.
->>>>
->>>> (There was some discussion about this over-estimate on the list, but it didn't make it
->>>> into the commit message.) I think a reserved->free change is fine. If user-space thinks
->>>> its still reserved nothing bad happens.
->>
->>>>> As kexec-tool will collect the iomem reserved info 
->>>>> and use it in second kernel, which causes error message generated a second time.
->>
->>>> What error message?
->>
->>> Sorry, it's my mistake. The kexec-tool could not use iomem reserved info in the second kernel.
->>> The error message I mean is that the initrd reserved memblock region will be shown in 
->>> second kernel /proc/iomem. But this message comes from the dtb's memreserve node, 
->>> not the first kernel /proc/iomem.
->>
->> This doesn't sound right.
->> Is kexec-tool spraying anything reserved in /proc/iomem into the DT as memreserve?
+@Rafael: Please apply this version instead of the diff I supplied on the
+WARN email earlier. This has proper protection in place at many places.
 
-> No, it isn't. The kexec-tool could not spray resserved info to DT as memreserve.
+ drivers/cpufreq/cpufreq.c | 98 ++++++++++++++++++++++-----------------
+ include/linux/cpufreq.h   |  8 +---
+ 2 files changed, 57 insertions(+), 49 deletions(-)
 
-(well, it generates the second DT, and it has the reserved /proc/iomem entries on hand)
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 091789e868ee..a46abd738cfd 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -718,23 +718,15 @@ static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+ static ssize_t store_##file_name					\
+ (struct cpufreq_policy *policy, const char *buf, size_t count)		\
+ {									\
+-	int ret, temp;							\
+-	struct cpufreq_policy new_policy;				\
++	unsigned long val;						\
++	int ret;							\
+ 									\
+-	memcpy(&new_policy, policy, sizeof(*policy));			\
+-	new_policy.min = policy->user_policy.min;			\
+-	new_policy.max = policy->user_policy.max;			\
+-									\
+-	ret = sscanf(buf, "%u", &new_policy.object);			\
++	ret = sscanf(buf, "%lu", &val);					\
+ 	if (ret != 1)							\
+ 		return -EINVAL;						\
+ 									\
+-	temp = new_policy.object;					\
+-	ret = cpufreq_set_policy(policy, &new_policy);		\
+-	if (!ret)							\
+-		policy->user_policy.object = temp;			\
+-									\
+-	return ret ? ret : count;					\
++	ret = dev_pm_qos_update_request(policy->object##_freq_req, val);\
++	return ret >= 0 ? count : ret;					\
+ }
+ 
+ store_one(scaling_min_freq, min);
+@@ -1126,8 +1118,6 @@ void refresh_frequency_limits(struct cpufreq_policy *policy)
+ 		new_policy = *policy;
+ 		pr_debug("updating policy for CPU %u\n", policy->cpu);
+ 
+-		new_policy.min = policy->user_policy.min;
+-		new_policy.max = policy->user_policy.max;
+ 		cpufreq_set_policy(policy, &new_policy);
+ 	}
+ 
+@@ -1283,6 +1273,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
+ 				   DEV_PM_QOS_MAX_FREQUENCY);
+ 	dev_pm_qos_remove_notifier(dev, &policy->nb_min,
+ 				   DEV_PM_QOS_MIN_FREQUENCY);
++	dev_pm_qos_remove_request(policy->max_freq_req);
++	dev_pm_qos_remove_request(policy->min_freq_req);
++	kfree(policy->min_freq_req);
+ 
+ 	cpufreq_policy_put_kobj(policy);
+ 	free_cpumask_var(policy->real_cpus);
+@@ -1361,16 +1354,50 @@ static int cpufreq_online(unsigned int cpu)
+ 	cpumask_and(policy->cpus, policy->cpus, cpu_online_mask);
+ 
+ 	if (new_policy) {
+-		policy->user_policy.min = policy->min;
+-		policy->user_policy.max = policy->max;
++		struct device *dev = get_cpu_device(cpu);
+ 
+ 		for_each_cpu(j, policy->related_cpus) {
+ 			per_cpu(cpufreq_cpu_data, j) = policy;
+ 			add_cpu_dev_symlink(policy, j);
+ 		}
+-	} else {
+-		policy->min = policy->user_policy.min;
+-		policy->max = policy->user_policy.max;
++
++		policy->min_freq_req = kzalloc(2 * sizeof(*policy->min_freq_req),
++					       GFP_KERNEL);
++		if (!policy->min_freq_req)
++			goto out_destroy_policy;
++
++		ret = dev_pm_qos_add_request(dev, policy->min_freq_req,
++					     DEV_PM_QOS_MIN_FREQUENCY,
++					     policy->min);
++		if (ret < 0) {
++			/*
++			 * So we don't call dev_pm_qos_remove_request() for an
++			 * uninitialized request.
++			 */
++			kfree(policy->min_freq_req);
++			policy->min_freq_req = NULL;
++
++			dev_err(dev, "Failed to add min-freq constraint (%d)\n",
++				ret);
++			goto out_destroy_policy;
++		}
++
++		/*
++		 * This must be initialized right here to avoid calling
++		 * dev_pm_qos_remove_request() on uninitialized request in case
++		 * of errors.
++		 */
++		policy->max_freq_req = policy->min_freq_req + 1;
++
++		ret = dev_pm_qos_add_request(dev, policy->max_freq_req,
++					     DEV_PM_QOS_MAX_FREQUENCY,
++					     policy->max);
++		if (ret < 0) {
++			policy->max_freq_req = NULL;
++			dev_err(dev, "Failed to add max-freq constraint (%d)\n",
++				ret);
++			goto out_destroy_policy;
++		}
+ 	}
+ 
+ 	if (cpufreq_driver->get && has_target()) {
+@@ -2344,7 +2371,6 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
+ {
+ 	struct cpufreq_governor *old_gov;
+ 	struct device *cpu_dev = get_cpu_device(policy->cpu);
+-	unsigned long min, max;
+ 	int ret;
+ 
+ 	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
+@@ -2352,24 +2378,12 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
+ 
+ 	memcpy(&new_policy->cpuinfo, &policy->cpuinfo, sizeof(policy->cpuinfo));
+ 
+-	/*
+-	* This check works well when we store new min/max freq attributes,
+-	* because new_policy is a copy of policy with one field updated.
+-	*/
+-	if (new_policy->min > new_policy->max)
+-		return -EINVAL;
+-
+ 	/*
+ 	 * PM QoS framework collects all the requests from users and provide us
+ 	 * the final aggregated value here.
+ 	 */
+-	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
+-	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
+-
+-	if (min > new_policy->min)
+-		new_policy->min = min;
+-	if (max < new_policy->max)
+-		new_policy->max = max;
++	new_policy->min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
++	new_policy->max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
+ 
+ 	/* verify the cpu speed can be set within this limit */
+ 	ret = cpufreq_driver->verify(new_policy);
+@@ -2458,10 +2472,9 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
+  * @cpu: CPU to re-evaluate the policy for.
+  *
+  * Update the current frequency for the cpufreq policy of @cpu and use
+- * cpufreq_set_policy() to re-apply the min and max limits saved in the
+- * user_policy sub-structure of that policy, which triggers the evaluation
+- * of policy notifiers and the cpufreq driver's ->verify() callback for the
+- * policy in question, among other things.
++ * cpufreq_set_policy() to re-apply the min and max limits, which triggers the
++ * evaluation of policy notifiers and the cpufreq driver's ->verify() callback
++ * for the policy in question, among other things.
+  */
+ void cpufreq_update_policy(unsigned int cpu)
+ {
+@@ -2521,10 +2534,9 @@ static int cpufreq_boost_set_sw(int state)
+ 			break;
+ 		}
+ 
+-		down_write(&policy->rwsem);
+-		policy->user_policy.max = policy->max;
+-		cpufreq_governor_limits(policy);
+-		up_write(&policy->rwsem);
++		ret = dev_pm_qos_update_request(policy->max_freq_req, policy->max);
++		if (ret)
++			break;
+ 	}
+ 
+ 	return ret;
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 1fa37b675a80..afc683021ac5 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -50,11 +50,6 @@ struct cpufreq_cpuinfo {
+ 	unsigned int		transition_latency;
+ };
+ 
+-struct cpufreq_user_policy {
+-	unsigned int		min;    /* in kHz */
+-	unsigned int		max;    /* in kHz */
+-};
+-
+ struct cpufreq_policy {
+ 	/* CPUs sharing clock, require sw coordination */
+ 	cpumask_var_t		cpus;	/* Online CPUs only */
+@@ -84,7 +79,8 @@ struct cpufreq_policy {
+ 	struct work_struct	update; /* if update_policy() needs to be
+ 					 * called, but you're in IRQ context */
+ 
+-	struct cpufreq_user_policy user_policy;
++	struct dev_pm_qos_request *min_freq_req;
++	struct dev_pm_qos_request *max_freq_req;
+ 	struct cpufreq_frequency_table	*freq_table;
+ 	enum cpufreq_table_sorting freq_table_sorted;
+ 
+-- 
+2.21.0.rc0.269.g1a574e7a288b
 
-
-> After we started the kernel from uboot, the /sys/firmware/fdt in this kernel has been add some infos,
-> incluing the dtb memreserve and ramdisk memreserve info.
-
-Aha! Ugh.
-arm64_memblock_init() memblock_reserves() this, as does fdt_init_reserved_mem().
-But then we memblock_free() it in free_initrd_mem().
-
-
-> And then we use this fdt as the kexec dtb, and the second kernel would read 
-> the memreserve node and reserve the memblock.
-
-> So we can see the first kernel initrd reserved info from the second kernel /proc/iomem.
-
-[...]
-
-> This phenomenon is not caused by first kernel /proc/iomem or kexec, but dtb.
-
-Right, so the options are:
-
-(1) Delete the memreserve node from the DT when we free the initrd. I don't think this is
-the sort of thing the kernel should be doing.
-
-(2) Memreserving the initramfs implies 'keepinitrd' on the commandline. The DT has told us
-to "exclude reserved memory from normal usage". If the bootloader didn't mean for us to
-reserve this memory forever, it should drop the memreserve.
-
-(3) kexec-tools determines this memreserve is no longer needed and removes it from the new
-DT. It has the details to do this: /sys/firmware/fdt will show the physical addresses of
-the initramfs. With your patch /proc/iomem will show that this region is regular memory.
-(not covered by any reserved type). This is safe with older kernels.
-
-
-My preference is 2 then 3.
-
-[...]
-
-> I agree. The kexec-tool will use the second-level reserved info to avoid the load address 
-> conflict with the important thing, It is true that if the image load address kexec-tools set 
-> would belong to other important thing, something would go wrong. 
-> So I think we need clean the initrd reserved info from /proc/iomem, it is useless.
-
-If we've freed the memory and we can update that file, sure.
-I think at the time of that patch the assumption was only the arch code does
-memblock_reserve() early, so we never need to update /proc/iomem.
-
-
-Thanks,
-
-James
