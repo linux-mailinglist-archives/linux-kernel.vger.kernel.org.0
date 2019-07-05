@@ -2,73 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFDE460CE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 23:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C544F60CE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 23:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfGEU7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 16:59:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725813AbfGEU7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 16:59:12 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E33A92133F;
-        Fri,  5 Jul 2019 20:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562360351;
-        bh=blb3ParGsikEh+pFK9nY3PgBtuvBfyUvOjCyCqbNYME=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lK5T1WpJIKPq7+htupiCX8IYnFYw2prXmCoNV96uroJmlSbcnoPtKp+RvmwaYA1lL
-         b4Hmcg2m7pxxkjXucAEuovmcYqd9bD9GO4DPOP+KMKQCVrE2ixVY4GQY3EK+hD3u5q
-         9/467hFwZ3d49hmMAPVzOy6ksur+rDfhCIFE13l0=
-Date:   Fri, 5 Jul 2019 16:59:09 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     stable@kernel.org, Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [STABLE backport 4.9] arm64, vdso: Define
- vdso_{start,end} as array
-Message-ID: <20190705205909.GJ10104@sasha-vm>
-References: <20190705184726.3221252-1-arnd@arndb.de>
+        id S1728009AbfGEVAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 17:00:25 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:40797 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfGEVAY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 17:00:24 -0400
+X-Originating-IP: 91.224.148.103
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 107921BF207;
+        Fri,  5 Jul 2019 21:00:19 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, od@zcrc.me,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: rawnand: ingenic: Fix ingenic_ecc dependency
+Date:   Fri,  5 Jul 2019 23:00:13 +0200
+Message-Id: <20190705210013.13355-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190629012248.12447-1-paul@crapouillou.net>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190705184726.3221252-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: c403ec33b613a15d9fd8dde37f246b79cd56b5df
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 08:47:20PM +0200, Arnd Bergmann wrote:
->From: Kees Cook <keescook@chromium.org>
->
->Commit dbbb08f500d6146398b794fdc68a8e811366b451 upstream.
->
->Adjust vdso_{start|end} to be char arrays to avoid compile-time analysis
->that flags "too large" memcmp() calls with CONFIG_FORTIFY_SOURCE.
->
->Cc: Jisheng Zhang <jszhang@marvell.com>
->Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->Suggested-by: Mark Rutland <mark.rutland@arm.com>
->Signed-off-by: Kees Cook <keescook@chromium.org>
->Signed-off-by: Will Deacon <will.deacon@arm.com>
->Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->---
->Backported to 4.9, which is lacking the rework from
->2077be6783b5 ("arm64: Use __pa_symbol for kernel symbols")
+On Sat, 2019-06-29 at 01:22:48 UTC, Paul Cercueil wrote:
+> If MTD_NAND_JZ4780 is y and MTD_NAND_JZ4780_BCH is m,
+> which select CONFIG_MTD_NAND_INGENIC_ECC to m, building fails:
+> 
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function `ingenic_nand_remove':
+> ingenic_nand.c:(.text+0x177): undefined reference to `ingenic_ecc_release'
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function `ingenic_nand_ecc_correct':
+> ingenic_nand.c:(.text+0x2ee): undefined reference to `ingenic_ecc_correct'
+> 
+> To fix that, the ingenic_nand and ingenic_ecc modules have been fused
+> into one single module.
+> - The ingenic_ecc.c code is now compiled in only if
+>   $(CONFIG_MTD_NAND_INGENIC_ECC) is set. This is now a boolean instead
+>   of tristate.
+> - To avoid changing the module name, the ingenic_nand.c file is moved to
+>   ingenic_nand_drv.c. Then the module name is still ingenic_nand.
+> - Since ingenic_ecc.c is no more a module, the module-specific macros
+>   have been dropped, and the functions are no more exported for use by
+>   the ingenic_nand driver.
+> 
+> Fixes: 15de8c6efd0e ("mtd: rawnand: ingenic: Separate top-level and SoC specific code")
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>
+> Cc: stable@vger.kernel.org
 
-I've queued both this and the 4.4 backport, thanks!
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
---
-Thanks,
-Sasha
+Miquel
