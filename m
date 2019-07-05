@@ -2,63 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0CB60104
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B49BF6010B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 08:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfGEG3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 02:29:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39598 "EHLO mail.kernel.org"
+        id S1727938AbfGEGc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 02:32:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbfGEG3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 02:29:13 -0400
-Received: from localhost (c-98-234-77-170.hsd1.ca.comcast.net [98.234.77.170])
+        id S1727046AbfGEGc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 02:32:59 -0400
+Received: from localhost (unknown [122.167.76.109])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5809A21852;
-        Fri,  5 Jul 2019 06:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CCC3218BB;
+        Fri,  5 Jul 2019 06:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562308152;
-        bh=rtqDsA1dt41jmY4HH8dyLkub/U82sQVRFe+2M0a+nCg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TCMhTSfTG6e8HjcjQ/khzcsPcnDqritHcZ6OLjp9322MVS1Z7TRWENemxx7rQcdBf
-         zuUSYXaA35XA/Y6p7t5ICwKKLNWBzM1njkLJ3b+rJiKLpqwQdQ1JE7BM1KSjicYuUK
-         Bf6cGP5MRnee4uZaaImcS3ge3cKgNAci8zDG9Utg=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: allow all the users to pin a file
-Date:   Thu,  4 Jul 2019 23:29:10 -0700
-Message-Id: <20190705062910.39163-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        s=default; t=1562308378;
+        bh=O0Y1hTv/2k9oNDwA5XMXcT5tyOAMyI4oyPL8FuGxUVo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z2fw7wDVQqCrmxOQ3yvjwbuCL4INZOcv3OK78jbVH9x/JftnIov3ShGPE/Q6j5vyQ
+         mxrzNuLJWZGWhVZ9MK2IlLQiA+vu6kieHx/XGsT8TJ+1Mp73bwnLQ3tik0gwY51jFX
+         EUuTsELhrB9en9mZHjD8PyEpDnBc8VtM/b/lalXQ=
+Date:   Fri, 5 Jul 2019 11:59:45 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Sameer Pujar <spujar@nvidia.com>, dan.j.williams@intel.com,
+        thierry.reding@gmail.com, ldewangan@nvidia.com,
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: tegra210-adma: remove PM_CLK dependency
+Message-ID: <20190705062945.GW2911@vkoul-mobl>
+References: <1561046059-15821-1-git-send-email-spujar@nvidia.com>
+ <1f21a03d-4cb9-c0e3-588e-8183d6f31cae@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f21a03d-4cb9-c0e3-588e-8183d6f31cae@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows users to pin files.
+On 20-06-19, 17:02, Jon Hunter wrote:
+> 
+> On 20/06/2019 16:54, Sameer Pujar wrote:
+> > Tegra ADMA does not use pm-clk interface now and hence the dependency
+> > is removed from Kconfig.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/file.c | 3 ---
- 1 file changed, 3 deletions(-)
+Applied, thanks
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b164f48e0f31..f8d46df8fa9e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2964,9 +2964,6 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
- 	__u32 pin;
- 	int ret = 0;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (get_user(pin, (__u32 __user *)arg))
- 		return -EFAULT;
- 
 -- 
-2.19.0.605.g01d371f741-goog
-
+~Vinod
