@@ -2,76 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5117260381
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE44603B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbfGEJ6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:58:11 -0400
-Received: from mga07.intel.com ([134.134.136.100]:55406 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728402AbfGEJ6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:58:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 02:58:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,454,1557212400"; 
-   d="scan'208";a="185144841"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Jul 2019 02:58:04 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 34385715; Fri,  5 Jul 2019 12:58:01 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH 8/8] ACPI / property: Add two new Thunderbolt property GUIDs to the list
-Date:   Fri,  5 Jul 2019 12:58:00 +0300
-Message-Id: <20190705095800.43534-9-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190705095800.43534-1-mika.westerberg@linux.intel.com>
-References: <20190705095800.43534-1-mika.westerberg@linux.intel.com>
+        id S1728016AbfGEKAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:00:06 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:26229 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbfGEKAG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 06:00:06 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x659xmjN009567
+        for <linux-kernel@vger.kernel.org>; Fri, 5 Jul 2019 18:59:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x659xmjN009567
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562320788;
+        bh=7vo4tVVjFp2kF3CCv5uSappoveKorG1+DyG5PCqC1mo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=drq8MaMbdGESVV4jgCedEiZm6fgkjP+o5bmM0K9cOYi9ZwIVTd+iZfK2wFELQfdFC
+         3WQ9Y8bSjaL3K4DNSYE6U+9pH49/yvNX4Wc5fFfUeFsnUexvpwQ/4XvMLvMduoD3QJ
+         80IumNwsZg1SARySsPtcLCMlEsm6IYzLRHDS8Or9zOxzUtHowKUe235BAQ9JnhmB4y
+         dq+fUaULEbCGZx5p6TgacoqjHJQfOVua4lVbFd6Vcohdo9tK5QaBp9SuyiU+Ybatqg
+         31zCY2tAq3x8JrUrvXukE1b3C3R67GWUjZ2MwW5aBdZst2q4mn4Mim98GGVKVYkgRS
+         Vr/OBAbNQlICw==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id v6so3473932vsq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 02:59:48 -0700 (PDT)
+X-Gm-Message-State: APjAAAXMMvKR3obSSio0MBazWnZvyGJP76WRIeRPqs8FpDq/iv/4yIvG
+        jbB8ryeAy5xgLylcHBzPPqcNq3/GBg1E5wR2Ktk=
+X-Google-Smtp-Source: APXvYqw/AUFCUUd5jXpPkprJCwIFt7JAmja2F/erzSFp296eLvhPJ66gWzHHWXgUX0GCg6HvO6LlFAxsNEuazgKizc0=
+X-Received: by 2002:a67:fc45:: with SMTP id p5mr1635301vsq.179.1562320787446;
+ Fri, 05 Jul 2019 02:59:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1557756964-13087-1-git-send-email-yamada.masahiro@socionext.com> <87v9wibq5z.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87v9wibq5z.fsf@concordia.ellerman.id.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 5 Jul 2019 18:59:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASK=z68pqPcPw8OGM1Y9SGSHOAMDygsbmNvOW1oOsQFRA@mail.gmail.com>
+Message-ID: <CAK7LNASK=z68pqPcPw8OGM1Y9SGSHOAMDygsbmNvOW1oOsQFRA@mail.gmail.com>
+Subject: Re: [PATCH v2] powerpc/boot: pass CONFIG options in a simpler and
+ more robust way
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Greer <mgreer@animalcreek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ice Lake Thunderbolt controller includes two new device property
-compatible properties that we need to be able to extract in the driver
-so add them to the growing array of GUIDs.
+On Thu, Jul 4, 2019 at 9:26 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>
+> > Commit 5e9dcb6188a4 ("powerpc/boot: Expose Kconfig symbols to wrapper")
+> > was wrong, but commit e41b93a6be57 ("powerpc/boot: Fix build failures
+> > with -j 1") was also wrong.
+> >
+> > The correct dependency is:
+> >
+> >   $(obj)/serial.o: $(obj)/autoconf.h
+> >
+> > However, I do not see the reason why we need to copy autoconf.h to
+> > arch/power/boot/. Nor do I see consistency in the way of passing
+> > CONFIG options.
+> >
+> > decompress.c references CONFIG_KERNEL_GZIP and CONFIG_KERNEL_XZ, which
+> > are passed via the command line.
+> >
+> > serial.c includes autoconf.h to reference a couple of CONFIG options,
+> > but this is fragile because we often forget to include "autoconf.h"
+> > from source files.
+> >
+> > In fact, it is already broken.
+> >
+> > ppc_asm.h references CONFIG_PPC_8xx, but utils.S is not given any way
+> > to access CONFIG options. So, CONFIG_PPC_8xx is never defined here.
+> >
+> > Pass $(LINUXINCLUDE) to make sure CONFIG options are accessible from
+> > all .c and .S files in arch/powerpc/boot/.
+>
+> This breaks our skiroot_defconfig, I don't know why yet:
+>
+>   In file included from /kisskb/src/arch/powerpc/boot/../../../lib/decompress_unxz.c:236:0,
+>                    from /kisskb/src/arch/powerpc/boot/decompress.c:42:
+>   /kisskb/src/arch/powerpc/boot/../../../lib/xz/xz_dec_bcj.c: In function 'bcj_powerpc':
+>   /kisskb/src/arch/powerpc/boot/../../../lib/xz/xz_dec_bcj.c:166:11: warning: implicit declaration of function 'get_unaligned_be32' [-Wimplicit-function-declaration]
+>      instr = get_unaligned_be32(buf + i);
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/acpi/property.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index da3ced297f19..07cbacbab861 100644
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -39,6 +39,12 @@ static const guid_t prp_guids[] = {
- 	/* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
- 	GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
- 		  0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
-+	/* TBT GUID for IMR_VALID: c44d002f-69f9-4e7d-a904-a7baabdf43f7 */
-+	GUID_INIT(0xc44d002f, 0x69f9, 0x4e7d,
-+		  0xa9, 0x04, 0xa7, 0xba, 0xab, 0xdf, 0x43, 0xf7),
-+	/* TBT GUID for WAKE_SUPPORTED: 6c501103-c189-4296-ba72-9bf5a26ebe5d */
-+	GUID_INIT(0x6c501103, 0xc189, 0x4296,
-+		  0xba, 0x72, 0x9b, 0xf5, 0xa2, 0x6e, 0xbe, 0x5d),
- };
- 
- /* ACPI _DSD data subnodes GUID: dbb8e3e6-5886-4ba6-8795-1319f52a966b */
+OK, now I see the cause of the error.
+
+I will insert a new patch in v3.
+
+Thanks.
+
+
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/13862914/
+>
+> cheers
+
+
+
 -- 
-2.20.1
-
+Best Regards
+Masahiro Yamada
