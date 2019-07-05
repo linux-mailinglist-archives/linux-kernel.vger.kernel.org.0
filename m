@@ -2,56 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6973E601C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E635601C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 09:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbfGEHwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 03:52:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbfGEHwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 03:52:44 -0400
-Received: from localhost (unknown [122.167.76.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7C23218BC;
-        Fri,  5 Jul 2019 07:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562313163;
-        bh=sGsMo32UVw8Di9Jyj88e7Hy+JqyP8yaKWl3j6/DAklU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IBuV2J+/X9w5ItEQfBpdv+PDrQrTDmz/Nj0ie+AdJnshP4tvn9GJeeeu84BfSIXbK
-         eE8t4k0+W6rjkjsegnPIbImjO7Sz+OPuOsrqXaGPYDgrEyaaMsTnUe6IPO59Y7Q2GF
-         a1z9ckXsqsD9IzTs2vEeUOqTRXS/hW6BGAdZxduY=
-Date:   Fri, 5 Jul 2019 13:19:27 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        dan.j.williams@intel.com, linux-arm-msm@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        srinivas.kandagatla@linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: qcom: bam_dma: Fix completed descriptors count
-Message-ID: <20190705074927.GC2911@vkoul-mobl>
-References: <1561723786-22500-1-git-send-email-sricharan@codeaurora.org>
+        id S1728049AbfGEHvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 03:51:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34860 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727587AbfGEHvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 03:51:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A8DBCACD4;
+        Fri,  5 Jul 2019 07:51:52 +0000 (UTC)
+Subject: Re: [PATCH 1/2] scsi_host: add support for request batching
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+References: <20190530112811.3066-1-pbonzini@redhat.com>
+ <20190530112811.3066-2-pbonzini@redhat.com>
+ <760164a0-589d-d9fa-fb63-79b5e0899c00@suse.de>
+ <aaa344bf-af29-0485-4e83-5442331a2c9c@redhat.com>
+ <afea12a1-47b3-0ebe-a3c2-6adc615bbddf@redhat.com>
+ <c1d16dbf-713d-3528-78d7-a3f49c056f74@suse.de>
+ <20190705074418.GB10995@stefanha-x1.localdomain>
+From:   Hannes Reinecke <hare@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+ azzYF4VRJsdl+d0MCaSy8mUh
+Message-ID: <141b9bec-77e5-4b99-a494-642bc88bb1a2@suse.de>
+Date:   Fri, 5 Jul 2019 09:51:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561723786-22500-1-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190705074418.GB10995@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-06-19, 17:39, Sricharan R wrote:
-> One space is left unused in circular FIFO to differentiate
-> 'full' and 'empty' cases. So take that in to account while
-> counting for the descriptors completed.
+On 7/5/19 9:44 AM, Stefan Hajnoczi wrote:
+> On Fri, Jul 05, 2019 at 09:12:37AM +0200, Hannes Reinecke wrote:
+>> On 7/4/19 3:19 PM, Paolo Bonzini wrote:
+>>> On 19/06/19 12:31, Paolo Bonzini wrote:
+>>>>> I'm a bit unsure if 'bd->last' is always set; it's quite obvious that
+>>>>> it's present if set, but what about requests with 'bd->last == false' ?
+>>>>> Is there a guarantee that they will _always_ be followed with a request
+>>>>> with bd->last == true?
+>>>>> And if so, is there a guarantee that this request is part of the same batch?
+>>>> It's complicated.  A request with bd->last == false _will_ always be
+>>>> followed by a request with bd->last == true in the same batch.  However,
+>>>> due to e.g. errors it may be possible that the last request is not sent.
+>>>>  In that case, the block layer sends commit_rqs, as documented in the
+>>>> comment above, to flush the requests that have been sent already.
+>>>>
+>>>> So, a driver that obeys bd->last (or SCMD_LAST) but does not implement
+>>>> commit_rqs is bound to have bugs, which is why this patch was not split
+>>>> further.
+>>>>
+>>>> Makes sense?
+>>>
+>>> Hannes, can you provide your Reviewed-by?
+>>>
+>> Well ... since you asked for it:
+>>
+>> Where is the 'commit_rqs' callback actually used?
+>> I seem to be going blind, but I can't find it; should be somewhere in
+>> the first patch, no?
+>> As per description:
+>>
+>>  * The commit_rqs function is used to trigger a hardware
+>>  * doorbell after some requests have been queued with
+>>  * queuecommand, when an error is encountered before sending
+>>  * the request with SCMD_LAST set.
+>>
+>> So it should be somewhere in the error path, probably scsi_error or
+>> something. But I don't seem to be able to find it ...
 > 
-> Fixes the issue reported here,
-> 	https://lkml.org/lkml/2019/6/18/669
+> The block layer calls scsi_mq_ops->commit_rqs() from
+> blk_mq_dispatch_rq_list() and blk_mq_try_issue_list_directly().
+> 
+Ah, right.
 
-Applied, thanks
+Now, then:
 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+
+Cheers,
+
+Hannes
 -- 
-~Vinod
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG Nürnberg)
