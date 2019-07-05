@@ -2,91 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B20226061D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 106CB60617
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfGEMmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:42:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:4897 "EHLO mga07.intel.com"
+        id S1728686AbfGEMmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:42:11 -0400
+Received: from mga14.intel.com ([192.55.52.115]:5662 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfGEMmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:42:22 -0400
+        id S1727295AbfGEMmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 08:42:11 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 05:41:57 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 05:42:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,455,1557212400"; 
-   d="scan'208";a="248182207"
+   d="scan'208";a="169667533"
 Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga001.jf.intel.com with SMTP; 05 Jul 2019 05:41:52 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 05 Jul 2019 15:41:51 +0300
-Date:   Fri, 5 Jul 2019 15:41:51 +0300
+  by orsmga006.jf.intel.com with SMTP; 05 Jul 2019 05:42:05 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 05 Jul 2019 15:42:04 +0300
+Date:   Fri, 5 Jul 2019 15:42:04 +0300
 From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
         rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
-        imre.deak@intel.com, dhinakaran.pandiyan@intel.com,
-        chris@chris-wilson.co.uk, manasi.d.navare@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+        lucas.demarchi@intel.com, imre.deak@intel.com,
+        jose.souza@intel.com, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH -next] drm/i915: Remove set but not used variable
- 'encoder'
-Message-ID: <20190705124151.GN5942@intel.com>
-References: <20190705113112.64715-1-yuehaibing@huawei.com>
+ 'intel_dig_port'
+Message-ID: <20190705124204.GO5942@intel.com>
+References: <20190705113138.65880-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190705113112.64715-1-yuehaibing@huawei.com>
+In-Reply-To: <20190705113138.65880-1-yuehaibing@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 11:31:12AM +0000, YueHaibing wrote:
+On Fri, Jul 05, 2019 at 11:31:38AM +0000, YueHaibing wrote:
 > Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> drivers/gpu/drm/i915/display/intel_dp.c: In function 'intel_dp_set_drrs_state':
-> drivers/gpu/drm/i915/display/intel_dp.c:6623:24: warning:
->  variable 'encoder' set but not used [-Wunused-but-set-variable]
+> drivers/gpu/drm/i915/display/intel_ddi.c: In function 'intel_ddi_get_config':
+> drivers/gpu/drm/i915/display/intel_ddi.c:3774:29: warning:
+>  variable 'intel_dig_port' set but not used [-Wunused-but-set-variable]
+>   struct intel_digital_port *intel_dig_port;
 > 
-> It's never used, so can be removed.Also remove related
-> variable 'dig_port'
+> It is never used, so can be removed.
 > 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
 Applied to drm-intel-next-queued. Thanks for the patch.
 
 > ---
->  drivers/gpu/drm/i915/display/intel_dp.c | 5 -----
->  1 file changed, 5 deletions(-)
+>  drivers/gpu/drm/i915/display/intel_ddi.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> index 8f7188d71d08..0bdb7ecc5a81 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> @@ -6620,8 +6620,6 @@ static void intel_dp_set_drrs_state(struct drm_i915_private *dev_priv,
->  				    const struct intel_crtc_state *crtc_state,
->  				    int refresh_rate)
->  {
-> -	struct intel_encoder *encoder;
-> -	struct intel_digital_port *dig_port = NULL;
->  	struct intel_dp *intel_dp = dev_priv->drrs.dp;
->  	struct intel_crtc *intel_crtc = to_intel_crtc(crtc_state->base.crtc);
->  	enum drrs_refresh_rate_type index = DRRS_HIGH_RR;
-> @@ -6636,9 +6634,6 @@ static void intel_dp_set_drrs_state(struct drm_i915_private *dev_priv,
->  		return;
->  	}
+> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
+> index a4172595c8d8..30e48609db1d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
+> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
+> @@ -3771,7 +3771,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
+>  	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
+>  	struct intel_crtc *intel_crtc = to_intel_crtc(pipe_config->base.crtc);
+>  	enum transcoder cpu_transcoder = pipe_config->cpu_transcoder;
+> -	struct intel_digital_port *intel_dig_port;
+>  	u32 temp, flags = 0;
 >  
-> -	dig_port = dp_to_dig_port(intel_dp);
-> -	encoder = &dig_port->base;
-> -
->  	if (!intel_crtc) {
->  		DRM_DEBUG_KMS("DRRS: intel_crtc not initialized\n");
->  		return;
+>  	/* XXX: DSI transcoder paranoia */
+> @@ -3810,7 +3809,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
+>  	switch (temp & TRANS_DDI_MODE_SELECT_MASK) {
+>  	case TRANS_DDI_MODE_SELECT_HDMI:
+>  		pipe_config->has_hdmi_sink = true;
+> -		intel_dig_port = enc_to_dig_port(&encoder->base);
+>  
+>  		pipe_config->infoframes.enable |=
+>  			intel_hdmi_infoframes_enabled(encoder, pipe_config);
 > 
 > 
 
