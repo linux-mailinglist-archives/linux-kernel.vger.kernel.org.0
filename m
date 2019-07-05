@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7131602CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 11:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C3B602B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 10:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfGEJDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 05:03:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60808 "EHLO inva021.nxp.com"
+        id S1728051AbfGEIz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 04:55:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:33262 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbfGEJDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 05:03:20 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E79B42006EB;
-        Fri,  5 Jul 2019 11:03:18 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71FCE2001AE;
-        Fri,  5 Jul 2019 11:03:11 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2A6B6402E5;
-        Fri,  5 Jul 2019 17:03:02 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, leonard.crestez@nxp.com,
-        viresh.kumar@linaro.org, daniel.baluta@nxp.com, ping.bai@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V4 2/2] arm64: dts: imx8mm: Add "fsl,imx8mq-src" as src's fallback compatible
-Date:   Fri,  5 Jul 2019 16:54:06 +0800
-Message-Id: <20190705085406.22483-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190705085406.22483-1-Anson.Huang@nxp.com>
-References: <20190705085406.22483-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726116AbfGEIz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:55:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C87EA2B;
+        Fri,  5 Jul 2019 01:55:55 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B67B3F246;
+        Fri,  5 Jul 2019 01:55:54 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, acme@kernel.org, mark.rutland@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [PATCH v2 0/5] arm64: Enable access to pmu registers by user-space
+Date:   Fri,  5 Jul 2019 09:55:36 +0100
+Message-Id: <20190705085541.9356-1-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+The perf user-space tool relies on the PMU to monitor events. It offers an
+abstraction layer over the hardware counters since the underlying
+implementation is cpu-dependent. We want to allow userspace tools to have
+access to the registers storing the hardware counters' values directly.
+This targets specifically self-monitoring tasks in order to reduce the
+overhead by directly accessing the registers without having to go
+through the kernel.
+In order to do this we need to setup the pmu so that it exposes its registers
+to userspace access.
 
-i.MX8MM can reuse i.MX8MQ's src driver, add "fsl,imx8mq-src" as
-src's fallback compatible to enable it.
+The first patch add a test to the perf tool so that we can test that the
+access to the registers works correctly from userspace.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
-No changes.
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The second patch add a capability in the arm64 cpufeatures framework in
+order to detect when we are running on a heterogeneous system.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 9db8efd..da5ee11 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -502,7 +502,7 @@
- 			};
- 
- 			src: reset-controller@30390000 {
--				compatible = "fsl,imx8mm-src", "syscon";
-+				compatible = "fsl,imx8mm-src", "fsl,imx8mq-src", "syscon";
- 				reg = <0x30390000 0x10000>;
- 				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 				#reset-cells = <1>;
+The third patch focuses on the armv8 pmuv3 PMU support and makes sure that
+the access to the pmu registers is enable and that the userspace have
+access to the relevent information in order to use them.
+
+The fourth patch put in place callbacks to enable access to the hardware
+counters from userspace when a compatible event is opened using the perf
+API.
+
+The fifth patch adds a short documentation about PMU counters direct
+access from userspace.
+
+**Changes since v1**
+
+* Rebased on linux-next/master
+* Do not include RSEQs materials (test and utilities) since we want to
+  enable direct access to counters only on homogeneous systems.
+* Do not include the hook defitinions for the same reason as above.
+* Add a cpu feature/capability to detect heterogeneous systems.
+
+Raphael Gault (5):
+  perf: arm64: Add test to check userspace access to hardware counters.
+  arm64: cpufeature: Add feature to detect heterogeneous systems
+  arm64: pmu: Add function implementation to update event index in
+    userpage.
+  arm64: perf: Enable pmu counter direct access for perf event on armv8
+  Documentation: arm64: Document PMU counters access from userspace
+
+ .../arm64/pmu_counter_user_access.txt         |  42 +++
+ arch/arm64/include/asm/cpucaps.h              |   3 +-
+ arch/arm64/include/asm/mmu.h                  |   6 +
+ arch/arm64/include/asm/mmu_context.h          |   2 +
+ arch/arm64/include/asm/perf_event.h           |  14 +
+ arch/arm64/kernel/cpufeature.c                |  20 ++
+ arch/arm64/kernel/perf_event.c                |  23 ++
+ drivers/perf/arm_pmu.c                        |  38 +++
+ include/linux/perf/arm_pmu.h                  |   2 +
+ tools/perf/arch/arm64/include/arch-tests.h    |   6 +
+ tools/perf/arch/arm64/tests/Build             |   1 +
+ tools/perf/arch/arm64/tests/arch-tests.c      |   4 +
+ tools/perf/arch/arm64/tests/user-events.c     | 255 ++++++++++++++++++
+ 13 files changed, 415 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/arm64/pmu_counter_user_access.txt
+ create mode 100644 tools/perf/arch/arm64/tests/user-events.c
+
 -- 
-2.7.4
+2.17.1
 
