@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9EC605F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B0F60600
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 14:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfGEMdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 08:33:39 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38717 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbfGEMdj (ORCPT
+        id S1728810AbfGEMgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 08:36:51 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1878 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbfGEMgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 08:33:39 -0400
-Received: by mail-qk1-f193.google.com with SMTP id a27so7737051qkk.5
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2019 05:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=SM8/4exhoEHGZvFQb+ptk62AOWI2rKv8kDwMIolo8dI=;
-        b=ckYufb+JTejpyz8pDQLhV2fiq+FAfmAMJXOQOHzRQuW89WYkHU4Lnaf8DM+LDzsQly
-         7DR9KgHXKyZJ5SQnARXpB7b0GDPR+IzumhAhjFElKZoaWbVQqBzOGuOt2mXTD7nzuXt5
-         rht4Mpc03KaerdCaAGd9Zz+VR1Rrl9rREPc+1J7nPBLLCwdHhPvxkD51oec3BWxH/q5A
-         8y8smn0+FXxH8Gikf6Oak6WiJwqqFwAOKVh2vW+4toDJIiGZgqAhD4f+Uc2n5IztDsqL
-         u3oZpE+TduYcqojeNfFd5skXHK2hBtPlP72gQxG0RENMyEEMZ5xl0dJFmnFf9EpIr4ix
-         WIHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=SM8/4exhoEHGZvFQb+ptk62AOWI2rKv8kDwMIolo8dI=;
-        b=ts9BNZEqlQGPpIt3qyM+qW9nMSqN/Pb/eh6RsvXnbwHmLrNGnq8Ng6OOv7JXvIC40N
-         bPf42qBdPJL4h+mzgOsQHD6ttAOcaXkRzm0nGwspQBI1AAZUQrmM49YZbtkULChGG6J9
-         R8K5iwwCZ2SpYt71uc4vEW/nYSH4vXb9icW7NTfH8VWVc/z6zhVquAh0taNJOHEZWD4+
-         /izUX5KPZ5bn9E0TR1UDaRIlfEWCvbv1yL17TG/JVHyg3UDWMH69GbseywCYD0L0O6Ko
-         IpPBAmCOX/vmvrtnLkzhIYa5ENHxiAZf3XRIEwUnGJfOtCfT554PdXqzs6GRUBQdT1wh
-         WACA==
-X-Gm-Message-State: APjAAAWrscDdju1LBUnBdWCpy9QsaXwRBwdY+1Br+glVcB8tz3X6iySk
-        pHmRzL2sMkjLyn0bwOIHCHjdAA==
-X-Google-Smtp-Source: APXvYqyX4DTV+YYFhT5OJ/l0wgbSemi0wOkZLMZP/Jtfy+M9HG6Dx7KgQV0v8jgq8UDEfu8Mwq0uQg==
-X-Received: by 2002:a37:a1d6:: with SMTP id k205mr2848006qke.171.1562330018204;
-        Fri, 05 Jul 2019 05:33:38 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id z33sm2504614qtc.56.2019.07.05.05.33.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Jul 2019 05:33:37 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hjNPE-0008UP-St; Fri, 05 Jul 2019 09:33:36 -0300
-Date:   Fri, 5 Jul 2019 09:33:36 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: hmm_range_fault related fixes and legacy API removal v2
-Message-ID: <20190705123336.GA31543@ziepe.ca>
-References: <20190703220214.28319-1-hch@lst.de>
+        Fri, 5 Jul 2019 08:36:51 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x65CVYTY029722;
+        Fri, 5 Jul 2019 14:35:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=njzQHa4+h1RnF+3DEZ8qWlHR8A0NDvMIkjMuExbOY/c=;
+ b=Lms/oWpARTnfFQZUGeLLSL/L5nCtc4yzZ/CJ0qPJ0hKUMsYaYecBD/8UKtYDYaRrRHBt
+ l2cG1M1ivkaqS6KPtjjDZzFp7+tv6a8Btq9SpvxDUUWWQtFHndcN96Zei+cX7Pnl17za
+ lCrFTCEwLRM6Et0oiVg66e+9uElel5r76m8cdY4Uqf1hXM7kKTOSeeadR5UFlCWPcO27
+ 5h6salTtUNpFVrgDhLmYhcR6JrRewtugTCbL+tBa0NOfUoTAiYUAbUwhsO5ZwimFvkt3
+ /6jFjyql7Bun7AVz1gsL5KWi0P8RSvHJIJ0hmG6DEEBRoIdy5bImxxgwrvn5EJ49lQ2o ig== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2tdwf1jhdu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 05 Jul 2019 14:35:16 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 79C7D34;
+        Fri,  5 Jul 2019 12:35:15 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 40D982C7F;
+        Fri,  5 Jul 2019 12:35:15 +0000 (GMT)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 5 Jul
+ 2019 14:35:14 +0200
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1473.003; Fri, 5 Jul 2019 14:35:14 +0200
+From:   Philippe CORNU <philippe.cornu@st.com>
+To:     Olivier MOYSAN <olivier.moysan@st.com>,
+        "a.hajda@samsung.com" <a.hajda@samsung.com>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "Laurent.pinchart@ideasonboard.com" 
+        <Laurent.pinchart@ideasonboard.com>,
+        "jonas@kwiboo.se" <jonas@kwiboo.se>,
+        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "jsarha@ti.com" <jsarha@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: display: sii902x: Change audio mclk
+ binding
+Thread-Topic: [PATCH 2/3] dt-bindings: display: sii902x: Change audio mclk
+ binding
+Thread-Index: AQHVMO2JtZ7sVttbMk6Xu8iqEAATraa72MyA
+Date:   Fri, 5 Jul 2019 12:35:14 +0000
+Message-ID: <ca446f4b-d918-fe6d-f6bd-4aa07efbefac@st.com>
+References: <1562082426-14876-1-git-send-email-olivier.moysan@st.com>
+ <1562082426-14876-3-git-send-email-olivier.moysan@st.com>
+In-Reply-To: <1562082426-14876-3-git-send-email-olivier.moysan@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <82CCEAE863094E428B349826FE92A781@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190703220214.28319-1-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-05_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 03:02:08PM -0700, Christoph Hellwig wrote:
-> Hi Jérôme, Ben and Jason,
-> 
-> below is a series against the hmm tree which fixes up the mmap_sem
-> locking in nouveau and while at it also removes leftover legacy HMM APIs
-> only used by nouveau.
-
-As much as I like this series, it won't make it to this merge window,
-sorry.
-
-Let's revisit it in a few weeks at rc1.
-
-Regards,
-Jason
+SGkgT2xpdmllciwNCmFuZCBtYW55IHRoYW5rcyBmb3IgeW91ciBwYXRjaC4NCkkgaGF2ZSBkb3Vi
+bGUgY2hlY2tlZCBpbiB0aGUgc2lsOTAyMi8yNCBkYXRhc2hlZXQgYW5kIHlvdSBhcmUgcmlnaHQ6
+DQoNCiJBcyBhbiBvcHRpb24sIHRoZSBvcmlnaW5hbCBNQ0xLIHNpZ25hbCB1c2VkIHRvIHN0cm9i
+ZSB0aGUgSTJTIHNpZ25hbHMgDQpvdXQgZnJvbSB0aGUgc291cmNpbmcgY2hpcCBjYW4gYmUgdXNl
+ZC4gSWYgdGhlIGludGVybmFsIFBMTCBpcyB1c2VkLCANCnRoZW4gYW4gZXh0ZXJuYWwgTUNMSyBp
+bnB1dCBpcyBub3QgcmVxdWlyZWQuIg0KDQpTbywgZXZlbiBpZiAjc291bmQtZGFpLWNlbGxzIGlz
+IHRoZXJlLCB0aGlzIGlzIG5vdCBtYW5kYXRvcnkgdG8gaGF2ZSBNQ0xLLg0KDQpSZXZpZXdlZC1i
+eTogUGhpbGlwcGUgQ29ybnUgPHBoaWxpcHBlLmNvcm51QHN0LmNvbT4NClBoaWxpcHBlIDotKQ0K
+DQoNCk9uIDcvMi8xOSA1OjQ3IFBNLCBPbGl2aWVyIE1veXNhbiB3cm90ZToNCj4gQXMgc3RhdGVk
+IGluIFNpTDkwMjIvMjQgZGF0YXNoZWV0LCBtYXN0ZXIgY2xvY2sgaXMgbm90IHJlcXVpcmVkIGZv
+ciBJMlMuDQo+IE1ha2UgbWNsayBwcm9wZXJ0eSBvcHRpb25hbCBpbiBEVCBiaW5kaW5ncy4NCj4g
+DQo+IEZpeGVzOiAzZjE4MDIxZjQzYTMgKCJkdC1iaW5kaW5nczogZGlzcGxheTogc2lpOTAyeDog
+QWRkIEhETUkgYXVkaW8gYmluZGluZ3MiKQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogT2xpdmllciBN
+b3lzYW4gPG9saXZpZXIubW95c2FuQHN0LmNvbT4NCj4gLS0tDQo+ICAgRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkwMngudHh0IHwgNSArKy0tLQ0K
+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+YnJpZGdlL3NpaTkwMngudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
+c3BsYXkvYnJpZGdlL3NpaTkwMngudHh0DQo+IGluZGV4IDJkZjQ0YjdkMzgyMS4uNmUxNGUwODdj
+MGQwIDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9icmlkZ2Uvc2lpOTAyeC50eHQNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkwMngudHh0DQo+IEBAIC0yNiw5ICsyNiw4IEBA
+IE9wdGlvbmFsIHByb3BlcnRpZXM6DQo+ICAgCS0gY2xvY2tzOiBwaGFuZGxlIGFuZCBjbG9jayBz
+cGVjaWZpZXIgZm9yIGVhY2ggY2xvY2sgbGlzdGVkIGluDQo+ICAgICAgICAgICAgICB0aGUgY2xv
+Y2stbmFtZXMgcHJvcGVydHkNCj4gICAJLSBjbG9jay1uYW1lczogIm1jbGsiDQo+IC0JICAgRGVz
+Y3JpYmVzIFNJSTkwMnggTUNMSyBpbnB1dC4gTUNMSyBpcyB1c2VkIHRvIHByb2R1Y2UNCj4gLQkg
+ICBIRE1JIGF1ZGlvIENUUyB2YWx1ZXMuIFRoaXMgcHJvcGVydHkgaXMgcmVxdWlyZWQgaWYNCj4g
+LQkgICAiI3NvdW5kLWRhaS1jZWxscyItcHJvcGVydHkgaXMgcHJlc2VudC4gVGhpcyBwcm9wZXJ0
+eSBmb2xsb3dzDQo+ICsJICAgRGVzY3JpYmVzIFNJSTkwMnggTUNMSyBpbnB1dC4gTUNMSyBjYW4g
+YmUgdXNlZCB0byBwcm9kdWNlDQo+ICsJICAgSERNSSBhdWRpbyBDVFMgdmFsdWVzLiBUaGlzIHBy
+b3BlcnR5IGZvbGxvd3MNCj4gICAJICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2Nsb2NrL2Nsb2NrLWJpbmRpbmdzLnR4dA0KPiAgIAkgICBjb25zdW1lciBiaW5kaW5nLg0KPiAg
+IA0KPiA=
