@@ -2,152 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D587660498
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABEC06043F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 12:13:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfGEKgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 06:36:16 -0400
-Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:40887 "EHLO
-        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726116AbfGEKgQ (ORCPT
+        id S1728390AbfGEKNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 06:13:44 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55410 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbfGEKNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:36:16 -0400
-X-Greylist: delayed 1291 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Jul 2019 06:34:58 EDT
-Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.190) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
- Fri,  5 Jul 2019 10:35:00 +0000
-Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
- M9W0067.microfocus.com (2002:f79:be::f79:be) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 5 Jul 2019 10:13:19 +0000
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (15.124.72.12) by
- M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Fri, 5 Jul 2019 10:13:19 +0000
-Received: from CY4PR1801MB1909.namprd18.prod.outlook.com (10.171.255.24) by
- CY4PR1801MB1813.namprd18.prod.outlook.com (10.165.88.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Fri, 5 Jul 2019 10:13:17 +0000
-Received: from CY4PR1801MB1909.namprd18.prod.outlook.com
- ([fe80::1d84:4a66:a3f4:97f8]) by CY4PR1801MB1909.namprd18.prod.outlook.com
- ([fe80::1d84:4a66:a3f4:97f8%3]) with mapi id 15.20.2032.022; Fri, 5 Jul 2019
- 10:13:17 +0000
-From:   Matthias Brugger <mbrugger@suse.com>
-To:     CK Hu <ck.hu@mediatek.com>, Ulrich Hecht <uli@fpond.eu>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        MichaelTurquette <mturquette@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        LaurentPinchart <laurent.pinchart@ideasonboard.com>,
-        RandyDunlap <rdunlap@infradead.org>,
-        "matthias.bgg@kernel.org" <matthias.bgg@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "moderated list:ARM/FREESCALE IMX /MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
- mmsys clocks
-Thread-Topic: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
- mmsys clocks
-Thread-Index: AQHVL8EGuRsY17jXTEOvyv41Lq4Xp6a6MMOsgABrtViAAKf5pIAAkIgA
-Date:   Fri, 5 Jul 2019 10:13:17 +0000
-Message-ID: <acd26dd8-7933-7ef5-0ba2-be8a7aa5ef99@suse.com>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
- <20181116125449.23581-9-matthias.bgg@kernel.org>
- <20181116231522.GA18006@bogus>
- <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
- <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
- <154281878765.88331.10581984256202566195@swboyd.mtv.corp.google.com>
- <458178ac-c0fc-9671-7fc8-ed2d6f61424c@suse.com>
- <154356023767.88331.18401188808548429052@swboyd.mtv.corp.google.com>
- <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
- <1561953318.25914.9.camel@mtksdaap41>
- <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
- <100944512.353257.1562254420397@webmail.strato.com>
- <1562290530.10428.6.camel@mtksdaap41>
-In-Reply-To: <1562290530.10428.6.camel@mtksdaap41>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB6PR0501CA0041.eurprd05.prod.outlook.com
- (2603:10a6:4:67::27) To CY4PR1801MB1909.namprd18.prod.outlook.com
- (2603:10b6:910:7a::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mbrugger@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [95.169.228.42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ecaa8f01-9a45-4160-1306-08d7013165ed
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR1801MB1813;
-x-ms-traffictypediagnostic: CY4PR1801MB1813:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <CY4PR1801MB18133416B6CA7541E8852069BAF50@CY4PR1801MB1813.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(346002)(39860400002)(136003)(366004)(396003)(189003)(199004)(229853002)(8936002)(25786009)(31696002)(4326008)(71200400001)(81166006)(8676002)(7416002)(31686004)(86362001)(102836004)(71190400001)(68736007)(3846002)(186003)(256004)(81156014)(6116002)(26005)(6306002)(305945005)(110136005)(6436002)(486006)(53936002)(386003)(6506007)(99286004)(76176011)(6512007)(53546011)(5660300002)(2906002)(52116002)(6246003)(966005)(66476007)(316002)(66946007)(73956011)(2616005)(14454004)(11346002)(476003)(446003)(7736002)(6486002)(54906003)(66066001)(66556008)(36756003)(478600001)(64756008)(66446008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1801MB1813;H:CY4PR1801MB1909.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LqON9FAWXUbVHrdbY/czW9gyOUR9u5Fw1xhw3HMa9TpqikbV0p1fbFzeDHA7UdRFSTzMVggvqKykqD7tBa6Zy9R2o165AuOgh8wXinChBf3wSdhYQkyWA4QHVdcGexJF9rAFIG1vUYPJSF1qZPhar9GU4K/nJzaKKtm47U+42yl68lRey7vPv/iaRxsKCbY/4huPDPQ2NHyd0cjP141yJceMKITMXsx5T1M7I5eOi7DlGF+w1x59Q8mo8m/13xb/RsL7DDX0WTIn2ALsZjZ4LIl80MSKoZfh1M0GbD1mjQsIwt47jNN6e8VvnuQBpvcr6aBLZh03L4mHYNHvl+c3tQADRakQsVaNMae0+XftpVA8TnuB7p1s1v4Tbi66qKoZ8XE4nZH8sFvFTqhr5/3LJ9TzaXFVbWeXJKfauQPOWds=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9AF2F788BE05D147BD5CCEB781B442D7@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 5 Jul 2019 06:13:43 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 83bbb67b149af7d0; Fri, 5 Jul 2019 12:13:41 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, len.brown@intel.com,
+        rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/2] powercap/rapl: Add Ice Lake NNPI support to RAPL driver
+Date:   Fri, 05 Jul 2019 12:13:41 +0200
+Message-ID: <3695289.DUDsO16Ie3@kreacher>
+In-Reply-To: <52eaefed-8f94-8cb0-0cfa-c0c16a34bd0b@linux.intel.com>
+References: <20190614080523.13464-1-rajneesh.bhardwaj@linux.intel.com> <2359736.lHFMKXy7DL@kreacher> <52eaefed-8f94-8cb0-0cfa-c0c16a34bd0b@linux.intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecaa8f01-9a45-4160-1306-08d7013165ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 10:13:17.6512
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mbrugger@suse.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1801MB1813
-X-OriginatorOrg: suse.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA1LzA3LzIwMTkgMDM6MzUsIENLIEh1IHdyb3RlOg0KPiBIaSwgVWxpOg0KPiANCj4g
-T24gVGh1LCAyMDE5LTA3LTA0IGF0IDE3OjMzICswMjAwLCBVbHJpY2ggSGVjaHQgd3JvdGU6DQo+
-Pj4gT24gSnVseSA0LCAyMDE5IGF0IDExOjA4IEFNIE1hdHRoaWFzIEJydWdnZXIgPG1hdHRoaWFz
-LmJnZ0BnbWFpbC5jb20+IHdyb3RlOg0KPj4+IFlvdSBhcmUgcmlnaHQsIGl0IHRvb2sgZmFyIHRv
-byBsb25nIGZvciBtZSB0byByZXNwb25kIHdpdGggYSBuZXcgdmVyc2lvbiBvZiB0aGUNCj4+PiBz
-ZXJpZXMuIFRoZSBwcm9ibGVtIEkgZmFjZSBpcywgdGhhdCBJIHVzZSBteSBtdDgxNzMgYmFzZWQg
-Y2hyb21lYm9vayBmb3INCj4+PiB0ZXN0aW5nLiBJdCBuZWVkcyBzb21lIGRvd25zdHJlYW0gcGF0
-Y2hlcyBhbmQgYnJva2Ugc29tZXdoZXJlIGJldHdlZW4gbXkgbGFzdA0KPj4+IGVtYWlsIGFuZCBh
-IGZldyBtb250aCBhZ28uDQo+Pg0KPj4gSWYgdGhhdCBDaHJvbWVib29rIGlzIGFuIEFjZXIgUjEz
-IGFuZCB5b3UgbmVlZCBhIHdvcmtpbmcga2VybmVsLCB5b3UgbWF5IHdhbnQgdG8gaGF2ZSBhIGxv
-b2sgYXQgaHR0cHM6Ly9naXRodWIuY29tL3VsaS9rZXJuZWwvdHJlZS9lbG0td29ya2luZy01LjIg
-Lg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHNhbXBsZSBjb2RlLCBhbmQgeW91ciBpbXBsZW1lbnRh
-dGlvbiBpcyBkaWZmZXJlbnQgdGhhbg0KPiBNYXR0aGlhcycgdmVyc2lvbi4gSW4geW91ciB2ZXJz
-aW9uLCBtbXN5cyBpcyBhIHNpbmdsZSBkZXZpY2Ugd2hpY2ggaGFzDQo+IGNsb2NrIGZ1bmN0aW9u
-IGFuZCBkaXNwbGF5IGZ1bmN0aW9uLCB0aGUgY2xvY2sgZnVuY3Rpb24gaXMgcGxhY2VkIGluDQo+
-IGNsb2NrIGRyaXZlciBmb2xkZXIgYW5kIGRpc3BsYXkgZnVuY3Rpb24gaXMgcGxhY2VkIGluIGRy
-bSBkcml2ZXIgZm9sZGVyLg0KPiBJbiBNYXR0aGlhcycgdmVyc2lvbiwgY2xvY2sgZnVuY3Rpb24g
-aXMgYSBzdWIgZGV2aWNlIG9mIG1tc3lzLiBJJ3ZlIG5vDQo+IGlkZWEgb2Ygd2hpY2ggb25lIGlz
-IGJldHRlci4gSSB3b3VsZCBnZXQgbW9yZSBpbmZvcm1hdGlvbiB0byBtYWtlIGJldHRlcg0KPiBk
-ZWNpc2lvbi4NCj4gDQoNCkZyb20gdGhlIGRpc2N1c3Npb24gd2UgaGFkIGhlcmUgYW5kIHRoZSBs
-YXN0IGNvbW1lbnRzIGZyb20gU3RlcGhlbiBJIHRoaW4gd2hhdA0Kd2Ugc2hvdWxkIGRvIGlzOg0K
-LSBjcmVhdGUgYSBwbGF0Zm9ybSBkcml2ZXIgZm9yIHRoZSBtbXN5cyBjbG9jayBwYXJ0LCBpbiB0
-aGUgZHJpdmVycy9jbGsvbWVkaWF0ZWsvLi4uDQotIHRoZSBEUk0gZHJpdmVyIGNyZWF0ZXMgYSBw
-bGF0Zm9ybSBkZXZpY2Ugd2hpY2ggd2lsbCBwcm9iZSB0aGUgY2xvY2sgZHJpdmVyLg0KDQpUaGlz
-IHdheSB5b3Ugd29uJ3QgbmVlZCB0byBjaGFuZ2UgYW55IGNvbXBhdGlibGUuDQoNCllvdSB3aWxs
-IGhhdmUgdG8gcmUtcmVhZCB0aGUgZGlzY3Vzc2lvbnMgaW4gdGhlIGRpZmZlcmVudCB2ZXJzaW9u
-cyBvZiB0aGlzIHNlcmllcy4NCk15IGZpcnN0IGFwcHJvYWNoIHdhcyB0byB1c2EgYSBtZmQgZHJp
-dmVyIGZvciBtbXN5cywgd2hpY2ggd2FzIHJlamVjdGVkLg0KVGhlIGxhc3QgYXBwcm9hY2ggd2Fz
-IHRvIGNyZWF0ZSBhIERUUyBzdWIgbm9kZSwgYWxzbyByZWplY3RlZCA6KQ0KDQpSZWdhcmRzLA0K
-TWF0dGhpYXMNCg0KPiBSZWdhcmRzLA0KPiBDSw0KPiANCj4+DQo+PiBDVQ0KPj4gVWxpDQo+Pg0K
-Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4+IExp
-bnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPj4gTGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFk
-ZWFkLm9yZw0KPj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
-aW51eC1tZWRpYXRlaw0KPiANCj4gDQo+IA0K
+On Friday, June 28, 2019 10:21:41 AM CEST Bhardwaj, Rajneesh wrote:
+> 
+> On 28-Jun-19 3:32 AM, Rafael J. Wysocki wrote:
+> > On Friday, June 14, 2019 10:05:23 AM CEST Rajneesh Bhardwaj wrote:
+> >> Enables support for ICL-NNPI, which is a neural network processor for deep
+> >> learning inference. From RAPL point of view it is same as Ice Lake Mobile
+> >> processor.
+> >>
+> >> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >> Cc: linux-pm@vger.kernel.org
+> >> Link: https://lkml.org/lkml/2019/6/5/1034
+> >> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+> >> ---
+> >>   drivers/powercap/intel_rapl.c | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
+> >> index 4347f15165f8..431c8c8bdf07 100644
+> >> --- a/drivers/powercap/intel_rapl.c
+> >> +++ b/drivers/powercap/intel_rapl.c
+> >> @@ -1157,6 +1157,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
+> >>   	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	rapl_defaults_core),
+> >>   	INTEL_CPU_FAM6(CANNONLAKE_MOBILE,	rapl_defaults_core),
+> >>   	INTEL_CPU_FAM6(ICELAKE_MOBILE,		rapl_defaults_core),
+> >> +	INTEL_CPU_FAM6(ICELAKE_NNPI,		rapl_defaults_core),
+> >>   
+> >>   	INTEL_CPU_FAM6(ATOM_SILVERMONT,		rapl_defaults_byt),
+> >>   	INTEL_CPU_FAM6(ATOM_AIRMONT,		rapl_defaults_cht),
+> >>
+> > It is in my queue, but I get build errors when I try to apply it.
+> >
+> > I guess the definition of ICELAKE_NNPI is not there in the Linus' tree yet.
+> 
+> Yes, though 
+> https://www.spinics.net/lists/linux-tip-commits/msg48978.html is 
+> accepted by Thomas already.
+
+It is not in 5.2-rc7, though, AFAICS.
+
+The patch is still in my queue and waiting.
+
+
+
