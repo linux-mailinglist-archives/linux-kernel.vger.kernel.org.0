@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48140607CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD5E607D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 16:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfGEO1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 10:27:22 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:36114 "EHLO inva020.nxp.com"
+        id S1727670AbfGEO1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 10:27:39 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:50614 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfGEO1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 10:27:19 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 41E4C1A07CD;
+        id S1725813AbfGEO1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 10:27:20 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CB791200762;
         Fri,  5 Jul 2019 16:27:18 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3629C1A07C8;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BEA5E20076A;
         Fri,  5 Jul 2019 16:27:18 +0200 (CEST)
 Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E9D44204D6;
-        Fri,  5 Jul 2019 16:27:17 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 455B2204D6;
+        Fri,  5 Jul 2019 16:27:18 +0200 (CEST)
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     ruxandra.radulescu@nxp.com,
         Razvan Stefanescu <razvan.stefanescu@nxp.com>,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v2 2/6] staging: fsl-dpaa2/ethsw: Add network interface statistics
-Date:   Fri,  5 Jul 2019 17:27:12 +0300
-Message-Id: <1562336836-17119-3-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH v2 3/6] staging: fsl-dpaa2/ethsw: Remove netdevice on port probing error
+Date:   Fri,  5 Jul 2019 17:27:13 +0300
+Message-Id: <1562336836-17119-4-git-send-email-ioana.ciornei@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1562336836-17119-1-git-send-email-ioana.ciornei@nxp.com>
 References: <1562336836-17119-1-git-send-email-ioana.ciornei@nxp.com>
@@ -40,8 +40,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 
-Allocate MC portal with atomic context for I/O and enable network interface
-statistics for hardware counters.
+If the ethsw_port_init() call failed, the netdevice remains registered in
+the system.
+
+Use labels to ensure that netdevice is unregistered and freed in this case.
 
 Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
@@ -49,31 +51,40 @@ Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 Changes in v2:
  - none
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index 87470070c3a5..b2273f840813 100644
+index b2273f840813..9f1617164865 100644
 --- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
 +++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -521,6 +521,7 @@ static int swdev_get_port_parent_id(struct net_device *dev,
- 	.ndo_stop		= port_stop,
+@@ -1460,13 +1460,23 @@ static int ethsw_probe_port(struct ethsw_core *ethsw, u16 port_idx)
+ 	err = register_netdev(port_netdev);
+ 	if (err < 0) {
+ 		dev_err(dev, "register_netdev error %d\n", err);
+-		free_netdev(port_netdev);
+-		return err;
++		goto err_register_netdev;
+ 	}
  
- 	.ndo_set_mac_address	= eth_mac_addr,
-+	.ndo_get_stats64	= port_get_stats,
- 	.ndo_change_mtu		= port_change_mtu,
- 	.ndo_has_offload_stats	= port_has_offload_stats,
- 	.ndo_get_offload_stats	= port_get_offload_stats,
-@@ -1483,7 +1484,8 @@ static int ethsw_probe(struct fsl_mc_device *sw_dev)
- 	ethsw->dev = dev;
- 	dev_set_drvdata(dev, ethsw);
+ 	ethsw->ports[port_idx] = port_priv;
  
--	err = fsl_mc_portal_allocate(sw_dev, 0, &ethsw->mc_io);
-+	err = fsl_mc_portal_allocate(sw_dev, FSL_MC_IO_ATOMIC_CONTEXT_PORTAL,
-+				     &ethsw->mc_io);
- 	if (err) {
- 		if (err == -ENXIO)
- 			err = -EPROBE_DEFER;
+-	return ethsw_port_init(port_priv, port_idx);
++	err = ethsw_port_init(port_priv, port_idx);
++	if (err)
++		goto err_ethsw_port_init;
++
++	return 0;
++
++err_ethsw_port_init:
++	unregister_netdev(port_netdev);
++err_register_netdev:
++	free_netdev(port_netdev);
++
++	return err;
+ }
+ 
+ static int ethsw_probe(struct fsl_mc_device *sw_dev)
 -- 
 1.9.1
 
