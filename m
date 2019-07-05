@@ -2,174 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3641C6054E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52DE260552
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 13:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfGELgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 5 Jul 2019 07:36:51 -0400
-Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:55434
-        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726107AbfGELgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Jul 2019 07:36:50 -0400
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id B24B42110C;
-        Fri,  5 Jul 2019 11:36:47 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 05 Jul 2019 13:36:47 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Eckert.Florian@googlemail.com,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] Update pcengines-apuv2 platform device
-In-Reply-To: <CAHp75VdHPRXgg6YsBM8uAfuM4CBs1HHn1condus6uW5BqC5COg@mail.gmail.com>
-References: <20190704090205.19400-1-fe@dev.tdt.de>
- <CAHp75Vcocs=9AwX32ouOWFc+wAduCFv2DT_p4JYPUVV0BumjqA@mail.gmail.com>
- <e2c50449b498c796de8258fac0b0aba6@dev.tdt.de>
- <CAHp75VdHPRXgg6YsBM8uAfuM4CBs1HHn1condus6uW5BqC5COg@mail.gmail.com>
-Message-ID: <226c0a14b7a662be019d02eee4695d17@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.1.5
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
+        id S1728758AbfGELia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 5 Jul 2019 07:38:30 -0400
+Received: from node.akkea.ca ([192.155.83.177]:41794 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728741AbfGELi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Jul 2019 07:38:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 2131E4E2051;
+        Fri,  5 Jul 2019 11:38:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1562326708; bh=18P+AMytcx3lv76RTtEolvqR25huJYtRlXkpaF9f5yE=;
+        h=From:To:Cc:Subject:Date;
+        b=mfJTkIGivYuAi4DCALqY13+hqDe09cDBGciyJM5EwsH+Ha/iNCKEXUAOwO9FAUjzM
+         cLaRPELssKRLCF+LyPFzeDWOl3ALnaXYkmmXxKxPxtwPVh9cpJCvy+mBs4B2ULabj1
+         TCmIwW+Jvj6bCxv/esdptNJMXrl4H1tlQ/AVsaNU=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 68gWECsqC91D; Fri,  5 Jul 2019 11:38:27 +0000 (UTC)
+Received: from media.hitronhub.home (S0106ac202e1e3ee3.cg.shawcable.net [96.51.227.121])
+        by node.akkea.ca (Postfix) with ESMTPSA id 7A70A4E204E;
+        Fri,  5 Jul 2019 11:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1562326707; bh=18P+AMytcx3lv76RTtEolvqR25huJYtRlXkpaF9f5yE=;
+        h=From:To:Cc:Subject:Date;
+        b=GQ/H+cQREUeTwBG7+qcyZMDRjUAVUI9784QoRD/mDpJuss9+bmJqLcMwveXscH9WL
+         2pTQcWnuMiDW+JjPkkKqXABLoqcpkDuZZPzKk7oFG+IXTVd4iBVXNKox68i5ObGyT2
+         h1J4frsHlDpoyCGRBZt70Gbhyp6lwxESagY4BPAY=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     angus.ainslie@puri.sm
+Cc:     krzk@kernel.org, Sebastian Reichel <sre@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>
+Subject: [PATCH] power: supply: bq25890_charger: Add the BQ25895 part
+Date:   Fri,  5 Jul 2019 05:37:51 -0600
+Message-Id: <20190705113751.18116-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andy
+The BQ25895 is almost identical to the BQ25890.
 
->> >> This patchset adds the following changes to this pcengines-apuv2
->> >> platform device.
->> >>
->> >
->> > Before doing anything to this driver, what is the plan for previously
->> > upstreamed:
->> >
->> > drivers/leds/leds-apu.c
->> 
->> I think we can remove the related APU2/APU3 code stuff from this 
->> driver.
->> The recently added pcengines-apuv2 driver does *not* support the APU1.
->> So I think we need the related APU1 stuff if we still want to support
->> this board.
-> 
-> So, I would like to see some unification (since it's material for v5.4
-> cycle anyway, we have time).
+Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+---
+ drivers/power/supply/bq25890_charger.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-A few thoughts and information about your suggestion to unify this.
-
-APU1 (PC-Engines) CPU "AMD G series T40E APU":
-This is also an old design and is not recommend for new design 
-(deprecated).
-Also not many were produced and are in the field.
-See https://pcengines.ch/apu.htm
-
-Platform-Device (LEDs, Button):
-I have no platform device description found in the linux sources.
-So the GPIO button should not work.
-
-LEDs-Driver:
-Only the LEDs should work with this device driver.
-This is shared additonal with new APU2/APU3.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c
-
-I think we should remove the APU2/APU3 stuff. This will now be handled 
-by the new gpio-amd-fch.c / pcengines-apuv2.c
-kombination.
-
-
-APU2/APU3/APU4 (PC-Engines) CPU "AMD Embedded G series GX-412TC":
-This is the newest design and is recommend for new products.
-See https://pcengines.ch/apu2.htm
-
-GPIO-Driver:
-The following driver is responsible for the GPIO export and handling
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpio-amd-fch.c
-
-Platform-Device (LEDs, Button):
-This Platform description is only valid for APU2/APU3 and not for APU1.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c
-
-LEDs-Driver:
-We have an additional device only for LEDs this works for 
-APU1/APU2/APU3.
-I think we should remove the APU2/APU3 LEDs from the leds-apu device as 
-mentioned above.
-So this device supports only the APU1 LEDs.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c
-
-We could extend and/or rename the pcengienes-apuv2 device to support 
-also APU3 and the newest APU4.
-The APU2 does only have LEDs Button and the MPCIE2 reset lines see my 
-patch.
-The APU3 does have an additional the simswap pin.
-So the current pcengines-apuv2 platform is from my point of view wrong.
-We should change this to the following layout and add the legacy GPIO 
-numbering.
-
-This are the following GPIOs:
-
-APU2:
-LED1
-LED2
-LED3
-BUTTON
-MPCIE2
-MPCIE3
-
-APU3:
-LED1
-LED2
-LED3
-BUTTON
-MPCIE2
-MPCIE3
-SIMSWAP
-
-APU4:
-TODO
-
-
->> > arch/x86/platform/geode/alix.c
->> 
->> I think this is not related because this is a different platform 
->> driver.
->> Maybe we should move them to drivers/platform/x86?
-> 
-> You mentioned somewhere ALIx, can you elaborate if these are platforms
-> of the same family (PC engines)?
-> 
-> Looking into the code, I think we may unify all three under umbrella
-> of one driver if the above is true.
-
-ALIX (PC-Engines) CPU "AMD Geode LX":
-This is an old design we have already in use and is not recommend for 
-new design (deprecated)
-https://pcengines.ch/alix.htm
-
-GPIO-Driver:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpio-cs5535.c
-
-Platform-Device (LEDs, button):
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/platform/geode/alix.c
-
-I think we should leave the driver as it is because this is a different 
-design and has nothing to do with the PUs.
-The only thing I can imagine is to move the platform device to 
-"drivers/platform/x86", but this is cosmetic.
-I have only mentioned the alix board to explain why I think that we 
-should change the APU key code from the GPIO button to unify this.
-
-With Best Regards,
-
-Florian
+diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
+index d333f2b321b9..9d1ec8d677de 100644
+--- a/drivers/power/supply/bq25890_charger.c
++++ b/drivers/power/supply/bq25890_charger.c
+@@ -22,6 +22,7 @@
+ #define BQ25890_IRQ_PIN			"bq25890_irq"
+ 
+ #define BQ25890_ID			3
++#define BQ25895_ID			7
+ #define BQ25896_ID			0
+ 
+ enum bq25890_fields {
+@@ -171,7 +172,7 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_WD]			= REG_FIELD(0x07, 4, 5),
+ 	[F_TMR_EN]		= REG_FIELD(0x07, 3, 3),
+ 	[F_CHG_TMR]		= REG_FIELD(0x07, 1, 2),
+-	[F_JEITA_ISET]		= REG_FIELD(0x07, 0, 0),
++	[F_JEITA_ISET]		= REG_FIELD(0x07, 0, 0), // reserved on BQ25895
+ 	/* REG08 */
+ 	[F_BATCMP]		= REG_FIELD(0x08, 5, 7),
+ 	[F_VCLAMP]		= REG_FIELD(0x08, 2, 4),
+@@ -180,7 +181,7 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_FORCE_ICO]		= REG_FIELD(0x09, 7, 7),
+ 	[F_TMR2X_EN]		= REG_FIELD(0x09, 6, 6),
+ 	[F_BATFET_DIS]		= REG_FIELD(0x09, 5, 5),
+-	[F_JEITA_VSET]		= REG_FIELD(0x09, 4, 4),
++	[F_JEITA_VSET]		= REG_FIELD(0x09, 4, 4), // reserved on BQ25895
+ 	[F_BATFET_DLY]		= REG_FIELD(0x09, 3, 3),
+ 	[F_BATFET_RST_EN]	= REG_FIELD(0x09, 2, 2),
+ 	[F_PUMPX_UP]		= REG_FIELD(0x09, 1, 1),
+@@ -188,7 +189,7 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	/* REG0A */
+ 	[F_BOOSTV]		= REG_FIELD(0x0A, 4, 7),
+ 	/* PFM_OTG_DIS 3 on BQ25896 */
+-	[F_BOOSTI]		= REG_FIELD(0x0A, 0, 2),
++	[F_BOOSTI]		= REG_FIELD(0x0A, 0, 2), // reserved on BQ25895
+ 	/* REG0B */
+ 	[F_VBUS_STAT]		= REG_FIELD(0x0B, 5, 7),
+ 	[F_CHG_STAT]		= REG_FIELD(0x0B, 3, 4),
+@@ -392,6 +393,8 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_MODEL_NAME:
+ 		if (bq->chip_id == BQ25890_ID)
+ 			val->strval = "BQ25890";
++		else if (bq->chip_id == BQ25895_ID)
++			val->strval = "BQ25895";
+ 		else if (bq->chip_id == BQ25896_ID)
+ 			val->strval = "BQ25896";
+ 		else
+@@ -862,7 +865,8 @@ static int bq25890_probe(struct i2c_client *client,
+ 		return bq->chip_id;
+ 	}
+ 
+-	if ((bq->chip_id != BQ25890_ID) && (bq->chip_id != BQ25896_ID)) {
++	if ((bq->chip_id != BQ25890_ID) && (bq->chip_id != BQ25895_ID)
++			&& (bq->chip_id != BQ25896_ID)) {
+ 		dev_err(dev, "Chip with ID=%d, not supported!\n", bq->chip_id);
+ 		return -ENODEV;
+ 	}
+-- 
+2.17.1
 
