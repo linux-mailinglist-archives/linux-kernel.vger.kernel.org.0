@@ -2,121 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD485FF71
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 04:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F785FF7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2019 04:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfGECTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 4 Jul 2019 22:19:18 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37245 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbfGECTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Jul 2019 22:19:18 -0400
-Received: by mail-io1-f67.google.com with SMTP id e5so11691468iok.4;
-        Thu, 04 Jul 2019 19:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=qk2//h2D34hxgiSXW2dV6ayNgCS4DN9Pcd0bjNc8T14=;
-        b=k/4eqnPXmvuJt4S26AnW4sZ9spsOUER10IC3IAOmmIe/lkWqvSTSB7mFLcxFoxl+OI
-         hEatzLQM99Q/U0verRfdZRXYMCE0E041igoz+u78i+RA7szMvLxuRp8E8zcnGkyKOioK
-         PxnX8YDbeJ7lETII83tfsmexFKsCYb9GAHLwN3hKR/xVQSfRk700JKPxp9MvGbmWDx/v
-         hx+imqPwvHAggwi2mBWeNwzgJPrwpghzPqaiLT88uxM0IpIQrdEi2G7K4/Ql/ubKXfn5
-         yFCes3LmCPwDgJeY4X7hYVEWLb5a29FVu306GYMGTLKXg8l2Np7VgkMmCDCEOE1p23cZ
-         0+qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qk2//h2D34hxgiSXW2dV6ayNgCS4DN9Pcd0bjNc8T14=;
-        b=EvvEjatB5wI2Jnobm2xPz1yhhdzmbimm5Yp488+V9950PPv+crr0C37++fw1k7YCeE
-         ueTOFkBE1sDOaFI+zcI+fsWWk+rBidydl4d/KlUYqnS8mRaE2S0EzjlJSC64SPZZkeN6
-         4Vf7WGGWx8vzvXc/7bRJGezkEmUXL6903T0dNQgt0Z78eHY3Jo9dVmjoS3R+s8YFn43Q
-         WhuPVI44bj/KbEZk6fYsklE2WnBHa7dBMBSPkBBpnPAeYkgR1D7f6QtWAU5ZDugmasoy
-         ibVjajxB9hcydA/Y5R2cA0DfZb1gRtMuk6s4wb6ERijAHB4L5KKFeemHKxo2Yz1oAe5o
-         OazA==
-X-Gm-Message-State: APjAAAX36Y5XISMTpimg4A0XPYuHKsP457t0sQJkAgtLNs0+hhuvDaih
-        agz0Iz5w+DktqcdJu/S9+1SGYzmpLAEdOP9TVXUXxf2B
-X-Google-Smtp-Source: APXvYqyuVXO6nUUU3KDsJ2cq/+XZFLt+HvdkmxPLjVip5YJIhgnjkHZTG5y0OqoSLAkSE44MVLIgaD3LZeXZNm+LAwI=
-X-Received: by 2002:a5d:968b:: with SMTP id m11mr1472848ion.16.1562293157370;
- Thu, 04 Jul 2019 19:19:17 -0700 (PDT)
+        id S1727547AbfGEC3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 4 Jul 2019 22:29:08 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41777 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727305AbfGEC3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Jul 2019 22:29:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 19:29:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,453,1557212400"; 
+   d="scan'208";a="248066440"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga001.jf.intel.com with ESMTP; 04 Jul 2019 19:29:05 -0700
+Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 20/22] iommu/vt-d: Add bind guest PASID support
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1560087862-57608-21-git-send-email-jacob.jun.pan@linux.intel.com>
+ <f183139b-b5a8-f6b5-58e6-f93e01f7be6a@linux.intel.com>
+ <20190627132244.351c7426@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <840a6943-87ab-938f-5f8d-3a2c21e08549@linux.intel.com>
+Date:   Fri, 5 Jul 2019 10:21:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <1561711763-24705-1-git-send-email-dag.moxnes@oracle.com>
-In-Reply-To: <1561711763-24705-1-git-send-email-dag.moxnes@oracle.com>
-From:   Parav Pandit <pandit.parav@gmail.com>
-Date:   Fri, 5 Jul 2019 07:49:06 +0530
-Message-ID: <CAG53R5VQqqr0S6OU+13tcuxcvz922iuqoP-mWbaQERPc48964A@mail.gmail.com>
-Subject: Re: [PATCH v2] RDMA/core: Fix race when resolving IP address
-To:     Dag Moxnes <dag.moxnes@oracle.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190627132244.351c7426@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 2:20 PM Dag Moxnes <dag.moxnes@oracle.com> wrote:
->
-> Use neighbour lock when copying MAC address from neighbour data struct
-> in dst_fetch_ha.
->
-> When not using the lock, it is possible for the function to race with
-> neigh_update, causing it to copy an invalid MAC address.
->
-> It is possible to provoke this error by calling rdma_resolve_addr in a
-> tight loop, while deleting the corresponding ARP entry in another tight
-> loop.
->
-> Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
->
-> ---
-> v1 -> v2:
->    * Modified implementation to improve readability
-> ---
->  drivers/infiniband/core/addr.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/add=
-r.c
-> index 2f7d141598..51323ffbc5 100644
-> --- a/drivers/infiniband/core/addr.c
-> +++ b/drivers/infiniband/core/addr.c
-> @@ -333,11 +333,14 @@ static int dst_fetch_ha(const struct dst_entry *dst=
-,
->         if (!n)
->                 return -ENODATA;
->
-> -       if (!(n->nud_state & NUD_VALID)) {
-> +       read_lock_bh(&n->lock);
-> +       if (n->nud_state & NUD_VALID) {
-> +               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
-> +               read_unlock_bh(&n->lock);
-> +       } else {
-> +               read_unlock_bh(&n->lock);
->                 neigh_event_send(n, NULL);
->                 ret =3D -ENODATA;
-> -       } else {
-> -               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
->         }
->
->         neigh_release(n);
-> --
-> 2.20.1
->
-Reviewed-by: Parav Pandit <parav@mellanox.com>
+Hi Jacob,
 
-A sample trace such as below in commit message would be good to have.
-Or the similar one that you noticed with ARP delete sequence.
+On 6/28/19 4:22 AM, Jacob Pan wrote:
+>>> +		}
+>>> +		refcount_set(&svm->refs, 0);
+>>> +		ioasid_set_data(data->hpasid, svm);
+>>> +		INIT_LIST_HEAD_RCU(&svm->devs);
+>>> +		INIT_LIST_HEAD(&svm->list);
+>>> +
+>>> +		mmput(svm->mm);
+>>> +	}
+>>> +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+>>> +	if (!sdev) {
+>>> +		ret = -ENOMEM;
+>>> +		goto out;
+>> I think you need to clean up svm if its device list is empty here, as
+>> you said above:
+>>
+> No, we come here only if the device list is not empty and the new
+> device to bind is different than any existing device in the list. If we
+> cannot allocate memory for the new device, should not free the existing
+> SVM, right?
+> 
 
-neigh_changeaddr()
-  neigh_flush_dev()
-   n->nud_state =3D NUD_NOARP;
+I'm sorry, but the code doesn't show this. We come here even an svm data
+structure was newly created with an empty device list. I post the code
+below to ensure that we are reading a same piece of code.
 
-Having some issues with office outlook, so replying via gmail.
+         mutex_lock(&pasid_mutex);
+         svm = ioasid_find(NULL, data->hpasid, NULL);
+         if (IS_ERR(svm)) {
+                 ret = PTR_ERR(svm);
+                 goto out;
+         }
+         if (svm) {
+                 /*
+                  * If we found svm for the PASID, there must be at
+                  * least one device bond, otherwise svm should be freed.
+                  */
+                 BUG_ON(list_empty(&svm->devs));
+
+                 for_each_svm_dev() {
+                         /* In case of multiple sub-devices of the same 
+pdev assigned, we should
+                          * allow multiple bind calls with the same 
+PASID and pdev.
+                          */
+                         sdev->users++;
+                         goto out;
+                 }
+         } else {
+                 /* We come here when PASID has never been bond to a 
+device. */
+                 svm = kzalloc(sizeof(*svm), GFP_KERNEL);
+                 if (!svm) {
+                         ret = -ENOMEM;
+                         goto out;
+                 }
+                 /* REVISIT: upper layer/VFIO can track host process 
+that bind the PASID.
+                  * ioasid_set = mm might be sufficient for vfio to 
+check pasid VMM
+                  * ownership.
+                  */
+                 svm->mm = get_task_mm(current);
+                 svm->pasid = data->hpasid;
+                 if (data->flags & IOMMU_SVA_GPASID_VAL) {
+                         svm->gpasid = data->gpasid;
+                         svm->flags &= SVM_FLAG_GUEST_PASID;
+                 }
+                 refcount_set(&svm->refs, 0);
+                 ioasid_set_data(data->hpasid, svm);
+                 INIT_LIST_HEAD_RCU(&svm->devs);
+                 INIT_LIST_HEAD(&svm->list);
+
+                 mmput(svm->mm);
+         }
+         sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+         if (!sdev) {
+                 ret = -ENOMEM;
+                 goto out;
+         }
+         sdev->dev = dev;
+         sdev->users = 1;
+
+Best regards,
+Baolu
