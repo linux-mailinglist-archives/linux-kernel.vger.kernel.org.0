@@ -2,140 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7318161252
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 19:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F88261257
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 19:22:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfGFRTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 6 Jul 2019 13:19:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726698AbfGFRTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 13:19:54 -0400
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C9DD2082F;
-        Sat,  6 Jul 2019 17:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562433593;
-        bh=MptNP8FBOfvZAcejuztr5mKgDsORmKl359mYbRWSfLg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DJrms23xKxptgn/RLeGTW1mAtXPVOIDTTChgMVj8a3BO0KKyqe9ywQx2H4xmmMt2C
-         xQ/s11R3793ElE5imIMhiIfGyD2HYmHDJ0SPEEWNxvDiRctM+vAzozT4GUz+UFpd26
-         NNX05Ibzo/XAvtNh2V6tsIsLT6sL71/U5ubGIaGs=
-Date:   Sat, 6 Jul 2019 19:19:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Richard Gong <richard.gong@linux.intel.com>,
-        Romain Izard <romain.izard.pro@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mans Rullgard <mans@mansr.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 01/12 v2] Platform: add a dev_groups pointer to struct
- platform_driver
-Message-ID: <20190706171948.GA23324@kroah.com>
-References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
- <20190704084617.3602-2-gregkh@linuxfoundation.org>
- <20190704093200.GM13424@localhost>
- <20190704104311.GA16681@kroah.com>
- <20190704121143.GA5007@kroah.com>
- <CAKdAkRQ4W7wjYjZcBn4_s+PD26pv_8mrjUt-ne24GkimGEXoiA@mail.gmail.com>
- <20190706083251.GA9249@kroah.com>
- <CAKdAkRQRdqRZXdkpLdTO0H8fSvy7x1sDNS4GxE0n8dxaLRDJzQ@mail.gmail.com>
+        id S1727089AbfGFRWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 13:22:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9680 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726698AbfGFRWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 13:22:31 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x66HLV6d049493
+        for <linux-kernel@vger.kernel.org>; Sat, 6 Jul 2019 13:22:29 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tjqh33hhn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2019 13:22:29 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Sat, 6 Jul 2019 18:22:28 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 6 Jul 2019 18:22:26 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x66HMPsC22610094
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 6 Jul 2019 17:22:25 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82336A405B;
+        Sat,  6 Jul 2019 17:22:25 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B7F9A405C;
+        Sat,  6 Jul 2019 17:22:24 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Sat,  6 Jul 2019 17:22:24 +0000 (GMT)
+Date:   Sat, 6 Jul 2019 22:52:23 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched/topology: One function call less in
+ build_group_from_child_sched_domain()
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <ad2e7dfb-3323-b214-716e-a6cae41b8bcc@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAKdAkRQRdqRZXdkpLdTO0H8fSvy7x1sDNS4GxE0n8dxaLRDJzQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <ad2e7dfb-3323-b214-716e-a6cae41b8bcc@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19070617-0028-0000-0000-000003817380
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070617-0029-0000-0000-00002441780D
+Message-Id: <20190706172223.GA12680@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-06_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907060230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 06, 2019 at 10:04:39AM -0700, Dmitry Torokhov wrote:
-> Hi Greg,
+* Markus Elfring <Markus.Elfring@web.de> [2019-07-06 16:05:17]:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 6 Jul 2019 16:00:13 +0200
 > 
-> On Sat, Jul 6, 2019 at 1:32 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jul 04, 2019 at 02:17:22PM -0700, Dmitry Torokhov wrote:
-> > > Hi Greg,
-> > >
-> > > On Thu, Jul 4, 2019 at 5:15 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > Platform drivers like to add sysfs groups to their device, but right now
-> > > > they have to do it "by hand".  The driver core should handle this for
-> > > > them, but there is no way to get to the bus-default attribute groups as
-> > > > all platform devices are "special and unique" one-off drivers/devices.
-> > > >
-> > > > To combat this, add a dev_groups pointer to platform_driver which allows
-> > > > a platform driver to set up a list of default attributes that will be
-> > > > properly created and removed by the platform driver core when a probe()
-> > > > function is successful and removed right before the device is unbound.
-> > >
-> > > Why is this limited to platform bus? Drivers for other buses also
-> > > often want to augment list of their attributes during probe(). I'd
-> > > move it to generic probe handling.
-> >
-> > This is not limited to the platform at all, the driver core supports
-> > this for any bus type today, but it's then up to the bus-specific code
-> > to pass that on to the driver core.  That's usually set for the
-> > bus-specific attributes that they want exposed for all devices of that
-> > bus type (see the bus_groups, dev_groups, and drv_groups pointers in
-> > struct bus_type).
-> >
-> > For the platform devices, the problem is that this is something that the
-> > individual drivers want after they bind to the device.  And as all
-> > platform devices are "different" they can't be a "common" set of
-> > attributes, so they need to be created after the device is bound to the
-> > driver.
+> Avoid an extra function call by using a ternary operator instead of
+> a conditional statement.
 > 
-> I believe that your assertion that only platform devices want to
-> install custom attributes is incorrect.
-
-Sorry, I didn't mean to imply that only platform drivers want to do
-this, as you say, many other drivers do as well.
-
-> Drivers for devices attached
-> to serio, i2c, USB, spi, etc, etc, all have additional attributes:
+> This issue was detected by using the Coccinelle software.
 > 
-> dtor@dtor-ws:~/kernel/work (master *)$ grep -l '\(i2c\|usb\|spi\)'
-> `git grep -l '\(device_add_group\|sysfs_create_group\)' -- drivers` |
-> wc -l
-> 170
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  kernel/sched/topology.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> I am pretty sure some of this count is false positives, but majority
-> is actually proper hits.
-
-Yeah, I know, we need to add this type of functionality to those busses
-as well.  I don't see a way of doing it other than this bus-by-bus
-conversion, do you?
-
-> > > We already emit KOBJ_BIND when we finish binding device to a driver,
-> > > regardless of the bus. I know we still need to teach systemd to handle
-> > > it properly, but I think it is better than sprinkling KOBJ_CHANGE
-> > > around.
-> >
-> > But the object's attributes did just change, which is what KOBJ_CHANGE
-> > tells userspace, so this should be the correct thing to say to
-> > userspace.
-> >
-> > And yes, ideally KOBJ_BIND would be handled, and it will be sent once
-> > the device's probe function succeeds, but we have to deal with old
-> > userspaces as well, right?
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index f751ce0b783e..6190eb52c30a 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -886,11 +886,7 @@ build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
+>  		return NULL;
 > 
-> Not for the new functionality, I do not think so. Newer kernels should
-> be compatible with older userspace as it not breaking it, but new
-> functionality is not guaranteed to be available with older userspace.
+>  	sg_span = sched_group_span(sg);
+> -	if (sd->child)
+> -		cpumask_copy(sg_span, sched_domain_span(sd->child));
+> -	else
+> -		cpumask_copy(sg_span, sched_domain_span(sd));
+> -
+> +	cpumask_copy(sg_span, sched_domain_span(sd->child ? sd->child : sd));
 
-I agree, but again, this is a kobject change (adding attributes), so
-I think the event type I picked here is the correct one.
+At runtime, Are we avoiding a function call?
+However I think we are avoiding a branch instead of a conditional, which may
+be beneficial.
 
-thanks,
+>  	atomic_inc(&sg->ref);
+>  	return sg;
+>  }
+> --
+> 2.22.0
+> 
 
-greg k-h
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
