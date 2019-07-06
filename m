@@ -2,47 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250BD61209
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 17:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0427C611FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 17:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfGFP44 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 6 Jul 2019 11:56:56 -0400
-Received: from mx1.palacio.go.gov.br ([177.69.118.33]:59974 "EHLO
-        webmail.palacio.go.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfGFP44 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 11:56:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTP id 9AA6534219B;
-        Sat,  6 Jul 2019 12:49:54 -0300 (BRT)
-Received: from webmail.palacio.go.gov.br ([127.0.0.1])
-        by localhost (webmail.palacio.go.gov.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id lh1au3Xl0xua; Sat,  6 Jul 2019 12:49:54 -0300 (BRT)
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTP id 114E53421D7;
-        Sat,  6 Jul 2019 12:49:54 -0300 (BRT)
-X-Virus-Scanned: amavisd-new at palacio.go.gov.br
-Received: from webmail.palacio.go.gov.br ([127.0.0.1])
-        by localhost (webmail.palacio.go.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 9oKfsW9aDysX; Sat,  6 Jul 2019 12:49:53 -0300 (BRT)
-Received: from [192.168.43.132] (unknown [223.225.81.106])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTPSA id 03A6F341FB5;
-        Sat,  6 Jul 2019 12:49:40 -0300 (BRT)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727044AbfGFPuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 11:50:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726794AbfGFPuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 11:50:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F32C3082201;
+        Sat,  6 Jul 2019 15:50:05 +0000 (UTC)
+Received: from treble (ovpn-122-197.rdu2.redhat.com [10.10.122.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00C9C1714B;
+        Sat,  6 Jul 2019 15:50:03 +0000 (UTC)
+Date:   Sat, 6 Jul 2019 10:50:01 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Craig Topper <craig.topper@intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Stephen Hines <srhines@google.com>
+Subject: Re: objtool warnings in prerelease clang-9
+Message-ID: <20190706155001.yrfxqj7c2bmqtbid@treble>
+References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+ <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Hi, This is Clara
-To:     SGT Clara <Faleconosco@casacivil.go.gov.br>
-From:   "Clara Duran" <Faleconosco@casacivil.go.gov.br>
-Date:   Sat, 06 Jul 2019 21:19:21 +0530
-Reply-To: clarastrongduran@gmail.com
-Message-Id: <20190706154941.03A6F341FB5@webmail.palacio.go.gov.br>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 06 Jul 2019 15:50:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 02, 2019 at 11:58:27PM +0200, Thomas Gleixner wrote:
+> platform-quirks.o:
+> 
+>         if (x86_platform.set_legacy_features)
+>   74:   4c 8b 1d 00 00 00 00    mov    0x0(%rip),%r11        # 7b <x86_early_init_platform_quirks+0x7b>
+>   7b:   4d 85 db                test   %r11,%r11
+>   7e:   0f 85 00 00 00 00       jne    84 <x86_early_init_platform_quirks+0x84>
+>                 x86_platform.set_legacy_features();
+> }
+>   84:   c3                      retq   
+> 
+> That jne jumps to __x86_indirect_thunk_r11, aka. ratpoutine.
+> 
+> No idea why objtool thinks that the instruction at 0x84 is not
+> reachable. Josh?
 
-Are you there ?. 
-Can I have a word with you privately?
+That's a conditional tail call, which is something GCC never does.
+Objtool doesn't understand that, so we'll need to fix it.
+
+-- 
+Josh
