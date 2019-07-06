@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DBC6104D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 13:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACEB961065
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 13:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbfGFLLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 6 Jul 2019 07:11:52 -0400
-Received: from onstation.org ([52.200.56.107]:43804 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726007AbfGFLLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 07:11:51 -0400
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 34FC93EE72;
-        Sat,  6 Jul 2019 11:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1562411510;
-        bh=9cS2ydOA+KgzUTCiP9CODFmbS9Ga+mbp4SRgk17zSTQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XtRF2BQeKmlC7mlP1jE2b+HH2EKT8V8epfArAt0Xr+rEx2WTrCMk6HDBxy6ITdgXE
-         8REsIhod/4UHChJjWb1I3fGfUjQmrWi2ebroo0hNR0Ib9p67bwaxmilIw14Nf+o54p
-         YPJYX/LbQIsnt+mMpR+6DV6pmvevRKcxmzBzmdzs=
-From:   Brian Masney <masneyb@onstation.org>
-To:     robdclark@gmail.com, sean@poorly.run
-Cc:     airlied@linux.ie, daniel@ffwll.ch, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/msm/phy/dsi_phy: silence -EPROBE_DEFER warnings
-Date:   Sat,  6 Jul 2019 07:11:38 -0400
-Message-Id: <20190706111138.2238-1-masneyb@onstation.org>
-X-Mailer: git-send-email 2.20.1
+        id S1727004AbfGFLTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 07:19:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43010 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbfGFLTz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 07:19:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eAaoeydu5/7mUiHaUSIJXkqgFNZi4v8q6elnU4LELEc=; b=HM9aBZZ88EbUMezo9xeghq0JB
+        BOxyGdDGNE3KI259r57Tvc8tCjHrFND3Uw6hWJ8OzwZgyntlankqMNX4agY0yNi5NEmlPpSBJPWLU
+        QXO7JFKABLWhvMXrKmgg5mLflV4M2gvt3efrMzOYrpBJqUpkfrDLoFsxNkglg0vbf5VCkJmQ4fEtp
+        Ffyri9Y2+TBpeQrJvoPxAS++QEiTMTeOJKSHIOi9rbWBlCMa01nsQPGmagErGtqB5tR0tu8Gf2csN
+        ddIMqv9tSZDECrwFtIstUZxdc5i/p+1bL1CSk5EhF9wFrkYGw+BPkb1WR5zf/UgChAj+40UYUP0xo
+        25/8N+HLg==;
+Received: from 177.205.70.5.dynamic.adsl.gvt.net.br ([177.205.70.5] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hjijR-0002Ls-VR; Sat, 06 Jul 2019 11:19:54 +0000
+Date:   Sat, 6 Jul 2019 08:19:50 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 35/39] docs: infiniband: add it to the driver-api
+ bookset
+Message-ID: <20190706081950.4a629537@coco.lan>
+In-Reply-To: <20190703180802.GA26557@ziepe.ca>
+References: <cover.1561724493.git.mchehab+samsung@kernel.org>
+        <12743088687a9b0b305c05b62a5093056a4190b8.1561724493.git.mchehab+samsung@kernel.org>
+        <20190703180802.GA26557@ziepe.ca>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following errors show up when booting the Nexus 5:
+Em Wed, 3 Jul 2019 15:08:02 -0300
+Jason Gunthorpe <jgg@ziepe.ca> escreveu:
 
-msm_dsi_phy fd922a00.dsi-phy: [drm:dsi_phy_driver_probe] *ERROR*
- dsi_phy_regulator_init: failed to init regulator, ret=-517
-msm_dsi_phy fd922a00.dsi-phy: [drm:dsi_phy_driver_probe] *ERROR*
- dsi_phy_driver_probe: failed to init regulator
+> On Fri, Jun 28, 2019 at 09:30:28AM -0300, Mauro Carvalho Chehab wrote:
+> > While this contains some uAPI stuff, it was intended to be
+> > read by a kernel doc. So, let's not move it to a different
+> > dir, but, instead, just add it to the driver-api bookset.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> >  Documentation/index.rst            | 1 +
+> >  Documentation/infiniband/index.rst | 2 +-
+> >  2 files changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/index.rst b/Documentation/index.rst
+> > index ea33cbbccd9d..e69d2fde7735 100644
+> > +++ b/Documentation/index.rst
+> > @@ -96,6 +96,7 @@ needed).
+> >     block/index
+> >     hid/index
+> >     iio/index
+> > +   infiniband/index
+> >     leds/index
+> >     media/index
+> >     networking/index
+> > diff --git a/Documentation/infiniband/index.rst b/Documentation/infiniband/index.rst
+> > index 22eea64de722..9cd7615438b9 100644
+> > +++ b/Documentation/infiniband/index.rst
+> > @@ -1,4 +1,4 @@
+> > -:orphan:
+> > +.. SPDX-License-Identifier: GPL-2.0
+> >  
+> >  ==========
+> >  InfiniBand  
+> 
+> Should this one go to the rdma.git as well? It looks like yes
 
-dsi_phy_regulator_init() already logs the error, so no need to log
-the same error a second time in dsi_phy_driver_probe(). This patch
-also changes dsi_phy_regulator_init() to not log the error if the
-error code is -EPROBE_DEFER to reduce noise in dmesg.
+I'm OK if you want to add to rdma.git. However, this will likely rise 
+conflicts, though, as this series has lots of other patches touching
+Documentation/index.rst. 
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+So, I suspect that it would be easier to merge this together with the
+other patches via the docs tree, by the end of the merge window.
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-index 4097eca1b3ef..d0e1cc6728dc 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-@@ -396,8 +396,11 @@ static int dsi_phy_regulator_init(struct msm_dsi_phy *phy)
- 
- 	ret = devm_regulator_bulk_get(dev, num, s);
- 	if (ret < 0) {
--		DRM_DEV_ERROR(dev, "%s: failed to init regulator, ret=%d\n",
--						__func__, ret);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "%s: failed to init regulator, ret=%d\n",
-+				      __func__, ret);
-+
- 		return ret;
- 	}
- 
-@@ -584,10 +587,8 @@ static int dsi_phy_driver_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = dsi_phy_regulator_init(phy);
--	if (ret) {
--		DRM_DEV_ERROR(dev, "%s: failed to init regulator\n", __func__);
-+	if (ret)
- 		goto fail;
--	}
- 
- 	phy->ahb_clk = msm_clk_get(pdev, "iface");
- 	if (IS_ERR(phy->ahb_clk)) {
--- 
-2.20.1
+If you prefer to apply it against your tree, my plan is to do
+a final rebase at the second week of the merge window, in order to
+avoid such conflicts.
 
+Thanks,
+Mauro
