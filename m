@@ -2,110 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F020B61120
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 16:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85DA961125
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2019 16:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfGFOdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 6 Jul 2019 10:33:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbfGFOdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 10:33:12 -0400
-Received: from localhost (unknown [84.241.198.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3C2B20856;
-        Sat,  6 Jul 2019 14:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562423591;
-        bh=ubiVo0bb1PtKFZuX4toTprLja2/mREIfWFfVvYYfjoM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XP3m/J/2HPzFINlEwlYC5OOO+1ynQYoW6OXi0PRGOJzax/ceCjNAZueCO6iRnccoi
-         8GYYSK+VWNTutXy7nBPPlLRBhz3NEzIHFkia2bnV5ADbqjHelE7xiZrYj4R19UUGmg
-         uYLPrHltTOh8AQzGdD1m6atvMd2JDJrd+E9Mfqns=
-Date:   Sat, 6 Jul 2019 16:33:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Jul 4
-Message-ID: <20190706143307.GA2240@kroah.com>
-References: <20190704220945.27728dd9@canb.auug.org.au>
- <20190704222450.021c9d71@canb.auug.org.au>
- <20190706083433.GB9249@kroah.com>
- <20190706194412.64c15c42@canb.auug.org.au>
- <20190706094647.GA17929@kroah.com>
- <20190706201729.48548ede@canb.auug.org.au>
+        id S1726760AbfGFOi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 10:38:26 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:28682 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbfGFOi0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 10:38:26 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x66EcKkt000659;
+        Sat, 6 Jul 2019 23:38:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x66EcKkt000659
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562423901;
+        bh=PVCFVmyvT9EjILIv3Kkv4dgmBeJ8MNfOpTsOuaznyq4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qnCXUPNXNGSEmzhaBqa6BtS3Qsngwd+3SkaZRZDyVIbBIc89wP8T482xmFnk54qHn
+         69VUChZpoyGGKrrTrKPvLL/pXF7oOX3XWHveA9UtVHH4cRH55cMaUzaqZ7oeLR7PR8
+         mPTrAG4rTBFa2U0KJ0lJkiYvw70Atw/akVmPP1UKviYgs8Po6oeQd3MOfITv+wgG0C
+         q2EUFrXcZQjppAmNPE9kv0/orYJ2tX7Le0d/oLFLWFQK5ZNJEeBFxzRq33EhXVTeXi
+         owetfSsdeWVhyxgiFo7xHGnHNKgK9XXxM/uKun/2esEs+WG4n/yIQP/zKpqnNj8HhA
+         6/ca8wFfqDIcw==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id m8so5512102vsj.0;
+        Sat, 06 Jul 2019 07:38:20 -0700 (PDT)
+X-Gm-Message-State: APjAAAUMZ1NgKZBUSwI920aPSte06d/Ae6CF2X3T61OLQijmLoD2HKMK
+        nMG7v1vnNHhEa/UvHzrFGHqZalduBbCyjDcBSd8=
+X-Google-Smtp-Source: APXvYqz/0CW3uSWzYLP0qJaZZfTTulvrddvSBI1PPL8hvcZkBfYdco9ohdL/wybUc7dPXzoEe2XVFJQF2dXRFskUk6U=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr5369277vsn.54.1562423899788;
+ Sat, 06 Jul 2019 07:38:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190706201729.48548ede@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190628051300.30678-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190628051300.30678-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 6 Jul 2019 23:37:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ8M_z-z8tp-OiU=n13iggqEyY084S5HNS3p8LwM3qc1g@mail.gmail.com>
+Message-ID: <CAK7LNAQ8M_z-z8tp-OiU=n13iggqEyY084S5HNS3p8LwM3qc1g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: use -E instead of -c for __cc-option
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 06, 2019 at 08:17:29PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Sat, 6 Jul 2019 11:46:47 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sat, Jul 06, 2019 at 07:44:12PM +1000, Stephen Rothwell wrote:
-> > > 
-> > > On Sat, 6 Jul 2019 10:34:33 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:  
-> > > >
-> > > > On Thu, Jul 04, 2019 at 10:24:50PM +1000, Stephen Rothwell wrote:  
-> > > > > 
-> > > > > This release produces a whole lot (over 200) of this message in my qemu
-> > > > > boot tests:
-> > > > > 
-> > > > > [    1.698497] debugfs: File 'sched' already present!
-> > > > > 
-> > > > > Introduced by commit
-> > > > > 
-> > > > >   43e23b6c0b01 ("debugfs: log errors when something goes wrong")
-> > > > > 
-> > > > > from the driver-core tree.  I assume that the error(?) was already
-> > > > > happening, but it is now being reported.    
-> > > > 
-> > > > What are you passing to qemu to get this?  I just tried it myself and
-> > > > see no error reports at all.  Have a .config I can use to try to
-> > > > reproduce this?  
-> > > 
-> > > It is a powerpc pseries_le_defconfig kernel and I run qemu like this:
-> > > 
-> > > qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel vmlinux -initrd rootfs.cpio.gz  
-> > 
-> > Hm, I think my rootfs initrd might be quite simple compared to yours (it
-> > drops me into a busybox shell).  Any pointers to where you created yours
-> > from?
-> 
-> Michael Ellerman gave it to me.  It is very simple.  Its /init is just
-> 
-> $ cat init
-> #!/bin/sh
-> # devtmpfs does not get automounted for initramfs
-> /bin/mount -t devtmpfs devtmpfs /dev
-> exec 0</dev/console
-> exec 1>/dev/console
-> exec 2>/dev/console
-> exec /sbin/init $*
-> 
-> and /sbin/init is a link to /bin/busybox
-> 
-> It is all run by an expect script that just waits for the login:
-> prompt, logs in a root and runs "halt".
-> 
-> All the debugfs messages appear before the kernel finished booting.
+On Fri, Jun 28, 2019 at 2:13 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Use -E instead of -c like scripts/Kconfig.include
+> This makes the compiler flag evaluation slightly faster.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Thanks, this helped.  Looks like it is the loop device causing this.  Or
-at least I can trigger it here with that module.
+Applied to linux-kbuild.
 
-And it seems that the debugfs code for those devices never worked, let
-me unwind the mess of pointers to try to find the real solution here...
 
-thanks,
 
-greg k-h
+>  scripts/Kbuild.include | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index f641bb0aa63f..e4329b92d165 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -113,7 +113,7 @@ as-instr = $(call try-run,\
+>  # __cc-option
+>  # Usage: MY_CFLAGS += $(call __cc-option,$(CC),$(MY_CFLAGS),-march=winchip-c6,-march=i586)
+>  __cc-option = $(call try-run,\
+> -       $(1) -Werror $(2) $(3) -c -x c /dev/null -o "$$TMP",$(3),$(4))
+> +       $(1) -Werror $(2) $(3) -E -x c /dev/null -o "$$TMP",$(3),$(4))
+>
+>  # Do not attempt to build with gcc plugins during cc-option tests.
+>  # (And this uses delayed resolution so the flags will be up to date.)
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
