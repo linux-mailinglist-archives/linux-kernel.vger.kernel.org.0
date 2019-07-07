@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3810C61690
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AA6D616A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfGGTkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:40:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:58050 "EHLO
+        id S1728128AbfGGTla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57840 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727672AbfGGTiR (ORCPT
+        by vger.kernel.org with ESMTP id S1727642AbfGGTiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:17 -0400
+        Sun, 7 Jul 2019 15:38:15 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCzG-0006kJ-8D; Sun, 07 Jul 2019 20:38:14 +0100
+        id 1hkCzD-0006ji-0j; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0005f3-A1; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCz8-0005ev-75; Sun, 07 Jul 2019 20:38:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Oleg Nesterov" <oleg@redhat.com>,
-        "Siarhei Volkau" <lis8215@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Stanislaw Gruszka" <sgruszka@redhat.com>
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Viresh Kumar" <viresh.kumar@linaro.org>,
+        "Nathan Chancellor" <natechancellor@gmail.com>,
+        "Robert Jarzmik" <robert.jarzmik@free.fr>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.989988578@decadent.org.uk>
+Message-ID: <lsq.1562518457.909156221@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 108/129] lib/div64.c: off by one in shift
+Subject: [PATCH 3.16 107/129] cpufreq: pxa2xx: remove incorrect __init
+ annotation
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,48 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanislaw Gruszka <sgruszka@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit cdc94a37493135e355dfc0b0e086d84e3eadb50d upstream.
+commit 9505b98ccddc454008ca7efff90044e3e857c827 upstream.
 
-fls counts bits starting from 1 to 32 (returns 0 for zero argument).  If
-we add 1 we shift right one bit more and loose precision from divisor,
-what cause function incorect results with some numbers.
+pxa_cpufreq_init_voltages() is marked __init but usually inlined into
+the non-__init pxa_cpufreq_init() function. When building with clang,
+it can stay as a standalone function in a discarded section, and produce
+this warning:
 
-Corrected code was tested in user-space, see bugzilla:
-   https://bugzilla.kernel.org/show_bug.cgi?id=202391
+WARNING: vmlinux.o(.text+0x616a00): Section mismatch in reference from the function pxa_cpufreq_init() to the function .init.text:pxa_cpufreq_init_voltages()
+The function pxa_cpufreq_init() references
+the function __init pxa_cpufreq_init_voltages().
+This is often because pxa_cpufreq_init lacks a __init
+annotation or the annotation of pxa_cpufreq_init_voltages is wrong.
 
-Link: http://lkml.kernel.org/r/1548686944-11891-1-git-send-email-sgruszka@redhat.com
-Fixes: 658716d19f8f ("div64_u64(): improve precision on 32bit platforms")
-Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
-Reported-by: Siarhei Volkau <lis8215@gmail.com>
-Tested-by: Siarhei Volkau <lis8215@gmail.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 50e77fcd790e ("ARM: pxa: remove __init from cpufreq_driver->init()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- lib/div64.c | 4 ++--
+ drivers/cpufreq/pxa2xx-cpufreq.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/div64.c
-+++ b/lib/div64.c
-@@ -100,7 +100,7 @@ u64 div64_u64_rem(u64 dividend, u64 divi
- 		quot = div_u64_rem(dividend, divisor, &rem32);
- 		*remainder = rem32;
- 	} else {
--		int n = 1 + fls(high);
-+		int n = fls(high);
- 		quot = div_u64(dividend >> n, divisor >> n);
+--- a/drivers/cpufreq/pxa2xx-cpufreq.c
++++ b/drivers/cpufreq/pxa2xx-cpufreq.c
+@@ -191,7 +191,7 @@ static int pxa_cpufreq_change_voltage(px
+ 	return ret;
+ }
  
- 		if (quot != 0)
-@@ -138,7 +138,7 @@ u64 div64_u64(u64 dividend, u64 divisor)
- 	if (high == 0) {
- 		quot = div_u64(dividend, divisor);
- 	} else {
--		int n = 1 + fls(high);
-+		int n = fls(high);
- 		quot = div_u64(dividend >> n, divisor >> n);
+-static void __init pxa_cpufreq_init_voltages(void)
++static void pxa_cpufreq_init_voltages(void)
+ {
+ 	vcc_core = regulator_get(NULL, "vcc_core");
+ 	if (IS_ERR(vcc_core)) {
+@@ -207,7 +207,7 @@ static int pxa_cpufreq_change_voltage(px
+ 	return 0;
+ }
  
- 		if (quot != 0)
+-static void __init pxa_cpufreq_init_voltages(void) { }
++static void pxa_cpufreq_init_voltages(void) { }
+ #endif
+ 
+ static void find_freq_tables(struct cpufreq_frequency_table **freq_table,
 
