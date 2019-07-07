@@ -2,90 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F81561650
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13AA6170F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfGGTde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:33:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57728 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfGGTde (ORCPT
+        id S1728534AbfGGTox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:44:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38066 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbfGGTot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:33:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jU5cEjUtcVYO3EaFU5lWyybUeSozoad8uL7Kr7BLfLM=; b=gb9drmike6oRAXpcP1cYg9E/h
-        L/qk0ptX30TDgNFuHLR4AGhKrfBn3QTrfMYf7J8/R6SfcsgC8EBDhVRkAYVokbnjdPYqW+Am4Bsiw
-        mbEwPjYMf8iqI37MI5DgNjkfhtG55g6EeWM2IWE24ntmKDiDxBhbLf6EjUVJO2VNNtq7v76E9ekBX
-        so5Bz++sxMLYMAzj28hL5zn6FC6xwAqTak5e7uNp0vfS/ofPIooa884l7zevYmDTBlhUgBProdfSU
-        a+qbyHJRObWin6sU9Omyyj6IL1TMp51Suyr0r2CpLAN77BskyyQQSfj5O0QoG+lB6MAVyWZb/RkrG
-        I3AGMBoug==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkCuh-0003co-Vv; Sun, 07 Jul 2019 19:33:32 +0000
-Subject: Re: [PATCH] tpm: Document UEFI event log quirks
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tweek@google.com, matthewgarrett@google.com,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20190703161109.22935-1-jarkko.sakkinen@linux.intel.com>
- <6acf78df-b168-14d3-fea4-9a9d2945e77f@infradead.org>
- <a8ee93721a674434e22d31fd1d10bf9472c1c739.camel@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ec274596-6bc8-07a0-d09b-1d191646c5cd@infradead.org>
-Date:   Sun, 7 Jul 2019 12:33:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Sun, 7 Jul 2019 15:44:49 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hkD4r-0001gh-QG; Sun, 07 Jul 2019 21:44:02 +0200
+Date:   Sun, 7 Jul 2019 21:44:00 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pingfan Liu <kernelfans@gmail.com>
+cc:     x86@kernel.org, Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, Qian Cai <cai@lca.pw>,
+        Barret Rhoden <brho@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/numa: instance all parsed numa node
+In-Reply-To: <1562300143-11671-2-git-send-email-kernelfans@gmail.com>
+Message-ID: <alpine.DEB.2.21.1907072133310.3648@nanos.tec.linutronix.de>
+References: <1562300143-11671-1-git-send-email-kernelfans@gmail.com> <1562300143-11671-2-git-send-email-kernelfans@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <a8ee93721a674434e22d31fd1d10bf9472c1c739.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/5/19 3:15 AM, Jarkko Sakkinen wrote:
-> On Wed, 2019-07-03 at 09:45 -0700, Randy Dunlap wrote:
->>> +This introduces another problem: nothing guarantees that it is not
->>> +called before the stub gets to run. Thus, it needs to copy the final
->>> +events table preboot size to the custom configuration table so that
->>> +kernel offset it later on.
+On Fri, 5 Jul 2019, Pingfan Liu wrote:
 
-     (so that)
-     the kernel can use that final table preboot size as an events table
-     offset later on.
+> I hit a bug on an AMD machine, with kexec -l nr_cpus=4 option. nr_cpus option
+> is used to speed up kdump process, so it is not a rare case.
 
->>
->> ?  kernel can offset it later on.
-> 
-> EFI stub calculates the total size of the events in the final events
-> table at the time.
-> 
-> Later on, TPM driver uses this offset to copy only the events that
-> were actually generated after ExitBootServices():
-> 
-> /*
->  * Copy any of the final events log that didn't also end up in the
->  * main log. Events can be logged in both if events are generated
->  * between GetEventLog() and ExitBootServices().
->  */
-> memcpy((void *)log->bios_event_log + log_size,
->        final_tbl->events + log_tbl->final_events_preboot_size,
->        efi_tpm_final_log_size);
-> 
-> What would be a better way to describe this?
+But fundamentally wrong, really.
 
-Yeah, I think I see what it's doing, how it's using that.
-See above.
+The rest of the CPUs are in a half baken state and any broadcast event,
+e.g. MCE or a stray IPI, will result in a undiagnosable crash.
 
-OK?
+Thanks,
 
--- 
-~Randy
+	tglx
+
+
