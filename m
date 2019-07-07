@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA80616CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6764F61700
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbfGGTmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:42:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57572 "EHLO
+        id S1728461AbfGGToa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:44:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57310 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727606AbfGGTiL (ORCPT
+        by vger.kernel.org with ESMTP id S1727550AbfGGTiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:11 -0400
+        Sun, 7 Jul 2019 15:38:08 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz7-0006iS-Cw; Sun, 07 Jul 2019 20:38:05 +0100
+        id 1hkCz5-0006gj-6M; Sun, 07 Jul 2019 20:38:03 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz5-0005cU-Hn; Sun, 07 Jul 2019 20:38:03 +0100
+        id 1hkCz3-0005aZ-Oh; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Sean Christopherson" <sean.j.christopherson@intel.com>
+        "Colin Ian King" <colin.king@canonical.com>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.293385462@decadent.org.uk>
+Message-ID: <lsq.1562518457.992044291@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 077/129] KVM: x86/mmu: Do not cache MMIO accesses
- while memslots are in flux
+Subject: [PATCH 3.16 053/129] rtc: pm8xxx: fix unintended sign extension
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,58 +47,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit ddfd1730fd829743e41213e32ccc8b4aa6dc8325 upstream.
+commit e42280886018c6f77f0a90190f7cba344b0df3e0 upstream.
 
-When installing new memslots, KVM sets bit 0 of the generation number to
-indicate that an update is in-progress.  Until the update is complete,
-there are no guarantees as to whether a vCPU will see the old or the new
-memslots.  Explicity prevent caching MMIO accesses so as to avoid using
-an access cached from the old memslots after the new memslots have been
-installed.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Note that it is unclear whether or not disabling caching during the
-update window is strictly necessary as there is no definitive
-documentation as to what ordering guarantees KVM provides with respect
-to updating memslots.  That being said, the MMIO spte code does not
-allow reusing sptes created while an update is in-progress, and the
-associated documentation explicitly states:
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-    We do not want to use an MMIO sptes created with an odd generation
-    number, ...  If KVM is unlucky and creates an MMIO spte while the
-    low bit is 1, the next access to the spte will always be a cache miss.
+Detected by CoverityScan, CID#1309693 ("Unintended sign extension")
 
-At the very least, disabling the per-vCPU MMIO cache during updates will
-make its behavior consistent with the MMIO spte behavior and
-documentation.
-
-Fixes: 56f17dd3fbc4 ("kvm: x86: fix stale mmio cache bug")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[
+Fixes: 9a9a54ad7aa2 ("drivers/rtc: add support for Qualcomm PMIC8xxx RTC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/x86.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-pm8xxx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -75,10 +75,15 @@ static inline u32 bit(int bitno)
- static inline void vcpu_cache_mmio_info(struct kvm_vcpu *vcpu,
- 					gva_t gva, gfn_t gfn, unsigned access)
- {
-+	u64 gen = kvm_memslots(vcpu->kvm)->generation;
-+
-+	if (unlikely(gen & 1))
-+		return;
-+
- 	vcpu->arch.mmio_gva = gva & PAGE_MASK;
- 	vcpu->arch.access = access;
- 	vcpu->arch.mmio_gfn = gfn;
--	vcpu->arch.mmio_gen = kvm_memslots(vcpu->kvm)->generation;
-+	vcpu->arch.mmio_gen = gen;
- }
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -175,7 +175,8 @@ static int pm8xxx_rtc_read_time(struct d
+ 		}
+ 	}
  
- static inline bool vcpu_match_mmio_gen(struct kvm_vcpu *vcpu)
+-	secs = value[0] | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
++	secs = value[0] | (value[1] << 8) | (value[2] << 16) |
++	       ((unsigned long)value[3] << 24);
+ 
+ 	rtc_time_to_tm(secs, tm);
+ 
+@@ -253,7 +254,8 @@ static int pm8xxx_rtc_read_alarm(struct
+ 		return rc;
+ 	}
+ 
+-	secs = value[0] | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
++	secs = value[0] | (value[1] << 8) | (value[2] << 16) |
++	       ((unsigned long)value[3] << 24);
+ 
+ 	rtc_time_to_tm(secs, &alarm->time);
+ 
 
