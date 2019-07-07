@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE645616A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11AD616D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfGGTiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56778 "EHLO
+        id S1728307AbfGGTnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:43:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57458 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727435AbfGGTiA (ORCPT
+        by vger.kernel.org with ESMTP id S1727581AbfGGTiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:00 -0400
+        Sun, 7 Jul 2019 15:38:11 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz0-0006d0-P1; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCz5-0006hE-RO; Sun, 07 Jul 2019 20:38:03 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCyz-0005Wv-Kc; Sun, 07 Jul 2019 20:37:57 +0100
+        id 1hkCz4-0005b6-7n; Sun, 07 Jul 2019 20:38:02 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Yangtao Li" <tiny.windzz@gmail.com>,
-        "Stephen Boyd" <sboyd@kernel.org>
+        "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Alan Cox" <alan@linux.intel.com>,
+        "QiaoChong" <qiaochong@loongson.cn>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.704973466@decadent.org.uk>
+Message-ID: <lsq.1562518457.586141178@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 008/129] clk: imx6sx: fix refcount leak in
- imx6sx_clocks_init()
+Subject: [PATCH 3.16 060/129] parport_pc: fix find_superio io compare
+ code, should use equal test.
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,31 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: QiaoChong <qiaochong@loongson.cn>
 
-commit 1731e14fb30212dd8c1e9f8fc1af061e56498c55 upstream.
+commit 21698fd57984cd28207d841dbdaa026d6061bceb upstream.
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+In the original code before 181bf1e815a2 the loop was continuing until
+it finds the first matching superios[i].io and p->base.
+But after 181bf1e815a2 the logic changed and the loop now returns the
+pointer to the first mismatched array element which is then used in
+get_superio_dma() and get_superio_irq() and thus returning the wrong
+value.
+Fix the condition so that it now returns the correct pointer.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: d55135689019 ("ARM: imx: add clock driver for imx6sx")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-[bwh: Backported to 3.16: adjust filename]
+Fixes: 181bf1e815a2 ("parport_pc: clean up the modified while loops using for")
+Cc: Alan Cox <alan@linux.intel.com>
+Signed-off-by: QiaoChong <qiaochong@loongson.cn>
+[rewrite the commit message]
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/mach-imx/clk-imx6sx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/parport/parport_pc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mach-imx/clk-imx6sx.c
-+++ b/arch/arm/mach-imx/clk-imx6sx.c
-@@ -143,6 +143,7 @@ static void __init imx6sx_clocks_init(st
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
- 	base = of_iomap(np, 0);
- 	WARN_ON(!base);
-+	of_node_put(np);
- 
- 	/*                                              type               name             parent_name   base         div_mask */
- 	clks[IMX6SX_CLK_PLL1_SYS]       = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1_sys",      "osc",        base,        0x7f);
+--- a/drivers/parport/parport_pc.c
++++ b/drivers/parport/parport_pc.c
+@@ -1377,7 +1377,7 @@ static struct superio_struct *find_super
+ {
+ 	int i;
+ 	for (i = 0; i < NR_SUPERIOS; i++)
+-		if (superios[i].io != p->base)
++		if (superios[i].io == p->base)
+ 			return &superios[i];
+ 	return NULL;
+ }
 
