@@ -2,80 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A8A617B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 23:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D2261C1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfGGV3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 17:29:08 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:41481 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbfGGV3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 17:29:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hhXw3RLQz9s3Z;
-        Mon,  8 Jul 2019 07:29:04 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562534945;
-        bh=NALcSf4JxZPqMxNvupzy2z8xGoJsECRpYxfpF9O/qdk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QYMey3OBF+AYU5US/yoY0hFvYWrl6UFNCTZ1xkwRqd19cYcaHG4970hR875rpcfJ+
-         tpyDY7OOt79uqTISdjhrO62fQxi8eLeszaMCcRk/fXV+rr7VsDGA5G1c0Sm7izh9Gx
-         fXs04L2xIyEYVRwQxSsNZM/700PXVUoY0jcmNCGPPP2nYmqzk4lJhr4MXOD6Y7+/ku
-         A6f5uqspbUYj7d2oTXmPub4di0jtol4UxR17f86uqqVLNEpVS+hmIvplRyIQdWEjCG
-         BjKQFFYJhD+K0NmrZo6pYQvEnX2WA5Z/jBX18XiEWZNCsJu12WI1Q/dK6mXGIEXd4w
-         BjSodw+J+PrzA==
-Date:   Mon, 8 Jul 2019 07:28:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Trond Myklebust <trondmy@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: linux-next: Signed-off-by missing for commits in the nfs tree
-Message-ID: <20190708072858.566aa564@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SQV5lqOq5h55WP=SGQwO2zZ"; protocol="application/pgp-signature"
+        id S1729703AbfGHJM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 05:12:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58768 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728166AbfGHJM0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 05:12:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6899N1m045622;
+        Mon, 8 Jul 2019 09:11:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=HrLoCLWKaK68rHicJaIU6MsioVbmLOJdaDU92K7D8ok=;
+ b=tCQMMzgabehfm7OTcpmRRmZH/CeFRo9huZe6zZBm3ddL+DXYhBX0Q7XEAI8ETyetM8wD
+ B7A6dMd/hrPQf6XgJpR8+GxoNoVZKCi1y41ENxqkoKM/nFNBrTEvH5wE5nZMeo5uLDhW
+ iVyII8WAHKxzcBETvG85BMPTIx+LEPchtvoIHVY/kxGgvCUSHz1hkLXFBBfJjM20+i22
+ MuKlGIQ8byC7Vd4u37Io5eq91055SPgtpicAwD2qVQQBb3+VbCU4P4i2vjmV7G1tvRq1
+ vRz8UNCz1KVxgrgh+J6BkjJeSQUWg08qwkrga4St6EpOc867feT4FpGkUF4zTMXpoFq0 9A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2tjkkpd879-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jul 2019 09:11:30 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6897uOB111007;
+        Mon, 8 Jul 2019 09:11:30 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2tjkf23d87-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jul 2019 09:11:30 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x689BTkI005039;
+        Mon, 8 Jul 2019 09:11:29 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jul 2019 02:11:29 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v6 0/4] misc fixes to PV extensions code
+Date:   Sun,  7 Jul 2019 17:15:04 +0800
+Message-Id: <1562490908-17882-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907080120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907080121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SQV5lqOq5h55WP=SGQwO2zZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+In virtualization environment, PV extensions (drivers, interrupts,
+timers, etc) are enabled in the majority of use cases which is the
+best option.
 
-Commits
+However, in some cases (kexec not fully working, benchmarking, etc)
+we want to disable PV extensions. We have xen_nopv for that purpose
+but only for XEN. For a consistent admin experience a common command
+line parameter set across all PV guest implementations is a better
+choice.
 
-  fe9ad197bd8a ("xprtrdma: Remove the RPCRDMA_REQ_F_PENDING flag")
-  08d720bcd822 ("xprtrdma: Fix occasional transport deadlock")
-  beb843739ea0 ("xprtrdma: Replace use of xdr_stream_pos in rpcrdma_marshal=
-_req")
+To achieve this introduce a new 'nopv' parameter which is usable by
+most of PV guest implementation. Due to the limitation of some PV
+guests(XEN PV, XEN PVH and jailhouse), 'nopv' is ignored for XEN PV
+, jailhouse and XEN PVH if booting via Xen-PVH boot entry. If booting
+via normal boot entry(like grub2), PVH guest has to panic itself
+currently.
 
-are missing a Signed-off-by from their committer.
+While analyzing the PV guest code one bug were found and fixed.
+(Patches 1). It can be applied independent of the functional
+changes, but is kept in the series as the functional changes
+depend on them.
 
---=20
-Cheers,
-Stephen Rothwell
+For compatibility reason, "xen_nopv" is keeped and mapped to "nopv",
+this way also avoids an issue with xen_nopv when booting PVH guest.
 
---Sig_/SQV5lqOq5h55WP=SGQwO2zZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Build test passes with CONFIG_HYPERVISOR_GUEST enable and disabled.
+I didn't get env to test with jailhouse and Hyperv, the others work
+as expected.
 
------BEGIN PGP SIGNATURE-----
+v6:
+PATCH3 add Reviewed-by
+PATCH4 remove unnecessory xen_hvm_nopv_guest_late_init() per Boris
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0iZBoACgkQAVBC80lX
-0Gw4yQf+Oa9dWIJx7AWeZD3x6VGMo0fw//DkdOWNuKzGuyWzZuyYyiNkJZayBDCq
-WRsipYgaCwenH+djQZDMGnyCcYSmTEIdIxWV7OabFfPnYWPtnmDIwXirHUxZJCjz
-weHP9RhVUkeNxjuqtNs9kgpDnaJBb5Wlhh+cKfSs4XgUJdnnb5kbW7X2rzTKJYlq
-wDFIxxIDWiBwx01EZqvuucUcu0kMgwDqEQ8Ka0lqJAf8l9HLDjJvzLtoKvmp/wt/
-E/3Cd7Huwo+KY4Jn7Je30twpWAKCRCZFXfQXYwTDHenrO8ER/1ojVXbCwk9oMuW7
-dyi3czWZWJl47sVqj3gYRGcGpieJxQ==
-=lW+S
------END PGP SIGNATURE-----
+v5:
+PATCH2:
+update patch description per Boris
+add declaration of nopv variable in arch/x86/include/asm/hypervisor.h
+which will be used in PATCH3 and PATCH4
 
---Sig_/SQV5lqOq5h55WP=SGQwO2zZ--
+PATCH3 update xen_parse_nopv() per Boris
+PATCH4 add nopv=false per Boris
+Combine PATCH5 into PATCH3
+
+
+v4:
+PATCH5 a new patch to add 'xen_nopv' back per Boris
+
+v3:
+Remove some unrelated patches from patchset as suggested by Tglx
+
+PATCH1 unchanged
+PATCH2 add Reviewed-by
+PATCH3 add Reviewed-by
+PATCH4 rewrite the patch as Jgross found an issue in old patch,
+description is also updated.
+
+
+
+v2:
+PATCH3 use 'ignore_nopv' for PVH/PV guest as suggested by Jgross.
+PATCH5 new added one, specifically for HVM guest
+
+Thanks
+Zhenzhong
