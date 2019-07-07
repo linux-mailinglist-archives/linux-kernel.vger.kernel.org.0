@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95BD616FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A2261749
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfGGToW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:44:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57328 "EHLO
+        id S1728747AbfGGTq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:46:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56876 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727556AbfGGTiJ (ORCPT
+        by vger.kernel.org with ESMTP id S1727460AbfGGTiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:09 -0400
+        Sun, 7 Jul 2019 15:38:01 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0006hd-Dy; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCz1-0006dY-Fl; Sun, 07 Jul 2019 20:37:59 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0005bh-Sd; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz0-0005Xd-FF; Sun, 07 Jul 2019 20:37:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jay Dolan" <jay.dolan@accesio.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Jeremy Fertic" <jeremyfertic@gmail.com>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.476613801@decadent.org.uk>
+Message-ID: <lsq.1562518457.98043477@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 067/129] serial: 8250_pci: Fix number of ports for
- ACCES serial cards
+Subject: [PATCH 3.16 017/129] staging: iio: adt7316: fix the dac write
+ calculation
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,137 +48,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Dolan <jay.dolan@accesio.com>
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-commit b896b03bc7fce43a07012cc6bf5e2ab2fddf3364 upstream.
+commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
 
-Have the correct number of ports created for ACCES serial cards. Two port
-cards show up as four ports, and four port cards show up as eight.
+The lsb calculation is not masking the correct bits from the user input.
+Subtract 1 from (1 << offset) to correctly set up the mask to be applied
+to user input.
 
-Fixes: c8d192428f52 ("serial: 8250: added acces i/o products quad and octal serial cards")
-Signed-off-by: Jay Dolan <jay.dolan@accesio.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The lsb register stores its value starting at the bit 7 position.
+adt7316_store_DAC() currently assumes the value is at the other end of the
+register. Shift the lsb value before storing it in a new variable lsb_reg,
+and write this variable to the lsb register.
+
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/8250/8250_pci.c | 36 +++++++++++++++---------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/staging/iio/addac/adt7316.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -4943,10 +4943,10 @@ static struct pci_device_id serial_pci_t
- 	 */
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_2SDB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_COM_2S,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SDB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
-@@ -4955,10 +4955,10 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM232_2DB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_COM232_2,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4DB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
-@@ -4967,10 +4967,10 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_2SMDB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_COM_2SM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SMDB,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
-@@ -4979,13 +4979,13 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_ICM485_1,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7951 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_ICM422_2,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_ICM485_2,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_ICM422_4,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
-@@ -4994,16 +4994,16 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM_2S,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4S,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM232_2,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_MPCIE_ICM232_2,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM232_4,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7954 },
-@@ -5012,13 +5012,13 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM_2SM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7954 },
-+		pbn_pericom_PI7C9X7952 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM422_4,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7958 },
-+		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM485_4,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7958 },
-+		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM422_8,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7958 },
-@@ -5027,19 +5027,19 @@ static struct pci_device_id serial_pci_t
- 		pbn_pericom_PI7C9X7958 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7958 },
-+		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM232_8,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7958 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7958 },
-+		pbn_pericom_PI7C9X7954 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_COM_8SM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_pericom_PI7C9X7958 },
- 	{	PCI_VENDOR_ID_ACCESIO, PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4SM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
--		pbn_pericom_PI7C9X7958 },
-+		pbn_pericom_PI7C9X7954 },
- 	/*
- 	 * Topic TP560 Data/Fax/Voice 56k modem (reported by Evan Clarke)
- 	 */
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -1448,7 +1448,7 @@ static ssize_t adt7316_show_DAC(struct a
+ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+ 		int channel, const char *buf, size_t len)
+ {
+-	u8 msb, lsb, offset;
++	u8 msb, lsb, lsb_reg, offset;
+ 	u16 data;
+ 	int ret;
+ 
+@@ -1466,9 +1466,13 @@ static ssize_t adt7316_store_DAC(struct
+ 		return -EINVAL;
+ 
+ 	if (chip->dac_bits > 8) {
+-		lsb = data & (1 << offset);
++		lsb = data & ((1 << offset) - 1);
++		if (chip->dac_bits == 12)
++			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
++		else
++			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
+ 		ret = chip->bus.write(chip->bus.client,
+-			ADT7316_DA_DATA_BASE + channel * 2, lsb);
++			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
+ 		if (ret)
+ 			return -EIO;
+ 	}
 
