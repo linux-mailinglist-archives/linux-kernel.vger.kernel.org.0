@@ -2,82 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E59FF614AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 12:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B16BD614CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 13:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfGGK1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 06:27:16 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38682 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfGGK1P (ORCPT
+        id S1726764AbfGGL6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 07:58:21 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:4688 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfGGL6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 06:27:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z75so6197859pgz.5;
-        Sun, 07 Jul 2019 03:27:15 -0700 (PDT)
+        Sun, 7 Jul 2019 07:58:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8zUSV3oUAOKo1p9yciN3aXy3pVPdOrPwzw0QPi5xIzo=;
-        b=VBjqvvTXk8FATRmQEiOuWon5GfWlkAvU4GGZ6FUmW7+3gmXcpcm4/fFEGzxd2XhrtB
-         PHtGO0BF15qudbOJN1Mb2S1EJXqlorX0y4YkkVQOtl+YRryzXGN/AjqF79esn/tuNQd+
-         ifppzkOODJ5w7jSvmT2lYljvh+zH7Re24g7l3J1/t0Z86tiKN0LOopmOQAf74LcDlod4
-         en+RY5ZRD75cN+LkdTg1L5u6r9vgS9J8VHxz11zeiwh8ffZpiGe2eZTarrX6OzfTK1TS
-         u5qJHUe1a1kMyxm5DV9PSMrA4nHyW32fBjW+23vrFzWpH6RZ1gZQTX7oSbYd9n4DgFYj
-         2Fdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8zUSV3oUAOKo1p9yciN3aXy3pVPdOrPwzw0QPi5xIzo=;
-        b=I46owV0g0pSPhUgqvdWU1cyhyynDclEre1V+x7sn5JRy7deGLJSWOzePcz/yGEiBQb
-         adHlgW1znvC5ZHt050X6UQMaLnL+B2RmQI4PtXXUXMBrNr/M9rQKC9i8gnqV1j/S9u85
-         7z/gdkNVNK8SjksIzwwUjf+/E2tVBueBkPROnOaJBdQ+uZku2TRnWvA6aIhcN1X4uBx3
-         HSuCuUc10mh64W12/UE3dRbgo+QHLPdc+t9NKsfEV+/6gfCHQjy8GXEsDHVcWQe/rtUg
-         EkUS9QlnVzfcSUlaPKmQ17mEKO0iOwakaKbDPRpmALCNJr+c3l67S6HU4/bYf9+MC1eb
-         A+Pw==
-X-Gm-Message-State: APjAAAUiFlLo6btvuo3W8/92I+99xE+iWTF05yJ6y+uoHbFZ/atzni/9
-        k8LrF5h7q/Ru8p7OQiWN9cc=
-X-Google-Smtp-Source: APXvYqyMx2+32HyNXxBJxnXN90ZX/eNGMf1iEDAGfhyfSUHZUz4eRncpRFe5vwFlPtEZBqtHdLc5ng==
-X-Received: by 2002:a17:90a:bf0e:: with SMTP id c14mr16074811pjs.55.1562495234516;
-        Sun, 07 Jul 2019 03:27:14 -0700 (PDT)
-Received: from carrot.localdomain (i60-35-92-254.s42.a014.ap.plala.or.jp. [60.35.92.254])
-        by smtp.gmail.com with ESMTPSA id x128sm35195975pfd.17.2019.07.07.03.27.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Jul 2019 03:27:12 -0700 (PDT)
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Subject: [PATCH] MAINTAINERS: nilfs2: update email address
-Date:   Sun,  7 Jul 2019 19:25:53 +0900
-Message-Id: <1562495153-8166-1-git-send-email-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1562500698; x=1594036698;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=AzRAD81nU2MwlCqn0AU1evNVTd1zGcE1O6MmxMHhUbc=;
+  b=GFC9qHnyD7oytVt8NNIq0OZ9KzASQKyzbCEPBow8lcxylNWJIZRR3+Lg
+   ydYRouHrvTGm6Lbw9CMjyJGhB0y/SmepzuPpEti5Gl+ddNO1vMfp27bB3
+   q8ecW/Bv7QOpOJP2mghfnk4pDZ9VH5kyjyjfJSbIkSEaCGb/JKFqyWQSY
+   c=;
+X-IronPort-AV: E=Sophos;i="5.62,462,1554768000"; 
+   d="scan'208";a="773526810"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 07 Jul 2019 11:58:15 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com (Postfix) with ESMTPS id D2DE8A230C;
+        Sun,  7 Jul 2019 11:58:15 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Sun, 7 Jul 2019 11:58:15 +0000
+Received: from ub6d44c9ce3e25c.ant.amazon.com (10.43.161.16) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Sun, 7 Jul 2019 11:58:06 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
+        <mchehab@kernel.org>, <james.morse@arm.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <linus.walleij@linaro.org>,
+        <Jonathan.Cameron@huawei.com>, <nicolas.ferre@microchip.com>,
+        <paulmck@linux.ibm.com>
+CC:     <dwmw@amazon.co.uk>, <benh@amazon.com>, <ronenk@amazon.com>,
+        <talel@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>, <hhhawa@amazon.com>
+Subject: [PATCH v2 0/4] Add support for Amazon's Annapurna Labs EDAC for L1/L2
+Date:   Sun, 7 Jul 2019 14:57:34 +0300
+Message-ID: <1562500658-14717-1-git-send-email-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.16]
+X-ClientProxiedBy: EX13D12UWC004.ant.amazon.com (10.43.162.182) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change my email since lab.ntt.co.jp email domain has been deprecated
-due to company policy.
+This series adds L1 and L2 caches support for error detection and
+correction for Amazon's Annapurna Labs SoCs.
+Alpine SoCs support L1 and L2 single bit correction and two bits detection
+capability based on ARM implementation.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+-----------------
+- Split into two drivers
+- Get cpu-mask according to l2-cache handler from devicetree
+- Remove parameter casting
+- Use GENMASK() in bit mask
+- Use FIELD_GET()
+- Update define description PLRU_RAM -> PF_RAM
+- Use sys_reg() and read_sysreg_s()
+- Remove all write/read wrappers
+- Check fatal field to set if the error correctable or not
+- Remove un-relevant information from error prints.
+- Update smp_call_function_single() call function to wait
+- remove usage of get_online_cpus/put_online_cpus
+- Use on_each_cpu() and smp_call_function_any() instead of loop with for_each_cpu.
+- use buffer for error prints and pass to edac API
+- Remove edac_op_state set
+- Add for loop to report on repeated errors of the same type
+- Fix error name of the TLB to be L2_TLB as written in ARM TRM
+- Minor change in Kconfig
+- Minor changes in commit message
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 01a52fc..b8eadb3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11116,7 +11116,7 @@ F:	include/uapi/linux/nfs*
- F:	include/uapi/linux/sunrpc/
- 
- NILFS2 FILESYSTEM
--M:	Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-+M:	Ryusuke Konishi <konishi.ryusuke@gmail.com>
- L:	linux-nilfs@vger.kernel.org
- W:	https://nilfs.sourceforge.io/
- W:	https://nilfs.osdn.jp/
+Hanna Hawa (4):
+  dt-bindings: EDAC: Add Amazon's Annapurna Labs L1 EDAC
+  edac: Add support for Amazon's Annapurna Labs L1 EDAC
+  dt-bindings: EDAC: Add Amazon's Annapurna Labs L2 EDAC
+  edac: Add support for Amazon's Annapurna Labs L2 EDAC
+
+ .../devicetree/bindings/edac/amazon,al-l1-edac.txt |  14 ++
+ .../devicetree/bindings/edac/amazon,al-l2-edac.txt |  20 +++
+ MAINTAINERS                                        |  12 ++
+ drivers/edac/Kconfig                               |  16 ++
+ drivers/edac/Makefile                              |   2 +
+ drivers/edac/al_l1_edac.c                          | 154 +++++++++++++++++
+ drivers/edac/al_l2_edac.c                          | 185 +++++++++++++++++++++
+ 7 files changed, 403 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-l1-edac.txt
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-l2-edac.txt
+ create mode 100644 drivers/edac/al_l1_edac.c
+ create mode 100644 drivers/edac/al_l2_edac.c
+
 -- 
-1.8.3.1
+2.7.4
 
