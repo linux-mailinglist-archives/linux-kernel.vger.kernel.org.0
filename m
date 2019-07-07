@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB13C6167A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA526166F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfGGTiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56956 "EHLO
+        id S1727967AbfGGTjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:39:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57822 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727485AbfGGTiD (ORCPT
+        by vger.kernel.org with ESMTP id S1727640AbfGGTiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:03 -0400
+        Sun, 7 Jul 2019 15:38:14 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz2-0006dx-DF; Sun, 07 Jul 2019 20:38:00 +0100
+        id 1hkCzC-0006j1-HH; Sun, 07 Jul 2019 20:38:10 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz0-0005Y2-Td; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCz7-0005eT-PT; Sun, 07 Jul 2019 20:38:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>, "NeilBrown" <neilb@suse.de>
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>,
+        "Michal Hocko" <mhocko@suse.com>, "Joe Perches" <joe@perches.com>,
+        "Roman Penyaev" <rpenyaev@suse.de>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.895426084@decadent.org.uk>
+Message-ID: <lsq.1562518457.673598026@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 022/129] security/selinux: pass 'flags' arg to
- avc_audit() and avc_has_perm_flags()
+Subject: [PATCH 3.16 101/129] mm/vmalloc: fix size check for
+ remap_vmalloc_range_partial()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,92 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.de>
+From: Roman Penyaev <rpenyaev@suse.de>
 
-commit 7b20ea2579238f5e0da4bc93276c1b63c960c9ef upstream.
+commit 401592d2e095947344e10ec0623adbcd58934dd4 upstream.
 
-This allows MAY_NOT_BLOCK to be passed, in RCU-walk mode, through
-the new avc_has_perm_flags() to avc_audit() and thence the slow_avc_audit.
+When VM_NO_GUARD is not set area->size includes adjacent guard page,
+thus for correct size checking get_vm_area_size() should be used, but
+not area->size.
 
-Signed-off-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-[bwh: Backported to 3.16 as dependency of commit 3a28cff3bd4b
- "selinux: avoid silent denials in permissive mode under RCU walk"]
+This fixes possible kernel oops when userspace tries to mmap an area on
+1 page bigger than was allocated by vmalloc_user() call: the size check
+inside remap_vmalloc_range_partial() accounts non-existing guard page
+also, so check successfully passes but vmalloc_to_page() returns NULL
+(guard page does not physically exist).
+
+The following code pattern example should trigger an oops:
+
+  static int oops_mmap(struct file *file, struct vm_area_struct *vma)
+  {
+        void *mem;
+
+        mem = vmalloc_user(4096);
+        BUG_ON(!mem);
+        /* Do not care about mem leak */
+
+        return remap_vmalloc_range(vma, mem, 0);
+  }
+
+And userspace simply mmaps size + PAGE_SIZE:
+
+  mmap(NULL, 8192, PROT_WRITE|PROT_READ, MAP_PRIVATE, fd, 0);
+
+Possible candidates for oops which do not have any explicit size
+checks:
+
+   *** drivers/media/usb/stkwebcam/stk-webcam.c:
+   v4l_stk_mmap[789]   ret = remap_vmalloc_range(vma, sbuf->buffer, 0);
+
+Or the following one:
+
+   *** drivers/video/fbdev/core/fbmem.c
+   static int
+   fb_mmap(struct file *file, struct vm_area_struct * vma)
+        ...
+        res = fb->fb_mmap(info, vma);
+
+Where fb_mmap callback calls remap_vmalloc_range() directly without any
+explicit checks:
+
+   *** drivers/video/fbdev/vfb.c
+   static int vfb_mmap(struct fb_info *info,
+             struct vm_area_struct *vma)
+   {
+       return remap_vmalloc_range(vma, (void *)info->fix.smem_start, vma->vm_pgoff);
+   }
+
+Link: http://lkml.kernel.org/r/20190103145954.16942-2-rpenyaev@suse.de
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/selinux/avc.c         | 18 +++++++++++++++++-
- security/selinux/hooks.c       |  2 +-
- security/selinux/include/avc.h |  9 +++++++--
- 3 files changed, 25 insertions(+), 4 deletions(-)
+ mm/vmalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -768,7 +768,23 @@ int avc_has_perm(u32 ssid, u32 tsid, u16
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2141,7 +2141,7 @@ int remap_vmalloc_range_partial(struct v
+ 	if (!(area->flags & VM_USERMAP))
+ 		return -EINVAL;
  
- 	rc = avc_has_perm_noaudit(ssid, tsid, tclass, requested, 0, &avd);
+-	if (kaddr + size > area->addr + area->size)
++	if (kaddr + size > area->addr + get_vm_area_size(area))
+ 		return -EINVAL;
  
--	rc2 = avc_audit(ssid, tsid, tclass, requested, &avd, rc, auditdata);
-+	rc2 = avc_audit(ssid, tsid, tclass, requested, &avd, rc, auditdata, 0);
-+	if (rc2)
-+		return rc2;
-+	return rc;
-+}
-+
-+int avc_has_perm_flags(u32 ssid, u32 tsid, u16 tclass,
-+		       u32 requested, struct common_audit_data *auditdata,
-+		       int flags)
-+{
-+	struct av_decision avd;
-+	int rc, rc2;
-+
-+	rc = avc_has_perm_noaudit(ssid, tsid, tclass, requested, 0, &avd);
-+
-+	rc2 = avc_audit(ssid, tsid, tclass, requested, &avd, rc,
-+			auditdata, flags);
- 	if (rc2)
- 		return rc2;
- 	return rc;
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1569,7 +1569,7 @@ static int cred_has_capability(const str
- 
- 	rc = avc_has_perm_noaudit(sid, sid, sclass, av, 0, &avd);
- 	if (audit == SECURITY_CAP_AUDIT) {
--		int rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
-+		int rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad, 0);
- 		if (rc2)
- 			return rc2;
- 	}
---- a/security/selinux/include/avc.h
-+++ b/security/selinux/include/avc.h
-@@ -130,7 +130,8 @@ static inline int avc_audit(u32 ssid, u3
- 			    u16 tclass, u32 requested,
- 			    struct av_decision *avd,
- 			    int result,
--			    struct common_audit_data *a)
-+			    struct common_audit_data *a,
-+			    int flags)
- {
- 	u32 audited, denied;
- 	audited = avc_audit_required(requested, avd, result, 0, &denied);
-@@ -138,7 +139,7 @@ static inline int avc_audit(u32 ssid, u3
- 		return 0;
- 	return slow_avc_audit(ssid, tsid, tclass,
- 			      requested, audited, denied, result,
--			      a, 0);
-+			      a, flags);
- }
- 
- #define AVC_STRICT 1 /* Ignore permissive mode. */
-@@ -150,6 +151,10 @@ int avc_has_perm_noaudit(u32 ssid, u32 t
- int avc_has_perm(u32 ssid, u32 tsid,
- 		 u16 tclass, u32 requested,
- 		 struct common_audit_data *auditdata);
-+int avc_has_perm_flags(u32 ssid, u32 tsid,
-+		       u16 tclass, u32 requested,
-+		       struct common_audit_data *auditdata,
-+		       int flags);
- 
- u32 avc_policy_seqno(void);
- 
+ 	do {
 
