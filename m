@@ -2,172 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE25A614AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 12:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37C34614A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 12:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfGGKnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 06:43:17 -0400
-Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:60638
-        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfGGKnR (ORCPT
+        id S1727335AbfGGKKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 06:10:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58753 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbfGGKKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 06:43:17 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.89)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1hk4dX-000tXw-9b
-        for linux-kernel@vger.kernel.org; Sun, 07 Jul 2019 12:43:15 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   "Andrey Jr. Melnikov" <temnota.am@gmail.com>
-Subject: Re: [PATCH 1/1] scsi: aacraid: resurrect correct arc ctrl checks for Series-6
-Date:   Sun, 7 Jul 2019 13:09:39 +0300
-Message-ID: <10t8vf-fq.ln1@banana.localnet>
-References: <20190627161408.10295-1-khorenko@virtuozzo.com> <20190627161408.10295-2-khorenko@virtuozzo.com>
-User-Agent: tin/2.2.1-20140504 ("Tober an Righ") (UNIX) (Linux/4.3.3-bananian (armv7l))
-Cc:     linux-scsi@vger.kernel.org
+        Sun, 7 Jul 2019 06:10:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x67AA0Wu879360
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 7 Jul 2019 03:10:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x67AA0Wu879360
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562494201;
+        bh=h6AxCnF8Cy9JvxbrLLPGcxIHpYIAsA8NGwjX/2T0TCA=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ZocZeRO/C5/UqyHn+1CMBh4ddZ9hqA1l97JNRwkfeyw/m7mgxJ0CzoP1DuUrL1CUL
+         dQxCAduNUMfmQxZb1OERSxf9fRQQa6fOhEuQN3pzRSD5Ly7qUkmgS7gO9WiJyOD81m
+         ErFEMFfTSvk3bVkGiVQm8wYT5NhBeAIddM9fuxpDSQdWK7M/knc5az2Zxuebiwg9fI
+         J6/zsVm/Jo+fqqPsq4GWYZ8s07QWY/E+vtuPbtrhvtoSzWn2K9prbSKuMt2shaE0qB
+         AkyYskedAr5VrTSeZ60Y1RMYLOsaWWcw1yG7pfnJ3sYz/SB+9+snH2VCloDtWEDJyg
+         E9h5QsOSojJAg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x67AA07K879357;
+        Sun, 7 Jul 2019 03:10:00 -0700
+Date:   Sun, 7 Jul 2019 03:10:00 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for zhengbin <tipbot@zytor.com>
+Message-ID: <tip-9176ab1b848059a0cd9caf39f0cebaa1b7ec5ec2@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, zhengbin13@huawei.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          zhengbin13@huawei.com
+In-Reply-To: <1562460701-113301-1-git-send-email-zhengbin13@huawei.com>
+References: <1562460701-113301-1-git-send-email-zhengbin13@huawei.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] time: Validate user input in
+ compat_settimeofday()
+Git-Commit-ID: 9176ab1b848059a0cd9caf39f0cebaa1b7ec5ec2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In gmane.linux.scsi Konstantin Khorenko <khorenko@virtuozzo.com> wrote:
-> This partially reverts ms commit
-> 395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
+Commit-ID:  9176ab1b848059a0cd9caf39f0cebaa1b7ec5ec2
+Gitweb:     https://git.kernel.org/tip/9176ab1b848059a0cd9caf39f0cebaa1b7ec5ec2
+Author:     zhengbin <zhengbin13@huawei.com>
+AuthorDate: Sun, 7 Jul 2019 08:51:41 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 7 Jul 2019 12:05:40 +0200
 
-> The patch above not only drops Series-9 cards checks but also
-> changes logic for Series-6 controllers which leads to controller
-> hangs/resets under high io load.
+time: Validate user input in compat_settimeofday()
 
-> So revert to original arc ctrl checks for Series-6 controllers.
+The user value is validated after converting the timeval to a timespec, but
+for a wide range of negative tv_usec values the multiplication overflow turns
+them in positive numbers. So the 'validated later' is not catching the
+invalid input.
 
-> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1777586
-> https://bugzilla.redhat.com/show_bug.cgi?id=1724077
-> https://jira.sw.ru/browse/PSBM-95736
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1562460701-113301-1-git-send-email-zhengbin13@huawei.com
 
-> Fixes: 395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
-> Cc: stable@vger.kernel.org
+---
+ kernel/time/time.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-> ---
->  drivers/scsi/aacraid/aacraid.h  | 11 -----------
->  drivers/scsi/aacraid/comminit.c | 14 ++++++++++----
->  drivers/scsi/aacraid/commsup.c  |  4 +++-
->  drivers/scsi/aacraid/linit.c    |  7 +++++--
->  4 files changed, 18 insertions(+), 18 deletions(-)
-
-> diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
-> index 3fa03230f6ba..b674fb645523 100644
-> --- a/drivers/scsi/aacraid/aacraid.h
-> +++ b/drivers/scsi/aacraid/aacraid.h
-> @@ -2729,17 +2729,6 @@ int _aac_rx_init(struct aac_dev *dev);
->  int aac_rx_select_comm(struct aac_dev *dev, int comm);
->  int aac_rx_deliver_producer(struct fib * fib);
->  
-> -static inline int aac_is_src(struct aac_dev *dev)
-> -{
-> -       u16 device = dev->pdev->device;
-> -
-> -       if (device == PMC_DEVICE_S6 ||
-> -               device == PMC_DEVICE_S7 ||
-> -               device == PMC_DEVICE_S8)
-> -               return 1;
-> -       return 0;
-> -}
-> -
-
-Why remove helper?
-
->  static inline int aac_supports_2T(struct aac_dev *dev)
->  {
->         return (dev->adapter_info.options & AAC_OPT_NEW_COMM_64);
-> diff --git a/drivers/scsi/aacraid/comminit.c b/drivers/scsi/aacraid/comminit.c
-> index d4fcfa1e54e0..b8046b6c1239 100644
-> --- a/drivers/scsi/aacraid/comminit.c
-> +++ b/drivers/scsi/aacraid/comminit.c
-> @@ -41,7 +41,9 @@ static inline int aac_is_msix_mode(struct aac_dev *dev)
->  {
->         u32 status = 0;
->  
-> -       if (aac_is_src(dev))
-> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
-> +           dev->pdev->device == PMC_DEVICE_S7 ||
-> +           dev->pdev->device == PMC_DEVICE_S8)
->                 status = src_readl(dev, MUnit.OMR);
->         return (status & AAC_INT_MODE_MSIX);
->  }
-> @@ -349,7 +351,8 @@ int aac_send_shutdown(struct aac_dev * dev)
->         /* FIB should be freed only after getting the response from the F/W */
->         if (status != -ERESTARTSYS)
->                 aac_fib_free(fibctx);
-Fix this
-> -       if (aac_is_src(dev) &&
-> +       if ((dev->pdev->device == PMC_DEVICE_S7 ||
-> +            dev->pdev->device == PMC_DEVICE_S8) &&
->              dev->msi_enabled)
->                 aac_set_intx_mode(dev);
->         return status;
-> @@ -605,7 +608,8 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
->                 dev->max_fib_size = status[1] & 0xFFE0;
->                 host->sg_tablesize = status[2] >> 16;
->                 dev->sg_tablesize = status[2] & 0xFFFF;
-this one
-> -               if (aac_is_src(dev)) {
-> +               if (dev->pdev->device == PMC_DEVICE_S7 ||
-> +                   dev->pdev->device == PMC_DEVICE_S8) {
->                         if (host->can_queue > (status[3] >> 16) -
->                                         AAC_NUM_MGT_FIB)
->                                 host->can_queue = (status[3] >> 16) -
-> @@ -624,7 +628,9 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
->                         pr_warn("numacb=%d ignored\n", numacb);
->         }
->  
-> -       if (aac_is_src(dev))
-> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
-> +           dev->pdev->device == PMC_DEVICE_S7 ||
-> +           dev->pdev->device == PMC_DEVICE_S8)
->                 aac_define_int_mode(dev);
->         /*
->          *      Ok now init the communication subsystem
-> diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-> index 2142a649e865..705e003caa95 100644
-> --- a/drivers/scsi/aacraid/commsup.c
-> +++ b/drivers/scsi/aacraid/commsup.c
-> @@ -2574,7 +2574,9 @@ void aac_free_irq(struct aac_dev *dev)
->  {
->         int i;
->  
-> -       if (aac_is_src(dev)) {
-> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
-> +           dev->pdev->device == PMC_DEVICE_S7 ||
-> +           dev->pdev->device == PMC_DEVICE_S8) {
->                 if (dev->max_msix > 1) {
->                         for (i = 0; i < dev->max_msix; i++)
->                                 free_irq(pci_irq_vector(dev->pdev, i),
-> diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-> index 644f7f5c61a2..3b7968b17169 100644
-> --- a/drivers/scsi/aacraid/linit.c
-> +++ b/drivers/scsi/aacraid/linit.c
-> @@ -1560,7 +1560,9 @@ static void __aac_shutdown(struct aac_dev * aac)
->  
->         aac_adapter_disable_int(aac);
->  
-> -       if (aac_is_src(aac)) {
-> +       if (aac->pdev->device == PMC_DEVICE_S6 ||
-> +           aac->pdev->device == PMC_DEVICE_S7 ||
-> +           aac->pdev->device == PMC_DEVICE_S8) {
->                 if (aac->max_msix > 1) {
->                         for (i = 0; i < aac->max_msix; i++) {
->                                 free_irq(pci_irq_vector(aac->pdev, i),
-> @@ -1835,7 +1837,8 @@ static int aac_acquire_resources(struct aac_dev *dev)
->         aac_adapter_enable_int(dev);
->  
->  
-and this.
-> -       if (aac_is_src(dev))
-> +       if (dev->pdev->device == PMC_DEVICE_S7 ||
-> +           dev->pdev->device == PMC_DEVICE_S8)
->                 aac_define_int_mode(dev);
->  
->         if (dev->msi_enabled)
-
-
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 7f7d6914ddd5..5c54ca632d08 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -251,6 +251,10 @@ COMPAT_SYSCALL_DEFINE2(settimeofday, struct old_timeval32 __user *, tv,
+ 	if (tv) {
+ 		if (compat_get_timeval(&user_tv, tv))
+ 			return -EFAULT;
++
++		if (!timeval_valid(&user_tv))
++			return -EINVAL;
++
+ 		new_ts.tv_sec = user_tv.tv_sec;
+ 		new_ts.tv_nsec = user_tv.tv_usec * NSEC_PER_USEC;
+ 	}
