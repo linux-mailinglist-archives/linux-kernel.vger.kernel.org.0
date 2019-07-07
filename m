@@ -2,75 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A816161C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 20:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8014D61643
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfGGSq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 14:46:29 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38944 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfGGSq3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 14:46:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z23so14205077wma.4
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 11:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L6timX0gQJEBIxMah3pF3mfpam6FwMoFqJWEfMCkqVc=;
-        b=DjO120H1Z7WiybUUq/FmlobfZa+0Tjq2/BBSi8wrF94PSYVlvDjUg6zU1JBbgBRW/V
-         jR6mC9zd5YO7XyYs6j78VgXOGQ9o77M0zBe9oQIG8PVruN0uMFQB8rAb7HMVfgtPRb/W
-         x8dYcmSMvvoNrSRQ+l25JyEe8MvOl9dk8KZbCmY9uKT0SkDAF3+FzUtbeydT2IAKpWlt
-         ThVrveUStdnioYPWHxgo+I6X+9+vWU9Fue1nE4oIky9eAhFkjw2dTu7q2dTr/hI1n64b
-         qEp2+n0+S5NEeIW641OuRxaWmywIBug3B27Qn/mhQXwV0uKISvtJLXOBSFfI8XFo5avU
-         Cb7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L6timX0gQJEBIxMah3pF3mfpam6FwMoFqJWEfMCkqVc=;
-        b=sAlSp0ZcvBQ374pp9sc/1ilD2EEnztSyNT7B00hah8PGgShj8n9xRIixCoZ12haBgZ
-         Cc1kfGnxnyOpIcsOyzCLUO6zvEgDya2Ea7Rov6FI0XYDbJUUiKwedfgigA0MNCQ9rgvA
-         lOEm9PLGrohDNlDWaTD9xd+qeWATc7ZptGQ0u+ejbxBYhZ3htYrxsNTPPSwUQP7vdFoC
-         XpG+1fGqNvUtWT5RmcRHIaAep2WI4P3KNJM1BZg78HYbMmuXdiOB1dzeaN4sYB0jgfw3
-         ASj3b3Q2AeZK8Hv0Ev3Ay9vYmX1z3+vdCFi5pUg2+trAJkp6G17FwDnht2r+QdIhEQ16
-         F46Q==
-X-Gm-Message-State: APjAAAWBqo7frV/biQs0XPNWTbRuUDSKUHPI4CuLdGkWVR8Gju+p6PO6
-        EexofvEu9KprkdxVsL4Udmni5kCFPUw0z2vm7hg=
-X-Google-Smtp-Source: APXvYqxDsivsH4zthvW9FrIbBJrXLQ+6bpjhTvoaebrztfH+5uj3+I0VL3iV7hqmTctsYaJSnmcoo9Ll1g+TsbU8zy4=
-X-Received: by 2002:a1c:9e4d:: with SMTP id h74mr13651549wme.9.1562525187486;
- Sun, 07 Jul 2019 11:46:27 -0700 (PDT)
+        id S1727408AbfGGTLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:11:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:57062 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbfGGTLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 15:11:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13DCD360;
+        Sun,  7 Jul 2019 12:11:09 -0700 (PDT)
+Received: from why (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FA503F738;
+        Sun,  7 Jul 2019 12:11:07 -0700 (PDT)
+Date:   Sun, 7 Jul 2019 20:10:59 +0100
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Aleix Roca Nonell <kernelrocks@gmail.com>
+Cc:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: interrupt-controller: Document RTD129x
+Message-ID: <20190707201059.0e86dc71@why>
+In-Reply-To: <20190707132246.GB13340@arks.localdomain>
+References: <20190707132246.GB13340@arks.localdomain>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1559114302-10507-1-git-send-email-dingxiang@cmss.chinamobile.com>
-In-Reply-To: <1559114302-10507-1-git-send-email-dingxiang@cmss.chinamobile.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Sun, 7 Jul 2019 20:46:16 +0200
-Message-ID: <CAFLxGvwi4WzHT7FAZaucjSMy=L+Y2GY8oL3uFyBto+hK+BBTLA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: afs: remove unneeded NULL check
-To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 9:19 AM Ding Xiang
-<dingxiang@cmss.chinamobile.com> wrote:
->
-> NULL check before kfree is unneeded, so remove it.
->
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+On Sun, 7 Jul 2019 15:22:46 +0200
+Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
 
-Applied.
+> Add binding for Realtek RTD129x interrupt controller.
+> 
+> Signed-off-by: Aleix Roca Nonell <kernelrocks@gmail.com>
+> ---
+>  .../realtek,rtd129x-intc.txt                  | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/realtek,rtd129x-intc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/realtek,rtd129x-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtd129x-intc.txt
+> new file mode 100644
+> index 000000000000..3ebb7c02afe5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtd129x-intc.txt
+> @@ -0,0 +1,24 @@
+> +Realtek RTD129x IRQ Interrupt Controller
+> +=======================================
+> +
+> +Required properties:
+> +
+> +- compatible           :  Should be one of the following:
+> +                          - "realtek,rtd129x-intc-misc"
+> +                          - "realtek,rtd129x-intc-iso"
 
--- 
+What does 'iso' mean in this context?
+
+> +- reg                  :  Specifies the address of the ISR, IER and Unmask
+> +                          register in couples of "address length".
+
+Are these registers actually interleaved with other stuff? What else it
+in between?
+
+> +- interrupts           :  Specifies the interrupt line which is mux'ed.
+> +- interrupt-controller :  Presence indicates the node as interrupt controller.
+> +- #interrupt-cells     :  Shall be 1. See common bindings in interrupt.txt.
+
+So I guess this is level only, with an unspecified polarity? No edge
+interrupts?
+
+> +
+> +
+> +Example:
+> +
+> +	interrupt-controller@98007000 {
+> +		compatible = "realtek,rtd129x-iso-irq-mux";
+
+It'd be good if the the example matched the rest of the documentation.
+
+> +		reg = <0x98007000 0x4 0x98007040 0x4 0x98007004 0x4>;
+> +		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +	};
+
 Thanks,
-//richard
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
