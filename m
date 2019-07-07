@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EAA616B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B735F616AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbfGGTmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:42:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57708 "EHLO
+        id S1728133AbfGGTll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57844 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727625AbfGGTiN (ORCPT
+        by vger.kernel.org with ESMTP id S1727645AbfGGTiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:13 -0400
+        Sun, 7 Jul 2019 15:38:15 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz9-0006kU-UU; Sun, 07 Jul 2019 20:38:08 +0100
+        id 1hkCzD-0006k7-8V; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz7-0005eD-Dv; Sun, 07 Jul 2019 20:38:05 +0100
+        id 1hkCz9-0005fx-3Z; Sun, 07 Jul 2019 20:38:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Pavel Shilovsky" <pshilov@microsoft.com>,
-        "Pavel Shilovsky" <piastryyy@gmail.com>
+        "Jack Morgenstein" <jackm@dev.mellanox.co.il>,
+        "Tariq Toukan" <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.9438667@decadent.org.uk>
+Message-ID: <lsq.1562518457.957409944@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 098/129] CIFS: Do not reset lease state to NONE on
- lease break
+Subject: [PATCH 3.16 118/129] net/mlx4_core: Fix qp mtt size calculation
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,99 +48,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <piastryyy@gmail.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 7b9b9edb49ad377b1e06abf14354c227e9ac4b06 upstream.
+commit 8511a653e9250ef36b95803c375a7be0e2edb628 upstream.
 
-Currently on lease break the client sets a caching level twice:
-when oplock is detected and when oplock is processed. While the
-1st attempt sets the level to the value provided by the server,
-the 2nd one resets the level to None unconditionally.
-This happens because the oplock/lease processing code was changed
-to avoid races between page cache flushes and oplock breaks.
-The commit c11f1df5003d534 ("cifs: Wait for writebacks to complete
-before attempting write.") fixed the races for oplocks but didn't
-apply the same changes for leases resulting in overwriting the
-server granted value to None. Fix this by properly processing
-lease breaks.
+Calculation of qp mtt size (in function mlx4_RST2INIT_wrapper)
+ultimately depends on function roundup_pow_of_two.
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[bwh: Backported to 3.16: drop change in smb311_operations]
+If the amount of memory required by the QP is less than one page,
+roundup_pow_of_two is called with argument zero.  In this case, the
+roundup_pow_of_two result is undefined.
+
+Calling roundup_pow_of_two with a zero argument resulted in the
+following stack trace:
+
+UBSAN: Undefined behaviour in ./include/linux/log2.h:61:13
+shift exponent 64 is too large for 64-bit type 'long unsigned int'
+CPU: 4 PID: 26939 Comm: rping Tainted: G OE 4.19.0-rc1
+Hardware name: Supermicro X9DR3-F/X9DR3-F, BIOS 3.2a 07/09/2015
+Call Trace:
+dump_stack+0x9a/0xeb
+ubsan_epilogue+0x9/0x7c
+__ubsan_handle_shift_out_of_bounds+0x254/0x29d
+? __ubsan_handle_load_invalid_value+0x180/0x180
+? debug_show_all_locks+0x310/0x310
+? sched_clock+0x5/0x10
+? sched_clock+0x5/0x10
+? sched_clock_cpu+0x18/0x260
+? find_held_lock+0x35/0x1e0
+? mlx4_RST2INIT_QP_wrapper+0xfb1/0x1440 [mlx4_core]
+mlx4_RST2INIT_QP_wrapper+0xfb1/0x1440 [mlx4_core]
+
+Fix this by explicitly testing for zero, and returning one if the
+argument is zero (assuming that the next higher power of 2 in this case
+should be one).
+
+Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/cifs/smb2misc.c
-+++ b/fs/cifs/smb2misc.c
-@@ -420,7 +420,6 @@ smb2_tcon_has_lease(struct cifs_tcon *tc
- 	__u8 lease_state;
- 	struct list_head *tmp;
- 	struct cifsFileInfo *cfile;
--	struct TCP_Server_Info *server = tcon->ses->server;
- 	struct cifs_pending_open *open;
- 	struct cifsInodeInfo *cinode;
- 	int ack_req = le32_to_cpu(rsp->Flags &
-@@ -440,13 +439,25 @@ smb2_tcon_has_lease(struct cifs_tcon *tc
- 		cifs_dbg(FYI, "lease key match, lease break 0x%d\n",
- 			 le32_to_cpu(rsp->NewLeaseState));
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -2460,13 +2460,13 @@ static int qp_get_mtt_size(struct mlx4_q
+ 	int total_pages;
+ 	int total_mem;
+ 	int page_offset = (be32_to_cpu(qpc->params2) >> 6) & 0x3f;
++	int tot;
  
--		server->ops->set_oplock_level(cinode, lease_state, 0, NULL);
--
- 		if (ack_req)
- 			cfile->oplock_break_cancelled = false;
- 		else
- 			cfile->oplock_break_cancelled = true;
+ 	sq_size = 1 << (log_sq_size + log_sq_sride + 4);
+ 	rq_size = (srq|rss|xrc) ? 0 : (1 << (log_rq_size + log_rq_stride + 4));
+ 	total_mem = sq_size + rq_size;
+-	total_pages =
+-		roundup_pow_of_two((total_mem + (page_offset << 6)) >>
+-				   page_shift);
++	tot = (total_mem + (page_offset << 6)) >> page_shift;
++	total_pages = !tot ? 1 : roundup_pow_of_two(tot);
  
-+		set_bit(CIFS_INODE_PENDING_OPLOCK_BREAK, &cinode->flags);
-+
-+		/*
-+		 * Set or clear flags depending on the lease state being READ.
-+		 * HANDLE caching flag should be added when the client starts
-+		 * to defer closing remote file handles with HANDLE leases.
-+		 */
-+		if (lease_state & SMB2_LEASE_READ_CACHING_HE)
-+			set_bit(CIFS_INODE_DOWNGRADE_OPLOCK_TO_L2,
-+				&cinode->flags);
-+		else
-+			clear_bit(CIFS_INODE_DOWNGRADE_OPLOCK_TO_L2,
-+				  &cinode->flags);
-+
- 		queue_work(cifsoplockd_wq, &cfile->oplock_break);
- 		kfree(lw);
- 		return true;
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -962,6 +962,15 @@ smb2_downgrade_oplock(struct TCP_Server_
+ 	return total_pages;
  }
- 
- static void
-+smb21_downgrade_oplock(struct TCP_Server_Info *server,
-+		       struct cifsInodeInfo *cinode, bool set_level2)
-+{
-+	server->ops->set_oplock_level(cinode,
-+				      set_level2 ? SMB2_LEASE_READ_CACHING_HE :
-+				      0, 0, NULL);
-+}
-+
-+static void
- smb2_set_oplock_level(struct cifsInodeInfo *cinode, __u32 oplock,
- 		      unsigned int epoch, bool *purge_cache)
- {
-@@ -1253,7 +1262,7 @@ struct smb_version_operations smb21_oper
- 	.print_stats = smb2_print_stats,
- 	.is_oplock_break = smb2_is_valid_oplock_break,
- 	.handle_cancelled_mid = smb2_handle_cancelled_mid,
--	.downgrade_oplock = smb2_downgrade_oplock,
-+	.downgrade_oplock = smb21_downgrade_oplock,
- 	.need_neg = smb2_need_neg,
- 	.negotiate = smb2_negotiate,
- 	.negotiate_wsize = smb2_negotiate_wsize,
-@@ -1331,7 +1340,7 @@ struct smb_version_operations smb30_oper
- 	.dump_share_caps = smb2_dump_share_caps,
- 	.is_oplock_break = smb2_is_valid_oplock_break,
- 	.handle_cancelled_mid = smb2_handle_cancelled_mid,
--	.downgrade_oplock = smb2_downgrade_oplock,
-+	.downgrade_oplock = smb21_downgrade_oplock,
- 	.need_neg = smb2_need_neg,
- 	.negotiate = smb2_negotiate,
- 	.negotiate_wsize = smb2_negotiate_wsize,
 
