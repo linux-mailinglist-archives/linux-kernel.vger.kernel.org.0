@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8D76172A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6183261695
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfGGTp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:45:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57056 "EHLO
+        id S1727862AbfGGTky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:40:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:58022 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727513AbfGGTiF (ORCPT
+        by vger.kernel.org with ESMTP id S1727667AbfGGTiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:05 -0400
+        Sun, 7 Jul 2019 15:38:17 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz3-0006ff-Pp; Sun, 07 Jul 2019 20:38:01 +0100
+        id 1hkCzG-0006je-45; Sun, 07 Jul 2019 20:38:14 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz2-0005ZE-G4; Sun, 07 Jul 2019 20:38:00 +0100
+        id 1hkCz9-0005gX-Kp; Sun, 07 Jul 2019 20:38:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Brian Norris" <computersforpeace@gmail.com>
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Alistair Strachan" <astrachan@google.com>,
+        "syzbot" <syzkaller@googlegroups.com>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.691006377@decadent.org.uk>
+Message-ID: <lsq.1562518457.148922416@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 037/129] mtd: docg3: Don't leak docg3->bbt in error path
+Subject: [PATCH 3.16 125/129] media: uvcvideo: Fix 'type' check leading to
+ overflow
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,44 +50,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Alistair Strachan <astrachan@google.com>
 
-commit 45c2ebd702a468d5037cf16aa4f8ea8d67776f6a upstream.
+commit 47bb117911b051bbc90764a8bff96543cbd2005f upstream.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+When initially testing the Camera Terminal Descriptor wTerminalType
+field (buffer[4]), no mask is used. Later in the function, the MSB is
+overloaded to store the descriptor subtype, and so a mask of 0x7fff
+is used to check the type.
+
+If a descriptor is specially crafted to set this overloaded bit in the
+original wTerminalType field, the initial type check will fail (falling
+through, without adjusting the buffer size), but the later type checks
+will pass, assuming the buffer has been made suitably large, causing an
+overflow.
+
+Avoid this problem by checking for the MSB in the wTerminalType field.
+If the bit is set, assume the descriptor is bad, and abort parsing it.
+
+Originally reported here:
+https://groups.google.com/forum/#!topic/syzkaller/Ot1fOE6v1d8
+A similar (non-compiling) patch was provided at that time.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/devices/docg3.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -1907,7 +1907,7 @@ doc_probe_device(struct docg3_cascade *c
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -977,11 +977,19 @@ static int uvc_parse_standard_control(st
+ 			return -EINVAL;
+ 		}
  
- 	ret = 0;
- 	if (chip_id != (u16)(~chip_id_inv)) {
--		goto nomem3;
-+		goto nomem4;
- 	}
- 
- 	switch (chip_id) {
-@@ -1917,7 +1917,7 @@ doc_probe_device(struct docg3_cascade *c
- 		break;
- 	default:
- 		doc_err("Chip id %04x is not a DiskOnChip G3 chip\n", chip_id);
--		goto nomem3;
-+		goto nomem4;
- 	}
- 
- 	doc_set_driver_info(chip_id, mtd);
-@@ -1926,6 +1926,8 @@ doc_probe_device(struct docg3_cascade *c
- 	doc_reload_bbt(docg3);
- 	return mtd;
- 
-+nomem4:
-+	kfree(docg3->bbt);
- nomem3:
- 	kfree(mtd);
- nomem2:
+-		/* Make sure the terminal type MSB is not null, otherwise it
+-		 * could be confused with a unit.
++		/*
++		 * Reject invalid terminal types that would cause issues:
++		 *
++		 * - The high byte must be non-zero, otherwise it would be
++		 *   confused with a unit.
++		 *
++		 * - Bit 15 must be 0, as we use it internally as a terminal
++		 *   direction flag.
++		 *
++		 * Other unknown types are accepted.
+ 		 */
+ 		type = get_unaligned_le16(&buffer[4]);
+-		if ((type & 0xff00) == 0) {
++		if ((type & 0x7f00) == 0 || (type & 0x8000) != 0) {
+ 			uvc_trace(UVC_TRACE_DESCR, "device %d videocontrol "
+ 				"interface %d INPUT_TERMINAL %d has invalid "
+ 				"type 0x%04x, skipping\n", udev->devnum,
 
