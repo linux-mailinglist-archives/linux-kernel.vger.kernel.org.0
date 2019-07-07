@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 652B1616B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 220F961699
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfGGTmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:42:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57732 "EHLO
+        id S1728077AbfGGTlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57886 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727627AbfGGTiN (ORCPT
+        by vger.kernel.org with ESMTP id S1727655AbfGGTiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:13 -0400
+        Sun, 7 Jul 2019 15:38:15 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz9-0006kR-QD; Sun, 07 Jul 2019 20:38:07 +0100
+        id 1hkCzD-0006kM-Cc; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz7-0005e8-CD; Sun, 07 Jul 2019 20:38:05 +0100
+        id 1hkCz9-0005g7-8Y; Sun, 07 Jul 2019 20:38:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -28,14 +28,13 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
         "David S. Miller" <davem@davemloft.net>,
-        "Ido Schimmel" <idosch@mellanox.com>,
-        "Amit Cohen" <amitc@mellanox.com>
+        "Xin Long" <lucien.xin@gmail.com>, "Xiumei Mu" <xmu@redhat.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.691156682@decadent.org.uk>
+Message-ID: <lsq.1562518457.656970295@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 097/129] ip6mr: Do not call __IP6_INC_STATS() from
- preemptible context
+Subject: [PATCH 3.16 120/129] pptp: dst_release sk_dst_cache in
+ pptp_sock_destruct
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,67 +48,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 87c11f1ddbbad38ad8bad47af133a8208985fbdf upstream.
+commit 9417d81f4f8adfe20a12dd1fadf73a618cbd945d upstream.
 
-Similar to commit 44f49dd8b5a6 ("ipmr: fix possible race resulting from
-improper usage of IP_INC_STATS_BH() in preemptible context."), we cannot
-assume preemption is disabled when incrementing the counter and
-accessing a per-CPU variable.
+sk_setup_caps() is called to set sk->sk_dst_cache in pptp_connect,
+so we have to dst_release(sk->sk_dst_cache) in pptp_sock_destruct,
+otherwise, the dst refcnt will leak.
 
-Preemption can be enabled when we add a route in process context that
-corresponds to packets stored in the unresolved queue, which are then
-forwarded using this route [1].
+It can be reproduced by this syz log:
 
-Fix this by using IP6_INC_STATS() which takes care of disabling
-preemption on architectures where it is needed.
+  r1 = socket$pptp(0x18, 0x1, 0x2)
+  bind$pptp(r1, &(0x7f0000000100)={0x18, 0x2, {0x0, @local}}, 0x1e)
+  connect$pptp(r1, &(0x7f0000000000)={0x18, 0x2, {0x3, @remote}}, 0x1e)
 
-[1]
-[  157.451447] BUG: using __this_cpu_add() in preemptible [00000000] code: smcrouted/2314
-[  157.460409] caller is ip6mr_forward2+0x73e/0x10e0
-[  157.460434] CPU: 3 PID: 2314 Comm: smcrouted Not tainted 5.0.0-rc7-custom-03635-g22f2712113f1 #1336
-[  157.460449] Hardware name: Mellanox Technologies Ltd. MSN2100-CB2FO/SA001017, BIOS 5.6.5 06/07/2016
-[  157.460461] Call Trace:
-[  157.460486]  dump_stack+0xf9/0x1be
-[  157.460553]  check_preemption_disabled+0x1d6/0x200
-[  157.460576]  ip6mr_forward2+0x73e/0x10e0
-[  157.460705]  ip6_mr_forward+0x9a0/0x1510
-[  157.460771]  ip6mr_mfc_add+0x16b3/0x1e00
-[  157.461155]  ip6_mroute_setsockopt+0x3cb/0x13c0
-[  157.461384]  do_ipv6_setsockopt.isra.8+0x348/0x4060
-[  157.462013]  ipv6_setsockopt+0x90/0x110
-[  157.462036]  rawv6_setsockopt+0x4a/0x120
-[  157.462058]  __sys_setsockopt+0x16b/0x340
-[  157.462198]  __x64_sys_setsockopt+0xbf/0x160
-[  157.462220]  do_syscall_64+0x14d/0x610
-[  157.462349]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Consecutive dmesg warnings will occur:
 
-Fixes: 0912ea38de61 ("[IPV6] MROUTE: Add stats in multicast routing module method ip6_mr_forward().")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Amit Cohen <amitc@mellanox.com>
+  unregister_netdevice: waiting for lo to become free. Usage count = 1
+
+v1->v2:
+  - use rcu_dereference_protected() instead of rcu_dereference_check(),
+    as suggested by Eric.
+
+Fixes: 00959ade36ac ("PPTP: PPP over IPv4 (Point-to-Point Tunneling Protocol)")
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6mr.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ppp/pptp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1984,10 +1984,10 @@ int ip6mr_compat_ioctl(struct sock *sk,
- 
- static inline int ip6mr_forward2_finish(struct sk_buff *skb)
- {
--	IP6_INC_STATS_BH(dev_net(skb_dst(skb)->dev), ip6_dst_idev(skb_dst(skb)),
--			 IPSTATS_MIB_OUTFORWDATAGRAMS);
--	IP6_ADD_STATS_BH(dev_net(skb_dst(skb)->dev), ip6_dst_idev(skb_dst(skb)),
--			 IPSTATS_MIB_OUTOCTETS, skb->len);
-+	IP6_INC_STATS(dev_net(skb_dst(skb)->dev), ip6_dst_idev(skb_dst(skb)),
-+		      IPSTATS_MIB_OUTFORWDATAGRAMS);
-+	IP6_ADD_STATS(dev_net(skb_dst(skb)->dev), ip6_dst_idev(skb_dst(skb)),
-+		      IPSTATS_MIB_OUTOCTETS, skb->len);
- 	return dst_output(skb);
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -579,6 +579,7 @@ static void pptp_sock_destruct(struct so
+ 		pppox_unbind_sock(sk);
+ 	}
+ 	skb_queue_purge(&sk->sk_receive_queue);
++	dst_release(rcu_dereference_protected(sk->sk_dst_cache, 1));
  }
  
+ static int pptp_create(struct net *net, struct socket *sock)
 
