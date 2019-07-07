@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB62E616C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE645616A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfGGTms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:42:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57598 "EHLO
+        id S1727647AbfGGTiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56778 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727608AbfGGTiM (ORCPT
+        by vger.kernel.org with ESMTP id S1727435AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:12 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0006jQ-RO; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCz0-0006d0-P1; Sun, 07 Jul 2019 20:37:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0005dI-F3; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCyz-0005Wv-Kc; Sun, 07 Jul 2019 20:37:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Joel Fernandes" <joel@joelfernandes.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Yangtao Li" <tiny.windzz@gmail.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.208042947@decadent.org.uk>
+Message-ID: <lsq.1562518457.704973466@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 087/129] staging: android: ashmem: Avoid
- range_alloc() allocation with ashmem_mutex held.
+Subject: [PATCH 3.16 008/129] clk: imx6sx: fix refcount leak in
+ imx6sx_clocks_init()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,144 +48,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit ecd182cbf4e107928077866399100228d2359c60 upstream.
+commit 1731e14fb30212dd8c1e9f8fc1af061e56498c55 upstream.
 
-ashmem_pin() is calling range_shrink() without checking whether
-range_alloc() succeeded. Also, doing memory allocation with ashmem_mutex
-held should be avoided because ashmem_shrink_scan() tries to hold it.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Therefore, move memory allocation for range_alloc() to ashmem_pin_unpin()
-and make range_alloc() not to fail.
-
-This patch is mostly meant for backporting purpose for fuzz testing on
-stable/distributor kernels, for there is a plan to remove this code in
-near future.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Joel Fernandes <joel@joelfernandes.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: d55135689019 ("ARM: imx: add clock driver for imx6sx")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/android/ashmem.c | 42 ++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ arch/arm/mach-imx/clk-imx6sx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -158,19 +158,15 @@ static inline void lru_del(struct ashmem
-  * @end:	   The ending page (inclusive)
-  *
-  * This function is protected by ashmem_mutex.
-- *
-- * Return: 0 if successful, or -ENOMEM if there is an error
-  */
--static int range_alloc(struct ashmem_area *asma,
--		       struct ashmem_range *prev_range, unsigned int purged,
--		       size_t start, size_t end)
-+static void range_alloc(struct ashmem_area *asma,
-+			struct ashmem_range *prev_range, unsigned int purged,
-+			size_t start, size_t end,
-+			struct ashmem_range **new_range)
- {
--	struct ashmem_range *range;
--
--	range = kmem_cache_zalloc(ashmem_range_cachep, GFP_KERNEL);
--	if (unlikely(!range))
--		return -ENOMEM;
-+	struct ashmem_range *range = *new_range;
+--- a/arch/arm/mach-imx/clk-imx6sx.c
++++ b/arch/arm/mach-imx/clk-imx6sx.c
+@@ -143,6 +143,7 @@ static void __init imx6sx_clocks_init(st
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
++	of_node_put(np);
  
-+	*new_range = NULL;
- 	range->asma = asma;
- 	range->pgstart = start;
- 	range->pgend = end;
-@@ -180,8 +176,6 @@ static int range_alloc(struct ashmem_are
- 
- 	if (range_on_lru(range))
- 		lru_add(range);
--
--	return 0;
- }
- 
- /**
-@@ -576,7 +570,8 @@ static int get_name(struct ashmem_area *
-  *
-  * Caller must hold ashmem_mutex.
-  */
--static int ashmem_pin(struct ashmem_area *asma, size_t pgstart, size_t pgend)
-+static int ashmem_pin(struct ashmem_area *asma, size_t pgstart, size_t pgend,
-+		      struct ashmem_range **new_range)
- {
- 	struct ashmem_range *range, *next;
- 	int ret = ASHMEM_NOT_PURGED;
-@@ -628,7 +623,7 @@ static int ashmem_pin(struct ashmem_area
- 			 * second half and adjust the first chunk's endpoint.
- 			 */
- 			range_alloc(asma, range, range->purged,
--				    pgend + 1, range->pgend);
-+				    pgend + 1, range->pgend, new_range);
- 			range_shrink(range, range->pgstart, pgstart - 1);
- 			break;
- 		}
-@@ -642,7 +637,8 @@ static int ashmem_pin(struct ashmem_area
-  *
-  * Caller must hold ashmem_mutex.
-  */
--static int ashmem_unpin(struct ashmem_area *asma, size_t pgstart, size_t pgend)
-+static int ashmem_unpin(struct ashmem_area *asma, size_t pgstart, size_t pgend,
-+			struct ashmem_range **new_range)
- {
- 	struct ashmem_range *range, *next;
- 	unsigned int purged = ASHMEM_NOT_PURGED;
-@@ -668,7 +664,8 @@ restart:
- 		}
- 	}
- 
--	return range_alloc(asma, range, purged, pgstart, pgend);
-+	range_alloc(asma, range, purged, pgstart, pgend, new_range);
-+	return 0;
- }
- 
- /*
-@@ -701,10 +698,17 @@ static int ashmem_pin_unpin(struct ashme
- 	struct ashmem_pin pin;
- 	size_t pgstart, pgend;
- 	int ret = -EINVAL;
-+	struct ashmem_range *range = NULL;
- 
- 	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
- 		return -EFAULT;
- 
-+	if (cmd == ASHMEM_PIN || cmd == ASHMEM_UNPIN) {
-+		range = kmem_cache_zalloc(ashmem_range_cachep, GFP_KERNEL);
-+		if (!range)
-+			return -ENOMEM;
-+	}
-+
- 	mutex_lock(&ashmem_mutex);
- 
- 	if (unlikely(!asma->file))
-@@ -728,10 +732,10 @@ static int ashmem_pin_unpin(struct ashme
- 
- 	switch (cmd) {
- 	case ASHMEM_PIN:
--		ret = ashmem_pin(asma, pgstart, pgend);
-+		ret = ashmem_pin(asma, pgstart, pgend, &range);
- 		break;
- 	case ASHMEM_UNPIN:
--		ret = ashmem_unpin(asma, pgstart, pgend);
-+		ret = ashmem_unpin(asma, pgstart, pgend, &range);
- 		break;
- 	case ASHMEM_GET_PIN_STATUS:
- 		ret = ashmem_get_pin_status(asma, pgstart, pgend);
-@@ -740,6 +744,8 @@ static int ashmem_pin_unpin(struct ashme
- 
- out_unlock:
- 	mutex_unlock(&ashmem_mutex);
-+	if (range)
-+		kmem_cache_free(ashmem_range_cachep, range);
- 
- 	return ret;
- }
+ 	/*                                              type               name             parent_name   base         div_mask */
+ 	clks[IMX6SX_CLK_PLL1_SYS]       = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1_sys",      "osc",        base,        0x7f);
 
