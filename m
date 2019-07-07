@@ -2,105 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6488C613D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 06:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 987AA613D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 06:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfGGEdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 00:33:38 -0400
-Received: from m12-13.163.com ([220.181.12.13]:46785 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfGGEdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 00:33:38 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Sun, 07 Jul 2019 00:33:34 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=obkgI72FnkfilFr+aG
-        Iy9W7IsYqdSbTqaaEZ3FLrriA=; b=DEVuW4gyKlk83j4/+KPUpMZpfvcwWzq2jL
-        1jKT8EcZagpc1Rh7oklwAYNQAYfJppkDaiDbK3pK7ZtJV9VO0nv23OoPCsg0mLCP
-        3jJMl0mcxEuny1vsXSA396kC1pv+XznLfDKawI+FzhplcQQQA2Flo9xeUBBkD8Vq
-        URMtsD/hU=
-Received: from localhost.localdomain (unknown [125.82.14.162])
-        by smtp9 (Coremail) with SMTP id DcCowACnI71WciFdP77+AA--.37123S2;
-        Sun, 07 Jul 2019 12:17:27 +0800 (CST)
-From:   xianfengting221@163.com
-To:     wensong@linux-vs.org, horms@verge.net.au, ja@ssi.bg,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hu Haowen <xianfengting221@163.com>
-Subject: [PATCH] ipvs: Delete some unused space characters in Kconfig
-Date:   Sun,  7 Jul 2019 12:16:49 +0800
-Message-Id: <1562473009-29726-1-git-send-email-xianfengting221@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DcCowACnI71WciFdP77+AA--.37123S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar18JF1Utryfur1ktr43Wrg_yoW8tFyDpr
-        9I9r13KF47Ar1Ykr97uFy8Cryxua93Jw45Gr1kZ3s7Aas8JFn2y3Z5trsrKa4UArZ5ZrW3
-        ZFW5Xw1j93Z0yaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UJfH8UUUUU=
-X-Originating-IP: [125.82.14.162]
-X-CM-SenderInfo: h0ld0wxhqj3xtqjsjii6rwjhhfrp/1tbiMhzqAFWBjw5NGAAAsE
+        id S1725980AbfGGEbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 00:31:25 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:23802 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfGGEbZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 00:31:25 -0400
+X-Greylist: delayed 6584 seconds by postgrey-1.27 at vger.kernel.org; Sun, 07 Jul 2019 00:31:24 EDT
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x674VEU7017936;
+        Sun, 7 Jul 2019 13:31:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x674VEU7017936
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562473875;
+        bh=IU0sI9lPOAmBhk7WYcj3uitcIXFJtoxBE1UAngMjX+k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Wk3A769fxcaYr7FAEqIx5AV1FOC9WBk0yABfqa6o/GIn+keE7SkMR0w/p5R6oBPLf
+         teh97OLt/FoxyUxFMYnqBgW5sCDNYv8mvc/qxKQJhv97nR9LLWfSDRPAl38AwG9+1H
+         gcGQIpsvHlCBJi8NAsVx/9N+ijkstQNGMmEg/AYeGc0myr0gQUW56j/9BMIpTC1bpV
+         9OP4PtjRSIJkwsWLBiyibDUj/WVmYUdVAISC5zsRAtWP4kY7pOR30NRl3IMKqQ7TUi
+         R73NJCdri/Jr/J4rm+0f/Z4A7EunSS16TSqWwdJNQ0eqNgJ1ejS3wW/h2HpYqpHoFP
+         XZgoV311I2oyw==
+X-Nifty-SrcIP: [209.85.217.47]
+Received: by mail-vs1-f47.google.com with SMTP id m8so6155741vsj.0;
+        Sat, 06 Jul 2019 21:31:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAWIRwI6/4Y2Rl5NLUux2mD/q5eUuBPNRbtYfWwlRRH8HBoJ663E
+        zcxhZPLlMIDnX8wvX2ALP2HV8tCgBGOFhBClXIE=
+X-Google-Smtp-Source: APXvYqwKbCy6SG4VPCk6kF3FiYB0gXvisBArK09GBAC8M82YAt1D0LiOArAyE+Z9AKi3bhgH5xLCz3JCZWq/Xwtsbwk=
+X-Received: by 2002:a67:fc45:: with SMTP id p5mr6475026vsq.179.1562473873698;
+ Sat, 06 Jul 2019 21:31:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190605053006.14332-1-yamada.masahiro@socionext.com> <20190706203745.af0bf9bd5dd46e94fa5e1ff9@linux-foundation.org>
+In-Reply-To: <20190706203745.af0bf9bd5dd46e94fa5e1ff9@linux-foundation.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 7 Jul 2019 13:30:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARCjucs=0BD=00SD8Ljh+a0GtCUNHF4En=eSM1+VG0-4g@mail.gmail.com>
+Message-ID: <CAK7LNARCjucs=0BD=00SD8Ljh+a0GtCUNHF4En=eSM1+VG0-4g@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: do not use unexported cpu_to_le32()/le32_to_cpu()
+ in uapi header
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hu Haowen <xianfengting221@163.com>
+Hi Andrew,
 
-The space characters at the end of lines are always unused and
-not easy to find. This patch deleted some of them I have found
-in Kconfig.
+On Sun, Jul 7, 2019 at 12:38 PM Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Signed-off-by: Hu Haowen <xianfengting221@163.com>
----
+>
+> Seems fairly serious.  I'm thinking this needs a cc:stable?
 
-This is my first patch to the Linux kernel, so please forgive
-me if anything went wrong.
 
- net/netfilter/ipvs/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Ah, yes.
 
-diff --git a/net/netfilter/ipvs/Kconfig b/net/netfilter/ipvs/Kconfig
-index f6f1a0d..54afad5 100644
---- a/net/netfilter/ipvs/Kconfig
-+++ b/net/netfilter/ipvs/Kconfig
-@@ -120,7 +120,7 @@ config	IP_VS_RR
- 
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
-- 
-+
- config	IP_VS_WRR
- 	tristate "weighted round-robin scheduling"
- 	---help---
-@@ -138,7 +138,7 @@ config	IP_VS_LC
-         tristate "least-connection scheduling"
- 	---help---
- 	  The least-connection scheduling algorithm directs network
--	  connections to the server with the least number of active 
-+	  connections to the server with the least number of active
- 	  connections.
- 
- 	  If you want to compile it in kernel, say Y. To compile it as a
-@@ -193,7 +193,7 @@ config  IP_VS_LBLCR
- 	tristate "locality-based least-connection with replication scheduling"
- 	---help---
- 	  The locality-based least-connection with replication scheduling
--	  algorithm is also for destination IP load balancing. It is 
-+	  algorithm is also for destination IP load balancing. It is
- 	  usually used in cache cluster. It differs from the LBLC scheduling
- 	  as follows: the load balancer maintains mappings from a target
- 	  to a set of server nodes that can serve the target. Requests for
-@@ -250,8 +250,8 @@ config	IP_VS_SED
- 	tristate "shortest expected delay scheduling"
- 	---help---
- 	  The shortest expected delay scheduling algorithm assigns network
--	  connections to the server with the shortest expected delay. The 
--	  expected delay that the job will experience is (Ci + 1) / Ui if 
-+	  connections to the server with the shortest expected delay. The
-+	  expected delay that the job will experience is (Ci + 1) / Ui if
- 	  sent to the ith server, in which Ci is the number of connections
- 	  on the ith server and Ui is the fixed service rate (weight)
- 	  of the ith server.
+
+Cc: linux-stable <stable@vger.kernel.org> # 4.9
+Fixes: e63e88bc53ba ("nilfs2: move ioctl interface and disk layout to
+uapi separately")
+
+
+Thanks.
+
 -- 
-2.7.4
-
-
+Best Regards
+Masahiro Yamada
