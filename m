@@ -2,101 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9FA61572
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 17:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62E5E61577
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 17:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfGGPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 11:46:27 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42048 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfGGPq1 (ORCPT
+        id S1727335AbfGGPts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 11:49:48 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35311 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfGGPts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 11:46:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a10so13335599wrp.9;
-        Sun, 07 Jul 2019 08:46:25 -0700 (PDT)
+        Sun, 7 Jul 2019 11:49:48 -0400
+Received: by mail-io1-f68.google.com with SMTP id m24so19910255ioo.2;
+        Sun, 07 Jul 2019 08:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bGbtCUO4BOGVmzuMetixQhEWqFmuXemkUETV1bb996A=;
-        b=HurwfdDW3WShikoqlGrI+gydUdaNqT7nPbx+UlqF+z+96uFR0gEOxu7vwrwEIcA652
-         2vLX1bspJ3g8K3J1VtUAGpR5FCLx9lLvut88FGuKNVLFdX/2lcoTuwUtN+fRSAFZA06C
-         h3kZvDezlWrGwrV5wdCB3lIDTpAJgeXke0hpev1TE61jvqFG5Q8yBYNszPBPzyqCXmkY
-         wILy7HTrAmn8ZexDHsiSOrgg93jeFW6C/CdXiocgdhKz2/Y0n1edjGs0EC7XaJNuoUsF
-         ONWgtki6SDtg6krR9585ICxqV98f6NBs1JiTf3jw1DHeSzMNm1n2D6Ho5zQPOBX0SNgp
-         oUzg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b4nSr8C4VJLXjo2WMEW+SSHBlpQfsTI/51+kxtK6GPA=;
+        b=YvbEjwwJ0MctJmyVW2533O+SajBFaUp96J65ETZP+TatSMINnLBybugK6AoA58+MfZ
+         yd15CnKnxIQnb+432TC0RnoimNjVmfkheHmHbAo/DwijS92RSoszBySc4s83WHsLef+p
+         ZXtoF5JncfYaRuocLhwSQN5OoVp+NjBZozVDL1n9KB5gbQrKGBokpNMsMHF7ScczNG9W
+         VErLPBTv8kbBqF0FjQSgB5IYmd3oOKSbu8CTCDMwj97kfsW30VCistO+f40EnHTS7A1p
+         IDbwYqJzeKXw/J4laVfJb/T57lFaIteuOcrYiq8sMQEpG3HKhJKB2f+Q6gR5Akx+kl5u
+         1M5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bGbtCUO4BOGVmzuMetixQhEWqFmuXemkUETV1bb996A=;
-        b=EexSvyJElWDOYWadK3JhnrNo4/Kdo+wytPLV4ruLPYSd65hvJRWSmBNGBmKAftIh8W
-         t/WoQYgGoKc7PE2fGYWlWKul3FncyRS7xGFnx+oNcy4bl8rplzRdWOWF7bf8xjMrvvhB
-         ZUv3ay+GyN8R16c7sL3bwrK/4z79fiFuBgFfxWnf2nfis9tfG8UZ5BH20pfFB9yOdMz6
-         NORVT8RwccuIDiapw8r5cQQO5t44A0gvvUp301Wlphud3cmkirGlJwuKgrXqH13JIGWU
-         QwUI0B5jXccJPDq3oLo/mEnwgnbDUbiI7P+WSLjNHayxkiWWBjSXL+yqMztTdMo5WSOy
-         qEMA==
-X-Gm-Message-State: APjAAAXgQtJ4vcVONbqoUnT4yPGSe4glVLFPx4a8whu1NZb63qffSNN9
-        kAeluJaIgEsSrBSex6QTiDk=
-X-Google-Smtp-Source: APXvYqw9VqMOs+dnAC5XrgWMcL+6DE/EqrdzKGc6ZeBG3yR+KiuAuikZUZouVTyX/acHxAB3S/hQsw==
-X-Received: by 2002:a5d:42c5:: with SMTP id t5mr4824387wrr.5.1562514384972;
-        Sun, 07 Jul 2019 08:46:24 -0700 (PDT)
-Received: from arks.localdomain (179.red-83-58-138.dynamicip.rima-tde.net. [83.58.138.179])
-        by smtp.gmail.com with ESMTPSA id f17sm9779586wmf.27.2019.07.07.08.46.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 07 Jul 2019 08:46:24 -0700 (PDT)
-Date:   Sun, 7 Jul 2019 17:46:17 +0200
-From:   Aleix Roca Nonell <kernelrocks@gmail.com>
-To:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] irqchip: Add Realtek RTD129x intc driver
-Message-ID: <20190707154617.GA18436@arks.localdomain>
-References: <20190707132256.GC13340@arks.localdomain>
- <baeb2dd8-0382-01ad-514b-982c0f123e6e@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b4nSr8C4VJLXjo2WMEW+SSHBlpQfsTI/51+kxtK6GPA=;
+        b=GMxOMXCqS3LHnlI5y3C+V08+j4JME1dV+tGpDw7pOycRfYqcti+GGeOESLK4PLidbJ
+         P+VRqkFKgwVj8n3IugOflX3WmWRIM7WAy9hZtAktJS8XJuvi+CRanH+9NOIbA3BaN0Vs
+         xVaW/Ki4uCsXhBn0rxU/FrbqiguIEyhd3xJR75Yji/abPoFtCX5SZshVoz0+I9ZHC8bZ
+         kM5Sd7IvUz+hSWv3J2dRJJRiky3JkCbytXldIYfg4lojlnmUsOHzuzHTMWyIog2UVxYB
+         UYIdFMe7R+1yxGEXtMT7/oeCbyNx1NPjlNPUrgY7GQnfJJiQi1tBBXOtgTLaLJ8cBxNI
+         iqJQ==
+X-Gm-Message-State: APjAAAX8VcdiOUUqqdEBMcE+SiFtX8FIF8for0C2JIM1DGglstulh8Bs
+        R0lE1uzjWSbjTt68XgnEkRYvG3WFnJK2qi4qRA4=
+X-Google-Smtp-Source: APXvYqw8oS+uiF28Cm5vFb/bwzir+3/EqF2Ea/W20KGlon5E6qPXtr6B7HM849DAD8MJjXYvcZw/7BLf/kSb+cG9qi8=
+X-Received: by 2002:a6b:c9d8:: with SMTP id z207mr13631851iof.184.1562514586987;
+ Sun, 07 Jul 2019 08:49:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <baeb2dd8-0382-01ad-514b-982c0f123e6e@suse.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com> <20190706192852.GO17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190706192852.GO17978@ZenIV.linux.org.uk>
+From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date:   Sun, 7 Jul 2019 17:49:35 +0200
+Message-ID: <CAJHCu1+JYWN7mEHprmCc+osP=K4qGA9xB3Jxg53_K4kwo4J6dA@mail.gmail.com>
+Subject: Re: [PATCH v5 06/12] S.A.R.A.: WX protection
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        Brad Spengler <spender@grsecurity.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        PaX Team <pageexec@freemail.hu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 07, 2019 at 03:27:16PM +0200, Andreas Färber wrote:
-> Am 07.07.19 um 15:22 schrieb Aleix Roca Nonell:
-> > This driver adds support for the RTD1296 and RTD1295 interrupt
-> > controller (intc). It is based on both the BPI-SINOVOIP project and
-> > Andreas Färber's previous attempt to submit a similar driver.
-> 
-> Doing that without my Signed-off-by and Copyright is certainly not okay.
-> It is also lacking a clear description of what you changed from my last
-> submission or the post-submission GitHub version adressing review
-> comments, which broke.
+Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, Jul 06, 2019 at 12:54:47PM +0200, Salvatore Mesoraca wrote:
+>
+> > +#define sara_warn_or_return(err, msg) do {           \
+> > +     if ((sara_wxp_flags & SARA_WXP_VERBOSE))        \
+> > +             pr_wxp(msg);                            \
+> > +     if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))      \
+> > +             return -err;                            \
+> > +} while (0)
+> > +
+> > +#define sara_warn_or_goto(label, msg) do {           \
+> > +     if ((sara_wxp_flags & SARA_WXP_VERBOSE))        \
+> > +             pr_wxp(msg);                            \
+> > +     if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))      \
+> > +             goto label;                             \
+> > +} while (0)
+>
+> No.  This kind of "style" has no place in the kernel.
+>
+> Don't hide control flow.  It's nasty enough to reviewers,
+> but it's pure hell on anyone who strays into your code while
+> chasing a bug or doing general code audit.  In effect, you
+> are creating your oh-so-private C dialect and assuming that
+> everyone who ever looks at your code will start with learning
+> that *AND* incorporating it into their mental C parser.
+> I'm sorry, but you are not that important.
+>
+> If it looks like a function call, a casual reader will assume
+> that this is exactly what it is.  And when one is scanning
+> through a function (e.g. to tell if handling of some kind
+> of refcounts is correct, with twentieth grep through the
+> tree having brought something in your code into the view),
+> the last thing one wants is to switch between the area-specific
+> C dialects.  Simply because looking at yours is sandwiched
+> between digging through some crap in drivers/target/ and that
+> weird thing in kernel/tracing/, hopefully staying limited
+> to 20 seconds of glancing through several functions in your
+> code.
+>
+> Don't Do That.  Really.
 
-I'm really sorry about that, because I rewrote the code (almost) from
-scratch (given that I wasn't aware of this previous attempt when I
-started working with it) I was not sure if it was necessary. I will
-address this in the next version of the patch series.
+I understand your concerns.
+The first version of SARA didn't use these macros,
+they were added because I was asked[1] to do so.
 
-Thank you and sorry for the inconvenience.
+I have absolutely no problems in reverting this change.
+I just want to make sure that there is agreement on this matter.
+Maybe Kees can clarify his stance.
 
-> 
-> Regards,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH
-> Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> HRB 21284 (AG Nürnberg)
+Thank you for your suggestions.
+
+[1] https://lkml.kernel.org/r/CAGXu5jJuQx2qOt_aDqDQDcqGOZ5kmr5rQ9Zjv=MRRCJ65ERfGw@mail.gmail.com
