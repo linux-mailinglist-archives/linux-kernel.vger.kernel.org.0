@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4837561680
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA14616D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfGGTix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57254 "EHLO
+        id S1728318AbfGGTnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:43:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57510 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727547AbfGGTiI (ORCPT
+        by vger.kernel.org with ESMTP id S1727592AbfGGTiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:08 -0400
+        Sun, 7 Jul 2019 15:38:11 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz5-0006h3-Kg; Sun, 07 Jul 2019 20:38:03 +0100
+        id 1hkCz8-0006jD-Is; Sun, 07 Jul 2019 20:38:06 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0005b1-5X; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz6-0005d9-A0; Sun, 07 Jul 2019 20:38:04 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "yangerkun" <yangerkun@huawei.com>, "Theodore Ts'o" <tytso@mit.edu>
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        "Laurent Dufour" <ldufour@linux.vnet.ibm.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.291988630@decadent.org.uk>
+Message-ID: <lsq.1562518457.923215258@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 059/129] ext4: add mask of ext4 flags to swap
+Subject: [PATCH 3.16 085/129] powerpc/mm/hash: Handle mmap_min_addr
+ correctly in get_unmapped_area topdown search
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,57 +49,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: yangerkun <yangerkun@huawei.com>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 
-commit abdc644e8cbac2e9b19763680e5a7cf9bab2bee7 upstream.
+commit 3b4d07d2674f6b4a9281031f99d1f7efd325b16d upstream.
 
-The reason is that while swapping two inode, we swap the flags too.
-Some flags such as EXT4_JOURNAL_DATA_FL can really confuse the things
-since we're not resetting the address operations structure.  The
-simplest way to keep things sane is to restrict the flags that can be
-swapped.
+When doing top-down search the low_limit is not PAGE_SIZE but rather
+max(PAGE_SIZE, mmap_min_addr). This handle cases in which mmap_min_addr >
+PAGE_SIZE.
 
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: fba2369e6ceb ("mm: use vm_unmapped_area() on powerpc architecture")
+Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/ext4.h  | 3 +++
- fs/ext4/ioctl.c | 6 +++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/mm/slice.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -405,6 +405,9 @@ struct flex_groups {
- /* Flags that are appropriate for non-directories/regular files. */
- #define EXT4_OTHER_FLMASK (EXT4_NODUMP_FL | EXT4_NOATIME_FL)
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -30,6 +30,7 @@
+ #include <linux/err.h>
+ #include <linux/spinlock.h>
+ #include <linux/export.h>
++#include <linux/security.h>
+ #include <asm/mman.h>
+ #include <asm/mmu.h>
+ #include <asm/spu.h>
+@@ -313,6 +314,7 @@ static unsigned long slice_find_area_top
+ 	int pshift = max_t(int, mmu_psize_defs[psize].shift, PAGE_SHIFT);
+ 	unsigned long addr, found, prev;
+ 	struct vm_unmapped_area_info info;
++	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
  
-+/* The only flags that should be swapped */
-+#define EXT4_FL_SHOULD_SWAP (EXT4_HUGE_FILE_FL | EXT4_EXTENTS_FL)
-+
- /* Mask out flags that are inappropriate for the given type of inode. */
- static inline __u32 ext4_mask_flags(umode_t mode, __u32 flags)
- {
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -61,6 +61,7 @@ static void swap_inode_data(struct inode
- 	loff_t isize;
- 	struct ext4_inode_info *ei1;
- 	struct ext4_inode_info *ei2;
-+	unsigned long tmp;
+ 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
+ 	info.length = len;
+@@ -320,7 +322,7 @@ static unsigned long slice_find_area_top
+ 	info.align_offset = 0;
  
- 	ei1 = EXT4_I(inode1);
- 	ei2 = EXT4_I(inode2);
-@@ -71,7 +72,10 @@ static void swap_inode_data(struct inode
- 	memswap(&inode1->i_mtime, &inode2->i_mtime, sizeof(inode1->i_mtime));
- 
- 	memswap(ei1->i_data, ei2->i_data, sizeof(ei1->i_data));
--	memswap(&ei1->i_flags, &ei2->i_flags, sizeof(ei1->i_flags));
-+	tmp = ei1->i_flags & EXT4_FL_SHOULD_SWAP;
-+	ei1->i_flags = (ei2->i_flags & EXT4_FL_SHOULD_SWAP) |
-+		(ei1->i_flags & ~EXT4_FL_SHOULD_SWAP);
-+	ei2->i_flags = tmp | (ei2->i_flags & ~EXT4_FL_SHOULD_SWAP);
- 	memswap(&ei1->i_disksize, &ei2->i_disksize, sizeof(ei1->i_disksize));
- 	ext4_es_remove_extent(inode1, 0, EXT_MAX_BLOCKS);
- 	ext4_es_remove_extent(inode2, 0, EXT_MAX_BLOCKS);
+ 	addr = mm->mmap_base;
+-	while (addr > PAGE_SIZE) {
++	while (addr > min_addr) {
+ 		info.high_limit = addr;
+ 		if (!slice_scan_available(addr - 1, available, 0, &addr))
+ 			continue;
+@@ -332,8 +334,8 @@ static unsigned long slice_find_area_top
+ 		 * Check if we need to reduce the range, or if we can
+ 		 * extend it to cover the previous available slice.
+ 		 */
+-		if (addr < PAGE_SIZE)
+-			addr = PAGE_SIZE;
++		if (addr < min_addr)
++			addr = min_addr;
+ 		else if (slice_scan_available(addr - 1, available, 0, &prev)) {
+ 			addr = prev;
+ 			goto prev_slice;
+@@ -415,7 +417,7 @@ unsigned long slice_get_unmapped_area(un
+ 		addr = _ALIGN_UP(addr, 1ul << pshift);
+ 		slice_dbg(" aligned addr=%lx\n", addr);
+ 		/* Ignore hint if it's too large or overlaps a VMA */
+-		if (addr > mm->task_size - len ||
++		if (addr > mm->task_size - len || addr < mmap_min_addr ||
+ 		    !slice_area_is_free(mm, addr, len))
+ 			addr = 0;
+ 	}
 
