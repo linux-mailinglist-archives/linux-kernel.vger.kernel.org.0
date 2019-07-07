@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D55986169D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A985761674
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbfGGTlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:41:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57874 "EHLO
+        id S1727678AbfGGTiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56772 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727651AbfGGTiP (ORCPT
+        by vger.kernel.org with ESMTP id S1727433AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:15 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCzC-0006jU-Mg; Sun, 07 Jul 2019 20:38:10 +0100
+        id 1hkCz0-0006cy-JU; Sun, 07 Jul 2019 20:37:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0005fa-Oa; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCyz-0005Wl-Ey; Sun, 07 Jul 2019 20:37:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Xiao Ni" <xni@redhat.com>, "Song Liu" <songliubraving@fb.com>
+        "Yangtao Li" <tiny.windzz@gmail.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.332065955@decadent.org.uk>
+Message-ID: <lsq.1562518457.589861218@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 114/129] It's wrong to add len to sector_nr in raid10
- reshape twice
+Subject: [PATCH 3.16 006/129] clk: samsung: exynos4: fix refcount leak in
+ exynos4_get_xom()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,30 +48,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Ni <xni@redhat.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit b761dcf1217760a42f7897c31dcb649f59b2333e upstream.
+commit cee82eb9532090cd1dc953e845d71f9b1445c84e upstream.
 
-In reshape_request it already adds len to sector_nr already. It's wrong to add len to
-sector_nr again after adding pages to bio. If there is bad block it can't copy one chunk
-at a time, it needs to goto read_more. Now the sector_nr is wrong. It can cause data
-corruption.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/raid10.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4506,7 +4506,6 @@ bio_full:
- 	atomic_inc(&r10_bio->remaining);
- 	read_bio->bi_next = NULL;
- 	generic_make_request(read_bio);
--	sector_nr += nr_sectors;
- 	sectors_done += nr_sectors;
- 	if (sector_nr <= last)
- 		goto read_more;
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1032,6 +1032,7 @@ static unsigned long exynos4_get_xom(voi
+ 			xom = readl(chipid_base + 8);
+ 
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
+ 
+ 	return xom;
 
