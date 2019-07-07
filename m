@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6127E61667
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BAA66170C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfGGTjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:39:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57498 "EHLO
+        id S1727535AbfGGTiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56764 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727588AbfGGTiL (ORCPT
+        by vger.kernel.org with ESMTP id S1726105AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:11 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0006iz-AP; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCz0-0006cz-JW; Sun, 07 Jul 2019 20:37:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0005cz-3r; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCyz-0005Wq-I3; Sun, 07 Jul 2019 20:37:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Aaro Koskinen" <aaro.koskinen@iki.fi>,
-        "Ulf Hansson" <ulf.hansson@linaro.org>
+        "Yangtao Li" <tiny.windzz@gmail.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.999453514@decadent.org.uk>
+Message-ID: <lsq.1562518457.296300115@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 083/129] mmc: omap: fix the maximum timeout setting
+Subject: [PATCH 3.16 007/129] clk: imx6q: fix refcount leak in
+ imx6q_clocks_init()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,47 +48,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit a6327b5e57fdc679c842588c3be046c0b39cc127 upstream.
+commit c9ec1d8fef31b5fc9e90e99f9bd685db5caa7c5e upstream.
 
-When running OMAP1 kernel on QEMU, MMC access is annoyingly noisy:
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-	MMC: CTO of 0xff and 0xfe cannot be used!
-	MMC: CTO of 0xff and 0xfe cannot be used!
-	MMC: CTO of 0xff and 0xfe cannot be used!
-	[ad inf.]
-
-Emulator warnings appear to be valid. The TI document SPRU680 [1]
-("OMAP5910 Dual-Core Processor MultiMedia Card/Secure Data Memory Card
-(MMC/SD) Reference Guide") page 36 states that the maximum timeout is 253
-cycles and "0xff and 0xfe cannot be used".
-
-Fix by using 0xfd as the maximum timeout.
-
-Tested using QEMU 2.5 (Siemens SX1 machine, OMAP310), and also checked on
-real hardware using Palm TE (OMAP310), Nokia 770 (OMAP1710) and Nokia N810
-(OMAP2420) that MMC works as before.
-
-[1] http://www.ti.com/lit/ug/spru680/spru680.pdf
-
-Fixes: 730c9b7e6630f ("[MMC] Add OMAP MMC host driver")
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 2acd1b6f889c ("ARM: i.MX6: implement clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mmc/host/omap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-imx/clk-imx6q.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -921,7 +921,7 @@ static inline void set_cmd_timeout(struc
- 	reg &= ~(1 << 5);
- 	OMAP_MMC_WRITE(host, SDIO, reg);
- 	/* Set maximum timeout */
--	OMAP_MMC_WRITE(host, CTO, 0xff);
-+	OMAP_MMC_WRITE(host, CTO, 0xfd);
- }
+--- a/arch/arm/mach-imx/clk-imx6q.c
++++ b/arch/arm/mach-imx/clk-imx6q.c
+@@ -157,6 +157,7 @@ static void __init imx6q_clocks_init(str
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
++	of_node_put(np);
  
- static inline void set_data_timeout(struct mmc_omap_host *host, struct mmc_request *req)
+ 	/* Audio/video PLL post dividers do not work on i.MX6q revision 1.0 */
+ 	if (cpu_is_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0) {
 
