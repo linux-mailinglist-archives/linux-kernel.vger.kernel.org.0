@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0785561670
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A2C61684
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfGGTjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:39:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57778 "EHLO
+        id S1727914AbfGGTjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:39:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57608 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727634AbfGGTiO (ORCPT
+        by vger.kernel.org with ESMTP id S1727611AbfGGTiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:14 -0400
+        Sun, 7 Jul 2019 15:38:12 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCzC-0006je-Fa; Sun, 07 Jul 2019 20:38:10 +0100
+        id 1hkCz9-0006kW-F0; Sun, 07 Jul 2019 20:38:07 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0005fN-HD; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCz7-0005eH-Gs; Sun, 07 Jul 2019 20:38:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
+        "NeilBrown" <neilb@suse.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.568896783@decadent.org.uk>
+Message-ID: <lsq.1562518457.225073674@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 111/129] vxlan: test dev->flags & IFF_UP before
- calling gro_cells_receive()
+Subject: [PATCH 3.16 099/129] nfsd: fix memory corruption caused by readdir
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,63 +47,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: NeilBrown <neilb@suse.com>
 
-commit 59cbf56fcd98ba2a715b6e97c4e43f773f956393 upstream.
+commit b602345da6cbb135ba68cf042df8ec9a73da7981 upstream.
 
-Same reasons than the ones explained in commit 4179cb5a4c92
-("vxlan: test dev->flags & IFF_UP before calling netif_rx()")
+If the result of an NFSv3 readdir{,plus} request results in the
+"offset" on one entry having to be split across 2 pages, and is sized
+so that the next directory entry doesn't fit in the requested size,
+then memory corruption can happen.
 
-netif_rx() or gro_cells_receive() must be called under a strict contract.
+When encode_entry() is called after encoding the last entry that fits,
+it notices that ->offset and ->offset1 are set, and so stores the
+offset value in the two pages as required.  It clears ->offset1 but
+*does not* clear ->offset.
 
-At device dismantle phase, core networking clears IFF_UP
-and flush_all_backlogs() is called after rcu grace period
-to make sure no incoming packet might be in a cpu backlog
-and still referencing the device.
+Normally this omission doesn't matter as encode_entry_baggage() will
+be called, and will set ->offset to a suitable value (not on a page
+boundary).
+But in the case where cd->buflen < elen and nfserr_toosmall is
+returned, ->offset is not reset.
 
-A similar protocol is used for gro_cells infrastructure, as
-gro_cells_destroy() will be called only after a full rcu
-grace period is observed after IFF_UP has been cleared.
+This means that nfsd3proc_readdirplus will see ->offset with a value 4
+bytes before the end of a page, and ->offset1 set to NULL.
+It will try to write 8bytes to ->offset.
+If we are lucky, the next page will be read-only, and the system will
+  BUG: unable to handle kernel paging request at...
 
-Most drivers call netif_rx() from their interrupt handler,
-and since the interrupts are disabled at device dismantle,
-netif_rx() does not have to check dev->flags & IFF_UP
+If we are unlucky, some innocent page will have the first 4 bytes
+corrupted.
 
-Virtual drivers do not have this guarantee, and must
-therefore make the check themselves.
+nfsd3proc_readdir() doesn't even check for ->offset1, it just blindly
+writes 8 bytes to the offset wherever it is.
 
-Otherwise we risk use-after-free and/or crashes.
+Fix this by clearing ->offset after it is used, and copying the
+->offset handling code from nfsd3_proc_readdirplus into
+nfsd3_proc_readdir.
 
-Fixes: d342894c5d2f ("vxlan: virtual extensible lan")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+(Note that the commit hash in the Fixes tag is from the 'history'
+ tree - this bug predates git).
+
+Fixes: 0b1d57cf7654 ("[PATCH] kNFSd: Fix nfs3 dentry encoding")
+Fixes-URL: https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?id=0b1d57cf7654
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -1280,6 +1280,14 @@ static void vxlan_rcv(struct vxlan_sock
+ fs/nfsd/nfs3proc.c | 16 ++++++++++++++--
+ fs/nfsd/nfs3xdr.c  |  1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+--- a/fs/nfsd/nfs3proc.c
++++ b/fs/nfsd/nfs3proc.c
+@@ -440,8 +440,19 @@ nfsd3_proc_readdir(struct svc_rqst *rqst
+ 					&resp->common, nfs3svc_encode_entry);
+ 	memcpy(resp->verf, argp->verf, 8);
+ 	resp->count = resp->buffer - argp->buffer;
+-	if (resp->offset)
+-		xdr_encode_hyper(resp->offset, argp->cookie);
++	if (resp->offset) {
++		loff_t offset = argp->cookie;
++
++		if (unlikely(resp->offset1)) {
++			/* we ended up with offset on a page boundary */
++			*resp->offset = htonl(offset >> 32);
++			*resp->offset1 = htonl(offset & 0xffffffff);
++			resp->offset1 = NULL;
++		} else {
++			xdr_encode_hyper(resp->offset, offset);
++		}
++		resp->offset = NULL;
++	}
+ 
+ 	RETURN_STATUS(nfserr);
+ }
+@@ -501,6 +512,7 @@ nfsd3_proc_readdirplus(struct svc_rqst *
+ 		} else {
+ 			xdr_encode_hyper(resp->offset, offset);
  		}
++		resp->offset = NULL;
  	}
  
-+	rcu_read_lock();
-+
-+	if (unlikely(!(vxlan->dev->flags & IFF_UP))) {
-+		rcu_read_unlock();
-+		atomic_long_inc(&vxlan->dev->rx_dropped);
-+		goto drop;
-+	}
-+
- 	stats = this_cpu_ptr(vxlan->dev->tstats);
- 	u64_stats_update_begin(&stats->syncp);
- 	stats->rx_packets++;
-@@ -1288,6 +1296,8 @@ static void vxlan_rcv(struct vxlan_sock
+ 	RETURN_STATUS(nfserr);
+--- a/fs/nfsd/nfs3xdr.c
++++ b/fs/nfsd/nfs3xdr.c
+@@ -909,6 +909,7 @@ encode_entry(struct readdir_cd *ccd, con
+ 		} else {
+ 			xdr_encode_hyper(cd->offset, offset64);
+ 		}
++		cd->offset = NULL;
+ 	}
  
- 	netif_rx(skb);
- 
-+	rcu_read_unlock();
-+
- 	return;
- drop:
- 	/* Consume bad packet */
+ 	/*
 
