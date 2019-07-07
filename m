@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F1661737
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9B46169C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfGGTqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:46:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56996 "EHLO
+        id S1728089AbfGGTlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57892 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727495AbfGGTiE (ORCPT
+        by vger.kernel.org with ESMTP id S1727656AbfGGTiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:04 -0400
+        Sun, 7 Jul 2019 15:38:15 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz2-0006f2-VM; Sun, 07 Jul 2019 20:38:01 +0100
+        id 1hkCzD-0006kK-CH; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz1-0005YW-D0; Sun, 07 Jul 2019 20:37:59 +0100
+        id 1hkCz9-0005fs-0Y; Sun, 07 Jul 2019 20:38:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jacopo Mondi" <jacopo+renesas@jmondi.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>
+        "Tariq Toukan" <tariqt@mellanox.com>,
+        "Jack Morgenstein" <jackm@dev.mellanox.co.il>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.203969553@decadent.org.uk>
+Message-ID: <lsq.1562518457.418429045@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 028/129] media: v4l2: i2c: ov7670: Fix PLL bypass
- register values
+Subject: [PATCH 3.16 117/129] net/mlx4_core: Fix locking in SRIOV mode
+ when switching between events and polling
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,80 +49,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 61da76beef1e4f0b6ba7be4f8d0cf0dac7ce1f55 upstream.
+commit c07d27927f2f2e96fcd27bb9fb330c9ea65612d0 upstream.
 
-The following commits:
-commit f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
-commit 04ee6d92047e ("[media] media: ov7670: add possibility to bypass pll for ov7675")
-introduced the ability to bypass PLL multiplier and use input clock (xvclk)
-as pixel clock output frequency for ov7675 sensor.
+In procedures mlx4_cmd_use_events() and mlx4_cmd_use_polling(), we need to
+guarantee that there are no FW commands in progress on the comm channel
+(for VFs) or wrapped FW commands (on the PF) when SRIOV is active.
 
-PLL is bypassed using register DBLV[7:6], according to ov7670 and ov7675
-sensor manuals. Macros used to set DBLV register seem wrong in the
-driver, as their values do not match what reported in the datasheet.
+We do this by also taking the slave_cmd_mutex when SRIOV is active.
 
-Fix by changing DBLV_* macros to use bits [7:6] and set bits [3:0] to
-default 0x0a reserved value (according to datasheets).
+This is especially important when switching from event to polling, since we
+free the command-context array during the switch.  If there are FW commands
+in progress (e.g., waiting for a completion event), the completion event
+handler will access freed memory.
 
-While at there, remove a write to DBLV register in
-"ov7675_set_framerate()" that over-writes the previous one to the same
-register that takes "info->pll_bypass" flag into account instead of setting PLL
-multiplier to 4x unconditionally.
+Since the decision to use comm_wait or comm_poll is taken before grabbing
+the event_sem/poll_sem in mlx4_comm_cmd_wait/poll, we must take the
+slave_cmd_mutex as well (to guarantee that the decision to use events or
+polling and the call to the appropriate cmd function are atomic).
 
-And, while at there, since "info->pll_bypass" is only used in
-set/get_framerate() functions used by ov7675 only, it is not necessary
-to check for the device id at probe time to make sure that when using
-ov7670 "info->pll_bypass" is set to false.
-
-Fixes: f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: a7e1f04905e5 ("net/mlx4_core: Fix deadlock when switching between polling and event fw commands")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/i2c/ov7670.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/cmd.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -167,10 +167,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-
- #define REG_GFIX	0x69	/* Fix gain control */
+--- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+@@ -2196,6 +2196,8 @@ int mlx4_cmd_use_events(struct mlx4_dev
+ 	if (!priv->cmd.context)
+ 		return -ENOMEM;
  
- #define REG_DBLV	0x6b	/* PLL control an debugging */
--#define   DBLV_BYPASS	  0x00	  /* Bypass PLL */
--#define   DBLV_X4	  0x01	  /* clock x4 */
--#define   DBLV_X6	  0x10	  /* clock x6 */
--#define   DBLV_X8	  0x11	  /* clock x8 */
-+#define   DBLV_BYPASS	  0x0a	  /* Bypass PLL */
-+#define   DBLV_X4	  0x4a	  /* clock x4 */
-+#define   DBLV_X6	  0x8a	  /* clock x6 */
-+#define   DBLV_X8	  0xca	  /* clock x8 */
++	if (mlx4_is_mfunc(dev))
++		mutex_lock(&priv->cmd.slave_cmd_mutex);
+ 	down_write(&priv->cmd.switch_sem);
+ 	for (i = 0; i < priv->cmd.max_cmds; ++i) {
+ 		priv->cmd.context[i].token = i;
+@@ -2217,6 +2219,8 @@ int mlx4_cmd_use_events(struct mlx4_dev
+ 	down(&priv->cmd.poll_sem);
+ 	priv->cmd.use_events = 1;
+ 	up_write(&priv->cmd.switch_sem);
++	if (mlx4_is_mfunc(dev))
++		mutex_unlock(&priv->cmd.slave_cmd_mutex);
  
- #define REG_REG76	0x76	/* OV's name */
- #define   R76_BLKPCOR	  0x80	  /* Black pixel correction enable */
-@@ -845,7 +845,7 @@ static int ov7675_set_framerate(struct v
- 	if (ret < 0)
- 		return ret;
+ 	return err;
+ }
+@@ -2229,6 +2233,8 @@ void mlx4_cmd_use_polling(struct mlx4_de
+ 	struct mlx4_priv *priv = mlx4_priv(dev);
+ 	int i;
  
--	return ov7670_write(sd, REG_DBLV, DBLV_X4);
-+	return 0;
++	if (mlx4_is_mfunc(dev))
++		mutex_lock(&priv->cmd.slave_cmd_mutex);
+ 	down_write(&priv->cmd.switch_sem);
+ 	priv->cmd.use_events = 0;
+ 
+@@ -2239,6 +2245,8 @@ void mlx4_cmd_use_polling(struct mlx4_de
+ 
+ 	up(&priv->cmd.poll_sem);
+ 	up_write(&priv->cmd.switch_sem);
++	if (mlx4_is_mfunc(dev))
++		mutex_unlock(&priv->cmd.slave_cmd_mutex);
  }
  
- static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
-@@ -1552,11 +1552,7 @@ static int ov7670_probe(struct i2c_clien
- 		if (config->clock_speed)
- 			info->clock_speed = config->clock_speed;
- 
--		/*
--		 * It should be allowed for ov7670 too when it is migrated to
--		 * the new frame rate formula.
--		 */
--		if (config->pll_bypass && id->driver_data != MODEL_OV7670)
-+		if (config->pll_bypass)
- 			info->pll_bypass = true;
- 
- 		if (config->pclk_hb_disable)
+ struct mlx4_cmd_mailbox *mlx4_alloc_cmd_mailbox(struct mlx4_dev *dev)
 
