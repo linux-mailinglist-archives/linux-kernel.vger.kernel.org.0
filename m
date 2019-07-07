@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A9F616D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D9F61715
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbfGGTnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:43:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57558 "EHLO
+        id S1728553AbfGGTpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:45:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57176 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727603AbfGGTiL (ORCPT
+        by vger.kernel.org with ESMTP id S1727429AbfGGTiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:11 -0400
+        Sun, 7 Jul 2019 15:38:06 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0006jU-Va; Sun, 07 Jul 2019 20:38:07 +0100
+        id 1hkCz4-0006gY-TI; Sun, 07 Jul 2019 20:38:03 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0005dN-I6; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCz3-0005aN-I0; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Lubomir Rintel" <lkundrak@v3.sk>
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Colin Ian King" <colin.king@canonical.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.503602606@decadent.org.uk>
+Message-ID: <lsq.1562518457.445556003@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 088/129] serial: 8250_of: assume reg-shift of 2 for
- mrvl,mmp-uart
+Subject: [PATCH 3.16 051/129] rtc: 88pm860x: fix unintended sign extension
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,36 +47,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit f4817843e39ce78aace0195a57d4e8500a65a898 upstream.
+commit dc9e47160626cdb58d5c39a4f43dcfdb27a5c004 upstream.
 
-There are two other drivers that bind to mrvl,mmp-uart and both of them
-assume register shift of 2 bits. There are device trees that lack the
-property and rely on that assumption.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-If this driver wins the race to bind to those devices, it should behave
-the same as the older deprecated driver.
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
+Detected by CoverityScan, CID#144925-144928 ("Unintended sign extension")
+
+Fixes: 008b30408c40 ("mfd: Add rtc support to 88pm860x")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/of_serial.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/rtc/rtc-88pm860x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/drivers/tty/serial/of_serial.c
-+++ b/drivers/tty/serial/of_serial.c
-@@ -93,6 +93,10 @@ static int of_platform_serial_setup(stru
- 	if (of_property_read_u32(np, "reg-offset", &prop) == 0)
- 		port->mapbase += prop;
+--- a/drivers/rtc/rtc-88pm860x.c
++++ b/drivers/rtc/rtc-88pm860x.c
+@@ -115,11 +115,13 @@ static int pm860x_rtc_read_time(struct d
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
-+	/* Compatibility with the deprecated pxa driver and 8250_pxa drivers. */
-+	if (of_device_is_compatible(np, "mrvl,mmp-uart"))
-+		port->regshift = 2;
-+
- 	/* Check for registers offset within the devices address range */
- 	if (of_property_read_u32(np, "reg-shift", &prop) == 0)
- 		port->regshift = prop;
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -145,7 +147,8 @@ static int pm860x_rtc_set_time(struct de
+ 
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -170,10 +173,12 @@ static int pm860x_rtc_read_alarm(struct
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
+ 
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_EXPIRE1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -198,11 +203,13 @@ static int pm860x_rtc_set_alarm(struct d
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
+ 
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 
