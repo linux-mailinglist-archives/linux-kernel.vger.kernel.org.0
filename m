@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E3161743
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5022C61687
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfGGTiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56766 "EHLO
+        id S1728026AbfGGTk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:40:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:58030 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727431AbfGGTiA (ORCPT
+        by vger.kernel.org with ESMTP id S1727669AbfGGTiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:00 -0400
+        Sun, 7 Jul 2019 15:38:17 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz0-0006cx-CW; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCzD-0006kU-My; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCyz-0005Wg-C6; Sun, 07 Jul 2019 20:37:57 +0100
+        id 1hkCz9-0005gb-Ml; Sun, 07 Jul 2019 20:38:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Yangtao Li" <tiny.windzz@gmail.com>,
-        "Stephen Boyd" <sboyd@kernel.org>
+        "Takashi Iwai" <tiwai@suse.de>,
+        "huangwen" <huangwen@venustech.com.cn>,
+        "Kalle Valo" <kvalo@codeaurora.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.95525416@decadent.org.uk>
+Message-ID: <lsq.1562518457.121759028@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 005/129] clk: socfpga: fix refcount leak
+Subject: [PATCH 3.16 126/129] mwifiex: Fix possible buffer overflows at
+ parsing bss descriptor
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,29 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 7f9705beeb3759e69165e7aff588f6488ff6c1ac upstream.
+commit 13ec7f10b87f5fc04c4ccbd491c94c7980236a74 upstream.
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+mwifiex_update_bss_desc_with_ie() calls memcpy() unconditionally in
+a couple places without checking the destination size.  Since the
+source is given from user-space, this may trigger a heap buffer
+overflow.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 5343325ff3dd ("clk: socfpga: add a clock driver for the Arria 10 platform")
-Fixes: a30d27ed739b ("clk: socfpga: fix clock driver for 3.15")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-[bwh: Backported to 3.16: drop changes in clk-pll-a10.c]
+Fix it by putting the length check before performing memcpy().
+
+This fix addresses CVE-2019-3846.
+
+Reported-by: huangwen <huangwen@venustech.com.cn>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -102,6 +102,7 @@ static __init struct clk *__socfpga_pll_
+ drivers/net/wireless/mwifiex/scan.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/net/wireless/mwifiex/scan.c
++++ b/drivers/net/wireless/mwifiex/scan.c
+@@ -1171,6 +1171,8 @@ int mwifiex_update_bss_desc_with_ie(stru
+ 		}
+ 		switch (element_id) {
+ 		case WLAN_EID_SSID:
++			if (element_len > IEEE80211_MAX_SSID_LEN)
++				return -EINVAL;
+ 			bss_entry->ssid.ssid_len = element_len;
+ 			memcpy(bss_entry->ssid.ssid, (current_ptr + 2),
+ 			       element_len);
+@@ -1180,6 +1182,8 @@ int mwifiex_update_bss_desc_with_ie(stru
+ 			break;
  
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_base_addr = of_iomap(clkmgr_np, 0);
-+	of_node_put(clkmgr_np);
- 	BUG_ON(!clk_mgr_base_addr);
- 	pll_clk->hw.reg = clk_mgr_base_addr + reg;
- 
+ 		case WLAN_EID_SUPP_RATES:
++			if (element_len > MWIFIEX_SUPPORTED_RATES)
++				return -EINVAL;
+ 			memcpy(bss_entry->data_rates, current_ptr + 2,
+ 			       element_len);
+ 			memcpy(bss_entry->supported_rates, current_ptr + 2,
 
