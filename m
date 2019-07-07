@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0158961703
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D0E1616B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbfGGToi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:44:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57250 "EHLO
+        id S1728166AbfGGTl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57666 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727545AbfGGTiI (ORCPT
+        by vger.kernel.org with ESMTP id S1727620AbfGGTiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:08 -0400
+        Sun, 7 Jul 2019 15:38:13 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz5-0006h0-Id; Sun, 07 Jul 2019 20:38:03 +0100
+        id 1hkCz8-0006je-Lp; Sun, 07 Jul 2019 20:38:06 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0005aw-2R; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz6-0005dd-Pr; Sun, 07 Jul 2019 20:38:04 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, "yangerkun" <yangerkun@huawei.com>
+        "David Sterba" <dsterba@suse.com>,
+        "Zygo Blaxell" <ce3g8jdj@umail.furryterror.org>,
+        "Filipe Manana" <fdmanana@suse.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.920702981@decadent.org.uk>
+Message-ID: <lsq.1562518457.18137553@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 058/129] ext4: update quota information while
- swapping boot loader inode
+Subject: [PATCH 3.16 091/129] Btrfs: fix corruption reading shared and
+ compressed extents after hole punching
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,120 +49,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: yangerkun <yangerkun@huawei.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit aa507b5faf38784defe49f5e64605ac3c4425e26 upstream.
+commit 8e928218780e2f1cf2f5891c7575e8f0b284fcce upstream.
 
-While do swap between two inode, they swap i_data without update
-quota information. Also, swap_inode_boot_loader can do "revert"
-somtimes, so update the quota while all operations has been finished.
+In the past we had data corruption when reading compressed extents that
+are shared within the same file and they are consecutive, this got fixed
+by commit 005efedf2c7d0 ("Btrfs: fix read corruption of compressed and
+shared extents") and by commit 808f80b46790f ("Btrfs: update fix for read
+corruption of compressed and shared extents"). However there was a case
+that was missing in those fixes, which is when the shared and compressed
+extents are referenced with a non-zero offset. The following shell script
+creates a reproducer for this issue:
 
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16:
- - Include <linux/quotaops.h>
- - dquot_initialize() does not return an erro
- - Adjust context]
+  #!/bin/bash
+
+  mkfs.btrfs -f /dev/sdc &> /dev/null
+  mount -o compress /dev/sdc /mnt/sdc
+
+  # Create a file with 3 consecutive compressed extents, each has an
+  # uncompressed size of 128Kb and a compressed size of 4Kb.
+  for ((i = 1; i <= 3; i++)); do
+      head -c 4096 /dev/zero
+      for ((j = 1; j <= 31; j++)); do
+          head -c 4096 /dev/zero | tr '\0' "\377"
+      done
+  done > /mnt/sdc/foobar
+  sync
+
+  echo "Digest after file creation:   $(md5sum /mnt/sdc/foobar)"
+
+  # Clone the first extent into offsets 128K and 256K.
+  xfs_io -c "reflink /mnt/sdc/foobar 0 128K 128K" /mnt/sdc/foobar
+  xfs_io -c "reflink /mnt/sdc/foobar 0 256K 128K" /mnt/sdc/foobar
+  sync
+
+  echo "Digest after cloning:         $(md5sum /mnt/sdc/foobar)"
+
+  # Punch holes into the regions that are already full of zeroes.
+  xfs_io -c "fpunch 0 4K" /mnt/sdc/foobar
+  xfs_io -c "fpunch 128K 4K" /mnt/sdc/foobar
+  xfs_io -c "fpunch 256K 4K" /mnt/sdc/foobar
+  sync
+
+  echo "Digest after hole punching:   $(md5sum /mnt/sdc/foobar)"
+
+  echo "Dropping page cache..."
+  sysctl -q vm.drop_caches=1
+  echo "Digest after hole punching:   $(md5sum /mnt/sdc/foobar)"
+
+  umount /dev/sdc
+
+When running the script we get the following output:
+
+  Digest after file creation:   5a0888d80d7ab1fd31c229f83a3bbcc8  /mnt/sdc/foobar
+  linked 131072/131072 bytes at offset 131072
+  128 KiB, 1 ops; 0.0033 sec (36.960 MiB/sec and 295.6830 ops/sec)
+  linked 131072/131072 bytes at offset 262144
+  128 KiB, 1 ops; 0.0015 sec (78.567 MiB/sec and 628.5355 ops/sec)
+  Digest after cloning:         5a0888d80d7ab1fd31c229f83a3bbcc8  /mnt/sdc/foobar
+  Digest after hole punching:   5a0888d80d7ab1fd31c229f83a3bbcc8  /mnt/sdc/foobar
+  Dropping page cache...
+  Digest after hole punching:   fba694ae8664ed0c2e9ff8937e7f1484  /mnt/sdc/foobar
+
+This happens because after reading all the pages of the extent in the
+range from 128K to 256K for example, we read the hole at offset 256K
+and then when reading the page at offset 260K we don't submit the
+existing bio, which is responsible for filling all the page in the
+range 128K to 256K only, therefore adding the pages from range 260K
+to 384K to the existing bio and submitting it after iterating over the
+entire range. Once the bio completes, the uncompressed data fills only
+the pages in the range 128K to 256K because there's no more data read
+from disk, leaving the pages in the range 260K to 384K unfilled. It is
+just a slightly different variant of what was solved by commit
+005efedf2c7d0 ("Btrfs: fix read corruption of compressed and shared
+extents").
+
+Fix this by forcing a bio submit, during readpages(), whenever we find a
+compressed extent map for a page that is different from the extent map
+for the previous page or has a different starting offset (in case it's
+the same compressed extent), instead of the extent map's original start
+offset.
+
+A test case for fstests follows soon.
+
+Reported-by: Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
+Fixes: 808f80b46790f ("Btrfs: update fix for read corruption of compressed and shared extents")
+Fixes: 005efedf2c7d0 ("Btrfs: fix read corruption of compressed and shared extents")
+Tested-by: Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -14,6 +14,7 @@
- #include <linux/compat.h>
- #include <linux/mount.h>
- #include <linux/file.h>
-+#include <linux/quotaops.h>
- #include <asm/uaccess.h>
- #include "ext4_jbd2.h"
- #include "ext4.h"
-@@ -66,9 +67,6 @@ static void swap_inode_data(struct inode
+ fs/btrfs/extent_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2936,11 +2936,11 @@ static int __do_readpage(struct extent_i
+ 		 */
+ 		if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags) &&
+ 		    prev_em_start && *prev_em_start != (u64)-1 &&
+-		    *prev_em_start != em->orig_start)
++		    *prev_em_start != em->start)
+ 			force_bio_submit = true;
  
- 	memswap(&inode1->i_version, &inode2->i_version,
- 		  sizeof(inode1->i_version));
--	memswap(&inode1->i_blocks, &inode2->i_blocks,
--		  sizeof(inode1->i_blocks));
--	memswap(&inode1->i_bytes, &inode2->i_bytes, sizeof(inode1->i_bytes));
- 	memswap(&inode1->i_atime, &inode2->i_atime, sizeof(inode1->i_atime));
- 	memswap(&inode1->i_mtime, &inode2->i_mtime, sizeof(inode1->i_mtime));
+ 		if (prev_em_start)
+-			*prev_em_start = em->orig_start;
++			*prev_em_start = em->start;
  
-@@ -117,6 +115,9 @@ static long swap_inode_boot_loader(struc
- 	struct inode *inode_bl;
- 	struct ext4_inode_info *ei_bl;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	qsize_t size, size_bl, diff;
-+	blkcnt_t blocks;
-+	unsigned short bytes;
- 
- 	inode_bl = ext4_iget(sb, EXT4_BOOT_LOADER_INO, EXT4_IGET_SPECIAL);
- 	if (IS_ERR(inode_bl))
-@@ -179,6 +180,11 @@ static long swap_inode_boot_loader(struc
- 			memset(ei_bl->i_data, 0, sizeof(ei_bl->i_data));
- 	}
- 
-+	dquot_initialize(inode);
-+
-+	size = (qsize_t)(inode->i_blocks) * (1 << 9) + inode->i_bytes;
-+	size_bl = (qsize_t)(inode_bl->i_blocks) * (1 << 9) + inode_bl->i_bytes;
-+	diff = size - size_bl;
- 	swap_inode_data(inode, inode_bl);
- 
- 	inode->i_ctime = inode_bl->i_ctime = ext4_current_time(inode);
-@@ -194,24 +200,46 @@ static long swap_inode_boot_loader(struc
- 
- 	err = ext4_mark_inode_dirty(handle, inode);
- 	if (err < 0) {
-+		/* No need to update quota information. */
- 		ext4_warning(inode->i_sb,
- 			"couldn't mark inode #%lu dirty (err %d)",
- 			inode->i_ino, err);
- 		/* Revert all changes: */
- 		swap_inode_data(inode, inode_bl);
- 		ext4_mark_inode_dirty(handle, inode);
--	} else {
--		err = ext4_mark_inode_dirty(handle, inode_bl);
--		if (err < 0) {
--			ext4_warning(inode_bl->i_sb,
--				"couldn't mark inode #%lu dirty (err %d)",
--				inode_bl->i_ino, err);
--			/* Revert all changes: */
--			swap_inode_data(inode, inode_bl);
--			ext4_mark_inode_dirty(handle, inode);
--			ext4_mark_inode_dirty(handle, inode_bl);
--		}
-+		goto err_out1;
- 	}
-+
-+	blocks = inode_bl->i_blocks;
-+	bytes = inode_bl->i_bytes;
-+	inode_bl->i_blocks = inode->i_blocks;
-+	inode_bl->i_bytes = inode->i_bytes;
-+	err = ext4_mark_inode_dirty(handle, inode_bl);
-+	if (err < 0) {
-+		/* No need to update quota information. */
-+		ext4_warning(inode_bl->i_sb,
-+			"couldn't mark inode #%lu dirty (err %d)",
-+			inode_bl->i_ino, err);
-+		goto revert;
-+	}
-+
-+	/* Bootloader inode should not be counted into quota information. */
-+	if (diff > 0)
-+		dquot_free_space(inode, diff);
-+	else
-+		err = dquot_alloc_space(inode, -1 * diff);
-+
-+	if (err < 0) {
-+revert:
-+		/* Revert all changes: */
-+		inode_bl->i_blocks = blocks;
-+		inode_bl->i_bytes = bytes;
-+		swap_inode_data(inode, inode_bl);
-+		ext4_mark_inode_dirty(handle, inode);
-+		ext4_mark_inode_dirty(handle, inode_bl);
-+	}
-+
-+err_out1:
- 	ext4_journal_stop(handle);
- 	ext4_double_up_write_data_sem(inode, inode_bl);
- 
+ 		free_extent_map(em);
+ 		em = NULL;
 
