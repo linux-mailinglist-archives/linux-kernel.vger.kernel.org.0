@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB6E616D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98375616B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbfGGTnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:43:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57520 "EHLO
+        id S1727861AbfGGTlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:41:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57682 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727593AbfGGTiL (ORCPT
+        by vger.kernel.org with ESMTP id S1727622AbfGGTiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:11 -0400
+        Sun, 7 Jul 2019 15:38:13 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz7-0006iX-Eo; Sun, 07 Jul 2019 20:38:05 +0100
+        id 1hkCz8-0006jV-IQ; Sun, 07 Jul 2019 20:38:06 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz5-0005cZ-LP; Sun, 07 Jul 2019 20:38:03 +0100
+        id 1hkCz6-0005dT-Kf; Sun, 07 Jul 2019 20:38:04 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+        "Axel Lin" <axel.lin@ingics.com>,
+        "Charles Keepax" <ckeepax@opensource.cirrus.com>,
+        "Mark Brown" <broonie@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.444719417@decadent.org.uk>
+Message-ID: <lsq.1562518457.992415495@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 078/129] fs/nfs: Fix nfs_parse_devname to not modify
- it's argument
+Subject: [PATCH 3.16 089/129] regulator: wm831x-dcdc: Fix list of
+ wm831x_dcdc_ilim from mA to uA
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,32 +49,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-commit 40cc394be1aa18848b8757e03bd8ed23281f572e upstream.
+commit c25d47888f0fb3d836d68322d4aea2caf31a75a6 upstream.
 
-In the rare and unsupported case of a hostname list nfs_parse_devname
-will modify dev_name.  There is no need to modify dev_name as the all
-that is being computed is the length of the hostname, so the computed
-length can just be shorted.
+The wm831x_dcdc_ilim entries needs to be uA because it is used to compare
+with min_uA and max_uA.
+While at it also make the array const and change to use unsigned int.
 
-Fixes: dc04589827f7 ("NFS: Use common device name parsing logic for NFSv4 and NFSv2/v3")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/nfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/wm831x-dcdc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1893,7 +1893,7 @@ static int nfs_parse_devname(const char
- 		/* kill possible hostname list: not supported */
- 		comma = strchr(dev_name, ',');
- 		if (comma != NULL && comma < end)
--			*comma = 0;
-+			len = comma - dev_name;
- 	}
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -327,8 +327,8 @@ static int wm831x_buckv_get_voltage_sel(
+ }
  
- 	if (len > maxnamlen)
+ /* Current limit options */
+-static u16 wm831x_dcdc_ilim[] = {
+-	125, 250, 375, 500, 625, 750, 875, 1000
++static const unsigned int wm831x_dcdc_ilim[] = {
++	125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000
+ };
+ 
+ static int wm831x_buckv_set_current_limit(struct regulator_dev *rdev,
 
