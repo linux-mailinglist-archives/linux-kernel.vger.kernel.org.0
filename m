@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA14616D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8225161717
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfGGTnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:43:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57510 "EHLO
+        id S1728561AbfGGTpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:45:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57166 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727592AbfGGTiL (ORCPT
+        by vger.kernel.org with ESMTP id S1727531AbfGGTiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:11 -0400
+        Sun, 7 Jul 2019 15:38:06 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz8-0006jD-Is; Sun, 07 Jul 2019 20:38:06 +0100
+        id 1hkCz4-0006gF-9w; Sun, 07 Jul 2019 20:38:02 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0005d9-A0; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCz3-0005Zp-1P; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        "Laurent Dufour" <ldufour@linux.vnet.ibm.com>
+        "Eric Biggers" <ebiggers@kernel.org>,
+        "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.923215258@decadent.org.uk>
+Message-ID: <lsq.1562518457.499548159@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 085/129] powerpc/mm/hash: Handle mmap_min_addr
- correctly in get_unmapped_area topdown search
+Subject: [PATCH 3.16 044/129] crypto: arm64/aes-ccm - fix logical bug in
+ AAD MAC handling
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,69 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 3b4d07d2674f6b4a9281031f99d1f7efd325b16d upstream.
+commit eaf46edf6ea89675bd36245369c8de5063a0272c upstream.
 
-When doing top-down search the low_limit is not PAGE_SIZE but rather
-max(PAGE_SIZE, mmap_min_addr). This handle cases in which mmap_min_addr >
-PAGE_SIZE.
+The NEON MAC calculation routine fails to handle the case correctly
+where there is some data in the buffer, and the input fills it up
+exactly. In this case, we enter the loop at the end with w8 == 0,
+while a negative value is assumed, and so the loop carries on until
+the increment of the 32-bit counter wraps around, which is quite
+obviously wrong.
 
-Fixes: fba2369e6ceb ("mm: use vm_unmapped_area() on powerpc architecture")
-Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[bwh: Backported to 3.16: adjust context]
+So omit the loop altogether in this case, and exit right away.
+
+Reported-by: Eric Biggers <ebiggers@kernel.org>
+Fixes: a3fd82105b9d1 ("arm64/crypto: AES in CCM mode using ARMv8 Crypto ...")
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/mm/slice.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm64/crypto/aes-ce-ccm-core.S | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -30,6 +30,7 @@
- #include <linux/err.h>
- #include <linux/spinlock.h>
- #include <linux/export.h>
-+#include <linux/security.h>
- #include <asm/mman.h>
- #include <asm/mmu.h>
- #include <asm/spu.h>
-@@ -313,6 +314,7 @@ static unsigned long slice_find_area_top
- 	int pshift = max_t(int, mmu_psize_defs[psize].shift, PAGE_SHIFT);
- 	unsigned long addr, found, prev;
- 	struct vm_unmapped_area_info info;
-+	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
- 
- 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
- 	info.length = len;
-@@ -320,7 +322,7 @@ static unsigned long slice_find_area_top
- 	info.align_offset = 0;
- 
- 	addr = mm->mmap_base;
--	while (addr > PAGE_SIZE) {
-+	while (addr > min_addr) {
- 		info.high_limit = addr;
- 		if (!slice_scan_available(addr - 1, available, 0, &addr))
- 			continue;
-@@ -332,8 +334,8 @@ static unsigned long slice_find_area_top
- 		 * Check if we need to reduce the range, or if we can
- 		 * extend it to cover the previous available slice.
- 		 */
--		if (addr < PAGE_SIZE)
--			addr = PAGE_SIZE;
-+		if (addr < min_addr)
-+			addr = min_addr;
- 		else if (slice_scan_available(addr - 1, available, 0, &prev)) {
- 			addr = prev;
- 			goto prev_slice;
-@@ -415,7 +417,7 @@ unsigned long slice_get_unmapped_area(un
- 		addr = _ALIGN_UP(addr, 1ul << pshift);
- 		slice_dbg(" aligned addr=%lx\n", addr);
- 		/* Ignore hint if it's too large or overlaps a VMA */
--		if (addr > mm->task_size - len ||
-+		if (addr > mm->task_size - len || addr < mmap_min_addr ||
- 		    !slice_area_is_free(mm, addr, len))
- 			addr = 0;
- 	}
+--- a/arch/arm64/crypto/aes-ce-ccm-core.S
++++ b/arch/arm64/crypto/aes-ce-ccm-core.S
+@@ -74,12 +74,13 @@ ENTRY(ce_aes_ccm_auth_data)
+ 	beq	10f
+ 	ext	v0.16b, v0.16b, v0.16b, #1	/* rotate out the mac bytes */
+ 	b	7b
+-8:	mov	w7, w8
++8:	cbz	w8, 91f
++	mov	w7, w8
+ 	add	w8, w8, #16
+ 9:	ext	v1.16b, v1.16b, v1.16b, #1
+ 	adds	w7, w7, #1
+ 	bne	9b
+-	eor	v0.16b, v0.16b, v1.16b
++91:	eor	v0.16b, v0.16b, v1.16b
+ 	st1	{v0.16b}, [x0]
+ 10:	str	w8, [x3]
+ 	ret
 
