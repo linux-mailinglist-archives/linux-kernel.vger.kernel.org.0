@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D97EA6172B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C266B61678
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbfGGTqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:46:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57012 "EHLO
+        id S1727708AbfGGTiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56864 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727501AbfGGTiE (ORCPT
+        by vger.kernel.org with ESMTP id S1727461AbfGGTiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:04 -0400
+        Sun, 7 Jul 2019 15:38:01 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz3-0006fH-Eg; Sun, 07 Jul 2019 20:38:01 +0100
+        id 1hkCz1-0006dJ-AV; Sun, 07 Jul 2019 20:37:59 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz1-0005Yr-Nk; Sun, 07 Jul 2019 20:37:59 +0100
+        id 1hkCz0-0005XP-6w; Sun, 07 Jul 2019 20:37:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Finn Thain" <fthain@telegraphics.com.au>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>
+        "Jeremy Fertic" <jeremyfertic@gmail.com>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.188051372@decadent.org.uk>
+Message-ID: <lsq.1562518457.854394507@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 032/129] m68k: Add -ffreestanding to CFLAGS
+Subject: [PATCH 3.16 014/129] staging: iio: adt7316: fix dac_bits assignment
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,52 +47,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-commit 28713169d879b67be2ef2f84dcf54905de238294 upstream.
+commit e9de475723de5bf207a5b7b88bdca863393e42c8 upstream.
 
-This patch fixes a build failure when using GCC 8.1:
+The value of dac_bits is used in adt7316_show_DAC() and adt7316_store_DAC(),
+and it should be either 8, 10, or 12 bits depending on the device in use. The
+driver currently only assigns a value to dac_bits in
+adt7316_store_da_high_resolution(). The purpose of the dac high resolution
+option is not to change dac resolution for normal operation. Instead, it
+is specific to an optional feature where one or two of the four dacs can
+be set to output voltage proportional to temperature. If the user chooses
+to set dac a and/or dac b to output voltage proportional to temperature,
+the da_high_resolution attribute can optionally be enabled to use 10 bit
+resolution rather than the default 8 bits. This is only available on the
+10 and 12 bit dac devices. If the user attempts to read or write dacs a
+or b under these settings, the driver's current behaviour is to return an
+error. Dacs c and d continue to operate normally under these conditions.
+With the above in mind, remove the dac_bits assignments from this function
+since the value of dac_bits as used in the driver is not dependent on this
+dac high resolution option.
 
-/usr/bin/ld: block/partitions/ldm.o: in function `ldm_parse_tocblock':
-block/partitions/ldm.c:153: undefined reference to `strcmp'
+Since the dac_bits assignments discussed above are currently the only ones
+in this driver, the default value of dac_bits is 0. This results in incorrect
+calculations when the dacs are read or written in adt7316_show_DAC() and
+adt7316_store_DAC(). To correct this, assign a value to dac_bits in
+adt7316_probe() to ensure correct operation as soon as the device is
+registered and available to userspace.
 
-This is caused by a new optimization which effectively replaces a
-strncmp() call with a strcmp() call. This affects a number of strncmp()
-call sites in the kernel.
-
-The entire class of optimizations is avoided with -fno-builtin, which
-gets enabled by -ffreestanding. This may avoid possible future build
-failures in case new optimizations appear in future compilers.
-
-I haven't done any performance measurements with this patch but I did
-count the function calls in a defconfig build. For example, there are now
-23 more sprintf() calls and 39 fewer strcpy() calls. The effect on the
-other libc functions is smaller.
-
-If this harms performance we can tackle that regression by optimizing
-the call sites, ideally using semantic patches. That way, clang and ICC
-builds might benfit too.
-
-Reference: https://marc.info/?l=linux-m68k&m=154514816222244&w=2
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/m68k/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/iio/addac/adt7316.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/m68k/Makefile
-+++ b/arch/m68k/Makefile
-@@ -59,7 +59,10 @@ cpuflags-$(CONFIG_M5206e)	:= $(call cc-o
- cpuflags-$(CONFIG_M5206)	:= $(call cc-option,-mcpu=5206,-m5200)
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -654,15 +654,9 @@ static ssize_t adt7316_store_da_high_res
+ 	u8 config3;
+ 	int ret;
  
- KBUILD_AFLAGS += $(cpuflags-y)
--KBUILD_CFLAGS += $(cpuflags-y) -pipe
-+KBUILD_CFLAGS += $(cpuflags-y)
+-	chip->dac_bits = 8;
+-
+-	if (buf[0] == '1') {
++	if (buf[0] == '1')
+ 		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
+-		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+-			chip->dac_bits = 12;
+-		else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
+-			chip->dac_bits = 10;
+-	} else
++	else
+ 		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
+ 
+ 	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
+@@ -2129,6 +2123,13 @@ int adt7316_probe(struct device *dev, st
+ 	else
+ 		return -ENODEV;
+ 
++	if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
++		chip->dac_bits = 12;
++	else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
++		chip->dac_bits = 10;
++	else
++		chip->dac_bits = 8;
 +
-+KBUILD_CFLAGS += -pipe -ffreestanding
-+
- ifdef CONFIG_MMU
- # without -fno-strength-reduce the 53c7xx.c driver fails ;-(
- KBUILD_CFLAGS += -fno-strength-reduce -ffixed-a2
+ 	chip->ldac_pin = adt7316_platform_data[1];
+ 	if (!chip->ldac_pin) {
+ 		chip->config3 |= ADT7316_DA_EN_VIA_DAC_LDCA;
 
