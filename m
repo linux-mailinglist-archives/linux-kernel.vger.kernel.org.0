@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9FA66173C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E3161743
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfGGTq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:46:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56990 "EHLO
+        id S1727469AbfGGTiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56766 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727494AbfGGTiE (ORCPT
+        by vger.kernel.org with ESMTP id S1727431AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:04 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz3-0006fQ-Ey; Sun, 07 Jul 2019 20:38:01 +0100
+        id 1hkCz0-0006cx-CW; Sun, 07 Jul 2019 20:37:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz1-0005Yk-LY; Sun, 07 Jul 2019 20:37:59 +0100
+        id 1hkCyz-0005Wg-C6; Sun, 07 Jul 2019 20:37:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Nicolin Chen" <nicoleotsuka@gmail.com>,
-        "Mark Brown" <broonie@kernel.org>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "Stefan Agner" <stefan@agner.ch>,
-        "Daniel Baluta" <daniel.baluta@nxp.com>
+        "Yangtao Li" <tiny.windzz@gmail.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.215668785@decadent.org.uk>
+Message-ID: <lsq.1562518457.95525416@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 031/129] ASoC: imx-sgtl5000: put of nodes if finding
- codec fails
+Subject: [PATCH 3.16 005/129] clk: socfpga: fix refcount leak
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,34 +47,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit d9866572486802bc598a3e8576a5231378d190de upstream.
+commit 7f9705beeb3759e69165e7aff588f6488ff6c1ac upstream.
 
-Make sure to properly put the of node in case finding the codec
-fails.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Fixes: 81e8e4926167 ("ASoC: fsl: add sgtl5000 clock support for imx-sgtl5000")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 5343325ff3dd ("clk: socfpga: add a clock driver for the Arria 10 platform")
+Fixes: a30d27ed739b ("clk: socfpga: fix clock driver for 3.15")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+[bwh: Backported to 3.16: drop changes in clk-pll-a10.c]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/fsl/imx-sgtl5000.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/sound/soc/fsl/imx-sgtl5000.c
-+++ b/sound/soc/fsl/imx-sgtl5000.c
-@@ -118,7 +118,8 @@ static int imx_sgtl5000_probe(struct pla
- 	codec_dev = of_find_i2c_device_by_node(codec_np);
- 	if (!codec_dev) {
- 		dev_err(&pdev->dev, "failed to find codec platform device\n");
--		return -EPROBE_DEFER;
-+		ret = -EPROBE_DEFER;
-+		goto fail;
- 	}
+--- a/drivers/clk/socfpga/clk-pll.c
++++ b/drivers/clk/socfpga/clk-pll.c
+@@ -102,6 +102,7 @@ static __init struct clk *__socfpga_pll_
  
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+ 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
+ 	clk_mgr_base_addr = of_iomap(clkmgr_np, 0);
++	of_node_put(clkmgr_np);
+ 	BUG_ON(!clk_mgr_base_addr);
+ 	pll_clk->hw.reg = clk_mgr_base_addr + reg;
+ 
 
