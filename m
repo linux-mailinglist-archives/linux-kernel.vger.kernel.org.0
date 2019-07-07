@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A2261749
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 934ED61759
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfGGTq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:46:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56876 "EHLO
+        id S1728193AbfGGTrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:47:35 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56790 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727460AbfGGTiB (ORCPT
+        by vger.kernel.org with ESMTP id S1727438AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:01 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz1-0006dY-Fl; Sun, 07 Jul 2019 20:37:59 +0100
+        id 1hkCz1-0006dG-50; Sun, 07 Jul 2019 20:37:59 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz0-0005Xd-FF; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCyz-0005XE-W6; Sun, 07 Jul 2019 20:37:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jeremy Fertic" <jeremyfertic@gmail.com>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
+        "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Yangtao Li" <tiny.windzz@gmail.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.98043477@decadent.org.uk>
+Message-ID: <lsq.1562518457.421562213@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 017/129] staging: iio: adt7316: fix the dac write
- calculation
+Subject: [PATCH 3.16 012/129] clk: armada-xp: fix refcount leak in
+ axp_clk_init()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,52 +49,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
+commit db20a90a4b6745dad62753f8bd2f66afdd5abc84 upstream.
 
-The lsb calculation is not masking the correct bits from the user input.
-Subtract 1 from (1 << offset) to correctly set up the mask to be applied
-to user input.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-The lsb register stores its value starting at the bit 7 position.
-adt7316_store_DAC() currently assumes the value is at the other end of the
-register. Shift the lsb value before storing it in a new variable lsb_reg,
-and write this variable to the lsb register.
-
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 0a11a6ae9437 ("clk: mvebu: armada-xp: maintain clock init order")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/addac/adt7316.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/clk/mvebu/armada-xp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -1448,7 +1448,7 @@ static ssize_t adt7316_show_DAC(struct a
- static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
- 		int channel, const char *buf, size_t len)
- {
--	u8 msb, lsb, offset;
-+	u8 msb, lsb, lsb_reg, offset;
- 	u16 data;
- 	int ret;
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -202,7 +202,9 @@ static void __init axp_clk_init(struct d
  
-@@ -1466,9 +1466,13 @@ static ssize_t adt7316_store_DAC(struct
- 		return -EINVAL;
+ 	mvebu_coreclk_setup(np, &axp_coreclks);
  
- 	if (chip->dac_bits > 8) {
--		lsb = data & (1 << offset);
-+		lsb = data & ((1 << offset) - 1);
-+		if (chip->dac_bits == 12)
-+			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
-+		else
-+			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
- 		ret = chip->bus.write(chip->bus.client,
--			ADT7316_DA_DATA_BASE + channel * 2, lsb);
-+			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
- 		if (ret)
- 			return -EIO;
- 	}
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
++		of_node_put(cgnp);
++	}
+ }
+ CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
 
