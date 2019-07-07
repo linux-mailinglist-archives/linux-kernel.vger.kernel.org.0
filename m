@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72AEF61665
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9626166B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfGGTi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57386 "EHLO
+        id S1727990AbfGGTjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:39:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57968 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727566AbfGGTiK (ORCPT
+        by vger.kernel.org with ESMTP id S1727665AbfGGTiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:10 -0400
+        Sun, 7 Jul 2019 15:38:16 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz7-0006iG-41; Sun, 07 Jul 2019 20:38:05 +0100
+        id 1hkCzD-0006jk-89; Sun, 07 Jul 2019 20:38:11 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz5-0005cK-Cl; Sun, 07 Jul 2019 20:38:03 +0100
+        id 1hkCz8-0005fm-Uj; Sun, 07 Jul 2019 20:38:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Kangjie Lu" <kjlu@umn.edu>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.853184860@decadent.org.uk>
+Message-ID: <lsq.1562518457.80017454@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 075/129] drm/radeon/evergreen_cs: fix missing break
- in switch statement
+Subject: [PATCH 3.16 116/129] net: sh_eth: fix a missing check of
+ of_get_phy_mode
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,32 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-commit cc5034a5d293dd620484d1d836aa16c6764a1c8c upstream.
+commit 035a14e71f27eefa50087963b94cbdb3580d08bf upstream.
 
-Add missing break statement in order to prevent the code from falling
-through to case CB_TARGET_MASK.
+of_get_phy_mode may fail and return a negative error code;
+the fix checks the return value of of_get_phy_mode and
+returns NULL of it fails.
 
-This bug was found thanks to the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Fixes: dd220a00e8bd ("drm/radeon/kms: add support for streamout v7")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: b356e978e92f ("sh_eth: add device tree support")
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/radeon/evergreen_cs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/radeon/evergreen_cs.c
-+++ b/drivers/gpu/drm/radeon/evergreen_cs.c
-@@ -1318,6 +1318,7 @@ static int evergreen_cs_check_reg(struct
- 			return -EINVAL;
- 		}
- 		ib[idx] += (u32)((reloc->gpu_offset >> 8) & 0xffffffff);
-+		break;
- 	case CB_TARGET_MASK:
- 		track->cb_target_mask = radeon_get_ib_value(p, idx);
- 		track->cb_dirty = true;
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2712,12 +2712,16 @@ static struct sh_eth_plat_data *sh_eth_p
+ 	struct device_node *np = dev->of_node;
+ 	struct sh_eth_plat_data *pdata;
+ 	const char *mac_addr;
++	int ret;
+ 
+ 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+ 		return NULL;
+ 
+-	pdata->phy_interface = of_get_phy_mode(np);
++	ret = of_get_phy_mode(np);
++	if (ret < 0)
++		return NULL;
++	pdata->phy_interface = ret;
+ 
+ 	mac_addr = of_get_mac_address(np);
+ 	if (mac_addr)
 
