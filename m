@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1262616F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 023C061718
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfGGToH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:44:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57360 "EHLO
+        id S1728568AbfGGTpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:45:11 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57126 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726105AbfGGTiJ (ORCPT
+        by vger.kernel.org with ESMTP id S1727529AbfGGTiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:09 -0400
+        Sun, 7 Jul 2019 15:38:06 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0006hq-PF; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCz4-0006g3-9v; Sun, 07 Jul 2019 20:38:02 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0005br-W5; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz2-0005Zk-Vp; Sun, 07 Jul 2019 20:38:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jacek Anaszewski" <jacek.anaszewski@gmail.com>,
-        "Michal Kazior" <michal@plume.com>
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Eric Biggers" <ebiggers@google.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.276777089@decadent.org.uk>
+Message-ID: <lsq.1562518457.77341541@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 069/129] leds: lp55xx: fix null deref on firmware
- load failure
+Subject: [PATCH 3.16 043/129] crypto: testmgr - skip crc32c context test
+ for ahash algorithms
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,54 +48,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Kazior <michal@plume.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 5ddb0869bfc1bca6cfc592c74c64a026f936638c upstream.
+commit eb5e6730db98fcc4b51148b4a819fa4bf864ae54 upstream.
 
-I've stumbled upon a kernel crash and the logs
-pointed me towards the lp5562 driver:
+Instantiating "cryptd(crc32c)" causes a crypto self-test failure because
+the crypto_alloc_shash() in alg_test_crc32c() fails.  This is because
+cryptd(crc32c) is an ahash algorithm, not a shash algorithm; so it can
+only be accessed through the ahash API, unlike shash algorithms which
+can be accessed through both the ahash and shash APIs.
 
-> <4>[306013.841294] lp5562 0-0030: Direct firmware load for lp5562 failed with error -2
-> <4>[306013.894990] lp5562 0-0030: Falling back to user helper
-> ...
-> <3>[306073.924886] lp5562 0-0030: firmware request failed
-> <1>[306073.939456] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-> <4>[306074.251011] PC is at _raw_spin_lock+0x1c/0x58
-> <4>[306074.255539] LR is at release_firmware+0x6c/0x138
-> ...
+As the test is testing the shash descriptor format which is only
+applicable to shash algorithms, skip it for ahash algorithms.
 
-After taking a look I noticed firmware_release()
-could be called with either NULL or a dangling
-pointer.
+(Note that it's still important to fix crypto self-test failures even
+ for weird algorithm instantiations like cryptd(crc32c) that no one
+ would really use; in fips_enabled mode unprivileged users can use them
+ to panic the kernel, and also they prevent treating a crypto self-test
+ failure as a bug when fuzzing the kernel.)
 
-Fixes: 10c06d178df11 ("leds-lp55xx: support firmware interface")
-Signed-off-by: Michal Kazior <michal@plume.com>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Fixes: 8e3ee85e68c5 ("crypto: crc32c - Test descriptor context format")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/leds/leds-lp55xx-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ crypto/testmgr.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -214,7 +214,7 @@ static void lp55xx_firmware_loaded(const
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1655,14 +1655,21 @@ static int alg_test_crc32c(const struct
  
- 	if (!fw) {
- 		dev_err(dev, "firmware request failed\n");
+ 	err = alg_test_hash(desc, driver, type, mask);
+ 	if (err)
 -		goto out;
-+		return;
++		return err;
+ 
+ 	tfm = crypto_alloc_shash(driver, type, mask);
+ 	if (IS_ERR(tfm)) {
++		if (PTR_ERR(tfm) == -ENOENT) {
++			/*
++			 * This crc32c implementation is only available through
++			 * ahash API, not the shash API, so the remaining part
++			 * of the test is not applicable to it.
++			 */
++			return 0;
++		}
+ 		printk(KERN_ERR "alg: crc32c: Failed to load transform for %s: "
+ 		       "%ld\n", driver, PTR_ERR(tfm));
+-		err = PTR_ERR(tfm);
+-		goto out;
++		return PTR_ERR(tfm);
  	}
  
- 	/* handling firmware data is chip dependent */
-@@ -227,9 +227,9 @@ static void lp55xx_firmware_loaded(const
+ 	do {
+@@ -1691,7 +1698,6 @@ static int alg_test_crc32c(const struct
  
- 	mutex_unlock(&chip->lock);
+ 	crypto_free_shash(tfm);
  
 -out:
- 	/* firmware should be released for other channel use */
- 	release_firmware(chip->fw);
-+	chip->fw = NULL;
+ 	return err;
  }
  
- static int lp55xx_request_firmware(struct lp55xx_chip *chip)
 
