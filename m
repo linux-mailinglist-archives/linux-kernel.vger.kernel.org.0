@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78A5616E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F2161664
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfGGTni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:43:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57452 "EHLO
+        id S1727819AbfGGTir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57200 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727580AbfGGTiK (ORCPT
+        by vger.kernel.org with ESMTP id S1727541AbfGGTiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:10 -0400
+        Sun, 7 Jul 2019 15:38:07 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz6-0006hk-Dz; Sun, 07 Jul 2019 20:38:04 +0100
+        id 1hkCz5-0006gb-2o; Sun, 07 Jul 2019 20:38:03 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0005bm-UN; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz3-0005aE-EH; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jay Dolan" <jay.dolan@accesio.com>
+        "Chiranjeevi Rapolu" <chiranjeevi.rapolu@intel.com>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.619949336@decadent.org.uk>
+Message-ID: <lsq.1562518457.774638704@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 068/129] serial: 8250_pci: Have ACCES cards that use
- the four port Pericom PI7C9X7954 chip use the pci_pericom_setup()
+Subject: [PATCH 3.16 049/129] media: uvcvideo: Avoid NULL pointer
+ dereference at the end of streaming
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,133 +50,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Dolan <jay.dolan@accesio.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-commit 78d3820b9bd39028727c6aab7297b63c093db343 upstream.
+commit 9dd0627d8d62a7ddb001a75f63942d92b5336561 upstream.
 
-The four port Pericom chips have the fourth port at the wrong address.
-Make use of quirk to fix it.
+The UVC video driver converts the timestamp from hardware specific unit
+to one known by the kernel at the time when the buffer is dequeued. This
+is fine in general, but the streamoff operation consists of the
+following steps (among other things):
 
-Fixes: c8d192428f52 ("serial: 8250: added acces i/o products quad and octal serial cards")
-Signed-off-by: Jay Dolan <jay.dolan@accesio.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+1. uvc_video_clock_cleanup --- the hardware clock sample array is
+   released and the pointer to the array is set to NULL,
+
+2. buffers in active state are returned to the user and
+
+3. buf_finish callback is called on buffers that are prepared.
+   buf_finish includes calling uvc_video_clock_update that accesses the
+   hardware clock sample array.
+
+The above is serialised by a queue specific mutex. Address the problem
+by skipping the clock conversion if the hardware clock sample array is
+already released.
+
+Fixes: 9c0863b1cc48 ("[media] vb2: call buf_finish from __queue_cancel")
+
+Reported-by: Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>
+Tested-by: Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/8250/8250_pci.c | 105 +++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+ drivers/media/usb/uvc/uvc_video.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -2183,6 +2183,111 @@ static struct pci_serial_quirk pci_seria
- 		.setup		= pci_default_setup,
- 		.exit		= pci_plx9050_exit,
- 	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SDB,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM_4S,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4DB,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM232_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SMDB,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM_4SM,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM422_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM485_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4S,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM232_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM232_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM422_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM485_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SM,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
-+	{
-+		.vendor     = PCI_VENDOR_ID_ACCESIO,
-+		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4SM,
-+		.subvendor  = PCI_ANY_ID,
-+		.subdevice  = PCI_ANY_ID,
-+		.setup      = pci_pericom_setup,
-+	},
- 	/*
- 	 * SBS Technologies, Inc., PMC-OCTALPRO 232
- 	 */
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -627,6 +627,14 @@ void uvc_video_clock_update(struct uvc_s
+ 	u32 rem;
+ 	u64 y;
+ 
++	/*
++	 * We will get called from __vb2_queue_cancel() if there are buffers
++	 * done but not dequeued by the user, but the sample array has already
++	 * been released at that time. Just bail out in that case.
++	 */
++	if (!clock->samples)
++		return;
++
+ 	spin_lock_irqsave(&clock->lock, flags);
+ 
+ 	if (clock->count < clock->size)
 
