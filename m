@@ -2,66 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3A56135F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 02:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC906136D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 03:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfGGAxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 6 Jul 2019 20:53:05 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33828 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfGGAxE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 20:53:04 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hjvQD-0001lt-C2; Sun, 07 Jul 2019 00:52:58 +0000
-Date:   Sun, 7 Jul 2019 01:52:53 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mfd: asic3: One function call less in asic3_irq_probe()
-Message-ID: <20190707005251.GQ17978@ZenIV.linux.org.uk>
-References: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
+        id S1727177AbfGGBRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 21:17:48 -0400
+Received: from namei.org ([65.99.196.166]:50962 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726927AbfGGBRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 21:17:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x671GBjI025045;
+        Sun, 7 Jul 2019 01:16:11 GMT
+Date:   Sat, 6 Jul 2019 18:16:11 -0700 (PDT)
+From:   James Morris <jmorris@namei.org>
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
+cc:     linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Brad Spengler <spender@grsecurity.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        PaX Team <pageexec@freemail.hu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 00/12] S.A.R.A. a new stacked LSM
+In-Reply-To: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <alpine.LRH.2.21.1907061814390.24897@namei.org>
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 08:30:08PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 5 Jul 2019 20:22:26 +0200
-> 
-> Avoid an extra function call by using a ternary operator instead of
-> a conditional statement.
+On Sat, 6 Jul 2019, Salvatore Mesoraca wrote:
 
-Which is a good thing, because...?
+> S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
 
-> This issue was detected by using the Coccinelle software.
+Please make this just SARA. Nobody wants to read or type S.A.R.A.
 
-Oh, I see - that answers all questions.  "Software has detected an issue",
-so of course an issue it is.
 
-> -		if (irq < asic->irq_base + ASIC3_NUM_GPIOS)
-> -			irq_set_chip(irq, &asic3_gpio_irq_chip);
-> -		else
-> -			irq_set_chip(irq, &asic3_irq_chip);
-> -
-> +		irq_set_chip(irq,
-> +			     (irq < asic->irq_base + ASIC3_NUM_GPIOS)
-> +			     ? &asic3_gpio_irq_chip
-> +			     : &asic3_irq_chip);
 
-... except that the result is not objectively better by any real
-criteria.  It's not more readable, it conveys _less_ information
-to reader (the fact that calls differ only by the last argument
-had been visually obvious already, and logics used to be easier
-to see), it (obviously) does not generate better (or different)
-code.  What the hell is the point?
+-- 
+James Morris
+<jmorris@namei.org>
 
-May I politely inquire what makes you so determined to avoid any
-not-entirely-mechanical activity?
