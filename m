@@ -2,78 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C996156E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 17:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67FF061574
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 17:47:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfGGPkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 11:40:55 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34803 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfGGPkz (ORCPT
+        id S1727286AbfGGPrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 11:47:03 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37154 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfGGPrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 11:40:55 -0400
-Received: by mail-io1-f67.google.com with SMTP id k8so29421351iot.1;
-        Sun, 07 Jul 2019 08:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qwHbQTuFE2kUikky3tbT6iwWg4yYSI3KMwntAKoTe4o=;
-        b=er0xymwpwDu18o30aSZDPXm6ih4bYYK56Lsn0PBrEBsI2+GkfvJ0DLnQK2RVcNhiay
-         +D/JD05yJ/wS8a98UDAA7JmIXiaidvPOMnU2vGyMoKdb1jtHeCtBC3kmXqU8R3Q228vG
-         68XGAd7WFcd9HF8yqcBoPhLbNT6Ry5i5f0EVkcB7o8FeikeNs/fXuQT4mDrR8/glCN+Y
-         olzFtTyNcreomoJ0mN7e/JWRCYVoCfOG9fLdGpi1ajzyeGmzLMEJxRge1NuGQzdqnECA
-         z47rAAdunWBGIzPrvt8O+hq21Hog6XykpUYRgPx2NN9dX9m4ijMVEhbxacAQadi+J3vO
-         uUqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qwHbQTuFE2kUikky3tbT6iwWg4yYSI3KMwntAKoTe4o=;
-        b=JFRU1J/fUNhR9L+52JhQEpKkjnhiIVLifXrfvBxd1Qb0FN+48glRLcTl4/0H3fvWM7
-         I01dsV7j8YeqnPoWQtPtghd3UI72XEBtB0upMwrW2wrhSHC6FxYLODXdLpOh4nU8Mg7j
-         YOzteNWiLeytCxNIHzqPC46CJsKhWdquI5C5CwbJbVcoqC/ObxfizkIhf5Qsk9cNz3BG
-         xhLSUxdzvqGpbCoM1kOPykUJ76Gachj8eF3FN9JZgdG9iWKatfKiIk+ftEFHRxwvmmqD
-         FyRFHOd9bjmEqM+EAIutD7MXucl2OvSJ/tZGZ+qRFKDxcfdbWYsPbEVBEMNtCmkrKQ2r
-         GsbA==
-X-Gm-Message-State: APjAAAW85MF13WpGIFkIyLMMoqgUe01rz74gvDeSFzC7aGuPyclQ4H9j
-        xARHg8Z1j7j3MyrQRl0rfPq53UxCpKbsQ8wCjIuRsdSXDB+Tzw==
-X-Google-Smtp-Source: APXvYqzuxGF7GLEefBfbdxPUSlLxOABw/jdkNTyIlCf5RzRx9gAPfKtK85ODjRIpvEtMUdMrKQuPQCx7Np6eky+RxpY=
-X-Received: by 2002:a5d:8347:: with SMTP id q7mr13181248ior.277.1562514054357;
- Sun, 07 Jul 2019 08:40:54 -0700 (PDT)
+        Sun, 7 Jul 2019 11:47:03 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67Fhv0P071029;
+        Sun, 7 Jul 2019 15:46:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=uYaJcnvEx4X1SmHQfvatBVE33WA/WoF3de594XALlMo=;
+ b=e9O8T04O1yzKAv3SKvh1lVAPaLjvb6sWOoGD7iyuPikLilR/pRY3PGYX8fb6e/KEdjkh
+ hdOsvhjoc2m5jAwCbbN+sYx3mD0Rr/FZsA4OZio4Mzn7PcmAVLrTal/rde8/mIpL6Zk9
+ SdTntEEaxkoDhxuVMarOTC8YIpXqo9YYrQmU5uoWU01LPs2U7F0foSZ8IBoP4TVEndM3
+ eCBxARBwyXDSAAoiofi67pJDLApTCItVWe5isBFHkRsOjY3ZZdxs5RgoLmanuqvJquLO
+ Icg/5XpxSzz3RkUsDzJ+O8WvgFyKnOKsH/oYz8wx1EuT7l7SnH9mnU3bHhtlx7KNOoY/ +Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2tjm9qayac-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 07 Jul 2019 15:46:17 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67Fhk7C023162;
+        Sun, 7 Jul 2019 15:46:17 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2tjgrt6amn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 07 Jul 2019 15:46:17 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x67FkFGg028454;
+        Sun, 7 Jul 2019 15:46:15 GMT
+Received: from [10.0.0.83] (/73.223.239.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 07 Jul 2019 08:46:14 -0700
+Subject: Re: [PATCH] tracing: make exported ftrace_set_clr_event non-static
+To:     Denis Efremov <efremov@linux.com>,
+        Divya Indi <divya.indi@oracle.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20190704172110.27041-1-efremov@linux.com>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <a86cfb65-6430-c79d-29b1-447601527418@oracle.com>
+Date:   Sun, 7 Jul 2019 08:46:12 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com> <alpine.LRH.2.21.1907061814390.24897@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1907061814390.24897@namei.org>
-From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date:   Sun, 7 Jul 2019 17:40:43 +0200
-Message-ID: <CAJHCu1KPkzREqq0pGJ6Wp4CKHkA0Eeaj2vcGViE+B0192tFWFw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/12] S.A.R.A. a new stacked LSM
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190704172110.27041-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907070217
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907070218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
->
-> On Sat, 6 Jul 2019, Salvatore Mesoraca wrote:
->
-> > S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
->
-> Please make this just SARA. Nobody wants to read or type S.A.R.A.
+Patch looks good to me.
 
-Agreed.
-Thank you for your suggestion.
+Reviewed-by: Joe Jin <joe.jin@oracle.com>
+
+Thanks,
+Joe
+On 7/4/19 10:21 AM, Denis Efremov wrote:
+> The function ftrace_set_clr_event is declared static and marked
+> EXPORT_SYMBOL_GPL(), which is at best an odd combination. Because the
+> function was decided to be a part of API, this commit removes the static
+> attribute and adds the declaration to the header.
+> 
+> Fixes: f45d1225adb04 ("tracing: Kernel access to Ftrace instances")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  include/linux/trace_events.h | 1 +
+>  kernel/trace/trace_events.c  | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 8a62731673f7..84bc84f00e8f 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -539,6 +539,7 @@ extern int trace_event_get_offsets(struct trace_event_call *call);
+>  
+>  #define is_signed_type(type)	(((type)(-1)) < (type)1)
+>  
+> +int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
+>  int trace_set_clr_event(const char *system, const char *event, int set);
+>  
+>  /*
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index 0ce3db67f556..b6b46184f6bf 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -795,7 +795,7 @@ static int __ftrace_set_clr_event(struct trace_array *tr, const char *match,
+>  	return ret;
+>  }
+>  
+> -static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+> +int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+>  {
+>  	char *event = NULL, *sub = NULL, *match;
+>  	int ret;
+> 
+
