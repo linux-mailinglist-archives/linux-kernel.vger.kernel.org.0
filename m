@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 023C061718
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B78A5616E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbfGGTpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:45:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57126 "EHLO
+        id S1728350AbfGGTni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:43:38 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57452 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727529AbfGGTiG (ORCPT
+        by vger.kernel.org with ESMTP id S1727580AbfGGTiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:06 -0400
+        Sun, 7 Jul 2019 15:38:10 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz4-0006g3-9v; Sun, 07 Jul 2019 20:38:02 +0100
+        id 1hkCz6-0006hk-Dz; Sun, 07 Jul 2019 20:38:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz2-0005Zk-Vp; Sun, 07 Jul 2019 20:38:00 +0100
+        id 1hkCz4-0005bm-UN; Sun, 07 Jul 2019 20:38:02 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Eric Biggers" <ebiggers@google.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jay Dolan" <jay.dolan@accesio.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.77341541@decadent.org.uk>
+Message-ID: <lsq.1562518457.619949336@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 043/129] crypto: testmgr - skip crc32c context test
- for ahash algorithms
+Subject: [PATCH 3.16 068/129] serial: 8250_pci: Have ACCES cards that use
+ the four port Pericom PI7C9X7954 chip use the pci_pericom_setup()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,66 +48,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Jay Dolan <jay.dolan@accesio.com>
 
-commit eb5e6730db98fcc4b51148b4a819fa4bf864ae54 upstream.
+commit 78d3820b9bd39028727c6aab7297b63c093db343 upstream.
 
-Instantiating "cryptd(crc32c)" causes a crypto self-test failure because
-the crypto_alloc_shash() in alg_test_crc32c() fails.  This is because
-cryptd(crc32c) is an ahash algorithm, not a shash algorithm; so it can
-only be accessed through the ahash API, unlike shash algorithms which
-can be accessed through both the ahash and shash APIs.
+The four port Pericom chips have the fourth port at the wrong address.
+Make use of quirk to fix it.
 
-As the test is testing the shash descriptor format which is only
-applicable to shash algorithms, skip it for ahash algorithms.
-
-(Note that it's still important to fix crypto self-test failures even
- for weird algorithm instantiations like cryptd(crc32c) that no one
- would really use; in fips_enabled mode unprivileged users can use them
- to panic the kernel, and also they prevent treating a crypto self-test
- failure as a bug when fuzzing the kernel.)
-
-Fixes: 8e3ee85e68c5 ("crypto: crc32c - Test descriptor context format")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: c8d192428f52 ("serial: 8250: added acces i/o products quad and octal serial cards")
+Signed-off-by: Jay Dolan <jay.dolan@accesio.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- crypto/testmgr.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_pci.c | 105 +++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
 
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1655,14 +1655,21 @@ static int alg_test_crc32c(const struct
- 
- 	err = alg_test_hash(desc, driver, type, mask);
- 	if (err)
--		goto out;
-+		return err;
- 
- 	tfm = crypto_alloc_shash(driver, type, mask);
- 	if (IS_ERR(tfm)) {
-+		if (PTR_ERR(tfm) == -ENOENT) {
-+			/*
-+			 * This crc32c implementation is only available through
-+			 * ahash API, not the shash API, so the remaining part
-+			 * of the test is not applicable to it.
-+			 */
-+			return 0;
-+		}
- 		printk(KERN_ERR "alg: crc32c: Failed to load transform for %s: "
- 		       "%ld\n", driver, PTR_ERR(tfm));
--		err = PTR_ERR(tfm);
--		goto out;
-+		return PTR_ERR(tfm);
- 	}
- 
- 	do {
-@@ -1691,7 +1698,6 @@ static int alg_test_crc32c(const struct
- 
- 	crypto_free_shash(tfm);
- 
--out:
- 	return err;
- }
- 
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -2183,6 +2183,111 @@ static struct pci_serial_quirk pci_seria
+ 		.setup		= pci_default_setup,
+ 		.exit		= pci_plx9050_exit,
+ 	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SDB,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM_4S,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4DB,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM232_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SMDB,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_COM_4SM,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM422_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM485_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4S,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM232_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_MPCIE_ICM232_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM422_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM485_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM232_4,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_COM_4SM,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
++	{
++		.vendor     = PCI_VENDOR_ID_ACCESIO,
++		.device     = PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4SM,
++		.subvendor  = PCI_ANY_ID,
++		.subdevice  = PCI_ANY_ID,
++		.setup      = pci_pericom_setup,
++	},
+ 	/*
+ 	 * SBS Technologies, Inc., PMC-OCTALPRO 232
+ 	 */
 
