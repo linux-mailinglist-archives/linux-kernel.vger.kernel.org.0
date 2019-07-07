@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE50361755
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C49D961663
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfGGTr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:47:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56810 "EHLO
+        id S1727813AbfGGTio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:38:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57196 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727443AbfGGTiA (ORCPT
+        by vger.kernel.org with ESMTP id S1727538AbfGGTiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:00 -0400
+        Sun, 7 Jul 2019 15:38:07 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCyz-0006ct-W1; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCz5-0006gg-0o; Sun, 07 Jul 2019 20:38:03 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCyz-0005WQ-0V; Sun, 07 Jul 2019 20:37:57 +0100
+        id 1hkCz3-0005aU-MA; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Jeremy Fertic" <jeremyfertic@gmail.com>
+        "Colin Ian King" <colin.king@canonical.com>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.759915938@decadent.org.uk>
+Message-ID: <lsq.1562518457.131121313@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 001/129] staging: iio: adt7316: fix register and bit
- definitions
+Subject: [PATCH 3.16 052/129] rtc: 88pm80x: fix unintended sign extension
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,44 +47,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 53a6f022b4fe8645468adaffca901dbf8c3c547e upstream.
+commit fb0b322537a831b5b0cb948c56f8f958ce493d3a upstream.
 
-Change two register addresses and one bit definition to match the
-datasheet.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Note that there are many issues in this driver so I would
-not suggest backporting these fixes to stable trees.
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Detected by CoverityScan, CID#714646-714649 ("Unintended sign extension")
+
+Fixes: 2985c29c1964 ("rtc: Add rtc support to 88PM80X PMIC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/addac/adt7316.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/rtc/rtc-88pm80x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -59,8 +59,8 @@
- #define ADT7316_CONFIG1			0x18
- #define ADT7316_CONFIG2			0x19
- #define ADT7316_CONFIG3			0x1A
--#define ADT7316_LDAC_CONFIG		0x1B
--#define ADT7316_DAC_CONFIG		0x1C
-+#define ADT7316_DAC_CONFIG		0x1B
-+#define ADT7316_LDAC_CONFIG		0x1C
- #define ADT7316_INT_MASK1		0x1D
- #define ADT7316_INT_MASK2		0x1E
- #define ADT7316_IN_TEMP_OFFSET		0x1F
-@@ -117,7 +117,7 @@
-  */
- #define ADT7316_ADCLK_22_5		0x1
- #define ADT7316_DA_HIGH_RESOLUTION	0x2
--#define ADT7316_DA_EN_VIA_DAC_LDCA	0x4
-+#define ADT7316_DA_EN_VIA_DAC_LDCA	0x8
- #define ADT7516_AIN_IN_VREF		0x10
- #define ADT7316_EN_IN_TEMP_PROP_DACA	0x20
- #define ADT7316_EN_EX_TEMP_PROP_DACB	0x40
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -116,12 +116,14 @@ static int pm80x_rtc_read_time(struct de
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -144,7 +146,8 @@ static int pm80x_rtc_set_time(struct dev
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -165,11 +168,13 @@ static int pm80x_rtc_read_alarm(struct d
+ 	int ret;
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -192,12 +197,14 @@ static int pm80x_rtc_set_alarm(struct de
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 
