@@ -2,170 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB07961340
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 02:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 323E161343
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 02:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfGGAIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 6 Jul 2019 20:08:43 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43475 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfGGAIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Jul 2019 20:08:43 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 16so12443762ljv.10
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2019 17:08:41 -0700 (PDT)
+        id S1727174AbfGGAPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 6 Jul 2019 20:15:53 -0400
+Received: from mail-eopbgr790059.outbound.protection.outlook.com ([40.107.79.59]:17872
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726927AbfGGAPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Jul 2019 20:15:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=scpPsW6mAUXoVLt8Kn4PeKq811oedw5fzrQlbMjJCpY=;
-        b=G+oUd4wfJSoGtgNHa4aniQAymFR8ZTODrrpYDDWKvvAT1YrndCYcei6L3flSRZXgBd
-         QUpo82vvG+iH5qmiH84iaRIHdc5FjR3ElleF4iXAMgN0mw4XLgeTReq+O0ocMMRwfHKX
-         Ogar77eefZnUateWBw1DYgSIQsn/YXxYZzz9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=scpPsW6mAUXoVLt8Kn4PeKq811oedw5fzrQlbMjJCpY=;
-        b=edaEdhRHDc8QdixJxB39h5tXpI/9xJw9zpqRCCzyPbFz/7Vlsk+bmmSB9rBzsJK0Pz
-         Lv09mkLgQweXhSl4LbBX8a7xas4xZ9N5N5eocVxwkp+/NrCQR0TAvkhF1YyqNEDFSwxt
-         cCGwLAONGXDAB+j+ANw7eWZ8WjVfQFNHMZZCdO4VGTKak1Nr6iIaUVK3FiPZkHqJi3bi
-         P9e3PDurV5GBt6bRP8hXIW19AnWcs3kistfJKlcDsjRRWbq/ZBQtLi7s4HJSMiIfb+qx
-         0uAxP+IJJcnOryWAmVLehmsfGn9/Z9HzC2TrDjaBEuWSPIQ/V9dQxxJs1DO5Gklh9ofB
-         uzqA==
-X-Gm-Message-State: APjAAAV3MC3P8yZnvUpixyMdempQctzYJKNHqAwvDolvLcXCSt+fV0BY
-        Ag05gjnh8z/9Yu1ALVP76Qp1bkFsZNI=
-X-Google-Smtp-Source: APXvYqw2tJrZPIOqFWRRsAv4mx3ZDknodIy1ap5iH3A73H1JWOKTrA+us8GHbi5YNixiiJk1hL5iFA==
-X-Received: by 2002:a2e:480a:: with SMTP id v10mr5795615lja.94.1562458120513;
-        Sat, 06 Jul 2019 17:08:40 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id a70sm2655096ljf.57.2019.07.06.17.08.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Jul 2019 17:08:37 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id p197so8522493lfa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2019 17:08:37 -0700 (PDT)
-X-Received: by 2002:ac2:59c9:: with SMTP id x9mr5027021lfn.52.1562458116980;
- Sat, 06 Jul 2019 17:08:36 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nOyuTZS7vLWp0X5nJRBoWvPujeRRYv+Wxw+fvRTVdEw=;
+ b=NOQZcc8/e5+vNEx3G1bEElUoGy9VVrbvl3zfcNQddVsI+DfPStLlVPXVWSLk7l9yTOqvYJ4YW9lLo1aDJffs8gc0tA2U3vvWfI0kqRr3I8tNMLgvLMqYHquS2KKLOVlfmbOOvTeWYjNzfXAKGDDSMx+z5HdFExGvcBRdFaEjvms=
+Received: from DM6PR02CA0014.namprd02.prod.outlook.com (2603:10b6:5:1c::27) by
+ MN2PR02MB6766.namprd02.prod.outlook.com (2603:10b6:208:1dc::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2052.18; Sun, 7 Jul
+ 2019 00:15:50 +0000
+Received: from BL2NAM02FT029.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::200) by DM6PR02CA0014.outlook.office365.com
+ (2603:10b6:5:1c::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2052.19 via Frontend
+ Transport; Sun, 7 Jul 2019 00:15:49 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.80.198)
+ smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.80.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
+Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
+ BL2NAM02FT029.mail.protection.outlook.com (10.152.77.100) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.2032.15 via Frontend Transport; Sun, 7 Jul 2019 00:15:49 +0000
+Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
+ xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1531.3; Sun, 7 Jul 2019 01:15:45 +0100
+Received: from smtp.xilinx.com (172.21.105.197) by
+ xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Sun, 7 Jul 2019 01:15:45 +0100
+Envelope-to: arnd@arndb.de,
+ gregkh@linuxfoundation.org,
+ michal.simek@xilinx.com,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ dragan.cvetic@xilinx.com,
+ derek.kiernan@xilinx.com
+Received: from [149.199.110.15] (port=58228 helo=xirdraganc40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <dragan.cvetic@xilinx.com>)
+        id 1hjuqG-0004ON-W0; Sun, 07 Jul 2019 01:15:45 +0100
+From:   Dragan Cvetic <dragan.cvetic@xilinx.com>
+To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Dragan Cvetic <dragan.cvetic@xilinx.com>,
+        Derek Kiernan <derek.kiernan@xilinx.com>
+Subject: [PATCH V8 0/8] misc: xilinx sd-fec drive
+Date:   Sun, 7 Jul 2019 01:15:34 +0100
+Message-ID: <1562458542-457448-1-git-send-email-dragan.cvetic@xilinx.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190704195555.580363209@infradead.org> <20190704200050.534802824@infradead.org>
- <CAHk-=wiJ4no+TW-8KTfpO-Q5+aaTGVoBJzrnFTvj_zGpVbrGfA@mail.gmail.com>
- <20190705134916.GU3402@hirez.programming.kicks-ass.net> <CAHk-=whsgA+8XtqJY91gqHhh9xLYQLM3kLLFTby=uf2eoZyK7Q@mail.gmail.com>
- <20190706182728.435a89ed@gandalf.local.home> <CAHk-=wj=vCn1c7O4rpjwnS1fZbEppkeUhAq=ob3+wox0FKNZwQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wj=vCn1c7O4rpjwnS1fZbEppkeUhAq=ob3+wox0FKNZwQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 6 Jul 2019 17:08:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjOFXr83=A03ORuT5qq5yiQPwN9vMOrYvTMcqdC-wNn8w@mail.gmail.com>
-Message-ID: <CAHk-=wjOFXr83=A03ORuT5qq5yiQPwN9vMOrYvTMcqdC-wNn8w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] x86/mm, tracing: Fix CR2 corruption
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Anvin <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
-Content-Type: multipart/mixed; boundary="0000000000000a3535058d0c21d7"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(39850400004)(376002)(136003)(396003)(2980300002)(54534003)(189003)(199004)(51416003)(7696005)(2201001)(956004)(26005)(7636002)(186003)(336012)(305945005)(36756003)(71366001)(6306002)(8936002)(2616005)(476003)(486006)(126002)(4326008)(316002)(16586007)(44832011)(36906005)(14444005)(28376004)(5660300002)(356004)(6666004)(50226002)(54906003)(110136005)(106002)(9786002)(8676002)(478600001)(2906002)(246002)(26826003)(48376002)(50466002)(966005)(107886003)(70206006)(76130400001)(426003)(47776003)(70586007)(60926002)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6766;H:xir-pvapexch02.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: be212b49-1e15-414f-1d20-08d7027043ea
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:MN2PR02MB6766;
+X-MS-TrafficTypeDiagnostic: MN2PR02MB6766:
+X-MS-Exchange-PUrlCount: 8
+X-Microsoft-Antispam-PRVS: <MN2PR02MB676625CF1689EF5B5B49AC77CBF70@MN2PR02MB6766.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:2276;
+X-Forefront-PRVS: 0091C8F1EB
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: RonO8HxXgzKYl8j6grJlSqKcfD2Vj3xe1yspJ3ufraQsqyHjW/wMuIJaPeBe0UjvSBbUsjU77NCspPRGSaDikrUpPYJ+F4xqACJv5ZpqDkk1CODuN0Q42u5vySFkTZoyY9DlgL09DHrgP9uq5TXup99h1RAVmPt2w3L7105oP+ZWYFPOi2GLmuhivj/K9c+IU9SEMweFWjWzYzyJCyjKTNEIP2FA4PoB4ezfj4XCs/8cz/rAhFrOcwdGPZL/OOpbGy/vCv/r4Cntgvyk9kDAyzD3nZh49+9ewLevi7zCPn/dfJWFO22PJerhbeWOb0SdGC2L3usWUhsU2GQI0m2yUnYwCN7i9/ZB7JW5O6AqfnuVMHzWRglXIpILRrD448i/a6RClEVNHQ30Une7VDv+0UZbdAL1ZsgmSi1nNg6gPaE=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2019 00:15:49.3572
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: be212b49-1e15-414f-1d20-08d7027043ea
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6766
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000000a3535058d0c21d7
-Content-Type: text/plain; charset="UTF-8"
+This patchset is adding the full Soft Decision Forward Error
+Correction (SD-FEC) driver implementation, driver DT binding and
+driver documentation.
 
-On Sat, Jul 6, 2019 at 3:41 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, Jul 6, 2019 at 3:27 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > We also have to deal with reading vmalloc'd data as that can fault too.
->
-> Ahh, that may be a better reason for PeterZ's patches and reading cr2
-> very early from asm code than the stack trace case.
+Forward Error Correction (FEC) codes such as Low Density Parity
+Check (LDPC) and turbo codes provide a means to control errors in
+data transmissions over unreliable or noisy communication
+channels. The SD-FEC Integrated Block is an optimized block for
+soft-decision decoding of these codes. Fixed turbo codes are
+supported directly, whereas custom and standardized LDPC codes
+are supported through the ability to specify the parity check
+matrix through an AXI4-Lite bus or using the optional programmable
+(PL)-based support logic. For the further information see
+https://www.xilinx.com/support/documentation/ip_documentation/
+sd_fec/v1_1/pg256-sdfec-integrated-block.pdf
 
-Hmm. Another alternative might be to simply just make our vmalloc page
-fault handling more robust.
+This driver is a platform device driver which supports SDFEC16
+(16nm) IP. SD-FEC driver supports LDPC decoding and encoding and
+Turbo code decoding. LDPC codes can be specified on
+a codeword-by-codeword basis, also a custom LDPC code can be used.
 
-Right now, if we take a vmalloc page fault in an inconvenient spot, it
-is fatal because it corrupts the cr2 in the outer context.
+The SD-FEC driver exposes a char device interface and supports
+file operations: open(), close(), poll() and ioctl(). The driver
+allows only one usage of the device, open() limits the number of
+driver instances. The driver also utilize Common Clock Framework
+(CCF).
 
-However, it doesn't *need* to be fatal. Who cares if the outer context
-cr2 gets corrupted? We probably *shouldn't* care - it's an odd and
-unusual case, and the outer context could just handle the wrong
-vmalloc-address cr2 fine (it's going to be a no-op, since the inner
-page fault will have handled it already), return, and then re-fault.
+The control and monitoring is supported over ioctl system call.
+The features supported by ioctl():
+- enable or disable data pipes to/from device
+- configure the FEC algorithm parameters
+- set the order of data
+- provide a control of a SDFEC bypass option
+- activates/deactivates SD-FEC
+- collect and provide statistical data
+- enable/disable interrupt mode
 
-The only reason it's fatal right now is that we care much too deeply about
+Poll can be utilized to detect errors on IRQ trigger rather than
+using looping status and stats ioctl's.
 
- (a) the error code
- (b) the pt_regs state
+Tested-by: Santhosh Dyavanapally <SDYAVANA@xilinx.com>
+Tested by: Punnaiah Choudary Kalluri <punnaia@xilinx.com>
+Tested-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
+Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
 
-when we handle vmalloc faults.
+Changes V1 -> V2:
+- Removed unnecesary comenting from the commit messages.
+- Removed error log messages which can be triggered from user space.
+- Corrected the SDFEC table end addresses.
+- Removed casting between user pointer and kernel pointer.
+- Corrected definition of ioctl command code, used a corect type for
+size parameters.
+- Changes to declarations of IOCTL that pass structures, i.e. do not
+use pointers for sizeof as prevents compile time checks
+- IOCTL size fix, using a paging to manage a memory. Implemented a big
+tables transfer from user to kernel with get_user_pages_fast().
+- Removed unnecessary check after container_of.
+- Removed not needed ioctl code checkes inside ioctl handler.
+- Implemented compat_ioctl.
+- Updated reviewer and tester lists.
+- Updated documentation, added Limitation chapter related to fork()
+and dup().
 
-So one option is that we simply handle the vmalloc faults _without_
-caring about the error code and the pt_regs state, because even if the
-error code or the pt_regs implies that the fault comes from user
-space, the cr2 value might be due to a vmalloc fault from the inner
-kernel page fault that corrupted cr2.
+Link to V1 patch series:
+https://lore.kernel.org/lkml/1552997064-432700-1-git-send-email-dragan.cvetic@xilinx.com/
 
-Right now vmalloc faults are already special and need to be handled
-without holding any locks etc. We'd just make them even more special,
-and say that we might have a vmalloc area fault from any context.
+Changes V2 -> V3:
+- Corrected a licence in xilinx_sdfec.h changed to uapi licence format.
+- Corrected driver variable data types into user space data types.
 
-IOW, somethinig like the attached patch would make nesting vmalloc
-faults harmless. Sure, we'll do the "vmalloc fault" twice, and return
-and re-do the original page fault, but this is a very unusual case, so
-from a performance angle we don't really care.
+Link to V2 patch series:
+https://lore.kernel.org/lkml/1554804414-206099-1-git-send-email-dragan.cvetic@xilinx.com/
 
-But I guess the "read cr2 early" is fine too..
+Changes V3 -> V4:
+- Migrate to simplier misc driver
+- Fix DT example
+- Remove helper function
+- Remove unused open_count variable
+- Remove some logs
+- Change log level to dev_dbg in the most logs
+- Change spin lock to spin_lock_irqsave/spin_lock_irqrestore
+- Correct a licence date in xilinx_sdfec.c
+- Add PTR_ERR in clock handling
 
-               Linus
+Link to V3 patch series:
+https://lore.kernel.org/lkml/1556402706-176271-1-git-send-email-dragan.cvetic@xilinx.com/
 
---0000000000000a3535058d0c21d7
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jxs77kj10>
-X-Attachment-Id: f_jxs77kj10
+Changes V4 -> V5:
+- change atomic variables to c type variables
+- align spinlock name to better description
+- correct a logicla error in LDPC algorithm
+- remove log messages
+- remove useless if statements
+- remove not needed fec_id variable
+- squash commit 4 with 6
 
-IGFyY2gveDg2L21tL2ZhdWx0LmMgfCAzMiArKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvYXJjaC94ODYvbW0vZmF1bHQuYyBiL2FyY2gveDg2L21tL2ZhdWx0LmMKaW5kZXgg
-NDZkZjRjNmFhZTQ2Li4zYTAzNTA0YmM2MjQgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L21tL2ZhdWx0
-LmMKKysrIGIvYXJjaC94ODYvbW0vZmF1bHQuYwpAQCAtMTI0NSw2ICsxMjQ1LDE1IEBAIHN0YXRp
-YyB2b2lkCiBkb19rZXJuX2FkZHJfZmF1bHQoc3RydWN0IHB0X3JlZ3MgKnJlZ3MsIHVuc2lnbmVk
-IGxvbmcgaHdfZXJyb3JfY29kZSwKIAkJICAgdW5zaWduZWQgbG9uZyBhZGRyZXNzKQogeworCS8q
-CisJICogVGhlIGtlcm5lbCB2bWFsbG9jIGFyZWEgY2FuIGZhdWx0IGluIGF0IGFueSB0aW1lLCBh
-bmQKKwkgKiB3ZSBzaG91bGQgbm90IGNoZWNrIHRoZSBodyBlcnJvciBjb2RlLCBzaW5jZSB0aGUg
-Y3IyIHZhbHVlCisJICogY291bGQgYmUgYSBzdGFsZSBvbmUgZnJvbSBhIG5lc3RlZCB2bWFsbG9j
-IGZhdWx0LCBidXQgdGhlCisJICogZXJyb3IgY29kZSBnb3QgcHVzaGVkIGJ5IGhhcmR3YXJlLgor
-CSAqLworCWlmICh2bWFsbG9jX2ZhdWx0KGFkZHJlc3MpID49IDApCisJCXJldHVybjsKKwogCS8q
-CiAJICogUHJvdGVjdGlvbiBrZXlzIGV4Y2VwdGlvbnMgb25seSBoYXBwZW4gb24gdXNlciBwYWdl
-cy4gIFdlCiAJICogaGF2ZSBubyB1c2VyIHBhZ2VzIGluIHRoZSBrZXJuZWwgcG9ydGlvbiBvZiB0
-aGUgYWRkcmVzcwpAQCAtMTI1MiwyOSArMTI2MSw2IEBAIGRvX2tlcm5fYWRkcl9mYXVsdChzdHJ1
-Y3QgcHRfcmVncyAqcmVncywgdW5zaWduZWQgbG9uZyBod19lcnJvcl9jb2RlLAogCSAqLwogCVdB
-Uk5fT05fT05DRShod19lcnJvcl9jb2RlICYgWDg2X1BGX1BLKTsKIAotCS8qCi0JICogV2UgY2Fu
-IGZhdWx0LWluIGtlcm5lbC1zcGFjZSB2aXJ0dWFsIG1lbW9yeSBvbi1kZW1hbmQuIFRoZQotCSAq
-ICdyZWZlcmVuY2UnIHBhZ2UgdGFibGUgaXMgaW5pdF9tbS5wZ2QuCi0JICoKLQkgKiBOT1RFISBX
-ZSBNVVNUIE5PVCB0YWtlIGFueSBsb2NrcyBmb3IgdGhpcyBjYXNlLiBXZSBtYXkKLQkgKiBiZSBp
-biBhbiBpbnRlcnJ1cHQgb3IgYSBjcml0aWNhbCByZWdpb24sIGFuZCBzaG91bGQKLQkgKiBvbmx5
-IGNvcHkgdGhlIGluZm9ybWF0aW9uIGZyb20gdGhlIG1hc3RlciBwYWdlIHRhYmxlLAotCSAqIG5v
-dGhpbmcgbW9yZS4KLQkgKgotCSAqIEJlZm9yZSBkb2luZyB0aGlzIG9uLWRlbWFuZCBmYXVsdGlu
-ZywgZW5zdXJlIHRoYXQgdGhlCi0JICogZmF1bHQgaXMgbm90IGFueSBvZiB0aGUgZm9sbG93aW5n
-OgotCSAqIDEuIEEgZmF1bHQgb24gYSBQVEUgd2l0aCBhIHJlc2VydmVkIGJpdCBzZXQuCi0JICog
-Mi4gQSBmYXVsdCBjYXVzZWQgYnkgYSB1c2VyLW1vZGUgYWNjZXNzLiAgKERvIG5vdCBkZW1hbmQt
-Ci0JICogICAgZmF1bHQga2VybmVsIG1lbW9yeSBkdWUgdG8gdXNlci1tb2RlIGFjY2Vzc2VzKS4K
-LQkgKiAzLiBBIGZhdWx0IGNhdXNlZCBieSBhIHBhZ2UtbGV2ZWwgcHJvdGVjdGlvbiB2aW9sYXRp
-b24uCi0JICogICAgKEEgZGVtYW5kIGZhdWx0IHdvdWxkIGJlIG9uIGEgbm9uLXByZXNlbnQgcGFn
-ZSB3aGljaAotCSAqICAgICB3b3VsZCBoYXZlIFg4Nl9QRl9QUk9UPT0wKS4KLQkgKi8KLQlpZiAo
-IShod19lcnJvcl9jb2RlICYgKFg4Nl9QRl9SU1ZEIHwgWDg2X1BGX1VTRVIgfCBYODZfUEZfUFJP
-VCkpKSB7Ci0JCWlmICh2bWFsbG9jX2ZhdWx0KGFkZHJlc3MpID49IDApCi0JCQlyZXR1cm47Ci0J
-fQotCiAJLyogV2FzIHRoZSBmYXVsdCBzcHVyaW91cywgY2F1c2VkIGJ5IGxhenkgVExCIGludmFs
-aWRhdGlvbj8gKi8KIAlpZiAoc3B1cmlvdXNfa2VybmVsX2ZhdWx0KGh3X2Vycm9yX2NvZGUsIGFk
-ZHJlc3MpKQogCQlyZXR1cm47Cg==
---0000000000000a3535058d0c21d7--
+Link to V4 patch series:
+https://lore.kernel.org/lkml/1558784245-108751-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V5 -> V6:
+- the kernle/user space variables convert enums to __u32
+- put device ID under IDR
+
+Link to V5 patch series:
+https://lore.kernel.org/lkml/1560038656-380620-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V6 -> V7:
+- Fix maintainers list
+
+Link to V6 patch series:
+https://lore.kernel.org/lkml/1560174314-124649-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V7 -> V8:
+- 3 patches are added to char-misc, 8 to go
+- remove holes in structs for 32bit and 64bit
+- fix the compiler warning
+
+Link to V7 patch series:
+https://lore.kernel.org/lkml/1560274185-264438-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Dragan Cvetic (8):
+  misc: xilinx_sdfec: Store driver config and state
+  misc: xilinx_sdfec: Add ability to configure turbo
+  misc: xilinx_sdfec: Add ability to configure LDPC
+  misc: xilinx_sdfec: Add ability to get/set config
+  misc: xilinx_sdfec: Support poll file operation
+  misc: xilinx_sdfec: Add stats & status ioctls
+  Docs: misc: xilinx_sdfec: Add documentation
+  MAINTAINERS: add maintainer for SD-FEC
+
+ Documentation/misc-devices/index.rst |    1 +
+ MAINTAINERS                          |   11 +
+ drivers/misc/xilinx_sdfec.c          | 1184 +++++++++++++++++++++++++++++++++-
+ include/uapi/misc/xilinx_sdfec.h     |  448 +++++++++++++
+ 4 files changed, 1638 insertions(+), 6 deletions(-)
+ create mode 100644 include/uapi/misc/xilinx_sdfec.h
+
+-- 
+2.7.4
+
