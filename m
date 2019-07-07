@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0F961661
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E0861709
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfGGTif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:38:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57062 "EHLO
+        id S1727543AbfGGTor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:44:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57208 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727512AbfGGTiF (ORCPT
+        by vger.kernel.org with ESMTP id S1727542AbfGGTiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:05 -0400
+        Sun, 7 Jul 2019 15:38:07 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz3-0006fl-Po; Sun, 07 Jul 2019 20:38:01 +0100
+        id 1hkCz4-0006gO-Ns; Sun, 07 Jul 2019 20:38:02 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz2-0005ZJ-IP; Sun, 07 Jul 2019 20:38:00 +0100
+        id 1hkCz3-0005a4-9P; Sun, 07 Jul 2019 20:38:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Brian Norris" <computersforpeace@gmail.com>
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Colin Ian King" <colin.king@canonical.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.112295857@decadent.org.uk>
+Message-ID: <lsq.1562518457.12267426@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 038/129] mtd: docg3: Fix kasprintf() usage
+Subject: [PATCH 3.16 047/129] rtc: ds1672: fix unintended sign extension
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,58 +47,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 0eb8618bd07533f423fed47399a0d6387bfe7cac upstream.
+commit f0c04c276739ed8acbb41b4868e942a55b128dca upstream.
 
-kasprintf() does a dynamic memory allocation and can fail.
-We have to handle that case.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+Fix this by casting the u8 value to an unsigned long before the shift.
+
+Detected by CoverityScan, CID#138801 ("Unintended sign extension")
+
+Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/devices/docg3.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-ds1672.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -1822,7 +1822,7 @@ static void __exit doc_dbg_unregister(st
-  * @chip_id: The chip ID of the supported chip
-  * @mtd: The structure to fill
-  */
--static void __init doc_set_driver_info(int chip_id, struct mtd_info *mtd)
-+static int __init doc_set_driver_info(int chip_id, struct mtd_info *mtd)
- {
- 	struct docg3 *docg3 = mtd->priv;
- 	int cfg;
-@@ -1835,6 +1835,8 @@ static void __init doc_set_driver_info(i
- 	case DOC_CHIPID_G3:
- 		mtd->name = kasprintf(GFP_KERNEL, "docg3.%d",
- 				      docg3->device_id);
-+		if (!mtd->name)
-+			return -ENOMEM;
- 		docg3->max_block = 2047;
- 		break;
- 	}
-@@ -1857,6 +1859,8 @@ static void __init doc_set_driver_info(i
- 	mtd->_block_isbad = doc_block_isbad;
- 	mtd->ecclayout = &docg3_oobinfo;
- 	mtd->ecc_strength = DOC_ECC_BCH_T;
-+
-+	return 0;
- }
+--- a/drivers/rtc/rtc-ds1672.c
++++ b/drivers/rtc/rtc-ds1672.c
+@@ -60,7 +60,8 @@ static int ds1672_get_datetime(struct i2
+ 		"%s: raw read data - counters=%02x,%02x,%02x,%02x\n",
+ 		__func__, buf[0], buf[1], buf[2], buf[3]);
  
- /**
-@@ -1920,7 +1924,9 @@ doc_probe_device(struct docg3_cascade *c
- 		goto nomem4;
- 	}
+-	time = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	time = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++	       (buf[1] << 8) | buf[0];
  
--	doc_set_driver_info(chip_id, mtd);
-+	ret = doc_set_driver_info(chip_id, mtd);
-+	if (ret)
-+		goto nomem4;
+ 	rtc_time_to_tm(time, tm);
  
- 	doc_hamming_ecc_init(docg3, DOC_LAYOUT_OOB_PAGEINFO_SZ);
- 	doc_reload_bbt(docg3);
 
