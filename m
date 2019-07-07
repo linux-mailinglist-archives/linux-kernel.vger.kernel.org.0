@@ -2,159 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0276361C1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0592617B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 23:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbfGHJMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 05:12:22 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58602 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfGHJMV (ORCPT
+        id S1727754AbfGGVaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 17:30:52 -0400
+Received: from mail-io1-f43.google.com ([209.85.166.43]:34412 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfGGVav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 05:12:21 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6899hhK152103;
-        Mon, 8 Jul 2019 09:11:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=v1DgpfRJEzDrZLeF1PWs/KsiDG71M25IhxSiMAC4Vfs=;
- b=cmbeTjSiQMRMkxnf6WA2LqN9YKkbh/M6hGNnNNaH4y5hYlEASTeBSNt81XfWA9kPDhKL
- ikk6DEr4O42Yk3HROf+P+OcDXrGFAdNVWhPN/ogqHKii+Ud2lOzfygZjYICKaXnO5eot
- PuQm/lZ4eK/gCP+SCCTOoFTJrWUs0IpHnrc6P3CnZZQi/kODaeriuGLBH3HrGJNgeJl9
- d0msqftOe2zVV8Aynno+o2AheSzWCVWh2hw2/DYNHWbjyp/x/Cmnm7U3TOi5Mw80jbpc
- fsp3HQbrzRD3Sdw8J9DmJ32yWHu9lEcrGhqWV+pGRxwv4Pb3BCHpNctIpw9i5DOgb2Rl yA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2tjm9qd70b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 08 Jul 2019 09:11:41 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6897v8R131753;
-        Mon, 8 Jul 2019 09:11:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2tjjyk3snd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 08 Jul 2019 09:11:40 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x689BdZL005130;
-        Mon, 8 Jul 2019 09:11:39 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 08 Jul 2019 02:11:39 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v6 4/4] x86/xen: Add "nopv" support for HVM guest
-Date:   Sun,  7 Jul 2019 17:15:08 +0800
-Message-Id: <1562490908-17882-5-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1562490908-17882-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1562490908-17882-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907080120
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907080121
+        Sun, 7 Jul 2019 17:30:51 -0400
+Received: by mail-io1-f43.google.com with SMTP id k8so30669052iot.1;
+        Sun, 07 Jul 2019 14:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rDuKQA9H70ob7BkrooBEjjPJRzJyeCPcykhriQrD2wo=;
+        b=sleyPRkuDmUrn9eNZbAmmT0r9XMh9W4PAP9qILmo9i8WMiNX0ccLsTitGcIkfapp/q
+         syZN1d1twAnIZqrO6AmVdtL9JLhxZy8JLmPc8LNVuTxORaU9OVwiBCwiy3mCTxhhJZ2p
+         Whqyb4kxGBdQJ2/sqs7Mfru8CLoPIs11t0u+eqnkS9WBnYypMFDdg7NHFXOXj4GnHMsk
+         kHr0VAk4TqY9WI7ztYOdGDtf5Y5KRikq4oyFlcP/DuaDcF82qaP/j6oi/JZVbc+tWUcL
+         +CYTK0LoxGrbVEgtamh/1ktnelvWRUEn1g8Ukp5xEaHVF2SNpgCaKaYxW1b9T3DWUgca
+         Cb5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rDuKQA9H70ob7BkrooBEjjPJRzJyeCPcykhriQrD2wo=;
+        b=cgO8L4MAJzvcG38Enn50xOn5qI/K866kvrhRpJ89xXWC3Eqve9i0FtyaIy1jGip9A+
+         8v6x2mA1Fww1XwzWEC0TC2uMsqOhZAFgZFvNvW647MtOzqhwIjK6BqoDdGwV2RSMlFIg
+         zKzg6Hcz/avbfObXu/AzVN5mBBsZJB+NpRk7zhijXNQbWGdPfsO5g9Li0PDz0WvLapTv
+         NX1BoaMgJNa2lRXHhsYVZY1FMUT0HEjzbWZCVncXZaRzQlbRJPw48Da3S3tu0GP9qVND
+         UkYWGSBkF6PQwbb2diqT2/RxjdL3ZglZEQlC6pibVt6NaSaXexX9aNaqXsuesaNH5N3k
+         Z0Jg==
+X-Gm-Message-State: APjAAAXxY4T1l041qnmc6l9O4tSZYTCzr0Xr4xGPoec1z12KzltJ4jgE
+        QwpIVM27kfCD86fxj3wJ5UTXgyFYVHVwwkTyWA==
+X-Google-Smtp-Source: APXvYqwXQg51UFBFOq2J20Kdu9asEa1+9YuGv4Owio2WdAM4/Myn/hsJ0J1Bz9RR/RuFhhkF09vUfbxu7oC1/ejMzGo=
+X-Received: by 2002:a02:862b:: with SMTP id e40mr18213515jai.7.1562535050403;
+ Sun, 07 Jul 2019 14:30:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190708072858.566aa564@canb.auug.org.au>
+In-Reply-To: <20190708072858.566aa564@canb.auug.org.au>
+From:   Trond Myklebust <trondmy@gmail.com>
+Date:   Sun, 7 Jul 2019 17:30:39 -0400
+Message-ID: <CAABAsM7jKzWPNoe63LU33tVfn7a88ZP9yzp4Bb1BN2TDWMxgjQ@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the nfs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PVH guest needs PV extentions to work, so "nopv" parameter should be
-ignored for PVH but not for HVM guest.
+On Sun, 7 Jul 2019 at 17:29, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commits
+>
+>   fe9ad197bd8a ("xprtrdma: Remove the RPCRDMA_REQ_F_PENDING flag")
+>   08d720bcd822 ("xprtrdma: Fix occasional transport deadlock")
+>   beb843739ea0 ("xprtrdma: Replace use of xdr_stream_pos in rpcrdma_marshal_req")
+>
+> are missing a Signed-off-by from their committer.
+>
 
-If PVH guest boots up via the Xen-PVH boot entry, xen_pvh is set early,
-we know it's PVH guest and ignore "nopv" parameter directly.
-
-If PVH guest boots up via the normal boot entry same as HVM guest, it's
-hard to distinguish PVH and HVM guest at that time. In this case, we
-have to panic early if PVH is detected and nopv is enabled to avoid a
-worse situation later.
-
-Move xen_platform_hvm() after xen_hvm_guest_late_init() to avoid compile
-error.
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
----
- arch/x86/xen/enlighten_hvm.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 1756cf7..7e1c75f 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -231,14 +231,6 @@ bool __init xen_hvm_need_lapic(void)
- 	return true;
- }
- 
--static uint32_t __init xen_platform_hvm(void)
--{
--	if (xen_pv_domain())
--		return 0;
--
--	return xen_cpuid_base();
--}
--
- static __init void xen_hvm_guest_late_init(void)
- {
- #ifdef CONFIG_XEN_PVH
-@@ -250,6 +242,9 @@ static __init void xen_hvm_guest_late_init(void)
- 	/* PVH detected. */
- 	xen_pvh = true;
- 
-+	if (nopv)
-+		panic("\"nopv\" and \"xen_nopv\" parameters are unsupported in PVH guest.");
-+
- 	/* Make sure we don't fall back to (default) ACPI_IRQ_MODEL_PIC. */
- 	if (!nr_ioapics && acpi_irq_model == ACPI_IRQ_MODEL_PIC)
- 		acpi_irq_model = ACPI_IRQ_MODEL_PLATFORM;
-@@ -259,6 +254,26 @@ static __init void xen_hvm_guest_late_init(void)
- #endif
- }
- 
-+static uint32_t __init xen_platform_hvm(void)
-+{
-+	if (xen_pv_domain())
-+		return 0;
-+
-+	if (xen_pvh_domain() && nopv) {
-+		/* Guest booting via the Xen-PVH boot entry goes here */
-+		pr_info("\"nopv\" parameter is ignored in PVH guest\n");
-+		nopv = false;
-+	} else if (nopv) {
-+		/*
-+		 * Guest booting via normal boot entry (like via grub2) goes
-+		 * here.
-+		 */
-+		x86_init.hyper.guest_late_init = xen_hvm_guest_late_init;
-+		return 0;
-+	}
-+	return xen_cpuid_base();
-+}
-+
- const __initconst struct hypervisor_x86 x86_hyper_xen_hvm = {
- 	.name                   = "Xen HVM",
- 	.detect                 = xen_platform_hvm,
-@@ -268,4 +283,5 @@ static __init void xen_hvm_guest_late_init(void)
- 	.init.init_mem_mapping	= xen_hvm_init_mem_mapping,
- 	.init.guest_late_init	= xen_hvm_guest_late_init,
- 	.runtime.pin_vcpu       = xen_pin_vcpu,
-+	.ignore_nopv            = true,
- };
--- 
-1.8.3.1
-
+Anna?
