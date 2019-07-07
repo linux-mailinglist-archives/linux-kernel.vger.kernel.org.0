@@ -2,79 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 553A2617B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 23:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A8A617B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 23:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfGGVR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 17:17:57 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34891 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbfGGVR5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 17:17:57 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p197so9517301lfa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 14:17:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=khwRExgsrAxesDLfa+MBNv1Kv3bFqCQXDesV7F9LKao=;
-        b=Ark+YhDSe2cjbYKXLWFRcC6Zg4N/GRkkzxT43m4iaIAuQN8NmmRJspuz1CcbY7cA3l
-         kXIt4/Gaks4V/Ht5T9hR8BRUbU/TxYdtsEocgCSmUawCXES9+asmQ8/q7YB0i/U02/eW
-         KOByO/j0JMeifjbX/2rrzc2QtpJKR98kzq/bo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=khwRExgsrAxesDLfa+MBNv1Kv3bFqCQXDesV7F9LKao=;
-        b=OTfGMQjd9hfsdRk8sAZ/mNShQNKILBmug4Wv8Xcz8F/m0kUJN8Y+xjJ5LdSQyBqO6Z
-         GvKdcYLpTbO1KAeIUr420CTxmUwF8O4GNd7jKcCLerHuw1+TNvIZL/nIxreh7m1EkEiW
-         ba+eBaWbDRbQGnKTWGLVFCBJ0xbS+fhf91lG9rDxXcFNbrmVE3J4P1vLblrWZp+56yQg
-         Rmdc5OIInAPQ2I1/Kj0/AbvIjXn5tji1d0z8GWfuVR8odAOfEwKFm/Zw0ndUwynyX3p3
-         wq5WUAKuad+pZR8/gcjqB7femHs7uh0/+dBYKYqa/UaDgQ4dt2ogBk8lzU4tYsJjbMAN
-         8/lg==
-X-Gm-Message-State: APjAAAXkOVcyBio8ZQqPW13d7mWgkgaHRfNoeEDM+zPbOBkeT2HqNFVb
-        mldth98sIRxbK1U5v+Fv6QML0i4QP7M=
-X-Google-Smtp-Source: APXvYqz9gosT1hTeW6NyyfaMG7QLyT8ls762Lsmz2gckrCIS8G1kJ22+wyV2Xps7f7JrzwQTwTc1mg==
-X-Received: by 2002:a19:6519:: with SMTP id z25mr6822795lfb.42.1562534275056;
-        Sun, 07 Jul 2019 14:17:55 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id e13sm3214582ljg.102.2019.07.07.14.17.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Jul 2019 14:17:54 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id z15so9474337lfh.13
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 14:17:54 -0700 (PDT)
-X-Received: by 2002:a19:641a:: with SMTP id y26mr6182613lfb.29.1562534273929;
- Sun, 07 Jul 2019 14:17:53 -0700 (PDT)
+        id S1727706AbfGGV3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 17:29:08 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41481 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727562AbfGGV3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 17:29:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hhXw3RLQz9s3Z;
+        Mon,  8 Jul 2019 07:29:04 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562534945;
+        bh=NALcSf4JxZPqMxNvupzy2z8xGoJsECRpYxfpF9O/qdk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QYMey3OBF+AYU5US/yoY0hFvYWrl6UFNCTZ1xkwRqd19cYcaHG4970hR875rpcfJ+
+         tpyDY7OOt79uqTISdjhrO62fQxi8eLeszaMCcRk/fXV+rr7VsDGA5G1c0Sm7izh9Gx
+         fXs04L2xIyEYVRwQxSsNZM/700PXVUoY0jcmNCGPPP2nYmqzk4lJhr4MXOD6Y7+/ku
+         A6f5uqspbUYj7d2oTXmPub4di0jtol4UxR17f86uqqVLNEpVS+hmIvplRyIQdWEjCG
+         BjKQFFYJhD+K0NmrZo6pYQvEnX2WA5Z/jBX18XiEWZNCsJu12WI1Q/dK6mXGIEXd4w
+         BjSodw+J+PrzA==
+Date:   Mon, 8 Jul 2019 07:28:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Trond Myklebust <trondmy@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: linux-next: Signed-off-by missing for commits in the nfs tree
+Message-ID: <20190708072858.566aa564@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190706001612.GM17978@ZenIV.linux.org.uk> <20190706002236.26113-1-viro@ZenIV.linux.org.uk>
- <20190706002236.26113-4-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20190706002236.26113-4-viro@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 7 Jul 2019 14:17:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgB5NN=N9Z4Y26CTSr1EchMfXbuFvVU4rcKaNca9qVkiA@mail.gmail.com>
-Message-ID: <CAHk-=wgB5NN=N9Z4Y26CTSr1EchMfXbuFvVU4rcKaNca9qVkiA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] make struct mountpoint bear the dentry reference to
- mountpoint, not struct mount
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SQV5lqOq5h55WP=SGQwO2zZ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 5, 2019 at 5:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> +static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
-> +static LIST_HEAD(ex_mountpoints);
+--Sig_/SQV5lqOq5h55WP=SGQwO2zZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What protects the ex_mountpoints list?
+Hi all,
 
-It looks like it's the mount_lock, but why isn't that documented?
+Commits
 
-It sure isn't namespace_sem from the comment above.
+  fe9ad197bd8a ("xprtrdma: Remove the RPCRDMA_REQ_F_PENDING flag")
+  08d720bcd822 ("xprtrdma: Fix occasional transport deadlock")
+  beb843739ea0 ("xprtrdma: Replace use of xdr_stream_pos in rpcrdma_marshal=
+_req")
 
-                  Linus
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SQV5lqOq5h55WP=SGQwO2zZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0iZBoACgkQAVBC80lX
+0Gw4yQf+Oa9dWIJx7AWeZD3x6VGMo0fw//DkdOWNuKzGuyWzZuyYyiNkJZayBDCq
+WRsipYgaCwenH+djQZDMGnyCcYSmTEIdIxWV7OabFfPnYWPtnmDIwXirHUxZJCjz
+weHP9RhVUkeNxjuqtNs9kgpDnaJBb5Wlhh+cKfSs4XgUJdnnb5kbW7X2rzTKJYlq
+wDFIxxIDWiBwx01EZqvuucUcu0kMgwDqEQ8Ka0lqJAf8l9HLDjJvzLtoKvmp/wt/
+E/3Cd7Huwo+KY4Jn7Je30twpWAKCRCZFXfQXYwTDHenrO8ER/1ojVXbCwk9oMuW7
+dyi3czWZWJl47sVqj3gYRGcGpieJxQ==
+=lW+S
+-----END PGP SIGNATURE-----
+
+--Sig_/SQV5lqOq5h55WP=SGQwO2zZ--
