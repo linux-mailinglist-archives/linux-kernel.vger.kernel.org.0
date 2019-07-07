@@ -2,139 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BE356159A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 18:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C996156E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 17:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfGGQss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 12:48:48 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:47548 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfGGQss (ORCPT
+        id S1727058AbfGGPkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 11:40:55 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34803 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfGGPkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 12:48:48 -0400
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id A6C1B3AACD8
-        for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2019 15:14:39 +0000 (UTC)
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id E391BC0002;
-        Sun,  7 Jul 2019 15:14:22 +0000 (UTC)
-Subject: Re: [PATCH v3 0/2] Hugetlbfs support for riscv
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <20190701175900.4034-1-alex@ghiti.fr>
- <alpine.DEB.2.21.9999.1907031344330.10620@viisi.sifive.com>
- <c06441fd-0022-8fb9-36b0-2f5d956c3ed5@ghiti.fr>
- <alpine.DEB.2.21.9999.1907040429170.24872@viisi.sifive.com>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <040f378d-e483-fa3a-28f4-fdb1bb62591d@ghiti.fr>
-Date:   Sun, 7 Jul 2019 11:14:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 7 Jul 2019 11:40:55 -0400
+Received: by mail-io1-f67.google.com with SMTP id k8so29421351iot.1;
+        Sun, 07 Jul 2019 08:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qwHbQTuFE2kUikky3tbT6iwWg4yYSI3KMwntAKoTe4o=;
+        b=er0xymwpwDu18o30aSZDPXm6ih4bYYK56Lsn0PBrEBsI2+GkfvJ0DLnQK2RVcNhiay
+         +D/JD05yJ/wS8a98UDAA7JmIXiaidvPOMnU2vGyMoKdb1jtHeCtBC3kmXqU8R3Q228vG
+         68XGAd7WFcd9HF8yqcBoPhLbNT6Ry5i5f0EVkcB7o8FeikeNs/fXuQT4mDrR8/glCN+Y
+         olzFtTyNcreomoJ0mN7e/JWRCYVoCfOG9fLdGpi1ajzyeGmzLMEJxRge1NuGQzdqnECA
+         z47rAAdunWBGIzPrvt8O+hq21Hog6XykpUYRgPx2NN9dX9m4ijMVEhbxacAQadi+J3vO
+         uUqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qwHbQTuFE2kUikky3tbT6iwWg4yYSI3KMwntAKoTe4o=;
+        b=JFRU1J/fUNhR9L+52JhQEpKkjnhiIVLifXrfvBxd1Qb0FN+48glRLcTl4/0H3fvWM7
+         I01dsV7j8YeqnPoWQtPtghd3UI72XEBtB0upMwrW2wrhSHC6FxYLODXdLpOh4nU8Mg7j
+         YOzteNWiLeytCxNIHzqPC46CJsKhWdquI5C5CwbJbVcoqC/ObxfizkIhf5Qsk9cNz3BG
+         xhLSUxdzvqGpbCoM1kOPykUJ76Gachj8eF3FN9JZgdG9iWKatfKiIk+ftEFHRxwvmmqD
+         FyRFHOd9bjmEqM+EAIutD7MXucl2OvSJ/tZGZ+qRFKDxcfdbWYsPbEVBEMNtCmkrKQ2r
+         GsbA==
+X-Gm-Message-State: APjAAAW85MF13WpGIFkIyLMMoqgUe01rz74gvDeSFzC7aGuPyclQ4H9j
+        xARHg8Z1j7j3MyrQRl0rfPq53UxCpKbsQ8wCjIuRsdSXDB+Tzw==
+X-Google-Smtp-Source: APXvYqzuxGF7GLEefBfbdxPUSlLxOABw/jdkNTyIlCf5RzRx9gAPfKtK85ODjRIpvEtMUdMrKQuPQCx7Np6eky+RxpY=
+X-Received: by 2002:a5d:8347:: with SMTP id q7mr13181248ior.277.1562514054357;
+ Sun, 07 Jul 2019 08:40:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.9999.1907040429170.24872@viisi.sifive.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com> <alpine.LRH.2.21.1907061814390.24897@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1907061814390.24897@namei.org>
+From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date:   Sun, 7 Jul 2019 17:40:43 +0200
+Message-ID: <CAJHCu1KPkzREqq0pGJ6Wp4CKHkA0Eeaj2vcGViE+B0192tFWFw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/12] S.A.R.A. a new stacked LSM
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Brad Spengler <spender@grsecurity.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        PaX Team <pageexec@freemail.hu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 7/4/19 7:35 AM, Paul Walmsley wrote:
-> On Thu, 4 Jul 2019, Alexandre Ghiti wrote:
+James Morris <jmorris@namei.org> wrote:
 >
->> On 7/4/19 12:57 AM, Paul Walmsley wrote:
->>> On Mon, 1 Jul 2019, Alexandre Ghiti wrote:
->>>
->>>> - libhugetlbfs testsuite on riscv64/2M:
->>>>     - brk_near_huge triggers an assert in malloc.c, does not on x86.
->>> I was able to reproduce the 2MB megapages test results on rv64 QEMU.  On a
->>> HiFive Unleashed, though, a few more tests fail:
-> [ ... ]
+> On Sat, 6 Jul 2019, Salvatore Mesoraca wrote:
 >
->>> - One of the heapshrink tests fails ("Heap did not shrink")
->>>
->>>     # LD_PRELOAD="obj64/libhugetlbfs_privutils.so obj64/libhugetlbfs.so
->>> tests/obj64/libheapshrink.so" HUGETLB_MORECORE_SHRINK=yes
->>> HUGETLB_MORECORE=yes tests/obj64/heapshrink
->>>     Starting testcase "tests/obj64/heapshrink", pid 753
->>>     FAIL    Heap did not shrink
->>>     #
->>>
->>> Some of these may be related to the top-down mmap work, but there might be
->>> more work to do on actual hardware.
->>
->> I don't think this is related to top-down mmap layout, this test only
->> mmaps a huge page. It might be interesting to see more verbose messages
->> adding HUGETLB_VERBOSE=99 when launching the test.
-> Here is the HUGETLB_VERBOSE=99 output from the above heapshrink test on an
-> FU540:
+> > S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
 >
-> libhugetlbfs [(none):86]: INFO: Found pagesize 2048 kB
-> libhugetlbfs [(none):86]: INFO: Parsed kernel version: [5] . [2] . [0]  [pre-release: 6]
-> libhugetlbfs [(none):86]: INFO: Feature private_reservations is present in this kernel
-> libhugetlbfs [(none):86]: INFO: Feature noreserve_safe is present in this kernel
-> libhugetlbfs [(none):86]: INFO: Feature map_hugetlb is present in this kernel
-> libhugetlbfs [(none):86]: INFO: Kernel has MAP_PRIVATE reservations.  Disabling heap prefaulting.
-> libhugetlbfs [(none):86]: INFO: Kernel supports MAP_HUGETLB
-> libhugetlbfs [(none):86]: INFO: HUGETLB_SHARE=0, sharing disabled
-> libhugetlbfs [(none):86]: INFO: HUGETLB_NO_RESERVE=no, reservations enabled
-> libhugetlbfs [(none):86]: INFO: No segments were appropriate for remapping
-> libhugetlbfs [(none):86]: INFO: setup_morecore(): heapaddr = 0x2aaac00000
-> libhugetlbfs [(none):86]: INFO: hugetlbfs_morecore(1052672) = ...
-> libhugetlbfs [(none):86]: INFO: heapbase = 0x2aaac00000, heaptop = 0x2aaac00000, mapsize = 0, delta=1052672
-> libhugetlbfs [(none):86]: INFO: Attempting to map 2097152 bytes
-> libhugetlbfs [(none):86]: INFO: ... = 0x2aaac00000
-> libhugetlbfs [(none):86]: INFO: hugetlbfs_morecore(0) = ...
-> libhugetlbfs [(none):86]: INFO: heapbase = 0x2aaac00000, heaptop = 0x2aaad01000, mapsize = 200000, delta=-1044480
-> libhugetlbfs [(none):86]: INFO: ... = 0x2aaad01000
-> Starting testcase "tests/obj64/heapshrink", pid 86
-> libhugetlbfs [(none):86]: INFO: hugetlbfs_morecore(33558528) = ...
-> libhugetlbfs [(none):86]: INFO: heapbase = 0x2aaac00000, heaptop = 0x2aaad01000, mapsize = 200000, delta=32514048
-> libhugetlbfs [(none):86]: INFO: Attempting to map 33554432 bytes
-> libhugetlbfs [(none):86]: INFO: ... = 0x2aaad01000
-> FAIL    Heap did not shrink
->
->
-> This is with this hugepage configuration:
->
-> # /usr/local/bin/hugeadm --pool-list
->        Size  Minimum  Current  Maximum  Default
->     2097152       64       64       64        *
-> #
->
+> Please make this just SARA. Nobody wants to read or type S.A.R.A.
 
-Ok thanks for that, but it does not say much :)
-
-While trying to understand why it may fail on HW, I actually failed to 
-reproduce the results on qemu (I did not
-check the results for v3 and I recently switched from yocto to buildroot 
-so I lost my configuration...).
-
-What configuration do you use to reproduce the results on qemu ?
-
-FYI, while playing around, I noticed that with qemu v4.0.0, 
-icache_hygiene stalls whereas with
-v3.1.0, it does not but I did not investigate though.
-
-Thanks,
-
-Alex
-
-
-> - Paul
+Agreed.
+Thank you for your suggestion.
