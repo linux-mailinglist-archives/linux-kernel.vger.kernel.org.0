@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D39D6166D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2430D61758
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfGGTjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:39:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:58026 "EHLO
+        id S1728822AbfGGTrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:47:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56784 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727668AbfGGTiR (ORCPT
+        by vger.kernel.org with ESMTP id S1727437AbfGGTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:17 -0400
+        Sun, 7 Jul 2019 15:38:00 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCzE-0006kg-0j; Sun, 07 Jul 2019 20:38:12 +0100
+        id 1hkCz1-0006d8-0A; Sun, 07 Jul 2019 20:37:59 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz9-0005gl-SV; Sun, 07 Jul 2019 20:38:07 +0100
+        id 1hkCyz-0005X4-PP; Sun, 07 Jul 2019 20:37:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>,
-        "Kalle Valo" <kvalo@codeaurora.org>,
-        "huangwen" <huangwen@venustech.com.cn>
+        "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Yangtao Li" <tiny.windzz@gmail.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.996126085@decadent.org.uk>
+Message-ID: <lsq.1562518457.571652762@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 128/129] mwifiex: Fix heap overflow in
- mwifiex_uap_parse_tail_ies()
+Subject: [PATCH 3.16 010/129] clk: armada-370: fix refcount leak in
+ a370_clk_init()
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,100 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-commit 69ae4f6aac1578575126319d3f55550e7e440449 upstream.
+commit a3c24050bdf70c958a8d98c2823b66ea761e6a31 upstream.
 
-A few places in mwifiex_uap_parse_tail_ies() perform memcpy()
-unconditionally, which may lead to either buffer overflow or read over
-boundary.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-This patch addresses the issues by checking the read size and the
-destination size at each place more properly.  Along with the fixes,
-the patch cleans up the code slightly by introducing a temporary
-variable for the token size, and unifies the error path with the
-standard goto statement.
-
-Reported-by: huangwen <huangwen@venustech.com.cn>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16:
- - The tail IEs are parsed in mwifiex_set_mgmt_ies, which looks for two
-   specific IEs rather than looping
- - Check IE length against tail length after calling
-   cfg80211_find_vendor_ie(), but not after cfg80211_find_ie() since that
-   already does it
- - On error, return without calling mwifiex_set_mgmt_beacon_data_ies()
- - Drop inapplicable change to WMM IE handling
- - Adjust filename]
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 07ad6836fa21 ("clk: mvebu: armada-370: maintain clock init order")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/mwifiex/ie.c | 47 +++++++++++++++--------
- 1 file changed, 31 insertions(+), 16 deletions(-)
+ drivers/clk/mvebu/armada-370.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/mwifiex/ie.c
-+++ b/drivers/net/wireless/mwifiex/ie.c
-@@ -328,6 +328,8 @@ int mwifiex_set_mgmt_ies(struct mwifiex_
- 	struct ieee_types_header *rsn_ie, *wpa_ie = NULL;
- 	u16 rsn_idx = MWIFIEX_AUTO_IDX_MASK, ie_len = 0;
- 	const u8 *vendor_ie;
-+	unsigned int token_len;
-+	int err = 0;
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -168,8 +168,10 @@ static void __init a370_clk_init(struct
  
- 	if (info->tail && info->tail_len) {
- 		gen_ie = kzalloc(sizeof(struct mwifiex_ie), GFP_KERNEL);
-@@ -341,8 +343,13 @@ int mwifiex_set_mgmt_ies(struct mwifiex_
- 		rsn_ie = (void *)cfg80211_find_ie(WLAN_EID_RSN,
- 						  info->tail, info->tail_len);
- 		if (rsn_ie) {
--			memcpy(gen_ie->ie_buffer, rsn_ie, rsn_ie->len + 2);
--			ie_len = rsn_ie->len + 2;
-+			token_len = rsn_ie->len + 2;
-+			if (ie_len + token_len > IEEE_MAX_IE_SIZE) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+			memcpy(gen_ie->ie_buffer + ie_len, rsn_ie, token_len);
-+			ie_len += token_len;
- 			gen_ie->ie_length = cpu_to_le16(ie_len);
- 		}
+ 	mvebu_coreclk_setup(np, &a370_coreclks);
  
-@@ -352,9 +359,15 @@ int mwifiex_set_mgmt_ies(struct mwifiex_
- 						    info->tail_len);
- 		if (vendor_ie) {
- 			wpa_ie = (struct ieee_types_header *)vendor_ie;
--			memcpy(gen_ie->ie_buffer + ie_len,
--			       wpa_ie, wpa_ie->len + 2);
--			ie_len += wpa_ie->len + 2;
-+			token_len = wpa_ie->len + 2;
-+			if (token_len >
-+			    info->tail + info->tail_len - (u8 *)wpa_ie ||
-+			    ie_len + token_len > IEEE_MAX_IE_SIZE) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+			memcpy(gen_ie->ie_buffer + ie_len, wpa_ie, token_len);
-+			ie_len += token_len;
- 			gen_ie->ie_length = cpu_to_le16(ie_len);
- 		}
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, a370_gating_desc);
++		of_node_put(cgnp);
++	}
+ }
+ CLK_OF_DECLARE(a370_clk, "marvell,armada-370-core-clock", a370_clk_init);
  
-@@ -362,13 +375,16 @@ int mwifiex_set_mgmt_ies(struct mwifiex_
- 			if (mwifiex_update_uap_custom_ie(priv, gen_ie, &rsn_idx,
- 							 NULL, NULL,
- 							 NULL, NULL)) {
--				kfree(gen_ie);
--				return -1;
-+				err = -EINVAL;
-+				goto out;
- 			}
- 			priv->rsn_idx = rsn_idx;
- 		}
- 
-+	out:
- 		kfree(gen_ie);
-+		if (err)
-+			return err;
- 	}
- 
- 	return mwifiex_set_mgmt_beacon_data_ies(priv, info);
 
