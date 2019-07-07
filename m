@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E8A61753
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3EB616EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 21:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbfGGTrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 15:47:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56794 "EHLO
+        id S1728384AbfGGTn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 15:43:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:57408 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727439AbfGGTiA (ORCPT
+        by vger.kernel.org with ESMTP id S1727575AbfGGTiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 15:38:00 -0400
+        Sun, 7 Jul 2019 15:38:10 -0400
 Received: from 94.197.121.43.threembb.co.uk ([94.197.121.43] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCz0-0006cu-70; Sun, 07 Jul 2019 20:37:58 +0100
+        id 1hkCz7-0006ig-El; Sun, 07 Jul 2019 20:38:05 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hkCyz-0005WU-3P; Sun, 07 Jul 2019 20:37:57 +0100
+        id 1hkCz5-0005cf-Om; Sun, 07 Jul 2019 20:38:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Jeremy Fertic" <jeremyfertic@gmail.com>
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        "Doug Berger" <opendmb@gmail.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>
 Date:   Sun, 07 Jul 2019 17:54:17 +0100
-Message-ID: <lsq.1562518457.358003632@decadent.org.uk>
+Message-ID: <lsq.1562518457.981020944@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 002/129] staging: iio: adt7316: invert the logic of
- the check for an ldac pin
+Subject: [PATCH 3.16 079/129] irqchip/brcmstb-l2: Use _irqsave locking
+ variants in non-interrupt code
 In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 94.197.121.43
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,36 +49,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+From: Doug Berger <opendmb@gmail.com>
 
-commit 85a1c11913312132d0800ca2c1c42a011f96ea92 upstream.
+commit 33517881ede742107f416533b8c3e4abc56763da upstream.
 
-ADT7316_DA_EN_VIA_DAC_LDCA is set when the dac and ldac registers are being
-used to update the dacs instead of the ldac pin. ADT7516_SEL_AIN3 is an adc
-input that shares the ldac pin. Only set these bits if an ldac pin is not
-being used.
+Using the irq_gc_lock/irq_gc_unlock functions in the suspend and
+resume functions creates the opportunity for a deadlock during
+suspend, resume, and shutdown. Using the irq_gc_lock_irqsave/
+irq_gc_unlock_irqrestore variants prevents this possible deadlock.
 
-This could be backported to stable, but note there are various
-other bugs that probably make that a waste of time.
-
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 7f646e92766e2 ("irqchip: brcmstb-l2: Add Broadcom Set Top Box Level-2 interrupt controller")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+[maz: tidied up $SUBJECT]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/addac/adt7316.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-brcmstb-l2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -2130,7 +2130,7 @@ int adt7316_probe(struct device *dev, st
- 		return -ENODEV;
+--- a/drivers/irqchip/irq-brcmstb-l2.c
++++ b/drivers/irqchip/irq-brcmstb-l2.c
+@@ -82,8 +82,9 @@ static void brcmstb_l2_intc_suspend(stru
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct brcmstb_l2_intc_data *b = gc->private;
++	unsigned long flags;
  
- 	chip->ldac_pin = adt7316_platform_data[1];
--	if (chip->ldac_pin) {
-+	if (!chip->ldac_pin) {
- 		chip->config3 |= ADT7316_DA_EN_VIA_DAC_LDCA;
- 		if ((chip->id & ID_FAMILY_MASK) == ID_ADT75XX)
- 			chip->config1 |= ADT7516_SEL_AIN3;
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	/* Save the current mask */
+ 	b->saved_mask = __raw_readl(b->base + CPU_MASK_STATUS);
+ 
+@@ -92,22 +93,23 @@ static void brcmstb_l2_intc_suspend(stru
+ 		__raw_writel(~gc->wake_active, b->base + CPU_MASK_SET);
+ 		__raw_writel(gc->wake_active, b->base + CPU_MASK_CLEAR);
+ 	}
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ static void brcmstb_l2_intc_resume(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct brcmstb_l2_intc_data *b = gc->private;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	/* Clear unmasked non-wakeup interrupts */
+ 	__raw_writel(~b->saved_mask & ~gc->wake_active, b->base + CPU_CLEAR);
+ 
+ 	/* Restore the saved mask */
+ 	__raw_writel(b->saved_mask, b->base + CPU_MASK_SET);
+ 	__raw_writel(~b->saved_mask, b->base + CPU_MASK_CLEAR);
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ int __init brcmstb_l2_intc_of_init(struct device_node *np,
 
