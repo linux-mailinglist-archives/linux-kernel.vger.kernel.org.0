@@ -2,141 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936806149E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 12:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE25A614AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2019 12:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfGGKIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 06:08:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41333 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbfGGKIE (ORCPT
+        id S1727047AbfGGKnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 06:43:17 -0400
+Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:60638
+        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfGGKnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 06:08:04 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x67A7ws4878589
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 7 Jul 2019 03:07:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x67A7ws4878589
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562494079;
-        bh=nQc4W8TxTWn6p3U1vcjXmmpb5BtCnp3qTiIy9pV4lgc=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Tx+4YqYKw7vNJL+kv6mY7cfMBb7ZBH5zun1oeEA6rf+h9EeE4nxk4S9WB6TOr2S9N
-         ske6Y6IO7EVB0Cm0BOfVUjqJc3JVXzcTZzSjR8ccg6iO7UHnfDCFoNOr872fGoCWAD
-         EMRNwWXYCCQhCmfVzcpB/msxG1XE9cccH5QlQIr6YiPSBs//i3psOuEa9y9xE0YX9c
-         YVSYyXxJH4x4gB41tTIriaWks0oS45IguyG8CpzDMS52H+5P10AkKgT4sfvty5qDMp
-         FZtLCLkOe0F6O5VvjMhnXAK3VjeVa6UyqzivWg3EKQ8Xw0VmXWY9gxNi8zBxqxFkBg
-         GiQ/InC8xPZWg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x67A7wTE878585;
-        Sun, 7 Jul 2019 03:07:58 -0700
-Date:   Sun, 7 Jul 2019 03:07:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-7891bc0ab739a31538b5f879a523232b8b07a0d3@git.kernel.org>
-Cc:     hpa@zytor.com, bigeasy@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, bigeasy@linutronix.de
-In-Reply-To: <20190704060743.rvew4yrjd6n33uzx@linutronix.de>
-References: <20190704060743.rvew4yrjd6n33uzx@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/fpu: Inline fpu__xstate_clear_all_cpu_caps()
-Git-Commit-ID: 7891bc0ab739a31538b5f879a523232b8b07a0d3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Sun, 7 Jul 2019 06:43:17 -0400
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
+        id 1hk4dX-000tXw-9b
+        for linux-kernel@vger.kernel.org; Sun, 07 Jul 2019 12:43:15 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   "Andrey Jr. Melnikov" <temnota.am@gmail.com>
+Subject: Re: [PATCH 1/1] scsi: aacraid: resurrect correct arc ctrl checks for Series-6
+Date:   Sun, 7 Jul 2019 13:09:39 +0300
+Message-ID: <10t8vf-fq.ln1@banana.localnet>
+References: <20190627161408.10295-1-khorenko@virtuozzo.com> <20190627161408.10295-2-khorenko@virtuozzo.com>
+User-Agent: tin/2.2.1-20140504 ("Tober an Righ") (UNIX) (Linux/4.3.3-bananian (armv7l))
+Cc:     linux-scsi@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7891bc0ab739a31538b5f879a523232b8b07a0d3
-Gitweb:     https://git.kernel.org/tip/7891bc0ab739a31538b5f879a523232b8b07a0d3
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Thu, 4 Jul 2019 08:07:43 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 7 Jul 2019 12:01:47 +0200
+In gmane.linux.scsi Konstantin Khorenko <khorenko@virtuozzo.com> wrote:
+> This partially reverts ms commit
+> 395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
 
-x86/fpu: Inline fpu__xstate_clear_all_cpu_caps()
+> The patch above not only drops Series-9 cards checks but also
+> changes logic for Series-6 controllers which leads to controller
+> hangs/resets under high io load.
 
-All fpu__xstate_clear_all_cpu_caps() does is to invoke one simple
-function since commit
+> So revert to original arc ctrl checks for Series-6 controllers.
 
-  73e3a7d2a7c3b ("x86/fpu: Remove the explicit clearing of XSAVE dependent features")
+> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1777586
+> https://bugzilla.redhat.com/show_bug.cgi?id=1724077
+> https://jira.sw.ru/browse/PSBM-95736
 
-so invoke that function directly and remove the wrapper.
+> Fixes: 395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
+> Cc: stable@vger.kernel.org
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190704060743.rvew4yrjd6n33uzx@linutronix.de
+> Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+> ---
+>  drivers/scsi/aacraid/aacraid.h  | 11 -----------
+>  drivers/scsi/aacraid/comminit.c | 14 ++++++++++----
+>  drivers/scsi/aacraid/commsup.c  |  4 +++-
+>  drivers/scsi/aacraid/linit.c    |  7 +++++--
+>  4 files changed, 18 insertions(+), 18 deletions(-)
 
----
- arch/x86/include/asm/fpu/xstate.h |  1 -
- arch/x86/kernel/fpu/init.c        |  2 +-
- arch/x86/kernel/fpu/xstate.c      | 11 +----------
- 3 files changed, 2 insertions(+), 12 deletions(-)
+> diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
+> index 3fa03230f6ba..b674fb645523 100644
+> --- a/drivers/scsi/aacraid/aacraid.h
+> +++ b/drivers/scsi/aacraid/aacraid.h
+> @@ -2729,17 +2729,6 @@ int _aac_rx_init(struct aac_dev *dev);
+>  int aac_rx_select_comm(struct aac_dev *dev, int comm);
+>  int aac_rx_deliver_producer(struct fib * fib);
+>  
+> -static inline int aac_is_src(struct aac_dev *dev)
+> -{
+> -       u16 device = dev->pdev->device;
+> -
+> -       if (device == PMC_DEVICE_S6 ||
+> -               device == PMC_DEVICE_S7 ||
+> -               device == PMC_DEVICE_S8)
+> -               return 1;
+> -       return 0;
+> -}
+> -
 
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index 7e42b285c856..c6136d79f8c0 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -47,7 +47,6 @@ extern u64 xstate_fx_sw_bytes[USER_XSTATE_FX_SW_WORDS];
- extern void __init update_regset_xstate_info(unsigned int size,
- 					     u64 xstate_mask);
- 
--void fpu__xstate_clear_all_cpu_caps(void);
- void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr);
- const void *get_xsave_field_ptr(int xfeature_nr);
- int using_compacted_format(void);
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 5baae74af4f9..6ce7e0a23268 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -259,7 +259,7 @@ static void __init fpu__init_parse_early_param(void)
- #endif
- 
- 	if (cmdline_find_option_bool(boot_command_line, "noxsave"))
--		fpu__xstate_clear_all_cpu_caps();
-+		setup_clear_cpu_cap(X86_FEATURE_XSAVE);
- 
- 	if (cmdline_find_option_bool(boot_command_line, "noxsaveopt"))
- 		setup_clear_cpu_cap(X86_FEATURE_XSAVEOPT);
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 3c36dd1784db..7b4c52aa929f 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -67,15 +67,6 @@ static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask)*8];
-  */
- unsigned int fpu_user_xstate_size;
- 
--/*
-- * Clear all of the X86_FEATURE_* bits that are unavailable
-- * when the CPU has no XSAVE support.
-- */
--void fpu__xstate_clear_all_cpu_caps(void)
--{
--	setup_clear_cpu_cap(X86_FEATURE_XSAVE);
--}
--
- /*
-  * Return whether the system supports a given xfeature.
-  *
-@@ -709,7 +700,7 @@ static void fpu__init_disable_system_xstate(void)
- {
- 	xfeatures_mask = 0;
- 	cr4_clear_bits(X86_CR4_OSXSAVE);
--	fpu__xstate_clear_all_cpu_caps();
-+	setup_clear_cpu_cap(X86_FEATURE_XSAVE);
- }
- 
- /*
+Why remove helper?
+
+>  static inline int aac_supports_2T(struct aac_dev *dev)
+>  {
+>         return (dev->adapter_info.options & AAC_OPT_NEW_COMM_64);
+> diff --git a/drivers/scsi/aacraid/comminit.c b/drivers/scsi/aacraid/comminit.c
+> index d4fcfa1e54e0..b8046b6c1239 100644
+> --- a/drivers/scsi/aacraid/comminit.c
+> +++ b/drivers/scsi/aacraid/comminit.c
+> @@ -41,7 +41,9 @@ static inline int aac_is_msix_mode(struct aac_dev *dev)
+>  {
+>         u32 status = 0;
+>  
+> -       if (aac_is_src(dev))
+> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
+> +           dev->pdev->device == PMC_DEVICE_S7 ||
+> +           dev->pdev->device == PMC_DEVICE_S8)
+>                 status = src_readl(dev, MUnit.OMR);
+>         return (status & AAC_INT_MODE_MSIX);
+>  }
+> @@ -349,7 +351,8 @@ int aac_send_shutdown(struct aac_dev * dev)
+>         /* FIB should be freed only after getting the response from the F/W */
+>         if (status != -ERESTARTSYS)
+>                 aac_fib_free(fibctx);
+Fix this
+> -       if (aac_is_src(dev) &&
+> +       if ((dev->pdev->device == PMC_DEVICE_S7 ||
+> +            dev->pdev->device == PMC_DEVICE_S8) &&
+>              dev->msi_enabled)
+>                 aac_set_intx_mode(dev);
+>         return status;
+> @@ -605,7 +608,8 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
+>                 dev->max_fib_size = status[1] & 0xFFE0;
+>                 host->sg_tablesize = status[2] >> 16;
+>                 dev->sg_tablesize = status[2] & 0xFFFF;
+this one
+> -               if (aac_is_src(dev)) {
+> +               if (dev->pdev->device == PMC_DEVICE_S7 ||
+> +                   dev->pdev->device == PMC_DEVICE_S8) {
+>                         if (host->can_queue > (status[3] >> 16) -
+>                                         AAC_NUM_MGT_FIB)
+>                                 host->can_queue = (status[3] >> 16) -
+> @@ -624,7 +628,9 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
+>                         pr_warn("numacb=%d ignored\n", numacb);
+>         }
+>  
+> -       if (aac_is_src(dev))
+> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
+> +           dev->pdev->device == PMC_DEVICE_S7 ||
+> +           dev->pdev->device == PMC_DEVICE_S8)
+>                 aac_define_int_mode(dev);
+>         /*
+>          *      Ok now init the communication subsystem
+> diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+> index 2142a649e865..705e003caa95 100644
+> --- a/drivers/scsi/aacraid/commsup.c
+> +++ b/drivers/scsi/aacraid/commsup.c
+> @@ -2574,7 +2574,9 @@ void aac_free_irq(struct aac_dev *dev)
+>  {
+>         int i;
+>  
+> -       if (aac_is_src(dev)) {
+> +       if (dev->pdev->device == PMC_DEVICE_S6 ||
+> +           dev->pdev->device == PMC_DEVICE_S7 ||
+> +           dev->pdev->device == PMC_DEVICE_S8) {
+>                 if (dev->max_msix > 1) {
+>                         for (i = 0; i < dev->max_msix; i++)
+>                                 free_irq(pci_irq_vector(dev->pdev, i),
+> diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+> index 644f7f5c61a2..3b7968b17169 100644
+> --- a/drivers/scsi/aacraid/linit.c
+> +++ b/drivers/scsi/aacraid/linit.c
+> @@ -1560,7 +1560,9 @@ static void __aac_shutdown(struct aac_dev * aac)
+>  
+>         aac_adapter_disable_int(aac);
+>  
+> -       if (aac_is_src(aac)) {
+> +       if (aac->pdev->device == PMC_DEVICE_S6 ||
+> +           aac->pdev->device == PMC_DEVICE_S7 ||
+> +           aac->pdev->device == PMC_DEVICE_S8) {
+>                 if (aac->max_msix > 1) {
+>                         for (i = 0; i < aac->max_msix; i++) {
+>                                 free_irq(pci_irq_vector(aac->pdev, i),
+> @@ -1835,7 +1837,8 @@ static int aac_acquire_resources(struct aac_dev *dev)
+>         aac_adapter_enable_int(dev);
+>  
+>  
+and this.
+> -       if (aac_is_src(dev))
+> +       if (dev->pdev->device == PMC_DEVICE_S7 ||
+> +           dev->pdev->device == PMC_DEVICE_S8)
+>                 aac_define_int_mode(dev);
+>  
+>         if (dev->msi_enabled)
+
+
