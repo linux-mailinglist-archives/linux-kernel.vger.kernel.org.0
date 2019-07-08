@@ -2,102 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E04F461C4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C2361C5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbfGHJSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 05:18:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55568 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728793AbfGHJSd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 05:18:33 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-103-2xhe-QRYPc6LXjWhlktUtw-1; Mon, 08 Jul 2019 10:18:30 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
- 8 Jul 2019 10:18:29 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 8 Jul 2019 10:18:29 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Tony Chuang' <yhchuang@realtek.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-CC:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@endlessm.com" <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] rtw88/pci: Rearrange the memory usage for skb in RX ISR
-Thread-Topic: [PATCH] rtw88/pci: Rearrange the memory usage for skb in RX ISR
-Thread-Index: AQHVNVeEF2VH1aWcW0SX/aCCs+qgc6bAR+xA//+PoICAAIn6kIAADM1A
-Date:   Mon, 8 Jul 2019 09:18:28 +0000
-Message-ID: <85e3b48ee6694aa491c7caa73c027e0f@AcuMS.aculab.com>
-References: <20190708063252.4756-1-jian-hong@endlessm.com>
- <F7CD281DE3E379468C6D07993EA72F84D1861A6D@RTITMBSVM04.realtek.com.tw>
- <CAPpJ_eebQtL0y_j98J2T7m9g77A61SVtvD8qnNN42bV0dm4MLA@mail.gmail.com>
- <F7CD281DE3E379468C6D07993EA72F84D1861B71@RTITMBSVM04.realtek.com.tw>
-In-Reply-To: <F7CD281DE3E379468C6D07993EA72F84D1861B71@RTITMBSVM04.realtek.com.tw>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1729110AbfGHJXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 05:23:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:47587 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727401AbfGHJXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 05:23:52 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45j0Pb40jTz9sNx;
+        Mon,  8 Jul 2019 19:23:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562577829;
+        bh=WoJLpcljuHo/F0ZtvO6PX/LOkh76vKueq9DXlrSy+Sk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iPOa1yawyTjrhs6Uc3KRQl24I23tVEwMsORvoBNps/HtGDQnJMjg9fJUQaegmz6bk
+         +QA8NadeVn/OqU6Gq0UFawTclYzjJPtPQJwYDFnsiLcoxWhRXTsSBe3GLnfUt6naSV
+         G9QKL0ejcD+CPIe75+872wO/07vkRJfxLg1L6xtGLTC5KoYImRZGiZSefo7pfqytL1
+         PWMsX9Q4T9T1/71N5RhINRw0wJtmffjnsuVLWoAYerUocLy3peuW2odxZryQ3YWRP4
+         IewSAz0lqkzNJtofD1FRPfoNhtUYe8Q2DbKHxlAW3NhL42V18m8EW4rNPXG0+/Beav
+         6fT0cijwmi4Rg==
+Date:   Mon, 8 Jul 2019 19:23:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: linux-next: build failure after merge of the char-misc tree
+Message-ID: <20190708192345.53fce4cf@canb.auug.org.au>
 MIME-Version: 1.0
-X-MC-Unique: 2xhe-QRYPc6LXjWhlktUtw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gmOY+g3Rcwb.2Ufy42sw0dg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogVG9ueSBDaHVhbmcNCj4gU2VudDogMDggSnVseSAyMDE5IDEwOjAwDQo+ID4gPiA+IEBA
-IC04MDMsMjUgKzgxMiwxNCBAQCBzdGF0aWMgdm9pZCBydHdfcGNpX3J4X2lzcihzdHJ1Y3QgcnR3
-X2Rldg0KPiA+ICpydHdkZXYsDQo+ID4gPiA+IHN0cnVjdCBydHdfcGNpICpydHdwY2ksDQo+ID4g
-PiA+ICAgICAgICAgICAgICAgICAgICAgICBza2JfcHV0KHNrYiwgcGt0X3N0YXQucGt0X2xlbik7
-DQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICBza2JfcmVzZXJ2ZShza2IsIHBrdF9vZmZz
-ZXQpOw0KPiA+ID4gPg0KPiA+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgLyogYWxsb2MgYSBz
-bWFsbGVyIHNrYiB0byBtYWM4MDIxMSAqLw0KPiA+ID4gPiAtICAgICAgICAgICAgICAgICAgICAg
-bmV3ID0gZGV2X2FsbG9jX3NrYihwa3Rfc3RhdC5wa3RfbGVuKTsNCj4gPiA+ID4gLSAgICAgICAg
-ICAgICAgICAgICAgIGlmICghbmV3KSB7DQo+ID4gPiA+IC0gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIG5ldyA9IHNrYjsNCj4gPiA+ID4gLSAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7
-DQo+ID4gPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNrYl9wdXRfZGF0YShuZXcs
-IHNrYi0+ZGF0YSwNCj4gPiBza2ItPmxlbik7DQo+ID4gPiA+IC0gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGRldl9rZnJlZV9za2JfYW55KHNrYik7DQo+ID4gPiA+IC0gICAgICAgICAgICAg
-ICAgICAgICB9DQo+ID4gPg0KPiA+ID4gSSBhbSBub3Qgc3VyZSBpZiBpdCdzIGZpbmUgdG8gZGVs
-aXZlciBldmVyeSBodWdlIFNLQiB0byBtYWM4MDIxMS4NCj4gPiA+IEJlY2F1c2UgaXQgd2lsbCB0
-aGVuIGJlIGRlbGl2ZXJlZCB0byBUQ1AvSVAgc3RhY2suDQo+ID4gPiBIZW5jZSBJIHRoaW5rIGVp
-dGhlciBpdCBzaG91bGQgYmUgdGVzdGVkIHRvIGtub3cgaWYgdGhlIHBlcmZvcm1hbmNlDQo+ID4g
-PiB3b3VsZCBiZSBpbXBhY3RlZCBvciBmaW5kIG91dCBhIG1vcmUgZWZmaWNpZW50IHdheSB0byBz
-ZW5kDQo+ID4gPiBzbWFsbGVyIFNLQiB0byBtYWM4MDIxMSBzdGFjay4NCj4gPg0KPiA+IEkgcmVt
-ZW1iZXIgbmV0d29yayBzdGFjayBvbmx5IHByb2Nlc3NlcyB0aGUgc2tiIHdpdGgoaW4pIHBvaW50
-ZXJzDQo+ID4gKHNrYi0+ZGF0YSkgYW5kIHRoZSBza2ItPmxlbiBmb3IgZGF0YSBwYXJ0LiAgSXQg
-YWxzbyBjaGVja3MgcmVhbA0KPiA+IGJ1ZmZlciBib3VuZGFyeSAoaGVhZCBhbmQgZW5kKSBvZiB0
-aGUgc2tiIHRvIHByZXZlbnQgbWVtb3J5IG92ZXJmbG93Lg0KPiA+IFRoZXJlZm9yZSwgSSB0aGlu
-ayB1c2luZyB0aGUgb3JpZ2luYWwgc2tiIGlzIHRoZSBtb3N0IGVmZmljaWVudCB3YXkuDQo+ID4N
-Cj4gPiBJZiBJIG1pc3VuZGVyc3RhbmQgc29tZXRoaW5nLCBwbGVhc2UgcG9pbnQgb3V0Lg0KPiA+
-DQo+IA0KPiBJdCBtZWFucyBpZiB3ZSBzdGlsbCB1c2UgYSBodWdlIFNLQiAofjhLKSBmb3IgZXZl
-cnkgUlggcGFja2V0ICh+MS41SykuDQo+IFRoZXJlIGlzIGFib3V0IDYuNUsgbm90IHVzZWQuIEFu
-ZCBldmVuIG1vcmUgaWYgd2UgcGluZyB3aXRoIGxhcmdlIHBhY2tldA0KPiBzaXplICJlZy4gJCBw
-aW5nIC1zIDY1NTM2IiwgSSBhbSBub3Qgc3VyZSBpZiB0aG9zZSBodWdlIFNLQnMgd2lsbCBlYXQg
-YWxsIG9mDQo+IHRoZSBTS0IgbWVtIHBvb2wsIGFuZCB0aGVuIHBpbmcgZmFpbHMuDQo+IA0KPiBC
-VFcsIHRoZSBvcmlnaW5hbCBkZXNpZ24gb2YgUlRLX1BDSV9SWF9CVUZfU0laRSB0byBiZSAoODE5
-MiArIDI0KSBpcyB0bw0KPiByZWNlaXZlIEFNU0RVIHBhY2tldCBpbiBvbmUgU0tCLg0KPiAoQ291
-bGQgcHJvYmFibHkgZW5sYXJnZSBpdCB0byBSWCBWSFQgQU1TRFUgfjExSykNCg0KSWYgeW91IGFs
-bG9jYXRlIDgxOTIrMjQgdGhlIG1lbW9yeSBhbGxvY2F0ZWQgd2lsbCBiZSBlaXRoZXIgMTJrIG9y
-IDE2aw0KYW5kIHRoZSBza2IgdHJ1ZXNpemUgc2V0IGFwcHJvcHJpYXRlbHkuDQooUHJvYmFibHkg
-MTZrIGlmIGRtYSBtZW1vcnkuKQ0KSWYgdGhpcyBpcyBmZWQgaW50byBJUCBpdCBpcyBxdWl0ZSBs
-aWtlbHkgdGhhdCBhIHNpbmdsZSBieXRlIG9mIGRhdGENCndpbGwgZW5kIHVwIHF1ZXVlZCBvbiB0
-aGUgc29ja2V0IGluIDE2ayBvZiBkbWEtYWJsZSBtZW1vcnkuDQpUaGUgJ3RydWVzaXplJyBzdG9w
-cyB0aGlzIHVzaW5nIGFsbCB0aGUgc3lzdGVtIG1lbW9yeSwgYnV0IGl0IGlzbid0DQpnb29kIGZv
-ciBtZW1vcnkgdXNhZ2UuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNp
-ZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsN
-ClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+--Sig_/gmOY+g3Rcwb.2Ufy42sw0dg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
+
+After merging the char-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/misc/vmw_balloon.c: In function 'vmballoon_mount':
+drivers/misc/vmw_balloon.c:1736:14: error: 'simple_dname' undeclared (first=
+ use in this function); did you mean 'simple_rename'?
+   .d_dname =3D simple_dname,
+              ^~~~~~~~~~~~
+              simple_rename
+drivers/misc/vmw_balloon.c:1736:14: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+drivers/misc/vmw_balloon.c:1739:9: error: implicit declaration of function =
+'mount_pseudo'; did you mean 'mount_bdev'? [-Werror=3Dimplicit-function-dec=
+laration]
+  return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+         ^~~~~~~~~~~~
+         mount_bdev
+drivers/misc/vmw_balloon.c:1739:9: warning: returning 'int' from a function=
+ with return type 'struct dentry *' makes pointer from integer without a ca=
+st [-Wint-conversion]
+  return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        BALLOON_VMW_MAGIC);
+        ~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  83a8afa72e9c ("vmw_balloon: Compaction support")
+
+interacting with commits
+
+  7e5f7bb08b8c ("unexport simple_dname()")
+  8d9e46d80777 ("fold mount_pseudo_xattr() into pseudo_fs_get_tree()")
+
+from the vfs tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Jul 2019 19:17:56 +1000
+Subject: [PATCH] convert vmwballoon to use the new mount API
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/vmw_balloon.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index 91fa43051535..e8c0f7525f13 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -29,6 +29,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/mount.h>
++#include <linux/pseudo_fs.h>
+ #include <linux/balloon_compaction.h>
+ #include <linux/vmw_vmci_defs.h>
+ #include <linux/vmw_vmci_api.h>
+@@ -1728,21 +1729,14 @@ static inline void vmballoon_debugfs_exit(struct vm=
+balloon *b)
+=20
+ #ifdef CONFIG_BALLOON_COMPACTION
+=20
+-static struct dentry *vmballoon_mount(struct file_system_type *fs_type,
+-				      int flags, const char *dev_name,
+-				      void *data)
++static int vmballoon_init_fs_context(struct fs_context *fc)
+ {
+-	static const struct dentry_operations ops =3D {
+-		.d_dname =3D simple_dname,
+-	};
+-
+-	return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+-			    BALLOON_VMW_MAGIC);
++	return init_pseudo(fc, BALLOON_VMW_MAGIC) ? 0 : -ENOMEM;
+ }
+=20
+ static struct file_system_type vmballoon_fs =3D {
+ 	.name           =3D "balloon-vmware",
+-	.mount          =3D vmballoon_mount,
++	.init_fs_context          =3D vmballoon_init_fs_context,
+ 	.kill_sb        =3D kill_anon_super,
+ };
+=20
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gmOY+g3Rcwb.2Ufy42sw0dg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jC6EACgkQAVBC80lX
+0GxTegf9G11i4nX5i36O7bpMe6NcHZbERNWK80vL/coNywaOh7TdWnBeOAQk9X6Q
+BtEfbHNU7dQudjdqUS+OGSoXA+qlvPK3daNRQ+YGubt+LrapK/Q3BI/Uy2LK2kGb
+6LNIgdTwWE7aCALpcvGLrgM7aByk6ukGNvRNEiJG3kOMk0AnxO9gWwADIKzNqdUt
+r6G1rb7yeTN+3KFvNmKBnTFFSjl0j4aRA9q7s4/hMnMFFTm9KDYD7geGuCuugQMN
+PnZ8/H94VvMcnLZxvBSHlnfwmnmVMrg0od+Rp/AsvvUX8vwGmJBXN+TH/+pKb5CH
+cl4CUFwD6xM0HqGsW/GafxrROu9c9A==
+=21Y0
+-----END PGP SIGNATURE-----
+
+--Sig_/gmOY+g3Rcwb.2Ufy42sw0dg--
