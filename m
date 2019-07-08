@@ -2,146 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96A7061B5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68CF661B62
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbfGHHtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:49:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39582 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfGHHtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:49:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZtdcoTJjChZhuPwlagtEicRdXE6fEWR8USCQzYBj3As=; b=KlQ9rDMj5O2oKgRR1ZVrSXvUR
-        XU7cMcDvPgTu4Yb6UzfhpJCk5+aWfMLToecJ23SOGlfDKIOqnrOtuz7PcZjuUBRqtfhv8VPXrS4mW
-        FLU+w0npjYzog8aSpyh2PTF19VyckbJ8hmWZnQ9bouqs/o88uTq705C1YmRkTSGmLDHfSvgOUIukx
-        kBFyXGgzzrlNp58xqEeoOt+P7huHAt/5cvsm7c2WwzJyn9eCzYL0IexGYXChiD+G4QflroGJcBZgc
-        0uQtSudvMHBuf0lfLQ0PGqaAbqwKEV7Go/1EXK2KIw+SFchsSFFDSRivCL4vS8KXNMUW3QUgUH3LD
-        bUpVnwxgA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkONt-0002mS-Qu; Mon, 08 Jul 2019 07:48:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5BAD420AA5C74; Mon,  8 Jul 2019 09:48:23 +0200 (CEST)
-Date:   Mon, 8 Jul 2019 09:48:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eiichi Tsukata <devel@etsukata.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Anvin <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v2 5/7] x86/mm, tracing: Fix CR2 corruption
-Message-ID: <20190708074823.GV3402@hirez.programming.kicks-ass.net>
-References: <20190704195555.580363209@infradead.org>
- <20190704200050.534802824@infradead.org>
- <CAHk-=wiJ4no+TW-8KTfpO-Q5+aaTGVoBJzrnFTvj_zGpVbrGfA@mail.gmail.com>
- <a4a50e28-d972-3cef-b668-1e49d5b5496f@etsukata.com>
+        id S1729511AbfGHHut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:50:49 -0400
+Received: from gecko.sbs.de ([194.138.37.40]:57338 "EHLO gecko.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbfGHHut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 03:50:49 -0400
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id x687okks015033
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 8 Jul 2019 09:50:46 +0200
+Received: from [167.87.41.211] ([167.87.41.211])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x687ojqu023276;
+        Mon, 8 Jul 2019 09:50:46 +0200
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [ANNOUNCE] Jailhouse 0.11 released
+To:     Jailhouse <jailhouse-dev@googlegroups.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+X-Mozilla-News-Host: news://news://news://news://blaine.gmane.org
+Message-ID: <13acbeee-94fe-831b-51a5-01cc65f23bf0@siemens.com>
+Date:   Mon, 8 Jul 2019 09:50:45 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4a50e28-d972-3cef-b668-1e49d5b5496f@etsukata.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 06, 2019 at 08:07:22PM +0900, Eiichi Tsukata wrote:
-> 
-> 
-> On 2019/07/05 11:18, Linus Torvalds wrote:
-> > On Fri, Jul 5, 2019 at 5:03 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >>
-> >> Despire the current efforts to read CR2 before tracing happens there
-> >> still exist a number of possible holes:
-> > 
-> > So this whole series disturbs me for the simple reason that I thought
-> > tracing was supposed to save/restore cr2 and make it unnecessary to
-> > worry about this in non-tracing code.
-> > 
-> > That is very much what the NMI code explicitly does. Why shouldn't all
-> > the other tracing code do the same thing in case they can take page
-> > faults?
-> > 
-> > So I don't think the patches are wrong per se, but this seems to solve
-> > it at the wrong level.
+Long time, no release: Version 0.11 is finally available. Several last-minute
+issues delayed this, though that's not a real excuse for having so many months
+since the last one. Time-wise, this should have been two releases.
+Changeset-wise, we are in the same dimension as usual: 140 commits, 185 files
+changed, 4057 insertions, 1437 deletions.
 
-This solves it all at one site. If we're going to sprinkle CR2
-save/restore over 'all' sites we're bound to miss some and we'll be
-playing catch-up forever :/
+- New targets:
+   - Marvell MACCHIATObin
+   - Xilinx Ultra96
+   - Microsys miriac SBC-LS1046A
+   - Texas Instruments AM654 IDK
+- Cross-arch changes:
+   - add per-CPU statistics
+   - reset PCI devices already on cell shutdown
+   - account for PCI devices not supporting QWORD MSI-X accesses
+   - adjust driver DT overlay to latest kernels
+   - fix alignment calculation for page_alloc_aligned
+   - split and relicense printk core for inmates
+- ARM / ARM64:
+   - add Spectre v2 (CVE 2017-5715) mitigation (if firmware supports it)
+   - fix SGI forwarding during jailhouse enable
+   - avoid overwriting PSCI firmware on Orange Pi Zero
+   - adjust qemu-arm64 config to recent QEMU versions
+- x86:
+   - multiple fixes for MSI injection during jailhouse enable/disable
+   - fix address overflow in VT-d IR emulation
+   - do not fail root cell in the presence of Intel PKE
+   - various fixes and improvements of the MMIO instruction parser
+   - various config generator fixes and improvements
+   - more fine-grained MSR exit statistics
+   - remove hlt-related latency from apic-demo
+   - fix AMD inmate startup
+   - add exception reporting feature to inmates
+   - fix inmate stacks for SMP usage
+   - enable SSE and AVX during inmate start
 
-> Steven previously tried to fix it by saving CR2 in TRACE_IRQS_OFF:
-> https://lore.kernel.org/lkml/20190320221534.165ab87b@oasis.local.home/
+You can download the new release from
 
-That misses the context tracking tracepoint, which is also before we
-load CR2.
+    https://github.com/siemens/jailhouse/archive/v0.11.tar.gz
 
-> To prevent userstack trace code from reading user stack before it becomes ready,
-> checking current->in_execve in stack_trace_save_user() can help Steven's approach,
-> though trace_sched_process_exec() is called before current->in_execve = 0 so it changes
-> current behavior.
-> 
-> The PoC code is as follows:
-> 
-> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-> index 2abf27d7df6b..30fa6e1b7a87 100644
-> --- a/arch/x86/kernel/stacktrace.c
-> +++ b/arch/x86/kernel/stacktrace.c
-> @@ -116,10 +116,12 @@ void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
->                           const struct pt_regs *regs)
->  {
->         const void __user *fp = (const void __user *)regs->bp;
-> +       unsigned long address;
->  
->         if (!consume_entry(cookie, regs->ip, false))
->                 return;
->  
-> +       address = read_cr2();
->         while (1) {
->                 struct stack_frame_user frame;
->  
-> @@ -131,11 +133,14 @@ void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
->                         break;
->                 if (frame.ret_addr) {
->                         if (!consume_entry(cookie, frame.ret_addr, false))
-> -                               return;
-> +                               break;
->                 }
->                 if (fp == frame.next_fp)
->                         break;
->                 fp = frame.next_fp;
->         }
-> +
-> +       if (address != read_cr2())
-> +               write_cr2(address);
->  }
->  
+then follow the README.md for first steps on recommended evaluation
+platforms and check the tutorial session from ELC-E 2016 [1][2]. To try
+out Jailhouse in a virtual environment or on a few reference boards,
+there is an image generator available [3]. It will soon be updated to
+the new release as well. Drop us a note on the mailing list if you run
+into trouble.
 
-And this misses the perf unwinder, which we can reach if we attach perf
-to the tracepoint. We can most likely also do user accesses from
-kprobes, which we can similarly attach to tracepoints, and there's eBPF,
-and who knows what else...
+The forecast of upcoming changes first of all contains some pending patches
+series: IOMMUv3 is under review already, and cache coloring should see a v2
+series soon as well. Then we will likely need a workaround for an APIC issue
+Ralf and his group found on AMD Ryzen CPUs. That currently prevents non-root
+Linux boot on those CPUs. Finally, the ivshmem device will undergo a significant
+rework, patches may already be published this week. If all goes well, those
+should finally allow to settle on the interface and push the related kernel
+drivers upstream (network, UIO, ideally also a new virtio transport).
 
-Do we really want to go put CR2 save/restore around every single thing
-that can cause a fault (any fault) and is reachable from a tracepoint?
-That's going to be a long list of things ... :/
+Thanks to all the contributors and supporters!
 
-Or are we going to put the CR2 save/restore on every single tracepoint?
-But then we also need it on the mcount/fentry stubs and we again have
-multiple places.
+Jan
 
-Whereas if we stick it in the entry path, like I proposed, we fix it in
-one location and we're done.
+[1]
+https://events.linuxfoundation.org/sites/events/files/slides/ELCE2016-Jailhouse-Tutorial.pdf
+[2] https://youtu.be/7fiJbwmhnRw?list=PLbzoR-pLrL6pRFP6SOywVJWdEHlmQE51q
+[3] https://github.com/siemens/jailhouse-images
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
+
