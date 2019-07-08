@@ -2,57 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3926283B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C629628CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfGHSTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 14:19:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52429 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728765AbfGHSTu (ORCPT
+        id S1732638AbfGHS57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 14:57:59 -0400
+Received: from ivanoab6.miniserver.com ([5.153.251.140]:35716 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728562AbfGHS57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:19:50 -0400
-Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <cascardo@canonical.com>)
-        id 1hkYEu-0008Ga-FG; Mon, 08 Jul 2019 18:19:48 +0000
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Subject: [PATCH] selftests/ftrace: avoid failure when trying to probe a notrace function
-Date:   Mon,  8 Jul 2019 15:19:33 -0300
-Message-Id: <20190708181933.10286-1-cascardo@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 8 Jul 2019 14:57:59 -0400
+X-Greylist: delayed 2280 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jul 2019 14:57:59 EDT
+Received: from [192.168.17.6] (helo=jain.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1hkYF3-0000i0-Lu
+        for linux-kernel@vger.kernel.org; Mon, 08 Jul 2019 18:19:57 +0000
+Received: from sleer.kot-begemot.co.uk ([192.168.3.72])
+        by jain.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1hkYF1-00053d-7c
+        for linux-kernel@vger.kernel.org; Mon, 08 Jul 2019 19:19:57 +0100
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Subject: NFS Caching broken in 4.19.37
+Organization: Cambridge Greys
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <5022bdc4-9f3e-9756-cbca-ada37f88ecc7@cambridgegreys.com>
+Date:   Mon, 8 Jul 2019 19:19:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0
+X-Spam-Score: -1.0
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the function is on available_filter_functions. If it's not,
-mark the test as unresolved, instead of failing it.
+Hi list,
 
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
----
- tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc | 1 +
- 1 file changed, 1 insertion(+)
+NFS caching appears broken in 4.19.37.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-index 3fb70e01b1fe..e4dff034da12 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-@@ -26,6 +26,7 @@ test -d events/kprobes2/event2 || exit_failure
- 
- FUNC=`grep -m 10 " [tT] .*\.isra\..*$" /proc/kallsyms | tail -n 1 | cut -f 3 -d " "`
- [ "x" != "x$FUNC" ] || exit_unresolved
-+grep -n "$FUNC" available_filter_functions || exit_unresolved
- echo "p $FUNC" > kprobe_events
- EVENT=`grep $FUNC kprobe_events | cut -f 1 -d " " | cut -f 2 -d:`
- [ "x" != "x$EVENT" ] || exit_failure
+The more cores/threads the easier to reproduce. Tested with identical 
+results on Ryzen 1600 and 1600X.
+
+1. Mount an openwrt build tree over NFS v4
+2. Run make -j `cat /proc/cpuinfo | grep vendor | wc -l` ; make clean in 
+a loop
+3. Result after 3-4 iterations:
+
+State on the client
+
+ls -laF 
+/var/autofs/local/src/openwrt/build_dir/target-mips_24kc_musl/linux-ar71xx_tiny/linux-4.14.125/arch/mips/include/generated/uapi/asm
+
+total 8
+drwxr-xr-x 2 anivanov anivanov 4096 Jul  8 11:40 ./
+drwxr-xr-x 3 anivanov anivanov 4096 Jul  8 11:40 ../
+
+State as seen on the server (mounted via nfs from localhost):
+
+ls -laF 
+/var/autofs/local/src/openwrt/build_dir/target-mips_24kc_musl/linux-ar71xx_tiny/linux-4.14.125/arch/mips/include/generated/uapi/asm
+total 12
+drwxr-xr-x 2 anivanov anivanov 4096 Jul  8 11:40 ./
+drwxr-xr-x 3 anivanov anivanov 4096 Jul  8 11:40 ../
+-rw-r--r-- 1 anivanov anivanov   32 Jul  8 11:40 ipcbuf.h
+
+Actual state on the filesystem:
+
+ls -laF 
+/exports/work/src/openwrt/build_dir/target-mips_24kc_musl/linux-ar71xx_tiny/linux-4.14.125/arch/mips/include/generated/uapi/asm
+total 12
+drwxr-xr-x 2 anivanov anivanov 4096 Jul  8 11:40 ./
+drwxr-xr-x 3 anivanov anivanov 4096 Jul  8 11:40 ../
+-rw-r--r-- 1 anivanov anivanov   32 Jul  8 11:40 ipcbuf.h
+
+So the client has quite clearly lost the plot. Telling it to drop caches 
+and re-reading the directory shows the file present.
+
+It is possible to reproduce this using a linux kernel tree too, just 
+takes much more iterations - 10+ at least.
+
+Both client and server run 4.19.37 from Debian buster. This is filed as 
+debian bug 931500. I originally thought it to be autofs related, but 
+IMHO it is actually something fundamentally broken in nfs caching 
+resulting in cache corruption.
+
 -- 
-2.20.1
-
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
+https://www.cambridgegreys.com/
