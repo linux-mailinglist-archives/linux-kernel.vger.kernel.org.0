@@ -2,83 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF2861D91
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ECEC61DA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbfGHLFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 07:05:43 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41526 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfGHLFm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:05:42 -0400
-Received: by mail-pg1-f195.google.com with SMTP id q4so7494743pgj.8;
-        Mon, 08 Jul 2019 04:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NtX1NBWaGDXHcz/9wV69LDs12vFDWpigTQpyWgIp7WY=;
-        b=kcy3N/5wF2is7bKFphDTb3o32usun1qqyS+cw4mgA4BdBFYSHjAMF1zj1hxBN3uGPb
-         3CxCaL/F37D+IKkM/HjMb8/gK4miXo3WDG7DQyf6UEN5UW5ocleFGf0OS9jPX3a9zOHE
-         ThjMeTaV3tLmzBSadH3yqz9eh68IVYPZbg2zgXoj4ptcPRJ7S1l3qnYXW+6pwMoQcZ4L
-         TjLFVg4qA5pMMlC94TVV+qPzlRIWNdCdXYkZDJcFQAFCHKYJrIL3P9UVi2Ry0aNEgKlp
-         ItigGhFsqHWNdlvd+K9VFlv+k+xoMNvAj6eJtLOmCo3ue4amOLdZE0qNLsCbnV2MaFdf
-         d0yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NtX1NBWaGDXHcz/9wV69LDs12vFDWpigTQpyWgIp7WY=;
-        b=jloCaq5DEfZ1wrztgL3Gh4Uc7+bjHrExQWoFpPK/B2uTcb+ERsOobvNjGKjM0YSRL+
-         VaE7MWnrtdOQFWzR8tQRoJ+jTEvNoh8Nrk6nPHOSl5k6foVhe4uEeeM84hkSngRx8kls
-         cPqSh1kiBb3McFH0dIgvR/mlomL67CE5ghDNNSdSotSpwmkx7Tgs9nqLP7H83t8a1VpN
-         cW1JbsiA5xXsPuvPiYPCNT+Nid5ZV4ONmMOwTJmvvYzE8FcvcE/30k7X1psyB4FAdin+
-         SbjNYN38ZvHrCN7e9Pnv0d+K5skk4uRy2o8sXz3/A40vpzBU+hbfp6U1TojQGANgcHsy
-         Sm9g==
-X-Gm-Message-State: APjAAAX9e+3tzXV5VMGWy4bxI2VeRvmrXR2ZTRdKrDq2f9wUua0OtzFw
-        sY8venQ+twhpmeoYlG/j81E=
-X-Google-Smtp-Source: APXvYqx3p0GV+7LFLkdB/dvR0QAleb83mTbmvQxj6v1xCAHyHZb7nvdMjfJUdSoK0o17VhSBXXpLcA==
-X-Received: by 2002:a17:90a:9903:: with SMTP id b3mr24440118pjp.80.1562583942288;
-        Mon, 08 Jul 2019 04:05:42 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b126sm20811787pfa.126.2019.07.08.04.05.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 04:05:41 -0700 (PDT)
-Subject: Re: [PATCH 3.16 000/129] 3.16.70-rc1 review
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        Denis Kirjanov <kda@linux-powerpc.org>
-References: <lsq.1562518456.876074874@decadent.org.uk>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <89ecc914-674d-6626-6741-2076ba974d46@roeck-us.net>
-Date:   Mon, 8 Jul 2019 04:05:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1730375AbfGHLIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 07:08:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:44916 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730358AbfGHLIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 07:08:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2412360;
+        Mon,  8 Jul 2019 04:08:47 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7F2E3F738;
+        Mon,  8 Jul 2019 04:08:45 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 12:08:41 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alessio Balsini <balsini@android.com>
+Subject: Re: [PATCH v11 1/5] sched/core: uclamp: Extend CPU's cgroup
+ controller
+Message-ID: <20190708110838.4ohd7pqx5ngkzcsu@queper01-lin>
+References: <20190708084357.12944-1-patrick.bellasi@arm.com>
+ <20190708084357.12944-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <lsq.1562518456.876074874@decadent.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708084357.12944-2-patrick.bellasi@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/7/19 9:54 AM, Ben Hutchings wrote:
-> This is the start of the stable review cycle for the 3.16.70 release.
-> There are 129 patches in this series, which will be posted as responses
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue Jul 09 20:00:00 UTC 2019.
-> Anything received after that time might be too late.
-> 
+Hi Patrick,
 
-drivers/mtd/devices/docg3.c:1836:15: error: implicit declaration of function 'devm_kasprintf'
+On Monday 08 Jul 2019 at 09:43:53 (+0100), Patrick Bellasi wrote:
+> +static inline int uclamp_scale_from_percent(char *buf, u64 *value)
+> +{
+> +	*value = SCHED_CAPACITY_SCALE;
+> +
+> +	buf = strim(buf);
+> +	if (strncmp("max", buf, 4)) {
+> +		s64 percent;
+> +		int ret;
+> +
+> +		ret = cgroup_parse_float(buf, 2, &percent);
+> +		if (ret)
+> +			return ret;
+> +
+> +		percent <<= SCHED_CAPACITY_SHIFT;
+> +		*value = DIV_ROUND_CLOSEST_ULL(percent, 10000);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static inline u64 uclamp_percent_from_scale(u64 value)
+> +{
+> +	return DIV_ROUND_CLOSEST_ULL(value * 10000, SCHED_CAPACITY_SCALE);
+> +}
 
-Seen in various builds.
+FWIW, I tried the patches and realized these conversions result in a
+'funny' behaviour from a user's perspective. Things like this happen:
 
-Guenter
+   $ echo 20 > cpu.uclamp.min
+   $ cat cpu.uclamp.min
+   20.2
+   $ echo 20.2 > cpu.uclamp.min
+   $ cat cpu.uclamp.min
+   20.21
+
+Having looked at the code, I get why this is happening, but I'm not sure
+if a random user will. It's not an issue per se, but it's just a bit
+weird.
+
+I guess one way to fix this would be to revert back to having a
+1024-scale for the cgroup interface too ... Though I understand Tejun
+wanted % for consistency with other things.
+
+So, I'm not sure if this is still up for discussion, but in any case I
+wanted to say I support your original idea of using a 1024-scale for the
+cgroups interface, since that would solve the 'issue' above and keeps
+things consistent with the per-task API too.
+
+Thanks,
+Quentin
