@@ -2,142 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1440A61A91
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:21:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E36561A9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfGHGVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 02:21:14 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:65136 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbfGHGVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:21:13 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 2FF41269E9930AADFF56;
-        Mon,  8 Jul 2019 14:21:11 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x686Kqld015540;
-        Mon, 8 Jul 2019 14:20:52 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070814205323-2164429 ;
-          Mon, 8 Jul 2019 14:20:53 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Roger Quadros <rogerq@ti.com>
-Subject: [PATCH] phy: ti: am654-serdes: fix an use-after-free in serdes_am654_clk_register()
-Date:   Mon, 8 Jul 2019 14:19:05 +0800
-Message-Id: <1562566745-7447-4-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
+        id S1729107AbfGHG1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:27:12 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45858 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728474AbfGHG1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:27:11 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y8so2989435plr.12
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 23:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PvaTWFd0jIyj/jWh/gLuDIg+Wz9VdaFcROd1jUU6H5M=;
+        b=wHrS2MKgp/qpIFuWhyshvwk7x2tGKyT32qYGZauN0EYywHuPJyrg5ulDYUNFbZ4QNO
+         58Ztvc5wOabwQGRa4Lv6Rk28SjdXgvagQt6yX931q03CfOsah3bf/t5myrB0Vs1+YgHF
+         LY6zSMxF3ql+oh9z3joSHf/Twfb/WwJX+iZrHMK2G+yWniFiHStbYMpn0jI+qzUXlS0T
+         9JoAFd849ZRHJeTmodQFaDLNDP3/J46tcyp4vzEXo6BRtWbP5Fu6mwdWymT/DrOSdmUJ
+         ZImcGLQkaDli0BPtB5r0kbTt7aoUXMpGefJy2w7ISitK0rrwfC75uthm9iXe6nYU5duR
+         9Tlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PvaTWFd0jIyj/jWh/gLuDIg+Wz9VdaFcROd1jUU6H5M=;
+        b=T3z0MznR2p25k8fGKdPL7Pf2R5SizzCRFv3rYZRmV9D4Mkqa97x8hDtkfQ00/D8gh/
+         AFvbnWQHXFbdQ9iCC7xXEER7r8Wa1ODKRHG5gXLOZXRW7VZ6G4/9eSeDKcdY+filMRoo
+         rt6q491QhU0qHebKkg05DBeB6PJdN3eEjVbvVFy9U3X0s6PHCA6KOEwgiNIXnrC5cs/P
+         1ZY9/JKlAEAvnnlaQoV4GdzHaDbHZNsIoiJy6bFkbXioNTkAEBvkPMeqp1usfwcPbSQU
+         h5OtrpPx/EKgwWYcGQqe15wdLRCCMmnmLqytjhuGWTJ0dvYwolHbJmuDstFtR3dIBoaO
+         mQaA==
+X-Gm-Message-State: APjAAAW1D20Ioqg6jGGHqwU5Wvu7hi1W0MvsKZHL+kXVOm+73K4lmNm+
+        BWpOPBFZQmietQuDsFVeVIJhjw==
+X-Google-Smtp-Source: APXvYqwRjKnkWqnGnTkhQ05etsgpHpjlfberNuCPbKjt7IDKyX3jURUFRxp7JkDCe8+PHZdI8BnNTg==
+X-Received: by 2002:a17:902:f301:: with SMTP id gb1mr21987709plb.292.1562567230900;
+        Sun, 07 Jul 2019 23:27:10 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id v10sm17791814pfe.163.2019.07.07.23.27.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Jul 2019 23:27:10 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 11:57:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, cheng.shengyu@zte.com.cn,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] cpufreq/pasemi: fix an use-after-free in
+ pas_cpufreq_cpu_init()
+Message-ID: <20190708062708.5zufqsmgso436idn@vireshk-i7>
 References: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-08 14:20:53,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-08 14:20:53,
-        Serialize complete at 2019-07-08 14:20:53
-X-MAIL: mse-fl1.zte.com.cn x686Kqld015540
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The regmap_node variable is still being used in the syscon_node_to_regmap()
-call after the of_node_put() call, which may result in use-after-free.
+On 08-07-19, 14:19, Wen Yang wrote:
+> The cpu variable is still being used in the of_get_property() call
+> after the of_node_put() call, which may result in use-after-free.
+> 
+> Fixes: a9acc26b75f ("cpufreq/pasemi: fix possible object reference leak")
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/cpufreq/pasemi-cpufreq.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Fixes: 71e2f5c5c224 ("phy: ti: Add a new SERDES driver for TI's AM654x SoC")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Roger Quadros <rogerq@ti.com>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/phy/ti/phy-am654-serdes.c | 33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
+I will suggest some changes here.
 
-diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-index f8edd08..f14f1f0 100644
---- a/drivers/phy/ti/phy-am654-serdes.c
-+++ b/drivers/phy/ti/phy-am654-serdes.c
-@@ -405,6 +405,7 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
- 	const __be32 *addr;
- 	unsigned int reg;
- 	struct clk *clk;
-+	int ret = 0;
- 
- 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
- 	if (!mux)
-@@ -413,34 +414,40 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
- 	init = &mux->clk_data;
- 
- 	regmap_node = of_parse_phandle(node, "ti,serdes-clk", 0);
--	of_node_put(regmap_node);
- 	if (!regmap_node) {
- 		dev_err(dev, "Fail to get serdes-clk node\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out_put_node;
- 	}
- 
- 	regmap = syscon_node_to_regmap(regmap_node->parent);
- 	if (IS_ERR(regmap)) {
- 		dev_err(dev, "Fail to get Syscon regmap\n");
--		return PTR_ERR(regmap);
-+		ret = PTR_ERR(regmap);
-+		goto out_put_node;
- 	}
- 
- 	num_parents = of_clk_get_parent_count(node);
- 	if (num_parents < 2) {
- 		dev_err(dev, "SERDES clock must have parents\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_put_node;
- 	}
- 
- 	parent_names = devm_kzalloc(dev, (sizeof(char *) * num_parents),
- 				    GFP_KERNEL);
--	if (!parent_names)
--		return -ENOMEM;
-+	if (!parent_names) {
-+		ret = -ENOMEM;
-+		goto out_put_node;
-+	}
- 
- 	of_clk_parent_fill(node, parent_names, num_parents);
- 
- 	addr = of_get_address(regmap_node, 0, NULL, NULL);
--	if (!addr)
--		return -EINVAL;
-+	if (!addr) {
-+		ret = -EINVAL;
-+		goto out_put_node;
-+	}
- 
- 	reg = be32_to_cpu(*addr);
- 
-@@ -456,12 +463,16 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
- 	mux->hw.init = init;
- 
- 	clk = devm_clk_register(dev, &mux->hw);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto out_put_node;
-+	}
- 
- 	am654_phy->clks[clock_num] = clk;
- 
--	return 0;
-+out_put_node:
-+	of_node_put(regmap_node);
-+	return ret;
- }
- 
- static const struct of_device_id serdes_am654_id_table[] = {
+> diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+> index 6b1e4ab..d2dd47b 100644
+> --- a/drivers/cpufreq/pasemi-cpufreq.c
+> +++ b/drivers/cpufreq/pasemi-cpufreq.c
+> @@ -132,7 +132,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+
+Don't initialize "err" anymore.
+
+>  	cpu = of_get_cpu_node(policy->cpu, NULL);
+>  
+> -	of_node_put(cpu);
+>  	if (!cpu)
+>  		goto out;
+
+Do return -ENODEV; here.
+
+>  
+> @@ -141,15 +140,15 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  		dn = of_find_compatible_node(NULL, NULL,
+>  					     "pasemi,pwrficient-sdc");
+>  	if (!dn)
+> -		goto out;
+> +		goto out_put_cpu_node;
+>  	err = of_address_to_resource(dn, 0, &res);
+>  	of_node_put(dn);
+>  	if (err)
+> -		goto out;
+> +		goto out_put_cpu_node;
+>  	sdcasr_mapbase = ioremap(res.start + SDCASR_OFFSET, 0x2000);
+>  	if (!sdcasr_mapbase) {
+>  		err = -EINVAL;
+> -		goto out;
+> +		goto out_put_cpu_node;
+>  	}
+
+Don't do above changes.
+
+>  
+>  	dn = of_find_compatible_node(NULL, NULL, "1682m-gizmo");
+> @@ -177,6 +176,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  		err = -EINVAL;
+>  		goto out_unmap_sdcpwr;
+>  	}
+> +	of_node_put(cpu);
+>  
+>  	/* we need the freq in kHz */
+>  	max_freq = *max_freqp / 1000;
+> @@ -203,6 +203,8 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  
+>  out_unmap_sdcasr:
+>  	iounmap(sdcasr_mapbase);
+> +out_put_cpu_node:
+
+Don't add this label, instead use "out" for also having the below
+code.
+
+> +	of_node_put(cpu);
+>  out:
+>  	return err;
+>  }
+> -- 
+> 2.9.5
+
 -- 
-2.9.5
-
+viresh
