@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF72621AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698BC622F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733023AbfGHPSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:18:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42116 "EHLO mail.kernel.org"
+        id S2389573AbfGHPbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:31:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733013AbfGHPSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:18:21 -0400
+        id S2389568AbfGHPa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:30:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 220812171F;
-        Mon,  8 Jul 2019 15:18:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E0F3216C4;
+        Mon,  8 Jul 2019 15:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599100;
-        bh=+erWMCoHTiSsklg2eI6FKFJT38mbys5O4ZaxKE9Ogkc=;
+        s=default; t=1562599858;
+        bh=yJiA2PR8YPF1yGgR2WwLUjBahWd24u1D+ZqG8+xhrnY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gCmMan01dj6MvjpE1U0aYQSzOxExGa8v/EF5mdK3u7wbbeJ3cFgPpzc6fvWi5q78k
-         9Lxuy2GheRCO4JVgfjumejj1INQbfIC4U3VHTGesMkqrMwSsNegihh8tjUb6aoi0kc
-         YOGk8GMbjnA0EkcpBEYkTrZFX2BEPFUxtlRb0oJc=
+        b=Yu5SWi7Ls+d9O213HQT/kPC61+fGxxNxzA80aP7CCWmSaYL2QASfrpmBsAZSFubCA
+         DDzEVn24YgwlRLZxWfhG5v5gTv8K5FDmhqSKOl9xP3MORVzkmyeQaoeNcOgiPU0uDJ
+         NS9x7+6ubGRxFUDdb0kM4cDbVJo4+ilsB7euUhlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Adeodato=20Sim=C3=B3?= <dato@net.com.org.es>,
-        Dominique Martinet <dominique.martinet@cea.fr>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 35/73] net/9p: include trans_common.h to fix missing prototype warning.
+Subject: [PATCH 5.1 13/96] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
 Date:   Mon,  8 Jul 2019 17:12:45 +0200
-Message-Id: <20190708150523.187158218@linuxfoundation.org>
+Message-Id: <20190708150527.092837237@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,30 +48,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 52ad259eaac0454c1ac7123e7148cf8d6e6f5301 ]
+[ Upstream commit 5caaf29af5ca82d5da8bc1d0ad07d9e664ccf1d8 ]
 
-This silences -Wmissing-prototypes when defining p9_release_pages.
+If spi_register_master fails in spi_bitbang_start
+because device_add failure, We should return the
+error code other than 0, otherwise calling
+spi_bitbang_stop may trigger NULL pointer dereference
+like this:
 
-Link: http://lkml.kernel.org/r/b1c4df8f21689b10d451c28fe38e860722d20e71.1542089696.git.dato@net.com.org.es
-Signed-off-by: Adeodato Simó <dato@net.com.org.es>
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
+Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
+
+CPU: 0 PID: 3661 Comm: syz-executor.0 Not tainted 5.1.0+ #28
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ dump_stack+0xa9/0x10e
+ ? __list_del_entry_valid+0x45/0xd0
+ ? __list_del_entry_valid+0x45/0xd0
+ __kasan_report+0x171/0x18d
+ ? __list_del_entry_valid+0x45/0xd0
+ kasan_report+0xe/0x20
+ __list_del_entry_valid+0x45/0xd0
+ spi_unregister_controller+0x99/0x1b0
+ spi_lm70llp_attach+0x3ae/0x4b0 [spi_lm70llp]
+ ? 0xffffffffc1128000
+ ? klist_next+0x131/0x1e0
+ ? driver_detach+0x40/0x40 [parport]
+ port_check+0x3b/0x50 [parport]
+ bus_for_each_dev+0x115/0x180
+ ? subsys_dev_iter_exit+0x20/0x20
+ __parport_register_driver+0x1f0/0x210 [parport]
+ ? 0xffffffffc1150000
+ do_one_initcall+0xb9/0x3b5
+ ? perf_trace_initcall_level+0x270/0x270
+ ? kasan_unpoison_shadow+0x30/0x40
+ ? kasan_unpoison_shadow+0x30/0x40
+ do_init_module+0xe0/0x330
+ load_module+0x38eb/0x4270
+ ? module_frob_arch_sections+0x20/0x20
+ ? kernel_read_file+0x188/0x3f0
+ ? find_held_lock+0x6d/0xd0
+ ? fput_many+0x1a/0xe0
+ ? __do_sys_finit_module+0x162/0x190
+ __do_sys_finit_module+0x162/0x190
+ ? __ia32_sys_init_module+0x40/0x40
+ ? __mutex_unlock_slowpath+0xb4/0x3f0
+ ? wait_for_completion+0x240/0x240
+ ? vfs_write+0x160/0x2a0
+ ? lockdep_hardirqs_off+0xb5/0x100
+ ? mark_held_locks+0x1a/0x90
+ ? do_syscall_64+0x14/0x2a0
+ do_syscall_64+0x72/0x2a0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/9p/trans_common.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-bitbang.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
-index 38aa6345bdfa..9c0c894b56f8 100644
---- a/net/9p/trans_common.c
-+++ b/net/9p/trans_common.c
-@@ -14,6 +14,7 @@
+diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+index dd9a8c54a693..be95be4fe985 100644
+--- a/drivers/spi/spi-bitbang.c
++++ b/drivers/spi/spi-bitbang.c
+@@ -403,7 +403,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
+ 	if (ret)
+ 		spi_master_put(master);
  
- #include <linux/mm.h>
- #include <linux/module.h>
-+#include "trans_common.h"
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(spi_bitbang_start);
  
- /**
-  *  p9_release_req_pages - Release pages after the transaction.
 -- 
 2.20.1
 
