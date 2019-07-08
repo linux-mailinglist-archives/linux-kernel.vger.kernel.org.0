@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD106219C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B544962329
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbfGHPRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
+        id S1732554AbfGHPcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbfGHPRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:45 -0400
+        id S2390180AbfGHPcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E88E6216C4;
-        Mon,  8 Jul 2019 15:17:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECCB6216F4;
+        Mon,  8 Jul 2019 15:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599064;
-        bh=A3B+CCe3/MsWOjNTZZQCMTN4wd4E3BxnZap+XVg5Xew=;
+        s=default; t=1562599960;
+        bh=sRzUo8N2c4jO93+r4ZILDbdApJGAD7zCtHKnqBowNh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cLhk2dhxRl9B9ZHxxLXKwzrpblKTAUCEmfCGxhRJ+FUN1A9b950KdsXebcWQmwW6q
-         Y690i+S8veWtCIJtLT1Y97aimmYf9+cTJN9F4QbFyKbxJ+UKGnwjjwEWjCG2FwI/Ik
-         Kv05fvGbZJB2VQWcl2LYZzU7eH2b/mTHPrYClIUM=
+        b=m56xAybMYGowi3C3GgsIcC3FjDGXr4vziJJvsFkaCGKsjAXcEYezeeqhQzO+PspVb
+         F78FcdAKJSSaxTU6Kr3gXbRxP9G7fPekUbzrzC1v9QNyN+z93O+miH/VDPMBudc8bh
+         OCEcTngsIj71aO5OwUBtA3U0ohXSu4UEQZQXEPsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 30/73] perf help: Remove needless use of strncpy()
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 08/96] HID: i2c-hid: add iBall Aer3 to descriptor override
 Date:   Mon,  8 Jul 2019 17:12:40 +0200
-Message-Id: <20190708150522.770686017@linuxfoundation.org>
+Message-Id: <20190708150526.772295121@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+[ Upstream commit eb6964fa6509b4f1152313f1e0bb67f0c54a6046 ]
 
-commit b6313899f4ed2e76b8375cf8069556f5b94fbff0 upstream.
+This device uses the SIPODEV SP1064 touchpad, which does not
+supply descriptors, so it has to be added to the override
+list.
 
-Since we make sure the destination buffer has at least strlen(orig) + 1,
-no need to do a strncpy(dest, orig, strlen(orig)), just use strcpy(dest,
-orig).
-
-This silences this gcc 8.2 warning on Alpine Linux:
-
-  In function 'add_man_viewer',
-      inlined from 'perf_help_config' at builtin-help.c:284:3:
-  builtin-help.c:192:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
-    strncpy((*p)->name, name, len);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  builtin-help.c: In function 'perf_help_config':
-  builtin-help.c:187:15: note: length computed here
-    size_t len = strlen(name);
-                 ^~~~~~~~~~~~
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-2f69l7drca427ob4km8i7kvo@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+BugLink: https://bugs.launchpad.net/bugs/1825718
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-help.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/tools/perf/builtin-help.c
-+++ b/tools/perf/builtin-help.c
-@@ -179,7 +179,7 @@ static void add_man_viewer(const char *n
- 	while (*p)
- 		p = &((*p)->next);
- 	*p = zalloc(sizeof(**p) + len + 1);
--	strncpy((*p)->name, name, len);
-+	strcpy((*p)->name, name);
- }
+diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+index fd1b6eea6d2f..75078c83be1a 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -354,6 +354,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
+ 		},
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
++	{
++		.ident = "iBall Aer3",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "iBall"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Aer3"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
+ 	{ }	/* Terminate list */
+ };
  
- static int supported_man_viewer(const char *name, size_t len)
+-- 
+2.20.1
+
 
 
