@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB29062322
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A1A6216B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390136AbfGHPc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:32:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34054 "EHLO mail.kernel.org"
+        id S1732505AbfGHPQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390088AbfGHPcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:32:23 -0400
+        id S1732485AbfGHPQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A33B7204EC;
-        Mon,  8 Jul 2019 15:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F211E2166E;
+        Mon,  8 Jul 2019 15:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599942;
-        bh=bnBg8bSk1oBoZuw31yBBPLVRo5aAPKtDhkgR04AM0/o=;
+        s=default; t=1562598969;
+        bh=4Kk/spa2hF0gjWj0ksSjSFLkAF7rqXT7hdSaVHL1Gi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jDvJrhUVvU4mXDsOvEZZ3M5nwi6rhUoPqujkLqKv6FSqn+My/nfcAWcsYtQ0HFUqp
-         b0OhaqIK9UGtM7ZNohNgzMW1fgppJnESzOiFwSmC6JHd+o/py61/Gidjvw6flPAL6r
-         DiMW0A5Jm0xFeb2Eud1NeEvKjnK31P4zz1lk7BVY=
+        b=fJFNQ9PLZZFhPElQCfZNncbGrTqA2elLITfQBILMnFc6H/UEKeqL6BPVYV3yIDgdz
+         zP9Ba0dn4BkSF3/GjfIOr9eFE756wmntZYp1SQ6jOowXDxWZlrVFGhblfDa/GSEymU
+         Ce6CXI41T8zHORk2+U7mUWPN7ac+YZRP8ELsSt10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.1 04/96] netfilter: nft_flow_offload: set liberal tracking mode for tcp
-Date:   Mon,  8 Jul 2019 17:12:36 +0200
-Message-Id: <20190708150526.513518129@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+7fddca22578bc67c3fe4@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.4 27/73] cfg80211: fix memory leak of wiphy device name
+Date:   Mon,  8 Jul 2019 17:12:37 +0200
+Message-Id: <20190708150522.423940950@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 8437a6209f76f85a2db1abb12a9bde2170801617 upstream.
+commit 4f488fbca2a86cc7714a128952eead92cac279ab upstream.
 
-Without it, whenever a packet has to be pushed up the stack (e.g. because
-of mtu mismatch), then conntrack will flag packets as invalid, which in
-turn breaks NAT.
+In wiphy_new_nm(), if an error occurs after dev_set_name() and
+device_initialize() have already been called, it's necessary to call
+put_device() (via wiphy_free()) to avoid a memory leak.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: syzbot+7fddca22578bc67c3fe4@syzkaller.appspotmail.com
+Fixes: 1f87f7d3a3b4 ("cfg80211: add rfkill support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_flow_offload.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/wireless/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -72,6 +72,7 @@ static void nft_flow_offload_eval(const
- 	struct nf_flow_route route;
- 	struct flow_offload *flow;
- 	enum ip_conntrack_dir dir;
-+	bool is_tcp = false;
- 	struct nf_conn *ct;
- 	int ret;
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -447,7 +447,7 @@ use_default_name:
+ 				   &rdev->rfkill_ops, rdev);
  
-@@ -84,6 +85,8 @@ static void nft_flow_offload_eval(const
+ 	if (!rdev->rfkill) {
+-		kfree(rdev);
++		wiphy_free(&rdev->wiphy);
+ 		return NULL;
+ 	}
  
- 	switch (ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.dst.protonum) {
- 	case IPPROTO_TCP:
-+		is_tcp = true;
-+		break;
- 	case IPPROTO_UDP:
- 		break;
- 	default:
-@@ -109,6 +112,11 @@ static void nft_flow_offload_eval(const
- 	if (!flow)
- 		goto err_flow_alloc;
- 
-+	if (is_tcp) {
-+		ct->proto.tcp.seen[0].flags |= IP_CT_TCP_FLAG_BE_LIBERAL;
-+		ct->proto.tcp.seen[1].flags |= IP_CT_TCP_FLAG_BE_LIBERAL;
-+	}
-+
- 	ret = flow_offload_add(flowtable, flow);
- 	if (ret < 0)
- 		goto err_flow_add;
 
 
