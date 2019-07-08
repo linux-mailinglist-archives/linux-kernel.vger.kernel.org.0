@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A74162241
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1726252D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388283AbfGHPYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:24:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51150 "EHLO mail.kernel.org"
+        id S1732702AbfGHPQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388268AbfGHPX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:58 -0400
+        id S1732690AbfGHPQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3D9420665;
-        Mon,  8 Jul 2019 15:23:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4009216C4;
+        Mon,  8 Jul 2019 15:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599437;
-        bh=BL66CyQQAZYLkJtSJfiuk72pCvxOa8IC4WMFAcSz6Jk=;
+        s=default; t=1562599014;
+        bh=uCRlZIC/VW7rzqhFjBiiYtqSwHiFQPXOrTmJnrfKFWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DGMYTBsmVGwHFyQyB/gOROwkCylW/VrVBrIjzIQwqR/LnS1G1XG20REwVtSRaXCqz
-         QGsHTIKuFgP7LAyh7wAOPPu6sR4Zu++dV65MgSoiPAJ4eVbIPWQrDId33Pm+VG8c+N
-         Q/BBIuadKEqHrtZZyiaansPoTDYPl3hJP2w56nAs=
+        b=pIj0cZGEdcND9tzqWaOnwaBxvn6luVT6KB5Cqc9OmAPrpZHJIkW/LsBZtoencGjeP
+         I5eqvESTJ2gLsx6WuY4BIlNJseqaqsoTvkGMTI8kI4Z0fAS1NamTXjn9XeoksoPHm+
+         4/gtvMfiOynOjsziHuPIyreUyRe/yrgTRn/4BTc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 07/56] drm/mediatek: call mtk_dsi_stop() after mtk_drm_crtc_atomic_disable()
+        stable@vger.kernel.org, Matt Flax <flatmax@flatmax.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 49/73] ASoC : cs4265 : readable register too low
 Date:   Mon,  8 Jul 2019 17:12:59 +0200
-Message-Id: <20190708150518.265644852@linuxfoundation.org>
+Message-Id: <20190708150523.966806295@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2458d9d6d94be982b917e93c61a89b4426f32e31 ]
+[ Upstream commit f3df05c805983427319eddc2411a2105ee1757cf ]
 
-mtk_dsi_stop() should be called after mtk_drm_crtc_atomic_disable(), which
-needs ovl irq for drm_crtc_wait_one_vblank(), since after mtk_dsi_stop() is
-called, ovl irq will be disabled. If drm_crtc_wait_one_vblank() is called
-after last irq, it will timeout with this message: "vblank wait timed out
-on crtc 0". This happens sometimes when turning off the screen.
+The cs4265_readable_register function stopped short of the maximum
+register.
 
-In drm_atomic_helper.c#disable_outputs(),
-the calling sequence when turning off the screen is:
+An example bug is taken from :
+https://github.com/Audio-Injector/Ultra/issues/25
 
-1. mtk_dsi_encoder_disable()
-     --> mtk_output_dsi_disable()
-       --> mtk_dsi_stop();  /* sometimes make vblank timeout in
-                               atomic_disable */
-       --> mtk_dsi_poweroff();
-2. mtk_drm_crtc_atomic_disable()
-     --> drm_crtc_wait_one_vblank();
-     ...
-       --> mtk_dsi_ddp_stop()
-         --> mtk_dsi_poweroff();
+Where alsactl store fails with :
+Cannot read control '2,0,0,C Data Buffer,0': Input/output error
 
-mtk_dsi_poweroff() has reference count design, change to make
-mtk_dsi_stop() called in mtk_dsi_poweroff() when refcount is 0.
+This patch fixes the bug by setting the cs4265 to have readable
+registers up to the maximum hardware register CS4265_MAX_REGISTER.
 
-Fixes: 0707632b5bac ("drm/mediatek: update DSI sub driver flow for sending commands to panel")
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Matt Flax <flatmax@flatmax.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ sound/soc/codecs/cs4265.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 413313f19c36..c1b8caad65e6 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -631,6 +631,15 @@ static void mtk_dsi_poweroff(struct mtk_dsi *dsi)
- 	if (--dsi->refcount != 0)
- 		return;
- 
-+	/*
-+	 * mtk_dsi_stop() and mtk_dsi_start() is asymmetric, since
-+	 * mtk_dsi_stop() should be called after mtk_drm_crtc_atomic_disable(),
-+	 * which needs irq for vblank, and mtk_dsi_stop() will disable irq.
-+	 * mtk_dsi_start() needs to be called in mtk_output_dsi_enable(),
-+	 * after dsi is fully set.
-+	 */
-+	mtk_dsi_stop(dsi);
-+
- 	if (!mtk_dsi_switch_to_cmd_mode(dsi, VM_DONE_INT_FLAG, 500)) {
- 		if (dsi->panel) {
- 			if (drm_panel_unprepare(dsi->panel)) {
-@@ -697,7 +706,6 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi)
- 		}
- 	}
- 
--	mtk_dsi_stop(dsi);
- 	mtk_dsi_poweroff(dsi);
- 
- 	dsi->enabled = false;
+diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
+index 93b02be3a90e..6edec2387861 100644
+--- a/sound/soc/codecs/cs4265.c
++++ b/sound/soc/codecs/cs4265.c
+@@ -60,7 +60,7 @@ static const struct reg_default cs4265_reg_defaults[] = {
+ static bool cs4265_readable_register(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+-	case CS4265_CHIP_ID ... CS4265_SPDIF_CTL2:
++	case CS4265_CHIP_ID ... CS4265_MAX_REGISTER:
+ 		return true;
+ 	default:
+ 		return false;
 -- 
 2.20.1
 
