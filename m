@@ -2,347 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29B261D53
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 12:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C01C61D74
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfGHK6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 06:58:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43660 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfGHK6H (ORCPT
+        id S1729470AbfGHLDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 07:03:03 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:39436 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725836AbfGHLDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 06:58:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so7412554pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 03:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=d6dAM1ci7o4TpmVIsFndVbeON4KwXV2vAddiMtp+2rg=;
-        b=OaJtkbrqh3wVDVn0wJ1z7YpmxrRLRh7Cq81kUShPCKTuv09KsroCnCNfvB4j55bW/3
-         SToRBa4nJ6lmtBZr+9D8ElurhqxQTG+1VIfel9R8AapebZJEp7Z+0IwivYl4RWWkw8aN
-         sFZ+Q2iY0NBb5MAwCYcXHhQ1mpKCtq6ApGvcaq1f845FCj8cZw3gTwc9sPpoTwTZiLQX
-         Q9LSh0ThqxKYgbOYp++tUBXPzpGzT6dAnMf7o5oSZ7iei/9l11qtfLYb3N2jhc7t1vcw
-         d9FGmJCdl2o9ftP1q2fRo/jq3KUkI0D2bBdx4FlFPUdYZQ7ComK8Kh0JtRttr1W7q5bs
-         FalA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=d6dAM1ci7o4TpmVIsFndVbeON4KwXV2vAddiMtp+2rg=;
-        b=PKjVyislPXThYHb59r363Pw02TGiUgefk1RfC2X46p/Z2FGf22Ouo9nLIyOA+TDM7r
-         /7xwZ59XJNDkKgC90weeSX7eYNb9VP0MT6DjQqmjAFZ5JR+x5VlF8pyGI1x5wn2XHkoX
-         w/qwpLGGcL+KkzooH9Td020MChBaPNFRHpbhcMiCuPwu7sYE8IhIhJNqOZsT32I0ZyUo
-         gEnqpU4UcmRDWIVk94mZ5wQn9lqZAtejrYYafKclmq1Ye4KEJXFqWLH85uX2QEpaPhcq
-         CmkD7snsg9x0z7Zd17rR8s/73t/flzhhYDJD4zgFYiMZLaiZas+Uzk0juJfwh2K25//k
-         3QoA==
-X-Gm-Message-State: APjAAAWqtpyZHVjX0HAM39gtbYRSpKBF1BXI3oBThXrduMuFr3fLaweB
-        tG/ydzP/7r2i8uU+E2XBXRzv7w==
-X-Google-Smtp-Source: APXvYqz1++7+NABdTV15GtQMlvDYbNUBN3T/HAMKhj2R4v7YzhrP7J3zu2vSkKjkEzUM7x+bjDCQ+Q==
-X-Received: by 2002:a63:7a4f:: with SMTP id j15mr23302231pgn.427.1562583485927;
-        Mon, 08 Jul 2019 03:58:05 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id p7sm21360144pfp.131.2019.07.08.03.58.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 03:58:05 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
-        ulf.hansson@linaro.org, sfr@canb.auug.org.au, pavel@ucw.cz,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS framework
-Date:   Mon,  8 Jul 2019 16:27:52 +0530
-Message-Id: <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
-In-Reply-To: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
-References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+        Mon, 8 Jul 2019 07:03:02 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68Audq5018348;
+        Mon, 8 Jul 2019 03:59:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=elXWCnMgMiRYO8iDyFCDXPZvW8NVW4OljTSmIph/Im4=;
+ b=ElA/3A2J8yXeOOj/SFqdD+bihwDAV/Droe5XSDYAnkWsZXlUOVxvF4lAYw74wfGPM40r
+ PILts3ZT71CLShi/0XCshML02Ku8PlPL0oBefWUXIy+FbNNPaQormb8eEw9KiUrWthKE
+ 9ilRL8M2sl85Bo7vcqEbTbxLieIDuENnzeOolyg+utQZGQ5oQT+Qu9zWiljEOx52ZgSE
+ SaVfdv/Cp8t++3S43tKnt71EK4Aj70LDOJt3rTTxaXnUJ4r68zmjezmCU56Nv0ZtRCgk
+ EgL2FpvSNk1+dJ4HD2cT1VRH4tEXWB69CYvQhSN2WJoVVnY8/xrJetoeks4Mm8TvhO4H GA== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp2052.outbound.protection.outlook.com [104.47.34.52])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2tjr6vepk0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 08 Jul 2019 03:59:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=elXWCnMgMiRYO8iDyFCDXPZvW8NVW4OljTSmIph/Im4=;
+ b=DzIA+gYufo60sMwNgIc22ddYNEPzpjjEFM/611PNzmVBXIR8ZWJr+knU1ZY9hKaHo7LxNEksZW1Eh6UooWWRFQ0aAQmAmxowtWZG8EJxHU4ODoq+PLKA7267EJR/CnOjm9ZHcfUSAobhfiUJeOaK9V2LBq5R8NNLN8laRfE7Qbs=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB5911.namprd07.prod.outlook.com (20.179.91.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Mon, 8 Jul 2019 10:59:39 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::fd8c:399c:929b:33e2]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::fd8c:399c:929b:33e2%6]) with mapi id 15.20.2052.020; Mon, 8 Jul 2019
+ 10:59:39 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHVMyCBLRb+XoB9zUqxphM8AIPBC6a76sKAgAN7ISCAAOC4gIAAKa7g
+Date:   Mon, 8 Jul 2019 10:59:39 +0000
+Message-ID: <BYAPR07MB4709E5BA041BBDDB70E69F62DDF60@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com>
+ <1562324238-16655-6-git-send-email-pawell@cadence.com>
+ <87r274lmqk.fsf@linux.intel.com>
+ <BYAPR07MB4709EF3753AC0B87606B1182DDF70@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <87a7dpm442.fsf@linux.intel.com>
+In-Reply-To: <87a7dpm442.fsf@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNzcxMzA3MDAtYTE2Zi0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDc3MTMwNzAxLWExNmYtMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMzI0MCIgdD0iMTMyMDcwNTcxNzMzMzExNjQ2IiBoPSJRSmxMa0lqaWFtMVM1Si92WGRKaXc2R01Wa2M9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [59.145.174.78]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3e959a19-ceca-4d68-52d9-08d703935f86
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB5911;
+x-ms-traffictypediagnostic: BYAPR07MB5911:
+x-microsoft-antispam-prvs: <BYAPR07MB59115A798E763A4120FE141ADDF60@BYAPR07MB5911.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 00922518D8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(376002)(396003)(346002)(199004)(189003)(36092001)(8936002)(2501003)(76176011)(66066001)(71190400001)(71200400001)(7736002)(81166006)(102836004)(26005)(8676002)(256004)(81156014)(74316002)(9686003)(86362001)(107886003)(55016002)(186003)(14454004)(6506007)(7696005)(99286004)(6246003)(305945005)(53936002)(25786009)(229853002)(66476007)(66556008)(64756008)(66446008)(316002)(446003)(11346002)(7416002)(68736007)(5660300002)(6436002)(6116002)(3846002)(478600001)(4326008)(33656002)(486006)(66946007)(476003)(52536014)(110136005)(73956011)(2906002)(54906003)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5911;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sc1DwfhDbb3RAeCJlNxO25wKBfHCjUqkZrP+1gVxJ9zd/S7hoIH7DF5SNq0es0/LUxm8zdmyoJl7O8wTKai0/f09ht4VHEA12g0kUl1561DAbY4p9+yfyfCEoFs/yryc8l3ya0czW0EEZUMfmfJGLfDG4sHRq3im2FassLKMYTLdSCZv3lkq+myba8CAvXRYNlTenfdQTpNV/WGLyR+JIqCYNL7WLeaXQ3XIoj050DrS/PiM2nH6YtBzZOgIO3OFCUrTr+jQ5hMpBrZZ7Np62xiCb9gbHF/Vh0gxxKtXwn7J5TudDzgTyRSZXGZJlsecGDwgMzZbuJhWaVNweJugeFtD4jSb2JW7YdTe8g1UDvyTB3fxgjpDmNUIgkRHp1YJqT3U4080ElIva3BMvpQDk16rKOALNGtjLSq9lI+mwvg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e959a19-ceca-4d68-52d9-08d703935f86
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 10:59:39.1270
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pawell@global.cadence.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5911
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=991 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907080141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This registers the notifiers for min/max frequency constraints with the
-PM QoS framework. The constraints are also taken into consideration in
-cpufreq_set_policy().
+Hi Felipe
 
-This also relocates cpufreq_policy_put_kobj() as it is required to be
-called from cpufreq_policy_alloc() now.
+Please look at the changes in drivers/usb/common/common.c file.=20
+I'm going to add it as next patch to next version.
+=20
 
-refresh_frequency_limits() is updated to avoid calling
-cpufreq_set_policy() for inactive policies and handle_update() is
-updated to have proper locking in place.
+>Pawel Laszczak <pawell@cadence.com> writes:
+>>>> +void cdns3_role_stop(struct cdns3 *cdns)
+>
+>>>> +static const char *const cdns3_mode[] =3D {
+>>>> +	[USB_DR_MODE_UNKNOWN]		=3D "unknown",
+>>>> +	[USB_DR_MODE_OTG]		=3D "otg",
+>>>> +	[USB_DR_MODE_HOST]		=3D "host",
+>>>> +	[USB_DR_MODE_PERIPHERAL]	=3D "device",
+>>>> +};
+>>>
+>>>don't we have a generic version of this under usb/common ?
+>>>
+>> Yes, there is a similar array, but it is defined also as static
+>> and there is no function for converting value to string.
+>> There is only function for converting string to value.
+>
+>right. You can add the missing interface generically instead of
+>duplicating the enumeration.
+>
+>> There is also:
+>> [USB_DR_MODE_UNKNOWN]		=3D "",
+>> Instead of:
+>> [USB_DR_MODE_UNKNOWN]		=3D "unknown",
+>>
+>> So, for USB_DR_MODE_UNKNOWN user will not see anything information.
+>
+>But that's what "unknown" means :-) We don't know the information.
+>
 
-No constraints are added until now though.
+////// start
+commit 607754c60fabc43408f4f2de82d3560c72870787 (HEAD)
+Author: Pawel Laszczak <pawell@cadence.com>
+Date:   Mon Jul 8 12:53:47 2019 +0200
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-V6->V7:
-- All callers of refresh_frequency_limits(), except handle_update(),
-  take the policy->rwsem and result in deadlock as
-  refresh_frequency_limits() also takes the same lock again. Fix that
-  by taking the rwsem from handle_update() instead.
+    usb:common  Added usb_get_dr_mode_from_string and usb_dr_mode_to_string=
+.
 
-@Rafael: Sending it before Pavel has verified it as I would be offline
-later, in case you want to apply this today itself.
+    Patch introduces new function usb_dr_mode_to_string for converting dual=
+ role
+    mod to string and removes static from usb_dr_mode_to_string definition.
 
- drivers/cpufreq/cpufreq.c | 135 +++++++++++++++++++++++++++++---------
- include/linux/cpufreq.h   |   3 +
- 2 files changed, 108 insertions(+), 30 deletions(-)
+    Both changes have made to avoid duplication of code by cdns3 driver.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index ceb57af15ca0..b96ef6db1bfe 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -26,6 +26,7 @@
- #include <linux/kernel_stat.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_qos.h>
- #include <linux/slab.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-@@ -999,7 +1000,7 @@ static void add_cpu_dev_symlink(struct cpufreq_policy *policy, unsigned int cpu)
- {
- 	struct device *dev = get_cpu_device(cpu);
- 
--	if (!dev)
-+	if (unlikely(!dev))
- 		return;
- 
- 	if (cpumask_test_and_set_cpu(cpu, policy->real_cpus))
-@@ -1117,14 +1118,16 @@ static int cpufreq_add_policy_cpu(struct cpufreq_policy *policy, unsigned int cp
- 
- static void refresh_frequency_limits(struct cpufreq_policy *policy)
- {
--	struct cpufreq_policy new_policy = *policy;
--
--	pr_debug("updating policy for CPU %u\n", policy->cpu);
-+	struct cpufreq_policy new_policy;
- 
--	new_policy.min = policy->user_policy.min;
--	new_policy.max = policy->user_policy.max;
-+	if (!policy_is_inactive(policy)) {
-+		new_policy = *policy;
-+		pr_debug("updating policy for CPU %u\n", policy->cpu);
- 
--	cpufreq_set_policy(policy, &new_policy);
-+		new_policy.min = policy->user_policy.min;
-+		new_policy.max = policy->user_policy.max;
-+		cpufreq_set_policy(policy, &new_policy);
-+	}
- }
- 
- static void handle_update(struct work_struct *work)
-@@ -1133,14 +1136,60 @@ static void handle_update(struct work_struct *work)
- 		container_of(work, struct cpufreq_policy, update);
- 
- 	pr_debug("handle_update for cpu %u called\n", policy->cpu);
-+	down_write(&policy->rwsem);
- 	refresh_frequency_limits(policy);
-+	up_write(&policy->rwsem);
-+}
-+
-+static int cpufreq_notifier_min(struct notifier_block *nb, unsigned long freq,
-+				void *data)
-+{
-+	struct cpufreq_policy *policy = container_of(nb, struct cpufreq_policy, nb_min);
-+
-+	schedule_work(&policy->update);
-+	return 0;
-+}
-+
-+static int cpufreq_notifier_max(struct notifier_block *nb, unsigned long freq,
-+				void *data)
-+{
-+	struct cpufreq_policy *policy = container_of(nb, struct cpufreq_policy, nb_max);
-+
-+	schedule_work(&policy->update);
-+	return 0;
-+}
-+
-+static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
-+{
-+	struct kobject *kobj;
-+	struct completion *cmp;
-+
-+	down_write(&policy->rwsem);
-+	cpufreq_stats_free_table(policy);
-+	kobj = &policy->kobj;
-+	cmp = &policy->kobj_unregister;
-+	up_write(&policy->rwsem);
-+	kobject_put(kobj);
-+
-+	/*
-+	 * We need to make sure that the underlying kobj is
-+	 * actually not referenced anymore by anybody before we
-+	 * proceed with unloading.
-+	 */
-+	pr_debug("waiting for dropping of refcount\n");
-+	wait_for_completion(cmp);
-+	pr_debug("wait complete\n");
- }
- 
- static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
- {
- 	struct cpufreq_policy *policy;
-+	struct device *dev = get_cpu_device(cpu);
- 	int ret;
- 
-+	if (!dev)
-+		return NULL;
-+
- 	policy = kzalloc(sizeof(*policy), GFP_KERNEL);
- 	if (!policy)
- 		return NULL;
-@@ -1157,7 +1206,7 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
- 	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
- 				   cpufreq_global_kobject, "policy%u", cpu);
- 	if (ret) {
--		pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
-+		dev_err(dev, "%s: failed to init policy->kobj: %d\n", __func__, ret);
- 		/*
- 		 * The entire policy object will be freed below, but the extra
- 		 * memory allocated for the kobject name needs to be freed by
-@@ -1167,6 +1216,25 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
- 		goto err_free_real_cpus;
- 	}
- 
-+	policy->nb_min.notifier_call = cpufreq_notifier_min;
-+	policy->nb_max.notifier_call = cpufreq_notifier_max;
-+
-+	ret = dev_pm_qos_add_notifier(dev, &policy->nb_min,
-+				      DEV_PM_QOS_MIN_FREQUENCY);
-+	if (ret) {
-+		dev_err(dev, "Failed to register MIN QoS notifier: %d (%*pbl)\n",
-+			ret, cpumask_pr_args(policy->cpus));
-+		goto err_kobj_remove;
-+	}
-+
-+	ret = dev_pm_qos_add_notifier(dev, &policy->nb_max,
-+				      DEV_PM_QOS_MAX_FREQUENCY);
-+	if (ret) {
-+		dev_err(dev, "Failed to register MAX QoS notifier: %d (%*pbl)\n",
-+			ret, cpumask_pr_args(policy->cpus));
-+		goto err_min_qos_notifier;
-+	}
-+
- 	INIT_LIST_HEAD(&policy->policy_list);
- 	init_rwsem(&policy->rwsem);
- 	spin_lock_init(&policy->transition_lock);
-@@ -1177,6 +1245,11 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
- 	policy->cpu = cpu;
- 	return policy;
- 
-+err_min_qos_notifier:
-+	dev_pm_qos_remove_notifier(dev, &policy->nb_min,
-+				   DEV_PM_QOS_MIN_FREQUENCY);
-+err_kobj_remove:
-+	cpufreq_policy_put_kobj(policy);
- err_free_real_cpus:
- 	free_cpumask_var(policy->real_cpus);
- err_free_rcpumask:
-@@ -1189,30 +1262,9 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
- 	return NULL;
- }
- 
--static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
--{
--	struct kobject *kobj;
--	struct completion *cmp;
--
--	down_write(&policy->rwsem);
--	cpufreq_stats_free_table(policy);
--	kobj = &policy->kobj;
--	cmp = &policy->kobj_unregister;
--	up_write(&policy->rwsem);
--	kobject_put(kobj);
--
--	/*
--	 * We need to make sure that the underlying kobj is
--	 * actually not referenced anymore by anybody before we
--	 * proceed with unloading.
--	 */
--	pr_debug("waiting for dropping of refcount\n");
--	wait_for_completion(cmp);
--	pr_debug("wait complete\n");
--}
--
- static void cpufreq_policy_free(struct cpufreq_policy *policy)
- {
-+	struct device *dev = get_cpu_device(policy->cpu);
- 	unsigned long flags;
- 	int cpu;
- 
-@@ -1224,6 +1276,11 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
- 		per_cpu(cpufreq_cpu_data, cpu) = NULL;
- 	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
- 
-+	dev_pm_qos_remove_notifier(dev, &policy->nb_max,
-+				   DEV_PM_QOS_MAX_FREQUENCY);
-+	dev_pm_qos_remove_notifier(dev, &policy->nb_min,
-+				   DEV_PM_QOS_MIN_FREQUENCY);
-+
- 	cpufreq_policy_put_kobj(policy);
- 	free_cpumask_var(policy->real_cpus);
- 	free_cpumask_var(policy->related_cpus);
-@@ -2283,6 +2340,8 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
- 		       struct cpufreq_policy *new_policy)
- {
- 	struct cpufreq_governor *old_gov;
-+	struct device *cpu_dev = get_cpu_device(policy->cpu);
-+	unsigned long min, max;
- 	int ret;
- 
- 	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
-@@ -2297,11 +2356,27 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
- 	if (new_policy->min > new_policy->max)
- 		return -EINVAL;
- 
-+	/*
-+	 * PM QoS framework collects all the requests from users and provide us
-+	 * the final aggregated value here.
-+	 */
-+	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
-+	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
-+
-+	if (min > new_policy->min)
-+		new_policy->min = min;
-+	if (max < new_policy->max)
-+		new_policy->max = max;
-+
- 	/* verify the cpu speed can be set within this limit */
- 	ret = cpufreq_driver->verify(new_policy);
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * The notifier-chain shall be removed once all the users of
-+	 * CPUFREQ_ADJUST are moved to use the QoS framework.
-+	 */
- 	/* adjust if necessary - all reasons */
- 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
- 			CPUFREQ_ADJUST, new_policy);
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index a1467aa7f58b..95425941f46d 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -147,6 +147,9 @@ struct cpufreq_policy {
- 
- 	/* Pointer to the cooling device if used for thermal mitigation */
- 	struct thermal_cooling_device *cdev;
-+
-+	struct notifier_block nb_min;
-+	struct notifier_block nb_max;
+diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+index 18f5dcf58b0d..ab59954deff8 100644
+--- a/drivers/usb/common/common.c
++++ b/drivers/usb/common/common.c
+@@ -118,13 +118,20 @@ static const char *const usb_dr_modes[] =3D {
+        [USB_DR_MODE_OTG]               =3D "otg",
  };
- 
- struct cpufreq_freqs {
--- 
-2.21.0.rc0.269.g1a574e7a288b
+
+-static enum usb_dr_mode usb_get_dr_mode_from_string(const char *str)
++/**
++ * usb_get_dr_mode_from_string - Convert string to dual role mode.
++ * @str: Pointer to the given string
++ *
++ * The function gets string and returns the correspondig enum usb_dr_mode.
++ */
++enum usb_dr_mode usb_get_dr_mode_from_string(const char *str)
+ {
+        int ret;
+
+        ret =3D match_string(usb_dr_modes, ARRAY_SIZE(usb_dr_modes), str);
+        return (ret < 0) ? USB_DR_MODE_UNKNOWN : ret;
+ }
++EXPORT_SYMBOL_GPL(usb_get_dr_mode_from_string);
+
+ enum usb_dr_mode usb_get_dr_mode(struct device *dev)
+ {
+@@ -139,6 +146,21 @@ enum usb_dr_mode usb_get_dr_mode(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(usb_get_dr_mode);
+
++/**
++ * usb_dr_mode_to_string - Convert dual role mode to stringi.
++ * @dr_mode: Pointer to the given dual role mode
++ *
++ * The function gets enum usb_dr_mode, and returns the correspondig string=
+.
++ */
++const *char usb_dr_mode_to_string(const enum usb_dr_mode dr_mode)
++{
++       if (dr_mode > USB_DR_MODE_UNKNOWN || dr_mode <=3D USB_DR_MODE_PERIP=
+HERAL)
++               return usb_dr_modes[dr_mode];
++
++       return usb_dr_modes[USB_DR_MODE_UNKNOWN];
++}
++EXPORT_SYMBOL_GPL(usb_dr_mode_to_string);
+
+///// end
+
+What do you thing about it ?
+
+Pawel
+
 
