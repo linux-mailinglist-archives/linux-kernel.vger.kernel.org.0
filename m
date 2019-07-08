@@ -2,123 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A077561B78
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B643761B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbfGHH6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:58:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfGHH6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:58:31 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A9F72300602A;
-        Mon,  8 Jul 2019 07:58:30 +0000 (UTC)
-Received: from [10.36.116.46] (ovpn-116-46.ams2.redhat.com [10.36.116.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC44D5D9E2;
-        Mon,  8 Jul 2019 07:58:27 +0000 (UTC)
-Subject: Re: [PATCH 7/8] iommu/arm-smmu-v3: Improve add_device() error
- handling
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        will.deacon@arm.com
-Cc:     joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        robin.murphy@arm.com, jacob.jun.pan@linux.intel.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
- <20190610184714.6786-8-jean-philippe.brucker@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <1e35f298-25bb-719a-b314-c46ded4886a3@redhat.com>
-Date:   Mon, 8 Jul 2019 09:58:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728803AbfGHH6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:58:41 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33899 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfGHH6j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 03:58:39 -0400
+Received: by mail-ot1-f66.google.com with SMTP id n5so15293207otk.1;
+        Mon, 08 Jul 2019 00:58:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=StnBZ5X9IU3YfBiysdeAUKuuUOczu/xn5Tp1Ip5xjbA=;
+        b=hpAyFmuJunqfuuxjK/crmrEZIjoht/cOoswSDwolGMNwu6KQTRzcQCR+7V/KPPP3px
+         qpE6Mf4GYoXVh3z3CU5Rrd4Twr1NvHHIGrO0bIG5qXn5K7dowdk4l67CcNpecRIWwWWL
+         ppMOk+bl6pL95Kx6x7CUAvHt/0pjN+FBLk9JjzHIUN4DkUBxcS+z/uLESBN7P+LnvqrN
+         u427DsGjW7HEgAHqsphKQkHuSTIwFyMgImLjbKRnkDhaK1KubWtgIN3PcE+/izi1QykI
+         xsWhfx2YOi7ht1sEU3lZeUVwHf4gFnqn01G8wbuVKR7Q0IBNtblEliTK5eDEd0e7j7ip
+         hj0Q==
+X-Gm-Message-State: APjAAAU52DMG/CCw2uyMNwEtcYG2gIqOA7BATkxdNNetH3uFUF9Jb9dA
+        dNeqBE2ZnVvGLfjq+G29UwSF5iFqs50FHiVkfdQ=
+X-Google-Smtp-Source: APXvYqzUPRCgrUBw97eCjHFCwkgqypz9WTte0c3NlDtkB2BijxQNV9v4lF/EwkMmVsOxNeMUvOg3BbZciubIJ9wch0I=
+X-Received: by 2002:a9d:7a90:: with SMTP id l16mr1458564otn.297.1562572719133;
+ Mon, 08 Jul 2019 00:58:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190610184714.6786-8-jean-philippe.brucker@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 08 Jul 2019 07:58:30 +0000 (UTC)
+References: <20190706140746.29132-1-jacopo+renesas@jmondi.org> <20190706140746.29132-2-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190706140746.29132-2-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Jul 2019 09:58:27 +0200
+Message-ID: <CAMuHMdWVzm8yoZSoKZh3MJsaX4jCRXQCbn2x2LAu4UWtb1yYjw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/19] dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Hi Jacopo,
 
-On 6/10/19 8:47 PM, Jean-Philippe Brucker wrote:
-> Let add_device() clean up behind itself. The iommu_bus_init() function
-> does call remove_device() on error, but other sites (e.g. of_iommu) do
-> not.
-> 
-> Don't free level-2 stream tables because we'd have to track if we
-> allocated each of them or if they are used by other endpoints. It's not
-> worth the hassle since they are managed resources.
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+On Sat, Jul 6, 2019 at 4:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add device tree bindings documentation for the Renesas R-Car Display
+> Unit Color Management Module.
+>
+> CMM is the image enhancement module available on each R-Car DU video
+> channel on R-Car Gen2 and Gen3 SoCs (V3H and V3M excluded).
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Thanks
+Thanks for your patch!
 
-Eric
-> ---
->  drivers/iommu/arm-smmu-v3.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 633d829f246f..972bfb80f964 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -2398,14 +2398,16 @@ static int arm_smmu_add_device(struct device *dev)
->  	for (i = 0; i < master->num_sids; i++) {
->  		u32 sid = master->sids[i];
->  
-> -		if (!arm_smmu_sid_in_range(smmu, sid))
-> -			return -ERANGE;
-> +		if (!arm_smmu_sid_in_range(smmu, sid)) {
-> +			ret = -ERANGE;
-> +			goto err_free_master;
-> +		}
->  
->  		/* Ensure l2 strtab is initialised */
->  		if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB) {
->  			ret = arm_smmu_init_l2_strtab(smmu, sid);
->  			if (ret)
-> -				return ret;
-> +				goto err_free_master;
->  		}
->  	}
->  
-> @@ -2419,13 +2421,25 @@ static int arm_smmu_add_device(struct device *dev)
->  	if (!(smmu->features & ARM_SMMU_FEAT_2_LVL_CDTAB))
->  		master->ssid_bits = min(master->ssid_bits, 10U);
->  
-> +	ret = iommu_device_link(&smmu->iommu, dev);
-> +	if (ret)
-> +		goto err_free_master;
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
+> @@ -0,0 +1,25 @@
+> +* Renesas R-Car Color Management Module (CMM)
 > +
->  	group = iommu_group_get_for_dev(dev);
-> -	if (!IS_ERR(group)) {
-> -		iommu_group_put(group);
-> -		iommu_device_link(&smmu->iommu, dev);
-> +	if (IS_ERR(group)) {
-> +		ret = PTR_ERR(group);
-> +		goto err_unlink;
->  	}
->  
-> -	return PTR_ERR_OR_ZERO(group);
-> +	iommu_group_put(group);
-> +	return 0;
+> +Renesas R-Car image enhancement module connected to R-Car DU video channels.
 > +
-> +err_unlink:
-> +	iommu_device_unlink(&smmu->iommu, dev);
-> +err_free_master:
-> +	kfree(master);
-> +	fwspec->iommu_priv = NULL;
-> +	return ret;
->  }
->  
->  static void arm_smmu_remove_device(struct device *dev)
-> 
+> +Required properties:
+> + - compatible: shall be one of:
+> +   - "renesas,rcar-gen3-cmm"
+> +   - "renesas,rcar-gen2-cmm"
+
+Why do you think you do not need SoC-specific compatible values?
+What if you discover a different across the R-Car Gen3 line tomorrow?
+Does the IP block have a version register?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
