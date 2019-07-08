@@ -2,261 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC87629BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78657629C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:38:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404676AbfGHThK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:37:10 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:48648 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391733AbfGHThI (ORCPT
+        id S2403914AbfGHTiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:38:16 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:44093 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731628AbfGHTiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:37:08 -0400
-Received: by mail-io1-f69.google.com with SMTP id z19so20223824ioi.15
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:37:07 -0700 (PDT)
+        Mon, 8 Jul 2019 15:38:16 -0400
+Received: by mail-qk1-f193.google.com with SMTP id d79so9959659qke.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:38:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TylGuspNeCUoW8nua4Sr0QWN1QxRHrGILCPTzFyGjF4=;
+        b=PcWw+/z2WHLQiOeNrbXf/1WeVVGWBkKKh4TOwzFaP3xI1R52FemdlSxUyfeSEGKHRG
+         BR4TQ+KjWlm1+fndB0979LrQAHfyEKQDrp4GPMXvH4+ezBUZaPcFsSWdlsOz7QLU+drT
+         2rh3GD3k+eXKyfnpI44JzhUYTULeEtssA011xCfOkqx4OECoy4VbWXbvlRFcCvdLeMMD
+         G5nDmtJ1HlcXNgweqYcWf+akG7KG3x/lPOSu71NqC0AOD7a9mbf4hCmW4Tca+fiFhVqF
+         KNF8tWiHmTz2C6af/yTHJY3M5fsUKArdwpE8YScZKt8zEFhsFMircsg2A2XYFAIKGAtJ
+         HnxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gnWX0kUsdC0eHJTIMNthjAqQdaNjnsisdz8RZUKdFIY=;
-        b=rWZ2LsVaL8rOqQKcoogRsoKeUl/RC9bA1dH5SB962X3U595EDGqntNcLHoKPbJuAXk
-         ePvJnprahjEu7O/1Gi998bkZwWiCwA1J9UFSqji0U8KPiYo0ius/9B3EwKRQWJ6mTkD3
-         z5WG7M4DVWVYBisRdcw5Gn1xXz+nxxhEyiKWAjvMrAzb1d8Q1/IjqBrbvnr7s6IUFDT6
-         saDL3LtG4DyATT7hfJiFDWzRr8eBkLDbqAXFmdRqIxhKIy7LvzYMwLMrp0DVoTwoJLb6
-         6GfdUi5X7hLRFIglfPmr5wDdEbqmBlRoE2dvXekXwv5WQTNdlLsj2x0rU4R9nLQWjHIq
-         vrGA==
-X-Gm-Message-State: APjAAAUcQ0Fe4DjfP/qo3LAUiFbF/3WRDiShCrS0HtQPzA2dgyiDVPoy
-        wVXz+QqQ0gqYWisTSNP5ufx1AEHVPxtan7vwuGyq2URpRuzZ
-X-Google-Smtp-Source: APXvYqx+P1gcjJTw+mYefApBU6g5uc8dauxNcKbcisA1Nv5cDy/iQvYLMOG+J0EhTcQjjvIVy1AbUhYpOOcfSYCQF1cvNV+G5XW6
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TylGuspNeCUoW8nua4Sr0QWN1QxRHrGILCPTzFyGjF4=;
+        b=eSgxmrFlYt+Np6hkk3yx0mtlWPwMfKwPeD8Luwo9Ww4R67o0g5jaeXNYq5G07GmQUK
+         Hwe539HwD/PLY+3H6xv5arXOSrOoI92nbvKmMjIiT/zTY0xOgNumQGiPyqLskRBG1+2r
+         Ib/jhVGaKvDob3vJvOmxT/nZEWDbuXR5v0uK3UU/9LFGnfKkKcC8KmeRMU5aNxqYuouE
+         qIlbWpof7xgVd+tWaPkQYnY15DB11bwRfrhd5Hvz6PgjMnS8AzcgeiTQrSNQEP7xCzQ3
+         yFqpvmOujSrZyWO2rg76IHUrPsG5gq9XQwu7W5kFQaXljGFvId0x6d4QtIkQbeFlECGo
+         +NyQ==
+X-Gm-Message-State: APjAAAX67+e+D7upF4YdT5Xzf7FG/N/TH7bPohbFGB+zw7rS0JWspaUQ
+        TRltc2Fh8WPUC9wTS5uUM1LRBA==
+X-Google-Smtp-Source: APXvYqzoODXNa9c/vhGSXNm25Zh7L06C3wnVFa/2fmDj+Mm+Xr6Elcl1puBJDlDWMb4tqDNAH6pPlQ==
+X-Received: by 2002:a37:62ca:: with SMTP id w193mr14360785qkb.363.1562614695570;
+        Mon, 08 Jul 2019 12:38:15 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id t2sm10048103qth.33.2019.07.08.12.38.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Jul 2019 12:38:15 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hkZSo-0006yC-Dz; Mon, 08 Jul 2019 16:38:14 -0300
+Date:   Mon, 8 Jul 2019 16:38:14 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Mark Bloch <markb@mellanox.com>
+Cc:     Dag Moxnes <dag.moxnes@oracle.com>,
+        "dledford@redhat.com" <dledford@redhat.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] RDMA/core: Fix race when resolving IP address
+Message-ID: <20190708193814.GF23996@ziepe.ca>
+References: <1562584584-13132-1-git-send-email-dag.moxnes@oracle.com>
+ <20190708175025.GA6976@ziepe.ca>
+ <4b9ae7b8-310c-e0b6-7a8e-33e6d5bef83d@oracle.com>
+ <63b9d2cb-f69c-d77c-7803-f08e2a6f755d@mellanox.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:ab83:: with SMTP id t3mr23245388jan.133.1562614627005;
- Mon, 08 Jul 2019 12:37:07 -0700 (PDT)
-Date:   Mon, 08 Jul 2019 12:37:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c3810f058d30910b@google.com>
-Subject: WARNING: held lock freed! (2)
-From:   syzbot <syzbot+e54ed2cb16c6da22c549@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <63b9d2cb-f69c-d77c-7803-f08e2a6f755d@mellanox.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Jul 08, 2019 at 07:22:45PM +0000, Mark Bloch wrote:
+> 
+> 
+> On 7/8/19 11:47 AM, Dag Moxnes wrote:
+> > Thanks Jason,
+> > 
+> > Regards,
+> > Dag
+> > 
+> > Den 08.07.2019 19:50, skrev Jason Gunthorpe:
+> >> On Mon, Jul 08, 2019 at 01:16:24PM +0200, Dag Moxnes wrote:
+> >>> Use neighbour lock when copying MAC address from neighbour data struct
+> >>> in dst_fetch_ha.
+> >>>
+> >>> When not using the lock, it is possible for the function to race with
+> >>> neigh_update, causing it to copy an invalid MAC address.
+> >>>
+> >>> It is possible to provoke this error by calling rdma_resolve_addr in a
+> >>> tight loop, while deleting the corresponding ARP entry in another tight
+> >>> loop.
+> >>>
+> >>> This will cause the race shown it the following sample trace:
+> >>>
+> >>> rdma_resolve_addr()
+> >>>    rdma_resolve_ip()
+> >>>      addr_resolve()
+> >>>        addr_resolve_neigh()
+> >>>          fetch_ha()
+> >>>            dst_fetch_ha()
+> >>>              n->nud_state == NUD_VALID
+> >> It isn't nud_state that is the problem here, it is the parallel
+> >> memcpy's onto ha. I fixed the commit message
+> >>
+> >> This could also have been solved by using the ha_lock, but I don't
+> >> think we have a reason to particularly over-optimize this.
+> 
+> Sorry I'm late to the party, but why not just use: neigh_ha_snapshot()?
 
-syzbot found the following crash on:
+Yes, that is much better, please respin this
 
-HEAD commit:    9d1bc24b bonding: validate ip header before check IPPROTO_..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=152fab25a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7c31a94f66cc0aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=e54ed2cb16c6da22c549
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ad60bba00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165d2453a00000
-
-The bug was bisected to:
-
-commit c8c8218ec5af5d2598381883acbefbf604e56b5e
-Author: Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu Jun 27 21:30:58 2019 +0000
-
-     netrom: fix a memory leak in nr_rx_frame()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1489854ba00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1689854ba00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1289854ba00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e54ed2cb16c6da22c549@syzkaller.appspotmail.com
-Fixes: c8c8218ec5af ("netrom: fix a memory leak in nr_rx_frame()")
-
-=========================
-WARNING: held lock freed!
-5.2.0-rc6+ #75 Not tainted
--------------------------
-syz-executor315/8559 is freeing memory ffff88809faed2c0-ffff88809faedabf,  
-with a lock still held there!
-00000000cf45dbdb (sk_lock-AF_NETROM){+.+.}, at: lock_sock  
-include/net/sock.h:1522 [inline]
-00000000cf45dbdb (sk_lock-AF_NETROM){+.+.}, at: nr_release+0x11a/0x3b0  
-net/netrom/af_netrom.c:522
-2 locks held by syz-executor315/8559:
-  #0: 00000000c0a19dcd (&sb->s_type->i_mutex_key#11){+.+.}, at: inode_lock  
-include/linux/fs.h:778 [inline]
-  #0: 00000000c0a19dcd (&sb->s_type->i_mutex_key#11){+.+.}, at:  
-__sock_release+0x89/0x2a0 net/socket.c:600
-  #1: 00000000cf45dbdb (sk_lock-AF_NETROM){+.+.}, at: lock_sock  
-include/net/sock.h:1522 [inline]
-  #1: 00000000cf45dbdb (sk_lock-AF_NETROM){+.+.}, at: nr_release+0x11a/0x3b0  
-net/netrom/af_netrom.c:522
-
-stack backtrace:
-CPU: 0 PID: 8559 Comm: syz-executor315 Not tainted 5.2.0-rc6+ #75
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_freed_lock_bug kernel/locking/lockdep.c:5077 [inline]
-  debug_check_no_locks_freed.cold+0x9d/0xa9 kernel/locking/lockdep.c:5110
-  kfree+0xb1/0x220 mm/slab.c:3752
-  sk_prot_free net/core/sock.c:1636 [inline]
-  __sk_destruct+0x4f7/0x6e0 net/core/sock.c:1722
-  sk_destruct+0x7b/0x90 net/core/sock.c:1730
-  __sk_free+0xce/0x300 net/core/sock.c:1741
-  sk_free+0x42/0x50 net/core/sock.c:1752
-  sock_put include/net/sock.h:1725 [inline]
-  nr_destroy_socket+0x3df/0x4a0 net/netrom/af_netrom.c:288
-  nr_release+0x323/0x3b0 net/netrom/af_netrom.c:530
-  __sock_release+0xce/0x2a0 net/socket.c:601
-  sock_close+0x1b/0x30 net/socket.c:1273
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
-  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
-  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x447269
-Code: e8 7c 14 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb 0e fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f653a7bed88 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-RAX: ffffffffffffff95 RBX: 00000000006dcc48 RCX: 0000000000447269
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000006dcc40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc4c
-R13: 0000003066736362 R14: 002cc7eb47000000 R15: 0000003066736362
-==================================================================
-BUG: KASAN: use-after-free in debug_spin_lock_before  
-kernel/locking/spinlock_debug.c:83 [inline]
-BUG: KASAN: use-after-free in do_raw_spin_lock+0x28a/0x2e0  
-kernel/locking/spinlock_debug.c:112
-Read of size 4 at addr ffff88809faed34c by task syz-executor315/8559
-
-CPU: 1 PID: 8559 Comm: syz-executor315 Not tainted 5.2.0-rc6+ #75
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
-  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  kasan_report+0x12/0x20 mm/kasan/common.c:614
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
-  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
-  do_raw_spin_lock+0x28a/0x2e0 kernel/locking/spinlock_debug.c:112
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
-  _raw_spin_lock_bh+0x3b/0x50 kernel/locking/spinlock.c:175
-  spin_lock_bh include/linux/spinlock.h:343 [inline]
-  release_sock+0x20/0x1c0 net/core/sock.c:2928
-  nr_release+0x2df/0x3b0 net/netrom/af_netrom.c:553
-  __sock_release+0xce/0x2a0 net/socket.c:601
-  sock_close+0x1b/0x30 net/socket.c:1273
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
-  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
-  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x447269
-Code: e8 7c 14 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb 0e fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f653a7bed88 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-RAX: ffffffffffffff95 RBX: 00000000006dcc48 RCX: 0000000000447269
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000006dcc40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc4c
-R13: 0000003066736362 R14: 002cc7eb47000000 R15: 0000003066736362
-
-Allocated by task 8562:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:489 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:503
-  __do_kmalloc mm/slab.c:3660 [inline]
-  __kmalloc+0x15c/0x740 mm/slab.c:3669
-  kmalloc include/linux/slab.h:552 [inline]
-  sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1599
-  sk_alloc+0x39/0xf70 net/core/sock.c:1653
-  nr_make_new net/netrom/af_netrom.c:476 [inline]
-  nr_rx_frame+0x733/0x1e70 net/netrom/af_netrom.c:959
-  nr_loopback_timer+0x7b/0x170 net/netrom/nr_loopback.c:59
-  call_timer_fn+0x193/0x720 kernel/time/timer.c:1322
-  expire_timers kernel/time/timer.c:1366 [inline]
-  __run_timers kernel/time/timer.c:1685 [inline]
-  __run_timers kernel/time/timer.c:1653 [inline]
-  run_timer_softirq+0x66f/0x1740 kernel/time/timer.c:1698
-  __do_softirq+0x25c/0x94c kernel/softirq.c:292
-
-Freed by task 8559:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
-  __cache_free mm/slab.c:3432 [inline]
-  kfree+0xcf/0x220 mm/slab.c:3755
-  sk_prot_free net/core/sock.c:1636 [inline]
-  __sk_destruct+0x4f7/0x6e0 net/core/sock.c:1722
-  sk_destruct+0x7b/0x90 net/core/sock.c:1730
-  __sk_free+0xce/0x300 net/core/sock.c:1741
-  sk_free+0x42/0x50 net/core/sock.c:1752
-  sock_put include/net/sock.h:1725 [inline]
-  nr_destroy_socket+0x3df/0x4a0 net/netrom/af_netrom.c:288
-  nr_release+0x323/0x3b0 net/netrom/af_netrom.c:530
-  __sock_release+0xce/0x2a0 net/socket.c:601
-  sock_close+0x1b/0x30 net/socket.c:1273
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
-  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
-  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88809faed2c0
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 140 bytes inside of
-  2048-byte region [ffff88809faed2c0, ffff88809faedac0)
-The buggy address belongs to the page:
-page:ffffea00027ebb00 refcount:1 mapcount:0 mapping:ffff8880aa400c40  
-index:0x0 compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea000242cd08 ffffea00023df908 ffff8880aa400c40
-raw: 0000000000000000 ffff88809faec1c0 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88809faed200: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff88809faed280: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff88809faed300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                               ^
-  ffff88809faed380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88809faed400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks,
+Jason
