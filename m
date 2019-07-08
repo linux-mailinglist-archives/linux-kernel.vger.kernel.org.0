@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D741B6224B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 006A962199
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbfGHPYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:24:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51596 "EHLO mail.kernel.org"
+        id S1727870AbfGHPRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:17:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731376AbfGHPYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:20 -0400
+        id S1730500AbfGHPRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:17:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98F4121738;
-        Mon,  8 Jul 2019 15:24:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B481B216F4;
+        Mon,  8 Jul 2019 15:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599460;
-        bh=w/C1KY7DwgILP0qzGNFTrFsId6j3M+yqpLgt9370w2M=;
+        s=default; t=1562599061;
+        bh=fYiUsu4wzAHAeLPGcXP9HexqGaEUj1/KrAmDgh4Lwl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lge/ErUNje40tVHmOjidFQL45t26g5CiegUDOYrAEaE67GTpQ6jmbWRvKUg9dXQiv
-         fPsBuCABmmSjTPlADSZrfk+3P4Kf/wuqwu37x/0xwcBPiBo4DLPy6LH0YppNjSJTrX
-         NaiX/qkKpN0SjzYUoAdP6akEAAsIsKIYtS5c5QQc=
+        b=j2HY/7MZVpXeM7zY/QzwImT7nfxNC+wtw8bXYCc9QXcRDYEgM4pUDWqk4Fqa4YtpC
+         kjGBCWZSrgJ5FaR+3U3PSr2BdZszr5UB+w204sw0XmGtts3SZ0cN4s8ospfTRLEOZW
+         jD4XN3DTqA7mUX30WxaZxjFP51h85bDnW7v09v08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 23/56] ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 65/73] ALSA: firewire-lib/fireworks: fix miss detection of received MIDI messages
 Date:   Mon,  8 Jul 2019 17:13:15 +0200
-Message-Id: <20190708150521.427133141@linuxfoundation.org>
+Message-Id: <20190708150524.705914481@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 6994eefb0053799d2e07cd140df6c2ea106c41ee upstream.
+commit 7fbd1753b64eafe21cf842348a40a691d0dee440 upstream.
 
-Fix two issues:
+In IEC 61883-6, 8 MIDI data streams are multiplexed into single
+MIDI conformant data channel. The index of stream is calculated by
+modulo 8 of the value of data block counter.
 
-When called for PTRACE_TRACEME, ptrace_link() would obtain an RCU
-reference to the parent's objective credentials, then give that pointer
-to get_cred().  However, the object lifetime rules for things like
-struct cred do not permit unconditionally turning an RCU reference into
-a stable reference.
+In fireworks, the value of data block counter in CIP header has a quirk
+with firmware version v5.0.0, v5.7.3 and v5.8.0. This brings ALSA
+IEC 61883-1/6 packet streaming engine to miss detection of MIDI
+messages.
 
-PTRACE_TRACEME records the parent's credentials as if the parent was
-acting as the subject, but that's not the case.  If a malicious
-unprivileged child uses PTRACE_TRACEME and the parent is privileged, and
-at a later point, the parent process becomes attacker-controlled
-(because it drops privileges and calls execve()), the attacker ends up
-with control over two processes with a privileged ptrace relationship,
-which can be abused to ptrace a suid binary and obtain root privileges.
+This commit fixes the miss detection to modify the value of data block
+counter for the modulo calculation.
 
-Fix both of these by always recording the credentials of the process
-that is requesting the creation of the ptrace relationship:
-current_cred() can't change under us, and current is the proper subject
-for access control.
+For maintainers, this bug exists since a commit 18f5ed365d3f ("ALSA:
+fireworks/firewire-lib: add support for recent firmware quirk") in Linux
+kernel v4.2. There're many changes since the commit.  This fix can be
+backported to Linux kernel v4.4 or later. I tagged a base commit to the
+backport for your convenience.
 
-This change is theoretically userspace-visible, but I am not aware of
-any code that it will actually break.
+Besides, my work for Linux kernel v5.3 brings heavy code refactoring and
+some structure members are renamed in 'sound/firewire/amdtp-stream.h'.
+The content of this patch brings conflict when merging -rc tree with
+this patch and the latest tree. I request maintainers to solve the
+conflict to replace 'tx_first_dbc' with 'ctx_data.tx.first_dbc'.
 
-Fixes: 64b875f7ac8a ("ptrace: Capture the ptracer's creds not PT_PTRACE_CAP")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: df075feefbd3 ("ALSA: firewire-lib: complete AM824 data block processing layer")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/ptrace.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/firewire/amdtp-am824.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -78,9 +78,7 @@ void __ptrace_link(struct task_struct *c
-  */
- static void ptrace_link(struct task_struct *child, struct task_struct *new_parent)
- {
--	rcu_read_lock();
--	__ptrace_link(child, new_parent, __task_cred(new_parent));
--	rcu_read_unlock();
-+	__ptrace_link(child, new_parent, current_cred());
- }
+--- a/sound/firewire/amdtp-am824.c
++++ b/sound/firewire/amdtp-am824.c
+@@ -388,7 +388,7 @@ static void read_midi_messages(struct am
+ 	u8 *b;
  
- /**
+ 	for (f = 0; f < frames; f++) {
+-		port = (s->data_block_counter + f) % 8;
++		port = (8 - s->tx_first_dbc + s->data_block_counter + f) % 8;
+ 		b = (u8 *)&buffer[p->midi_position];
+ 
+ 		len = b[0] - 0x80;
 
 
