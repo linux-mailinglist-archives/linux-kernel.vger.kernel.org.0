@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1650621F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC466243A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387708AbfGHPVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:21:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46270 "EHLO mail.kernel.org"
+        id S2390985AbfGHPku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:40:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387680AbfGHPU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:20:57 -0400
+        id S2388478AbfGHP1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:27:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C25B4216FD;
-        Mon,  8 Jul 2019 15:20:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AACE216C4;
+        Mon,  8 Jul 2019 15:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599256;
-        bh=cW6dXEbzQ5FFfEr+2oS4Oy2c+x2zJXY56Pe7Lr47RDM=;
+        s=default; t=1562599625;
+        bh=i4YZhxEhpum9DmDPzI9pU8XkAK/3CfGO1Rg7YmxCLiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lmu1kOdoHx1lxx+uranVbF5DaBcsa9fOygw+KQDcjpsZRkAZxEjFeZCH5RETyCxDw
-         zON4LuJYC4tPcFwwGGn7gvyUxLlM3NOHWAZqM3wVK0M/PXC4rLdhAuv26ubc2CwtqK
-         02iqGY9/PRmC+zcwkPgooW7BurouHQaIorcWm4KQ=
+        b=CDuFFlREU48xPK9BX6b1LIW7xEe78OdKpSd5s5XuzEk6viH96pBeBdsJMN/jQtokQ
+         tyxW4xJ8yW44ELjiMDeb8Fad79n7EoxSiRXREOKwGtDbBvyipsXAnlKcqizeckw41e
+         ODX5cfjpDef6nUwoHU8dwEjtXqBqsyXOE2g6gXCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+30eaa8bf392f7fafffaf@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 056/102] tipc: check msg->req data len in tipc_nl_compat_bearer_disable
+        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 22/90] usb: gadget: fusb300_udc: Fix memory leak of fusb300->ep[i]
 Date:   Mon,  8 Jul 2019 17:12:49 +0200
-Message-Id: <20190708150529.357896700@linuxfoundation.org>
+Message-Id: <20190708150523.753501550@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,88 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+[ Upstream commit 62fd0e0a24abeebe2c19fce49dd5716d9b62042d ]
 
-[ Upstream commit 4f07b80c973348a99b5d2a32476a2e7877e94a05 ]
+There is no deallocation of fusb300->ep[i] elements, allocated at
+fusb300_probe.
 
-This patch is to fix an uninit-value issue, reported by syzbot:
+The patch adds deallocation of fusb300->ep array elements.
 
-  BUG: KMSAN: uninit-value in memchr+0xce/0x110 lib/string.c:981
-  Call Trace:
-    __dump_stack lib/dump_stack.c:77 [inline]
-    dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-    kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
-    __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
-    memchr+0xce/0x110 lib/string.c:981
-    string_is_valid net/tipc/netlink_compat.c:176 [inline]
-    tipc_nl_compat_bearer_disable+0x2a1/0x480 net/tipc/netlink_compat.c:449
-    __tipc_nl_compat_doit net/tipc/netlink_compat.c:327 [inline]
-    tipc_nl_compat_doit+0x3ac/0xb00 net/tipc/netlink_compat.c:360
-    tipc_nl_compat_handle net/tipc/netlink_compat.c:1178 [inline]
-    tipc_nl_compat_recv+0x1b1b/0x27b0 net/tipc/netlink_compat.c:1281
-
-TLV_GET_DATA_LEN() may return a negtive int value, which will be
-used as size_t (becoming a big unsigned long) passed into memchr,
-cause this issue.
-
-Similar to what it does in tipc_nl_compat_bearer_enable(), this
-fix is to return -EINVAL when TLV_GET_DATA_LEN() is negtive in
-tipc_nl_compat_bearer_disable(), as well as in
-tipc_nl_compat_link_stat_dump() and tipc_nl_compat_link_reset_stats().
-
-v1->v2:
-  - add the missing Fixes tags per Eric's request.
-
-Fixes: 0762216c0ad2 ("tipc: fix uninit-value in tipc_nl_compat_bearer_enable")
-Fixes: 8b66fee7f8ee ("tipc: fix uninit-value in tipc_nl_compat_link_reset_stats")
-Reported-by: syzbot+30eaa8bf392f7fafffaf@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/netlink_compat.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/fusb300_udc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -436,7 +436,11 @@ static int tipc_nl_compat_bearer_disable
- 	if (!bearer)
- 		return -EMSGSIZE;
+diff --git a/drivers/usb/gadget/udc/fusb300_udc.c b/drivers/usb/gadget/udc/fusb300_udc.c
+index 263804d154a7..00e3f66836a9 100644
+--- a/drivers/usb/gadget/udc/fusb300_udc.c
++++ b/drivers/usb/gadget/udc/fusb300_udc.c
+@@ -1342,12 +1342,15 @@ static const struct usb_gadget_ops fusb300_gadget_ops = {
+ static int fusb300_remove(struct platform_device *pdev)
+ {
+ 	struct fusb300 *fusb300 = platform_get_drvdata(pdev);
++	int i;
  
--	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
-+	len = TLV_GET_DATA_LEN(msg->req);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	len = min_t(int, len, TIPC_MAX_BEARER_NAME);
- 	if (!string_is_valid(name, len))
- 		return -EINVAL;
+ 	usb_del_gadget_udc(&fusb300->gadget);
+ 	iounmap(fusb300->reg);
+ 	free_irq(platform_get_irq(pdev, 0), fusb300);
  
-@@ -528,7 +532,11 @@ static int tipc_nl_compat_link_stat_dump
+ 	fusb300_free_request(&fusb300->ep[0]->ep, fusb300->ep0_req);
++	for (i = 0; i < FUSB300_MAX_NUM_EP; i++)
++		kfree(fusb300->ep[i]);
+ 	kfree(fusb300);
  
- 	name = (char *)TLV_DATA(msg->req);
- 
--	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	len = TLV_GET_DATA_LEN(msg->req);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	len = min_t(int, len, TIPC_MAX_BEARER_NAME);
- 	if (!string_is_valid(name, len))
- 		return -EINVAL;
- 
-@@ -806,7 +814,11 @@ static int tipc_nl_compat_link_reset_sta
- 	if (!link)
- 		return -EMSGSIZE;
- 
--	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	len = TLV_GET_DATA_LEN(msg->req);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	len = min_t(int, len, TIPC_MAX_BEARER_NAME);
- 	if (!string_is_valid(name, len))
- 		return -EINVAL;
- 
+ 	return 0;
+@@ -1491,6 +1494,8 @@ clean_up:
+ 		if (fusb300->ep0_req)
+ 			fusb300_free_request(&fusb300->ep[0]->ep,
+ 				fusb300->ep0_req);
++		for (i = 0; i < FUSB300_MAX_NUM_EP; i++)
++			kfree(fusb300->ep[i]);
+ 		kfree(fusb300);
+ 	}
+ 	if (reg)
+-- 
+2.20.1
+
 
 
