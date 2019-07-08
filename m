@@ -2,99 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F0161E11
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BD861E14
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfGHL4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 07:56:42 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:32865 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730682AbfGHL4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:56:39 -0400
-Received: by mail-vs1-f65.google.com with SMTP id m8so7995695vsj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 04:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B0N2o6vb53INmsDRg0vvoXHm5GyPTVSZcycR7PVLISU=;
-        b=PvlU5vz7XoPZUwIvygXmPcP5QfufMINmsJEA7E6WNSLKKplD/mSsZUWag6tko+vG5x
-         XhtSx4FHOo6+nMJ0HrtqzjOliGarGG8Qp5ulq4ym4Kbi/Cw//tCLhRkEdTCJUC+kSCMa
-         NX5lcpTu11Vh/MglPgWVWg7gRus8cgDxQ688ZKq7L823/gfYF6IDsTOxYvoUOn9QnJo+
-         2FSycF8LeDN6Qd3cSu1UXRzF3Ia7nxFLFkXnVtv8m9watIfHrMAtWHcDT4KDevlhpLPh
-         MucM1y0V40Df/oSHl4aXhjyKWggA+uISfJ/U0HDz74oQFLiO/XZx4lhRUWoyGWPAavF8
-         764w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B0N2o6vb53INmsDRg0vvoXHm5GyPTVSZcycR7PVLISU=;
-        b=gyOtm3yfl5L1m8UE/xrjWqZgBl/rfiRln/4sjKrAUchZjcSBZXP7+ZGXxrFoVXTTaF
-         CEt9FXqsBchGsVCY5ncO2dWK86JicXuSFJHLCAnVOcUYspueFRbEW9PNkoCmlcfTmQOA
-         gxOcvvwUABMccJTVTD8IIi0jf44g4WVIjW6D6PQCeg+QOPHftSo7Fyo089MyimSC9M4i
-         ZTY3ENuFMuSW9PawtjjyWCkgPIyzkpK3ZhvafX5R7XVD7KN2VuhhaIkXipte5wnMOaSq
-         BAxE2WslEBB6e76Y7mOmGn7EuZCMXtY46xH+Lt/WT75E5aWRJFg8jlznAawn6tfODQMt
-         7/fg==
-X-Gm-Message-State: APjAAAWltP0z1wgSRD6TeuGWscXlr5Edz8aXdSnueomx0ss0uKonNuA9
-        2qq6jJmC4FzyJ77ElWgHzsrpUU6yEOu71UIsc/nZ+w==
-X-Google-Smtp-Source: APXvYqwyuPgEkSrZremYSuowjEnjBh5G+SBxTju74mqujXxMD4n9mlArpncHihuukVZeUm+rYjRxRxKjUErClPTQcEk=
-X-Received: by 2002:a67:e454:: with SMTP id n20mr8380623vsm.34.1562586998946;
- Mon, 08 Jul 2019 04:56:38 -0700 (PDT)
+        id S1728562AbfGHL70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 07:59:26 -0400
+Received: from mga17.intel.com ([192.55.52.151]:17038 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727189AbfGHL70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 07:59:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 04:59:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="asc'?scan'208";a="167106436"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Jul 2019 04:59:21 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Pawel Laszczak <pawell@cadence.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede\@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus\@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt\@kernel.org" <robh+dt@kernel.org>,
+        "rogerq\@ti.com" <rogerq@ti.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen\@nxp.com" <peter.chen@nxp.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <BYAPR07MB47097C3C2A2BBA2AA63C65DEDDF60@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com> <1562324238-16655-6-git-send-email-pawell@cadence.com> <87r274lmqk.fsf@linux.intel.com> <BYAPR07MB4709EF3753AC0B87606B1182DDF70@BYAPR07MB4709.namprd07.prod.outlook.com> <87a7dpm442.fsf@linux.intel.com> <BYAPR07MB4709E5BA041BBDDB70E69F62DDF60@BYAPR07MB4709.namprd07.prod.outlook.com> <874l3wn5ep.fsf@linux.intel.com> <BYAPR07MB47097C3C2A2BBA2AA63C65DEDDF60@BYAPR07MB4709.namprd07.prod.outlook.com>
+Date:   Mon, 08 Jul 2019 14:59:11 +0300
+Message-ID: <874l3whh4g.fsf@linux.intel.com>
 MIME-Version: 1.0
-References: <20190702133631.47760-1-yuehaibing@huawei.com>
-In-Reply-To: <20190702133631.47760-1-yuehaibing@huawei.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 8 Jul 2019 13:56:03 +0200
-Message-ID: <CAPDyKFrfAD8_-s+uCeA=XYO5+YM7bPwfK0geNBLQ1gB80G6jbg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci_am654: Add dependency on MMC_SDHCI_AM654
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 at 15:36, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix build error:
->
-> drivers/mmc/host/sdhci_am654.o: In function `sdhci_am654_probe':
-> drivers/mmc/host/sdhci_am654.c:464: undefined reference to `__devm_regmap_init_mmio_clk'
-> drivers/mmc/host/sdhci_am654.o:(.debug_addr+0x3f8): undefined reference to `__devm_regmap_init_mmio_clk'
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: aff88ff23512 ("mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+(please send it as a formal patch from now on)
+
+Hi,
+
+Pawel Laszczak <pawell@cadence.com> writes:
+> The prototype was added , but not all text was past. Sorry for that.=20=20
 >
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 931770f..14d89a1 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -996,7 +996,7 @@ config MMC_SDHCI_OMAP
+> Fixed version:  with your changes.
 >
->  config MMC_SDHCI_AM654
->         tristate "Support for the SDHCI Controller in TI's AM654 SOCs"
-> -       depends on MMC_SDHCI_PLTFM && OF
-> +       depends on MMC_SDHCI_PLTFM && OF && REGMAP_MMIO
->         select MMC_SDHCI_IO_ACCESSORS
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
-> --
-> 2.7.4
+> ///// v2 corrected=20
+> commit 4553d48dd0500085d90c8280e28714072279c3dd (HEAD)
+> Author: Pawel Laszczak <pawell@cadence.com>
+> Date:   Mon Jul 8 12:53:47 2019 +0200
 >
+>     usb: common: Add usb_get_dr_mode_from_string and usb_dr_mode_to_strin=
+g.
 >
+>     Patch introduces new function usb_dr_mode_to_string for converting du=
+al role
+>     mod to string and removes static from usb_dr_mode_to_string definitio=
+n.
+>
+>     Both changes have made to avoid duplication of code by cdns3 driver.
+
+missing Signed-off-by
+
+> diff --git a/include/linux/usb/otg.h b/include/linux/usb/otg.h
+> index 69f1b6328532..c156817672c4 100644
+> --- a/include/linux/usb/otg.h
+> +++ b/include/linux/usb/otg.h
+> @@ -129,4 +129,20 @@ enum usb_dr_mode {
+>   */
+>  extern enum usb_dr_mode usb_get_dr_mode(struct device *dev);
+>
+> +/**
+> + * usb_get_dr_mode_from_string - Convert string to dual role mode.
+> + * @str: Pointer to the given string
+> + *
+> + * The function gets string and returns the correspondig enum usb_dr_mod=
+e.
+> + */
+
+why duplicate the documentation? Perhaps put it only in the header,
+otherwise we will need to update two locations whenever these functions
+change.
+
+> +extern enum usb_dr_mode usb_get_dr_mode_from_string(const char *str);
+> +
+> +/**
+> + * usb_dr_mode_to_string - Convert dual role mode to string.
+> + * @dr_mode: Pointer to the given dual role mode
+> + *
+> + * The function gets enum usb_dr_mode, and returns the correspondig stri=
+ng.
+> + */
+> +extern const char *usb_dr_mode_to_string(const enum usb_dr_mode dr_mode);
+
+Don't you need a stub for builds when CONFIG_USB_COMMON=3Dn?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0jMA8ACgkQzL64meEa
+mQaUFg//QWlWyc/qxvrzfDBRMXPr5QDNjbUZHa9wXB+i7lbjwfD6zeSDQ/+lBsKD
+9acBMn7YWt/2yFkosxGcKfC9f+hsUG+6guZip1R/PzZhewlGN5Sp5U1ewwudX6ou
+UjBKHgejELNxQw0pt0L++ZKtdFZVVU3RMtqSVtVWV1dDAYjqFX1oc3xD1a4Y8tyC
+Zi5pp4OelMEAKJ0sFAMxsbGia5NVm9svKw+sNJHusfQebGQ9rFuLT3MVY0+0WQFH
+2JeSLT0ov0z5xOYEYTg0yK41VnhCzmCnXjAnYsmq54xrrtguZJu1tI85Fo+G1TsX
+zMuFy7jjdDjVB6xCpORokR5Z64ZzuIAa2Vp8KxXkc6kCzsKQtx9EFuMXewMqdKHe
+6tIUbXJm+/syBd8AXKrChLPmycs6rXyD1UB3Y5Du+546nGMK1RnJXWf4BKCG6tYS
+KyMJy0ZPTOBV0RaJ+3VgMyoWD4wo5PHIcuGu/laBfUyoigbaLwOOQwkIEHh3LJA2
+0Do23Glk5n9HxeB70/dvi3TUbaTdbDsI1rKlLnbKrBbSlXS+F5mnp+7yRkA6kGIc
+zh+f3CIVxSTRSeG+NGI0CfGGPFwP/BkjyvCja+jhzSvFl0wl+wIK0JNOx/x49NdS
+8yzttpCKWZQuKruRQKTUJ/Hwlo54Mry/y+Kt5Rj0tXEK+zBthF0=
+=cRnm
+-----END PGP SIGNATURE-----
+--=-=-=--
