@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5656462432
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:41:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D382C6223E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389041AbfGHP1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55440 "EHLO mail.kernel.org"
+        id S2388260AbfGHPXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389028AbfGHP1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:20 -0400
+        id S2388239AbfGHPXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AE9921537;
-        Mon,  8 Jul 2019 15:27:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A02F2204EC;
+        Mon,  8 Jul 2019 15:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599639;
-        bh=sG0Foj3U+q11NH5M5t+rxF9XnnjNxtXcNZYDCEbC3YE=;
+        s=default; t=1562599425;
+        bh=FZxqh4LO5sleiDesi/CtbFNRaorh+bgW53p1xXQuq1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RaT1T3BLA8Zs542Ano+gq5a3Mhjf/Hw0uw0DvkJqREDasr/m1PEeTRHJAO3QAJRn4
-         tSHdboSOecPhZ6IBma2nQsedIwvdBccMhs8rSPQW6cZ12TQbmaUiPujd+V73W9ATYv
-         KZSU91M1J40iWC7ICVyRvOYoOTsj/jRI/q9ZpkbE=
+        b=W2hmvk+dmQ4TW9gYt4yXMmHhLhle9PQZy05LCgeM+9Q8FiXJCVfJZfLOi1NFDTOEu
+         cVp6f4JzLpXKe26Hm4LYkLw8nkL5Mq1fQ89VFFzevCa2PsALJ2V9/uBUGhRGcL4LaY
+         cNeYfdAMe/VgT7pgE57ycO1DfL31bg65mR5sRU/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jurgen Kramer <gtmkramer@xs4all.nl>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org, Libin Yang <libin.yang@intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 27/90] drm: panel-orientation-quirks: Add quirk for GPD pocket2
-Date:   Mon,  8 Jul 2019 17:12:54 +0200
-Message-Id: <20190708150523.979357450@linuxfoundation.org>
+Subject: [PATCH 4.14 03/56] ASoC: soc-pcm: BE dai needs prepare when pause release after resume
+Date:   Mon,  8 Jul 2019 17:12:55 +0200
+Message-Id: <20190708150517.274044300@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 15abc7110a77555d3bf72aaef46d1557db0a4ac5 ]
+[ Upstream commit 5087a8f17df868601cd7568299e91c28086d2b45 ]
 
-GPD has done it again, make a nice device (good), use way too generic
-DMI strings (bad) and use a portrait screen rotated 90 degrees (ugly).
+If playback/capture is paused and system enters S3, after system returns
+from suspend, BE dai needs to call prepare() callback when playback/capture
+is released from pause if RESUME_INFO flag is not set.
 
-Because of the too generic DMI strings this entry is also doing bios-date
-matching, so the gpd_pocket2 data struct may very well need to be updated
-with some extra bios-dates in the future.
+Currently, the dpcm_be_dai_prepare() function will block calling prepare()
+if the pcm is in SND_SOC_DPCM_STATE_PAUSED state. This will cause the
+following test case fail if the pcm uses BE:
 
-Changes in v2:
--Add one more known BIOS date to the list of BIOS dates
+playback -> pause -> S3 suspend -> S3 resume -> pause release
 
-Cc: Jurgen Kramer <gtmkramer@xs4all.nl>
-Reported-by: Jurgen Kramer <gtmkramer@xs4all.nl>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190524125759.14131-1-hdegoede@redhat.com
-(cherry picked from commit 6dab9102dd7b144e5723915438e0d6c473018cd0)
+The playback may exit abnormally when pause is released because the BE dai
+prepare() is not called.
+
+This patch allows dpcm_be_dai_prepare() to call dai prepare() callback in
+SND_SOC_DPCM_STATE_PAUSED state.
+
+Signed-off-by: Libin Yang <libin.yang@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_panel_orientation_quirks.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/soc/soc-pcm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-index ee4a5e1221f1..088363675940 100644
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -50,6 +50,14 @@ static const struct drm_dmi_panel_orientation_data gpd_pocket = {
- 	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
- };
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 584b7ffe78f5..052b6294a428 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2233,7 +2233,8 @@ int dpcm_be_dai_prepare(struct snd_soc_pcm_runtime *fe, int stream)
  
-+static const struct drm_dmi_panel_orientation_data gpd_pocket2 = {
-+	.width = 1200,
-+	.height = 1920,
-+	.bios_dates = (const char * const []){ "06/28/2018", "08/28/2018",
-+		"12/07/2018", NULL },
-+	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
-+};
-+
- static const struct drm_dmi_panel_orientation_data gpd_win = {
- 	.width = 720,
- 	.height = 1280,
-@@ -98,6 +106,14 @@ static const struct dmi_system_id orientation_data[] = {
- 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Default string"),
- 		},
- 		.driver_data = (void *)&gpd_pocket,
-+	}, {	/* GPD Pocket 2 (generic strings, also match on bios date) */
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Default string"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Default string"),
-+		  DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "Default string"),
-+		  DMI_EXACT_MATCH(DMI_BOARD_NAME, "Default string"),
-+		},
-+		.driver_data = (void *)&gpd_pocket2,
- 	}, {	/* GPD Win (same note on DMI match as GPD Pocket) */
- 		.matches = {
- 		  DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
+ 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_PARAMS) &&
+ 		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_STOP) &&
+-		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_SUSPEND))
++		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_SUSPEND) &&
++		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_PAUSED))
+ 			continue;
+ 
+ 		dev_dbg(be->dev, "ASoC: prepare BE %s\n",
 -- 
 2.20.1
 
