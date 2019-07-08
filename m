@@ -2,53 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E3C61BEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D1361BF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfGHIuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:50:02 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46151 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbfGHIuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:50:02 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c73so2585658pfb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 01:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0f8cjmK92HlNgqdiIijajGEwI8ww5eZP9m3oc7p56Nc=;
-        b=XNBc9Ibt2RD9ZScjtlSg3q03aKcjt0mkX8Tnqlq8ia3SlJkvgZLuf6bCf81oDV0c3g
-         mh6NaGDyDwg2iBHEvtwDBdVmHb5o9isAOZ3qTc5cvLFw2fx41/9zqBIhamXiWOuk+auA
-         2o0a+Vn5joLTl6S0zcEwQCZxvb0Ajiddc9J7o9f+U5KWykYYg+m4dNkDfKlSttULO4Gy
-         c0Og20/SbiF75xz6+y08B+exkdUkdAa/17gaxv1zKVDFpyu/MGrVei5O9Kj2MG8Bw7Zt
-         QFIizNqncdaiFzzHW12Xr172RlniGm1Ev8NfQHPgWZ4xYEiLO5SZ4M/CT/kCW9RNQDfB
-         /ksQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0f8cjmK92HlNgqdiIijajGEwI8ww5eZP9m3oc7p56Nc=;
-        b=OLSq0mqFHy7ZCO0FqF6efEmHWACILRhBg5iZ6EXFCUcJdP0J8LUdBU10vF5Sr/yL5x
-         WzKo7Lm3S/uafnW10fXOTa0mY4DiEIc5oNWVl1SYdszua1L/ZbkXNPFYJDuvLKFbNPBw
-         5g3QD+GofgypxK1T7VRy5aYcMMRJbKdN4W11YczAa7cdIjkVDCXAz9iKpSEKr1CuY4nF
-         nzut+HKuoDwvHlBK/L35tk88hP4vSvw+Nj4YgaxwKLDCVGt+DRjogevzK3vw0/u/jmcV
-         4hUOJrM6aDygRQVPmN7timBGKmgX4cu9lcIZoZQDLanv52wfWvoexhYB77HpYu+Xo/m2
-         OLzA==
-X-Gm-Message-State: APjAAAVMW6C1JapycenMW8EOvom5wBBtkFVFTpyhlfVB6Yqt7XAD/Pu7
-        TsAWOcrsUEN5iBcFVUi9+2EQCg==
-X-Google-Smtp-Source: APXvYqz2OAUpBgAYfslWqQ24NCOstvA/FjftUC0ZlsHmRwGfhGZVfXdBFIvrhykbYiXoTF6fiVa9dw==
-X-Received: by 2002:a17:90a:2023:: with SMTP id n32mr22686652pjc.3.1562575801326;
-        Mon, 08 Jul 2019 01:50:01 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id t17sm18436886pgg.48.2019.07.08.01.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 01:50:00 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 14:19:57 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        id S1729097AbfGHIy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:54:26 -0400
+Received: from mail-eopbgr80073.outbound.protection.outlook.com ([40.107.8.73]:8679
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727636AbfGHIyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 04:54:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IcNlbZo/PmBMhKNMU2vkni64ggmauEBrCouHRhzqkS8=;
+ b=g19Wg0xgTBWjazM9GlyiY6M8P78AQN8D/g2dgpi1b/MfQP8XYVEPHlc3UH0FV1OU2zXUfi+SRXh7ezwUL+ma3fw7oUEHBp8yN3OUFB+wuwQ3+4lMZywitKwOb3q5LFCpum5hNNoDp+3t7CVibXFWawwzryXc7HMT7si2R92wvOg=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3756.eurprd04.prod.outlook.com (52.134.73.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Mon, 8 Jul 2019 08:54:19 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2052.020; Mon, 8 Jul 2019
+ 08:54:19 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     Leonard Crestez <leonard.crestez@nxp.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
@@ -68,65 +46,92 @@ Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend opp
-Message-ID: <20190708084957.waiwdun327pgvfv4@vireshk-i7>
+Subject: RE: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend opp
+Thread-Topic: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend
+ opp
+Thread-Index: AQHVMjD62bccyXxndUyDszIpSDkBnabAaO+AgAACe/CAAARwgIAAADZQ
+Date:   Mon, 8 Jul 2019 08:54:19 +0000
+Message-ID: <DB3PR0402MB39164E2F386181255ED37F45F5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 References: <20190704061403.8249-1-Anson.Huang@nxp.com>
  <20190704061403.8249-2-Anson.Huang@nxp.com>
  <DB7PR04MB50519C02D90675070F21501DEEFA0@DB7PR04MB5051.eurprd04.prod.outlook.com>
  <20190708082511.py7gnjbqyp7bnhqx@vireshk-i7>
  <DB3PR0402MB391622133CD116FDE26A4F9AF5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20190708084957.waiwdun327pgvfv4@vireshk-i7>
+In-Reply-To: <20190708084957.waiwdun327pgvfv4@vireshk-i7>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9fe22632-f024-41fc-58de-08d70381dd2f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3756;
+x-ms-traffictypediagnostic: DB3PR0402MB3756:
+x-microsoft-antispam-prvs: <DB3PR0402MB375670A7E32EBD3CD424F656F5F60@DB3PR0402MB3756.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 00922518D8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(346002)(136003)(396003)(199004)(189003)(102836004)(3846002)(76116006)(66946007)(11346002)(6116002)(73956011)(68736007)(81156014)(26005)(2906002)(71190400001)(81166006)(8676002)(66556008)(66476007)(44832011)(15650500001)(54906003)(64756008)(14454004)(66446008)(446003)(52536014)(71200400001)(186003)(486006)(8936002)(66066001)(476003)(6916009)(7416002)(478600001)(256004)(7696005)(86362001)(316002)(53936002)(14444005)(7736002)(99286004)(74316002)(6436002)(5660300002)(6246003)(55016002)(305945005)(25786009)(9686003)(229853002)(4326008)(33656002)(76176011)(6506007)(53546011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3756;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uDpyWP9lwNJsxGDH0PD5HdEXSqM6Qibt+w3utjtHcBnaXJf9s44t6d3JF3bzGm3WbcmQwMnkASD6DYFFT3xyzRJjkr9jBe0vpE5feUF9x5PKOWIfLS3IdwF3+xArZwFtYTTEPTTDAWI5ad7iHRFW1C0QSBVFZktvqwtW/gwBrAdeqfmCoMlu85AxlnGcle3dZf92NIeXYJ6Cwikmi4Jn0RC7k3YT7B1k9C6czgphiK5QR4pWevqZzSd21197GXJIOcuaVWMTndE5PRF5Sc7mtNUHh+q1TvyYukuguZMHFWblrS5ez8Qhyxe09AW84eYJVmOKYkp+xV4Uof1hQInNVGtBvFKFhWN4x0hPZ1uCftkt1xTu0ABlHNiy2XdBu3AV19AjCEaQ4W9tPcliwl1+Y1R5colHm2yE9ELT7OjshXA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB391622133CD116FDE26A4F9AF5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20180716-391-311a52
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fe22632-f024-41fc-58de-08d70381dd2f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 08:54:19.1857
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3756
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-07-19, 08:43, Anson Huang wrote:
-> Hi, Viresh
-> 
-> > On 04-07-19, 07:49, Leonard Crestez wrote:
-> > > On 7/4/2019 9:23 AM, Anson.Huang@nxp.com wrote:
-> > > > From: Anson Huang <Anson.Huang@nxp.com>
-> > > >
-> > > > Assign highest OPP as suspend OPP to reduce suspend/resume latency
-> > > > on i.MX8MM.
-> > > >
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > ---
-> > > >   arch/arm64/boot/dts/freescale/imx8mm.dtsi | 1 +
-> > > >   1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > > b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > > index b11fc5e..3a62407 100644
-> > > > --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > > +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > > @@ -136,6 +136,7 @@
-> > > >   			opp-microvolt = <1000000>;
-> > > >   			opp-supported-hw = <0x8>, <0x3>;
-> > > >   			clock-latency-ns = <150000>;
-> > > > +			opp-suspend;
-> > > >   		};
-> > > >   	};
-> > >
-> > > What if the highest OPP is unavailable due to speed grading?
-> > 
-> > What does this exactly mean ? How is the OPP made unavailable in your
-> > case ?
-> 
-> That is because in i.MX8M series SoCs, the speed grading and market segment
-> fuses settings could affect the OPP defined in DT, in a word, all possible OPPs
-> are defined in DT, but each parts could ONLY select some of them to be working
-> OPPs, so if the "opp-suspend" is added for 1 OPP in DT, if the part's speed grading or
-> market segment fuse settings make that OPP as unavailable,  then that "opp-suspend"
-> is NOT working at all.
-
-How is this selection done ? You using some OPP helper or something
-else ?
-
--- 
-viresh
+SGksIFZpcmVzaA0KDQo+IE9uIDA4LTA3LTE5LCAwODo0MywgQW5zb24gSHVhbmcgd3JvdGU6DQo+
+ID4gSGksIFZpcmVzaA0KPiA+DQo+ID4gPiBPbiAwNC0wNy0xOSwgMDc6NDksIExlb25hcmQgQ3Jl
+c3RleiB3cm90ZToNCj4gPiA+ID4gT24gNy80LzIwMTkgOToyMyBBTSwgQW5zb24uSHVhbmdAbnhw
+LmNvbSB3cm90ZToNCj4gPiA+ID4gPiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhw
+LmNvbT4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEFzc2lnbiBoaWdoZXN0IE9QUCBhcyBzdXNwZW5k
+IE9QUCB0byByZWR1Y2Ugc3VzcGVuZC9yZXN1bWUNCj4gPiA+ID4gPiBsYXRlbmN5IG9uIGkuTVg4
+TU0uDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5z
+b24uSHVhbmdAbnhwLmNvbT4NCj4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiAgIGFyY2gvYXJtNjQv
+Ym9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS5kdHNpIHwgMSArDQo+ID4gPiA+ID4gICAxIGZpbGUg
+Y2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IGRpZmYgLS1naXQg
+YS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0uZHRzaQ0KPiA+ID4gPiA+IGIv
+YXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLmR0c2kNCj4gPiA+ID4gPiBpbmRl
+eCBiMTFmYzVlLi4zYTYyNDA3IDEwMDY0NA0KPiA+ID4gPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9v
+dC9kdHMvZnJlZXNjYWxlL2lteDhtbS5kdHNpDQo+ID4gPiA+ID4gKysrIGIvYXJjaC9hcm02NC9i
+b290L2R0cy9mcmVlc2NhbGUvaW14OG1tLmR0c2kNCj4gPiA+ID4gPiBAQCAtMTM2LDYgKzEzNiw3
+IEBADQo+ID4gPiA+ID4gICAJCQlvcHAtbWljcm92b2x0ID0gPDEwMDAwMDA+Ow0KPiA+ID4gPiA+
+ICAgCQkJb3BwLXN1cHBvcnRlZC1odyA9IDwweDg+LCA8MHgzPjsNCj4gPiA+ID4gPiAgIAkJCWNs
+b2NrLWxhdGVuY3ktbnMgPSA8MTUwMDAwPjsNCj4gPiA+ID4gPiArCQkJb3BwLXN1c3BlbmQ7DQo+
+ID4gPiA+ID4gICAJCX07DQo+ID4gPiA+ID4gICAJfTsNCj4gPiA+ID4NCj4gPiA+ID4gV2hhdCBp
+ZiB0aGUgaGlnaGVzdCBPUFAgaXMgdW5hdmFpbGFibGUgZHVlIHRvIHNwZWVkIGdyYWRpbmc/DQo+
+ID4gPg0KPiA+ID4gV2hhdCBkb2VzIHRoaXMgZXhhY3RseSBtZWFuID8gSG93IGlzIHRoZSBPUFAg
+bWFkZSB1bmF2YWlsYWJsZSBpbg0KPiA+ID4geW91ciBjYXNlID8NCj4gPg0KPiA+IFRoYXQgaXMg
+YmVjYXVzZSBpbiBpLk1YOE0gc2VyaWVzIFNvQ3MsIHRoZSBzcGVlZCBncmFkaW5nIGFuZCBtYXJr
+ZXQNCj4gPiBzZWdtZW50IGZ1c2VzIHNldHRpbmdzIGNvdWxkIGFmZmVjdCB0aGUgT1BQIGRlZmlu
+ZWQgaW4gRFQsIGluIGEgd29yZCwNCj4gPiBhbGwgcG9zc2libGUgT1BQcyBhcmUgZGVmaW5lZCBp
+biBEVCwgYnV0IGVhY2ggcGFydHMgY291bGQgT05MWSBzZWxlY3QNCj4gPiBzb21lIG9mIHRoZW0g
+dG8gYmUgd29ya2luZyBPUFBzLCBzbyBpZiB0aGUgIm9wcC1zdXNwZW5kIiBpcyBhZGRlZCBmb3IN
+Cj4gPiAxIE9QUCBpbiBEVCwgaWYgdGhlIHBhcnQncyBzcGVlZCBncmFkaW5nIG9yIG1hcmtldCBz
+ZWdtZW50IGZ1c2Ugc2V0dGluZ3MNCj4gbWFrZSB0aGF0IE9QUCBhcyB1bmF2YWlsYWJsZSwgIHRo
+ZW4gdGhhdCAib3BwLXN1c3BlbmQiDQo+ID4gaXMgTk9UIHdvcmtpbmcgYXQgYWxsLg0KPiANCj4g
+SG93IGlzIHRoaXMgc2VsZWN0aW9uIGRvbmUgPyBZb3UgdXNpbmcgc29tZSBPUFAgaGVscGVyIG9y
+IHNvbWV0aGluZyBlbHNlID8NCg0KRWFjaCBPUFAgaGFzICJvcHAtc3VwcG9ydGVkLWh3IiBwcm9w
+ZXJ0eSBhcyBiZWxvdywgdGhlIGZpcnN0IHZhbHVlIG5lZWRzIHRvIGJlDQpjaGVja2VkIHdpdGgg
+c3BlZWQgZ3JhZGluZyBmdXNlLCBhbmQgdGhlIHNlY29uZCBvbmUgbmVlZHMgdG8gYmUgY2hlY2tl
+ZCB3aXRoDQptYXJrZXQgc2VnbWVudCBmdXNlLCBPTkxZIGJvdGggb2YgdGhlbSBwYXNzZWQsIHRo
+ZW4gdGhpcyBPUFAgaXMgc3VwcG9ydGVkLiBJdA0KY2FsbHMgZGV2X3BtX29wcF9zZXRfc3VwcG9y
+dGVkX2h3KCkgdG8gdGVsbCBPUFAgZnJhbWV3b3JrIHRvIHBhcnNlIHRoZSBPUFANCnRhYmxlLCB0
+aGlzIGlzIG15IHVuZGVyc3RhbmRpbmcuDQoNCm9wcC1zdXBwb3J0ZWQtaHcgPSA8MHg4PiwgPDB4
+Mz47DQoNCnRoYW5rcywNCkFuc29uDQoNCg==
