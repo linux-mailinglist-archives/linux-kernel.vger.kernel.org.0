@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52562622A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2CF6252B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389115AbfGHP1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55844 "EHLO mail.kernel.org"
+        id S1732715AbfGHPRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389106AbfGHP1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:38 -0400
+        id S1732697AbfGHPQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A434F21537;
-        Mon,  8 Jul 2019 15:27:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7021B21707;
+        Mon,  8 Jul 2019 15:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599658;
-        bh=jERcKUo9O7p5on7ItWLW4j+yaGRGbLcrt5ua44OV0N4=;
+        s=default; t=1562599017;
+        bh=UqYaX4fyRfNX1yoi0yvqj0iqzoEcaynzbhGcyc602uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rpkU20uH8/7mZOcPTmAd3t7zfQ1S/dSQOOfPLDKB8UoSl5Qjzt402G+9Q6jVPLq4C
-         cGKLtnbg3dBiKUn96qRX8uK+TljnLrsJeQ9xdp4dBeeST7EmW6O5E7R7xVDhNwHyJ/
-         QZ9tgjEjiPlaceOR5gHtwc+EO9p/Dyxd0KIYpaK8=
+        b=nY2T2y1VHc+pPhSRgo9Yg/EBUYPkGcoSzPWKxdR0rixmncnC2swEKLmfcjGniHK6N
+         UBjqrNwF7b3CvFg6lbLrpwffGXMv3e3taNsM1mzjwsWtjXh91kHfCYCwLj1kfldSWE
+         PMbl6SnO8v91U8pS6Zbpwx4MRwhLy0snWo1P7aKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 32/90] platform/mellanox: mlxreg-hotplug: Add devm_free_irq call to remove flow
-Date:   Mon,  8 Jul 2019 17:12:59 +0200
-Message-Id: <20190708150524.227951745@linuxfoundation.org>
+Subject: [PATCH 4.4 50/73] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
+Date:   Mon,  8 Jul 2019 17:13:00 +0200
+Message-Id: <20190708150524.011326537@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +48,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c2eb7b6468ad4aa5600aed01aa0715f921a3f8b ]
+[ Upstream commit 5caaf29af5ca82d5da8bc1d0ad07d9e664ccf1d8 ]
 
-Add devm_free_irq() call to mlxreg-hotplug remove() for clean release
-of devices irq resource. Fix debugobjects warning triggered by rmmod
-It prevents of use-after-free memory, related to
-mlxreg_hotplug_work_handler.
+If spi_register_master fails in spi_bitbang_start
+because device_add failure, We should return the
+error code other than 0, otherwise calling
+spi_bitbang_stop may trigger NULL pointer dereference
+like this:
 
-Issue has been reported as debugobjects warning triggered by
-'rmmod mlxtreg-hotplug' flow, while running kernel with
-CONFIG_DEBUG_OBJECTS* options.
+BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
+Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
 
-[ 2489.623551] ODEBUG: free active (active state 0) object type: work_struct hint: mlxreg_hotplug_work_handler+0x0/0x7f0 [mlxreg_hotplug]
-[ 2489.637097] WARNING: CPU: 5 PID: 3924 at lib/debugobjects.c:328 debug_print_object+0xfe/0x180
-[ 2489.637165] RIP: 0010:debug_print_object+0xfe/0x180
-?
-[ 2489.637214] Call Trace:
-[ 2489.637225]  __debug_check_no_obj_freed+0x25e/0x320
-[ 2489.637231]  kfree+0x82/0x110
-[ 2489.637238]  release_nodes+0x33c/0x4e0
-[ 2489.637242]  ? devres_remove_group+0x1b0/0x1b0
-[ 2489.637247]  device_release_driver_internal+0x146/0x270
-[ 2489.637251]  driver_detach+0x73/0xe0
-[ 2489.637254]  bus_remove_driver+0xa1/0x170
-[ 2489.637261]  __x64_sys_delete_module+0x29e/0x320
-[ 2489.637265]  ? __ia32_sys_delete_module+0x320/0x320
-[ 2489.637268]  ? blkcg_exit_queue+0x20/0x20
-[ 2489.637273]  ? task_work_run+0x7d/0x100
-[ 2489.637278]  ? exit_to_usermode_loop+0x5b/0xf0
-[ 2489.637281]  do_syscall_64+0x73/0x160
-[ 2489.637287]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 2489.637290] RIP: 0033:0x7f95c3596fd7
+CPU: 0 PID: 3661 Comm: syz-executor.0 Not tainted 5.1.0+ #28
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ dump_stack+0xa9/0x10e
+ ? __list_del_entry_valid+0x45/0xd0
+ ? __list_del_entry_valid+0x45/0xd0
+ __kasan_report+0x171/0x18d
+ ? __list_del_entry_valid+0x45/0xd0
+ kasan_report+0xe/0x20
+ __list_del_entry_valid+0x45/0xd0
+ spi_unregister_controller+0x99/0x1b0
+ spi_lm70llp_attach+0x3ae/0x4b0 [spi_lm70llp]
+ ? 0xffffffffc1128000
+ ? klist_next+0x131/0x1e0
+ ? driver_detach+0x40/0x40 [parport]
+ port_check+0x3b/0x50 [parport]
+ bus_for_each_dev+0x115/0x180
+ ? subsys_dev_iter_exit+0x20/0x20
+ __parport_register_driver+0x1f0/0x210 [parport]
+ ? 0xffffffffc1150000
+ do_one_initcall+0xb9/0x3b5
+ ? perf_trace_initcall_level+0x270/0x270
+ ? kasan_unpoison_shadow+0x30/0x40
+ ? kasan_unpoison_shadow+0x30/0x40
+ do_init_module+0xe0/0x330
+ load_module+0x38eb/0x4270
+ ? module_frob_arch_sections+0x20/0x20
+ ? kernel_read_file+0x188/0x3f0
+ ? find_held_lock+0x6d/0xd0
+ ? fput_many+0x1a/0xe0
+ ? __do_sys_finit_module+0x162/0x190
+ __do_sys_finit_module+0x162/0x190
+ ? __ia32_sys_init_module+0x40/0x40
+ ? __mutex_unlock_slowpath+0xb4/0x3f0
+ ? wait_for_completion+0x240/0x240
+ ? vfs_write+0x160/0x2a0
+ ? lockdep_hardirqs_off+0xb5/0x100
+ ? mark_held_locks+0x1a/0x90
+ ? do_syscall_64+0x14/0x2a0
+ do_syscall_64+0x72/0x2a0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-The difference in release flow with and with no devm_free_irq is listed
-below:
-
-bus: 'platform': remove driver mlxreg-hotplug
- mlxreg_hotplug_remove(start)
-					-> devm_free_irq (with new code)
- mlxreg_hotplug_remove (end)
- release_nodes (start)
-  mlxreg-hotplug: DEVRES REL devm_hwmon_release (8 bytes)
-  device: 'hwmon3': device_unregister
-  PM: Removing info for No Bus:hwmon3
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (88 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (6 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
-  mlxreg-hotplug: DEVRES REL devm_irq_release (16 bytes) (no new code)
-  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (1376 bytes)
-   ------------[ cut here ]------------ (no new code):
-   ODEBUG: free active (active state 0) object type: work_struct hint: mlxreg_hotplug_work_handler
-
- release_nodes(end)
-driver: 'mlxreg-hotplug': driver_release
-
-Fixes: 1f976f6978bf ("platform/x86: Move Mellanox platform hotplug driver to platform/mellanox")
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/mellanox/mlxreg-hotplug.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-bitbang.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-index eca16d00e310..d52c821b8584 100644
---- a/drivers/platform/mellanox/mlxreg-hotplug.c
-+++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-@@ -673,6 +673,7 @@ static int mlxreg_hotplug_remove(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+index 3aa9e6e3dac8..4ef54436b9d4 100644
+--- a/drivers/spi/spi-bitbang.c
++++ b/drivers/spi/spi-bitbang.c
+@@ -392,7 +392,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
+ 	if (ret)
+ 		spi_master_put(master);
  
- 	/* Clean interrupts setup. */
- 	mlxreg_hotplug_unset_irq(priv);
-+	devm_free_irq(&pdev->dev, priv->irq, priv);
- 
- 	return 0;
+-	return 0;
++	return ret;
  }
+ EXPORT_SYMBOL_GPL(spi_bitbang_start);
+ 
 -- 
 2.20.1
 
