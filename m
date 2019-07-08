@@ -2,66 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA52D61AC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0170061ACA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfGHGrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 02:47:10 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38290 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbfGHGrK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:47:10 -0400
-Received: by mail-io1-f66.google.com with SMTP id j6so32747787ioa.5
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 23:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Hfqu4oPxXglsTXPW2C4AM13IzCDUfDsvNwffZFFCxjw=;
-        b=qa048Zo9VVqANh5oxPsmT6Vx1tXdslGOgdxne1JsOqWIMsqSn8Cwq34lR9cfaigIS/
-         /AgjkwQNtpmQh2aPX5KiOLcQoAG0rNWI8sePqjiLe9kYSwofqfPH+661zf32Dv09y/Hs
-         DmShG/8ArVOLiORnMYT29T00tpMCRt8r7Y9nlNJXMkR8M8nC/J1zTdmRND2jqvO6n827
-         ClEVQ+FxuWOBAGjiu4+QZ9kD/dMnzjLTFEOrfTIwaw13DWozPA4ZI34T7I0hEeLMOon6
-         0s41wFKFUUiYEWrxLHDHA7rPs+boVfbTpc6NbsinnTaFFFyT71lR1dI8GTkFVXxecZpK
-         s53w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Hfqu4oPxXglsTXPW2C4AM13IzCDUfDsvNwffZFFCxjw=;
-        b=Uj3RAJiW2/s/coCB7E9kyLueDXy0f3BZfrYUuvA07Wq2N7Cpy4amgXM0xyTvHJGHVT
-         SnRrPr9f7wohFAvrN5ZKuhWQXOzKYHnSvufn2uS7Ja9tTCqe3ysy1qzq2vaPLlIW5+DC
-         nXmB3CZXkxv9oG3UUtFTK3Q2MkC5ovaxoW+RIGqj/YTZeYaJ735vUtIUxdGmPUKitU0N
-         LpJreqm7i38WBOEyEa8Fm2yzbWVhV5iwuQHwj0DGC0/D0tYMG3IfF3E1dh+qd/QdXnsU
-         Ve4lEs3KQfswmYVVmCmd8DO1vpD4u8SjwXuXYcXbjiYDPROtNGiLIQjGtJKzITbwI5uH
-         PNHw==
-X-Gm-Message-State: APjAAAXZNEfLRBPi3y77NaeffuyRorDZyXwuCYKFZR7LWPna+0kVGUB0
-        y/8waXtTVGQXe1/+YABZTwTU5eFQ0XdusDJ7kCA=
-X-Google-Smtp-Source: APXvYqxsS8UiXDc5fofWSMuYiac8s6tEsfZzpjILNGgvXdDqOQHizEU29ffnuVJKwOtqaXvL9Yzs8YGIxKTL3h/gKHo=
-X-Received: by 2002:a02:b016:: with SMTP id p22mr19998875jah.121.1562568429238;
- Sun, 07 Jul 2019 23:47:09 -0700 (PDT)
+        id S1729209AbfGHGuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:50:52 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50487 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbfGHGuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:50:51 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hx1273ZFz9s8m;
+        Mon,  8 Jul 2019 16:50:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562568647;
+        bh=HAG8N3eVIJQIBBm0rDZ5loK5+K7qbQIbei3kLEglX3Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gRIZIvpGOhjC+9oIYEd5xhoj+lMX+uN4P4RcVNPDjZOkQSuI91eqyt8ILMLqKufxD
+         u/tN8WfuM+IFSew7wky2WjbEnAP8Hjn/iwcWdn9uwW9Z9HOEkaEDJI0+g7iyrDi/Va
+         Yurqz7u6cZOUkBkXJhkD7WKWDOokU16lwx/2ULvpABJPI342Rb/rp89qqw/65qToNe
+         VGm1dS9xvKOPIgnMwcKbcoXTOiJqaQsfb4MWNw14q58TNBXQyrEiTIFx6Wjkg+LalY
+         unROvkSTV87Kuqh+klNhqSqq0rPZ/mCxahZnvv0zeQsZQPsMkk3qYKmh1zUzAfJNBx
+         6zbygnlcL+XxQ==
+Date:   Mon, 8 Jul 2019 16:50:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190708165046.16d2912d@canb.auug.org.au>
+In-Reply-To: <20190702102832.GP20977@suse.cz>
+References: <20190702153302.28e7948d@canb.auug.org.au>
+        <20190702102832.GP20977@suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a02:c48f:0:0:0:0:0 with HTTP; Sun, 7 Jul 2019 23:47:08 -0700 (PDT)
-Reply-To: mrs.madinaabdoulaziz@gmail.com
-From:   "Mrs. Madina Abdoul Aziz" <visadapart@gmail.com>
-Date:   Mon, 8 Jul 2019 07:47:08 +0100
-Message-ID: <CADMddaq8DrOKEcLRON-5H9wnzj2jfu4vYdpgegA2CszFuWTzCg@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=51/kRi1X.SKH7VyK0k1qaz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/=51/kRi1X.SKH7VyK0k1qaz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have a personal Project in which i need your assistance I would like
-to be sure of your willingness, trustworthiness and commitment to
-execute this transaction with me. I seek your partnership in
-transferring  this fund {$US6,000,000}. If interested
-(234ty456@gmail.com ) for more details about the fund.
+Hi David,
 
-, thank you.
+On Tue, 2 Jul 2019 12:28:32 +0200 David Sterba <dsterba@suse.cz> wrote:
+>
+> On Tue, Jul 02, 2019 at 03:33:02PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > After merging the tip tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > fs/btrfs/ctree.c: In function '__tree_mod_log_insert':
+> > fs/btrfs/ctree.c:388:2: error: implicit declaration of function 'lockde=
+p_assert_held_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=
+=3Dimplicit-function-declaration]
+> >   lockdep_assert_held_exclusive(&fs_info->tree_mod_log_lock);
+> >   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >   lockdep_assert_held_once
+> >=20
+> > Caused by commit
+> >=20
+> >   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive(=
+) -> lockdep_assert_held_write()")
+> >=20
+> > interacting with commits
+> >=20
+> >   84cd7723de7c ("btrfs: assert tree mod log lock in __tree_mod_log_inse=
+rt")
+> >   283d2e443505 ("btrfs: assert extent map tree lock in add_extent_mappi=
+ng") =20
+>=20
+> I can move the patches out of the for-5.3 branch and send them
+> separately after the rename gets merged, they're merely adding the
+> assertion and otherwise do not affect the rest of the code.
+>=20
+> Fixing that in another way would probably need more synchronization
+> between the branches but I don't think it's necessary in this case. The
+> next for-next snapshot branch will fix the compilation issue.
 
-Mrs madina
+I see that you removed those commits.  The conflict is no more.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=51/kRi1X.SKH7VyK0k1qaz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0i58YACgkQAVBC80lX
+0GwwBwgApAIOv9IiBrb2huEuk9Ji2QUhgMUMp6OcNTWMj8J4YB/oRCHw8qF+kfEO
+cEKmDkcfTITyMBwy7EQf3lDsakhNo8znyTVWFWC/58pXsF0X+eKS1gabR2aXNVFK
+TbVvd/eyRe3los0+1PvwILIrlnu5+7mwxBaaFu+cFKWtRUpk/huCCjrxK4AcBx8F
+rEowTDq1B+xPxuQPvOU5MnJrBf+oJKyDakzbZU4YWpZacX0pexdcbstnBguTqOJo
+CYITpeXZ106khP97+q8F5gcWpq6Bs/GDg4cIvHD0rmiAou8r2fyWVrOFnU4cLmmz
+x8Dg189iR4SC1eiALYtUajZI8KDJyw==
+=3edz
+-----END PGP SIGNATURE-----
+
+--Sig_/=51/kRi1X.SKH7VyK0k1qaz--
