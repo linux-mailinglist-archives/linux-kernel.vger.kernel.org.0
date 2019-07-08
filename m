@@ -2,103 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CE962020
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A6B62103
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbfGHOL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 10:11:27 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:39239 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbfGHOL1 (ORCPT
+        id S1730246AbfGHPAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:00:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38574 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbfGHPAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:11:27 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mx0VH-1ih8Qe1h99-00ySN3; Mon, 08 Jul 2019 16:11:19 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Kevin Wang <kevin1.wang@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Kenneth Feng <kenneth.feng@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] amdgpu: fix warning about misplaced initializers
-Date:   Mon,  8 Jul 2019 16:11:06 +0200
-Message-Id: <20190708141117.1466888-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 8 Jul 2019 11:00:55 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r9so16244170ljg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 08:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=iAKzsaR3iuxO4zA014yfkJZC/e1MvRqZX+rJd4aMTnw=;
+        b=muDIQhw7g4Nb/xbCo0YGsfqXpi/XpbmNV3ec56+y12BJXT4IQbIk3S8BZwXzHoeHd3
+         6UVuH8YSRVkVVc7MZtL5Ij9VsRssTsWmsMRkJ+5xb3RjUDPqkR7QCVFCr9bpCujHPR+K
+         kyjqIajqPiyd5WKLq3ObtJCJFRG+Kvt9F3yjCYvAcefyvmN19A0u+H0ynf03DUqwJj7V
+         mM7GKA44kx36BqTGV9GvsUq22RgD/1CeA2brjmr61Q5IGsNFSHqMPcXi5xK8lbXKm5uq
+         mbMb/MSg6HD0PViRiAIInq1fEyOTWu7Qr9R7fjZ2jZwCa7uP9hnJ+Qucq6RQ6mKg5x7/
+         yY/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=iAKzsaR3iuxO4zA014yfkJZC/e1MvRqZX+rJd4aMTnw=;
+        b=gF9J+upOuHaNcwKIevd4OmqPGz2Y8VTIExMl6iEHeA1leb29XNywALOpe87ztiRy38
+         pSc0nSQa0R/d+0G9bc2Q9P+upAWAtoqpwPlmNEChPNWb0fGZDMl0LVgWTX81PnBRTSmQ
+         dXuBZBEq7IbsSD7FSPqRKo0aqva+A+H9Li7d5t0ucY8hHrYuYsxyl5Y5yVN+ZH8GVoFM
+         bdlI2ZzXNw67TN//XueY2jgci3uuSgYtiBlkkmmtYvOtkEHP0u+qKR6QqwavFt1It6Mx
+         srGit8BCWW32gnHQAYA3IbfNLOscH1+JS8niN31nEELWHoWXLtDvZOCnqHga+5IDZal4
+         yyeA==
+X-Gm-Message-State: APjAAAXsvWCxiop46d+bjJDRL8dHYOI4+kBi7q5d6sa6aeQn10Nrl+9u
+        KBqMbTGanIzICm+Fug4HKspRWpBo1Fc=
+X-Google-Smtp-Source: APXvYqzSLwvoFEdtCYexhEG3MKpeeQ6VThuwY5UzRN/WS0u19Q3eef7DzDKCicSdcVwAJ/nw/cmghA==
+X-Received: by 2002:a2e:9758:: with SMTP id f24mr10879714ljj.58.1562598052994;
+        Mon, 08 Jul 2019 08:00:52 -0700 (PDT)
+Received: from localhost.localdomain (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id t63sm3693363lje.65.2019.07.08.08.00.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 08:00:52 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 16:11:36 +0200
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     naveen.n.rao@linux.ibm.com, anil.s.keshavamurthy@intel.com,
+        davem@davemloft.net, mhiramat@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: kprobes sanity test fails on next-20190708
+Message-ID: <20190708141136.GA3239@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Riw7pyi5fcHlFYgLggi5fT891CARP6ay/3Mzo3v4QtTa3qKzhQL
- AQJ5rjrUB+ksQGEJNzGPSGY7yey1IZtuSLtkqHiHYkZZHHBjhihEsGvdLsAuTFIdsn/oxzu
- nq4sGwyPUsnY4YgfBmWzhwKz+kmnJCA+z8nBP0iM5TttL8c2eVGLIaz+ghEYdtZlgSO8U+o
- E06XZtUGrB9dO+gikaOTQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fbwEaYXrfiE=:z53MLd0Y/hSMEKZsD0Sie0
- sRZ863E1F83owcszbx/t58wXHyeQ6pp5Tlg2GQII6QloINaPdTd0oaEbdF8lUbhIEA9rCI8sx
- lnDbMzc8cl7jz8aAFbx8t7dznlvqsaABgwe/pOcqFsRJu3PmHNudN54+HrmnFI1XfFB/r4uVI
- LtOoKxm6aEMdIrtAL8xCgXg42LmsiFZ4SvL0KxcCZrKQl96EotWj4LmiN0cevwUSSUylS4hb2
- yQQaeYKMi1RJcKWGeQYpPORmgX/CIeMwbUExQMeCsEpeb5yzKUx50boK3bSqTNNZ1E3PgduYL
- lVE1jAFMh2M/RDAOrDclN07mjq3Ui3F5FYCITaiKFk9ioKso03vvNtCsPC448ruep2SwwzBWS
- 5FOtJhfXxHljhx3hTD4JgX0ScPUSAzjRk/Iloymuz2gpHOp1kW1wOP0YTRrN1D2mUEhj1tcpE
- xbAYfXORYm0EgoKTwFQxYWox/YmAAFDym8GE0IFuq4REEqFPEIfSaykWyuu0S9zcvWj9f2NE+
- kyryAoGZRaswOEtF0yu3igVAaasJHnSN2DHeopqwDTBoPoDJQQ36acpV9iW29cdDzHOmET7Y9
- tUEHHWa4yNVcH51K4IAL5hndtUReNt/Rii5CG19WTu1QPNLcuZ1BW1oY2XYb1jGQaUWMs78wN
- ZGHnXeoSmwOyOJOGtFx7bUAlwlBgeDqh0J1UxViQPxxaI+a6AuzOsEYzZxlIQX9I/IYNR8FkC
- amQgy5tB2Rs7+Rkvq8MViI6LV5JEXrM9i4+7xA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The navi10_ppt code contains two instances of an incorrect struct initializer:
+Hi,
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:601:33: error: suggest braces around initialization of subobject
-      [-Werror,-Wmissing-braces]
-        static SmuMetrics_t metrics = {0};
-                                       ^
-                                       {}
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:905:26: error: suggest braces around initialization of subobject
-      [-Werror,-Wmissing-braces]
-        SmuMetrics_t metrics = {0};
-                                ^
+argh... resending, with plaintext... Sorry =/
 
-Setting it to {} instead of {0} is correct and more portable here.
+I tried to build a next-201908 defconfig + CONFIG_KPROBES=y and
+CONFIG_KPROBES_SANITY_TEST=y
 
-Fixes: ab43c4bf1cc8 ("drm/amd/powerplay: fix fan speed show error (for hwmon pwm)")
-Fixes: 98e1a543c7b1 ("drm/amd/powerplay: add function get current clock freq interface for navi10")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I get the following Call trace, any ideas?
+I've tried tags back to next-20190525 and they also failes... I haven't
+found a commit that works yet.
 
-diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-index fdcea2b944ab..ce1da9e6e1bf 100644
---- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-@@ -606,7 +606,7 @@ static int navi10_get_current_clk_freq_by_table(struct smu_context *smu,
- 				       enum smu_clk_type clk_type,
- 				       uint32_t *value)
- {
--	static SmuMetrics_t metrics = {0};
-+	static SmuMetrics_t metrics = {};
- 	int ret = 0, clk_id = 0;
- 
- 	if (!value)
-@@ -957,7 +957,7 @@ static bool navi10_is_dpm_running(struct smu_context *smu)
- 
- static int navi10_get_fan_speed(struct smu_context *smu, uint16_t *value)
- {
--	SmuMetrics_t metrics = {0};
-+	SmuMetrics_t metrics = {};
- 	int ret = 0;
- 
- 	if (!value)
--- 
-2.20.0
+[    0.098694] Kprobe smoke test: started
+[    0.102001] audit: type=2000 audit(0.088:1): state=initialized
+audit_enabled=0 res=1
+[    0.104753] Internal error: aarch64 BRK: f2000004 [#1] PREEMPT SMP
+[    0.106845] Modules linked in:
+[    0.107897] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+5.2.0-next-20190708 #1
+[    0.110403] Hardware name: linux,dummy-virt (DT)
+[    0.112104] pstate: 60000005 (nZCv daif -PAN -UAO)
+[    0.113852] pc : kprobe_target+0x0/0x18
+[    0.115268] lr : init_test_probes+0x1ac/0x3a0
+[    0.116890] sp : ffff00001000bd40
+[    0.118122] x29: ffff00001000bd40 x28: 0000000000000000 
+[    0.120049] x27: 0000000000000000 x26: ffff000011190518 
+[    0.122029] x25: ffff00001117e7d8 x24: ffff000011261078 
+[    0.123977] x23: 0000000000000000 x22: ffff00001169bb70 
+[    0.125930] x21: ffff00001186c000 x20: ffff0000116796c8 
+[    0.127886] x19: ffff00001186cf10 x18: 0000000000000010 
+[    0.129836] x17: 0000000000000000 x16: ffff80007b078000 
+[    0.131829] x15: ffffffffffffffff x14: ffff0000116796c8 
+[    0.133759] x13: 0000000000000000 x12: 0000000000000000 
+[    0.135736] x11: 0000000000000000 x10: 0000000000000990 
+[    0.137693] x9 : ffff00001000ba10 x8 : ffff80007b0789f0 
+[    0.139659] x7 : ffff80007dbe1dc0 x6 : ffff80007dbe1d40 
+[    0.141615] x5 : 0000000000000237 x4 : 00000000000021f2 
+[    0.143599] x3 : ffff00001169bfb8 x2 : 0000000000000000 
+[    0.145582] x1 : ffff000010184e40 x0 : 0000000040a0d76d 
+[    0.147556] Call trace:
+[    0.148459]  kprobe_target+0x0/0x18
+[    0.149754]  init_kprobes+0x120/0x134
+[    0.151103]  do_one_initcall+0x74/0x1b0
+[    0.152511]  kernel_init_freeable+0x194/0x22c
+[    0.154133]  kernel_init+0x10/0x100
+[    0.155411]  ret_from_fork+0x10/0x1c
+[    0.156717] Code: a8c97bfd d65f03c0 d4210000 97fd5cdd (d4200080) 
+[    0.158949] ---[ end trace 823556350f0e2d55 ]---
+[    0.160681] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    0.163247] ---[ end Kernel panic - not syncing: Attempted to kill
+init! exitcode=0x0000000b ]---
 
+
+Cheers,
+Anders
