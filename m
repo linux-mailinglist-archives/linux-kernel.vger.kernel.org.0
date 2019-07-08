@@ -2,138 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE9B61A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC18E61A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:01:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfGHGAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 02:00:20 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41070 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbfGHGAU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:00:20 -0400
-Received: by mail-pl1-f195.google.com with SMTP id m9so3991053pls.8
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 23:00:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6q22eQDDCUZWlcpujovTPxDLV/PDTFZTJgjMkPGNMDU=;
-        b=qCFcjFeCt5a05VcS5Cjwgn22CsE/7DQLunpoWaYJxF06aSHKpcocF0SZYql/0vvOYP
-         gPHsR+rNQ8P0MLJcpgJMZv56u/hBqdpZ+4ywoAGXcYG7ooS3XQGOlYkBql1rIr38HYqu
-         zXO/ZmzprkLvQ+rKetYp4s1jyIcpCCyb5Yum+pq78zZQC78pLqdUN+WUEssnXexeUcl2
-         6r7akeSW1kIBwVhljmpM32CmF2uqDXRZRx1l3pUy2HmHEpgzOjQvbhy6q8r+XK8pAmUJ
-         0nOeDi2SQsTmFSpK+2c+gl8zE08CvsvEj+Ys1POjFUK/eul15t4sQnwNGka0hZ+Hicpr
-         VmWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6q22eQDDCUZWlcpujovTPxDLV/PDTFZTJgjMkPGNMDU=;
-        b=ttS+kgxUsmASQfUjaESU7Z3+6nKpCuPfLGdUa7KwfITDTZ3iHgzGdlDV/5eGCNYnC5
-         2JcYFv+FVW0TlawJQ0iba0Bf/DncNRWKhqhsOwx+sinnVd3xDSe3hyxQUyVv7DNKXIeO
-         JaooGJnv1bdhZP/adr8lZVA/ug3Qtp9kG4JPIEnYRTfny4d2UZcQJlU/PWb2RAuDRuu4
-         tnwrPmT3U35W4VNgQbbVpIX7wydW9DunLys6qtRzdy00AfCc9kBQnBEwQTvL4YBKmBcA
-         oGQtpzSBSjVeZ9tZ8KTmBqHAE4uHJZmEhfFZz3l8OY9Jq0/oRflqry2mPshBw1CwNpvJ
-         qlDg==
-X-Gm-Message-State: APjAAAULWVjlfj8LBIGRT7e1noj/orgvSPhunVFeaug7kA9mpSExk/gD
-        gkqX77iBWrg4X1e0TuEBM+u94A==
-X-Google-Smtp-Source: APXvYqzCH6JkIGIMDnIOEIFv7dTqbgSevQnLuknmocRwHgxJb1MtM345JVgkwrUtGfT2CEe7k8z8kg==
-X-Received: by 2002:a17:902:1e7:: with SMTP id b94mr22716751plb.333.1562565619188;
-        Sun, 07 Jul 2019 23:00:19 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id f15sm21479445pje.17.2019.07.07.23.00.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Jul 2019 23:00:18 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] opp: Return genpd virtual devices from dev_pm_opp_attach_genpd()
-Date:   Mon,  8 Jul 2019 11:30:11 +0530
-Message-Id: <027985ce35873cd218298302a1408da06d48458b.1562565567.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
+        id S1728912AbfGHGBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:01:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39654 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728075AbfGHGBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:01:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CEC2FAF06;
+        Mon,  8 Jul 2019 06:01:09 +0000 (UTC)
+Subject: Re: [PATCH v1] scsi: Don't select SCSI_PROC_FS by default
+To:     dgilbert@interlog.com,
+        "Elliott, Robert (Servers)" <elliott@hpe.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+Cc:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
+ <621306ee-7ab6-9cd2-e934-94b3d6d731fc@acm.org>
+ <fb2d2e74-6725-4bf2-cf6c-63c0a2a10f4f@interlog.com>
+ <da579578-349e-1320-0867-14fde659733e@acm.org>
+ <AT5PR8401MB11695CC7286B2D2F98FB9EADABEA0@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+ <1ad3e7ba-008d-31ad-89a0-b118b36e14e2@suse.de>
+ <e2469890-e0ae-fb79-4aa9-125cdaeedb2b@interlog.com>
+From:   Hannes Reinecke <hare@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+ azzYF4VRJsdl+d0MCaSy8mUh
+Message-ID: <284c3ecc-b3a8-eeec-92d5-5eda1f20f691@suse.de>
+Date:   Mon, 8 Jul 2019 08:01:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <e2469890-e0ae-fb79-4aa9-125cdaeedb2b@interlog.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpufreq drivers don't need to do runtime PM operations on the
-virtual devices returned by dev_pm_domain_attach_by_name() and so the
-virtual devices weren't shared with the callers of
-dev_pm_opp_attach_genpd() earlier.
+On 7/5/19 7:53 PM, Douglas Gilbert wrote:
+> On 2019-07-05 3:22 a.m., Hannes Reinecke wrote:
+[ .. ]
+>> As mentioned, rescan-scsi-bus.sh is keeping references to /proc/scsi as
+>> a fall back only, as it's meant to work kernel independent. Per default
+>> it'll be using /sys, and will happily work without /proc/scsi.
+>>
+>> So it's really only /proc/scsi/sg which carries some meaningful
+>> information; maybe we should move/copy it to somewhere else.
+>>
+>> I personally like getting rid of /proc/scsi.
+> 
+> /proc/scsi/device_info doesn't seem to be in sysfs.
+> 
+> Could the contents of /proc/scsi/sg/* be placed in
+> /sys/class/scsi_generic/* ? Currently that directory only has symlinks
+> to the sg devices.
+> 
+The sg parameters are already available in /sys/module/sg/parameters;
+so from that perspective I feel we're good.
+Problem is /proc/scsi/device_info, for which we currently don't have any
+other location to store it at.
+Hmm.
 
-But the IO device drivers would want to do that. This patch updates the
-prototype of dev_pm_opp_attach_genpd() to accept another argument to
-return the pointer to the array of genpd virtual devices.
+Cheers,
 
-Reported-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-@Rajendra: Can you please test this one ? I have only compile tested it.
-
- drivers/opp/core.c     | 5 ++++-
- include/linux/pm_opp.h | 4 ++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 2958cc7bbb58..07b6f1187b3b 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1775,6 +1775,7 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
-  * dev_pm_opp_attach_genpd - Attach genpd(s) for the device and save virtual device pointer
-  * @dev: Consumer device for which the genpd is getting attached.
-  * @names: Null terminated array of pointers containing names of genpd to attach.
-+ * @virt_devs: Pointer to return the array of virtual devices.
-  *
-  * Multiple generic power domains for a device are supported with the help of
-  * virtual genpd devices, which are created for each consumer device - genpd
-@@ -1789,7 +1790,8 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
-  * This helper needs to be called once with a list of all genpd to attach.
-  * Otherwise the original device structure will be used instead by the OPP core.
-  */
--struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
-+struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
-+		const char **names, struct device ***virt_devs)
- {
- 	struct opp_table *opp_table;
- 	struct device *virt_dev;
-@@ -1850,6 +1852,7 @@ struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names
- 		name++;
- 	}
- 
-+	*virt_devs = opp_table->genpd_virt_devs;
- 	mutex_unlock(&opp_table->genpd_virt_dev_lock);
- 
- 	return opp_table;
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index be570761b77a..7c2fe2952f40 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -131,7 +131,7 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
- void dev_pm_opp_put_clkname(struct opp_table *opp_table);
- struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
- void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
--struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names);
-+struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names, struct device ***virt_devs);
- void dev_pm_opp_detach_genpd(struct opp_table *opp_table);
- int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
- int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
-@@ -295,7 +295,7 @@ static inline struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const
- 
- static inline void dev_pm_opp_put_clkname(struct opp_table *opp_table) {}
- 
--static inline struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
-+static inline struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names, struct device ***virt_devs)
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
+Hannes
 -- 
-2.21.0.rc0.269.g1a574e7a288b
-
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG Nürnberg)
