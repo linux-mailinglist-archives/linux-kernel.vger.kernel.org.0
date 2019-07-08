@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E38622F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AC7621A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389884AbfGHPay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:30:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
+        id S1733009AbfGHPSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:18:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389867AbfGHPav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:30:51 -0400
+        id S1728358AbfGHPSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:18:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3117520665;
-        Mon,  8 Jul 2019 15:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D43EF216C4;
+        Mon,  8 Jul 2019 15:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599850;
-        bh=GFDOw1vLokEPjrw2hC5T0pdoppLVaZ7rZOTfoI8Wvqg=;
+        s=default; t=1562599091;
+        bh=u5OHYWXogRGyjPJCzh9MC2XrxCMiu/h0Ez/huW086Vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jC6pVTCrajhDh0s54GS0qnGSnCSEAi/3BabpgxX46/E60ioxNLY1h/1j2c1TECpM4
-         0fo3dNknjQP5E3dE+XyP3K93S8web9KsFAvc8mbphFPrHDN9QHd9Cc0Ycrt2v12vvr
-         D9ZB9sH7KuYalkrU7sfbt1202IRU4Q+wAy32pa1M=
+        b=JtSf5Abfl+gdlceY4i9RJ+XWPTedq6pEYWSSIBRihSOU89pg/EO4/QSejE7It8lJ0
+         VC096cDqSlTIYIp2moczyljMrAOJVMQHgOlTlIyFrch+MtzomiA3MuIO1hLbGgggAM
+         rsRSoD+4H/xfQuW5TvPL7cw2Z0lKZgrMik48Jx3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 10/96] ASoC: ak4458: add return value for ak4458_probe
+Subject: [PATCH 4.4 32/73] 9p: acl: fix uninitialized iattr access
 Date:   Mon,  8 Jul 2019 17:12:42 +0200
-Message-Id: <20190708150526.894632053@linuxfoundation.org>
+Message-Id: <20190708150522.953751349@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8dee20d792432740509237943700fbcfc230bad ]
+[ Upstream commit e02a53d92e197706cad1627bd84705d4aa20a145 ]
 
-AK4458 is probed successfully even if AK4458 is not present - this
-is caused by probe function returning no error on i2c access failure.
-Return an error on probe if i2c access has failed.
+iattr is passed to v9fs_vfs_setattr_dotl which does send various
+values from iattr over the wire, even if it tells the server to
+only look at iattr.ia_valid fields this could leak some stack data.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: http://lkml.kernel.org/r/1536339057-21974-2-git-send-email-asmadeus@codewreck.org
+Addresses-Coverity-ID: 1195601 ("Uninitalized scalar variable")
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/ak4458.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/9p/acl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
-index eab7c76cfcd9..4c5c3ec92609 100644
---- a/sound/soc/codecs/ak4458.c
-+++ b/sound/soc/codecs/ak4458.c
-@@ -536,9 +536,10 @@ static void ak4458_power_on(struct ak4458_priv *ak4458)
- 	}
- }
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index c30c6ceac2c4..d02ee4026e32 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -282,7 +282,7 @@ static int v9fs_xattr_set_acl(const struct xattr_handler *handler,
+ 	switch (handler->flags) {
+ 	case ACL_TYPE_ACCESS:
+ 		if (acl) {
+-			struct iattr iattr;
++			struct iattr iattr = { 0 };
+ 			struct posix_acl *old_acl = acl;
  
--static void ak4458_init(struct snd_soc_component *component)
-+static int ak4458_init(struct snd_soc_component *component)
- {
- 	struct ak4458_priv *ak4458 = snd_soc_component_get_drvdata(component);
-+	int ret;
- 
- 	/* External Mute ON */
- 	if (ak4458->mute_gpiod)
-@@ -546,21 +547,21 @@ static void ak4458_init(struct snd_soc_component *component)
- 
- 	ak4458_power_on(ak4458);
- 
--	snd_soc_component_update_bits(component, AK4458_00_CONTROL1,
-+	ret = snd_soc_component_update_bits(component, AK4458_00_CONTROL1,
- 			    0x80, 0x80);   /* ACKS bit = 1; 10000000 */
-+	if (ret < 0)
-+		return ret;
- 
--	ak4458_rstn_control(component, 1);
-+	return ak4458_rstn_control(component, 1);
- }
- 
- static int ak4458_probe(struct snd_soc_component *component)
- {
- 	struct ak4458_priv *ak4458 = snd_soc_component_get_drvdata(component);
- 
--	ak4458_init(component);
--
- 	ak4458->fs = 48000;
- 
--	return 0;
-+	return ak4458_init(component);
- }
- 
- static void ak4458_remove(struct snd_soc_component *component)
+ 			retval = posix_acl_update_mode(inode, &iattr.ia_mode, &acl);
 -- 
 2.20.1
 
