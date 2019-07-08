@@ -2,245 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C850F625CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76CCC625CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391491AbfGHQIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 12:08:31 -0400
-Received: from mail-eopbgr00060.outbound.protection.outlook.com ([40.107.0.60]:47236
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S2391508AbfGHQJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 12:09:08 -0400
+Received: from mail-eopbgr130079.outbound.protection.outlook.com ([40.107.13.79]:23910
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729062AbfGHQIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 12:08:31 -0400
+        id S1729062AbfGHQJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 12:09:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HeD22x2qu+E+nXXZqFU5iuBwex3iZJyWZOj/1xg4mVw=;
- b=UjQy/5lyimJXQMngqpeNrWyY46OAfwmxNeu/DoagKF0ZDIzhxY8KWVXHs1oYrIX0AfTUYRvdoOn3nYcHEGviU1viszBezez7Zjs8iYCkIcW+yUawVKY1C9q2nwpyWuhrbW1aEvOkVTywLDmFsla561hXd9sX6dJcL+CmDREOTE8=
+ bh=Et7pwJyRWqYJ5CEjQoBXXF01Y0fuJFtFXwGpth3tND4=;
+ b=n0JiqngRF/OmUAYT/JKcV0etP7CE2BmqObVVgApCErhcIhHh06kAkGv7PRbg/5DDUm7eNI3Sx6KZheHu84cDzWJHugNd7g2xZ1rFDpnV7BXS29o5EkRQH+0F3qPTz3dDzJYEvHyfCaxc18hCAwiZvebjIcqLRqxhO/we48qi0Wc=
 Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5648.eurprd05.prod.outlook.com (20.178.120.154) with Microsoft SMTP
+ VI1PR05MB6061.eurprd05.prod.outlook.com (20.178.204.31) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.19; Mon, 8 Jul 2019 16:08:27 +0000
+ 15.20.2052.19; Mon, 8 Jul 2019 16:09:03 +0000
 Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
  ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
  ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Mon, 8 Jul 2019
- 16:08:27 +0000
+ 16:09:03 +0000
 From:   Jason Gunthorpe <jgg@mellanox.com>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Doug Ledford <dledford@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+CC:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kamenee Arumugam <kamenee.arumugam@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVNTjoB8aYc7vyLEKUSeiDY6rDZ6bA5EqA
-Date:   Mon, 8 Jul 2019 16:08:27 +0000
-Message-ID: <20190708160823.GH23966@mellanox.com>
-References: <20190708125725.25c38fa7@canb.auug.org.au>
-In-Reply-To: <20190708125725.25c38fa7@canb.auug.org.au>
+        Yishai Hadas <yishaih@mellanox.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Thread-Topic: linux-next: manual merge of the mlx5-next tree with the rdma
+ tree
+Thread-Index: AQHVMhLbwhSrvM/Tf0CjT+DAZZSBmqbAFk+AgADUcAA=
+Date:   Mon, 8 Jul 2019 16:09:03 +0000
+Message-ID: <20190708160858.GI23966@mellanox.com>
+References: <20190704124738.1e88cb69@canb.auug.org.au>
+ <20190708132837.5ccb36ed@canb.auug.org.au>
+In-Reply-To: <20190708132837.5ccb36ed@canb.auug.org.au>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR10CA0020.namprd10.prod.outlook.com
- (2603:10b6:208:120::33) To VI1PR05MB4141.eurprd05.prod.outlook.com
+x-clientproxiedby: YQBPR0101CA0063.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::40) To VI1PR05MB4141.eurprd05.prod.outlook.com
  (2603:10a6:803:4d::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jgg@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [156.34.55.100]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a567b7a6-5a96-4f3e-7d90-08d703be82d8
+x-ms-office365-filtering-correlation-id: 8e4cd52c-0d9d-4218-a2bc-08d703be9865
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5648;
-x-ms-traffictypediagnostic: VI1PR05MB5648:
-x-microsoft-antispam-prvs: <VI1PR05MB5648176402E5223F3FC9640FCFF60@VI1PR05MB5648.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:962;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB6061;
+x-ms-traffictypediagnostic: VI1PR05MB6061:
+x-microsoft-antispam-prvs: <VI1PR05MB606176D0A80635B04900A619CFF60@VI1PR05MB6061.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 00922518D8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(346002)(396003)(366004)(53754006)(189003)(199004)(26005)(53546011)(76176011)(6512007)(186003)(99286004)(4326008)(102836004)(6506007)(386003)(7736002)(66066001)(305945005)(81166006)(81156014)(5660300002)(36756003)(6246003)(14444005)(54906003)(316002)(53936002)(33656002)(68736007)(52116002)(8676002)(478600001)(25786009)(3846002)(6116002)(8936002)(256004)(86362001)(2906002)(1076003)(6436002)(14454004)(486006)(229853002)(476003)(2616005)(446003)(64756008)(66476007)(66556008)(71190400001)(73956011)(66946007)(66446008)(71200400001)(11346002)(6916009)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5648;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(396003)(39860400002)(53754006)(199004)(189003)(43544003)(4326008)(5660300002)(476003)(33656002)(102836004)(478600001)(99286004)(66066001)(25786009)(68736007)(6436002)(229853002)(6486002)(6116002)(186003)(6512007)(52116002)(54906003)(3846002)(446003)(66446008)(64756008)(66556008)(66476007)(11346002)(26005)(305945005)(73956011)(66946007)(6506007)(7736002)(76176011)(6916009)(386003)(86362001)(36756003)(316002)(8936002)(256004)(486006)(14454004)(71190400001)(71200400001)(1076003)(81156014)(53936002)(81166006)(2906002)(2616005)(6246003)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6061;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eE0eMjDzXoKSKMuz7U4vgPkEGxiHLZ3Ob/PbbL4N2Gzk7+c7kpW8tC5bsWH2/2ByeSHzc/gQgtkh7V3K5Q2OeG1+05l4opiWQTvYmfA9XrlcKYxs9ksNC+D02l26Mu7KdIYUKMKSKwwoPo02UkaE6W+YQLNPuxBqqIb4q7aPrgiB/89gh1BrPHjaPmQtG8c8E+qklfIqb5p7T96+GA4LGhrHs96X4zuvl0yq0xklYW4ClDzvsTlBQZ7+Zjc+o5NBvetTuZHGCNWMg+hF1m4IdQ1/IIt7mE3VHDymtGY4HZY02ubRoXyS+Tx8voAGaLtRd01Z5Xbyy+Q5OrQv9r/SHkoXqAY8Ceg1v+gORlRIWnWpnMxguVuniDxTKoGh6xU/ECx5ciGb3RpZCNw/B8yrytYaX6l52jHbNhwzPYVhkoA=
+x-microsoft-antispam-message-info: PVlAFGBhyHpAejxwVOw6dZwotDxViEgt09wRmIOpfzZi60yAy+Ud9Van2nW25qYPyalMrbbgDYPLU/fpOKcjRocDJsKTPmXNP/aX7jam5hORPGIVGg3dsZAzTA3LEhmT2O8D4DgiTp+uSCrPO8hjAdp/CooOa2aNpYvSC4yhLbJa6fEMOcluTGELhc1fLzJUIY2TlWC0ENkHUb6ESjuAjpd47Nk0TsOKUNQUyj5GzNvdoC0gF83VFRARL8me08WCKyZ3VzgZKQ1VRUi8n7xO2oJLNWbZgvctiJMvbwTZBGqBFUTLHcqoxE1nxdyUE6cLTLwoa/UVpcaK7TDOM61JUsTewohgE/zD1cnWzM0aX8uIQUA0U07m3nzkSuV3f29jN1COMJraAraIkb+fnZgNFp8h18cLSVq7Y7r7WROXF8E=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7B68358B9440FE4D909878D8CE94B3C7@eurprd05.prod.outlook.com>
+Content-ID: <F041F5A654C82B408AAFE3221C2B5B14@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a567b7a6-5a96-4f3e-7d90-08d703be82d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 16:08:27.2408
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e4cd52c-0d9d-4218-a2bc-08d703be9865
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 16:09:03.3900
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5648
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 12:57:25PM +1000, Stephen Rothwell wrote:
+On Mon, Jul 08, 2019 at 01:28:37PM +1000, Stephen Rothwell wrote:
 > Hi all,
 >=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> On Thu, 4 Jul 2019 12:47:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > Hi all,
+> >=20
+> > Today's linux-next merge of the mlx5-next tree got a conflict in:
+> >=20
+> >   drivers/infiniband/hw/mlx5/cq.c
+> >=20
+> > between commit:
+> >=20
+> >   e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsi=
+bility")
+> >=20
+> > from the rdma tree and commit:
+> >=20
+> >   38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
+> >=20
+> > from the mlx5-next tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tre=
+e
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularl=
+y
+> > complex conflicts.
+> >=20
 >=20
-> In file included from <command-line>:32:
-> ./usr/include/rdma/rvt-abi.h:13:10: fatal error: rdma/ib_verbs.h: No such=
- file or directory
->  #include <rdma/ib_verbs.h>
->           ^~~~~~~~~~~~~~~~~
->=20
-> Caused by commits
->=20
->   dabac6e460ce ("IB/hfi1: Move receive work queue struct into uapi direct=
-ory")
->=20
-> interacting with commit
->=20
->   0c422a3d4e1b ("kbuild: compile-test exported headers to ensure they are=
- self-contained")
->=20
-> from the kbuild tree.
->=20
-> You can't reference the include/linux headers from uapi headers ...
->=20
-> I have used the rmda tree from 20190628 again today (given the previous
-> errors).
+> This is now a conflict between the net-next tree and the rdma tree.
 
-This is a bug that will break our userspace package too, we must fix
-it, very happy to see the functionality in "kbuild: compile-test
-exported headers to ensure they are self-contained"
+You'll see the mlx5-next merge with rdma tomorrow that will take care
+of this
 
-Dennis, you must put stuff in rdma-core and run the rdma-core CI if
-you are messing with the uapi headers.
-
-I'm adding this fixup so we can progress with the merge window. Please
-check it right away.
-
-From f10ff380fd7dfba4a36d40f8dd00fe17da8a1a10 Mon Sep 17 00:00:00 2001
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Mon, 8 Jul 2019 12:17:48 -0300
-Subject: [PATCH] RDMA/rvt: Do not use a kernel header in the ABI
-
-rvt was using ib_sge as part of it's ABI, which is not allowed. Introduce
-a new struct with the same layout and use it instead.
-
-Fixes: dabac6e460ce ("IB/hfi1: Move receive work queue struct into uapi dir=
-ectory")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
----
- drivers/infiniband/sw/rdmavt/qp.c | 32 ++++++++++++++++++++++++++-----
- include/uapi/rdma/rvt-abi.h       |  9 +++++++--
- 2 files changed, 34 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/infiniband/sw/rdmavt/qp.c b/drivers/infiniband/sw/rdma=
-vt/qp.c
-index 11b4d3c1efd486..0b0a241c57ff37 100644
---- a/drivers/infiniband/sw/rdmavt/qp.c
-+++ b/drivers/infiniband/sw/rdmavt/qp.c
-@@ -1847,8 +1847,11 @@ int rvt_post_recv(struct ib_qp *ibqp, const struct i=
-b_recv_wr *wr,
- 			wqe =3D rvt_get_rwqe_ptr(&qp->r_rq, wq->head);
- 			wqe->wr_id =3D wr->wr_id;
- 			wqe->num_sge =3D wr->num_sge;
--			for (i =3D 0; i < wr->num_sge; i++)
--				wqe->sg_list[i] =3D wr->sg_list[i];
-+			for (i =3D 0; i < wr->num_sge; i++) {
-+				wqe->sg_list[i].addr =3D wr->sg_list[i].addr;
-+				wqe->sg_list[i].length =3D wr->sg_list[i].length;
-+				wqe->sg_list[i].lkey =3D wr->sg_list[i].lkey;
-+			}
- 			/*
- 			 * Make sure queue entry is written
- 			 * before the head index.
-@@ -2250,8 +2253,11 @@ int rvt_post_srq_recv(struct ib_srq *ibsrq, const st=
-ruct ib_recv_wr *wr,
- 		wqe =3D rvt_get_rwqe_ptr(&srq->rq, wq->head);
- 		wqe->wr_id =3D wr->wr_id;
- 		wqe->num_sge =3D wr->num_sge;
--		for (i =3D 0; i < wr->num_sge; i++)
--			wqe->sg_list[i] =3D wr->sg_list[i];
-+		for (i =3D 0; i < wr->num_sge; i++) {
-+			wqe->sg_list[i].addr =3D wr->sg_list[i].addr;
-+			wqe->sg_list[i].length =3D wr->sg_list[i].length;
-+			wqe->sg_list[i].lkey =3D wr->sg_list[i].lkey;
-+		}
- 		/* Make sure queue entry is written before the head index. */
- 		smp_store_release(&wq->head, next);
- 		spin_unlock_irqrestore(&srq->rq.kwq->p_lock, flags);
-@@ -2259,6 +2265,22 @@ int rvt_post_srq_recv(struct ib_srq *ibsrq, const st=
-ruct ib_recv_wr *wr,
- 	return 0;
- }
-=20
-+/*
-+ * rvt used the internal kernel struct as part of its ABI, for now make su=
-re
-+ * the kernel struct does not change layout. FIXME: rvt should never cast =
-the
-+ * user struct to a kernel struct.
-+ */
-+static struct ib_sge *rvt_cast_sge(struct rvt_wqe_sge *sge)
-+{
-+	BUILD_BUG_ON(offsetof(struct ib_sge, addr) !=3D
-+		     offsetof(struct rvt_wqe_sge, addr));
-+	BUILD_BUG_ON(offsetof(struct ib_sge, length) !=3D
-+		     offsetof(struct rvt_wqe_sge, length));
-+	BUILD_BUG_ON(offsetof(struct ib_sge, lkey) !=3D
-+		     offsetof(struct rvt_wqe_sge, lkey));
-+	return (struct ib_sge *)sge;
-+}
-+
- /*
-  * Validate a RWQE and fill in the SGE state.
-  * Return 1 if OK.
-@@ -2282,7 +2304,7 @@ static int init_sge(struct rvt_qp *qp, struct rvt_rwq=
-e *wqe)
- 			continue;
- 		/* Check LKEY */
- 		ret =3D rvt_lkey_ok(rkt, pd, j ? &ss->sg_list[j - 1] : &ss->sge,
--				  NULL, &wqe->sg_list[i],
-+				  NULL, rvt_cast_sge(&wqe->sg_list[i]),
- 				  IB_ACCESS_LOCAL_WRITE);
- 		if (unlikely(ret <=3D 0))
- 			goto bad_lkey;
-diff --git a/include/uapi/rdma/rvt-abi.h b/include/uapi/rdma/rvt-abi.h
-index d2e35d24f1a9e6..7328293c715cfb 100644
---- a/include/uapi/rdma/rvt-abi.h
-+++ b/include/uapi/rdma/rvt-abi.h
-@@ -10,11 +10,16 @@
-=20
- #include <linux/types.h>
- #include <rdma/ib_user_verbs.h>
--#include <rdma/ib_verbs.h>
- #ifndef RDMA_ATOMIC_UAPI
- #define RDMA_ATOMIC_UAPI(_type, _name) struct{ _type val; } _name
- #endif
-=20
-+struct rvt_wqe_sge {
-+	__aligned_u64 addr;
-+	__u32 length;
-+	__u32 lkey;
-+};
-+
- /*
-  * This structure is used to contain the head pointer, tail pointer,
-  * and completion queue entries as a single memory allocation so
-@@ -39,7 +44,7 @@ struct rvt_rwqe {
- 	__u64 wr_id;
- 	__u8 num_sge;
- 	__u8 padding[7];
--	struct ib_sge sg_list[];
-+	struct rvt_wqe_sge sg_list[];
- };
-=20
- /*
---=20
-2.21.0
-
-
+Thanks,
+Jason
