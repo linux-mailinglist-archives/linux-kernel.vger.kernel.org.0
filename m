@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A6762179
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4166623DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732613AbfGHPQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:16:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39622 "EHLO mail.kernel.org"
+        id S2388071AbfGHPhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:37:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732599AbfGHPQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:16:34 -0400
+        id S2389730AbfGHPbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:31:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41092214C6;
-        Mon,  8 Jul 2019 15:16:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39931216F4;
+        Mon,  8 Jul 2019 15:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598993;
-        bh=udHj6L7oj91gY5v1/CPLP4scAiCxc6ToXIGOAqToVz8=;
+        s=default; t=1562599884;
+        bh=B3BWwCuukbc3fMSFs7l/VP/ypQsliVWsYqplb8DYBWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e4tOKoecyrydO5meVe/lLg6o3JXF0JwsRPRyAAdS4BY20cTJcHWWOkXz2Y1koGNKl
-         Nm52KUI1ou8XfEbX0NVV9JNfHsOnlCU34OGgtUUorVaSKUFKZMSGPZmOP2PuJzdQqT
-         HOOaFWms1hh2+SWVsKV/Q1AQmeJESuZcSi8IjGjQ=
+        b=Bi22uf/P+knrg3Cura0AHXOWLJKZGocY3naQIS7fYD7NVc34Oc6OHCPU6yoLZ0gCD
+         6On4LdOS3clRXTpvrsQsCFRV3U6a42IL8mBa5WGNuqzYis4LftvRRRBD7eYUMJVMgb
+         C6rEJ4OvM3nIV2qzw5IxH01Hy39j3voMtN2U7gJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 43/73] team: Always enable vlan tx offload
+        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 21/96] drm/mediatek: call drm_atomic_helper_shutdown() when unbinding driver
 Date:   Mon,  8 Jul 2019 17:12:53 +0200
-Message-Id: <20190708150523.644728335@linuxfoundation.org>
+Message-Id: <20190708150527.588499671@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+[ Upstream commit cf49b24ffa62766f8f04cd1c4cf17b75d29b240a ]
 
-[ Upstream commit ee4297420d56a0033a8593e80b33fcc93fda8509 ]
+shutdown all CRTC when unbinding drm driver.
 
-We should rather have vlan_tci filled all the way down
-to the transmitting netdevice and let it do the hw/sw
-vlan implementation.
-
-Suggested-by: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/team/team.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2091,12 +2091,12 @@ static void team_setup(struct net_device
- 	dev->features |= NETIF_F_NETNS_LOCAL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index e7362bdafa82..8718d123ccaa 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -311,6 +311,7 @@ err_config_cleanup:
+ static void mtk_drm_kms_deinit(struct drm_device *drm)
+ {
+ 	drm_kms_helper_poll_fini(drm);
++	drm_atomic_helper_shutdown(drm);
  
- 	dev->hw_features = TEAM_VLAN_FEATURES |
--			   NETIF_F_HW_VLAN_CTAG_TX |
- 			   NETIF_F_HW_VLAN_CTAG_RX |
- 			   NETIF_F_HW_VLAN_CTAG_FILTER;
- 
- 	dev->hw_features &= ~(NETIF_F_ALL_CSUM & ~NETIF_F_HW_CSUM);
- 	dev->features |= dev->hw_features;
-+	dev->features |= NETIF_F_HW_VLAN_CTAG_TX;
- }
- 
- static int team_newlink(struct net *src_net, struct net_device *dev,
+ 	component_unbind_all(drm->dev, drm);
+ 	drm_mode_config_cleanup(drm);
+-- 
+2.20.1
+
 
 
