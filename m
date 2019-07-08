@@ -2,258 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58A161E9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8273661EA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730868AbfGHMl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 08:41:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42710 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfGHMl4 (ORCPT
+        id S1730891AbfGHMmX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 8 Jul 2019 08:42:23 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:45355 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730824AbfGHMmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:41:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gqwlo/QWRFli7SCZXqLbPGOKGbV7Fnu9bXzKCGI3EjQ=; b=kMU0DvryN43lhok8a67CISGh3
-        ESrj8ktAUhi6LFKv1yaw9iattl+FFzubZkgipxv6/kPOnkeWbq75jtHAoZcVftIsmm7v640pFSZpX
-        0gdkIEvxmRSwzDYjfQBa9CfvdAZqIeGtRcECfkUhiq8CPAiixQtfPR2Qpez6TL/Jjfhys=;
-Received: from [217.140.106.54] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hkSxt-0000S0-Az; Mon, 08 Jul 2019 12:41:53 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 9B36DD02C61; Mon,  8 Jul 2019 13:41:52 +0100 (BST)
-Date:   Mon, 8 Jul 2019 13:41:52 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator updates for v5.3
-Message-ID: <20190708124152.GA12731@sirena.co.uk>
+        Mon, 8 Jul 2019 08:42:21 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-230-dcsia1rtNYyT8xw3SipVDQ-1; Mon, 08 Jul 2019 13:42:16 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 8 Jul 2019 13:42:15 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 8 Jul 2019 13:42:15 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Salvatore Mesoraca' <s.mesoraca16@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Brad Spengler <spender@grsecurity.net>,
+        "Casey Schaufler" <casey@schaufler-ca.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Jann Horn <jannh@google.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        PaX Team <pageexec@freemail.hu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: RE: [PATCH v5 06/12] S.A.R.A.: WX protection
+Thread-Topic: [PATCH v5 06/12] S.A.R.A.: WX protection
+Thread-Index: AQHVM+lhx/3G+gwH+UeGA1TJk0kwgabAq9yQ
+Date:   Mon, 8 Jul 2019 12:42:15 +0000
+Message-ID: <b946dd861874401a910740a9adea8e8e@AcuMS.aculab.com>
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+In-Reply-To: <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-X-Cookie: If anything can go wrong, it will.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: dcsia1rtNYyT8xw3SipVDQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Salvatore Mesoraca
+> Sent: 06 July 2019 11:55
+...
+> Executable MMAP prevention works by preventing any new executable
+> allocation after the dynamic libraries have been loaded. It works under the
+> assumption that, when the dynamic libraries have been finished loading, the
+> RELRO section will be marked read only.
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What about writing to the file of a dynamic library after it is loaded
+but before it is faulted it (or after evicting it from the I$).
 
-The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
+...
+> +#define find_relro_section(ELFH, ELFP, FILE, RELRO, FOUND) do {		\
+> +	unsigned long i;						\
+> +	int _tmp;							\
+> +	loff_t _pos = 0;						\
+> +	if (ELFH.e_type == ET_DYN || ELFH.e_type == ET_EXEC) {		\
+> +		for (i = 0; i < ELFH.e_phnum; ++i) {			\
+> +			_pos = ELFH.e_phoff + i*sizeof(ELFP);		\
+> +			_tmp = kernel_read(FILE, &ELFP, sizeof(ELFP),	\
+> +					   &_pos);			\
+> +			if (_tmp != sizeof(ELFP))			\
+> +				break;					\
+> +			if (ELFP.p_type == PT_GNU_RELRO) {		\
+> +				RELRO = ELFP.p_offset >> PAGE_SHIFT;	\
+> +				FOUND = true;				\
+> +				break;					\
+> +			}						\
+> +		}							\
+> +	}								\
+> +} while (0)
 
-  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
+This is big for a #define.
+Since it contains kernel_read() it can't really matter if it is
+a real function.
 
-are available in the Git repository at:
+	David
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v5.3
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-for you to fetch changes up to 0ed4513c9a32a479b4dc41685be68edf1e99c139:
-
-  Merge remote-tracking branch 'regulator/topic/coupled' into regulator-next (2019-07-04 17:34:34 +0100)
-
-----------------------------------------------------------------
-regulator: Updates for v5.3
-
-A couple of new features in the core, the most interesting one
-being support for complex regulator coupling configurations
-initially targeted at nVidia Tegra SoCs, and some new drivers but
-otherwise quite a quiet release.
-
- - Core support for gradual ramping of voltages for devices that
-   can't manage large changes in hardware from Bartosz Golaszewski.
- - Core support for systems that have complex coupling requirements
-   best described via code, contributed by Dmitry Osipenko.
- - New drivers for Dialog SLG51000, Qualcomm PM8005 and ST
-   Microelectronics STM32-Booster.
-
-----------------------------------------------------------------
-Anders Roxell (1):
-      regulator: 88pm800: fix warning same module names
-
-Axel Lin (4):
-      regulator: core: Slightly improve readability of _regulator_get_enable_time
-      regulator: max77650: Convert MAX77651 SBB1 to pickable linear range
-      regulator: slg51000: Constify slg51000_regl_ops and slg51000_switch_ops
-      regulator: slg51000: Remove unneeded regl_pdata from struct slg51000
-
-Bartosz Golaszewski (3):
-      regulator: max77650: add MODULE_ALIAS()
-      regulator: implement selector stepping
-      regulator: max77650: use vsel_step
-
-Charles Keepax (1):
-      regulator: arizona: Update device tree binding to support Madera CODECs
-
-Colin Ian King (1):
-      regulator: max77620: remove redundant assignment to variable ret
-
-Dmitry Osipenko (3):
-      regulator: max77620: Support Maxim 77663
-      regulator: core: Introduce API for regulators coupling customization
-      regulator: core: Expose some of core functions needed by couplers
-
-Eric Jeong (3):
-      MAINTAINERS: slg51000 updates to the Dialog Semiconductor search terms
-      regulator: slg51000: add slg51000 regulator driver
-      dt-bindings: regulator: add document bindings for slg51000
-
-Fabrice Gasnier (2):
-      regulator: add support for the stm32-booster
-      dt-bindings: regulator: add support for the stm32-booster
-
-Felix Riemann (1):
-      regulator: da9061/62: Adjust LDO voltage selection minimum value
-
-Geert Uytterhoeven (1):
-      regulator: cpcap: Spelling s/configuraion/configuration/
-
-Jeffrey Hugo (6):
-      regulator: qcom_spmi: Refactor get_mode/set_mode
-      dt-bindings: qcom_spmi: Document PM8005 regulators
-      regulator: qcom_spmi: Add support for PM8005
-      arm64: dts: msm8998-mtp: Add pm8005_s1 regulator
-      regulator: qcom_spmi: Fix math of spmi_regulator_set_voltage_time_sel
-      regulator: qcom_spmi: Do NULL check for lvs
-
-Jorge Ramirez (2):
-      dt-bindings: qcom_spmi: Document pms405 support
-      regulator: qcom_spmi: add PMS405 SPMI regulator
-
-Jorge Ramirez-Ortiz (1):
-      regulator: qcom_spmi: enable linear range info
-
-Krzysztof Kozlowski (5):
-      regulator: s2mps11: Fix ERR_PTR dereference on GPIO lookup failure
-      regulator: s2mps11: Reduce number of rdev_get_id() calls
-      regulator: s2mps11: Add support for disabling S2MPS11 regulators in suspend
-      regulator: s2mps11: Fix buck7 and buck8 wrong voltages
-      regulator: s2mps11: Adjust supported buck voltages to real values
-
-Linus Walleij (6):
-      regulator: arizona-micsupp: Delete unused include
-      regulator: bd70528: Drop unused include
-      regulator: bd718x7: Drop unused include
-      regulator: max77802: Drop unused includes
-      regulator: wm831x: Convert to use GPIO descriptors
-      regulator: max8952: Convert to use GPIO descriptors
-
-Mark Brown (6):
-      Merge tag 'v5.2-rc1' into regulator-5.3
-      Merge tag 'v5.2-rc4' into regulator-5.3
-      regulator: core: Make entire header comment C++ style
-      Merge branch 'regulator-5.2' into regulator-linus
-      Merge branch 'regulator-5.3' into regulator-next
-      Merge remote-tracking branch 'regulator/topic/coupled' into regulator-next
-
-Nathan Chancellor (1):
-      regulator: max77650: Move max77651_SBB1_desc's declaration down
-
-Richard Fitzgerald (2):
-      regulator: arizona-ldo1: Add support for Cirrus Logic Madera codecs
-      regulator: arizona-micsupp: Add support for Cirrus Logic Madera codecs
-
-Rob Herring (3):
-      regulator: Convert regulator binding to json-schema
-      regulator: Convert gpio-regulator to json-schema
-      regulator: Convert max8660 binding to json-schema
-
-Waibel Georg (1):
-      gpio: Fix return value mismatch of function gpiod_get_from_of_node()
-
-Wolfram Sang (4):
-      regulator: da9063: remove platform_data support
-      regulator: da9063: move definitions out of a header into the driver
-      regulator: da9063: platform_data is gone, depend on OF
-      regulator: max8952: simplify getting the adapter of a client
-
- .../bindings/regulator/arizona-regulator.txt       |   3 +-
- .../bindings/regulator/fixed-regulator.yaml        |   5 +-
- .../bindings/regulator/gpio-regulator.txt          |  57 ---
- .../bindings/regulator/gpio-regulator.yaml         | 118 +++++
- .../devicetree/bindings/regulator/max8660.txt      |  47 --
- .../devicetree/bindings/regulator/max8660.yaml     |  77 +++
- .../bindings/regulator/qcom,spmi-regulator.txt     |  22 +
- .../devicetree/bindings/regulator/regulator.txt    | 140 +-----
- .../devicetree/bindings/regulator/regulator.yaml   | 200 ++++++++
- .../devicetree/bindings/regulator/slg51000.txt     |  88 ++++
- .../bindings/regulator/st,stm32-booster.txt        |  18 +
- MAINTAINERS                                        |   2 +
- arch/arm/mach-s3c64xx/mach-crag6410.c              |  21 +-
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi          |  17 +
- drivers/gpio/gpiolib.c                             |   6 +-
- .../regulator/{88pm800.c => 88pm800-regulator.c}   |   0
- drivers/regulator/Kconfig                          |  37 +-
- drivers/regulator/Makefile                         |   4 +-
- drivers/regulator/arizona-ldo1.c                   |  83 +++-
- drivers/regulator/arizona-micsupp.c                |  72 ++-
- drivers/regulator/bd70528-regulator.c              |   1 -
- drivers/regulator/bd718x7-regulator.c              |   1 -
- drivers/regulator/core.c                           | 278 ++++++++---
- drivers/regulator/cpcap-regulator.c                |   2 +-
- drivers/regulator/da9062-regulator.c               |  40 +-
- drivers/regulator/da9063-regulator.c               |  61 ++-
- drivers/regulator/da9211-regulator.c               |   2 +
- drivers/regulator/helpers.c                        |  11 +-
- drivers/regulator/max77620-regulator.c             |  28 +-
- drivers/regulator/max77650-regulator.c             | 170 ++-----
- drivers/regulator/max77802-regulator.c             |   2 -
- drivers/regulator/max8952.c                        |  64 ++-
- drivers/regulator/of_regulator.c                   |  63 ++-
- drivers/regulator/qcom_spmi-regulator.c            | 252 +++++++++-
- drivers/regulator/s2mps11.c                        | 255 +++++-----
- drivers/regulator/s5m8767.c                        |   4 +-
- drivers/regulator/slg51000-regulator.c             | 523 +++++++++++++++++++++
- drivers/regulator/slg51000-regulator.h             | 505 ++++++++++++++++++++
- drivers/regulator/stm32-booster.c                  | 132 ++++++
- drivers/regulator/tps65090-regulator.c             |   7 +-
- drivers/regulator/wm831x-dcdc.c                    |  29 +-
- include/linux/mfd/da9062/registers.h               |   3 +
- include/linux/mfd/da9063/pdata.h                   |  49 --
- include/linux/mfd/samsung/core.h                   |   1 +
- include/linux/mfd/samsung/s2mps11.h                |   9 +-
- include/linux/mfd/wm831x/pdata.h                   |   1 -
- include/linux/regulator/coupler.h                  |  97 ++++
- include/linux/regulator/driver.h                   |  12 +-
- include/linux/regulator/machine.h                  |   2 +-
- include/linux/regulator/max8952.h                  |   3 -
- 50 files changed, 2862 insertions(+), 762 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/regulator/gpio-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/gpio-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/max8660.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/max8660.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/regulator.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/slg51000.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
- rename drivers/regulator/{88pm800.c => 88pm800-regulator.c} (100%)
- create mode 100644 drivers/regulator/slg51000-regulator.c
- create mode 100644 drivers/regulator/slg51000-regulator.h
- create mode 100644 drivers/regulator/stm32-booster.c
- create mode 100644 include/linux/regulator/coupler.h
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0jOg8ACgkQJNaLcl1U
-h9DF/Af/dH9ocLBRlgKPgGSEQU0ExJIQQEF4A+129EJtpszXcxdk5n80u8k/orsS
-BtK02en1dcuuJfHvcBB4F3/mJWzF+dSpRHDBa3ngSfxDWF/jqKWJWbM/RlnuWzHS
-c1Gx/3/I4NxauMEfoemZ3D16Acq9AW07QOSRxgeCR7FbycsJqBDsO/n1UZ7hqhlu
-ZUD2Zu7iufzHxWIk2wwhXTpRsCrucZxZYBF8OObR5glILJ1Ka/ZTBOl94IOEnKcr
-4jZ+I//5rEyuqordJUV8roZmtFVILiDVWKNZ5dJy4ImRt4ooyzLnosYJgyk89Gtb
-OCZIc3QPGXfaTnjoPe8COdtGPKtARA==
-=aBbU
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
