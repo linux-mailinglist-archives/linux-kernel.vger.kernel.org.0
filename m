@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F1262232
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B994622C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbfGHPX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50430 "EHLO mail.kernel.org"
+        id S1729983AbfGHP2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388180AbfGHPXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:24 -0400
+        id S2389380AbfGHP2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C126214C6;
-        Mon,  8 Jul 2019 15:23:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 467C6204EC;
+        Mon,  8 Jul 2019 15:28:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599403;
-        bh=jFLaiQnvGp8UNDb9IEsBU0xxlAQbsJv2AIo7kzHMCzY=;
+        s=default; t=1562599731;
+        bh=FRCL4MOe6ef/4Edzynh7ItEGQrJbwD2kHXeiG2W/lIk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uxe67mSaNQNRWI0Tcap1whKAbQvYwpC/FSm3mfbOQlRYAq02fx2m3jmsCivVBYdQq
-         k8idI7erMoWCvjZzFD6Vu8J9h45IFznoXrWmUupGuJHuHLaGjxQONt/Oo8nJgjrQmv
-         2qqBUoOY8l/c564A4P18vW9k8tnk1so4R2UF1mjo=
+        b=QmDf1FgL1mB9vN6CpxXNlMhxLniAsj7YobRK2naqt1yMrNPmQxNsZteAGPTaMbJZy
+         mEuytc0dodOAI6DYVwnYlLYKFeXRaoouQLc9TuFvr5XpdXbCG7dtNztNy5UcKL6N64
+         ZhPjHmgG9TFz6U78nUYXtK7Uq+k4+TKx2Ih3VugE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Robert Beckett <bob.beckett@collabora.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4.9 093/102] drm/imx: notify drm core before sending event during crtc disable
+Subject: [PATCH 4.19 59/90] drm/imx: only send event on crtc disable if kept disabled
 Date:   Mon,  8 Jul 2019 17:13:26 +0200
-Message-Id: <20190708150531.279646248@linuxfoundation.org>
+Message-Id: <20190708150525.419802764@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,26 +46,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Robert Beckett <bob.beckett@collabora.com>
 
-commit 78c68e8f5cd24bd32ba4ca1cdfb0c30cf0642685 upstream.
+commit 5aeab2bfc9ffa72d3ca73416635cb3785dfc076f upstream.
 
-Notify drm core before sending pending events during crtc disable.
-This fixes the first event after disable having an old stale timestamp
-by having drm_crtc_vblank_off update the timestamp to now.
+The event will be sent as part of the vblank enable during the modeset
+if the crtc is not being kept disabled.
 
-This was seen while debugging weston log message:
-Warning: computed repaint delay is insane: -8212 msec
-
-This occurred due to:
-1. driver starts up
-2. fbcon comes along and restores fbdev, enabling vblank
-3. vblank_disable_fn fires via timer disabling vblank, keeping vblank
-seq number and time set at current value
-(some time later)
-4. weston starts and does a modeset
-5. atomic commit disables crtc while it does the modeset
-6. ipu_crtc_atomic_disable sends vblank with old seq number and time
-
-Fixes: a474478642d5 ("drm/imx: fix crtc vblank state regression")
+Fixes: 5f2f911578fb ("drm/imx: atomic phase 3 step 1: Use atomic configuration")
 
 Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
 Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
@@ -73,27 +59,19 @@ Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/imx/ipuv3-crtc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/imx/ipuv3-crtc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/imx/ipuv3-crtc.c
 +++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
-@@ -76,14 +76,14 @@ static void ipu_crtc_atomic_disable(stru
- 	drm_atomic_helper_disable_planes_on_crtc(old_crtc_state, false);
- 	ipu_dc_disable(ipu);
+@@ -101,7 +101,7 @@ static void ipu_crtc_atomic_disable(stru
+ 	drm_crtc_vblank_off(crtc);
  
-+	drm_crtc_vblank_off(crtc);
-+
  	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
+-	if (crtc->state->event) {
++	if (crtc->state->event && !crtc->state->active) {
  		drm_crtc_send_vblank_event(crtc, crtc->state->event);
  		crtc->state->event = NULL;
  	}
- 	spin_unlock_irq(&crtc->dev->event_lock);
--
--	drm_crtc_vblank_off(crtc);
- }
- 
- static void imx_drm_crtc_reset(struct drm_crtc *crtc)
 
 
