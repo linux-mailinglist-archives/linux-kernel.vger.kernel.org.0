@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4310A62259
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F1262232
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388537AbfGHPZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:25:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52264 "EHLO mail.kernel.org"
+        id S1731248AbfGHPX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388412AbfGHPY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:56 -0400
+        id S2388180AbfGHPXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCF2F2166E;
-        Mon,  8 Jul 2019 15:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C126214C6;
+        Mon,  8 Jul 2019 15:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599495;
-        bh=+LiCpwHsjJSrbJyVIAOZQxJz3K+eHJCNVBkQ9T3ckGk=;
+        s=default; t=1562599403;
+        bh=jFLaiQnvGp8UNDb9IEsBU0xxlAQbsJv2AIo7kzHMCzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jbvVOL7AwI3h9VVKf3sC0RF0H6xN9e4NFZ+GsO/+3nsBd12oTiIa64sSamB0yEOYe
-         ddalTxlfNRHXfL1R+uO93jaYn46qSdHG335Z3xk+b2y43nz2GqQjgVYDVvDZcL7De6
-         sOn3wEBKZ3zN7DIO6ps48RaZ4eoOkcDKH5uoN9dY=
+        b=uxe67mSaNQNRWI0Tcap1whKAbQvYwpC/FSm3mfbOQlRYAq02fx2m3jmsCivVBYdQq
+         k8idI7erMoWCvjZzFD6Vu8J9h45IFznoXrWmUupGuJHuHLaGjxQONt/Oo8nJgjrQmv
+         2qqBUoOY8l/c564A4P18vW9k8tnk1so4R2UF1mjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.14 34/56] arm64: kaslr: keep modules inside module region when KASAN is enabled
+        stable@vger.kernel.org, Robert Beckett <bob.beckett@collabora.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 4.9 093/102] drm/imx: notify drm core before sending event during crtc disable
 Date:   Mon,  8 Jul 2019 17:13:26 +0200
-Message-Id: <20190708150523.116862643@linuxfoundation.org>
+Message-Id: <20190708150531.279646248@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Robert Beckett <bob.beckett@collabora.com>
 
-commit 6f496a555d93db7a11d4860b9220d904822f586a upstream.
+commit 78c68e8f5cd24bd32ba4ca1cdfb0c30cf0642685 upstream.
 
-When KASLR and KASAN are both enabled, we keep the modules where they
-are, and randomize the placement of the kernel so it is within 2 GB
-of the module region. The reason for this is that putting modules in
-the vmalloc region (like we normally do when KASLR is enabled) is not
-possible in this case, given that the entire vmalloc region is already
-backed by KASAN zero shadow pages, and so allocating dedicated KASAN
-shadow space as required by loaded modules is not possible.
+Notify drm core before sending pending events during crtc disable.
+This fixes the first event after disable having an old stale timestamp
+by having drm_crtc_vblank_off update the timestamp to now.
 
-The default module allocation window is set to [_etext - 128MB, _etext]
-in kaslr.c, which is appropriate for KASLR kernels booted without a
-seed or with 'nokaslr' on the command line. However, as it turns out,
-it is not quite correct for the KASAN case, since it still intersects
-the vmalloc region at the top, where attempts to allocate shadow pages
-will collide with the KASAN zero shadow pages, causing a WARN() and all
-kinds of other trouble. So cap the top end to MODULES_END explicitly
-when running with KASAN.
+This was seen while debugging weston log message:
+Warning: computed repaint delay is insane: -8212 msec
 
-Cc: <stable@vger.kernel.org> # 4.9+
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+This occurred due to:
+1. driver starts up
+2. fbcon comes along and restores fbdev, enabling vblank
+3. vblank_disable_fn fires via timer disabling vblank, keeping vblank
+seq number and time set at current value
+(some time later)
+4. weston starts and does a modeset
+5. atomic commit disables crtc while it does the modeset
+6. ipu_crtc_atomic_disable sends vblank with old seq number and time
+
+Fixes: a474478642d5 ("drm/imx: fix crtc vblank state regression")
+
+Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/module.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/imx/ipuv3-crtc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -32,6 +32,7 @@
+--- a/drivers/gpu/drm/imx/ipuv3-crtc.c
++++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
+@@ -76,14 +76,14 @@ static void ipu_crtc_atomic_disable(stru
+ 	drm_atomic_helper_disable_planes_on_crtc(old_crtc_state, false);
+ 	ipu_dc_disable(ipu);
  
- void *module_alloc(unsigned long size)
- {
-+	u64 module_alloc_end = module_alloc_base + MODULES_VSIZE;
- 	gfp_t gfp_mask = GFP_KERNEL;
- 	void *p;
- 
-@@ -39,9 +40,12 @@ void *module_alloc(unsigned long size)
- 	if (IS_ENABLED(CONFIG_ARM64_MODULE_PLTS))
- 		gfp_mask |= __GFP_NOWARN;
- 
-+	if (IS_ENABLED(CONFIG_KASAN))
-+		/* don't exceed the static module region - see below */
-+		module_alloc_end = MODULES_END;
++	drm_crtc_vblank_off(crtc);
 +
- 	p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
--				module_alloc_base + MODULES_VSIZE,
--				gfp_mask, PAGE_KERNEL_EXEC, 0,
-+				module_alloc_end, gfp_mask, PAGE_KERNEL_EXEC, 0,
- 				NUMA_NO_NODE, __builtin_return_address(0));
+ 	spin_lock_irq(&crtc->dev->event_lock);
+ 	if (crtc->state->event) {
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 		crtc->state->event = NULL;
+ 	}
+ 	spin_unlock_irq(&crtc->dev->event_lock);
+-
+-	drm_crtc_vblank_off(crtc);
+ }
  
- 	if (!p && IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
+ static void imx_drm_crtc_reset(struct drm_crtc *crtc)
 
 
