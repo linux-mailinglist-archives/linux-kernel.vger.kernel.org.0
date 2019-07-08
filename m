@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8F6A62228
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFAC622CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388100AbfGHPW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49682 "EHLO mail.kernel.org"
+        id S2389441AbfGHP3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:29:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729493AbfGHPW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:57 -0400
+        id S1729984AbfGHP3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:29:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85F8E214C6;
-        Mon,  8 Jul 2019 15:22:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E456B20645;
+        Mon,  8 Jul 2019 15:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599376;
-        bh=frJ4X5lZTs/c6mGsUYgae9BT+bXQw78oMXGMLEz7q6s=;
+        s=default; t=1562599746;
+        bh=73jRZ6iwEIMn0gQH0betICznSgckgcGhuUC5XcftbRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xrQ4omM7sAktLwsrmno8A2pUtZpcv5ULmrJv3F+qeajaf09hu0aCxeY/xRIMVDkPa
-         269FE0pKb1HZ2TXvlaj8KqKoaZZRvuOa2XjOATNCmFMXWpd+7Q8ZpNO3oE3IiT1n4S
-         wWHPCoJwsggDbQPljvumRmizCcMDwHIX0mCCIDR0=
+        b=ZZFWfYzOmejRoyzwaLP/CYTolSGLPVlMwSvcSobiuCLaSQ1xrfczcQW+2FGmndzDO
+         Xsdmkz+elUrWtUCoSg5q9PpUQMURQ1QG52SikY3/erEimsk7Gb+4HOk2AX9yUjbXHF
+         7SO1zFrKCeEz6/XHuAWYV+u/rthxUo5wYNpxVjoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rong Chen <rong.a.chen@intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 4.9 098/102] KVM: LAPIC: Fix pending interrupt in IRR blocked by software disable LAPIC
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 64/90] mlxsw: spectrum: Handle VLAN device unlinking
 Date:   Mon,  8 Jul 2019 17:13:31 +0200
-Message-Id: <20190708150531.552030006@linuxfoundation.org>
+Message-Id: <20190708150525.627075755@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,135 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+[ Upstream commit e149113a74c35f0a28d1bfe17d2505a03563c1d5 ]
 
-commit bb34e690e9340bc155ebed5a3d75fc63ff69e082 upstream.
+In commit 993107fea5ee ("mlxsw: spectrum_switchdev: Fix VLAN device
+deletion via ioctl") I fixed a bug caused by the fact that the driver
+views differently the deletion of a VLAN device when it is deleted via
+an ioctl and netlink.
 
-Thomas reported that:
+Instead of relying on a specific order of events (device being
+unregistered vs. VLAN filter being updated), simply make sure that the
+driver performs the necessary cleanup when the VLAN device is unlinked,
+which always happens before the other two events.
 
- | Background:
- |
- |    In preparation of supporting IPI shorthands I changed the CPU offline
- |    code to software disable the local APIC instead of just masking it.
- |    That's done by clearing the APIC_SPIV_APIC_ENABLED bit in the APIC_SPIV
- |    register.
- |
- | Failure:
- |
- |    When the CPU comes back online the startup code triggers occasionally
- |    the warning in apic_pending_intr_clear(). That complains that the IRRs
- |    are not empty.
- |
- |    The offending vector is the local APIC timer vector who's IRR bit is set
- |    and stays set.
- |
- | It took me quite some time to reproduce the issue locally, but now I can
- | see what happens.
- |
- | It requires apicv_enabled=0, i.e. full apic emulation. With apicv_enabled=1
- | (and hardware support) it behaves correctly.
- |
- | Here is the series of events:
- |
- |     Guest CPU
- |
- |     goes down
- |
- |       native_cpu_disable()
- |
- | 			apic_soft_disable();
- |
- |     play_dead()
- |
- |     ....
- |
- |     startup()
- |
- |       if (apic_enabled())
- |         apic_pending_intr_clear()	<- Not taken
- |
- |      enable APIC
- |
- |         apic_pending_intr_clear()	<- Triggers warning because IRR is stale
- |
- | When this happens then the deadline timer or the regular APIC timer -
- | happens with both, has fired shortly before the APIC is disabled, but the
- | interrupt was not serviced because the guest CPU was in an interrupt
- | disabled region at that point.
- |
- | The state of the timer vector ISR/IRR bits:
- |
- |     	     	       	        ISR     IRR
- | before apic_soft_disable()    0	      1
- | after apic_soft_disable()     0	      1
- |
- | On startup		      		 0	      1
- |
- | Now one would assume that the IRR is cleared after the INIT reset, but this
- | happens only on CPU0.
- |
- | Why?
- |
- | Because our CPU0 hotplug is just for testing to make sure nothing breaks
- | and goes through an NMI wakeup vehicle because INIT would send it through
- | the boots-trap code which is not really working if that CPU was not
- | physically unplugged.
- |
- | Now looking at a real world APIC the situation in that case is:
- |
- |     	     	       	      	ISR     IRR
- | before apic_soft_disable()    0	      1
- | after apic_soft_disable()     0	      1
- |
- | On startup		      		 0	      0
- |
- | Why?
- |
- | Once the dying CPU reenables interrupts the pending interrupt gets
- | delivered as a spurious interupt and then the state is clear.
- |
- | While that CPU0 hotplug test case is surely an esoteric issue, the APIC
- | emulation is still wrong, Even if the play_dead() code would not enable
- | interrupts then the pending IRR bit would turn into an ISR .. interrupt
- | when the APIC is reenabled on startup.
-
->From SDM 10.4.7.2 Local APIC State After It Has Been Software Disabled
-* Pending interrupts in the IRR and ISR registers are held and require
-  masking or handling by the CPU.
-
-In Thomas's testing, hardware cpu will not respect soft disable LAPIC
-when IRR has already been set or APICv posted-interrupt is in flight,
-so we can skip soft disable APIC checking when clearing IRR and set ISR,
-continue to respect soft disable APIC when attempting to set IRR.
-
-Reported-by: Rong Chen <rong.a.chen@intel.com>
-Reported-by: Feng Tang <feng.tang@intel.com>
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rong Chen <rong.a.chen@intel.com>
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/lapic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1992,7 +1992,7 @@ int kvm_apic_has_interrupt(struct kvm_vc
- 	struct kvm_lapic *apic = vcpu->arch.apic;
- 	int highest_irr;
- 
--	if (!apic_enabled(apic))
-+	if (!kvm_apic_hw_enabled(apic))
- 		return -1;
- 
- 	apic_update_ppr(apic);
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index ff2f6b8e2fab..0cab06046e5d 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -4681,6 +4681,16 @@ static int mlxsw_sp_netdevice_port_upper_event(struct net_device *lower_dev,
+ 		} else if (netif_is_macvlan(upper_dev)) {
+ 			if (!info->linking)
+ 				mlxsw_sp_rif_macvlan_del(mlxsw_sp, upper_dev);
++		} else if (is_vlan_dev(upper_dev)) {
++			struct net_device *br_dev;
++
++			if (!netif_is_bridge_port(upper_dev))
++				break;
++			if (info->linking)
++				break;
++			br_dev = netdev_master_upper_dev_get(upper_dev);
++			mlxsw_sp_port_bridge_leave(mlxsw_sp_port, upper_dev,
++						   br_dev);
+ 		}
+ 		break;
+ 	}
+-- 
+2.20.1
+
 
 
