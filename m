@@ -2,102 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A1C61E93
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40B861EA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbfGHMk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 08:40:59 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:35867 "EHLO
+        id S1730878AbfGHMmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 08:42:21 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:46413 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfGHMk7 (ORCPT
+        with ESMTP id S1727065AbfGHMmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:40:59 -0400
+        Mon, 8 Jul 2019 08:42:21 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MODeL-1i8QoA0AXp-00OZfs; Mon, 08 Jul 2019 14:40:23 +0200
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mduym-1iKMCm2862-00az91; Mon, 08 Jul 2019 14:41:26 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Andrea Gelmini <andrea.gelmini@gelma.net>,
-        Qu Wenruo <wqu@suse.com>, Liu Bo <bo.liu@linux.alibaba.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: reduce stack usage for btrfsic_process_written_block
-Date:   Mon,  8 Jul 2019 14:40:09 +0200
-Message-Id: <20190708124019.3374246-1-arnd@arndb.de>
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH] vmscan: fix memcg_kmem build failure
+Date:   Mon,  8 Jul 2019 14:41:03 +0200
+Message-Id: <20190708124120.3400683-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:8sOT6VQRiNZC3jnSu4L3RMXdtdrKeV0mXzADeVPdh87PGDVia0j
- cZ7K+7QQbnacsI/brzzT4cGLeui4MFzcdlcsG/Tpmj1j1wAmNJ/wVoz9FRpZModKOFBjj2Q
- CnedBnvnsjIsGn0hJlExKEw/fB4ylt3TtRsAG/eupJh0y2ru/rLrUzSPnD2bbng0PDHBQ8r
- Ux0R6kwhmV6oCjpF5YfPQ==
+X-Provags-ID: V03:K1:8VkSE5EXRvXhg4WTtl1yfmQwLxnuqIVBWC3O64OvYEpHsptKShz
+ liGdVTsfLuFY0hhVyQVWbff5R3bnb6E1HJhu20u8pAvj9sk57oG0RsiWEA+A1bIP/Uugd9q
+ 2kMCOc7ttYjFkbS/CznPsTeFSIM1mWM86j4G6IquKv0/qHs1LJEQyDFHh4E7ePwwl6mD2aj
+ jfri59CV9WSdBmPT0jJfA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eFrmzYnB2jc=:PqiTgWnbJy5Ai0g76Ilnfs
- kczS6VYts7jyh4xHlK5BmvFxLit8H4LsbxW9vvXAcEyexUS4s25e0xthcTnYMCjIL2QUbb0sn
- qigWfvOX1bV2ODxd3laivsHJnn1Vk3MrP7gnyvk3fBLBCMrAlEFvqcW4Q+7ONUvcQiB7ZhUOP
- r9dGSKEYD+oqtRCN4cPj21022GkjbtmQ+GoztNE1/JaxhBk0bxxSGnGmXXomUPfBpQJ65ojwm
- A7PDqFmkM2s0MbDberXHqmwVt7cM+n73md0c1EyjwTn7x63ZupBpAwH+0x2VoRxzhNsuKRlmV
- 1FXcyVyPVZmObtZwt9PdWWdEfr/DBDbZphob4UWdq6xLGu1k3E9YmzX4SsoxIgHT0ejdI5Q21
- J20UjXS0XG/+qZtPAGyDA2z8WmPGnzouLksywVYKSqqO3OzH4WyRNLbyGTcERTvIAnkmS2bHq
- Ps4MnRfz7rwkmHny1bmzlg6MH6GbqA/Ng79IvBixGAwB6d11wZb41yVP5+TZZYypgjnuSEutI
- S+/8U6qO7Jv8TPSl9s6CJjWeq8BQ4mY86MGWt+4iabNBjW4C/MRyjirMcseyeQNcYNe+E5PhZ
- ybltCMNVyjMhjMnC0k89W//Doa0MGHdcGbu1yjmtLmt2sRF5jFgTOWzF4GhPkeBGubPCYmX5K
- whjt6Z5IiLz3IUMpvS+llVzUHLXRE4/1p6nO9m8vkpGDDI2wcVsLzDStaYi4tLp3fGipDABqe
- hE63Q7hIZVfzSl+SpKjrzWWH6xbQq6xpF27Gug==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BR6pqYPidxU=:IRaEjSZOktumWrt9EMStya
+ IX38wDJ+IcfvW5pYQ44mrAN4pOG+fQBfdEpJjdSIiZkiiXgMWlz9OIiqV5DdcIp1mHsdwhTA9
+ rtdTNxE957ciTEuUFcKJ3CMh6m/HMNfwb9KVY+QAVUGrwqr3ACpvagXxvl8xUcs3nevzRuERn
+ rW0cF4laMbGlGWPzYD/E+eKlXk/TJDTKR8xGf4VfXa6DO4goKEHDJ1sKXj+o0I+QPV9ZbBJoH
+ i96a7Zpg6KHtjYR7CkgUCmcwVzdkpAidWvro3JmDTPB/Xpm8XSLkJRoRUTO+qOld4Gt1YN0KO
+ TPv5QgcYo34HcdMQppjFYyVe35Tn4bslNyZlESRD4UHV6zcUhDfgAIWd4Yc58B4hBFi7NNefD
+ bw3ai4opAWaOE+iE2O5tMhwrPgKUpcy+xnCLPA4f4mTZf8VUaix5mzL4Rf0qotuQAbjPIosJ8
+ zHTUCS0DxAJ4YTGxlKa9IWbst0+jW6ydHXPf+rZhQhlkLfSx3oHdSNaAaYGLwZG0998vvn7EP
+ zrba2rn2a2fSR0fyAD5KSxXfoVqQfL413Q9mnGnKlTIWGrU6R/L7KPzHiSi761jL2euFRRVES
+ effFfk1ECatHuTe8ZS7Ub5HMvBajqf0re1k1O9S3vlL+AbwNzwhAyXbCHpJ4gl04+uOvzzLhJ
+ QWf7Y6snVpnfNAu3wMawsKQjVoz3bb4dDGiCEMKdpV+eZRnJnSmHlCIGpER7rTpkmEAPExn5c
+ tdmnEbVumZyGVWj5RoAWRbXyX4mivgOuqISEGg==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-btrfsic_process_written_block() cals btrfsic_process_metablock(),
-which has a fairly large stack usage due to the btrfsic_stack_frame
-variable. It also calls btrfsic_test_for_metadata(), which now
-needs several hundreds of bytes for its SHASH_DESC_ON_STACK().
+When CONFIG_MEMCG_KMEM is disabled, we get a build failure
+for calling a nonexisting memcg_expand_shrinker_maps():
 
-In some configurations, we end up with both functions on the
-same stack, and gcc warns about the excessive stack usage that
-might cause the available stack space to run out:
+mm/vmscan.c:220:7: error: implicit declaration of function 'memcg_expand_shrinker_maps' [-Werror,-Wimplicit-function-declaration]
+                if (memcg_expand_shrinker_maps(id)) {
+                    ^
+mm/vmscan.c:220:7: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
+mm/vmscan.c:608:56: error: no member named 'shrinker_map' in 'struct mem_cgroup_per_node'
+        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+                                        ~~~~~~~~~~~~~~~~~~~~  ^
+include/linux/rcupdate.h:498:31: note: expanded from macro 'rcu_dereference_protected'
+        __rcu_dereference_protected((p), (c), __rcu)
+                                     ^
+include/linux/rcupdate.h:321:12: note: expanded from macro '__rcu_dereference_protected'
+        ((typeof(*p) __force __kernel *)(p)); \
+                  ^
+mm/vmscan.c:608:6: error: assigning to 'struct memcg_shrinker_map *' from incompatible type 'void'
+        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
 
-fs/btrfs/check-integrity.c:1743:13: error: stack frame size of 1152 bytes in function 'btrfsic_process_written_block' [-Werror,-Wframe-larger-than=]
+and another issue trying to access invalid struct fields:
 
-Marking both child functions as noinline_for_stack helps because
-this guarantees that the large variables are not on the same
-stack frame.
+mm/vmscan.c:608:56: error: no member named 'shrinker_map' in 'struct mem_cgroup_per_node'
+        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+                                        ~~~~~~~~~~~~~~~~~~~~  ^
+include/linux/rcupdate.h:498:31: note: expanded from macro 'rcu_dereference_protected'
+        __rcu_dereference_protected((p), (c), __rcu)
+                                     ^
+include/linux/rcupdate.h:321:12: note: expanded from macro '__rcu_dereference_protected'
+        ((typeof(*p) __force __kernel *)(p)); \
+                  ^
+mm/vmscan.c:608:6: error: assigning to 'struct memcg_shrinker_map *' from incompatible type 'void'
+        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
 
-Fixes: d5178578bcd4 ("btrfs: directly call into crypto framework for checksumming")
+Add a dummy definition for memcg_expand_shrinker_maps() that always fails,
+and hide the obviously nonworking shrink_slab_memcg() function.
+
+Fixes: 8236f517d69e ("mm: shrinker: make shrinker not depend on memcg kmem")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/btrfs/check-integrity.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+No idea what the intended behavior is supposed to be for this case.
+Rather than failing, should we actually provide that function?
+Or maybe a more elaborate change is needed?
+---
+ include/linux/memcontrol.h | 5 +++++
+ mm/vmscan.c                | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 81a9731959a9..0b52ab4cb964 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -940,7 +940,7 @@ static void btrfsic_stack_frame_free(struct btrfsic_stack_frame *sf)
- 	kfree(sf);
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 5901a90f58eb..6b15e2066fc7 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1407,6 +1407,11 @@ static inline void memcg_put_cache_ids(void)
+ {
  }
  
--static int btrfsic_process_metablock(
-+static noinline_for_stack int btrfsic_process_metablock(
- 		struct btrfsic_state *state,
- 		struct btrfsic_block *const first_block,
- 		struct btrfsic_block_data_ctx *const first_block_ctx,
-@@ -1706,8 +1706,9 @@ static void btrfsic_dump_database(struct btrfsic_state *state)
-  * Test whether the disk block contains a tree block (leaf or node)
-  * (note that this test fails for the super block)
-  */
--static int btrfsic_test_for_metadata(struct btrfsic_state *state,
--				     char **datav, unsigned int num_pages)
-+static noinline_for_stack int btrfsic_test_for_metadata(
-+		struct btrfsic_state *state,
-+		char **datav, unsigned int num_pages)
++static inline int memcg_expand_shrinker_maps(int new_id)
++{
++	return -ENOMEM;
++}
++
+ static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+ 					  int nid, int shrinker_id) { }
+ #endif /* CONFIG_MEMCG_KMEM */
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a0301edd8d03..323a9c50c0fe 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -591,7 +591,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	return freed;
+ }
+ 
+-#ifdef CONFIG_MEMCG
++#ifdef CONFIG_MEMCG_KMEM
+ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			struct mem_cgroup *memcg, int priority)
  {
- 	struct btrfs_fs_info *fs_info = state->fs_info;
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
 -- 
 2.20.0
 
