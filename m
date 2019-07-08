@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C16FD62387
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5832D623CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390816AbfGHPgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:36:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36554 "EHLO mail.kernel.org"
+        id S1732138AbfGHPat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390513AbfGHPeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:19 -0400
+        id S1730174AbfGHPap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:30:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC00E21537;
-        Mon,  8 Jul 2019 15:34:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14FF8216C4;
+        Mon,  8 Jul 2019 15:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600058;
-        bh=9LTkTlrEPx+icuSnurgRW/8LUYCz+J/9PSzI9KCInCY=;
+        s=default; t=1562599844;
+        bh=oqJOOPIzXqtL84WhyP7K9dTw3vqk5/8dazpQ8iRpGL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mgfv/L7JqB3UqLA39m+j4YSep0dby3uT4DfmYk/CuRrM/ZxtZPdA9DD/5qszlOatM
-         Kj8WnA5Z4bLcwIZxo/ltbRLNRyvWAFXjQAjykWYJMrvmcEQfFAg9v1DIOzpHr90mIN
-         7qri0L36mwarm19xUX4tolkSXEXjuJN8qkXZ5pSw=
+        b=gtLBaEHuX506Uwg6vmtgMB3iqJyh0Imvmt5ivP57+sSv6SM8AVRBt75SosmkVuS8A
+         yvkoxdDrX0QJD2horKqahtwsR7jx83Lnl8dOEl9SwLpYA9an42pvsVYWceQkEQdCS0
+         m//xPP1l9vEDDkW68loQHneWGauvgcTD7xG19qD0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Petr Mladek <pmladek@suse.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.1 80/96] ftrace/x86: Remove possible deadlock between register_kprobe() and ftrace_run_update_code()
-Date:   Mon,  8 Jul 2019 17:13:52 +0200
-Message-Id: <20190708150530.779800560@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>, ralf@linux-mips.org,
+        jhogan@kernel.org, f4bug@amsat.org, linux-mips@vger.kernel.org,
+        ysu@wavecomp.com, jcristau@debian.org
+Subject: [PATCH 4.19 86/90] MIPS: Fix bounds check virt_addr_valid
+Date:   Mon,  8 Jul 2019 17:13:53 +0200
+Message-Id: <20190708150526.824054542@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,184 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Mladek <pmladek@suse.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-commit d5b844a2cf507fc7642c9ae80a9d585db3065c28 upstream.
+commit d6ed083f5cc621e15c15b56c3b585fd524dbcb0f upstream.
 
-The commit 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module text
-permissions race") causes a possible deadlock between register_kprobe()
-and ftrace_run_update_code() when ftrace is using stop_machine().
+The bounds check used the uninitialized variable vaddr, it should use
+the given parameter kaddr instead. When using the uninitialized value
+the compiler assumed it to be 0 and optimized this function to just
+return 0 in all cases.
 
-The existing dependency chain (in reverse order) is:
+This should make the function check the range of the given address and
+only do the page map check in case it is in the expected range of
+virtual addresses.
 
--> #1 (text_mutex){+.+.}:
-       validate_chain.isra.21+0xb32/0xd70
-       __lock_acquire+0x4b8/0x928
-       lock_acquire+0x102/0x230
-       __mutex_lock+0x88/0x908
-       mutex_lock_nested+0x32/0x40
-       register_kprobe+0x254/0x658
-       init_kprobes+0x11a/0x168
-       do_one_initcall+0x70/0x318
-       kernel_init_freeable+0x456/0x508
-       kernel_init+0x22/0x150
-       ret_from_fork+0x30/0x34
-       kernel_thread_starter+0x0/0xc
-
--> #0 (cpu_hotplug_lock.rw_sem){++++}:
-       check_prev_add+0x90c/0xde0
-       validate_chain.isra.21+0xb32/0xd70
-       __lock_acquire+0x4b8/0x928
-       lock_acquire+0x102/0x230
-       cpus_read_lock+0x62/0xd0
-       stop_machine+0x2e/0x60
-       arch_ftrace_update_code+0x2e/0x40
-       ftrace_run_update_code+0x40/0xa0
-       ftrace_startup+0xb2/0x168
-       register_ftrace_function+0x64/0x88
-       klp_patch_object+0x1a2/0x290
-       klp_enable_patch+0x554/0x980
-       do_one_initcall+0x70/0x318
-       do_init_module+0x6e/0x250
-       load_module+0x1782/0x1990
-       __s390x_sys_finit_module+0xaa/0xf0
-       system_call+0xd8/0x2d0
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(text_mutex);
-                               lock(cpu_hotplug_lock.rw_sem);
-                               lock(text_mutex);
-  lock(cpu_hotplug_lock.rw_sem);
-
-It is similar problem that has been solved by the commit 2d1e38f56622b9b
-("kprobes: Cure hotplug lock ordering issues"). Many locks are involved.
-To be on the safe side, text_mutex must become a low level lock taken
-after cpu_hotplug_lock.rw_sem.
-
-This can't be achieved easily with the current ftrace design.
-For example, arm calls set_all_modules_text_rw() already in
-ftrace_arch_code_modify_prepare(), see arch/arm/kernel/ftrace.c.
-This functions is called:
-
-  + outside stop_machine() from ftrace_run_update_code()
-  + without stop_machine() from ftrace_module_enable()
-
-Fortunately, the problematic fix is needed only on x86_64. It is
-the only architecture that calls set_all_modules_text_rw()
-in ftrace path and supports livepatching at the same time.
-
-Therefore it is enough to move text_mutex handling from the generic
-kernel/trace/ftrace.c into arch/x86/kernel/ftrace.c:
-
-   ftrace_arch_code_modify_prepare()
-   ftrace_arch_code_modify_post_process()
-
-This patch basically reverts the ftrace part of the problematic
-commit 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module
-text permissions race"). And provides x86_64 specific-fix.
-
-Some refactoring of the ftrace code will be needed when livepatching
-is implemented for arm or nds32. These architectures call
-set_all_modules_text_rw() and use stop_machine() at the same time.
-
-Link: http://lkml.kernel.org/r/20190627081334.12793-1-pmladek@suse.com
-
-Fixes: 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module text permissions race")
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: Miroslav Benes <mbenes@suse.cz>
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-[
-  As reviewed by Miroslav Benes <mbenes@suse.cz>, removed return value of
-  ftrace_run_update_code() as it is a void function.
-]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 074a1e1167af ("MIPS: Bounds check virt_addr_valid")
+Cc: stable@vger.kernel.org # v4.12+
+Cc: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: f4bug@amsat.org
+Cc: linux-mips@vger.kernel.org
+Cc: ysu@wavecomp.com
+Cc: jcristau@debian.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/ftrace.c |    3 +++
- kernel/trace/ftrace.c    |   10 +---------
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ arch/mips/mm/mmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -22,6 +22,7 @@
- #include <linux/init.h>
- #include <linux/list.h>
- #include <linux/module.h>
-+#include <linux/memory.h>
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -203,7 +203,7 @@ unsigned long arch_randomize_brk(struct
  
- #include <trace/syscall.h>
- 
-@@ -35,6 +36,7 @@
- 
- int ftrace_arch_code_modify_prepare(void)
+ int __virt_addr_valid(const volatile void *kaddr)
  {
-+	mutex_lock(&text_mutex);
- 	set_kernel_text_rw();
- 	set_all_modules_text_rw();
- 	return 0;
-@@ -44,6 +46,7 @@ int ftrace_arch_code_modify_post_process
- {
- 	set_all_modules_text_ro();
- 	set_kernel_text_ro();
-+	mutex_unlock(&text_mutex);
- 	return 0;
- }
+-	unsigned long vaddr = (unsigned long)vaddr;
++	unsigned long vaddr = (unsigned long)kaddr;
  
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -34,7 +34,6 @@
- #include <linux/hash.h>
- #include <linux/rcupdate.h>
- #include <linux/kprobes.h>
--#include <linux/memory.h>
- 
- #include <trace/events/sched.h>
- 
-@@ -2615,12 +2614,10 @@ static void ftrace_run_update_code(int c
- {
- 	int ret;
- 
--	mutex_lock(&text_mutex);
--
- 	ret = ftrace_arch_code_modify_prepare();
- 	FTRACE_WARN_ON(ret);
- 	if (ret)
--		goto out_unlock;
-+		return;
- 
- 	/*
- 	 * By default we use stop_machine() to modify the code.
-@@ -2632,9 +2629,6 @@ static void ftrace_run_update_code(int c
- 
- 	ret = ftrace_arch_code_modify_post_process();
- 	FTRACE_WARN_ON(ret);
--
--out_unlock:
--	mutex_unlock(&text_mutex);
- }
- 
- static void ftrace_run_modify_code(struct ftrace_ops *ops, int command,
-@@ -5788,7 +5782,6 @@ void ftrace_module_enable(struct module
- 	struct ftrace_page *pg;
- 
- 	mutex_lock(&ftrace_lock);
--	mutex_lock(&text_mutex);
- 
- 	if (ftrace_disabled)
- 		goto out_unlock;
-@@ -5850,7 +5843,6 @@ void ftrace_module_enable(struct module
- 		ftrace_arch_code_modify_post_process();
- 
-  out_unlock:
--	mutex_unlock(&text_mutex);
- 	mutex_unlock(&ftrace_lock);
- 
- 	process_cached_mods(mod->name);
+ 	if ((vaddr < PAGE_OFFSET) || (vaddr >= MAP_BASE))
+ 		return 0;
 
 
