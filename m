@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40FA06279A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8A462783
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404051AbfGHRuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:50:07 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46025 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389898AbfGHRtb (ORCPT
+        id S2390539AbfGHRti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:49:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37151 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390218AbfGHRtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:49:31 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y8so3933345plr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:31 -0700 (PDT)
+        Mon, 8 Jul 2019 13:49:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g15so8061639pgi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KxfvBRXNL2lxAGR+5TYPhVFxu0m9HvU5t0GmP1NzevA=;
-        b=fa2IMYp5yxmb0mlrjbAugQfJQs7wOZE68qWJlUaWJbES77G4ch8hkfqoU7d3UuMROT
-         miKgo0y2jPB8lvjuBXfFCgUyDKKKj0ty13J70cwhBpbZ7rgFyu6qjJWJwYvFI5KKEjHo
-         0NTiwMOBldPc7y1fEm3F73rASqMQHrgQtOHaY=
+        bh=3Eb3Hb6sMPNCVrucYh3+8MTfpr8uJqt0a1oSlG2FmzA=;
+        b=Eh1Z2cY2TLITAWx2bANgQlukRumh7aQ8qMvjId2GjyNdQSlE4Akz5EQfSMUNs2dLbi
+         rkR2NqSY4lMvwQf9S2DSQpCn+V6sCrXSfutHEtHfoKNwXdYMkVs+tvmlPiGyIMYHLTac
+         U4GrH9ccvKqYgl5u99ugvBNsZsnU7+UIhA3VA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KxfvBRXNL2lxAGR+5TYPhVFxu0m9HvU5t0GmP1NzevA=;
-        b=ilFbPnT8BW5AvNlrakN1UAz/cO7Hszjstdsdn20T5ic3tSN8mWIX2dKVfK9KcsAlRV
-         oocFsryrDoJ1jF8AHWhHg31NbI0P7YTlc8klCPF+T8UN/rwhsjOb90jlbnP4bBp+LPhd
-         KqxwGwFIHtTfFrOdGBhCD2fBkQbPIAYGrAkAlUajT7rwgtk3/vQfy+2PElasHMpivd/k
-         Ian025WAcJKX0ZvwnidCLCkl/9/ITFJRSsYDsWTzeOe51sBbe9qdGibhlTMo0QUKPUMm
-         uE08cA6XPwNjUDIDiGHZvQZioqVNMUVR6NxDsDA+IAR5oqNICBrBImN8o6PtXOOzUgft
-         KSog==
-X-Gm-Message-State: APjAAAWtki6G1IcCYNxhEQ90lxnQoLKTdENccBmSIsApairSDa1wZR4m
-        Oc4SfUfnHF4uTBuPYR95lTl5ow==
-X-Google-Smtp-Source: APXvYqwHxN5CAV58byDjy1sz6I4FOZx29YlNCGS4HMqwy+D7g8iqgYoEjOJKr1IsZSeU5GI09ezrQg==
-X-Received: by 2002:a17:902:424:: with SMTP id 33mr26686735ple.151.1562608171183;
-        Mon, 08 Jul 2019 10:49:31 -0700 (PDT)
+        bh=3Eb3Hb6sMPNCVrucYh3+8MTfpr8uJqt0a1oSlG2FmzA=;
+        b=qUHe4yrNJvVhbTxMeuUw3xonf4v86DzsuYlvSQvRRTkRxy/bFAIBrTCSOV0/X0EcGi
+         Gsx97/3vQzxa8+ZN9oiNMAeiN6/CfEqrlXObyWs+tLbWIVA19LXFiOOSri3ktchOKRPq
+         2Fpk8ty4QHmRr81CWDB3kQ9KrHaKuQok4SeNzZW+53zMzqHPn6Le7hWpyskBMnuk/DeY
+         xlURhfMQlFZGQBWybZ+OSyG69nUZvCwuharBACMYvD+2i0F1xG88+kIHiSY8yIW1EPHG
+         6BuP5IXIvKS+BM6Q4Rm1yC659FEPncbUGD719Vil9wesC5kn62eqGWaidH0tFDDpXTv7
+         h5Wg==
+X-Gm-Message-State: APjAAAVxI39Wtljo7iaheH0+V/yejXWbVzRjS2990HawpDB3CP2PEgnI
+        UcbpWL216Zt4rXREKy6llt1Y5w==
+X-Google-Smtp-Source: APXvYqxUXc4eLmCK5ydeVvkEVQiap2JrFMI/RSqJ2b7/EDWXwmMFOd4atDt+r3lAjdEJ37qlAwbKDw==
+X-Received: by 2002:a17:90a:3463:: with SMTP id o90mr27861911pjb.15.1562608173232;
+        Mon, 08 Jul 2019 10:49:33 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.30
+        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.32
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 10:49:30 -0700 (PDT)
+        Mon, 08 Jul 2019 10:49:32 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Garnier <thgarnie@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 04/11] x86/entry/64: Adapt assembly for PIE support
-Date:   Mon,  8 Jul 2019 10:48:57 -0700
-Message-Id: <20190708174913.123308-5-thgarnie@chromium.org>
+Subject: [PATCH v8 05/11] x86: pm-trace - Adapt assembly for PIE support
+Date:   Mon,  8 Jul 2019 10:48:58 -0700
+Message-Id: <20190708174913.123308-6-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190708174913.123308-1-thgarnie@chromium.org>
 References: <20190708174913.123308-1-thgarnie@chromium.org>
@@ -64,8 +63,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+Change assembly to use the new _ASM_MOVABS macro instead of _ASM_MOV for
+the assembly to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
@@ -73,59 +72,22 @@ KASLR randomization range below 0xffffffff80000000.
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/entry/entry_64.S | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/pm-trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 0ea4831a72a4..9f55a359c896 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1309,7 +1309,8 @@ ENTRY(error_entry)
- 	movl	%ecx, %eax			/* zero extend */
- 	cmpq	%rax, RIP+8(%rsp)
- 	je	.Lbstep_iret
--	cmpq	$.Lgs_change, RIP+8(%rsp)
-+	leaq	.Lgs_change(%rip), %rcx
-+	cmpq	%rcx, RIP+8(%rsp)
- 	jne	.Lerror_entry_done
- 
- 	/*
-@@ -1506,10 +1507,10 @@ ENTRY(nmi)
- 	 * resume the outer NMI.
- 	 */
- 
--	movq	$repeat_nmi, %rdx
-+	leaq	repeat_nmi(%rip), %rdx
- 	cmpq	8(%rsp), %rdx
- 	ja	1f
--	movq	$end_repeat_nmi, %rdx
-+	leaq	end_repeat_nmi(%rip), %rdx
- 	cmpq	8(%rsp), %rdx
- 	ja	nested_nmi_out
- 1:
-@@ -1563,7 +1564,8 @@ nested_nmi:
- 	pushq	%rdx
- 	pushfq
- 	pushq	$__KERNEL_CS
--	pushq	$repeat_nmi
-+	leaq	repeat_nmi(%rip), %rdx
-+	pushq	%rdx
- 
- 	/* Put stack back */
- 	addq	$(6*8), %rsp
-@@ -1602,7 +1604,11 @@ first_nmi:
- 	addq	$8, (%rsp)	/* Fix up RSP */
- 	pushfq			/* RFLAGS */
- 	pushq	$__KERNEL_CS	/* CS */
--	pushq	$1f		/* RIP */
-+	pushq	$0		/* Future return address */
-+	pushq	%rax		/* Save RAX */
-+	leaq	1f(%rip), %rax	/* RIP */
-+	movq    %rax, 8(%rsp)   /* Put 1f on return address */
-+	popq	%rax		/* Restore RAX */
- 	iretq			/* continues at repeat_nmi below */
- 	UNWIND_HINT_IRET_REGS
- 1:
+diff --git a/arch/x86/include/asm/pm-trace.h b/arch/x86/include/asm/pm-trace.h
+index bfa32aa428e5..972070806ce9 100644
+--- a/arch/x86/include/asm/pm-trace.h
++++ b/arch/x86/include/asm/pm-trace.h
+@@ -8,7 +8,7 @@
+ do {								\
+ 	if (pm_trace_enabled) {					\
+ 		const void *tracedata;				\
+-		asm volatile(_ASM_MOV " $1f,%0\n"		\
++		asm volatile(_ASM_MOVABS " $1f,%0\n"		\
+ 			     ".section .tracedata,\"a\"\n"	\
+ 			     "1:\t.word %c1\n\t"		\
+ 			     _ASM_PTR " %c2\n"			\
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
