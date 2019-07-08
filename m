@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67DCB62310
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D73062181
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389972AbfGHPbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:31:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        id S1732689AbfGHPQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389949AbfGHPbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:31:40 -0400
+        id S1732668AbfGHPQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 092A8216C4;
-        Mon,  8 Jul 2019 15:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1514221537;
+        Mon,  8 Jul 2019 15:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599899;
-        bh=ixDuyIVwNBlt4I/Il/74gIWl5jtN2lUC4ax7LQpxNAc=;
+        s=default; t=1562599011;
+        bh=GOB/YXIpeKG8WTf2PwyMQg9WJC6fmWNCpDL1MuwziA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JIoqud/C3i+qUWO8qAYxG5xkLFmi3uPKaCZphnScV2UloPcqbk2fQOn63Whvz2l+U
-         v0WRQ5HSEJXvF9yIsVEtUgWxSnfKAL4AZjSzBIqKlJZ4KJgiM7IYxzOwIj6ESQEg2u
-         rOhSTBUhNpZEutV3HUGjA1VWaOjA3C1nzJ/c6Heg=
+        b=MADOcEbl3LjpWZe53jh9X7ZiaI6611shBhwzNHrz8cd4+s3WJOegnZnMfBAu21OLw
+         mXqP+gV2ImjrM3S19iiJIqloEoSpJHZPTPmoohLm3JaS4l1hQ93i+GeJybVZlvKdnx
+         EvKbRRUzSS2lxttV3T4V92e2VIuEI79dbgb+VYyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 26/96] ASoC: sun4i-i2s: Add offset to RX channel select
+        stable@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Richard Weinberger <richard@nod.at>,
+        Alessio Balsini <balsini@android.com>
+Subject: [PATCH 4.4 48/73] um: Compile with modern headers
 Date:   Mon,  8 Jul 2019 17:12:58 +0200
-Message-Id: <20190708150527.914983492@linuxfoundation.org>
+Message-Id: <20190708150523.917326177@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f9927000cb35f250051f0f1878db12ee2626eea1 ]
+From: Jason A. Donenfeld <Jason@zx2c4.com>
 
-Whilst testing the capture functionality of the i2s on the newer
-SoCs it was noticed that the recording was somewhat distorted.
-This was due to the offset not being set correctly on the receiver
-side.
+commit 530ba6c7cb3c22435a4d26de47037bb6f86a5329 upstream.
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Recent libcs have gotten a bit more strict, so we actually need to
+include the right headers and use the right types. This enables UML to
+compile again.
+
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/um/os-Linux/file.c   |    1 +
+ arch/um/os-Linux/signal.c |    2 ++
+ arch/x86/um/stub_segv.c   |    1 +
+ 3 files changed, 4 insertions(+)
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 8162e107e50b..bc128e2a6096 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -460,6 +460,10 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 		regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
- 				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
- 				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
-+
-+		regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
-+				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
-+				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
- 	}
+--- a/arch/um/os-Linux/file.c
++++ b/arch/um/os-Linux/file.c
+@@ -12,6 +12,7 @@
+ #include <sys/mount.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/un.h>
+ #include <sys/types.h>
+ #include <os.h>
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -14,7 +14,9 @@
+ #include <as-layout.h>
+ #include <kern_util.h>
+ #include <os.h>
++#include <sys/ucontext.h>
+ #include <sysdep/mcontext.h>
++#include <um_malloc.h>
  
- 	regmap_field_write(i2s->field_fmt_mode, val);
--- 
-2.20.1
-
+ void (*sig_info[NSIG])(int, struct siginfo *, struct uml_pt_regs *) = {
+ 	[SIGTRAP]	= relay_signal,
+--- a/arch/x86/um/stub_segv.c
++++ b/arch/x86/um/stub_segv.c
+@@ -6,6 +6,7 @@
+ #include <sysdep/stub.h>
+ #include <sysdep/faultinfo.h>
+ #include <sysdep/mcontext.h>
++#include <sys/ucontext.h>
+ 
+ void __attribute__ ((__section__ (".__syscall_stub")))
+ stub_segv_handler(int sig, siginfo_t *info, void *p)
 
 
