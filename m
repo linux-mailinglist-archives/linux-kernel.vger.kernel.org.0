@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C46E562206
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D197D62313
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbfGHPVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:21:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47424 "EHLO mail.kernel.org"
+        id S2390010AbfGHPbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:31:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387757AbfGHPVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:21:34 -0400
+        id S2389981AbfGHPbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:31:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E09D2216E3;
-        Mon,  8 Jul 2019 15:21:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 650F420665;
+        Mon,  8 Jul 2019 15:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599293;
-        bh=UqYaX4fyRfNX1yoi0yvqj0iqzoEcaynzbhGcyc602uk=;
+        s=default; t=1562599908;
+        bh=LpADHqXs6Y2jo3/LMrstxucMUzahlOU05lZHtleKCuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JuEIyF0KctulsjWnQrmvLl8p4EmbAL/HCAavb/afvovwyC8lkK+U+4otI8gxBOk/n
-         n9vnlC+uyOGXC5uuNi1oqUiXXTQuFuWwD3kmacCfNXj36I8qcgmesU+euPIplmrZKt
-         u0aJ6LnaGNFq/2iLy8rHIW3oDfGE7eZSMahPvxNI=
+        b=eMLvIU3vtyZRfdjBBAufVAgSatWUJ4139QyVkVdkCCq8g2eSA4wZpzrbmzg1lQPn5
+         JnWOYHtLHeKaiInZ1bemuH478w6zCEXetE2Fd6973r8liHs/s6J62gHmPDShNJ+RcW
+         DMinsOg7aoYBvjj6u5HyBLFXDDFT/NTrlplM1NgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Axel Lin <axel.lin@ingics.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        James Grant <jamesg@zaltys.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 068/102] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
+Subject: [PATCH 5.1 29/96] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
 Date:   Mon,  8 Jul 2019 17:13:01 +0200
-Message-Id: <20190708150529.976019125@linuxfoundation.org>
+Message-Id: <20190708150528.111562688@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,83 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5caaf29af5ca82d5da8bc1d0ad07d9e664ccf1d8 ]
+[ Upstream commit fbc318afadd6e7ae2252d6158cf7d0c5a2132f7d ]
 
-If spi_register_master fails in spi_bitbang_start
-because device_add failure, We should return the
-error code other than 0, otherwise calling
-spi_bitbang_stop may trigger NULL pointer dereference
-like this:
+Gadget drivers may queue request in interrupt context. This would lead to
+a descriptor allocation in that context. In that case we would hit
+BUG_ON(in_interrupt()) in __get_vm_area_node.
 
-BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
-Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
+Also remove the unnecessary cast.
 
-CPU: 0 PID: 3661 Comm: syz-executor.0 Not tainted 5.1.0+ #28
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- dump_stack+0xa9/0x10e
- ? __list_del_entry_valid+0x45/0xd0
- ? __list_del_entry_valid+0x45/0xd0
- __kasan_report+0x171/0x18d
- ? __list_del_entry_valid+0x45/0xd0
- kasan_report+0xe/0x20
- __list_del_entry_valid+0x45/0xd0
- spi_unregister_controller+0x99/0x1b0
- spi_lm70llp_attach+0x3ae/0x4b0 [spi_lm70llp]
- ? 0xffffffffc1128000
- ? klist_next+0x131/0x1e0
- ? driver_detach+0x40/0x40 [parport]
- port_check+0x3b/0x50 [parport]
- bus_for_each_dev+0x115/0x180
- ? subsys_dev_iter_exit+0x20/0x20
- __parport_register_driver+0x1f0/0x210 [parport]
- ? 0xffffffffc1150000
- do_one_initcall+0xb9/0x3b5
- ? perf_trace_initcall_level+0x270/0x270
- ? kasan_unpoison_shadow+0x30/0x40
- ? kasan_unpoison_shadow+0x30/0x40
- do_init_module+0xe0/0x330
- load_module+0x38eb/0x4270
- ? module_frob_arch_sections+0x20/0x20
- ? kernel_read_file+0x188/0x3f0
- ? find_held_lock+0x6d/0xd0
- ? fput_many+0x1a/0xe0
- ? __do_sys_finit_module+0x162/0x190
- __do_sys_finit_module+0x162/0x190
- ? __ia32_sys_init_module+0x40/0x40
- ? __mutex_unlock_slowpath+0xb4/0x3f0
- ? wait_for_completion+0x240/0x240
- ? vfs_write+0x160/0x2a0
- ? lockdep_hardirqs_off+0xb5/0x100
- ? mark_held_locks+0x1a/0x90
- ? do_syscall_64+0x14/0x2a0
- do_syscall_64+0x72/0x2a0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Tested-by: James Grant <jamesg@zaltys.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-bitbang.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/lpc32xx_udc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index 3aa9e6e3dac8..4ef54436b9d4 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -392,7 +392,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
- 	if (ret)
- 		spi_master_put(master);
+diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+index b0781771704e..eafc2a00c96a 100644
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -922,8 +922,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
+ 	dma_addr_t			dma;
+ 	struct lpc32xx_usbd_dd_gad	*dd;
  
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(spi_bitbang_start);
+-	dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
+-			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
++	dd = dma_pool_alloc(udc->dd_cache, GFP_ATOMIC | GFP_DMA, &dma);
+ 	if (dd)
+ 		dd->this_dma = dma;
  
 -- 
 2.20.1
