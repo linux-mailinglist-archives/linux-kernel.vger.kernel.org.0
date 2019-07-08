@@ -2,142 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CA0A62991
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 153A16299A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404357AbfGHT2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:28:05 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45724 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404353AbfGHT2E (ORCPT
+        id S2404509AbfGHT2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:28:40 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38345 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404490AbfGHT2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:28:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so8048907pfq.12;
-        Mon, 08 Jul 2019 12:28:03 -0700 (PDT)
+        Mon, 8 Jul 2019 15:28:39 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g17so8247253wrr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XFGp201YgwfhCgMQ2+xi2UZ04gFlh9fjk8QaqKcWWM8=;
+        b=eByNjAHQ9o/gf1C8Xi99pAkcPDF/QW95DHO86xCnnci/4ebU20m0iQNYoDPScgteIW
+         QTIWidwi5lZCdk/qtAEX7UwylqH8Ef3jlJM6uLwIf7rgpeA+Uui1beBu2gfEAQ+9bRxy
+         96oWoHTPEkWCFw7APu4khyboSygoDGcp03PnQrMQspnzx4EjSGjT1wXSO0HAEnLxMMdZ
+         c0eKewVfWXHQxSCMa0x96Y2I5rvX9/ZY8aktg12CMAYxyz+WLm1tzpRdXkGC4xwbwk/4
+         33Celnr4Q10QzxJHigzIuf+cTOG+d2YtUEsVJh4AoZ4dr9+IRJyr5zNvnFcIgVOIREAD
+         My2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gYORkOVhBZ3qEfxmUhzIzVtUTq0YjbmyEVwzAUWkCu4=;
-        b=Fu98mGVA9yn/B3ahwTaX+oOlQQGwdD4LZ6N7wpWW5wwlAvjJjiW+x/+OGhlgai8UOt
-         ZJfM+7Fklv28HFUM3b9VchIgUG9rOw5kyu1DJt0z6NwIfKtvk3xUTxh+fri0c9jUwYje
-         gnwLApCr/2Yw0D1q3/qRGfAoqtsCWsDOamU/43RkCrQoXwBcRyGC1IJuoT6Fbj9Hj1ws
-         ij1o+vL+358IMceLoTQ9jXg5GXrPNQYrXNFnGXpBoczeAtAFL7L1xMalsd6jWrZDoZ+1
-         iZ3RlUJNkEJny390/QWdMrczPq9IgOqMcAds2BD5OkZbSfKtwJNfbsVcQPg7RcQJmuaz
-         ty2g==
-X-Gm-Message-State: APjAAAVlrCnOqJfHbQ/tTQt4kvgmsQazz72GPZ0nMQEb1t9nmItdEfGB
-        uLhYvcWkO+FzKfNZtmSYPWk=
-X-Google-Smtp-Source: APXvYqxPe0tbDU8G83EqyqzukW2HzB+R+6kKau5wgSRQGfqWlosKarDiCdKCWJ7ETpwEJmik5kXPqg==
-X-Received: by 2002:a17:90a:9bca:: with SMTP id b10mr27811582pjw.90.1562614083277;
-        Mon, 08 Jul 2019 12:28:03 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id o14sm280839pjp.19.2019.07.08.12.28.02
+        bh=XFGp201YgwfhCgMQ2+xi2UZ04gFlh9fjk8QaqKcWWM8=;
+        b=Uwm/SeZqTnth6zt2ocexBqIUvc4qSoq7zEqVkODvt3YQHrpXT4m1ig8p5DHbNmd9EP
+         tqsgUmaIOC6AVa82ghq31eA3VFhYdtGqVfKVBQ+LwM1wB0p6kVJ+gzAiCzZ0cTaW0w/p
+         IlmdfZMIBVhGf+JAb6TKD/A5sjlSVr+DqD3C6o3KBp52UfOAXzLFRcdMLBwLAeH99VTu
+         g8J42poqYX7aOIeZ00+yEieK/hjgshRNfGLxer5Mp/6fCU3SxgzxbWnluphGUppVLds0
+         2yJFoc1U0SalWk/GovaQwDTd+gFCWPAqe0nb0qZGZQZbScKgXPbLefkOYz4jt3PXk4Kh
+         XASA==
+X-Gm-Message-State: APjAAAWI/bIzpV0mOvkVAV2/DNNAfBbb3hzh/TBfR8ZXJah6/Hej9o89
+        zdTFNbpHcbI0HonK5EkG8KRiHw==
+X-Google-Smtp-Source: APXvYqxBMO+UXgaDORhIMlIs6Cw1cGDEbiueatVNMvNVLb6yQS8osjnRVxBBNdP2hGxx6+flzSYSiw==
+X-Received: by 2002:a5d:5448:: with SMTP id w8mr20124921wrv.180.1562614117841;
+        Mon, 08 Jul 2019 12:28:37 -0700 (PDT)
+Received: from localhost (jirka.pirko.cz. [84.16.102.26])
+        by smtp.gmail.com with ESMTPSA id g12sm1058320wrv.9.2019.07.08.12.28.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 12:28:02 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C08C140255; Mon,  8 Jul 2019 19:28:01 +0000 (UTC)
-Date:   Mon, 8 Jul 2019 19:28:01 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Radoslaw Burny <rburny@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jsperbeck@google.com, stable@vger.kernel.org
-Subject: Re: [PATCH v3] fs: Fix the default values of i_uid/i_gid on
- /proc/sys inodes.
-Message-ID: <20190708192801.GG19023@42.do-not-panic.com>
-References: <20190708115130.250149-1-rburny@google.com>
+        Mon, 08 Jul 2019 12:28:37 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 21:28:37 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 04/15] ethtool: introduce ethtool netlink
+ interface
+Message-ID: <20190708192837.GE2282@nanopsycho.orion>
+References: <cover.1562067622.git.mkubecek@suse.cz>
+ <e7fa3ad7e9cf4d7a8f9a2085e3166f7260845b0a.1562067622.git.mkubecek@suse.cz>
+ <20190702122521.GN2250@nanopsycho>
+ <20190702145241.GD20101@unicorn.suse.cz>
+ <20190703084151.GR2250@nanopsycho>
+ <20190708172729.GC24474@unicorn.suse.cz>
+ <20190708192629.GD2282@nanopsycho.orion>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190708115130.250149-1-rburny@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190708192629.GD2282@nanopsycho.orion>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 01:51:30PM +0200, Radoslaw Burny wrote:
-> fs: Fix the default values of i_uid/i_gid on /proc/sys inodes.
-> Normally, the inode's i_uid/i_gid are translated relative to s_user_ns,
-> but this is not a correct behavior for proc. Since sysctl permission
-> check in test_perm is done against GLOBAL_ROOT_[UG]ID, it makes more
-> sense to use these values in u_[ug]id of proc inodes.
-> In other words: although uid/gid in the inode is not read during
-> test_perm, the inode logically belongs to the root of the namespace.
-> I have confirmed this with Eric Biederman at LPC and in this thread:
-> https://lore.kernel.org/lkml/87k1kzjdff.fsf@xmission.com
-> 
-> Consequences
-> ============
-> Since the i_[ug]id values of proc nodes are not used for permissions
-> checks, this change usually makes no functional difference. However, it
-> causes an issue in a setup where:
-> * a namespace container is created without root user in container -
->   hence the i_[ug]id of proc nodes are set to INVALID_[UG]ID
-> * container creator tries to configure it by writing /proc/sys files,
->   e.g. writing /proc/sys/kernel/shmmax to configure shared memory limit
-> Kernel does not allow to open an inode for writing if its i_[ug]id are
-> invalid, making it impossible to write shmmax and thus - configure the
-> container.
-> Using a container with no root mapping is apparently rare, but we do use
-> this configuration at Google. Also, we use a generic tool to configure
-> the container limits, and the inability to write any of them causes a
-> failure.
-> 
-> History
-> =======
-> The invalid uids/gids in inodes first appeared due to 81754357770e (fs:
-> Update i_[ug]id_(read|write) to translate relative to s_user_ns).
-> However, AFAIK, this did not immediately cause any issues.
-> The inability to write to these "invalid" inodes was only caused by a
-> later commit 0bd23d09b874 (vfs: Don't modify inodes with a uid or gid
-> unknown to the vfs).
-> 
-> Tested: Used a repro program that creates a user namespace without any
-> mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
-> Before the change, it shows the overflow uid, with the change it's 0.
-> The overflow uid indicates that the uid in the inode is not correct and
-> thus it is not possible to open the file for writing.
-> 
-> Fixes: 0bd23d09b874 ("vfs: Don't modify inodes with a uid or gid unknown to the vfs")
-> Cc: stable@vger.kernel.org # v4.8+
-> Signed-off-by: Radoslaw Burny <rburny@google.com>
+Mon, Jul 08, 2019 at 09:26:29PM CEST, jiri@resnulli.us wrote:
+>Mon, Jul 08, 2019 at 07:27:29PM CEST, mkubecek@suse.cz wrote:
+>>On Wed, Jul 03, 2019 at 10:41:51AM +0200, Jiri Pirko wrote:
+>>> Tue, Jul 02, 2019 at 04:52:41PM CEST, mkubecek@suse.cz wrote:
+>>> >On Tue, Jul 02, 2019 at 02:25:21PM +0200, Jiri Pirko wrote:
+>>> >> Tue, Jul 02, 2019 at 01:49:59PM CEST, mkubecek@suse.cz wrote:
+>>> >> >+
+>>> >> >+    ETHTOOL_A_HEADER_DEV_INDEX	(u32)		device ifindex
+>>> >> >+    ETHTOOL_A_HEADER_DEV_NAME	(string)	device name
+>>> >> >+    ETHTOOL_A_HEADER_INFOMASK	(u32)		info mask
+>>> >> >+    ETHTOOL_A_HEADER_GFLAGS	(u32)		flags common for all requests
+>>> >> >+    ETHTOOL_A_HEADER_RFLAGS	(u32)		request specific flags
+>>> >> >+
+>>> >> >+ETHTOOL_A_HEADER_DEV_INDEX and ETHTOOL_A_HEADER_DEV_NAME identify the device
+>>> >> >+message relates to. One of them is sufficient in requests, if both are used,
+>>> >> >+they must identify the same device. Some requests, e.g. global string sets, do
+>>> >> >+not require device identification. Most GET requests also allow dump requests
+>>> >> >+without device identification to query the same information for all devices
+>>> >> >+providing it (each device in a separate message).
+>>> >> >+
+>>> >> >+Optional info mask allows to ask only for a part of data provided by GET
+>>> >> 
+>>> >> How this "infomask" works? What are the bits related to? Is that request
+>>> >> specific?
+>>> >
+>>> >The interpretation is request specific, the information returned for
+>>> >a GET request is divided into multiple parts and client can choose to
+>>> >request one of them (usually one). In the code so far, infomask bits
+>>> >correspond to top level (nest) attributes but I would rather not make it
+>>> >a strict rule.
+>>> 
+>>> Wait, so it is a matter of verbosity? If you have multiple parts and the
+>>> user is able to chose one of them, why don't you rather have multiple
+>>> get commands, one per bit. This infomask construct seems redundant to me.
+>>
+>>I thought it was a matter of verbosity because it is a very basic
+>>element of the design, it was even advertised in the cover letter among
+>>the basic ideas, it has been there since the very beginning and in five
+>>previous versions through year and a half, noone did question it. That's
+>>why I thought you objected against unclear description, not against the
+>>concept as such.
+>>
+>>There are two reasons for this design. First is to reduce the number of
+>>requests needed to get the information. This is not so much a problem of
+>>ethtool itself; the only existing commands that would result in multiple
+>>request messages would be "ethtool <dev>" and "ethtool -s <dev>". Maybe
+>>also "ethtool -x/-X <dev>" but even if the indirection table and hash
+>>key have different bits assigned now, they don't have to be split even
+>>if we split other commands. It may be bigger problem for daemons wanting
+>>to keep track of system configuration which would have to issue many
+>>requests whenever a new device appears.
+>>
+>>Second reason is that with 8-bit genetlink command/message id, the space
+>>is not as infinite as it might seem. I counted quickly, right now the
+>>full series uses 14 ids for kernel messages, with split you propose it
+>>would most likely grow to 44. For full implementation of all ethtool
+>>functionality, we could get to ~60 ids. It's still only 1/4 of the
+>>available space but it's not clear what the future development will look
+>>like. We would certainly need to be careful not to start allocating new
+>>commands for single parameters and try to be foreseeing about what can
+>>be grouped together. But we will need to do that in any case.
+>>
+>>On kernel side, splitting existing messages would make some things a bit
+>>easier. It would also reduce the number of scenarios where only part of
+>>requested information is available or only part of a SET request fails.
+>
+>Okay, I got your point. So why don't we look at if from the other angle.
+>Why don't we have only single get/set command that would be in general
+>used to get/set ALL info from/to the kernel. Where we can have these
+>bits (perhaps rather varlen bitfield) to for user to indicate which data
+>is he interested in? This scales. The other commands would be
+>just for action.
+>
+>Something like RTM_GETLINK/RTM_SETLINK. Makes sense?
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
++ I think this might safe a lot of complexicity aroung your proposed
+inner ops.
 
-Andrew,
-
-When you get a chance, can you pick this one up on your tree? This was
-an old patch that just fell through the cracks, but fortuntely Radoslaw
-followed through with an updated commit message. This affects only a
-small crowd, however it is a proper fix.
-
-  Luis
-> ---
-> Changelog since v1:
->   - Updated the commit title and description.
-> 
->  fs/proc/proc_sysctl.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index c74570736b24..36ad1b0d6259 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
->  
->  	if (root->set_ownership)
->  		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
-> +	else {
-> +		inode->i_uid = GLOBAL_ROOT_UID;
-> +		inode->i_gid = GLOBAL_ROOT_GID;
-> +	}
->  
->  	return inode;
->  }
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+>
+>
+>>
+>>Michal
