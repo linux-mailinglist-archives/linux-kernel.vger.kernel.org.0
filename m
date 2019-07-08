@@ -2,108 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED02D619CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 06:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADAD61A09
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 06:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfGHER7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 00:17:59 -0400
-Received: from ozlabs.org ([203.11.71.1]:45259 "EHLO ozlabs.org"
+        id S1728014AbfGHEZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 00:25:56 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58011 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbfGHER7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 00:17:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hscg58vyz9s3l;
-        Mon,  8 Jul 2019 14:17:54 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562559476;
-        bh=VieVy7UWn7o5F9dBWHqJRxeZCvRi9w06XTxRVgaaLSo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nCctON+2mEZ27IiocbsqLKyxSCENVjWSU9x7Tcp7egEBJWMEo+WVMLGy4Dptq5sAG
-         TMEqZd/cyEKNVqIoSYQFCIpSBV5QcAuZlNp1+cmxK73L6sodwH1lfSib76PjoJvjNh
-         hSgWdK/t0ZC19MZk0+sLV5eMvvT5L287XP3PjMXoRVcqq412MC3OGeIMNadzwjG8z2
-         DeIFTfUCZXf4WoAh3zCtEqKXRS4yCXaK1Xi0lKN6Q2OOxex0dOvV2HXKGw8jdi4GTn
-         QUxq06GYcN1LzvZpBr3OnHHg13XgWbyAaUBzgN7jhir6moezog7492chDqB/I+LTlN
-         +WuLel+ynccwQ==
-Date:   Mon, 8 Jul 2019 14:17:54 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: linux-next: manual merge of the drm tree with the vfs tree
-Message-ID: <20190708141754.64d32ebe@canb.auug.org.au>
+        id S1726222AbfGHEZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 00:25:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2019 21:25:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,465,1557212400"; 
+   d="scan'208";a="364110586"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jul 2019 21:25:50 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hkLDq-0004hF-Ek; Mon, 08 Jul 2019 12:25:50 +0800
+Date:   Mon, 8 Jul 2019 12:25:47 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     kbuild-all@01.org, Lee Jones <lee.jones@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [linux-next:master 9908/12641] drivers/mfd/rohm-bd70528.c:109:14:
+ sparse: sparse: symbol 'bit0_offsets' was not declared. Should it be static?
+Message-ID: <201907081224.B6QvwFVw%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u04U78ytM4vB=CX3N=GbpPy"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/u04U78ytM4vB=CX3N=GbpPy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   22c45ec32b4a9fa8c48ef4f5bf9b189b307aae12
+commit: 21b7c58fc1943f3aa8c18a994ab9bed4ae5aa72d [9908/12641] mfd: bd70528: Support ROHM bd70528 PMIC core
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        git checkout 21b7c58fc1943f3aa8c18a994ab9bed4ae5aa72d
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Hi all,
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Today's linux-next merge of the drm tree got a conflict in:
 
-  include/uapi/linux/magic.h
+sparse warnings: (new ones prefixed by >>)
 
-between commit:
+>> drivers/mfd/rohm-bd70528.c:109:14: sparse: sparse: symbol 'bit0_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:110:14: sparse: sparse: symbol 'bit1_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:111:14: sparse: sparse: symbol 'bit2_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:112:14: sparse: sparse: symbol 'bit3_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:113:14: sparse: sparse: symbol 'bit4_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:114:14: sparse: sparse: symbol 'bit5_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:115:14: sparse: sparse: symbol 'bit6_offsets' was not declared. Should it be static?
+>> drivers/mfd/rohm-bd70528.c:116:14: sparse: sparse: symbol 'bit7_offsets' was not declared. Should it be static?
 
-  ea8157ab2ae5 ("zsfold: Convert zsfold to use the new mount API")
+Please review and possibly fold the followup patch.
 
-from the vfs tree and commit:
-
-  ed63bb1d1f84 ("dma-buf: give each buffer a full-fledged inode")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/linux/magic.h
-index 85c1119d0b0b,665e18627f78..000000000000
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@@ -91,6 -91,6 +91,7 @@@
-  #define UDF_SUPER_MAGIC		0x15013346
-  #define BALLOON_KVM_MAGIC	0x13661366
-  #define ZSMALLOC_MAGIC		0x58295829
- +#define Z3FOLD_MAGIC		0x33
-+ #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
- =20
-  #endif /* __LINUX_MAGIC_H__ */
-
---Sig_/u04U78ytM4vB=CX3N=GbpPy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0iw/IACgkQAVBC80lX
-0Gw5VAf8DDgJkQqJA0KHL5lzWfnr+HAflbMU2MMXJBSG3NsClNnp1GE5JDyRxueR
-HXZqxdX8X0pQ9bNsELol5xB75QB5cTedZdc29EFeTcB7EB95DSzzBHRBrL/ygvJg
-d43wZR3GJtnKPRiOajlXwfE13piL2v8iJzarCmsVwC8Qr3cOqScUxsk0xaCMVfxK
-fFLbdrW9J04vf+iS//JLLdvDboj1xtQIN2I/kWIklV06+QwxI1ThjX/PpMUocHbb
-DWZSW41v4wjv+IqHqElhL4ZyQRuPcIQVPGtDdGPTXndClaKfCD7P/WNyoCRNtycG
-l8NnwvFCccaiCnsaFDBrWHl0bOQihA==
-=8SNV
------END PGP SIGNATURE-----
-
---Sig_/u04U78ytM4vB=CX3N=GbpPy--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
