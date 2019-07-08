@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA93624AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5915D622B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387973AbfGHPW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48770 "EHLO mail.kernel.org"
+        id S2389297AbfGHP21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387935AbfGHPWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:21 -0400
+        id S2389277AbfGHP2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4966F2182B;
-        Mon,  8 Jul 2019 15:22:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5533A21537;
+        Mon,  8 Jul 2019 15:28:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599340;
-        bh=AWJ23jwBSxiKwBy12/lKgZfKk5wUHXCa/NwUSw44VtI=;
+        s=default; t=1562599703;
+        bh=II54N9oyz9p4+uMfs8XurpWIeyvXpBd2PwxshOEByrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rtvcKWbduDeI1d3eryD9Wo5JZiCVX/PiWS9fP2mjbf2Kv8/g7cC+F50iIx8mAB7hO
-         q+lRL5q/rbq70pkuo7DjdctwBQutMTsszuBCKxIcDOY80rVL/zOUj6VfNw/5riWHW1
-         Hf015TUVHo8u0E4G2BNrY/0t/fpAxj4u2cdfOeOg=
+        b=C5qixreJixuIZ6SD0u+EUOYlla5g70gB//JeAgvFv8E0UGKCDVOHHCnpDZ95QfdQJ
+         ivADcdXrj5PX4njU66MtvFqP3e+/2Gqi0avFkST/r1gRw3xMvAdZRUc4WKQM1GOhr8
+         CD9NzHpi5QaSJaggEzE9HqsqnUXBlsSs/LwpvbV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+c03f30b4f4c46bdf8575@syzkaller.appspotmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 083/102] KVM: x86: degrade WARN to pr_warn_ratelimited
-Date:   Mon,  8 Jul 2019 17:13:16 +0200
-Message-Id: <20190708150530.766568321@linuxfoundation.org>
+        syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 4.19 50/90] lib/mpi: Fix karactx leak in mpi_powm
+Date:   Mon,  8 Jul 2019 17:13:17 +0200
+Message-Id: <20190708150525.072211436@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 3f16a5c318392cbb5a0c7a3d19dff8c8ef3c38ee upstream.
+commit c8ea9fce2baf7b643384f36f29e4194fa40d33a6 upstream.
 
-This warning can be triggered easily by userspace, so it should certainly not
-cause a panic if panic_on_warn is set.
+Sometimes mpi_powm will leak karactx because a memory allocation
+failure causes a bail-out that skips the freeing of karactx.  This
+patch moves the freeing of karactx to the end of the function like
+everything else so that it can't be skipped.
 
-Reported-by: syzbot+c03f30b4f4c46bdf8575@syzkaller.appspotmail.com
-Suggested-by: Alexander Potapenko <glider@google.com>
-Acked-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
+Fixes: cdec9cb5167a ("crypto: GnuPG based MPI lib - source files...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ lib/mpi/mpi-pow.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1365,7 +1365,7 @@ static int set_tsc_khz(struct kvm_vcpu *
- 			vcpu->arch.tsc_always_catchup = 1;
- 			return 0;
- 		} else {
--			WARN(1, "user requested TSC rate below hardware speed\n");
-+			pr_warn_ratelimited("user requested TSC rate below hardware speed\n");
- 			return -1;
- 		}
- 	}
-@@ -1375,8 +1375,8 @@ static int set_tsc_khz(struct kvm_vcpu *
- 				user_tsc_khz, tsc_khz);
+--- a/lib/mpi/mpi-pow.c
++++ b/lib/mpi/mpi-pow.c
+@@ -37,6 +37,7 @@
+ int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
+ {
+ 	mpi_ptr_t mp_marker = NULL, bp_marker = NULL, ep_marker = NULL;
++	struct karatsuba_ctx karactx = {};
+ 	mpi_ptr_t xp_marker = NULL;
+ 	mpi_ptr_t tspace = NULL;
+ 	mpi_ptr_t rp, ep, mp, bp;
+@@ -163,13 +164,11 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ 		int c;
+ 		mpi_limb_t e;
+ 		mpi_limb_t carry_limb;
+-		struct karatsuba_ctx karactx;
  
- 	if (ratio == 0 || ratio >= kvm_max_tsc_scaling_ratio) {
--		WARN_ONCE(1, "Invalid TSC scaling ratio - virtual-tsc-khz=%u\n",
--			  user_tsc_khz);
-+		pr_warn_ratelimited("Invalid TSC scaling ratio - virtual-tsc-khz=%u\n",
-+			            user_tsc_khz);
- 		return -1;
+ 		xp = xp_marker = mpi_alloc_limb_space(2 * (msize + 1));
+ 		if (!xp)
+ 			goto enomem;
+ 
+-		memset(&karactx, 0, sizeof karactx);
+ 		negative_result = (ep[0] & 1) && base->sign;
+ 
+ 		i = esize - 1;
+@@ -294,8 +293,6 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ 		if (mod_shift_cnt)
+ 			mpihelp_rshift(rp, rp, rsize, mod_shift_cnt);
+ 		MPN_NORMALIZE(rp, rsize);
+-
+-		mpihelp_release_karatsuba_ctx(&karactx);
  	}
  
+ 	if (negative_result && rsize) {
+@@ -312,6 +309,7 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ leave:
+ 	rc = 0;
+ enomem:
++	mpihelp_release_karatsuba_ctx(&karactx);
+ 	if (assign_rp)
+ 		mpi_assign_limb_space(res, rp, size);
+ 	if (mp_marker)
 
 
