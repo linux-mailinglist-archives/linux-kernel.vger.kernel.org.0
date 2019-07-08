@@ -2,74 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A08AB62090
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B786209A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:37:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbfGHOen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 10:34:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14786 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728725AbfGHOem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:34:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 07:34:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
-   d="scan'208";a="248833705"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.189])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jul 2019 07:34:39 -0700
-Message-ID: <58070e5ee4e64b10df063b61612b021c23f0fc14.camel@linux.intel.com>
-Subject: Re: [PATCH v2] tpm: Fix null pointer dereference on chip register
- error path
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Milan Broz <gmazyland@gmail.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date:   Mon, 08 Jul 2019 17:34:42 +0300
-In-Reply-To: <20190704072615.31143-1-gmazyland@gmail.com>
-References: <20190703230125.aynx4ianvqqjt5d7@linux.intel.com>
-         <20190704072615.31143-1-gmazyland@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        id S1729963AbfGHOhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 10:37:52 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38502 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728998AbfGHOhw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 10:37:52 -0400
+Received: by mail-qt1-f193.google.com with SMTP id n11so18218116qtl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 07:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xlxx8z2Kd6mbVhAes5Vdim+URDBLB+ELlLVS4awXZ9Y=;
+        b=QCtZWFEv/LtisRrIoUoYOtwD3/m8z59j1MfwvEa140ZnPFZrcxcNolkffkei5eAXMV
+         ZWmer8DsRRKIQZ6JjDANKYtq6RWKGK4Ico5sCJyye/vnoEfMvoqp7ZKNEd8cJqFRr2US
+         kHONahrCz49ZK7/lxWQZqiaOWeZa9RmQPHx3LmHM+lYpHMqjF1nO76882BA93LL9B5VR
+         cAVM7nuU8XeqD4d0QsfeiqHP4PuPO9oTic+mlxUMtkoVm9+FqIwg5WhwiwJlpD6DrcBP
+         UqJxgKd0IRFYaKkLuMJXtO8YCnzkJYJ9i4SLoidzjGl26wOT64vM0whibmPGmxkQ24Xs
+         s+fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xlxx8z2Kd6mbVhAes5Vdim+URDBLB+ELlLVS4awXZ9Y=;
+        b=MrLpa0zCMO7u72JGg/S8mhyr3fOAtaQp6l6kQvUzuDtc0fMJa1KLD2L69b6WR5J2Bh
+         6Zzy/V7swycnpRl46ztkdSjtQUvRwEdqAMqfVT7HVzI4UkYdqrs0QvysS3SprFYVlu7g
+         U71DUlxAITh1hO1Rx5AOybG7HHnzVtCoewlu28aKdX+tayuLQ61LbWnkycR8dKhbXgKr
+         gYkurKErj5et5IfLHTwuRi74goG+04S8hIKia8YGCml+eWkJZ599SDoTosl8Ku1T8NuO
+         6Ec4y+JdMDdPOx5LGwE8YNEmQs+KBge35Y9DQRxaI3J8AB+WNLvT0Xih9/mN7yPS9+4n
+         D8gg==
+X-Gm-Message-State: APjAAAXzaB6c2NB7JjeqJlAAV6xWnusROb7yIrSZJJQzjeS4j9kQJNC0
+        M2DMTibvWBji3R+SlP5XCEE=
+X-Google-Smtp-Source: APXvYqyxDMinPFx1mhUvSh89llFUSIQMspgV3DMd8UeIuHnZU0mc22OT2kYYzqlAu+Bq2GLeP16tTA==
+X-Received: by 2002:ac8:f3b:: with SMTP id e56mr14584643qtk.123.1562596671308;
+        Mon, 08 Jul 2019 07:37:51 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:fa50])
+        by smtp.gmail.com with ESMTPSA id 67sm7655862qkh.108.2019.07.08.07.37.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 07:37:50 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 07:37:48 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Peng Wang <rocking@whu.edu.cn>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernfs: fix potential null pointer dereference
+Message-ID: <20190708143748.GZ657710@devbig004.ftw2.facebook.com>
+References: <20190705134730.20833-1-rocking@whu.edu.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705134730.20833-1-rocking@whu.edu.cn>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-04 at 09:26 +0200, Milan Broz wrote:
-> If clk_enable is not defined and chip initialization
-> is canceled code hits null dereference.
-> 
-> Easily reproducible with vTPM init fail:
->   swtpm chardev --tpmstate dir=nonexistent_dir --tpm2 --vtpm-proxy
-> 
-> BUG: kernel NULL pointer dereference, address: 00000000
-> ...
-> Call Trace:
->  tpm_chip_start+0x9d/0xa0 [tpm]
->  tpm_chip_register+0x10/0x1a0 [tpm]
->  vtpm_proxy_work+0x11/0x30 [tpm_vtpm_proxy]
->  process_one_work+0x214/0x5a0
->  worker_thread+0x134/0x3e0
->  ? process_one_work+0x5a0/0x5a0
->  kthread+0xd4/0x100
->  ? process_one_work+0x5a0/0x5a0
->  ? kthread_park+0x90/0x90
->  ret_from_fork+0x19/0x24
-> 
-> Fixes: 719b7d81f204 ("tpm: introduce tpm_chip_start() and tpm_chip_stop()")
-> Cc: stable@vger.kernel.org # v5.1+
-> Signed-off-by: Milan Broz <gmazyland@gmail.com>
+On Fri, Jul 05, 2019 at 09:47:30PM +0800, Peng Wang wrote:
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index a387534c9577..ea3fc972c48b 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -430,7 +430,7 @@ struct kernfs_node *kernfs_get_active(struct kernfs_node *kn)
+>   */
+>  void kernfs_put_active(struct kernfs_node *kn)
+>  {
+> -	struct kernfs_root *root = kernfs_root(kn);
+> +	struct kernfs_root *root;
+>  	int v;
+>  
+>  	if (unlikely(!kn))
+> @@ -442,6 +442,7 @@ void kernfs_put_active(struct kernfs_node *kn)
+>  	if (likely(v != KN_DEACTIVATED_BIAS))
+>  		return;
+>  
+> +	root = kernfs_root(kn);
+>  	wake_up_all(&root->deactivate_waitq);
 
-Looks legit.
+Maybe just remove the root variable altogether?  Other than that,
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 
-/Jarkko
+Thanks.
 
+-- 
+tejun
