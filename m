@@ -2,75 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBF961B4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F7861BC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729469AbfGHHg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:36:58 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45685 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfGHHg5 (ORCPT
+        id S1729175AbfGHIls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:41:48 -0400
+Received: from mail.santannapisa.it ([193.205.80.98]:30743 "EHLO
+        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbfGHIls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:36:57 -0400
-Received: by mail-ot1-f65.google.com with SMTP id x21so15162920otq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 00:36:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gNTUqnku8niNB9d4DJJdvCwiKFHyHplYOWjk0lkMatE=;
-        b=lcZ+HZaRxTIJKVlrSBQgzLCdNHYSFBocb28tpu0E1H/Qvn1ANvRNDcuMBA7WGphdER
-         bXxTuQzVRk9GYpibTZA5mCHwGAHtlhTSsmF5uP8iapUZ8cTR+kSWkF3jAAMwhHspmhs6
-         arFmCKnlbWQhlkvrzxf1/UkO3cFdb0STGP3LWqmCJvSm4E/S53QiJ/4KvF2QOQnZ+w6J
-         rQ5dcpuaL3Tpky1EIrPpzgKCRVWi27ZNCR1trzVQewUhuCNL204vUWvfJ8T3aXRk4u2N
-         rBBo8zYFXthtJe+e0Nkt/fjAmsRuhg/sVJexIUON9t9fBHVTSWMEsCMCX2U6/uPXdzc4
-         WQ/g==
-X-Gm-Message-State: APjAAAXN4tWjRh2Rvt/7V9GGRhdxh358HKsKHnimyDUgVfwdTB1j9uAr
-        eeU+EQbwkXa/hWKhn/kJW0eKKzyGGtBm5QDdX1Y=
-X-Google-Smtp-Source: APXvYqyo472/t+mGYfo5uuK1/V8g77+ciL53SR+frag8PpzDGidAds1XBVfRWATv1RPYNwBNDg7KEsURk1Vs+HdAyVs=
-X-Received: by 2002:a9d:5c11:: with SMTP id o17mr12692675otk.107.1562571416966;
- Mon, 08 Jul 2019 00:36:56 -0700 (PDT)
+        Mon, 8 Jul 2019 04:41:48 -0400
+X-Greylist: delayed 3600 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jul 2019 04:41:46 EDT
+Received: from [151.41.66.174] (account l.abeni@santannapisa.it HELO sweethome)
+  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
+  with ESMTPSA id 140626216; Mon, 08 Jul 2019 09:41:44 +0200
+Date:   Mon, 8 Jul 2019 09:41:36 +0200
+From:   luca abeni <luca.abeni@santannapisa.it>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC PATCH 2/6] sched/dl: Capacity-aware migrations
+Message-ID: <20190708094136.7bce5f46@sweethome>
+In-Reply-To: <b920d85b-4228-52fd-22db-3a0c26cf8ebd@arm.com>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+        <20190506044836.2914-3-luca.abeni@santannapisa.it>
+        <b920d85b-4228-52fd-22db-3a0c26cf8ebd@arm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn> <1562566745-7447-3-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1562566745-7447-3-git-send-email-wen.yang99@zte.com.cn>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Jul 2019 09:36:45 +0200
-Message-ID: <CAMuHMdVodmpcVXCESDxR3_oVK_5g2-9tW84YPP+eRh-0t_OBiQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: renesas-rza1: fix an use-after-free in rza1_irqc_probe()
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wen,
+Hi Dietmar,
 
-On Mon, Jul 8, 2019 at 8:22 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
-> The gic_node is still being used in the rza1_irqc_parse_map() call
-> after the of_node_put() call, which may result in use-after-free.
+On Thu, 4 Jul 2019 14:05:22 +0200
+Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
 
-Thanks! This use was added in v3, but I forgot to move the of_node_put() call.
+> On 5/6/19 6:48 AM, Luca Abeni wrote:
+> 
+> [...]
+> 
+> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > index 5b981eeeb944..3436f3d8fa8f 100644
+> > --- a/kernel/sched/deadline.c
+> > +++ b/kernel/sched/deadline.c
+> > @@ -1584,6 +1584,9 @@ select_task_rq_dl(struct task_struct *p, int
+> > cpu, int sd_flag, int flags) if (sd_flag != SD_BALANCE_WAKE)
+> >  		goto out;
+> >  
+> > +	if (dl_entity_is_special(&p->dl))
+> > +		goto out;  
+> 
+> I wonder if this is really required. The if condition
+> 
+> 1591         if (unlikely(dl_task(curr)) &&
+> 1592             (curr->nr_cpus_allowed < 2 ||
+> 1593              !dl_entity_preempt(&p->dl, &curr->dl)) &&
+> 1594             (p->nr_cpus_allowed > 1)) {
+> 
+> further below uses '!dl_entity_preempt(&p->dl, &curr->dl))' which
+> returns 'dl_entity_is_special(a) || ...'
 
-> Fixes: a644ccb819bc ("irqchip: Add Renesas RZ/A1 Interrupt Controller driver")
+Uhm... I do not remember the details; I remember that the check fixed
+something during the development of the patchset, but I did not check
+if it was still needed when I forward-ported the patches...
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+So, maybe it worked around some bugs in previous versions of the
+kernel, but is not needed now.
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+				Luca
