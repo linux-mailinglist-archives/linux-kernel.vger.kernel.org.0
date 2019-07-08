@@ -2,77 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC8E628FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92735628F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390884AbfGHTJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:09:58 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54421 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731402AbfGHTJ5 (ORCPT
+        id S2390577AbfGHTJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:09:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40056 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731340AbfGHTJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:09:57 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TWPWMSM_1562612890;
-Received: from US-160370MP2.local(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TWPWMSM_1562612890)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 09 Jul 2019 03:08:12 +0800
-Date:   Mon, 8 Jul 2019 12:08:09 -0700
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] blk-throttle: fix zero wait time for iops throttled group
-Message-ID: <20190708190809.l4fdhigexzdujvuv@US-160370MP2.local>
-Reply-To: bo.liu@linux.alibaba.com
-References: <156259979778.2486.6296077059654653057.stgit@buzz>
+        Mon, 8 Jul 2019 15:09:35 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so634633wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=l+7u9g4YDBV0qSmQ+PNq9QxlNzB07gtt7XvLALkjfds=;
+        b=ntTORaKLJG/d8XA448AE1+EpfPqMxzbrGlBi8lJLzrIW6Nw98seS7mTbk1/TimIZL7
+         QmTRbcq+jHhUV57ext+KUxTl+Tsb4rm+4TZsgmC8fegHHREqd62ASkozX6RbyifS0m3K
+         rXP3t5Pmt0lxx+nuXPTsHASW+Se0CqOyrROEfvm29546/BKlBH1C44IsDtfPaO6koLe6
+         kqoY8/ddoyN49cVKTv+pef+E4SOTBza7boq8nwT8RFnG7gaJbE6U5H9Z1621HfMl8jU/
+         fxMiPaoOOMqpFBoJx5WuSfAaCbaQreTuLynDEbkx+koRyE59r7LcHoiK/1PrBGEyDvJE
+         N4yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=l+7u9g4YDBV0qSmQ+PNq9QxlNzB07gtt7XvLALkjfds=;
+        b=ZM7bFA5akZIuxBIcHSwCPhCmcjat0Ixr8EQktz/j3jpIF0KHJDYDBd2wFrd5JwzRyg
+         sWDYjVlWXR9sd7qR8aZ8RdnWVPtmBDWcgwszn6i7b78FhGU4PJle5eMXaEjPO+8KlTVj
+         BBOt7ApQOGwQOKmaMb1EGQQN/srSbTzTtJLQE4ZqKdoaTiJKTBcEAWm3X+I+m/QXXaT9
+         Je1/8iamYYd69atxPsaRRv+tm+gBhG3M0R9XiA/JFUKf4a//XUGIlAIjsB0QpjOaz5Hd
+         RAS9DGTzZyPreZHhjtEIRyVA2pdCKlQiI+nuCu8O1uxxqpTJwW/To/4lmBtqX4uxDJmE
+         w7Gw==
+X-Gm-Message-State: APjAAAWcLzD3WG8UKjJPkr6tTTQNZ86L0LyR6LK7LvXJkyvWeIO9Mz++
+        ZHV/xOC4pg4AY0HNm+KtLlI6BTc=
+X-Google-Smtp-Source: APXvYqxygdOhpHLx5tzXF/3yWMoK0F/y9xyRu5iDwky2a0KP1f5yVHS7RUpBgCDBQs3i6zgtzAhOFg==
+X-Received: by 2002:a1c:a584:: with SMTP id o126mr18402512wme.147.1562612972910;
+        Mon, 08 Jul 2019 12:09:32 -0700 (PDT)
+Received: from avx2 ([46.53.249.188])
+        by smtp.gmail.com with ESMTPSA id t1sm21098764wra.74.2019.07.08.12.09.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 12:09:32 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 22:09:30 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     thgarnie@chromium.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 06/11] x86/CPU: Adapt assembly for PIE support
+Message-ID: <20190708190930.GA16215@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <156259979778.2486.6296077059654653057.stgit@buzz>
-User-Agent: NeoMutt/20180323
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 06:29:57PM +0300, Konstantin Khlebnikov wrote:
-> After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops
-> limit is enforced") wait time could be zero even if group is throttled and
-> cannot issue requests right now. As a result throtl_select_dispatch() turns
-> into busy-loop under irq-safe queue spinlock.
-> 
-> Fix is simple: always round up target time to the next throttle slice.
-> 
-> Fixes: 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops limit is enforced")
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Cc: stable@vger.kernel.org # v4.19+
-> ---
->  block/blk-throttle.c |    9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-> index 9ea7c0ecad10..8ab6c8153223 100644
-> --- a/block/blk-throttle.c
-> +++ b/block/blk-throttle.c
-> @@ -881,13 +881,10 @@ static bool tg_with_in_iops_limit(struct throtl_grp *tg, struct bio *bio,
->  	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
->  	u64 tmp;
->  
-> -	jiffy_elapsed = jiffy_elapsed_rnd = jiffies - tg->slice_start[rw];
-> -
-> -	/* Slice has just started. Consider one slice interval */
-> -	if (!jiffy_elapsed)
-> -		jiffy_elapsed_rnd = tg->td->throtl_slice;
-> +	jiffy_elapsed = jiffies - tg->slice_start[rw];
->  
-> -	jiffy_elapsed_rnd = roundup(jiffy_elapsed_rnd, tg->td->throtl_slice);
-> +	/* Round up to the next throttle slice, wait time must be nonzero */
-> +	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
->  
->  	/*
->  	 * jiffy_elapsed_rnd should not be a big value as minimum iops can be
+Thomas Garnier wrote:
+> -		"pushq $1f\n\t"
+> +		"movabsq $1f, %q0\n\t"
+> +		"pushq %q0\n\t"
+>  		"iretq\n\t"
+>  		UNWIND_HINT_RESTORE
+>  		"1:"
 
-Did you use a tiny iops limit to run into this?
+Fake PIE. True PIE looks like this:
 
-thanks,
--liubo
+ffffffff81022d70 <do_sync_core>:
+ffffffff81022d70:       8c d0                   mov    eax,ss
+ffffffff81022d72:       50                      push   rax
+ffffffff81022d73:       54                      push   rsp
+ffffffff81022d74:       48 83 04 24 08          add    QWORD PTR [rsp],0x8
+ffffffff81022d79:       9c                      pushf
+ffffffff81022d7a:       8c c8                   mov    eax,cs
+ffffffff81022d7c:       50                      push   rax
+ffffffff81022d7d:  ===> 48 8d 05 03 00 00 00    lea    rax,[rip+0x3]        # ffffffff81022d87 <do_sync_core+0x17>
+ffffffff81022d84:       50                      push   rax
+ffffffff81022d85:       48 cf                   iretq
+ffffffff81022d87:       c3                      ret
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -710,7 +710,8 @@ static inline void sync_core(void)
+ 		"pushfq\n\t"
+ 		"mov %%cs, %0\n\t"
+ 		"pushq %q0\n\t"
+-		"pushq $1f\n\t"
++		"leaq 1f(%%rip), %q0\n\t"
++		"pushq %q0\n\t"
+ 		"iretq\n\t"
+ 		UNWIND_HINT_RESTORE
+ 		"1:"
