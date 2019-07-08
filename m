@@ -2,177 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF27619C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 06:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0458619C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 06:13:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725886AbfGHEFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 00:05:55 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33953 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfGHEFz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 00:05:55 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n5so14826163otk.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 21:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qs74MNXeX8PUd5IlEIr3DdDrdTGpDJ2VkIsqNY9133o=;
-        b=vDGz+aDCGW4wDelVIhNKQxbg/e7MV9jEJZKH9NxVG2vyV754beiX2Y32hDXxxRu1xn
-         eYGUHwug99CIUe/F66wSqBhG5kWnfjHWqo+ZmFLltihwe5yMlQkHW3Hay3pjthHZgEaU
-         pcAUOgcO+dicWGKdHQUv/J6hKb5sMopNndwHc5GVhJzH7c+zG8MenF0j0nlOvsct8Fgt
-         Iod0CZblgBS7Eo9uq9v+RpFa6uWd3q08cPSq1g4C98Rkmxu3e0n1eiVsnf21Sy4NcFme
-         BiFxoxaTBLCSRq9/99d6a5jWg9ziwkn72ymfMCdmbt1g8P3iu4X3X5ppg6U08iMmVg3G
-         iK/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qs74MNXeX8PUd5IlEIr3DdDrdTGpDJ2VkIsqNY9133o=;
-        b=G5pdl+fsqx/+82hSdVHIhcV6B5f7GsFCpL0X0MQOZ9pc6Ey2S68TBih2owJ5dVXCQG
-         bqT49Y1e7NM40VVtkM8lqq0Bq/cxZPd0j+rb+pOILW9PAHpCxCVIHF+W8hsnqM6URTZx
-         izlC6xqUIv4ZP1fh4Q6S/N4EDqUn4tyHKsExC/n0p0kz08TuHdhFaO/cY8fKl2hqxy8W
-         ZoXBUdBtcAjw+0UGtKHCnZgJYautIbgYRxes/LjVadu0f3QNhR2S/jekri4IS7r3zrOg
-         4patIMaGN7RtsKThypkDZY0xF0Ut66q4Y55wI6ZUBYLjVqo9hazl/qpZsPQrEF1P7QUD
-         52YA==
-X-Gm-Message-State: APjAAAVg3UZSAFXciwsmZXzSTMeH4XOKf6K3hXBWaCO1H08WBJzIQkPt
-        PKWJKjgrJswxg7rMywkbQ4PkVoKRGLLXPMqKhpTd/AY+
-X-Google-Smtp-Source: APXvYqwxgtz+M2bm7WpCizdRAK1PqQi4uEX9nuOiY1ii0RK6aNn5uFZ06xOOfkFT10KzwbNv5azClviwBlDb1MwGEu8=
-X-Received: by 2002:a9d:6959:: with SMTP id p25mr12003060oto.118.1562558754128;
- Sun, 07 Jul 2019 21:05:54 -0700 (PDT)
+        id S1726124AbfGHEMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 00:12:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbfGHEMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 00:12:48 -0400
+Received: from localhost (unknown [49.207.58.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8C9620659;
+        Mon,  8 Jul 2019 04:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562559167;
+        bh=Z4vk7mVRT8EztIag0rUhGUeHxNVQ35Bv5DXVMPCwSCw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H0S+38m2yKXez1xDC8vjH36iNHJgAnJy1mYZjSaq+Bq53wkAX7PDFYGRp9ZGOOPJk
+         P6GLPc7NV0rk1M+ijQpA2s6UFvhBOqmq5DK10POK1AWxcbNKXeSHn1AlRIHi2HAO6I
+         DpoNEGhCbXNanQCq5OcO1u9U5i9XYzF8n9KWB1EY=
+Date:   Mon, 8 Jul 2019 09:39:31 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        John Garry <john.garry@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Angelo Dureghello <angelo@sysam.it>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Message-ID: <20190708040931.GJ2911@vkoul-mobl>
+References: <20190704173108.0646eef8@canb.auug.org.au>
+ <VE1PR04MB6638782ADA8BFB8A17BAF19D89F40@VE1PR04MB6638.eurprd04.prod.outlook.com>
+ <20190706144324.GH2911@vkoul-mobl>
+ <VE1PR04MB6638DAA60BE5910113D5DE0E89F60@VE1PR04MB6638.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <1561711901-4755-1-git-send-email-wanpengli@tencent.com> <1561711901-4755-2-git-send-email-wanpengli@tencent.com>
-In-Reply-To: <1561711901-4755-2-git-send-email-wanpengli@tencent.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 8 Jul 2019 12:05:44 +0800
-Message-ID: <CANRm+CyBP8qd6pYcyX_biGBwOcdjdqMqazNjSnq2H6QNE+OsHw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] sched/isolation: Prefer housekeeping cpu in local node
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VE1PR04MB6638DAA60BE5910113D5DE0E89F60@VE1PR04MB6638.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kindly ping for these two patches, :)
-On Fri, 28 Jun 2019 at 16:51, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> From: Wanpeng Li <wanpengli@tencent.com>
->
-> In real product setup, there will be houseeking cpus in each nodes, it
-> is prefer to do housekeeping from local node, fallback to global online
-> cpumask if failed to find houseeking cpu from local node.
->
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v3 -> v4:
->  * have a static function for sched_numa_find_closest
->  * cleanup sched_numa_find_closest comments
-> v2 -> v3:
->  * add sched_numa_find_closest comments
-> v1 -> v2:
->  * introduce sched_numa_find_closest
->
->  kernel/sched/isolation.c | 12 ++++++++++--
->  kernel/sched/sched.h     |  8 +++++---
->  kernel/sched/topology.c  | 20 ++++++++++++++++++++
->  3 files changed, 35 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 7b9e1e0..191f751 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -16,9 +16,17 @@ static unsigned int housekeeping_flags;
->
->  int housekeeping_any_cpu(enum hk_flags flags)
->  {
-> -       if (static_branch_unlikely(&housekeeping_overridden))
-> -               if (housekeeping_flags & flags)
-> +       int cpu;
-> +
-> +       if (static_branch_unlikely(&housekeeping_overridden)) {
-> +               if (housekeeping_flags & flags) {
-> +                       cpu = sched_numa_find_closest(housekeeping_mask, smp_processor_id());
-> +                       if (cpu < nr_cpu_ids)
-> +                               return cpu;
-> +
->                         return cpumask_any_and(housekeeping_mask, cpu_online_mask);
-> +               }
-> +       }
->         return smp_processor_id();
->  }
->  EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 802b1f3..ec65d90 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1261,16 +1261,18 @@ enum numa_topology_type {
->  extern enum numa_topology_type sched_numa_topology_type;
->  extern int sched_max_numa_distance;
->  extern bool find_numa_distance(int distance);
-> -#endif
-> -
-> -#ifdef CONFIG_NUMA
->  extern void sched_init_numa(void);
->  extern void sched_domains_numa_masks_set(unsigned int cpu);
->  extern void sched_domains_numa_masks_clear(unsigned int cpu);
-> +extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
->  #else
->  static inline void sched_init_numa(void) { }
->  static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
->  static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
-> +static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-> +{
-> +       return nr_cpu_ids;
-> +}
->  #endif
->
->  #ifdef CONFIG_NUMA_BALANCING
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index f751ce0..4eea2c9 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1724,6 +1724,26 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
->         }
->  }
->
-> +/*
-> + * sched_numa_find_closest() - given the NUMA topology, find the cpu
-> + *                             closest to @cpu from @cpumask.
-> + * cpumask: cpumask to find a cpu from
-> + * cpu: cpu to be close to
-> + *
-> + * returns: cpu, or nr_cpu_ids when nothing found.
-> + */
-> +int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-> +{
-> +       int i, j = cpu_to_node(cpu);
-> +
-> +       for (i = 0; i < sched_domains_numa_levels; i++) {
-> +               cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
-> +               if (cpu < nr_cpu_ids)
-> +                       return cpu;
-> +       }
-> +       return nr_cpu_ids;
-> +}
-> +
->  #endif /* CONFIG_NUMA */
->
->  static int __sdt_alloc(const struct cpumask *cpu_map)
-> --
-> 2.7.4
->
+On 08-07-19, 02:01, Robin Gong wrote:
+> On 06-07-19, 22:43, Vinod Koul <vkoul@kernel.org> wrote:
+> > > 	That's caused by 'of_irq_count' NOT export to global symbol, and I'm
+> > > curious why it has been here for so long since Zhangfei found it in
+> > > 2015.
+> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > >
+> > hwork.kernel.org%2Fpatch%2F7404681%2F&amp;data=02%7C01%7Cyibin.gon
+> > g%40
+> > >
+> > nxp.com%7C6172242dfadd4f71c09a08d70220bf6f%7C686ea1d3bc2b4c6fa92
+> > cd99c5
+> > >
+> > c301635%7C0%7C0%7C636980211986259586&amp;sdata=L8v%2B1o5zfgIAS
+> > go4qr3pu
+> > > cQ%2Byox1irANsvRv5ZNLlLM%3D&amp;reserved=0
+> > 
+> > Yes this does not seem to be applied, perhaps Rob can explain why. But this was
+> > not exported how did you test it?
+> I had no such issue because I built in fsl-edma instead of Stephen's config with building module.
+
+But you support it as a module, right? I am inclined to revert the patch
+now!
+
+-- 
+~Vinod
