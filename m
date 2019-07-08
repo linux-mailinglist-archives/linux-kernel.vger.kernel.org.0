@@ -2,121 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E58561FE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B0961FE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbfGHNzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 09:55:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45190 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731401AbfGHNzt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 09:55:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z7WcggLAejPzEpSoHTmfAATgZoGx2QqDsys6bSdrrxM=; b=ISRiZEZ66YGoTqn07Ke3eUgF4
-        0oQOIuAyAQnRMcG3rrcypTh1+D7cXB7f1zv1mtzxST8wFhPrly2T0SiTI7zYJboDdQb/9G+Arm2/I
-        EckJr0WF3bs3OalPk0UvwP0ZXNLLPNlEaNHUe3o1a5QYnq5CdgiO2sQFNFJwQm2q+glyEZ/UWGW3l
-        TDPr1GNUEJvvQINCBWrUu1nC+fYbbdVj/mioF2yH/0aofIQ9Ft7U7yYffIL7pjm2bWJGKNZVSN7Mx
-        Jv/aCmeze/IKL7cwE+eMcm6Oug3u4Dw3OICM6GQoAAkcM7M3zbBwhwHeh6m24Dfboyr00aYk3bOca
-        rRjn67KuQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkU7G-0004LA-8w; Mon, 08 Jul 2019 13:55:38 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1CA4120B28AD7; Mon,  8 Jul 2019 15:55:36 +0200 (CEST)
-Date:   Mon, 8 Jul 2019 15:55:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Luca Abeni <luca.abeni@santannapisa.it>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC PATCH 3/6] sched/dl: Try better placement even for deadline
- tasks that do not block
-Message-ID: <20190708135536.GK3402@hirez.programming.kicks-ass.net>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
- <20190506044836.2914-4-luca.abeni@santannapisa.it>
+        id S1731557AbfGHN43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 09:56:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39308 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727401AbfGHN43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 09:56:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D5386AFDB;
+        Mon,  8 Jul 2019 13:56:27 +0000 (UTC)
+Date:   Mon, 8 Jul 2019 15:56:26 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mans Rullgard <mans@mansr.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] auxdisplay: charlcd: Deduplicate simple_strtoul()
+Message-ID: <20190708135626.bvfy4dacv2mst2ht@pathway.suse.cz>
+References: <20190704115532.15679-1-andriy.shevchenko@linux.intel.com>
+ <20190704115532.15679-2-andriy.shevchenko@linux.intel.com>
+ <20190708131652.s3gdoieixgyekued@pathway.suse.cz>
+ <20190708133534.GO9224@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190506044836.2914-4-luca.abeni@santannapisa.it>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190708133534.GO9224@smile.fi.intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 06:48:33AM +0200, Luca Abeni wrote:
-> @@ -1223,8 +1250,17 @@ static void update_curr_dl(struct rq *rq)
->  			dl_se->dl_overrun = 1;
->  
->  		__dequeue_task_dl(rq, curr, 0);
-> -		if (unlikely(dl_se->dl_boosted || !start_dl_timer(curr)))
-> +		if (unlikely(dl_se->dl_boosted || !start_dl_timer(curr))) {
->  			enqueue_task_dl(rq, curr, ENQUEUE_REPLENISH);
-> +#ifdef CONFIG_SMP
-> +		} else if (dl_se->dl_adjust) {
-> +			if (rq->migrating_task == NULL) {
-> +				queue_balance_callback(rq, &per_cpu(dl_migrate_head, rq->cpu), migrate_dl_task);
+On Mon 2019-07-08 16:35:34, Andy Shevchenko wrote:
+> On Mon, Jul 08, 2019 at 03:16:52PM +0200, Petr Mladek wrote:
+> > On Thu 2019-07-04 14:55:32, Andy Shevchenko wrote:
+> > > Like in the commit
+> > >   8b2303de399f ("serial: core: Fix handling of options after MMIO address")
+> > > we may use simple_strtoul() which in comparison to kstrtoul() can do conversion
+> > > in-place without additional and unnecessary code to be written.
+> > > 
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > ---
+> > > - no change since v2
+> > >  drivers/auxdisplay/charlcd.c | 34 +++++++---------------------------
+> > >  1 file changed, 7 insertions(+), 27 deletions(-)
+> > > 
+> > > diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+> > > index 92745efefb54..3858dc7a4154 100644
+> > > --- a/drivers/auxdisplay/charlcd.c
+> > > +++ b/drivers/auxdisplay/charlcd.c
+> > > @@ -287,31 +287,6 @@ static int charlcd_init_display(struct charlcd *lcd)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > -/*
+> > > - * Parses an unsigned integer from a string, until a non-digit character
+> > > - * is found. The empty string is not accepted. No overflow checks are done.
+> > > - *
+> > > - * Returns whether the parsing was successful. Only in that case
+> > > - * the output parameters are written to.
+> > > - *
+> > > - * TODO: If the kernel adds an inplace version of kstrtoul(), this function
+> > > - * could be easily replaced by that.
+> > > - */
+> > > -static bool parse_n(const char *s, unsigned long *res, const char **next_s)
+> > > -{
+> > > -	if (!isdigit(*s))
+> > > -		return false;
+> > > -
+> > > -	*res = 0;
+> > > -	while (isdigit(*s)) {
+> > > -		*res = *res * 10 + (*s - '0');
+> > > -		++s;
+> > > -	}
+> > > -
+> > > -	*next_s = s;
+> > > -	return true;
+> > > -}
+> > > -
+> > >  /*
+> > >   * Parses a movement command of the form "(.*);", where the group can be
+> > >   * any number of subcommands of the form "(x|y)[0-9]+".
+> > > @@ -336,6 +311,7 @@ static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
+> > >  {
+> > >  	unsigned long new_x = *x;
+> > >  	unsigned long new_y = *y;
+> > > +	char *p;
+> > >  
+> > >  	for (;;) {
+> > >  		if (!*s)
+> > > @@ -345,11 +321,15 @@ static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
+> > >  			break;
+> > >  
+> > >  		if (*s == 'x') {
+> > > -			if (!parse_n(s + 1, &new_x, &s))
+> > > +			new_x = simple_strtoul(s + 1, &p, 10);
+> > 
+> > simple_strtoul() tries to detect the base even when it has been
+> > explicitely specified. 
+> 
+> I can't see it from the code. Can you point out to this drastic bug that has to
+> be fixed?
 
-I'm not entirely sure about this one.
+Grr, the base is detected only when it was not defined.
 
-That is, we only do those callbacks from:
+I am sorry for the noise. I probably have not woken up fully after
+the weekend yet.
 
-  schedule_tail()
-  __schedule()
-  rt_mutex_setprio()
-  __sched_setscheduler()
+The patch looks fine then. Feel free to use:
 
-and the above looks like it can happen outside of those.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-The pattern in those sites is:
-
-	rq_lock();
-	... do crap that leads to queue_balance_callback()
-	rq_unlock()
-	if (rq->balance_callback) {
-		raw_spin_lock_irqsave(rq->lock, flags);
-		... do callbacks
-		raw_spin_unlock_irqrestore(rq->lock, flags);
-	}
-
-So I suppose can catch abuse of this API by doing something like the
-below; can you validate?
-
----
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index aaca0e743776..89e615f1eae6 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1134,6 +1134,14 @@ static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
- 	rf->cookie = lockdep_pin_lock(&rq->lock);
- 
- #ifdef CONFIG_SCHED_DEBUG
-+#ifdef CONFIG_SMP
-+	/*
-+	 * There should not be pending callbacks at the start of rq_lock();
-+	 * all sites that handle them flush them at the end.
-+	 */
-+	WARN_ON_ONCE(rq->balance_callback);
-+#endif
-+
- 	rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
- 	rf->clock_update_flags = 0;
- #endif
+Best Regards,
+Petr
