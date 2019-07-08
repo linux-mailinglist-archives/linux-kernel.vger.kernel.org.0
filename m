@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B700624E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B6662172
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391344AbfGHPqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:46:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46002 "EHLO mail.kernel.org"
+        id S1732534AbfGHPQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730899AbfGHPUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:20:48 -0400
+        id S1730447AbfGHPQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39FBD216C4;
-        Mon,  8 Jul 2019 15:20:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA05F2166E;
+        Mon,  8 Jul 2019 15:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599247;
-        bh=M3ZuKp0XDdst9JplQL3gyct4VtflnifobcVwFZFGdug=;
+        s=default; t=1562598975;
+        bh=aYAo/xr3vWfROcvFgtq0lwGDp0XPObai2tK1AZ7l1R4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/M7+Cph+QBT+BoM6X802weX+v1U1/itqaS47xnce4ylFQnnCobWWq49SiaEZVZs4
-         1rv/nX1nltGU+LLdVrQga+XTJindWAX6E+AFtfQ54X2atyHL/JKk3a0hYTlvi5Xvh7
-         3b9GP8QneC/73QrlyM2b4gRYZefejK/XrHbGFTeU=
+        b=SOSdp4wLFTRs6ii4fwhq+If4r++4X5HJXq11vS4X9bxvYiRUOJstp1FewhojZhWF1
+         D66H5Qpj5DgToiCBsGNvysZstwjTEdVFQUaoQaahP1kBKQRGaExH+c+xpEMba44L+T
+         42u8uayXgOFYw2d9ZnCZGb4UWGPyJ+MevUpFkABY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roland Hii <roland.king.guan.hii@intel.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 053/102] net: stmmac: fixed new system time seconds value calculation
-Date:   Mon,  8 Jul 2019 17:12:46 +0200
-Message-Id: <20190708150529.189410547@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
+Subject: [PATCH 4.4 37/73] ovl: modify ovl_permission() to do checks on two inodes
+Date:   Mon,  8 Jul 2019 17:12:47 +0200
+Message-Id: <20190708150523.283666939@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Hii <roland.king.guan.hii@intel.com>
+From: Vivek Goyal <vgoyal@redhat.com>
 
-[ Upstream commit a1e5388b4d5fc78688e5e9ee6641f779721d6291 ]
+commit c0ca3d70e8d3cf81e2255a217f7ca402f5ed0862 upstream.
 
-When ADDSUB bit is set, the system time seconds field is calculated as
-the complement of the seconds part of the update value.
+Right now ovl_permission() calls __inode_permission(realinode), to do
+permission checks on real inode and no checks are done on overlay inode.
 
-For example, if 3.000000001 seconds need to be subtracted from the
-system time, this field is calculated as
-2^32 - 3 = 4294967296 - 3 = 0x100000000 - 3 = 0xFFFFFFFD
+Modify it to do checks both on overlay inode as well as underlying inode.
+Checks on overlay inode will be done with the creds of calling task while
+checks on underlying inode will be done with the creds of mounter.
 
-Previously, the 0x100000000 is mistakenly written as 100000000.
-
-This is further simplified from
-  sec = (0x100000000ULL - sec);
-to
-  sec = -sec;
-
-Fixes: ba1ffd74df74 ("stmmac: fix PTP support for GMAC4")
-Signed-off-by: Roland Hii <roland.king.guan.hii@intel.com>
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+[ Srivatsa: 4.4.y backport:
+  - Skipped the hunk modifying non-existent function ovl_get_acl()
+  - Adjusted the error path
+  - Included linux/cred.h to get prototype for revert_creds() ]
+Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-@@ -125,7 +125,7 @@ static int stmmac_adjust_systime(void __
- 		 * programmed with (2^32 – <new_sec_value>)
- 		 */
- 		if (gmac4)
--			sec = (100000000ULL - sec);
-+			sec = -sec;
+---
+ fs/overlayfs/inode.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -9,6 +9,7 @@
  
- 		value = readl(ioaddr + PTP_TCR);
- 		if (value & PTP_TCR_TSCTRLSSR)
+ #include <linux/fs.h>
+ #include <linux/slab.h>
++#include <linux/cred.h>
+ #include <linux/xattr.h>
+ #include "overlayfs.h"
+ 
+@@ -91,6 +92,7 @@ int ovl_permission(struct inode *inode,
+ 	struct ovl_entry *oe;
+ 	struct dentry *alias = NULL;
+ 	struct inode *realinode;
++	const struct cred *old_cred;
+ 	struct dentry *realdentry;
+ 	bool is_upper;
+ 	int err;
+@@ -143,7 +145,18 @@ int ovl_permission(struct inode *inode,
+ 			goto out_dput;
+ 	}
+ 
++	/*
++	 * Check overlay inode with the creds of task and underlying inode
++	 * with creds of mounter
++	 */
++	err = generic_permission(inode, mask);
++	if (err)
++		goto out_dput;
++
++	old_cred = ovl_override_creds(inode->i_sb);
+ 	err = __inode_permission(realinode, mask);
++	revert_creds(old_cred);
++
+ out_dput:
+ 	dput(alias);
+ 	return err;
 
 
