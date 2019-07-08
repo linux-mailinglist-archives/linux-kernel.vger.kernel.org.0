@@ -2,46 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7906194A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 04:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF1361959
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 04:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfGHCX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 22:23:26 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45296 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbfGHCX0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 22:23:26 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 36E2B1528C8AD;
-        Sun,  7 Jul 2019 19:23:26 -0700 (PDT)
-Date:   Sun, 07 Jul 2019 19:23:25 -0700 (PDT)
-Message-Id: <20190707.192325.233803747660583572.davem@davemloft.net>
-To:     joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 6/8] net: nixge: Fix misuse of strlcpy
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <ab064ed18bee3e59431afb742dfe7a570d7d0b58.1562283944.git.joe@perches.com>
-References: <cover.1562283944.git.joe@perches.com>
-        <ab064ed18bee3e59431afb742dfe7a570d7d0b58.1562283944.git.joe@perches.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 07 Jul 2019 19:23:26 -0700 (PDT)
+        id S1727723AbfGHCov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 22:44:51 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3515 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726105AbfGHCov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 22:44:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2019 19:44:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,465,1557212400"; 
+   d="scan'208";a="340322921"
+Received: from hu.sh.intel.com ([10.239.158.51])
+  by orsmga005.jf.intel.com with ESMTP; 07 Jul 2019 19:44:49 -0700
+From:   "Chen, Hu" <hu1.chen@intel.com>
+To:     hdegoede@redhat.com
+Cc:     hu1.chen@intel.com, Balaji <m.balaji@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: roles: Add PM callbacks
+Date:   Mon,  8 Jul 2019 10:25:14 +0800
+Message-Id: <20190708022514.7161-1-hu1.chen@intel.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Date: Thu,  4 Jul 2019 16:57:46 -0700
+On some Broxton NUC, the usb role is lost after S3 (it becomes "none").
+Add PM callbacks to address this issue: save the role during suspend and
+restore usb to that role during resume.
 
-> Probable cut&paste typo - use the correct field size.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+Test:
+Run Android on UC6CAY, a NUC powered by Broxton. Access this NUC via
+"adb shell" from a host PC. After a suspend/resume cycle, the adb still
+works well.
 
-Applied.
+Signed-off-by: Chen, Hu <hu1.chen@intel.com>
+Signed-off-by: Balaji <m.balaji@intel.com>
+
+diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+index 277de96181f9..caa1cfab41cc 100644
+--- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
++++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+@@ -37,6 +37,7 @@
+ struct intel_xhci_usb_data {
+ 	struct usb_role_switch *role_sw;
+ 	void __iomem *base;
++	enum usb_role role;
+ };
+ 
+ static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
+@@ -167,6 +168,30 @@ static int intel_xhci_usb_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int intel_xhci_usb_suspend(struct platform_device *pdev,
++				  pm_message_t state)
++{
++	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++
++	data->role = intel_xhci_usb_get_role(dev);
++
++	return 0;
++}
++
++static int intel_xhci_usb_resume(struct platform_device *pdev)
++{
++	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++
++	if (intel_xhci_usb_get_role(dev) != data->role) {
++		if (intel_xhci_usb_set_role(dev, data->role) != 0)
++			dev_warn(dev, "Failed to set role during resume\n");
++	}
++
++	return 0;
++}
++
+ static const struct platform_device_id intel_xhci_usb_table[] = {
+ 	{ .name = DRV_NAME },
+ 	{}
+@@ -180,6 +205,8 @@ static struct platform_driver intel_xhci_usb_driver = {
+ 	.id_table = intel_xhci_usb_table,
+ 	.probe = intel_xhci_usb_probe,
+ 	.remove = intel_xhci_usb_remove,
++	.suspend = intel_xhci_usb_suspend,
++	.resume = intel_xhci_usb_resume,
+ };
+ 
+ module_platform_driver(intel_xhci_usb_driver);
+-- 
+2.22.0
+
