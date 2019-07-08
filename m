@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5783622B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E9562501
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389234AbfGHP2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:28:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56618 "EHLO mail.kernel.org"
+        id S1733037AbfGHPS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:18:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730098AbfGHP2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:28:10 -0400
+        id S1733018AbfGHPSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:18:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 818F520645;
-        Mon,  8 Jul 2019 15:28:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C120F216E3;
+        Mon,  8 Jul 2019 15:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599689;
-        bh=wulHnAKnIRQXmD5SlTRtiU7beGLqGFFGxwlQru+CWj4=;
+        s=default; t=1562599103;
+        bh=NBp3141aUWRgutwla6lWbITEXfVZ+XUjm3uAkRmQhoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r4mbpYldFBMk0qiyzuYKghfFNuWYXnnrqR9//1gFPpj3vpQo0mbE9pD7YKb1chwHG
-         sLLo8gIjq2S8D7WnMNM4riAaaDVXsM+ZRhUCbqnZF03e0bFBrhvu9LpEgvyyHW9ot2
-         IJzRO4zpB9gsgX6HM+uyKaOzFzvor4wRjqvqsCvc=
+        b=Y2Yw1ErroxgspGLPsRFkLr/hc4gcz1TB0DSSzItNcirTl1xpa9WxgY1R8LZ5r1WXc
+         eT8C5JWqxiyj2W9mDdedXLBoOeV+gLDmrcWlK5uSlOfhWhL4dZbZjDKkbog2fglhR1
+         e0eZXe7nrGTbqTHEWVW6+GUYXxtf8V+1MgUjYBDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Flax <flatmax@flatmax.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 08/90] ASoC : cs4265 : readable register too low
-Date:   Mon,  8 Jul 2019 17:12:35 +0200
-Message-Id: <20190708150522.952943044@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.4 26/73] SMB3: retry on STATUS_INSUFFICIENT_RESOURCES instead of failing write
+Date:   Mon,  8 Jul 2019 17:12:36 +0200
+Message-Id: <20190708150522.379448483@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f3df05c805983427319eddc2411a2105ee1757cf ]
+From: Steve French <stfrench@microsoft.com>
 
-The cs4265_readable_register function stopped short of the maximum
-register.
+commit 8d526d62db907e786fd88948c75d1833d82bd80e upstream.
 
-An example bug is taken from :
-https://github.com/Audio-Injector/Ultra/issues/25
+Some servers such as Windows 10 will return STATUS_INSUFFICIENT_RESOURCES
+as the number of simultaneous SMB3 requests grows (even though the client
+has sufficient credits).  Return EAGAIN on STATUS_INSUFFICIENT_RESOURCES
+so that we can retry writes which fail with this status code.
 
-Where alsactl store fails with :
-Cannot read control '2,0,0,C Data Buffer,0': Input/output error
+This (for example) fixes large file copies to Windows 10 on fast networks.
 
-This patch fixes the bug by setting the cs4265 to have readable
-registers up to the maximum hardware register CS4265_MAX_REGISTER.
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Matt Flax <flatmax@flatmax.org>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/cs4265.c | 2 +-
+ fs/cifs/smb2maperror.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
-index 407554175282..68d18aca397d 100644
---- a/sound/soc/codecs/cs4265.c
-+++ b/sound/soc/codecs/cs4265.c
-@@ -60,7 +60,7 @@ static const struct reg_default cs4265_reg_defaults[] = {
- static bool cs4265_readable_register(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
--	case CS4265_CHIP_ID ... CS4265_SPDIF_CTL2:
-+	case CS4265_CHIP_ID ... CS4265_MAX_REGISTER:
- 		return true;
- 	default:
- 		return false;
--- 
-2.20.1
-
+--- a/fs/cifs/smb2maperror.c
++++ b/fs/cifs/smb2maperror.c
+@@ -455,7 +455,7 @@ static const struct status_to_posix_erro
+ 	{STATUS_FILE_INVALID, -EIO, "STATUS_FILE_INVALID"},
+ 	{STATUS_ALLOTTED_SPACE_EXCEEDED, -EIO,
+ 	"STATUS_ALLOTTED_SPACE_EXCEEDED"},
+-	{STATUS_INSUFFICIENT_RESOURCES, -EREMOTEIO,
++	{STATUS_INSUFFICIENT_RESOURCES, -EAGAIN,
+ 				"STATUS_INSUFFICIENT_RESOURCES"},
+ 	{STATUS_DFS_EXIT_PATH_FOUND, -EIO, "STATUS_DFS_EXIT_PATH_FOUND"},
+ 	{STATUS_DEVICE_DATA_ERROR, -EIO, "STATUS_DEVICE_DATA_ERROR"},
 
 
