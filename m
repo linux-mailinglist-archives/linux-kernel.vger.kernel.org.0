@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1426233E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03FFC6245E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbfGHPda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:33:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
+        id S2388594AbfGHPZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390347AbfGHPd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:33:27 -0400
+        id S2388571AbfGHPZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:25:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C94020665;
-        Mon,  8 Jul 2019 15:33:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68471216C4;
+        Mon,  8 Jul 2019 15:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600006;
-        bh=a19q6HBJseF2Wd1PAwtLqB5gVl5woajPfylehEwf/b4=;
+        s=default; t=1562599522;
+        bh=K6PGeGX2uGzbM2XUPHDUbzymPuucyvKYsiYoANA47CQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7oNdHN9Zz2u+TrPIhALXRVQjThrEp9bJ1hYsL6ql84EN2bOMXCACQXOPCxGgT/aK
-         hl2N6Ij+GxTC4yshDCvs+O82Kq817RpTGGc8yfD3rLDj7KHNJqbpxf2Y7GTpZjzlLZ
-         z+Pz+aKs3OFXFpm7AfTVovbpaga6JE05J5EEtDJc=
+        b=oQDKm6SqvFhgP2reQ3G2J7Win5IagIyoVGI+/aT/JzprphtMXvH1zbXEjAg3m1agE
+         qedGF2WCbEx79osHfL67trpO60MjpHXlFJC6rppv0ss60lEzorGn4ydq1426W0oJMy
+         d89/qYTtxL24U4KUBv4iOioYs5sActQPXXOYw8k0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Sailer <rs@tuxedocomputers.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 63/96] ALSA: hda/realtek: Add quirks for several Clevo notebook barebones
+        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Balbir Singh <sblbir@amzn.com>
+Subject: [PATCH 4.14 43/56] vhost_net: introduce vhost_exceeds_weight()
 Date:   Mon,  8 Jul 2019 17:13:35 +0200
-Message-Id: <20190708150529.874500232@linuxfoundation.org>
+Message-Id: <20190708150523.719177265@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Sailer <rs@tuxedocomputers.com>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 503d90b30602a3295978e46d844ccc8167400fe6 upstream.
+commit 272f35cba53d088085e5952fd81d7a133ab90789 upstream.
 
-This adds 4 SND_PCI_QUIRK(...) lines for several barebone models of the ODM
-Clevo. The model names are written in regex syntax to describe/match all clevo
-models that are similar enough and use the same PCI SSID that this fixup works
-for them.
-
-Additionally the lines regarding SSID 0x96e1 and 0x97e1 didn't fix audio for the
-all our Clevo notebooks using these SSIDs (models Clevo P960* and P970*) since
-ALC1220_FIXP_CLEVO_PB51ED_PINS swapped pins that are not necesarry to be
-swapped. This patch initiates ALC1220_FIXUP_CLEVO_P950 instead for these model
-and fixes the audio.
-
-Fixes: 80690a276f44 ("ALSA: hda/realtek - Add quirk for Tuxedo XC 1509")
-Signed-off-by: Richard Sailer <rs@tuxedocomputers.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Balbir Singh <sblbir@amzn.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/vhost/net.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2443,9 +2443,10 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
--	SND_PCI_QUIRK(0x1558, 0x96e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_CLEVO_PB51ED_PINS),
--	SND_PCI_QUIRK(0x1558, 0x97e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_CLEVO_PB51ED_PINS),
--	SND_PCI_QUIRK(0x1558, 0x65d1, "Tuxedo Book XC1509", ALC1220_FIXUP_CLEVO_PB51ED_PINS),
-+	SND_PCI_QUIRK(0x1558, 0x96e1, "Clevo P960[ER][CDFN]-K", ALC1220_FIXUP_CLEVO_P950),
-+	SND_PCI_QUIRK(0x1558, 0x97e1, "Clevo P970[ER][CDFN]", ALC1220_FIXUP_CLEVO_P950),
-+	SND_PCI_QUIRK(0x1558, 0x65d1, "Clevo PB51[ER][CDF]", ALC1220_FIXUP_CLEVO_PB51ED_PINS),
-+	SND_PCI_QUIRK(0x1558, 0x67d1, "Clevo PB71[ER][CDF]", ALC1220_FIXUP_CLEVO_PB51ED_PINS),
- 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -446,6 +446,12 @@ static bool vhost_exceeds_maxpend(struct
+ 		== nvq->done_idx;
+ }
+ 
++static bool vhost_exceeds_weight(int pkts, int total_len)
++{
++	return total_len >= VHOST_NET_WEIGHT ||
++	       pkts >= VHOST_NET_PKT_WEIGHT;
++}
++
+ /* Expects to be always run from workqueue - which acts as
+  * read-size critical section for our kind of RCU. */
+ static void handle_tx(struct vhost_net *net)
+@@ -550,7 +556,6 @@ static void handle_tx(struct vhost_net *
+ 			msg.msg_control = NULL;
+ 			ubufs = NULL;
+ 		}
+-
+ 		total_len += len;
+ 		if (total_len < VHOST_NET_WEIGHT &&
+ 		    !vhost_vq_avail_empty(&net->dev, vq) &&
+@@ -579,8 +584,7 @@ static void handle_tx(struct vhost_net *
+ 		else
+ 			vhost_zerocopy_signal_used(net, vq);
+ 		vhost_net_tx_packet(net);
+-		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+-		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
++		if (unlikely(vhost_exceeds_weight(++sent_pkts, total_len))) {
+ 			vhost_poll_queue(&vq->poll);
+ 			break;
+ 		}
+@@ -863,8 +867,7 @@ static void handle_rx(struct vhost_net *
+ 			vhost_log_write(vq, vq_log, log, vhost_len,
+ 					vq->iov, in);
+ 		total_len += vhost_len;
+-		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+-		    unlikely(++recv_pkts >= VHOST_NET_PKT_WEIGHT)) {
++		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
+ 			vhost_poll_queue(&vq->poll);
+ 			goto out;
+ 		}
 
 
