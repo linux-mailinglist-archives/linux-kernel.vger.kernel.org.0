@@ -2,131 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C104861C95
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDC561C9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729978AbfGHJvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 05:51:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35305 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbfGHJvH (ORCPT
+        id S1730009AbfGHJ5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 05:57:18 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35938 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbfGHJ5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 05:51:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y4so7692343wrm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 02:51:05 -0700 (PDT)
+        Mon, 8 Jul 2019 05:57:17 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k21so13988774edq.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 02:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XC+MCenEOTbiEZaPU4ZpNhdfgGfWHfTIq6+TiHkM7NU=;
-        b=ZYqnUAQqlSDGhAPfPpBsqqtk/N5hnycFGScWzud4u27GZVoN7HOq4dnBcBTnr+nLw/
-         p+JQcy03Y8UlGofWg4aJFjrQsBG9E9g49AlTziJ6WuItj8pXJNWDa6FVAJQBNFBfakmY
-         RlJb/yEyw9c0Yicd1rtDNoi6gfG07B6LsZ/SzqoTycLeSn6a4O1nhx7FoNRKP2hlWRZ2
-         mniDzJxBFZLwX/dfifuag8h+5C26vvDq9PlPEFFkBQdvSE3uTigxcVPasXstqn7YsGRh
-         a0tzCNd8zOkwEJ7BSw+f/jpnmqgqgRB7qbqIFSbI16H1w9lTzlqNH2yWnTDI/TEIyClm
-         92nA==
+        h=from:to:cc:subject:date:message-id;
+        bh=rg3MR+eApkBoKx2MM7FYI4liPQBRkBxidD5AvqBz0OM=;
+        b=SeHVRv3HeKJ2PAjjWt5Hmn//1ALTldDmhmUK8On9cmnhLklUIBkOxn/UZt3CYgJ87O
+         1KjhqbbSCfiHI9TgxroEsesjNDjgfEl4JD0ZNL3bDOc8WpnpyOYPjKVin8f7Of0H2eR7
+         4IASabU0RbxJKTxobQuwn784QEjSwH0r8u2CNMXJ2ECHOvSzJhBDxCyp1CQ+KbFpEubf
+         iNHvnFxb2MM/YLEwKEOEYdHNnQlcIEfYACv3HNQy5OH/kA2u2sqjEKwvDSKkHa52bc8G
+         WQt0iA5BE685gjJ499tyf2qv60VudAXaJtAdC6P2kEugvxB3blW6BOes/RCXPzR0uegp
+         R2Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=XC+MCenEOTbiEZaPU4ZpNhdfgGfWHfTIq6+TiHkM7NU=;
-        b=JZuhKjz0/86ICe3JSDE9s8p/6cci27LompkFVFpPiMCznuYqRQ4HCxuiALm2r1A0MM
-         ZIrVMBP8kUoZ2z18sTAnpWnz5GS/X4pm+b94P5jQP48pYcrtiL05hZn2Veh8tUKSBJCY
-         p9dIsbIgm3WFsjuNrqXfztJTJ9X028Je1UU6b4GevgNfAzYb+D/FV+kdNmAoyQcc6udu
-         Jdv8lLb/jIgU1H/8CI92qG9Jh6vCsyN1YUErQoAeVp6keBIgw453lQipm7cbi4kP8tzp
-         dU1owWzY1Ls8hO9iP5jDh+pHA0bs9Q8/ZpbBxH3MXE2INUe7prgLfffTc4bHgrDrNVmC
-         KZAg==
-X-Gm-Message-State: APjAAAXc+ibc3dgXz/LXYBCLJbKq6H+rBwWpMmlCbILPu957cra19vxm
-        +IDg74FsRpIyKAoaFUyqbYA=
-X-Google-Smtp-Source: APXvYqxDh4IthAZGfY5V5LAa7y4sh/8lal5dCeVm6w2KW5gWXtd16+sSzz19IRwApsglBcY2sC/KHw==
-X-Received: by 2002:adf:e6c5:: with SMTP id y5mr18746021wrm.235.1562579464969;
-        Mon, 08 Jul 2019 02:51:04 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id h9sm12818994wrw.85.2019.07.08.02.51.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rg3MR+eApkBoKx2MM7FYI4liPQBRkBxidD5AvqBz0OM=;
+        b=d2DGeHUN3YZ4G7A2eZfwkV6mFY6Ue5WwtcmCuLYaa6Pv9usr4Q1kL8ICBt/F9Kkwhi
+         zeNaLRXvunu8sXkiOECx1DbyRRHYZ4rogvEYH6TzpQFckS/KPDneLJwwDakwoYNNENgD
+         3ocSBqmu5GB8ueZhMXZIKJDckcBdRNo09PgeFIsNQND0pmz3kJPp7aoDqG8RSSQ+WT4y
+         7gJGs0SJVG2p3Agpbq41fGDkywWFDyzvcRXzLVPUYX1UtBXKi7CNBRI5VUINia5kNVhf
+         5uJ2pHFohn0FQRmUWK3up7CLWkZH/H98sH1iCsUd7++OsQAY+dHrSdLJ7+EHJHsPX8dD
+         AKgw==
+X-Gm-Message-State: APjAAAWLhCsqXN6mpWfN9Lv5dldMTDqPuvGFg+FXiAeSgBPoaXkJzUf/
+        30BrRrnoqG+BslErqhF5ekAv+YYFptQgNA==
+X-Google-Smtp-Source: APXvYqwEifHSmhjFpE/rRdKK4PwCH5groMB0buQ5s2hi1x5SS7e71wTQ5pHAGzEkO5QxhCQxTiM9jg==
+X-Received: by 2002:a17:906:838a:: with SMTP id p10mr15031436ejx.237.1562579835439;
+        Mon, 08 Jul 2019 02:57:15 -0700 (PDT)
+Received: from puskevit.guest.wlan ([195.142.153.182])
+        by smtp.gmail.com with ESMTPSA id p22sm3363012ejm.38.2019.07.08.02.57.14
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 02:51:04 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 11:51:02 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] RAS changes for v5.3
-Message-ID: <20190708095102.GA59026@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 08 Jul 2019 02:57:14 -0700 (PDT)
+From:   Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+Cc:     Fatih ALTINPINAR <fatihaltinpinar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        Josenivaldo Benito Jr <jrbenito@benito.qsl.br>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Staging: rtl8723bs: hal: rtl8723bs_recv.c: Fix code style
+Date:   Mon,  8 Jul 2019 12:56:50 +0300
+Message-Id: <20190708095652.18174-1-fatihaltinpinar@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Fixed a coding stlye issue. Removed braces from a single statement if
+block.
 
-Please pull the latest ras-core-for-linus git tree from:
+Signed-off-by: Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
-
-   # HEAD: 6e4f929ea8b2097b0052f6674de839a3c9d477e9 x86/mce: Do not check return value of debugfs_create functions
-
-Boris is on vacation so I'm sending the RAS bits this time. The main 
-changes were:
-
- - Various RAS/CEC improvements and fixes by Borislav Petkov:
-    - error insertion fixes
-    - offlining latency fix
-    - memory leak fix
-    - additional sanity checks
-    - cleanups
-    - debug output improvements
-
- - More SMCA enhancements by Yazen Ghannam:
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
+index e23b39ab16c5..71a4bcbeada9 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
+@@ -449,9 +449,8 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
+ 				skb_reserve(precvbuf->pskb, (RECVBUFF_ALIGN_SZ - alignment));
+ 			}
  
-    - make banks truly per-CPU which they are in the hardware,
-    - don't over-cache certain registers, 
-    - make the number of MCA banks per-CPU variable.
+-			if (!precvbuf->pskb) {
++			if (!precvbuf->pskb)
+ 				DBG_871X("%s: alloc_skb fail!\n", __func__);
+-			}
+ 		}
+ 
+ 		list_add_tail(&precvbuf->list, &precvpriv->free_recv_buf_queue.queue);
+-- 
+2.17.1
 
-   The long term goal with these changes is to support future 
-   heterogenous SMCA extensions.
-
- - Misc fixes and improvements.
-
- Thanks,
-
-	Ingo
-
------------------->
-Borislav Petkov (8):
-      RAS/CEC: Fix pfn insertion
-      RAS/CEC: Check count_threshold unconditionally
-      RAS/CEC: Do not set decay value on error
-      RAS/CEC: Fix potential memory leak
-      RAS/CEC: Sanity-check array on every insertion
-      RAS/CEC: Rename count_threshold to action_threshold
-      RAS/CEC: Dump the different array element sections
-      RAS/CEC: Add copyright
-
-Greg Kroah-Hartman (1):
-      x86/mce: Do not check return value of debugfs_create functions
-
-Tony Luck (1):
-      RAS/CEC: Add CONFIG_RAS_CEC_DEBUG and move CEC debug features there
-
-Yazen Ghannam (5):
-      x86/MCE: Make struct mce_banks[] static
-      x86/MCE: Make mce_banks a per-CPU array
-      x86/MCE/AMD: Don't cache block addresses on SMCA systems
-      x86/MCE: Make the number of MCA banks a per-CPU variable
-      x86/MCE: Determine MCA banks' init state properly
-
-
- arch/x86/kernel/cpu/mce/amd.c      |  92 +++++++++----------
- arch/x86/kernel/cpu/mce/core.c     | 177 +++++++++++++++++++++++++------------
- arch/x86/kernel/cpu/mce/inject.c   |  37 ++------
- arch/x86/kernel/cpu/mce/internal.h |  12 +--
- arch/x86/kernel/cpu/mce/severity.c |  14 +--
- arch/x86/ras/Kconfig               |  10 +++
- drivers/ras/cec.c                  | 132 ++++++++++++++++-----------
- 7 files changed, 269 insertions(+), 205 deletions(-)
