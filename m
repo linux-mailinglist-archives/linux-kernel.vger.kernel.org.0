@@ -2,90 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F7861BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C4561B54
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbfGHIls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:41:48 -0400
-Received: from mail.santannapisa.it ([193.205.80.98]:30743 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbfGHIls (ORCPT
+        id S1729481AbfGHHoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:44:37 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39771 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfGHHog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:41:48 -0400
-X-Greylist: delayed 3600 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jul 2019 04:41:46 EDT
-Received: from [151.41.66.174] (account l.abeni@santannapisa.it HELO sweethome)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 140626216; Mon, 08 Jul 2019 09:41:44 +0200
-Date:   Mon, 8 Jul 2019 09:41:36 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC PATCH 2/6] sched/dl: Capacity-aware migrations
-Message-ID: <20190708094136.7bce5f46@sweethome>
-In-Reply-To: <b920d85b-4228-52fd-22db-3a0c26cf8ebd@arm.com>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
-        <20190506044836.2914-3-luca.abeni@santannapisa.it>
-        <b920d85b-4228-52fd-22db-3a0c26cf8ebd@arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 8 Jul 2019 03:44:36 -0400
+Received: by mail-pg1-f194.google.com with SMTP id u17so6732558pgi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 00:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6yYLvyLEBI35unTfoBpTYZgBgYmEeKFbJbiIi6+Pm18=;
+        b=jrhAt7QHn1hfUTP3COeeH51Er61boYoW+oDIVMrr9COFzd9Upo4q27t48s4EWqhesa
+         KU35Ls9UQB0G45UVMerTSq1UJtXZFQ0YLdfSQ85nM3K3OTu4UzbX3fAjwNHPwxiF6i22
+         VWG+UdqpRCKTCF9pdkdySwfX2u8PuvZQNWb46wVpftzUmWNaBcyYsyf345kYKJBb/m28
+         FzLoPFg2ZkEOGzujoHE7dbijdRbLwq5RDamzdQv7GxV1z1Bbw2MxdeLiX9zp2SJpSxb+
+         1rNtxFARtLOqF4CLByMmOpiZIC/Ax2w4yn8VwnjE6QtO5m/DWsujGLML9vga4AY+jYyd
+         YXxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6yYLvyLEBI35unTfoBpTYZgBgYmEeKFbJbiIi6+Pm18=;
+        b=roH9HnWXq4me7meAidSKGIJtru8B3XClE5ipxHEVsBMRtKjiUOuFJw2jhz6qLE1dLj
+         DMJ5m71wombyhLMoGAfPadHUO+Mo3IItvSqO1hwlhUGLSTFmVG52OGm/wUNCJAe0Cqkn
+         wI8qz0Dx2kqAWGxvlJ/OR2c86uVe1XK5N9ONK4V//1I6L6QIDn0JFyBpnljRG563TesF
+         Sk1QFCYEi3Afga3uhw+HmfHRpyZMkK8NMIbHKBlycWLNSNGNtWep33JKxfD+a+NaKGuU
+         wzU8sdc6nEGpfFDuXnpy5B/usrDPGVPRj0xNYRYtv/JeRBvKFP5tLH5J62p3SlBRYBja
+         Qz7A==
+X-Gm-Message-State: APjAAAVl3qZbzFKktcj7nFG5yiq7dUoyetNt85KO4Pw27tbDLnVVUJl8
+        GmUvSVgaeI5D87M7Cg8FuvDloA==
+X-Google-Smtp-Source: APXvYqwZWf9LLc+ir3bbSRqwnYrobSk3zS9QKp8UXA6ZaA547Hc+q9BjEik4iR2j0FZUtVmgXY79Og==
+X-Received: by 2002:a65:42c3:: with SMTP id l3mr21652248pgp.372.1562571875771;
+        Mon, 08 Jul 2019 00:44:35 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id p13sm46332015pjb.30.2019.07.08.00.44.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 00:44:34 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 13:14:32 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, cheng.shengyu@zte.com.cn,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] cpufreq/pasemi: fix an use-after-free in
+ pas_cpufreq_cpu_init()
+Message-ID: <20190708074432.56q2e3ig5ehiee5f@vireshk-i7>
+References: <1562570393-8684-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562570393-8684-1-git-send-email-wen.yang99@zte.com.cn>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
-
-On Thu, 4 Jul 2019 14:05:22 +0200
-Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-
-> On 5/6/19 6:48 AM, Luca Abeni wrote:
+On 08-07-19, 15:19, Wen Yang wrote:
+> The cpu variable is still being used in the of_get_property() call
+> after the of_node_put() call, which may result in use-after-free.
 > 
-> [...]
+> Fixes: a9acc26b75f ("cpufreq/pasemi: fix possible object reference leak")
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> v2: clean up the code according to the advice of viresh.
 > 
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index 5b981eeeb944..3436f3d8fa8f 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -1584,6 +1584,9 @@ select_task_rq_dl(struct task_struct *p, int
-> > cpu, int sd_flag, int flags) if (sd_flag != SD_BALANCE_WAKE)
-> >  		goto out;
-> >  
-> > +	if (dl_entity_is_special(&p->dl))
-> > +		goto out;  
+>  drivers/cpufreq/pasemi-cpufreq.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> I wonder if this is really required. The if condition
-> 
-> 1591         if (unlikely(dl_task(curr)) &&
-> 1592             (curr->nr_cpus_allowed < 2 ||
-> 1593              !dl_entity_preempt(&p->dl, &curr->dl)) &&
-> 1594             (p->nr_cpus_allowed > 1)) {
-> 
-> further below uses '!dl_entity_preempt(&p->dl, &curr->dl))' which
-> returns 'dl_entity_is_special(a) || ...'
+> diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+> index 6b1e4ab..c6d464b 100644
+> --- a/drivers/cpufreq/pasemi-cpufreq.c
+> +++ b/drivers/cpufreq/pasemi-cpufreq.c
+> @@ -128,20 +128,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	int cur_astate, idx;
+>  	struct resource res;
+>  	struct device_node *cpu, *dn;
+> -	int err = -ENODEV;
+> +	int err;
+>  
+>  	cpu = of_get_cpu_node(policy->cpu, NULL);
+> -
+> -	of_node_put(cpu);
+>  	if (!cpu)
+> -		goto out;
+> +		return -ENODEV;
+>  
 
-Uhm... I do not remember the details; I remember that the check fixed
-something during the development of the patchset, but I did not check
-if it was still needed when I forward-ported the patches...
 
-So, maybe it worked around some bugs in previous versions of the
-kernel, but is not needed now.
+>  	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
+>  	if (!dn)
+>  		dn = of_find_compatible_node(NULL, NULL,
+>  					     "pasemi,pwrficient-sdc");
+>  	if (!dn)
+> -		goto out;
+> +		return -ENODEV;
 
+This change looks incorrect. You still need to drop reference to cpu ?
 
+>  	err = of_address_to_resource(dn, 0, &res);
+>  	of_node_put(dn);
+>  	if (err)
+> @@ -196,6 +194,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	policy->cur = pas_freqs[cur_astate].frequency;
+>  	ppc_proc_freq = policy->cur * 1000ul;
+>  
+> +	of_node_put(cpu);
+>  	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
+>  
+>  out_unmap_sdcpwr:
+> @@ -204,6 +203,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  out_unmap_sdcasr:
+>  	iounmap(sdcasr_mapbase);
+>  out:
+> +	of_node_put(cpu);
+>  	return err;
+>  }
+>  
+> -- 
+> 2.9.5
 
-				Luca
+-- 
+viresh
