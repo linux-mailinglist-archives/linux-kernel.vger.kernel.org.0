@@ -2,91 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF2E61FC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E10161FCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731406AbfGHNrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 09:47:33 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:46091 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbfGHNrd (ORCPT
+        id S1731463AbfGHNsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 09:48:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43062 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbfGHNsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 09:47:33 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MsqIi-1idXVd2xaq-00tCtF; Mon, 08 Jul 2019 15:47:09 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/exynos: add CONFIG_MMU dependency
-Date:   Mon,  8 Jul 2019 15:46:51 +0200
-Message-Id: <20190708134707.538501-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 8 Jul 2019 09:48:41 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x68DhVam069388;
+        Mon, 8 Jul 2019 13:48:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=jd+8j6+yNC3ijBw7+ODjQJXJiyZtrWICCAM1SOfIdDA=;
+ b=bpUOslIiaLPmuaytkrSZqCSyy9p3sjdE9No2vxO00n+9aEO5UKU1Qyl+3U/S1XSiUZyo
+ XnF8+bjOP4sSgzoIi+Y66MMcF8UpQZPgkJdJ6fzDN3TvO8hR8/MzEO8keo6CUhVeuStd
+ o0eQzynEOrS1TVOjzo7ABEMCnull0ic95EOFT6mOnt1iF8HGn8OaTgi4fAB5zuclLGhu
+ kGY6dYQMzXM2X8nZ73OC57GJq6zHKfvdbVf7LLq0PKLwo3M2BmVRUfn/GrEwLKAOjI7m
+ u6Arcud+FYmlwYkH3Xx9L+v5WYnTtmn4zGYta7AdGPg+91B+jkmYPjyoijN/nfgJNTOm DA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2tjkkpeggf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jul 2019 13:48:10 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x68Dh2OH073349;
+        Mon, 8 Jul 2019 13:46:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2tjkf26s5m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jul 2019 13:46:10 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x68Dk7hq000349;
+        Mon, 8 Jul 2019 13:46:08 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jul 2019 06:46:07 -0700
+Subject: Re: [PATCH v6 4/4] x86/xen: Add "nopv" support for HVM guest
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, jgross@suse.com,
+        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de
+References: <1562490908-17882-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1562490908-17882-5-git-send-email-zhenzhong.duan@oracle.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <86b0dbb9-74a7-6883-e6d7-210bd35a6944@oracle.com>
+Date:   Mon, 8 Jul 2019 09:46:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Axu85VajvoAR0wMxnciqB+GEFg6pSh3s41QC4py5g9oaTINzJOU
- UZTGHhbajCJ3JGbZmqfhTRCufcbapkbWIlxE2O6YC/PYBuj6T1Xc+KMLQ61WIPq+oD2194n
- CwfP9Yz4bxTS7rQpc1m0RFG+9Hhz5UTlg9Rdj5gGR44o4kixJuGca+25o7R7dEIlRK13gXG
- gCAopP2RQqbNVKGh6VcHw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wnjssiFpvxA=:HTMu8pLHDd0+KCxZo8b6Wn
- e+rAuNkumRK+K4Z/GKOoxrneL/xy7278A61Y67M6KOB+P062stKVyfD7Az5cOJZHGOFBOaOEk
- Uvyx4CtA4I/aveHXSdF7iTh61rnO0iFDNbMOm1+8KjkHwoghph0jdfvwy2VbPDC0ZP/4BhJGA
- fqZMHC9n9KfwFup9F1gyw9Wnv3c87zWbYYIKPtGWh9Yb6CazHKg4hSuJJ2cjWlIqLP/ohRJQE
- 4nsMQNB6aafVD8ZgDE5e5skHAfYuj41tTYzyB14BZiXY1dZ3uszoiZnQKx8Avsfc4UYNVdtvD
- A2SnOlW/1H+JnT/+zKLp+0PA0JoXKynorPVVTakM203L+fDzngNUGXsV6+rblk2MIpley2aeO
- 1iz9R/V9ISTWRasK1Z0fxpvOTpA7U6W3SZJYeGmTXx2QGlQvOhs8K+mrO9fUKKpfYS8SfIi3U
- vf5SmG44kUojDZ0Czvkz0kZ4nLl+o3WBTcolcI7ypGwocJYaXZvhFCZ8rcdz0yAR/POTH9Fjb
- I4ZyYvwDJZ/y0geIgeJo0BQDd2wuaQbHrrXwggxYJn4+BV4EeBmL4q2vHh7aWq88lAMNkdyWG
- Q4RB1/9Uxzh9dyJ6IdJHuumfnzjIpMplgs9EGUtvr70w91XN7wzNyJadQYJ9Mdcn7pUowbLO2
- tNEy0886CoGThl7fHLYWDGAXaKdwRsGZIivVKOprgWBasmaF+dPV8/YMPRzTamDudypA4e6S8
- Z2OwKIM/3VIqy4OOo2Gjb837APKoRwQAd4CMBA==
+In-Reply-To: <1562490908-17882-5-git-send-email-zhenzhong.duan@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907080173
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907080173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compile-testing this driver on a NOMMU configuration shows a link failure:
+On 7/7/19 5:15 AM, Zhenzhong Duan wrote:
+>  
+> +static uint32_t __init xen_platform_hvm(void)
+> +{
+> +	if (xen_pv_domain())
+> +		return 0;
+> +
+> +	if (xen_pvh_domain() && nopv) {
+> +		/* Guest booting via the Xen-PVH boot entry goes here */
+> +		pr_info("\"nopv\" parameter is ignored in PVH guest\n");
+> +		nopv = false;
+> +	} else if (nopv) {
+> +		/*
+> +		 * Guest booting via normal boot entry (like via grub2) goes
+> +		 * here.
+> +		 */
+> +		x86_init.hyper.guest_late_init = xen_hvm_guest_late_init;
+> +		return 0;
 
-drivers/gpu/drm/exynos/exynos_drm_gem.o: In function `exynos_drm_gem_fault':
-exynos_drm_gem.c:(.text+0x484): undefined reference to `vmf_insert_mixed'
+After staring at this some more I don't think we can do this.
+Hypervisor-specific code should not muck with with x86_init.hyper, it's
+layering violation. That's what init_hypervisor_platform() is for.
 
-Add a CONFIG_MMU dependency to ensure we only enable this in configurations
-that build correctly.
+So we may have to create another hypervisor_x86 ops structure for Xen
+nopv (which I don't find very appealing TBH). Or update
+x86_hyper_xen_hvm and return xen_cpuid_base() instead of zero (but then
+you'd need to update all these structs from __initconst to _init or some
+such). Or something else.
 
-Many other drm drivers have the same dependency. It would be nice to
-make this work in MMU-less configurations, but evidently nobody has
-ever needed this so far.
 
-Fixes: 156bdac99061 ("drm/exynos: trigger build of all modules")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/exynos/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+-boris
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 60ce4a8ad9e1..6f7d3b3b3628 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -2,6 +2,7 @@
- config DRM_EXYNOS
- 	tristate "DRM Support for Samsung SoC EXYNOS Series"
- 	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
-+	depends on MMU
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
- 	select SND_SOC_HDMI_CODEC if SND_SOC
--- 
-2.20.0
+
+> +	}
+> +	return xen_cpuid_base();
+> +}
+> +
+>  const __initconst struct hypervisor_x86 x86_hyper_xen_hvm = {
+>  	.name                   = "Xen HVM",
+>  	.detect                 = xen_platform_hvm,
+> @@ -268,4 +283,5 @@ static __init void xen_hvm_guest_late_init(void)
+>  	.init.init_mem_mapping	= xen_hvm_init_mem_mapping,
+>  	.init.guest_late_init	= xen_hvm_guest_late_init,
+>  	.runtime.pin_vcpu       = xen_pin_vcpu,
+> +	.ignore_nopv            = true,
+>  };
 
