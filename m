@@ -2,99 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0309F61960
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 04:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0D16196D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 05:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfGHC5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 22:57:30 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36605 "EHLO ozlabs.org"
+        id S1728723AbfGHDMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 23:12:19 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:52430 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfGHC53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 22:57:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hqqp0gjmz9sNC;
-        Mon,  8 Jul 2019 12:57:25 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562554646;
-        bh=VFMvekxiALG5/T3w/s22q5Spces/S/G1tm9jk6S5Ia8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TbZlXwghZ0pglE1yKKcLXI8E6jaP9LAExweQlJwrN0pGBJVMkrjW3HuJmIbP6VdZs
-         P3t3oRkCqEwSj1XW8wVh5BU59PA9ZwSbuzM9w+Op0lJp7HmJTkEoREciybkvLxdNcP
-         86R/N7P5JsupgKxz3OKcvl6hg81dy9b1HDY+pdHi1ohVnJreZbQjfYdO5W5vBDCPUb
-         aj5QryyxjvTw0RRD5H/bKW6hMTOL45WIaWQttPfvSpNtHy8Zg4MfPn/ATFy50lp1aO
-         C/vtgrVfSVXm0wdXy9xS49nO6Ys5CzN/JlOHLE2rIMMHjGigHSIRQO5HNYMMncuX7K
-         tjEQsUqp+xBgw==
-Date:   Mon, 8 Jul 2019 12:57:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kamenee Arumugam <kamenee.arumugam@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: linux-next: build failure after merge of the rdma tree
-Message-ID: <20190708125725.25c38fa7@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XLgGCQZ6W/s0w.HJzRujD_g"; protocol="application/pgp-signature"
+        id S1727973AbfGHDMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 23:12:19 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A51D1A0028;
+        Mon,  8 Jul 2019 05:12:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 459DD1A0D76;
+        Mon,  8 Jul 2019 05:12:12 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7422D402A6;
+        Mon,  8 Jul 2019 11:12:05 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] cpufreq: imx-cpufreq-dt: Add i.MX8MN support
+Date:   Mon,  8 Jul 2019 11:03:08 +0800
+Message-Id: <20190708030308.1815-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XLgGCQZ6W/s0w.HJzRujD_g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Hi all,
+i.MX8MN is a new SoC of i.MX8M series, it also uses speed
+grading and market segment fuses for OPP definitions, add
+support for this SoC.
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/cpufreq/imx-cpufreq-dt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-In file included from <command-line>:32:
-./usr/include/rdma/rvt-abi.h:13:10: fatal error: rdma/ib_verbs.h: No such f=
-ile or directory
- #include <rdma/ib_verbs.h>
-          ^~~~~~~~~~~~~~~~~
+diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
+index b54fd26..4f85f31 100644
+--- a/drivers/cpufreq/imx-cpufreq-dt.c
++++ b/drivers/cpufreq/imx-cpufreq-dt.c
+@@ -44,10 +44,11 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
+ 	 * According to datasheet minimum speed grading is not supported for
+ 	 * consumer parts so clamp to 1 to avoid warning for "no OPPs"
+ 	 *
+-	 * Applies to 8mq and 8mm.
++	 * Applies to i.MX8M series SoCs.
+ 	 */
+ 	if (mkt_segment == 0 && speed_grade == 0 && (
+ 			of_machine_is_compatible("fsl,imx8mm") ||
++			of_machine_is_compatible("fsl,imx8mn") ||
+ 			of_machine_is_compatible("fsl,imx8mq")))
+ 		speed_grade = 1;
+ 
+-- 
+2.7.4
 
-Caused by commits
-
-  dabac6e460ce ("IB/hfi1: Move receive work queue struct into uapi director=
-y")
-
-interacting with commit
-
-  0c422a3d4e1b ("kbuild: compile-test exported headers to ensure they are s=
-elf-contained")
-
-from the kbuild tree.
-
-You can't reference the include/linux headers from uapi headers ...
-
-I have used the rmda tree from 20190628 again today (given the previous
-errors).
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XLgGCQZ6W/s0w.HJzRujD_g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0isRUACgkQAVBC80lX
-0Gzswwf+PwNBgvj9IuYO+/veo1nviKwhkdPSFbCMesZiaO24KSyoAiRI0p8/X30/
-ufIK4+HM/iJ2oGev/BbnoyP6Daveg2ycq8atSDV/pXQi+Hvlb82qyu2drOIJDerM
-eKPILbsGJmhftzj8GBbQzEdTcCTpjHCInS+OPqs6r5iHasWkkxoGpknnViVhTDVM
-j/DfUaxTxv/AP3EWNHC6jRRo5KmuqiQKxsQ2ziURCivFWOaWmBNsxg1Bq+vGjdIm
-3uWJOtV6dGvFev9596t54IOvUxNTkCTtRMOJaQLi/vCM8UktApWEahZ65JvGR2U+
-dkb0yR+POQx7x2Xsfa1R+mQ/9UBZ9A==
-=kVX7
------END PGP SIGNATURE-----
-
---Sig_/XLgGCQZ6W/s0w.HJzRujD_g--
