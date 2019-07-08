@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E406215C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29613621E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732385AbfGHPPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:15:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38206 "EHLO mail.kernel.org"
+        id S2387416AbfGHPUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:20:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732370AbfGHPPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:15:37 -0400
+        id S1726491AbfGHPUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:20:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADAC4216E3;
-        Mon,  8 Jul 2019 15:15:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6BCE21537;
+        Mon,  8 Jul 2019 15:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598936;
-        bh=gecknaLnpxJAkcz09//PUVx/i0m8/5EUXaITOfUOD1g=;
+        s=default; t=1562599213;
+        bh=Zs8cdzwW/322Rt7NUIextUwtakxIBwPqzOFo9x9q7OI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nUbuHdEqul2Ayrn57K1uUUGbv8TftxwrD0w71YO1qNQg5vCyzPKvSIz1bxXHJDeVS
-         gXlUimtWtWuD9NYjB4zkvApTDtFM/iVhNpPmCwVAqV8QmC2laSW1a9Ycfu/o0aiRQs
-         BD4qlVPCxYfjSuB1KGbbEshIj4bJnZ09ZTXG4lnw=
+        b=Vpw0+SWBVJWAV9D6FrJlIpfNo2EwBwrNwpPuLhB/LYTcT3tygy9KvL3rVyeE2f+3o
+         L2nhKkcg0D+WKwxdpmfIXHVh/ft9BE7f4CvcNubpye8Faaq5t81ztHkSpSVoWzeeXC
+         h2+hJ8Hlib8RjecVawY7yH4Nv/MqVULy28IAnbbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com,
-        Willem de Bruijn <willemb@google.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 22/73] can: purge socket error queue on sock destruct
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 039/102] perf header: Fix unchecked usage of strncpy()
 Date:   Mon,  8 Jul 2019 17:12:32 +0200
-Message-Id: <20190708150521.526939612@linuxfoundation.org>
+Message-Id: <20190708150528.431360994@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit fd704bd5ee749d560e86c4f1fd2ef486d8abf7cf upstream.
+commit 5192bde7d98c99f2cd80225649e3c2e7493722f7 upstream.
 
-CAN supports software tx timestamps as of the below commit. Purge
-any queued timestamp packets on socket destroy.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Fixes: 51f31cabe3ce ("ip: support for TX timestamps on UDP and RAW sockets")
-Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  util/header.c: In function 'perf_event__synthesize_event_update_name':
+  util/header.c:3625:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->name, len);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3618:15: note: length computed here
+    size_t len = strlen(evsel->name);
+                 ^~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-wycz66iy8dl2z3yifgqf894p@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/can/af_can.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/header.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/can/af_can.c
-+++ b/net/can/af_can.c
-@@ -113,6 +113,7 @@ EXPORT_SYMBOL(can_ioctl);
- static void can_sock_destruct(struct sock *sk)
- {
- 	skb_queue_purge(&sk->sk_receive_queue);
-+	skb_queue_purge(&sk->sk_error_queue);
- }
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3027,7 +3027,7 @@ perf_event__synthesize_event_update_name
+ 	if (ev == NULL)
+ 		return -ENOMEM;
  
- static const struct can_proto *can_get_proto(int protocol)
+-	strncpy(ev->data, evsel->name, len);
++	strlcpy(ev->data, evsel->name, len + 1);
+ 	err = process(tool, (union perf_event*) ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
 
 
