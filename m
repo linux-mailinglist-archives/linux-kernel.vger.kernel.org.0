@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F76623DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A965362304
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732986AbfGHPbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:31:24 -0400
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:42246 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726318AbfGHPbU (ORCPT
+        id S2389917AbfGHPbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:31:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40044 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389702AbfGHPb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:31:20 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 1B4CE2E0AFB;
-        Mon,  8 Jul 2019 18:31:18 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id IybuJqQbtA-VHUevqMH;
-        Mon, 08 Jul 2019 18:31:18 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1562599878; bh=++lrfvwZjaLsfQzgaVw0H2rIS5jqJhN6AJSriPvsrIY=;
-        h=Message-ID:References:Date:To:From:Subject:In-Reply-To;
-        b=ve3zJM8jhAoeWRKWPa6NVzg904mXBEzV97CoUdwtLmTzRS5A2tkLlckrpJdlV2s0n
-         dxc3Y/GFnYWQJu5fLUmYVTk48k5Y+VBREqe4LJbhKKGTtreuRg0m9RIjEacGsSYDlS
-         8l97F7f7upQMOSfCX+QaTjM7Z7R5XTarP7xDs5n4=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id nA5P8SeRQi-VH9CfHCJ;
-        Mon, 08 Jul 2019 18:31:17 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH 2/2] null_blk: fix race and oops at removing device with
- bandwidth limit
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 08 Jul 2019 18:31:17 +0300
-Message-ID: <156259987752.2590.11230901750437507796.stgit@buzz>
-In-Reply-To: <156259987576.2590.3397115585587914567.stgit@buzz>
-References: <156259987576.2590.3397115585587914567.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Mon, 8 Jul 2019 11:31:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TSb9RZHxfeUIgcG4AaJCXnlRIyBQa6Hm5im5gRdlLAI=; b=lYpAV7pyexRRFGgMLB8Yxj4bW
+        IfR4+conmhOKMAdcNo69eTK/D2RLLtmdA9nGkDBU3/Nx7/IMnPsdURrFzAyxZE6IqLB536nS0Eg47
+        17NtHdMQLy96yG4ygWsXHuRA3GV8bWd7OZGUsWQPGhcquIY8fC19NnYL7a7eIzfga+rbM=;
+Received: from [217.140.106.53] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hkVbv-0000cW-9D; Mon, 08 Jul 2019 15:31:23 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id ECD7FD02C61; Mon,  8 Jul 2019 16:31:22 +0100 (BST)
+Date:   Mon, 8 Jul 2019 16:31:22 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] regulator: axp20x: fix DCDCA and DCDCD for AXP806
+Message-ID: <20190708153122.GA14859@sirena.co.uk>
+References: <20190706100545.22759-1-jernej.skrabec@siol.net>
+ <20190706100545.22759-2-jernej.skrabec@siol.net>
+ <20190706112144.GH20625@sirena.org.uk>
+ <24416869.PQYcAB5yxk@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Content-Disposition: inline
+In-Reply-To: <24416869.PQYcAB5yxk@jernej-laptop>
+X-Cookie: Visit beautiful Vergas, Minnesota.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function null_del_dev should disable throttling before canceling timer,
-otherwise timer could be restarted by null_handle_cmd().
 
-Remove bump of cur_bytes - without NULLB_DEV_FL_THROTTLED it has no effect.
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: eff2c4f10873 ("nullb: bandwidth control")
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- drivers/block/null_blk_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Jul 06, 2019 at 02:44:03PM +0200, Jernej =C5=A0krabec wrote:
+> Dne sobota, 06. julij 2019 ob 13:21:44 CEST je Mark Brown napisal(a):
 
-diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
-index 15925b355965..2d4ba7b05e2f 100644
---- a/drivers/block/null_blk_main.c
-+++ b/drivers/block/null_blk_main.c
-@@ -1398,8 +1398,8 @@ static void null_del_dev(struct nullb *nullb)
- 	del_gendisk(nullb->disk);
- 
- 	if (test_bit(NULLB_DEV_FL_THROTTLED, &nullb->dev->flags)) {
-+		clear_bit(NULLB_DEV_FL_THROTTLED, &nullb->dev->flags);
- 		hrtimer_cancel(&nullb->bw_timer);
--		atomic_long_set(&nullb->cur_bytes, LONG_MAX);
- 		null_restart_queue_async(nullb);
- 	}
- 
+> > This is not a great changelog - what are the bugs and how does
+> > this patch fix them?
 
+> In case of DCDCA, number of steps for second range should be 20 (0x14), b=
+ut it=20
+> was set to 14. So I guess patch author missed "0x".  Currently, math does=
+n't=20
+> work, because sum of both number of steps plus 2 must be equal to number =
+of=20
+> voltages macro.
+
+> Same error is present in AXP803 DCDC6 regulator.
+
+> In case of DCDCD, array of ranges (axp806_dcdcd_ranges) contains two rang=
+es,=20
+> which use same start and end macros. By checking datasheet or just checki=
+ng=20
+> macros at the top of the source file, it's obvious that "1" is missing in=
+=20
+> second range macro names (1600 instead of 600).=20
+
+Can you please resend these with changelogs on the relevant
+patches so they can be reviewed more sensibly?
+
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0jYcoACgkQJNaLcl1U
+h9DtSgf/URiCB0wuaBFm1xBj0lR4/D/ZwJ69BPtFimhZoiJ51iNYlrGoCrIqwEjo
+1M9VM72VcUprApRg0AzDRc17gcABv83YX3ejsUkfORYTpHMTKeo5BdILaDjWkhKu
+mLUwoW0ZhLD9vJ8LyHe+pz9SPQnIMsnzJWqJdocqbdodGgfqGT4cxXkv1W4IjAAn
+CigWB3O/7IQi6a6rKlH0US5UEpTGcrT4O3A+hJbfRXPYN49pzKMo5AXoCUQtJq0u
+A3uXF3m9s1spI2DlWSRzQZdivv9VbFDWimwFrFclfCUudiEPuQ+7Pm5mT1E8PIB9
+FCTsHO7Zb789/zwzUq5Ej7zwbGCnIQ==
+=5luO
+-----END PGP SIGNATURE-----
+
+--YZ5djTAD1cGYuMQK--
