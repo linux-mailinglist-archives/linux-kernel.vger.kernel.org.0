@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B2576218F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD106219C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732788AbfGHPRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:17:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40482 "EHLO mail.kernel.org"
+        id S1730468AbfGHPRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:17:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732777AbfGHPRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:14 -0400
+        id S1730511AbfGHPRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:17:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3862E2166E;
-        Mon,  8 Jul 2019 15:17:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E88E6216C4;
+        Mon,  8 Jul 2019 15:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599033;
-        bh=fHVNVZ/yi3kAe7zp1/zq7MgpT0N4EdP/+nIB0OHB9BY=;
+        s=default; t=1562599064;
+        bh=A3B+CCe3/MsWOjNTZZQCMTN4wd4E3BxnZap+XVg5Xew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BrRfn3aUa45dzJRVHSqsOwEQL+K+J8H2dzu14Qx+K/dkNA70zdsUUKp/6NOmTxZlB
-         g/bCFJDIk5GztoK0HtkzdEHFM+S1bLgJ1+MMf/RQxpPsHPiG1OUghmm4J8Pbp4XA2H
-         RQgj623eUujfebjH9hMHw/yCYkiBeoEdBL1fY/sY=
+        b=cLhk2dhxRl9B9ZHxxLXKwzrpblKTAUCEmfCGxhRJ+FUN1A9b950KdsXebcWQmwW6q
+         Y690i+S8veWtCIJtLT1Y97aimmYf9+cTJN9F4QbFyKbxJ+UKGnwjjwEWjCG2FwI/Ik
+         Kv05fvGbZJB2VQWcl2LYZzU7eH2b/mTHPrYClIUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 29/73] perf ui helpline: Use strlcpy() as a shorter form of strncpy() + explicit set nul
-Date:   Mon,  8 Jul 2019 17:12:39 +0200
-Message-Id: <20190708150522.673884057@linuxfoundation.org>
+Subject: [PATCH 4.4 30/73] perf help: Remove needless use of strncpy()
+Date:   Mon,  8 Jul 2019 17:12:40 +0200
+Message-Id: <20190708150522.770686017@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
 References: <20190708150513.136580595@linuxfoundation.org>
@@ -47,47 +47,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 4d0f16d059ddb91424480d88473f7392f24aebdc upstream.
+commit b6313899f4ed2e76b8375cf8069556f5b94fbff0 upstream.
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+Since we make sure the destination buffer has at least strlen(orig) + 1,
+no need to do a strncpy(dest, orig, strlen(orig)), just use strcpy(dest,
+orig).
 
-In this case we are actually setting the null byte at the right place,
-but since we pass the buffer size as the limit to strncpy() and not
-it minus one, gcc ends up warning us about that, see below. So, lets
-just switch to the shorter form provided by strlcpy().
+This silences this gcc 8.2 warning on Alpine Linux:
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
-
-  ui/tui/helpline.c: In function 'tui_helpline__push':
-  ui/tui/helpline.c:27:2: error: 'strncpy' specified bound 512 equals destination size [-Werror=stringop-truncation]
-    strncpy(ui_helpline__current, msg, sz)[sz - 1] = '\0';
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+  In function 'add_man_viewer',
+      inlined from 'perf_help_config' at builtin-help.c:284:3:
+  builtin-help.c:192:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy((*p)->name, name, len);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  builtin-help.c: In function 'perf_help_config':
+  builtin-help.c:187:15: note: length computed here
+    size_t len = strlen(name);
+                 ^~~~~~~~~~~~
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: e6e904687949 ("perf ui: Introduce struct ui_helpline")
-Link: https://lkml.kernel.org/n/tip-d1wz0hjjsh19xbalw69qpytj@git.kernel.org
+Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
+Link: https://lkml.kernel.org/n/tip-2f69l7drca427ob4km8i7kvo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/ui/tui/helpline.c |    2 +-
+ tools/perf/builtin-help.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/ui/tui/helpline.c
-+++ b/tools/perf/ui/tui/helpline.c
-@@ -23,7 +23,7 @@ static void tui_helpline__push(const cha
- 	SLsmg_set_color(0);
- 	SLsmg_write_nstring((char *)msg, SLtt_Screen_Cols);
- 	SLsmg_refresh();
--	strncpy(ui_helpline__current, msg, sz)[sz - 1] = '\0';
-+	strlcpy(ui_helpline__current, msg, sz);
+--- a/tools/perf/builtin-help.c
++++ b/tools/perf/builtin-help.c
+@@ -179,7 +179,7 @@ static void add_man_viewer(const char *n
+ 	while (*p)
+ 		p = &((*p)->next);
+ 	*p = zalloc(sizeof(**p) + len + 1);
+-	strncpy((*p)->name, name, len);
++	strcpy((*p)->name, name);
  }
  
- static int tui_helpline__show(const char *format, va_list ap)
+ static int supported_man_viewer(const char *name, size_t len)
 
 
