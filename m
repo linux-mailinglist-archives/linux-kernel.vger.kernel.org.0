@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F57622D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14C13623C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389498AbfGHP3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:29:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37168 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389481AbfGHP33 (ORCPT
+        id S2389833AbfGHPaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:30:12 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:40592 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389785AbfGHPaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:29:29 -0400
-Received: from [167.98.27.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hkVa3-00057b-E6; Mon, 08 Jul 2019 16:29:27 +0100
-Received: from ben by deadeye with local (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hkVa2-00036G-T0; Mon, 08 Jul 2019 16:29:26 +0100
-Message-ID: <85820ecbcc368f992eb061481c388bb2ebb8ad65.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 000/129] 3.16.70-rc1 review
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
-        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
-Date:   Mon, 08 Jul 2019 16:29:22 +0100
-In-Reply-To: <20190708130511.GA4626@luke-XPS-13>
-References: <lsq.1562518456.876074874@decadent.org.uk>
-         <20190708130511.GA4626@luke-XPS-13>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-UBYcyYUNPEIlvLKJ/Id1"
-User-Agent: Evolution 3.30.5-1.1 
+        Mon, 8 Jul 2019 11:30:03 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id F27A32E0A47;
+        Mon,  8 Jul 2019 18:29:58 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id SGvld7Yg6z-Twtq6Pmt;
+        Mon, 08 Jul 2019 18:29:58 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1562599798; bh=0ZLPgrM5RZIP8rfkfWdS2iGaxPtAPBUurmkYWYh9nVw=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=zZVm+LqvUNOElt9D5Fpn62DNu+R6E0Ocf8yo6kaWwidtIpAQSdGKp/OkZzxLJBe+J
+         gtdlZnaG0r8g/Cm3GNijyGzyJNsyDCOld478M6SLZArM9/xmFLAlaoZozKfdQt6Vlk
+         UHan79Lq3uT+tyIP2BtXXdXM5co4Gn4d4ZGRLyYA=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 7RpncgZf1J-Tww4iCld;
+        Mon, 08 Jul 2019 18:29:58 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] blk-throttle: fix zero wait time for iops throttled group
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org
+Cc:     Liu Bo <bo.liu@linux.alibaba.com>, stable@vger.kernel.org
+Date:   Mon, 08 Jul 2019 18:29:57 +0300
+Message-ID: <156259979778.2486.6296077059654653057.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 167.98.27.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops
+limit is enforced") wait time could be zero even if group is throttled and
+cannot issue requests right now. As a result throtl_select_dispatch() turns
+into busy-loop under irq-safe queue spinlock.
 
---=-UBYcyYUNPEIlvLKJ/Id1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Fix is simple: always round up target time to the next throttle slice.
 
-On Mon, 2019-07-08 at 06:05 -0700, Luke Nowakowski-Krijger wrote:
-> Hello,=20
->=20
-> I got 1 error when applying this patch series to the latest linux-3.16.y
-> stable branch
->=20
-> fs/fuse/file.c:218:3: error: implicit declaration of function =E2=80=98st=
-ream_open=E2=80=99
+Fixes: 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops limit is enforced")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: stable@vger.kernel.org # v4.19+
+---
+ block/blk-throttle.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-It is added by the previous patch and declared in <linux/fs.h>.=20
-fs/fuse/file.c always includes that (via fs/fuse/fuse_i.h), so I don't
-see how this error can happen.
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 9ea7c0ecad10..8ab6c8153223 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -881,13 +881,10 @@ static bool tg_with_in_iops_limit(struct throtl_grp *tg, struct bio *bio,
+ 	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
+ 	u64 tmp;
+ 
+-	jiffy_elapsed = jiffy_elapsed_rnd = jiffies - tg->slice_start[rw];
+-
+-	/* Slice has just started. Consider one slice interval */
+-	if (!jiffy_elapsed)
+-		jiffy_elapsed_rnd = tg->td->throtl_slice;
++	jiffy_elapsed = jiffies - tg->slice_start[rw];
+ 
+-	jiffy_elapsed_rnd = roundup(jiffy_elapsed_rnd, tg->td->throtl_slice);
++	/* Round up to the next throttle slice, wait time must be nonzero */
++	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
+ 
+ 	/*
+ 	 * jiffy_elapsed_rnd should not be a big value as minimum iops can be
 
-Ben.
-
---=20
-Ben Hutchings
-Time is nature's way of making sure that
-everything doesn't happen at once.
-
-
-
---=-UBYcyYUNPEIlvLKJ/Id1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl0jYVIACgkQ57/I7JWG
-EQknpBAAvk1RxrLlsgscIZSmkbexOcj+NwhyieFM9Mc8zhCaEnj7OBTU+i6oABXO
-weQgt59Nm7byVZqHPYt9B1F4blgt9oj6dqSQWUDtOYECjp9MEFPA1jNYBMwomsEE
-/DSH2wC1fN1qvfTBATR9n8UilqlM4mzIMUQ3taiCmp8sUp1VRem09qCKfP5kNkzb
-HYhWLbJPkyUD1ii650Aa5K3M/+u6HVUpDEZ3UAXlkPJi19YRrL9NcmQNEceUsK1j
-GH/JrsrEgQqOshx5a9bzH69BNpradteS0eBV4oGhc82mywXvrsPdBxlrM+O5LQa2
-o4BltIEd3z25Lh+TrZm9OUtXk319s4h/FHyanHUl31V1e7zVxEes2DlDnRR8PPMI
-J2xJDBMOiBZOswtie6cF3w+Oa5PZvvYMY/9VlQ6IX2b451Jf+UCl9M6ta8NahowR
-jo1PAr5oGwzrogpEeZLSGDGFpZDsznUUUsFbRJoSJOaHC+06pxnSgHSPmmUc8eZM
-mioe22HfoRHJQ1LN06EkdbwvHS6Nogjpt0a15TGPrU5CIgkyXtOsoELFA42o+Iip
-89O0HahTYZAztYv74GBOrG60o3qd4KqxlHFknfD13qB2rG6/1zLNZg2DWHYhEwqM
-S7cZFBL23eu3o/EnFHQDKqL/2UHNS1p4AYPv8Tblz/MQVdFDvwg=
-=hRS3
------END PGP SIGNATURE-----
-
---=-UBYcyYUNPEIlvLKJ/Id1--
