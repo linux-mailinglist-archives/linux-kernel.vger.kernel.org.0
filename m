@@ -2,179 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8DF61BD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5BE61BF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfGHIoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:44:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:50111 "EHLO ozlabs.org"
+        id S1729072AbfGHIwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:52:02 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:36526 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729555AbfGHIoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:44:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hzWp2ps6z9sNy;
-        Mon,  8 Jul 2019 18:44:06 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562575446;
-        bh=9iHnAV5x+eygmg72q9V9IpKKCZ5gF1idv4hhMUU9d1w=;
-        h=Date:From:To:Cc:Subject:From;
-        b=CtdS7i61kZ2nJIP99nJ7iZcpJOgnpZR9Bn6GsDLtyE17ipw5smgUD1DBihzJuCdtV
-         hy9UI/6xHnn3W1hb9l/z4sCSTsJ3bm60M3HM4E9yAoVJ6UnI/PDJnTs4pKFdlpsHYg
-         3tu0DrihODx54qVjbAkwqeHulXYwvZ42ecaTAjKnfGHkCoEWFHhf7YEMp5g9lapOC3
-         KE2d/7KqLTl7xuGXP/syCOkvYgdcSzezHu/EEJjkUec9yNuDyVdnKghWlXV4ZktPsf
-         UIovBvUW7ZSfFcipgP3d/80eKN9iTq67AV2nawogQHW22l7+sa4yac7LApj8u6Cc0z
-         gp4OEaILS6nCA==
-Date:   Mon, 8 Jul 2019 18:44:02 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Trond Myklebust <trondmy@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: linux-next: manual merge of the driver-core tree with the nfs tree
-Message-ID: <20190708184402.4cd912ac@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uXRP4x1pD_=gQ7L6IDWX1GM"; protocol="application/pgp-signature"
+        id S1728884AbfGHIwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 04:52:02 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id D496EBE0043BE622BB03;
+        Mon,  8 Jul 2019 16:51:58 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x688oVnj044240;
+        Mon, 8 Jul 2019 16:50:31 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070816503612-2168893 ;
+          Mon, 8 Jul 2019 16:50:36 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
+Subject: [PATCH v3] cpufreq/pasemi: fix an use-after-free in pas_cpufreq_cpu_init()
+Date:   Mon, 8 Jul 2019 16:48:46 +0800
+Message-Id: <1562575726-17438-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-08 16:50:36,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-08 16:50:33,
+        Serialize complete at 2019-07-08 16:50:33
+X-MAIL: mse-fl2.zte.com.cn x688oVnj044240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uXRP4x1pD_=gQ7L6IDWX1GM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The cpu variable is still being used in the of_get_property() call
+after the of_node_put() call, which may result in use-after-free.
 
-Hi all,
+Fixes: a9acc26b75f ("cpufreq/pasemi: fix possible object reference leak")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v3: fix a leaked reference.
+v2: clean up the code according to the advice of viresh.
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+ drivers/cpufreq/pasemi-cpufreq.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-  net/sunrpc/debugfs.c
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index 6b1e4ab..9dc5163 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -128,20 +128,20 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	int cur_astate, idx;
+ 	struct resource res;
+ 	struct device_node *cpu, *dn;
+-	int err = -ENODEV;
++	int err;
+ 
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
+-
+-	of_node_put(cpu);
+ 	if (!cpu)
+-		goto out;
++		return -ENODEV;
+ 
+ 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
+ 	if (!dn)
+ 		dn = of_find_compatible_node(NULL, NULL,
+ 					     "pasemi,pwrficient-sdc");
+-	if (!dn)
++	if (!dn) {
++		err = -ENODEV;
+ 		goto out;
++	}
+ 	err = of_address_to_resource(dn, 0, &res);
+ 	of_node_put(dn);
+ 	if (err)
+@@ -196,6 +196,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	policy->cur = pas_freqs[cur_astate].frequency;
+ 	ppc_proc_freq = policy->cur * 1000ul;
+ 
++	of_node_put(cpu);
+ 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
+ 
+ out_unmap_sdcpwr:
+@@ -204,6 +205,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ out_unmap_sdcasr:
+ 	iounmap(sdcasr_mapbase);
+ out:
++	of_node_put(cpu);
+ 	return err;
+ }
+ 
+-- 
+2.9.5
 
-between commit:
-
-  2f34b8bfae19 ("SUNRPC: add links for all client xprts to debugfs")
-
-from the nfs tree and commit:
-
-  0a0762c6c604 ("sunrpc: no need to check return value of debugfs_create fu=
-nctions")
-
-from the driver-core tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/sunrpc/debugfs.c
-index 105bea190a45,707d7aab1546..000000000000
---- a/net/sunrpc/debugfs.c
-+++ b/net/sunrpc/debugfs.c
-@@@ -118,60 -117,40 +117,52 @@@ static const struct file_operations tas
-  	.release	=3D tasks_release,
-  };
- =20
- +static int do_xprt_debugfs(struct rpc_clnt *clnt, struct rpc_xprt *xprt, =
-void *numv)
- +{
- +	int len;
- +	char name[24]; /* enough for "../../rpc_xprt/ + 8 hex digits + NULL */
- +	char link[9]; /* enough for 8 hex digits + NULL */
- +	int *nump =3D numv;
- +
- +	if (IS_ERR_OR_NULL(xprt->debugfs))
- +		return 0;
- +	len =3D snprintf(name, sizeof(name), "../../rpc_xprt/%s",
- +		       xprt->debugfs->d_name.name);
- +	if (len > sizeof(name))
- +		return -1;
- +	if (*nump =3D=3D 0)
- +		strcpy(link, "xprt");
- +	else {
- +		len =3D snprintf(link, sizeof(link), "xprt%d", *nump);
- +		if (len > sizeof(link))
- +			return -1;
- +	}
-- 	if (!debugfs_create_symlink(link, clnt->cl_debugfs, name))
-- 		return -1;
-++	debugfs_create_symlink(link, clnt->cl_debugfs, name);
- +	(*nump)++;
- +	return 0;
- +}
- +
-  void
-  rpc_clnt_debugfs_register(struct rpc_clnt *clnt)
-  {
-  	int len;
- -	char name[24]; /* enough for "../../rpc_xprt/ + 8 hex digits + NULL */
- -	struct rpc_xprt *xprt;
- +	char name[9]; /* enough for 8 hex digits + NULL */
- +	int xprtnum =3D 0;
- =20
-- 	/* Already registered? */
-- 	if (clnt->cl_debugfs || !rpc_clnt_dir)
-- 		return;
--=20
-  	len =3D snprintf(name, sizeof(name), "%x", clnt->cl_clid);
-  	if (len >=3D sizeof(name))
-  		return;
- =20
-  	/* make the per-client dir */
-  	clnt->cl_debugfs =3D debugfs_create_dir(name, rpc_clnt_dir);
-- 	if (!clnt->cl_debugfs)
-- 		return;
- =20
-  	/* make tasks file */
-- 	if (!debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs,
-- 				 clnt, &tasks_fops))
-- 		goto out_err;
-+ 	debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs, clnt,
-+ 			    &tasks_fops);
- =20
- -	rcu_read_lock();
- -	xprt =3D rcu_dereference(clnt->cl_xprt);
- -	/* no "debugfs" dentry? Don't bother with the symlink. */
- -	if (IS_ERR_OR_NULL(xprt->debugfs)) {
- -		rcu_read_unlock();
- -		return;
- -	}
- -	len =3D snprintf(name, sizeof(name), "../../rpc_xprt/%s",
- -			xprt->debugfs->d_name.name);
- -	rcu_read_unlock();
- -
- -	if (len >=3D sizeof(name))
- +	if (rpc_clnt_iterate_for_each_xprt(clnt, do_xprt_debugfs, &xprtnum) < 0)
-  		goto out_err;
- =20
- -	debugfs_create_symlink("xprt", clnt->cl_debugfs, name);
- -
-  	return;
-  out_err:
-  	debugfs_remove_recursive(clnt->cl_debugfs);
-
---Sig_/uXRP4x1pD_=gQ7L6IDWX1GM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jAlIACgkQAVBC80lX
-0Gx/hwf+OdQB9hhf8/q2PaTAveekef/bng7zIuO+8jukNi1ufafFfmBi2JzywSbI
-wSlYbT54SHDfTuUFYbKjMBsWiR/sxUJ++Kn5bWd/shhImYfZ7H6hKq0Zbifxi3w5
-bduOIJ+hH8RMUyat2XorJHIQRyzC0CGNKEjSNjnHeo3A8woQWN+jg3q++g5KhOTD
-mgPLzgDi1yvfd46/yYM0oVI7Ak08NlxL//lT76h90DI84NU9/NHaB4ea9CfUDtOL
-+u+84qPqnlHp8NlE+RRBhtkY3pZU2YRAfml6FZCc83kSPY13AjSpqDIPYC70nVKP
-q9S/lOoIXaQXvjTeEKc8K5kZR8KCfQ==
-=KalS
------END PGP SIGNATURE-----
-
---Sig_/uXRP4x1pD_=gQ7L6IDWX1GM--
