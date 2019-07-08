@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 726176251B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D741B6224B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732888AbfGHPRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:17:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41106 "EHLO mail.kernel.org"
+        id S1731396AbfGHPYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:24:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732856AbfGHPRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:39 -0400
+        id S1731376AbfGHPYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:24:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14CFD216F4;
-        Mon,  8 Jul 2019 15:17:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98F4121738;
+        Mon,  8 Jul 2019 15:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599058;
-        bh=PlbhsP/1l0Cu+F69o8LIBKwjU4G9z5OkTVqCpdeIhS4=;
+        s=default; t=1562599460;
+        bh=w/C1KY7DwgILP0qzGNFTrFsId6j3M+yqpLgt9370w2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AbmCWCihay2rGBfqI3iC0wxZ0rr8lF1q2qrcQZZ1JFywC73rh1rHuY2qlzoxqiicL
-         JnxhIpru+aP3MZy428pvY6ouv/HWXmqen/EBqpxb2sSiMKcaessL8GnWHCaKL8M4C+
-         6JrhL42/MUtsUZ4HseW25AipfJdoHUOvp2zW2gw4=
+        b=lge/ErUNje40tVHmOjidFQL45t26g5CiegUDOYrAEaE67GTpQ6jmbWRvKUg9dXQiv
+         fPsBuCABmmSjTPlADSZrfk+3P4Kf/wuqwu37x/0xwcBPiBo4DLPy6LH0YppNjSJTrX
+         NaiX/qkKpN0SjzYUoAdP6akEAAsIsKIYtS5c5QQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 64/73] ALSA: seq: fix incorrect order of dest_client/dest_ports arguments
-Date:   Mon,  8 Jul 2019 17:13:14 +0200
-Message-Id: <20190708150524.660457073@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 23/56] ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME
+Date:   Mon,  8 Jul 2019 17:13:15 +0200
+Message-Id: <20190708150521.427133141@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jann Horn <jannh@google.com>
 
-commit c3ea60c231446663afd6ea1054da6b7f830855ca upstream.
+commit 6994eefb0053799d2e07cd140df6c2ea106c41ee upstream.
 
-There are two occurrances of a call to snd_seq_oss_fill_addr where
-the dest_client and dest_port arguments are in the wrong order. Fix
-this by swapping them around.
+Fix two issues:
 
-Addresses-Coverity: ("Arguments in wrong order")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+When called for PTRACE_TRACEME, ptrace_link() would obtain an RCU
+reference to the parent's objective credentials, then give that pointer
+to get_cred().  However, the object lifetime rules for things like
+struct cred do not permit unconditionally turning an RCU reference into
+a stable reference.
+
+PTRACE_TRACEME records the parent's credentials as if the parent was
+acting as the subject, but that's not the case.  If a malicious
+unprivileged child uses PTRACE_TRACEME and the parent is privileged, and
+at a later point, the parent process becomes attacker-controlled
+(because it drops privileges and calls execve()), the attacker ends up
+with control over two processes with a privileged ptrace relationship,
+which can be abused to ptrace a suid binary and obtain root privileges.
+
+Fix both of these by always recording the credentials of the process
+that is requesting the creation of the ptrace relationship:
+current_cred() can't change under us, and current is the proper subject
+for access control.
+
+This change is theoretically userspace-visible, but I am not aware of
+any code that it will actually break.
+
+Fixes: 64b875f7ac8a ("ptrace: Capture the ptracer's creds not PT_PTRACE_CAP")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/oss/seq_oss_ioctl.c |    2 +-
- sound/core/seq/oss/seq_oss_rw.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/ptrace.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/sound/core/seq/oss/seq_oss_ioctl.c
-+++ b/sound/core/seq/oss/seq_oss_ioctl.c
-@@ -62,7 +62,7 @@ static int snd_seq_oss_oob_user(struct s
- 	if (copy_from_user(ev, arg, 8))
- 		return -EFAULT;
- 	memset(&tmpev, 0, sizeof(tmpev));
--	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.port, dp->addr.client);
-+	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.client, dp->addr.port);
- 	tmpev.time.tick = 0;
- 	if (! snd_seq_oss_process_event(dp, (union evrec *)ev, &tmpev)) {
- 		snd_seq_oss_dispatch(dp, &tmpev, 0, 0);
---- a/sound/core/seq/oss/seq_oss_rw.c
-+++ b/sound/core/seq/oss/seq_oss_rw.c
-@@ -174,7 +174,7 @@ insert_queue(struct seq_oss_devinfo *dp,
- 	memset(&event, 0, sizeof(event));
- 	/* set dummy -- to be sure */
- 	event.type = SNDRV_SEQ_EVENT_NOTEOFF;
--	snd_seq_oss_fill_addr(dp, &event, dp->addr.port, dp->addr.client);
-+	snd_seq_oss_fill_addr(dp, &event, dp->addr.client, dp->addr.port);
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -78,9 +78,7 @@ void __ptrace_link(struct task_struct *c
+  */
+ static void ptrace_link(struct task_struct *child, struct task_struct *new_parent)
+ {
+-	rcu_read_lock();
+-	__ptrace_link(child, new_parent, __task_cred(new_parent));
+-	rcu_read_unlock();
++	__ptrace_link(child, new_parent, current_cred());
+ }
  
- 	if (snd_seq_oss_process_event(dp, rec, &event))
- 		return 0; /* invalid event - no need to insert queue */
+ /**
 
 
