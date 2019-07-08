@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 381C56224E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C78E262422
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388367AbfGHPYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51760 "EHLO mail.kernel.org"
+        id S2389144AbfGHP1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:27:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388357AbfGHPY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:29 -0400
+        id S2389116AbfGHP1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:27:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6EE02173C;
-        Mon,  8 Jul 2019 15:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97DCF2166E;
+        Mon,  8 Jul 2019 15:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599468;
-        bh=nbg1uAtIg45BUypnjfpcZWL6DWQHO8lCwuS5lg5vDss=;
+        s=default; t=1562599664;
+        bh=EeN8P+8ubVqVRWHrFYaLidONZiymiRhuZH2JS9gXpZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eNkG/JCfE6RBsLN+gaG/KDl1vzNlt8EUl7CIh5HKD4FrZBosikvw6mH4YkvS9D1GB
-         b+SuKCUxe0Wn1LQ47mQGYsPawPXHYIVMX3buSwr96QvDg2cKpk6Css63+iDIrm0t9v
-         zqbzkmc4sPi229mTL3DiNsmReQrN21aqkxQQcL/Y=
+        b=0S2bSYC8wVBsBaFZW/pzDoYUS8usVHt5ZAetNCyW3yorM8QhMLdC+gsP/KTzgh4Uc
+         4/p5pwXOMQE06zeaI6sbsOwPpSZt6/RYvjtKPkpl159y36IMJJM5A+Ma4+I0wlWyt+
+         ylgSia1NMmGhsxfZXC1QyAtSpYVUFV8yYasbdo8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu-Hsuan Hsu <yuhsuan@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 08/56] ASoC: max98090: remove 24-bit format support if RJ is 0
-Date:   Mon,  8 Jul 2019 17:13:00 +0200
-Message-Id: <20190708150518.499283297@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Phil Auld <pauld@redhat.com>, Joel Savitz <jsavitz@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 34/90] cpuset: restore sanity to cpuset_cpus_allowed_fallback()
+Date:   Mon,  8 Jul 2019 17:13:01 +0200
+Message-Id: <20190708150524.329971848@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +45,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5628c8979642a076f91ee86c3bae5ad251639af0 ]
+[ Upstream commit d477f8c202d1f0d4791ab1263ca7657bbe5cf79e ]
 
-The supported formats are S16_LE and S24_LE now. However, by datasheet
-of max98090, S24_LE is only supported when it is in the right justified
-mode. We should remove 24-bit format if it is not in that mode to avoid
-triggering error.
+In the case that a process is constrained by taskset(1) (i.e.
+sched_setaffinity(2)) to a subset of available cpus, and all of those are
+subsequently offlined, the scheduler will set tsk->cpus_allowed to
+the current value of task_cs(tsk)->effective_cpus.
 
-Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This is done via a call to do_set_cpus_allowed() in the context of
+cpuset_cpus_allowed_fallback() made by the scheduler when this case is
+detected. This is the only call made to cpuset_cpus_allowed_fallback()
+in the latest mainline kernel.
+
+However, this is not sane behavior.
+
+I will demonstrate this on a system running the latest upstream kernel
+with the following initial configuration:
+
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	ffffffff,fffffff
+	Cpus_allowed_list:	0-63
+
+(Where cpus 32-63 are provided via smt.)
+
+If we limit our current shell process to cpu2 only and then offline it
+and reonline it:
+
+	# taskset -p 4 $$
+	pid 2272's current affinity mask: ffffffffffffffff
+	pid 2272's new affinity mask: 4
+
+	# echo off > /sys/devices/system/cpu/cpu2/online
+	# dmesg | tail -3
+	[ 2195.866089] process 2272 (bash) no longer affine to cpu2
+	[ 2195.872700] IRQ 114: no longer affine to CPU2
+	[ 2195.879128] smpboot: CPU 2 is now offline
+
+	# echo on > /sys/devices/system/cpu/cpu2/online
+	# dmesg | tail -1
+	[ 2617.043572] smpboot: Booting Node 0 Processor 2 APIC 0x4
+
+We see that our current process now has an affinity mask containing
+every cpu available on the system _except_ the one we originally
+constrained it to:
+
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:   ffffffff,fffffffb
+	Cpus_allowed_list:      0-1,3-63
+
+This is not sane behavior, as the scheduler can now not only place the
+process on previously forbidden cpus, it can't even schedule it on
+the cpu it was originally constrained to!
+
+Other cases result in even more exotic affinity masks. Take for instance
+a process with an affinity mask containing only cpus provided by smt at
+the moment that smt is toggled, in a configuration such as the following:
+
+	# taskset -p f000000000 $$
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	000000f0,00000000
+	Cpus_allowed_list:	36-39
+
+A double toggle of smt results in the following behavior:
+
+	# echo off > /sys/devices/system/cpu/smt/control
+	# echo on > /sys/devices/system/cpu/smt/control
+	# grep -i cpus /proc/$$/status
+	Cpus_allowed:	ffffff00,ffffffff
+	Cpus_allowed_list:	0-31,40-63
+
+This is even less sane than the previous case, as the new affinity mask
+excludes all smt-provided cpus with ids less than those that were
+previously in the affinity mask, as well as those that were actually in
+the mask.
+
+With this patch applied, both of these cases end in the following state:
+
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	ffffffff,ffffffff
+	Cpus_allowed_list:	0-63
+
+The original policy is discarded. Though not ideal, it is the simplest way
+to restore sanity to this fallback case without reinventing the cpuset
+wheel that rolls down the kernel just fine in cgroup v2. A user who wishes
+for the previous affinity mask to be restored in this fallback case can use
+that mechanism instead.
+
+This patch modifies scheduler behavior by instead resetting the mask to
+task_cs(tsk)->cpus_allowed by default, and cpu_possible mask in legacy
+mode. I tested the cases above on both modes.
+
+Note that the scheduler uses this fallback mechanism if and only if
+_every_ other valid avenue has been traveled, and it is the last resort
+before calling BUG().
+
+Suggested-by: Waiman Long <longman@redhat.com>
+Suggested-by: Phil Auld <pauld@redhat.com>
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+Acked-by: Phil Auld <pauld@redhat.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/max98090.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ kernel/cgroup/cpuset.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index cc66ea5cc776..3fe09828745a 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1924,6 +1924,21 @@ static int max98090_configure_dmic(struct max98090_priv *max98090,
- 	return 0;
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 266f10cb7222..ff956ccbb6df 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2432,10 +2432,23 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 	spin_unlock_irqrestore(&callback_lock, flags);
  }
  
-+static int max98090_dai_startup(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct max98090_priv *max98090 = snd_soc_component_get_drvdata(component);
-+	unsigned int fmt = max98090->dai_fmt;
++/**
++ * cpuset_cpus_allowed_fallback - final fallback before complete catastrophe.
++ * @tsk: pointer to task_struct with which the scheduler is struggling
++ *
++ * Description: In the case that the scheduler cannot find an allowed cpu in
++ * tsk->cpus_allowed, we fall back to task_cs(tsk)->cpus_allowed. In legacy
++ * mode however, this value is the same as task_cs(tsk)->effective_cpus,
++ * which will not contain a sane cpumask during cases such as cpu hotplugging.
++ * This is the absolute last resort for the scheduler and it is only used if
++ * _every_ other avenue has been traveled.
++ **/
 +
-+	/* Remove 24-bit format support if it is not in right justified mode. */
-+	if ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_RIGHT_J) {
-+		substream->runtime->hw.formats = SNDRV_PCM_FMTBIT_S16_LE;
-+		snd_pcm_hw_constraint_msbits(substream->runtime, 0, 16, 16);
-+	}
-+	return 0;
-+}
-+
- static int max98090_dai_hw_params(struct snd_pcm_substream *substream,
- 				   struct snd_pcm_hw_params *params,
- 				   struct snd_soc_dai *dai)
-@@ -2331,6 +2346,7 @@ EXPORT_SYMBOL_GPL(max98090_mic_detect);
- #define MAX98090_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+ void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+ {
+ 	rcu_read_lock();
+-	do_set_cpus_allowed(tsk, task_cs(tsk)->effective_cpus);
++	do_set_cpus_allowed(tsk, is_in_v2_mode() ?
++		task_cs(tsk)->cpus_allowed : cpu_possible_mask);
+ 	rcu_read_unlock();
  
- static const struct snd_soc_dai_ops max98090_dai_ops = {
-+	.startup = max98090_dai_startup,
- 	.set_sysclk = max98090_dai_set_sysclk,
- 	.set_fmt = max98090_dai_set_fmt,
- 	.set_tdm_slot = max98090_set_tdm_slot,
+ 	/*
 -- 
 2.20.1
 
