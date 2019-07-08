@@ -2,109 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C33661B22
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA9F61B29
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbfGHHOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:14:22 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35991 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfGHHOV (ORCPT
+        id S1729394AbfGHHRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:17:08 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:51637 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfGHHRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:14:21 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1hkNqt-0000Xy-P7; Mon, 08 Jul 2019 09:14:19 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1hkNqt-0001y2-4P; Mon, 08 Jul 2019 09:14:19 +0200
-Date:   Mon, 8 Jul 2019 09:14:19 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: nvmem creates multiple devices with the same name
-Message-ID: <20190708071419.eqhajizbipt24xl3@pengutronix.de>
-References: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
- <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
- <20190521092107.zpdkkhaanzruhqui@pengutronix.de>
- <20190701080642.4oxmw7c3rmwrt5ee@pengutronix.de>
- <45d0cfaf-2511-4b1e-f4da-b67fa9f9e867@linaro.org>
+        Mon, 8 Jul 2019 03:17:08 -0400
+Received: by mail-io1-f72.google.com with SMTP id c5so17959495iom.18
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 00:17:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Gn80oO4XYMAOVKBGMnOSHzTx+81UaZglCxw6gRYjbG0=;
+        b=Taoxad09XBGTiu1eflAxkbpqp2GfwJGd0qBqecuC0MwIxlnGkcHBoyg3h6RpJ4YJFa
+         LqHjQHpkx+iY08TgnBjkUyuVSsx/21Honi7x12MXRbjxf6WXOgmykeex3sEJOVw2e5UH
+         zyWHw7igvH34Q2UqFGgDjmu1pIeUkY9n0aRYUAHtyLOOlXI8dzmptIc97/JkfI86B6Jq
+         zwjiEZDZhYjukJ8PcEiolH8ah8VT2cBGhPPTmgbOzQPIbF/Dx+TBn+maEQUNSrE0ZrLk
+         +qbI3VOao637UL6Hrtivh4RNOvm1uQoviQVPrsqGFDH6nmYhQZlP7OsdD1/GZ9BLEh/3
+         lyvA==
+X-Gm-Message-State: APjAAAWlkksOEBhnij5TJGUKrFPiMmeZcvRazvHl92lRePRpX1IeavjJ
+        wT9Ob+yONWV87QxH2TD7mtkpNNsgNkvWnzsTcq5KAsm8hjK+
+X-Google-Smtp-Source: APXvYqzZ3tM8OYLS29FUeOoOntB1b9wp7bg1+O4gdNJWOSGIt4/II1rMLZL1KXH3w5kGDbVgCyF3SI1TOBm6ExNEwNVolK2Zwhz1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45d0cfaf-2511-4b1e-f4da-b67fa9f9e867@linaro.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:02:28 up 13:12, 24 users,  load average: 0.18, 0.32, 0.32
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a5d:8747:: with SMTP id k7mr16963614iol.20.1562570227370;
+ Mon, 08 Jul 2019 00:17:07 -0700 (PDT)
+Date:   Mon, 08 Jul 2019 00:17:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000056d70a058d263bbc@google.com>
+Subject: general protection fault in send_hsr_supervision_frame
+From:   syzbot <syzbot+097ef84cdc95843fbaa8@syzkaller.appspotmail.com>
+To:     arvid.brodin@alten.se, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 05:54:54PM +0100, Srinivas Kandagatla wrote:
-> Hi Sascha,
-> 
-> On 01/07/2019 09:06, Sascha Hauer wrote:
-> > Hi Srinivas,
-> > 
-> > On Tue, May 21, 2019 at 11:21:07AM +0200, Sascha Hauer wrote:
-> > > On Tue, May 21, 2019 at 10:02:32AM +0100, Srinivas Kandagatla wrote:
-> > > > 
-> > > > 
-> > > > On 21/05/2019 09:56, Sascha Hauer wrote:
-> > > > > . Are there any suggestions how to register the nvmem devices
-> > > > > with a different name?
-> > > > 
-> > > > struct nvmem_config provides id field for this purpose, this will be used by
-> > > > nvmem to set the device name space along with name field.
-> > > 
-> > > There's no way for a caller to know a unique name/id combination.
-> > > The mtd layer could initialize the id field with the mtd number, but
-> > > that would still not guarantee that another caller, like an EEPROM
-> > > driver or such, doesn't use the same name/id combination.
-> > 
-> > This is still an unresolved issue. Do you have any input how we could
-> > proceed here?
-> 
-> Sorry for the delay!
-> I think simplest solution would be to check if there is already an nvmem
-> provider with the same name before assigning name to the device and then
-> append the id in case it exists.
-> 
-> Let me know if below patch helps the situation so that I can take this in
-> next cycle!
-> 
-> ----------------------------------->cut<----------------------------
->     nvmem: core: Check nvmem device name before adding the same one
-> 
->     In some usecases where nvmem names are directly derived from
->     partition names, its likely that different devices might have
->     same partition name.
->     This will be an issue as we will be creating two different
->     nvmem devices with same name and sysfs will not be very happy with that.
-> 
->     Simple solution is to check the existance of the nvmem provider with
->     same name and append an id if it exists before creating the device name.
+Hello,
 
-This solution obviously works for me. I am not sure if that's really
-what we want as the resulting names in sysfs are not predictable in any
-way. In that case we might be better off using mtdx as Boris suggested.
+syzbot found the following crash on:
 
-Sascha
+HEAD commit:    537de0c8 ipv4: Fix NULL pointer dereference in ipv4_neigh_..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d2af63a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=90f5d2d9c1e7421c
+dashboard link: https://syzkaller.appspot.com/bug?extid=097ef84cdc95843fbaa8
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a9361da00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a4c753a00000
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+The bug was bisected to:
+
+commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668
+Author: Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu Jul 4 00:21:13 2019 +0000
+
+     hsr: implement dellink to clean up resources
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b86c77a00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=12b86c77a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b86c77a00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+097ef84cdc95843fbaa8@syzkaller.appspotmail.com
+Fixes: b9a1e627405d ("hsr: implement dellink to clean up resources")
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 10432 Comm: syz-executor357 Not tainted 5.2.0-rc6+ #76
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:send_hsr_supervision_frame+0x38/0xf20 net/hsr/hsr_device.c:255
+Code: 89 fd 41 54 53 48 83 ec 50 89 75 bc e8 81 d2 5c fa 49 8d 45 10 48 89  
+c2 48 89 45 d0 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dc 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff8880ae809c50 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff871403d7
+RDX: 0000000000000002 RSI: ffffffff8713f08f RDI: 0000000000000000
+RBP: ffff8880ae809cc8 R08: ffff88809e014600 R09: ffffed1015d06c70
+R10: ffffed1015d06c6f R11: ffff8880ae83637b R12: ffff888097eff000
+R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f85a5cd2700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006de0a0 CR3: 00000000a1151000 CR4: 00000000001406f0
+Call Trace:
+  <IRQ>
+  hsr_announce+0x12f/0x3b0 net/hsr/hsr_device.c:339
+  call_timer_fn+0x193/0x720 kernel/time/timer.c:1322
+  expire_timers kernel/time/timer.c:1366 [inline]
+  __run_timers kernel/time/timer.c:1685 [inline]
+  __run_timers kernel/time/timer.c:1653 [inline]
+  run_timer_softirq+0x66f/0x1740 kernel/time/timer.c:1698
+  __do_softirq+0x25c/0x94c kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x13b/0x550 arch/x86/kernel/apic/apic.c:1068
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:806
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:767  
+[inline]
+RIP: 0010:lock_is_held_type+0x272/0x320 kernel/locking/lockdep.c:4343
+Code: ff df c7 83 7c 08 00 00 00 00 00 00 48 c1 e8 03 80 3c 10 00 0f 85 88  
+00 00 00 48 83 3d 86 a0 5b 07 00 74 31 48 8b 7d c0 57 9d <0f> 1f 44 00 00  
+48 83 c4 20 44 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d
+RSP: 0018:ffff8880a13f71e8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff1164e7e RBX: ffff88809e014600 RCX: ffff88809e014e80
+RDX: dffffc0000000000 RSI: ffffffff88ba3700 RDI: 0000000000000286
+RBP: ffff8880a13f7230 R08: ffff88809e014600 R09: ffffed1015d06c70
+R10: ffffed1015d06c6f R11: ffff8880ae83637b R12: 0000000000000001
+R13: ffff88809e014ef8 R14: ffffffff88ba3700 R15: 0000000000000003
+  lock_is_held include/linux/lockdep.h:356 [inline]
+  rcu_read_lock_held kernel/rcu/update.c:270 [inline]
+  rcu_read_lock_held+0xa3/0xd0 kernel/rcu/update.c:262
+  xa_head include/linux/xarray.h:1128 [inline]
+  xas_start+0x1ce/0x560 lib/xarray.c:187
+  xas_load+0x21/0x150 lib/xarray.c:232
+  find_get_entry+0x144/0x770 mm/filemap.c:1506
+  pagecache_get_page+0x4c/0x850 mm/filemap.c:1608
+  find_get_page_flags include/linux/pagemap.h:266 [inline]
+  ext4_mb_load_buddy_gfp+0x595/0x13e0 fs/ext4/mballoc.c:1190
+  ext4_mb_load_buddy fs/ext4/mballoc.c:1241 [inline]
+  ext4_mb_regular_allocator+0x7e0/0x1260 fs/ext4/mballoc.c:2190
+  ext4_mb_new_blocks+0x1881/0x3c10 fs/ext4/mballoc.c:4539
+  ext4_ext_map_blocks+0x2b83/0x5250 fs/ext4/extents.c:4414
+  ext4_map_blocks+0x8c5/0x18e0 fs/ext4/inode.c:640
+  ext4_alloc_file_blocks+0x287/0xac0 fs/ext4/extents.c:4603
+  ext4_fallocate+0x8ba/0x2060 fs/ext4/extents.c:4888
+  vfs_fallocate+0x4aa/0xa50 fs/open.c:309
+  ioctl_preallocate+0x197/0x210 fs/ioctl.c:490
+  file_ioctl fs/ioctl.c:506 [inline]
+  do_vfs_ioctl+0x1170/0x1380 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x448e19
+Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b 05 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f85a5cd1d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006e5a08 RCX: 0000000000448e19
+RDX: 0000000020000080 RSI: 0000000040305828 RDI: 0000000000000003
+RBP: 00000000006e5a00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e5a0c
+R13: f4a25a5f72695f65 R14: 6761000000000000 R15: 00046c7465677568
+Modules linked in:
+---[ end trace 1a213132b72d6860 ]---
+RIP: 0010:send_hsr_supervision_frame+0x38/0xf20 net/hsr/hsr_device.c:255
+Code: 89 fd 41 54 53 48 83 ec 50 89 75 bc e8 81 d2 5c fa 49 8d 45 10 48 89  
+c2 48 89 45 d0 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dc 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff8880ae809c50 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff871403d7
+RDX: 0000000000000002 RSI: ffffffff8713f08f RDI: 0000000000000000
+RBP: ffff8880ae809cc8 R08: ffff88809e014600 R09: ffffed1015d06c70
+R10: ffffed1015d06c6f R11: ffff8880ae83637b R12: ffff888097eff000
+R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f85a5cd2700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006de0a0 CR3: 00000000a1151000 CR4: 00000000001406f0
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
