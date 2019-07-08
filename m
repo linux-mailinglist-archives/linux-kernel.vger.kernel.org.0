@@ -2,127 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1005B628DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A399628E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389763AbfGHTBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:01:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43610 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732447AbfGHTBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:01:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E223660E3F; Mon,  8 Jul 2019 19:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562612459;
-        bh=8vvsLWPcHr0znTAIRbRfTb5WuDfVnCumJ8bN1RXKkaU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCBItDyqdXQ80M9E9W6GK6F8HiOenmBMy9khHqj+UHTf1bVEVKH2STolV1x8ZzkRp
-         ubmbSGE7TN9Y6LO+rWtkn1xf7oAMVPY/7icta+tV0M+6uK/16Vcn5phSInNFl3O9wj
-         yZT6sC8ILmXaZzoc8ADGFpNJm2Qoj1aLxvnalEoQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3F59660E40;
-        Mon,  8 Jul 2019 19:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562612456;
-        bh=8vvsLWPcHr0znTAIRbRfTb5WuDfVnCumJ8bN1RXKkaU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Upbw5W/djHsjIjuGf3gIhOy7HFDE4loB2ekFEU8qBMXVqNg4kaM4fLsyTssaxk5D1
-         jHSu0mL/YhTYrNDb71e9+JvNqt7t87D7uj2fjYpvwVSQ3zTjPtmx0/wb2H8ffeXsmY
-         92papmWE9htJ+GplCCwMzha46zOrNt6UtgY+Rvf0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F59660E40
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
-        hoegsberg@google.com, dianders@chromium.org,
-        baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v2 3/3] iommu/arm-smmu: Add support for DOMAIN_ATTR_SPLIT_TABLES
-Date:   Mon,  8 Jul 2019 13:00:47 -0600
-Message-Id: <1562612447-19856-4-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562612447-19856-1-git-send-email-jcrouse@codeaurora.org>
-References: <1562612447-19856-1-git-send-email-jcrouse@codeaurora.org>
+        id S2389372AbfGHTDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:03:15 -0400
+Received: from first.geanix.com ([116.203.34.67]:59810 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728461AbfGHTDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 15:03:14 -0400
+Received: from zen.localdomain (unknown [85.184.140.241])
+        by first.geanix.com (Postfix) with ESMTPSA id 301FB1697;
+        Mon,  8 Jul 2019 19:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1562612506; bh=eUvEBsk9YXwvgLqf5OTAVLdqkkv/UdScF9UtNiuiDbQ=;
+        h=From:To:Cc:Subject:Date;
+        b=LL61Qi7p2jP05T3Y3BEQuHJwXmHeMmp9QvAR3B0GXbrHcHnaaWkWXTvHeZ/+OlSU2
+         oCADjdMoiaiRc32JblBklePWBvUPedP/XhzcF3U3Csf15qGNGzltgW1PpCJIpaq0wI
+         6qFaWf6YkZzTshkZLP2BgHKfcx2rj7onNwVtUfwi5PlmxoBE4YNyK2d3219aMMXZVo
+         7RjUx3stbqkrlHLm3zNndygmBYpF506UYw0uoPnPStwO5Xa5t/U1QBwt2Q7l8jwe9P
+         VzmJuJN9aSaA2z2F/5oUWIR1R5SJHMEVN8teR7upoZoLQqIn/qn9NY3OaweJjQl8si
+         IbZpftWQjHOBA==
+From:   =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
+        =?UTF-8?q?Sean=20Nyekj=C3=A6r?= <sean@geanix.com>,
+        Esben Haabendal <esben@geanix.com>
+Subject: [PATCH 1/4] tty: n_gsm: remove obsolete mknod doc example
+Date:   Mon,  8 Jul 2019 21:02:49 +0200
+Message-Id: <20190708190252.24628-1-martin@geanix.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
+        autolearn=disabled version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on 884f5ce5917a
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When DOMAIN_ATTR_SPLIT_TABLES is specified for pass ARM_64_LPAE_SPLIT_S1
-to io_pgtable_ops to allocate and initialize TTBR0 and TTBR1 pagetables.
+The n_gsm driver handles registration of /dev/gsmttyX nodes, so there's
+no need to do mknod manually.
 
-v3: Moved all the pagetable specific work into io-pgtable-arm
-in a previous patch.
-
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Martin Hundebøll <martin@geanix.com>
 ---
+ Documentation/serial/n_gsm.rst | 10 ----------
+ 1 file changed, 10 deletions(-)
 
- drivers/iommu/arm-smmu.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 653b6b3..7a6b4bb 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -257,6 +257,7 @@ struct arm_smmu_domain {
- 	bool				non_strict;
- 	struct mutex			init_mutex; /* Protects smmu pointer */
- 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
-+	u32 attributes;
- 	struct iommu_domain		domain;
- };
+diff --git a/Documentation/serial/n_gsm.rst b/Documentation/serial/n_gsm.rst
+index f3ad9fd26408..78f91ce06956 100644
+--- a/Documentation/serial/n_gsm.rst
++++ b/Documentation/serial/n_gsm.rst
+@@ -63,16 +63,6 @@ Major parts of the initialization program :
+ 	daemon(0,0);
+ 	pause();
  
-@@ -832,7 +833,11 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 		ias = smmu->va_size;
- 		oas = smmu->ipa_size;
- 		if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH64) {
--			fmt = ARM_64_LPAE_S1;
-+			if (smmu_domain->attributes &
-+				(1 << DOMAIN_ATTR_SPLIT_TABLES))
-+				fmt = ARM_64_LPAE_SPLIT_S1;
-+			else
-+				fmt = ARM_64_LPAE_S1;
- 		} else if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_L) {
- 			fmt = ARM_32_LPAE_S1;
- 			ias = min(ias, 32UL);
-@@ -1582,6 +1587,10 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
- 		case DOMAIN_ATTR_NESTING:
- 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 			return 0;
-+		case DOMAIN_ATTR_SPLIT_TABLES:
-+			*(int *)data = !!(smmu_domain->attributes &
-+				(1 << DOMAIN_ATTR_SPLIT_TABLES));
-+			return 0;
- 		default:
- 			return -ENODEV;
- 		}
-@@ -1622,6 +1631,11 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 			else
- 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 			break;
-+		case DOMAIN_ATTR_SPLIT_TABLES:
-+			if (*((int *)data))
-+				smmu_domain->attributes |=
-+					(1 << DOMAIN_ATTR_SPLIT_TABLES);
-+			break;
- 		default:
- 			ret = -ENODEV;
- 		}
+-4. create the devices corresponding to the "virtual" serial ports (take care,
+-   each modem has its configuration and some DLC have dedicated functions,
+-   for example GPS), starting with minor 1 (DLC0 is reserved for the management
+-   of the mux)::
+-
+-     MAJOR=`cat /proc/devices |grep gsmtty | awk '{print $1}`
+-     for i in `seq 1 4`; do
+-	mknod /dev/ttygsm$i c $MAJOR $i
+-     done
+-
+ 5. use these devices as plain serial ports.
+ 
+    for example, it's possible:
 -- 
-2.7.4
+2.22.0
 
