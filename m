@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E646235C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C318623E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390576AbfGHPei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:34:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
+        id S2388222AbfGHPiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390551AbfGHPea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:30 -0400
+        id S2389649AbfGHPaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:30:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DCDA20651;
-        Mon,  8 Jul 2019 15:34:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F90521537;
+        Mon,  8 Jul 2019 15:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600070;
-        bh=B5Ps5EHCwOMk/+GkMoCH5wo2EPVXUVjD2NyKOyU17y4=;
+        s=default; t=1562599838;
+        bh=TSKGw1r5dLtQbJRCdmKWf5HSmP9FklzelECTG9HgAjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BjyLLxlUe45yjzl/CIIk1EPlJ1bn7Z4cc7asoiPALEhnaurBOr7pjfN1ioDJyCOT9
-         7/q+pfFF5FFH0m+X1W1bEZ9QKd94YCDlKlKdoQjXu+5FnerzNp/GOkjgEKq/UEZqsq
-         OUO2SWyxy1zVnbBcs0hz8i0fA/r5RsbAa6IIH7t4=
+        b=qgZfkfXY0XbGKfxsXZnwLi8u9lwUgkygkjSfepjCkZGOk0Lb9oX1J+jJvio0c6NI1
+         dbVjjTlyrEMWR51kbGdUz2oF+OPP/HdcjK72zqoNTXom4BJlIN5FzPPFv6FS/aI+YO
+         63vYKFpyTHo7fCnfEctPpWvejY3SePzjyRiwLdPM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 83/96] tty: rocket: fix incorrect forward declaration of rp_init()
-Date:   Mon,  8 Jul 2019 17:13:55 +0200
-Message-Id: <20190708150530.936020429@linuxfoundation.org>
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.19 89/90] dmaengine: qcom: bam_dma: Fix completed descriptors count
+Date:   Mon,  8 Jul 2019 17:13:56 +0200
+Message-Id: <20190708150527.042392553@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 423ea3255424b954947d167681b71ded1b8fca53 ]
+From: Sricharan R <sricharan@codeaurora.org>
 
-Make the forward declaration actually match the real function
-definition, something that previous versions of gcc had just ignored.
+commit f6034225442c4a87906d36e975fd9e99a8f95487 upstream.
 
-This is another patch to fix new warnings from gcc-9 before I start the
-merge window pulls.  I don't want to miss legitimate new warnings just
-because my system update brought a new compiler with new warnings.
+One space is left unused in circular FIFO to differentiate
+'full' and 'empty' cases. So take that in to account while
+counting for the descriptors completed.
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes the issue reported here,
+	https://lkml.org/lkml/2019/6/18/669
+
+Cc: stable@vger.kernel.org
+Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/tty/rocket.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/qcom/bam_dma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/tty/rocket.c b/drivers/tty/rocket.c
-index b121d8f8f3d7..27aeca30eeae 100644
---- a/drivers/tty/rocket.c
-+++ b/drivers/tty/rocket.c
-@@ -266,7 +266,7 @@ MODULE_PARM_DESC(pc104_3, "set interface types for ISA(PC104) board #3 (e.g. pc1
- module_param_array(pc104_4, ulong, NULL, 0);
- MODULE_PARM_DESC(pc104_4, "set interface types for ISA(PC104) board #4 (e.g. pc104_4=232,232,485,485,...");
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -808,6 +808,9 @@ static u32 process_channel_irqs(struct b
+ 		/* Number of bytes available to read */
+ 		avail = CIRC_CNT(offset, bchan->head, MAX_DESCRIPTORS + 1);
  
--static int rp_init(void);
-+static int __init rp_init(void);
- static void rp_cleanup_module(void);
- 
- module_init(rp_init);
--- 
-2.20.1
-
++		if (offset < bchan->head)
++			avail--;
++
+ 		list_for_each_entry_safe(async_desc, tmp,
+ 					 &bchan->desc_list, desc_node) {
+ 			/* Not enough data to read */
 
 
