@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B0A462312
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5710362205
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389995AbfGHPbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:31:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33076 "EHLO mail.kernel.org"
+        id S2387769AbfGHPVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:21:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389966AbfGHPbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:31:46 -0400
+        id S2387741AbfGHPVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:21:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD45020665;
-        Mon,  8 Jul 2019 15:31:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2947B216E3;
+        Mon,  8 Jul 2019 15:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599905;
-        bh=i4YZhxEhpum9DmDPzI9pU8XkAK/3CfGO1Rg7YmxCLiU=;
+        s=default; t=1562599290;
+        bh=uHLaqiSsQAcBq1LXrmM+IfqwHY3/6Ig7VQhPmEKMlxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNCYxQjOGTBgRD68Yi67tMA9PxcyaZWN75aOQCVeYp6S9m2vp4HxYoJ/6ajq8INJj
-         mfPcJ3O7sNaQ8FlHSrI+Qt7QLZx/oyQvCmmJftHODxQYLBSY/CVFm7PTNaXD9G2P8K
-         SYpJKGFaQTkahi0G5AxqXqXM7Gn0iWD3NThrsPCQ=
+        b=T/8tFQobbttNh9rg9ERvv6iUvjW+euEyyPqli6zCD2kve5dwG4TCgvL3iu3jnXDSl
+         uvch7HfiShI/5H59Zcoe0+4oUeAxH5P/Y+UN6r+kLpHOSwE6uXD+/g5Q7CqlHfU2h0
+         CEUZjAGVn7puMhadtX+ypAEy7fw09Gxi9qrlj8+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Libin Yang <libin.yang@intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 28/96] usb: gadget: fusb300_udc: Fix memory leak of fusb300->ep[i]
+Subject: [PATCH 4.9 067/102] ASoC: soc-pcm: BE dai needs prepare when pause release after resume
 Date:   Mon,  8 Jul 2019 17:13:00 +0200
-Message-Id: <20190708150528.045711167@linuxfoundation.org>
+Message-Id: <20190708150529.925684682@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 62fd0e0a24abeebe2c19fce49dd5716d9b62042d ]
+[ Upstream commit 5087a8f17df868601cd7568299e91c28086d2b45 ]
 
-There is no deallocation of fusb300->ep[i] elements, allocated at
-fusb300_probe.
+If playback/capture is paused and system enters S3, after system returns
+from suspend, BE dai needs to call prepare() callback when playback/capture
+is released from pause if RESUME_INFO flag is not set.
 
-The patch adds deallocation of fusb300->ep array elements.
+Currently, the dpcm_be_dai_prepare() function will block calling prepare()
+if the pcm is in SND_SOC_DPCM_STATE_PAUSED state. This will cause the
+following test case fail if the pcm uses BE:
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+playback -> pause -> S3 suspend -> S3 resume -> pause release
+
+The playback may exit abnormally when pause is released because the BE dai
+prepare() is not called.
+
+This patch allows dpcm_be_dai_prepare() to call dai prepare() callback in
+SND_SOC_DPCM_STATE_PAUSED state.
+
+Signed-off-by: Libin Yang <libin.yang@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/fusb300_udc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/soc-pcm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/fusb300_udc.c b/drivers/usb/gadget/udc/fusb300_udc.c
-index 263804d154a7..00e3f66836a9 100644
---- a/drivers/usb/gadget/udc/fusb300_udc.c
-+++ b/drivers/usb/gadget/udc/fusb300_udc.c
-@@ -1342,12 +1342,15 @@ static const struct usb_gadget_ops fusb300_gadget_ops = {
- static int fusb300_remove(struct platform_device *pdev)
- {
- 	struct fusb300 *fusb300 = platform_get_drvdata(pdev);
-+	int i;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 1dbcdc99dbe3..1d00f6e894ef 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2247,7 +2247,8 @@ int dpcm_be_dai_prepare(struct snd_soc_pcm_runtime *fe, int stream)
  
- 	usb_del_gadget_udc(&fusb300->gadget);
- 	iounmap(fusb300->reg);
- 	free_irq(platform_get_irq(pdev, 0), fusb300);
+ 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_PARAMS) &&
+ 		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_STOP) &&
+-		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_SUSPEND))
++		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_SUSPEND) &&
++		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_PAUSED))
+ 			continue;
  
- 	fusb300_free_request(&fusb300->ep[0]->ep, fusb300->ep0_req);
-+	for (i = 0; i < FUSB300_MAX_NUM_EP; i++)
-+		kfree(fusb300->ep[i]);
- 	kfree(fusb300);
- 
- 	return 0;
-@@ -1491,6 +1494,8 @@ clean_up:
- 		if (fusb300->ep0_req)
- 			fusb300_free_request(&fusb300->ep[0]->ep,
- 				fusb300->ep0_req);
-+		for (i = 0; i < FUSB300_MAX_NUM_EP; i++)
-+			kfree(fusb300->ep[i]);
- 		kfree(fusb300);
- 	}
- 	if (reg)
+ 		dev_dbg(be->dev, "ASoC: prepare BE %s\n",
 -- 
 2.20.1
 
