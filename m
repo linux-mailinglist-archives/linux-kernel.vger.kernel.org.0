@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E926215D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB5D623BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732399AbfGHPPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:15:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38348 "EHLO mail.kernel.org"
+        id S2390673AbfGHPhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:37:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732388AbfGHPPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:15:43 -0400
+        id S2389966AbfGHPbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:31:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC6862166E;
-        Mon,  8 Jul 2019 15:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18EA3216C4;
+        Mon,  8 Jul 2019 15:31:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598942;
-        bh=3s485M+LWeT8MncYdT3mtF1nFnXOQ9inBgm8ZFbXAmY=;
+        s=default; t=1562599911;
+        bh=EMd2/EMEbomDp/HYQ44yrWt9W+8QT59uhc6NBw2ZYe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ec1Mf6sedC/Y4l9ZgdOu+OMgOhur+J/gm0e6LJNlU60hJfEtYHL6YeTcKIQy6Xbv1
-         MCpdF6vt/t2FKMsT7Ay2k9/6oBMBJD1Zdsz7yfddQd3HmUmYjfGqzUUQHAkjSGVz9i
-         XZv06Fx4oZ2c3pQdxiNiqB/WL3keaCFOhrr61cJM=
+        b=MSh3b6yhn37nohj71HrHxUFTqcJ9LUOsKJlpTwF31DJoPoUql06PoaWFNFd091WeF
+         aVW9SnM2jtZWid49ESN7Oy8GV56WFas2Yl04XNVC4Dlvs4P9K6hr+fWdpFKY4aZ2Sb
+         rCCAUX8lFfW1bCzXP7TtxXV/q2SwRbr7LeTAfuZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@intel.com>
-Subject: [PATCH 4.4 24/73] Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
-Date:   Mon,  8 Jul 2019 17:12:34 +0200
-Message-Id: <20190708150521.870389311@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 5.1 03/96] netfilter: nf_flow_table: ignore DF bit setting
+Date:   Mon,  8 Jul 2019 17:12:35 +0200
+Message-Id: <20190708150526.452638247@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
+commit e75b3e1c9bc5b997d09bdf8eb72ab3dd3c1a7072 upstream.
 
-The minimum encryption key size for LE connections is 56 bits and to
-align LE with BR/EDR, enforce 56 bits of minimum encryption key size for
-BR/EDR connections as well.
+Its irrelevant if the DF bit is set or not, we must pass packet to
+stack in either case.
 
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Cc: stable@vger.kernel.org
+If the DF bit is set, we must pass it to stack so the appropriate
+ICMP error can be generated.
+
+If the DF is not set, we must pass it to stack for fragmentation.
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/bluetooth/hci_core.h |    3 +++
- net/bluetooth/hci_conn.c         |    8 ++++++++
- 2 files changed, 11 insertions(+)
+ net/netfilter/nf_flow_table_ip.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -174,6 +174,9 @@ struct adv_info {
+--- a/net/netfilter/nf_flow_table_ip.c
++++ b/net/netfilter/nf_flow_table_ip.c
+@@ -246,8 +246,7 @@ nf_flow_offload_ip_hook(void *priv, stru
+ 	flow = container_of(tuplehash, struct flow_offload, tuplehash[dir]);
+ 	rt = (struct rtable *)flow->tuplehash[dir].tuple.dst_cache;
  
- #define HCI_MAX_SHORT_NAME_LENGTH	10
+-	if (unlikely(nf_flow_exceeds_mtu(skb, flow->tuplehash[dir].tuple.mtu)) &&
+-	    (ip_hdr(skb)->frag_off & htons(IP_DF)) != 0)
++	if (unlikely(nf_flow_exceeds_mtu(skb, flow->tuplehash[dir].tuple.mtu)))
+ 		return NF_ACCEPT;
  
-+/* Min encryption key size to match with SMP */
-+#define HCI_MIN_ENC_KEY_SIZE		7
-+
- /* Default LE RPA expiry time, 15 minutes */
- #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
- 
---- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -1177,6 +1177,14 @@ int hci_conn_check_link_mode(struct hci_
- 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
- 		return 0;
- 
-+	/* The minimum encryption key size needs to be enforced by the
-+	 * host stack before establishing any L2CAP connections. The
-+	 * specification in theory allows a minimum of 1, but to align
-+	 * BR/EDR and LE transports, a minimum of 7 is chosen.
-+	 */
-+	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
-+		return 0;
-+
- 	return 1;
- }
- 
+ 	if (skb_try_make_writable(skb, sizeof(*iph)))
 
 
