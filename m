@@ -2,82 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 821A662117
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE72D6211C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732075AbfGHPEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:04:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43071 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbfGHPEx (ORCPT
+        id S1732101AbfGHPFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:05:35 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43476 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732088AbfGHPFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:04:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i189so7745599pfg.10;
-        Mon, 08 Jul 2019 08:04:53 -0700 (PDT)
+        Mon, 8 Jul 2019 11:05:35 -0400
+Received: by mail-pl1-f194.google.com with SMTP id cl9so8404084plb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 08:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=H9EINtO6YwQJ4ZxIKBrIJIpE+ticnzKw5UC4agQffbk=;
+        b=o7cOjfvg2jSxFWlm3udFfMurqkl7jt5qfMsKpKWAAYUSE81YJtq2rBKxk+JSOXVIyB
+         YBC0JGPoi97/mjdg+PWQDF+ykAdrco0wjdORXwT4eIKlyIOdFdVeUqV3MOfs1+k233IW
+         YZIUF1jIEAUeTQV4F5g8s5Yn0H0qTxBfjZ5Uqb0bV11oGagTfwYccNJPFwiFEoHZFias
+         mWkOherrJHDPiK10Vd3ptTm8lpLjePtpuRvWkC8V5T+T+KnpnalI5oQUIptv3c20jxYF
+         RgaH5ABcTLPOjOwZjiNrjQ3rNrk8csMfU0ZWd1ht6G1hugtoF1OdhTuUyQbULd2H33fK
+         EY8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uuzMBczhpFd4zcYpjMdhnitg6M+5a5PUQK3Xnc+A9H8=;
-        b=j8J6o81O8Kel0trZLKq/QJTiW8o9fOeSVRjcZ4jVDKP6IzQTQH348leOzEaTap+3PN
-         I1mO0PAi8OCArSZWpzAjCoL09jKyK8q1BcjLRqwzuukGzNnFRnPF43JPKT3zg0dqvQ0b
-         4HmPKNrRchQAQSr586Nc7tpzJumVLQKh+aQw77MKRJm65iGgXPx5psTwWhn6zVR3jvDT
-         Y/IIfOU6aa8fjZgzu9EGVZmhv5jeCl93oZW7W7/FcNwwcp9wUA8ng+GLlEycbZiWx+gl
-         dTwLaFU6jiUH8vDClP9oq4UVBVIhyawDk3xfxRl6CpIXcXpooiYCvrWHShlNzBoXPEzD
-         iLtQ==
-X-Gm-Message-State: APjAAAUcl5dj6iOFlAg4qczfv9fpfQJ7fR5OfpdG7LNtsLWwn5RShQiM
-        K5XR1Rz2sWE+csJSo9Bfx7/F55pa
-X-Google-Smtp-Source: APXvYqyJlMgwmQ5yvGTru8xbts6noQsMZxodcWdtoYVrpsTXXjLpzN1qyUzURq/d7YVTiwSh76fHqw==
-X-Received: by 2002:a17:90a:208d:: with SMTP id f13mr25643200pjg.68.1562598292667;
-        Mon, 08 Jul 2019 08:04:52 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id 1sm17843072pfe.102.2019.07.08.08.04.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 08:04:51 -0700 (PDT)
-Subject: Re: [PATCH] scsi: Remove unreachable code
-To:     Ding Xiang <dingxiang@cmss.chinamobile.com>, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1562234156-11945-1-git-send-email-dingxiang@cmss.chinamobile.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <82794d9a-8f36-7012-da6a-1e05ce2bb3cb@acm.org>
-Date:   Mon, 8 Jul 2019 08:04:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=H9EINtO6YwQJ4ZxIKBrIJIpE+ticnzKw5UC4agQffbk=;
+        b=ow4eGbNrJryhKZgziI4kTFFSdFz7smKD023pdll6jIO1YBrQm8cknXOVLc7/vlWYWr
+         P2tZH9LunmWqM0OqiRnT3XMKjuZUuv5Dls88sotmUgWKbiRJC5j5L9CkD7adCOMy+uMQ
+         vrYRf43/Am8JsHqKVlANghkz0eYVRNjs3qCjXDeghkqeXwHVI+ahm3EPuuodWZauNkql
+         gLOiwM33w4JhycNoB5ulY4aYRMGk2Z1MASFPZ2C4V5EB9WmGwnaqRYNbvKF54SAA92PQ
+         OqHbaVylZGlveyiWAtFvQMD/FpRRyLmN2lrEkTgLMtZfoL5c1yo1IihP9UTghbL/f/Ws
+         AG0w==
+X-Gm-Message-State: APjAAAV+fV8SB0A8T6ELrE3+bxhLkuutIFsryu2FTLfcTLGP8pUfkRo+
+        9vVrJttiu+DkQrfaWhCEGeXBuA==
+X-Google-Smtp-Source: APXvYqwVnbCn84uvEYTzrqNXCKBSi6I5x4jEwsn1sRjK7qh2dm1vi66uyMzQcnk061y7dVnI4L1BlA==
+X-Received: by 2002:a17:902:a60d:: with SMTP id u13mr25729049plq.144.1562598334101;
+        Mon, 08 Jul 2019 08:05:34 -0700 (PDT)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id j1sm19833019pfe.101.2019.07.08.08.05.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 08:05:34 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 08:05:27 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jake Oshins <jakeo@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Yuehaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH v2] PCI: hv: fix pci-hyperv build when SYSFS not enabled
+Message-ID: <20190708080527.138e18e9@hermes.lan>
+In-Reply-To: <c1261e6d-84c3-4874-5c32-a3988c5a85d6@infradead.org>
+References: <535f212f-e111-399d-4ad0-82d2ae505e48@infradead.org>
+        <DM6PR21MB13373F2B76558930CC368E17CAFB0@DM6PR21MB1337.namprd21.prod.outlook.com>
+        <c1261e6d-84c3-4874-5c32-a3988c5a85d6@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1562234156-11945-1-git-send-email-dingxiang@cmss.chinamobile.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/19 2:55 AM, Ding Xiang wrote:
-> The return code after switch default is unreachable,
-> so remove it.
-> 
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
-> ---
->   drivers/scsi/scsi_error.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
-> index bfa569f..12180f0 100644
-> --- a/drivers/scsi/scsi_error.c
-> +++ b/drivers/scsi/scsi_error.c
-> @@ -1909,7 +1909,6 @@ int scsi_decide_disposition(struct scsi_cmnd *scmd)
->   	default:
->   		return FAILED;
->   	}
-> -	return FAILED;
+On Sun, 7 Jul 2019 10:46:22 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-I'd rather remove the "default: return FAILED;" code than make the above 
-change. If status_byte() ever would be changed into an inline function 
-that returns an enum then my alternative will allow the compiler to 
-verify whether all enum labels have been handled. No such check will be 
-performed if the above patch would be applied.
+> On 7/3/19 11:06 AM, Haiyang Zhang wrote:
+> > 
+> >   
+> >> -----Original Message-----
+> >> From: Randy Dunlap <rdunlap@infradead.org>
+> >> Sent: Wednesday, July 3, 2019 12:59 PM
+> >> To: LKML <linux-kernel@vger.kernel.org>; linux-pci <linux-  
+> >> pci@vger.kernel.org>  
+> >> Cc: Matthew Wilcox <willy@infradead.org>; Jake Oshins
+> >> <jakeo@microsoft.com>; KY Srinivasan <kys@microsoft.com>; Haiyang
+> >> Zhang <haiyangz@microsoft.com>; Stephen Hemminger
+> >> <sthemmin@microsoft.com>; Sasha Levin <sashal@kernel.org>; Bjorn
+> >> Helgaas <bhelgaas@google.com>; linux-hyperv@vger.kernel.org; Dexuan
+> >> Cui <decui@microsoft.com>; Yuehaibing <yuehaibing@huawei.com>
+> >> Subject: [PATCH v2] PCI: hv: fix pci-hyperv build when SYSFS not enabled
+> >>
+> >> From: Randy Dunlap <rdunlap@infradead.org>
+> >>
+> >> Fix build of drivers/pci/controller/pci-hyperv.o when
+> >> CONFIG_SYSFS is not set/enabled by adding stubs for
+> >> pci_create_slot() and pci_destroy_slot().
+> >>
+> >> Fixes these build errors:
+> >>
+> >> ERROR: "pci_destroy_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+> >> ERROR: "pci_create_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+> >>
+> >> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot
+> >> information")
+> >>
+> >> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> >> Cc: Matthew Wilcox <willy@infradead.org>
+> >> Cc: Jake Oshins <jakeo@microsoft.com>
+> >> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> >> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> >> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> >> Cc: Sasha Levin <sashal@kernel.org>
+> >> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> >> Cc: linux-pci@vger.kernel.org
+> >> Cc: linux-hyperv@vger.kernel.org
+> >> Cc: Dexuan Cui <decui@microsoft.com>
+> >> Cc: Yuehaibing <yuehaibing@huawei.com>
+> >> ---
+> >> v2:
+> >> - provide non-CONFIG_SYSFS stubs for pci_create_slot() and
+> >>   pci_destroy_slot() [suggested by Matthew Wilcox <willy@infradead.org>]
+> >> - use the correct Fixes: tag [Dexuan Cui <decui@microsoft.com>]
+> >>
+> >>  include/linux/pci.h |   12 ++++++++++--
+> >>  1 file changed, 10 insertions(+), 2 deletions(-)
+> >>
+> >> --- lnx-52-rc7.orig/include/linux/pci.h
+> >> +++ lnx-52-rc7/include/linux/pci.h
+> >> @@ -25,6 +25,7 @@
+> >>  #include <linux/ioport.h>
+> >>  #include <linux/list.h>
+> >>  #include <linux/compiler.h>
+> >> +#include <linux/err.h>
+> >>  #include <linux/errno.h>
+> >>  #include <linux/kobject.h>
+> >>  #include <linux/atomic.h>
+> >> @@ -947,14 +948,21 @@ int pci_scan_root_bus_bridge(struct pci_
+> >>  struct pci_bus *pci_add_new_bus(struct pci_bus *parent, struct pci_dev
+> >> *dev,
+> >>  				int busnr);
+> >>  void pcie_update_link_speed(struct pci_bus *bus, u16 link_status);
+> >> +#ifdef CONFIG_SYSFS
+> >> +void pci_dev_assign_slot(struct pci_dev *dev);
+> >>  struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
+> >>  				 const char *name,
+> >>  				 struct hotplug_slot *hotplug);
+> >>  void pci_destroy_slot(struct pci_slot *slot);
+> >> -#ifdef CONFIG_SYSFS
+> >> -void pci_dev_assign_slot(struct pci_dev *dev);
+> >>  #else
+> >>  static inline void pci_dev_assign_slot(struct pci_dev *dev) { }
+> >> +static inline struct pci_slot *pci_create_slot(struct pci_bus *parent,
+> >> +					       int slot_nr,
+> >> +					       const char *name,
+> >> +					       struct hotplug_slot *hotplug) {
+> >> +	return ERR_PTR(-EINVAL);
+> >> +}
+> >> +static inline void pci_destroy_slot(struct pci_slot *slot) { }
+> >>  #endif
+> >>  int pci_scan_slot(struct pci_bus *bus, int devfn);
+> >>  struct pci_dev *pci_scan_single_device(struct pci_bus *bus, int devfn);
+> >>  
+> > 
+> > The serial number in slot info is used to match VF NIC with Synthetic NIC.
+> > Without selecting SYSFS, the SRIOV feature will fail on VM on Hyper-V and
+> > Azure. The first version of this patch should be used.
+> > 
+> > @Stephen Hemminger how do you think?
 
-Bart.
+Haiyang is right, accelerated networking won't work if slot is not recorded.
+
+So the original patch (to depend on SYSFS) or using "select SYSFS" is
+are necessary.
+
+The whole thing is a bit of "angels dancing on the head of a pin" because
+there is no good reason to build kernel without SYSFS in real world.
+It would just be looking for trouble. As far as I can tell it is all
+about getting "make randconfig" to work in more cases.
+
+ 
