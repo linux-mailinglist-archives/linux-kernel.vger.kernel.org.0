@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE066234E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F256962279
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733117AbfGHPeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:34:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
+        id S2388772AbfGHP0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:26:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732904AbfGHPd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:33:59 -0400
+        id S2388757AbfGHP0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:26:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898ED20651;
-        Mon,  8 Jul 2019 15:33:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E029520665;
+        Mon,  8 Jul 2019 15:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600039;
-        bh=CHO/JtLrHSUF6zrWQpzQrrCaKs2c1Yb/LPO0XVE+yO0=;
+        s=default; t=1562599568;
+        bh=oqJOOPIzXqtL84WhyP7K9dTw3vqk5/8dazpQ8iRpGL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x+NdS/49S4iSPJYU2t8zvt6CkFvGChvtF4wIfhWRCV66+hgeE5AGZH4Hww1QDzfIM
-         36tp3f79zxBIZhgSL02X/rIHhQKvARbqaCkIbnV2ySheiNcY8qNEvLtllGcCwR6bUC
-         L+wcfjV73hQ8zxBNZw6kkCvOAHwreNEFixusj2Ok=
+        b=o4zefNNd4Uc9X3GYRiX/z9t5CSr2Q0CkqIYcJup9u55UCdIO1vca9vJ1m+actuUuN
+         O9RKsmONijNGtSdzN2Gw3QgZdTYog5FoBeu4Xq+DW/nNe5ZM5GqGmIKcdcO/rBjTWZ
+         UJHUrXjOJpOATT9eHmRef1xSAjY9ndedp9jqlZlc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Slava Abramov <slava.abramov@amd.com>
-Subject: [PATCH 5.1 73/96] drm/amd/powerplay: use hardware fan control if no powerplay fan table
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>, ralf@linux-mips.org,
+        jhogan@kernel.org, f4bug@amsat.org, linux-mips@vger.kernel.org,
+        ysu@wavecomp.com, jcristau@debian.org
+Subject: [PATCH 4.14 53/56] MIPS: Fix bounds check virt_addr_valid
 Date:   Mon,  8 Jul 2019 17:13:45 +0200
-Message-Id: <20190708150530.399773745@linuxfoundation.org>
+Message-Id: <20190708150524.194818214@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Quan <evan.quan@amd.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-commit f78c581e22d4b33359ac3462e8d0504735df01f4 upstream.
+commit d6ed083f5cc621e15c15b56c3b585fd524dbcb0f upstream.
 
-Otherwise, you may get divided-by-zero error or corrput the SMU fan
-control feature.
+The bounds check used the uninitialized variable vaddr, it should use
+the given parameter kaddr instead. When using the uninitialized value
+the compiler assumed it to be 0 and optimized this function to just
+return 0 in all cases.
 
-Signed-off-by: Evan Quan <evan.quan@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Tested-by: Slava Abramov <slava.abramov@amd.com>
-Acked-by: Slava Abramov <slava.abramov@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+This should make the function check the range of the given address and
+only do the page map check in case it is in the expected range of
+virtual addresses.
+
+Fixes: 074a1e1167af ("MIPS: Bounds check virt_addr_valid")
+Cc: stable@vger.kernel.org # v4.12+
+Cc: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: f4bug@amsat.org
+Cc: linux-mips@vger.kernel.org
+Cc: ysu@wavecomp.com
+Cc: jcristau@debian.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c |    4 +++-
- drivers/gpu/drm/amd/powerplay/inc/hwmgr.h                   |    1 +
- drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c     |    4 ++++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ arch/mips/mm/mmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c
-@@ -916,8 +916,10 @@ static int init_thermal_controller(
- 			PHM_PlatformCaps_ThermalController
- 		  );
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -203,7 +203,7 @@ unsigned long arch_randomize_brk(struct
  
--	if (0 == powerplay_table->usFanTableOffset)
-+	if (0 == powerplay_table->usFanTableOffset) {
-+		hwmgr->thermal_controller.use_hw_fan_control = 1;
+ int __virt_addr_valid(const volatile void *kaddr)
+ {
+-	unsigned long vaddr = (unsigned long)vaddr;
++	unsigned long vaddr = (unsigned long)kaddr;
+ 
+ 	if ((vaddr < PAGE_OFFSET) || (vaddr >= MAP_BASE))
  		return 0;
-+	}
- 
- 	fan_table = (const PPTable_Generic_SubTable_Header *)
- 		(((unsigned long)powerplay_table) +
---- a/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
-+++ b/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
-@@ -694,6 +694,7 @@ struct pp_thermal_controller_info {
- 	uint8_t ucType;
- 	uint8_t ucI2cLine;
- 	uint8_t ucI2cAddress;
-+	uint8_t use_hw_fan_control;
- 	struct pp_fan_info fanInfo;
- 	struct pp_advance_fan_control_parameters advanceFanControlParameters;
- };
---- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
-@@ -2092,6 +2092,10 @@ static int polaris10_thermal_setup_fan_t
- 		return 0;
- 	}
- 
-+	/* use hardware fan control */
-+	if (hwmgr->thermal_controller.use_hw_fan_control)
-+		return 0;
-+
- 	tmp64 = hwmgr->thermal_controller.advanceFanControlParameters.
- 			usPWMMin * duty100;
- 	do_div(tmp64, 10000);
 
 
