@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B912A62292
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FCD6232F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388935AbfGHP0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
+        id S1732513AbfGHPcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729901AbfGHPYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:46 -0400
+        id S1732837AbfGHPcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0891204EC;
-        Mon,  8 Jul 2019 15:24:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F4A820665;
+        Mon,  8 Jul 2019 15:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599486;
-        bh=XP/wjr61UkwKqFacjGA1z8OfOfSKKAteAPObbnI2bmo=;
+        s=default; t=1562599972;
+        bh=8O11ITLKPbz+4ZI9n9HX2qF0mworvCh5GxMZg3fjy9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VkSkVeoNFtPPMlojpSnRiOnh/+jJ634jJXQ3nWX1n1ruo0MVel0lOLg6qRlDawgqx
-         sP4T4285vPk5ch5kfFXPh7TKTDUGs6vhU8HGSV2DVtY6Z4ymAbvsnGHlsiJBCXjjdi
-         yX6PY+Eo+ALuNUpyB5OktnIB7olrNYhQk7otxhQo=
+        b=FO4ijXv8BE+/kmymKlbikUf68/OeXzglMUSAY/HVLqX/C9CksxtwaLLAZvgXjkADs
+         g0J9JIVtihpVpX5CHRS2GDB9PyaqV9HosNJaFJxo1wgqUF1EKKOONyoL0/DjcdNEbM
+         HyoVj6gGTubbtbxc70f93I6q7JNq8TEaxZWLoaHY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 4.14 31/56] lib/mpi: Fix karactx leak in mpi_powm
-Date:   Mon,  8 Jul 2019 17:13:23 +0200
-Message-Id: <20190708150522.786651247@linuxfoundation.org>
+        stable@vger.kernel.org, swkhack <swkhack@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 52/96] mm/mlock.c: change count_mm_mlocked_page_nr return type
+Date:   Mon,  8 Jul 2019 17:13:24 +0200
+Message-Id: <20190708150529.325236444@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+[ Upstream commit 0874bb49bb21bf24deda853e8bf61b8325e24bcb ]
 
-commit c8ea9fce2baf7b643384f36f29e4194fa40d33a6 upstream.
+On a 64-bit machine the value of "vma->vm_end - vma->vm_start" may be
+negative when using 32 bit ints and the "count >> PAGE_SHIFT"'s result
+will be wrong.  So change the local variable and return value to
+unsigned long to fix the problem.
 
-Sometimes mpi_powm will leak karactx because a memory allocation
-failure causes a bail-out that skips the freeing of karactx.  This
-patch moves the freeing of karactx to the end of the function like
-everything else so that it can't be skipped.
-
-Reported-by: syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
-Fixes: cdec9cb5167a ("crypto: GnuPG based MPI lib - source files...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20190513023701.83056-1-swkhack@gmail.com
+Fixes: 0cf2f6f6dc60 ("mm: mlock: check against vma for actual mlock() size")
+Signed-off-by: swkhack <swkhack@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/mpi/mpi-pow.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ mm/mlock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/mpi/mpi-pow.c
-+++ b/lib/mpi/mpi-pow.c
-@@ -37,6 +37,7 @@
- int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
+diff --git a/mm/mlock.c b/mm/mlock.c
+index 080f3b36415b..d614163f569b 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -636,11 +636,11 @@ static int apply_vma_lock_flags(unsigned long start, size_t len,
+  * is also counted.
+  * Return value: previously mlocked page counts
+  */
+-static int count_mm_mlocked_page_nr(struct mm_struct *mm,
++static unsigned long count_mm_mlocked_page_nr(struct mm_struct *mm,
+ 		unsigned long start, size_t len)
  {
- 	mpi_ptr_t mp_marker = NULL, bp_marker = NULL, ep_marker = NULL;
-+	struct karatsuba_ctx karactx = {};
- 	mpi_ptr_t xp_marker = NULL;
- 	mpi_ptr_t tspace = NULL;
- 	mpi_ptr_t rp, ep, mp, bp;
-@@ -164,13 +165,11 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		int c;
- 		mpi_limb_t e;
- 		mpi_limb_t carry_limb;
--		struct karatsuba_ctx karactx;
+ 	struct vm_area_struct *vma;
+-	int count = 0;
++	unsigned long count = 0;
  
- 		xp = xp_marker = mpi_alloc_limb_space(2 * (msize + 1));
- 		if (!xp)
- 			goto enomem;
- 
--		memset(&karactx, 0, sizeof karactx);
- 		negative_result = (ep[0] & 1) && base->sign;
- 
- 		i = esize - 1;
-@@ -295,8 +294,6 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		if (mod_shift_cnt)
- 			mpihelp_rshift(rp, rp, rsize, mod_shift_cnt);
- 		MPN_NORMALIZE(rp, rsize);
--
--		mpihelp_release_karatsuba_ctx(&karactx);
- 	}
- 
- 	if (negative_result && rsize) {
-@@ -313,6 +310,7 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- leave:
- 	rc = 0;
- enomem:
-+	mpihelp_release_karatsuba_ctx(&karactx);
- 	if (assign_rp)
- 		mpi_assign_limb_space(res, rp, size);
- 	if (mp_marker)
+ 	if (mm == NULL)
+ 		mm = current->mm;
+-- 
+2.20.1
+
 
 
