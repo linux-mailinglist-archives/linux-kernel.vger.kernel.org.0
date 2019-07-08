@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E980862161
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2E2624F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732420AbfGHPPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
+        id S1733194AbfGHPTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:19:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732406AbfGHPPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:15:48 -0400
+        id S1733185AbfGHPTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:19:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 803382166E;
-        Mon,  8 Jul 2019 15:15:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B05521537;
+        Mon,  8 Jul 2019 15:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598948;
-        bh=VD+juevNkgfkUrbrh1YefcJUwNtoDjS+2fPAoB0Yji8=;
+        s=default; t=1562599149;
+        bh=pACI6D3myO5JNSRbPWXUf6hK64xGN3l01pdmArsudig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1WBfmN9S/yXiD3E0MHGgxDudgFMfLmUOvr8ZLDyMM7SXMY+N3Qjd5/PQy3Q2Gi1w
-         4aTiV7xd06WS9V8mK5UCRzk5xRRO7yobO79GcudVNJg/2vE4sTy2hbZFqOJJjf/Hu4
-         d9GBgOqky7icHe5YZTJTOeGZ/KwcpGALw4yDbBM0=
+        b=w0R2fdVMhUzfuzXa89YWTeuraVhj+RG4x6vbwBk9Ib31fGar3OgSvLajffDWoBig6
+         jgfXYi905q8jGWfI4xL5hUe0JfzozG6nfSbsqPUbAHOmvz4ZSlncy5B6s99LH9cIE4
+         mBx49F9BetWA0XS48UlvGtS6isLbOZthWHo5oD5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 03/73] scsi: vmw_pscsi: Fix use-after-free in pvscsi_queue_lck()
-Date:   Mon,  8 Jul 2019 17:12:13 +0200
-Message-Id: <20190708150517.429031888@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 021/102] scripts/checkstack.pl: Fix arm64 wrong or unknown architecture
+Date:   Mon,  8 Jul 2019 17:12:14 +0200
+Message-Id: <20190708150527.302732202@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+[ Upstream commit 4f45d62a52297b10ded963412a158685647ecdec ]
 
-commit 240b4cc8fd5db138b675297d4226ec46594d9b3b upstream.
+The following error occurs for the `make ARCH=arm64 checkstack` case:
 
-Once we unlock adapter->hw_lock in pvscsi_queue_lck() nothing prevents just
-queued scsi_cmnd from completing and freeing the request. Thus cmd->cmnd[0]
-dereference can dereference already freed request leading to kernel crashes
-or other issues (which one of our customers observed). Store cmd->cmnd[0]
-in a local variable before unlocking adapter->hw_lock to fix the issue.
+aarch64-linux-gnu-objdump -d vmlinux $(find . -name '*.ko') | \
+perl ./scripts/checkstack.pl arm64
+wrong or unknown architecture "arm64"
 
-CC: <stable@vger.kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+As suggested by Masahiro Yamada, fix the above error using regular
+expressions in the same way it was fixed for the `ARCH=x86` case via
+commit fda9f9903be6 ("scripts/checkstack.pl: automatically handle
+32-bit and 64-bit mode for ARCH=x86").
 
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/vmw_pvscsi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ scripts/checkstack.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -733,6 +733,7 @@ static int pvscsi_queue_lck(struct scsi_
- 	struct pvscsi_adapter *adapter = shost_priv(host);
- 	struct pvscsi_ctx *ctx;
- 	unsigned long flags;
-+	unsigned char op;
- 
- 	spin_lock_irqsave(&adapter->hw_lock, flags);
- 
-@@ -745,13 +746,14 @@ static int pvscsi_queue_lck(struct scsi_
- 	}
- 
- 	cmd->scsi_done = done;
-+	op = cmd->cmnd[0];
- 
- 	dev_dbg(&cmd->device->sdev_gendev,
--		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, cmd->cmnd[0]);
-+		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, op);
- 
- 	spin_unlock_irqrestore(&adapter->hw_lock, flags);
- 
--	pvscsi_kick_io(adapter, cmd->cmnd[0]);
-+	pvscsi_kick_io(adapter, op);
- 
- 	return 0;
- }
+diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+index 12a6940741fe..b8f616545277 100755
+--- a/scripts/checkstack.pl
++++ b/scripts/checkstack.pl
+@@ -45,7 +45,7 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+ 	$x	= "[0-9a-f]";	# hex character
+ 	$xs	= "[0-9a-f ]";	# hex character or space
+ 	$funcre = qr/^$x* <(.*)>:$/;
+-	if ($arch eq 'aarch64') {
++	if ($arch =~ '^(aarch|arm)64$') {
+ 		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
+ 		$re = qr/^.*stp.*sp, \#-([0-9]{1,8})\]\!/o;
+ 	} elsif ($arch eq 'arm') {
+-- 
+2.20.1
+
 
 
