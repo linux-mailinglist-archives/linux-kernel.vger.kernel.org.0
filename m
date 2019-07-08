@@ -2,86 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D36B361DA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3A8461DAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbfGHLIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 07:08:48 -0400
-Received: from mail-eopbgr80094.outbound.protection.outlook.com ([40.107.8.94]:12006
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730246AbfGHLIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:08:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector1-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mwx5LdNpTF+WqRAlUUVQvOtc5zydKj2+w1v2Lc+jfmo=;
- b=iXayU/IfvbNO4klYIat8KoHTjp0evyI6ZeYKj0ssqHvsRmnZfNI6TEH++/yvGhSX7yv2NxV3AtD5Z8Azi5yD928zAz6E+97PjYdnpQYeb7l+9lMGtXy5JE2Pao54ytCUcRe0SDEuiUGgsCfBPJgwVXesJWBzLuQ6swLn0W7LENU=
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com (10.170.235.155) by
- VI1PR02MB5280.eurprd02.prod.outlook.com (20.178.80.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Mon, 8 Jul 2019 11:08:44 +0000
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::f92b:de76:1404:8783]) by VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::f92b:de76:1404:8783%7]) with mapi id 15.20.2032.019; Mon, 8 Jul 2019
- 11:08:44 +0000
-From:   Tomer Tayar <ttayar@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Omer Shpigelman <oshpigelman@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH] habanalabs: use correct variable to show fd open counter
-Thread-Topic: [PATCH] habanalabs: use correct variable to show fd open counter
-Thread-Index: AQHVNXoNlo+PFKCvb065eSaxqxaboqbAj3dw
-Date:   Mon, 8 Jul 2019 11:08:44 +0000
-Message-ID: <VI1PR02MB3054A333A1B5D22EE2F4DD64D2F60@VI1PR02MB3054.eurprd02.prod.outlook.com>
-References: <20190708104355.32569-1-oded.gabbay@gmail.com>
-In-Reply-To: <20190708104355.32569-1-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ttayar@habana.ai; 
-x-originating-ip: [31.154.181.186]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 58a17fc3-b329-4f8f-a678-08d70394a4a8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR02MB5280;
-x-ms-traffictypediagnostic: VI1PR02MB5280:
-x-microsoft-antispam-prvs: <VI1PR02MB528048916B361C44B40FC960D2F60@VI1PR02MB5280.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3044;
-x-forefront-prvs: 00922518D8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39840400004)(136003)(346002)(189003)(199004)(66066001)(74482002)(53936002)(186003)(99286004)(7736002)(7696005)(6246003)(256004)(25786009)(110136005)(305945005)(14454004)(8936002)(316002)(6636002)(81156014)(81166006)(26005)(52536014)(5660300002)(4744005)(8676002)(86362001)(102836004)(55016002)(2906002)(2501003)(11346002)(74316002)(6506007)(66946007)(9686003)(66556008)(64756008)(76116006)(66476007)(66446008)(73956011)(6436002)(76176011)(6116002)(3846002)(33656002)(68736007)(486006)(71200400001)(478600001)(476003)(446003)(71190400001)(229853002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB5280;H:VI1PR02MB3054.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Mo76kPsnXHOQ5cFVv8gO+h+cnuFAABG6lhfrALEfGvJDbjmYZccQhBQLCXy9wM+L8QS+iHSPAZfs5Qruc8sduWP74aYWHyzaUBJos1btSH05xAvkM8M589AbjR3uGGtI0x65pYfuQdeT0Q/MmlMUPmze/1BfcbDfWmIYyqgl11HsW8OsvheBuRDALontvtLsqDIzsouw1xvjur/vi79pgln4CEGwkQt9s1UKtAQHTJDOjYgZQLqqzt14wil1p3hZE9LPG/OYQvhICbtkyzGtoGR9FoThWg0L2Jiv0Wv+mZdso8KJYqwxZCfM2WlUb7GRTRHjfBSFoL/Zk0kogrslcNz/52kAa7cFEq0IGzvAFNpKZgYsmhfmtAqQifbt+z8oUAVu6g+X890ulbmYxRabuLL0BTVx5md08dVSE0OVBKE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730387AbfGHLJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 07:09:09 -0400
+Received: from foss.arm.com ([217.140.110.172]:44956 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727668AbfGHLJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 07:09:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E06FE14F6;
+        Mon,  8 Jul 2019 04:09:07 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A77353F738;
+        Mon,  8 Jul 2019 04:09:06 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 12:09:04 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Douglas Raillard <douglas.raillard@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        quentin.perret@arm.com, dietmar.eggemann@arm.com
+Subject: Re: [RFC PATCH v2 0/5] sched/cpufreq: Make schedutil energy aware
+Message-ID: <20190708110904.ecrlr4p77n4r6qzk@e110439-lin>
+References: <20190627171603.14767-1-douglas.raillard@arm.com>
+ <20190702155115.GW3436@hirez.programming.kicks-ass.net>
+ <5198292b-1874-9ff4-6a9f-826a5ea00466@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58a17fc3-b329-4f8f-a678-08d70394a4a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 11:08:44.5365
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ttayar@habana.ai
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB5280
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5198292b-1874-9ff4-6a9f-826a5ea00466@arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Sent: Monday, 8 July 2019 13:44
+On 03-Jul 17:36, Douglas Raillard wrote:
+> On 7/2/19 4:51 PM, Peter Zijlstra wrote:
+> > On Thu, Jun 27, 2019 at 06:15:58PM +0100, Douglas RAILLARD wrote:
 
-> The current code checks if the user context pointer is NULL or not to
-> display the number of open file descriptors of a device. However, that
-> variable (user_ctx) will eventually go away as the driver will support
-> multiple processes. Instead, the driver can use the atomic counter of
-> the open file descriptors which the driver already maintains.
->=20
-> Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+[...]
 
-Reviewed-by: Tomer Tayar <ttayar@habana.ai>
+> > I'm not immediately seeing how it is transient; that is, PELT has a
+> > wobble in it's steady state, is that accounted for?
+> > 
+> 
+> The transient-ness of the ramp boost I'm introducing comes from the fact that for a
+> periodic task at steady state, task_ue.enqueued <= task_u when the task is executing.
+                ^^^^^^^^^^^^^^^
+
+I find your above "at steady state" a bit confusing.
+
+The condition "task_ue.enqueue <= task_u" is true only for the first
+task's big activation after a series of small activations, e.g. a task
+switching from 20% to 70%.
+
+That's the transient stat you refer to, isn't it?
+
+> That is because task_ue.enqueued is sampled at dequeue time, precisely at the moment
+> at which task_u is reaching its max for that task.
+
+Right, so in the example above we will have enqueued=20% while task_u
+is going above to converge towards 70%
+
+> Since we only take into account positive boosts, ramp boost will
+> only have an impact in the "increase transients".
+
+Right.
+
+I think Peter was referring to the smallish wobbles we see when the
+task already converged to 70%. If that's the case I would say they are
+already fully covered also by the current util_est.
+
+You are also correct in pointing out that in the steady state
+ramp_boost will not be triggered in that steady state.
+
+IMU, that's for two main reasons:
+ a) it's very likely that enqueued <= util_avg
+ b) even in case enqueued should turn out to be _slightly_ bigger then
+    util_avg, the corresponding (proportional) ramp_boost would be so
+    tiny to not have any noticeable effect on OPP selection.
+
+Am I correct on point b) above?
+
+Could you maybe come up with some experimental numbers related to that
+case specifically?
+
+Best,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
