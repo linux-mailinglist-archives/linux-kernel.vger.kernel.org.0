@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D197D62313
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B22F66225A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390010AbfGHPbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:31:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33168 "EHLO mail.kernel.org"
+        id S2388423AbfGHPZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389981AbfGHPbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:31:49 -0400
+        id S2388538AbfGHPZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:25:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 650F420665;
-        Mon,  8 Jul 2019 15:31:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2F1B2166E;
+        Mon,  8 Jul 2019 15:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599908;
-        bh=LpADHqXs6Y2jo3/LMrstxucMUzahlOU05lZHtleKCuA=;
+        s=default; t=1562599501;
+        bh=h7dxYQZZoJDmLEaLirceWiPTOe+djBBoPaO0SnvyirU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eMLvIU3vtyZRfdjBBAufVAgSatWUJ4139QyVkVdkCCq8g2eSA4wZpzrbmzg1lQPn5
-         JnWOYHtLHeKaiInZ1bemuH478w6zCEXetE2Fd6973r8liHs/s6J62gHmPDShNJ+RcW
-         DMinsOg7aoYBvjj6u5HyBLFXDDFT/NTrlplM1NgE=
+        b=JxQIlx+2bveoPeARpzf8c8MIDJWTgyB2Q+dXwAd6pz/gjeVOO0DN21Y3pZwhupl90
+         F3o62KIU9XDeK7KfwioSDLja3HbOfbf8Skz/KG+foHFxY1D91dLoihQ67sf0BBppbf
+         yDHPqlVuYl9Bi+cA0Q6iVCUya8BMsTXnur5oiK/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        James Grant <jamesg@zaltys.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 29/96] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
+Subject: [PATCH 4.14 09/56] ASoC: sun4i-i2s: Fix sun8i tx channel offset mask
 Date:   Mon,  8 Jul 2019 17:13:01 +0200
-Message-Id: <20190708150528.111562688@linuxfoundation.org>
+Message-Id: <20190708150518.661098702@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fbc318afadd6e7ae2252d6158cf7d0c5a2132f7d ]
+[ Upstream commit 7e46169a5f35762f335898a75d1b8a242f2ae0f5 ]
 
-Gadget drivers may queue request in interrupt context. This would lead to
-a descriptor allocation in that context. In that case we would hit
-BUG_ON(in_interrupt()) in __get_vm_area_node.
+Although not causing any noticeable issues, the mask for the
+channel offset is covering too many bits.
 
-Also remove the unnecessary cast.
-
-Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Tested-by: James Grant <jamesg@zaltys.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/lpc32xx_udc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index b0781771704e..eafc2a00c96a 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -922,8 +922,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
- 	dma_addr_t			dma;
- 	struct lpc32xx_usbd_dd_gad	*dd;
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index b4af5ce78ecb..a10913f8293f 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -110,7 +110,7 @@
  
--	dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
--			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
-+	dd = dma_pool_alloc(udc->dd_cache, GFP_ATOMIC | GFP_DMA, &dma);
- 	if (dd)
- 		dd->this_dma = dma;
- 
+ #define SUN8I_I2S_TX_CHAN_MAP_REG	0x44
+ #define SUN8I_I2S_TX_CHAN_SEL_REG	0x34
+-#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 11)
++#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 12)
+ #define SUN8I_I2S_TX_CHAN_OFFSET(offset)	(offset << 12)
+ #define SUN8I_I2S_TX_CHAN_EN_MASK		GENMASK(11, 4)
+ #define SUN8I_I2S_TX_CHAN_EN(num_chan)		(((1 << num_chan) - 1) << 4)
 -- 
 2.20.1
 
