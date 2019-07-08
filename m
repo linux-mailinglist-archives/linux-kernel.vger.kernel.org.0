@@ -2,113 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E77761A96
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1440A61A91
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfGHGWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 02:22:14 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:34286 "EHLO mxct.zte.com.cn"
+        id S1729069AbfGHGVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:21:14 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:65136 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbfGHGWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:22:13 -0400
+        id S1727218AbfGHGVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:21:13 -0400
 Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id E1517169850ABFE0DA36;
-        Mon,  8 Jul 2019 14:22:11 +0800 (CST)
+        by Forcepoint Email with ESMTPS id 2FF41269E9930AADFF56;
+        Mon,  8 Jul 2019 14:21:11 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x686KmqA015529;
-        Mon, 8 Jul 2019 14:20:48 +0800 (GMT-8)
+        by mse-fl1.zte.com.cn with ESMTP id x686Kqld015540;
+        Mon, 8 Jul 2019 14:20:52 +0800 (GMT-8)
         (envelope-from wen.yang99@zte.com.cn)
 Received: from fox-host8.localdomain ([10.74.120.8])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070814205273-2164428 ;
-          Mon, 8 Jul 2019 14:20:52 +0800 
+          with ESMTP id 2019070814205323-2164429 ;
+          Mon, 8 Jul 2019 14:20:53 +0800 
 From:   Wen Yang <wen.yang99@zte.com.cn>
 To:     linux-kernel@vger.kernel.org
 Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
         cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] irqchip: renesas-rza1: fix an use-after-free in rza1_irqc_probe()
-Date:   Mon, 8 Jul 2019 14:19:04 +0800
-Message-Id: <1562566745-7447-3-git-send-email-wen.yang99@zte.com.cn>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] phy: ti: am654-serdes: fix an use-after-free in serdes_am654_clk_register()
+Date:   Mon, 8 Jul 2019 14:19:05 +0800
+Message-Id: <1562566745-7447-4-git-send-email-wen.yang99@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
 References: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-08 14:20:52,
+ 21, 2013) at 2019-07-08 14:20:53,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-08 14:20:50,
-        Serialize complete at 2019-07-08 14:20:50
-X-MAIL: mse-fl1.zte.com.cn x686KmqA015529
+ 2019-07-08 14:20:53,
+        Serialize complete at 2019-07-08 14:20:53
+X-MAIL: mse-fl1.zte.com.cn x686Kqld015540
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gic_node is still being used in the rza1_irqc_parse_map() call
-after the of_node_put() call, which may result in use-after-free.
+The regmap_node variable is still being used in the syscon_node_to_regmap()
+call after the of_node_put() call, which may result in use-after-free.
 
-Fixes: a644ccb819bc ("irqchip: Add Renesas RZ/A1 Interrupt Controller driver")
+Fixes: 71e2f5c5c224 ("phy: ti: Add a new SERDES driver for TI's AM654x SoC")
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Roger Quadros <rogerq@ti.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/irqchip/irq-renesas-rza1.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/phy/ti/phy-am654-serdes.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rza1.c b/drivers/irqchip/irq-renesas-rza1.c
-index b1f19b21..b0d46ac 100644
---- a/drivers/irqchip/irq-renesas-rza1.c
-+++ b/drivers/irqchip/irq-renesas-rza1.c
-@@ -208,20 +208,19 @@ static int rza1_irqc_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->base);
+diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
+index f8edd08..f14f1f0 100644
+--- a/drivers/phy/ti/phy-am654-serdes.c
++++ b/drivers/phy/ti/phy-am654-serdes.c
+@@ -405,6 +405,7 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	const __be32 *addr;
+ 	unsigned int reg;
+ 	struct clk *clk;
++	int ret = 0;
  
- 	gic_node = of_irq_find_parent(np);
--	if (gic_node) {
-+	if (gic_node)
- 		parent = irq_find_host(gic_node);
--		of_node_put(gic_node);
--	}
+ 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+@@ -413,34 +414,40 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	init = &mux->clk_data;
  
- 	if (!parent) {
- 		dev_err(dev, "cannot find parent domain\n");
+ 	regmap_node = of_parse_phandle(node, "ti,serdes-clk", 0);
+-	of_node_put(regmap_node);
+ 	if (!regmap_node) {
+ 		dev_err(dev, "Fail to get serdes-clk node\n");
 -		return -ENODEV;
 +		ret = -ENODEV;
 +		goto out_put_node;
  	}
  
- 	ret = rza1_irqc_parse_map(priv, gic_node);
- 	if (ret) {
- 		dev_err(dev, "cannot parse %s: %d\n", "interrupt-map", ret);
--		return ret;
+ 	regmap = syscon_node_to_regmap(regmap_node->parent);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(dev, "Fail to get Syscon regmap\n");
+-		return PTR_ERR(regmap);
++		ret = PTR_ERR(regmap);
 +		goto out_put_node;
  	}
  
- 	priv->chip.name = "rza1-irqc",
-@@ -237,10 +236,12 @@ static int rza1_irqc_probe(struct platform_device *pdev)
- 						    priv);
- 	if (!priv->irq_domain) {
- 		dev_err(dev, "cannot initialize irq domain\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
+ 	num_parents = of_clk_get_parent_count(node);
+ 	if (num_parents < 2) {
+ 		dev_err(dev, "SERDES clock must have parents\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_put_node;
  	}
+ 
+ 	parent_names = devm_kzalloc(dev, (sizeof(char *) * num_parents),
+ 				    GFP_KERNEL);
+-	if (!parent_names)
+-		return -ENOMEM;
++	if (!parent_names) {
++		ret = -ENOMEM;
++		goto out_put_node;
++	}
+ 
+ 	of_clk_parent_fill(node, parent_names, num_parents);
+ 
+ 	addr = of_get_address(regmap_node, 0, NULL, NULL);
+-	if (!addr)
+-		return -EINVAL;
++	if (!addr) {
++		ret = -EINVAL;
++		goto out_put_node;
++	}
+ 
+ 	reg = be32_to_cpu(*addr);
+ 
+@@ -456,12 +463,16 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	mux->hw.init = init;
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto out_put_node;
++	}
+ 
+ 	am654_phy->clks[clock_num] = clk;
  
 -	return 0;
 +out_put_node:
-+	of_node_put(gic_node);
++	of_node_put(regmap_node);
 +	return ret;
  }
  
- static int rza1_irqc_remove(struct platform_device *pdev)
+ static const struct of_device_id serdes_am654_id_table[] = {
 -- 
 2.9.5
 
