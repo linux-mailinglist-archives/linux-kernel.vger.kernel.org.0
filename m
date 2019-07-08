@@ -2,152 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1E061BE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8DF61BD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729641AbfGHIo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:44:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:42014 "EHLO foss.arm.com"
+        id S1729566AbfGHIoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:44:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:50111 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729602AbfGHIoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:44:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF58A152F;
-        Mon,  8 Jul 2019 01:44:23 -0700 (PDT)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6AEE93F246;
-        Mon,  8 Jul 2019 01:44:21 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alessio Balsini <balsini@android.com>
-Subject: [PATCH v11 5/5] sched/core: uclamp: Update CPU's refcount on TG's clamp changes
-Date:   Mon,  8 Jul 2019 09:43:57 +0100
-Message-Id: <20190708084357.12944-6-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190708084357.12944-1-patrick.bellasi@arm.com>
-References: <20190708084357.12944-1-patrick.bellasi@arm.com>
+        id S1729555AbfGHIoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 04:44:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hzWp2ps6z9sNy;
+        Mon,  8 Jul 2019 18:44:06 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562575446;
+        bh=9iHnAV5x+eygmg72q9V9IpKKCZ5gF1idv4hhMUU9d1w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CtdS7i61kZ2nJIP99nJ7iZcpJOgnpZR9Bn6GsDLtyE17ipw5smgUD1DBihzJuCdtV
+         hy9UI/6xHnn3W1hb9l/z4sCSTsJ3bm60M3HM4E9yAoVJ6UnI/PDJnTs4pKFdlpsHYg
+         3tu0DrihODx54qVjbAkwqeHulXYwvZ42ecaTAjKnfGHkCoEWFHhf7YEMp5g9lapOC3
+         KE2d/7KqLTl7xuGXP/syCOkvYgdcSzezHu/EEJjkUec9yNuDyVdnKghWlXV4ZktPsf
+         UIovBvUW7ZSfFcipgP3d/80eKN9iTq67AV2nawogQHW22l7+sa4yac7LApj8u6Cc0z
+         gp4OEaILS6nCA==
+Date:   Mon, 8 Jul 2019 18:44:02 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Trond Myklebust <trondmy@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+Subject: linux-next: manual merge of the driver-core tree with the nfs tree
+Message-ID: <20190708184402.4cd912ac@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uXRP4x1pD_=gQ7L6IDWX1GM"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On updates of task group (TG) clamp values, ensure that these new values
-are enforced on all RUNNABLE tasks of the task group, i.e. all RUNNABLE
-tasks are immediately boosted and/or capped as requested.
+--Sig_/uXRP4x1pD_=gQ7L6IDWX1GM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Do that each time we update effective clamps from cpu_util_update_eff().
-Use the *cgroup_subsys_state (css) to walk the list of tasks in each
-affected TG and update their RUNNABLE tasks.
-Update each task by using the same mechanism used for cpu affinity masks
-updates, i.e. by taking the rq lock.
+Hi all,
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
+Today's linux-next merge of the driver-core tree got a conflict in:
 
----
-Changes in v11:
- Message-ID: <20190624174607.GQ657710@devbig004.ftw2.facebook.com>
- - Ensure group limits always clamps group protection
----
- kernel/sched/core.c | 58 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+  net/sunrpc/debugfs.c
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2591a70c85cf..ddc5fcd4b9cf 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1043,6 +1043,57 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
- 		uclamp_rq_dec_id(rq, p, clamp_id);
- }
- 
-+static inline void
-+uclamp_update_active(struct task_struct *p, unsigned int clamp_id)
-+{
-+	struct rq_flags rf;
-+	struct rq *rq;
-+
-+	/*
-+	 * Lock the task and the rq where the task is (or was) queued.
-+	 *
-+	 * We might lock the (previous) rq of a !RUNNABLE task, but that's the
-+	 * price to pay to safely serialize util_{min,max} updates with
-+	 * enqueues, dequeues and migration operations.
-+	 * This is the same locking schema used by __set_cpus_allowed_ptr().
-+	 */
-+	rq = task_rq_lock(p, &rf);
-+
-+	/*
-+	 * Setting the clamp bucket is serialized by task_rq_lock().
-+	 * If the task is not yet RUNNABLE and its task_struct is not
-+	 * affecting a valid clamp bucket, the next time it's enqueued,
-+	 * it will already see the updated clamp bucket value.
-+	 */
-+	if (!p->uclamp[clamp_id].active)
-+		goto done;
-+
-+	uclamp_rq_dec_id(rq, p, clamp_id);
-+	uclamp_rq_inc_id(rq, p, clamp_id);
-+
-+done:
-+
-+	task_rq_unlock(rq, p, &rf);
-+}
-+
-+static inline void
-+uclamp_update_active_tasks(struct cgroup_subsys_state *css,
-+			   unsigned int clamps)
-+{
-+	struct css_task_iter it;
-+	struct task_struct *p;
-+	unsigned int clamp_id;
-+
-+	css_task_iter_start(css, 0, &it);
-+	while ((p = css_task_iter_next(&it))) {
-+		for_each_clamp_id(clamp_id) {
-+			if ((0x1 << clamp_id) & clamps)
-+				uclamp_update_active(p, clamp_id);
-+		}
-+	}
-+	css_task_iter_end(&it);
-+}
-+
- #ifdef CONFIG_UCLAMP_TASK_GROUP
- static void cpu_util_update_eff(struct cgroup_subsys_state *css);
- static void uclamp_update_root_tg(void)
-@@ -7087,8 +7138,13 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
- 			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
- 			clamps |= (0x1 << clamp_id);
- 		}
--		if (!clamps)
-+		if (!clamps) {
- 			css = css_rightmost_descendant(css);
-+			continue;
-+		}
-+
-+		/* Immediately update descendants RUNNABLE tasks */
-+		uclamp_update_active_tasks(css, clamps);
- 	}
- }
- 
--- 
-2.21.0
+between commit:
 
+  2f34b8bfae19 ("SUNRPC: add links for all client xprts to debugfs")
+
+from the nfs tree and commit:
+
+  0a0762c6c604 ("sunrpc: no need to check return value of debugfs_create fu=
+nctions")
+
+from the driver-core tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/sunrpc/debugfs.c
+index 105bea190a45,707d7aab1546..000000000000
+--- a/net/sunrpc/debugfs.c
++++ b/net/sunrpc/debugfs.c
+@@@ -118,60 -117,40 +117,52 @@@ static const struct file_operations tas
+  	.release	=3D tasks_release,
+  };
+ =20
+ +static int do_xprt_debugfs(struct rpc_clnt *clnt, struct rpc_xprt *xprt, =
+void *numv)
+ +{
+ +	int len;
+ +	char name[24]; /* enough for "../../rpc_xprt/ + 8 hex digits + NULL */
+ +	char link[9]; /* enough for 8 hex digits + NULL */
+ +	int *nump =3D numv;
+ +
+ +	if (IS_ERR_OR_NULL(xprt->debugfs))
+ +		return 0;
+ +	len =3D snprintf(name, sizeof(name), "../../rpc_xprt/%s",
+ +		       xprt->debugfs->d_name.name);
+ +	if (len > sizeof(name))
+ +		return -1;
+ +	if (*nump =3D=3D 0)
+ +		strcpy(link, "xprt");
+ +	else {
+ +		len =3D snprintf(link, sizeof(link), "xprt%d", *nump);
+ +		if (len > sizeof(link))
+ +			return -1;
+ +	}
+- 	if (!debugfs_create_symlink(link, clnt->cl_debugfs, name))
+- 		return -1;
+++	debugfs_create_symlink(link, clnt->cl_debugfs, name);
+ +	(*nump)++;
+ +	return 0;
+ +}
+ +
+  void
+  rpc_clnt_debugfs_register(struct rpc_clnt *clnt)
+  {
+  	int len;
+ -	char name[24]; /* enough for "../../rpc_xprt/ + 8 hex digits + NULL */
+ -	struct rpc_xprt *xprt;
+ +	char name[9]; /* enough for 8 hex digits + NULL */
+ +	int xprtnum =3D 0;
+ =20
+- 	/* Already registered? */
+- 	if (clnt->cl_debugfs || !rpc_clnt_dir)
+- 		return;
+-=20
+  	len =3D snprintf(name, sizeof(name), "%x", clnt->cl_clid);
+  	if (len >=3D sizeof(name))
+  		return;
+ =20
+  	/* make the per-client dir */
+  	clnt->cl_debugfs =3D debugfs_create_dir(name, rpc_clnt_dir);
+- 	if (!clnt->cl_debugfs)
+- 		return;
+ =20
+  	/* make tasks file */
+- 	if (!debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs,
+- 				 clnt, &tasks_fops))
+- 		goto out_err;
++ 	debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs, clnt,
++ 			    &tasks_fops);
+ =20
+ -	rcu_read_lock();
+ -	xprt =3D rcu_dereference(clnt->cl_xprt);
+ -	/* no "debugfs" dentry? Don't bother with the symlink. */
+ -	if (IS_ERR_OR_NULL(xprt->debugfs)) {
+ -		rcu_read_unlock();
+ -		return;
+ -	}
+ -	len =3D snprintf(name, sizeof(name), "../../rpc_xprt/%s",
+ -			xprt->debugfs->d_name.name);
+ -	rcu_read_unlock();
+ -
+ -	if (len >=3D sizeof(name))
+ +	if (rpc_clnt_iterate_for_each_xprt(clnt, do_xprt_debugfs, &xprtnum) < 0)
+  		goto out_err;
+ =20
+ -	debugfs_create_symlink("xprt", clnt->cl_debugfs, name);
+ -
+  	return;
+  out_err:
+  	debugfs_remove_recursive(clnt->cl_debugfs);
+
+--Sig_/uXRP4x1pD_=gQ7L6IDWX1GM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jAlIACgkQAVBC80lX
+0Gx/hwf+OdQB9hhf8/q2PaTAveekef/bng7zIuO+8jukNi1ufafFfmBi2JzywSbI
+wSlYbT54SHDfTuUFYbKjMBsWiR/sxUJ++Kn5bWd/shhImYfZ7H6hKq0Zbifxi3w5
+bduOIJ+hH8RMUyat2XorJHIQRyzC0CGNKEjSNjnHeo3A8woQWN+jg3q++g5KhOTD
+mgPLzgDi1yvfd46/yYM0oVI7Ak08NlxL//lT76h90DI84NU9/NHaB4ea9CfUDtOL
++u+84qPqnlHp8NlE+RRBhtkY3pZU2YRAfml6FZCc83kSPY13AjSpqDIPYC70nVKP
+q9S/lOoIXaQXvjTeEKc8K5kZR8KCfQ==
+=KalS
+-----END PGP SIGNATURE-----
+
+--Sig_/uXRP4x1pD_=gQ7L6IDWX1GM--
