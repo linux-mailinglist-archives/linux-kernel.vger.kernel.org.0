@@ -2,93 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3A4626F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02649626FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732525AbfGHRRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:17:42 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38890 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729574AbfGHRRm (ORCPT
+        id S1732910AbfGHRVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:21:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39603 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728744AbfGHRVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:17:42 -0400
-Received: by mail-lf1-f67.google.com with SMTP id h28so7130090lfj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:17:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+bECgTdMtGyGERAEx4hhuq1ieQo20b4zcXHR1yCPWbo=;
-        b=YkdbkwQAEgL5WEVqh56Ro2gTiY0AqYU6FJl4lhKzjngEUNfc75EOmqvN/9o5KeQpRO
-         8lpUZyvo4iiOCecAiFUNPpFjrlvMY38JOxpiAtItCRRMhaMDC1zexo+UgbU4ZqyeGdqs
-         Q3VdTY3FIaBIw/JtDQVJXC5HHLSZ075eXR2II=
+        Mon, 8 Jul 2019 13:21:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x4so18019998wrt.6;
+        Mon, 08 Jul 2019 10:21:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+bECgTdMtGyGERAEx4hhuq1ieQo20b4zcXHR1yCPWbo=;
-        b=dHyNiKPTMQbjQap+IuMBIgmoSgrhtC4ZZrYOxgQtm75SnhyuBb2Hr1NE5hI68KP6xs
-         XpNGi02mWcCs7TAL4koqgrjaSb2fyKPVeB42/q7Klh9QWZUMwWvEc5xKw6WzF4+7izZl
-         G/awf3AAFRv28mk9LmkQMKw/uVf8mBYAGhz+o402jPUT+p74Wm2PVsrsdojGlL2i1ZPI
-         7dnhEiVf7gyAh2CH3b6xcYyHR6vQDHSNbQuzFsEI9pVHvYmgD5Ne7ICwcIgD2k+eC636
-         srmHZkwZxU10jM4MlxJfIyvxXoozHHgwrNLb86cW76xS8yuNbOQxArTfP61DjnlEF+fl
-         ZROA==
-X-Gm-Message-State: APjAAAUxnHdkBrkpaoP8+c/YSatG+Xo1ppdxTkbHqTV+EZovM8ipIiVp
-        HhMJegAlAbyU5X2two6wwMsIxs2OW2Q=
-X-Google-Smtp-Source: APXvYqy2JQCd64K3Ye9dSBV4wV4goFxtwz10QGzlPRqvr+382vadfJ2KMxecN8uia9sf3+oJj/55LA==
-X-Received: by 2002:a19:6e41:: with SMTP id q1mr9496421lfk.20.1562606259526;
-        Mon, 08 Jul 2019 10:17:39 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id r84sm4148687lja.54.2019.07.08.10.17.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 10:17:38 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id t28so16700829lje.9
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:17:38 -0700 (PDT)
-X-Received: by 2002:a2e:9a58:: with SMTP id k24mr10999260ljj.165.1562606258274;
- Mon, 08 Jul 2019 10:17:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uXyuo2g4akO/rflhBob2HGNH9vo/urZZU/7rwD/7OQk=;
+        b=SFhiMTpZDU5MapzrF800zAG91bIxCaShuCHUo5YPw1Fn10yJad/dqiYxoiGBtnvV/7
+         gn3sqq8TbO7AWD7cZBaiBucMzM6npxoRaK2Rk0JzlWtbEHd2Ea8OlK516xVHkzzeQ7gj
+         NXygAxN7FUbVGNyxcZZKKuVLAmnjPZ0RaUHfDqACPMU887FDHhspYy43DH9C4R6gA7zh
+         ebLRd9pNfWxToDKq9qzS+Q2T+tQf9KB/ChJZ7n5EaKnuP5Yypv1/gNUCqwNrMVk+sFW9
+         qXLX/zAlaPi655wYIyDZwSDvWOAfykF/QVGtT4gUvUG4BEjnxlXtqEquBWFNBjeoFCbE
+         bQWQ==
+X-Gm-Message-State: APjAAAWVNye8KPMuAgf5ONG5EsrknmK5PI38bNTQgW0Ew59cs5AAWb48
+        nazSUDtT2H97NXdZe5shuzM=
+X-Google-Smtp-Source: APXvYqzLOITvxGq9hmemZ5mYsiA6citBYgRcyrb+hXyrIxCX+rk6D4G4JFHs99QgjjzlFcbExJ03Cg==
+X-Received: by 2002:adf:aa93:: with SMTP id h19mr19563580wrc.3.1562606506301;
+        Mon, 08 Jul 2019 10:21:46 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id h11sm16376853wro.73.2019.07.08.10.21.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 10:21:45 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Andrew Duggan <aduggan@synaptics.com>
+Cc:     Denis Efremov <efremov@linux.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: synaptics-rmi4 - remove the exporting of rmi_2d_sensor_set_input_params
+Date:   Mon,  8 Jul 2019 20:21:38 +0300
+Message-Id: <20190708172138.31009-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <your-ad-here.call-01562573328-ext-8139@work.hours>
-In-Reply-To: <your-ad-here.call-01562573328-ext-8139@work.hours>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 8 Jul 2019 10:17:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=win6P5gsZnE57WZOUNGP12gX2gGri3+7EhQ6uky2fZk_w@mail.gmail.com>
-Message-ID: <CAHk-=win6P5gsZnE57WZOUNGP12gX2gGri3+7EhQ6uky2fZk_w@mail.gmail.com>
-Subject: Re: [GIT PULL] s390 patches for the 5.3 merge window
-To:     Vasily Gorbik <gor@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 8, 2019 at 1:23 AM Vasily Gorbik <gor@linux.ibm.com> wrote:
->
-> please pull s390 fixes and features for 5.3.
-> This is my first pull request. My PGP key id is 716A93D7,
-> key fingerprint: F397 316C 210A 9C03 1205  6691 467C 8ED2 716A 93D7
+The function rmi_2d_sensor_set_input_params is declared static and marked
+EXPORT_SYMBOL_GPL, which is at best an odd combination. Because the
+function is not used outside of the drivers/input/rmi4/rmi_2d_sensor.c
+file it is defined in, this commit removes the EXPORT_SYMBOL_GPL() marking.
 
-Thanks for the heads-up, everything looks fine and I see you have the
-proper signatures on that key.
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ drivers/input/rmi4/rmi_2d_sensor.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> Please also note the fixup required to avoid s390 build error after you
-> pull Greg's driver-core changes for 5.3:
-> http://lkml.kernel.org/r/e9889ea3-0286-df1c-864c-ba67a0286855@de.ibm.com
+diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rmi_2d_sensor.c
+index ea549efe4bc4..b7fe6eb35a4e 100644
+--- a/drivers/input/rmi4/rmi_2d_sensor.c
++++ b/drivers/input/rmi4/rmi_2d_sensor.c
+@@ -204,7 +204,6 @@ static void rmi_2d_sensor_set_input_params(struct rmi_2d_sensor *sensor)
+ 	if (sensor->topbuttonpad)
+ 		set_bit(INPUT_PROP_TOPBUTTONPAD, input->propbit);
+ }
+-EXPORT_SYMBOL_GPL(rmi_2d_sensor_set_input_params);
+ 
+ int rmi_2d_sensor_configure_input(struct rmi_function *fn,
+ 					struct rmi_2d_sensor *sensor)
+-- 
+2.21.0
 
-Ok, so I don't have Greg's pull request in my in-box yet, which means
-that I may well forget about this by the time I do get it, and I won't
-see the build failure because I don't do a s390 cross-build.
-
-I'll _try_ to remember, but apologies in advance if this slips
-through. I have the working memory of a slightly retarded chipmunk.
-
-Greg - if you happen to remember and add a reminder to the pull
-request when it gets done that would be good, but worst case the s390
-people get to call me names.
-
-                Linus
