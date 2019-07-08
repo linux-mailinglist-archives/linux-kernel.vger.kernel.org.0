@@ -2,127 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DA66280F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66FC162813
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbfGHSKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 14:10:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54236 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391076AbfGHSKc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:10:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DD2F2611D1; Mon,  8 Jul 2019 18:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562609430;
-        bh=xc3K/NrdBEaL95vnh28d+67UATTmmmFkY/nNFHRLfGo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WtnxYmmJfDFFC3ZXL2Jt7pK6XeoHlYEkvYbO/ZegOQMTXUdIz88Q/QhG2UA02bk6O
-         e7BUbq446SPLKxHXsUjNy8rSVjL4nbcKgyzT7aZcPkzgzoa7ME16pMjNHtMyqv/XKu
-         CbNyOsRsGeoUh45EO3aUg1QO9TN1d3Q7EpmTdjLQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1731272AbfGHSM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 14:12:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42256 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728624AbfGHSM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 14:12:56 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7D546118F;
-        Mon,  8 Jul 2019 18:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562609428;
-        bh=xc3K/NrdBEaL95vnh28d+67UATTmmmFkY/nNFHRLfGo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3CKBpHmq8kNLiWfhNh0vkxDilmJZ/IdNkQuSuV824oCpjlWbnUXvMI4V/68WPG3k
-         O49xsnWLyPK/TIeADf5UiLifp/hxMLuAIkNdTFBnj6XZwnkUIMWbLihOHQqU8EeNrK
-         u+PYnNg/4nckxVTPXIz49sLijvNZrLalnaJuuU4U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7D546118F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
-        dianders@chromimum.org, hoegsberg@google.com,
-        baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] iommu/arm-smmu: Add support for DOMAIN_ATTR_SPLIT_TABLES
-Date:   Mon,  8 Jul 2019 12:10:18 -0600
-Message-Id: <1562609418-25446-4-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562609418-25446-1-git-send-email-jcrouse@codeaurora.org>
-References: <1562609418-25446-1-git-send-email-jcrouse@codeaurora.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 6EBFB85363;
+        Mon,  8 Jul 2019 18:12:53 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13A1C2BFBE;
+        Mon,  8 Jul 2019 18:12:39 +0000 (UTC)
+Date:   Mon, 8 Jul 2019 14:12:37 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Message-ID: <20190708181237.5poheliito7zpvmc@madcap2.tricolour.ca>
+References: <20190529145742.GA8959@cisco>
+ <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco>
+ <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco>
+ <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com>
+ <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+ <20190530212900.GC5739@cisco>
+ <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 08 Jul 2019 18:12:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When DOMAIN_ATTR_SPLIT_TABLES is specified for pass ARM_64_LPAE_SPLIT_S1
-to io_pgtable_ops to allocate and initialize TTBR0 and TTBR1 pagetables.
+On 2019-05-30 19:26, Paul Moore wrote:
+> On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+> > >
+> > > [REMINDER: It is an "*audit* container ID" and not a general
+> > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+> >
+> > This sort of seems like a distinction without a difference; presumably
+> > audit is going to want to differentiate between everything that people
+> > in userspace call a container. So you'll have to support all this
+> > insanity anyway, even if it's "not a container ID".
+> 
+> That's not quite right.  Audit doesn't care about what a container is,
+> or is not, it also doesn't care if the "audit container ID" actually
+> matches the ID used by the container engine in userspace and I think
+> that is a very important line to draw.  Audit is simply given a value
+> which it calls the "audit container ID", it ensures that the value is
+> inherited appropriately (e.g. children inherit their parent's audit
+> container ID), and it uses the value in audit records to provide some
+> additional context for log analysis.  The distinction isn't limited to
+> the value itself, but also to how it is used; it is an "audit
+> container ID" and not a "container ID" because this value is
+> exclusively for use by the audit subsystem.  We are very intentionally
+> not adding a generic container ID to the kernel.  If the kernel does
+> ever grow a general purpose container ID we will be one of the first
+> ones in line to make use of it, but we are not going to be the ones to
+> generically add containers to the kernel.  Enough people already hate
+> audit ;)
+> 
+> > > I'm not interested in supporting/merging something that isn't useful;
+> > > if this doesn't work for your use case then we need to figure out what
+> > > would work.  It sounds like nested containers are much more common in
+> > > the lxc world, can you elaborate a bit more on this?
+> > >
+> > > As far as the possible solutions you mention above, I'm not sure I
+> > > like the per-userns audit container IDs, I'd much rather just emit the
+> > > necessary tracking information via the audit record stream and let the
+> > > log analysis tools figure it out.  However, the bigger question is how
+> > > to limit (re)setting the audit container ID when you are in a non-init
+> > > userns.  For reasons already mentioned, using capable() is a non
+> > > starter for everything but the initial userns, and using ns_capable()
+> > > is equally poor as it essentially allows any userns the ability to
+> > > munge it's audit container ID (obviously not good).  It appears we
+> > > need a different method for controlling access to the audit container
+> > > ID.
+> >
+> > One option would be to make it a string, and have it be append only.
+> > That should be safe with no checks.
+> >
+> > I know there was a long thread about what type to make this thing. I
+> > think you could accomplish the append-only-ness with a u64 if you had
+> > some rule about only allowing setting lower order bits than those that
+> > are already set. With 4 bits for simplicity:
+> >
+> > 1100         # initial container id
+> > 1100 -> 1011 # not allowed
+> > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+> >              # no lower order bits left
+> >
+> > There are probably fancier ways to do it if you actually understand
+> > math :)
+> 
+>  ;)
+> 
+> > Since userns nesting is limited to 32 levels (right now, IIRC), and
+> > you have 64 bits, this might be reasonable. You could just teach
+> > container engines to use the first say N bits for themselves, with a 1
+> > bit for the barrier at the end.
+> 
+> I like the creativity, but I worry that at some point these
+> limitations are going to be raised (limits have a funny way of doing
+> that over time) and we will be in trouble.  I say "trouble" because I
+> want to be able to quickly do an audit container ID comparison and
+> we're going to pay a penalty for these larger values (we'll need this
+> when we add multiple auditd support and the requisite record routing).
+> 
+> Thinking about this makes me also realize we probably need to think a
+> bit longer about audit container ID conflicts between orchestrators.
+> Right now we just take the value that is given to us by the
+> orchestrator, but if we want to allow multiple container orchestrators
+> to work without some form of cooperation in userspace (I think we have
+> to assume the orchestrators will not talk to each other) we likely
+> need to have some way to block reuse of an audit container ID.  We
+> would either need to prevent the orchestrator from explicitly setting
+> an audit container ID to a currently in use value, or instead generate
+> the audit container ID in the kernel upon an event triggered by the
+> orchestrator (e.g. a write to a /proc file).  I suspect we should
+> start looking at the idr code, I think we will need to make use of it.
 
-v3: Moved all the pagetable specific work into io-pgtable-arm in a previous
-patch.
+To address this, I'd suggest that it is enforced to only allow the
+setting of descendants and to maintain a master list of audit container
+identifiers (with a hash table if necessary later) that includes the
+container owner.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
+This also allows the orchestrator/engine to inject processes into
+existing containers by checking that the audit container identifier is
+only used again by the same owner.
 
- drivers/iommu/arm-smmu.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+I have working code for both.
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 653b6b3..7a6b4bb 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -257,6 +257,7 @@ struct arm_smmu_domain {
- 	bool				non_strict;
- 	struct mutex			init_mutex; /* Protects smmu pointer */
- 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
-+	u32 attributes;
- 	struct iommu_domain		domain;
- };
- 
-@@ -832,7 +833,11 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 		ias = smmu->va_size;
- 		oas = smmu->ipa_size;
- 		if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH64) {
--			fmt = ARM_64_LPAE_S1;
-+			if (smmu_domain->attributes &
-+				(1 << DOMAIN_ATTR_SPLIT_TABLES))
-+				fmt = ARM_64_LPAE_SPLIT_S1;
-+			else
-+				fmt = ARM_64_LPAE_S1;
- 		} else if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_L) {
- 			fmt = ARM_32_LPAE_S1;
- 			ias = min(ias, 32UL);
-@@ -1582,6 +1587,10 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
- 		case DOMAIN_ATTR_NESTING:
- 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 			return 0;
-+		case DOMAIN_ATTR_SPLIT_TABLES:
-+			*(int *)data = !!(smmu_domain->attributes &
-+				(1 << DOMAIN_ATTR_SPLIT_TABLES));
-+			return 0;
- 		default:
- 			return -ENODEV;
- 		}
-@@ -1622,6 +1631,11 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 			else
- 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 			break;
-+		case DOMAIN_ATTR_SPLIT_TABLES:
-+			if (*((int *)data))
-+				smmu_domain->attributes |=
-+					(1 << DOMAIN_ATTR_SPLIT_TABLES);
-+			break;
- 		default:
- 			ret = -ENODEV;
- 		}
--- 
-2.7.4
+> paul moore
+> www.paul-moore.com
 
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
