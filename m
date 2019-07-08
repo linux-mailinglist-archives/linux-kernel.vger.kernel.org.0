@@ -2,134 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24ADD61A8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F121761A95
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfGHGSX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 8 Jul 2019 02:18:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60212 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729044AbfGHGSX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:18:23 -0400
-Received: from mail-wm1-f69.google.com ([209.85.128.69])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <chia-lin.kao@canonical.com>)
-        id 1hkMyj-0007Kd-8u
-        for linux-kernel@vger.kernel.org; Mon, 08 Jul 2019 06:18:21 +0000
-Received: by mail-wm1-f69.google.com with SMTP id u19so3857126wmj.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 23:18:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ni/ZsRUHJQeGte3cJaCva9RYqIeypB1jmcG6EYYS4M0=;
-        b=dzGUSMS7NzFs6G5RdLmMjB70WtLj4dRk/ubaB0SjCqVEMT+Aaw/Xr8lVASqP02N0ce
-         X3vTp598zxgJtzNP7SbedZErONPM5j/Su6yhSka8NUGxpZ+EqUPMo3IqWv6y87tPMeds
-         8DLGDZrR+qJjGeCKXClpeSF67uuzNkF0jr1Ymuk3ladKvkxzynDXpzqajPjgSSldZe7o
-         rl+6AowsgijktIQhXThxgzqxIhL1TsUVUPZSInUg7gecZM6MgX624kuBxITp+0+Hg1ts
-         hZV1ffAmxPEdZ/sNLtYSsESW0yaMs01vaxR6TG5A72bJMRRDNsVrtgbcXYzOIvzI5DKx
-         qsFQ==
-X-Gm-Message-State: APjAAAWuRAZGaldZVGksFV86SVvZsvM1bRsIei/y11LpL9F2DIR09cn3
-        OIOaGZ8GyJiMvx6T/357eUzke+stCaG3Ga+Edu6FC+Gl4vMgScs6wsRN/g+Ym+d9dVTbAhL82yu
-        FSj42f2VmaaPlMJ2FBVBlsKB65UlycitVlEVpIRrDkVvjNekGebxVO0zhbg==
-X-Received: by 2002:adf:ec0f:: with SMTP id x15mr16856900wrn.165.1562566700888;
-        Sun, 07 Jul 2019 23:18:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwig7hgNaptLx4qBqsvR/0MyqEqHKYxSDJDbwqswzvIlF/Euk+VlLhQjiYtbYlLVahTH/1T47u6IHnv1+zpsmk=
-X-Received: by 2002:adf:ec0f:: with SMTP id x15mr16856867wrn.165.1562566700631;
- Sun, 07 Jul 2019 23:18:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190625083051.30332-1-acelan.kao@canonical.com>
- <a3469010-829c-16dc-be83-6fe9b3021530@linux.intel.com> <CAFv23QnaKMs9bjS9ry_L4K7wskUqNR2AsgDG-v+fah2XO7EpKw@mail.gmail.com>
- <5c14537d-b6aa-b478-fdd8-29f690b15e07@linux.intel.com>
-In-Reply-To: <5c14537d-b6aa-b478-fdd8-29f690b15e07@linux.intel.com>
-From:   AceLan Kao <acelan.kao@canonical.com>
-Date:   Mon, 8 Jul 2019 14:18:09 +0800
-Message-ID: <CAFv23Qmo_f=FEVM2ZOfL-8SvP624doY-OxU_T091uweKwJJ7QA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: designware: Add disable runtime pm quirk
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        id S1729093AbfGHGVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:21:22 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:33566 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727218AbfGHGVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:21:21 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 1553A895BBB8E99657FC;
+        Mon,  8 Jul 2019 14:21:16 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x686Klnf049223;
+        Mon, 8 Jul 2019 14:20:47 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070814205103-2164426 ;
+          Mon, 8 Jul 2019 14:20:51 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
+Subject: [PATCH] cpufreq/pasemi: fix an use-after-free in pas_cpufreq_cpu_init()
+Date:   Mon, 8 Jul 2019 14:19:02 +0800
+Message-Id: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-08 14:20:51,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-08 14:20:48,
+        Serialize complete at 2019-07-08 14:20:48
+X-MAIL: mse-fl2.zte.com.cn x686Klnf049223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarkko,
+The cpu variable is still being used in the of_get_property() call
+after the of_node_put() call, which may result in use-after-free.
 
-Sorry, I lost track of this thread and didn't understand what you want
-me to try.
-I'm willing to try it if you can explain it more.
+Fixes: a9acc26b75f ("cpufreq/pasemi: fix possible object reference leak")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/cpufreq/pasemi-cpufreq.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-My colleague comes out another solution for this issue
-   https://lkml.org/lkml/2019/7/5/17
-and it explains why it takes up to 100ms to wake up.
-This solution is more aggressive to zero the d3cold_delay and it looks
-like the delay is not necessary.
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index 6b1e4ab..d2dd47b 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -132,7 +132,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
+ 
+-	of_node_put(cpu);
+ 	if (!cpu)
+ 		goto out;
+ 
+@@ -141,15 +140,15 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		dn = of_find_compatible_node(NULL, NULL,
+ 					     "pasemi,pwrficient-sdc");
+ 	if (!dn)
+-		goto out;
++		goto out_put_cpu_node;
+ 	err = of_address_to_resource(dn, 0, &res);
+ 	of_node_put(dn);
+ 	if (err)
+-		goto out;
++		goto out_put_cpu_node;
+ 	sdcasr_mapbase = ioremap(res.start + SDCASR_OFFSET, 0x2000);
+ 	if (!sdcasr_mapbase) {
+ 		err = -EINVAL;
+-		goto out;
++		goto out_put_cpu_node;
+ 	}
+ 
+ 	dn = of_find_compatible_node(NULL, NULL, "1682m-gizmo");
+@@ -177,6 +176,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		err = -EINVAL;
+ 		goto out_unmap_sdcpwr;
+ 	}
++	of_node_put(cpu);
+ 
+ 	/* we need the freq in kHz */
+ 	max_freq = *max_freqp / 1000;
+@@ -203,6 +203,8 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ out_unmap_sdcasr:
+ 	iounmap(sdcasr_mapbase);
++out_put_cpu_node:
++	of_node_put(cpu);
+ out:
+ 	return err;
+ }
+-- 
+2.9.5
 
-Anyway, we have two different proposed solutions now, my proposed
-solution is specific to the listed platforms, but we may have to
-extent the list(platforms which uses the old firmware),
-the other proposed solution from my colleague is generic and apply to
-all platforms which loads intel-lpss-pci driver, it may lead to
-unexpected regressions which we don't see now.
-Please give some suggestions, thanks.
-
-Best regards,
-AceLan Kao.
-
-Jarkko Nikula <jarkko.nikula@linux.intel.com> 於 2019年6月26日 週三 下午2:27寫道：
->
-> On 6/26/19 5:32 AM, AceLan Kao wrote:
-> > Adding I2C_HID_QUIRK_NO_RUNTIME_PM quirk doesn't help on this issue.
-> > Actually, Goodix touchpad already has that PM quirk in the list for other issue.
-> >          { I2C_VENDOR_ID_GOODIX, I2C_DEVICE_ID_GOODIX_01F0,
-> >                 I2C_HID_QUIRK_NO_RUNTIME_PM },
-> > I also modify the code as you suggested, but no luck.
-> >
-> Yeah, I realized it won't help as the i2c-hid device is anyway powered
-> on constantly when the device is open by the pm_runtime_get_sync() call
-> in i2c_hid_open().
->
-> > It's not Goodix takes time to wakeup, it's designware I2C controller.
-> > Designware doesn't do anything wrong here, it's Goodix set the interrupt timeout
-> > that leads to the issue, so we have to prevent designware from runtime
-> > suspended.
-> > But only on that bus where Goodix is connected and open by user space.
-> What I mean something like below:
->
-> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c
-> b/drivers/hid/i2c-hid/i2c-hid-core.c
-> index 90164fed08d3..bbeaa39ddc23 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> @@ -795,6 +795,9 @@ static int i2c_hid_open(struct hid_device *hid)
->         struct i2c_hid *ihid = i2c_get_clientdata(client);
->         int ret = 0;
->
-> +       /* some quirk test here */
-> +       pm_runtime_get_sync(&client->adapter->dev);
-> +
->         ret = pm_runtime_get_sync(&client->dev);
->         if (ret < 0)
->                 return ret;
-> @@ -812,6 +815,9 @@ static void i2c_hid_close(struct hid_device *hid)
->
->         /* Save some power */
->         pm_runtime_put(&client->dev);
-> +
-> +       /* some quirk test here */
-> +       pm_runtime_put(&client->adapter->dev);
->   }
->
->   static int i2c_hid_power(struct hid_device *hid, int lvl)
->
-> --
-> Jarkko
