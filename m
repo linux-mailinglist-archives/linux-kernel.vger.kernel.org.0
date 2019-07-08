@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D08622A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A602D62488
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:43:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389090AbfGHP1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55718 "EHLO mail.kernel.org"
+        id S2391178AbfGHPnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:43:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389074AbfGHP1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:32 -0400
+        id S1729736AbfGHPXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BC4920665;
-        Mon,  8 Jul 2019 15:27:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2ADE214C6;
+        Mon,  8 Jul 2019 15:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599652;
-        bh=lpF8smmZKzXzIFKYhBNQHTJe28GZk9w9HrrXxBl46x0=;
+        s=default; t=1562599431;
+        bh=de8mC/QLuiEZzy4zq3/VOkL0MdnjAWqlozWMPbRT42M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FBHQ3cOk9QBAx5/l8LNXw8XZ4+WU7Bq2dznqgtd+nh90RubdrYSC+At3znnkD6xfd
-         hgXpV0lef/x8slvjJQBk0yuF73K9kGlN9JjtLUWRPCsxm0j2fCObJqCdGNhMNsGOMW
-         YlbRKMXCxU2n8rnn2qM7w/iV41Oqbu1aem61DRB4=
+        b=0tZL/cLnRwKj+agKayAijzjI0NT159uqOb3p8n3aSBAEWppnMZG+cuSp01RNqxdmh
+         sB3xCraHnUYcVhIX5cp2ul+QktlV/MWBTEYQykp+vkUuJLBV+FVOHWE3x/qhk2GWO9
+         LXqXfn1svduzAWS1ZYHKOY5g9dKYud3cI4ZExxYg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathew King <mathewk@chromium.org>,
-        Jett Rink <jettrink@chromium.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 30/90] platform/x86: intel-vbtn: Report switch events when event wakes device
+        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 05/56] drm/mediatek: fix unbind functions
 Date:   Mon,  8 Jul 2019 17:12:57 +0200
-Message-Id: <20190708150524.134124013@linuxfoundation.org>
+Message-Id: <20190708150517.994331556@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cb1921b17adbe6509538098ac431033378cd7165 ]
+[ Upstream commit 8fd7a37b191f93737f6280a9b5de65f98acc12c9 ]
 
-When a switch event, such as tablet mode/laptop mode or docked/undocked,
-wakes a device make sure that the value of the swich is reported.
-Without when a device is put in tablet mode from laptop mode when it is
-suspended or vice versa the device will wake up but mode will be
-incorrect.
+detatch panel in mtk_dsi_destroy_conn_enc(), since .bind will try to
+attach it again.
 
-Tested by suspending a device in laptop mode and putting it in tablet
-mode, the device resumes and is in tablet mode. When suspending the
-device in tablet mode and putting it in laptop mode the device resumes
-and is in laptop mode.
-
-Signed-off-by: Mathew King <mathewk@chromium.org>
-Reviewed-by: Jett Rink <jettrink@chromium.org>
-Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 2e54c14e310f ("drm/mediatek: Add DSI sub driver")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel-vbtn.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-index 06cd7e818ed5..a0d0cecff55f 100644
---- a/drivers/platform/x86/intel-vbtn.c
-+++ b/drivers/platform/x86/intel-vbtn.c
-@@ -76,12 +76,24 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
- 	struct platform_device *device = context;
- 	struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
- 	unsigned int val = !(event & 1); /* Even=press, Odd=release */
--	const struct key_entry *ke_rel;
-+	const struct key_entry *ke, *ke_rel;
- 	bool autorelease;
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 7e5e24c2152a..413313f19c36 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -851,6 +851,8 @@ static void mtk_dsi_destroy_conn_enc(struct mtk_dsi *dsi)
+ 	/* Skip connector cleanup if creation was delegated to the bridge */
+ 	if (dsi->conn.dev)
+ 		drm_connector_cleanup(&dsi->conn);
++	if (dsi->panel)
++		drm_panel_detach(dsi->panel);
+ }
  
- 	if (priv->wakeup_mode) {
--		if (sparse_keymap_entry_from_scancode(priv->input_dev, event)) {
-+		ke = sparse_keymap_entry_from_scancode(priv->input_dev, event);
-+		if (ke) {
- 			pm_wakeup_hard_event(&device->dev);
-+
-+			/*
-+			 * Switch events like tablet mode will wake the device
-+			 * and report the new switch position to the input
-+			 * subsystem.
-+			 */
-+			if (ke->type == KE_SW)
-+				sparse_keymap_report_event(priv->input_dev,
-+							   event,
-+							   val,
-+							   0);
- 			return;
- 		}
- 		goto out_unknown;
+ static void mtk_dsi_ddp_start(struct mtk_ddp_comp *comp)
 -- 
 2.20.1
 
