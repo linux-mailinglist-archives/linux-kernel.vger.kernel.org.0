@@ -2,116 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD7461D20
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 12:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A18661D26
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 12:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbfGHKhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 06:37:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53502 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfGHKhK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 06:37:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T91IgG+rHZNc0YB1ANzKPE0tZSQBRCXLcDSK9NZh7+k=; b=RIXKBBPou5htvmoG3XlZxb6a2
-        rEGkWuVCnCaSdxl5ztreMDUc4SIHfeRDMeiB0huUyOmip6ver5eZzY8I5dk7xVbXeW1XV1ywoG0tg
-        F0jgW6QQ9s4MijFnxH0iFuG+qpBpLy5UsgeQDkBvgX9gZ2bqtI3I7puoQERiJpkWbnVdw=;
-Received: from [217.140.106.54] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hkR19-0003DI-W4; Mon, 08 Jul 2019 10:37:08 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 92916D02D15; Mon,  8 Jul 2019 11:37:07 +0100 (BST)
-Date:   Mon, 8 Jul 2019 11:37:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] regmap updates for v5.3
-Message-ID: <20190708103707.GB8576@sirena.org.uk>
+        id S1728275AbfGHKlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 06:41:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:44302 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfGHKlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 06:41:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9270E360;
+        Mon,  8 Jul 2019 03:41:18 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA2FE3F246;
+        Mon,  8 Jul 2019 03:41:15 -0700 (PDT)
+Subject: Re: [RFC PATCH 2/6] sched/dl: Capacity-aware migrations
+To:     luca abeni <luca.abeni@santannapisa.it>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-3-luca.abeni@santannapisa.it>
+ <b920d85b-4228-52fd-22db-3a0c26cf8ebd@arm.com>
+ <20190708094136.7bce5f46@sweethome>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <7d323b6f-ae15-b04d-cd67-a5e6f8d101d5@arm.com>
+Date:   Mon, 8 Jul 2019 12:41:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
-Content-Disposition: inline
-X-Cookie: optimist, n:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190708094136.7bce5f46@sweethome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/8/19 9:41 AM, luca abeni wrote:
+> Hi Dietmar,
+> 
+> On Thu, 4 Jul 2019 14:05:22 +0200
+> Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> 
+>> On 5/6/19 6:48 AM, Luca Abeni wrote:
+>>
+>> [...]
+>>
+>>> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+>>> index 5b981eeeb944..3436f3d8fa8f 100644
+>>> --- a/kernel/sched/deadline.c
+>>> +++ b/kernel/sched/deadline.c
+>>> @@ -1584,6 +1584,9 @@ select_task_rq_dl(struct task_struct *p, int
+>>> cpu, int sd_flag, int flags) if (sd_flag != SD_BALANCE_WAKE)
+>>>  		goto out;
+>>>  
+>>> +	if (dl_entity_is_special(&p->dl))
+>>> +		goto out;  
+>>
+>> I wonder if this is really required. The if condition
+>>
+>> 1591         if (unlikely(dl_task(curr)) &&
+>> 1592             (curr->nr_cpus_allowed < 2 ||
+>> 1593              !dl_entity_preempt(&p->dl, &curr->dl)) &&
+>> 1594             (p->nr_cpus_allowed > 1)) {
+>>
+>> further below uses '!dl_entity_preempt(&p->dl, &curr->dl))' which
+>> returns 'dl_entity_is_special(a) || ...'
+> 
+> Uhm... I do not remember the details; I remember that the check fixed
+> something during the development of the patchset, but I did not check
+> if it was still needed when I forward-ported the patches...
+> 
+> So, maybe it worked around some bugs in previous versions of the
+> kernel, but is not needed now.
 
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
-
-  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git regmap-v5.3
-
-for you to fetch changes up to aaccf3863ce22108ae1d3bac82604eec9d8ae44c:
-
-  Merge branch 'regmap-5.3' into regmap-next (2019-07-04 17:33:59 +0100)
-
-----------------------------------------------------------------
-regmap: Updates for v5.3
-
-This is a relatively busy release for regmap, though not busy in the
-grand scheme of things, with the addition of support for I3C from Vitor
-Soares and a few small fixes and cleanups.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      regmap: lzo: Switch to bitmap_zalloc()
-
-Daniel Baluta (1):
-      regmap: debugfs: Fix memory leak in regmap_debugfs_init
-
-Mark Brown (2):
-      Merge branch 'regmap-5.2' into regmap-linus
-      Merge branch 'regmap-5.3' into regmap-next
-
-Srinivas Kandagatla (1):
-      regmap: fix bulk writes on paged registers
-
-Vitor Soares (1):
-      regmap: add i3c bus support
-
-YueHaibing (1):
-      regmap: select CONFIG_REGMAP while REGMAP_SCCB is set
-
- drivers/base/regmap/Kconfig          |  6 +++-
- drivers/base/regmap/Makefile         |  1 +
- drivers/base/regmap/regcache-lzo.c   |  8 ++---
- drivers/base/regmap/regmap-debugfs.c |  2 ++
- drivers/base/regmap/regmap-i3c.c     | 60 ++++++++++++++++++++++++++++++++++++
- drivers/base/regmap/regmap.c         |  2 ++
- include/linux/regmap.h               | 20 ++++++++++++
- 7 files changed, 93 insertions(+), 6 deletions(-)
- create mode 100644 drivers/base/regmap/regmap-i3c.c
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0jHNIACgkQJNaLcl1U
-h9Bu1wf/eHD4yjePQu6Z/kPD2C6Fxm1/wRVuXC6/1DM1YPqCXWdL8s3VM3U4Rsim
-5BHF0SyQveKMaKm40BfhkcqUXD4BG7MmStroE9BEVmwC9VsUEkZNXvkgNkmbco9W
-eqFhpgITA9PKw+TF7cdJz/Y4SSVPWFgLPohb+hxfOzCg3QYKMosh5sIZiYh5mubF
-RTzWZOGL9Wkq21GP+Jckcur5uyc6sSJk16Ex0lr8tWJu3fiWxzRH+0XOjO7hIIAI
-NYQtL23V+FWJiaU3OqXBQQ/yK2MOByML1v1qiacA2EV+7EWoOzhv64J1V5S216JL
-+/L/Ql6++ort1wsz2ZEeJmpTRF70Ow==
-=TWM6
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
+I figured it out in the meantime ... you added a ' ... ||
+static_branch_unlikely(&sched_asym_cpucapacity)' in this patch to this
+if condition which let's special dl tasks (like sugov:X) enter this
+condition e.g. on big.LITTLE.
