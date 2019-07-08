@@ -2,173 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F3D6222E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41646223A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbfGHPXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34854 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388157AbfGHPXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BC5D9AF9C;
-        Mon,  8 Jul 2019 15:23:12 +0000 (UTC)
-Date:   Mon, 8 Jul 2019 17:23:11 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S2388231AbfGHPXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:42 -0400
+Received: from ms.lwn.net ([45.79.88.28]:51864 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731266AbfGHPXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:38 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 47D992B8;
+        Mon,  8 Jul 2019 15:23:37 +0000 (UTC)
+Date:   Mon, 8 Jul 2019 09:23:36 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH POC] printk_ringbuffer: Alternative implementation of
- lockless printk ringbuffer
-Message-ID: <20190708152311.7u6hs453phhjif3q@pathway.suse.cz>
-References: <20190621140516.h36g4in26pe3rmly@pathway.suse.cz>
- <20190704103321.10022-1-pmladek@suse.com>
- <20190704103321.10022-1-pmladek@suse.com>
- <87r275j15h.fsf@linutronix.de>
+Subject: Re: [PATCH] docs: automarkup.py: ignore exceptions when seeking for
+ xrefs
+Message-ID: <20190708092336.01ade0ab@lwn.net>
+In-Reply-To: <d9b1c85769ba659dba6c7c8b459e385be28ca478.1562430514.git.mchehab+samsung@kernel.org>
+References: <d9b1c85769ba659dba6c7c8b459e385be28ca478.1562430514.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r275j15h.fsf@linutronix.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-07-04 16:59:54, John Ogness wrote:
-> Hi Petr,
+On Sat,  6 Jul 2019 13:28:42 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+
+> When using the automarkup extension with:
+> 	make pdfdocs
 > 
-> On 2019-07-04, Petr Mladek <pmladek@suse.com> wrote:
-> > This is POC that implements the lockless printk ringbuffer slightly
-> > different way. I believe that it is worth considering because it looks
-> > much easier to deal with. The reasons are:
-> >
-> > 	+ The state of each entry is always clear.
-> >
-> > 	+ The write access rights and validity of the data
-> > 	  are clear from the state of the entry.
-> >
-> > 	+ It seems that three barriers are enough to synchronize
-> > 	  readers vs. writers. The rest is done implicitely
-> > 	  using atomic operations.
-> >
-> > Of course, I might have missed some critical race that can't get
-> > solved by the new design easily. But I do not see it at the moment.
+> without passing an specific book, the code will raise an exception:
 > 
-> Two things jump out at me when looking at the implementation:
+> 	  File "/devel/v4l/docs/Documentation/sphinx/automarkup.py", line 86, in auto_markup
+> 	    node.parent.replace(node, markup_funcs(name, app, node))
+> 	  File "/devel/v4l/docs/Documentation/sphinx/automarkup.py", line 59, in markup_funcs
+> 	    'function', target, pxref, lit_text)
+> 	  File "/devel/v4l/docs/sphinx_2.0/lib/python3.7/site-packages/sphinx/domains/c.py", line 308, in resolve_xref
+> 	    contnode, target)
+> 	  File "/devel/v4l/docs/sphinx_2.0/lib/python3.7/site-packages/sphinx/util/nodes.py", line 450, in make_refnode
+> 	    '#' + targetid)
+> 	  File "/devel/v4l/docs/sphinx_2.0/lib/python3.7/site-packages/sphinx/builders/latex/__init__.py", line 159, in get_relative_uri
+> 	    return self.get_target_uri(to, typ)
+> 	  File "/devel/v4l/docs/sphinx_2.0/lib/python3.7/site-packages/sphinx/builders/latex/__init__.py", line 152, in get_target_uri
+> 	    raise NoUri
+> 	sphinx.environment.NoUri
 > 
-> 1. The code claims that the cmpxchg(seq_newest) in prb_reserve_desc()
-> guarantees that "The descriptor is ours until the COMMITTED bit is set."
-> This is not true if in that wind seq_newest wraps, allowing another
-> writer to gain ownership of the same descriptor. For small descriptor
-> arrays (such as in my test module), this situation is quite easy to
-> reproduce.
+> This happens because not all references will belong to a single
+> PDF/LaTeX document.
 
-I am not sure that I fully understand the problem. seq_newest
-wraps at 2^30 (32-bit) and at 2^62 (64-bit). It takes a while
-to reuse an existing one. And it does not depend on the size
-of the array.
+Interesting.  I'd like to understand better why the HTML builder doesn't do
+this...it seems like a bug in the latex builder somehow.
 
-In addition, new sequence number can get assigned only when
-the descriptor with the conflicting (sharing the same struct
-prb_desc) sequence number is in reusable state. It means
-that it has to be committed before.
-
-> This was one of the reasons I chose to use a linked list. When the
-> descriptor is atomically removed from the linked list, it can _never_ be
-> used (or even seen) by any other writer until the owning writer is done
-> with it.
+> Better to just ignore those than breaking Sphinx build.
 > 
-> I'm not yet sure how that could be fixed with this implementation. The
-> state information is in a separate variable than the head pointer for
-> the descriptor array (seq_newest). This means you cannot atomically
-> reserve descriptors.
-
-In my implementation, the sequence numbers are atomically reserved
-in prb_reserve_desc() by
-
-	} while (cmpxchg(&rb->seq_newest, seq_newest, seq) != newest_seqs);
-
-where seq is always seq_newest + 1. We are here only when the
-conflicting seq from the previous wrap is in reusable state
-and the related datablock is moved outside valid lpos range.
-This is ensured by prb_remove_desc_oldest(rb, seq_prev_wrap).
-
-Now, the CPU that succeeded with cmpxchg() becomes
-the exclusive owner of the respective descriptor. The sequence
-number is written into this descriptor _after_ cmpxchg() succeeded.
-
-It is safe because:
-
-    + previous values are not longer used (descriptor has been marked
-      as reusable, lpos from the related datablock were moved
-      outside valid range (lpos_oldest, lpos_newest).
-
-    + new values are ignored by readers and other writers until
-      the right sequence number and the committed flag is set
-      in the descriptor.
-
-
-> 2. Another issue is when prb_reserve() fails and sets the descriptor as
-> unused. As it is now, no reader can read beyond that descriptor until it
-> is recycled. Readers need to know that the descriptor is bad and can be
-> skipped over. It might be better to handle this the way I did: go ahead
-> and set the state to committed, but have invalid lpos/lpos_next values
-> (for example: lpos_next=lpos) so the reader knows it can skip over the
-> descriptor.
-
-This is exactly what the code does, see prb_make_desc_unused().
-It marks the descriptor as committed so that it can get reused.
-And it sets lpos and lpos_next to the same value so that
-the situation can get eventually detected by readers.
-
-
-> > The code compiles but it is not really tested. I wanted to send it
-> > ASAP in a good enough state before we spend more time on cleaning
-> > up either of the proposals.
+> Fixes: d74b0d31ddde ("Docs: An initial automarkup extension for sphinx")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/sphinx/automarkup.py | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> I am glad to see you put together your implementation. If anything, it
-> shows you understand the design! If after seeing my next version (v3)
-> you are still convinced that using a linked list for the descriptors is
-> too complex, then I can help support your idea to move to an array.
+> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
+> index b300cf129869..dba14374f269 100644
+> --- a/Documentation/sphinx/automarkup.py
+> +++ b/Documentation/sphinx/automarkup.py
+> @@ -55,8 +55,13 @@ def markup_funcs(docname, app, node):
+>                                            reftype = 'function',
+>                                            reftarget = target, modname = None,
+>                                            classname = None)
+> -            xref = cdom.resolve_xref(app.env, docname, app.builder,
+> -                                     'function', target, pxref, lit_text)
+> +
+> +            # When building pdf documents, this may raise a NoUri exception
+> +            try:
+> +                xref = cdom.resolve_xref(app.env, docname, app.builder,
+> +                                         'function', target, pxref, lit_text)
+> +            except:
+> +                xref = None
 
-I am definitely interested into seeing v3 of your approach. I believe
-that it will be much easier to understand. Then it will be easier to
-compare.
+So this absolutely needs to be "except sphinx.environment.NoUri".  I have
+seen catch-all "except" clauses paper over or otherwise hide too many
+problems over the years; I really try to avoid ever using them.
 
+I want to look at this problem and understand it a bit better; then I'll
+probably end up applying this patch with the above tweak.
 
-BTW: There is one potential problem with my alternative approach.
+Thanks,
 
-     The descriptors and the related data blocks might get reserved
-     in different order. Now, the descriptor might get reused only
-     when the related datablock is moved outside the valid range.
-     This operation might move also other data blocks outside
-     the range and invalidate descriptors that were reserved later.
-     As a result we might need to invalidate more messages in
-     the log buffer then would be really necessary.
-
-     If I get it properly, this problem does not exist with
-     the implementation using links. It is because the descriptors
-     are linked in the same order as the reserved data blocks.
-
-     I am not sure how big the problem, with more invalidated messages,
-     would be in reality. I am not sure if it would be worth
-     a more complicated implementation.
-
-     Alternative solution would be to somehow mix tricks from
-     both approaches and get something that is easier to deal
-     with and has less drawbacks. I am not sure it is possible.
-     Anyway, I still need to fully understand the linked approach
-     first.
-
-Best Regards,
-Petr
+jon
