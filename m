@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E076295A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8ED36298A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391522AbfGHTZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:25:13 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42748 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388726AbfGHTZL (ORCPT
+        id S2404196AbfGHT0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:26:31 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38044 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbfGHTZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:25:11 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so8061301pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:25:10 -0700 (PDT)
+        Mon, 8 Jul 2019 15:25:12 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y15so8071825pfn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0/u92z35Ke4CKIbgzmi0ZCVrrTWSoncNGXWMgkU4HjU=;
-        b=hMTkzh7N34WJMex7DCQgYtT6uMIctbygBh0hRb7bTeVZciQKdfi/QkiLFqBL9FtSDP
-         zj6WdZXfF3AQzeV7Wl5G6g1e+Qh08ZlUEVvu9Wug4rlbb4CFks9pS2S2RlujC/kPbauV
-         6u8MODyvje12OGh9ko7dkGQqnM6WLvJOAdI3M=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=MaGzZisdYBBgFX/QuRcqVi/VI5GsRgwFYphjBCtTHs0=;
+        b=LwQ+7zDaMDpO5piJbvIq8JbtbV72vHpBAwq3IFau8WlEoUnxJ+WP7+9VrBVGl+5uN4
+         J+Ar+i53NQMiECyGyGjjJI35+J4wzNYAmWEhijO3gZurm/2WvoDHY0H8W1OIEOXs0/OI
+         bI5bj6duTAH31k3iVODuW8sPlqBdnfdadfG5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0/u92z35Ke4CKIbgzmi0ZCVrrTWSoncNGXWMgkU4HjU=;
-        b=GDFHQ+BQfdKzFfXHSs/BFb+3z618ewOBY3XNdujHB9kXSaqLiBrzmeEcqyIEfRkVy3
-         s/5ay67AjJuiCVAtJz8er7kNcUMkdMulK9eNsJFpQQqW4lNdaEczAlKyh1KPE0xUmARS
-         zTi7ZCmjfPOYhS93DQ7EplUnhiqBYSPnEDUIRfRbhQ3SHOtQYmCo67rPi/1qHecdZksa
-         ftv3HxlRHEkutk70STfbI3t8Mw0AftVRRC1AdK3TahlltXKLu8XSrZQOaNL1In1Yjhex
-         XvmB/C4zikCyiYZFBdFqkICCwOqNc8+i6Dio/PG4j2HuNS4f6eCKHPuF3SkgjbxdVMhO
-         g6mA==
-X-Gm-Message-State: APjAAAUwyyM8sLGqCgJAHqZh/CBpKoyvunfpPP5keQmQgFPxtnWG7ewg
-        wJYxlOwle2CdQ71rH/XS5PrsbQ==
-X-Google-Smtp-Source: APXvYqxOSQwQ7NAwnECL2t+8NgMoEu6WfclD8cbGn9DmiABWUbcM+f3VfzhREsWQjcfcoaNhKkccsQ==
-X-Received: by 2002:a63:a1a:: with SMTP id 26mr25517384pgk.265.1562613910217;
-        Mon, 08 Jul 2019 12:25:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=MaGzZisdYBBgFX/QuRcqVi/VI5GsRgwFYphjBCtTHs0=;
+        b=el6Zx2aBaZVMriiNG0I+PI9X6ALL45v3XhJX+yzqdzAKZURGLcy1tbysp9rb6wINsp
+         jXHYxiDVWZRXCLx7TuJHZcxXBjPKvHsmWqHcMN1BEjcgHnIvA9rHAV+x9+1HAn/8sP76
+         2Xl5dTajqBHD4EUY58cI5Ulkpk/vSOd5j2bvASLn0SzQyf+ZtZgpsIft/cdyYJrditK0
+         +/KG0+rLOgxeIl14jAIzOdv1Crx17mYXkiEgzGIjVtLU9RaO9CW2kSiD3UlOtuLwj9w4
+         0mKqIKUKRAXTB4kcxBzxrXtJOijnSCWvjOFWpe6jrlL+/MrfMXm39HEVN7F/iDcSiDvF
+         AKNA==
+X-Gm-Message-State: APjAAAWLAHODAgtlICDQ224bPm4vn70Gsif5N3+opvrs9GREAaBgyXKS
+        8MK3/cexEYnA32ZEwAJ2Czkoww==
+X-Google-Smtp-Source: APXvYqxcCcLYcn/x8D50rn/vmkXY7YFkvL0a3L/ogSHSleiZNJEF9oD7to8kU4B1bDy6uEs49/LGuA==
+X-Received: by 2002:a63:f4e:: with SMTP id 14mr26032375pgp.58.1562613911655;
+        Mon, 08 Jul 2019 12:25:11 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id u23sm20751520pfn.140.2019.07.08.12.25.09
+        by smtp.gmail.com with ESMTPSA id v184sm19032424pfb.82.2019.07.08.12.25.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 12:25:09 -0700 (PDT)
+        Mon, 08 Jul 2019 12:25:11 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     "David S . Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>,
@@ -53,10 +53,12 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 0/7] net: phy: realtek: Enable configuration of RTL8211E LEDs and SSC
-Date:   Mon,  8 Jul 2019 12:24:52 -0700
-Message-Id: <20190708192459.187984-1-mka@chromium.org>
+Subject: [PATCH v3 1/7] dt-bindings: net: Add bindings for Realtek PHYs
+Date:   Mon,  8 Jul 2019 12:24:53 -0700
+Message-Id: <20190708192459.187984-2-mka@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190708192459.187984-1-mka@chromium.org>
+References: <20190708192459.187984-1-mka@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,39 +66,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Realtek RTL8211E allows customization of the PHY LED behavior,
-like which LEDs are on for certain link speeds and which LEDs blink
-when there is traffic. By default EEE LED mode is enabled, in which
-a blinking LED is on for 400ms and off for 2s. This series adds
-support for configuring the LED behavior through device tree
-properties.
+Add the 'realtek,eee-led-mode-disable' property to disable EEE
+LED mode on Realtek PHYs that support it.
 
-The RTL8211E supports Spread Spectrum Clocking (SSC), which reduces
-clock noise that may affect other board functions. By default SSC
-is disabled, this series adds support for enabling it through a
-device tree property.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+TODO: adapt PHY core to deal with optional compatible strings
 
-Certain registers on the RTL8211E can only be accessed through
-a vendor specific extended page mechanism. Extended pages need
-to be accessed for the LED configuration and enabling SSC. This
-series adds helpers to facilitate accessing extended pages.
+Changes in v3:
+- added entry for compatible string
+- added compatible string to example
+- mention that the new property is only available for RTL8211E
 
-Matthias Kaehlcke (7):
-  dt-bindings: net: Add bindings for Realtek PHYs
-  net: phy: realtek: Allow disabling RTL8211E EEE LED mode
-  dt-bindings: net: realtek: Add property to enable SSC
-  net: phy: realtek: Add helpers for accessing RTL8211E extension pages
-  net: phy: realtek: Support SSC for the RTL8211E
-  dt-bindings: net: realtek: Add property to configure LED mode
-  net: phy: realtek: configure RTL8211E LEDs
-
- .../devicetree/bindings/net/realtek.txt       |  47 +++++
- drivers/net/phy/realtek.c                     | 171 ++++++++++++++++--
- include/dt-bindings/net/realtek.h             |  18 ++
- 3 files changed, 221 insertions(+), 15 deletions(-)
+Changes in v2:
+- document 'realtek,eee-led-mode-disable' instead of
+  'realtek,enable-ssc' in the initial version
+---
+ .../devicetree/bindings/net/realtek.txt       | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/net/realtek.txt
- create mode 100644 include/dt-bindings/net/realtek.h
 
+diff --git a/Documentation/devicetree/bindings/net/realtek.txt b/Documentation/devicetree/bindings/net/realtek.txt
+new file mode 100644
+index 000000000000..db0333f23fec
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/realtek.txt
+@@ -0,0 +1,31 @@
++Realtek PHY properties.
++
++This document describes properties of Realtek PHYs.
++
++Optional properties:
++- compatible: should be one of the following:
++  "realtek,rtl8201cp", "realtek,rtl8201f", "realtek,rtl8211",
++  "realtek,rtl8211b", "realtek,rtl8211c", "realtek,rtl8211dn",
++  "realtek,rtl8211e", "realtek,rtl8211f", "rtl8366rb"
++
++  the property is required if any of the properties are specified that
++  are only supported for certain Realtek PHYs.
++
++- realtek,eee-led-mode-disable: Disable EEE LED mode on this port.
++
++  Only supported for "realtek,rtl8211e".
++
++
++Example:
++
++mdio0 {
++	compatible = "snps,dwmac-mdio";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	ethphy: ethernet-phy@1 {
++		compatible = "realtek,rtl8211e";
++		reg = <1>;
++		realtek,eee-led-mode-disable;
++	};
++};
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
