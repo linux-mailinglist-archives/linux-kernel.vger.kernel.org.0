@@ -2,111 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5BE61BF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF6B61BE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:48:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfGHIwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:52:02 -0400
-Received: from mx7.zte.com.cn ([202.103.147.169]:36526 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfGHIwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:52:02 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id D496EBE0043BE622BB03;
-        Mon,  8 Jul 2019 16:51:58 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x688oVnj044240;
-        Mon, 8 Jul 2019 16:50:31 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070816503612-2168893 ;
-          Mon, 8 Jul 2019 16:50:36 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
-Subject: [PATCH v3] cpufreq/pasemi: fix an use-after-free in pas_cpufreq_cpu_init()
-Date:   Mon, 8 Jul 2019 16:48:46 +0800
-Message-Id: <1562575726-17438-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-08 16:50:36,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-08 16:50:33,
-        Serialize complete at 2019-07-08 16:50:33
-X-MAIL: mse-fl2.zte.com.cn x688oVnj044240
+        id S1728440AbfGHIsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:48:43 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43784 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbfGHIsn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 04:48:43 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x688mfSc105328;
+        Mon, 8 Jul 2019 03:48:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562575721;
+        bh=0vvrbq4sO8mI+45KfLyz6qhcBRue/QwX9tsHP/CDc7o=;
+        h=From:To:CC:Subject:Date;
+        b=JR3BZbImwQ5P/aIZK4o7eVKa/2secReGTOj/RZR4AakVNcnXSY4oP4wU6Vdngd8UT
+         EuGy7rzzQ2AOPj+dcYb/Ars00Ch4SQXRST3xGJr9uZDJguJIVzo6dGECi3VRfvpv8L
+         nfgYZUu+skpWWWhEjDkM9+gIwq0nb9zUyctiw35Y=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x688medG122916
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 8 Jul 2019 03:48:40 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 8 Jul
+ 2019 03:48:40 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 8 Jul 2019 03:48:40 -0500
+Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x688mc7P061716;
+        Mon, 8 Jul 2019 03:48:39 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <t-kristo@ti.com>, <j-keerthy@ti.com>
+Subject: [PATCH] gpio: davinci: silence error prints in case of EPROBE_DEFER
+Date:   Mon, 8 Jul 2019 14:19:04 +0530
+Message-ID: <20190708084904.18607-1-j-keerthy@ti.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpu variable is still being used in the of_get_property() call
-after the of_node_put() call, which may result in use-after-free.
+Silence error prints in case of EPROBE_DEFER. This avoids
+multiple/duplicate defer prints during boot.
 
-Fixes: a9acc26b75f ("cpufreq/pasemi: fix possible object reference leak")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
-v3: fix a leaked reference.
-v2: clean up the code according to the advice of viresh.
+ drivers/gpio/gpio-davinci.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- drivers/cpufreq/pasemi-cpufreq.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 6b1e4ab..9dc5163 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -128,20 +128,20 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	int cur_astate, idx;
- 	struct resource res;
- 	struct device_node *cpu, *dn;
--	int err = -ENODEV;
-+	int err;
- 
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
--
--	of_node_put(cpu);
- 	if (!cpu)
--		goto out;
-+		return -ENODEV;
- 
- 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
- 	if (!dn)
- 		dn = of_find_compatible_node(NULL, NULL,
- 					     "pasemi,pwrficient-sdc");
--	if (!dn)
-+	if (!dn) {
-+		err = -ENODEV;
- 		goto out;
-+	}
- 	err = of_address_to_resource(dn, 0, &res);
- 	of_node_put(dn);
- 	if (err)
-@@ -196,6 +196,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cur = pas_freqs[cur_astate].frequency;
- 	ppc_proc_freq = policy->cur * 1000ul;
- 
-+	of_node_put(cpu);
- 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
- 
- out_unmap_sdcpwr:
-@@ -204,6 +205,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- out_unmap_sdcasr:
- 	iounmap(sdcasr_mapbase);
- out:
-+	of_node_put(cpu);
- 	return err;
- }
- 
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index fc494a84a29d..e0b025689625 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -238,8 +238,9 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	for (i = 0; i < nirq; i++) {
+ 		chips->irqs[i] = platform_get_irq(pdev, i);
+ 		if (chips->irqs[i] < 0) {
+-			dev_info(dev, "IRQ not populated, err = %d\n",
+-				 chips->irqs[i]);
++			if (chips->irqs[i] != -EPROBE_DEFER)
++				dev_info(dev, "IRQ not populated, err = %d\n",
++					 chips->irqs[i]);
+ 			return chips->irqs[i];
+ 		}
+ 	}
 -- 
-2.9.5
+2.17.1
 
