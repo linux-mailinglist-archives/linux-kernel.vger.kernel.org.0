@@ -2,110 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A2062C6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 01:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89BFB62C61
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 01:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfGHXN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 19:13:57 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34527 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfGHXN4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 19:13:56 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 31so2098206wrm.1;
-        Mon, 08 Jul 2019 16:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XaRXZQCNBW0FXINwm4ytAUNDCX/SiwydWSwmwt/UWuk=;
-        b=aB/KHvRVnzj/KYHgRH8OpLgd97kFns5I6hoLJEjjgHmuKdI7Py8I3NmBuPChNYhSxf
-         DHi4ptImpe9EaKeYf8WFkFhkbXyGkrr21UtQvRH2v7XMeaxMS2Y1jj7OIrlXg4SZEWdu
-         HMxwU6xVrrKJDjS2QTvMX75569gfR4lUVhTltG9iu1OVg/cVh0E8uLwTWnePyIkeR9OG
-         kbYxQc2AMWE7UIcWYVv90eW8k3Gnr5rTm8nlbkmyN1bBk1WzsG6PpgMC0mcFOCD2pj05
-         jGlhIdecijQTjLHRVtQ7jo3WiKaojvBUCpcaX99wRY1/eyJmWv3SyvafNfy/ZhUhd9lc
-         AO1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XaRXZQCNBW0FXINwm4ytAUNDCX/SiwydWSwmwt/UWuk=;
-        b=GmPmBAY7x8zVKujG2Xk6ZXxQi/12KEqwrnDR2cZbZrB/3kr3Cp30xkFWvrmzmVKBu9
-         5c0JrcGFCmHU1wm4E2frDZFDjjOj0xqE/fh6mQfXgPQoqY/ye3TvSN7UDq/SzoVYRCGN
-         B0QWnfERUb4I8Wg63drGi/Zj+CNmSqLCu6TLU8mv4x/t7g1++OctHY5JCuxNFKmIZ1WD
-         KQ2xB0IuHTjE0t6/D8yGPQcMF4tj8/FIr7LaWOB4+tZqlU4gPI6c/XmEe4VJEX0CmOJl
-         ea5YIZ+vVBgOojkMt1ZCZTu5ZybjZMNoBDTo7badHw9iLou7MUWbQQkSZZA0lKYZsL4u
-         SZig==
-X-Gm-Message-State: APjAAAWVRAofNuYXdYCTnxYzs9nPq74/4KJtAMwoIZEj7OMmopOP28KW
-        x72rUhpLfgqnjJG8GSxadUU=
-X-Google-Smtp-Source: APXvYqzS34nlLa+QncLuO6A/Gitk0bBARc5vnefA3pHpopXXX61vnmV6tq0nyO+fK6oenaESWqqt/Q==
-X-Received: by 2002:a5d:56c7:: with SMTP id m7mr21100523wrw.64.1562627634196;
-        Mon, 08 Jul 2019 16:13:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id x16sm736653wmj.4.2019.07.08.16.13.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 16:13:53 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Boris Pismenny <borisp@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] net/mlx5e: Return in default case statement in tx_post_resync_params
-Date:   Mon,  8 Jul 2019 16:11:55 -0700
-Message-Id: <20190708231154.89969-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        id S1726605AbfGHXMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 19:12:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:44579 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbfGHXMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 19:12:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jLp518FDz9s3Z;
+        Tue,  9 Jul 2019 09:12:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562627565;
+        bh=nd0L5KvIlUBThUk3llUF/iTHenWnlgmOQfj8lXdA6Tc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dUvryMtEwm3xpq0uikBGgNNa6koRF2gFM8NUjoojFkqiz5+a03fHNDvve0YGXuCBk
+         dOzPd4v5O7KgVvJsVCeURe5UuMSc8BV3Qh8EZ0zgpH6HFAfU0vKWFzsRD6K4HDBNQK
+         hp6JeUJrrXFbvdmZsawhQGdWK6BKJMszBaclWWlPEm+uUc4wFl5hROcIsl3ZP1TPa7
+         s5zkB3uZwMcP+fIKLOz2Arz+ni4EzIQY6gvpY/VJRD01SzfjzHAp3cgxgdd91t+BjO
+         pdneCPSC6ioVXLrDtfehvxKvmPSk+Qr4MBtbrGvrzrPCSiovUcqTh5qW3+gy2ZZsjo
+         bQde4CtMvjm8w==
+Date:   Tue, 9 Jul 2019 09:12:36 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ pidfd tree
+Message-ID: <20190709091236.3b658262@canb.auug.org.au>
+In-Reply-To: <20190522114314.515b410d@canb.auug.org.au>
+References: <20190522114314.515b410d@canb.auug.org.au>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IRDCyuFiV/FuGuV+Q6a9QFe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang warns:
+--Sig_/IRDCyuFiV/FuGuV+Q6a9QFe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:251:2:
-warning: variable 'rec_seq_sz' is used uninitialized whenever switch
-default is taken [-Wsometimes-uninitialized]
-        default:
-        ^~~~~~~
-drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:255:46: note:
-uninitialized use occurs here
-        skip_static_post = !memcmp(rec_seq, &rn_be, rec_seq_sz);
-                                                    ^~~~~~~~~~
-drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:239:16: note:
-initialize the variable 'rec_seq_sz' to silence this warning
-        u16 rec_seq_sz;
-                      ^
-                       = 0
-1 warning generated.
+Hi all,
 
-This case statement was clearly designed to be one that should not be
-hit during runtime because of the WARN_ON statement so just return early
-to prevent copying uninitialized memory up into rn_be.
+On Wed, 22 May 2019 11:43:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+>=20
+>   kernel/pid.c
+>=20
+> between commit:
+>=20
+>   99e9da7f2796 ("pid: add pidfd_open()")
+>=20
+> from the pidfd tree and commit:
+>=20
+>   51c59c914840 ("kernel/pid.c: convert struct pid:count to refcount_t")
+>=20
+> from the akpm-current tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc kernel/pid.c
+> index 39181ccca846,b59681973dd6..000000000000
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@@ -37,8 -36,7 +37,8 @@@
+>   #include <linux/init_task.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/proc_ns.h>
+> - #include <linux/proc_fs.h>
+> + #include <linux/refcount.h>
+>  +#include <linux/sched/signal.h>
+>   #include <linux/sched/task.h>
+>   #include <linux/idr.h>
+>  =20
 
-Fixes: d2ead1f360e8 ("net/mlx5e: Add kTLS TX HW offload support")
-Link: https://github.com/ClangBuiltLinux/linux/issues/590
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c | 1 +
- 1 file changed, 1 insertion(+)
+I am still getting this conflict.  Just a reminder in case you think
+Linus may need to know.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-index 3f5f4317a22b..5c08891806f0 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-@@ -250,6 +250,7 @@ tx_post_resync_params(struct mlx5e_txqsq *sq,
- 	}
- 	default:
- 		WARN_ON(1);
-+		return;
- 	}
- 
- 	skip_static_post = !memcmp(rec_seq, &rn_be, rec_seq_sz);
--- 
-2.22.0
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/IRDCyuFiV/FuGuV+Q6a9QFe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jzeQACgkQAVBC80lX
+0Gwb1wf+IPW9D2u1iKzZgxiBMWjepDrUjwjHC9DHUXJclpawkF4A0nR4sW3vZnP+
+RyDNy1UrE377NY5XNWviBBIrWUhynPslxMTbDNYcLZT5phMCsmqUWNx0ZtAYUEQT
+jmupMjSjwVd4mbr2ar33LQgP3FVZcaefmGXBl5v1LCdYmPlKiDCjm00jtObLJae+
+/wsyT9INHXVPHrMFcjlOhToeDrRuy8Wmvw8RHtALVLV1uhv2Q3+0l6TB9ryEHMlW
+/sQBicaMnY/jrV3MzvY3NV5nEPDyN0s9Ls1PwjYGyamQQKqWNB40ZtdQTDDjzzV0
+9d4bsLeZg1OAA3Xx/1Z/3Jg0+slE7Q==
+=5GWn
+-----END PGP SIGNATURE-----
+
+--Sig_/IRDCyuFiV/FuGuV+Q6a9QFe--
