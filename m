@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7646062230
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ACE862429
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388179AbfGHPXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50342 "EHLO mail.kernel.org"
+        id S2388951AbfGHP0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:26:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388169AbfGHPXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:21 -0400
+        id S2388457AbfGHPYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:24:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0086C204EC;
-        Mon,  8 Jul 2019 15:23:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27E8E204EC;
+        Mon,  8 Jul 2019 15:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599400;
-        bh=XP/wjr61UkwKqFacjGA1z8OfOfSKKAteAPObbnI2bmo=;
+        s=default; t=1562599492;
+        bh=lJVXvgSVh1PubHkZQ2NeBKf24hax92kj9bnFmPHHqkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRS/FIp8kKKrgL8D6qR+Y43qsK4tNYy1qWuy9BWPz050YoKOsAMol/5BtaD9YydJz
-         OT0dnNvmtrgYvje9Mav0nKiasFgcaC+tVEus9XcZqQKm9PYrMu4z8zMLa5VMdK7w9p
-         tJSQpuGUWDjNnQNc8uodNryRPqlNxvxMzEOx92M0=
+        b=kwQ75MIGi90MhnuqX9LeM9DoIhnrIpljj9AP6Oqwk5fQ/B4VPRRcGF+x08kRjfyyv
+         1ujA2lv5a77RFlBx2zsbTOfjw1XZtvgQEdCIT5muU23Bf/CR2kJoJ89wljcM4KLq1F
+         k8Kv7dzfcW9RNXn6krJCWBEMvybclEARmbRadWdM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 4.9 092/102] lib/mpi: Fix karactx leak in mpi_powm
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 4.14 33/56] ARM: dts: armada-xp-98dx3236: Switch to armada-38x-uart serial node
 Date:   Mon,  8 Jul 2019 17:13:25 +0200
-Message-Id: <20190708150531.228221466@linuxfoundation.org>
+Message-Id: <20190708150523.031613831@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
 
-commit c8ea9fce2baf7b643384f36f29e4194fa40d33a6 upstream.
+commit 80031361747aec92163464f2ee08870fec33bcb0 upstream.
 
-Sometimes mpi_powm will leak karactx because a memory allocation
-failure causes a bail-out that skips the freeing of karactx.  This
-patch moves the freeing of karactx to the end of the function like
-everything else so that it can't be skipped.
+Switch to the "marvell,armada-38x-uart" driver variant to empty
+the UART buffer before writing to the UART_LCR register.
 
-Reported-by: syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
-Fixes: cdec9cb5167a ("crypto: GnuPG based MPI lib - source files...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+Tested-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>.
+Cc: stable@vger.kernel.org
+Fixes: 43e28ba87708 ("ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236")
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/mpi/mpi-pow.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/lib/mpi/mpi-pow.c
-+++ b/lib/mpi/mpi-pow.c
-@@ -37,6 +37,7 @@
- int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
- {
- 	mpi_ptr_t mp_marker = NULL, bp_marker = NULL, ep_marker = NULL;
-+	struct karatsuba_ctx karactx = {};
- 	mpi_ptr_t xp_marker = NULL;
- 	mpi_ptr_t tspace = NULL;
- 	mpi_ptr_t rp, ep, mp, bp;
-@@ -164,13 +165,11 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		int c;
- 		mpi_limb_t e;
- 		mpi_limb_t carry_limb;
--		struct karatsuba_ctx karactx;
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -360,3 +360,11 @@
+ 	status = "disabled";
+ };
  
- 		xp = xp_marker = mpi_alloc_limb_space(2 * (msize + 1));
- 		if (!xp)
- 			goto enomem;
- 
--		memset(&karactx, 0, sizeof karactx);
- 		negative_result = (ep[0] & 1) && base->sign;
- 
- 		i = esize - 1;
-@@ -295,8 +294,6 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		if (mod_shift_cnt)
- 			mpihelp_rshift(rp, rp, rsize, mod_shift_cnt);
- 		MPN_NORMALIZE(rp, rsize);
--
--		mpihelp_release_karatsuba_ctx(&karactx);
- 	}
- 
- 	if (negative_result && rsize) {
-@@ -313,6 +310,7 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- leave:
- 	rc = 0;
- enomem:
-+	mpihelp_release_karatsuba_ctx(&karactx);
- 	if (assign_rp)
- 		mpi_assign_limb_space(res, rp, size);
- 	if (mp_marker)
++&uart0 {
++	compatible = "marvell,armada-38x-uart";
++};
++
++&uart1 {
++	compatible = "marvell,armada-38x-uart";
++};
++
 
 
