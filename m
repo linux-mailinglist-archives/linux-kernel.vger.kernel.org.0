@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6CE6222F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FAC62384
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732666AbfGHPXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50180 "EHLO mail.kernel.org"
+        id S2390755AbfGHPgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:36:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732353AbfGHPXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:15 -0400
+        id S2390853AbfGHPfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:35:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C77D120665;
-        Mon,  8 Jul 2019 15:23:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0F4217D9;
+        Mon,  8 Jul 2019 15:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599394;
-        bh=vVFyYXwho3zCgkOD0rbDcYE6AzYSHyuG8zbWWEKW4J4=;
+        s=default; t=1562600099;
+        bh=mRPp/zK5V6l69aHKM5b/TkXMBJAtLcfaKxPp1RIEfOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hI5Xhh6KYaWvgVL4gU68kgiDY10awdSOHlKBnSOwjGI9xUWb25GqduoicBf7koaje
-         cBawH5shtqt2M0+QaxDHq54/I4ESH1Ee2GDw3YoUkbUEnD9wJWt3u9gAXZgpRp3vkS
-         zluTeJZ+HY8K9IIR0+VaUwXw9ZovV+XVaBrCe8z8=
+        b=MZRZc2/lX3pAJiuDj4Bxbz3m45Rl8oyLNsslPgEB8aZ26dmbYILM51gl4JP+46aCo
+         ljKECYwerFHtOGB+4DbHg4Yqw0P606e9V60uyJCTIXG3JQ1oFbmBiymv3g5Radw0mZ
+         fliyGkdL1M+ttX4FTod4umrzCMr4AcvkyTpxaEZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 090/102] ALSA: line6: Fix write on zero-sized buffer
+        stable@vger.kernel.org, Manuel Traut <manut@linutronix.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 51/96] scripts/decode_stacktrace.sh: prefix addr2line with $CROSS_COMPILE
 Date:   Mon,  8 Jul 2019 17:13:23 +0200
-Message-Id: <20190708150531.120534160@linuxfoundation.org>
+Message-Id: <20190708150529.278685117@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+[ Upstream commit c04e32e911653442fc834be6e92e072aeebe01a1 ]
 
-commit 3450121997ce872eb7f1248417225827ea249710 upstream.
+At least for ARM64 kernels compiled with the crosstoolchain from
+Debian/stretch or with the toolchain from kernel.org the line number is
+not decoded correctly by 'decode_stacktrace.sh':
 
-LINE6 drivers allocate the buffers based on the value returned from
-usb_maxpacket() calls.  The manipulated device may return zero for
-this, and this results in the kmalloc() with zero size (and it may
-succeed) while the other part of the driver code writes the packet
-data with the fixed size -- which eventually overwrites.
+  $ echo "[  136.513051]  f1+0x0/0xc [kcrash]" | \
+    CROSS_COMPILE=/opt/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-linux- \
+   ./scripts/decode_stacktrace.sh /scratch/linux-arm64/vmlinux \
+                                  /scratch/linux-arm64 \
+                                  /nfs/debian/lib/modules/4.20.0-devel
+  [  136.513051] f1 (/linux/drivers/staging/kcrash/kcrash.c:68) kcrash
 
-This patch adds a simple sanity check for the invalid buffer size for
-avoiding that problem.
+If addr2line from the toolchain is used the decoded line number is correct:
 
-Reported-by: syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  [  136.513051] f1 (/linux/drivers/staging/kcrash/kcrash.c:57) kcrash
 
+Link: http://lkml.kernel.org/r/20190527083425.3763-1-manut@linutronix.de
+Signed-off-by: Manuel Traut <manut@linutronix.de>
+Acked-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/line6/pcm.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ scripts/decode_stacktrace.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/line6/pcm.c
-+++ b/sound/usb/line6/pcm.c
-@@ -558,6 +558,11 @@ int line6_init_pcm(struct usb_line6 *lin
- 	line6pcm->max_packet_size_out =
- 		usb_maxpacket(line6->usbdev,
- 			usb_sndisocpipe(line6->usbdev, ep_write), 1);
-+	if (!line6pcm->max_packet_size_in || !line6pcm->max_packet_size_out) {
-+		dev_err(line6pcm->line6->ifcdev,
-+			"cannot get proper max packet size\n");
-+		return -EINVAL;
-+	}
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index bcdd45df3f51..a7a36209a193 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -73,7 +73,7 @@ parse_symbol() {
+ 	if [[ "${cache[$module,$address]+isset}" == "isset" ]]; then
+ 		local code=${cache[$module,$address]}
+ 	else
+-		local code=$(addr2line -i -e "$objfile" "$address")
++		local code=$(${CROSS_COMPILE}addr2line -i -e "$objfile" "$address")
+ 		cache[$module,$address]=$code
+ 	fi
  
- 	spin_lock_init(&line6pcm->out.lock);
- 	spin_lock_init(&line6pcm->in.lock);
+-- 
+2.20.1
+
 
 
