@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2275F62781
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40FA06279A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390242AbfGHRtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:49:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39059 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387759AbfGHRta (ORCPT
+        id S2404051AbfGHRuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:50:07 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46025 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389898AbfGHRtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:49:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id u17so7571792pgi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:30 -0700 (PDT)
+        Mon, 8 Jul 2019 13:49:31 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y8so3933345plr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LHzYtWmSFmeH9NbFwqWKy4UztiT2kxra8C1X8yUmUfM=;
-        b=kV0yLxy2kpMjOwguVfayi7phtFRYimSGCn/j1wuyKjll3J3KBdoeR84Ly2P7THz2O6
-         1/X14UpK0enZCuSRXpOX9dzeN2DoreXYkCymkk0qGXCxmW+9ryMXHuu+eJ6Spe4Nu+kY
-         c02Lz1ShzpKhcdhhBTYM7FKjKh8qL2F0m1R9Y=
+        bh=KxfvBRXNL2lxAGR+5TYPhVFxu0m9HvU5t0GmP1NzevA=;
+        b=fa2IMYp5yxmb0mlrjbAugQfJQs7wOZE68qWJlUaWJbES77G4ch8hkfqoU7d3UuMROT
+         miKgo0y2jPB8lvjuBXfFCgUyDKKKj0ty13J70cwhBpbZ7rgFyu6qjJWJwYvFI5KKEjHo
+         0NTiwMOBldPc7y1fEm3F73rASqMQHrgQtOHaY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LHzYtWmSFmeH9NbFwqWKy4UztiT2kxra8C1X8yUmUfM=;
-        b=kYVhmwF+KcwXFmvIx5Otx6ak9YMnZ7mCas03dw6uyNjbGH/qKXd2T5sm17/xhRswEo
-         X1Ou1sgerFF/uxDtiIWWliaGNcVeCS8VTVTfG/PY1TNKQE37/YB3hEs+cdzhFy2Uc8U+
-         zMjQijVsIEjHl1VqML+tg/MxRDrShfhshcpjpx5Yc/JWw8vY/RmvAP9YN22UhvOB6Ilj
-         hQfXT6c4Rl6hDri4t5nl+evTWlczpAJgkhKERRL9CO9JGl05VfEdWNU+TWL8AHD3VWVo
-         ZSgf6S+bVqOEprcd+VxFrIY8QZr3BbOyaUgbJz0E8BJCRt7kQHH8YIx9YQ8xlNcGEfzg
-         Q9YQ==
-X-Gm-Message-State: APjAAAW1boQBQsnPVWNpqxSPM6sQdNVCZE9Nm5kBH97LBUE3YSqliOIV
-        hgAIjNIO9hChNv6yq3PqWVvGBdkTdPg=
-X-Google-Smtp-Source: APXvYqxcOh2L5ETIH15om1Lngn2WXi3piqkN48igLZFnoxb4cW4xxjqv4e9K/9qm1u+nuEor01c/ng==
-X-Received: by 2002:a17:90a:b115:: with SMTP id z21mr27246758pjq.64.1562608170298;
-        Mon, 08 Jul 2019 10:49:30 -0700 (PDT)
+        bh=KxfvBRXNL2lxAGR+5TYPhVFxu0m9HvU5t0GmP1NzevA=;
+        b=ilFbPnT8BW5AvNlrakN1UAz/cO7Hszjstdsdn20T5ic3tSN8mWIX2dKVfK9KcsAlRV
+         oocFsryrDoJ1jF8AHWhHg31NbI0P7YTlc8klCPF+T8UN/rwhsjOb90jlbnP4bBp+LPhd
+         KqxwGwFIHtTfFrOdGBhCD2fBkQbPIAYGrAkAlUajT7rwgtk3/vQfy+2PElasHMpivd/k
+         Ian025WAcJKX0ZvwnidCLCkl/9/ITFJRSsYDsWTzeOe51sBbe9qdGibhlTMo0QUKPUMm
+         uE08cA6XPwNjUDIDiGHZvQZioqVNMUVR6NxDsDA+IAR5oqNICBrBImN8o6PtXOOzUgft
+         KSog==
+X-Gm-Message-State: APjAAAWtki6G1IcCYNxhEQ90lxnQoLKTdENccBmSIsApairSDa1wZR4m
+        Oc4SfUfnHF4uTBuPYR95lTl5ow==
+X-Google-Smtp-Source: APXvYqwHxN5CAV58byDjy1sz6I4FOZx29YlNCGS4HMqwy+D7g8iqgYoEjOJKr1IsZSeU5GI09ezrQg==
+X-Received: by 2002:a17:902:424:: with SMTP id 33mr26686735ple.151.1562608171183;
+        Mon, 08 Jul 2019 10:49:31 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.29
+        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 10:49:29 -0700 (PDT)
+        Mon, 08 Jul 2019 10:49:30 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Garnier <thgarnie@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 03/11] x86: relocate_kernel - Adapt assembly for PIE support
-Date:   Mon,  8 Jul 2019 10:48:56 -0700
-Message-Id: <20190708174913.123308-4-thgarnie@chromium.org>
+Subject: [PATCH v8 04/11] x86/entry/64: Adapt assembly for PIE support
+Date:   Mon,  8 Jul 2019 10:48:57 -0700
+Message-Id: <20190708174913.123308-5-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190708174913.123308-1-thgarnie@chromium.org>
 References: <20190708174913.123308-1-thgarnie@chromium.org>
@@ -65,7 +64,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only absolute references of symbols for the
+Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extend the
@@ -74,22 +73,59 @@ KASLR randomization range below 0xffffffff80000000.
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/kernel/relocate_kernel_64.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index c51ccff5cd01..c72889b09840 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -206,7 +206,7 @@ identity_mapped:
- 	movq	%rax, %cr3
- 	lea	PAGE_SIZE(%r8), %rsp
- 	call	swap_pages
--	movq	$virtual_mapped, %rax
-+	movabsq	$virtual_mapped, %rax
- 	pushq	%rax
- 	ret
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 0ea4831a72a4..9f55a359c896 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1309,7 +1309,8 @@ ENTRY(error_entry)
+ 	movl	%ecx, %eax			/* zero extend */
+ 	cmpq	%rax, RIP+8(%rsp)
+ 	je	.Lbstep_iret
+-	cmpq	$.Lgs_change, RIP+8(%rsp)
++	leaq	.Lgs_change(%rip), %rcx
++	cmpq	%rcx, RIP+8(%rsp)
+ 	jne	.Lerror_entry_done
  
+ 	/*
+@@ -1506,10 +1507,10 @@ ENTRY(nmi)
+ 	 * resume the outer NMI.
+ 	 */
+ 
+-	movq	$repeat_nmi, %rdx
++	leaq	repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	1f
+-	movq	$end_repeat_nmi, %rdx
++	leaq	end_repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	nested_nmi_out
+ 1:
+@@ -1563,7 +1564,8 @@ nested_nmi:
+ 	pushq	%rdx
+ 	pushfq
+ 	pushq	$__KERNEL_CS
+-	pushq	$repeat_nmi
++	leaq	repeat_nmi(%rip), %rdx
++	pushq	%rdx
+ 
+ 	/* Put stack back */
+ 	addq	$(6*8), %rsp
+@@ -1602,7 +1604,11 @@ first_nmi:
+ 	addq	$8, (%rsp)	/* Fix up RSP */
+ 	pushfq			/* RFLAGS */
+ 	pushq	$__KERNEL_CS	/* CS */
+-	pushq	$1f		/* RIP */
++	pushq	$0		/* Future return address */
++	pushq	%rax		/* Save RAX */
++	leaq	1f(%rip), %rax	/* RIP */
++	movq    %rax, 8(%rsp)   /* Put 1f on return address */
++	popq	%rax		/* Restore RAX */
+ 	iretq			/* continues at repeat_nmi below */
+ 	UNWIND_HINT_IRET_REGS
+ 1:
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
