@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 479FA62353
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD53C623EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390512AbfGHPeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:34:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
+        id S2390697AbfGHPjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:39:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390480AbfGHPeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:07 -0400
+        id S2389782AbfGHPaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:30:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F592204EC;
-        Mon,  8 Jul 2019 15:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5CAA216C4;
+        Mon,  8 Jul 2019 15:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600046;
-        bh=aXj3z6IfKKrCdHytfIuFAzc+6Ul5/4UgWYTW5tMWF8k=;
+        s=default; t=1562599799;
+        bh=+3pnNI24UcgqddC+16lnH/sPlaUZ2koWchHGt+Hx0XE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TN0TPdX3j7TiAwwXypVnY2D7ZP5bcZ2cOzekpF1NC39AkfWa0bSzSO+uVzmQ4gmyG
-         vg+435yiYh07WcxXfkKe3tC8W2LL0ZBW8KgNFt5FSc8UfpBT8/j7sUGzG9PsDzpqXx
-         m7aEIBxkro7MWMrCcDv+sLhfV7X8B1nI/GEzyKOU=
+        b=nE1e5MS4mP6t0+CO9XgYa/EbKlNPKSq8EPXh93vXgFRpnXlQ7rIG6uZWL4BEwVRax
+         XsFpBxdpZGK3eSVSvZnYLvVXAQmMtYCyVezFa32TDJ6k11URLncCfUy0wtc/omIaWH
+         BxWssMTVFqwQxN37jvUpPjS0LcIf8FkQY+hJbP8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH 5.1 76/96] drm/virtio: move drm_connector_update_edid_property() call
+        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 81/90] netfilter: ipv6: nf_defrag: accept duplicate fragments again
 Date:   Mon,  8 Jul 2019 17:13:48 +0200
-Message-Id: <20190708150530.567539195@linuxfoundation.org>
+Message-Id: <20190708150526.488683525@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerd Hoffmann <kraxel@redhat.com>
+[ Upstream commit 8a3dca632538c550930ce8bafa8c906b130d35cf ]
 
-commit 41de4be6f6efa4132b29af51158cd672d93f2543 upstream.
+When fixing the skb leak introduced by the conversion to rbtree, I
+forgot about the special case of duplicate fragments. The condition
+under the 'insert_error' label isn't effective anymore as
+nf_ct_frg6_gather() doesn't override the returned value anymore. So
+duplicate fragments now get NF_DROP verdict.
 
-drm_connector_update_edid_property can sleep, we must not
-call it while holding a spinlock.  Move the callsite.
+To accept duplicate fragments again, handle them specially as soon as
+inet_frag_queue_insert() reports them. Return -EINPROGRESS which will
+translate to NF_STOLEN verdict, like any accepted fragment. However,
+such packets don't carry any new information and aren't queued, so we
+just drop them immediately.
 
-Fixes: b4b01b4995fb ("drm/virtio: add edid support")
-Reported-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Tested-by: Max Filippov <jcmvbkbc@gmail.com>
-Tested-by: Cornelia Huck <cohuck@redhat.com>
-Acked-by: Cornelia Huck <cohuck@redhat.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20190405044602.2334-1-kraxel@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: a0d56cb911ca ("netfilter: ipv6: nf_defrag: fix leakage of unqueued fragments")
+Signed-off-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -620,11 +620,11 @@ static void virtio_gpu_cmd_get_edid_cb(s
- 	output = vgdev->outputs + scanout;
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index 73c29ddcfb95..35d5a76867d0 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -265,8 +265,14 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
  
- 	new_edid = drm_do_get_edid(&output->conn, virtio_get_edid_block, resp);
-+	drm_connector_update_edid_property(&output->conn, new_edid);
+ 	prev = fq->q.fragments_tail;
+ 	err = inet_frag_queue_insert(&fq->q, skb, offset, end);
+-	if (err)
++	if (err) {
++		if (err == IPFRAG_DUP) {
++			/* No error for duplicates, pretend they got queued. */
++			kfree_skb(skb);
++			return -EINPROGRESS;
++		}
+ 		goto insert_error;
++	}
  
- 	spin_lock(&vgdev->display_info_lock);
- 	old_edid = output->edid;
- 	output->edid = new_edid;
--	drm_connector_update_edid_property(&output->conn, output->edid);
- 	spin_unlock(&vgdev->display_info_lock);
+ 	if (dev)
+ 		fq->iif = dev->ifindex;
+@@ -304,8 +310,6 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
+ 	return -EINPROGRESS;
  
- 	kfree(old_edid);
+ insert_error:
+-	if (err == IPFRAG_DUP)
+-		goto err;
+ 	inet_frag_kill(&fq->q);
+ err:
+ 	skb_dst_drop(skb);
+-- 
+2.20.1
+
 
 
