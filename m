@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8585662AC1
+	by mail.lfdr.de (Postfix) with ESMTP id EE1F862AC2
 	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 23:15:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405275AbfGHVPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 17:15:32 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35453 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbfGHVPc (ORCPT
+        id S2405291AbfGHVPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 17:15:35 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44122 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405278AbfGHVPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 17:15:32 -0400
-Received: by mail-qk1-f194.google.com with SMTP id r21so14175440qke.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 14:15:31 -0700 (PDT)
+        Mon, 8 Jul 2019 17:15:33 -0400
+Received: by mail-qt1-f196.google.com with SMTP id 44so15652239qtg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 14:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=9LBn+IrpD1vlilot1sDuhm5JaXmsdy7FeGQpNbYaEeU=;
-        b=FJLVGEkBkaIWGq+BYeDm49b/d/5s8UkKFjcHQ3Pj9CIeR9WqFVBFK83oylM3vbGySY
-         a/yz6JrxbrlxhkRBTTrMs0C2J/W6nlJ1vQjELf2Bdegk1pBajKXLyTOo73BGyhhwmgCp
-         hpSOTkjSZ/m5LO73UP1Taf9WGt0Yjjcdf1SdEKLTO8Y9GwUwaOY9BZsOvoYDKw0JDWcj
-         fPVVkLf6OQU8ckKMzR+Is03XGjLfH5O8FgfInnivtbaF6/BRHFciiuGjsy5dJM/sQZBZ
-         zekQZpRlJY9hAgDxbXYaBw7Kc+lfhEPpvhBlKGrW2AWK3kgug85CfDgVzblJ1cXVS5Ot
-         BVyg==
+        bh=O8sp7Ivz1alrz3xXygPalicyjdu3OPu+GkykS7h2DZg=;
+        b=n8BIhwWJ9zh0jUg2RW2/uYQy7FXCgRGeTdMBO55KXOXgAIespxSPLZq0PYdQHargu4
+         8/6ZmX6+n021l86aooEGRSG6OOh9z87P2hsOb//zkA6XSfbnLwX1J6q9EqiRDhiSEkei
+         37/LIxbZzFCypM5/mZYla7j/sFWUIrbc8e3qhgO4wFofOmUK0lhXe4tr6tDxWT0nr2tS
+         QQ0+d7Qy7D/REmw0t12Dt0EtWx80RzWMBAEUOejhW8CkeW2/+kE8QKMZkyyV8nLai6eQ
+         0uWgAgMS4TLYACEQUE8stDXIn7xumtxeI3mjoGdxI0wMvKfmReYsVjRk6sJfFqriuHbY
+         Us6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9LBn+IrpD1vlilot1sDuhm5JaXmsdy7FeGQpNbYaEeU=;
-        b=taA+jcgRLLDHElDCoPRhb8kwHpDxJ+8P4wRgA3pWBAGpZk5/KRrh4A9N4oLtoaVAnr
-         wEiE3r32waUsR1QD68DQIJXpqakTnIrR8IPRcem/GQXlzOG28ovURP5dwbyMD8MKwDX2
-         /4dJPrQznCm8d6ago7cim9TlXUxtUBbRfjaI39++X8r1p9cVwYOhDu+HjiIxx4FVjAwo
-         NR20H7L0roK3QjSXwwz/cyiPZMzoYNDn1J1BLt/+ajzFfaUTOSsLlxKXP8qdAJYihpTf
-         orf0ptlERZqWqf9wnwkIP0Zo1wuDfU1WcRl/jFFlg/YjahifreT8Im3lGf73eWM2FFnQ
-         CIlQ==
-X-Gm-Message-State: APjAAAUPed92IJIY3g8e/LAByYImbJ1u0Pzz/TWuc+BhPtPM7sQHWgdE
-        Z5qVHnxU7qLhHWPx1uQHOj+P0Q==
-X-Google-Smtp-Source: APXvYqyjmTZLx8/N9MAAgH+1T1Fmph8LQJ2u9QiscaRxh3JxBlx4HZGFN/j+WzZn5c0D7KSK12erkQ==
-X-Received: by 2002:a37:bac2:: with SMTP id k185mr15419295qkf.211.1562620531230;
-        Mon, 08 Jul 2019 14:15:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=O8sp7Ivz1alrz3xXygPalicyjdu3OPu+GkykS7h2DZg=;
+        b=AQkDVMoeVRxokIecAwgiMEc7T8SqbBhSakiiVQZ316xdQp7h5V+Kl54DKsSHchcjyE
+         HCgBDO65hMet3fbiCvX4dBBAYozGLauXdqQmarsT11TBHb6VpXtSpXkxLlCzg4TP8X/t
+         MOF1Q7lJvc+dCjtuBMyPaaKNkObBw75czNB55Jh0KpNUcwOdZbnURtNESl9xaEN85SAV
+         klrQOuX3LwAW3IKfKj23BlmFEws02KRvgDlNUJFtHx2+leumF0bxnIQPNKDqDCdXG93j
+         e0/OFip07kjLfyEgGmxdh8sBml3Ar8mHfionghyrEcY1mT69mvwD3V5a36KPPf3y8Dhp
+         cMPg==
+X-Gm-Message-State: APjAAAXkWRd1nzw5hfy7Bik5fRayelhgWDn/fYIdVeyXSgsFfQUvmFf6
+        +p+frr4zDPWmQs8knNt9dSi9Mw==
+X-Google-Smtp-Source: APXvYqyKqoOHu6EcUgIJIytE2kcvp422ziKgpaW7euQ8lCRv+YnhnmdNGlmL0VXgx8QTvMj1RSZ8nQ==
+X-Received: by 2002:a0c:b148:: with SMTP id r8mr16207600qvc.240.1562620532517;
+        Mon, 08 Jul 2019 14:15:32 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id b67sm8335620qkd.82.2019.07.08.14.15.29
+        by smtp.gmail.com with ESMTPSA id b67sm8335620qkd.82.2019.07.08.14.15.31
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 14:15:30 -0700 (PDT)
+        Mon, 08 Jul 2019 14:15:31 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
         linux-kernel@vger.kernel.org, corbet@lwn.net,
         catalin.marinas@arm.com, will@kernel.org,
         linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v1 0/5] allow to reserve memory for normal kexec kernel
-Date:   Mon,  8 Jul 2019 17:15:23 -0400
-Message-Id: <20190708211528.12392-1-pasha.tatashin@soleen.com>
+Subject: [v1 1/5] kexec: quiet down kexec reboot
+Date:   Mon,  8 Jul 2019 17:15:24 -0400
+Message-Id: <20190708211528.12392-2-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190708211528.12392-1-pasha.tatashin@soleen.com>
+References: <20190708211528.12392-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,50 +64,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, it is only allowed to reserve memory for crash kernel, because
-it is a requirement in order to be able to boot into crash kernel without
-touching memory of crashed kernel is to have memory reserved.
+Here is a regular kexec command sequence and output:
+=====
+$ kexec --reuse-cmdline -i --load Image
+$ kexec -e
+[  161.342002] kexec_core: Starting new kernel
 
-The second benefit for having memory reserved for kexec kernel is
-that it does not require a relocation after segments are loaded into
-memory.
+Welcome to Buildroot
+buildroot login:
+=====
 
-If kexec functionality is used for a fast system update, with a minimal
-downtime, the relocation of kernel + initramfs might take a significant
-portion of reboot.
+Even when "quiet" kernel parameter is specified, "kexec_core: Starting
+new kernel" is printed.
 
-In fact, on the machine that we are using, that has ARM64 processor
-it takes 0.35s to relocate during kexec, thus taking 52% of kernel reboot
-time:
+This message has  KERN_EMERG level, but there is no emergency, it is a
+normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
 
-kernel shutdown	0.03s
-relocation	0.35s
-kernel startup	0.29s
+Machines that have slow console baud rate benefit from less output.
 
-Image: 13M and initramfs is 24M. If initramfs increases, the relocation
-time increases proportionally.
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Simon Horman <horms@verge.net.au>
+---
+ kernel/kexec_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While, it is possible to add 'kexeckernel=' parameters support to other
-architectures by modifying reserve_crashkernel(), in this series this is
-done for arm64 only.
-
-Pavel Tatashin (5):
-  kexec: quiet down kexec reboot
-  kexec: add resource for normal kexec region
-  kexec: export common crashkernel/kexeckernel parser
-  kexec: use reserved memory for normal kexec reboot
-  arm64, kexec: reserve kexeckernel region
-
- .../admin-guide/kernel-parameters.txt         |  7 ++
- arch/arm64/kernel/setup.c                     |  5 ++
- arch/arm64/mm/init.c                          | 83 ++++++++++++-------
- include/linux/crash_core.h                    |  6 ++
- include/linux/ioport.h                        |  1 +
- include/linux/kexec.h                         |  6 +-
- kernel/crash_core.c                           | 27 +++---
- kernel/kexec_core.c                           | 50 +++++++----
- 8 files changed, 127 insertions(+), 58 deletions(-)
-
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index d5870723b8ad..2c5b72863b7b 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -1169,7 +1169,7 @@ int kernel_kexec(void)
+ 		 * CPU hotplug again; so re-enable it here.
+ 		 */
+ 		cpu_hotplug_enable();
+-		pr_emerg("Starting new kernel\n");
++		pr_notice("Starting new kernel\n");
+ 		machine_shutdown();
+ 	}
+ 
 -- 
 2.22.0
 
