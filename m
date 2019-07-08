@@ -2,99 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A173162794
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EBE6279C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404027AbfGHRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:49:54 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35246 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403870AbfGHRtx (ORCPT
+        id S2404058AbfGHRuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:50:16 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:41184 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730936AbfGHRuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:49:53 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w24so8643693plp.2;
-        Mon, 08 Jul 2019 10:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/ancY3EFLWrWbOtiL61BFmmz+2+LYOXr28AVKYlsboM=;
-        b=ZZ3DRy2AB9jjXaaZclJtiEqiGrrohKz++rVEG+SoD5ns9yAK/NrkarsxDMEIQaF0TI
-         rdtLQYAsp8m36P3/LrUQNzNj0WQ1eVPK+GLAqmkZ4Jr4fGLFCw7QGWg0UFqQaHJYR8jZ
-         WAPy0Y061TGQCSPRwJ5GV1uNGLn+sZehMQBgSI3jCOXddLlIQcBM5xrumBonGw4WcWb8
-         Lb27EJ4fY5DdW3OgJ843HaZsJdua0L2AE0FcYzNC5J/Lk48hPVamyrO6VWTOBbKJ8Vr6
-         bQ9X1yqU+zXwWMhwBgMOStKpsmVaBNp9vZf0qoAiCgm9Z5AXdTKm4XfLK5DRcDFmTGJE
-         dAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/ancY3EFLWrWbOtiL61BFmmz+2+LYOXr28AVKYlsboM=;
-        b=WIDfkZ/Wq01LB+bmfFFuCoaT5uvfxkLYXiFQ0+8jCGrB3OgcfRFQn52EXsyNL5jk9z
-         pjWo8TSAiWDl1EExzHFkZwytqBHkSnIykHHZIs9TumCZK40dhtPHoN6n5ZPBnxgmLJXL
-         dok4z3gDVZN+7BG36xgs7uyLOEypIUTxfIu9vvF1eRKo9Z/QU2IuRpUJJv0roS4tA1xV
-         627zrZh90k0jzAJrI9odt6bkkVreINCCLnQ3M9zUi9udiRIxwaJ1nPoBOF2M7541L8NY
-         aUQ2DC40Uug/BRSF4VKgr05blFcxFaNYd0TObhT+akbhqM/siO7Gn2Q1mlLgYVQDKEOz
-         1G7Q==
-X-Gm-Message-State: APjAAAWhZqb2UkEaxcMTBgKamZQ9Lf7DdqKKe+67Zd3R40zdKByUZghD
-        209oKIWRPy4iXQaUIPwsoC38z6VP
-X-Google-Smtp-Source: APXvYqzHnvoi64IAIYQAQwAjuuMAntEhX7GX0pOHKTC9bgLPVxmBM8eJrVrMWtkmJ8mmPUq2/gkPSg==
-X-Received: by 2002:a17:902:2a27:: with SMTP id i36mr26194794plb.161.1562608192793;
-        Mon, 08 Jul 2019 10:49:52 -0700 (PDT)
-Received: from ?IPv6:2405:4800:58c7:1881:3232:ec6:81a5:864b? ([2405:4800:58c7:1881:3232:ec6:81a5:864b])
-        by smtp.gmail.com with ESMTPSA id x9sm11038532pfn.177.2019.07.08.10.49.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 10:49:52 -0700 (PDT)
-Cc:     linux-kernel@vger.kernel.org, tranmanphong@gmail.com,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
-From:   Phong Tran <tranmanphong@gmail.com>
-Message-ID: <c1498293-f0f6-0599-bd72-4156370a7599@gmail.com>
-Date:   Tue, 9 Jul 2019 00:49:48 +0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 8 Jul 2019 13:50:15 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 6F4BD80636;
+        Mon,  8 Jul 2019 19:50:09 +0200 (CEST)
+Date:   Mon, 8 Jul 2019 19:50:08 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Enric =?iso-8859-1?Q?Balletb=F2?= <enric.balletbo@collabora.com>,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v5 2/7] drm/panel: simple: Add ability to override
+ typical timing
+Message-ID: <20190708175007.GA3511@ravnborg.org>
+References: <20190401171724.215780-1-dianders@chromium.org>
+ <20190401171724.215780-3-dianders@chromium.org>
+ <20190630202246.GB15102@ravnborg.org>
+ <CAD=FV=V_wTD1xpkXRe-z2HsZ8QXKq7jmq8CsfhMnFxi-5XDJjw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=V_wTD1xpkXRe-z2HsZ8QXKq7jmq8CsfhMnFxi-5XDJjw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=AWgJsaMlI6ysr0MxQJMA:9 a=0846P8UFn4bgp1PN:21 a=puqGkp3IltQWEqwz:21
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/8/19 10:12 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.17 release.
-> There are 96 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Dough.
+
+On Mon, Jul 01, 2019 at 09:39:24AM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
-> Anything received after that time might be too late.
+> On Sun, Jun 30, 2019 at 1:22 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> >
+> > > @@ -91,6 +92,8 @@ struct panel_simple {
+> > >       struct i2c_adapter *ddc;
+> > >
+> > >       struct gpio_desc *enable_gpio;
+> > > +
+> > > +     struct drm_display_mode override_mode;
+> > I fail to see where this poiter is assigned.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.17-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
+> In panel_simple_parse_override_mode().  Specifically:
 > 
+> drm_display_mode_from_videomode(&vm, &panel->override_mode);
 
-build and boot fine with qemu-system-riscv64
+The above code-snippet is only called in the panel has specified display
+timings using display_timings - it is not called when display_mode is
+used.
+So override_mode is only assigned in some cases and not all cases.
+This needs to be fixed so we do not reference override_mode unless
+it is set.
 
-root@(none):~# uname  -a
-Linux (none) 5.1.17-rc1-00097-gb64119f8dffe #4 SMP Tue Jul 9 00:44:23 
-+07 2019 riscv64 GNU/Linux
-root@(none):~# cat /proc/cpuinfo
-processor	: 0
-hart		: 0
-isa		: rv64imafdcu
-mmu		: sv48
+> 
+> 
+> > @@ -152,6 +162,44 @@ static int panel_simple_get_fixed_modes(struct panel_simple *panel)
+> > >               num++;
+> > >       }
+> > >
+> > > +     return num;
+> > > +}
+> > > +
+> > > +static int panel_simple_get_non_edid_modes(struct panel_simple *panel)
+> > > +{
+> > > +     struct drm_connector *connector = panel->base.connector;
+> > > +     struct drm_device *drm = panel->base.drm;
+> > > +     struct drm_display_mode *mode;
+> > > +     bool has_override = panel->override_mode.type;
+> > This looks suspicious.
+> > panel->override_mode.type is an unsigned int that may have a number of
+> > bits set.
+> > So the above code implicitly convert a .type != 0 to a true.
+> > This can be expressed in a much more reader friendly way.
+> 
+> You would suggest that I add a boolean field to a structure to
+> indicate whether an override mode is present?
+A simple  bool has_override = panel->override_mode.type != 0;
+would do the trick here.
+Then there is no hidden conversion from int to a bool.
 
+But as override_mode can be NULL something more needs to be done.
 
+	Sam
