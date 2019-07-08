@@ -2,47 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0193762A75
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 22:38:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAE1762A77
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 22:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405097AbfGHUij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 16:38:39 -0400
-Received: from verein.lst.de ([213.95.11.211]:36822 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404955AbfGHUij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 16:38:39 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9B52468B05; Mon,  8 Jul 2019 22:38:37 +0200 (CEST)
-Date:   Mon, 8 Jul 2019 22:38:37 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>
-Subject: Re: m68k build failures in -next: undefined reference to
- `arch_dma_prep_coherent'
-Message-ID: <20190708203837.GA15713@lst.de>
-References: <20190708170647.GA12313@roeck-us.net> <CAMuHMdUnSqKHA7EN1S8U7eBODs4gi-raw4P3FxnR_afhb2Zd5g@mail.gmail.com> <20190708194516.GA18304@roeck-us.net> <CAMuHMdVKKkx_S_mXmCzckyiw1fbLQMEZroRT+UchHv+tgF-3RA@mail.gmail.com> <20190708202226.GA15167@lst.de> <CAMuHMdUUpyiRp3LdfE0M96dM6kAzse+gfXWqEQWe9ScwT9GX4A@mail.gmail.com> <20190708203733.GA15607@lst.de>
+        id S2405108AbfGHUkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 16:40:01 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33709 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732003AbfGHUkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 16:40:00 -0400
+Received: by mail-ot1-f65.google.com with SMTP id q20so17619556otl.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 13:40:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=onvwnS5gjBHoF9rdE0gG38KKlQEhhWJR79obwao8mVg=;
+        b=plsBGjxUJ2jmv3vLlNzWtxmRsRug7cHSgEfV9gfIV2iRRw8RUTXRq5ISby546NsZHL
+         jqmKgf/dovS4m0suaSvXCA+hPM4wlVp5Fi7MArLDll2doeO/Wuh37v1y4YKk2NkmM1jK
+         0mQ9LL/pZkToWNC+bvw4ijkZ51FBElcmROz2Qj7mOxmlXRYqRRcWAYgK2Yhn9NOIeQim
+         khqDKd8W78jtbCER177rGNNrDQuVJccoj4GwxIX9kHcEkObC4fnfJCsie/6385xkn/iw
+         XMr+cy/AVtC9+BoPpEPxFGuNXG210QjoWaW/OhE5XNGDzyLJvR/1d1b/wxOJ6YRrioit
+         pOSA==
+X-Gm-Message-State: APjAAAVyJEYfMV2K1yNWKDBTVwTpraHrvm2TlLIVMUxgneoA41DOUGZU
+        jefP2vHjM+c7he7ab5Y11Bar1c9Vmx+wM4bOW1o=
+X-Google-Smtp-Source: APXvYqxEEee9nNr+XuV9YsEG2Wdt0zLmowIgYkkeLu1vfIdc0/382PdopHQ3HgegIGxBVnXIgaIuLSarwEiMBn+ZjGE=
+X-Received: by 2002:a9d:5c11:: with SMTP id o17mr1413175otk.107.1562618399916;
+ Mon, 08 Jul 2019 13:39:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708203733.GA15607@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190708175101.19990-1-hch@lst.de>
+In-Reply-To: <20190708175101.19990-1-hch@lst.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Jul 2019 22:39:48 +0200
+Message-ID: <CAMuHMdVrAVYWvQCh7AF1O7SRbuZb9fQp9fi0yQyZMeaOpfHyEw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: don't select ARCH_HAS_DMA_PREP_COHERENT for nommu
+ or coldfire
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Ungerer <gerg@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 10:37:33PM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 08, 2019 at 10:36:05PM +0200, Geert Uytterhoeven wrote:
-> > Note that the build failure is more subtle: both m5307c3_defconfig and
-> > m5475evb_defconfig build fine in m68k/for-linus, but fail in
-> > next-20190708.  So it fails when combined with other changes, going
-> > in through a different tree (the DMA tree?).
-> 
-> Yes, the dma tree adds the stub for the symbol and adds code relying
-> on that.
+Hi Christoph,
 
-If you give me an ack I can add the fix to the dma-mapping pull request.
+On Mon, Jul 8, 2019 at 7:51 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> m68k only provides the dma_prep_coherent symbol when an mmu is enabled
+
+arch_dma_prep_coherent
+
+> and not on the coldfire platform.  Fix the Kconfig symbol selection
+> up to match this.
+>
+> Fixes: 69878ef47562 ("m68k: Implement arch_dma_prep_coherent()")
+
+Do you know the SHA1 for the other commit, that causes the issue when
+combined with the above?
+
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+> --- a/arch/m68k/Kconfig
+> +++ b/arch/m68k/Kconfig
+> @@ -5,7 +5,7 @@ config M68K
+>         select ARCH_32BIT_OFF_T
+>         select ARCH_HAS_BINFMT_FLAT
+>         select ARCH_HAS_DMA_MMAP_PGPROT if MMU && !COLDFIRE
+> -       select ARCH_HAS_DMA_PREP_COHERENT
+> +       select ARCH_HAS_DMA_PREP_COHERENT if HAS_DMA && MMU && !COLDFIRE
+>         select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
+>         select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
+>         select ARCH_NO_COHERENT_DMA_MMAP if !MMU
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
