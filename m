@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67EC162784
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A173162794
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403878AbfGHRtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:49:45 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40160 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391061AbfGHRtn (ORCPT
+        id S2404027AbfGHRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:49:54 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35246 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403870AbfGHRtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:49:43 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so8654867pla.7
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:43 -0700 (PDT)
+        Mon, 8 Jul 2019 13:49:53 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w24so8643693plp.2;
+        Mon, 08 Jul 2019 10:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VYVCK+lE6TfQr6KRbpNni5BR/rdhwG4w+KTNeQVPvFA=;
-        b=YO7rYeBTtbOSPm2PM2bUxLHbjhObhohK+nc071hlnGlCjMy8KwfWnPBD8qNgCz3fB1
-         8RchZLAzudKMoEAymQQLjNDFw0lA8xTX0qJciZeUvBDr2VLBQ3P0M+Pa7oSYMgRHrMdN
-         woz/GPDPKTh6ACUfHbMv4pAEfp7T2uaZhoVGo=
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/ancY3EFLWrWbOtiL61BFmmz+2+LYOXr28AVKYlsboM=;
+        b=ZZ3DRy2AB9jjXaaZclJtiEqiGrrohKz++rVEG+SoD5ns9yAK/NrkarsxDMEIQaF0TI
+         rdtLQYAsp8m36P3/LrUQNzNj0WQ1eVPK+GLAqmkZ4Jr4fGLFCw7QGWg0UFqQaHJYR8jZ
+         WAPy0Y061TGQCSPRwJ5GV1uNGLn+sZehMQBgSI3jCOXddLlIQcBM5xrumBonGw4WcWb8
+         Lb27EJ4fY5DdW3OgJ843HaZsJdua0L2AE0FcYzNC5J/Lk48hPVamyrO6VWTOBbKJ8Vr6
+         bQ9X1yqU+zXwWMhwBgMOStKpsmVaBNp9vZf0qoAiCgm9Z5AXdTKm4XfLK5DRcDFmTGJE
+         dAfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VYVCK+lE6TfQr6KRbpNni5BR/rdhwG4w+KTNeQVPvFA=;
-        b=JKeCz96eMPSrR+tQu3HRCG8EIwpXnaSkOsKD9L9nY7iYUikrUa2tFmCbIN65wIrEiX
-         zu6wflHuQJfckPPlRRm1WiVUYSrgevVZmj0TDie4od8Tz8Qb5GebgdD1xh5kDML9gHOq
-         1ApFR/DAcQO/szlmrc+cZ8+bi0hHsAgLpHyfe+yz+Q4Domgf21q+tlQYNZgCho3Gn/7J
-         UUpo3bNbDQ9aDT+Pa0xQhCxTT4LakbRoDhcvw26VQCPtWwN8p2mMjtRFdz4kuQlvXt55
-         o8rImJOk9sSYzwllgJ1JYxuif629neyLF1M1nR06MRMWkLKWBzuh0ShdVHgEJMmWtqUB
-         PgTw==
-X-Gm-Message-State: APjAAAXGCGZDyZUME/c1jxiMCyMAVPUTKIvy0u3JSDW8BWYAlcIrTCME
-        7xaMZNPrpXRDx2fgm8aZYklFfg==
-X-Google-Smtp-Source: APXvYqzLN6oNXPNoxCuXGt+FuBI73Vtvl0VQN9tamK8mlquFWOHra5OXoyNjTYkeZDsSJbhySbtUxA==
-X-Received: by 2002:a17:902:684f:: with SMTP id f15mr26566998pln.332.1562608182892;
-        Mon, 08 Jul 2019 10:49:42 -0700 (PDT)
-Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 10:49:42 -0700 (PDT)
-From:   Thomas Garnier <thgarnie@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     kristen@linux.intel.com, keescook@chromium.org,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <namit@vmware.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 11/11] x86/alternatives: Adapt assembly for PIE support
-Date:   Mon,  8 Jul 2019 10:49:04 -0700
-Message-Id: <20190708174913.123308-12-thgarnie@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190708174913.123308-1-thgarnie@chromium.org>
-References: <20190708174913.123308-1-thgarnie@chromium.org>
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/ancY3EFLWrWbOtiL61BFmmz+2+LYOXr28AVKYlsboM=;
+        b=WIDfkZ/Wq01LB+bmfFFuCoaT5uvfxkLYXiFQ0+8jCGrB3OgcfRFQn52EXsyNL5jk9z
+         pjWo8TSAiWDl1EExzHFkZwytqBHkSnIykHHZIs9TumCZK40dhtPHoN6n5ZPBnxgmLJXL
+         dok4z3gDVZN+7BG36xgs7uyLOEypIUTxfIu9vvF1eRKo9Z/QU2IuRpUJJv0roS4tA1xV
+         627zrZh90k0jzAJrI9odt6bkkVreINCCLnQ3M9zUi9udiRIxwaJ1nPoBOF2M7541L8NY
+         aUQ2DC40Uug/BRSF4VKgr05blFcxFaNYd0TObhT+akbhqM/siO7Gn2Q1mlLgYVQDKEOz
+         1G7Q==
+X-Gm-Message-State: APjAAAWhZqb2UkEaxcMTBgKamZQ9Lf7DdqKKe+67Zd3R40zdKByUZghD
+        209oKIWRPy4iXQaUIPwsoC38z6VP
+X-Google-Smtp-Source: APXvYqzHnvoi64IAIYQAQwAjuuMAntEhX7GX0pOHKTC9bgLPVxmBM8eJrVrMWtkmJ8mmPUq2/gkPSg==
+X-Received: by 2002:a17:902:2a27:: with SMTP id i36mr26194794plb.161.1562608192793;
+        Mon, 08 Jul 2019 10:49:52 -0700 (PDT)
+Received: from ?IPv6:2405:4800:58c7:1881:3232:ec6:81a5:864b? ([2405:4800:58c7:1881:3232:ec6:81a5:864b])
+        by smtp.gmail.com with ESMTPSA id x9sm11038532pfn.177.2019.07.08.10.49.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 10:49:52 -0700 (PDT)
+Cc:     linux-kernel@vger.kernel.org, tranmanphong@gmail.com,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
+From:   Phong Tran <tranmanphong@gmail.com>
+Message-ID: <c1498293-f0f6-0599-bd72-4156370a7599@gmail.com>
+Date:   Tue, 9 Jul 2019 00:49:48 +0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly options to work with pointers instead of integers.
+On 7/8/19 10:12 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.1.17 release.
+> There are 96 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.17-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> and the diffstat can be found below.
+> 
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range below 0xffffffff80000000.
+build and boot fine with qemu-system-riscv64
 
-Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
----
- arch/x86/include/asm/alternative.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+root@(none):~# uname  -a
+Linux (none) 5.1.17-rc1-00097-gb64119f8dffe #4 SMP Tue Jul 9 00:44:23 
++07 2019 riscv64 GNU/Linux
+root@(none):~# cat /proc/cpuinfo
+processor	: 0
+hart		: 0
+isa		: rv64imafdcu
+mmu		: sv48
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 094fbc9c0b1c..28a838106e5f 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -243,7 +243,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
- /* Like alternative_io, but for replacing a direct call with another one. */
- #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
- 	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
--		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-+		: output : [old] "X" (oldfunc), [new] "X" (newfunc), ## input)
- 
- /*
-  * Like alternative_call, but there are two features and respective functions.
-@@ -256,8 +256,8 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
- 		"call %P[new2]", feature2)				      \
- 		: output, ASM_CALL_CONSTRAINT				      \
--		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
--		  [new2] "i" (newfunc2), ## input)
-+		: [old] "X" (oldfunc), [new1] "X" (newfunc1),		      \
-+		  [new2] "X" (newfunc2), ## input)
- 
- /*
-  * use this macro(s) if you need more than one output parameter
--- 
-2.22.0.410.gd8fdbe21b5-goog
 
