@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6011A6217E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B96462328
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732651AbfGHPQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:16:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39844 "EHLO mail.kernel.org"
+        id S2390181AbfGHPcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732622AbfGHPQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:16:43 -0400
+        id S1732377AbfGHPci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2E56216E3;
-        Mon,  8 Jul 2019 15:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 589B921537;
+        Mon,  8 Jul 2019 15:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599003;
-        bh=jPUtAY0aRIOFzQ+zGaxTILOGg7nWtlDKM2DBfxvPVZ8=;
+        s=default; t=1562599957;
+        bh=GJjTOXqbqgHDFASrn9drflgFS1R+sgfX9aM1EesWgXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MTVmyrlJgZqHJXvm/YeAFi88JsgahkOUrsiHt6hsDYdOPuOLBGgvKVTyI+MaKIP4y
-         0GaetC191OvPr/RrMQojhezoh43PkzGrB8KWpB2qg49eDwslxkacHdxDY5lnxIQV21
-         pp75g3Dn/vWdijTlvUggLsmh+XiRwRBJBTVPdbAA=
+        b=CfEYfn0g/FHyyi189SuXRoqVBn+a7pKSqA9cKnhT+tdrZYvkHlIVqUZOHQre+5V8O
+         mbrPLf9M3J6hN97+caGVdA0gg23ANutqAC65aLBGjnFsErWJV3Zs4UJ1rkD1l0wwqn
+         ONqMoWFoOdhIO5osnRhbM4h50fZT7+vusSWacvpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 28/73] mac80211: drop robust management frames from unknown TA
-Date:   Mon,  8 Jul 2019 17:12:38 +0200
-Message-Id: <20190708150522.494806945@linuxfoundation.org>
+        stable@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 5.1 07/96] idr: Fix idr_get_next race with idr_remove
+Date:   Mon,  8 Jul 2019 17:12:39 +0200
+Message-Id: <20190708150526.709425198@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +43,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-commit 588f7d39b3592a36fb7702ae3b8bdd9be4621e2f upstream.
+commit 5c089fd0c73411f2170ab795c9ffc16718c7d007 upstream.
 
-When receiving a robust management frame, drop it if we don't have
-rx->sta since then we don't have a security association and thus
-couldn't possibly validate the frame.
+If the entry is deleted from the IDR between the call to
+radix_tree_iter_find() and rcu_dereference_raw(), idr_get_next()
+will return NULL, which will end the iteration prematurely.  We should
+instead continue to the next entry in the IDR.  This only happens if the
+iteration is protected by the RCU lock.  Most IDR users use a spinlock
+or semaphore to exclude simultaneous modifications.  It was noticed once
+the PID allocator was converted to use the IDR, as it uses the RCU lock,
+but there may be other users elsewhere in the kernel.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+We can't use the normal pattern of calling radix_tree_deref_retry()
+(which catches both a retry entry in a leaf node and a node entry in
+the root) as the IDR supports storing entries which are unaligned,
+which will trigger an infinite loop if they are encountered.  Instead,
+we have to explicitly check whether the entry is a retry entry.
+
+Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
+Reported-by: Brendan Gregg <bgregg@netflix.com>
+Tested-by: Brendan Gregg <bgregg@netflix.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/rx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ lib/idr.c                           |   14 +++++++++-
+ tools/testing/radix-tree/idr-test.c |   46 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -3324,6 +3324,8 @@ static bool ieee80211_accept_frame(struc
- 	case NL80211_IFTYPE_STATION:
- 		if (!bssid && !sdata->u.mgd.use_4addr)
- 			return false;
-+		if (ieee80211_is_robust_mgmt_frame(skb) && !rx->sta)
-+			return false;
- 		if (multicast)
- 			return true;
- 		return ether_addr_equal(sdata->vif.addr, hdr->addr1);
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -227,11 +227,21 @@ void *idr_get_next(struct idr *idr, int
+ {
+ 	struct radix_tree_iter iter;
+ 	void __rcu **slot;
++	void *entry = NULL;
+ 	unsigned long base = idr->idr_base;
+ 	unsigned long id = *nextid;
+ 
+ 	id = (id < base) ? 0 : id - base;
+-	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
++	radix_tree_for_each_slot(slot, &idr->idr_rt, &iter, id) {
++		entry = rcu_dereference_raw(*slot);
++		if (!entry)
++			continue;
++		if (!xa_is_internal(entry))
++			break;
++		if (slot != &idr->idr_rt.xa_head && !xa_is_retry(entry))
++			break;
++		slot = radix_tree_iter_retry(&iter);
++	}
+ 	if (!slot)
+ 		return NULL;
+ 	id = iter.index + base;
+@@ -240,7 +250,7 @@ void *idr_get_next(struct idr *idr, int
+ 		return NULL;
+ 
+ 	*nextid = id;
+-	return rcu_dereference_raw(*slot);
++	return entry;
+ }
+ EXPORT_SYMBOL(idr_get_next);
+ 
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -287,6 +287,51 @@ static void idr_align_test(struct idr *i
+ 	}
+ }
+ 
++DEFINE_IDR(find_idr);
++
++static void *idr_throbber(void *arg)
++{
++	time_t start = time(NULL);
++	int id = *(int *)arg;
++
++	rcu_register_thread();
++	do {
++		idr_alloc(&find_idr, xa_mk_value(id), id, id + 1, GFP_KERNEL);
++		idr_remove(&find_idr, id);
++	} while (time(NULL) < start + 10);
++	rcu_unregister_thread();
++
++	return NULL;
++}
++
++void idr_find_test_1(int anchor_id, int throbber_id)
++{
++	pthread_t throbber;
++	time_t start = time(NULL);
++
++	pthread_create(&throbber, NULL, idr_throbber, &throbber_id);
++
++	BUG_ON(idr_alloc(&find_idr, xa_mk_value(anchor_id), anchor_id,
++				anchor_id + 1, GFP_KERNEL) != anchor_id);
++
++	do {
++		int id = 0;
++		void *entry = idr_get_next(&find_idr, &id);
++		BUG_ON(entry != xa_mk_value(id));
++	} while (time(NULL) < start + 11);
++
++	pthread_join(throbber, NULL);
++
++	idr_remove(&find_idr, anchor_id);
++	BUG_ON(!idr_is_empty(&find_idr));
++}
++
++void idr_find_test(void)
++{
++	idr_find_test_1(100000, 0);
++	idr_find_test_1(0, 100000);
++}
++
+ void idr_checks(void)
+ {
+ 	unsigned long i;
+@@ -368,6 +413,7 @@ void idr_checks(void)
+ 	idr_u32_test(1);
+ 	idr_u32_test(0);
+ 	idr_align_test(&idr);
++	idr_find_test();
+ }
+ 
+ #define module_init(x)
 
 
