@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8028623CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE0B76235E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389849AbfGHPap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:30:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59746 "EHLO mail.kernel.org"
+        id S1733135AbfGHPem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:34:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389720AbfGHPam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:30:42 -0400
+        id S2390575AbfGHPei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:34:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6370B20665;
-        Mon,  8 Jul 2019 15:30:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A696221537;
+        Mon,  8 Jul 2019 15:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599841;
-        bh=c9X+wix+KAvIOO4t20Yh0NGUFt5F9cIwciHntpSwQH0=;
+        s=default; t=1562600078;
+        bh=LM5F0Foz7CGLRgH2lWz/bad1ZpG8VxUk5A261MLxHCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oDzoFRZia3UGBQXekZoYxflpYC7Sw68mMR1xSAhDB4r/AywMOFM+fnPT7BrEAqaZP
-         pBSt4m4JgtsSC1rLXvgN6aXyMRrFokwhBPWmSxS/uBxz1Y5p5i6leVrkuhOJ7XbqKL
-         bZedfhzuGcCA5NExFsPkCAjNW4MZCgBF+RH+yDIw=
+        b=sAFhJQ/+J/jh+eCs73yxhRAUaOeSSZ4e2Lm/TdGr93GLKkYS9jr86myuohuEI6t/W
+         XIvVMCYmG1JWzO9B1TTHALecas07e/8k6uRja76SxHbIiXK5l/KII9+l03ZS01SdOa
+         pa435e6xhFf/Dn8yYcIrY3ya/zo0e9wHkut6oAuc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Gong <yibin.gong@nxp.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Michael Olbrich <m.olbrich@pengutronix.de>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.19 90/90] dmaengine: imx-sdma: remove BD_INTR for channel0
-Date:   Mon,  8 Jul 2019 17:13:57 +0200
-Message-Id: <20190708150527.107862575@linuxfoundation.org>
+        stable@vger.kernel.org, Rong Chen <rong.a.chen@intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH 5.1 86/96] KVM: LAPIC: Fix pending interrupt in IRR blocked by software disable LAPIC
+Date:   Mon,  8 Jul 2019 17:13:58 +0200
+Message-Id: <20190708150531.088265193@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +47,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Gong <yibin.gong@nxp.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-commit 3f93a4f297961c12bb17aa16cb3a4d1291823cae upstream.
+commit bb34e690e9340bc155ebed5a3d75fc63ff69e082 upstream.
 
-It is possible for an irq triggered by channel0 to be received later
-after clks are disabled once firmware loaded during sdma probe. If
-that happens then clearing them by writing to SDMA_H_INTR won't work
-and the kernel will hang processing infinite interrupts. Actually,
-don't need interrupt triggered on channel0 since it's pollling
-SDMA_H_STATSTOP to know channel0 done rather than interrupt in
-current code, just clear BD_INTR to disable channel0 interrupt to
-avoid the above case.
-This issue was brought by commit 1d069bfa3c78 ("dmaengine: imx-sdma:
-ack channel 0 IRQ in the interrupt handler") which didn't take care
-the above case.
+Thomas reported that:
 
-Fixes: 1d069bfa3c78 ("dmaengine: imx-sdma: ack channel 0 IRQ in the interrupt handler")
-Cc: stable@vger.kernel.org #5.0+
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
-Tested-by: Sven Van Asbroeck <thesven73@gmail.com>
-Reviewed-by: Michael Olbrich <m.olbrich@pengutronix.de>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+ | Background:
+ |
+ |    In preparation of supporting IPI shorthands I changed the CPU offline
+ |    code to software disable the local APIC instead of just masking it.
+ |    That's done by clearing the APIC_SPIV_APIC_ENABLED bit in the APIC_SPIV
+ |    register.
+ |
+ | Failure:
+ |
+ |    When the CPU comes back online the startup code triggers occasionally
+ |    the warning in apic_pending_intr_clear(). That complains that the IRRs
+ |    are not empty.
+ |
+ |    The offending vector is the local APIC timer vector who's IRR bit is set
+ |    and stays set.
+ |
+ | It took me quite some time to reproduce the issue locally, but now I can
+ | see what happens.
+ |
+ | It requires apicv_enabled=0, i.e. full apic emulation. With apicv_enabled=1
+ | (and hardware support) it behaves correctly.
+ |
+ | Here is the series of events:
+ |
+ |     Guest CPU
+ |
+ |     goes down
+ |
+ |       native_cpu_disable()
+ |
+ | 			apic_soft_disable();
+ |
+ |     play_dead()
+ |
+ |     ....
+ |
+ |     startup()
+ |
+ |       if (apic_enabled())
+ |         apic_pending_intr_clear()	<- Not taken
+ |
+ |      enable APIC
+ |
+ |         apic_pending_intr_clear()	<- Triggers warning because IRR is stale
+ |
+ | When this happens then the deadline timer or the regular APIC timer -
+ | happens with both, has fired shortly before the APIC is disabled, but the
+ | interrupt was not serviced because the guest CPU was in an interrupt
+ | disabled region at that point.
+ |
+ | The state of the timer vector ISR/IRR bits:
+ |
+ |     	     	       	        ISR     IRR
+ | before apic_soft_disable()    0	      1
+ | after apic_soft_disable()     0	      1
+ |
+ | On startup		      		 0	      1
+ |
+ | Now one would assume that the IRR is cleared after the INIT reset, but this
+ | happens only on CPU0.
+ |
+ | Why?
+ |
+ | Because our CPU0 hotplug is just for testing to make sure nothing breaks
+ | and goes through an NMI wakeup vehicle because INIT would send it through
+ | the boots-trap code which is not really working if that CPU was not
+ | physically unplugged.
+ |
+ | Now looking at a real world APIC the situation in that case is:
+ |
+ |     	     	       	      	ISR     IRR
+ | before apic_soft_disable()    0	      1
+ | after apic_soft_disable()     0	      1
+ |
+ | On startup		      		 0	      0
+ |
+ | Why?
+ |
+ | Once the dying CPU reenables interrupts the pending interrupt gets
+ | delivered as a spurious interupt and then the state is clear.
+ |
+ | While that CPU0 hotplug test case is surely an esoteric issue, the APIC
+ | emulation is still wrong, Even if the play_dead() code would not enable
+ | interrupts then the pending IRR bit would turn into an ISR .. interrupt
+ | when the APIC is reenabled on startup.
+
+>From SDM 10.4.7.2 Local APIC State After It Has Been Software Disabled
+* Pending interrupts in the IRR and ISR registers are held and require
+  masking or handling by the CPU.
+
+In Thomas's testing, hardware cpu will not respect soft disable LAPIC
+when IRR has already been set or APICv posted-interrupt is in flight,
+so we can skip soft disable APIC checking when clearing IRR and set ISR,
+continue to respect soft disable APIC when attempting to set IRR.
+
+Reported-by: Rong Chen <rong.a.chen@intel.com>
+Reported-by: Feng Tang <feng.tang@intel.com>
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rong Chen <rong.a.chen@intel.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/imx-sdma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/lapic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -681,7 +681,7 @@ static int sdma_load_script(struct sdma_
- 	spin_lock_irqsave(&sdma->channel_0_lock, flags);
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2331,7 +2331,7 @@ int kvm_apic_has_interrupt(struct kvm_vc
+ 	struct kvm_lapic *apic = vcpu->arch.apic;
+ 	u32 ppr;
  
- 	bd0->mode.command = C0_SETPM;
--	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
-+	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
- 	bd0->mode.count = size / 2;
- 	bd0->buffer_addr = buf_phys;
- 	bd0->ext_buffer_addr = address;
-@@ -1000,7 +1000,7 @@ static int sdma_load_context(struct sdma
- 	context->gReg[7] = sdmac->watermark_level;
+-	if (!apic_enabled(apic))
++	if (!kvm_apic_hw_enabled(apic))
+ 		return -1;
  
- 	bd0->mode.command = C0_SETDM;
--	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
-+	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
- 	bd0->mode.count = sizeof(*context) / 4;
- 	bd0->buffer_addr = sdma->context_phys;
- 	bd0->ext_buffer_addr = 2048 + (sizeof(*context) / 4) * channel;
+ 	__apic_update_ppr(apic, &ppr);
 
 
