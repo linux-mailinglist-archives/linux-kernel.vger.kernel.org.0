@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C2B622D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16912623C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:38:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389476AbfGHP31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
+        id S2388100AbfGHPaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:30:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfGHP3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:29:21 -0400
+        id S2389716AbfGHP3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:29:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC8821537;
-        Mon,  8 Jul 2019 15:29:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43F8D204EC;
+        Mon,  8 Jul 2019 15:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599760;
-        bh=XQyksg6BQprAUNPQBRwXdMzPOwjy+Jls0OH6AIq2J9M=;
+        s=default; t=1562599789;
+        bh=YfYnE2EjNzOFpBmQyvvAYXtKa4/nrf6T7RqUEnwwf8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pDjlcSIlSYkXNURtwjQBjupaufezEQD8XIJVMY1/qH94r8TW6vavaOnxO9ngDHvWj
-         JYlhZn+Mb4w/nWYTjd8kkaQ8rGCuMADDTNAfOnlTixoFh678uxyvNhV423Ru3ao9AT
-         JjhzaGwVCInS5zgOAeKkNlHn+4qaNoatIMs8lKy8=
+        b=R+sRL/Q+bt7DCG8L2FZioQMLe+JWZQdlOyiUXk4Ot/iUUhmhRJfeqs0LXGtN0iOjj
+         TT+gV+ilhkEz2HUV0fMLFRsI/DQ4o1Ix2KKsDrcNcj9ayZX4Qj98m60frGlJnVenPD
+         BcLTnfnQ4pCc1AOKq4NsANCtUAvGhDHDGdot/dec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 42/90] crypto: user - prevent operating on larval algorithms
-Date:   Mon,  8 Jul 2019 17:13:09 +0200
-Message-Id: <20190708150524.687220407@linuxfoundation.org>
+Subject: [PATCH 4.19 43/90] crypto: cryptd - Fix skcipher instance memory leak
+Date:   Mon,  8 Jul 2019 17:13:10 +0200
+Message-Id: <20190708150524.730642298@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
 References: <20190708150521.829733162@linuxfoundation.org>
@@ -45,55 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-commit 21d4120ec6f5b5992b01b96ac484701163917b63 upstream.
+commit 1a0fad630e0b7cff38e7691b28b0517cfbb0633f upstream.
 
-Michal Suchanek reported [1] that running the pcrypt_aead01 test from
-LTP [2] in a loop and holding Ctrl-C causes a NULL dereference of
-alg->cra_users.next in crypto_remove_spawns(), via crypto_del_alg().
-The test repeatedly uses CRYPTO_MSG_NEWALG and CRYPTO_MSG_DELALG.
+cryptd_skcipher_free() fails to free the struct skcipher_instance
+allocated in cryptd_create_skcipher(), leading to a memory leak.  This
+is detected by kmemleak on bootup on ARM64 platforms:
 
-The crash occurs when the instance that CRYPTO_MSG_DELALG is trying to
-unregister isn't a real registered algorithm, but rather is a "test
-larval", which is a special "algorithm" added to the algorithms list
-while the real algorithm is still being tested.  Larvals don't have
-initialized cra_users, so that causes the crash.  Normally pcrypt_aead01
-doesn't trigger this because CRYPTO_MSG_NEWALG waits for the algorithm
-to be tested; however, CRYPTO_MSG_NEWALG returns early when interrupted.
+ unreferenced object 0xffff80003377b180 (size 1024):
+   comm "cryptomgr_probe", pid 822, jiffies 4294894830 (age 52.760s)
+   backtrace:
+     kmem_cache_alloc_trace+0x270/0x2d0
+     cryptd_create+0x990/0x124c
+     cryptomgr_probe+0x5c/0x1e8
+     kthread+0x258/0x318
+     ret_from_fork+0x10/0x1c
 
-Everything else in the "crypto user configuration" API has this same bug
-too, i.e. it inappropriately allows operating on larval algorithms
-(though it doesn't look like the other cases can cause a crash).
-
-Fix this by making crypto_alg_match() exclude larval algorithms.
-
-[1] https://lkml.kernel.org/r/20190625071624.27039-1-msuchanek@suse.de
-[2] https://github.com/linux-test-project/ltp/blob/20190517/testcases/kernel/crypto/pcrypt_aead01.c
-
-Reported-by: Michal Suchanek <msuchanek@suse.de>
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
-Cc: <stable@vger.kernel.org> # v3.2+
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: 4e0958d19bd8 ("crypto: cryptd - Add support for skcipher")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crypto_user.c |    3 +++
- 1 file changed, 3 insertions(+)
+ crypto/cryptd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -55,6 +55,9 @@ static struct crypto_alg *crypto_alg_mat
- 	list_for_each_entry(q, &crypto_alg_list, cra_list) {
- 		int match = 0;
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -586,6 +586,7 @@ static void cryptd_skcipher_free(struct
+ 	struct skcipherd_instance_ctx *ctx = skcipher_instance_ctx(inst);
  
-+		if (crypto_is_larval(q))
-+			continue;
-+
- 		if ((q->cra_flags ^ p->cru_type) & p->cru_mask)
- 			continue;
+ 	crypto_drop_skcipher(&ctx->spawn);
++	kfree(inst);
+ }
  
+ static int cryptd_create_skcipher(struct crypto_template *tmpl,
 
 
