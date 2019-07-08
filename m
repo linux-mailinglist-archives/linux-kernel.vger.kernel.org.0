@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94918621EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5783622B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbfGHPUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:20:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45718 "EHLO mail.kernel.org"
+        id S2389234AbfGHP2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbfGHPUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:20:38 -0400
+        id S1730098AbfGHP2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8153621707;
-        Mon,  8 Jul 2019 15:20:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 818F520645;
+        Mon,  8 Jul 2019 15:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599238;
-        bh=RuCd3mBU/YnHzV8tqwPc4vB+QugbZ7+ubgJ+TwVioV8=;
+        s=default; t=1562599689;
+        bh=wulHnAKnIRQXmD5SlTRtiU7beGLqGFFGxwlQru+CWj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SYi4yF7yb9uLuWWaz/U5zah44YC8QO3qCL8HgLIlkGD1U8l66kiZrfyRwqJTk3SWz
-         KEvqa83qq3hmVg9Aydmu3hqRqPMMaTg5iBx8FI9DVlLAQs2AJvAlJGkRwtLtcToWgL
-         MGIEUskWGPSQXWsoIaIgwOG8Za9PpgQrylbFyrHQ=
+        b=r4mbpYldFBMk0qiyzuYKghfFNuWYXnnrqR9//1gFPpj3vpQo0mbE9pD7YKb1chwHG
+         sLLo8gIjq2S8D7WnMNM4riAaaDVXsM+ZRhUCbqnZF03e0bFBrhvu9LpEgvyyHW9ot2
+         IJzRO4zpB9gsgX6HM+uyKaOzFzvor4wRjqvqsCvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
+        stable@vger.kernel.org, Matt Flax <flatmax@flatmax.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 042/102] 9p/rdma: remove useless check in cm_event_handler
+Subject: [PATCH 4.19 08/90] ASoC : cs4265 : readable register too low
 Date:   Mon,  8 Jul 2019 17:12:35 +0200
-Message-Id: <20190708150528.598293344@linuxfoundation.org>
+Message-Id: <20190708150522.952943044@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 473c7dd1d7b59ff8f88a5154737e3eac78a96e5b ]
+[ Upstream commit f3df05c805983427319eddc2411a2105ee1757cf ]
 
-the client c is always dereferenced to get the rdma struct, so c has to
-be a valid pointer at this point.
-Gcc would optimize that away but let's make coverity happy...
+The cs4265_readable_register function stopped short of the maximum
+register.
 
-Link: http://lkml.kernel.org/r/1536339057-21974-3-git-send-email-asmadeus@codewreck.org
-Addresses-Coverity-ID: 102778 ("Dereference before null check")
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+An example bug is taken from :
+https://github.com/Audio-Injector/Ultra/issues/25
+
+Where alsactl store fails with :
+Cannot read control '2,0,0,C Data Buffer,0': Input/output error
+
+This patch fixes the bug by setting the cs4265 to have readable
+registers up to the maximum hardware register CS4265_MAX_REGISTER.
+
+Signed-off-by: Matt Flax <flatmax@flatmax.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/9p/trans_rdma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/codecs/cs4265.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 9662c2747be7..8e4313ad3f02 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -254,8 +254,7 @@ p9_cm_event_handler(struct rdma_cm_id *id, struct rdma_cm_event *event)
- 	case RDMA_CM_EVENT_DISCONNECTED:
- 		if (rdma)
- 			rdma->state = P9_RDMA_CLOSED;
--		if (c)
--			c->status = Disconnected;
-+		c->status = Disconnected;
- 		break;
- 
- 	case RDMA_CM_EVENT_TIMEWAIT_EXIT:
+diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
+index 407554175282..68d18aca397d 100644
+--- a/sound/soc/codecs/cs4265.c
++++ b/sound/soc/codecs/cs4265.c
+@@ -60,7 +60,7 @@ static const struct reg_default cs4265_reg_defaults[] = {
+ static bool cs4265_readable_register(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+-	case CS4265_CHIP_ID ... CS4265_SPDIF_CTL2:
++	case CS4265_CHIP_ID ... CS4265_MAX_REGISTER:
+ 		return true;
+ 	default:
+ 		return false;
 -- 
 2.20.1
 
