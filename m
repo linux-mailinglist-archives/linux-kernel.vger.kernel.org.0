@@ -2,152 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E51B62636
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 312216266F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388137AbfGHQbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 12:31:47 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43034 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbfGHQbq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 12:31:46 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c19so5746680lfm.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
-        b=jy8Ff5Nekqo/UDsSM6LPdZ1/vxXRxHPPtCQNmrMM9JBSzKLh/D5A49NUn+QH8yxpsN
-         ZcneME9bQ5PEkkfjrJ5FFDXn51FOriVckEKMGfCX2C3b3tapU4Zog43RMlaoakymFFVr
-         8v2hEmD0TJZAZo2mtG7DNytqbW2S69YhcO4m+up5YxpC1iCRYbyIQ5rNjx0uOSmoxkvX
-         JAn9KqrTnU2fCfxIxP3Js5Muakzs0ucaDQ+dNOqm7KGl0mMoAvZd8PteWG2J87NJ6y5T
-         ApLhbzQONg2+flpPM4Evj/KZ0VrvDrl48NOSfNPbN7psuTAsrlP8nOA5fMCMQtkl1YMH
-         J2pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
-        b=MiTa4Z5sjw0ScdFi6+wrNfikbd0dO8YSqkgTycUdneADIdwY9ZUNJeWBgRTmZIJoE2
-         0orTgwY4kByoFyJwJRH0qtkVNP9yyvwpUakys0DVaVp1K+lQ/9kgUdwEK+ZEzckwUCXw
-         lfAwKwv7b3AkbgliQ3YT8Xt0CN/nqjMajOuk0itxupKgp+wDJilMWkfEEaRm5M9AHkJV
-         yyWdkGrBOpQrpGPsrVFCrbGDC4MNdo+k3bKYjFqyhaxe/jaqn2j390hGEdH3Oqj+Ice0
-         5z/rX+/EO+QV3wvmWksel46BUUS24tvDrgpnIG9y7X0f9OnXvFXk3geDOfG+y5bRbisS
-         kK0A==
-X-Gm-Message-State: APjAAAXhksEEcJw7pGr4mnNDUD36XmagOEGTierRNW2HXcw8LQDLwowy
-        rMfZHzBTw3LPY4cIRYHjjQHzEg==
-X-Google-Smtp-Source: APXvYqxUVvYjuVf39gxQ380dX6pWA86hhvJUjir+HrNiY0cZ5linR0Mbx8/ENcW/g4VOsocx8t9j7Q==
-X-Received: by 2002:a19:5f46:: with SMTP id a6mr9474420lfj.142.1562603504069;
-        Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
-Received: from jax (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
-        by smtp.gmail.com with ESMTPSA id y5sm3724894ljj.5.2019.07.08.09.31.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Jul 2019 09:31:43 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 18:31:41 +0200
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
-        serge@hallyn.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
-Message-ID: <20190708163140.GB28253@jax>
-References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
- <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
+        id S1730415AbfGHQdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 12:33:53 -0400
+Received: from relay.sw.ru ([185.231.240.75]:58336 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbfGHQdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 12:33:53 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hkWa8-00028e-L6; Mon, 08 Jul 2019 19:33:36 +0300
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+ <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+ <1560447999.15814.15.camel@mtksdccf07> <1560479520.15814.34.camel@mtksdccf07>
+ <1560744017.15814.49.camel@mtksdccf07>
+ <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
+ <1560774735.15814.54.camel@mtksdccf07> <1561974995.18866.1.camel@mtksdccf07>
+ <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+Date:   Mon, 8 Jul 2019 19:33:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sumit,
 
-On Mon, Jul 08, 2019 at 06:11:39PM +0530, Sumit Garg wrote:
-> Hi Jens,
-> 
-> On Thu, 13 Jun 2019 at 16:01, Sumit Garg <sumit.garg@linaro.org> wrote:
-> >
-> > Add support for TEE based trusted keys where TEE provides the functionality
-> > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > an alternative in case platform doesn't possess a TPM device.
-> >
-> > This series also adds some TEE features like:
-> >
-> > Patch #1, #2 enables support for registered kernel shared memory with TEE.
-> >
-> 
-> Would you like to pick up Patch #1, #2 separately? I think both these
-> patches add independent functionality and also got reviewed-by tags
-> too.
 
-I think it makes more sense to keep them together in the same patch
-series or could end up with dependencies between trees.
-
-If you don't think dependencies will be an issue then I don't mind
-picking them up, in that case they'd likely sit in an arm-soc branch
-until next merge window. However, I think that #3 (support for private
-kernel login method) should be included too and that one isn't ready
-yet.
-
-Thanks,
-Jens
-
+On 7/5/19 4:34 PM, Dmitry Vyukov wrote:
+> On Mon, Jul 1, 2019 at 11:56 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+>>>>>>>>> This patch adds memory corruption identification at bug report for
+>>>>>>>>> software tag-based mode, the report show whether it is "use-after-free"
+>>>>>>>>> or "out-of-bound" error instead of "invalid-access" error.This will make
+>>>>>>>>> it easier for programmers to see the memory corruption problem.
+>>>>>>>>>
+>>>>>>>>> Now we extend the quarantine to support both generic and tag-based kasan.
+>>>>>>>>> For tag-based kasan, the quarantine stores only freed object information
+>>>>>>>>> to check if an object is freed recently. When tag-based kasan reports an
+>>>>>>>>> error, we can check if the tagged addr is in the quarantine and make a
+>>>>>>>>> good guess if the object is more like "use-after-free" or "out-of-bound".
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> We already have all the information and don't need the quarantine to make such guess.
+>>>>>>>> Basically if shadow of the first byte of object has the same tag as tag in pointer than it's out-of-bounds,
+>>>>>>>> otherwise it's use-after-free.
+>>>>>>>>
+>>>>>>>> In pseudo-code it's something like this:
+>>>>>>>>
+>>>>>>>> u8 object_tag = *(u8 *)kasan_mem_to_shadow(nearest_object(cacche, page, access_addr));
+>>>>>>>>
+>>>>>>>> if (access_addr_tag == object_tag && object_tag != KASAN_TAG_INVALID)
+>>>>>>>>   // out-of-bounds
+>>>>>>>> else
+>>>>>>>>   // use-after-free
+>>>>>>>
+>>>>>>> Thanks your explanation.
+>>>>>>> I see, we can use it to decide corruption type.
+>>>>>>> But some use-after-free issues, it may not have accurate free-backtrace.
+>>>>>>> Unfortunately in that situation, free-backtrace is the most important.
+>>>>>>> please see below example
+>>>>>>>
+>>>>>>> In generic KASAN, it gets accurate free-backrace(ptr1).
+>>>>>>> In tag-based KASAN, it gets wrong free-backtrace(ptr2). It will make
+>>>>>>> programmer misjudge, so they may not believe tag-based KASAN.
+>>>>>>> So We provide this patch, we hope tag-based KASAN bug report is the same
+>>>>>>> accurate with generic KASAN.
+>>>>>>>
+>>>>>>> ---
+>>>>>>>     ptr1 = kmalloc(size, GFP_KERNEL);
+>>>>>>>     ptr1_free(ptr1);
+>>>>>>>
+>>>>>>>     ptr2 = kmalloc(size, GFP_KERNEL);
+>>>>>>>     ptr2_free(ptr2);
+>>>>>>>
+>>>>>>>     ptr1[size] = 'x';  //corruption here
+>>>>>>>
+>>>>>>>
+>>>>>>> static noinline void ptr1_free(char* ptr)
+>>>>>>> {
+>>>>>>>     kfree(ptr);
+>>>>>>> }
+>>>>>>> static noinline void ptr2_free(char* ptr)
+>>>>>>> {
+>>>>>>>     kfree(ptr);
+>>>>>>> }
+>>>>>>> ---
+>>>>>>>
+>>>>>> We think of another question about deciding by that shadow of the first
+>>>>>> byte.
+>>>>>> In tag-based KASAN, it is immediately released after calling kfree(), so
+>>>>>> the slub is easy to be used by another pointer, then it will change
+>>>>>> shadow memory to the tag of new pointer, it will not be the
+>>>>>> KASAN_TAG_INVALID, so there are many false negative cases, especially in
+>>>>>> small size allocation.
+>>>>>>
+>>>>>> Our patch is to solve those problems. so please consider it, thanks.
+>>>>>>
+>>>>> Hi, Andrey and Dmitry,
+>>>>>
+>>>>> I am sorry to bother you.
+>>>>> Would you tell me what you think about this patch?
+>>>>> We want to use tag-based KASAN, so we hope its bug report is clear and
+>>>>> correct as generic KASAN.
+>>>>>
+>>>>> Thanks your review.
+>>>>> Walter
+>>>>
+>>>> Hi Walter,
+>>>>
+>>>> I will probably be busy till the next week. Sorry for delays.
+>>>
+>>> It's ok. Thanks your kindly help.
+>>> I hope I can contribute to tag-based KASAN. It is a very important tool
+>>> for us.
+>>
+>> Hi, Dmitry,
+>>
+>> Would you have free time to discuss this patch together?
+>> Thanks.
 > 
+> Sorry for delays. I am overwhelm by some urgent work. I afraid to
+> promise any dates because the next week I am on a conference, then
+> again a backlog and an intern starting...
 > 
-> -Sumit
+> Andrey, do you still have concerns re this patch? This change allows
+> to print the free stack.
+
+I 'm not sure that quarantine is a best way to do that. Quarantine is made to delay freeing, but we don't that here.
+If we want to remember more free stacks wouldn't be easier simply to remember more stacks in object itself?
+Same for previously used tags for better use-after-free identification.
+
+> We also have a quarantine for hwasan in user-space. Though it works a
+> bit differently then the normal asan quarantine. We keep a per-thread
+> fixed-size ring-buffer of recent allocations:
+> https://github.com/llvm-mirror/compiler-rt/blob/master/lib/hwasan/hwasan_report.cpp#L274-L284
+> and scan these ring buffers during reports.
 > 
-> > Patch #3 enables support for private kernel login method required for
-> > cases like trusted keys where we don't wan't user-space to directly access
-> > TEE service to retrieve trusted key contents.
-> >
-> > Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
-> >
-> > This patch-set has been tested with OP-TEE based pseudo TA which can be
-> > found here [1].
-> >
-> > Looking forward to your valuable feedback/suggestions.
-> >
-> > [1] https://github.com/OP-TEE/optee_os/pull/3082
-> >
-> > Sumit Garg (7):
-> >   tee: optee: allow kernel pages to register as shm
-> >   tee: enable support to register kernel memory
-> >   tee: add private login method for kernel clients
-> >   KEYS: trusted: Introduce TEE based Trusted Keys
-> >   KEYS: encrypted: Allow TEE based trusted master keys
-> >   doc: keys: Document usage of TEE based Trusted Keys
-> >   MAINTAINERS: Add entry for TEE based Trusted Keys
-> >
-> >  Documentation/security/keys/tee-trusted.rst      |  93 +++++
-> >  MAINTAINERS                                      |   9 +
-> >  drivers/tee/optee/call.c                         |   7 +
-> >  drivers/tee/tee_core.c                           |   6 +
-> >  drivers/tee/tee_shm.c                            |  16 +-
-> >  include/keys/tee_trusted.h                       |  84 ++++
-> >  include/keys/trusted-type.h                      |   1 +
-> >  include/linux/tee_drv.h                          |   1 +
-> >  include/uapi/linux/tee.h                         |   2 +
-> >  security/keys/Kconfig                            |   3 +
-> >  security/keys/Makefile                           |   3 +
-> >  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
-> >  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
-> >  13 files changed, 737 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/security/keys/tee-trusted.rst
-> >  create mode 100644 include/keys/tee_trusted.h
-> >  create mode 100644 security/keys/tee_trusted.c
-> >
-> > --
-> > 2.7.4
-> >
