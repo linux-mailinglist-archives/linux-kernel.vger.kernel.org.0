@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F57662BCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2162B80
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfGHWg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 18:36:59 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38230 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727188AbfGHWeb (ORCPT
+        id S1727410AbfGHWei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 18:34:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6190 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727310AbfGHWef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 18:34:31 -0400
-X-UUID: f1075665c97d41609a88914ff5e0bbca-20190709
-X-UUID: f1075665c97d41609a88914ff5e0bbca-20190709
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        Mon, 8 Jul 2019 18:34:35 -0400
+X-UUID: c84ba7921f3c4fc6945e894dbc085a0a-20190709
+X-UUID: c84ba7921f3c4fc6945e894dbc085a0a-20190709
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2109577963; Tue, 09 Jul 2019 06:34:27 +0800
+        with ESMTP id 169333812; Tue, 09 Jul 2019 06:34:30 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 9 Jul 2019 06:34:27 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 9 Jul 2019 06:34:26 +0800
+ Transport; Tue, 9 Jul 2019 06:34:27 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,14 +35,15 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v4, 07/33] arm64: dts: add display nodes for mt8183
-Date:   Tue, 9 Jul 2019 06:33:47 +0800
-Message-ID: <1562625253-29254-8-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v4, 08/33] drm/mediatek: add mutex mod into ddp private data
+Date:   Tue, 9 Jul 2019 06:33:48 +0800
+Message-ID: <1562625253-29254-9-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 225097C3D8CB0E70DA658BF06083C2FDB2F48FEDD2382F5AB18219059F5D0E922000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,140 +52,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add display nodes for mt8183
+except mutex mod, mutex mod reg,mutex sof reg,
+and mutex sof id will be ddp private data
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 109 +++++++++++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 41 +++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index d13ade7..4991c64 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -17,6 +17,14 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 579ce28..412b82f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -147,12 +147,16 @@ struct mtk_disp_mutex {
+ 	bool claimed;
+ };
  
-+	aliases {
-+		ovl0 = &ovl0;
-+		ovl_2l0 = &ovl_2l0;
-+		ovl_2l1 = &ovl_2l1;
-+		rdma0 = &rdma0;
-+		rdma1 = &rdma1;
-+	};
++struct mtk_ddp_data {
++	const unsigned int *mutex_mod;
++};
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -327,6 +335,107 @@
- 			#clock-cells = <1>;
- 		};
+ struct mtk_ddp {
+ 	struct device			*dev;
+ 	struct clk			*clk;
+ 	void __iomem			*regs;
+ 	struct mtk_disp_mutex		mutex[10];
+-	const unsigned int		*mutex_mod;
++	const struct mtk_ddp_data	*data;
+ };
  
-+		display_components: dispsys@14000000 {
-+			compatible = "mediatek,mt8183-display";
-+			reg = <0 0x14000000 0 0x1000>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+		};
+ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+@@ -202,6 +206,18 @@ struct mtk_ddp {
+ 	[DDP_COMPONENT_WDMA1] = MT8173_MUTEX_MOD_DISP_WDMA1,
+ };
+ 
++static const struct mtk_ddp_data mt2701_ddp_driver_data = {
++	.mutex_mod = mt2701_mutex_mod,
++};
 +
-+		ovl0: ovl@14008000 {
-+			compatible = "mediatek,mt8183-disp-ovl";
-+			reg = <0 0x14008000 0 0x1000>;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_OVL0>;
-+			mediatek,larb = <&larb0>;
-+		};
++static const struct mtk_ddp_data mt2712_ddp_driver_data = {
++	.mutex_mod = mt2712_mutex_mod,
++};
 +
-+		ovl_2l0: ovl@14009000 {
-+			compatible = "mediatek,mt8183-disp-ovl-2l";
-+			reg = <0 0x14009000 0 0x1000>;
-+			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_OVL0_2L>;
-+			mediatek,larb = <&larb0>;
-+		};
++static const struct mtk_ddp_data mt8173_ddp_driver_data = {
++	.mutex_mod = mt8173_mutex_mod,
++};
 +
-+		ovl_2l1: ovl@1400a000 {
-+			compatible = "mediatek,mt8183-disp-ovl-2l";
-+			reg = <0 0x1400a000 0 0x1000>;
-+			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_OVL1_2L>;
-+			mediatek,larb = <&larb0>;
-+		};
-+
-+		rdma0: rdma@1400b000 {
-+			compatible = "mediatek,mt8183-disp-rdma";
-+			reg = <0 0x1400b000 0 0x1000>;
-+			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_RDMA0>;
-+			mediatek,larb = <&larb0>;
-+		};
-+
-+		rdma1: rdma@1400c000 {
-+			compatible = "mediatek,mt8183-disp-rdma1";
-+			reg = <0 0x1400c000 0 0x1000>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_RDMA1>;
-+			mediatek,larb = <&larb0>;
-+		};
-+
-+		color0: color@1400e000 {
-+			compatible = "mediatek,mt8183-disp-color",
-+				     "mediatek,mt8173-disp-color";
-+			reg = <0 0x1400e000 0 0x1000>;
-+			interrupts = <GIC_SPI 231 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_COLOR0>;
-+		};
-+
-+		ccorr0: ccorr@1400f000 {
-+			compatible = "mediatek,mt8183-disp-ccorr";
-+			reg = <0 0x1400f000 0 0x1000>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_CCORR0>;
-+		};
-+
-+		aal0: aal@14010000 {
-+			compatible = "mediatek,mt8183-disp-aal",
-+				     "mediatek,mt8173-disp-aal";
-+			reg = <0 0x14010000 0 0x1000>;
-+			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_AAL0>;
-+		};
-+
-+		gamma0: gamma@14011000 {
-+			compatible = "mediatek,mt8183-disp-gamma",
-+				     "mediatek,mt8173-disp-gamma";
-+			reg = <0 0x14011000 0 0x1000>;
-+			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_GAMMA0>;
-+		};
-+
-+		dither0: dither@14012000 {
-+			compatible = "mediatek,mt8183-disp-dither";
-+			reg = <0 0x14012000 0 0x1000>;
-+			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+			clocks = <&mmsys CLK_MM_DISP_DITHER0>;
-+		};
-+
-+		mutex: mutex@14016000 {
-+			compatible = "mediatek,mt8183-disp-mutex";
-+			reg = <0 0x14016000 0 0x1000>;
-+			interrupts = <GIC_SPI 217 IRQ_TYPE_LEVEL_LOW>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
-+		};
-+
- 		larb0: larb@14017000 {
- 			compatible = "mediatek,mt8183-smi-larb";
- 			reg = <0 0x14017000 0 0x1000>;
+ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 				    enum mtk_ddp_comp_id next,
+ 				    unsigned int *addr)
+@@ -464,15 +480,15 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+ 		reg = MUTEX_SOF_DPI1;
+ 		break;
+ 	default:
+-		if (ddp->mutex_mod[id] < 32) {
++		if (ddp->data->mutex_mod[id] < 32) {
+ 			offset = DISP_REG_MUTEX_MOD(mutex->id);
+ 			reg = readl_relaxed(ddp->regs + offset);
+-			reg |= 1 << ddp->mutex_mod[id];
++			reg |= 1 << ddp->data->mutex_mod[id];
+ 			writel_relaxed(reg, ddp->regs + offset);
+ 		} else {
+ 			offset = DISP_REG_MUTEX_MOD2(mutex->id);
+ 			reg = readl_relaxed(ddp->regs + offset);
+-			reg |= 1 << (ddp->mutex_mod[id] - 32);
++			reg |= 1 << (ddp->data->mutex_mod[id] - 32);
+ 			writel_relaxed(reg, ddp->regs + offset);
+ 		}
+ 		return;
+@@ -502,15 +518,15 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+ 			       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
+ 		break;
+ 	default:
+-		if (ddp->mutex_mod[id] < 32) {
++		if (ddp->data->mutex_mod[id] < 32) {
+ 			offset = DISP_REG_MUTEX_MOD(mutex->id);
+ 			reg = readl_relaxed(ddp->regs + offset);
+-			reg &= ~(1 << ddp->mutex_mod[id]);
++			reg &= ~(1 << ddp->data->mutex_mod[id]);
+ 			writel_relaxed(reg, ddp->regs + offset);
+ 		} else {
+ 			offset = DISP_REG_MUTEX_MOD2(mutex->id);
+ 			reg = readl_relaxed(ddp->regs + offset);
+-			reg &= ~(1 << (ddp->mutex_mod[id] - 32));
++			reg &= ~(1 << (ddp->data->mutex_mod[id] - 32));
+ 			writel_relaxed(reg, ddp->regs + offset);
+ 		}
+ 		break;
+@@ -585,7 +601,7 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ddp->regs);
+ 	}
+ 
+-	ddp->mutex_mod = of_device_get_match_data(dev);
++	ddp->data = of_device_get_match_data(dev);
+ 
+ 	platform_set_drvdata(pdev, ddp);
+ 
+@@ -598,9 +614,12 @@ static int mtk_ddp_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id ddp_driver_dt_match[] = {
+-	{ .compatible = "mediatek,mt2701-disp-mutex", .data = mt2701_mutex_mod},
+-	{ .compatible = "mediatek,mt2712-disp-mutex", .data = mt2712_mutex_mod},
+-	{ .compatible = "mediatek,mt8173-disp-mutex", .data = mt8173_mutex_mod},
++	{ .compatible = "mediatek,mt2701-disp-mutex",
++	  .data = &mt2701_ddp_driver_data},
++	{ .compatible = "mediatek,mt2712-disp-mutex",
++	  .data = &mt2712_ddp_driver_data},
++	{ .compatible = "mediatek,mt8173-disp-mutex",
++	  .data = &mt8173_ddp_driver_data},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, ddp_driver_dt_match);
 -- 
 1.8.1.1.dirty
 
