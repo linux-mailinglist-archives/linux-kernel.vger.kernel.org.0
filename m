@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3767162793
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55CB662791
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:50:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404016AbfGHRtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:49:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44920 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390712AbfGHRtk (ORCPT
+        id S2391206AbfGHRtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:49:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37162 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390873AbfGHRtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:49:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id t16so7941933pfe.11
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:40 -0700 (PDT)
+        Mon, 8 Jul 2019 13:49:41 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g15so8061815pgi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:49:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jvubPfiCRWcqYJeQKrlvplKJ87mcq6CV3rScnhJCQ5U=;
-        b=gWdTavZInEF8s+f73QfuvdZZVflT//tp6s2gup+DG7rzJx++7Zxn4YR8R+P3cCQ3vg
-         0XtUyooDHCqvJfLoTxIPl7CFHlSKSceFQO1IeLxzta92vXckW46gHBQduoya2pJJMyio
-         nnulEIodWWvqRkpqb1gs8njfVwcB7aV8EdjTo=
+        bh=zk4/OPGo86ftMBdGr+5okqxNxr1xkvSdReLqcT2u18A=;
+        b=XsOl+a4RAnXCWhNEVRPeVMhX4ouKgXngCNqnfUxMciMui+pL4rHn4H1iwCHUjJmJIC
+         2ElaPOflyt6/Xi//KGH/Fy7duud9Gy23ek+J89nJPK8tVN1aiJv5zeg2ri/hk0NA12K1
+         l48hzBjCqkjo8vewPUND3AMeDcQR6+1oul5jU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jvubPfiCRWcqYJeQKrlvplKJ87mcq6CV3rScnhJCQ5U=;
-        b=sikNjAnFUPgd9IqAbhyCFYa3J2KOgd9NDoEYXhsyuRoZX6gaDsmRvIgdPIHP5MjZKf
-         iolMcjoBrRieTw7hXW2cjRfWe8YQ7Mxjlk/Dy5AQtU5jLUAunKSYISXNwv2GREdwa6Zq
-         R5dqlOXbadZr3LxYBtgjbIinMnAL0CMviTKRr2Arqex1bsrKr22nxecP7MBHPvMuKzEi
-         DOKFbnRiazZPm3DxPZxJGMWKTTPUS0G1/5ZouGzSsssNG2Rb0AlYvuWQxGx0P2mEleKv
-         qLFU9K3nWW0F06rcbdp4ynfHhRErjI2tmv4zy1jWlgqb9Mtc5UA49M9DhAVaaYu8zil3
-         DSdg==
-X-Gm-Message-State: APjAAAW5tEDWVVqUD7RYq660MhuPVorZahfCMJl2SaDEMCWr5hb3Jazx
-        AKp7yCOI8OSbltC1lJGF6h8uwQ==
-X-Google-Smtp-Source: APXvYqx8rkznkGCAzouh1iIQ84Mhjqiwd/g+Pg/qIIPvd4iT14Pzd6lYH1LAJdK/xxZzTbQTVpJPsA==
-X-Received: by 2002:a63:2310:: with SMTP id j16mr26308534pgj.238.1562608179726;
-        Mon, 08 Jul 2019 10:49:39 -0700 (PDT)
+        bh=zk4/OPGo86ftMBdGr+5okqxNxr1xkvSdReLqcT2u18A=;
+        b=H7h7V/nWzTRzK7Raq77kSb2tTyVNmiSt1uhfnz3SMClXP2YGlum/1ihV1ElSw36jDm
+         KVLSZDuO4G1a8AATaCE/VJfQwthsXdPxNeq02LbE5LBtGufj+lGxiqeQfW7B64SYfPAX
+         tPfddo3CebZbHI1veuVFVwC7XeYyYoiHLCv6rmwzDAgtMJYQcIrgXAHqcIKkLWGfTz5E
+         tznGlcrrY37EcTYQhxzWbXit1bgT0gRnlGdNetLKyfyQRT3p2tSAFxKUFG+JfzTv8y5c
+         FvRDcqyV4zXNuAGv0YI7Ex0BECQNm9o8Dd7+VJNePlf9hZPcMUbPWn9ajpvbseNM/AZ+
+         oBZQ==
+X-Gm-Message-State: APjAAAXvYu505/glfoOWBj72QfKfQ3NB2cgHycD9r3j4zFnSpgrLjNXT
+        e8dzTcF+MBJMWoEnsNinbzMbuQ==
+X-Google-Smtp-Source: APXvYqwGon64A3Eg43O0xpcjziuFJrMuP/ARJjBIDsIb1lPDikUr28nYvEkK1nyoH64klte1o9Y66Q==
+X-Received: by 2002:a63:7e1d:: with SMTP id z29mr25328202pgc.346.1562608180745;
+        Mon, 08 Jul 2019 10:49:40 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.38
+        by smtp.gmail.com with ESMTPSA id j1sm20151686pfe.101.2019.07.08.10.49.40
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 10:49:39 -0700 (PDT)
+        Mon, 08 Jul 2019 10:49:40 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Garnier <thgarnie@chromium.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 09/11] x86/power/64: Adapt assembly for PIE support
-Date:   Mon,  8 Jul 2019 10:49:02 -0700
-Message-Id: <20190708174913.123308-10-thgarnie@chromium.org>
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 10/11] x86/paravirt: Adapt assembly for PIE support
+Date:   Mon,  8 Jul 2019 10:49:03 -0700
+Message-Id: <20190708174913.123308-11-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190708174913.123308-1-thgarnie@chromium.org>
 References: <20190708174913.123308-1-thgarnie@chromium.org>
@@ -66,42 +66,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+if PIE is enabled, switch the paravirt assembly constraints to be
+compatible. The %c/i constrains generate smaller code so is kept by
+default.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/power/hibernate_asm_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/paravirt_types.h | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
-index a4d5eb0a7ece..796cd19d575b 100644
---- a/arch/x86/power/hibernate_asm_64.S
-+++ b/arch/x86/power/hibernate_asm_64.S
-@@ -23,7 +23,7 @@
- #include <asm/frame.h>
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 946f8f1f1efc..5ec59abc5cb5 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -343,9 +343,25 @@ extern struct paravirt_patch_template pv_ops;
+ #define PARAVIRT_PATCH(x)					\
+ 	(offsetof(struct paravirt_patch_template, x) / sizeof(void *))
  
- ENTRY(swsusp_arch_suspend)
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -114,7 +114,7 @@ ENTRY(restore_registers)
- 	movq	%rax, %cr4;  # turn PGE back on
++#ifdef CONFIG_X86_PIE
++#define paravirt_opptr_call "a"
++#define paravirt_opptr_type "p"
++
++/*
++ * Alternative patching requires a maximum of 7 bytes but the relative call is
++ * only 6 bytes. If PIE is enabled, add an additional nop to the call
++ * instruction to ensure patching is possible.
++ * */
++#define PARAVIRT_CALL_POST  "nop;"
++#else
++#define paravirt_opptr_call "c"
++#define paravirt_opptr_type "i"
++#define PARAVIRT_CALL_POST  ""
++#endif
++
+ #define paravirt_type(op)				\
+ 	[paravirt_typenum] "i" (PARAVIRT_PATCH(op)),	\
+-	[paravirt_opptr] "i" (&(pv_ops.op))
++	[paravirt_opptr] paravirt_opptr_type (&(pv_ops.op))
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
  
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	pt_regs_sp(%rax), %rsp
- 	movq	pt_regs_bp(%rax), %rbp
- 	movq	pt_regs_si(%rax), %rsi
+@@ -384,9 +400,10 @@ int paravirt_disable_iospace(void);
+  * offset into the paravirt_patch_template structure, and can therefore be
+  * freely converted back into a structure offset.
+  */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
++#define PARAVIRT_CALL						\
++	ANNOTATE_RETPOLINE_SAFE					\
++	"call *%" paravirt_opptr_call "[paravirt_opptr];"	\
++	PARAVIRT_CALL_POST
+ 
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
