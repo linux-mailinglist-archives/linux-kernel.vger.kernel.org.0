@@ -2,59 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF6D62418
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59F57622D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389158AbfGHP1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2353 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389130AbfGHP1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 08:27:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
-   d="scan'208";a="363835568"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.189])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Jul 2019 08:27:42 -0700
-Message-ID: <47219a790c2c5b5a3ec0a331ece8956f9a82f45b.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm: Document UEFI event log quirks
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jordan Hand <jorhand@linux.microsoft.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tweek@google.com, matthewgarrett@google.com,
-        Jonathan Corbet <corbet@lwn.net>
-Date:   Mon, 08 Jul 2019 18:27:45 +0300
-In-Reply-To: <33ff21e2-1e27-cc85-0ea3-5127cb2598ba@linux.microsoft.com>
-References: <20190703161109.22935-1-jarkko.sakkinen@linux.intel.com>
-         <dacf145d-49e0-16e5-5963-415bab1884e1@linux.microsoft.com>
-         <fcf497b7aa95cd6915986bc4581f10814c4d5341.camel@linux.intel.com>
-         <33ff21e2-1e27-cc85-0ea3-5127cb2598ba@linux.microsoft.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        id S2389498AbfGHP3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:29:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37168 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389481AbfGHP33 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:29:29 -0400
+Received: from [167.98.27.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hkVa3-00057b-E6; Mon, 08 Jul 2019 16:29:27 +0100
+Received: from ben by deadeye with local (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hkVa2-00036G-T0; Mon, 08 Jul 2019 16:29:26 +0100
+Message-ID: <85820ecbcc368f992eb061481c388bb2ebb8ad65.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 000/129] 3.16.70-rc1 review
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
+        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
+Date:   Mon, 08 Jul 2019 16:29:22 +0100
+In-Reply-To: <20190708130511.GA4626@luke-XPS-13>
+References: <lsq.1562518456.876074874@decadent.org.uk>
+         <20190708130511.GA4626@luke-XPS-13>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-UBYcyYUNPEIlvLKJ/Id1"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 167.98.27.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-07-07 at 21:10 -0700, Jordan Hand wrote:
-> > "Thus, it nees to save the final events table size at the time to the
-> > custom configuration table so that the TPM driver can later on skip the
-> > events generated during the preboot time."
-> > 
-> Yes, that sounds more clear to me.
-> 
-> Thanks,
-> Jordan
 
-Awesome, thank you.
+--=-UBYcyYUNPEIlvLKJ/Id1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-/Jarkko
+On Mon, 2019-07-08 at 06:05 -0700, Luke Nowakowski-Krijger wrote:
+> Hello,=20
+>=20
+> I got 1 error when applying this patch series to the latest linux-3.16.y
+> stable branch
+>=20
+> fs/fuse/file.c:218:3: error: implicit declaration of function =E2=80=98st=
+ream_open=E2=80=99
 
+It is added by the previous patch and declared in <linux/fs.h>.=20
+fs/fuse/file.c always includes that (via fs/fuse/fuse_i.h), so I don't
+see how this error can happen.
+
+Ben.
+
+--=20
+Ben Hutchings
+Time is nature's way of making sure that
+everything doesn't happen at once.
+
+
+
+--=-UBYcyYUNPEIlvLKJ/Id1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl0jYVIACgkQ57/I7JWG
+EQknpBAAvk1RxrLlsgscIZSmkbexOcj+NwhyieFM9Mc8zhCaEnj7OBTU+i6oABXO
+weQgt59Nm7byVZqHPYt9B1F4blgt9oj6dqSQWUDtOYECjp9MEFPA1jNYBMwomsEE
+/DSH2wC1fN1qvfTBATR9n8UilqlM4mzIMUQ3taiCmp8sUp1VRem09qCKfP5kNkzb
+HYhWLbJPkyUD1ii650Aa5K3M/+u6HVUpDEZ3UAXlkPJi19YRrL9NcmQNEceUsK1j
+GH/JrsrEgQqOshx5a9bzH69BNpradteS0eBV4oGhc82mywXvrsPdBxlrM+O5LQa2
+o4BltIEd3z25Lh+TrZm9OUtXk319s4h/FHyanHUl31V1e7zVxEes2DlDnRR8PPMI
+J2xJDBMOiBZOswtie6cF3w+Oa5PZvvYMY/9VlQ6IX2b451Jf+UCl9M6ta8NahowR
+jo1PAr5oGwzrogpEeZLSGDGFpZDsznUUUsFbRJoSJOaHC+06pxnSgHSPmmUc8eZM
+mioe22HfoRHJQ1LN06EkdbwvHS6Nogjpt0a15TGPrU5CIgkyXtOsoELFA42o+Iip
+89O0HahTYZAztYv74GBOrG60o3qd4KqxlHFknfD13qB2rG6/1zLNZg2DWHYhEwqM
+S7cZFBL23eu3o/EnFHQDKqL/2UHNS1p4AYPv8Tblz/MQVdFDvwg=
+=hRS3
+-----END PGP SIGNATURE-----
+
+--=-UBYcyYUNPEIlvLKJ/Id1--
