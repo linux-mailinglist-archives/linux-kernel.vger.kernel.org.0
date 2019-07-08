@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F71C62548
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF24621C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391473AbfGHPuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:50:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38596 "EHLO mail.kernel.org"
+        id S1733216AbfGHPTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:19:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729999AbfGHPPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:15:54 -0400
+        id S1733205AbfGHPTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:19:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21D91216FD;
-        Mon,  8 Jul 2019 15:15:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82D5321537;
+        Mon,  8 Jul 2019 15:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598953;
-        bh=P4zCUfw3PBJ37v5L33h79iJqNctbwXqXcDvvCEH9UCQ=;
+        s=default; t=1562599156;
+        bh=NUS9YOn5HCd2lVHAlqD9mDJjs3hLJPpuIfN7lHx0wp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dLl/IX7I3H79Kf+blpzC2Jl7k3XWwJldv5xrQOWCU4mBCNJuXBTUICjVbgESk+Cr2
-         emYpeLv8GJqAmFqzqrYOKpidDmybEzBujIp5JhMV+5HIByEIX46fwpStQA534/Bs0O
-         l4IPhdPAmTxyJ5TQLq9uGlmUKVY14wfBpD5pV7oQ=
+        b=Zl7hj0IIg0tPkGR5NfUaR2gIVffmXrWVe1gGRoFuFoWSREPYVivNYgfY99kR4km5d
+         v/FuJizyNwPmsvDHZGkKuHXoRct2zC1NzZ84oC64H1aqkCFhNU2/GeGkO8SU6O1UCt
+         UKbGgO8A/bVJlNQP1mX1PFwBbzCG9OFsx5wFKtbU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 05/73] gcc-9: silence address-of-packed-member warning
-Date:   Mon,  8 Jul 2019 17:12:15 +0200
-Message-Id: <20190708150518.071139435@linuxfoundation.org>
+        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 023/102] s390/qeth: fix VLAN attribute in bridge_hostnotify udev event
+Date:   Mon,  8 Jul 2019 17:12:16 +0200
+Message-Id: <20190708150527.430478010@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+[ Upstream commit 335726195e460cb6b3f795b695bfd31f0ea70ef0 ]
 
-commit 6f303d60534c46aa1a239f29c321f95c83dda748 upstream.
+Enabling sysfs attribute bridge_hostnotify triggers a series of udev events
+for the MAC addresses of all currently connected peers. In case no VLAN is
+set for a peer, the device reports the corresponding MAC addresses with
+VLAN ID 4096. This currently results in attribute VLAN=4096 for all
+non-VLAN interfaces in the initial series of events after host-notify is
+enabled.
 
-We already did this for clang, but now gcc has that warning too.  Yes,
-yes, the address may be unaligned.  And that's kind of the point.
+Instead, no VLAN attribute should be reported in the udev event for
+non-VLAN interfaces.
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Only the initial events face this issue. For dynamic changes that are
+reported later, the device uses a validity flag.
 
+This also changes the code so that it now sets the VLAN attribute for
+MAC addresses with VID 0. On Linux, no qeth interface will ever be
+registered with VID 0: Linux kernel registers VID 0 on all network
+interfaces initially, but qeth will drop .ndo_vlan_rx_add_vid for VID 0.
+Peers with other OSs could register MACs with VID 0.
+
+Fixes: 9f48b9db9a22 ("qeth: bridgeport support - address notifications")
+Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Makefile |    2 +-
+ drivers/s390/net/qeth_l2_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -636,6 +636,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
+index 58404e69aa4b..6ba4e921d2fd 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -2124,7 +2124,7 @@ static void qeth_bridgeport_an_set_cb(void *priv,
  
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-@@ -712,7 +713,6 @@ ifeq ($(cc-name),clang)
- KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
- KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
--KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- # Quiet clang warning: comparison of unsigned expression < 0 is always false
- KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
- # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+ 	l2entry = (struct qdio_brinfo_entry_l2 *)entry;
+ 	code = IPA_ADDR_CHANGE_CODE_MACADDR;
+-	if (l2entry->addr_lnid.lnid)
++	if (l2entry->addr_lnid.lnid < VLAN_N_VID)
+ 		code |= IPA_ADDR_CHANGE_CODE_VLANID;
+ 	qeth_bridge_emit_host_event(card, anev_reg_unreg, code,
+ 		(struct net_if_token *)&l2entry->nit,
+-- 
+2.20.1
+
 
 
