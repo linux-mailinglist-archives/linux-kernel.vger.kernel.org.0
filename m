@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1726252D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D33E624C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbfGHPQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:16:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40046 "EHLO mail.kernel.org"
+        id S2387746AbfGHPVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:21:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732690AbfGHPQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:16:55 -0400
+        id S2387516AbfGHPV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:21:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4009216C4;
-        Mon,  8 Jul 2019 15:16:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 924602166E;
+        Mon,  8 Jul 2019 15:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599014;
-        bh=uCRlZIC/VW7rzqhFjBiiYtqSwHiFQPXOrTmJnrfKFWY=;
+        s=default; t=1562599287;
+        bh=9L0SttTa0BIq1Uf+MGhfQMvOxZrYpehlrhdYX9je6l8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pIj0cZGEdcND9tzqWaOnwaBxvn6luVT6KB5Cqc9OmAPrpZHJIkW/LsBZtoencGjeP
-         I5eqvESTJ2gLsx6WuY4BIlNJseqaqsoTvkGMTI8kI4Z0fAS1NamTXjn9XeoksoPHm+
-         4/gtvMfiOynOjsziHuPIyreUyRe/yrgTRn/4BTc8=
+        b=hI7Prt/fF/VYR5FpIhyGCuxdVvN25DA6xVihRDiZKAKgt0EnPJ9SWSTOzXrRiXEL3
+         oWhSJcXF4c24GNqs62VM8RTZu+8vsaf1pkQ8O1DlO4NICCash8dL977ajaRPufgIrR
+         hGlobMU/Y0f5LfnOfrZL1GLyeEcXaD3WmEFw4/Ds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 49/73] ASoC : cs4265 : readable register too low
+Subject: [PATCH 4.9 066/102] ASoC : cs4265 : readable register too low
 Date:   Mon,  8 Jul 2019 17:12:59 +0200
-Message-Id: <20190708150523.966806295@linuxfoundation.org>
+Message-Id: <20190708150529.864746321@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -68,7 +68,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
-index 93b02be3a90e..6edec2387861 100644
+index 6e8eb1f5a041..bed64723e5d9 100644
 --- a/sound/soc/codecs/cs4265.c
 +++ b/sound/soc/codecs/cs4265.c
 @@ -60,7 +60,7 @@ static const struct reg_default cs4265_reg_defaults[] = {
