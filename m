@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA1B61AEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA55E61AEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfGHHJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:09:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:2812 "EHLO mga12.intel.com"
+        id S1729355AbfGHHJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:09:08 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24913 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbfGHHJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:09:01 -0400
+        id S1727481AbfGHHJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 03:09:08 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 00:09:00 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 00:09:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,465,1557212400"; 
-   d="scan'208";a="173185440"
+   d="scan'208";a="248729596"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Jul 2019 00:09:00 -0700
+  by orsmga001.jf.intel.com with ESMTP; 08 Jul 2019 00:09:00 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1hkNlj-0007IV-NU; Mon, 08 Jul 2019 15:08:59 +0800
-Date:   Mon, 8 Jul 2019 15:08:42 +0800
+        id 1hkNlj-0007Il-Oj; Mon, 08 Jul 2019 15:08:59 +0800
+Date:   Mon, 8 Jul 2019 15:08:43 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Tony Xie <tony.xie@rock-chips.com>
 Cc:     kbuild-all@01.org, Lee Jones <lee.jones@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [linux-next:master 9992/12641] drivers/mfd/rk808.c:754:1: sparse:
- sparse: symbol 'rk8xx_pm_ops' was not declared. Should it be static?
-Message-ID: <201907081550.e4JO1ctY%lkp@intel.com>
+Subject: [RFC PATCH linux-next] mfd: rk808: rk8xx_pm_ops can be static
+Message-ID: <20190708070843.GA23605@lkp-kbuild12>
+References: <201907081550.e4JO1ctY%lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <201907081550.e4JO1ctY%lkp@intel.com>
 X-Patchwork-Hint: ignore
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,26 +43,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
-head:   22c45ec32b4a9fa8c48ef4f5bf9b189b307aae12
-commit: 586c1b4125b3c7bf5b482fcafab5d568b8a3c285 [9992/12641] mfd: rk808: Add RK817 and RK809 support
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
-        git checkout 586c1b4125b3c7bf5b482fcafab5d568b8a3c285
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/mfd/rk808.c:754:1: sparse: sparse: symbol 'rk8xx_pm_ops' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Fixes: 586c1b4125b3 ("mfd: rk808: Add RK817 and RK809 support")
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ rk808.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 6ee1c46..52666a9 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -751,7 +751,7 @@ static int rk8xx_resume(struct device *dev)
+ 
+ 	return ret;
+ }
+-SIMPLE_DEV_PM_OPS(rk8xx_pm_ops, rk8xx_suspend, rk8xx_resume);
++static SIMPLE_DEV_PM_OPS(rk8xx_pm_ops, rk8xx_suspend, rk8xx_resume);
+ 
+ static struct i2c_driver rk808_i2c_driver = {
+ 	.driver = {
