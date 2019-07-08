@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CB06225C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1A6762334
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729812AbfGHPZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:25:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52436 "EHLO mail.kernel.org"
+        id S2390271AbfGHPdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:33:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388543AbfGHPZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:25:04 -0400
+        id S2390258AbfGHPdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:33:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73C14204EC;
-        Mon,  8 Jul 2019 15:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B11A2177B;
+        Mon,  8 Jul 2019 15:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599503;
-        bh=pPvXy1dg4w7R9+7wjQwCiC2XVNsumn72yQ7jifnr8r8=;
+        s=default; t=1562599982;
+        bh=w/C1KY7DwgILP0qzGNFTrFsId6j3M+yqpLgt9370w2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Him/r2HsdoSrrp3T6ruIjV38vZkl8RqtyXUsH4ObErqBkDNywW2Pe1v8o3TJWqgH3
-         6MONPYsGo6g0pSQlcLTu6T7oSSCFpYlNpoi8tswv2CdrMxKKXQ4JxrQJthtY8FySQj
-         ol5/J/0Eh1Zv8rpQa6ZYifF39VEq2+jjIqHBtEaI=
+        b=oDC7vc+LkHN4AFbumnBBlkixXBEAuM2PdkUdfBu9JwGs/KgLXOu7VbxXTXCvJqsa4
+         14outkq/5FpOvrISSwHPORNu7DrH6AyiSv2jNFrrnv+BCLb7ur5pBP1FLUXNG1ZwLn
+         HxgK+mA/PWguQygnORzzl/lkygbNq/ZDmxEzD6d4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Beckett <bob.beckett@collabora.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4.14 36/56] drm/imx: notify drm core before sending event during crtc disable
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.1 56/96] ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME
 Date:   Mon,  8 Jul 2019 17:13:28 +0200
-Message-Id: <20190708150523.216561571@linuxfoundation.org>
+Message-Id: <20190708150529.539934595@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Beckett <bob.beckett@collabora.com>
+From: Jann Horn <jannh@google.com>
 
-commit 78c68e8f5cd24bd32ba4ca1cdfb0c30cf0642685 upstream.
+commit 6994eefb0053799d2e07cd140df6c2ea106c41ee upstream.
 
-Notify drm core before sending pending events during crtc disable.
-This fixes the first event after disable having an old stale timestamp
-by having drm_crtc_vblank_off update the timestamp to now.
+Fix two issues:
 
-This was seen while debugging weston log message:
-Warning: computed repaint delay is insane: -8212 msec
+When called for PTRACE_TRACEME, ptrace_link() would obtain an RCU
+reference to the parent's objective credentials, then give that pointer
+to get_cred().  However, the object lifetime rules for things like
+struct cred do not permit unconditionally turning an RCU reference into
+a stable reference.
 
-This occurred due to:
-1. driver starts up
-2. fbcon comes along and restores fbdev, enabling vblank
-3. vblank_disable_fn fires via timer disabling vblank, keeping vblank
-seq number and time set at current value
-(some time later)
-4. weston starts and does a modeset
-5. atomic commit disables crtc while it does the modeset
-6. ipu_crtc_atomic_disable sends vblank with old seq number and time
+PTRACE_TRACEME records the parent's credentials as if the parent was
+acting as the subject, but that's not the case.  If a malicious
+unprivileged child uses PTRACE_TRACEME and the parent is privileged, and
+at a later point, the parent process becomes attacker-controlled
+(because it drops privileges and calls execve()), the attacker ends up
+with control over two processes with a privileged ptrace relationship,
+which can be abused to ptrace a suid binary and obtain root privileges.
 
-Fixes: a474478642d5 ("drm/imx: fix crtc vblank state regression")
+Fix both of these by always recording the credentials of the process
+that is requesting the creation of the ptrace relationship:
+current_cred() can't change under us, and current is the proper subject
+for access control.
 
-Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+This change is theoretically userspace-visible, but I am not aware of
+any code that it will actually break.
+
+Fixes: 64b875f7ac8a ("ptrace: Capture the ptracer's creds not PT_PTRACE_CAP")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/imx/ipuv3-crtc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/ptrace.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/imx/ipuv3-crtc.c
-+++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
-@@ -99,14 +99,14 @@ static void ipu_crtc_atomic_disable(stru
- 	ipu_dc_disable(ipu);
- 	ipu_prg_disable(ipu);
- 
-+	drm_crtc_vblank_off(crtc);
-+
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
- 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
- 		crtc->state->event = NULL;
- 	}
- 	spin_unlock_irq(&crtc->dev->event_lock);
--
--	drm_crtc_vblank_off(crtc);
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -78,9 +78,7 @@ void __ptrace_link(struct task_struct *c
+  */
+ static void ptrace_link(struct task_struct *child, struct task_struct *new_parent)
+ {
+-	rcu_read_lock();
+-	__ptrace_link(child, new_parent, __task_cred(new_parent));
+-	rcu_read_unlock();
++	__ptrace_link(child, new_parent, current_cred());
  }
  
- static void imx_drm_crtc_reset(struct drm_crtc *crtc)
+ /**
 
 
