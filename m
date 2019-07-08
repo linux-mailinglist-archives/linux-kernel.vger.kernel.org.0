@@ -2,88 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476B261B7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C897461B82
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfGHH6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:58:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfGHH6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:58:34 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 268CB3092640;
-        Mon,  8 Jul 2019 07:58:34 +0000 (UTC)
-Received: from [10.36.116.46] (ovpn-116-46.ams2.redhat.com [10.36.116.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BDBC018ACB;
-        Mon,  8 Jul 2019 07:58:31 +0000 (UTC)
-Subject: Re: [PATCH 2/8] dt-bindings: document PASID property for IOMMU
- masters
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        will.deacon@arm.com
-Cc:     joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        robin.murphy@arm.com, jacob.jun.pan@linux.intel.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
- <20190610184714.6786-3-jean-philippe.brucker@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <4a90dc21-e727-b2f6-1353-cb08babf0ec2@redhat.com>
-Date:   Mon, 8 Jul 2019 09:58:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190610184714.6786-3-jean-philippe.brucker@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 08 Jul 2019 07:58:34 +0000 (UTC)
+        id S1728308AbfGHIAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:00:12 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48920 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfGHIAL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 04:00:11 -0400
+Received: from ramsan ([84.194.98.4])
+        by baptiste.telenet-ops.be with bizsmtp
+        id a8092000905gfCL01809mD; Mon, 08 Jul 2019 10:00:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hkOZG-0005UX-2Y; Mon, 08 Jul 2019 10:00:10 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hkOZG-0005wb-01; Mon, 08 Jul 2019 10:00:10 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [git pull] m68k updates for 5.3
+Date:   Mon,  8 Jul 2019 10:00:05 +0200
+Message-Id: <20190708080005.22806-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+	Hi Linus,
 
-On 6/10/19 8:47 PM, Jean-Philippe Brucker wrote:
-> On Arm systems, some platform devices behind an SMMU may support the PASID
-> feature, which offers multiple address space. Let the firmware tell us
-> when a device supports PASID.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> ---
-> Previous discussion on this patch last year:
-> https://patchwork.ozlabs.org/patch/872275/
-> I split PASID and stall definitions, keeping only PASID here.
-> ---
->  Documentation/devicetree/bindings/iommu/iommu.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
-> index 5a8b4624defc..3c36334e4f94 100644
-> --- a/Documentation/devicetree/bindings/iommu/iommu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
-> @@ -86,6 +86,12 @@ have a means to turn off translation. But it is invalid in such cases to
->  disable the IOMMU's device tree node in the first place because it would
->  prevent any driver from properly setting up the translations.
->  
-> +Optional properties:
-> +--------------------
-> +- pasid-num-bits: Some masters support multiple address spaces for DMA, by
-> +  tagging DMA transactions with an address space identifier. By default,
-> +  this is 0, which means that the device only has one address space.
-> +
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-Thanks
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Eric
->  
->  Notes:
->  ======
-> 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v5.3-tag1
+
+for you to fetch changes up to 69878ef47562f32e02d0b7975c990e1c0339320d:
+
+  m68k: Implement arch_dma_prep_coherent() (2019-07-01 11:17:00 +0200)
+
+----------------------------------------------------------------
+m68k updates for v5.3
+
+  - Switch to using the generic remapping DMA allocator,
+  - Defconfig updates.
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      m68k: Use the generic dma coherent remap allocator
+      m68k: Implement arch_dma_prep_coherent()
+
+Geert Uytterhoeven (1):
+      m68k: defconfig: Update defconfigs for v5.2-rc1
+
+ arch/m68k/Kconfig                    |  3 ++
+ arch/m68k/configs/amiga_defconfig    | 17 +++++------
+ arch/m68k/configs/apollo_defconfig   | 17 +++++------
+ arch/m68k/configs/atari_defconfig    | 17 +++++------
+ arch/m68k/configs/bvme6000_defconfig | 17 +++++------
+ arch/m68k/configs/hp300_defconfig    | 17 +++++------
+ arch/m68k/configs/mac_defconfig      | 17 +++++------
+ arch/m68k/configs/multi_defconfig    | 17 +++++------
+ arch/m68k/configs/mvme147_defconfig  | 17 +++++------
+ arch/m68k/configs/mvme16x_defconfig  | 17 +++++------
+ arch/m68k/configs/q40_defconfig      | 17 +++++------
+ arch/m68k/configs/sun3_defconfig     | 17 +++++------
+ arch/m68k/configs/sun3x_defconfig    | 17 +++++------
+ arch/m68k/kernel/dma.c               | 57 +++++++-----------------------------
+ 14 files changed, 98 insertions(+), 166 deletions(-)
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
