@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CFB62B8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10ADA62B83
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfGHWex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 18:34:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:25910 "EHLO
+        id S1727741AbfGHWev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 18:34:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34729 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727547AbfGHWer (ORCPT
+        with ESMTP id S1727492AbfGHWeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 18:34:47 -0400
-X-UUID: fb0084a53d9a47c688ff393d58f992c6-20190709
-X-UUID: fb0084a53d9a47c688ff393d58f992c6-20190709
+        Mon, 8 Jul 2019 18:34:46 -0400
+X-UUID: e2f386e0c8fe413390c501b7a60e6df6-20190709
+X-UUID: e2f386e0c8fe413390c501b7a60e6df6-20190709
 Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 686714619; Tue, 09 Jul 2019 06:34:40 +0800
+        with ESMTP id 1873091533; Tue, 09 Jul 2019 06:34:40 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 9 Jul 2019 06:34:38 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 9 Jul 2019 06:34:37 +0800
+ Transport; Tue, 9 Jul 2019 06:34:38 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,15 +35,14 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v4, 20/33] drm/medaitek: add layer_nr for ovl private data
-Date:   Tue, 9 Jul 2019 06:34:00 +0800
-Message-ID: <1562625253-29254-21-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v4, 21/33] drm/mediatek: add function to background color input select for ovl/ovl_2l direct link
+Date:   Tue, 9 Jul 2019 06:34:01 +0800
+Message-ID: <1562625253-29254-22-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 474F5C3AC966225E64CB4C579BF51C6090B072D4768532445A60A59DD61B83942000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,56 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add layer_nr for ovl private data
-ovl_2l almost same with with ovl hardware, except the
-layer number for ovl_2l is 2 and ovl is 4.
-this patch is a preparation for ovl-2l and
-ovl share the same driver.
+This patch add function to background color input select for ovl/ovl_2l direct link
+for ovl/ovl_2l direct link usecase, we need set background color
+input select for these hardware.
+this is preparation patch for ovl/ovl_2l usecase
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index afb313c..a0ab760 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -60,6 +60,7 @@
- struct mtk_disp_ovl_data {
- 	unsigned int addr;
- 	unsigned int gmc_bits;
-+	unsigned int layer_nr;
- 	bool fmt_rgb565_is_0;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index a0ea8c9..ec6f329a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -92,6 +92,8 @@ struct mtk_ddp_comp_funcs {
+ 			     struct mtk_plane_state *state);
+ 	void (*gamma_set)(struct mtk_ddp_comp *comp,
+ 			  struct drm_crtc_state *state);
++	void (*bgclr_in_on)(struct mtk_ddp_comp *comp);
++	void (*bgclr_in_off)(struct mtk_ddp_comp *comp);
  };
  
-@@ -137,7 +138,9 @@ static void mtk_ovl_config(struct mtk_ddp_comp *comp, unsigned int w,
- 
- static unsigned int mtk_ovl_layer_nr(struct mtk_ddp_comp *comp)
- {
--	return 4;
-+	struct mtk_disp_ovl *ovl = comp_to_ovl(comp);
-+
-+	return ovl->data->layer_nr;
+ struct mtk_ddp_comp {
+@@ -172,6 +174,18 @@ static inline void mtk_ddp_gamma_set(struct mtk_ddp_comp *comp,
+ 		comp->funcs->gamma_set(comp, state);
  }
  
- static void mtk_ovl_layer_on(struct mtk_ddp_comp *comp, unsigned int idx)
-@@ -342,12 +345,14 @@ static int mtk_disp_ovl_remove(struct platform_device *pdev)
- static const struct mtk_disp_ovl_data mt2701_ovl_driver_data = {
- 	.addr = DISP_REG_OVL_ADDR_MT2701,
- 	.gmc_bits = 8,
-+	.layer_nr = 4,
- 	.fmt_rgb565_is_0 = false,
- };
- 
- static const struct mtk_disp_ovl_data mt8173_ovl_driver_data = {
- 	.addr = DISP_REG_OVL_ADDR_MT8173,
- 	.gmc_bits = 8,
-+	.layer_nr = 4,
- 	.fmt_rgb565_is_0 = true,
- };
- 
++static inline void mtk_ddp_comp_bgclr_in_on(struct mtk_ddp_comp *comp)
++{
++	if (comp->funcs && comp->funcs->bgclr_in_on)
++		comp->funcs->bgclr_in_on(comp);
++}
++
++static inline void mtk_ddp_comp_bgclr_in_off(struct mtk_ddp_comp *comp)
++{
++	if (comp->funcs && comp->funcs->bgclr_in_off)
++		comp->funcs->bgclr_in_off(comp);
++}
++
+ int mtk_ddp_comp_get_id(struct device_node *node,
+ 			enum mtk_ddp_comp_type comp_type);
+ int mtk_ddp_comp_init(struct device *dev, struct device_node *comp_node,
 -- 
 1.8.1.1.dirty
 
