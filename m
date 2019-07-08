@@ -2,152 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6283062072
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB8B062075
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbfGHO2V convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 8 Jul 2019 10:28:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729760AbfGHO2V (ORCPT
+        id S1731788AbfGHO2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 10:28:49 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38317 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730052AbfGHO2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:28:21 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68ERMMl115712
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Jul 2019 10:28:20 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.112])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tm60yvg5r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:28:19 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <BMT@zurich.ibm.com>;
-        Mon, 8 Jul 2019 14:28:19 -0000
-Received: from us1b3-smtp04.a3dr.sjc01.isc4sb.com (10.122.203.161)
-        by smtp.notes.na.collabserv.com (10.122.47.54) with smtp.notes.na.collabserv.com ESMTP;
-        Mon, 8 Jul 2019 14:28:14 -0000
-Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
-          by us1b3-smtp04.a3dr.sjc01.isc4sb.com
-          with ESMTP id 2019070814281388-485737 ;
-          Mon, 8 Jul 2019 14:28:13 +0000 
-In-Reply-To: <20190708140858.GC23966@mellanox.com>
-From:   "Bernard Metzler" <BMT@zurich.ibm.com>
-To:     "Jason Gunthorpe" <jgg@mellanox.com>
-Cc:     "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Doug Ledford" <dledford@redhat.com>,
-        "Linux Next Mailing List" <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Date:   Mon, 8 Jul 2019 14:28:13 +0000
+        Mon, 8 Jul 2019 10:28:48 -0400
+Received: by mail-ua1-f66.google.com with SMTP id j2so5028379uaq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 07:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=68vznt+Nl+HIjpVeyOFjYkL8X85BJYZga875EvEkgwM=;
+        b=CbW90Kx6vg6zZV2z6W0S6oN+W+3Hf9bbaeVqDpGwX65nTM4Oi4hCzAJsL1IhLYr7Y6
+         lUCGYwhOZ/ae7OfRWpnbNW4DokqfMe+nLQNPn6gExdLelOrIrUD4YHTEBDjAus5BfJkm
+         VDf24sp95LpmMKk4xybv1bNRVTnF4SrD1AGWhxL0LwdqbkBtptd4kLhfAnq2njOoL3CY
+         IH6dLgeRjtOdkjZUiWxvatMKKcZjiVVCfL2RjGs2RA1GfVaUyEgZggdcGo6hbk/nFW34
+         k77GOgTFBeyzW+4YMZI6MRbQNe8gabkwlDvtEAv6nGFv0jirDvc+RFLzgIf6nm4VrDnl
+         t17g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=68vznt+Nl+HIjpVeyOFjYkL8X85BJYZga875EvEkgwM=;
+        b=CJBfdy1F5yctDE3BkZ3dz89MShNkvKW4UzYiYMB7s+1vWb0dyyv1btye1940Sec8ka
+         6RDGhpIf+qChXOhlQEoFo+Fhu4LHBrcUXqbTpTXJ+Wo2xMJaALBuHvx6EJmHOKhIpKEE
+         r9qEI77dgmahCbgAj33VFbD75a2L6dbGx8Uwivxjvpy9kNBkPre6j9g66MF/XDS9A9uN
+         EZyLozB4otwtO/OJQl10gZ73NqJa7w2uFKfDmew03EIa1Qk0KOSct1ZFHPUVmaP300BU
+         pOzXfnBXi96MTWgwZGNGZ4nlSZV+RDSobs7Y3C5Nyqnh6lekGMlm5o9HH6brvExBDuEI
+         nnnA==
+X-Gm-Message-State: APjAAAVH3sMNymAknLzq+SfwD2SRCvOQbqScVksozDLfWRg6sLf+OSig
+        EAuVJ3KFz5JEPyHEyZoviV8uAaFXUxvhGzFQ1BDv9A==
+X-Google-Smtp-Source: APXvYqxXaixiaeoRgKw4SCi4T30AcDWB5FfcW76Qs5xWqbCRh/dyia0EFH4sqoLPJ2X05DM7OGKxTFq/TY3O6G9kfG8=
+X-Received: by 2002:a9f:230c:: with SMTP id 12mr7420727uae.85.1562596126944;
+ Mon, 08 Jul 2019 07:28:46 -0700 (PDT)
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20190708140858.GC23966@mellanox.com>,<20190708130351.2141a39b@canb.auug.org.au>
-X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
- SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
-X-KeepSent: 8B5D0A35:3AB4C2D3-00258431:004F7CF8;
- type=4; name=$KeepSent
-X-LLNOutbound: False
-X-Disclaimed: 37267
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19070814-0163-0000-0000-000006B23BBB
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.001805
-X-IBM-SpamModules-Versions: BY=3.00011395; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01229239; UDB=6.00647369; IPR=6.01010498;
- BA=6.00006352; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027634; XFM=3.00000015;
- UTC=2019-07-08 14:28:18
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-07-08 08:53:28 - 6.00010139
-x-cbparentid: 19070814-0164-0000-0000-0000100845AC
-Message-Id: <OF8B5D0A35.3AB4C2D3-ON00258431.004F7CF8-00258431.004F7D00@notes.na.collabserv.com>
-Subject: Re:  Re: linux-next: build failure after merge of the rdma tree
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+References: <20190708104355.32569-1-oded.gabbay@gmail.com> <20190708112136.GA13795@kroah.com>
+ <CAFCwf11XN_stq3HHVGqD4_LKG8W3uFiYarfbwP50hw58Hi10Sw@mail.gmail.com>
+ <20190708114259.GA16677@kroah.com> <CAFCwf10Zk2hjLceEjM_2dwz0=h1jmn_EZVKVjsJEE3ORooOzgA@mail.gmail.com>
+ <20190708122033.GA19624@kroah.com>
+In-Reply-To: <20190708122033.GA19624@kroah.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Mon, 8 Jul 2019 17:28:21 +0300
+Message-ID: <CAFCwf10wO_6HqWbA3e_zRozHLDXg5sFvimb_sEs44X1yvGmL4A@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: use correct variable to show fd open counter
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        Tomer Tayar <ttayar@habana.ai>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------"Jason Gunthorpe" <jgg@mellanox.com> wrote: -----
+On Mon, Jul 8, 2019 at 3:20 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jul 08, 2019 at 02:51:33PM +0300, Oded Gabbay wrote:
+> > On Mon, Jul 8, 2019 at 2:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Mon, Jul 08, 2019 at 02:30:13PM +0300, Oded Gabbay wrote:
+> > > > On Mon, Jul 8, 2019 at 2:21 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Mon, Jul 08, 2019 at 01:43:55PM +0300, Oded Gabbay wrote:
+> > > > > > The current code checks if the user context pointer is NULL or not to
+> > > > > > display the number of open file descriptors of a device. However, that
+> > > > > > variable (user_ctx) will eventually go away as the driver will support
+> > > > > > multiple processes. Instead, the driver can use the atomic counter of
+> > > > > > the open file descriptors which the driver already maintains.
+> > > > > >
+> > > > > > Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/misc/habanalabs/sysfs.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+> > > > > > index 25eb46d29d88..881be19b5fad 100644
+> > > > > > --- a/drivers/misc/habanalabs/sysfs.c
+> > > > > > +++ b/drivers/misc/habanalabs/sysfs.c
+> > > > > > @@ -356,7 +356,7 @@ static ssize_t write_open_cnt_show(struct device *dev,
+> > > > > >  {
+> > > > > >       struct hl_device *hdev = dev_get_drvdata(dev);
+> > > > > >
+> > > > > > -     return sprintf(buf, "%d\n", hdev->user_ctx ? 1 : 0);
+> > > > > > +     return sprintf(buf, "%d\n", atomic_read(&hdev->fd_open_cnt));
+> > > > > >  }
+> > > > >
+> > > > > Odds are, this means nothing, as it doesn't get touched if the file
+> > > > > descriptor is duped or sent to another process.
+> > > > >
+> > > > > Why do you care about the number of open files?  Whenever someone tries
+> > > > > to do this type of logic, it is almost always wrong, just let userspace
+> > > > > do what it wants to do, and if wants to open something twice, then it
+> > > > > gets to keep the pieces when things break.
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > greg k-h
+> > > >
+> > > > I care about the number of open file descriptors because I can't let
+> > > > multiple processes run simultaneously on my device, as we still don't
+> > > > have the code to do proper isolation between the processes, in regard
+> > > > of memory accesses on our device memory and by using our DMA engine.
+> > > > Basically, it's a security hole. If you want, I can explain more in
+> > > > length on this issue.
+> > >
+> > > But the issue is that you can't "force" this from the kernel side at
+> > > all.  Trying to catch this at open() time only catches the obvious
+> > > processes.
+> > >
+> > > As I said, how do you check for:
+> > >         fd = open(...);
+> > >         fd_new = dup(fd);
+> > >
+> > >         write(fd, ...);
+> > >         write(fd_new, ...);
+> > >
+> > > or, pass the fd across a socket?  Or other fun ways of sending file
+> > > descriptors around a system.
+> > >
+> > > You have to trust userspace here, sorry.  If someone wants to do
+> > > multiple accesses, they can, but again, they deserve the pieces when
+> > > things fall apart.
+> >
+> > I see what you are saying, but from *security* perspective, I don't
+> > think I really care about the scenarios above, right ?
+> > Because that would mean a user duplicated his *own* fd. Sure, things
+> > won't work for him, but what do I care about that, as you rightly
+> > said.
+> > I'm only concerned about the security risk, where there is a
+> > legitimate user and a malicious one. Because I can't isolate between
+> > them, I want to be able to allow only one of them to run.
+>
+> But how can you tell if the first one is the "malicious" one and the
+> second one is "legitimate"?  You do that by the "normal" file
+> permissions and the like, you don't try to do a "first one wins!" type
+> of policy, that's crazy :)
 
->To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Bernard Metzler"
-><bmt@zurich.ibm.com>
->From: "Jason Gunthorpe" <jgg@mellanox.com>
->Date: 07/08/2019 04:09PM
->Cc: "Doug Ledford" <dledford@redhat.com>, "Linux Next Mailing List"
-><linux-next@vger.kernel.org>, "Linux Kernel Mailing List"
-><linux-kernel@vger.kernel.org>
->Subject: [EXTERNAL] Re: linux-next: build failure after merge of the
->rdma tree
->
->On Mon, Jul 08, 2019 at 01:03:51PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> After merging the rdma tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->> 
->> In file included from include/asm-generic/percpu.h:7,
->>                  from arch/x86/include/asm/percpu.h:544,
->>                  from arch/x86/include/asm/preempt.h:6,
->>                  from include/linux/preempt.h:78,
->>                  from include/linux/spinlock.h:51,
->>                  from include/linux/seqlock.h:36,
->>                  from include/linux/time.h:6,
->>                  from include/linux/ktime.h:24,
->>                  from include/linux/timer.h:6,
->>                  from include/linux/netdevice.h:24,
->>                  from drivers/infiniband/sw/siw/siw_main.c:8:
->> include/linux/percpu-defs.h:92:33: warning: '__pcpu_unique_use_cnt'
->initialized and declared 'extern'
->>   extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;  \
->>                                  ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:115:2: note: in expansion of macro
->'DEFINE_PER_CPU_SECTION'
->>   DEFINE_PER_CPU_SECTION(type, name, "")
->>   ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of
->macro 'DEFINE_PER_CPU'
->>  static DEFINE_PER_CPU(atomic_t, use_cnt = ATOMIC_INIT(0));
->>         ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:93:26: error: redefinition of
->'__pcpu_unique_use_cnt'
->>   __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;   \
->>                           ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:115:2: note: in expansion of macro
->'DEFINE_PER_CPU_SECTION'
->>   DEFINE_PER_CPU_SECTION(type, name, "")
->>   ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of
->macro 'DEFINE_PER_CPU'
->>  static DEFINE_PER_CPU(atomic_t, use_cnt = ATOMIC_INIT(0));
->
->Bernard, 
->
->This looks like the wrong way to use DEFINE_PER_CPU these days. I'm
->not sure why my compiles don't hit it, or why 0-day didn't say
->something
->
->Looking at the other atomic_t PER_CPU users they just rely on
->automatic zero initialization, so this should just be:
->
->  static DEFINE_PER_CPU(atomic_t, use_cnt);
->
->?
->
->Please confirm ASAP.
->
+I don't care who is malicious and who is not. Of course I can't count
+on "first one wins" to do that...
+What I care about, is that two different processes won't be able to
+send jobs to the device at the same time. That's it.
+But I see your point about not using file-descriptors to enforce this
+limitation.
+I will change my code, but it will take a bit of time. It's not a
+trivial change.
 
-Hi Jason,
+Thanks,
+Oded
 
-Thanks for  bringing this up. Indeed, that explicit
-initialization seem to be inappropriate. Can you please
-fix that as you suggest?
-
-Thanks very much,
-Bernard.
-
+>
+> > I don't care if one of them duplicates his own FD, right ?
+>
+> If you are trying to keep someone from having multiple FD per device,
+> then yes, you should care.  The point is, you can't know.
+>
+> > Please tell me if my assumption here is correct or not, because this
+> > has implications.
+>
+> Don't rely on "first one wins!" as a security policy to prevent bad
+> things from happening.  That's never going to work, let userspace police
+> these things, as that is the only place you can do it properly (or with
+> a selinux/apparmor/lsm policy).
+>
+> > > > We have the H/W infrastructure for that, using MMU and multiple
+> > > > address space IDs (ASID), but we didn't write the code yet in the
+> > > > driver, as that is a BIG feature but it wasn't requested by anyone
+> > > > yet.
+> > > >
+> > > > So the current solution is to block the ability to open multiple file
+> > > > descriptors.
+> > > >
+> > > > Regarding this specific sysfs property, I don't really care about it.
+> > > > I simply saw that it is shown in other drivers and I thought it may be
+> > > > nice for a system admin utility to show it.
+> > >
+> > > What drivers show the number of open file descriptors?  Time to go
+> > > delete them as well :)
+> > hehe
+> > I tried to grep for it but I couldn't find any. Strange because I was
+> > sure I saw this in some driver.
+>
+> If you run across it again, please let me know.  It's a common
+> "anti-pattern" that I have been guilty of in the past.
+>
+> thanks,
+>
+> greg k-h
