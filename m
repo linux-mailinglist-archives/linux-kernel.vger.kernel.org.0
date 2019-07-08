@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30492624DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC7EE62297
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbfGHPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:20:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
+        id S2388455AbfGHP1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:27:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387656AbfGHPUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:20:51 -0400
+        id S2388973AbfGHP1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:27:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC47A2182B;
-        Mon,  8 Jul 2019 15:20:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C1A7216C4;
+        Mon,  8 Jul 2019 15:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599250;
-        bh=lXgYJ88QjOuOoYufTSd5UBKHmsWzYrpuGVb1Luvt/P0=;
+        s=default; t=1562599619;
+        bh=yRJjLKLhEK5TnyOeE6cPOJE+AZlWLNzC06hpNaQ/nq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHFKlfurHW1qWXoR0GEVYkFz7WDLzEjTEr5d6r3suORi7KzEOljVfUgmwq+kAnNV3
-         6ad0vLDU1BTGVCWYXhT65uaeHjmEwVqamMBbxucr+BixB9LC8kuRnwEReWyYlRUXSm
-         3Dn5hbfA63uD0B/wNrFjz/temhJt9RJ8scaLNO4E=
+        b=eT5i9qgcAneIhq6VUbV4icEJNZ0sMX0Zz4guWIpOtT1FhMO6FmF0NPn6m6eJiD+fw
+         ovqZN/NM3hcR3RaWHoSyOHa4CPpX7vOZU9WaADAdqKSMDrVQLwMeUu3Yl4DC7jy4xv
+         2yGY86A/P7J7AOIgKt2lKlIdcgjedPxbQNu+pzr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com,
-        syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 054/102] sctp: change to hold sk after auth shkey is created successfully
+        stable@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 20/90] ASoC: sun4i-i2s: Add offset to RX channel select
 Date:   Mon,  8 Jul 2019 17:12:47 +0200
-Message-Id: <20190708150529.248380860@linuxfoundation.org>
+Message-Id: <20190708150523.641923841@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,51 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+[ Upstream commit f9927000cb35f250051f0f1878db12ee2626eea1 ]
 
-[ Upstream commit 25bff6d5478b2a02368097015b7d8eb727c87e16 ]
+Whilst testing the capture functionality of the i2s on the newer
+SoCs it was noticed that the recording was somewhat distorted.
+This was due to the offset not being set correctly on the receiver
+side.
 
-Now in sctp_endpoint_init(), it holds the sk then creates auth
-shkey. But when the creation fails, it doesn't release the sk,
-which causes a sk defcnf leak,
-
-Here to fix it by only holding the sk when auth shkey is created
-successfully.
-
-Fixes: a29a5bd4f5c3 ("[SCTP]: Implement SCTP-AUTH initializations.")
-Reported-by: syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com
-Reported-by: syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/endpointola.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/sctp/endpointola.c
-+++ b/net/sctp/endpointola.c
-@@ -125,10 +125,6 @@ static struct sctp_endpoint *sctp_endpoi
- 	/* Initialize the bind addr area */
- 	sctp_bind_addr_init(&ep->base.bind_addr, 0);
- 
--	/* Remember who we are attached to.  */
--	ep->base.sk = sk;
--	sock_hold(ep->base.sk);
--
- 	/* Create the lists of associations.  */
- 	INIT_LIST_HEAD(&ep->asocs);
- 
-@@ -165,6 +161,10 @@ static struct sctp_endpoint *sctp_endpoi
- 	ep->auth_chunk_list = auth_chunks;
- 	ep->prsctp_enable = net->sctp.prsctp_enable;
- 
-+	/* Remember who we are attached to.  */
-+	ep->base.sk = sk;
-+	sock_hold(ep->base.sk);
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 5750738b6ac0..6173dd86c62c 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -460,6 +460,10 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
+ 				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
+ 				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
 +
- 	return ep;
++		regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
++				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
++				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
+ 	}
  
- nomem_hmacs:
+ 	regmap_field_write(i2s->field_fmt_mode, val);
+-- 
+2.20.1
+
 
 
