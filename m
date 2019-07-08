@@ -2,168 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD04F61EC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:50:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207C161ECE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbfGHMuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 08:50:17 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731019AbfGHMuQ (ORCPT
+        id S1731045AbfGHMv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 08:51:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:44981 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfGHMv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:50:16 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68ClVNN101836
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Jul 2019 08:50:15 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tm3nh68ha-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 08:50:15 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 8 Jul 2019 13:50:14 +0100
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 8 Jul 2019 13:50:11 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x68CoA6B45154650
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 8 Jul 2019 12:50:10 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48FB4B2068;
-        Mon,  8 Jul 2019 12:50:10 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1CA46B2065;
-        Mon,  8 Jul 2019 12:50:10 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  8 Jul 2019 12:50:10 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6B10716C3D0B; Mon,  8 Jul 2019 05:50:13 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 05:50:13 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Reply-To: paulmck@linux.ibm.com
-References: <1562565609-12482-1-git-send-email-byungchul.park@lge.com>
+        Mon, 8 Jul 2019 08:51:29 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mvs2R-1ibkHp1Zwt-00swZe; Mon, 08 Jul 2019 14:51:18 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nandor Han <nandor.han@vaisala.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nvmem: fix nvmem_cell_write() prototype
+Date:   Mon,  8 Jul 2019 14:51:07 +0200
+Message-Id: <20190708125115.3731543-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562565609-12482-1-git-send-email-byungchul.park@lge.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19070812-0064-0000-0000-000003F874EF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011395; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01229206; UDB=6.00647349; IPR=6.01010465;
- MB=3.00027632; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-08 12:50:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070812-0065-0000-0000-00003E2E7FCE
-Message-Id: <20190708125013.GG26519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907080159
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:F5W/srgO0603YyWyAzNz5lIxzMjkSTkeFBySmMdsEFHEfRskmBX
+ ED6CC28DmE6kleszwxB00hZUJc8Zi5eyhyD3h4ituhNtJI1R83Ltankhoy1RIz+QELI0dtl
+ /PnFdUAMHhj458aogrU6S0psh/NEF/9u0gGPD/+IkTF15/iswWi8wMRWE3Ifb6ZFu7TOKd0
+ hBypeMnjduLMmMk1ZO64g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EbiKBLLcMBA=:RPSnkgPAS4fb6sKFiJ4QiN
+ Pd0pNmawvwiTJ8rW5DQYBeXnEAYt008n8FPDsnNkL5Y8U7Ihc6G5/jWnyI4BTOoaEb8Uxk3u6
+ v17Fq2EseW6ctmdDDxd8ttwFb6w0lzulEArbgaisuauzHYGtbpWi2tz3MQAua+nV9u4BlTNhK
+ LzNCy+B8M9Uv+4vZj/8/NXLGtVDHiOdinsuFmFlnL3cETfmjx+wG2WXwX91Rmo+El2GZyYv96
+ Ht4da7S7AVXfvMzbA3jBkGRPYN4a8jFlgInkAQ9Ubyn6u0YF9nbPJHPvz/FHFqnQmZZgptDs6
+ pswvQBSLFonyVygArR8tnpxw5Rs7bW0N3aV31GcwseCp/96WeVB2g1k7B5yFRxGSPQ/xeikU2
+ xzC9t9B0YV9KNsGnxhAwEu4qnDOdNe51INCkjPy4klnC6V+0hn9Ag7tVNXRdM1kJEe+nVvb6U
+ v5xTXPYwWztfBkBqpzCk9ba1w6UL8eFprzjQJHz+S9YXQduCr3RUS7H6XylP8VCDIdSL8t5De
+ /D0zLZDqAyhbRnf5n9ZdI5Hr9wg+rI3pAmlZN0rMaN5AXeVQIw2XD6rmXIPuSNSX9lWbMHsxj
+ bQtzrVarLcPPnJ5/StdpzDNmLvMN4cRLeuh96QUtPfl8DLZJg6fkRyLMKVM+aVTsdR81DUGQJ
+ oss0uRWpbiJ/bg6X76D14+b99mj3vRxT8A4ZYWZ5HSZ5s71kXiOk/t8jMiz82cz5CNCQ/VmwF
+ tF4WiYHxlyLsbrk5wIsOtRRIESPVVy5ZStpX4Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 03:00:09PM +0900, Byungchul Park wrote:
-> jiffies_till_sched_qs is useless if it's readonly as it is used to set
-> jiffies_to_sched_qs with its value regardless of first/next fqs jiffies.
-> And it should be applied immediately on change through sysfs.
+The dummy declaration for nvmem_cell_write() has a different prototype
+from the one that is normally used, and it causes a warning when
+CONFIG_NVMEM is disabled:
 
-Actually, the intent was to only allow this to be changed at boot time.
-Of course, if there is now a good reason to adjust it, it needs
-to be adjustable.  So what situation is making you want to change
-jiffies_till_sched_qs at runtime?  To what values is it proving useful
-to adjust it?  What (if any) relationships between this timeout and the
-various other RCU timeouts need to be maintained?  What changes to
-rcutorture should be applied in order to test the ability to change
-this at runtime?
+drivers/power/reset/nvmem-reboot-mode.c:27:42: error: incompatible pointer types passing 'unsigned int *' to parameter
+      of type 'const char *' [-Werror,-Wincompatible-pointer-types]
+        ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
 
-							Thanx, Paul
+Make the second argument a void pointer like the other prototype has.
 
-> The function for setting jiffies_to_sched_qs,
-> adjust_jiffies_till_sched_qs() will be called only if
-> the value from sysfs != ULONG_MAX. And the value won't be adjusted
-> unlike first/next fqs jiffies.
-> 
-> While at it, changed the positions of two module_param()s downward.
-> 
-> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> ---
->  kernel/rcu/tree.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index a2f8ba2..a28e2fe 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -422,9 +422,7 @@ static int rcu_is_cpu_rrupt_from_idle(void)
->   * quiescent-state help from rcu_note_context_switch().
->   */
->  static ulong jiffies_till_sched_qs = ULONG_MAX;
-> -module_param(jiffies_till_sched_qs, ulong, 0444);
->  static ulong jiffies_to_sched_qs; /* See adjust_jiffies_till_sched_qs(). */
-> -module_param(jiffies_to_sched_qs, ulong, 0444); /* Display only! */
->  
->  /*
->   * Make sure that we give the grace-period kthread time to detect any
-> @@ -450,6 +448,18 @@ static void adjust_jiffies_till_sched_qs(void)
->  	WRITE_ONCE(jiffies_to_sched_qs, j);
->  }
->  
-> +static int param_set_sched_qs_jiffies(const char *val, const struct kernel_param *kp)
-> +{
-> +	ulong j;
-> +	int ret = kstrtoul(val, 0, &j);
-> +
-> +	if (!ret && j != ULONG_MAX) {
-> +		WRITE_ONCE(*(ulong *)kp->arg, j);
-> +		adjust_jiffies_till_sched_qs();
-> +	}
-> +	return ret;
-> +}
-> +
->  static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
->  {
->  	ulong j;
-> @@ -474,6 +484,11 @@ static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param
->  	return ret;
->  }
->  
-> +static struct kernel_param_ops sched_qs_jiffies_ops = {
-> +	.set = param_set_sched_qs_jiffies,
-> +	.get = param_get_ulong,
-> +};
-> +
->  static struct kernel_param_ops first_fqs_jiffies_ops = {
->  	.set = param_set_first_fqs_jiffies,
->  	.get = param_get_ulong,
-> @@ -484,8 +499,11 @@ static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param
->  	.get = param_get_ulong,
->  };
->  
-> +module_param_cb(jiffies_till_sched_qs, &sched_qs_jiffies_ops, &jiffies_till_sched_qs, 0644);
->  module_param_cb(jiffies_till_first_fqs, &first_fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
->  module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
-> +
-> +module_param(jiffies_to_sched_qs, ulong, 0444); /* Display only! */
->  module_param(rcu_kick_kthreads, bool, 0644);
->  
->  static void force_qs_rnp(int (*f)(struct rcu_data *rdp));
-> -- 
-> 1.9.1
-> 
+Fixes: 69aba7948cbe ("nvmem: Add a simple NVMEM framework for consumers")
+Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reboot mode write interface")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/nvmem-consumer.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+index 8f8be5b00060..459df4ba5408 100644
+--- a/include/linux/nvmem-consumer.h
++++ b/include/linux/nvmem-consumer.h
+@@ -118,7 +118,7 @@ static inline void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len)
+ }
+ 
+ static inline int nvmem_cell_write(struct nvmem_cell *cell,
+-				    const char *buf, size_t len)
++				    const void *buf, size_t len)
+ {
+ 	return -EOPNOTSUPP;
+ }
+-- 
+2.20.0
 
