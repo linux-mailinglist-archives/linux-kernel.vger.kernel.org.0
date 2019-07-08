@@ -2,96 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0CFB61A92
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E77761A96
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 08:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbfGHGVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 02:21:18 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:24398 "EHLO mxhk.zte.com.cn"
+        id S1729100AbfGHGWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 02:22:14 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:34286 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbfGHGVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 02:21:17 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 1146F7C42D795FFB758E;
-        Mon,  8 Jul 2019 14:21:16 +0800 (CST)
+        id S1727452AbfGHGWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 02:22:13 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id E1517169850ABFE0DA36;
+        Mon,  8 Jul 2019 14:22:11 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x686KmPG049233;
+        by mse-fl1.zte.com.cn with ESMTP id x686KmqA015529;
         Mon, 8 Jul 2019 14:20:48 +0800 (GMT-8)
         (envelope-from wen.yang99@zte.com.cn)
 Received: from fox-host8.localdomain ([10.74.120.8])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070814205197-2164427 ;
-          Mon, 8 Jul 2019 14:20:51 +0800 
+          with ESMTP id 2019070814205273-2164428 ;
+          Mon, 8 Jul 2019 14:20:52 +0800 
 From:   Wen Yang <wen.yang99@zte.com.cn>
 To:     linux-kernel@vger.kernel.org
 Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
         cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH] crypto: crypto4xx: fix a potential double free in ppc4xx_trng_probe
-Date:   Mon, 8 Jul 2019 14:19:03 +0800
-Message-Id: <1562566745-7447-2-git-send-email-wen.yang99@zte.com.cn>
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] irqchip: renesas-rza1: fix an use-after-free in rza1_irqc_probe()
+Date:   Mon, 8 Jul 2019 14:19:04 +0800
+Message-Id: <1562566745-7447-3-git-send-email-wen.yang99@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
 References: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
  21, 2013) at 2019-07-08 14:20:52,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-08 14:20:49,
-        Serialize complete at 2019-07-08 14:20:49
-X-MAIL: mse-fl2.zte.com.cn x686KmPG049233
+ 2019-07-08 14:20:50,
+        Serialize complete at 2019-07-08 14:20:50
+X-MAIL: mse-fl1.zte.com.cn x686KmqA015529
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a possible double free issue in ppc4xx_trng_probe():
+The gic_node is still being used in the rza1_irqc_parse_map() call
+after the of_node_put() call, which may result in use-after-free.
 
-85:	dev->trng_base = of_iomap(trng, 0);
-86:	of_node_put(trng);          ---> released here
-87:	if (!dev->trng_base)
-88:		goto err_out;
-...
-110:	ierr_out:
-111:		of_node_put(trng);  ---> double released here
-...
-
-This issue was detected by using the Coccinelle software.
-We fix it by removing the unnecessary of_node_put().
-
-Fixes: 5343e674f32 ("crypto4xx: integrate ppc4xx-rng into crypto4xx")
+Fixes: a644ccb819bc ("irqchip: Add Renesas RZ/A1 Interrupt Controller driver")
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Allison Randal <allison@lohutok.net>
-Cc: Armijn Hemel <armijn@tjaldur.nl>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-crypto@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/crypto/amcc/crypto4xx_trng.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/irqchip/irq-renesas-rza1.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/crypto/amcc/crypto4xx_trng.c b/drivers/crypto/amcc/crypto4xx_trng.c
-index 02a6bed3..f10a87e 100644
---- a/drivers/crypto/amcc/crypto4xx_trng.c
-+++ b/drivers/crypto/amcc/crypto4xx_trng.c
-@@ -108,7 +108,6 @@ void ppc4xx_trng_probe(struct crypto4xx_core_device *core_dev)
- 	return;
+diff --git a/drivers/irqchip/irq-renesas-rza1.c b/drivers/irqchip/irq-renesas-rza1.c
+index b1f19b21..b0d46ac 100644
+--- a/drivers/irqchip/irq-renesas-rza1.c
++++ b/drivers/irqchip/irq-renesas-rza1.c
+@@ -208,20 +208,19 @@ static int rza1_irqc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->base);
  
- err_out:
--	of_node_put(trng);
- 	iounmap(dev->trng_base);
- 	kfree(rng);
- 	dev->trng_base = NULL;
+ 	gic_node = of_irq_find_parent(np);
+-	if (gic_node) {
++	if (gic_node)
+ 		parent = irq_find_host(gic_node);
+-		of_node_put(gic_node);
+-	}
+ 
+ 	if (!parent) {
+ 		dev_err(dev, "cannot find parent domain\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_put_node;
+ 	}
+ 
+ 	ret = rza1_irqc_parse_map(priv, gic_node);
+ 	if (ret) {
+ 		dev_err(dev, "cannot parse %s: %d\n", "interrupt-map", ret);
+-		return ret;
++		goto out_put_node;
+ 	}
+ 
+ 	priv->chip.name = "rza1-irqc",
+@@ -237,10 +236,12 @@ static int rza1_irqc_probe(struct platform_device *pdev)
+ 						    priv);
+ 	if (!priv->irq_domain) {
+ 		dev_err(dev, "cannot initialize irq domain\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
+ 	}
+ 
+-	return 0;
++out_put_node:
++	of_node_put(gic_node);
++	return ret;
+ }
+ 
+ static int rza1_irqc_remove(struct platform_device *pdev)
 -- 
 2.9.5
 
