@@ -2,53 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4455761B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4376C61B8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 10:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfGHIAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 04:00:31 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37514 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbfGHIAb (ORCPT
+        id S1728082AbfGHIIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 04:08:02 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33566 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfGHIIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 04:00:31 -0400
-Received: by mail-io1-f66.google.com with SMTP id q22so11320895iog.4
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 01:00:30 -0700 (PDT)
+        Mon, 8 Jul 2019 04:08:01 -0400
+Received: by mail-vk1-f193.google.com with SMTP id y130so2290852vkc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 01:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=808GklTtpiY6j+zB0h+7B3wldlJYTeWMuoR0jKZbHt0=;
-        b=uIg7YBZv0ar9wDfVUJdHfAqJy9ExlbhFG9DNRjDywMLNiE44qGDYg3o6XKmCnFCVyN
-         AqFD4nlwuIuxy2OA/PhamwIq3jWzKAGHXhA/dsiNZxN6bXLzBiRokyR24fkCjvDD42dQ
-         mLBmhpHiZRGjz+zjlqRvHfrrYwhQoPSjiKfi2hIhuPyKkUrrYSdcFzsPocDEgKgNgSY3
-         sq9zsI4uTpj8V+En8jDNTNAs1MObmDznzZcwWl2QPbA+SMN/lYAWBdU5aCWiEDVYykgd
-         tkWN6N4Lzo1p/STfHXTc4fV+EIp145FCjIYElpcwlPGFOm9MUUNmCoWKuNbDu0nAyImP
-         +WwQ==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZOR8clYW+rncXTX2zDaB/JyvqUChf4gA7xNaU/YBSOg=;
+        b=HjwQkZGofNQdyJdhdsVJlTLKDMPO0orD/dj2rtP84s0BLxKprbw2Q0dPlIchoaQk1Q
+         G58ky89Ofz0eHD4HVvHRwHNfU9isBY0fIdt3WYIJC3EbFjKwqFFqBa7gqM5w4PUQpZ61
+         oPcCg1OYdgDCOhMgzIBHKZxAgWyNtsYps3kRElLlJb/aUAEV2h1RuR8baolPBQ8XUv7+
+         IZlQ7xdB401Vlqa39KXXlpK63Sa21h5vdTbM8X4/Td9P3eC3oGy/cnHM59B0rP5KX8my
+         CjR7J0rOwlm2GG2eurjO6bedWoMrLyvIEr3Jxm1dBPknhkUI9blYTV10DefQZajdhoA8
+         s+Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=808GklTtpiY6j+zB0h+7B3wldlJYTeWMuoR0jKZbHt0=;
-        b=Jkv9SrpJBEUrb8kjC36tZyZppp9cHtONxZf0YZOrGQoTsJyOOcdOmko8mlonUa2dGu
-         TfIV1WshIuvxT3Kmm9z/UGrxl6PZSJzQ7+zPtsqcH9C2K2kUVTIGK6Img6Zl/Be9/tDR
-         VkmbVv4rwWGZmnw+QBvuie17PbL5W2J537QIYu4Km3XrAqsLlZQ0dafr6bFvTvdWCPFK
-         aUHh02H2Gan5urwDMb4vvH/sd2tbN80kcIbFKVxW4LRxzfUIGwR/2mOwQNoeivQS4pky
-         MGBvkv8N390KkBtcLBL2PBx18zwaN9o0hPnr5Fuxdj8jPeazrPTgtHr+yJN8noU8ikoO
-         E77Q==
-X-Gm-Message-State: APjAAAVRLeGrDzRCE1zVo457QCy2KhAkFOIERz1Akcyd4GR0NalLOvdg
-        0csdKgHqRqs8UYVFASNBuxJR106V49dxBQWpADg=
-X-Google-Smtp-Source: APXvYqynwQabbni+2VW8KgD3IqYwo+Le7fliF60GAkL2vBsNdEc6rYzR/tmMXOiA/TIKsYq0gs1oSKiiW7cCG0WdOXs=
-X-Received: by 2002:a02:5ec3:: with SMTP id h186mr13386903jab.110.1562572829455;
- Mon, 08 Jul 2019 01:00:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZOR8clYW+rncXTX2zDaB/JyvqUChf4gA7xNaU/YBSOg=;
+        b=TTBGZ1HW5w4N+3dyMENgDZsTGuP0e5APVDE/9js9Fr955Cgsr9Md/5/YtT45VrXMTK
+         Vj91lPLT/gXBIM1oB8rHKpDlHg0C5FYJ+7lIApqYRkwnrt6GvLyZf/PYj5ZpxD868rY2
+         FzBCHgz9cvFjUiDYUU1Cq/kB7rtoZvTAu1om0GHfpRWdIJ6XBU0/hLRXP9GbgeD9Ttk8
+         ZsEPHznubS6Kx2AJDMHJqS717wi6A5Ur3Elo5jstuvFBtlZVvw/obW3LCaQT7qovpr6u
+         f79s99uy0dkay6O6DgHUe2eMdeAbU/RtvZkDAUbm5oT+fjTJReBVtHBSzssod8Dv4NnN
+         /rQw==
+X-Gm-Message-State: APjAAAW3Ss7cPkWxmLjnf8i8IfTiRfQVeHJY6rnS3O0MNSMhpQeQobdp
+        CjoopePR8bqV+qYTzlFZX2OI+a3LpvYz8A1mDTWjog==
+X-Google-Smtp-Source: APXvYqxvi+ZGKZk70HDy/wcOVHFF+mkZN0c9aifSzp8ZeR05ajx0gubx1sPnRzwxwHIKL4hXvHNHgKeeEsePgZx9XtI=
+X-Received: by 2002:a1f:acc5:: with SMTP id v188mr4725232vke.16.1562573279892;
+ Mon, 08 Jul 2019 01:07:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:8f47:0:0:0:0:0 with HTTP; Mon, 8 Jul 2019 01:00:29 -0700 (PDT)
-Reply-To: angelagilbertelmustafa@gmail.com
-From:   "Mrs. Aangela Gilbert" <sgoodluck55@gmail.com>
-Date:   Mon, 8 Jul 2019 09:00:29 +0100
-Message-ID: <CACGopxj8j_gX246QFKKs4naQnC+JgzoWCp1xYR4ToLOUeiH81Q@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
+References: <20190708063252.4756-1-jian-hong@endlessm.com> <F7CD281DE3E379468C6D07993EA72F84D1861A6D@RTITMBSVM04.realtek.com.tw>
+In-Reply-To: <F7CD281DE3E379468C6D07993EA72F84D1861A6D@RTITMBSVM04.realtek.com.tw>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Mon, 8 Jul 2019 16:07:23 +0800
+Message-ID: <CAPpJ_eebQtL0y_j98J2T7m9g77A61SVtvD8qnNN42bV0dm4MLA@mail.gmail.com>
+Subject: Re: [PATCH] rtw88/pci: Rearrange the memory usage for skb in RX ISR
+To:     Tony Chuang <yhchuang@realtek.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@endlessm.com" <linux@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,36 +64,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings
+Tony Chuang <yhchuang@realtek.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=888=E6=97=
+=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=883:23=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> > Subject: [PATCH] rtw88/pci: Rearrange the memory usage for skb in RX IS=
+R
+>
+> nit, "rtw88: pci:" would be better.
 
-With warm hearts I offer my friendship and my greetings and I hope
-this letter meets you in good time. It will be surprising to you to
-receive this proposal from me since you do not know me personally.
-However, I am sincerely seeking your confidence in this matter which I
-propose with my free mind and as a woman of integrity. My name is Mrs.
-Aangela Gilbert. I am terminally ill and have decided to donate the
-inheritance I got from my late husband to you. I have been diagnosed
-of acute cancer for about 2 years now. From all indication my
-condition is really deteriorating and my doctors have courageously
-advised me that I may not live all that long; this is because the
-cancer has reached a critical stage.
+Ok.
 
-In my present condition life is without meaning to me and hope has
-since eluded me. Each day I give my entire existence a thought, I feel
-over powered by gloom and despair, also saw nothing but death lurking
-around. All these are my reasons for deciding to donate my inheritance
-for charity in which you have been favored as the beneficiary. I must
-tell you that I was truly touched by my inner mind to take this
-decision and I will advise you don=E2=80=99t see your windfall as avenue fo=
-r
-pleasure spree but should see it as an opportunity to help others
-especially the Orphans, the widows and less privileged people. Always
-put me in your prayers and ask God to forgive my sins and trespasses.
+> >
+> > When skb allocation fails and the "rx routine starvation" is hit, the
+> > function returns immediately without updating the RX ring. At this
+> > point, the RX ring may continue referencing an old skb which was alread=
+y
+> > handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
+> > bad things happen.
+> >
+> > This patch allocates a new skb first in RX ISR. If we don't have memory
+> > available, we discard the current frame, allowing the existing skb to b=
+e
+> > reused in the ring. Otherwise, we simplify the code flow and just hand
+> > over the RX-populated skb over to mac80211.
+> >
+> > In addition, to fixing the kernel crash, the RX routine should now
+> > generally behave better under low memory conditions.
+> >
+> > Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=3D204053
+> > Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> > Reviewed-by: Daniel Drake <drake@endlessm.com>
+> > Cc: <stable@vger.kernel.org>
+> > ---
+> >  drivers/net/wireless/realtek/rtw88/pci.c | 28 +++++++++++-------------
+> >  1 file changed, 13 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/realtek/rtw88/pci.c
+> > b/drivers/net/wireless/realtek/rtw88/pci.c
+> > index cfe05ba7280d..1bfc99ae6b84 100644
+> > --- a/drivers/net/wireless/realtek/rtw88/pci.c
+> > +++ b/drivers/net/wireless/realtek/rtw88/pci.c
+> > @@ -786,6 +786,15 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev,
+> > struct rtw_pci *rtwpci,
+> >               rx_desc =3D skb->data;
+> >               chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_=
+status);
+> >
+> > +             /* discard current skb if the new skb cannot be allocated=
+ as a
+> > +              * new one in rx ring later
+> > +              * */
+>
+> nit, comment indentation.
 
-I shall be undergoing major operations in less than two weeks from
-now. If you are sure that you will use the donated fund as I have
-advised here, get back to me for more details.
+Thanks.  I will fix this.
 
-Thanks and kind regards.
+> > +             new =3D dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
+> > +             if (WARN(!new, "rx routine starvation\n")) {
+> > +                     new =3D skb;
+> > +                     goto next_rp;
+> > +             }
+> > +
+> >               /* offset from rx_desc to payload */
+> >               pkt_offset =3D pkt_desc_sz + pkt_stat.drv_info_sz +
+> >                            pkt_stat.shift;
+> > @@ -803,25 +812,14 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev=
+,
+> > struct rtw_pci *rtwpci,
+> >                       skb_put(skb, pkt_stat.pkt_len);
+> >                       skb_reserve(skb, pkt_offset);
+> >
+> > -                     /* alloc a smaller skb to mac80211 */
+> > -                     new =3D dev_alloc_skb(pkt_stat.pkt_len);
+> > -                     if (!new) {
+> > -                             new =3D skb;
+> > -                     } else {
+> > -                             skb_put_data(new, skb->data, skb->len);
+> > -                             dev_kfree_skb_any(skb);
+> > -                     }
+>
+> I am not sure if it's fine to deliver every huge SKB to mac80211.
+> Because it will then be delivered to TCP/IP stack.
+> Hence I think either it should be tested to know if the performance
+> would be impacted or find out a more efficient way to send
+> smaller SKB to mac80211 stack.
 
-Mrs. Aangela Gilbert
+I remember network stack only processes the skb with(in) pointers
+(skb->data) and the skb->len for data part.  It also checks real
+buffer boundary (head and end) of the skb to prevent memory overflow.
+Therefore, I think using the original skb is the most efficient way.
+
+If I misunderstand something, please point out.
+
+
+
+> >                       /* TODO: merge into rx.c */
+> >                       rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
+> > -                     memcpy(new->cb, &rx_status, sizeof(rx_status));
+> > -                     ieee80211_rx_irqsafe(rtwdev->hw, new);
+> > +                     memcpy(skb->cb, &rx_status, sizeof(rx_status));
+> > +                     ieee80211_rx_irqsafe(rtwdev->hw, skb);
+> >               }
+> >
+> > -             /* skb delivered to mac80211, alloc a new one in rx ring =
+*/
+> > -             new =3D dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
+> > -             if (WARN(!new, "rx routine starvation\n"))
+> > -                     return;
+> > -
+> > +next_rp:
+> > +             /* skb delivered to mac80211, attach the new one into rx =
+ring */
+> >               ring->buf[cur_rp] =3D new;
+> >               rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_desc=
+_sz);
+> >
+>
+> --
+>
+> Yan-Hsuan
