@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4973C621A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24FE062365
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732946AbfGHPSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41592 "EHLO mail.kernel.org"
+        id S2390883AbfGHPfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:35:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730545AbfGHPR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:59 -0400
+        id S2390655AbfGHPeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:34:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96EC5216C4;
-        Mon,  8 Jul 2019 15:17:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F19FF204EC;
+        Mon,  8 Jul 2019 15:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599079;
-        bh=gl/oNOjwK39gihV+wxOnVsA+ocDBYadNV3JNY+DxmXk=;
+        s=default; t=1562600089;
+        bh=1y6TrxPpo4z/VeD6N4ELESCYUlwBI91glaQM5xDDCtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E7nsqeMBW9S6M/GH0CR5jSfeEqRKDyx5bRxbxZ/jJEnaWfZfzukTn7xGw7D2JabpJ
-         FOsbfJKdfTuJDuDvwyVASMrv+MCXStaUqto+mZUcEc8dJwpFGFYXnPE4ACPy3pW7NT
-         FiueMnrnSDASrqdINLYbCqtQOt+Tw0DiBNA2ikNQ=
+        b=Hc8PLI2jRy20ldAzu9exvzxgnLEh5iCGOvPFtT7FbSO6qWbnX5a+84RuJEgFatCLQ
+         /jFfDJh3qrx6E4hdltMPNGIFdF+BL2c39BJ663aNHUbDvJIKun8FTMhlApzxyPTQun
+         HFo/AimHSqvRf4Tf7wVzDkwtMF1itjPj35BLIEqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.4 70/73] ARC: handle gcc generated __builtin_trap for older compiler
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 48/96] i2c: pca-platform: Fix GPIO lookup code
 Date:   Mon,  8 Jul 2019 17:13:20 +0200
-Message-Id: <20190708150524.946909595@linuxfoundation.org>
+Message-Id: <20190708150529.113774328@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta <vgupta@synopsys.com>
+[ Upstream commit a0cac264a86fbf4d6cb201fbbb73c1d335e3248a ]
 
-commit af1be2e21203867cb958aaceed5366e2e24b88e8 upstream.
+The devm_gpiod_request_gpiod() call will add "-gpios" to
+any passed connection ID before looking it up.
 
-ARC gcc prior to GNU 2018.03 release didn't have a target specific
-__builtin_trap() implementation, generating default abort() call.
+I do not think the reset GPIO on this platform is named
+"reset-gpios-gpios" but rather "reset-gpios" in the device
+tree, so fix this up so that we get a proper reset GPIO
+handle.
 
-Implement the abort() call - emulating what newer gcc does for the same,
-as suggested by Arnd.
+Also drop the inclusion of the legacy GPIO header.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 0e8ce93bdceb ("i2c: pca-platform: add devicetree awareness")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/kernel/traps.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/i2c/busses/i2c-pca-platform.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arc/kernel/traps.c
-+++ b/arch/arc/kernel/traps.c
-@@ -155,3 +155,11 @@ void do_insterror_or_kprobe(unsigned lon
+diff --git a/drivers/i2c/busses/i2c-pca-platform.c b/drivers/i2c/busses/i2c-pca-platform.c
+index de3fe6e828cb..f50afa8e3cba 100644
+--- a/drivers/i2c/busses/i2c-pca-platform.c
++++ b/drivers/i2c/busses/i2c-pca-platform.c
+@@ -21,7 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/i2c-algo-pca.h>
+ #include <linux/platform_data/i2c-pca-platform.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+@@ -173,7 +172,7 @@ static int i2c_pca_pf_probe(struct platform_device *pdev)
+ 	i2c->adap.dev.parent = &pdev->dev;
+ 	i2c->adap.dev.of_node = np;
  
- 	insterror_is_error(address, regs);
- }
-+
-+/*
-+ * abort() call generated by older gcc for __builtin_trap()
-+ */
-+void abort(void)
-+{
-+	__asm__ __volatile__("trap_s  5\n");
-+}
+-	i2c->gpio = devm_gpiod_get_optional(&pdev->dev, "reset-gpios", GPIOD_OUT_LOW);
++	i2c->gpio = devm_gpiod_get_optional(&pdev->dev, "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(i2c->gpio))
+ 		return PTR_ERR(i2c->gpio);
+ 
+-- 
+2.20.1
+
 
 
