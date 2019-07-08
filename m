@@ -2,78 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE46628FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C93262901
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390728AbfGHTJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:09:49 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45260 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390590AbfGHTJr (ORCPT
+        id S2390460AbfGHTKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:10:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53504 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727606AbfGHTKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:09:47 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m23so17028063lje.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=eng.ucsd.edu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dA2xhiNGZ0tuWmkiPtLUTjcqW1BzzQUxradpm/yDvWk=;
-        b=H/Qz6Zl4qWwcws/K4ttAjHFj7ySNEcnvAfua+hF3xC61yiKJu8+PHKTL9/3Q79Ov0F
-         04UJsxxgK8HOgQFcL+Y995nNvXIOkKe975rJKD3bDttCNpDbpKWx3P/LaqlIuugcGT8q
-         2ZyIADyyETAdZHQUyluRBkVRjZTX98gebReZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dA2xhiNGZ0tuWmkiPtLUTjcqW1BzzQUxradpm/yDvWk=;
-        b=hJNaRHzhGF5btn42vYSLqizMqGfzQ4p2LGnb9Tcjr4o2lCn8UgfBfFKB4PwSTjmqA1
-         d64Rfh7FscE+Kaaqk5c5wK7BkeeZm9fSHwzDls6nMHy1BqpqE0bO9BLMzLnmHElOvAr3
-         KykRROrpaHd3dbn+gewbi7Y+145A0L/modnbqztziNx58GBa/ehyiSbmLRgHpongJMFy
-         oJqu3cMvW+0sRY3JfVEYMJvPJ+8w0ppsetUNbMZ8buKPXVL8uekI3Dic3G+tqTwjWYh0
-         HNuj4GyjocCrFOR/sBkEUaHWBCh+3kvX9E+TN7c4Q19Mhaq0BzF4Gg8XTdITRoD6gI8M
-         g+Zw==
-X-Gm-Message-State: APjAAAURrJEKT3LFZS4FQhy3aqTVt4qUK+jqdcdLrEBC7LcSNF/Wl4XX
-        8pC9wQTpOnDwO2cx6gMd8Z+Pmw==
-X-Google-Smtp-Source: APXvYqwcb8orHaqFemykl0AZtk0WZ0DDmrGen5cKEPKeIzWzqPpyTZWQsDBi7rDXGKW6XAxiXf08jg==
-X-Received: by 2002:a2e:858b:: with SMTP id b11mr11221294lji.159.1562612985927;
-        Mon, 08 Jul 2019 12:09:45 -0700 (PDT)
-Received: from luke-XPS-13 (77-255-206-190.adsl.inetia.pl. [77.255.206.190])
-        by smtp.gmail.com with ESMTPSA id k4sm3834016ljg.59.2019.07.08.12.09.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 12:09:45 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 12:09:42 -0700
-From:   Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/56] 4.14.133-stable review
-Message-ID: <20190708190942.GA4652@luke-XPS-13>
-References: <20190708150514.376317156@linuxfoundation.org>
+        Mon, 8 Jul 2019 15:10:36 -0400
+Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=calabresa)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <cascardo@canonical.com>)
+        id 1hkZ21-0003Ex-F9; Mon, 08 Jul 2019 19:10:33 +0000
+Date:   Mon, 8 Jul 2019 16:10:29 -0300
+From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Shuah Khan <shuahkhan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] selftests/ftrace: Select an existing function in
+ kprobe_eventname test
+Message-ID: <20190708191026.GA8307@calabresa>
+References: <20190322150923.1b58eca5@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190322150923.1b58eca5@gandalf.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 05:12:52PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.133 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Mar 22, 2019 at 03:09:23PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > 
-> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
-> Anything received after that time might be too late.
+> Running the ftrace selftests on the latest kernel caused the
+> kprobe_eventname test to fail. It was due to the test that searches for
+> a function with at "dot" in the name and adding a probe to that.
+> Unfortunately, for this test, it picked:
+> 
+>  optimize_nops.isra.2.cold.4
+> 
+> Which happens to be marked as "__init", which means it no longer exists
+> in the kernel! (kallsyms keeps those function names around for tracing
+> purposes)
+> 
+> As only functions that still exist are in the
+> available_filter_functions file, as they are removed when the functions
+> are freed at boot or module exit, have the test search for a function
+> with ".isra." in the name as well as being in the
+> available_filter_functions (if the file exists).
+> 
 
-Hi Greg, 
+This fixes a similar problem for me.
 
-Compiled and booted on my x86_64 system. 
+Tested-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-Thanks, 
-- Luke
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
+> index 3fb70e01b1fe..3ff236719b6e 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
+> @@ -24,7 +24,21 @@ test -d events/kprobes2/event2 || exit_failure
+>  
+>  :;: "Add an event on dot function without name" ;:
+>  
+> -FUNC=`grep -m 10 " [tT] .*\.isra\..*$" /proc/kallsyms | tail -n 1 | cut -f 3 -d " "`
+> +find_dot_func() {
+> +	if [ ! -f available_filter_functions ]; then
+> +		grep -m 10 " [tT] .*\.isra\..*$" /proc/kallsyms | tail -n 1 | cut -f 3 -d " "
+> +		return;
+> +	fi
+> +
+> +	grep " [tT] .*\.isra\..*" /proc/kallsyms | cut -f 3 -d " " | while read f; do
+> +		if grep -s $f available_filter_functions; then
+> +			echo $f
+> +			break
+> +		fi
+> +	done
+> +}
+> +
+> +FUNC=`find_dot_func | tail -n 1`
+>  [ "x" != "x$FUNC" ] || exit_unresolved
+>  echo "p $FUNC" > kprobe_events
+>  EVENT=`grep $FUNC kprobe_events | cut -f 1 -d " " | cut -f 2 -d:`
