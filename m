@@ -2,163 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB45E6264B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E51B62636
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403951AbfGHQcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 12:32:08 -0400
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:40933 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403831AbfGHQcD (ORCPT
+        id S2388137AbfGHQbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 12:31:47 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43034 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbfGHQbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 12:32:03 -0400
-Received: by mail-wm1-f53.google.com with SMTP id v19so147147wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 09:32:02 -0700 (PDT)
+        Mon, 8 Jul 2019 12:31:46 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c19so5746680lfm.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kinvolk.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sQGKbunRlrvdVKbp02vEGwvG8+xrq5xUVQ5fY/+t4TE=;
-        b=SJBZLbfj73WvztsTVCyOaGzkao16f0cK4Qd3O7+93OdYSwxGMZrFSA+QNEXHIq4q52
-         QTqMGAMrkclA3q+GV20vV9rDe5T7Aq+vjBeSxnO4sxrsd425CRXW6cWA9wOzNeN23mBb
-         DH4d4tYhyv4Fh9Zq0DD9xa42KhSbQp1I9es+s=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
+        b=jy8Ff5Nekqo/UDsSM6LPdZ1/vxXRxHPPtCQNmrMM9JBSzKLh/D5A49NUn+QH8yxpsN
+         ZcneME9bQ5PEkkfjrJ5FFDXn51FOriVckEKMGfCX2C3b3tapU4Zog43RMlaoakymFFVr
+         8v2hEmD0TJZAZo2mtG7DNytqbW2S69YhcO4m+up5YxpC1iCRYbyIQ5rNjx0uOSmoxkvX
+         JAn9KqrTnU2fCfxIxP3Js5Muakzs0ucaDQ+dNOqm7KGl0mMoAvZd8PteWG2J87NJ6y5T
+         ApLhbzQONg2+flpPM4Evj/KZ0VrvDrl48NOSfNPbN7psuTAsrlP8nOA5fMCMQtkl1YMH
+         J2pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sQGKbunRlrvdVKbp02vEGwvG8+xrq5xUVQ5fY/+t4TE=;
-        b=Dmci1x2avNKmMKrcUoUAZ+R8VmJnGCG2lsJeRuS8GWrViQFxW7QYaIcG1cRCIWNpOp
-         ZQlnfpl3p+D1nvoiOhfRhyXfQQ4XxSO+qDhXKyjJEFdod8iqoRDknwCKRe7f6mLWI28Q
-         XHfXoTZhVkqQ6aH4nfUNxPP11nEnfo0sB5LzwWBbB2Vus3M9qOuGcfCTH0pNvewGaUvt
-         4ET7cI1eFmc0hT2YMEaVJeQlUaCNxVqDijZv6oeKNMIEDB4jlwryMzGKyIToFikyXV7t
-         olydqnwg89SXZVwy+rnsljO00/RCxLASP2+7FKSs4FjO+nLCbwk/APvu6ECyE3VTD0/M
-         AtdA==
-X-Gm-Message-State: APjAAAWa147+mhyjHaLvbqbGEgBPZ+tXR7owO7xbQxLeCgU3WXJmq5bU
-        +g3b3QX8oJvRUOs2E6V8c1PSNj28lyg=
-X-Google-Smtp-Source: APXvYqzZGSWnfDDVHTzxD8mRM5nAtI2EXCovxJ1DXmzY0w4uYyNkN/nErPCAqTn8joiAXOQfOGRdWg==
-X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr17034505wmb.119.1562603521360;
-        Mon, 08 Jul 2019 09:32:01 -0700 (PDT)
-Received: from localhost.localdomain (ip5f5aedbe.dynamic.kabel-deutschland.de. [95.90.237.190])
-        by smtp.gmail.com with ESMTPSA id e6sm18255086wrw.23.2019.07.08.09.32.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 09:32:00 -0700 (PDT)
-From:   Krzesimir Nowak <krzesimir@kinvolk.io>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alban Crequy <alban@kinvolk.io>,
-        =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Stanislav Fomichev <sdf@google.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        Krzesimir Nowak <krzesimir@kinvolk.io>
-Subject: [bpf-next v3 12/12] selftests/bpf: Test correctness of narrow 32bit read on 64bit field
-Date:   Mon,  8 Jul 2019 18:31:21 +0200
-Message-Id: <20190708163121.18477-13-krzesimir@kinvolk.io>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190708163121.18477-1-krzesimir@kinvolk.io>
-References: <20190708163121.18477-1-krzesimir@kinvolk.io>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
+        b=MiTa4Z5sjw0ScdFi6+wrNfikbd0dO8YSqkgTycUdneADIdwY9ZUNJeWBgRTmZIJoE2
+         0orTgwY4kByoFyJwJRH0qtkVNP9yyvwpUakys0DVaVp1K+lQ/9kgUdwEK+ZEzckwUCXw
+         lfAwKwv7b3AkbgliQ3YT8Xt0CN/nqjMajOuk0itxupKgp+wDJilMWkfEEaRm5M9AHkJV
+         yyWdkGrBOpQrpGPsrVFCrbGDC4MNdo+k3bKYjFqyhaxe/jaqn2j390hGEdH3Oqj+Ice0
+         5z/rX+/EO+QV3wvmWksel46BUUS24tvDrgpnIG9y7X0f9OnXvFXk3geDOfG+y5bRbisS
+         kK0A==
+X-Gm-Message-State: APjAAAXhksEEcJw7pGr4mnNDUD36XmagOEGTierRNW2HXcw8LQDLwowy
+        rMfZHzBTw3LPY4cIRYHjjQHzEg==
+X-Google-Smtp-Source: APXvYqxUVvYjuVf39gxQ380dX6pWA86hhvJUjir+HrNiY0cZ5linR0Mbx8/ENcW/g4VOsocx8t9j7Q==
+X-Received: by 2002:a19:5f46:: with SMTP id a6mr9474420lfj.142.1562603504069;
+        Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
+Received: from jax (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
+        by smtp.gmail.com with ESMTPSA id y5sm3724894ljj.5.2019.07.08.09.31.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Jul 2019 09:31:43 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 18:31:41 +0200
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
+        serge@hallyn.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
+Message-ID: <20190708163140.GB28253@jax>
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test the correctness of the 32bit narrow reads by reading both halves
-of the 64 bit field and doing a binary or on them to see if we get the
-original value.
+Hi Sumit,
 
-It succeeds as it should, but with the commit e2f7fc0ac695 ("bpf: fix
-undefined behavior in narrow load handling") reverted, the test fails
-with a following message:
+On Mon, Jul 08, 2019 at 06:11:39PM +0530, Sumit Garg wrote:
+> Hi Jens,
+> 
+> On Thu, 13 Jun 2019 at 16:01, Sumit Garg <sumit.garg@linaro.org> wrote:
+> >
+> > Add support for TEE based trusted keys where TEE provides the functionality
+> > to seal and unseal trusted keys using hardware unique key. Also, this is
+> > an alternative in case platform doesn't possess a TPM device.
+> >
+> > This series also adds some TEE features like:
+> >
+> > Patch #1, #2 enables support for registered kernel shared memory with TEE.
+> >
+> 
+> Would you like to pick up Patch #1, #2 separately? I think both these
+> patches add independent functionality and also got reviewed-by tags
+> too.
 
-> $ sudo ./test_verifier
-> ...
-> #967/p 32bit loads of a 64bit field (both least and most significant words) FAIL retval -1985229329 != 0
-> verification time 17 usec
-> stack depth 0
-> processed 8 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
-> ...
-> Summary: 1519 PASSED, 0 SKIPPED, 1 FAILED
+I think it makes more sense to keep them together in the same patch
+series or could end up with dependencies between trees.
 
-Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
----
- tools/testing/selftests/bpf/test_verifier.c   | 19 +++++++++++++++++
- .../testing/selftests/bpf/verifier/var_off.c  | 21 +++++++++++++++++++
- 2 files changed, 40 insertions(+)
+If you don't think dependencies will be an issue then I don't mind
+picking them up, in that case they'd likely sit in an arm-soc branch
+until next merge window. However, I think that #3 (support for private
+kernel login method) should be included too and that one isn't ready
+yet.
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 484ea8842b06..2a20280a4a44 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -24,6 +24,7 @@
- 
- #include <sys/capability.h>
- 
-+#include <linux/compiler.h>
- #include <linux/unistd.h>
- #include <linux/filter.h>
- #include <linux/bpf_perf_event.h>
-@@ -343,6 +344,24 @@ static void bpf_fill_perf_event_test_run_check(struct bpf_test *self)
- 	self->fill_insns = NULL;
- }
- 
-+static void bpf_fill_32bit_loads(struct bpf_test *self)
-+{
-+	compiletime_assert(
-+		sizeof(struct bpf_perf_event_data) <= TEST_CTX_LEN,
-+		"buffer for ctx is too short to fit struct bpf_perf_event_data");
-+	compiletime_assert(
-+		sizeof(struct bpf_perf_event_value) <= TEST_DATA_LEN,
-+		"buffer for data is too short to fit struct bpf_perf_event_value");
-+
-+	struct bpf_perf_event_data ctx = {
-+		.sample_period = 0x0123456789abcdef,
-+	};
-+
-+	memcpy(self->ctx, &ctx, sizeof(ctx));
-+	free(self->fill_insns);
-+	self->fill_insns = NULL;
-+}
-+
- /* BPF_SK_LOOKUP contains 13 instructions, if you need to fix up maps */
- #define BPF_SK_LOOKUP(func)						\
- 	/* struct bpf_sock_tuple tuple = {} */				\
-diff --git a/tools/testing/selftests/bpf/verifier/var_off.c b/tools/testing/selftests/bpf/verifier/var_off.c
-index 8504ac937809..3f8bee0a50ef 100644
---- a/tools/testing/selftests/bpf/verifier/var_off.c
-+++ b/tools/testing/selftests/bpf/verifier/var_off.c
-@@ -246,3 +246,24 @@
- 	.result = ACCEPT,
- 	.prog_type = BPF_PROG_TYPE_LWT_IN,
- },
-+{
-+	"32bit loads of a 64bit field (both least and most significant words)",
-+	.insns = {
-+	BPF_LDX_MEM(BPF_W, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period)),
-+	BPF_LDX_MEM(BPF_W, BPF_REG_5, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period) + 4),
-+	BPF_LDX_MEM(BPF_DW, BPF_REG_6, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period)),
-+	BPF_ALU64_IMM(BPF_LSH, BPF_REG_5, 32),
-+	BPF_ALU64_REG(BPF_OR, BPF_REG_4, BPF_REG_5),
-+	BPF_ALU64_REG(BPF_XOR, BPF_REG_4, BPF_REG_6),
-+	BPF_MOV64_REG(BPF_REG_0, BPF_REG_4),
-+	BPF_EXIT_INSN(),
-+	},
-+	.result = ACCEPT,
-+	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-+	.ctx = { 0, },
-+	.ctx_len = sizeof(struct bpf_perf_event_data),
-+	.data = { 0, },
-+	.data_len = sizeof(struct bpf_perf_event_value),
-+	.fill_helper = bpf_fill_32bit_loads,
-+	.override_data_out_len = true,
-+},
--- 
-2.20.1
+Thanks,
+Jens
 
+> 
+> 
+> -Sumit
+> 
+> > Patch #3 enables support for private kernel login method required for
+> > cases like trusted keys where we don't wan't user-space to directly access
+> > TEE service to retrieve trusted key contents.
+> >
+> > Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
+> >
+> > This patch-set has been tested with OP-TEE based pseudo TA which can be
+> > found here [1].
+> >
+> > Looking forward to your valuable feedback/suggestions.
+> >
+> > [1] https://github.com/OP-TEE/optee_os/pull/3082
+> >
+> > Sumit Garg (7):
+> >   tee: optee: allow kernel pages to register as shm
+> >   tee: enable support to register kernel memory
+> >   tee: add private login method for kernel clients
+> >   KEYS: trusted: Introduce TEE based Trusted Keys
+> >   KEYS: encrypted: Allow TEE based trusted master keys
+> >   doc: keys: Document usage of TEE based Trusted Keys
+> >   MAINTAINERS: Add entry for TEE based Trusted Keys
+> >
+> >  Documentation/security/keys/tee-trusted.rst      |  93 +++++
+> >  MAINTAINERS                                      |   9 +
+> >  drivers/tee/optee/call.c                         |   7 +
+> >  drivers/tee/tee_core.c                           |   6 +
+> >  drivers/tee/tee_shm.c                            |  16 +-
+> >  include/keys/tee_trusted.h                       |  84 ++++
+> >  include/keys/trusted-type.h                      |   1 +
+> >  include/linux/tee_drv.h                          |   1 +
+> >  include/uapi/linux/tee.h                         |   2 +
+> >  security/keys/Kconfig                            |   3 +
+> >  security/keys/Makefile                           |   3 +
+> >  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
+> >  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
+> >  13 files changed, 737 insertions(+), 4 deletions(-)
+> >  create mode 100644 Documentation/security/keys/tee-trusted.rst
+> >  create mode 100644 include/keys/tee_trusted.h
+> >  create mode 100644 security/keys/tee_trusted.c
+> >
+> > --
+> > 2.7.4
+> >
