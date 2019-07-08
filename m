@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FAA562338
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5971662229
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390309AbfGHPdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:33:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        id S2388107AbfGHPXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390299AbfGHPdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:33:12 -0400
+        id S2388096AbfGHPW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:22:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC2A821743;
-        Mon,  8 Jul 2019 15:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36B662166E;
+        Mon,  8 Jul 2019 15:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599991;
-        bh=PlbhsP/1l0Cu+F69o8LIBKwjU4G9z5OkTVqCpdeIhS4=;
+        s=default; t=1562599378;
+        bh=FG0Fd4yCVaRhYLAoDH+EcpNxQWOhdpbmj1xXw0TZ748=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LliRj3q5HO6mVo5thflTnto48Pd54G6MnnJ11y0df1zwPfNUywK3Y//HgIsR/zrdf
-         jZY/wlJFZX7JwaJQGoQiZlrQD7IGNTbZZbmMFSbWDdTWPc11FVx0uuDJGrrFuadCME
-         V6BYj8J7cf/xHzEWkgdYcb/PA9sNdj/DLHxVge5w=
+        b=XGKRJEEO2lvY81DeFLprtjV6EdeLZa/GfRq5jtnDRmgYgHcFOSG83DgX5V690y+lz
+         Sbgj/ve2f39TQ7f2os0vZ68y91KZj2jFKK6Tz6/ExxQrJLnlPxAHlPOuQE/Wg310bU
+         r8JWKIFSkP6o6w8ufSMighsfImSE6cv+nMFOq9uA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 59/96] ALSA: seq: fix incorrect order of dest_client/dest_ports arguments
-Date:   Mon,  8 Jul 2019 17:13:31 +0200
-Message-Id: <20190708150529.688888192@linuxfoundation.org>
+        stable@vger.kernel.org, Gary Leshner <Gary.S.Leshner@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 099/102] IB/hfi1: Close PSM sdma_progress sleep window
+Date:   Mon,  8 Jul 2019 17:13:32 +0200
+Message-Id: <20190708150531.607648948@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit c3ea60c231446663afd6ea1054da6b7f830855ca upstream.
+commit da9de5f8527f4b9efc82f967d29a583318c034c7 upstream.
 
-There are two occurrances of a call to snd_seq_oss_fill_addr where
-the dest_client and dest_port arguments are in the wrong order. Fix
-this by swapping them around.
+The call to sdma_progress() is called outside the wait lock.
 
-Addresses-Coverity: ("Arguments in wrong order")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In this case, there is a race condition where sdma_progress() can return
+false and the sdma_engine can idle.  If that happens, there will be no
+more sdma interrupts to cause the wakeup and the user_sdma xmit will hang.
+
+Fix by moving the lock to enclose the sdma_progress() call.
+
+Also, delete busycount. The need for this was removed by:
+commit bcad29137a97 ("IB/hfi1: Serve the most starved iowait entry first")
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Gary Leshner <Gary.S.Leshner@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- sound/core/seq/oss/seq_oss_ioctl.c |    2 +-
- sound/core/seq/oss/seq_oss_rw.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/core/seq/oss/seq_oss_ioctl.c
-+++ b/sound/core/seq/oss/seq_oss_ioctl.c
-@@ -62,7 +62,7 @@ static int snd_seq_oss_oob_user(struct s
- 	if (copy_from_user(ev, arg, 8))
- 		return -EFAULT;
- 	memset(&tmpev, 0, sizeof(tmpev));
--	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.port, dp->addr.client);
-+	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.client, dp->addr.port);
- 	tmpev.time.tick = 0;
- 	if (! snd_seq_oss_process_event(dp, (union evrec *)ev, &tmpev)) {
- 		snd_seq_oss_dispatch(dp, &tmpev, 0, 0);
---- a/sound/core/seq/oss/seq_oss_rw.c
-+++ b/sound/core/seq/oss/seq_oss_rw.c
-@@ -174,7 +174,7 @@ insert_queue(struct seq_oss_devinfo *dp,
- 	memset(&event, 0, sizeof(event));
- 	/* set dummy -- to be sure */
- 	event.type = SNDRV_SEQ_EVENT_NOTEOFF;
--	snd_seq_oss_fill_addr(dp, &event, dp->addr.port, dp->addr.client);
-+	snd_seq_oss_fill_addr(dp, &event, dp->addr.client, dp->addr.port);
+---
+ drivers/infiniband/hw/hfi1/user_sdma.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -260,7 +260,6 @@ struct user_sdma_txreq {
+ 	struct list_head list;
+ 	struct user_sdma_request *req;
+ 	u16 flags;
+-	unsigned busycount;
+ 	u64 seqnum;
+ };
  
- 	if (snd_seq_oss_process_event(dp, rec, &event))
- 		return 0; /* invalid event - no need to insert queue */
+@@ -323,25 +322,22 @@ static int defer_packet_queue(
+ 	struct hfi1_user_sdma_pkt_q *pq =
+ 		container_of(wait, struct hfi1_user_sdma_pkt_q, busy);
+ 	struct hfi1_ibdev *dev = &pq->dd->verbs_dev;
+-	struct user_sdma_txreq *tx =
+-		container_of(txreq, struct user_sdma_txreq, txreq);
+ 
+-	if (sdma_progress(sde, seq, txreq)) {
+-		if (tx->busycount++ < MAX_DEFER_RETRY_COUNT)
+-			goto eagain;
+-	}
++	write_seqlock(&dev->iowait_lock);
++	if (sdma_progress(sde, seq, txreq))
++		goto eagain;
+ 	/*
+ 	 * We are assuming that if the list is enqueued somewhere, it
+ 	 * is to the dmawait list since that is the only place where
+ 	 * it is supposed to be enqueued.
+ 	 */
+ 	xchg(&pq->state, SDMA_PKT_Q_DEFERRED);
+-	write_seqlock(&dev->iowait_lock);
+ 	if (list_empty(&pq->busy.list))
+ 		list_add_tail(&pq->busy.list, &sde->dmawait);
+ 	write_sequnlock(&dev->iowait_lock);
+ 	return -EBUSY;
+ eagain:
++	write_sequnlock(&dev->iowait_lock);
+ 	return -EAGAIN;
+ }
+ 
+@@ -925,7 +921,6 @@ static int user_sdma_send_pkts(struct us
+ 
+ 		tx->flags = 0;
+ 		tx->req = req;
+-		tx->busycount = 0;
+ 		INIT_LIST_HEAD(&tx->list);
+ 
+ 		if (req->seqnum == req->info.npkts - 1)
 
 
