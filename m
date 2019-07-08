@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 486FE62475
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5EFC62478
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403815AbfGHPm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:42:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43238 "EHLO mail.kernel.org"
+        id S2391131AbfGHPnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:43:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389736AbfGHPm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:42:57 -0400
+        id S2388363AbfGHPnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:43:06 -0400
 Received: from quaco.ghostprotocols.net (179-240-135-35.3g.claro.net.br [179.240.135.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D6A7217D4;
-        Mon,  8 Jul 2019 15:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87F902173E;
+        Mon,  8 Jul 2019 15:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600576;
-        bh=r09yOia058PCrGFNgLE5XEV85SDolYpnVtWv4U3LiRE=;
+        s=default; t=1562600585;
+        bh=Sj42SYX8jC9aIGvWj5C/8VYWXl/7Xnbl671lOC8VwSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uMKh0Ojl07olyBEytwF/pEZ06nqqpqlOV9WCN3pZ4Oyqh2GntqRIDK/AZePZuJBKF
-         XFktwTKkybnsac+R5hUNk87+yijESRD5liF+iSN1U6SzyOvEEnLEJxQfSWcdydhigR
-         KD9SVa3RdcMgAhv7+P4H7+4yLn47YXz04beC+Nlo=
+        b=SawOzypiiQ/rtpbPw3MKWe9DCVuueurVwe+Tnu8vtPWwo9PoGKzzWuhzLYcCQl4K1
+         y/gYxMqTdTKB7OV6iaYA2RoubvRBknyIyTW7lbrM2yaGDT0ZBAoSkb1B1LPe1ay/fR
+         7janHZcCF5f9f2ekm3OOoLUFsNbTTgGsiIc0bScA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Konstantin Kharlamov <Hi-Angel@yandex.ru>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
         Kim Phillips <kim.phillips@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sandipan Das <sandipan@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4/8] perf evsel: Do not rely on errno values for precise_ip fallback
-Date:   Mon,  8 Jul 2019 12:42:03 -0300
-Message-Id: <20190708154207.11403-5-acme@kernel.org>
+Subject: [PATCH 5/8] perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
+Date:   Mon,  8 Jul 2019 12:42:04 -0300
+Message-Id: <20190708154207.11403-6-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190708154207.11403-1-acme@kernel.org>
 References: <20190708154207.11403-1-acme@kernel.org>
@@ -49,55 +51,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 
-Konstantin reported problem with default perf record command, which
-fails on some AMD servers, because of the default maximum precise
-config.
+'probe libc's inet_pton & backtrace it with ping' testcase sometimes
+fails on powerpc because distro ping binary does not have symbol
+information and thus it prints "[unknown]" function name in the
+backtrace.
 
-The current fallback mechanism counts on getting ENOTSUP errno for
-precise_ip fails, but that's not the case on some AMD servers.
+Accept "[unknown]" as valid function name for powerpc as well.
 
-We can fix this by removing the errno check completely, because the
-precise_ip fallback is separated. We can just try  (if requested by
-evsel->precise_max) all possible precise_ip, and if one succeeds we win,
-if not, we continue with standard fallback.
+ # perf test -v "probe libc's inet_pton & backtrace it with ping"
 
-Reported-by: Konstantin Kharlamov <Hi-Angel@yandex.ru>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Before:
+
+  59: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 79695
+  ping 79718 [077] 96483.787025: probe_libc:inet_pton: (7fff83a754c8)
+  7fff83a754c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
+  7fff83a2b7a0 gaih_inet.constprop.7+0x1020
+  (/usr/lib64/power9/libc-2.28.so)
+  7fff83a2c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
+  1171830f4 [unknown] (/usr/bin/ping)
+  FAIL: expected backtrace entry
+  ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+  got "1171830f4 [unknown] (/usr/bin/ping)"
+  test child finished with -1
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: FAILED!
+
+After:
+
+  59: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 79085
+  ping 79108 [045] 96400.214177: probe_libc:inet_pton: (7fffbb9654c8)
+  7fffbb9654c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
+  7fffbb91b7a0 gaih_inet.constprop.7+0x1020
+  (/usr/lib64/power9/libc-2.28.so)
+  7fffbb91c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
+  132e830f4 [unknown] (/usr/bin/ping)
+  test child finished with 0
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: Ok
+
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Reviewed-by: Kim Phillips <kim.phillips@amd.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Monnet <quentin.monnet@netronome.com>
-Cc: Kim Phillips <kim.phillips@amd.com>
-Link: http://lkml.kernel.org/r/20190703080949.10356-1-jolsa@kernel.org
+Cc: Sandipan Das <sandipan@linux.ibm.com>
+Fixes: 1632936480a5 ("perf tests: Fix record+probe_libc_inet_pton.sh without ping's debuginfo")
+Link: http://lkml.kernel.org/r/1561630614-3216-1-git-send-email-s1seetee@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 4a5947625c5c..69beb9f80f07 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1785,14 +1785,8 @@ static int perf_event_open(struct perf_evsel *evsel,
- 		if (fd >= 0)
- 			break;
- 
--		/*
--		 * Do quick precise_ip fallback if:
--		 *  - there is precise_ip set in perf_event_attr
--		 *  - maximum precise is requested
--		 *  - sys_perf_event_open failed with ENOTSUP error,
--		 *    which is associated with wrong precise_ip
--		 */
--		if (!precise_ip || !evsel->precise_max || (errno != ENOTSUP))
-+		/* Do not try less precise if not requested. */
-+		if (!evsel->precise_max)
- 			break;
- 
- 		/*
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 61c9f8fc6fa1..58a99a292930 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -44,7 +44,7 @@ trace_libc_inet_pton_backtrace() {
+ 		eventattr='max-stack=4'
+ 		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+ 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+-		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
++		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
 -- 
 2.20.1
 
