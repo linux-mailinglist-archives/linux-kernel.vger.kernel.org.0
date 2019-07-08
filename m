@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32DF62492
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE34624A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403877AbfGHPoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:44:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:52044 "EHLO foss.arm.com"
+        id S2391241AbfGHPoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:44:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:52052 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403850AbfGHPoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:44:12 -0400
+        id S2403855AbfGHPoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:44:13 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6BBE1516;
-        Mon,  8 Jul 2019 08:44:11 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A85B152B;
+        Mon,  8 Jul 2019 08:44:13 -0700 (PDT)
 Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CACB43F59C;
-        Mon,  8 Jul 2019 08:44:10 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 166063F59C;
+        Mon,  8 Jul 2019 08:44:11 -0700 (PDT)
 From:   Sudeep Holla <sudeep.holla@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
@@ -24,9 +24,9 @@ Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
         Jim Quinlan <james.quinlan@broadcom.com>,
         Bo Zhang <bozhang.zhang@broadcom.com>,
         Volodymyr Babchuk <volodymyr_babchuk@epam.com>
-Subject: [PATCH 4/6] firmware: arm_scmi: Fix few trivial typos in comments
-Date:   Mon,  8 Jul 2019 16:43:56 +0100
-Message-Id: <20190708154358.16227-5-sudeep.holla@arm.com>
+Subject: [PATCH 5/6] firmware: arm_scmi: Use the term 'message' instead of 'command'
+Date:   Mon,  8 Jul 2019 16:43:57 +0100
+Message-Id: <20190708154358.16227-6-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190708154358.16227-1-sudeep.holla@arm.com>
 References: <20190708154358.16227-1-sudeep.holla@arm.com>
@@ -35,38 +35,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While adding new comments found couple of typos that are better fixed.
+In preparation to adding support for other two types of messages that
+SCMI specification mentions, let's replace the term 'command' with the
+correct term 'message'.
 
-s/informfation/information/
-s/statues/status/
+As per the specification the messages are of 3 types:
+commands(synchronous or asynchronous), delayed responses and notifications.
 
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_scmi/driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/arm_scmi/common.h | 10 +++++-----
+ drivers/firmware/arm_scmi/driver.c |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+index 44fd4f9404a9..4349d836b392 100644
+--- a/drivers/firmware/arm_scmi/common.h
++++ b/drivers/firmware/arm_scmi/common.h
+@@ -48,11 +48,11 @@ struct scmi_msg_resp_prot_version {
+ /**
+  * struct scmi_msg_hdr - Message(Tx/Rx) header
+  *
+- * @id: The identifier of the command being sent
+- * @protocol_id: The identifier of the protocol used to send @id command
+- * @seq: The token to identify the message. when a message/command returns,
+- *	the platform returns the whole message header unmodified including
+- *	the token
++ * @id: The identifier of the message being sent
++ * @protocol_id: The identifier of the protocol used to send @id message
++ * @seq: The token to identify the message. when a message returns, the]
++ *	platform returns the whole message header unmodified including the
++ *	token
+  * @status: Status of the transfer once it's complete
+  * @poll_completion: Indicate if the transfer needs to be polled for
+  *	completion or interrupt mode is used
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 6ef652940099..cac255c418b2 100644
+index cac255c418b2..69bf85fea967 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -86,7 +86,7 @@ struct scmi_desc {
- };
- 
- /**
-- * struct scmi_chan_info - Structure representing a SCMI channel informfation
-+ * struct scmi_chan_info - Structure representing a SCMI channel information
-  *
-  * @cl: Mailbox Client
-  * @chan: Transmit/Receive mailbox channel
-@@ -190,7 +190,7 @@ static void scmi_fetch_response(struct scmi_xfer *xfer,
- 				struct scmi_shared_mem __iomem *mem)
+@@ -182,7 +182,7 @@ static inline int scmi_to_linux_errno(int errno)
+ static inline void scmi_dump_header_dbg(struct device *dev,
+ 					struct scmi_msg_hdr *hdr)
  {
- 	xfer->hdr.status = ioread32(mem->msg_payload);
--	/* Skip the length of header and statues in payload area i.e 8 bytes*/
-+	/* Skip the length of header and status in payload area i.e 8 bytes */
- 	xfer->rx.len = min_t(size_t, xfer->rx.len, ioread32(&mem->length) - 8);
+-	dev_dbg(dev, "Command ID: %x Sequence ID: %x Protocol: %x\n",
++	dev_dbg(dev, "Message ID: %x Sequence ID: %x Protocol: %x\n",
+ 		hdr->id, hdr->seq, hdr->protocol_id);
+ }
  
- 	/* Take a copy to the rx buffer.. */
+@@ -241,7 +241,7 @@ static void scmi_rx_callback(struct mbox_client *cl, void *m)
+  * @hdr: pointer to header containing all the information on message id,
+  *	protocol id and sequence id.
+  *
+- * Return: 32-bit packed command header to be sent to the platform.
++ * Return: 32-bit packed message header to be sent to the platform.
+  */
+ static inline u32 pack_scmi_header(struct scmi_msg_hdr *hdr)
+ {
+@@ -280,7 +280,7 @@ static void scmi_tx_prepare(struct mbox_client *cl, void *m)
+  *
+  * @handle: Pointer to SCMI entity handle
+  *
+- * Helper function which is used by various command functions that are
++ * Helper function which is used by various message functions that are
+  * exposed to clients of this driver for allocating a message traffic event.
+  *
+  * This function can sleep depending on pending requests already in the system
 -- 
 2.17.1
 
