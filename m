@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5994622C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794FE62331
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732921AbfGHP2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:28:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
+        id S2390234AbfGHPc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389335AbfGHP2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:28:44 -0400
+        id S1732686AbfGHPcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F821204EC;
-        Mon,  8 Jul 2019 15:28:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28EE120665;
+        Mon,  8 Jul 2019 15:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599723;
-        bh=ylqPuutFgMprDE1dCFgn4SIfV7iG8LZauyBpCDxVHy4=;
+        s=default; t=1562599974;
+        bh=7hQTXNKTVE51JAzz/0jxsi5MNoIHeJexkZF5jwsc5jc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PyIFkBYGFZ6BQhzrNvKx8Bbyn9oxmKqbOlu5rC+W6dRF2CNpxsiolh1SpQPIO8cHW
-         GpkX20HnGEZ+p7hhYZyWncOlJnAjcl3i5olBysO0ruwZqkiTIh5SrdaUIOTOt7oMzS
-         VKcYxgAnzvYdQSmDTKeMaTrATNQYnQbjiYJEigRg=
+        b=Rv2XFsgdVT80YfSQfcLqQBw8SU62+LBre6A1PapJvfAyAWltBZDtqbBgZ7aEqT1cz
+         x8GM03kHPve4crCXTTU00IIHhG6pCEJBVLhM9jcR1CGJv5wJytqtIpmnM+UxDdMxlH
+         OKcpos4xo7DWZBMaKB6bKrt5u7bcS4dGit4AzEb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.19 57/90] drm/etnaviv: add missing failure path to destroy suballoc
-Date:   Mon,  8 Jul 2019 17:13:24 +0200
-Message-Id: <20190708150525.342053201@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 53/96] tracing: avoid build warning with HAVE_NOP_MCOUNT
+Date:   Mon,  8 Jul 2019 17:13:25 +0200
+Message-Id: <20190708150529.373569464@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+[ Upstream commit cbdaeaf050b730ea02e9ab4ff844ce54d85dbe1d ]
 
-commit be132e1375c1fffe48801296279079f8a59a9ed3 upstream.
+Selecting HAVE_NOP_MCOUNT enables -mnop-mcount (if gcc supports it)
+and sets CC_USING_NOP_MCOUNT. Reuse __is_defined (which is suitable for
+testing CC_USING_* defines) to avoid conditional compilation and fix
+the following gcc 9 warning on s390:
 
-When something goes wrong in the GPU init after the cmdbuf suballocator
-has been constructed, we fail to destroy it properly. This causes havok
-later when the GPU is unbound due to a module unload or similar.
+kernel/trace/ftrace.c:2514:1: warning: ‘ftrace_code_disable’ defined
+but not used [-Wunused-function]
 
-Fixes: e66774dd6f6a (drm/etnaviv: add cmdbuf suballocator)
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/patch.git-1a82d13f33ac.your-ad-here.call-01559732716-ext-6629@work.hours
 
+Fixes: 2f4df0017baed ("tracing: Add -mcount-nop option support")
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -760,7 +760,7 @@ int etnaviv_gpu_init(struct etnaviv_gpu
- 	if (IS_ERR(gpu->cmdbuf_suballoc)) {
- 		dev_err(gpu->dev, "Failed to create cmdbuf suballocator\n");
- 		ret = PTR_ERR(gpu->cmdbuf_suballoc);
--		goto fail;
-+		goto destroy_iommu;
- 	}
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index b920358dd8f7..538f0b1c7ea2 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2939,14 +2939,13 @@ static int ftrace_update_code(struct module *mod, struct ftrace_page *new_pgs)
+ 			p = &pg->records[i];
+ 			p->flags = rec_flags;
  
- 	/* Create buffer: */
-@@ -768,7 +768,7 @@ int etnaviv_gpu_init(struct etnaviv_gpu
- 				  PAGE_SIZE);
- 	if (ret) {
- 		dev_err(gpu->dev, "could not create command buffer\n");
--		goto destroy_iommu;
-+		goto destroy_suballoc;
- 	}
+-#ifndef CC_USING_NOP_MCOUNT
+ 			/*
+ 			 * Do the initial record conversion from mcount jump
+ 			 * to the NOP instructions.
+ 			 */
+-			if (!ftrace_code_disable(mod, p))
++			if (!__is_defined(CC_USING_NOP_MCOUNT) &&
++			    !ftrace_code_disable(mod, p))
+ 				break;
+-#endif
  
- 	if (gpu->mmu->version == ETNAVIV_IOMMU_V1 &&
-@@ -800,6 +800,9 @@ int etnaviv_gpu_init(struct etnaviv_gpu
- free_buffer:
- 	etnaviv_cmdbuf_free(&gpu->buffer);
- 	gpu->buffer.suballoc = NULL;
-+destroy_suballoc:
-+	etnaviv_cmdbuf_suballoc_destroy(gpu->cmdbuf_suballoc);
-+	gpu->cmdbuf_suballoc = NULL;
- destroy_iommu:
- 	etnaviv_iommu_destroy(gpu->mmu);
- 	gpu->mmu = NULL;
+ 			update_cnt++;
+ 		}
+-- 
+2.20.1
+
 
 
