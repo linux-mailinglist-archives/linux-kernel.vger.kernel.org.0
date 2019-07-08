@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99ADC623A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 479FA62353
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390885AbfGHPgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:36:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36256 "EHLO mail.kernel.org"
+        id S2390512AbfGHPeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:34:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390474AbfGHPeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:05 -0400
+        id S2390480AbfGHPeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:34:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9809204EC;
-        Mon,  8 Jul 2019 15:34:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F592204EC;
+        Mon,  8 Jul 2019 15:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600044;
-        bh=KL1idasl/xFehBRaaQE9mfpe3MfJKyVEFRjSs0sXuKQ=;
+        s=default; t=1562600046;
+        bh=aXj3z6IfKKrCdHytfIuFAzc+6Ul5/4UgWYTW5tMWF8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jHGP54spk8EQBkGLgfb4GI+bCCnSpHaSP+oscNHDk2b2NJSsQOaBm2g69JuBsLwKe
-         gJ6xXquWuf5cEjSiVkEKZDO3L2gpSlY2rO9D3gWY2b19TXHT0mBFKxCKCCyJfQPqGI
-         ZhjsIpOOAmUPPcfeMTnz+9Dx3xrXDJLbVI3O0Wv8=
+        b=TN0TPdX3j7TiAwwXypVnY2D7ZP5bcZ2cOzekpF1NC39AkfWa0bSzSO+uVzmQ4gmyG
+         vg+435yiYh07WcxXfkKe3tC8W2LL0ZBW8KgNFt5FSc8UfpBT8/j7sUGzG9PsDzpqXx
+         m7aEIBxkro7MWMrCcDv+sLhfV7X8B1nI/GEzyKOU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>
-Subject: [PATCH 5.1 75/96] drm/amdgpu/gfx9: use reset default for PA_SC_FIFO_SIZE
-Date:   Mon,  8 Jul 2019 17:13:47 +0200
-Message-Id: <20190708150530.510384942@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH 5.1 76/96] drm/virtio: move drm_connector_update_edid_property() call
+Date:   Mon,  8 Jul 2019 17:13:48 +0200
+Message-Id: <20190708150530.567539195@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
 References: <20190708150526.234572443@linuxfoundation.org>
@@ -43,48 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Gerd Hoffmann <kraxel@redhat.com>
 
-commit 25f09f858835b0e9a06213811031190a17d8ab78 upstream.
+commit 41de4be6f6efa4132b29af51158cd672d93f2543 upstream.
 
-Recommended by the hw team.
+drm_connector_update_edid_property can sleep, we must not
+call it while holding a spinlock.  Move the callsite.
 
-Reviewed-and-Tested-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: b4b01b4995fb ("drm/virtio: add edid support")
+Reported-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Tested-by: Max Filippov <jcmvbkbc@gmail.com>
+Tested-by: Cornelia Huck <cohuck@redhat.com>
+Acked-by: Cornelia Huck <cohuck@redhat.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20190405044602.2334-1-kraxel@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c |   19 -------------------
- 1 file changed, 19 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_vq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -1899,25 +1899,6 @@ static void gfx_v9_0_constants_init(stru
- 	mutex_unlock(&adev->srbm_mutex);
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -620,11 +620,11 @@ static void virtio_gpu_cmd_get_edid_cb(s
+ 	output = vgdev->outputs + scanout;
  
- 	gfx_v9_0_init_compute_vmid(adev);
--
--	mutex_lock(&adev->grbm_idx_mutex);
--	/*
--	 * making sure that the following register writes will be broadcasted
--	 * to all the shaders
--	 */
--	gfx_v9_0_select_se_sh(adev, 0xffffffff, 0xffffffff, 0xffffffff);
--
--	WREG32_SOC15(GC, 0, mmPA_SC_FIFO_SIZE,
--		   (adev->gfx.config.sc_prim_fifo_size_frontend <<
--			PA_SC_FIFO_SIZE__SC_FRONTEND_PRIM_FIFO_SIZE__SHIFT) |
--		   (adev->gfx.config.sc_prim_fifo_size_backend <<
--			PA_SC_FIFO_SIZE__SC_BACKEND_PRIM_FIFO_SIZE__SHIFT) |
--		   (adev->gfx.config.sc_hiz_tile_fifo_size <<
--			PA_SC_FIFO_SIZE__SC_HIZ_TILE_FIFO_SIZE__SHIFT) |
--		   (adev->gfx.config.sc_earlyz_tile_fifo_size <<
--			PA_SC_FIFO_SIZE__SC_EARLYZ_TILE_FIFO_SIZE__SHIFT));
--	mutex_unlock(&adev->grbm_idx_mutex);
--
- }
+ 	new_edid = drm_do_get_edid(&output->conn, virtio_get_edid_block, resp);
++	drm_connector_update_edid_property(&output->conn, new_edid);
  
- static void gfx_v9_0_wait_for_rlc_serdes(struct amdgpu_device *adev)
+ 	spin_lock(&vgdev->display_info_lock);
+ 	old_edid = output->edid;
+ 	output->edid = new_edid;
+-	drm_connector_update_edid_property(&output->conn, output->edid);
+ 	spin_unlock(&vgdev->display_info_lock);
+ 
+ 	kfree(old_edid);
 
 
