@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D9B62B93
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2580362B90
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfGHWfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 18:35:04 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:14050 "EHLO
+        id S1727898AbfGHWfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 18:35:00 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:25910 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727571AbfGHWew (ORCPT
+        with ESMTP id S1727677AbfGHWeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 18:34:52 -0400
-X-UUID: 47fed46910f242119b0c58a04e0e73a7-20190709
-X-UUID: 47fed46910f242119b0c58a04e0e73a7-20190709
+        Mon, 8 Jul 2019 18:34:50 -0400
+X-UUID: e37847bf802246ea86cbbd7eb1240560-20190709
+X-UUID: e37847bf802246ea86cbbd7eb1240560-20190709
 Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2083053402; Tue, 09 Jul 2019 06:34:47 +0800
+        with ESMTP id 611989789; Tue, 09 Jul 2019 06:34:48 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 9 Jul 2019 06:34:46 +0800
+ 15.0.1395.4; Tue, 9 Jul 2019 06:34:47 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 9 Jul 2019 06:34:45 +0800
+ Transport; Tue, 9 Jul 2019 06:34:46 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,9 +35,9 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v4, 30/33] drm/mediatek: add connection from OVL_2L1 to RDMA1
-Date:   Tue, 9 Jul 2019 06:34:10 +0800
-Message-ID: <1562625253-29254-31-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v4, 31/33] drm/mediatek: add connection from DITHER0 to DSI0
+Date:   Tue, 9 Jul 2019 06:34:11 +0800
+Message-ID: <1562625253-29254-32-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
@@ -51,37 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add connection from OVL_2L1 to RDMA1
+This patch add connection from DITHER0 to DSI0
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 0a63dd0..4d75cef 100644
+index 4d75cef..c4c8531 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -42,9 +42,11 @@
- #define DISP_REG_CONFIG_DPI_SEL			0x064
+@@ -43,10 +43,12 @@
  
  #define MT8183_DISP_OVL0_2L_MOUT_EN		0xf04
-+#define MT8183_DISP_OVL1_2L_MOUT_EN		0xf08
+ #define MT8183_DISP_OVL1_2L_MOUT_EN		0xf08
++#define MT8183_DISP_DITHER0_MOUT_EN		0xf0c
  #define MT8183_DISP_PATH0_SEL_IN		0xf24
  
  #define OVL0_2L_MOUT_EN_DISP_PATH0			BIT(0)
-+#define OVL1_2L_MOUT_EN_RDMA1				BIT(4)
+ #define OVL1_2L_MOUT_EN_RDMA1				BIT(4)
++#define DITHER0_MOUT_IN_DSI0				BIT(0)
  #define DISP_PATH0_SEL_IN_OVL0_2L			0x1
  
  #define MT2701_DISP_MUTEX0_MOD0			0x2c
-@@ -325,6 +327,10 @@ static unsigned int mtk_ddp_mout_en(const struct mtk_mmsys_reg_data *data,
- 		   next == DDP_COMPONENT_RDMA0) {
- 		*addr = MT8183_DISP_OVL0_2L_MOUT_EN;
- 		value = OVL0_2L_MOUT_EN_DISP_PATH0;
-+	} else if (cur == DDP_COMPONENT_OVL_2L1 &&
-+		   next == DDP_COMPONENT_RDMA1) {
-+		*addr = MT8183_DISP_OVL1_2L_MOUT_EN;
-+		value = OVL1_2L_MOUT_EN_RDMA1;
+@@ -331,6 +333,9 @@ static unsigned int mtk_ddp_mout_en(const struct mtk_mmsys_reg_data *data,
+ 		   next == DDP_COMPONENT_RDMA1) {
+ 		*addr = MT8183_DISP_OVL1_2L_MOUT_EN;
+ 		value = OVL1_2L_MOUT_EN_RDMA1;
++	} else if (cur == DDP_COMPONENT_DITHER && next == DDP_COMPONENT_DSI0) {
++		*addr = MT8183_DISP_DITHER0_MOUT_EN;
++		value = DITHER0_MOUT_IN_DSI0;
  	} else {
  		value = 0;
  	}
