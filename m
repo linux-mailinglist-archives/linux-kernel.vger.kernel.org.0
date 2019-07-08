@@ -2,74 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FD4620AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:41:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5313A620B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbfGHOlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 10:41:25 -0400
-Received: from mail-qt1-f172.google.com ([209.85.160.172]:38094 "EHLO
-        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728764AbfGHOlY (ORCPT
+        id S1731909AbfGHOmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 10:42:18 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:34651 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbfGHOmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:41:24 -0400
-Received: by mail-qt1-f172.google.com with SMTP id n11so18231019qtl.5;
-        Mon, 08 Jul 2019 07:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kXUN90sDFULd4qRU/R3KEOn/usuVWjJoGJ35nR0nQ18=;
-        b=Xl9uEj6Og+rO1HLpisU7MOQS4uv+UWSEBNNTBNCnDepQBNXTF8mBQpk9jo/3wdKibZ
-         CtZ5kQkMen21+OKQuJ+PCew8yXZuL5r+BgvKpLxdZM9mmLPQ+IYG6A+qUCJCGIEZ8tnH
-         reW7Nkw1QthoOFm1CoYBce4mMtko7w8uWB1P05mMGNTOsZXKHk1cluXKkadnDTJGwCBm
-         IGzeblqdEzm5X4MFpL3O715NYXJ49/og3rViPEBVtXDCIra2D+aJBBXOv9Wf8sSq/MwJ
-         Z+c7nb/En3PazH06XUDEysCWZsK/YpFDRy6/xAUpmjPARQnRlTG5Jc/8fnHOcuzk4zWR
-         REOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kXUN90sDFULd4qRU/R3KEOn/usuVWjJoGJ35nR0nQ18=;
-        b=k+0pISdu7F130TrTO4mCoz5vkU3z7TH7JDaABJEHfm7Kok9vMYBBX91Rrpy9IY65dq
-         meUM13XhZMBJ/lcu4GAKCHBD7/QsBEqXb9n2TTxeZX0lvQfOg/vqP0YUcFPvyCb7wwn8
-         0Vll0p7bKo4Nhe4WguZstmCy1tw+tHv4JqX+3fhLwN940v/xs+XhlBNOZDI6muFVTTuB
-         zLYQoTIb6zcVQN1pOuamZi4GYHrCDhXJCYYWpUKfv/OZ8420uremGNztC7JM5GbQTyQA
-         CIOwVQl2ltGQ28Rt7Ca8t9sRHP6WbZ9vJU6GYmxn6LKVGMT8AjdJHP6CnO3cHHfyxtwG
-         XQbg==
-X-Gm-Message-State: APjAAAVsLA31yXLimn7rAcA3CEE1PAJSmIkHoDoVYT7SxzOLtsIgBxSj
-        K8iDcrxMbcvjyWve7VgpK1U=
-X-Google-Smtp-Source: APXvYqzWtXVq70kcEBCAF1m2IUspOBnTrPdr4XPMk3W1jFGF8Wj2K0zHDvWCYUCXGwEsoLQ0eBJRtA==
-X-Received: by 2002:ac8:3449:: with SMTP id v9mr10281942qtb.163.1562596883530;
-        Mon, 08 Jul 2019 07:41:23 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:fa50])
-        by smtp.gmail.com with ESMTPSA id g3sm7342207qkk.125.2019.07.08.07.41.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 07:41:22 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 07:41:21 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Peng Wang <rocking@whu.edu.cn>
-Cc:     lizefan@huawei.com, hannes@cmpxchg.org, cgroups@vger.kernel.org,
+        Mon, 8 Jul 2019 10:42:16 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MWiYo-1hzqv148xk-00X1Le; Mon, 08 Jul 2019 16:42:08 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jonathan Kim <Jonathan.Kim@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Xiaojie Yuan <xiaojie.yuan@amd.com>,
+        Jack Xiao <Jack.Xiao@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Rex Zhu <Rex.Zhu@amd.com>, Emily Deng <Emily.Deng@amd.com>,
+        xinhui pan <xinhui.pan@amd.com>, Evan Quan <evan.quan@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: simplify code for cgroup_subtree_control_write()
-Message-ID: <20190708144121.GA657710@devbig004.ftw2.facebook.com>
-References: <20190708130132.5582-1-rocking@whu.edu.cn>
+Subject: [PATCH 1/2] amdgpu: make pmu support optional
+Date:   Mon,  8 Jul 2019 16:41:43 +0200
+Message-Id: <20190708144205.2770771-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708130132.5582-1-rocking@whu.edu.cn>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:TL1q7iyD5PpIZrvVCvrRvHAEqENf6QOhISgByGYYJX9jV/rf/xg
+ M406DVe1lGcgSljrSAf61pEusIKkC3qSIQ+fLZSMbU3brdrpcG2nHgEwYkia6rDBUCq2ZdZ
+ Ag8tQzIQs5OwrZE2DI7ZuF7dvJosR20rVcUecDsFwHtc/2KjOzZCJ7I9hVY7OkhpKGBqGat
+ A1j3Rt2ErvZmbhjIQ4x+g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lnFTjrpE41c=:9mQYtLxFcpzQV2qFm/8yIE
+ SoJ/ip22hyZDDdbyqQRhP1ar5J85GrRy0ziq8mkxbDL6ImsU+PRvY7t2xMVKx/rwh1XyU94de
+ jbLARyZH1ZtsMfRLZkRR5soBdlxdutLlFwwOGzoz4+dTivWjZinLfkdzHHht3wBtlG9UTL9fx
+ R+lDMHwCBjULSVCwQA8ok0YBWjywIs9uJDnrcu9k7+7JKXNWqbiTDOFgDiUYOVZ9dy8PjkVnT
+ lquSTfbKQOf4desKeysg/LijtPf6zgJgGFAj20D3FUGSKMrEt79X7YbQeYHKALF0S7i7pyMGG
+ Azboq2UifUADzZOy/SqwCm5gAZ6OnsSNxDvYvNLB9EXNH2X5TR7rHq47HecfTvRh+02LOBoaA
+ Ns6LI8KM7pnmYn2nMCATam+RFzvUbkh5VpOc874UZEvvmJ7mY/y1Yco9ZfZ4K33wIYpYdMU2Z
+ M54SC6ZNmKKtY6i6ARl1I1ahJl4jq9NoGiC9uCAN+gQK/QRvDakzR/kK/Xw2rGXOueiT3ME1H
+ maqnFEa4jdvcSoU5Ql83Y9R/HCkrRQInX2yjnb3NDPKg7yLdMCZDOuPikOO7+lJzc77BgR9/X
+ 8FFwGxKCtdu6wMVEFKVnpGq5c9/Ddi152/IFttm742ujmFIRR7sFzDTCUIvIVEaTbP/mHjpIu
+ N1BT3MKSASMJiYypWubm5ww5IKJj7yu6E6eoK4NgYLsrXiFoblrf+v2a6ToGTFzvNK/spe5hR
+ IN2J/smOH2L/OpQ/5IZ2wa98hRbURz8AeGrGpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 09:01:32PM +0800, Peng Wang wrote:
-> Process "enable" and "disable" earlier to simplify code.
+When CONFIG_PERF_EVENTS is disabled, we cannot compile the pmu
+portion of the amdgpu driver:
 
-I don't think this is correct and even if it were the value of this
-change is close to none, so nack on this one.
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:48:38: error: no member named 'hw' in 'struct perf_event'
+        struct hw_perf_event *hwc = &event->hw;
+                                     ~~~~~  ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:51:13: error: no member named 'attr' in 'struct perf_event'
+        if (event->attr.type != event->pmu->type)
+            ~~~~~  ^
+...
 
-Thanks.
+Use conditional compilation for this file.
 
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/amd/amdgpu/Makefile        | 4 +++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 6 ++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/Makefile b/drivers/gpu/drm/amd/amdgpu/Makefile
+index 3a15a46b4ecb..3f5329906fce 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Makefile
++++ b/drivers/gpu/drm/amd/amdgpu/Makefile
+@@ -54,7 +54,9 @@ amdgpu-y += amdgpu_device.o amdgpu_kms.o \
+ 	amdgpu_gtt_mgr.o amdgpu_vram_mgr.o amdgpu_virt.o amdgpu_atomfirmware.o \
+ 	amdgpu_vf_error.o amdgpu_sched.o amdgpu_debugfs.o amdgpu_ids.o \
+ 	amdgpu_gmc.o amdgpu_xgmi.o amdgpu_csa.o amdgpu_ras.o amdgpu_vm_cpu.o \
+-	amdgpu_vm_sdma.o amdgpu_pmu.o amdgpu_discovery.o
++	amdgpu_vm_sdma.o amdgpu_discovery.o
++
++amdgpu-$(CONFIG_PERF_EVENTS) += amdgpu_pmu.o
+ 
+ # add asic specific block
+ amdgpu-$(CONFIG_DRM_AMDGPU_CIK)+= cik.o cik_ih.o kv_smc.o kv_dpm.o \
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 30989b455047..a02ccce7bf53 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -2816,7 +2816,8 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	r = amdgpu_pmu_init(adev);
++	if (IS_ENABLED(CONFIG_PERF_EVENTS))
++		r = amdgpu_pmu_init(adev);
+ 	if (r)
+ 		dev_err(adev->dev, "amdgpu_pmu_init failed\n");
+ 
+@@ -2888,7 +2889,8 @@ void amdgpu_device_fini(struct amdgpu_device *adev)
+ 	amdgpu_debugfs_regs_cleanup(adev);
+ 	device_remove_file(adev->dev, &dev_attr_pcie_replay_count);
+ 	amdgpu_ucode_sysfs_fini(adev);
+-	amdgpu_pmu_fini(adev);
++	if (IS_ENABLED(CONFIG_PERF_EVENTS))
++		amdgpu_pmu_fini(adev);
+ 	amdgpu_debugfs_preempt_cleanup(adev);
+ 	if (amdgpu_discovery)
+ 		amdgpu_discovery_fini(adev);
 -- 
-tejun
+2.20.0
+
