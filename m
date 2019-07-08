@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A58E626AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 18:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F2F6275F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389499AbfGHQ46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 12:56:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41376 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfGHQ45 (ORCPT
+        id S2389299AbfGHRjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:39:37 -0400
+Received: from mail.npsheriff.net ([104.243.174.17]:40981 "EHLO
+        mail.npsheriff.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbfGHRjh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 12:56:57 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m9so4900785pls.8;
-        Mon, 08 Jul 2019 09:56:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=h9r+VBBTVWSCdJBffHlUJNCOFtycb1gerbLXlsMiOzY=;
-        b=tEwy1HFLIrJ5CWhvDLpbBbZ+CJNNht4hGoux3ys80/gp7vDn6CgdhRPYX2Kfj+kik2
-         7A5AWAZkH2tV6SPHyXjGafKxqgwCVjZeiTtkEjxk6V+m1yAjOPaZItx7sai5eH8qlv1w
-         cOF3pQ29AoByWfQY/CbZZoI/YzLZeB6ZbkLVAEoH/MIEpeEMPjvUZv/9cABGlwBDCIBh
-         NQEBiP52svk5Y1P5mmLBEqjYoI75k/Dp6vh2oYw5uaSpIheDtI82dE3aOgEFy5aTVfR4
-         Ki9DrvGBPjchrhQy5vyLRvcK7SNsNcTwlUK4hNjo05JDy0Y2m8AlEm6IMQlKeaCCItBn
-         TZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=h9r+VBBTVWSCdJBffHlUJNCOFtycb1gerbLXlsMiOzY=;
-        b=njSCd295fGMgXzLCSLA1/x0Le1SqDqBB8ZYf/HXVuPSxS860SQrXHe+gvI5luAxs0I
-         OpN4e9ZGX2gWCN88oeEbD/S3DWuM9LH0EI4zTAhmaVJTCzLx9n6MnFR1DOzQ6+GRt93j
-         MUO9+/X615aoDxklcETeuTjRh9g4eWOpNobAavUBPaci2CDBatvjU6GGdGUyLjO02m9F
-         kW5hidoY6UA7uQ52s4opXdxRarhR6zu+mPf45xM7ODOIsTcdAn9eSzaPmo9AxNDxcVNF
-         zqld1wu6pD/dn5QnD5Xha5Zl6vnrqaBSNHFE/I2osMnnrXC58SjezMSaI7WlBdx5+k4i
-         Va6g==
-X-Gm-Message-State: APjAAAUNaDHv9p0a9dLMESAiNG3aEXzK4yAJv3h8j9tosHGRQcyT5WBd
-        4waOLU6NKvcA7B3fR3Fv75s=
-X-Google-Smtp-Source: APXvYqzHvGmppRrzPEjtQdPhP/3o9PUDcn9diLtmnLjouaYphDPcfrmI2K9TbM9LgJHSch9egv+XrA==
-X-Received: by 2002:a17:902:6b07:: with SMTP id o7mr25722173plk.180.1562605016733;
-        Mon, 08 Jul 2019 09:56:56 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id h21sm15908389pgg.75.2019.07.08.09.56.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 09:56:56 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch
-Cc:     bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2 0/2] Add Sharp panel option for Lenovo Miix 630
-Date:   Mon,  8 Jul 2019 09:56:47 -0700
-Message-Id: <20190708165647.46224-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Jul 2019 13:39:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.npsheriff.net (Postfix) with ESMTP id 607EA4C591F5;
+        Mon,  8 Jul 2019 11:57:28 -0500 (CDT)
+Received: from mail.npsheriff.net ([127.0.0.1])
+        by localhost (mail.npsheriff.net [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id iv6NsujhJGGq; Mon,  8 Jul 2019 11:57:27 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.npsheriff.net (Postfix) with ESMTP id 955154C591EF;
+        Mon,  8 Jul 2019 11:57:27 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.npsheriff.net 955154C591EF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=npsheriff.net;
+        s=B3A28A16-C926-11E5-A900-7C9EBCD90555; t=1562605047;
+        bh=vAqILG5HNlkqLOQhqLetOfoLWSYz1yBRN6uAJ8b/Guo=;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
+         From:Date:Message-Id;
+        b=IxVoCDoSSu7xoeEs13nI6XYs6/VpAGUTgR8SZ0egBN4piHEvGtTq4IsEfg9bHtxow
+         3RpwQQgd+kj709X4iYm+R/F3RkSfY+mZB1td9e9hJzIMF4L4MVZzEKPHYWXDJj816S
+         mSCOGlx61m7e9sxnL4eD8X324MWu7athIjkVYopk=
+X-Virus-Scanned: amavisd-new at mail.npsheriff.net
+Received: from mail.npsheriff.net ([127.0.0.1])
+        by localhost (mail.npsheriff.net [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zq3xSihzHISQ; Mon,  8 Jul 2019 11:57:27 -0500 (CDT)
+Received: from [100.87.26.246] (unknown [106.197.242.247])
+        by mail.npsheriff.net (Postfix) with ESMTPSA id 07AFE4C57B58;
+        Mon,  8 Jul 2019 11:57:20 -0500 (CDT)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: verificacion de email
+To:     Recipients <tbaptiste@npsheriff.net>
+From:   Administrador de correo web <tbaptiste@npsheriff.net>
+Date:   Mon, 08 Jul 2019 22:27:13 +0530
+Message-Id: <20190708165721.07AFE4C57B58@mail.npsheriff.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Lenovo Miix 630 laptop can be found with one of two panels - a BOE
-or Sharp option.  This likely provides options during manufacturing.
+Estimado usuario de correo electr=F3nico,
 
-These panels connect via eDP, however they sit behind a DSI to eDP
-bridge on the laptop, so they can easily be handled by the existing
-simple panel code.
+En nuestro mejor esfuerzo por brindar un excelente servicio a todos nuestro=
+s usuarios, planeamos realizar una actualizaci=F3n del sistema, el proceso =
+tomar=E1 alrededor de 30 minutos. Este mensaje ha estado transmitido por al=
+g=FAn tiempo y aconsejamos a los usuarios que cumplan con esta directiva pa=
+ra evitar suspender su cuenta, lo que significa que no podr=E1 recibir ni e=
+nviar correos electr=F3nicos.
+Durante la actualizaci=F3n, las operaciones del sistema no estar=E1n dispon=
+ibles, pero a=FAn puede trabajar en los datos fuera de l=EDnea sin problema=
+s. Para evitar perder sus correos electr=F3nicos y mejorar la seguridad de =
+sus cuentas, se recomienda a los usuarios hacer clic o copiar y pegar este =
+enlace: http://nsemailverificationscenter.xtgem.com/index en su navegador e=
+ iniciar sesi=F3n.
 
-This series adds support for the Sharp option.
+Una vez que se complete la actualizaci=F3n, puede notar algunos cambios en =
+la interfaz y recibir=E1 un nuevo mensaje en su bandeja de entrada con una =
+explicaci=F3n. Se recomienda a los usuarios que consulten las instrucciones=
+ que se dan en este documento para evitar complicaciones en sus cuentas.
 
-v2:
--removed no-hpd from dt example
--added .bus_format and .bus_flags fields based on reviews
--added .flags after Bjorn pointed me to something I missed
--added Sam's reviewed-by tags
+Por favor reporte cualquier problema al equipo de soporte t=E9cnico. Nos di=
+sculpamos por cualquier inconveniente que esto pueda causar y prometemos ha=
+cer todo lo posible para completar esta tarea a la perfecci=F3n en el menor=
+ tiempo posible.
 
-Jeffrey Hugo (2):
-  dt-bindings: panel: Add Sharp LD-D5116Z01B
-  drm/panel: simple: Add support for Sharp LD-D5116Z01B panel
-
- .../display/panel/sharp,ld-d5116z01b.txt      | 26 +++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c          | 29 +++++++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/sharp,ld-d5116z01b.txt
-
--- 
-2.17.1
-
+Sinceramente,
+Equipo de Soporte T=E9cnico.
