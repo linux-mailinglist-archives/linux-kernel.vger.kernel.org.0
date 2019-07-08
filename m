@@ -2,49 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B487B62B9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE23A62BDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfGHWfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 18:35:40 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:59632 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728097AbfGHWfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 18:35:37 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id CD2AC12D6BBEF;
-        Mon,  8 Jul 2019 15:35:36 -0700 (PDT)
-Date:   Mon, 08 Jul 2019 15:35:36 -0700 (PDT)
-Message-Id: <20190708.153536.95559795393042220.davem@davemloft.net>
-To:     sgarzare@redhat.com
-Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
-        linux-kernel@vger.kernel.org, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, stefanha@redhat.com
-Subject: Re: [PATCH v3 0/3] vsock/virtio: several fixes in the .probe() and
- .remove()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190705110454.95302-1-sgarzare@redhat.com>
-References: <20190705110454.95302-1-sgarzare@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 08 Jul 2019 15:35:37 -0700 (PDT)
+        id S1728483AbfGHWir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 18:38:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbfGHWiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 18:38:46 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FB51356EC;
+        Mon,  8 Jul 2019 22:38:46 +0000 (UTC)
+Received: from treble (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CD5D1001B2B;
+        Mon,  8 Jul 2019 22:38:37 +0000 (UTC)
+Date:   Mon, 8 Jul 2019 17:38:34 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <songliubraving@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kairui Song <kasong@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/urgent] bpf: Fix ORC unwinding in non-JIT BPF code
+Message-ID: <20190708223834.zx7u45a4uuu2yyol@treble>
+References: <881939122b88f32be4c374d248c09d7527a87e35.1561685471.git.jpoimboe@redhat.com>
+ <tip-b22cf36c189f31883ad0238a69ccf82aa1f3b16b@git.kernel.org>
+ <20190706202942.GA123403@gmail.com>
+ <20190707013206.don22x3tfldec4zm@treble>
+ <20190707055209.xqyopsnxfurhrkxw@treble>
+ <CAADnVQJqT8o=_6P6xHjwxrXqX9ToSb0cTfoOcm2Xcha3KRNNSw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAADnVQJqT8o=_6P6xHjwxrXqX9ToSb0cTfoOcm2Xcha3KRNNSw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 08 Jul 2019 22:38:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Fri,  5 Jul 2019 13:04:51 +0200
+On Mon, Jul 08, 2019 at 03:15:37PM -0700, Alexei Starovoitov wrote:
+> > 2)
+> >
+> >   After doing the first optimization, GCC then does another one which is
+> >   a little trickier.  It replaces:
+> >
+> >         select_insn:
+> >                 jmp *jumptable(, %rax, 8)
+> >                 ...
+> >         ALU64_ADD_X:
+> >                 ...
+> >                 jmp *jumptable(, %rax, 8)
+> >         ALU_ADD_X:
+> >                 ...
+> >                 jmp *jumptable(, %rax, 8)
+> >
+> >   with
+> >
+> >         select_insn:
+> >                 mov jumptable, %r12
+> >                 jmp *(%r12, %rax, 8)
+> >                 ...
+> >         ALU64_ADD_X:
+> >                 ...
+> >                 jmp *(%r12, %rax, 8)
+> >         ALU_ADD_X:
+> >                 ...
+> >                 jmp *(%r12, %rax, 8)
+> >
+> >   The problem is that it only moves the jumptable address into %r12
+> >   once, for the entire function, then it goes through multiple recursive
+> >   indirect jumps which rely on that %r12 value.  But objtool isn't yet
+> >   smart enough to be able to track the value across multiple recursive
+> >   indirect jumps through the jump table.
+> >
+> >   After some digging I found that the quick and easy fix is to disable
+> >   -fgcse.  In fact, this seems to be recommended by the GCC manual, for
+> >   code like this:
+> >
+> >     -fgcse
+> >         Perform a global common subexpression elimination pass.  This
+> >         pass also performs global constant and copy propagation.
+> >
+> >         Note: When compiling a program using computed gotos, a GCC
+> >         extension, you may get better run-time performance if you
+> >         disable the global common subexpression elimination pass by
+> >         adding -fno-gcse to the command line.
+> >
+> >         Enabled at levels -O2, -O3, -Os.
+> >
+> >   This code indeed relies extensively on computed gotos.  I don't know
+> >   *why* disabling this optimization would improve performance.  In fact
+> >   I really don't see how it could make much of a difference either way.
+> >
+> >   Anyway, using -fno-gcse makes optimization #2 go away and makes
+> >   objtool happy, with only a fix for #1 needed.
+> >
+> >   If -fno-gcse isn't an option, we might be able to fix objtool by using
+> >   the "first_jump_src" thing which Peter added, improving it such that
+> >   it also takes table jumps into account.
+> 
+> Sorry for delay. I'm mostly offgrid until next week.
+> As far as -fno-gcse.. I don't mind as long as it doesn't hurt performance.
+> Which I suspect it will :(
+> All these indirect gotos are there for performance.
+> Single indirect goto and a bunch of jmp select_insn
+> are way slower, since there is only one instruction
+> for cpu branch predictor to work with.
+> When every insn is followed by "jmp *jumptable"
+> there is more room for cpu to speculate.
+> It's been long time, but when I wrote it the difference
+> between all indirect goto vs single indirect goto was almost 2x.
 
-> During the review of "[PATCH] vsock/virtio: Initialize core virtio vsock
-> before registering the driver", Stefan pointed out some possible issues
-> in the .probe() and .remove() callbacks of the virtio-vsock driver.
- ...
+Just to clarify, -fno-gcse doesn't get rid of any of the indirect jumps.
+It still has 166 indirect jumps.  It just gets rid of the second
+optimization, where the jumptable address is placed in a register.
 
-Series applied to net-next, thanks.
+If you have a benchmark which is relatively easy to use, I could try to
+run some tests.
+
+-- 
+Josh
