@@ -2,93 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D17C7627EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F7B627FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387684AbfGHSHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 14:07:08 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60474 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbfGHSHH (ORCPT
+        id S2388190AbfGHSIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 14:08:55 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:46562 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730714AbfGHSIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:07:07 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkY2U-0003oz-6Z; Mon, 08 Jul 2019 18:06:58 +0000
-Date:   Mon, 8 Jul 2019 19:06:58 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, markward@linux.ibm.com
-Subject: Re: linux-next: Tree for Jul 8 --> bootup failure on s390x (bisected)
-Message-ID: <20190708180657.GV17978@ZenIV.linux.org.uk>
-References: <20190708224238.60bd0aff@canb.auug.org.au>
- <0be7464d-f8ed-0567-b0ff-a6d31ecfd7a8@de.ibm.com>
+        Mon, 8 Jul 2019 14:08:54 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x68I8pNT049069;
+        Mon, 8 Jul 2019 13:08:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562609331;
+        bh=gDlRL2KY4kegZgACOvx1ncFnsIR8rOGXLXLEq91Ouik=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=R9cVX7MiyWenX278Ns1pTM+0OQTqa4G2BHm6J2gEAQy5oTIYfUgF32RAeGtVdmz+A
+         v6W7AlahQU/NixSUiwl/DKSK8ILxJ/4SOLqDGc9q+QbGHUnaArwB2QoknWWPwavKRn
+         UdGrIjKTvaqACHFuM/+FqxqHbLqlGkPNKDkp4rxY=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x68I8pSQ024728
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 8 Jul 2019 13:08:51 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 8 Jul
+ 2019 13:08:50 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 8 Jul 2019 13:08:50 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x68I8oBO051420;
+        Mon, 8 Jul 2019 13:08:50 -0500
+Subject: Re: [PATCH v2 1/2] leds: tlc591xx: simplify driver by using the
+ managed led API
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tomi.valkeinen@ti.com>
+References: <20190708100620.22388-1-jjhiblot@ti.com>
+ <20190708100620.22388-2-jjhiblot@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
+Date:   Mon, 8 Jul 2019 13:08:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0be7464d-f8ed-0567-b0ff-a6d31ecfd7a8@de.ibm.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190708100620.22388-2-jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 06:52:14PM +0200, Christian Borntraeger wrote:
+JJ
 
-> smp: Brought up 1 node, 1 CPU
-> Unable to handle kernel pointer dereference in virtual kernel address space
-> Failing address: 000000003a070000 TEID: 000000003a070407
-> Fault in home space mode while using kernel ASCE.
-> AS:000000003a780007 R3:000000007ffd0007 S:000000007ffd4800 P:000000003a07021d 
-> Oops: 0004 ilc:2 [#1] SMP 
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc5-00101-gcb8f0b366109 #14
-> Hardware name: IBM 2964 NC9 712 (KVM/Linux)
-> Krnl PSW : 0704e00180000000 000000003974b580 (shmem_parse_monolithic+0x88/0x100)
->            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-> Krnl GPRS: 0000000000000000 000000000000003d 000000003a07040e 000000000000003d
->            000000003a07040f 000000000000006d 0000000000000001 0000000000000000
->            000000007f7c1c00 0000000000000000 000000003a07040a 0000000000000000
->            000000007f7e4000 000000003a190d78 000000003974b56c 000003e00031fd38
-> Krnl Code: 000000003974b574: b920002a		cgr	%r2,%r10
->            000000003974b578: a784001b		brc	8,3974b5ae
->           #000000003974b57c: 41402001		la	%r4,1(%r2)
->           >000000003974b580: 92002000		mvi	0(%r2),0
->            000000003974b584: a7090000		lghi	%r0,0
->            000000003974b588: b9040014		lgr	%r1,%r4
->            000000003974b58c: b25e0001		srst	%r0,%r1
->            000000003974b590: a714fffe		brc	1,3974b58c
-> Call Trace:
-> ([<000003e00031fd80>] 0x3e00031fd80)
->  [<0000000039811662>] vfs_kern_mount.part.0+0x9a/0xc8 
->  [<000000003a302fc0>] devtmpfs_init+0x38/0x140 
->  [<000000003a302e0a>] driver_init+0x22/0x60 
->  [<000000003a2beff8>] kernel_init_freeable+0x298/0x4f0 
->  [<0000000039e7b53a>] kernel_init+0x22/0x148 
->  [<0000000039e87b70>] ret_from_fork+0x30/0x34 
->  [<0000000039e87b74>] kernel_thread_starter+0x0/0xc 
-> INFO: lockdep is turned off.
-> [...]
+On 7/8/19 5:06 AM, Jean-Jacques Hiblot wrote:
+> Use the managed API of the LED class (devm_led_classdev_register()
+> instead of led_classdev_register()).
+> This allows us to remove the code used to track-and-destroy the LED devices
 
-Oh, fuck...  OK, I understand what's going on; sorry, my fault.  Could you
-verify that the following helps?
+What changed from v1?
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 52312c665a38..30d0523014e0 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -431,9 +431,10 @@ static int devtmpfsd(void *p)
-  */
- int __init devtmpfs_init(void)
- {
-+	char opts[] = "mode=0755";
- 	int err;
- 
--	mnt = vfs_kern_mount(&internal_fs_type, 0, "devtmpfs", "mode=0755");
-+	mnt = vfs_kern_mount(&internal_fs_type, 0, "devtmpfs", opts);
- 	if (IS_ERR(mnt)) {
- 		printk(KERN_ERR "devtmpfs: unable to create devtmpfs %ld\n",
- 				PTR_ERR(mnt));
+I don't see any changes especially the bounds on the reg property.
+
+Dan
+
+
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> ---
+>   drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
+>   1 file changed, 20 insertions(+), 59 deletions(-)
+>
+> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+> index 59ff088c7d75..3d5a4b92f016 100644
+> --- a/drivers/leds/leds-tlc591xx.c
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
+>   	return err;
+>   }
+>   
+> -static void
+> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
+> -{
+> -	int i = j;
+> -
+> -	while (--i >= 0) {
+> -		if (priv->leds[i].active)
+> -			led_classdev_unregister(&priv->leds[i].ldev);
+> -	}
+> -}
+> -
+> -static int
+> -tlc591xx_configure(struct device *dev,
+> -		   struct tlc591xx_priv *priv,
+> -		   const struct tlc591xx *tlc591xx)
+> -{
+> -	unsigned int i;
+> -	int err = 0;
+> -
+> -	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+> -	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
+> -		struct tlc591xx_led *led = &priv->leds[i];
+> -
+> -		if (!led->active)
+> -			continue;
+> -
+> -		led->priv = priv;
+> -		led->led_no = i;
+> -		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> -		led->ldev.max_brightness = LED_FULL;
+> -		err = led_classdev_register(dev, &led->ldev);
+> -		if (err < 0) {
+> -			dev_err(dev, "couldn't register LED %s\n",
+> -				led->ldev.name);
+> -			goto exit;
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -exit:
+> -	tlc591xx_destroy_devices(priv, i);
+> -	return err;
+> -}
+> -
+>   static const struct regmap_config tlc591xx_regmap = {
+>   	.reg_bits = 8,
+>   	.val_bits = 8,
+> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
+>   
+>   	i2c_set_clientdata(client, priv);
+>   
+> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+> +
+>   	for_each_child_of_node(np, child) {
+> +		struct tlc591xx_led *led;
+> +
+>   		err = of_property_read_u32(child, "reg", &reg);
+>   		if (err) {
+>   			of_node_put(child);
+> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
+>   			of_node_put(child);
+>   			return -EINVAL;
+>   		}
+> -		priv->leds[reg].active = true;
+> -		priv->leds[reg].ldev.name =
+> +		led = &priv->leds[reg];
+> +
+> +		led->active = true;
+> +		led->ldev.name =
+>   			of_get_property(child, "label", NULL) ? : child->name;
+> -		priv->leds[reg].ldev.default_trigger =
+> +		led->ldev.default_trigger =
+>   			of_get_property(child, "linux,default-trigger", NULL);
+> -	}
+> -	return tlc591xx_configure(dev, priv, tlc591xx);
+> -}
+> -
+> -static int
+> -tlc591xx_remove(struct i2c_client *client)
+> -{
+> -	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
+> -
+> -	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
+>   
+> +		led->priv = priv;
+> +		led->led_no = reg;
+> +		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> +		led->ldev.max_brightness = LED_FULL;
+> +		err = devm_led_classdev_register(dev, &led->ldev);
+> +		if (err < 0) {
+> +			dev_err(dev, "couldn't register LED %s\n",
+> +				led->ldev.name);
+> +			return err;
+> +		}
+> +	}
+>   	return 0;
+>   }
+>   
+> @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
+>   		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
+>   	},
+>   	.probe = tlc591xx_probe,
+> -	.remove = tlc591xx_remove,
+>   	.id_table = tlc591xx_id,
+>   };
+>   
