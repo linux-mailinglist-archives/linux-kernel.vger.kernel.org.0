@@ -2,109 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B24C6280E
+	by mail.lfdr.de (Postfix) with ESMTP id 94DA66280F
 	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 20:10:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403832AbfGHSKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 14:10:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391014AbfGHSKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728765AbfGHSKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 14:10:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54236 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391076AbfGHSKc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 8 Jul 2019 14:10:32 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FDEB21852;
-        Mon,  8 Jul 2019 18:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DD2F2611D1; Mon,  8 Jul 2019 18:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
         s=default; t=1562609430;
-        bh=j+rSbs+kGaqx8COBQc4tpdvoQbep4jlHqdDyLALm1mA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mFLm/RZJKV25ZjQjegx8Me/MS6n3tt5zsoZRyGpRp1nSFDPr1wJ7+s332MS8A8wV6
-         uOcBaKDmaW0WMydmDdcZ55c1EGWgqF8l82/ZeGaZoSgjuFTbg4oFvz/mZ8JJqddnyi
-         SWCtQJfoNRWl0a3bj5YNnAJnBRnmgzJ0enxE23v4=
-Subject: Re: [PATCH for 5.2] rseq/selftests: Fix Thumb mode build failure on
- arm32
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable <stable@vger.kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Fernandes <joelaf@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>, Ben Maurer <bmaurer@fb.com>,
-        linux-api <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        shuah <shuah@kernel.org>
-References: <20190630135613.19897-1-mathieu.desnoyers@efficios.com>
- <1154710388.12906.1562608719838.JavaMail.zimbra@efficios.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <bd970db6-e230-007c-8645-88866e6b3faf@kernel.org>
-Date:   Mon, 8 Jul 2019 12:10:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <1154710388.12906.1562608719838.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        bh=xc3K/NrdBEaL95vnh28d+67UATTmmmFkY/nNFHRLfGo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WtnxYmmJfDFFC3ZXL2Jt7pK6XeoHlYEkvYbO/ZegOQMTXUdIz88Q/QhG2UA02bk6O
+         e7BUbq446SPLKxHXsUjNy8rSVjL4nbcKgyzT7aZcPkzgzoa7ME16pMjNHtMyqv/XKu
+         CbNyOsRsGeoUh45EO3aUg1QO9TN1d3Q7EpmTdjLQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7D546118F;
+        Mon,  8 Jul 2019 18:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562609428;
+        bh=xc3K/NrdBEaL95vnh28d+67UATTmmmFkY/nNFHRLfGo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=X3CKBpHmq8kNLiWfhNh0vkxDilmJZ/IdNkQuSuV824oCpjlWbnUXvMI4V/68WPG3k
+         O49xsnWLyPK/TIeADf5UiLifp/hxMLuAIkNdTFBnj6XZwnkUIMWbLihOHQqU8EeNrK
+         u+PYnNg/4nckxVTPXIz49sLijvNZrLalnaJuuU4U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7D546118F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
+        dianders@chromimum.org, hoegsberg@google.com,
+        baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 3/3] iommu/arm-smmu: Add support for DOMAIN_ATTR_SPLIT_TABLES
+Date:   Mon,  8 Jul 2019 12:10:18 -0600
+Message-Id: <1562609418-25446-4-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1562609418-25446-1-git-send-email-jcrouse@codeaurora.org>
+References: <1562609418-25446-1-git-send-email-jcrouse@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/8/19 11:58 AM, Mathieu Desnoyers wrote:
-> ----- On Jun 30, 2019, at 9:56 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
-> 
->> Using ".arm .inst" for the arm signature introduces build issues for
->> programs compiled in Thumb mode because the assembler stays in the
->> arm mode for the rest of the inline assembly. Revert to using a ".word"
->> to express the signature as data instead.
->>
->> The choice of signature is a valid trap instruction on arm32 little
->> endian, where both code and data are little endian.
->>
->> ARMv6+ big endian (BE8) generates mixed endianness code vs data:
->> little-endian code and big-endian data. The data value of the signature
->> needs to have its byte order reversed to generate the trap instruction.
->>
->> Prior to ARMv6, -mbig-endian generates big-endian code and data
->> (which match), so the endianness of the data representation of the
->> signature should not be reversed. However, the choice between BE32
->> and BE8 is done by the linker, so we cannot know whether code and
->> data endianness will be mixed before the linker is invoked. So rather
->> than try to play tricks with the linker, the rseq signature is simply
->> data (not a trap instruction) prior to ARMv6 on big endian. This is
->> why the signature is expressed as data (.word) rather than as
->> instruction (.inst) in assembler.
->>
->> Because a ".word" is used to emit the signature, it will be interpreted
->> as a literal pool by a disassembler, not as an actual instruction.
->> Considering that the signature is not meant to be executed except in
->> scenarios where the program execution is completely bogus, this should
->> not be an issue.
-> 
-> Now that 5.2 is out before this patch has been merged, can we please
-> integrate this patch through the kernel selftests or ARM tree so it
-> can be merged into the stable 5.2 branch ?
-> 
+When DOMAIN_ATTR_SPLIT_TABLES is specified for pass ARM_64_LPAE_SPLIT_S1
+to io_pgtable_ops to allocate and initialize TTBR0 and TTBR1 pagetables.
 
-I will apply it to selftests and send it for 5.3-rc1 and mark it for
-stable.
+v3: Moved all the pagetable specific work into io-pgtable-arm in a previous
+patch.
 
-thanks,
--- Shuah
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
+
+ drivers/iommu/arm-smmu.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 653b6b3..7a6b4bb 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -257,6 +257,7 @@ struct arm_smmu_domain {
+ 	bool				non_strict;
+ 	struct mutex			init_mutex; /* Protects smmu pointer */
+ 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
++	u32 attributes;
+ 	struct iommu_domain		domain;
+ };
+ 
+@@ -832,7 +833,11 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+ 		ias = smmu->va_size;
+ 		oas = smmu->ipa_size;
+ 		if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH64) {
+-			fmt = ARM_64_LPAE_S1;
++			if (smmu_domain->attributes &
++				(1 << DOMAIN_ATTR_SPLIT_TABLES))
++				fmt = ARM_64_LPAE_SPLIT_S1;
++			else
++				fmt = ARM_64_LPAE_S1;
+ 		} else if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_L) {
+ 			fmt = ARM_32_LPAE_S1;
+ 			ias = min(ias, 32UL);
+@@ -1582,6 +1587,10 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
+ 		case DOMAIN_ATTR_NESTING:
+ 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
+ 			return 0;
++		case DOMAIN_ATTR_SPLIT_TABLES:
++			*(int *)data = !!(smmu_domain->attributes &
++				(1 << DOMAIN_ATTR_SPLIT_TABLES));
++			return 0;
+ 		default:
+ 			return -ENODEV;
+ 		}
+@@ -1622,6 +1631,11 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
+ 			else
+ 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
+ 			break;
++		case DOMAIN_ATTR_SPLIT_TABLES:
++			if (*((int *)data))
++				smmu_domain->attributes |=
++					(1 << DOMAIN_ATTR_SPLIT_TABLES);
++			break;
+ 		default:
+ 			ret = -ENODEV;
+ 		}
+-- 
+2.7.4
+
