@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFE5623FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBEE62351
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390766AbfGHPjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:39:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58762 "EHLO mail.kernel.org"
+        id S2390500AbfGHPeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:34:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730734AbfGHP3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:29:54 -0400
+        id S2390471AbfGHPeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:34:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99393204EC;
-        Mon,  8 Jul 2019 15:29:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31B9A20651;
+        Mon,  8 Jul 2019 15:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599793;
-        bh=s1k1F5quKTgHa+VggIV+0M3Yj0ny8zHIvRpb5ldtwvc=;
+        s=default; t=1562600041;
+        bh=+7FiTRrLiAJdrxgP+15TtcJzC8osl96ZZyLt6gKPPFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T5GM5kmXoArawUKlKVTaHarnFeqMP56o/py2k26fobtjcmGyotqerXLX9xQ1ysVRi
-         CCcMCLttYwYS29sHWzKhjpDGa7XKLPKKuAAllpr472DtpOeFeZcqiHecS90/CQrWS2
-         +96MZZKndloChd8LKtCBsldgAPezO8LYxFMFJooM=
+        b=F3RmA1JNbjjYPA72IWaOYoPTLVrjoFl+MxQbjwm5PfD9IWKi3CLZ4StpMZPWG4ZRY
+         3B9ZXzNitV6Gwjnix5d4J8gM1T1BQ4YHuWH06LkzK6VofMI8SwK1qh8dBwW8+Roomr
+         cOrNovw+JrWgwU6jEz5me8wWO263Ny4hRMbzJDVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 79/90] net: hns: fix unsigned comparison to less than zero
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        Likun Gao <Likun.Gao@amd.com>, Lyude Paul <lyude@redhat.com>
+Subject: [PATCH 5.1 74/96] drm/amdgpu: Dont skip display settings in hwmgr_resume()
 Date:   Mon,  8 Jul 2019 17:13:46 +0200
-Message-Id: <20190708150526.356784871@linuxfoundation.org>
+Message-Id: <20190708150530.449312447@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ea401685a20b5d631957f024bda86e1f6118eb20 ]
+From: Lyude Paul <lyude@redhat.com>
 
-Currently mskid is unsigned and hence comparisons with negative
-error return values are always false. Fix this by making mskid an
-int.
+commit 688f3d1ebedffa310b6591bd1b63fa0770d945fe upstream.
 
-Fixes: f058e46855dc ("net: hns: fix ICMP6 neighbor solicitation messages discard problem")
-Addresses-Coverity: ("Operands don't affect result")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+I'm not entirely sure why this is, but for some reason:
+
+921935dc6404 ("drm/amd/powerplay: enforce display related settings only on needed")
+
+Breaks runtime PM resume on the Radeon PRO WX 3100 (Lexa) in one the
+pre-production laptops I have. The issue manifests as the following
+messages in dmesg:
+
+[drm] UVD and UVD ENC initialized successfully.
+amdgpu 0000:3b:00.0: [drm:amdgpu_ring_test_helper [amdgpu]] *ERROR* ring vce1 test failed (-110)
+[drm:amdgpu_device_ip_resume_phase2 [amdgpu]] *ERROR* resume of IP block <vce_v3_0> failed -110
+[drm:amdgpu_device_resume [amdgpu]] *ERROR* amdgpu_device_ip_resume failed (-110).
+
+And happens after about 6-10 runtime PM suspend/resume cycles (sometimes
+sooner, if you're lucky!). Unfortunately I can't seem to pin down
+precisely which part in psm_adjust_power_state_dynamic that is causing
+the issue, but not skipping the display setting setup seems to fix it.
+Hopefully if there is a better fix for this, this patch will spark
+discussion around it.
+
+Fixes: 921935dc6404 ("drm/amd/powerplay: enforce display related settings only on needed")
+Cc: Evan Quan <evan.quan@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Huang Rui <ray.huang@amd.com>
+Cc: Rex Zhu <Rex.Zhu@amd.com>
+Cc: Likun Gao <Likun.Gao@amd.com>
+Cc: <stable@vger.kernel.org> # v5.1+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 2 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index f5ff07cb2b72..f2b0b587a1be 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -2777,7 +2777,7 @@ static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
- 	struct hns_mac_cb *mac_cb;
- 	u8 addr[ETH_ALEN] = {0};
- 	u8 port_num;
--	u16 mskid;
-+	int mskid;
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -325,7 +325,7 @@ int hwmgr_resume(struct pp_hwmgr *hwmgr)
+ 	if (ret)
+ 		return ret;
  
- 	/* promisc use vague table match with vlanid = 0 & macaddr = 0 */
- 	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
--- 
-2.20.1
-
+-	ret = psm_adjust_power_state_dynamic(hwmgr, true, NULL);
++	ret = psm_adjust_power_state_dynamic(hwmgr, false, NULL);
+ 
+ 	return ret;
+ }
 
 
