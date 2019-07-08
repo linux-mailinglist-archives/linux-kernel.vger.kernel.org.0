@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF2562218
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F9EF62382
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:36:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730853AbfGHPWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48610 "EHLO mail.kernel.org"
+        id S2390730AbfGHPfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:35:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387899AbfGHPWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:16 -0400
+        id S2390867AbfGHPfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:35:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E30A721707;
-        Mon,  8 Jul 2019 15:22:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DD6020665;
+        Mon,  8 Jul 2019 15:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599335;
-        bh=gl/oNOjwK39gihV+wxOnVsA+ocDBYadNV3JNY+DxmXk=;
+        s=default; t=1562600101;
+        bh=8atBNu46beg+VWS2TbE2mQKXdNdpnS6fAWsFMrBMSoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y7V8yrOhGbOmVhQdeNAewaLX6hRemECnmRqC7Fg054pXeQbVnG3qtKxNl7IKvgQ+X
-         JoXQjgRlO9dsyy6zyGHQ/p88Fh71jWrpMk+ynRgCFTySGIJzzzbeoItLYc4rgkDsU/
-         4XINRiDmKsLw/7hvsXVnbAuwAwogMRLTxeoM9RqI=
+        b=o0YPyVK6UICLAkEPQqynmpYWG5ynJh4HjmXBLqWqqDPqd1uRNva0LHAnzFG8zHDd+
+         H2FjvgzPTN8OB2jMznXPE4pwWtE8jfG9Wi0ZIhj+Q4fM9SJyjztbsAdz8CPI2+lF6X
+         dF+bK8HCX+WTfDy1uVm8FnTRwL19iKUWpOFo7c4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 081/102] ARC: handle gcc generated __builtin_trap for older compiler
+        stable@vger.kernel.org, "kernelci.org bot" <bot@kernelci.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 42/96] ASoC: core: Fix deadlock in snd_soc_instantiate_card()
 Date:   Mon,  8 Jul 2019 17:13:14 +0200
-Message-Id: <20190708150530.661283796@linuxfoundation.org>
+Message-Id: <20190708150528.822507752@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta <vgupta@synopsys.com>
+[ Upstream commit 495f926c68ddb905a7a0192963096138c6a934e1 ]
 
-commit af1be2e21203867cb958aaceed5366e2e24b88e8 upstream.
+Move the client_mutex lock to snd_soc_unbind_card() before
+removing link components. This prevents the deadlock
+in the error path in snd_soc_instantiate_card().
 
-ARC gcc prior to GNU 2018.03 release didn't have a target specific
-__builtin_trap() implementation, generating default abort() call.
-
-Implement the abort() call - emulating what newer gcc does for the same,
-as suggested by Arnd.
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 34ac3c3eb8 (ASoC: core: lock client_mutex while removing
+link components)
+Reported-by: kernelci.org bot <bot@kernelci.org>
+Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/kernel/traps.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ sound/soc/soc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arc/kernel/traps.c
-+++ b/arch/arc/kernel/traps.c
-@@ -155,3 +155,11 @@ void do_insterror_or_kprobe(unsigned lon
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 9df3bdeb5c47..c010cc864cf3 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1008,14 +1008,12 @@ static void soc_remove_link_components(struct snd_soc_card *card,
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
  
- 	insterror_is_error(address, regs);
+-	mutex_lock(&client_mutex);
+ 	for_each_rtdcom(rtd, rtdcom) {
+ 		component = rtdcom->component;
+ 
+ 		if (component->driver->remove_order == order)
+ 			soc_remove_component(component);
+ 	}
+-	mutex_unlock(&client_mutex);
  }
-+
-+/*
-+ * abort() call generated by older gcc for __builtin_trap()
-+ */
-+void abort(void)
-+{
-+	__asm__ __volatile__("trap_s  5\n");
-+}
+ 
+ static void soc_remove_dai_links(struct snd_soc_card *card)
+@@ -2836,12 +2834,14 @@ static void snd_soc_unbind_card(struct snd_soc_card *card, bool unregister)
+ 		snd_soc_dapm_shutdown(card);
+ 		snd_soc_flush_all_delayed_work(card);
+ 
++		mutex_lock(&client_mutex);
+ 		/* remove all components used by DAI links on this card */
+ 		for_each_comp_order(order) {
+ 			for_each_card_rtds(card, rtd) {
+ 				soc_remove_link_components(card, rtd, order);
+ 			}
+ 		}
++		mutex_unlock(&client_mutex);
+ 
+ 		soc_cleanup_card_resources(card);
+ 		if (!unregister)
+-- 
+2.20.1
+
 
 
