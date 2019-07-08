@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C2062BA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20BA862BAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 00:36:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfGHWet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 18:34:49 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18700 "EHLO
+        id S1728225AbfGHWgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 18:36:09 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29229 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727460AbfGHWeo (ORCPT
+        with ESMTP id S1727148AbfGHWem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 18:34:44 -0400
-X-UUID: 335b721a9cd24d2893cdc49dfec50733-20190709
-X-UUID: 335b721a9cd24d2893cdc49dfec50733-20190709
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        Mon, 8 Jul 2019 18:34:42 -0400
+X-UUID: cbce96f35f5b498fb38dcf6ccba089ab-20190709
+X-UUID: cbce96f35f5b498fb38dcf6ccba089ab-20190709
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1836778172; Tue, 09 Jul 2019 06:34:37 +0800
+        with ESMTP id 1980034319; Tue, 09 Jul 2019 06:34:37 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 9 Jul 2019 06:34:35 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 9 Jul 2019 06:34:36 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Tue, 9 Jul 2019 06:34:35 +0800
@@ -35,15 +35,14 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v4, 17/33] drm/mediatek: add component OVL_2L1
-Date:   Tue, 9 Jul 2019 06:33:57 +0800
-Message-ID: <1562625253-29254-18-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v4, 18/33] drm/mediatek: add component DITHER
+Date:   Tue, 9 Jul 2019 06:33:58 +0800
+Message-ID: <1562625253-29254-19-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 3D70BDC702B84D336EDDE4EFD7E5C33C85E6BFD3F61704312E1C2EB6E82711922000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,39 +51,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add component OVL_2L1
+This patch add component DITHER
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 32 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  2 ++
+ 2 files changed, 34 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index bcbf673..1aa4224 100644
+index 1aa4224..bc92a1b 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -268,6 +268,7 @@ struct mtk_ddp_comp_match {
- 	[DDP_COMPONENT_OVL0]	= { MTK_DISP_OVL,	0, NULL },
- 	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
- 	[DDP_COMPONENT_OVL_2L0]	= { MTK_DISP_OVL_2L,	0, NULL },
-+	[DDP_COMPONENT_OVL_2L1]	= { MTK_DISP_OVL_2L,	1, NULL },
- 	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
- 	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
- 	[DDP_COMPONENT_PWM2]	= { MTK_DISP_PWM,	2, NULL },
+@@ -47,6 +47,12 @@
+ #define CCORR_RELAY_MODE			BIT(0)
+ #define DISP_CCORR_SIZE				0x0030
+ 
++#define DISP_DITHER_EN				0x0000
++#define DITHER_EN				BIT(0)
++#define DISP_DITHER_CFG				0x0020
++#define DITHER_RELAY_MODE			BIT(0)
++#define DISP_DITHER_SIZE			0x0030
++
+ #define DISP_GAMMA_EN				0x0000
+ #define DISP_GAMMA_CFG				0x0020
+ #define DISP_GAMMA_SIZE				0x0030
+@@ -155,6 +161,24 @@ static void mtk_ccorr_stop(struct mtk_ddp_comp *comp)
+ 	writel_relaxed(0x0, comp->regs + DISP_CCORR_EN);
+ }
+ 
++static void mtk_dither_config(struct mtk_ddp_comp *comp, unsigned int w,
++			      unsigned int h, unsigned int vrefresh,
++			      unsigned int bpc)
++{
++	writel(h << 16 | w, comp->regs + DISP_DITHER_SIZE);
++	writel(DITHER_RELAY_MODE, comp->regs + DISP_DITHER_CFG);
++}
++
++static void mtk_dither_start(struct mtk_ddp_comp *comp)
++{
++	writel(DITHER_EN, comp->regs + DISP_DITHER_EN);
++}
++
++static void mtk_dither_stop(struct mtk_ddp_comp *comp)
++{
++	writel_relaxed(0x0, comp->regs + DISP_DITHER_EN);
++}
++
+ static void mtk_gamma_config(struct mtk_ddp_comp *comp, unsigned int w,
+ 			     unsigned int h, unsigned int vrefresh,
+ 			     unsigned int bpc)
+@@ -209,6 +233,12 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
+ 	.stop = mtk_ccorr_stop,
+ };
+ 
++static const struct mtk_ddp_comp_funcs ddp_dither = {
++	.config = mtk_dither_config,
++	.start = mtk_dither_start,
++	.stop = mtk_dither_stop,
++};
++
+ static const struct mtk_ddp_comp_funcs ddp_gamma = {
+ 	.gamma_set = mtk_gamma_set,
+ 	.config = mtk_gamma_config,
+@@ -234,6 +264,7 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
+ 	[MTK_DISP_CCORR] = "ccorr",
+ 	[MTK_DISP_AAL] = "aal",
+ 	[MTK_DISP_GAMMA] = "gamma",
++	[MTK_DISP_DITHER] = "dither",
+ 	[MTK_DISP_UFOE] = "ufoe",
+ 	[MTK_DSI] = "dsi",
+ 	[MTK_DPI] = "dpi",
+@@ -256,6 +287,7 @@ struct mtk_ddp_comp_match {
+ 	[DDP_COMPONENT_CCORR]	= { MTK_DISP_CCORR,	0, &ddp_ccorr },
+ 	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
+ 	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
++	[DDP_COMPONENT_DITHER]	= { MTK_DISP_DITHER,	0, &ddp_dither },
+ 	[DDP_COMPONENT_DPI0]	= { MTK_DPI,		0, NULL },
+ 	[DDP_COMPONENT_DPI1]	= { MTK_DPI,		1, NULL },
+ 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index 8f586d0..8ac9f62 100644
+index 8ac9f62..a0ea8c9 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -60,6 +60,7 @@ enum mtk_ddp_comp_id {
- 	DDP_COMPONENT_OD1,
- 	DDP_COMPONENT_OVL0,
- 	DDP_COMPONENT_OVL_2L0,
-+	DDP_COMPONENT_OVL_2L1,
- 	DDP_COMPONENT_OVL1,
- 	DDP_COMPONENT_PWM0,
- 	DDP_COMPONENT_PWM1,
+@@ -30,6 +30,7 @@ enum mtk_ddp_comp_type {
+ 	MTK_DISP_WDMA,
+ 	MTK_DISP_COLOR,
+ 	MTK_DISP_CCORR,
++	MTK_DISP_DITHER,
+ 	MTK_DISP_AAL,
+ 	MTK_DISP_GAMMA,
+ 	MTK_DISP_UFOE,
+@@ -49,6 +50,7 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_CCORR,
+ 	DDP_COMPONENT_COLOR0,
+ 	DDP_COMPONENT_COLOR1,
++	DDP_COMPONENT_DITHER,
+ 	DDP_COMPONENT_DPI0,
+ 	DDP_COMPONENT_DPI1,
+ 	DDP_COMPONENT_DSI0,
 -- 
 1.8.1.1.dirty
 
