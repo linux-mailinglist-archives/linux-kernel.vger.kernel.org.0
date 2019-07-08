@@ -2,63 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF3361953
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 04:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2280B618D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 03:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfGHChy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 7 Jul 2019 22:37:54 -0400
-Received: from mx1.casamilitar.go.gov.br ([177.69.118.33]:54277 "EHLO
-        webmail.palacio.go.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfGHChx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 22:37:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTP id E225731692DC;
-        Sun,  7 Jul 2019 22:20:53 -0300 (BRT)
-Received: from webmail.palacio.go.gov.br ([127.0.0.1])
-        by localhost (webmail.palacio.go.gov.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id g4vYYurD7FPu; Sun,  7 Jul 2019 22:20:53 -0300 (BRT)
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTP id 1247931692CD;
-        Sun,  7 Jul 2019 22:20:53 -0300 (BRT)
-X-Virus-Scanned: amavisd-new at palacio.go.gov.br
-Received: from webmail.palacio.go.gov.br ([127.0.0.1])
-        by localhost (webmail.palacio.go.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Hzym2eT5qXeN; Sun,  7 Jul 2019 22:20:52 -0300 (BRT)
-Received: from [100.79.152.111] (unknown [106.202.24.172])
-        by webmail.palacio.go.gov.br (Postfix) with ESMTPSA id 83C3C31692AA;
-        Sun,  7 Jul 2019 22:20:30 -0300 (BRT)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728353AbfGHBWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 21:22:19 -0400
+Received: from mail-eopbgr40087.outbound.protection.outlook.com ([40.107.4.87]:31556
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727369AbfGHBWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 21:22:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q2iz7yaacijSKO9oEt6QqOfXTsgWcAScl2A2PfWskYI=;
+ b=VWxIqfCoYS2UlIAIyhKGnF89FU0oQN2t41sfYyAl9OG16LfOIqi06Y/SJGmaB1KH3domikHgmSfJqjzSuIT398iz+s7GTKsRYtlCvZyRHgEnoGokMqUdVO6bl68imDbF14F/P8qhOndn4WTrcGEmBTube1+HLprh4PGSgM3E+/k=
+Received: from VE1PR04MB6638.eurprd04.prod.outlook.com (20.179.235.81) by
+ VE1SPR01MB0001.eurprd04.prod.outlook.com (20.179.193.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Mon, 8 Jul 2019 01:22:15 +0000
+Received: from VE1PR04MB6638.eurprd04.prod.outlook.com
+ ([fe80::a4a8:729f:e664:fa8]) by VE1PR04MB6638.eurprd04.prod.outlook.com
+ ([fe80::a4a8:729f:e664:fa8%2]) with mapi id 15.20.2052.020; Mon, 8 Jul 2019
+ 01:22:15 +0000
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Vinod Koul <vkoul@kernel.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        John Garry <john.garry@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Angelo Dureghello <angelo@sysam.it>
+Subject: RE: linux-next: build failure after merge of the slave-dma tree
+Thread-Topic: linux-next: build failure after merge of the slave-dma tree
+Thread-Index: AQHVMjqAoCw3ift/eE+RdAWMvGtRgaa75B+Q
+Date:   Mon, 8 Jul 2019 01:22:15 +0000
+Message-ID: <VE1PR04MB6638080C43EC68EFF9F7B38A89F60@VE1PR04MB6638.eurprd04.prod.outlook.com>
+References: <20190704173108.0646eef8@canb.auug.org.au>
+In-Reply-To: <20190704173108.0646eef8@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8b8f2e65-082b-43a6-81be-08d70342b625
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1SPR01MB0001;
+x-ms-traffictypediagnostic: VE1SPR01MB0001:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VE1SPR01MB0001C856CA53D750DD6A59C789F60@VE1SPR01MB0001.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:669;
+x-forefront-prvs: 00922518D8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(346002)(39860400002)(136003)(396003)(189003)(199004)(53754006)(305945005)(7736002)(25786009)(68736007)(11346002)(6116002)(76176011)(74316002)(52536014)(86362001)(76116006)(71190400001)(446003)(3846002)(26005)(81166006)(81156014)(186003)(316002)(486006)(476003)(8676002)(71200400001)(7696005)(8936002)(66066001)(33656002)(64756008)(66556008)(66946007)(478600001)(73956011)(4744005)(256004)(6436002)(102836004)(66446008)(66476007)(14454004)(110136005)(966005)(9686003)(6246003)(53936002)(2906002)(4326008)(53546011)(6306002)(5660300002)(229853002)(99286004)(55016002)(54906003)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1SPR01MB0001;H:VE1PR04MB6638.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: G/zx6QmUoHe9RxgeMcjK0WOZPJGrtI+A6dVT5G2lWMI7+1I5uNDtYmgiSG4eEMRCo0/bU26JH8W1OvqNDsUP//7Cf38hRKZ1MsArRDxUL0/RbO6807nweJBi2ysMtir8UV90BsEinasE4KKqER7iG0EGzGo1ntwR7T5rHzCvaahv2Bi+d5gPCAxkEbYMah+WnblkQJNHazZmltoFd1gbswg88LALZTft6qCE9UDnaqNSq2AGo/dBWVDifHqsfTwUfEpE+AAT61YF5mESeIUaUT2Dc2coRWih0bz5pmCFGOR5j90uC7essRh8fFfMFptSdW2nO30VAc3X3HSXhny3MfzenuzV6ZNwVr+c+Z+zGWFRE8Ot6oyGMQ6U2qLr0NukuGknGQ6GWKqtOVqUpvw2rz2IwC2Ht/4lS/y2i/M/NAM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?b?QVRFTsOHw4NP?=
-To:     Recipients <Faleconosco@casacivil.go.gov.br>
-From:   Administrador de Sistemas <Faleconosco@casacivil.go.gov.br>
-Date:   Mon, 08 Jul 2019 06:50:08 +0530
-Reply-To: mailsss@mail2world.com
-Message-Id: <20190708012031.83C3C31692AA@webmail.palacio.go.gov.br>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b8f2e65-082b-43a6-81be-08d70342b625
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 01:22:15.2132
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yibin.gong@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1SPR01MB0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATENÇÃO;
+Hi Stephen,
+	That's caused by 'of_irq_count' NOT export to global symbol, and I'm curio=
+us why it has been
+here for so long since Zhangfei found it in 2015. https://patchwork.kernel.=
+org/patch/7404681/
+Hi Rob,
+	Is there something I miss so that Zhangfei's patch not accepted finally?
 
-Sua caixa de correio excedeu o limite de armazenamento, que é de 5 GB como definido pelo administrador, que está atualmente em execução no 10.9GB, você pode não ser capaz de enviar ou receber novas mensagens até que você re-validar a sua caixa de correio. Para revalidar sua caixa de correio, envie os seguintes dados abaixo:
-
-nome: Vitor Hugo Borba Manzke
-Nome de usuário: 
-senha:
-Confirme a Senha :
-Endereço de e-mail: 
-Telefone: 
-
-Se você não conseguir revalidar sua caixa de correio, sua caixa postal vai ser desativado!
-
-Lamentamos o inconveniente.
-Código de verificação: pt:p9uyba98139>2016
-Correio Técnico Suporte ©2019
-
-obrigado
-Administrador de Sistemas 
+On 04-07-19, 15:31 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>=20
+> After merging the slave-dma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> ERROR: "of_irq_count" [drivers/dma/fsl-edma.ko] undefined!
+>=20
+> Caused by commit
+>=20
+>   7144afd025b2 ("dmaengine: fsl-edma: add i.mx7ulp edma2 version
+> support")
+>=20
+> I have reverted that commit for today.
+>=20
+> --
+> Cheers,
+> Stephen Rothwell
