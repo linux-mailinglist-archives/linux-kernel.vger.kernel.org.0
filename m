@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F07862528
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C979D62249
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732859AbfGHPRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:17:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40974 "EHLO mail.kernel.org"
+        id S1731374AbfGHPYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732842AbfGHPRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:33 -0400
+        id S2388328AbfGHPYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:24:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DFD0216C4;
-        Mon,  8 Jul 2019 15:17:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41CA0214C6;
+        Mon,  8 Jul 2019 15:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599053;
-        bh=yeybfoY3aX4WhdcmzO9PBFQXE+dk9vasnGbliLQV7hY=;
+        s=default; t=1562599454;
+        bh=KawLcqAK8Jtlnzz5LbCaBUmEuHDVz6zoCaHEviFevVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LFjROdHlHZ3Oglfo6nPQHB4sFvcoLSc2Q9vOFIa+KSDg/B/X0FuE8z/KNaF5iUDCC
-         EFOmLfsiO+GiJLyllFJpUCuLIO9UbVhAqDUeyosf4UualzhittlcF7DK1LVbSHd3Pg
-         sUBcnIKfuB6E3pRRk+Lh4TYY821JDUcQWUnrZSWk=
+        b=qs+gVPY2oD4Pjd9CmZFoMm3fFcHVIpLBA94U0zsck0SHFvgjeB38s76HbvJdHX7Nh
+         uq7AY4WPpbUyimh3Qz/Q2OtShnszqI6L4a/O/i0W3k+fdZuaep330uHaQphW5b6/NS
+         9hKW9t1371MkpxbnGD+08AGjvjPaGUvDaV/SVcaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 62/73] ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME
-Date:   Mon,  8 Jul 2019 17:13:12 +0200
-Message-Id: <20190708150524.578927600@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Ganesan Ramalingam <ganesanr@broadcom.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        John Crispin <john@phrozen.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 21/56] MIPS: netlogic: xlr: Remove erroneous check in nlm_fmn_send()
+Date:   Mon,  8 Jul 2019 17:13:13 +0200
+Message-Id: <20190708150520.811521205@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+[ Upstream commit 02eec6c9fc0cb13169cc97a6139771768791f92b ]
 
-commit 6994eefb0053799d2e07cd140df6c2ea106c41ee upstream.
+In nlm_fmn_send() we have a loop which attempts to send a message
+multiple times in order to handle the transient failure condition of a
+lack of available credit. When examining the status register to detect
+the failure we check for a condition that can never be true, which falls
+foul of gcc 8's -Wtautological-compare:
 
-Fix two issues:
+  In file included from arch/mips/netlogic/common/irq.c:65:
+  ./arch/mips/include/asm/netlogic/xlr/fmn.h: In function 'nlm_fmn_send':
+  ./arch/mips/include/asm/netlogic/xlr/fmn.h:304:22: error: bitwise
+    comparison always evaluates to false [-Werror=tautological-compare]
+     if ((status & 0x2) == 1)
+                        ^~
 
-When called for PTRACE_TRACEME, ptrace_link() would obtain an RCU
-reference to the parent's objective credentials, then give that pointer
-to get_cred().  However, the object lifetime rules for things like
-struct cred do not permit unconditionally turning an RCU reference into
-a stable reference.
+If the path taken if this condition were true all we do is print a
+message to the kernel console. Since failures seem somewhat expected
+here (making the console message questionable anyway) and the condition
+has clearly never evaluated true we simply remove it, rather than
+attempting to fix it to check status correctly.
 
-PTRACE_TRACEME records the parent's credentials as if the parent was
-acting as the subject, but that's not the case.  If a malicious
-unprivileged child uses PTRACE_TRACEME and the parent is privileged, and
-at a later point, the parent process becomes attacker-controlled
-(because it drops privileges and calls execve()), the attacker ends up
-with control over two processes with a privileged ptrace relationship,
-which can be abused to ptrace a suid binary and obtain root privileges.
-
-Fix both of these by always recording the credentials of the process
-that is requesting the creation of the ptrace relationship:
-current_cred() can't change under us, and current is the proper subject
-for access control.
-
-This change is theoretically userspace-visible, but I am not aware of
-any code that it will actually break.
-
-Fixes: 64b875f7ac8a ("ptrace: Capture the ptracer's creds not PT_PTRACE_CAP")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20174/
+Cc: Ganesan Ramalingam <ganesanr@broadcom.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Jayachandran C <jnair@caviumnetworks.com>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/ptrace.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/mips/include/asm/netlogic/xlr/fmn.h | 2 --
+ 1 file changed, 2 deletions(-)
 
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -45,9 +45,7 @@ void __ptrace_link(struct task_struct *c
-  */
- static void ptrace_link(struct task_struct *child, struct task_struct *new_parent)
- {
--	rcu_read_lock();
--	__ptrace_link(child, new_parent, __task_cred(new_parent));
--	rcu_read_unlock();
-+	__ptrace_link(child, new_parent, current_cred());
- }
- 
- /**
+diff --git a/arch/mips/include/asm/netlogic/xlr/fmn.h b/arch/mips/include/asm/netlogic/xlr/fmn.h
+index 5604db3d1836..d79c68fa78d9 100644
+--- a/arch/mips/include/asm/netlogic/xlr/fmn.h
++++ b/arch/mips/include/asm/netlogic/xlr/fmn.h
+@@ -301,8 +301,6 @@ static inline int nlm_fmn_send(unsigned int size, unsigned int code,
+ 	for (i = 0; i < 8; i++) {
+ 		nlm_msgsnd(dest);
+ 		status = nlm_read_c2_status0();
+-		if ((status & 0x2) == 1)
+-			pr_info("Send pending fail!\n");
+ 		if ((status & 0x4) == 0)
+ 			return 0;
+ 	}
+-- 
+2.20.1
+
 
 
