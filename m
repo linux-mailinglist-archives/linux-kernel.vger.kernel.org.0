@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF750621F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7B16229F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387462AbfGHPVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:21:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46542 "EHLO mail.kernel.org"
+        id S2389014AbfGHP1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:27:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387709AbfGHPVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:21:06 -0400
+        id S2389002AbfGHP1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:27:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28B7B21734;
-        Mon,  8 Jul 2019 15:21:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58BEA204EC;
+        Mon,  8 Jul 2019 15:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599265;
-        bh=uJ9cKZvs83i2eyJqGCstzudXWkkAG38PjVk7XRlvJAQ=;
+        s=default; t=1562599633;
+        bh=ufD0E8SWNu+JsFTjySIfU4IWaPejDtquRn2gQbcJcKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hb6YpDBpAQ481LCq18gdJBvo6K4aOcrCInrwF2IXYCFWBTQi8HzacI15974MyqahR
-         JSJzE5L7a7rFWiGBthX4FEeKgVpoQJADjoAFyamqLichTyYZxHBQtvfF0vMs12hdiy
-         wj1kEz2GWumrECi2HZ5uNVXb+jgLFeOLku547EwI=
+        b=swaog2eMV10DfuXSXN5sqyYVakjjnt8DNiQK3pbFDkj+XyHRCwaknzn00XGhPemID
+         StIjYUMgwmG+xn0AJTCFQKPiM11+Jhc34Hff0Mksgcck9nU6UJvUkQMTwRbcwSa32c
+         ZLWcRJkJXoCTgTZsF7J9mFOnHywjf1CDeCJSf2TI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 059/102] bonding: Always enable vlan tx offload
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 25/90] SoC: rt274: Fix internal jack assignment in set_jack callback
 Date:   Mon,  8 Jul 2019 17:12:52 +0200
-Message-Id: <20190708150529.518123433@linuxfoundation.org>
+Message-Id: <20190708150523.885423970@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+[ Upstream commit 04268bf2757a125616b6c2140e6250f43b7b737a ]
 
-[ Upstream commit 30d8177e8ac776d89d387fad547af6a0f599210e ]
+When we call snd_soc_component_set_jack(component, NULL, NULL) we should
+set rt274->jack to passed jack, so when interrupt is triggered it calls
+snd_soc_jack_report(rt274->jack, ...) with proper value.
 
-We build vlan on top of bonding interface, which vlan offload
-is off, bond mode is 802.3ad (LACP) and xmit_hash_policy is
-BOND_XMIT_POLICY_ENCAP34.
+This fixes problem in machine where in register, we call
+snd_soc_register(component, &headset, NULL), which just calls
+rt274_mic_detect via callback.
+Now when machine driver is removed "headset" will be gone, so we
+need to tell codec driver that it's gone with:
+snd_soc_register(component, NULL, NULL), but we also need to be able
+to handle NULL jack argument here gracefully.
+If we don't set it to NULL, next time the rt274_irq runs it will call
+snd_soc_jack_report with first argument being invalid pointer and there
+will be Oops.
 
-Because vlan tx offload is off, vlan tci is cleared and skb push
-the vlan header in validate_xmit_vlan() while sending from vlan
-devices. Then in bond_xmit_hash, __skb_flow_dissect() fails to
-get information from protocol headers encapsulated within vlan,
-because 'nhoff' is points to IP header, so bond hashing is based
-on layer 2 info, which fails to distribute packets across slaves.
-
-This patch always enable bonding's vlan tx offload, pass the vlan
-packets to the slave devices with vlan tci, let them to handle
-vlan implementation.
-
-Fixes: 278339a42a1b ("bonding: propogate vlan_features to bonding master")
-Suggested-by: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt274.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -4241,12 +4241,12 @@ void bond_setup(struct net_device *bond_
- 	bond_dev->features |= NETIF_F_NETNS_LOCAL;
+diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
+index 18a931c25ca5..f09f2d87ac60 100644
+--- a/sound/soc/codecs/rt274.c
++++ b/sound/soc/codecs/rt274.c
+@@ -398,6 +398,8 @@ static int rt274_mic_detect(struct snd_soc_component *component,
+ {
+ 	struct rt274_priv *rt274 = snd_soc_component_get_drvdata(component);
  
- 	bond_dev->hw_features = BOND_VLAN_FEATURES |
--				NETIF_F_HW_VLAN_CTAG_TX |
- 				NETIF_F_HW_VLAN_CTAG_RX |
- 				NETIF_F_HW_VLAN_CTAG_FILTER;
++	rt274->jack = jack;
++
+ 	if (jack == NULL) {
+ 		/* Disable jack detection */
+ 		regmap_update_bits(rt274->regmap, RT274_EAPD_GPIO_IRQ_CTRL,
+@@ -405,7 +407,6 @@ static int rt274_mic_detect(struct snd_soc_component *component,
  
- 	bond_dev->hw_features |= NETIF_F_GSO_ENCAP_ALL;
- 	bond_dev->features |= bond_dev->hw_features;
-+	bond_dev->features |= NETIF_F_HW_VLAN_CTAG_TX;
- }
+ 		return 0;
+ 	}
+-	rt274->jack = jack;
  
- /* Destroy a bonding device.
+ 	regmap_update_bits(rt274->regmap, RT274_EAPD_GPIO_IRQ_CTRL,
+ 				RT274_IRQ_EN, RT274_IRQ_EN);
+-- 
+2.20.1
+
 
 
