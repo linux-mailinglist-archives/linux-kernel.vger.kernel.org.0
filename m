@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E57662366
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC58622BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390893AbfGHPfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
+        id S2389324AbfGHP2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390729AbfGHPex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:53 -0400
+        id S1731889AbfGHP2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6729E2173E;
-        Mon,  8 Jul 2019 15:34:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 288CE21738;
+        Mon,  8 Jul 2019 15:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600092;
-        bh=ZqQAp2f71kUMzWjXrmUXyEvoOcVtQiz/zU3rz+gLjXE=;
+        s=default; t=1562599715;
+        bh=+LiCpwHsjJSrbJyVIAOZQxJz3K+eHJCNVBkQ9T3ckGk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hd0gRF56gSHJBOb19XGU98/Z7WN7dL4BAGkpKYPv/oxuEn+OBTxxbAHSkHWvzLmxz
-         Jo9tL+w+zkKmnykKuMK1Lvpiirmn5L6iyBaFtkY/wLCTZQHK6ptzMG+JxH5k3XXAgG
-         Gi3m1ECbCZQqKpNM8HBNIItr+o2l7VvCdowUAGks=
+        b=jhLYGoNthqwYdqyQtKKyE2GLkaPJKSLgj4Jz3rON8qeKHXgVFS1cbFpfrMYcaiDi/
+         ET/HSOM3s8ho2iCZu4PvaEa6FLloiNvOZIC/uI8BOb66Q8n1Oo7XGjSE48MgnSPY+V
+         PQI5FdUo1nyFK8qFOPNu5tTF0qkCBMttASLUCM1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 49/96] arm64: tlbflush: Ensure start/end of address range are aligned to stride
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.19 54/90] arm64: kaslr: keep modules inside module region when KASAN is enabled
 Date:   Mon,  8 Jul 2019 17:13:21 +0200
-Message-Id: <20190708150529.164511039@linuxfoundation.org>
+Message-Id: <20190708150525.232113672@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 01d57485fcdb9f9101a10a18e32d5f8b023cab86 ]
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Since commit 3d65b6bbc01e ("arm64: tlbi: Set MAX_TLBI_OPS to
-PTRS_PER_PTE"), we resort to per-ASID invalidation when attempting to
-perform more than PTRS_PER_PTE invalidation instructions in a single
-call to __flush_tlb_range(). Whilst this is beneficial, the mmu_gather
-code does not ensure that the end address of the range is rounded-up
-to the stride when freeing intermediate page tables in pXX_free_tlb(),
-which defeats our range checking.
+commit 6f496a555d93db7a11d4860b9220d904822f586a upstream.
 
-Align the bounds passed into __flush_tlb_range().
+When KASLR and KASAN are both enabled, we keep the modules where they
+are, and randomize the placement of the kernel so it is within 2 GB
+of the module region. The reason for this is that putting modules in
+the vmalloc region (like we normally do when KASLR is enabled) is not
+possible in this case, given that the entire vmalloc region is already
+backed by KASAN zero shadow pages, and so allocating dedicated KASAN
+shadow space as required by loaded modules is not possible.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Reported-by: Hanjun Guo <guohanjun@huawei.com>
-Tested-by: Hanjun Guo <guohanjun@huawei.com>
-Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The default module allocation window is set to [_etext - 128MB, _etext]
+in kaslr.c, which is appropriate for KASLR kernels booted without a
+seed or with 'nokaslr' on the command line. However, as it turns out,
+it is not quite correct for the KASAN case, since it still intersects
+the vmalloc region at the top, where attempts to allocate shadow pages
+will collide with the KASAN zero shadow pages, causing a WARN() and all
+kinds of other trouble. So cap the top end to MODULES_END explicitly
+when running with KASAN.
+
+Cc: <stable@vger.kernel.org> # 4.9+
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Tested-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/include/asm/tlbflush.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/module.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 3a1870228946..dff8f9ea5754 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -195,6 +195,9 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 	unsigned long asid = ASID(vma->vm_mm);
- 	unsigned long addr;
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -32,6 +32,7 @@
  
-+	start = round_down(start, stride);
-+	end = round_up(end, stride);
+ void *module_alloc(unsigned long size)
+ {
++	u64 module_alloc_end = module_alloc_base + MODULES_VSIZE;
+ 	gfp_t gfp_mask = GFP_KERNEL;
+ 	void *p;
+ 
+@@ -39,9 +40,12 @@ void *module_alloc(unsigned long size)
+ 	if (IS_ENABLED(CONFIG_ARM64_MODULE_PLTS))
+ 		gfp_mask |= __GFP_NOWARN;
+ 
++	if (IS_ENABLED(CONFIG_KASAN))
++		/* don't exceed the static module region - see below */
++		module_alloc_end = MODULES_END;
 +
- 	if ((end - start) >= (MAX_TLBI_OPS * stride)) {
- 		flush_tlb_mm(vma->vm_mm);
- 		return;
--- 
-2.20.1
-
+ 	p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
+-				module_alloc_base + MODULES_VSIZE,
+-				gfp_mask, PAGE_KERNEL_EXEC, 0,
++				module_alloc_end, gfp_mask, PAGE_KERNEL_EXEC, 0,
+ 				NUMA_NO_NODE, __builtin_return_address(0));
+ 
+ 	if (!p && IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
 
 
