@@ -2,95 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1588061F33
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8039F61F39
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 15:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbfGHNCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 09:02:40 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:49530 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbfGHNCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 09:02:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id B2ADC20423F;
-        Mon,  8 Jul 2019 15:02:37 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7Hwv6m74jWwG; Mon,  8 Jul 2019 15:02:28 +0200 (CEST)
-Received: from [192.168.48.23] (host-23-251-188-50.dyn.295.ca [23.251.188.50])
-        by smtp.infotech.no (Postfix) with ESMTPA id C280620416A;
-        Mon,  8 Jul 2019 15:02:26 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [PATCH v1] scsi: Don't select SCSI_PROC_FS by default
-To:     Hannes Reinecke <hare@suse.de>,
-        "Elliott, Robert (Servers)" <elliott@hpe.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-Cc:     SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
- <621306ee-7ab6-9cd2-e934-94b3d6d731fc@acm.org>
- <fb2d2e74-6725-4bf2-cf6c-63c0a2a10f4f@interlog.com>
- <da579578-349e-1320-0867-14fde659733e@acm.org>
- <AT5PR8401MB11695CC7286B2D2F98FB9EADABEA0@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <1ad3e7ba-008d-31ad-89a0-b118b36e14e2@suse.de>
- <e2469890-e0ae-fb79-4aa9-125cdaeedb2b@interlog.com>
- <284c3ecc-b3a8-eeec-92d5-5eda1f20f691@suse.de>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <5155c7bd-f339-33bb-1a84-18ea75963db2@interlog.com>
-Date:   Mon, 8 Jul 2019 09:02:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1731203AbfGHNEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 09:04:02 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34850 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728800AbfGHNEC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 09:04:02 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w24so8248159plp.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 06:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xEfBrs0GhPems//ZFf52Fo4j6AMBzVKhWRp8eHZnqyk=;
+        b=Iru3nkI7DdRqXxzZ+0XkeP7Rnohck3RuZS81SLlMzIsYYgLTBoTzwIvINF7hVsPs2N
+         ZwzM7OEIf7qiFCssBC7h5Y92COfsEJU/Y8hza+5nefr1z4cysRWWIJqs37R6Chv25xK5
+         y45rh8Yr+SnYzmyYUJfPnrszcA3W2iX8piLwk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xEfBrs0GhPems//ZFf52Fo4j6AMBzVKhWRp8eHZnqyk=;
+        b=lHtDqolakUbY3JaZuriaRDM0qv8m61G3BAO7cSzbgeniIhys1Rz3rQtMZZ0wkELrVf
+         IVIWYQgOMK8yXBy0Dah0bGeW9+5QLQlFK1DmuNngsLQegEwOWZt6fCHXVMUfIR7twWPb
+         OwzgIf8Ku/CwYObimCzZul6ouch/DV7uOJ+qjjQVuIlzinxnOSGlMjLD3tjLM7fD2O4z
+         pXeosME0ryBEuS7kYTtANI/KN9QLnFSNc38BgJHdT/IIikYRovHlvCupRtzfC1EuNlgm
+         IfXrhOd7oUnI6OYKUW+UGrw+OJhtVSBpkRlFbYYLeJxIzL1Ap0hr9kZM9bLy9RvUp2s1
+         XW3A==
+X-Gm-Message-State: APjAAAVcdrVdL5OoVR0U11Kuv45kqGzIivjYXa4kUUztCFMyaK0FKQ9f
+        +gCLf0X2h3GGXzsmXPdwPA93QQ==
+X-Google-Smtp-Source: APXvYqzro80AFaLxQlBJtyvkxSAPb2bSZlIgTRpiA9rxnWvI8qiQ8NPMv3tyPIJZ+H3/t4AbomZhxw==
+X-Received: by 2002:a17:902:1125:: with SMTP id d34mr24723603pla.40.1562591041295;
+        Mon, 08 Jul 2019 06:04:01 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id s66sm22941893pgs.39.2019.07.08.06.03.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 06:04:00 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 09:03:59 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Byungchul Park <byungchul.park@lge.com>, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
+Message-ID: <20190708130359.GA42888@google.com>
+References: <1562565609-12482-1-git-send-email-byungchul.park@lge.com>
+ <20190708125013.GG26519@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <284c3ecc-b3a8-eeec-92d5-5eda1f20f691@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708125013.GG26519@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-08 2:01 a.m., Hannes Reinecke wrote:
-> On 7/5/19 7:53 PM, Douglas Gilbert wrote:
->> On 2019-07-05 3:22 a.m., Hannes Reinecke wrote:
-> [ .. ]
->>> As mentioned, rescan-scsi-bus.sh is keeping references to /proc/scsi as
->>> a fall back only, as it's meant to work kernel independent. Per default
->>> it'll be using /sys, and will happily work without /proc/scsi.
->>>
->>> So it's really only /proc/scsi/sg which carries some meaningful
->>> information; maybe we should move/copy it to somewhere else.
->>>
->>> I personally like getting rid of /proc/scsi.
->>
->> /proc/scsi/device_info doesn't seem to be in sysfs.
->>
->> Could the contents of /proc/scsi/sg/* be placed in
->> /sys/class/scsi_generic/* ? Currently that directory only has symlinks
->> to the sg devices.
->>
-> The sg parameters are already available in /sys/module/sg/parameters;
-> so from that perspective I feel we're good.
+Good morning!
 
-# ls /sys/module/sg/parameters/
-allow_dio  def_reserved_size  scatter_elem_sz
+On Mon, Jul 08, 2019 at 05:50:13AM -0700, Paul E. McKenney wrote:
+> On Mon, Jul 08, 2019 at 03:00:09PM +0900, Byungchul Park wrote:
+> > jiffies_till_sched_qs is useless if it's readonly as it is used to set
+> > jiffies_to_sched_qs with its value regardless of first/next fqs jiffies.
+> > And it should be applied immediately on change through sysfs.
 
-# ls /proc/scsi/sg/
-allow_dio  debug  def_reserved_size  device_hdr  devices  device_strs
-red_debug  version
+It is interesting it can be setup at boot time, but not at runtime. I think
+this can be mentioned in the change log that it is not really "read-only",
+because it is something that can be dynamically changed as a kernel boot
+parameter.
 
-So that doesn't work, what are in 'parameters' are passed in at
-module/driver initialization. Back to my original question: Could the
-contents of /proc/scsi/sg/* be placed in /sys/class/scsi_generic/* ?
+> Actually, the intent was to only allow this to be changed at boot time.
+> Of course, if there is now a good reason to adjust it, it needs
+> to be adjustable.  So what situation is making you want to change
+> jiffies_till_sched_qs at runtime?  To what values is it proving useful
+> to adjust it?  What (if any) relationships between this timeout and the
+> various other RCU timeouts need to be maintained?  What changes to
+> rcutorture should be applied in order to test the ability to change
+> this at runtime?
 
-> Problem is /proc/scsi/device_info, for which we currently don't have any
-> other location to store it at.
-> Hmm.
+I am also interested in the context, are you changing it at runtime for
+experimentation? I recently was doing some performance experiments and it is
+quite interesting how reducing this value can shorten grace period times :)
 
-Doug Gilbert
+Joel
 
+
+> 							Thanx, Paul
+> 
+> > The function for setting jiffies_to_sched_qs,
+> > adjust_jiffies_till_sched_qs() will be called only if
+> > the value from sysfs != ULONG_MAX. And the value won't be adjusted
+> > unlike first/next fqs jiffies.
+> > 
+> > While at it, changed the positions of two module_param()s downward.
+> > 
+> > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> > ---
+> >  kernel/rcu/tree.c | 22 ++++++++++++++++++++--
+> >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index a2f8ba2..a28e2fe 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -422,9 +422,7 @@ static int rcu_is_cpu_rrupt_from_idle(void)
+> >   * quiescent-state help from rcu_note_context_switch().
+> >   */
+> >  static ulong jiffies_till_sched_qs = ULONG_MAX;
+> > -module_param(jiffies_till_sched_qs, ulong, 0444);
+> >  static ulong jiffies_to_sched_qs; /* See adjust_jiffies_till_sched_qs(). */
+> > -module_param(jiffies_to_sched_qs, ulong, 0444); /* Display only! */
+> >  
+> >  /*
+> >   * Make sure that we give the grace-period kthread time to detect any
+> > @@ -450,6 +448,18 @@ static void adjust_jiffies_till_sched_qs(void)
+> >  	WRITE_ONCE(jiffies_to_sched_qs, j);
+> >  }
+> >  
+> > +static int param_set_sched_qs_jiffies(const char *val, const struct kernel_param *kp)
+> > +{
+> > +	ulong j;
+> > +	int ret = kstrtoul(val, 0, &j);
+> > +
+> > +	if (!ret && j != ULONG_MAX) {
+> > +		WRITE_ONCE(*(ulong *)kp->arg, j);
+> > +		adjust_jiffies_till_sched_qs();
+> > +	}
+> > +	return ret;
+> > +}
+> > +
+> >  static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
+> >  {
+> >  	ulong j;
+> > @@ -474,6 +484,11 @@ static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param
+> >  	return ret;
+> >  }
+> >  
+> > +static struct kernel_param_ops sched_qs_jiffies_ops = {
+> > +	.set = param_set_sched_qs_jiffies,
+> > +	.get = param_get_ulong,
+> > +};
+> > +
+> >  static struct kernel_param_ops first_fqs_jiffies_ops = {
+> >  	.set = param_set_first_fqs_jiffies,
+> >  	.get = param_get_ulong,
+> > @@ -484,8 +499,11 @@ static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param
+> >  	.get = param_get_ulong,
+> >  };
+> >  
+> > +module_param_cb(jiffies_till_sched_qs, &sched_qs_jiffies_ops, &jiffies_till_sched_qs, 0644);
+> >  module_param_cb(jiffies_till_first_fqs, &first_fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
+> >  module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
+> > +
+> > +module_param(jiffies_to_sched_qs, ulong, 0444); /* Display only! */
+> >  module_param(rcu_kick_kthreads, bool, 0644);
+> >  
+> >  static void force_qs_rnp(int (*f)(struct rcu_data *rdp));
+> > -- 
+> > 1.9.1
+> > 
+> 
