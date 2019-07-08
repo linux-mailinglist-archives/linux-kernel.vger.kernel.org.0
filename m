@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77A79621EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 546ED62171
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387640AbfGHPUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:20:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
+        id S1732523AbfGHPQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387626AbfGHPUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:20:45 -0400
+        id S1732503AbfGHPQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90A7A2175B;
-        Mon,  8 Jul 2019 15:20:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F762214C6;
+        Mon,  8 Jul 2019 15:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599244;
-        bh=xsjJ86Q+T5GaIDll6gOOCctVm7yc0BwsqYC21t7R8X4=;
+        s=default; t=1562598972;
+        bh=eGfgAKV5+ZxqApMTRtauQhErQlQAqpFw3a1/8pnBTKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUv+pfSi/FTQrG24Vrnz3bZy/CLGY43y9Ieiw0CC59UZl9mLds4FxSJujkf0zFj8t
-         ec06qjSQGr0cMZtTFurppnlvmvK2QlR5zFDZIo6Es3259OYIGYLzHr9UzME81SKQLz
-         YL+bbbzI6s22Yd+0wNr8oDFbaeHdAtK//DsERLfU=
+        b=U12PFZPPExXjFGuxpIXkSc93f+94frZNeHsiDzWnz238cX4yc63003SxiiARfl8o/
+         NwMRohdgD6pWgxhRWHU0k8zUGKh/0TgHSglgdu76xfGq1gsBL7lnTun/1nyN33zguw
+         G8m/qVYf9mUi6LTCq4f9b/m4lvwFvPSmFv87SiJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 052/102] af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET
-Date:   Mon,  8 Jul 2019 17:12:45 +0200
-Message-Id: <20190708150529.134836691@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Wu <ww9210@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
+Subject: [PATCH 4.4 36/73] KVM: X86: Fix scan ioapic use-before-initialization
+Date:   Mon,  8 Jul 2019 17:12:46 +0200
+Message-Id: <20190708150523.233228374@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,153 +46,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Horman <nhorman@tuxdriver.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-[ Upstream commit 89ed5b519004a7706f50b70f611edbd3aaacff2c ]
+commit e97f852fd4561e77721bb9a4e0ea9d98305b1e93 upstream.
 
-When an application is run that:
-a) Sets its scheduler to be SCHED_FIFO
-and
-b) Opens a memory mapped AF_PACKET socket, and sends frames with the
-MSG_DONTWAIT flag cleared, its possible for the application to hang
-forever in the kernel.  This occurs because when waiting, the code in
-tpacket_snd calls schedule, which under normal circumstances allows
-other tasks to run, including ksoftirqd, which in some cases is
-responsible for freeing the transmitted skb (which in AF_PACKET calls a
-destructor that flips the status bit of the transmitted frame back to
-available, allowing the transmitting task to complete).
+Reported by syzkaller:
 
-However, when the calling application is SCHED_FIFO, its priority is
-such that the schedule call immediately places the task back on the cpu,
-preventing ksoftirqd from freeing the skb, which in turn prevents the
-transmitting task from detecting that the transmission is complete.
+ BUG: unable to handle kernel NULL pointer dereference at 00000000000001c8
+ PGD 80000003ec4da067 P4D 80000003ec4da067 PUD 3f7bfa067 PMD 0
+ Oops: 0000 [#1] PREEMPT SMP PTI
+ CPU: 7 PID: 5059 Comm: debug Tainted: G           OE     4.19.0-rc5 #16
+ RIP: 0010:__lock_acquire+0x1a6/0x1990
+ Call Trace:
+  lock_acquire+0xdb/0x210
+  _raw_spin_lock+0x38/0x70
+  kvm_ioapic_scan_entry+0x3e/0x110 [kvm]
+  vcpu_enter_guest+0x167e/0x1910 [kvm]
+  kvm_arch_vcpu_ioctl_run+0x35c/0x610 [kvm]
+  kvm_vcpu_ioctl+0x3e9/0x6d0 [kvm]
+  do_vfs_ioctl+0xa5/0x690
+  ksys_ioctl+0x6d/0x80
+  __x64_sys_ioctl+0x1a/0x20
+  do_syscall_64+0x83/0x6e0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-We can fix this by converting the schedule call to a completion
-mechanism.  By using a completion queue, we force the calling task, when
-it detects there are no more frames to send, to schedule itself off the
-cpu until such time as the last transmitted skb is freed, allowing
-forward progress to be made.
+The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT6 msr
+and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
+However, irqchip is not initialized by this simple testcase, ioapic/apic
+objects should not be accessed.
+This can be triggered by the following program:
 
-Tested by myself and the reporter, with good results
+    #define _GNU_SOURCE
 
-Change Notes:
+    #include <endian.h>
+    #include <stdint.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <sys/syscall.h>
+    #include <sys/types.h>
+    #include <unistd.h>
 
-V1->V2:
-	Enhance the sleep logic to support being interruptible and
-allowing for honoring to SK_SNDTIMEO (Willem de Bruijn)
+    uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
 
-V2->V3:
-	Rearrage the point at which we wait for the completion queue, to
-avoid needing to check for ph/skb being null at the end of the loop.
-Also move the complete call to the skb destructor to avoid needing to
-modify __packet_set_status.  Also gate calling complete on
-packet_read_pending returning zero to avoid multiple calls to complete.
-(Willem de Bruijn)
+    int main(void)
+    {
+    	syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+    	long res = 0;
+    	memcpy((void*)0x20000040, "/dev/kvm", 9);
+    	res = syscall(__NR_openat, 0xffffffffffffff9c, 0x20000040, 0, 0);
+    	if (res != -1)
+    		r[0] = res;
+    	res = syscall(__NR_ioctl, r[0], 0xae01, 0);
+    	if (res != -1)
+    		r[1] = res;
+    	res = syscall(__NR_ioctl, r[1], 0xae41, 0);
+    	if (res != -1)
+    		r[2] = res;
+    	memcpy(
+    			(void*)0x20000080,
+    			"\x01\x00\x00\x00\x00\x5b\x61\xbb\x96\x00\x00\x40\x00\x00\x00\x00\x01\x00"
+    			"\x08\x00\x00\x00\x00\x00\x0b\x77\xd1\x78\x4d\xd8\x3a\xed\xb1\x5c\x2e\x43"
+    			"\xaa\x43\x39\xd6\xff\xf5\xf0\xa8\x98\xf2\x3e\x37\x29\x89\xde\x88\xc6\x33"
+    			"\xfc\x2a\xdb\xb7\xe1\x4c\xac\x28\x61\x7b\x9c\xa9\xbc\x0d\xa0\x63\xfe\xfe"
+    			"\xe8\x75\xde\xdd\x19\x38\xdc\x34\xf5\xec\x05\xfd\xeb\x5d\xed\x2e\xaf\x22"
+    			"\xfa\xab\xb7\xe4\x42\x67\xd0\xaf\x06\x1c\x6a\x35\x67\x10\x55\xcb",
+    			106);
+    	syscall(__NR_ioctl, r[2], 0x4008ae89, 0x20000080);
+    	syscall(__NR_ioctl, r[2], 0xae80, 0);
+    	return 0;
+    }
 
-	Move timeo computation within loop, to re-fetch the socket
-timeout since we also use the timeo variable to record the return code
-from the wait_for_complete call (Neil Horman)
+This patch fixes it by bailing out scan ioapic if ioapic is not initialized in
+kernel.
 
-V3->V4:
-	Willem has requested that the control flow be restored to the
-previous state.  Doing so lets us eliminate the need for the
-po->wait_on_complete flag variable, and lets us get rid of the
-packet_next_frame function, but introduces another complexity.
-Specifically, but using the packet pending count, we can, if an
-applications calls sendmsg multiple times with MSG_DONTWAIT set, each
-set of transmitted frames, when complete, will cause
-tpacket_destruct_skb to issue a complete call, for which there will
-never be a wait_on_completion call.  This imbalance will lead to any
-future call to wait_for_completion here to return early, when the frames
-they sent may not have completed.  To correct this, we need to re-init
-the completion queue on every call to tpacket_snd before we enter the
-loop so as to ensure we wait properly for the frames we send in this
-iteration.
-
-	Change the timeout and interrupted gotos to out_put rather than
-out_status so that we don't try to free a non-existant skb
-	Clean up some extra newlines (Willem de Bruijn)
-
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-Reported-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Wei Wu <ww9210@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Wei Wu <ww9210@gmail.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[ Srivatsa: Adjusted the context for 4.4.y ]
+Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |   20 +++++++++++++++++---
- net/packet/internal.h  |    1 +
- 2 files changed, 18 insertions(+), 3 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2399,6 +2399,9 @@ static void tpacket_destruct_skb(struct
- 
- 		ts = __packet_set_timestamp(po, ph, skb);
- 		__packet_set_status(po, ph, TP_STATUS_AVAILABLE | ts);
-+
-+		if (!packet_read_pending(&po->tx_ring))
-+			complete(&po->skb_completion);
+---
+ arch/x86/kvm/x86.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6409,7 +6409,8 @@ static void vcpu_scan_ioapic(struct kvm_
+ 		kvm_scan_ioapic_routes(vcpu, vcpu->arch.eoi_exit_bitmap);
+ 	else {
+ 		kvm_x86_ops->sync_pir_to_irr(vcpu);
+-		kvm_ioapic_scan_entry(vcpu, vcpu->arch.eoi_exit_bitmap);
++		if (ioapic_in_kernel(vcpu->kvm))
++			kvm_ioapic_scan_entry(vcpu, vcpu->arch.eoi_exit_bitmap);
  	}
- 
- 	sock_wfree(skb);
-@@ -2629,7 +2632,7 @@ static int tpacket_parse_header(struct p
- 
- static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
- {
--	struct sk_buff *skb;
-+	struct sk_buff *skb = NULL;
- 	struct net_device *dev;
- 	struct virtio_net_hdr *vnet_hdr = NULL;
- 	struct sockcm_cookie sockc;
-@@ -2644,6 +2647,7 @@ static int tpacket_snd(struct packet_soc
- 	int len_sum = 0;
- 	int status = TP_STATUS_AVAILABLE;
- 	int hlen, tlen, copylen = 0;
-+	long timeo = 0;
- 
- 	mutex_lock(&po->pg_vec_lock);
- 
-@@ -2690,12 +2694,21 @@ static int tpacket_snd(struct packet_soc
- 	if ((size_max > dev->mtu + reserve + VLAN_HLEN) && !po->has_vnet_hdr)
- 		size_max = dev->mtu + reserve + VLAN_HLEN;
- 
-+	reinit_completion(&po->skb_completion);
-+
- 	do {
- 		ph = packet_current_frame(po, &po->tx_ring,
- 					  TP_STATUS_SEND_REQUEST);
- 		if (unlikely(ph == NULL)) {
--			if (need_wait && need_resched())
--				schedule();
-+			if (need_wait && skb) {
-+				timeo = sock_sndtimeo(&po->sk, msg->msg_flags & MSG_DONTWAIT);
-+				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
-+				if (timeo <= 0) {
-+					err = !timeo ? -ETIMEDOUT : -ERESTARTSYS;
-+					goto out_put;
-+				}
-+			}
-+			/* check for additional frames */
- 			continue;
- 		}
- 
-@@ -3249,6 +3262,7 @@ static int packet_create(struct net *net
- 	sock_init_data(sock, sk);
- 
- 	po = pkt_sk(sk);
-+	init_completion(&po->skb_completion);
- 	sk->sk_family = PF_PACKET;
- 	po->num = proto;
- 	po->xmit = dev_queue_xmit;
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -125,6 +125,7 @@ struct packet_sock {
- 	unsigned int		tp_hdrlen;
- 	unsigned int		tp_reserve;
- 	unsigned int		tp_tstamp;
-+	struct completion	skb_completion;
- 	struct net_device __rcu	*cached_dev;
- 	int			(*xmit)(struct sk_buff *skb);
- 	struct packet_type	prot_hook ____cacheline_aligned_in_smp;
+ 	kvm_x86_ops->load_eoi_exitmap(vcpu);
+ }
 
 
