@@ -2,384 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D638C629B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5AC0629BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391720AbfGHTgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:36:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11227 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbfGHTgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:36:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 12:36:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
-   d="scan'208";a="167208212"
-Received: from ynam-mobl1.amr.corp.intel.com (HELO [10.251.9.168]) ([10.251.9.168])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Jul 2019 12:36:33 -0700
-Subject: Re: [PATCH v1 5/6] mm: Add logic for separating "aerated" pages from
- "raw" pages
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>, nitesh@redhat.com,
-        kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com
-References: <20190619222922.1231.27432.stgit@localhost.localdomain>
- <20190619223331.1231.39271.stgit@localhost.localdomain>
- <f704f160-49fb-2fdf-e8ac-44b47245a75c@intel.com>
- <66a43ec2912265ff7f1a16e0cf5258d5c3c61de5.camel@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <a73eac6b-7fce-7a0d-46ab-1a7aa10dfe08@intel.com>
-Date:   Mon, 8 Jul 2019 12:36:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2404691AbfGHThS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:37:18 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:33016 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391725AbfGHThH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 15:37:07 -0400
+Received: by mail-io1-f69.google.com with SMTP id 132so17570157iou.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:37:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=rvU9EpJ/ZrGJ01qsksyZdkenSMAoMztu/ZdDa0dDQNo=;
+        b=Gl10XynF1SRnOWlS643d/DXBniKKNHp8YXlHGEOg6J4AjXQYX/3LWumk9iQQz0uR0r
+         /U4Zol5RcPPKGxfCt9gz5gmXD4llnVqRJbo1UfbjDZlPMzLwknmbvW+3EE2l21LjBd0S
+         O3CLMc+l+2RYsvQxk4vcywU8wi6BxIGHpltgnT8o07QDZk1P7XQNhNZGEJwcZHp1Y/+j
+         saslqT6PO+stPYJBAZHOLxFzdln5oSO7E08WZ3KSA/W/OiSHyEyxSmuwSJocftIOfoDS
+         lO0F3aHlJb/IBAVYS/YqieQg9xy5YR1+5Vvu844Y3X+YYmP/TfMLsza73DaeWEyWGAqM
+         NQFw==
+X-Gm-Message-State: APjAAAW500XHqwqeWuxgN4l0sCqx1OxwB2X1GhNsvGbUqhjvSCCmbdiV
+        AL9k5jJJ6vwRxL/98OAmNlGiBdd3tSPlYZAIyi9w/+WaHWeP
+X-Google-Smtp-Source: APXvYqziWldilP8K4vSOqdpjtylCdvMsx2+OcaZ8+SIDv2t9XOOmVzSHETzg0mpxmT6eA7sqSzsBIXyu2E8IBvgCWRHVNPt/xftW
 MIME-Version: 1.0
-In-Reply-To: <66a43ec2912265ff7f1a16e0cf5258d5c3c61de5.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:ca19:: with SMTP id i25mr24171955jak.6.1562614626405;
+ Mon, 08 Jul 2019 12:37:06 -0700 (PDT)
+Date:   Mon, 08 Jul 2019 12:37:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ba542e058d309136@google.com>
+Subject: possible deadlock in rtnl_lock (6)
+From:   syzbot <syzbot+174ce29c2308dec5bc68@syzkaller.appspotmail.com>
+To:     ast@kernel.org, bjorn.topel@intel.com, bpf@vger.kernel.org,
+        christian@brauner.io, daniel@iogearbox.net, davem@davemloft.net,
+        dsahern@gmail.com, edumazet@google.com, hawk@kernel.org,
+        i.maximets@samsung.com, idosch@mellanox.com,
+        jakub.kicinski@netronome.com, johannes.berg@intel.com,
+        john.fastabend@gmail.com, jonathan.lemon@gmail.com, kafai@fb.com,
+        linux-kernel@vger.kernel.org, magnus.karlsson@intel.com,
+        netdev@vger.kernel.org, petrm@mellanox.com,
+        roopa@cumulusnetworks.com, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, xdp-newbies@vger.kernel.org,
+        yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/8/19 12:02 PM, Alexander Duyck wrote:
-> On Tue, 2019-06-25 at 13:24 -0700, Dave Hansen wrote:
->> I also don't see what the boundary has to do with aerated pages being on
->> the tail of the list.  If you want them on the tail, you just always
->> list_add_tail() them.
-> 
-> The issue is that there are multiple things that can add to the tail of
-> the list. For example the shuffle code or the lower order buddy expecting
-> its buddy to be freed. In those cases I don't want to add to tail so
-> instead I am adding those to the boundary. By doing that I can avoid
-> having the tail of the list becoming interleaved with raw and aerated
-> pages.
+Hello,
 
-So, it sounds like we've got the following data structure rules:
+syzbot found the following crash on:
 
-1. We have one list_head and one list of pages
-2. For the purposes of allocation, the list is treated the same as
-   before these patches
-3. For a "free()", the behavior changes and we now have two "tails":
-   3a. Aerated pages are freed into the tail of the list
-   3b. Cold pages are freed at the boundary between aerated and non.
-       This serves to...  This is also referred to as a "tail".
-   3a. Hot pages are never aerated and are still freed into the head
-       of the list.
+HEAD commit:    537de0c8 ipv4: Fix NULL pointer dereference in ipv4_neigh_..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=14521cc3a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=90f5d2d9c1e7421c
+dashboard link: https://syzkaller.appspot.com/bug?extid=174ce29c2308dec5bc68
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1777debba00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16969b53a00000
 
-Did I miss any?  Could you please spell it out this way in future
-changelogs?
+The bug was bisected to:
 
+commit 455302d1c9ae9318660aaeb9748a01ff414c9741
+Author: Ilya Maximets <i.maximets@samsung.com>
+Date:   Fri Jun 28 08:04:07 2019 +0000
 
->>> +struct list_head *__aerator_get_tail(unsigned int order, int migratetype);
->>>  static inline struct list_head *aerator_get_tail(struct zone *zone,
->>>  						 unsigned int order,
->>>  						 int migratetype)
->>>  {
->>> +#ifdef CONFIG_AERATION
->>> +	if (order >= AERATOR_MIN_ORDER &&
->>> +	    test_bit(ZONE_AERATION_ACTIVE, &zone->flags))
->>> +		return __aerator_get_tail(order, migratetype);
->>> +#endif
->>>  	return &zone->free_area[order].free_list[migratetype];
->>>  }
->>
->> Logically, I have no idea what this is doing.  "Go get pages out of the
->> aerated list?"  "raw list"?  Needs comments.
-> 
-> I'll add comments. Really now that I think about it I should probably
-> change the name for this anyway. What is really being returned is the tail
-> for the non-aerated list. Specifically if ZONE_AERATION_ACTIVE is set we
-> want to prevent any insertions below the list of aerated pages, so we are
-> returning the first entry in the aerated list and using that as the
-> tail/head of a list tail insertion.
-> 
-> Ugh. I really need to go back and name this better.
+     xdp: fix hang while unregistering device bound to xdp socket
 
-OK, so we now have two tails?  One that's called both a boundary and a
-tail at different parts of the code?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1179943da00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1379943da00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1579943da00000
 
->>>  static inline void aerator_notify_free(struct zone *zone, int order)
->>>  {
->>> +#ifdef CONFIG_AERATION
->>> +	if (!static_key_false(&aerator_notify_enabled))
->>> +		return;
->>> +	if (order < AERATOR_MIN_ORDER)
->>> +		return;
->>> +	if (test_bit(ZONE_AERATION_REQUESTED, &zone->flags))
->>> +		return;
->>> +	if (aerator_raw_pages(&zone->free_area[order]) < AERATOR_HWM)
->>> +		return;
->>> +
->>> +	__aerator_notify(zone);
->>> +#endif
->>>  }
->>
->> Again, this is really hard to review.  I see some possible overhead in a
->> fast path here, but only if aerator_notify_free() is called in a fast
->> path.  Is it?  I have to go digging in the previous patches to figure
->> that out.
-> 
-> This is called at the end of __free_one_page().
-> 
-> I tried to limit the impact as much as possible by ordering the checks the
-> way I did. The order check should limit the impact pretty significantly as
-> that is the only one that will be triggered for every page, then the
-> higher order pages are left to deal with the test_bit and
-> aerator_raw_pages checks.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+174ce29c2308dec5bc68@syzkaller.appspotmail.com
+Fixes: 455302d1c9ae ("xdp: fix hang while unregistering device bound to xdp  
+socket")
 
-That sounds like a good idea.  But, that good idea is very hard to
-distill from the code in the patch.
+======================================================
+WARNING: possible circular locking dependency detected
+5.2.0-rc6+ #76 Not tainted
+------------------------------------------------------
+syz-executor613/9114 is trying to acquire lock:
+000000002c564901 (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20  
+net/core/rtnetlink.c:72
 
-Imagine if the function stared being commented with:
+but task is already holding lock:
+0000000039d6ee9b (&xs->mutex){+.+.}, at: xsk_bind+0x16a/0xe70  
+net/xdp/xsk.c:422
 
-/* Called from a hot path in __free_one_page() */
-
-And said:
+which lock already depends on the new lock.
 
 
-	if (!static_key_false(&aerator_notify_enabled))
-		return;
+the existing dependency chain (in reverse order) is:
 
-	/* Avoid (slow) notifications when no aeration is performed: */
-	if (order < AERATOR_MIN_ORDER)
-		return;
-	if (test_bit(ZONE_AERATION_REQUESTED, &zone->flags))
-		return;
+-> #2 (&xs->mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:926 [inline]
+        __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1073
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+        xsk_notifier+0x149/0x290 net/xdp/xsk.c:730
+        notifier_call_chain+0xc2/0x230 kernel/notifier.c:95
+        __raw_notifier_call_chain kernel/notifier.c:396 [inline]
+        raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:403
+        call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1749
+        call_netdevice_notifiers_extack net/core/dev.c:1761 [inline]
+        call_netdevice_notifiers net/core/dev.c:1775 [inline]
+        rollback_registered_many+0x9b9/0xfc0 net/core/dev.c:8206
+        rollback_registered+0x109/0x1d0 net/core/dev.c:8248
+        unregister_netdevice_queue net/core/dev.c:9295 [inline]
+        unregister_netdevice_queue+0x1ee/0x2c0 net/core/dev.c:9288
+        br_dev_delete+0x145/0x1a0 net/bridge/br_if.c:383
+        br_del_bridge+0xd7/0x120 net/bridge/br_if.c:483
+        br_ioctl_deviceless_stub+0x2a4/0x7b0 net/bridge/br_ioctl.c:376
+        sock_ioctl+0x44b/0x780 net/socket.c:1141
+        vfs_ioctl fs/ioctl.c:46 [inline]
+        file_ioctl fs/ioctl.c:509 [inline]
+        do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+        ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+        __do_sys_ioctl fs/ioctl.c:720 [inline]
+        __se_sys_ioctl fs/ioctl.c:718 [inline]
+        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-	/* Some other relevant comment: */
-	if (aerator_raw_pages(&zone->free_area[order]) < AERATOR_HWM)
-		return;
+-> #1 (&net->xdp.lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:926 [inline]
+        __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1073
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+        xsk_notifier+0xa7/0x290 net/xdp/xsk.c:726
+        notifier_call_chain+0xc2/0x230 kernel/notifier.c:95
+        __raw_notifier_call_chain kernel/notifier.c:396 [inline]
+        raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:403
+        call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1749
+        call_netdevice_notifiers_extack net/core/dev.c:1761 [inline]
+        call_netdevice_notifiers net/core/dev.c:1775 [inline]
+        rollback_registered_many+0x9b9/0xfc0 net/core/dev.c:8206
+        rollback_registered+0x109/0x1d0 net/core/dev.c:8248
+        unregister_netdevice_queue net/core/dev.c:9295 [inline]
+        unregister_netdevice_queue+0x1ee/0x2c0 net/core/dev.c:9288
+        br_dev_delete+0x145/0x1a0 net/bridge/br_if.c:383
+        br_del_bridge+0xd7/0x120 net/bridge/br_if.c:483
+        br_ioctl_deviceless_stub+0x2a4/0x7b0 net/bridge/br_ioctl.c:376
+        sock_ioctl+0x44b/0x780 net/socket.c:1141
+        vfs_ioctl fs/ioctl.c:46 [inline]
+        file_ioctl fs/ioctl.c:509 [inline]
+        do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+        ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+        __do_sys_ioctl fs/ioctl.c:720 [inline]
+        __se_sys_ioctl fs/ioctl.c:718 [inline]
+        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-	/* This is slow, but should happen very rarely: */
-	__aerator_notify(zone);
+-> #0 (rtnl_mutex){+.+.}:
+        lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+        __mutex_lock_common kernel/locking/mutex.c:926 [inline]
+        __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1073
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+        rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
+        xdp_umem_assign_dev+0xbe/0x8b0 net/xdp/xdp_umem.c:96
+        xsk_bind+0x4d7/0xe70 net/xdp/xsk.c:488
+        __sys_bind+0x239/0x290 net/socket.c:1653
+        __do_sys_bind net/socket.c:1664 [inline]
+        __se_sys_bind net/socket.c:1662 [inline]
+        __x64_sys_bind+0x73/0xb0 net/socket.c:1662
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
->>> +static void aerator_populate_boundaries(struct zone *zone)
->>> +{
->>> +	unsigned int order, mt;
->>> +
->>> +	if (test_bit(ZONE_AERATION_ACTIVE, &zone->flags))
->>> +		return;
->>> +
->>> +	for_each_aerate_migratetype_order(order, mt)
->>> +		aerator_reset_boundary(zone, order, mt);
->>> +
->>> +	set_bit(ZONE_AERATION_ACTIVE, &zone->flags);
->>> +}
->>
->> This function appears misnamed as it's doing more than boundary
->> manipulation.
-> 
-> The ZONE_AERATION_ACTIVE flag is what is used to indicate that the
-> boundaries are being tracked. Without that we just fall back to using the
-> free_list tail.
+other info that might help us debug this:
 
-Is the flag used for other things?  Or just to indicate that boundaries
-are being tracked?
+Chain exists of:
+   rtnl_mutex --> &net->xdp.lock --> &xs->mutex
 
->>> +struct list_head *__aerator_get_tail(unsigned int order, int migratetype)
->>> +{
->>> +	return boundary[order - AERATOR_MIN_ORDER][migratetype];
->>> +}
->>> +
->>> +void __aerator_del_from_boundary(struct page *page, struct zone *zone)
->>> +{
->>> +	unsigned int order = page_private(page) - AERATOR_MIN_ORDER;
->>> +	int mt = get_pcppage_migratetype(page);
->>> +	struct list_head **tail = &boundary[order][mt];
->>> +
->>> +	if (*tail == &page->lru)
->>> +		*tail = page->lru.next;
->>> +}
->>
->> Ewww.  Please just track the page that's the boundary, not the list head
->> inside the page that's the boundary.
->>
->> This also at least needs one comment along the lines of: Move the
->> boundary if the page representing the boundary is being removed.
-> 
-> So the reason for using the list_head is because we can end up with a
-> boundary for an empty list. In that case we don't have a page to point to
-> but just the list_head for the list itself. It actually makes things quite
-> a bit simpler, otherwise I have to perform extra checks to see if the list
-> is empty.
+  Possible unsafe locking scenario:
 
-Could you please double-check that keeping a 'struct page *' is truly
-more messy?
+        CPU0                    CPU1
+        ----                    ----
+   lock(&xs->mutex);
+                                lock(&net->xdp.lock);
+                                lock(&xs->mutex);
+   lock(rtnl_mutex);
 
->>> +void aerator_add_to_boundary(struct page *page, struct zone *zone)
->>> +{
->>> +	unsigned int order = page_private(page) - AERATOR_MIN_ORDER;
->>> +	int mt = get_pcppage_migratetype(page);
->>> +	struct list_head **tail = &boundary[order][mt];
->>> +
->>> +	*tail = &page->lru;
->>> +}
->>> +
->>> +void aerator_shutdown(void)
->>> +{
->>> +	static_key_slow_dec(&aerator_notify_enabled);
->>> +
->>> +	while (atomic_read(&a_dev_info->refcnt))
->>> +		msleep(20);
->>
->> We generally frown on open-coded check/sleep loops.  What is this for?
-> 
-> We are waiting on the aerator to finish processing the list it had active.
-> With the static key disabled we should see the refcount wind down to 0.
-> Once that occurs we can safely free the a_dev_info structure since there
-> will be no other uses of it.
+  *** DEADLOCK ***
 
-That's fine, but we still don't open-code sleep loops.  Please remove this.
+1 lock held by syz-executor613/9114:
+  #0: 0000000039d6ee9b (&xs->mutex){+.+.}, at: xsk_bind+0x16a/0xe70  
+net/xdp/xsk.c:422
 
-"Wait until we can free the thing" sounds to me like RCU.  Do you want
-to use RCU here?  A synchronize_rcu() call can be a very powerful thing
-if the read-side critical sections are amenable to it.
+stack backtrace:
+CPU: 1 PID: 9114 Comm: syz-executor613 Not tainted 5.2.0-rc6+ #76
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_circular_bug.cold+0x1cc/0x28f kernel/locking/lockdep.c:1565
+  check_prev_add kernel/locking/lockdep.c:2310 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2418 [inline]
+  validate_chain kernel/locking/lockdep.c:2800 [inline]
+  __lock_acquire+0x3755/0x5490 kernel/locking/lockdep.c:3793
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+  __mutex_lock_common kernel/locking/mutex.c:926 [inline]
+  __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1073
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
+  xdp_umem_assign_dev+0xbe/0x8b0 net/xdp/xdp_umem.c:96
+  xsk_bind+0x4d7/0xe70 net/xdp/xsk.c:488
+  __sys_bind+0x239/0x290 net/socket.c:1653
+  __do_sys_bind net/socket.c:1664 [inline]
+  __se_sys_bind net/socket.c:1662 [inline]
+  __x64_sys_bind+0x73/0xb0 net/socket.c:1662
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447909
+Code: e8 cc e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fb2a478fd98 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 00000000006dcc58 RCX: 0000000000447909
+RDX: 0000000000000010 RSI: 0000000020000040 RDI: 0000000000000005
+RBP: 00000000006dcc50 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc5c
+R13: 0000003066736362 R14: 0000000000000000 R15: 0000003066736362
 
->>> +static void aerator_schedule_initial_aeration(void)
->>> +{
->>> +	struct zone *zone;
->>> +
->>> +	for_each_populated_zone(zone) {
->>> +		spin_lock(&zone->lock);
->>> +		__aerator_notify(zone);
->>> +		spin_unlock(&zone->lock);
->>> +	}
->>> +}
->>
->> Why do we need an initial aeration?
-> 
-> This is mostly about avoiding any possible races while we are brining up
-> the aerator. If we assume we are just going to start a cycle of aeration
-> for all zones when the aerator is brought up it makes it easier to be sure
-> we have gone though and checked all of the zones after initialization is
-> complete.
 
-Let me ask a different way:  What will happen if we don't have this?
-Will things crash?  Will they be slow?  Do we not know?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->>> +{
->>> +	struct list_head *batch = &a_dev_info->batch;
->>> +	int budget = a_dev_info->capacity;
->>
->> Where does capacity come from?
-> 
-> It is the limit on how many pages we can process at a time. The value is
-> set in a_dev_info before the call to aerator_startup.
-
-Let me ask another way: Does it come from the user?  Or is it
-automatically determined by some in-kernel heuristic?
-
->>> +		while ((page = get_aeration_page(zone, order, mt))) {
->>> +			list_add_tail(&page->lru, batch);
->>> +
->>> +			if (!--budget)
->>> +				return;
->>> +		}
->>> +	}
->>> +
->>> +	/*
->>> +	 * If there are no longer enough free pages to fully populate
->>> +	 * the aerator, then we can just shut it down for this zone.
->>> +	 */
->>> +	clear_bit(ZONE_AERATION_REQUESTED, &zone->flags);
->>> +	atomic_dec(&a_dev_info->refcnt);
->>> +}
->>
->> Huh, so this is the number of threads doing aeration?  Didn't we just
->> make a big deal about there only being one zone being aerated at a time?
->>  Or, did I misunderstand what refcnt is from its lack of clear
->> documentation?
-> 
-> The refcnt is the number of zones requesting aeration plus one additional
-> if the thread is active. We are limited to only having pages from one zone
-> in the aerator at a time. That is to prevent us from having to maintain
-> multiple boundaries.
-
-That sounds like excellent documentation to add to 'refcnt's definition.
-
->>> +static void aerator_drain(struct zone *zone)
->>> +{
->>> +	struct list_head *list = &a_dev_info->batch;
->>> +	struct page *page;
->>> +
->>> +	/*
->>> +	 * Drain the now aerated pages back into their respective
->>> +	 * free lists/areas.
->>> +	 */
->>> +	while ((page = list_first_entry_or_null(list, struct page, lru))) {
->>> +		list_del(&page->lru);
->>> +		put_aeration_page(zone, page);
->>> +	}
->>> +}
->>> +
->>> +static void aerator_scrub_zone(struct zone *zone)
->>> +{
->>> +	/* See if there are any pages to pull */
->>> +	if (!test_bit(ZONE_AERATION_REQUESTED, &zone->flags))
->>> +		return;
->>
->> How would someone ask for the zone to be scrubbed when aeration has not
->> been requested?
-> 
-> I'm not sure what you are asking here. Basically this function is called
-> per zone by aerator_cycle. Which now that I think about it I should
-> probably swap the names around that we perform a cycle per zone and just
-> scrub memory generically.
-
-It looks like aerator_cycle() calls aerator_scrub_zone() on all zones
-all the time.  This is the code responsible for ensuring that we don't
-do any aeration work on zones that do not need it.
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
