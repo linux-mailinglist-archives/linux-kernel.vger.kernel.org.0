@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089E062245
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4F462321
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388302AbfGHPYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:24:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51336 "EHLO mail.kernel.org"
+        id S2390123AbfGHPcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbfGHPYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:06 -0400
+        id S2390101AbfGHPcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66009216C4;
-        Mon,  8 Jul 2019 15:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1FDC204EC;
+        Mon,  8 Jul 2019 15:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599445;
-        bh=hgQ+2bVAoQQuV8KG06d4Eq1oE3qf1lul/5N4UIfJLCc=;
+        s=default; t=1562599936;
+        bh=y7y7MSMK9hdNZfa+zF+eVj7qOvMY+FsVldXOaW4VfQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U+44ugMoRSgjQPn2bQq+vPhsiLSR7VjRCt9lUoncIkMtNlqkRcRs1KcOw0dZrlVWv
-         C9aRzcieoVM5pcd+pRBY3nG55EaZjxVr8R1BxmNSmlOqWTy4+iNpy8X5IW5ef+fpWP
-         y1xjy8L2v+MJer8+zdt01IH49Ou6pjUrUGEutOfA=
+        b=h4Hh7GBeyTeI3jxglnW/7IW7NyRasGcVbMxBOLzM/Ug+T+6/y6lxQBdfBp7w53Ors
+         3X/TQa8ncaM2aKy/8gKYlBXtzn0LpEctG2n5S+7BfFSUpBoO3PKop2FNeGVLDRu6Kw
+         mQwe0v1vWTPiXNAZy/8ByM+nyEfEdmNYBujybcOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, swkhack <swkhack@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Bader Ali - Saleh <bader.alisaleh@microsemi.com>,
+        Scott Teel <scott.teel@microsemi.com>,
+        Matt Perricone <matt.perricone@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/56] mm/mlock.c: change count_mm_mlocked_page_nr return type
+Subject: [PATCH 5.1 38/96] scsi: hpsa: correct ioaccel2 chaining
 Date:   Mon,  8 Jul 2019 17:13:10 +0200
-Message-Id: <20190708150520.182687785@linuxfoundation.org>
+Message-Id: <20190708150528.619427587@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0874bb49bb21bf24deda853e8bf61b8325e24bcb ]
+[ Upstream commit 625d7d3518875c4d303c652a198feaa13d9f52d9 ]
 
-On a 64-bit machine the value of "vma->vm_end - vma->vm_start" may be
-negative when using 32 bit ints and the "count >> PAGE_SHIFT"'s result
-will be wrong.  So change the local variable and return value to
-unsigned long to fix the problem.
+- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_LAST_SG for
+  the last s/g element.
 
-Link: http://lkml.kernel.org/r/20190513023701.83056-1-swkhack@gmail.com
-Fixes: 0cf2f6f6dc60 ("mm: mlock: check against vma for actual mlock() size")
-Signed-off-by: swkhack <swkhack@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_CHAIN when
+  chaining.
+
+Reviewed-by: Bader Ali - Saleh <bader.alisaleh@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Matt Perricone <matt.perricone@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mlock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/hpsa.c     | 7 ++++++-
+ drivers/scsi/hpsa_cmd.h | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/mm/mlock.c b/mm/mlock.c
-index 46af369c13e5..1f9ee86672e8 100644
---- a/mm/mlock.c
-+++ b/mm/mlock.c
-@@ -629,11 +629,11 @@ static int apply_vma_lock_flags(unsigned long start, size_t len,
-  * is also counted.
-  * Return value: previously mlocked page counts
-  */
--static int count_mm_mlocked_page_nr(struct mm_struct *mm,
-+static unsigned long count_mm_mlocked_page_nr(struct mm_struct *mm,
- 		unsigned long start, size_t len)
- {
- 	struct vm_area_struct *vma;
--	int count = 0;
-+	unsigned long count = 0;
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index f044e7d10d63..2d181e5e65ff 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4925,7 +4925,7 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
+ 			curr_sg->reserved[0] = 0;
+ 			curr_sg->reserved[1] = 0;
+ 			curr_sg->reserved[2] = 0;
+-			curr_sg->chain_indicator = 0x80;
++			curr_sg->chain_indicator = IOACCEL2_CHAIN;
  
- 	if (mm == NULL)
- 		mm = current->mm;
+ 			curr_sg = h->ioaccel2_cmd_sg_list[c->cmdindex];
+ 		}
+@@ -4942,6 +4942,11 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
+ 			curr_sg++;
+ 		}
+ 
++		/*
++		 * Set the last s/g element bit
++		 */
++		(curr_sg - 1)->chain_indicator = IOACCEL2_LAST_SG;
++
+ 		switch (cmd->sc_data_direction) {
+ 		case DMA_TO_DEVICE:
+ 			cp->direction &= ~IOACCEL2_DIRECTION_MASK;
+diff --git a/drivers/scsi/hpsa_cmd.h b/drivers/scsi/hpsa_cmd.h
+index 21a726e2eec6..f6afca4b2319 100644
+--- a/drivers/scsi/hpsa_cmd.h
++++ b/drivers/scsi/hpsa_cmd.h
+@@ -517,6 +517,7 @@ struct ioaccel2_sg_element {
+ 	u8 reserved[3];
+ 	u8 chain_indicator;
+ #define IOACCEL2_CHAIN 0x80
++#define IOACCEL2_LAST_SG 0x40
+ };
+ 
+ /*
 -- 
 2.20.1
 
