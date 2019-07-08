@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F032862226
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB756225F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388086AbfGHPWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49592 "EHLO mail.kernel.org"
+        id S2388547AbfGHPZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:25:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729493AbfGHPWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:52 -0400
+        id S2388437AbfGHPZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:25:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 053B1216E3;
-        Mon,  8 Jul 2019 15:22:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9C9E204EC;
+        Mon,  8 Jul 2019 15:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599372;
-        bh=RYOBTpTrNjHCdpFk/eqreEmSwKZHskeo9MtL8o1Q9yE=;
+        s=default; t=1562599509;
+        bh=3rlcjAJthrL8jMYOtcCNxy3wPnFG1Y09KFzXtGtO8pc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kg3k7zI+m+Ix2C5BAir51JmPWH8kzy1NHBL68UtNaW0YCPnDjtV+QIztqz2UqLDmo
-         b20WldLZb3dPFDI3X6emCo6EKSLGPwtrlaFMzFmuXqVVZHSmV2IoJl56wfLxkDqmAU
-         CRX5z2oMzAvlOHnah7G7BrQamoR3hmoCH3aXWS24=
+        b=n6+JtOrQOQOF6J9MnG5MhAwWfHCxURK2SIbGkz4S06AuuTUl4Xk+9ZZX0pzkE1i/E
+         nmbbr84TWWRAkQ7tlmOK41I5nddUnW1yalgp/cmb62/nMetJ6rr0WVWnROos6mzwaC
+         mVUuAr8P0RlRvi3YTt1PgikPnZgKtjmgnVSFtK2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 097/102] arm64, vdso: Define vdso_{start,end} as array
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 38/56] ftrace/x86: Remove possible deadlock between register_kprobe() and ftrace_run_update_code()
 Date:   Mon,  8 Jul 2019 17:13:30 +0200
-Message-Id: <20190708150531.499551020@linuxfoundation.org>
+Message-Id: <20190708150523.325386979@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,64 +46,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit dbbb08f500d6146398b794fdc68a8e811366b451 upstream.
+From: Petr Mladek <pmladek@suse.com>
 
-Adjust vdso_{start|end} to be char arrays to avoid compile-time analysis
-that flags "too large" memcmp() calls with CONFIG_FORTIFY_SOURCE.
+commit d5b844a2cf507fc7642c9ae80a9d585db3065c28 upstream.
 
-Cc: Jisheng Zhang <jszhang@marvell.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The commit 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module text
+permissions race") causes a possible deadlock between register_kprobe()
+and ftrace_run_update_code() when ftrace is using stop_machine().
+
+The existing dependency chain (in reverse order) is:
+
+-> #1 (text_mutex){+.+.}:
+       validate_chain.isra.21+0xb32/0xd70
+       __lock_acquire+0x4b8/0x928
+       lock_acquire+0x102/0x230
+       __mutex_lock+0x88/0x908
+       mutex_lock_nested+0x32/0x40
+       register_kprobe+0x254/0x658
+       init_kprobes+0x11a/0x168
+       do_one_initcall+0x70/0x318
+       kernel_init_freeable+0x456/0x508
+       kernel_init+0x22/0x150
+       ret_from_fork+0x30/0x34
+       kernel_thread_starter+0x0/0xc
+
+-> #0 (cpu_hotplug_lock.rw_sem){++++}:
+       check_prev_add+0x90c/0xde0
+       validate_chain.isra.21+0xb32/0xd70
+       __lock_acquire+0x4b8/0x928
+       lock_acquire+0x102/0x230
+       cpus_read_lock+0x62/0xd0
+       stop_machine+0x2e/0x60
+       arch_ftrace_update_code+0x2e/0x40
+       ftrace_run_update_code+0x40/0xa0
+       ftrace_startup+0xb2/0x168
+       register_ftrace_function+0x64/0x88
+       klp_patch_object+0x1a2/0x290
+       klp_enable_patch+0x554/0x980
+       do_one_initcall+0x70/0x318
+       do_init_module+0x6e/0x250
+       load_module+0x1782/0x1990
+       __s390x_sys_finit_module+0xaa/0xf0
+       system_call+0xd8/0x2d0
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(text_mutex);
+                               lock(cpu_hotplug_lock.rw_sem);
+                               lock(text_mutex);
+  lock(cpu_hotplug_lock.rw_sem);
+
+It is similar problem that has been solved by the commit 2d1e38f56622b9b
+("kprobes: Cure hotplug lock ordering issues"). Many locks are involved.
+To be on the safe side, text_mutex must become a low level lock taken
+after cpu_hotplug_lock.rw_sem.
+
+This can't be achieved easily with the current ftrace design.
+For example, arm calls set_all_modules_text_rw() already in
+ftrace_arch_code_modify_prepare(), see arch/arm/kernel/ftrace.c.
+This functions is called:
+
+  + outside stop_machine() from ftrace_run_update_code()
+  + without stop_machine() from ftrace_module_enable()
+
+Fortunately, the problematic fix is needed only on x86_64. It is
+the only architecture that calls set_all_modules_text_rw()
+in ftrace path and supports livepatching at the same time.
+
+Therefore it is enough to move text_mutex handling from the generic
+kernel/trace/ftrace.c into arch/x86/kernel/ftrace.c:
+
+   ftrace_arch_code_modify_prepare()
+   ftrace_arch_code_modify_post_process()
+
+This patch basically reverts the ftrace part of the problematic
+commit 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module
+text permissions race"). And provides x86_64 specific-fix.
+
+Some refactoring of the ftrace code will be needed when livepatching
+is implemented for arm or nds32. These architectures call
+set_all_modules_text_rw() and use stop_machine() at the same time.
+
+Link: http://lkml.kernel.org/r/20190627081334.12793-1-pmladek@suse.com
+
+Fixes: 9f255b632bf12c4dd7 ("module: Fix livepatch/ftrace module text permissions race")
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Miroslav Benes <mbenes@suse.cz>
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+[
+  As reviewed by Miroslav Benes <mbenes@suse.cz>, removed return value of
+  ftrace_run_update_code() as it is a void function.
+]
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/kernel/vdso.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/ftrace.c |    3 +++
+ kernel/trace/ftrace.c    |   10 +---------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index c9b9a5a322eb..c0f315ecfa7c 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -37,7 +37,7 @@
- #include <asm/vdso.h>
- #include <asm/vdso_datapage.h>
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -22,6 +22,7 @@
+ #include <linux/init.h>
+ #include <linux/list.h>
+ #include <linux/module.h>
++#include <linux/memory.h>
  
--extern char vdso_start, vdso_end;
-+extern char vdso_start[], vdso_end[];
- static unsigned long vdso_pages __ro_after_init;
+ #include <trace/syscall.h>
  
- /*
-@@ -124,14 +124,14 @@ static int __init vdso_init(void)
- 	int i;
- 	struct page **vdso_pagelist;
+@@ -36,6 +37,7 @@
  
--	if (memcmp(&vdso_start, "\177ELF", 4)) {
-+	if (memcmp(vdso_start, "\177ELF", 4)) {
- 		pr_err("vDSO is not a valid ELF object!\n");
- 		return -EINVAL;
- 	}
+ int ftrace_arch_code_modify_prepare(void)
+ {
++	mutex_lock(&text_mutex);
+ 	set_kernel_text_rw();
+ 	set_all_modules_text_rw();
+ 	return 0;
+@@ -45,6 +47,7 @@ int ftrace_arch_code_modify_post_process
+ {
+ 	set_all_modules_text_ro();
+ 	set_kernel_text_ro();
++	mutex_unlock(&text_mutex);
+ 	return 0;
+ }
  
--	vdso_pages = (&vdso_end - &vdso_start) >> PAGE_SHIFT;
-+	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
- 	pr_info("vdso: %ld pages (%ld code @ %p, %ld data @ %p)\n",
--		vdso_pages + 1, vdso_pages, &vdso_start, 1L, vdso_data);
-+		vdso_pages + 1, vdso_pages, vdso_start, 1L, vdso_data);
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -34,7 +34,6 @@
+ #include <linux/hash.h>
+ #include <linux/rcupdate.h>
+ #include <linux/kprobes.h>
+-#include <linux/memory.h>
  
- 	/* Allocate the vDSO pagelist, plus a page for the data. */
- 	vdso_pagelist = kcalloc(vdso_pages + 1, sizeof(struct page *),
-@@ -144,7 +144,7 @@ static int __init vdso_init(void)
+ #include <trace/events/sched.h>
  
- 	/* Grab the vDSO code pages. */
- 	for (i = 0; i < vdso_pages; i++)
--		vdso_pagelist[i + 1] = pfn_to_page(PHYS_PFN(__pa(&vdso_start)) + i);
-+		vdso_pagelist[i + 1] = pfn_to_page(PHYS_PFN(__pa(vdso_start)) + i);
+@@ -2693,12 +2692,10 @@ static void ftrace_run_update_code(int c
+ {
+ 	int ret;
  
- 	vdso_spec[0].pages = &vdso_pagelist[0];
- 	vdso_spec[1].pages = &vdso_pagelist[1];
--- 
-2.20.1
-
+-	mutex_lock(&text_mutex);
+-
+ 	ret = ftrace_arch_code_modify_prepare();
+ 	FTRACE_WARN_ON(ret);
+ 	if (ret)
+-		goto out_unlock;
++		return;
+ 
+ 	/*
+ 	 * By default we use stop_machine() to modify the code.
+@@ -2710,9 +2707,6 @@ static void ftrace_run_update_code(int c
+ 
+ 	ret = ftrace_arch_code_modify_post_process();
+ 	FTRACE_WARN_ON(ret);
+-
+-out_unlock:
+-	mutex_unlock(&text_mutex);
+ }
+ 
+ static void ftrace_run_modify_code(struct ftrace_ops *ops, int command,
+@@ -5800,7 +5794,6 @@ void ftrace_module_enable(struct module
+ 	struct ftrace_page *pg;
+ 
+ 	mutex_lock(&ftrace_lock);
+-	mutex_lock(&text_mutex);
+ 
+ 	if (ftrace_disabled)
+ 		goto out_unlock;
+@@ -5861,7 +5854,6 @@ void ftrace_module_enable(struct module
+ 		ftrace_arch_code_modify_post_process();
+ 
+  out_unlock:
+-	mutex_unlock(&text_mutex);
+ 	mutex_unlock(&ftrace_lock);
+ 
+ 	process_cached_mods(mod->name);
 
 
