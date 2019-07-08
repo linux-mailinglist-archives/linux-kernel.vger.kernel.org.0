@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B404C6221E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C7462250
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbfGHPWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48990 "EHLO mail.kernel.org"
+        id S2388388AbfGHPYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387959AbfGHPW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:29 -0400
+        id S2388377AbfGHPYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:24:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AC65216C4;
-        Mon,  8 Jul 2019 15:22:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43D50216C4;
+        Mon,  8 Jul 2019 15:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599348;
-        bh=Tr7jjzslEElrJBvAeJh/1qHlH0gkRwbCfJetvKKd06o=;
+        s=default; t=1562599476;
+        bh=vVFyYXwho3zCgkOD0rbDcYE6AzYSHyuG8zbWWEKW4J4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2f1vYw60q/VCR2Ql1puIIMEzBsnVTW6kWrcsGOkpQ522TZbW+nz/UoFDzj5rD1OXd
-         iTNKf5g7lPRp7ahEa1nurduyEsyJg5jV/hpigViP/4M8SlADF7tNIg5KMl6NrlA2ZB
-         ErW+N3DL54aKY8NqDK2P0Bl8OzM7lI4/ihAP3aJ8=
+        b=NvtpDwNPfb/Kc0l7l3Sa9IwB0jBm3jWi7nwIzWJTYvfgGUVt+4lfLJJNSIrKgYIbH
+         Hzxk6Vef2/HoY07PT4YqVOS9EC4vuRQzts5iKPRR795T5wqJ/V5mYmtXIIEzBXVL6X
+         97ldzaBwQTp1pkmhdcZp619Vb+hakPF+/y3PLuRk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 086/102] ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME
-Date:   Mon,  8 Jul 2019 17:13:19 +0200
-Message-Id: <20190708150530.917139845@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 28/56] ALSA: line6: Fix write on zero-sized buffer
+Date:   Mon,  8 Jul 2019 17:13:20 +0200
+Message-Id: <20190708150522.453606217@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 6994eefb0053799d2e07cd140df6c2ea106c41ee upstream.
+commit 3450121997ce872eb7f1248417225827ea249710 upstream.
 
-Fix two issues:
+LINE6 drivers allocate the buffers based on the value returned from
+usb_maxpacket() calls.  The manipulated device may return zero for
+this, and this results in the kmalloc() with zero size (and it may
+succeed) while the other part of the driver code writes the packet
+data with the fixed size -- which eventually overwrites.
 
-When called for PTRACE_TRACEME, ptrace_link() would obtain an RCU
-reference to the parent's objective credentials, then give that pointer
-to get_cred().  However, the object lifetime rules for things like
-struct cred do not permit unconditionally turning an RCU reference into
-a stable reference.
+This patch adds a simple sanity check for the invalid buffer size for
+avoiding that problem.
 
-PTRACE_TRACEME records the parent's credentials as if the parent was
-acting as the subject, but that's not the case.  If a malicious
-unprivileged child uses PTRACE_TRACEME and the parent is privileged, and
-at a later point, the parent process becomes attacker-controlled
-(because it drops privileges and calls execve()), the attacker ends up
-with control over two processes with a privileged ptrace relationship,
-which can be abused to ptrace a suid binary and obtain root privileges.
-
-Fix both of these by always recording the credentials of the process
-that is requesting the creation of the ptrace relationship:
-current_cred() can't change under us, and current is the proper subject
-for access control.
-
-This change is theoretically userspace-visible, but I am not aware of
-any code that it will actually break.
-
-Fixes: 64b875f7ac8a ("ptrace: Capture the ptracer's creds not PT_PTRACE_CAP")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/ptrace.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/usb/line6/pcm.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -74,9 +74,7 @@ void __ptrace_link(struct task_struct *c
-  */
- static void ptrace_link(struct task_struct *child, struct task_struct *new_parent)
- {
--	rcu_read_lock();
--	__ptrace_link(child, new_parent, __task_cred(new_parent));
--	rcu_read_unlock();
-+	__ptrace_link(child, new_parent, current_cred());
- }
+--- a/sound/usb/line6/pcm.c
++++ b/sound/usb/line6/pcm.c
+@@ -558,6 +558,11 @@ int line6_init_pcm(struct usb_line6 *lin
+ 	line6pcm->max_packet_size_out =
+ 		usb_maxpacket(line6->usbdev,
+ 			usb_sndisocpipe(line6->usbdev, ep_write), 1);
++	if (!line6pcm->max_packet_size_in || !line6pcm->max_packet_size_out) {
++		dev_err(line6pcm->line6->ifcdev,
++			"cannot get proper max packet size\n");
++		return -EINVAL;
++	}
  
- /**
+ 	spin_lock_init(&line6pcm->out.lock);
+ 	spin_lock_init(&line6pcm->in.lock);
 
 
