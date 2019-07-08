@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F2C62258
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A86096226B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388527AbfGHPZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:25:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50560 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388393AbfGHPY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E4D9460F37; Mon,  8 Jul 2019 15:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562599496;
-        bh=LaN53jeBYi5tmPR5ezGeeym0cUuS5a/xgbX3lDsZMh8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ONNmY6hh8UETji6VY4CPGNI9BNgDf1TfHiCcbM8ph7nNlivKTcA8F4ptLXFT27cQf
-         +nCkVIfIRYCHNcUpZldX8dvnHlQ/VCitu7yWegFZoy4CIY13H0J3o1KVd7lXPpnNmR
-         h7v//ZnmbhGp8EESOjxSCQhsGJeljGtl1F+wkgc0=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 33C9360DAD;
-        Mon,  8 Jul 2019 15:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562599496;
-        bh=LaN53jeBYi5tmPR5ezGeeym0cUuS5a/xgbX3lDsZMh8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ONNmY6hh8UETji6VY4CPGNI9BNgDf1TfHiCcbM8ph7nNlivKTcA8F4ptLXFT27cQf
-         +nCkVIfIRYCHNcUpZldX8dvnHlQ/VCitu7yWegFZoy4CIY13H0J3o1KVd7lXPpnNmR
-         h7v//ZnmbhGp8EESOjxSCQhsGJeljGtl1F+wkgc0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 33C9360DAD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Mon, 8 Jul 2019 09:24:53 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: add missing MODULE_FIRMWARE()
-Message-ID: <20190708152453.GB10188@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190703140055.26300-1-robdclark@gmail.com>
+        id S2388666AbfGHPZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:25:46 -0400
+Received: from mga07.intel.com ([134.134.136.100]:18169 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388641AbfGHPZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:25:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 08:25:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="scan'208";a="363835132"
+Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.189])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Jul 2019 08:25:35 -0700
+Message-ID: <846cacae8cede764a2e84f628f539d94582fdbe0.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: Document UEFI event log quirks
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     tweek@google.com, matthewgarrett@google.com,
+        Jonathan Corbet <corbet@lwn.net>
+Date:   Mon, 08 Jul 2019 18:25:38 +0300
+In-Reply-To: <ec274596-6bc8-07a0-d09b-1d191646c5cd@infradead.org>
+References: <20190703161109.22935-1-jarkko.sakkinen@linux.intel.com>
+         <6acf78df-b168-14d3-fea4-9a9d2945e77f@infradead.org>
+         <a8ee93721a674434e22d31fd1d10bf9472c1c739.camel@linux.intel.com>
+         <ec274596-6bc8-07a0-d09b-1d191646c5cd@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703140055.26300-1-robdclark@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 07:00:35AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Sun, 2019-07-07 at 12:33 -0700, Randy Dunlap wrote:
+> On 7/5/19 3:15 AM, Jarkko Sakkinen wrote:
+> > On Wed, 2019-07-03 at 09:45 -0700, Randy Dunlap wrote:
+> > > > +This introduces another problem: nothing guarantees that it is not
+> > > > +called before the stub gets to run. Thus, it needs to copy the final
+> > > > +events table preboot size to the custom configuration table so that
+> > > > +kernel offset it later on.
 > 
-> For platforms that require the "zap shader" to take the GPU out of
-> secure mode at boot, we also need the zap fw to end up in the initrd.
+>      (so that)
+>      the kernel can use that final table preboot size as an events table
+>      offset later on.
 > 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_device.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> > > ?  kernel can offset it later on.
+> > 
+> > EFI stub calculates the total size of the events in the final events
+> > table at the time.
+> > 
+> > Later on, TPM driver uses this offset to copy only the events that
+> > were actually generated after ExitBootServices():
+> > 
+> > /*
+> >  * Copy any of the final events log that didn't also end up in the
+> >  * main log. Events can be logged in both if events are generated
+> >  * between GetEventLog() and ExitBootServices().
+> >  */
+> > memcpy((void *)log->bios_event_log + log_size,
+> >        final_tbl->events + log_tbl->final_events_preboot_size,
+> >        efi_tpm_final_log_size);
+> > 
+> > What would be a better way to describe this?
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> index d9ac8c4cd866..aa64514afd5c 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> @@ -174,6 +174,10 @@ MODULE_FIRMWARE("qcom/a530_zap.b01");
->  MODULE_FIRMWARE("qcom/a530_zap.b02");
->  MODULE_FIRMWARE("qcom/a630_sqe.fw");
->  MODULE_FIRMWARE("qcom/a630_gmu.bin");
-> +MODULE_FIRMWARE("qcom/a630_zap.mdt");
-> +MODULE_FIRMWARE("qcom/a630_zap.b00");
-> +MODULE_FIRMWARE("qcom/a630_zap.b01");
-> +MODULE_FIRMWARE("qcom/a630_zap.b02");
-
-Hopefully we are in the very last days of the split PIL so we can leave this
-ugliness behind us once and for all.
-
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-
->  static inline bool _rev_match(uint8_t entry, uint8_t id)
->  {
-> -- 
-> 2.20.1
+> Yeah, I think I see what it's doing, how it's using that.
+> See above.
 > 
+> OK?
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Your propsal looks legit, thank you. I'll send an update that
+tries to address yours and Jordan's feedback.
+
+/Jarkko 
+
