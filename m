@@ -2,86 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF1961D1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 12:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD7461D20
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 12:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbfGHKgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 06:36:06 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37348 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfGHKgF (ORCPT
+        id S1729373AbfGHKhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 06:37:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53502 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfGHKhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 06:36:05 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x68AZwQg120686;
-        Mon, 8 Jul 2019 05:35:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562582158;
-        bh=+rE4ppdXIfkvuURqrEEwb+GfW7AExeh1U8btFkQFRsk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=n0saEAcDb5/h0N5sEHwiMZFBgSToDPETp1nVAR3POkt+G61m9V4e/zf7D3nYC455o
-         ilMjtpJ/3NvBPZqEdKG1+9YHmJCrtJKPtIHAsqez7YCIoujKGqHvhNE83+eNcUX2Q+
-         o/4aSCqO7LjNurkW/KqX9dRfqRfFvLNym3IpeXNk=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x68AZwYq123160
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 8 Jul 2019 05:35:58 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 8 Jul
- 2019 05:35:58 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 8 Jul 2019 05:35:58 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x68AZvp6057604;
-        Mon, 8 Jul 2019 05:35:58 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH 2/2] dt-bindings: leds: document new "power-supply" property
-Date:   Mon, 8 Jul 2019 12:35:47 +0200
-Message-ID: <20190708103547.23528-3-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190708103547.23528-1-jjhiblot@ti.com>
-References: <20190708103547.23528-1-jjhiblot@ti.com>
+        Mon, 8 Jul 2019 06:37:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=T91IgG+rHZNc0YB1ANzKPE0tZSQBRCXLcDSK9NZh7+k=; b=RIXKBBPou5htvmoG3XlZxb6a2
+        rEGkWuVCnCaSdxl5ztreMDUc4SIHfeRDMeiB0huUyOmip6ver5eZzY8I5dk7xVbXeW1XV1ywoG0tg
+        F0jgW6QQ9s4MijFnxH0iFuG+qpBpLy5UsgeQDkBvgX9gZ2bqtI3I7puoQERiJpkWbnVdw=;
+Received: from [217.140.106.54] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hkR19-0003DI-W4; Mon, 08 Jul 2019 10:37:08 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 92916D02D15; Mon,  8 Jul 2019 11:37:07 +0100 (BST)
+Date:   Mon, 8 Jul 2019 11:37:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] regmap updates for v5.3
+Message-ID: <20190708103707.GB8576@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Disposition: inline
+X-Cookie: optimist, n:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the LEDs are powered by a voltage/current regulator. describing in
-the device-tree makes it possible for the LED core to enable/disable it
-when needed.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- Documentation/devicetree/bindings/leds/common.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 70876ac11367..e093a2b7eb90 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -61,6 +61,11 @@ Optional properties for child nodes:
- - panic-indicator : This property specifies that the LED should be used,
- 		    if at all possible, as a panic indicator.
- 
-+- power-supply : A voltage/current regulator used to to power the LED. When a
-+		 LED is turned off, the LED core disable its regulator. The
-+		 same regulator can power many LED (or other) devices. It is
-+		 turned off only when all of its users disabled it.
-+
- - trigger-sources : List of devices which should be used as a source triggering
- 		    this LED activity. Some LEDs can be related to a specific
- 		    device and should somehow indicate its state. E.g. USB 2.0
--- 
-2.17.1
+The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
 
+  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git regmap-v5.3
+
+for you to fetch changes up to aaccf3863ce22108ae1d3bac82604eec9d8ae44c:
+
+  Merge branch 'regmap-5.3' into regmap-next (2019-07-04 17:33:59 +0100)
+
+----------------------------------------------------------------
+regmap: Updates for v5.3
+
+This is a relatively busy release for regmap, though not busy in the
+grand scheme of things, with the addition of support for I3C from Vitor
+Soares and a few small fixes and cleanups.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      regmap: lzo: Switch to bitmap_zalloc()
+
+Daniel Baluta (1):
+      regmap: debugfs: Fix memory leak in regmap_debugfs_init
+
+Mark Brown (2):
+      Merge branch 'regmap-5.2' into regmap-linus
+      Merge branch 'regmap-5.3' into regmap-next
+
+Srinivas Kandagatla (1):
+      regmap: fix bulk writes on paged registers
+
+Vitor Soares (1):
+      regmap: add i3c bus support
+
+YueHaibing (1):
+      regmap: select CONFIG_REGMAP while REGMAP_SCCB is set
+
+ drivers/base/regmap/Kconfig          |  6 +++-
+ drivers/base/regmap/Makefile         |  1 +
+ drivers/base/regmap/regcache-lzo.c   |  8 ++---
+ drivers/base/regmap/regmap-debugfs.c |  2 ++
+ drivers/base/regmap/regmap-i3c.c     | 60 ++++++++++++++++++++++++++++++++++++
+ drivers/base/regmap/regmap.c         |  2 ++
+ include/linux/regmap.h               | 20 ++++++++++++
+ 7 files changed, 93 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/base/regmap/regmap-i3c.c
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0jHNIACgkQJNaLcl1U
+h9Bu1wf/eHD4yjePQu6Z/kPD2C6Fxm1/wRVuXC6/1DM1YPqCXWdL8s3VM3U4Rsim
+5BHF0SyQveKMaKm40BfhkcqUXD4BG7MmStroE9BEVmwC9VsUEkZNXvkgNkmbco9W
+eqFhpgITA9PKw+TF7cdJz/Y4SSVPWFgLPohb+hxfOzCg3QYKMosh5sIZiYh5mubF
+RTzWZOGL9Wkq21GP+Jckcur5uyc6sSJk16Ex0lr8tWJu3fiWxzRH+0XOjO7hIIAI
+NYQtL23V+FWJiaU3OqXBQQ/yK2MOByML1v1qiacA2EV+7EWoOzhv64J1V5S216JL
++/L/Ql6++ort1wsz2ZEeJmpTRF70Ow==
+=TWM6
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
