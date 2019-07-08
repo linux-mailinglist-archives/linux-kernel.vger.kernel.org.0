@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E41D6233C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FBBC624E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390362AbfGHPd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:33:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35476 "EHLO mail.kernel.org"
+        id S2388137AbfGHPXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390347AbfGHPdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:33:24 -0400
+        id S2388116AbfGHPXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F166020665;
-        Mon,  8 Jul 2019 15:33:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43BE12166E;
+        Mon,  8 Jul 2019 15:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600003;
-        bh=nBB6RH8DlhwgZizyYTe+f/eNVq+Li7TO2zarQoSczqY=;
+        s=default; t=1562599384;
+        bh=7i5TIOHDCJrnRJK3is1Oicb1skMDjv9yLBrDM4cBtmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hok8xvPyXbCCxH8n26lJw5PturgKN1E21O3dVLY0ks/scNEZC2Hwq16FXsr54NLVn
-         Lf2v1DZ95cAW0orj/YkSqCAOT2MJ8BrKBhBM/Hjq6H48QDQ4AdDhDQni0yIzqjAURU
-         yFpTWL4ffrJJlPvmupOt0vSDw778+ru/4f5ZOlVw=
+        b=UjdMmEvckIPWquGud1AJPqL/YZL9yrbkH7COrRZLXezIHPOBLMNFljxNweR2NkqfC
+         k8wyLZmomjqLuoSa4E3NZWyw1y7WdQv4wNlMGZF5CqlSbFiY3iTTZdvKVja1Cp2mAi
+         9njb1w8KaUSl+qoMacabYbs0CeOkI0vdwjVNsGhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 62/96] ALSA: usb-audio: fix sign unintended sign extension on left shifts
+        stable@vger.kernel.org, Robin Gong <yibin.gong@nxp.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Michael Olbrich <m.olbrich@pengutronix.de>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.9 101/102] dmaengine: imx-sdma: remove BD_INTR for channel0
 Date:   Mon,  8 Jul 2019 17:13:34 +0200
-Message-Id: <20190708150529.827837657@linuxfoundation.org>
+Message-Id: <20190708150531.704945047@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Robin Gong <yibin.gong@nxp.com>
 
-commit 2acf5a3e6e9371e63c9e4ff54d84d08f630467a0 upstream.
+commit 3f93a4f297961c12bb17aa16cb3a4d1291823cae upstream.
 
-There are a couple of left shifts of unsigned 8 bit values that
-first get promoted to signed ints and hence get sign extended
-on the shift if the top bit of the 8 bit values are set. Fix
-this by casting the 8 bit values to unsigned ints to stop the
-unintentional sign extension.
+It is possible for an irq triggered by channel0 to be received later
+after clks are disabled once firmware loaded during sdma probe. If
+that happens then clearing them by writing to SDMA_H_INTR won't work
+and the kernel will hang processing infinite interrupts. Actually,
+don't need interrupt triggered on channel0 since it's pollling
+SDMA_H_STATSTOP to know channel0 done rather than interrupt in
+current code, just clear BD_INTR to disable channel0 interrupt to
+avoid the above case.
+This issue was brought by commit 1d069bfa3c78 ("dmaengine: imx-sdma:
+ack channel 0 IRQ in the interrupt handler") which didn't take care
+the above case.
 
-Addresses-Coverity: ("Unintended sign extension")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 1d069bfa3c78 ("dmaengine: imx-sdma: ack channel 0 IRQ in the interrupt handler")
+Cc: stable@vger.kernel.org #5.0+
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
+Tested-by: Sven Van Asbroeck <thesven73@gmail.com>
+Reviewed-by: Michael Olbrich <m.olbrich@pengutronix.de>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer_quirks.c |    4 ++--
+ drivers/dma/imx-sdma.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/usb/mixer_quirks.c
-+++ b/sound/usb/mixer_quirks.c
-@@ -754,7 +754,7 @@ static int snd_ni_control_init_val(struc
- 		return err;
- 	}
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -632,7 +632,7 @@ static int sdma_load_script(struct sdma_
+ 	spin_lock_irqsave(&sdma->channel_0_lock, flags);
  
--	kctl->private_value |= (value << 24);
-+	kctl->private_value |= ((unsigned int)value << 24);
- 	return 0;
- }
+ 	bd0->mode.command = C0_SETPM;
+-	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
++	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
+ 	bd0->mode.count = size / 2;
+ 	bd0->buffer_addr = buf_phys;
+ 	bd0->ext_buffer_addr = address;
+@@ -909,7 +909,7 @@ static int sdma_load_context(struct sdma
+ 	context->gReg[7] = sdmac->watermark_level;
  
-@@ -915,7 +915,7 @@ static int snd_ftu_eff_switch_init(struc
- 	if (err < 0)
- 		return err;
- 
--	kctl->private_value |= value[0] << 24;
-+	kctl->private_value |= (unsigned int)value[0] << 24;
- 	return 0;
- }
- 
+ 	bd0->mode.command = C0_SETDM;
+-	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
++	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
+ 	bd0->mode.count = sizeof(*context) / 4;
+ 	bd0->buffer_addr = sdma->context_phys;
+ 	bd0->ext_buffer_addr = 2048 + (sizeof(*context) / 4) * channel;
 
 
