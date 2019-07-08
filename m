@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54313623EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94FBE6234D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389792AbfGHPaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:30:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58638 "EHLO mail.kernel.org"
+        id S2389578AbfGHPeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389585AbfGHP3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:29:45 -0400
+        id S2390460AbfGHPd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:33:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE61216F4;
-        Mon,  8 Jul 2019 15:29:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5ECE204EC;
+        Mon,  8 Jul 2019 15:33:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599784;
-        bh=5Bi1ejuRESz61bUYqPNkEyic9P7oSHxXtmSYp6EISkg=;
+        s=default; t=1562600036;
+        bh=QWEh1KWjRkuEdqk4cC4/ckIcIZMQz4gyuaWKf67BMWM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LAAviDeTVHrn7RqMCi4WqO0YcMzEm3ut+rgXAtNdJJhr+LD1KLF5DeGNnpnnmWezo
-         C4cWpPdbb9JYG8nAzChqnOPbqYoLnneSvvFaNpZW51Pfj5BjH4P2kRGY+GOj+AMgJZ
-         1FQYdwIrpqcmR9w4KVrOaJg5SoQ4BCclZxtC8YfQ=
+        b=wkLuIvsBz28gVY+kq8k4/geuNvGCtJ0/ipPczI5FOdObKYSXiuCqek4HDfbefL2QO
+         K7jFth+CGi5TME8Ncn6fTif5ks1LPlSOEvW388MZRwZYPHdYeBHqJ0Z5UwY36gtLLv
+         /L1HFjuCKup9lsJaSAM/dgA1mlDB/RE5nJg0+XKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 77/90] netfilter: ipv6: nf_defrag: fix leakage of unqueued fragments
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 5.1 72/96] drm/i915/ringbuffer: EMIT_INVALIDATE *before* switch context
 Date:   Mon,  8 Jul 2019 17:13:44 +0200
-Message-Id: <20190708150526.237087551@linuxfoundation.org>
+Message-Id: <20190708150530.343722818@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a0d56cb911ca301de81735f1d73c2aab424654ba ]
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-With commit 997dd9647164 ("net: IP6 defrag: use rbtrees in
-nf_conntrack_reasm.c"), nf_ct_frag6_reasm() is now called from
-nf_ct_frag6_queue(). With this change, nf_ct_frag6_queue() can fail
-after the skb has been added to the fragment queue and
-nf_ct_frag6_gather() was adapted to handle this case.
+commit c84c9029d782a3a0d2a7f0522ecb907314d43e2c upstream.
 
-But nf_ct_frag6_queue() can still fail before the fragment has been
-queued. nf_ct_frag6_gather() can't handle this case anymore, because it
-has no way to know if nf_ct_frag6_queue() queued the fragment before
-failing. If it didn't, the skb is lost as the error code is overwritten
-with -EINPROGRESS.
+Despite what I think the prm recommends, commit f2253bd9859b
+("drm/i915/ringbuffer: EMIT_INVALIDATE after switch context") turned out
+to be a huge mistake when enabling Ironlake contexts as the GPU would
+hang on either a MI_FLUSH or PIPE_CONTROL immediately following the
+MI_SET_CONTEXT of an active mesa context (more vanilla contexts, e.g.
+simple rendercopies with igt, do not suffer).
 
-Fix this by setting -EINPROGRESS directly in nf_ct_frag6_queue(), so
-that nf_ct_frag6_gather() can propagate the error as is.
+Ville found the following clue,
 
-Fixes: 997dd9647164 ("net: IP6 defrag: use rbtrees in nf_conntrack_reasm.c")
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  "[DevCTG+]: For the invalidate operation of the pipe control, the
+   following pointers are affected. The
+   invalidate operation affects the restore of these packets. If the pipe
+   control invalidate operation is completed
+   before the context save, the indirect pointers will not be restored from
+   memory.
+   1. Pipeline State Pointer
+   2. Media State Pointer
+   3. Constant Buffer Packet"
+
+which suggests by us emitting the INVALIDATE prior to the MI_SET_CONTEXT,
+we prevent the context-restore from chasing the dangling pointers within
+the image, and explains why this likely prevents the GPU hang.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190419111749.3910-1-chris@chris-wilson.co.uk
+(cherry picked from commit 928f8f42310f244501a7c70daac82c196112c190 in drm-intel-next)
+Cc: stable@vger.kernel.org
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111014
+Fixes: f2253bd9859b ("drm/i915/ringbuffer: EMIT_INVALIDATE after switch context")
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/i915/intel_ringbuffer.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index cb1b4772dac0..73c29ddcfb95 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -293,7 +293,11 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
- 		skb->_skb_refdst = 0UL;
- 		err = nf_ct_frag6_reasm(fq, skb, prev, dev);
- 		skb->_skb_refdst = orefdst;
--		return err;
-+
-+		/* After queue has assumed skb ownership, only 0 or
-+		 * -EINPROGRESS must be returned.
-+		 */
-+		return err ? -EINPROGRESS : 0;
- 	}
+--- a/drivers/gpu/drm/i915/intel_ringbuffer.c
++++ b/drivers/gpu/drm/i915/intel_ringbuffer.c
+@@ -1957,12 +1957,12 @@ static int ring_request_alloc(struct i91
+ 	 */
+ 	request->reserved_space += LEGACY_REQUEST_SIZE;
  
- 	skb_dst_drop(skb);
-@@ -481,12 +485,6 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- 		ret = 0;
- 	}
+-	ret = switch_context(request);
++	/* Unconditionally invalidate GPU caches and TLBs. */
++	ret = request->engine->emit_flush(request, EMIT_INVALIDATE);
+ 	if (ret)
+ 		return ret;
  
--	/* after queue has assumed skb ownership, only 0 or -EINPROGRESS
--	 * must be returned.
--	 */
--	if (ret)
--		ret = -EINPROGRESS;
--
- 	spin_unlock_bh(&fq->q.lock);
- 	inet_frag_put(&fq->q);
- 	return ret;
--- 
-2.20.1
-
+-	/* Unconditionally invalidate GPU caches and TLBs. */
+-	ret = request->engine->emit_flush(request, EMIT_INVALIDATE);
++	ret = switch_context(request);
+ 	if (ret)
+ 		return ret;
+ 
 
 
