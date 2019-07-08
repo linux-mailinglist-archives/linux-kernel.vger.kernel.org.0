@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 799D462219
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8A36232E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:34:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387940AbfGHPWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:22:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48684 "EHLO mail.kernel.org"
+        id S2390216AbfGHPcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387541AbfGHPWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:22:19 -0400
+        id S2390202AbfGHPcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97547216C4;
-        Mon,  8 Jul 2019 15:22:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEE4D21537;
+        Mon,  8 Jul 2019 15:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599338;
-        bh=Nf2YQlA6/8uRbuf11XOZ+HRCsHe6fw5Z0BmejLtcxfw=;
+        s=default; t=1562599969;
+        bh=FUBe4MgdrJVgVL3bFWuyr2XtphH673KwFTkFrPWIc/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n3ZDQ0NF/RwvVw/wCPuINkm5H/wmyV+/SQBJMZSOFVJ7y4QE9oUyu4uXBrVO9LzGL
-         Z4OUzVp96MkwdiwgogDineyjpuSriUiZZ7p11sEpwd27bmEGalDpy8MFzboX0usWjz
-         RsOTtgtd7R62OR1SUfAZKoxW+0oTFtggehtXuISc=
+        b=d3wGEJAgvFik3UGwbuKnVfIAcwIdTAxx9bn9nsDbuvq44dx4+aCW93sW8Gpi5ky2y
+         GZq/eeqyUhWkDV/jX02A+ArQkq9now5mstBsUp5Je49ZydQ562D0lCkM+Rqse0X1eU
+         0oeMRQ72TE1WxJt2831NM6OsE4wO3IBDwNvH0fc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 4.9 082/102] clk: sunxi: fix uninitialized access
+        stable@vger.kernel.org, Alex Levin <levinale@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 43/96] ASoC: Intel: sst: fix kmalloc call with wrong flags
 Date:   Mon,  8 Jul 2019 17:13:15 +0200
-Message-Id: <20190708150530.716651984@linuxfoundation.org>
+Message-Id: <20190708150528.867462871@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit 3da428ff2aa5a5191ba2f1630eea75f03242f3f2 ]
 
-commit 4e903450bcb9a6bc90733b981d7cb8b3c4996a0e upstream.
+When calling kmalloc with GFP_KERNEL in case CONFIG_SLOB is unset,
+kmem_cache_alloc_trace is called.
 
-gcc-8 reports an uninitialized variable access in a code path
-that we would see with incorrect DTB input:
+In case CONFIG_TRACING is set, kmem_cache_alloc_trace will ball
+slab_alloc, which will call slab_pre_alloc_hook which might_sleep_if.
 
-drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_init':
-drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+The context in which it is called in this case, the
+intel_sst_interrupt_mrfld, calling a sleeping kmalloc generates a BUG():
 
-This works around by skipping invalid input and printing a warning
-instead if it ever happens. The problem was apparently part of the
-initiali driver submission, but older compilers don't notice it.
+Fixes: 972b0d456e64 ("ASoC: Intel: remove GFP_ATOMIC, use GFP_KERNEL")
 
-Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[   20.250671] BUG: sleeping function called from invalid context at mm/slab.h:422
+[   20.250683] in_atomic(): 1, irqs_disabled(): 1, pid: 1791, name: Chrome_IOThread
+[   20.250690] CPU: 0 PID: 1791 Comm: Chrome_IOThread Tainted: G        W         4.19.43 #61
+[   20.250693] Hardware name: GOOGLE Kefka, BIOS Google_Kefka.7287.337.0 03/02/2017
+[   20.250697] Call Trace:
+[   20.250704]  <IRQ>
+[   20.250716]  dump_stack+0x7e/0xc3
+[   20.250725]  ___might_sleep+0x12a/0x140
+[   20.250731]  kmem_cache_alloc_trace+0x53/0x1c5
+[   20.250736]  ? update_cfs_rq_load_avg+0x17e/0x1aa
+[   20.250740]  ? cpu_load_update+0x6c/0xc2
+[   20.250746]  sst_create_ipc_msg+0x2d/0x88
+[   20.250752]  intel_sst_interrupt_mrfld+0x12a/0x22c
+[   20.250758]  __handle_irq_event_percpu+0x133/0x228
+[   20.250764]  handle_irq_event_percpu+0x35/0x7a
+[   20.250768]  handle_irq_event+0x36/0x55
+[   20.250773]  handle_fasteoi_irq+0xab/0x16c
+[   20.250779]  handle_irq+0xd9/0x11e
+[   20.250785]  do_IRQ+0x54/0xe0
+[   20.250791]  common_interrupt+0xf/0xf
+[   20.250795]  </IRQ>
+[   20.250800] RIP: 0010:__lru_cache_add+0x4e/0xad
+[   20.250806] Code: 00 01 48 c7 c7 b8 df 01 00 65 48 03 3c 25 28 f1 00 00 48 8b 48 08 48 89 ca 48 ff ca f6 c1 01 48 0f 44 d0 f0 ff 42 34 0f b6 0f <89> ca fe c2 88 17 48 89 44 cf 08 80 fa 0f 74 0e 48 8b 08 66 85 c9
+[   20.250809] RSP: 0000:ffffa568810bfd98 EFLAGS: 00000202 ORIG_RAX: ffffffffffffffd6
+[   20.250814] RAX: ffffd3b904eb1940 RBX: ffffd3b904eb1940 RCX: 0000000000000004
+[   20.250817] RDX: ffffd3b904eb1940 RSI: ffffa10ee5c47450 RDI: ffffa10efba1dfb8
+[   20.250821] RBP: ffffa568810bfda8 R08: ffffa10ef9c741c1 R09: dead000000000100
+[   20.250824] R10: 0000000000000000 R11: 0000000000000000 R12: ffffa10ee8d52a40
+[   20.250827] R13: ffffa10ee8d52000 R14: ffffa10ee5c47450 R15: 800000013ac65067
+[   20.250835]  lru_cache_add_active_or_unevictable+0x4e/0xb8
+[   20.250841]  handle_mm_fault+0xd98/0x10c4
+[   20.250848]  __do_page_fault+0x235/0x42d
+[   20.250853]  ? page_fault+0x8/0x30
+[   20.250858]  do_page_fault+0x3d/0x17a
+[   20.250862]  ? page_fault+0x8/0x30
+[   20.250866]  page_fault+0x1e/0x30
+[   20.250872] RIP: 0033:0x7962fdea9304
+[   20.250875] Code: 0f 11 4c 17 f0 c3 48 3b 15 f1 26 31 00 0f 83 e2 00 00 00 48 39 f7 72 0f 74 12 4c 8d 0c 16 4c 39 cf 0f 82 63 01 00 00 48 89 d1 <f3> a4 c3 80 fa 08 73 12 80 fa 04 73 1e 80 fa 01 77 26 72 05 0f b6
+[   20.250879] RSP: 002b:00007962f4db5468 EFLAGS: 00010206
+[   20.250883] RAX: 00003c8cc9d47008 RBX: 0000000000000000 RCX: 0000000000001b48
+[   20.250886] RDX: 0000000000002b40 RSI: 00003c8cc9551000 RDI: 00003c8cc9d48000
+[   20.250890] RBP: 00007962f4db5820 R08: 0000000000000000 R09: 00003c8cc9552b48
+[   20.250893] R10: 0000562dd1064d30 R11: 00003c8cc825b908 R12: 00003c8cc966d3c0
+[   20.250896] R13: 00003c8cc9e280c0 R14: 0000000000000000 R15: 0000000000000000
 
+Signed-off-by: Alex Levin <levinale@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi/clk-sun8i-bus-gates.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/intel/atom/sst/sst_pvt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-+++ b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-@@ -78,6 +78,10 @@ static void __init sun8i_h3_bus_gates_in
- 			clk_parent = APB1;
- 		else if (index >= 96 && index <= 127)
- 			clk_parent = APB2;
-+		else {
-+			WARN_ON(true);
-+			continue;
-+		}
+diff --git a/sound/soc/intel/atom/sst/sst_pvt.c b/sound/soc/intel/atom/sst/sst_pvt.c
+index 00a37a09dc9b..dba0ca07ebf9 100644
+--- a/sound/soc/intel/atom/sst/sst_pvt.c
++++ b/sound/soc/intel/atom/sst/sst_pvt.c
+@@ -166,11 +166,11 @@ int sst_create_ipc_msg(struct ipc_post **arg, bool large)
+ {
+ 	struct ipc_post *msg;
  
- 		clk_reg = reg + 4 * (index / 32);
- 		clk_bit = index % 32;
+-	msg = kzalloc(sizeof(*msg), GFP_KERNEL);
++	msg = kzalloc(sizeof(*msg), GFP_ATOMIC);
+ 	if (!msg)
+ 		return -ENOMEM;
+ 	if (large) {
+-		msg->mailbox_data = kzalloc(SST_MAILBOX_SIZE, GFP_KERNEL);
++		msg->mailbox_data = kzalloc(SST_MAILBOX_SIZE, GFP_ATOMIC);
+ 		if (!msg->mailbox_data) {
+ 			kfree(msg);
+ 			return -ENOMEM;
+-- 
+2.20.1
+
 
 
