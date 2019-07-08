@@ -2,102 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56B261998
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 05:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3050C6199F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 05:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbfGHDvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 23:51:02 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46212 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728914AbfGHDvC (ORCPT
+        id S1728972AbfGHDx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 23:53:59 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60216 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbfGHDx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 23:51:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c73so2236171pfb.13
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2019 20:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/1pK4KTnhC89gqGYh7RqYsGWCRyTdp8pAHVuXCVYQM0=;
-        b=rcOUQmSGNhVpug3mIyjRLWjXiIaNo6rSisJB7mCEu56J3i3r5wszqroltHwaefo8vt
-         FJDolSTb9COCAUPHEGmXp44a6WgYMNaoFB4kjRxvZjojSvG8SQMDG6OYic4T1MQE6uA2
-         7Vrndp5vb1fxgXpz4LpAvyqwp0UnYxe4Ggcp7XsuGSF4TAzn/Biuj8atuRDXEXY5mUtJ
-         KEZfwdEobRo9Gd/bIam2/We+/7UualkhGP2pQR2FafF5FOQ8LRRCWVZOW096GA+lW5Fm
-         LZcUyPzr5ka9SttykNopIJMhRkEI2r8N8aBTz7NxcdIA/4wmiwDRB5HqwB831axXIcfV
-         WuXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/1pK4KTnhC89gqGYh7RqYsGWCRyTdp8pAHVuXCVYQM0=;
-        b=CGMfdEjhMNq7jsCVx/DSyEov4roqlqNu4txNApVoi9QuURtO8BHOSI9utsJ9gE/wQc
-         V4IQNwk0tJXkd5vNgWifTK9LRlHzcLJd1lareKYcmuBnYsF9lWQ9uSdUHJXW/r3DIszC
-         LNR/Q3HAZSBp290TOUN1X7uXTCNLNJ6rgdYoWahvVxhjQlW+x3/aT0GHO05E6Z1WJCGY
-         xjeQz6a2zvh8Jaf+LOcntxzxEb+jigbB3U55pIADwg7yLiTeUEG/UGYtZMOWoVJcDAut
-         V3DdrXkp6W5uIXInl8ITUWkTemqTSAUka55PiaRpctvFprxmumls7WYFEw5eVH4nMVzd
-         wF4w==
-X-Gm-Message-State: APjAAAUkj9QqDPulzqx0c7qTuXJNUEjLurM5QEqubKp+vXnyg7svJxYp
-        F9b5lv/6V5p2vzxYsEoh4yw8vg==
-X-Google-Smtp-Source: APXvYqwChaIoPvXaa69JPPf8K46yTRYkCg4Tm7IDyulcIk9nICKW8Ynmx8kiGVyy7hwFcgTvMhQjWg==
-X-Received: by 2002:a63:7e17:: with SMTP id z23mr19550031pgc.14.1562557861027;
-        Sun, 07 Jul 2019 20:51:01 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id b1sm16054904pfi.91.2019.07.07.20.50.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Jul 2019 20:51:00 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 09:20:57 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Anson.Huang@nxp.com
-Cc:     rjw@rjwysocki.net, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH] cpufreq: imx-cpufreq-dt: Add i.MX8MN support
-Message-ID: <20190708035057.h2lgadm56tgdqsor@vireshk-i7>
-References: <20190708030308.1815-1-Anson.Huang@nxp.com>
+        Sun, 7 Jul 2019 23:53:56 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x683qjop025049;
+        Sun, 7 Jul 2019 22:52:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562557965;
+        bh=BrRcS2Ts0+S5AcxuLtFsmCPOIptQ/S7lXXWgFUi6kWA=;
+        h=From:To:CC:Subject:Date;
+        b=OTI6h2xjNNQdb3BrlzNL/9rQfQhkLJarwU+e1JabV7dNUSUXFfKUKsiD/ikWgEBY9
+         hxjHyYrtOMQthS+xqFLpEqjBma0vp5rGXgbediC3+mW6bj2lcwK6vDQyHrEL9PnBT+
+         Tdrkd1DEGu7SLZuMaY+0O9s7gQX1s8k82chb0qSY=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x683qjf7042834
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 7 Jul 2019 22:52:45 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Sun, 7 Jul
+ 2019 22:52:45 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Sun, 7 Jul 2019 22:52:45 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x683qjaa122089;
+        Sun, 7 Jul 2019 22:52:45 -0500
+Received: from localhost (irmo.dhcp.ti.com [128.247.58.153])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x683qjm26429;
+        Sun, 7 Jul 2019 22:52:45 -0500 (CDT)
+From:   Suman Anna <s-anna@ti.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+CC:     Tony Lindgren <tony@atomide.com>, "Andrew F. Davis" <afd@ti.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/6] Add TI PRUSS Local Interrupt Controller IRQChip driver
+Date:   Sun, 7 Jul 2019 22:52:37 -0500
+Message-ID: <20190708035243.12170-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708030308.1815-1-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-07-19, 11:03, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> i.MX8MN is a new SoC of i.MX8M series, it also uses speed
-> grading and market segment fuses for OPP definitions, add
-> support for this SoC.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/cpufreq/imx-cpufreq-dt.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
-> index b54fd26..4f85f31 100644
-> --- a/drivers/cpufreq/imx-cpufreq-dt.c
-> +++ b/drivers/cpufreq/imx-cpufreq-dt.c
-> @@ -44,10 +44,11 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
->  	 * According to datasheet minimum speed grading is not supported for
->  	 * consumer parts so clamp to 1 to avoid warning for "no OPPs"
->  	 *
-> -	 * Applies to 8mq and 8mm.
-> +	 * Applies to i.MX8M series SoCs.
->  	 */
->  	if (mkt_segment == 0 && speed_grade == 0 && (
->  			of_machine_is_compatible("fsl,imx8mm") ||
-> +			of_machine_is_compatible("fsl,imx8mn") ||
->  			of_machine_is_compatible("fsl,imx8mq")))
->  		speed_grade = 1;
+Hi All,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+The following series adds an IRQChip driver for the local interrupt controller
+present within a Programmable Real-Time Unit and Industrial Communication
+Subsystem (PRU-ICSS) present on a number of TI SoCs including OMAP architecture
+based AM335x, AM437x, AM57xx SoCs, Keystone 2 architecture based 66AK2G SoCs,
+Davinci architecture based OMAP-L138/DA850 SoCs and the latest K3 architecture
+based AM65x and J721E SoCs. This series splits out the INTC portions into a
+separate stand-alone series from the previous PRUSS support patch series [1]
+as requested by various maintainers. Patches are on top of latest master.
 
-@Rafael: Can you pick this one directly, no point sending another pull request
-for just one patch. Thanks.
+The PRUSS local INTC is a unique interrupt controller designed to map a number
+of SoC-level device or internal PRUSS interrupt sources into a smaller set of
+output interrupt lines that are connected to various SoC-level processors like
+the host ARM, PRU cores themselves and optionally to some DSPs, other PRUSS,
+DMA controllers etc. The following are some of the features:
+ - Capture of 64 (160 on K3) System Events/input interrupt sources
+ - Multiplexing of these system events onto 10 (20 on K3) output interrupt
+   channels in a many-to-one fashion
+ - Multiplexing of the output interrupt channels onto 10 (20 on K3) host
+   interrupts split between multiple processors. Typical integration connects
+   the first 2 host interrupts to PRU cores, and the next 8 host interrupts
+   to ARM cores.
+ - Independent enable and disable of system events and their mapping onto
+   a channel
+ - Independent enable and disable of host events and the mapping to host
+   events per interrupt channel. 
+ - Inherent hardward prioritization of events and channels (lower number
+   indicates higher priority).
+ - Additional input interrupt sources multiplexing using either a SoC-level
+   CFG MMR or PRUSS CFG MMR (support will be added through PRU rproc client
+   bindings).
+
+More details can be found in any of the supported SoC TRMs.
+Eg: Chapter 30.1.6 of AM5728 TRM [2]
+
+Changes from previous series include:
+ - Update bindings to move away from SoC-specific compatibles
+ - Use new DT properties to add support for shared and exclusive ARM GIC
+   interrupt lines 
+ - Include support for Davinci OMAP-L138 and K3 AM65x & J721E SoCs
+ - Split up the driver patch into granular incremental support patches
+
+regards
+Suman
+
+[1] https://patchwork.kernel.org/cover/10795721/
+[2] http://www.ti.com/lit/pdf/spruhz6
+
+
+Andrew F. Davis (2):
+  irqchip/irq-pruss-intc: Add a PRUSS irqchip driver for PRUSS
+    interrupts
+  irqchip/irq-pruss-intc: Add API to trigger a PRU sysevent
+
+Suman Anna (4):
+  dt-bindings: irqchip: Add PRUSS interrupt controller bindings
+  irqchip/irq-pruss-intc: Add support for shared and invalid interrupts
+  irqchip/irq-pruss-intc: Add helper functions to configure internal
+    mapping
+  irqchip/irq-pruss-intc: Add support for ICSSG INTC on K3 SoCs
+
+ .../interrupt-controller/ti,pruss-intc.txt    |  92 +++
+ drivers/irqchip/Kconfig                       |  10 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-pruss-intc.c              | 749 ++++++++++++++++++
+ include/linux/irqchip/irq-pruss-intc.h        |  33 +
+ include/linux/pruss_intc.h                    |  26 +
+ 6 files changed, 911 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.txt
+ create mode 100644 drivers/irqchip/irq-pruss-intc.c
+ create mode 100644 include/linux/irqchip/irq-pruss-intc.h
+ create mode 100644 include/linux/pruss_intc.h
 
 -- 
-viresh
+2.22.0
+
