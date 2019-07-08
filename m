@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BC562319
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B6A62450
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390070AbfGHPcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:32:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33626 "EHLO mail.kernel.org"
+        id S2388736AbfGHP0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:26:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390026AbfGHPcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:32:06 -0400
+        id S2388722AbfGHP0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:26:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2897921743;
-        Mon,  8 Jul 2019 15:32:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F1EB20665;
+        Mon,  8 Jul 2019 15:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599925;
-        bh=MvPKptrsH1yGccI/d1FhXIx/+pPTsmfzi2Gzw1r0H4I=;
+        s=default; t=1562599559;
+        bh=849QI4FgZ5IFRTyySZdZyjabtM3ze9NF08JsXOOQ4q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gYeDVt6ySjt6dtWpR7NmKnvFFngJfJlDaDj0tE6SaBO4f1Zd3fA7ytTBPSrNTS4op
-         429OmmkuIHQxfRAXYvngNn0SZfN1FSV4flZkBpkcJWgcExvoJwqddooKGM2iXwqryp
-         lBFTadjKU+IxpmxcLz7M5YJF20XmaVHw9gEIKTCw=
+        b=M4IYFhlOc5zt7Y5h17qKmQ+NJQgQDy0E7ssqdePwgzVbBM3gK/JxNE46rfc/PsCGI
+         jrFKJp64hiOsxpE1fh4FdhOw8M09LtCVoN0Jw1wkDBRj/bsDjOpOo/WBZrraFA8vBw
+         8tSfSyNq8pFXYPD7jT2p4hLxAfFtjwZiX4nl7NnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        Bader Ali - Saleh <bader.alisaleh@microsemi.com>,
+        Scott Teel <scott.teel@microsemi.com>,
+        Matt Perricone <matt.perricone@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 34/96] ASoC: Intel: cht_bsw_rt5672: fix kernel oops with platform_name override
+Subject: [PATCH 4.14 14/56] scsi: hpsa: correct ioaccel2 chaining
 Date:   Mon,  8 Jul 2019 17:13:06 +0200
-Message-Id: <20190708150528.406899292@linuxfoundation.org>
+Message-Id: <20190708150519.519975443@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9bbc799318a34061703f2a980e2b6df7fc6760f0 ]
+[ Upstream commit 625d7d3518875c4d303c652a198feaa13d9f52d9 ]
 
-The platform override code uses devm_ functions to allocate memory for
-the new name but the card device is not initialized. Fix by moving the
-init earlier.
+- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_LAST_SG for
+  the last s/g element.
 
-Fixes: f403906da05cd ("ASoC: Intel: cht_bsw_rt5672: platform name fixup support")
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_CHAIN when
+  chaining.
+
+Reviewed-by: Bader Ali - Saleh <bader.alisaleh@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Matt Perricone <matt.perricone@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/boards/cht_bsw_rt5672.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/hpsa.c     | 7 ++++++-
+ drivers/scsi/hpsa_cmd.h | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/boards/cht_bsw_rt5672.c b/sound/soc/intel/boards/cht_bsw_rt5672.c
-index 3d5a2b3a06f0..87ce3857376d 100644
---- a/sound/soc/intel/boards/cht_bsw_rt5672.c
-+++ b/sound/soc/intel/boards/cht_bsw_rt5672.c
-@@ -425,6 +425,7 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 5b4b7f9be2d7..6d520e8945f7 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4800,7 +4800,7 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
+ 			curr_sg->reserved[0] = 0;
+ 			curr_sg->reserved[1] = 0;
+ 			curr_sg->reserved[2] = 0;
+-			curr_sg->chain_indicator = 0x80;
++			curr_sg->chain_indicator = IOACCEL2_CHAIN;
  
- 	/* override plaform name, if required */
-+	snd_soc_card_cht.dev = &pdev->dev;
- 	platform_name = mach->mach_params.platform;
+ 			curr_sg = h->ioaccel2_cmd_sg_list[c->cmdindex];
+ 		}
+@@ -4817,6 +4817,11 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
+ 			curr_sg++;
+ 		}
  
- 	ret_val = snd_soc_fixup_dai_links_platform_name(&snd_soc_card_cht,
-@@ -442,7 +443,6 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	snd_soc_card_set_drvdata(&snd_soc_card_cht, drv);
++		/*
++		 * Set the last s/g element bit
++		 */
++		(curr_sg - 1)->chain_indicator = IOACCEL2_LAST_SG;
++
+ 		switch (cmd->sc_data_direction) {
+ 		case DMA_TO_DEVICE:
+ 			cp->direction &= ~IOACCEL2_DIRECTION_MASK;
+diff --git a/drivers/scsi/hpsa_cmd.h b/drivers/scsi/hpsa_cmd.h
+index 078afe448115..ecf15344b55d 100644
+--- a/drivers/scsi/hpsa_cmd.h
++++ b/drivers/scsi/hpsa_cmd.h
+@@ -516,6 +516,7 @@ struct ioaccel2_sg_element {
+ 	u8 reserved[3];
+ 	u8 chain_indicator;
+ #define IOACCEL2_CHAIN 0x80
++#define IOACCEL2_LAST_SG 0x40
+ };
  
- 	/* register the soc card */
--	snd_soc_card_cht.dev = &pdev->dev;
- 	ret_val = devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_cht);
- 	if (ret_val) {
- 		dev_err(&pdev->dev,
+ /*
 -- 
 2.20.1
 
