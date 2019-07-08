@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78477623AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0956622DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390942AbfGHPga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:36:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
+        id S2389543AbfGHP3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:29:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390398AbfGHPdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:33:45 -0400
+        id S2389500AbfGHP3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:29:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58E9821743;
-        Mon,  8 Jul 2019 15:33:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A96821537;
+        Mon,  8 Jul 2019 15:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600024;
-        bh=MyymLWxB7oI6HyWoFiUfm3IGCoALyYheBe2ypwBZcOQ=;
+        s=default; t=1562599776;
+        bh=fEV56gnYpPkogzIow6iloZq2JvmolkSAjPoJ9ZYsC2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OFbXvIYVRDCVdKCV06lePkOXk7p+fj5qZFYte/CtYdDMfhXYcWJQp8CF9iqmOgSS8
-         IGn8aAAo7TZY4spi4u+FcKPCWtoNTYHyLSGZcRmeBOlDAlV3VVz0+ZnIBn2ltIU6V6
-         TwF/F/Xa2E0w2Z3p8XB8fgv75Wu/Cfe+rFBAKsdU=
+        b=DYGY+mhPmi37zMqSfg7AegEVulzSXUFIH6fongyl8CkNdLq1ZLY6WbifKfE8PwzMv
+         mipCRyvkhJiHfa39tEFSHhJRz9OlIrbMUCk434nCaob4jm364fdSXjyKLeBRy87icn
+         4KX1Y/KfZXh4UgGfudawW3hUvWPmT97d5VU+tGHo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eiichi Tsukata <devel@etsukata.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.1 69/96] tracing/snapshot: Resize spare buffer if size changed
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 74/90] ALSA: hda: Initialize power_state field properly
 Date:   Mon,  8 Jul 2019 17:13:41 +0200
-Message-Id: <20190708150530.189892715@linuxfoundation.org>
+Message-Id: <20190708150526.070864123@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,105 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eiichi Tsukata <devel@etsukata.com>
+[ Upstream commit 183ab39eb0ea9879bb68422a83e65f750f3192f0 ]
 
-commit 46cc0b44428d0f0e81f11ea98217fc0edfbeab07 upstream.
+The recent commit 98081ca62cba ("ALSA: hda - Record the current power
+state before suspend/resume calls") made the HD-audio driver to store
+the PM state in power_state field.  This forgot, however, the
+initialization at power up.  Although the codec drivers usually don't
+need to refer to this field in the normal operation, let's initialize
+it properly for consistency.
 
-Current snapshot implementation swaps two ring_buffers even though their
-sizes are different from each other, that can cause an inconsistency
-between the contents of buffer_size_kb file and the current buffer size.
-
-For example:
-
-  # cat buffer_size_kb
-  7 (expanded: 1408)
-  # echo 1 > events/enable
-  # grep bytes per_cpu/cpu0/stats
-  bytes: 1441020
-  # echo 1 > snapshot             // current:1408, spare:1408
-  # echo 123 > buffer_size_kb     // current:123,  spare:1408
-  # echo 1 > snapshot             // current:1408, spare:123
-  # grep bytes per_cpu/cpu0/stats
-  bytes: 1443700
-  # cat buffer_size_kb
-  123                             // != current:1408
-
-And also, a similar per-cpu case hits the following WARNING:
-
-Reproducer:
-
-  # echo 1 > per_cpu/cpu0/snapshot
-  # echo 123 > buffer_size_kb
-  # echo 1 > per_cpu/cpu0/snapshot
-
-WARNING:
-
-  WARNING: CPU: 0 PID: 1946 at kernel/trace/trace.c:1607 update_max_tr_single.part.0+0x2b8/0x380
-  Modules linked in:
-  CPU: 0 PID: 1946 Comm: bash Not tainted 5.2.0-rc6 #20
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-  RIP: 0010:update_max_tr_single.part.0+0x2b8/0x380
-  Code: ff e8 dc da f9 ff 0f 0b e9 88 fe ff ff e8 d0 da f9 ff 44 89 ee bf f5 ff ff ff e8 33 dc f9 ff 41 83 fd f5 74 96 e8 b8 da f9 ff <0f> 0b eb 8d e8 af da f9 ff 0f 0b e9 bf fd ff ff e8 a3 da f9 ff 48
-  RSP: 0018:ffff888063e4fca0 EFLAGS: 00010093
-  RAX: ffff888066214380 RBX: ffffffff99850fe0 RCX: ffffffff964298a8
-  RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000005
-  RBP: 1ffff1100c7c9f96 R08: ffff888066214380 R09: ffffed100c7c9f9b
-  R10: ffffed100c7c9f9a R11: 0000000000000003 R12: 0000000000000000
-  R13: 00000000ffffffea R14: ffff888066214380 R15: ffffffff99851060
-  FS:  00007f9f8173c700(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000714dc0 CR3: 0000000066fa6000 CR4: 00000000000006f0
-  Call Trace:
-   ? trace_array_printk_buf+0x140/0x140
-   ? __mutex_lock_slowpath+0x10/0x10
-   tracing_snapshot_write+0x4c8/0x7f0
-   ? trace_printk_init_buffers+0x60/0x60
-   ? selinux_file_permission+0x3b/0x540
-   ? tracer_preempt_off+0x38/0x506
-   ? trace_printk_init_buffers+0x60/0x60
-   __vfs_write+0x81/0x100
-   vfs_write+0x1e1/0x560
-   ksys_write+0x126/0x250
-   ? __ia32_sys_read+0xb0/0xb0
-   ? do_syscall_64+0x1f/0x390
-   do_syscall_64+0xc1/0x390
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-This patch adds resize_buffer_duplicate_size() to check if there is a
-difference between current/spare buffer sizes and resize a spare buffer
-if necessary.
-
-Link: http://lkml.kernel.org/r/20190625012910.13109-1-devel@etsukata.com
-
-Cc: stable@vger.kernel.org
-Fixes: ad909e21bbe69 ("tracing: Add internal tracing_snapshot() functions")
-Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 98081ca62cba ("ALSA: hda - Record the current power state before suspend/resume calls")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sound/pci/hda/hda_codec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6696,11 +6696,13 @@ tracing_snapshot_write(struct file *filp
- 			break;
- 		}
- #endif
--		if (!tr->allocated_snapshot) {
-+		if (tr->allocated_snapshot)
-+			ret = resize_buffer_duplicate_size(&tr->max_buffer,
-+					&tr->trace_buffer, iter->cpu_file);
-+		else
- 			ret = tracing_alloc_snapshot_instance(tr);
--			if (ret < 0)
--				break;
--		}
-+		if (ret < 0)
-+			break;
- 		local_irq_disable();
- 		/* Now, we're going to swap */
- 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
+diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
+index 21de8145f1a6..a6233775e779 100644
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -971,6 +971,7 @@ int snd_hda_codec_device_new(struct hda_bus *bus, struct snd_card *card,
+ 
+ 	/* power-up all before initialization */
+ 	hda_set_power_state(codec, AC_PWRST_D0);
++	codec->core.dev.power.power_state = PMSG_ON;
+ 
+ 	snd_hda_codec_proc_new(codec);
+ 
+-- 
+2.20.1
+
 
 
