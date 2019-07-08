@@ -2,46 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC7D62299
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D26056253C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbfGHP1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55008 "EHLO mail.kernel.org"
+        id S1732552AbfGHPQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:16:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388445AbfGHP1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:03 -0400
+        id S1732518AbfGHPQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:16:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAD8621783;
-        Mon,  8 Jul 2019 15:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27A4E216F4;
+        Mon,  8 Jul 2019 15:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599622;
-        bh=fgU99gXUjNXlXPCWm3ZZMB9EiPUVK0YGQq/KTE7Zrpo=;
+        s=default; t=1562598978;
+        bh=4Ahg2GXYYsHUau4Ok8zIOt9qfq6O1JPEwBm4JbHt6iM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0zX6dJLWemOJPzYNz26M8kPr+FkRzCMvcMHsnKQtv9Tabp5scf+9wznWCcyo8t/jc
-         lw5He1mSXtwCnn6yVyON5Punxw04o+n72yWG1bloG+Ekjth+d/iqMWB5oEDwff8lwM
-         aLz6GRLuC9moEnp617ddGmVpTdUfjJ7Ogc6OaHMM=
+        b=wADDV46KuZsm5fjLWjwotkorSttdf2NnALgmosPSt6AePCAnpt8zfIGp12Yx3G0z6
+         cch+kVU/m66FEQGpPA2xlHTJC/KNfqzTymy4nO632IYOFMgSkY0AUOem+5anEg8E4v
+         /6fXw1Yn9Bwl8ZDk4o5o4Yfc3Q+Gy1aj0lgs82oI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        rui.zhang@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/90] x86/CPU: Add more Icelake model numbers
+        stable@vger.kernel.org,
+        Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Mark Kanda <mark.kanda@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, bp@alien8.de,
+        rkrcmar@redhat.com, kvm@vger.kernel.org
+Subject: [PATCH 4.4 38/73] x86/speculation: Allow guests to use SSBD even if host does not
 Date:   Mon,  8 Jul 2019 17:12:48 +0200
-Message-Id: <20190708150523.709582820@linuxfoundation.org>
+Message-Id: <20190708150523.343123789@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,47 +48,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e35faeb64146f2015f2aec14b358ae508e4066db ]
+From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
 
-Add the CPUID model numbers of Icelake (ICL) desktop and server
-processors to the Intel family list.
+commit c1f7fec1eb6a2c86d01bc22afce772c743451d88 upstream.
 
- [ Qiuxu: Sort the macros by model number. ]
+The bits set in x86_spec_ctrl_mask are used to calculate the guest's value
+of SPEC_CTRL that is written to the MSR before VMENTRY, and control which
+mitigations the guest can enable.  In the case of SSBD, unless the host has
+enabled SSBD always on mode (by passing "spec_store_bypass_disable=on" in
+the kernel parameters), the SSBD bit is not set in the mask and the guest
+can not properly enable the SSBD always on mitigation mode.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Cc: rui.zhang@intel.com
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190603134122.13853-1-kan.liang@linux.intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This has been confirmed by running the SSBD PoC on a guest using the SSBD
+always on mitigation mode (booted with kernel parameter
+"spec_store_bypass_disable=on"), and verifying that the guest is vulnerable
+unless the host is also using SSBD always on mode. In addition, the guest
+OS incorrectly reports the SSB vulnerability as mitigated.
+
+Always set the SSBD bit in x86_spec_ctrl_mask when the host CPU supports
+it, allowing the guest to use SSBD whether or not the host has chosen to
+enable the mitigation in any of its modes.
+
+Fixes: be6fcb5478e9 ("x86/bugs: Rework spec_ctrl base and mask logic")
+Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: bp@alien8.de
+Cc: rkrcmar@redhat.com
+Cc: kvm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1560187210-11054-1-git-send-email-alejandro.j.jimenez@oracle.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/include/asm/intel-family.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/cpu/bugs.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 058b1a1994c4..2e38fb82b91d 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -52,6 +52,9 @@
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -807,6 +807,16 @@ static enum ssb_mitigation __init __ssb_
+ 	}
  
- #define INTEL_FAM6_CANNONLAKE_MOBILE	0x66
- 
-+#define INTEL_FAM6_ICELAKE_X		0x6A
-+#define INTEL_FAM6_ICELAKE_XEON_D	0x6C
-+#define INTEL_FAM6_ICELAKE_DESKTOP	0x7D
- #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
- 
- /* "Small Core" Processors (Atom) */
--- 
-2.20.1
-
+ 	/*
++	 * If SSBD is controlled by the SPEC_CTRL MSR, then set the proper
++	 * bit in the mask to allow guests to use the mitigation even in the
++	 * case where the host does not enable it.
++	 */
++	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
++	    static_cpu_has(X86_FEATURE_AMD_SSBD)) {
++		x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
++	}
++
++	/*
+ 	 * We have three CPU feature flags that are in play here:
+ 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
+ 	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
+@@ -823,7 +833,6 @@ static enum ssb_mitigation __init __ssb_
+ 			x86_amd_ssb_disable();
+ 		} else {
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+-			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 		}
+ 	}
 
 
