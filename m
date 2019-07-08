@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57387621A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2B06224F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732934AbfGHPR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:17:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41382 "EHLO mail.kernel.org"
+        id S2388378AbfGHPYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:24:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732895AbfGHPRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:17:50 -0400
+        id S2388349AbfGHPY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:24:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5446216E3;
-        Mon,  8 Jul 2019 15:17:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1156C2175B;
+        Mon,  8 Jul 2019 15:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599070;
-        bh=XP/wjr61UkwKqFacjGA1z8OfOfSKKAteAPObbnI2bmo=;
+        s=default; t=1562599465;
+        bh=qLjg0DWNqTJ7BN/j9P64/y3e03eUz7PUOvgBE+41BOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lcqHqrws4HO19Zd4iG9Bu+/w4aMV0GQwqNSmwSuMbpSm1VcIj4DILHWUkXJmogsvV
-         IEQz+NNDsTTSS4R2KYRswNqDpt7EZpqqG5D4/upGP9wXFdIP3tJ5Vy2DGFDuYpf3PA
-         7n36KOoo8TwN85WzZtERYoBBLSFoiPBMvYgk2f6A=
+        b=f6gn8eTpQH1+r/WoC7kbGcHc18w14eiWY+hBXCmGrPDtkPagF/qJWsKxYg/as8dxe
+         BXuknRP9Hx3De6bMDRaUt/VQFaPUKImjR/1cVZuyxfh6swA6QtHwenYMW+QFr71m0W
+         1j6Kr3q63i1Ubde4VaWMYlNNn60Ry6mGBQ4KR7go=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 4.4 67/73] lib/mpi: Fix karactx leak in mpi_powm
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 25/56] crypto: cryptd - Fix skcipher instance memory leak
 Date:   Mon,  8 Jul 2019 17:13:17 +0200
-Message-Id: <20190708150524.807209089@linuxfoundation.org>
+Message-Id: <20190708150521.910421953@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-commit c8ea9fce2baf7b643384f36f29e4194fa40d33a6 upstream.
+commit 1a0fad630e0b7cff38e7691b28b0517cfbb0633f upstream.
 
-Sometimes mpi_powm will leak karactx because a memory allocation
-failure causes a bail-out that skips the freeing of karactx.  This
-patch moves the freeing of karactx to the end of the function like
-everything else so that it can't be skipped.
+cryptd_skcipher_free() fails to free the struct skcipher_instance
+allocated in cryptd_create_skcipher(), leading to a memory leak.  This
+is detected by kmemleak on bootup on ARM64 platforms:
 
-Reported-by: syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
-Fixes: cdec9cb5167a ("crypto: GnuPG based MPI lib - source files...")
+ unreferenced object 0xffff80003377b180 (size 1024):
+   comm "cryptomgr_probe", pid 822, jiffies 4294894830 (age 52.760s)
+   backtrace:
+     kmem_cache_alloc_trace+0x270/0x2d0
+     cryptd_create+0x990/0x124c
+     cryptomgr_probe+0x5c/0x1e8
+     kthread+0x258/0x318
+     ret_from_fork+0x10/0x1c
+
+Fixes: 4e0958d19bd8 ("crypto: cryptd - Add support for skcipher")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/mpi/mpi-pow.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ crypto/cryptd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/lib/mpi/mpi-pow.c
-+++ b/lib/mpi/mpi-pow.c
-@@ -37,6 +37,7 @@
- int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
- {
- 	mpi_ptr_t mp_marker = NULL, bp_marker = NULL, ep_marker = NULL;
-+	struct karatsuba_ctx karactx = {};
- 	mpi_ptr_t xp_marker = NULL;
- 	mpi_ptr_t tspace = NULL;
- 	mpi_ptr_t rp, ep, mp, bp;
-@@ -164,13 +165,11 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		int c;
- 		mpi_limb_t e;
- 		mpi_limb_t carry_limb;
--		struct karatsuba_ctx karactx;
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -585,6 +585,7 @@ static void cryptd_skcipher_free(struct
+ 	struct skcipherd_instance_ctx *ctx = skcipher_instance_ctx(inst);
  
- 		xp = xp_marker = mpi_alloc_limb_space(2 * (msize + 1));
- 		if (!xp)
- 			goto enomem;
+ 	crypto_drop_skcipher(&ctx->spawn);
++	kfree(inst);
+ }
  
--		memset(&karactx, 0, sizeof karactx);
- 		negative_result = (ep[0] & 1) && base->sign;
- 
- 		i = esize - 1;
-@@ -295,8 +294,6 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- 		if (mod_shift_cnt)
- 			mpihelp_rshift(rp, rp, rsize, mod_shift_cnt);
- 		MPN_NORMALIZE(rp, rsize);
--
--		mpihelp_release_karatsuba_ctx(&karactx);
- 	}
- 
- 	if (negative_result && rsize) {
-@@ -313,6 +310,7 @@ int mpi_powm(MPI res, MPI base, MPI exp,
- leave:
- 	rc = 0;
- enomem:
-+	mpihelp_release_karatsuba_ctx(&karactx);
- 	if (assign_rp)
- 		mpi_assign_limb_space(res, rp, size);
- 	if (mp_marker)
+ static int cryptd_create_skcipher(struct crypto_template *tmpl,
 
 
