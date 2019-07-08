@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16912623C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5CA62212
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388100AbfGHPaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:30:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58712 "EHLO mail.kernel.org"
+        id S2387881AbfGHPWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:22:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389716AbfGHP3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:29:50 -0400
+        id S1730971AbfGHPWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:22:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43F8D204EC;
-        Mon,  8 Jul 2019 15:29:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01E8521734;
+        Mon,  8 Jul 2019 15:22:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599789;
-        bh=YfYnE2EjNzOFpBmQyvvAYXtKa4/nrf6T7RqUEnwwf8o=;
+        s=default; t=1562599321;
+        bh=KawLcqAK8Jtlnzz5LbCaBUmEuHDVz6zoCaHEviFevVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+sRL/Q+bt7DCG8L2FZioQMLe+JWZQdlOyiUXk4Ot/iUUhmhRJfeqs0LXGtN0iOjj
-         TT+gV+ilhkEz2HUV0fMLFRsI/DQ4o1Ix2KKsDrcNcj9ayZX4Qj98m60frGlJnVenPD
-         BcLTnfnQ4pCc1AOKq4NsANCtUAvGhDHDGdot/dec=
+        b=V9loN213sl9t7WNp4KeyDiWVjfcZ02yJpm6a0hnPjTCpek6uV0XVMk/P7TnKN1f2I
+         rHC1HzBWyx96lgisDgf36AzOr+OOWaR1zFNJKX0G578pvCHt368+GCBTUEuIa2BoeP
+         RGY0vpF6ReqUh9X7HnNZRHQKvS6O2QMR8hyH5X7M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 43/90] crypto: cryptd - Fix skcipher instance memory leak
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Ganesan Ramalingam <ganesanr@broadcom.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        John Crispin <john@phrozen.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 077/102] MIPS: netlogic: xlr: Remove erroneous check in nlm_fmn_send()
 Date:   Mon,  8 Jul 2019 17:13:10 +0200
-Message-Id: <20190708150524.730642298@linuxfoundation.org>
+Message-Id: <20190708150530.442187589@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+[ Upstream commit 02eec6c9fc0cb13169cc97a6139771768791f92b ]
 
-commit 1a0fad630e0b7cff38e7691b28b0517cfbb0633f upstream.
+In nlm_fmn_send() we have a loop which attempts to send a message
+multiple times in order to handle the transient failure condition of a
+lack of available credit. When examining the status register to detect
+the failure we check for a condition that can never be true, which falls
+foul of gcc 8's -Wtautological-compare:
 
-cryptd_skcipher_free() fails to free the struct skcipher_instance
-allocated in cryptd_create_skcipher(), leading to a memory leak.  This
-is detected by kmemleak on bootup on ARM64 platforms:
+  In file included from arch/mips/netlogic/common/irq.c:65:
+  ./arch/mips/include/asm/netlogic/xlr/fmn.h: In function 'nlm_fmn_send':
+  ./arch/mips/include/asm/netlogic/xlr/fmn.h:304:22: error: bitwise
+    comparison always evaluates to false [-Werror=tautological-compare]
+     if ((status & 0x2) == 1)
+                        ^~
 
- unreferenced object 0xffff80003377b180 (size 1024):
-   comm "cryptomgr_probe", pid 822, jiffies 4294894830 (age 52.760s)
-   backtrace:
-     kmem_cache_alloc_trace+0x270/0x2d0
-     cryptd_create+0x990/0x124c
-     cryptomgr_probe+0x5c/0x1e8
-     kthread+0x258/0x318
-     ret_from_fork+0x10/0x1c
+If the path taken if this condition were true all we do is print a
+message to the kernel console. Since failures seem somewhat expected
+here (making the console message questionable anyway) and the condition
+has clearly never evaluated true we simply remove it, rather than
+attempting to fix it to check status correctly.
 
-Fixes: 4e0958d19bd8 ("crypto: cryptd - Add support for skcipher")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20174/
+Cc: Ganesan Ramalingam <ganesanr@broadcom.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Jayachandran C <jnair@caviumnetworks.com>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/cryptd.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/include/asm/netlogic/xlr/fmn.h | 2 --
+ 1 file changed, 2 deletions(-)
 
---- a/crypto/cryptd.c
-+++ b/crypto/cryptd.c
-@@ -586,6 +586,7 @@ static void cryptd_skcipher_free(struct
- 	struct skcipherd_instance_ctx *ctx = skcipher_instance_ctx(inst);
- 
- 	crypto_drop_skcipher(&ctx->spawn);
-+	kfree(inst);
- }
- 
- static int cryptd_create_skcipher(struct crypto_template *tmpl,
+diff --git a/arch/mips/include/asm/netlogic/xlr/fmn.h b/arch/mips/include/asm/netlogic/xlr/fmn.h
+index 5604db3d1836..d79c68fa78d9 100644
+--- a/arch/mips/include/asm/netlogic/xlr/fmn.h
++++ b/arch/mips/include/asm/netlogic/xlr/fmn.h
+@@ -301,8 +301,6 @@ static inline int nlm_fmn_send(unsigned int size, unsigned int code,
+ 	for (i = 0; i < 8; i++) {
+ 		nlm_msgsnd(dest);
+ 		status = nlm_read_c2_status0();
+-		if ((status & 0x2) == 1)
+-			pr_info("Send pending fail!\n");
+ 		if ((status & 0x4) == 0)
+ 			return 0;
+ 	}
+-- 
+2.20.1
+
 
 
