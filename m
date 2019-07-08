@@ -2,100 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEABE6290B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96EF462910
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391223AbfGHTMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:12:46 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54647 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389193AbfGHTMp (ORCPT
+        id S2390364AbfGHTNP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 8 Jul 2019 15:13:15 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37739 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731475AbfGHTNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:12:45 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p74so601130wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=dMil1FF/9REos4dHEvshh6LKzpYeBc8wUcAzB7CI8Tc=;
-        b=yRP35joYO5y3RvQxJ+Tg5qKQQHzyEjrQELOBFFI//iRwsiDLPZ2P3rhQpYDrASm5fa
-         /oISGUmC//2EDrUiJ+Fc3P0o2+hhGlDL7XT3/+cdacufN9C/VyoIRNOn5hr5BD16d1l3
-         EwqBv8caKn2R76pKCv0S0RLwm9fDq0CtnVxJ6UVKSzqpM22IHMNpknex6yViGuwzpFqE
-         WdIJOp4YH1m+l/DLm+bgO/B7QoWXb5bD2nk/FCKmkdofItfc4HikqMJEZOIyU6xFBApR
-         LOKqOuPzrWY78Vg486C7KWm8hUiqZhN6/3MmFmgM/GXNuixs5DSUCD4v1z91Z7lM/qJU
-         dfZA==
+        Mon, 8 Jul 2019 15:13:14 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t76so13503473oih.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:13:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=dMil1FF/9REos4dHEvshh6LKzpYeBc8wUcAzB7CI8Tc=;
-        b=dDhOo0kqlQBZ1JphV4IgWNo3kKdvYY2kjuXbn49MgAha96O6MhouVyZtZNZaah3fvz
-         ki7+2vf+xhzpk/Y1+APrbgyyNMCJBU4Z3QhhcRT8yftag1T8nG1pQQNOgFz8Y8be4SGw
-         XnU08wWmppaCyUmLWiS9oHkJ8qOQbEhfF9H1+lMM+pfK41sKKTVa8qc42xKW5EdAuHCl
-         7t30obR837fTLm0TTEXAdlGsV63PsWWeFSlX5ktLBKqmPS76i0EyuEx/97IDsBWj6pUH
-         EU8QXKc8p0Z5zfra0dozSr2FmHZEuBdzHUnZNU8uOtrGnyxF+pV6qIWsZkaj1TPG0vgy
-         S6Gg==
-X-Gm-Message-State: APjAAAVeRvX5zHR5lZMMdCyy7Y3qp3EzZhs7+JdoEQRMbH7zT8nM7LYn
-        bQDmpdavhqUFn4TMfY73zROq3A==
-X-Google-Smtp-Source: APXvYqzSjfPRtwxOTL9skUSR1bbuTNHs/2Tl/ZWO+lUZjmE9WR63Kb6S2H25DEBsa1+uk2sA4OWoFQ==
-X-Received: by 2002:a1c:f505:: with SMTP id t5mr17559349wmh.67.1562613163480;
-        Mon, 08 Jul 2019 12:12:43 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id 2sm22474071wrn.29.2019.07.08.12.12.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 12:12:42 -0700 (PDT)
-Message-ID: <5d2395aa.1c69fb81.75e33.192a@mx.google.com>
-Date:   Mon, 08 Jul 2019 12:12:42 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=f/iAZk8KBALEXe3ofIcdjPtZ381Z/qPq9/MkPNAVFqo=;
+        b=OSxU/xA8Yxia4FbjLvzAY8TI0Koco+PgCYOp+1kz5UDUJn0G+8lPlTEBIxcN0R8dzn
+         HRfKtrG+gGy3MezkadPYVzQ/yzfwU+QMlQ3cp6X99QJw6ZipW48RKOFl71k+8dCGQfXj
+         K2O0dMVajt81cH4ger8Su5Kx5aC8lC/I8iO7RwCnI26hgwEUXbg+I8A53WEKwtkNiHPz
+         ufp5wzyRyQVN9lFHPnpNktHry4zUE0C4e7eh4nTtR3urtQ7yXo0wJKlw0jR0EQmix7PI
+         74+bzENEe+bB92NjwOXsLbq/ECn6ANQM+YOSSQRGRmEX7ytUqU7d+Kv0DSkvgLSFDHL3
+         6kkg==
+X-Gm-Message-State: APjAAAVfRQ2Cu1SVDJTpcKdsUfG8CdA0FNWL5pOVWYw8ayyP8SN2gAx1
+        4eYjW4wCsDDpC42vIESlVU+K0JwG64F9j2LjW3U=
+X-Google-Smtp-Source: APXvYqymhb0R3YqY/8XLBja5zCuNRUxFv1wtunf5a3ohwI0qLU+ALtM04jLiTqu2Fr75SOJJ2YGfZJKd/xKLfZ9p2Zs=
+X-Received: by 2002:aca:bd43:: with SMTP id n64mr9540644oif.148.1562613193671;
+ Mon, 08 Jul 2019 12:13:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.19.57-91-g7b63e70b83fc
-X-Kernelci-Branch: linux-4.19.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 00/90] 4.19.58-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+References: <20190708170647.GA12313@roeck-us.net>
+In-Reply-To: <20190708170647.GA12313@roeck-us.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Jul 2019 21:13:02 +0200
+Message-ID: <CAMuHMdUnSqKHA7EN1S8U7eBODs4gi-raw4P3FxnR_afhb2Zd5g@mail.gmail.com>
+Subject: Re: m68k build failures in -next: undefined reference to `arch_dma_prep_coherent'
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 100 boots: 2 failed, 98 passed (v4.19.57-91-g7=
-b63e70b83fc)
+Hi Günter,
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.57-91-g7b63e70b83fc/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.57-91-g7b63e70b83fc/
+On Mon, Jul 8, 2019 at 7:06 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> I see the following build error in -next:
+>
+> kernel/dma/direct.o: In function `dma_direct_alloc_pages':
+> direct.c:(.text+0x4d8): undefined reference to `arch_dma_prep_coherent'
+>
+> Example: m68k:allnoconfig.
+>
+> Bisect log is ambiguous and points to the merge of m68k/for-next into
+> -next. Yet, I think the problem is with commit 69878ef47562 ("m68k:
+> Implement arch_dma_prep_coherent()") which is supposed to introduce
+> the function. The problem is likely that arch_dma_prep_coherent()
+> is only declared if CONFIG_MMU is enabled, but it is called from code
+> outside CONFIG_MMU.
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.57-91-g7b63e70b83fc
-Git Commit: 7b63e70b83fca977d86fe50ca2a48f40addac0a4
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 60 unique boards, 24 SoC families, 15 builds out of 206
+Thanks, one more thing to fix in m68k-allnoconfig (did it really build
+before?)...
 
-Boot Failures Detected:
+Given you say "example", does it fail in real configs, too?
 
-arm:
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
+Thanks again!
 
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
+Gr{oetje,eeting}s,
 
----
-For more info write to <info@kernelci.org>
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
