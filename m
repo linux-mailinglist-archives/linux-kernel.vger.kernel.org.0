@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE25A62159
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6131622AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbfGHPPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:15:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
+        id S2389202AbfGHP2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbfGHPPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:15:33 -0400
+        id S2389191AbfGHP15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:27:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D506214C6;
-        Mon,  8 Jul 2019 15:15:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE73F2173C;
+        Mon,  8 Jul 2019 15:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598932;
-        bh=2VdFkdk9SIaAdzepBOAW1EfUckj2mgK2DM94z7kTn2A=;
+        s=default; t=1562599677;
+        bh=EMd2/EMEbomDp/HYQ44yrWt9W+8QT59uhc6NBw2ZYe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TFCtYKYQ0vJ7BO85v3Dh+JL6ToPQ0JDdXxDeYIrTk3kYjtC2pg9png1FOzGyNJboy
-         C8Ai+oaTFfhFuvWjsHxvaLhR9w3Cjt0fRMBpuAn/Cdi1koTJe0Iu0v3S/YctmlHxrc
-         s7U5k3CnlT7vMyc6Y0Ge+n+HycUyAzVcyoPUMIbg=
+        b=UOMQB8cv4o4b+JOofQqZT+sP4iBFf6p2gIC1q/B6WyMkvJDpQy3QWCKSErvdoeXPD
+         Z/M4tngKkT8B0/ymHvZmDXribmJwIJyo+s8lJbIZZJcAXpXGGeHQBr/EuDRG1CC+TY
+         1jWlO2K4we0Exn1KdwrAw8P4dhp8rroOyRZriBiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 21/73] can: flexcan: fix timeout when set small bitrate
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 04/90] netfilter: nf_flow_table: ignore DF bit setting
 Date:   Mon,  8 Jul 2019 17:12:31 +0200
-Message-Id: <20190708150521.367974176@linuxfoundation.org>
+Message-Id: <20190708150522.494728351@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joakim Zhang <qiangqing.zhang@nxp.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 247e5356a709eb49a0d95ff2a7f07dac05c8252c upstream.
+commit e75b3e1c9bc5b997d09bdf8eb72ab3dd3c1a7072 upstream.
 
-Current we can meet timeout issue when setting a small bitrate like
-10000 as follows on i.MX6UL EVK board (ipg clock = 66MHZ, per clock =
-30MHZ):
+Its irrelevant if the DF bit is set or not, we must pass packet to
+stack in either case.
 
-| root@imx6ul7d:~# ip link set can0 up type can bitrate 10000
+If the DF bit is set, we must pass it to stack so the appropriate
+ICMP error can be generated.
 
-A link change request failed with some changes committed already.
-Interface can0 may have been left with an inconsistent configuration,
-please check.
+If the DF is not set, we must pass it to stack for fragmentation.
 
-| RTNETLINK answers: Connection timed out
-
-It is caused by calling of flexcan_chip_unfreeze() timeout.
-
-Originally the code is using usleep_range(10, 20) for unfreeze
-operation, but the patch (8badd65 can: flexcan: avoid calling
-usleep_range from interrupt context) changed it into udelay(10) which is
-only a half delay of before, there're also some other delay changes.
-
-After double to FLEXCAN_TIMEOUT_US to 100 can fix the issue.
-
-Meanwhile, Rasmus Villemoes reported that even with a timeout of 100,
-flexcan_probe() fails on the MPC8309, which requires a value of at least
-140 to work reliably. 250 works for everyone.
-
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/flexcan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_flow_table_ip.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -171,7 +171,7 @@
- #define FLEXCAN_MB_CNT_LENGTH(x)	(((x) & 0xf) << 16)
- #define FLEXCAN_MB_CNT_TIMESTAMP(x)	((x) & 0xffff)
+--- a/net/netfilter/nf_flow_table_ip.c
++++ b/net/netfilter/nf_flow_table_ip.c
+@@ -246,8 +246,7 @@ nf_flow_offload_ip_hook(void *priv, stru
+ 	flow = container_of(tuplehash, struct flow_offload, tuplehash[dir]);
+ 	rt = (struct rtable *)flow->tuplehash[dir].tuple.dst_cache;
  
--#define FLEXCAN_TIMEOUT_US		(50)
-+#define FLEXCAN_TIMEOUT_US		(250)
+-	if (unlikely(nf_flow_exceeds_mtu(skb, flow->tuplehash[dir].tuple.mtu)) &&
+-	    (ip_hdr(skb)->frag_off & htons(IP_DF)) != 0)
++	if (unlikely(nf_flow_exceeds_mtu(skb, flow->tuplehash[dir].tuple.mtu)))
+ 		return NF_ACCEPT;
  
- /* FLEXCAN hardware feature flags
-  *
+ 	if (skb_try_make_writable(skb, sizeof(*iph)))
 
 
