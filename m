@@ -2,104 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45F536213D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6CD62550
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfGHPMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:12:32 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37674 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfGHPMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:12:31 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b3so5127645plr.4;
-        Mon, 08 Jul 2019 08:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0ZlZQON9aXZI6W+/rm8yZm1Su8lHYcjbQIV3vB7p7ls=;
-        b=WLG9PY/b56egrw6ro2o0M9u014Bd6pXU/gKDM9DWFKxH39OIF3810maRQKFlW5uRIq
-         pN+4h9otmfgFm2UMQ05iVf/Mz/oGsvnbZgMWTSNQujR8HC+qUf73scnCmGiRJH+v0k08
-         smv9KF8upZ4PAvBORJTFLeotH0hcXF9rwCuDgCTGs1M8R9cApI/vNYc7JLSeqATcqdfI
-         h9abqenJJqCvOVVx0LKtp2nIG/lIyiqsEPUtvRfgGJ5jymTuV3QTGxV7KiDXtnfmeQCk
-         IVOu6WplVBtQMIhTvR1thGTS8x4ieB5i5f/al64O31QA5Ml7yJ3AQVYX0yGYLoBoqLwD
-         PgJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0ZlZQON9aXZI6W+/rm8yZm1Su8lHYcjbQIV3vB7p7ls=;
-        b=uYOct0+wvqNwwBBTyNFFdnU/uVaetnVjvHCWcw+bD/hKA1RXhrTlIJbUqFOXnbKOBm
-         nTjoc+1minjXfYby7CAG4xZSJMQZEQTY+H/wCuhOk90B2PJj7RFARc6NnETL4y8xD+W8
-         56bV/arjwOG7WCGEGZqhOnAQ87AQNpNeDXEwrVoaKdGO+KAFLTf0ZON/USSruXh4OW53
-         6urZ0cChSp6I/BwFrchFaE6G9TLdbA8mJiIBC7xdad4fjnCl4UtuLtF5/tqLyPApX0Sn
-         NhAqtEePs20vrrpu8tBDnU2swl6vtQIJ/IgwHKPKOOu72f15lps8KxSZ5EYNA0T8ldL0
-         8lCg==
-X-Gm-Message-State: APjAAAXUswhjy8T6jwVVp/fNzGQnNRr0NIHcrH0PLZgm/ujCE2Newx5P
-        Kl+tXv5j5Y3vRxTWVAVhuzQ=
-X-Google-Smtp-Source: APXvYqzGcOLSRTDXNOYk/ZPO4pPqDF4I8CW3Kxig9leWs34URU+rJA8ZvqMFQ9pnLLDKwfcSi1JXAg==
-X-Received: by 2002:a17:902:b20d:: with SMTP id t13mr24385288plr.229.1562598750859;
-        Mon, 08 Jul 2019 08:12:30 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id q198sm23082354pfq.155.2019.07.08.08.12.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 08:12:30 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2] drm/msm/mdp5: Find correct node for creating gem address space
-Date:   Mon,  8 Jul 2019 08:12:24 -0700
-Message-Id: <20190708151224.22555-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1732281AbfGHPPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:15:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732260AbfGHPPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:15:09 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A83C2216F4;
+        Mon,  8 Jul 2019 15:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562598909;
+        bh=GsJ/jriVqesY5hG7ydJ9EDvUFwT2ScZGlDjXsi/bvE8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V+VhtcOqICltuO5XkI4CHTEE0v/9TTKK+h2YN6cepGK68797scktB9nnkRe4sr4Xp
+         Wzb+6Ih/YRelv2upsjehlNIu9A3IDawmZIvbDsAELReOXw+ErHRhrbdFBmhj6eanUd
+         gEDhtVxsS076AiRu9mitt2taPie4jvweNFA3edaU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 14/73] sparc: perf: fix updated event period in response to PERF_EVENT_IOC_PERIOD
+Date:   Mon,  8 Jul 2019 17:12:24 +0200
+Message-Id: <20190708150520.003246074@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Creating the msm gem address space requires a reference to the dev where
-the iommu is located.  The driver currently assumes this is the same as
-the platform device, which breaks when the iommu is outside of the
-platform device (ie in the parent).  Default to using the platform device,
-but check to see if that has an iommu reference, and if not, use the parent
-device instead.  This should handle all the various iommu designs for
-mdp5 supported systems.
+[ Upstream commit 56cd0aefa475079e9613085b14a0f05037518fed ]
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+The PERF_EVENT_IOC_PERIOD ioctl command can be used to change the
+sample period of a running perf_event. Consequently, when calculating
+the next event period, the new period will only be considered after the
+previous one has overflowed.
+
+This patch changes the calculation of the remaining event ticks so that
+they are offset if the period has changed.
+
+See commit 3581fe0ef37c ("ARM: 7556/1: perf: fix updated event period in
+response to PERF_EVENT_IOC_PERIOD") for details.
+
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ arch/sparc/kernel/perf_event.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-v2: It turns out there isn't a universal way to get the iommu device, so 
-check to see if its in the current node or parent
-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 4a60f5fca6b0..02dc7d426cb0 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -663,6 +663,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
- 	struct msm_kms *kms;
- 	struct msm_gem_address_space *aspace;
- 	int irq, i, ret;
-+	struct device *iommu_dev;
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index a5d0c2f08110..815352d501f0 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -889,6 +889,10 @@ static int sparc_perf_event_set_period(struct perf_event *event,
+ 	s64 period = hwc->sample_period;
+ 	int ret = 0;
  
- 	/* priv->kms would have been populated by the MDP5 driver */
- 	kms = priv->kms;
-@@ -702,7 +703,11 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
- 	mdelay(16);
- 
- 	if (config->platform.iommu) {
--		aspace = msm_gem_address_space_create(&pdev->dev,
-+		iommu_dev = &pdev->dev;
-+		if (!iommu_dev->iommu_fwspec)
-+			iommu_dev = iommu_dev->parent;
++	/* The period may have been changed by PERF_EVENT_IOC_PERIOD */
++	if (unlikely(period != hwc->last_period))
++		left = period - (hwc->last_period - left);
 +
-+		aspace = msm_gem_address_space_create(iommu_dev,
- 				config->platform.iommu, "mdp5");
- 		if (IS_ERR(aspace)) {
- 			ret = PTR_ERR(aspace);
+ 	if (unlikely(left <= -period)) {
+ 		left = period;
+ 		local64_set(&hwc->period_left, left);
 -- 
-2.17.1
+2.20.1
+
+
 
