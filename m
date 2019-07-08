@@ -2,71 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB79624BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CC862505
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391257AbfGHPpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:45:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732066AbfGHPpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:45:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=02LebEonQEm8s4H9wfANLjV5fLft7vqIhRuHDWcgIq0=; b=uuxWthZYHeDmwO+HPaphehmge
-        Z9yf6zdfzrIasFn442hod6zlTKYx7AqT5xj4L+lza0eMoC5zGZx1ZnZaKlhPEDgp2e9ccq7E0KHuh
-        5ZQUns/OW9z5zCZX7Y/v1UhyS9dycmNBhQy8pDjZ9hUPlRizOxH0/l3FWENmzAJHkqt4BRfDM4Xb2
-        963W2B86KLWw+OiH0PjWvJ3FTQrLIKRiOajQ89rY8wLqGu5/HbLHD4ETd1RCxK+M+q1MSj18wsn8J
-        S9acx6ergxXuV03bEmQhU2jbLP5w5O41qM+En4lC7d0fJUoU0okunWT5wA/SRzKIAnbIij81VFSZ6
-        nJY8sHsZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkVpa-0000K3-1q; Mon, 08 Jul 2019 15:45:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7FC4E20976D60; Mon,  8 Jul 2019 17:45:28 +0200 (CEST)
-Date:   Mon, 8 Jul 2019 17:45:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH 2/7] perf/cgroup: order events in RB tree by cgroup id
-Message-ID: <20190708154528.GD3419@hirez.programming.kicks-ass.net>
-References: <20190702065955.165738-1-irogers@google.com>
- <20190702065955.165738-3-irogers@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702065955.165738-3-irogers@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2391265AbfGHPrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:47:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:52312 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733310AbfGHPrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:47:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5864F360;
+        Mon,  8 Jul 2019 08:47:41 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5442B3F59C;
+        Mon,  8 Jul 2019 08:47:40 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Bo Zhang <bozhang.zhang@broadcom.com>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+Subject: [PATCH 00/11] firmware: arm_scmi: Add support for Rx, async commands and delayed response
+Date:   Mon,  8 Jul 2019 16:47:19 +0100
+Message-Id: <20190708154730.16643-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 11:59:50PM -0700, Ian Rogers wrote:
-> +perf_event_groups_first(struct perf_event_groups *groups, int cpu,
-> +			struct cgroup *cgrp)
->  {
->  	struct perf_event *node_event = NULL, *match = NULL;
->  	struct rb_node *node = groups->tree.rb_node;
-> +#ifdef CONFIG_CGROUP_PERF
-> +	int node_cgrp_id, cgrp_id = 0;
-> +
-> +	if (cgrp)
-> +		cgrp_id = cgrp->id;
-> +#endif
+Hi,
 
-Is 0 ever a valid cgroup.id ? If so, should we perhaps use -1 to denote
-'none' ? Ether way around a little comment here couldn't hurt, saves one
-from digging into the cgroup code.
+This patch series adds SCMI infrastructure/core support for recieve(Rx)
+channels, asynchronous commands and delayed response. It adds async
+command support for clock rate setting and sensor reading based on the
+attributes read from the firmware.
+
+The code is rebased on the cleanup series[1] and is available @[2]
+
+--
+Regards,
+Sudeep
+
+[1] https://lore.kernel.org/lkml/20190708154358.16227-1-sudeep.holla@arm.com
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git scmi_updates
+
+Sudeep Holla (11):
+  firmware: arm_scmi: Reorder some functions to avoid forward declarations
+  firmware: arm_scmi: Segregate tx channel handling and prepare to add rx
+  firmware: arm_scmi: Add receive channel support for notifications
+  firmware: arm_scmi: Separate out tx buffer handling and prepare to add rx
+  firmware: arm_scmi: Add receive buffer support for notifications
+  firmware: arm_scmi: Add mechanism to unpack message headers
+  firmware: arm_scmi: Add support for asynchronous commands and delayed response
+  firmware: arm_scmi: Drop async flag in sensor_ops->reading_get
+  firmware: arm_scmi: Add asynchronous sensor read if it supports
+  firmware: arm_scmi: Drop config flag in clk_ops->rate_set
+  firmware: arm_scmi: Use asynchronous CLOCK_RATE_SET when possible
+
+ drivers/clk/clk-scmi.c              |   2 +-
+ drivers/firmware/arm_scmi/clock.c   |  23 +-
+ drivers/firmware/arm_scmi/common.h  |   6 +-
+ drivers/firmware/arm_scmi/driver.c  | 346 ++++++++++++++++++----------
+ drivers/firmware/arm_scmi/sensors.c |  32 ++-
+ drivers/hwmon/scmi-hwmon.c          |   2 +-
+ include/linux/scmi_protocol.h       |   6 +-
+ 7 files changed, 280 insertions(+), 137 deletions(-)
+
+-- 
+2.17.1
+
