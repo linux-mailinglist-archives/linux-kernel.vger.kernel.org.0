@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D3A62386
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31521622BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390786AbfGHPgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:36:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36672 "EHLO mail.kernel.org"
+        id S2389320AbfGHP2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:28:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390535AbfGHPeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:34:25 -0400
+        id S2389301AbfGHP2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E815320651;
-        Mon,  8 Jul 2019 15:34:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2852B2182B;
+        Mon,  8 Jul 2019 15:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562600064;
-        bh=CkEnPNYqChytH+UasjUn29arYNXKTmNT3vNOpYPMoKg=;
+        s=default; t=1562599709;
+        bh=KqHjrb1zrNGqP1R+ytN0gT07Z/RXl+CKWn+VVkHprh4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cqlZA1veS2KsXJ+OXN6xORP2uW74VnOKxSKysUG2U/93sFPF8u/w3yEc7MhCOPGfH
-         oqLs7DpOEo4u+mbJKwNOlTGoNUKikHjIe6Tl+dqVPP4UtACvSYFeY6adogBzcNLHl0
-         U6qGhDBgfQ8o4fZkpgwXAfDdaBIoEO5j2iTufEQk=
+        b=eh44dw3Z9CfRPVKK4FtgkV47j88gSG/szAzRMLvxMpmKGFXYyiYU62x9PWnxsSNUp
+         X0qdGPwMfCn/48pmo0ZN2sxNb39Z0kj4TSF7IUxJJ/AoGN1izEAHh3THtTM2O5MxFK
+         3WrVdvQkgEHW3L6H6bQot47+/oTMTlxxJFiSp3Kw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 46/96] platform/x86: mlx-platform: Fix parent device in i2c-mux-reg device registration
-Date:   Mon,  8 Jul 2019 17:13:18 +0200
-Message-Id: <20190708150529.014193844@linuxfoundation.org>
+        stable@vger.kernel.org, Eiichi Tsukata <devel@etsukata.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.19 52/90] tracing/snapshot: Resize spare buffer if size changed
+Date:   Mon,  8 Jul 2019 17:13:19 +0200
+Message-Id: <20190708150525.148581525@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-References: <20190708150526.234572443@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,158 +43,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 160da20b254dd4bfc5828f12c208fa831ad4be6c ]
+From: Eiichi Tsukata <devel@etsukata.com>
 
-Fix the issue found while running kernel with the option
-CONFIG_DEBUG_TEST_DRIVER_REMOVE.
-Driver 'mlx-platform' registers 'i2c_mlxcpld' device and then registers
-few underlying 'i2c-mux-reg' devices:
-	priv->pdev_i2c = platform_device_register_simple("i2c_mlxcpld", nr,
-							 NULL, 0);
-	...
-	for (i = 0; i < ARRAY_SIZE(mlxplat_mux_data); i++) {
-		priv->pdev_mux[i] = platform_device_register_resndata(
-						&mlxplat_dev->dev,
-						"i2c-mux-reg", i, NULL,
-						0, &mlxplat_mux_data[i],
-						sizeof(mlxplat_mux_data[i]));
+commit 46cc0b44428d0f0e81f11ea98217fc0edfbeab07 upstream.
 
-But actual parent of "i2c-mux-reg" device is priv->pdev_i2c->dev and
-not mlxplat_dev->dev.
-Patch fixes parent device parameter in a call to
-platform_device_register_resndata() for "i2c-mux-reg".
+Current snapshot implementation swaps two ring_buffers even though their
+sizes are different from each other, that can cause an inconsistency
+between the contents of buffer_size_kb file and the current buffer size.
 
-It solves the race during initialization flow while 'i2c_mlxcpld.1' is
-removing after probe, while 'i2c-mux-reg.0' is still in probing flow:
-'i2c_mlxcpld.1'	flow:	probe -> remove -> probe.
-'i2c-mux-reg.0'	flow:		  probe -> ...
+For example:
 
-[   12:621096] Registering platform device 'i2c_mlxcpld.1'. Parent at platform
-[   12:621117] device: 'i2c_mlxcpld.1': device_add
-[   12:621155] bus: 'platform': add device i2c_mlxcpld.1
-[   12:621384] Registering platform device 'i2c-mux-reg.0'. Parent at mlxplat
-[   12:621395] device: 'i2c-mux-reg.0': device_add
-[   12:621425] bus: 'platform': add device i2c-mux-reg.0
-[   12:621806] Registering platform device 'i2c-mux-reg.1'. Parent at mlxplat
-[   12:621828] device: 'i2c-mux-reg.1': device_add
-[   12:621892] bus: 'platform': add device i2c-mux-reg.1
-[   12:621906] bus: 'platform': add driver i2c_mlxcpld
-[   12:621996] bus: 'platform': driver_probe_device: matched device i2c_mlxcpld.1 with driver i2c_mlxcpld
-[   12:622003] bus: 'platform': really_probe: probing driver i2c_mlxcpld with device i2c_mlxcpld.1
-[   12:622100] i2c_mlxcpld i2c_mlxcpld.1: no default pinctrl state
-[   12:622293] device: 'i2c-1': device_add
-[   12:627280] bus: 'i2c': add device i2c-1
-[   12:627692] device: 'i2c-1': device_add
-[   12.629639] bus: 'platform': add driver i2c-mux-reg
-[   12.629718] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.629723] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.629818] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.629981] platform i2c-mux-reg.0: Driver i2c-mux-reg requests probe deferral
-[   12.629986] platform i2c-mux-reg.0: Added to deferred list
-[   12.629992] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.1 with driver i2c-mux-reg
-[   12.629997] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.1
-[   12.630091] i2c-mux-reg i2c-mux-reg.1: no default pinctrl state
-[   12.630247] platform i2c-mux-reg.1: Driver i2c-mux-reg requests probe deferral
-[   12.630252] platform i2c-mux-reg.1: Added to deferred list
-[   12.640892] devices_kset: Moving i2c-mux-reg.0 to end of list
-[   12.640900] platform i2c-mux-reg.0: Retrying from deferred list
-[   12.640911] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.640919] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.640999] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.641177] platform i2c-mux-reg.0: Driver i2c-mux-reg requests probe deferral
-[   12.641187] platform i2c-mux-reg.0: Added to deferred list
-[   12.641198] devices_kset: Moving i2c-mux-reg.1 to end of list
-[   12.641219] platform i2c-mux-reg.1: Retrying from deferred list
-[   12.641237] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.1 with driver i2c-mux-reg
-[   12.641247] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.1
-[   12.641331] i2c-mux-reg i2c-mux-reg.1: no default pinctrl state
-[   12.641465] platform i2c-mux-reg.1: Driver i2c-mux-reg requests probe deferral
-[   12.641469] platform i2c-mux-reg.1: Added to deferred list
-[   12.646427] device: 'i2c-1': device_add
-[   12.646647] bus: 'i2c': add device i2c-1
-[   12.647104] device: 'i2c-1': device_add
-[   12.669231] devices_kset: Moving i2c-mux-reg.0 to end of list
-[   12.669240] platform i2c-mux-reg.0: Retrying from deferred list
-[   12.669258] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.669263] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.669343] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.669585] device: 'i2c-2': device_add
-[   12.669795] bus: 'i2c': add device i2c-2
-[   12.670201] device: 'i2c-2': device_add
-[   12.671427] i2c i2c-1: Added multiplexed i2c bus 2
-[   12.671514] device: 'i2c-3': device_add
-[   12.671724] bus: 'i2c': add device i2c-3
-[   12.672136] device: 'i2c-3': device_add
-[   12.673378] i2c i2c-1: Added multiplexed i2c bus 3
-[   12.673472] device: 'i2c-4': device_add
-[   12.673676] bus: 'i2c': add device i2c-4
-[   12.674060] device: 'i2c-4': device_add
-[   12.675861] i2c i2c-1: Added multiplexed i2c bus 4
-[   12.675941] device: 'i2c-5': device_add
-[   12.676150] bus: 'i2c': add device i2c-5
-[   12.676550] device: 'i2c-5': device_add
-[   12.678103] i2c i2c-1: Added multiplexed i2c bus 5
-[   12.678193] device: 'i2c-6': device_add
-[   12.678395] bus: 'i2c': add device i2c-6
-[   12.678774] device: 'i2c-6': device_add
-[   12.679969] i2c i2c-1: Added multiplexed i2c bus 6
-[   12.680065] device: 'i2c-7': device_add
-[   12.680275] bus: 'i2c': add device i2c-7
-[   12.680913] device: 'i2c-7': device_add
-[   12.682506] i2c i2c-1: Added multiplexed i2c bus 7
-[   12.682600] device: 'i2c-8': device_add
-[   12.682808] bus: 'i2c': add device i2c-8
-[   12.683189] device: 'i2c-8': device_add
-[   12.683907] device: 'i2c-1': device_unregister
-[   12.683945] device: 'i2c-1': device_unregister
-[   12.684387] device: 'i2c-1': device_create_release
-[   12.684536] bus: 'i2c': remove device i2c-1
-[   12.686019] i2c i2c-8: Failed to create compatibility class link
-[   12.686086] ------------[ cut here ]------------
-[   12.686087] can't create symlink to mux device
-[   12.686224] Workqueue: events deferred_probe_work_func
-[   12.686135] WARNING: CPU: 7 PID: 436 at drivers/i2c/i2c-mux.c:416 i2c_mux_add_adapter+0x729/0x7d0 [i2c_mux]
-[   12.686232] RIP: 0010:i2c_mux_add_adapter+0x729/0x7d0 [i2c_mux]
-[   0x190/0x190 [i2c_mux]
-[   12.686300]  ? i2c_mux_alloc+0xac/0x110 [i2c_mux]
-[   12.686306]  ? i2c_mux_reg_set+0x200/0x200 [i2c_mux_reg]
-[   12.686313]  i2c_mux_reg_probe+0x22c/0x731 [i2c_mux_reg]
-[   12.686322]  ? i2c_mux_reg_deselect+0x60/0x60 [i2c_mux_reg]
-[   12.686346]  platform_drv_probe+0xa8/0x110
-[   12.686351]  really_probe+0x185/0x720
-[   12.686358]  driver_probe_device+0xdf/0x1f0
-...
-[   12.686522] i2c i2c-1: Added multiplexed i2c bus 8
-[   12.686621] device: 'i2c-9': device_add
-[   12.686626] kobject_add_internal failed for i2c-9 (error: -2 parent: i2c-1)
-[   12.694729] i2c-core: adapter 'i2c-1-mux (chan_id 8)': can't register device (-2)
-[   12.705726] i2c i2c-1: failed to add mux-adapter 8 as bus 9 (error=-2)
-[   12.714494] device: 'i2c-8': device_unregister
-[   12.714537] device: 'i2c-8': device_unregister
+  # cat buffer_size_kb
+  7 (expanded: 1408)
+  # echo 1 > events/enable
+  # grep bytes per_cpu/cpu0/stats
+  bytes: 1441020
+  # echo 1 > snapshot             // current:1408, spare:1408
+  # echo 123 > buffer_size_kb     // current:123,  spare:1408
+  # echo 1 > snapshot             // current:1408, spare:123
+  # grep bytes per_cpu/cpu0/stats
+  bytes: 1443700
+  # cat buffer_size_kb
+  123                             // != current:1408
 
-Fixes: 6613d18e9038 ("platform/x86: mlx-platform: Move module from arch/x86")
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+And also, a similar per-cpu case hits the following WARNING:
+
+Reproducer:
+
+  # echo 1 > per_cpu/cpu0/snapshot
+  # echo 123 > buffer_size_kb
+  # echo 1 > per_cpu/cpu0/snapshot
+
+WARNING:
+
+  WARNING: CPU: 0 PID: 1946 at kernel/trace/trace.c:1607 update_max_tr_single.part.0+0x2b8/0x380
+  Modules linked in:
+  CPU: 0 PID: 1946 Comm: bash Not tainted 5.2.0-rc6 #20
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
+  RIP: 0010:update_max_tr_single.part.0+0x2b8/0x380
+  Code: ff e8 dc da f9 ff 0f 0b e9 88 fe ff ff e8 d0 da f9 ff 44 89 ee bf f5 ff ff ff e8 33 dc f9 ff 41 83 fd f5 74 96 e8 b8 da f9 ff <0f> 0b eb 8d e8 af da f9 ff 0f 0b e9 bf fd ff ff e8 a3 da f9 ff 48
+  RSP: 0018:ffff888063e4fca0 EFLAGS: 00010093
+  RAX: ffff888066214380 RBX: ffffffff99850fe0 RCX: ffffffff964298a8
+  RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000005
+  RBP: 1ffff1100c7c9f96 R08: ffff888066214380 R09: ffffed100c7c9f9b
+  R10: ffffed100c7c9f9a R11: 0000000000000003 R12: 0000000000000000
+  R13: 00000000ffffffea R14: ffff888066214380 R15: ffffffff99851060
+  FS:  00007f9f8173c700(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000714dc0 CR3: 0000000066fa6000 CR4: 00000000000006f0
+  Call Trace:
+   ? trace_array_printk_buf+0x140/0x140
+   ? __mutex_lock_slowpath+0x10/0x10
+   tracing_snapshot_write+0x4c8/0x7f0
+   ? trace_printk_init_buffers+0x60/0x60
+   ? selinux_file_permission+0x3b/0x540
+   ? tracer_preempt_off+0x38/0x506
+   ? trace_printk_init_buffers+0x60/0x60
+   __vfs_write+0x81/0x100
+   vfs_write+0x1e1/0x560
+   ksys_write+0x126/0x250
+   ? __ia32_sys_read+0xb0/0xb0
+   ? do_syscall_64+0x1f/0x390
+   do_syscall_64+0xc1/0x390
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+This patch adds resize_buffer_duplicate_size() to check if there is a
+difference between current/spare buffer sizes and resize a spare buffer
+if necessary.
+
+Link: http://lkml.kernel.org/r/20190625012910.13109-1-devel@etsukata.com
+
+Cc: stable@vger.kernel.org
+Fixes: ad909e21bbe69 ("tracing: Add internal tracing_snapshot() functions")
+Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/platform/x86/mlx-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index 48fa7573e29b..0e5f073e51bc 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -1828,7 +1828,7 @@ static int __init mlxplat_init(void)
- 
- 	for (i = 0; i < ARRAY_SIZE(mlxplat_mux_data); i++) {
- 		priv->pdev_mux[i] = platform_device_register_resndata(
--						&mlxplat_dev->dev,
-+						&priv->pdev_i2c->dev,
- 						"i2c-mux-reg", i, NULL,
- 						0, &mlxplat_mux_data[i],
- 						sizeof(mlxplat_mux_data[i]));
--- 
-2.20.1
-
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6471,11 +6471,13 @@ tracing_snapshot_write(struct file *filp
+ 			break;
+ 		}
+ #endif
+-		if (!tr->allocated_snapshot) {
++		if (tr->allocated_snapshot)
++			ret = resize_buffer_duplicate_size(&tr->max_buffer,
++					&tr->trace_buffer, iter->cpu_file);
++		else
+ 			ret = tracing_alloc_snapshot_instance(tr);
+-			if (ret < 0)
+-				break;
+-		}
++		if (ret < 0)
++			break;
+ 		local_irq_disable();
+ 		/* Now, we're going to swap */
+ 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
 
 
