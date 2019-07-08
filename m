@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2407C62180
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 253D262489
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732666AbfGHPQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:16:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39896 "EHLO mail.kernel.org"
+        id S2390189AbfGHPnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732648AbfGHPQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:16:46 -0400
+        id S2388249AbfGHPXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AF89216E3;
-        Mon,  8 Jul 2019 15:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BD62204EC;
+        Mon,  8 Jul 2019 15:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599005;
-        bh=2qhzfsLtRC+4/kABIINMSLG+GVDZvREe7CyKIpCpHPY=;
+        s=default; t=1562599427;
+        bh=UqYaX4fyRfNX1yoi0yvqj0iqzoEcaynzbhGcyc602uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r5pOcczNbddipoOgshQ0enhhF9Q+f/KoLO0g+0B9lFJZEtsgVrHUMGgcyJMQEkcwr
-         /wMPM3rT7NIlvMg+KiQWprh8J+BvoHVxe5cfqNksxT8UB5P3MxVGIu+z0sBKfRV+CG
-         a5r5xsKkS+TsJVLegAs5POATIczZeNtHRn2tNiWI=
+        b=J2UZFyQ68o5TqHmT8dFbCS7ii/w+tuynzg3LRSLOHRiC8d6N4moExhruAWZge6L+2
+         lfUhl75Ie90BhROy7R8PHu/K5fO/2kaxAL5ITwEVI9uAQN6MDepZnVkx1+civ69wyD
+         pti4LvZMi4aGLyNERpFEB1he8Q/DtutWwm/3CQnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Josh Elsasser <jelsasser@appneta.com>
-Subject: [PATCH 4.4 46/73] net: check before dereferencing netdev_ops during busy poll
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 04/56] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
 Date:   Mon,  8 Jul 2019 17:12:56 +0200
-Message-Id: <20190708150523.819580216@linuxfoundation.org>
+Message-Id: <20190708150517.470067346@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+References: <20190708150514.376317156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,69 +48,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Elsasser <jelsasser@appneta.com>
+[ Upstream commit 5caaf29af5ca82d5da8bc1d0ad07d9e664ccf1d8 ]
 
-init_dummy_netdev() leaves its netdev_ops pointer zeroed. This leads
-to a NULL pointer dereference when sk_busy_loop fires against an iwlwifi
-wireless adapter and checks napi->dev->netdev_ops->ndo_busy_poll.
+If spi_register_master fails in spi_bitbang_start
+because device_add failure, We should return the
+error code other than 0, otherwise calling
+spi_bitbang_stop may trigger NULL pointer dereference
+like this:
 
-Avoid this by ensuring napi->dev->netdev_ops is valid before following
-the pointer, avoiding the following panic when busy polling on a dummy
-netdev:
+BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
+Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
 
-  BUG: unable to handle kernel NULL pointer dereference at 00000000000000c8
-  IP: [<ffffffff817b4b72>] sk_busy_loop+0x92/0x2f0
-  Call Trace:
-   [<ffffffff815a3134>] ? uart_write_room+0x74/0xf0
-   [<ffffffff817964a9>] sock_poll+0x99/0xa0
-   [<ffffffff81223142>] do_sys_poll+0x2e2/0x520
-   [<ffffffff8118d3fc>] ? get_page_from_freelist+0x3bc/0xa30
-   [<ffffffff810ada22>] ? update_curr+0x62/0x140
-   [<ffffffff811ea671>] ? __slab_free+0xa1/0x2a0
-   [<ffffffff811ea671>] ? __slab_free+0xa1/0x2a0
-   [<ffffffff8179dbb1>] ? skb_free_head+0x21/0x30
-   [<ffffffff81221bd0>] ? poll_initwait+0x50/0x50
-   [<ffffffff811eaa36>] ? kmem_cache_free+0x1c6/0x1e0
-   [<ffffffff815a4884>] ? uart_write+0x124/0x1d0
-   [<ffffffff810bd1cd>] ? remove_wait_queue+0x4d/0x60
-   [<ffffffff810bd224>] ? __wake_up+0x44/0x50
-   [<ffffffff81582731>] ? tty_write_unlock+0x31/0x40
-   [<ffffffff8158c5c6>] ? tty_ldisc_deref+0x16/0x20
-   [<ffffffff81584820>] ? tty_write+0x1e0/0x2f0
-   [<ffffffff81587e50>] ? process_echoes+0x80/0x80
-   [<ffffffff8120c17b>] ? __vfs_write+0x2b/0x130
-   [<ffffffff8120d09a>] ? vfs_write+0x15a/0x1a0
-   [<ffffffff81223455>] SyS_poll+0x75/0x100
-   [<ffffffff819a6524>] entry_SYSCALL_64_fastpath+0x24/0xcf
+CPU: 0 PID: 3661 Comm: syz-executor.0 Not tainted 5.1.0+ #28
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ dump_stack+0xa9/0x10e
+ ? __list_del_entry_valid+0x45/0xd0
+ ? __list_del_entry_valid+0x45/0xd0
+ __kasan_report+0x171/0x18d
+ ? __list_del_entry_valid+0x45/0xd0
+ kasan_report+0xe/0x20
+ __list_del_entry_valid+0x45/0xd0
+ spi_unregister_controller+0x99/0x1b0
+ spi_lm70llp_attach+0x3ae/0x4b0 [spi_lm70llp]
+ ? 0xffffffffc1128000
+ ? klist_next+0x131/0x1e0
+ ? driver_detach+0x40/0x40 [parport]
+ port_check+0x3b/0x50 [parport]
+ bus_for_each_dev+0x115/0x180
+ ? subsys_dev_iter_exit+0x20/0x20
+ __parport_register_driver+0x1f0/0x210 [parport]
+ ? 0xffffffffc1150000
+ do_one_initcall+0xb9/0x3b5
+ ? perf_trace_initcall_level+0x270/0x270
+ ? kasan_unpoison_shadow+0x30/0x40
+ ? kasan_unpoison_shadow+0x30/0x40
+ do_init_module+0xe0/0x330
+ load_module+0x38eb/0x4270
+ ? module_frob_arch_sections+0x20/0x20
+ ? kernel_read_file+0x188/0x3f0
+ ? find_held_lock+0x6d/0xd0
+ ? fput_many+0x1a/0xe0
+ ? __do_sys_finit_module+0x162/0x190
+ __do_sys_finit_module+0x162/0x190
+ ? __ia32_sys_init_module+0x40/0x40
+ ? __mutex_unlock_slowpath+0xb4/0x3f0
+ ? wait_for_completion+0x240/0x240
+ ? vfs_write+0x160/0x2a0
+ ? lockdep_hardirqs_off+0xb5/0x100
+ ? mark_held_locks+0x1a/0x90
+ ? do_syscall_64+0x14/0x2a0
+ do_syscall_64+0x72/0x2a0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Commit 79e7fff47b7b ("net: remove support for per driver ndo_busy_poll()")
-indirectly fixed this upstream in linux-4.11 by removing the offending
-pointer usage. No other users of napi->dev touch its netdev_ops.
-
-Fixes: 8b80cda536ea ("net: rename include/net/ll_poll.h to include/net/busy_poll.h") # 4.4.y
-Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-
-This is a straightforward backport of the 4.9.y fix[1] for this crash, which doesn't
-apply to the older LTS releases. Only build-tested on 4.4.y, as I don't have access
-to wireless hardware and firmware that runs on older LTS kernels.
-
-[1]: https://lore.kernel.org/stable/20190701234143.72631-1-jelsasser@appneta.com/T/#u
-
- include/net/busy_poll.h |    2 +-
+ drivers/spi/spi-bitbang.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/busy_poll.h
-+++ b/include/net/busy_poll.h
-@@ -93,7 +93,7 @@ static inline bool sk_busy_loop(struct s
- 		goto out;
+diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+index 3aa9e6e3dac8..4ef54436b9d4 100644
+--- a/drivers/spi/spi-bitbang.c
++++ b/drivers/spi/spi-bitbang.c
+@@ -392,7 +392,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
+ 	if (ret)
+ 		spi_master_put(master);
  
- 	ops = napi->dev->netdev_ops;
--	if (!ops->ndo_busy_poll)
-+	if (!ops || !ops->ndo_busy_poll)
- 		goto out;
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(spi_bitbang_start);
  
- 	do {
+-- 
+2.20.1
+
 
 
