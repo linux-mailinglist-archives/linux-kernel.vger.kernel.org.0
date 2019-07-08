@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FB061E06
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7CF61E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 13:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbfGHL4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 07:56:23 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:35095 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730628AbfGHL4V (ORCPT
+        id S1730654AbfGHL42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 07:56:28 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:36744 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730628AbfGHL4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:56:21 -0400
-Received: by mail-vk1-f196.google.com with SMTP id m17so2390111vkl.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 04:56:21 -0700 (PDT)
+        Mon, 8 Jul 2019 07:56:25 -0400
+Received: by mail-vs1-f66.google.com with SMTP id y16so4355395vsc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 04:56:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BlFTfhz/+AEFhJwpYcJkS+wIUzBLziougjZpKo9Piqs=;
-        b=TWIF5agXFrPqVLhH+NfmJmiehDiXhJ+xN3aAqZSxwJe6+ljAyd7mUl/ZZ+80TymJ+T
-         NLZ7x/XJcjzCV+MoWwckhKOdysduppW6xjdeAjY4ivz7U8cnLwlV/7Kgq0AMvb7x4fLD
-         7a7SUDYCyPoGnsPt5xEc9FfW6JReW7DNK21KBKV0QLtEAvigWxFIaXjGydrCWp0nJrWT
-         3ZN54DlUDsM4MKb94aOff/maQDZ8AC05oWstdtWh8YR5mnHAQT3ybAYvGvMCVB+0/tx1
-         ZGxdKWJtZ025LucQwuf1wSDUj8pVrF7LvUbvhvFoCm/oaAs+RuMvmKEhjC0gRYX100+i
-         LEBA==
+        bh=INqtaKqgJbsCXfOBlyhjMGZiHQUnucRAJNFBEd5g9d0=;
+        b=n2aOuh4+2HfLrrQ/AerkGk8nPcV0a9lHD1biMG5L8xAvYkxmgeLA8NS7F25S5q3m4/
+         PCxVdgp2Jf8w+c1ts10xe7qmXFh+7oane/qyxsSzTyhYVjYlUWbx7mj0ICC6+bojcHJI
+         0SINwngWRJuBqkIGoFi8LSLM9AAf4cWCut+tz8LeJrgv1RvYMMYGzCJDEIEEotA8Lx4T
+         ExMvH2gvUGRMH8HhXJ4gQBnh9YRG72rx3rbZCAk4XKuIF2dvHFVtWbEZbGdLt8u1/62E
+         wvQoT932jJjfBcNytTV6L5O68aaoqrXemfhwy6DrUlk5jFD5bypBb8QcMyuWa0IaOma9
+         Ed1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BlFTfhz/+AEFhJwpYcJkS+wIUzBLziougjZpKo9Piqs=;
-        b=ghWugaLyupdj9hUXpvSp70ZAVk3tX9d1CPKavObQiej6fhMohJyaLgi1JFhgZ/uhvp
-         BvBAz/tKl8Jda+OW2mqZQRuPyf38P4/sPBfzAQLWu+/xDnR4ODLyRdMX0rpSHWDwvBVs
-         XvtbKjpaUHwwbPdBV4zbAs62t6QIFFylCXwmKqE6S6CSJ5++nIWsZYAurrmjunGaa7jY
-         b4ITc7OOHEnIHNFUGTEIY44MOSogVDlfnHTdjqyMKiSXJ7EKYVYKEUUhF6HKiDAgOp+P
-         KnoiTsjxDKKihs+N/bz/A8piiSOPmwpk8AC/o3CEYJd8MWhitRn9equQG+NqJcMciITH
-         Nt+w==
-X-Gm-Message-State: APjAAAXaILFc9Fq2SWNO7yhSqgRreJj2/e8ccGQYz1omxxQjM4o/LgqD
-        RF4nj2GDcT/9aPXJ3mQMQIdRmHtXTCNOhN5sIvlC5A==
-X-Google-Smtp-Source: APXvYqyW0ACrsmKwbRbIibahJxBuTjC2FXPE7anQ5O/bL4R0LL9Pn404YIp6kRpgzcc29K7udmDloODNZ4gsXmlTiko=
-X-Received: by 2002:a1f:ab04:: with SMTP id u4mr4972793vke.40.1562586980668;
- Mon, 08 Jul 2019 04:56:20 -0700 (PDT)
+        bh=INqtaKqgJbsCXfOBlyhjMGZiHQUnucRAJNFBEd5g9d0=;
+        b=SVum7hL5jm76uyaGIhv99Z/MhpOTodkHm3sgg/Po3MayUp6+2Iqsnq2GJebTUDO0YT
+         4HbM5v5IjACsaSk19AgW05uSogtVHBF+8Lg+cl9pGxqG/fhdMaZSl0EmYNrorhv6RdcW
+         Kn/XAsBIzgJsC7XV9oUe6J66TNa4sVIWWXeLGL/O7RC7N/17EX0yT8Bcmdz3ySvANGPY
+         n05O5bkasW4Wb0ci+0UnTHJmaZXwzMgQHl00SotdHv7RKdILyO/stnluV3c+Ipql/Gd+
+         x6ESbo3zb/C2HESijors0b1FUmokS4IDIYuEHYAPQ3OpF5dXo4rlqpuDllfVZtprINtI
+         MxkA==
+X-Gm-Message-State: APjAAAVLGpcU6/X2HfaZImK7U0doknICYwA6I3hSBctNfOhrOFWsEJPH
+        sfIMvjeENGJOsB32zJD5Bb2mg/V68TlGmQvgbuEf9Q==
+X-Google-Smtp-Source: APXvYqzuMQxu5Q5w1+tmz7XnrX4NkraXYwW+cB7xG+jvVxMPoX8GHek6Jxl9SAJweTu5ja02CrA++IPVX9ipqF+7hMA=
+X-Received: by 2002:a67:ee5b:: with SMTP id g27mr9881440vsp.165.1562586984367;
+ Mon, 08 Jul 2019 04:56:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190624070345.20373-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190624070345.20373-1-yamada.masahiro@socionext.com>
+References: <20190625092042.19320-1-hch@lst.de> <20190625092042.19320-2-hch@lst.de>
+In-Reply-To: <20190625092042.19320-2-hch@lst.de>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 8 Jul 2019 13:55:44 +0200
-Message-ID: <CAPDyKFoBaYH+Rqn1heyUEJL-V=dm4dvx4JD31SK+uSS4vXiLXw@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-binding: mmc: rename tmio_mmc.txt to renesas,sdhi.txt
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Simon Horman <simon.horman@netronome.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+Date:   Mon, 8 Jul 2019 13:55:48 +0200
+Message-ID: <CAPDyKFotnDCpt9k-r3D2uYRAzpFVA3woRQENLcNcDY0q8+8SVg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: let the dma map ops handle bouncing
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019 at 09:04, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, 25 Jun 2019 at 11:21, Christoph Hellwig <hch@lst.de> wrote:
 >
-> As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
-> MFD glue") said, these MMC controllers use the IP from Panasonic.
+> Just like we do for all other block drivers.  Especially as the limit
+> imposed at the moment might be way to pessimistic for iommus.
 >
-> TMIO (Toshiba Mobile IO) MMC was the first upstreamed user of this IP.
-> The common driver code was split and expanded as 'tmio-mmc-core', then
-> it became historical misnomer since 'tmio' is not the name of this IP.
->
-> In the discussion [1], we decide to keep this name as-is at least in
-> Linux driver level because renaming everything is a big churn.
->
-> However, DT should not be oriented to a particular project even though
-> it is mainly developed in Linux communities.
->
-> This is the misfortune only in Linux. Let's stop exporting it to other
-> projects, where there is no good reason to call this hardware "TMIO".
-> Rename the file to renesas,sdhi.txt. In fact, all the information in
-> this file is specific to the Renesas platform.
->
-> This commit also removes the first paragraph entirely. The DT-binding
-> should describe the hardware. It is strange to talk about Linux driver
-> internals such as how the drivers are probed, how platform data are
-> handed off, etc.
->
-> [1] https://www.spinics.net/lists/linux-mmc/msg46952.html
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+From your earlier reply, I decided to fold in the following
+information to the changelog, as to clarify things a bit:
+
+"This also means we are not going to set a bounce limit for the queue, in
+case we have a dma mask. On most architectures it was never needed, the
+major hold out was x86-32 with PAE, but that has been fixed by now."
+
+Please tell, if you want me to change something.
 
 Applied for next, thanks!
 
@@ -100,36 +84,34 @@ Uffe
 
 
 > ---
+>  drivers/mmc/core/queue.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> Changes in v2:
->  - Rename to renesas,sdhi.txt instead of renesas_sdhi.txt
+> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+> index 3557d5c51141..e327f80ebe70 100644
+> --- a/drivers/mmc/core/queue.c
+> +++ b/drivers/mmc/core/queue.c
+> @@ -350,18 +350,15 @@ static const struct blk_mq_ops mmc_mq_ops = {
+>  static void mmc_setup_queue(struct mmc_queue *mq, struct mmc_card *card)
+>  {
+>         struct mmc_host *host = card->host;
+> -       u64 limit = BLK_BOUNCE_HIGH;
+>         unsigned block_size = 512;
 >
->  .../bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt}   | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
->  rename Documentation/devicetree/bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt} (87%)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> similarity index 87%
-> rename from Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> rename to Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> index 2b4f17ca9087..dd08d038a65c 100644
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> @@ -1,13 +1,4 @@
-> -* Toshiba Mobile IO SD/MMC controller
+> -       if (mmc_dev(host)->dma_mask && *mmc_dev(host)->dma_mask)
+> -               limit = (u64)dma_max_pfn(mmc_dev(host)) << PAGE_SHIFT;
 > -
-> -The tmio-mmc driver doesn't probe its devices actively, instead its binding to
-> -devices is managed by either MFD drivers or by the sh_mobile_sdhi platform
-> -driver. Those drivers supply the tmio-mmc driver with platform data, that either
-> -describe hardware capabilities, known to them, or are obtained by them from
-> -their own platform data or from their DT information. In the latter case all
-> -compulsory and any optional properties, common to all SD/MMC drivers, as
-> -described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
-> -optional bindings can be used.
-> +* Renesas SDHI SD/MMC controller
+>         blk_queue_flag_set(QUEUE_FLAG_NONROT, mq->queue);
+>         blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, mq->queue);
+>         if (mmc_can_erase(card))
+>                 mmc_queue_setup_discard(mq->queue, card);
 >
->  Required properties:
->  - compatible: should contain one or more of the following:
+> -       blk_queue_bounce_limit(mq->queue, limit);
+> +       if (!mmc_dev(host)->dma_mask || !*mmc_dev(host)->dma_mask)
+> +               blk_queue_bounce_limit(mq->queue, BLK_BOUNCE_HIGH);
+>         blk_queue_max_hw_sectors(mq->queue,
+>                 min(host->max_blk_count, host->max_req_size / 512));
+>         blk_queue_max_segments(mq->queue, host->max_segs);
 > --
-> 2.17.1
+> 2.20.1
 >
