@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C7462250
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D3262413
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388388AbfGHPYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:24:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51932 "EHLO mail.kernel.org"
+        id S2390824AbfGHPkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:40:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388377AbfGHPYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:24:37 -0400
+        id S1726435AbfGHP2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:28:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43D50216C4;
-        Mon,  8 Jul 2019 15:24:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8438A21537;
+        Mon,  8 Jul 2019 15:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599476;
-        bh=vVFyYXwho3zCgkOD0rbDcYE6AzYSHyuG8zbWWEKW4J4=;
+        s=default; t=1562599713;
+        bh=/FKc4kjIe82GxU9Sjc+/PTPdm3BLOpOWYvdj+AgWmkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NvtpDwNPfb/Kc0l7l3Sa9IwB0jBm3jWi7nwIzWJTYvfgGUVt+4lfLJJNSIrKgYIbH
-         Hzxk6Vef2/HoY07PT4YqVOS9EC4vuRQzts5iKPRR795T5wqJ/V5mYmtXIIEzBXVL6X
-         97ldzaBwQTp1pkmhdcZp619Vb+hakPF+/y3PLuRk=
+        b=KzTImTs0L2/h3MieRhcnxm7VDQcmGY9mK2GtMmnMordLT4a+rEANyri+gziXzJI8Y
+         12Ior4yOBJ+Y4ZTwU5WnxQO+w3kqLMvAky7KcTuA3COb0FKxobTygh8UhXyhiHDcUQ
+         MvVjlRy0SUCO55rEKO9rVYMdqM4CNAs7vof7H3vE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 28/56] ALSA: line6: Fix write on zero-sized buffer
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 4.19 53/90] ARM: dts: armada-xp-98dx3236: Switch to armada-38x-uart serial node
 Date:   Mon,  8 Jul 2019 17:13:20 +0200
-Message-Id: <20190708150522.453606217@linuxfoundation.org>
+Message-Id: <20190708150525.188209975@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
 
-commit 3450121997ce872eb7f1248417225827ea249710 upstream.
+commit 80031361747aec92163464f2ee08870fec33bcb0 upstream.
 
-LINE6 drivers allocate the buffers based on the value returned from
-usb_maxpacket() calls.  The manipulated device may return zero for
-this, and this results in the kmalloc() with zero size (and it may
-succeed) while the other part of the driver code writes the packet
-data with the fixed size -- which eventually overwrites.
+Switch to the "marvell,armada-38x-uart" driver variant to empty
+the UART buffer before writing to the UART_LCR register.
 
-This patch adds a simple sanity check for the invalid buffer size for
-avoiding that problem.
-
-Reported-by: syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+Tested-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>.
+Cc: stable@vger.kernel.org
+Fixes: 43e28ba87708 ("ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236")
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/pcm.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/sound/usb/line6/pcm.c
-+++ b/sound/usb/line6/pcm.c
-@@ -558,6 +558,11 @@ int line6_init_pcm(struct usb_line6 *lin
- 	line6pcm->max_packet_size_out =
- 		usb_maxpacket(line6->usbdev,
- 			usb_sndisocpipe(line6->usbdev, ep_write), 1);
-+	if (!line6pcm->max_packet_size_in || !line6pcm->max_packet_size_out) {
-+		dev_err(line6pcm->line6->ifcdev,
-+			"cannot get proper max packet size\n");
-+		return -EINVAL;
-+	}
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -336,3 +336,11 @@
+ 	status = "disabled";
+ };
  
- 	spin_lock_init(&line6pcm->out.lock);
- 	spin_lock_init(&line6pcm->in.lock);
++&uart0 {
++	compatible = "marvell,armada-38x-uart";
++};
++
++&uart1 {
++	compatible = "marvell,armada-38x-uart";
++};
++
 
 
