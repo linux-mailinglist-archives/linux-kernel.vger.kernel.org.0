@@ -2,97 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF0C620DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27D61620DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 16:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfGHOuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 10:50:06 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41781 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfGHOuF (ORCPT
+        id S1732008AbfGHOuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 10:50:09 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45337 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfGHOuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:50:05 -0400
-Received: by mail-qk1-f196.google.com with SMTP id v22so13487452qkj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 07:50:05 -0700 (PDT)
+        Mon, 8 Jul 2019 10:50:08 -0400
+Received: by mail-ed1-f66.google.com with SMTP id e2so8066555edi.12;
+        Mon, 08 Jul 2019 07:50:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xqD9//vj8hyLQhGtAn7OCQx4sQ5rQOlHZCIXpnadci0=;
+        b=rOrXFx3Bc/hwiJvEdJNsKrbM90PbzvbN/E+5fM3JYFUlefRprxepT8ORwFRGfjH6g5
+         SwECpUtBnUTYXiQYYW3FwXa4FciqgA70AdhmrVxZPqAC2kPrnENv5dkLpXbBuR+3tyk7
+         ZvtGejI3nsLP/XQZIuo/2LXKPsojhJ6aV1szipsFm0AQ8kDj8aDn1dAFvvbSq6bP3mYi
+         dBoY66MpsAhDIPuus8AXUyVG9vYjdVrv7F06zNhCu+msD4JJtBfiNkfqSqhLJgSnmMnd
+         Umpc7BI3ziNyAOP510ujmqpcY5fJCCPFn3T9HPzwsXETGHMwSaXn/G39GhZj+oXmTsGQ
+         vuCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m4lJKeNqPF6PUhJfVn2/MLy0a1U7ORLGNDoWGGROjW8=;
-        b=C7A5mLSiTfjgbzYTC3X6pmXN7G3Wa0TtLyNnOcY+pfGI7T0WZc5M/R2HsIgD+YdQsK
-         eBhyIx56QXOIenHYBSVIn5kiePzp9OrF6DSOXDoHLKZ9sDktvhuqOddkDWRXMPAkDfqf
-         3hxWPyzc/G2gDvbkL8XjGo2BSYPAipm/Dxh8RqebqTomEybidCUKAkHXKvSsH5kDGdb6
-         IFbnAwzFkOzkAcjF/gHCBS+BAe8M1QmocAucp0bEzqcyDxXWVcDX2Tza1HfNAgIdySM5
-         hq8wZeLaRg7vEAB44XJasKPie3agTxDLA/8Tu8W79Z/PRFx+ZuagUn4RnRioiVR3jRa2
-         itpQ==
-X-Gm-Message-State: APjAAAWL257FaERG0nIDvS1DWk1zzNlD3Gyn0zIFxdQ0fHlemh8+N4Z+
-        RRF1ohxQle6tEnGRAMu6mIrKiyFSTFM=
-X-Google-Smtp-Source: APXvYqzcydk75TJwyLHh1v1P7pYsUDMdBgKhP7Ny0LseHJK3GqpASJIMfeiWla1A76rTrchhM+b/iw==
-X-Received: by 2002:a37:2c46:: with SMTP id s67mr15092125qkh.396.1562597404820;
-        Mon, 08 Jul 2019 07:50:04 -0700 (PDT)
-Received: from dennisz-mbp ([2620:10d:c091:500::3:8b5a])
-        by smtp.gmail.com with ESMTPSA id a6sm6872044qkn.59.2019.07.08.07.50.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 07:50:03 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 10:50:02 -0400
-From:   Dennis Zhou <dennis@kernel.org>
+        bh=xqD9//vj8hyLQhGtAn7OCQx4sQ5rQOlHZCIXpnadci0=;
+        b=dJnz8bO8F7KSgQKNs8Q9E9Hf1arpre3KcUpb0Q6cVdf+zQUd+Qs1pZSuunPOHj4h3R
+         z8hnaS+2ldlnaIePpqr6zaD2SCEcOVY2oG7/ZpVx1DzWwrAzKL9r0puxmxk9YdFiYpvH
+         +VbHNKYohs3hw1+OhKcTJYXjl+xaxYRGZzcbMTmwNsPHCLKODU/BawnzXYgJyMqvaNeH
+         fnq6Z0jjDnwwWAqvuuJysvZ8WBQejvFuHfzbVYMTaWtP+YrQaCoHTcZ4EjeMKcMGLBuZ
+         3QM8ADFj/B+pSXffNxDRJ0Ngp2hjtVFbxHNskIU0d2CflQWBKlUAuXyI8MdFjerowJ2t
+         m0KQ==
+X-Gm-Message-State: APjAAAU5aY8luGtY8tNHi3EudnHR9WgSQBGIKSRMO5xIKYiqH6GqF30e
+        TyBIQXApez76WtEN3SXkUMg=
+X-Google-Smtp-Source: APXvYqxt23CLo9IIkHXCkj0qvqdL4T6+9V8SwBfp/4gULMA6Th4DnExR1aYs+mQefTg1e9PwHQh4yQ==
+X-Received: by 2002:a17:906:310c:: with SMTP id 12mr16489797ejx.259.1562597406063;
+        Mon, 08 Jul 2019 07:50:06 -0700 (PDT)
+Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id 43sm5668607edz.87.2019.07.08.07.50.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 07:50:05 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 07:50:03 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] percpu: fix pcpu_page_first_chunk return code handling
-Message-ID: <20190708145002.GA17098@dennisz-mbp>
-References: <20190708125217.3757973-1-arnd@arndb.de>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] ceph: fix uninitialized return code
+Message-ID: <20190708145003.GB43693@archlinux-epyc>
+References: <20190708134821.587398-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190708125217.3757973-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190708134821.587398-1-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 02:52:09PM +0200, Arnd Bergmann wrote:
-> gcc complains that pcpu_page_first_chunk() might return an uninitialized
-> error code when the loop is never entered:
+On Mon, Jul 08, 2019 at 03:48:08PM +0200, Arnd Bergmann wrote:
+> clang points out a -Wsometimed-uninitized bug in the modified
+> ceph_real_mount() function:
 > 
-> mm/percpu.c: In function 'pcpu_page_first_chunk':
-> mm/percpu.c:2929:9: error: 'rc' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> fs/ceph/super.c:850:6: error: variable 'err' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+>         if (!fsc->sb->s_root) {
+>             ^~~~~~~~~~~~~~~~
+> fs/ceph/super.c:885:9: note: uninitialized use occurs here
+>         return err;
+>                ^~~
+> fs/ceph/super.c:850:2: note: remove the 'if' if its condition is always true
+>         if (!fsc->sb->s_root) {
+>         ^~~~~~~~~~~~~~~~~~~~~~
+> fs/ceph/super.c:843:9: note: initialize the variable 'err' to silence this warning
+>         int err;
+>                ^
+>                 = 0
 > 
-> Make it return zero like before the cleanup.
+> Set it to zero if the condition is false.
 > 
-> Fixes: a13e0ad81216 ("percpu: Make pcpu_setup_first_chunk() void function")
+> Fixes: 108f95bfaa56 ("vfs: Convert ceph to use the new mount API")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  mm/percpu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 5a918a4b1da0..5b65f753c575 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -2917,6 +2917,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
->  		ai->reserved_size, ai->dyn_size);
->  
->  	pcpu_setup_first_chunk(ai, vm.addr);
-> +	rc = 0;
->  	goto out_free_ar;
->  
->  enomem:
-> -- 
-> 2.20.0
-> 
 
-Hi Arnd,
+Thanks for the patch!
 
-I got the report for the kbuild bot. I have the fix in my tree already.
-
-Thanks,
-Dennis
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
