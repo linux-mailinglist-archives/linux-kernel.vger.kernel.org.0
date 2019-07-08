@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C93262901
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6086B6290A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390460AbfGHTKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:10:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53504 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbfGHTKg (ORCPT
+        id S2391148AbfGHTMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:12:45 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54646 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731294AbfGHTMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:10:36 -0400
-Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=calabresa)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <cascardo@canonical.com>)
-        id 1hkZ21-0003Ex-F9; Mon, 08 Jul 2019 19:10:33 +0000
-Date:   Mon, 8 Jul 2019 16:10:29 -0300
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <shuahkhan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] selftests/ftrace: Select an existing function in
- kprobe_eventname test
-Message-ID: <20190708191026.GA8307@calabresa>
-References: <20190322150923.1b58eca5@gandalf.local.home>
+        Mon, 8 Jul 2019 15:12:44 -0400
+Received: by mail-wm1-f68.google.com with SMTP id p74so601074wme.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 12:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=K91t+FtsfBSUcSDS3x3jNNU8zFh5v/uXYLs4sWDTadg=;
+        b=JQ1dItqNHVtvJ3YcIF4UShPyQ5LAqp4n/nsKRJQCM2pkOwKj72l6twA+nroOhRwRST
+         RR3jHx+WQxM4rL+ygMsWSqlzfiUk4hjHW1Fit7t8+9PQzB9+E+9mf0EHI5cjx2Ogd2Ou
+         wQ88bPOzy1VaAv9b2lDcyUYXOPv+u6fdUt0a37HibTbu1bBYxoSMiaDG63NLDJWq/5vE
+         XGjR+3jhgH3WleyLhL4wHIAehCmYmvQ5YK48BDuyp4XAhjz2u1jsqqudrknK0FG/axzl
+         4ZVKDFNTlj7sc74PSIxlXc9qnJowPgRcehUZfhjvi79lJWiByxtELbAqVn2WZlh+6nqj
+         frpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=K91t+FtsfBSUcSDS3x3jNNU8zFh5v/uXYLs4sWDTadg=;
+        b=cbenvC2TwoTMx8yWrrMNuwv45f2zk7zo6i+oXd2J0VbVH9mOj/2OfpqJsFkquJf6yg
+         uOWmAZT/r86BqziB8beUNNRO8Q9fvTBWokWQNH7p5DbFU364F9gfDyBn3wS8y6MOZTg8
+         quSyV51VgyzWFC1H8UGCsO1NFgo59n56UyxY5idI8TGG+lmdUbKHJatpmsGUt8v8/QZP
+         F2L6ELoF5WzAOwiHqAFDel+uDITWi6MgIi+pmhoktdfpRZPu6Y+7aWCZTtV1nqajUosq
+         /o/7O9eYCo4QQu3DlEKwBDD2Q6Qt+L7WuQ6F29jRj4dpAv1HSKAQ8r0D3Ti7wuE24L1z
+         W0uw==
+X-Gm-Message-State: APjAAAW3uMVIGjbWrWZLRLJCu4xIsQBDpr05yaNxtYYW87jEhDMtwahw
+        Tfj8UUk3G0yd9TiPYW54vgUbxQ==
+X-Google-Smtp-Source: APXvYqze2ejGTZU+LIj/GN7jDGL5U4KMBJsrIA0HOLHCTbE/A6UpepKmCzUp4TCuRFyDOgqXwg51bQ==
+X-Received: by 2002:a05:600c:2549:: with SMTP id e9mr18206495wma.46.1562613161948;
+        Mon, 08 Jul 2019 12:12:41 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id u186sm771409wmu.26.2019.07.08.12.12.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 12:12:41 -0700 (PDT)
+Message-ID: <5d2395a9.1c69fb81.41685.4bf6@mx.google.com>
+Date:   Mon, 08 Jul 2019 12:12:41 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190322150923.1b58eca5@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.9.184-102-gf075c4e9d730
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 000/102] 4.9.185-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 03:09:23PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> 
-> Running the ftrace selftests on the latest kernel caused the
-> kprobe_eventname test to fail. It was due to the test that searches for
-> a function with at "dot" in the name and adding a probe to that.
-> Unfortunately, for this test, it picked:
-> 
->  optimize_nops.isra.2.cold.4
-> 
-> Which happens to be marked as "__init", which means it no longer exists
-> in the kernel! (kallsyms keeps those function names around for tracing
-> purposes)
-> 
-> As only functions that still exist are in the
-> available_filter_functions file, as they are removed when the functions
-> are freed at boot or module exit, have the test search for a function
-> with ".isra." in the name as well as being in the
-> available_filter_functions (if the file exists).
-> 
+stable-rc/linux-4.9.y boot: 94 boots: 2 failed, 92 passed (v4.9.184-102-gf0=
+75c4e9d730)
 
-This fixes a similar problem for me.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.184-102-gf075c4e9d730/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.184-102-gf075c4e9d730/
 
-Tested-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.184-102-gf075c4e9d730
+Git Commit: f075c4e9d7301b229ebc16b6ae51dd5094802c48
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 49 unique boards, 21 SoC families, 15 builds out of 197
 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-> index 3fb70e01b1fe..3ff236719b6e 100644
-> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_eventname.tc
-> @@ -24,7 +24,21 @@ test -d events/kprobes2/event2 || exit_failure
->  
->  :;: "Add an event on dot function without name" ;:
->  
-> -FUNC=`grep -m 10 " [tT] .*\.isra\..*$" /proc/kallsyms | tail -n 1 | cut -f 3 -d " "`
-> +find_dot_func() {
-> +	if [ ! -f available_filter_functions ]; then
-> +		grep -m 10 " [tT] .*\.isra\..*$" /proc/kallsyms | tail -n 1 | cut -f 3 -d " "
-> +		return;
-> +	fi
-> +
-> +	grep " [tT] .*\.isra\..*" /proc/kallsyms | cut -f 3 -d " " | while read f; do
-> +		if grep -s $f available_filter_functions; then
-> +			echo $f
-> +			break
-> +		fi
-> +	done
-> +}
-> +
-> +FUNC=`find_dot_func | tail -n 1`
->  [ "x" != "x$FUNC" ] || exit_unresolved
->  echo "p $FUNC" > kprobe_events
->  EVENT=`grep $FUNC kprobe_events | cut -f 1 -d " " | cut -f 2 -d:`
+Boot Failures Detected:
+
+arm:
+    sunxi_defconfig:
+        gcc-8:
+            sun7i-a20-bananapi: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            sun7i-a20-bananapi: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
