@@ -2,51 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 056CB618C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 03:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE56C618CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 03:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbfGHBTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 21:19:46 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59779 "EHLO ozlabs.org"
+        id S1728296AbfGHBUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 21:20:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:39111 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728075AbfGHBTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 21:19:39 -0400
+        id S1728123AbfGHBTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 21:19:42 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45hnfw1DV0z9sP8; Mon,  8 Jul 2019 11:19:35 +1000 (AEST)
+        id 45hng06LbNz9sP0; Mon,  8 Jul 2019 11:19:40 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 14b2f7d908c374df57792410bc0100dd71be4e5c
-In-Reply-To: <1559635233-21385-1-git-send-email-krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+X-powerpc-patch-commit: fbded57c962e7c42c932e1a46c8d801441726662
+In-Reply-To: <1b4946c9e580b51b6ca2ddc5963d66406c013c2d.1560507284.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] powerpc/configs: Remove useless UEVENT_HELPER_PATH
-Message-Id: <45hnfw1DV0z9sP8@ozlabs.org>
-Date:   Mon,  8 Jul 2019 11:19:35 +1000 (AEST)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] powerpc/boot: don't force gzipped uImage
+Message-Id: <45hng06LbNz9sP0@ozlabs.org>
+Date:   Mon,  8 Jul 2019 11:19:40 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-04 at 08:00:33 UTC, Krzysztof Kozlowski wrote:
-> Remove the CONFIG_UEVENT_HELPER_PATH because:
-> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
->    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
->    made default to 'n',
-> 2. It is not recommended (help message: "This should not be used today
->    [...] creates a high system load") and was kept only for ancient
->    userland,
-> 3. Certain userland specifically requests it to be disabled (systemd
->    README: "Legacy hotplug slows down the system and confuses udev").
+On Fri, 2019-06-14 at 10:16:23 UTC, Christophe Leroy wrote:
+> This patch modifies the generation of uImage by handing over
+> the selected compression type instead of forcing gzip
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/14b2f7d908c374df57792410bc0100dd71be4e5c
+https://git.kernel.org/powerpc/c/fbded57c962e7c42c932e1a46c8d801441726662
 
 cheers
