@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACA561AED
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F103361AF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 09:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfGHHJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 03:09:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33901 "EHLO mga01.intel.com"
+        id S1728964AbfGHHKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 03:10:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:40042 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbfGHHJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:09:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 00:09:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,465,1557212400"; 
-   d="scan'208";a="167593116"
-Received: from liujing-mobl.ccr.corp.intel.com (HELO [10.238.129.57]) ([10.238.129.57])
-  by orsmga003.jf.intel.com with ESMTP; 08 Jul 2019 00:09:01 -0700
-Subject: Re: [PATCH 5/5] KVM: cpuid: remove has_leaf_count from struct
- kvm_cpuid_param
-To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20190704140715.31181-1-pbonzini@redhat.com>
- <20190704140715.31181-6-pbonzini@redhat.com>
-From:   Jing Liu <jing2.liu@linux.intel.com>
-Message-ID: <bb5e81f4-bb34-2841-0fa1-63876b97e54c@linux.intel.com>
-Date:   Mon, 8 Jul 2019 15:09:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726684AbfGHHKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 03:10:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 876322B;
+        Mon,  8 Jul 2019 00:10:48 -0700 (PDT)
+Received: from [10.1.196.120] (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0079D3F246;
+        Mon,  8 Jul 2019 00:12:42 -0700 (PDT)
+Subject: Re: [PATCH v2 1/5] perf: arm64: Add test to check userspace access to
+ hardware counters.
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, mark.rutland@arm.com
+References: <20190705085541.9356-1-raphael.gault@arm.com>
+ <20190705085541.9356-2-raphael.gault@arm.com>
+ <20190705145436.GA29396@kernel.org>
+From:   Raphael Gault <raphael.gault@arm.com>
+Message-ID: <7fcf5a01-15f3-5a97-bc1b-74d82f31981f@arm.com>
+Date:   Mon, 8 Jul 2019 08:10:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190704140715.31181-6-pbonzini@redhat.com>
+In-Reply-To: <20190705145436.GA29396@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -41,36 +41,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo,
+Hi Arnaldo,
 
-On 7/4/2019 10:07 PM, Paolo Bonzini wrote:
-> The has_leaf_count member was originally added for KVM's paravirtualization
-> CPUID leaves.  However, since then the leaf count _has_ been added to those
-> leaves as well, so we can drop that special case.
+On 7/5/19 3:54 PM, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Jul 05, 2019 at 09:55:37AM +0100, Raphael Gault escreveu:
+>> This test relies on the fact that the PMU registers are accessible
+>> from userspace. It then uses the perf_event_mmap_page to retrieve
+>> the counter index and access the underlying register.
+>>
+>> This test uses sched_setaffinity(2) in order to run on all CPU and thus
+>> check the behaviour of the PMU of all cpus in a big.LITTLE environment.
+>>
+>> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+>> ---
+>>   tools/perf/arch/arm64/include/arch-tests.h |   6 +
+>>   tools/perf/arch/arm64/tests/Build          |   1 +
+>>   tools/perf/arch/arm64/tests/arch-tests.c   |   4 +
+>>   tools/perf/arch/arm64/tests/user-events.c  | 255 +++++++++++++++++++++
+>>   4 files changed, 266 insertions(+)
+>>   create mode 100644 tools/perf/arch/arm64/tests/user-events.c
+>>
+>> diff --git a/tools/perf/arch/arm64/include/arch-tests.h b/tools/perf/arch/arm64/include/arch-tests.h
+>> index 90ec4c8cb880..a9b17ae0560b 100644
+>> --- a/tools/perf/arch/arm64/include/arch-tests.h
+>> +++ b/tools/perf/arch/arm64/include/arch-tests.h
+>> @@ -2,11 +2,17 @@
+>>   #ifndef ARCH_TESTS_H
+>>   #define ARCH_TESTS_H
+>>   
+>> +#define __maybe_unused	__attribute__((unused))
 > 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[...]
-> @@ -835,11 +834,10 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
->   	int limit, nent = 0, r = -E2BIG, i;
->   	u32 func;
->   	static const struct kvm_cpuid_param param[] = {
-> -		{ .func = 0, .has_leaf_count = true },
-> -		{ .func = 0x80000000, .has_leaf_count = true },
-> -		{ .func = 0xC0000000, .qualifier = is_centaur_cpu, .has_leaf_count = true },
-> +		{ .func = 0 },
-> +		{ .func = 0x80000000 },
-> +		{ .func = 0xC0000000, .qualifier = is_centaur_cpu },
+> 
+> What is wrong with using:
+> 
+> #include <linux/compiler.h>
+> 
+> ?
+> 
+> [acme@quaco perf]$ find tools/perf/ -name "*.[ch]" | xargs grep __maybe_unused | wc -l
+> 1115
+> [acme@quaco perf]$ grep __maybe_unused tools/include/linux/compiler.h
+> #ifndef __maybe_unused
+> # define __maybe_unused		__attribute__((unused))
+> [acme@quaco perf]$
+> 
+> Also please don't break strings in multiple lines just to comply with
+> the 80 column limit. That is ok when you have multiple lines ending with
+> a newline, but otherwise just makes it look ugly.
+> 
 
->   		{ .func = KVM_CPUID_SIGNATURE },
-> -		{ .func = KVM_CPUID_FEATURES },
-
-It seems the two func are introduced by 2b5e97e, as paravirtual cpuid.
-But when searching KVM_CPUID_SIGNATURE, there seems no caller requesting
-this cpuid. Meanwhile, I felt curious if KVM_CPUID_FEATURES is still in 
-use but it seems kvm_update_cpuid() uses that. Not sure which spec 
-introduces the latest pv cpuid.
+You're right, I shall correct those points.
 
 Thanks,
-Jing
 
-[...]
+-- 
+Raphael Gault
