@@ -2,47 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09DB5618C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 03:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0083C618C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 03:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbfGHBTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 21:19:50 -0400
-Received: from ozlabs.org ([203.11.71.1]:44261 "EHLO ozlabs.org"
+        id S1728211AbfGHBTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 21:19:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:48771 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbfGHBTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 21:19:44 -0400
+        id S1728075AbfGHBTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 21:19:49 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45hng20xqlz9sNs; Mon,  8 Jul 2019 11:19:42 +1000 (AEST)
+        id 45hng72Df7z9sNs; Mon,  8 Jul 2019 11:19:47 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 7b570361f6f66c91443541b19121038c076e7d64
-In-Reply-To: <20190617145204.6810-1-geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>
+X-powerpc-patch-commit: 4f44e8aeaf1937d9148dfcc4c028cd8aff27902e
+In-Reply-To: <1562169853-12593-1-git-send-email-info@metux.net>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/powerpc: Add missing newline at end of file
-Message-Id: <45hng20xqlz9sNs@ozlabs.org>
-Date:   Mon,  8 Jul 2019 11:19:42 +1000 (AEST)
+Cc:     alistair@popple.id.au, kvm-ppc@vger.kernel.org, oss@buserror.net,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] arch: powerpc: Kconfig: pedantic formatting
+Message-Id: <45hng72Df7z9sNs@ozlabs.org>
+Date:   Mon,  8 Jul 2019 11:19:47 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 14:52:04 UTC, Geert Uytterhoeven wrote:
-> "git diff" says:
+On Wed, 2019-07-03 at 16:04:13 UTC, "Enrico Weigelt, metux IT consult" wrote:
+> Formatting of Kconfig files doesn't look so pretty, so let the
+> Great White Handkerchief come around and clean it up.
 > 
->     \ No newline at end of file
+> Also convert "---help---" as requested on lkml.
 > 
-> after modifying the file.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/7b570361f6f66c91443541b19121038c076e7d64
+https://git.kernel.org/powerpc/c/4f44e8aeaf1937d9148dfcc4c028cd8aff27902e
 
 cheers
