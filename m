@@ -2,76 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 477346210E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 821A662117
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732061AbfGHPD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:03:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38082 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730192AbfGHPD0 (ORCPT
+        id S1732075AbfGHPEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:04:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43071 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730233AbfGHPEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:03:26 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r12so14858420edo.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 08:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=qNO7wOAoo7vHrMeShfaEKOog3aOQISPfKYPplk0EZyY=;
-        b=r2sLLQ1z74xBkf92kuPfJqfoxgVDlrHH9OdN5DR/YHoOjhjrkF3pVVcQZe9B7pShMD
-         LgT0WcoZ6gPPxuOY2uHd4if+PhNfpTAtS+Yp7lzgvQtWgvFVmd+lYMVA7WG/df5wFyC5
-         1qC5NJ33JomOjLZQN3thn6tRw02GFsjdb+jTHiVXNiBI7HneP6OE1FF1cRwGFcSIdvGv
-         gMrlSbpUomyRtQy9GpTvSZAVvsCdVi0Bb/KoC6UQsCZsIWdLcbVrB3ZcCOe1WpKwURNL
-         KbN9RsOAWFPNWKDVXsLS4nr6hrIKHY1toywCQObuIBmvPKZaK8vBTKkayWFgF1a3dDKE
-         3xvg==
+        Mon, 8 Jul 2019 11:04:53 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i189so7745599pfg.10;
+        Mon, 08 Jul 2019 08:04:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:content-transfer-encoding;
-        bh=qNO7wOAoo7vHrMeShfaEKOog3aOQISPfKYPplk0EZyY=;
-        b=SRaW8cl+1zIB/Tro+BbHzP3qw5SuimPFzwFmRgMslnriUPCWdnPEypKR8E34iRFbO9
-         ba62UtBF5PeV/WLmQ2uHFHjJkfcM9WBqcsTVxB9ciz3MB5hQQnFB81kJijtedNtXzgBp
-         fJn6YT7CLl6jZgO+vEIhgrDF4PHcDJB84ks+zeP6n2GLMVUGhn888MhNDk1LTbqjEijw
-         EIvlhOD1OonJcNKRiDuZ66JgSo41Ej2a4hYKcM8jl5a6hP0ylAtr7GOSQjjQ19QRpoRv
-         WO5J96wX5PZA1Ftr8yfxZZtYLOCZDquyQKC3c/tdLl4GFLKcSI7pwdheKn3dHkW4UqS/
-         Ehyw==
-X-Gm-Message-State: APjAAAVM1B0rWz02mj9asW5/Qtq/A5pelKxaZCWT2D4scsmb4eUXndcM
-        gac/3gVKhi5c04lbpgHw8KK8bQsrXrhIfjsuy3A=
-X-Google-Smtp-Source: APXvYqxhPczpc+xcpnaycKPE+Um/LShC2mJMP/4fhg/WkqWnFeLTioFoZYO9UbL8B3J6H8bqXilennkIrirDR28SfCg=
-X-Received: by 2002:a50:eb96:: with SMTP id y22mr20573369edr.211.1562598204704;
- Mon, 08 Jul 2019 08:03:24 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uuzMBczhpFd4zcYpjMdhnitg6M+5a5PUQK3Xnc+A9H8=;
+        b=j8J6o81O8Kel0trZLKq/QJTiW8o9fOeSVRjcZ4jVDKP6IzQTQH348leOzEaTap+3PN
+         I1mO0PAi8OCArSZWpzAjCoL09jKyK8q1BcjLRqwzuukGzNnFRnPF43JPKT3zg0dqvQ0b
+         4HmPKNrRchQAQSr586Nc7tpzJumVLQKh+aQw77MKRJm65iGgXPx5psTwWhn6zVR3jvDT
+         Y/IIfOU6aa8fjZgzu9EGVZmhv5jeCl93oZW7W7/FcNwwcp9wUA8ng+GLlEycbZiWx+gl
+         dTwLaFU6jiUH8vDClP9oq4UVBVIhyawDk3xfxRl6CpIXcXpooiYCvrWHShlNzBoXPEzD
+         iLtQ==
+X-Gm-Message-State: APjAAAUcl5dj6iOFlAg4qczfv9fpfQJ7fR5OfpdG7LNtsLWwn5RShQiM
+        K5XR1Rz2sWE+csJSo9Bfx7/F55pa
+X-Google-Smtp-Source: APXvYqyJlMgwmQ5yvGTru8xbts6noQsMZxodcWdtoYVrpsTXXjLpzN1qyUzURq/d7YVTiwSh76fHqw==
+X-Received: by 2002:a17:90a:208d:: with SMTP id f13mr25643200pjg.68.1562598292667;
+        Mon, 08 Jul 2019 08:04:52 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id 1sm17843072pfe.102.2019.07.08.08.04.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 08:04:51 -0700 (PDT)
+Subject: Re: [PATCH] scsi: Remove unreachable code
+To:     Ding Xiang <dingxiang@cmss.chinamobile.com>, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1562234156-11945-1-git-send-email-dingxiang@cmss.chinamobile.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <82794d9a-8f36-7012-da6a-1e05ce2bb3cb@acm.org>
+Date:   Mon, 8 Jul 2019 08:04:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Received: by 2002:a17:906:ce33:0:0:0:0 with HTTP; Mon, 8 Jul 2019 08:03:22
- -0700 (PDT)
-From:   Ayesha Al-Qaddafi <ayeshaalgaddafi689@gmail.com>
-Date:   Mon, 8 Jul 2019 03:03:22 -1200
-X-Google-Sender-Auth: 0nKqsuQ1VmOqswOSGofz1n7PRvQ
-Message-ID: <CAPHg+rEMXtXhEthVxLuZ7dfxVRMp08KZpRshNX1nJKkJr21PtQ@mail.gmail.com>
-Subject: Re: Investment offer to you,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1562234156-11945-1-git-send-email-dingxiang@cmss.chinamobile.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings Dear Friend,
+On 7/4/19 2:55 AM, Ding Xiang wrote:
+> The return code after switch default is unreachable,
+> so remove it.
+> 
+> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+> ---
+>   drivers/scsi/scsi_error.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+> index bfa569f..12180f0 100644
+> --- a/drivers/scsi/scsi_error.c
+> +++ b/drivers/scsi/scsi_error.c
+> @@ -1909,7 +1909,6 @@ int scsi_decide_disposition(struct scsi_cmnd *scmd)
+>   	default:
+>   		return FAILED;
+>   	}
+> -	return FAILED;
 
- It=E2=80=99s my pleasure to contact you through this media as i am in need=
- of
-your urgent assistance. My names are Mrs. Ayesha Al-Qaddafi a single
-Mother and a Widow with three Children. I am the only biological
-Daughter of late Libyan President (Late Colonel Muammar Al Qaddafi). I
-have an investment funds worth Twenty Eight Million Four Hundred
-Thousand United State Dollar($28.400.000.00) and i need an
-investmentManager/Partner and because of the asylum status i will
-authorize you the ownership of the funds, however, I am interested in
-for the investment project assistance in your country, may be from
-there, we can build a business relationship in the near future. I am
-willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits. If you arewilling to
-handle this project kindly reply urgent to  enable me provide you more
-information about the investment funds. Your Urgent Reply Will Be
-Appreciated. Regards Ayesha Al-Qaddafi.
+I'd rather remove the "default: return FAILED;" code than make the above 
+change. If status_byte() ever would be changed into an inline function 
+that returns an enum then my alternative will allow the compiler to 
+verify whether all enum labels have been handled. No such check will be 
+performed if the above patch would be applied.
+
+Bart.
