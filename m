@@ -2,141 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40B861EA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E844461E9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 14:41:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfGHMmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 08:42:21 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:46413 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfGHMmV (ORCPT
+        id S1730858AbfGHMlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 08:41:53 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46858 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbfGHMlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:42:21 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mduym-1iKMCm2862-00az91; Mon, 08 Jul 2019 14:41:26 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH] vmscan: fix memcg_kmem build failure
-Date:   Mon,  8 Jul 2019 14:41:03 +0200
-Message-Id: <20190708124120.3400683-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 8 Jul 2019 08:41:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id z15so10799096lfh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 05:41:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=01ZaodaDx7mKeMsXvB23tTxrXIayVtwHPEPEGKhS98A=;
+        b=LTaOrKl0vSBgTH3p2sCQOsuKjJdFWmWnutde8wO+ePasoJh4cKjHrhnyXY6PgrHpLK
+         85c5GiNIeepifFeyVzMroc3IGeQPvYJsPE6GANW/1Jz6ipZTGtmxG3AFWpis6U5nxM0u
+         9SspHklbe19WcWvyMY9A/cnz9VTq1NQi6rZHvrJPOODA3+sTroEftiODx8+Z4PSbdSD4
+         JVRSZGHXxPJYU60Nw/oKQHdhX3zqe+HPJGoKm9LfYUsR6VOgOnX1FU9++vR1/7k5B6Sl
+         OqLGlWgWVOugSqujh54KMPW29ELbJauzph1ezjbkSCh758w6oq8hSl80Vsbq8YXvfFGx
+         5fqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=01ZaodaDx7mKeMsXvB23tTxrXIayVtwHPEPEGKhS98A=;
+        b=GgMrWYcFwB7zJXL3Utzz8bRQDP79XmLHAmpgLiwqPVxGa/31nQr0K5XBfYV/AluDu7
+         NMGU8bL34gFDkIRHaB6LAHjw3HNp7dVsPFcUADGNVulUOhYwd9SpL1pKA5YL8p3IdYIl
+         mKJnRXBPxfvrgu/fP2S8j4YFzphw5cU09CM4udrRtanE9eZHWnfLRBC+ZFtZwYCceuU8
+         MjcSazuCupu+Xj29ibGd+myEwuL/bL9h8YTD7G567PLj6j1t7KwZrFVOMZxEcgMLX3RS
+         so1Bwmyvt5TT/OnGxHWmek8gKM1HSGPSgVZrTpDflT6C6+eG4ByVJ0U8UWMnKgbC4xDL
+         4GPg==
+X-Gm-Message-State: APjAAAV/ovoxpaloEC5UA2FDayYwAu6vhVo4mznIi9h3wgaD6yxRFhcG
+        gLVlpXmKQ5RmwHedllkYg9rkNH8tK+tUXcazJYCJqssw
+X-Google-Smtp-Source: APXvYqxE30q0tSSJMu3guI09sH2bs/UqlCraWFjUE/V1BMcubjJgN2dhMofOAQnk/QVFVER9j12WU8+boVM3eecRu6U=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr8772526lfp.61.1562589711198;
+ Mon, 08 Jul 2019 05:41:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:8VkSE5EXRvXhg4WTtl1yfmQwLxnuqIVBWC3O64OvYEpHsptKShz
- liGdVTsfLuFY0hhVyQVWbff5R3bnb6E1HJhu20u8pAvj9sk57oG0RsiWEA+A1bIP/Uugd9q
- 2kMCOc7ttYjFkbS/CznPsTeFSIM1mWM86j4G6IquKv0/qHs1LJEQyDFHh4E7ePwwl6mD2aj
- jfri59CV9WSdBmPT0jJfA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BR6pqYPidxU=:IRaEjSZOktumWrt9EMStya
- IX38wDJ+IcfvW5pYQ44mrAN4pOG+fQBfdEpJjdSIiZkiiXgMWlz9OIiqV5DdcIp1mHsdwhTA9
- rtdTNxE957ciTEuUFcKJ3CMh6m/HMNfwb9KVY+QAVUGrwqr3ACpvagXxvl8xUcs3nevzRuERn
- rW0cF4laMbGlGWPzYD/E+eKlXk/TJDTKR8xGf4VfXa6DO4goKEHDJ1sKXj+o0I+QPV9ZbBJoH
- i96a7Zpg6KHtjYR7CkgUCmcwVzdkpAidWvro3JmDTPB/Xpm8XSLkJRoRUTO+qOld4Gt1YN0KO
- TPv5QgcYo34HcdMQppjFYyVe35Tn4bslNyZlESRD4UHV6zcUhDfgAIWd4Yc58B4hBFi7NNefD
- bw3ai4opAWaOE+iE2O5tMhwrPgKUpcy+xnCLPA4f4mTZf8VUaix5mzL4Rf0qotuQAbjPIosJ8
- zHTUCS0DxAJ4YTGxlKa9IWbst0+jW6ydHXPf+rZhQhlkLfSx3oHdSNaAaYGLwZG0998vvn7EP
- zrba2rn2a2fSR0fyAD5KSxXfoVqQfL413Q9mnGnKlTIWGrU6R/L7KPzHiSi761jL2euFRRVES
- effFfk1ECatHuTe8ZS7Ub5HMvBajqf0re1k1O9S3vlL+AbwNzwhAyXbCHpJ4gl04+uOvzzLhJ
- QWf7Y6snVpnfNAu3wMawsKQjVoz3bb4dDGiCEMKdpV+eZRnJnSmHlCIGpER7rTpkmEAPExn5c
- tdmnEbVumZyGVWj5RoAWRbXyX4mivgOuqISEGg==
-To:     unlisted-recipients:; (no To-header on input)
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+In-Reply-To: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 8 Jul 2019 18:11:39 +0530
+Message-ID: <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
+Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
+        serge@hallyn.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_MEMCG_KMEM is disabled, we get a build failure
-for calling a nonexisting memcg_expand_shrinker_maps():
+Hi Jens,
 
-mm/vmscan.c:220:7: error: implicit declaration of function 'memcg_expand_shrinker_maps' [-Werror,-Wimplicit-function-declaration]
-                if (memcg_expand_shrinker_maps(id)) {
-                    ^
-mm/vmscan.c:220:7: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
-mm/vmscan.c:608:56: error: no member named 'shrinker_map' in 'struct mem_cgroup_per_node'
-        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
-                                        ~~~~~~~~~~~~~~~~~~~~  ^
-include/linux/rcupdate.h:498:31: note: expanded from macro 'rcu_dereference_protected'
-        __rcu_dereference_protected((p), (c), __rcu)
-                                     ^
-include/linux/rcupdate.h:321:12: note: expanded from macro '__rcu_dereference_protected'
-        ((typeof(*p) __force __kernel *)(p)); \
-                  ^
-mm/vmscan.c:608:6: error: assigning to 'struct memcg_shrinker_map *' from incompatible type 'void'
-        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+On Thu, 13 Jun 2019 at 16:01, Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key. Also, this is
+> an alternative in case platform doesn't possess a TPM device.
+>
+> This series also adds some TEE features like:
+>
+> Patch #1, #2 enables support for registered kernel shared memory with TEE.
+>
 
-and another issue trying to access invalid struct fields:
+Would you like to pick up Patch #1, #2 separately? I think both these
+patches add independent functionality and also got reviewed-by tags
+too.
 
-mm/vmscan.c:608:56: error: no member named 'shrinker_map' in 'struct mem_cgroup_per_node'
-        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
-                                        ~~~~~~~~~~~~~~~~~~~~  ^
-include/linux/rcupdate.h:498:31: note: expanded from macro 'rcu_dereference_protected'
-        __rcu_dereference_protected((p), (c), __rcu)
-                                     ^
-include/linux/rcupdate.h:321:12: note: expanded from macro '__rcu_dereference_protected'
-        ((typeof(*p) __force __kernel *)(p)); \
-                  ^
-mm/vmscan.c:608:6: error: assigning to 'struct memcg_shrinker_map *' from incompatible type 'void'
-        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
 
-Add a dummy definition for memcg_expand_shrinker_maps() that always fails,
-and hide the obviously nonworking shrink_slab_memcg() function.
+-Sumit
 
-Fixes: 8236f517d69e ("mm: shrinker: make shrinker not depend on memcg kmem")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-No idea what the intended behavior is supposed to be for this case.
-Rather than failing, should we actually provide that function?
-Or maybe a more elaborate change is needed?
----
- include/linux/memcontrol.h | 5 +++++
- mm/vmscan.c                | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 5901a90f58eb..6b15e2066fc7 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1407,6 +1407,11 @@ static inline void memcg_put_cache_ids(void)
- {
- }
- 
-+static inline int memcg_expand_shrinker_maps(int new_id)
-+{
-+	return -ENOMEM;
-+}
-+
- static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
- 					  int nid, int shrinker_id) { }
- #endif /* CONFIG_MEMCG_KMEM */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a0301edd8d03..323a9c50c0fe 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -591,7 +591,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	return freed;
- }
- 
--#ifdef CONFIG_MEMCG
-+#ifdef CONFIG_MEMCG_KMEM
- static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 			struct mem_cgroup *memcg, int priority)
- {
--- 
-2.20.0
-
+> Patch #3 enables support for private kernel login method required for
+> cases like trusted keys where we don't wan't user-space to directly access
+> TEE service to retrieve trusted key contents.
+>
+> Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
+>
+> This patch-set has been tested with OP-TEE based pseudo TA which can be
+> found here [1].
+>
+> Looking forward to your valuable feedback/suggestions.
+>
+> [1] https://github.com/OP-TEE/optee_os/pull/3082
+>
+> Sumit Garg (7):
+>   tee: optee: allow kernel pages to register as shm
+>   tee: enable support to register kernel memory
+>   tee: add private login method for kernel clients
+>   KEYS: trusted: Introduce TEE based Trusted Keys
+>   KEYS: encrypted: Allow TEE based trusted master keys
+>   doc: keys: Document usage of TEE based Trusted Keys
+>   MAINTAINERS: Add entry for TEE based Trusted Keys
+>
+>  Documentation/security/keys/tee-trusted.rst      |  93 +++++
+>  MAINTAINERS                                      |   9 +
+>  drivers/tee/optee/call.c                         |   7 +
+>  drivers/tee/tee_core.c                           |   6 +
+>  drivers/tee/tee_shm.c                            |  16 +-
+>  include/keys/tee_trusted.h                       |  84 ++++
+>  include/keys/trusted-type.h                      |   1 +
+>  include/linux/tee_drv.h                          |   1 +
+>  include/uapi/linux/tee.h                         |   2 +
+>  security/keys/Kconfig                            |   3 +
+>  security/keys/Makefile                           |   3 +
+>  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
+>  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
+>  13 files changed, 737 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/security/keys/tee-trusted.rst
+>  create mode 100644 include/keys/tee_trusted.h
+>  create mode 100644 security/keys/tee_trusted.c
+>
+> --
+> 2.7.4
+>
