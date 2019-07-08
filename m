@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7266162261
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC14E6222C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388583AbfGHPZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:25:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52722 "EHLO mail.kernel.org"
+        id S2388124AbfGHPXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:23:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732252AbfGHPZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:25:18 -0400
+        id S2388111AbfGHPXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:23:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 953B12173C;
-        Mon,  8 Jul 2019 15:25:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2FB7216E3;
+        Mon,  8 Jul 2019 15:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599517;
-        bh=phYTtr4YIzBnLj0kKfXRcL88eJHIW7FW1b9iFoOvf3k=;
+        s=default; t=1562599382;
+        bh=/GzAiJJ/5hONQVTfBdxNgtfUqn2/2GZIdHEzd+9p2as=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rXi10izgp59IrKrIL7wB0jTH0efkJJrA/eLp9AhqNUwgTFzgD1AcXOpiXqUL7TxjX
-         3KIlDDE2ioh91IPuxw1tm4rCkKysXSzyA6wFHmJXY3ExEaQaASXUk0mY+7XcXzCdPe
-         ibGgEPCN9XTCtS9dp3lZsN+aw6Lyxvfdr+ISODas=
+        b=yALUaqWQrEZoxAWeKz/laBy741EoWwC6/yC5Wqx3NUUY/kw6VxMPbOevb1ZMF7vIj
+         g+sHLR3rFx91BJd+MDGmOzg9D4ZyF671VnQnD26YqJNu1YFbpzfd7Moc5v+g+8Wrqx
+         uxN1Rn5woLRDfmPMEHzZ4M16vox/S/tbGynd+2Mg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Haibin Zhang <haibinzhang@tencent.com>,
-        Yunfang Tai <yunfangtai@tencent.com>,
-        Lidong Chen <lidongchen@tencent.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Balbir Singh <sblbir@amazon.com>
-Subject: [PATCH 4.14 41/56] vhost-net: set packet weight of tx polling to 2 * vq size
+        stable@vger.kernel.org, Dmitry Korotin <dkorotin@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.9 100/102] MIPS: Add missing EHB in mtc0 -> mfc0 sequence.
 Date:   Mon,  8 Jul 2019 17:13:33 +0200
-Message-Id: <20190708150523.593655310@linuxfoundation.org>
+Message-Id: <20190708150531.659345759@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,136 +43,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: haibinzhang(张海斌) <haibinzhang@tencent.com>
+From: Dmitry Korotin <dkorotin@wavecomp.com>
 
-commit a2ac99905f1ea8b15997a6ec39af69aa28a3653b upstream.
+commit 0b24cae4d535045f4c9e177aa228d4e97bad212c upstream.
 
-handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
-polling udp packets with small length(e.g. 1byte udp payload), because setting
-VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
+Add a missing EHB (Execution Hazard Barrier) in mtc0 -> mfc0 sequence.
+Without this execution hazard barrier it's possible for the value read
+back from the KScratch register to be the value from before the mtc0.
 
-Ping-Latencies shown below were tested between two Virtual Machines using
-netperf (UDP_STREAM, len=1), and then another machine pinged the client:
+Reproducible on P5600 & P6600.
 
-vq size=256
-Packet-Weight   Ping-Latencies(millisecond)
-                   min      avg       max
-Origin           3.319   18.489    57.303
-64               1.643    2.021     2.552
-128              1.825    2.600     3.224
-256              1.997    2.710     4.295
-512              1.860    3.171     4.631
-1024             2.002    4.173     9.056
-2048             2.257    5.650     9.688
-4096             2.093    8.508    15.943
+The hazard is documented in the MIPS Architecture Reference Manual Vol.
+III: MIPS32/microMIPS32 Privileged Resource Architecture (MD00088), rev
+6.03 table 8.1 which includes:
 
-vq size=512
-Packet-Weight   Ping-Latencies(millisecond)
-                   min      avg       max
-Origin           6.537   29.177    66.245
-64               2.798    3.614     4.403
-128              2.861    3.820     4.775
-256              3.008    4.018     4.807
-512              3.254    4.523     5.824
-1024             3.079    5.335     7.747
-2048             3.944    8.201    12.762
-4096             4.158   11.057    19.985
+   Producer | Consumer | Hazard
+  ----------|----------|----------------------------
+   mtc0     | mfc0     | any coprocessor 0 register
 
-Seems pretty consistent, a small dip at 2 VQ sizes.
-Ring size is a hint from device about a burst size it can tolerate. Based on
-benchmarks, set the weight to 2 * vq size.
-
-To evaluate this change, another tests were done using netperf(RR, TX) between
-two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz, and vq size was
-tweaked through qemu. Results shown below does not show obvious changes.
-
-vq size=256 TCP_RR                vq size=512 TCP_RR
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-   1/       1/  -7%/        -2%      1/       1/   0%/        -2%
-   1/       4/  +1%/         0%      1/       4/  +1%/         0%
-   1/       8/  +1%/        -2%      1/       8/   0%/        +1%
-  64/       1/  -6%/         0%     64/       1/  +7%/        +3%
-  64/       4/   0%/        +2%     64/       4/  -1%/        +1%
-  64/       8/   0%/         0%     64/       8/  -1%/        -2%
- 256/       1/  -3%/        -4%    256/       1/  -4%/        -2%
- 256/       4/  +3%/        +4%    256/       4/  +1%/        +2%
- 256/       8/  +2%/         0%    256/       8/  +1%/        -1%
-
-vq size=256 UDP_RR                vq size=512 UDP_RR
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-   1/       1/  -5%/        +1%      1/       1/  -3%/        -2%
-   1/       4/  +4%/        +1%      1/       4/  -2%/        +2%
-   1/       8/  -1%/        -1%      1/       8/  -1%/         0%
-  64/       1/  -2%/        -3%     64/       1/  +1%/        +1%
-  64/       4/  -5%/        -1%     64/       4/  +2%/         0%
-  64/       8/   0%/        -1%     64/       8/  -2%/        +1%
- 256/       1/  +7%/        +1%    256/       1/  -7%/         0%
- 256/       4/  +1%/        +1%    256/       4/  -3%/        -4%
- 256/       8/  +2%/        +2%    256/       8/  +1%/        +1%
-
-vq size=256 TCP_STREAM            vq size=512 TCP_STREAM
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-  64/       1/   0%/        -3%     64/       1/   0%/         0%
-  64/       4/  +3%/        -1%     64/       4/  -2%/        +4%
-  64/       8/  +9%/        -4%     64/       8/  -1%/        +2%
- 256/       1/  +1%/        -4%    256/       1/  +1%/        +1%
- 256/       4/  -1%/        -1%    256/       4/  -3%/         0%
- 256/       8/  +7%/        +5%    256/       8/  -3%/         0%
- 512/       1/  +1%/         0%    512/       1/  -1%/        -1%
- 512/       4/  +1%/        -1%    512/       4/   0%/         0%
- 512/       8/  +7%/        -5%    512/       8/  +6%/        -1%
-1024/       1/   0%/        -1%   1024/       1/   0%/        +1%
-1024/       4/  +3%/         0%   1024/       4/  +1%/         0%
-1024/       8/  +8%/        +5%   1024/       8/  -1%/         0%
-2048/       1/  +2%/        +2%   2048/       1/  -1%/         0%
-2048/       4/  +1%/         0%   2048/       4/   0%/        -1%
-2048/       8/  -2%/         0%   2048/       8/   5%/        -1%
-4096/       1/  -2%/         0%   4096/       1/  -2%/         0%
-4096/       4/  +2%/         0%   4096/       4/   0%/         0%
-4096/       8/  +9%/        -2%   4096/       8/  -5%/        -1%
-
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
-Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
-Signed-off-by: Lidong Chen <lidongchen@tencent.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Balbir Singh <sblbir@amazon.com>
+Signed-off-by: Dmitry Korotin <dkorotin@wavecomp.com>
+[paul.burton@mips.com:
+  - Commit message tweaks.
+  - Add Fixes tags.
+  - Mark for stable back to v3.15 where P5600 support was introduced.]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 3d8bfdd03072 ("MIPS: Use C0_KScratch (if present) to hold PGD pointer.")
+Fixes: 829dcc0a956a ("MIPS: Add MIPS P5600 probe support")
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # v3.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/net.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/mips/mm/tlbex.c |   29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "
-  * Using this limit prevents one virtqueue from starving others. */
- #define VHOST_NET_WEIGHT 0x80000
- 
-+/* Max number of packets transferred before requeueing the job.
-+ * Using this limit prevents one virtqueue from starving rx. */
-+#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
-+
- /* MAX number of TX used buffers for outstanding zerocopy */
- #define VHOST_MAX_PEND 128
- #define VHOST_GOODCOPY_LEN 256
-@@ -461,6 +465,7 @@ static void handle_tx(struct vhost_net *
- 	struct socket *sock;
- 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
- 	bool zcopy, zcopy_used;
-+	int sent_pkts = 0;
- 
- 	mutex_lock(&vq->mutex);
- 	sock = vq->private_data;
-@@ -572,7 +577,8 @@ static void handle_tx(struct vhost_net *
- 		else
- 			vhost_zerocopy_signal_used(net, vq);
- 		vhost_net_tx_packet(net);
--		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
-+		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-+		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
+--- a/arch/mips/mm/tlbex.c
++++ b/arch/mips/mm/tlbex.c
+@@ -386,6 +386,7 @@ static struct work_registers build_get_w
+ static void build_restore_work_registers(u32 **p)
+ {
+ 	if (scratch_reg >= 0) {
++		uasm_i_ehb(p);
+ 		UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+ 		return;
+ 	}
+@@ -674,10 +675,12 @@ static void build_restore_pagemask(u32 *
+ 			uasm_i_mtc0(p, 0, C0_PAGEMASK);
+ 			uasm_il_b(p, r, lid);
  		}
+-		if (scratch_reg >= 0)
++		if (scratch_reg >= 0) {
++			uasm_i_ehb(p);
+ 			UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-		else
++		} else {
+ 			UASM_i_LW(p, 1, scratchpad_offset(0), 0);
++		}
+ 	} else {
+ 		/* Reset default page size */
+ 		if (PM_DEFAULT_MASK >> 16) {
+@@ -935,10 +938,12 @@ build_get_pgd_vmalloc64(u32 **p, struct
+ 		uasm_i_jr(p, ptr);
+ 
+ 		if (mode == refill_scratch) {
+-			if (scratch_reg >= 0)
++			if (scratch_reg >= 0) {
++				uasm_i_ehb(p);
+ 				UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-			else
++			} else {
+ 				UASM_i_LW(p, 1, scratchpad_offset(0), 0);
++			}
+ 		} else {
+ 			uasm_i_nop(p);
+ 		}
+@@ -1238,6 +1243,7 @@ build_fast_tlb_refill_handler (u32 **p,
+ 	UASM_i_MTC0(p, odd, C0_ENTRYLO1); /* load it */
+ 
+ 	if (c0_scratch_reg >= 0) {
++		uasm_i_ehb(p);
+ 		UASM_i_MFC0(p, scratch, c0_kscratch(), c0_scratch_reg);
+ 		build_tlb_write_entry(p, l, r, tlb_random);
+ 		uasm_l_leave(l, *p);
+@@ -1592,15 +1598,17 @@ static void build_setup_pgd(void)
+ 		uasm_i_dinsm(&p, a0, 0, 29, 64 - 29);
+ 		uasm_l_tlbl_goaround1(&l, p);
+ 		UASM_i_SLL(&p, a0, a0, 11);
+-		uasm_i_jr(&p, 31);
+ 		UASM_i_MTC0(&p, a0, C0_CONTEXT);
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
+ 	} else {
+ 		/* PGD in c0_KScratch */
+-		uasm_i_jr(&p, 31);
+ 		if (cpu_has_ldpte)
+ 			UASM_i_MTC0(&p, a0, C0_PWBASE);
+ 		else
+ 			UASM_i_MTC0(&p, a0, c0_kscratch(), pgd_reg);
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
+ 	}
+ #else
+ #ifdef CONFIG_SMP
+@@ -1614,13 +1622,16 @@ static void build_setup_pgd(void)
+ 	UASM_i_LA_mostly(&p, a2, pgdc);
+ 	UASM_i_SW(&p, a0, uasm_rel_lo(pgdc), a2);
+ #endif /* SMP */
+-	uasm_i_jr(&p, 31);
+ 
+ 	/* if pgd_reg is allocated, save PGD also to scratch register */
+-	if (pgd_reg != -1)
++	if (pgd_reg != -1) {
+ 		UASM_i_MTC0(&p, a0, c0_kscratch(), pgd_reg);
+-	else
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
++	} else {
++		uasm_i_jr(&p, 31);
+ 		uasm_i_nop(&p);
++	}
+ #endif
+ 	if (p >= tlbmiss_handler_setup_pgd_end)
+ 		panic("tlbmiss_handler_setup_pgd space exceeded");
 
 
