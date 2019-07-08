@@ -2,77 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB851626ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0338621BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:19:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbfGHRPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:15:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfGHRPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:15:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50D2721479;
-        Mon,  8 Jul 2019 17:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562606149;
-        bh=Kqv2Ui7O5cUGL9J6mkg9AMIciu2U6pD5nvGQlDoz+As=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rxs57saZcKQwk+qOA7j1lnrbjw1GjQ52hlIfFX9u7wQWpwhtAcCI0R0VJTVd1bzp1
-         CeZuwdk0P/enR9x29GH8BH3/Liz+SVAdouwcdHSAiCNrVlRTTYUa9AXWXsv7sHd/bH
-         5eT83pR5u6/Dgt2XtD+A2J1uCUxi03VvbWZdXxOI=
-Date:   Mon, 8 Jul 2019 17:16:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <skhan@linuxfoundation.org>, mchehab@kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: usb: convert usb-help to rst
-Message-ID: <20190708151605.GA14040@kroah.com>
-References: <20190705185519.31033-1-tranmanphong@gmail.com>
- <20190708075255.0f337b28@lwn.net>
- <CAD3AR6EN7n5KXnJqW0UdgB_eQjuTedB6KdC8sJ_h+MJNKB6ZmA@mail.gmail.com>
+        id S1733164AbfGHPTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:19:01 -0400
+Received: from app1.whu.edu.cn ([202.114.64.88]:40278 "EHLO whu.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733117AbfGHPSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:18:54 -0400
+Received: from localhost (unknown [111.202.192.5])
+        by email1 (Coremail) with SMTP id AQBjCgAnCTrQXiNdSDViAA--.46705S2;
+        Mon, 08 Jul 2019 23:18:46 +0800 (CST)
+From:   Peng Wang <rocking@whu.edu.cn>
+To:     gregkh@linuxfoundation.org, tj@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Peng Wang <rocking@whu.edu.cn>
+Subject: [PATCH v2] kernfs: fix potential null pointer dereference
+Date:   Mon,  8 Jul 2019 23:16:11 +0800
+Message-Id: <20190708151611.13242-1-rocking@whu.edu.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD3AR6EN7n5KXnJqW0UdgB_eQjuTedB6KdC8sJ_h+MJNKB6ZmA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQBjCgAnCTrQXiNdSDViAA--.46705S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrW3JF1DtrW5Jr1DXr4xJFb_yoW3AFX_Cr
+        18C3s09FW7Wrs7Wr13G3ySqryF9a1qv3W0vF4fta98tFZxta1DArn3Jw1vyrn7Gry8Wr9F
+        yFn0yryqkrWxXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+        1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+        cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+        ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6ryrMxAI
+        w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
+        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+        CI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+        6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUz6wAUUUUU=
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 10:01:13PM +0700, Phong Tran wrote:
-> On Mon, Jul 8, 2019 at 8:52 PM Jonathan Corbet <corbet@lwn.net> wrote:
-> >
-> > On Sat,  6 Jul 2019 01:55:19 +0700
-> > Phong Tran <tranmanphong@gmail.com> wrote:
-> >
-> > > Add new index.rst and change usb-help.txt format
-> > > to rst.
-> > >
-> > > Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> >
-> > Thank you for working to make the kernel's documentation better.  That
-> > said, I really don't think there is value in keeping this document.  It
-> > hasn't been updated in any useful way in decades, contains broken links,
-> > and the links that still work are full of obsolete information.  Honestly,
-> > a better patch would, IMO, just delete this file.
-> >
-> @Jonathan Corbet  it's fine to me.
-> 
-> Need ack from you @Greg Kroah-Hartman
-> if yes, I will send the cleanup patch.
+Get root safely after kn is ensureed to be not null.
 
-All of the USB documentation needs a refresh and look again at where it
-is and what it contains.  After 5.3-rc1 I would recommend doing that (as
-that is when all of the recent pending documentation changes will be
-merged).
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+---
+ fs/kernfs/dir.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-thanks,
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index a387534c9577..ddf537923a0a 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -430,7 +430,6 @@ struct kernfs_node *kernfs_get_active(struct kernfs_node *kn)
+  */
+ void kernfs_put_active(struct kernfs_node *kn)
+ {
+-	struct kernfs_root *root = kernfs_root(kn);
+ 	int v;
+ 
+ 	if (unlikely(!kn))
+@@ -442,7 +441,7 @@ void kernfs_put_active(struct kernfs_node *kn)
+ 	if (likely(v != KN_DEACTIVATED_BIAS))
+ 		return;
+ 
+-	wake_up_all(&root->deactivate_waitq);
++	wake_up_all(&kernfs_root(kn)->deactivate_waitq);
+ }
+ 
+ /**
+-- 
+2.19.1
 
-greg k-h
