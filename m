@@ -2,68 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0D16196D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 05:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D289461962
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 05:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbfGHDMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 7 Jul 2019 23:12:19 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52430 "EHLO inva020.nxp.com"
+        id S1727969AbfGHDDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 7 Jul 2019 23:03:55 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53933 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727973AbfGHDMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Jul 2019 23:12:19 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A51D1A0028;
-        Mon,  8 Jul 2019 05:12:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 459DD1A0D76;
-        Mon,  8 Jul 2019 05:12:12 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7422D402A6;
-        Mon,  8 Jul 2019 11:12:05 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] cpufreq: imx-cpufreq-dt: Add i.MX8MN support
-Date:   Mon,  8 Jul 2019 11:03:08 +0800
-Message-Id: <20190708030308.1815-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727814AbfGHDDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Jul 2019 23:03:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hqzC6mT5z9sNF;
+        Mon,  8 Jul 2019 13:03:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562555032;
+        bh=kzaW4wYJTEYFrOqTKjRKd+T9uIcp5lMpH2cp+bHLSn0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cuiqTSHtPIxSyFRQIbQsSAb4hTRRavWAaSBWNz3gSz8WuE5gTX8+ZwFMMlpEXexk+
+         e/MdSzkcpnviQj/i0kXlc+KQKHje2JW0kfa+PShFt0gupDISYkOn62eEmfWrUzatsv
+         sIe+ighO98GNTYxtDuDIs6wg7dnmyrR9dTNqtgLoNLjoIvoLRA5MDocn/ZPztO1V3Z
+         ljkt6Kpm86f4ACkM8EKBr8NBCv0xa2T9AKcTWE73z6zmNk6x3YmCsUdB5htkWmc8lw
+         Qi+897ssAtoKvDihbaTuLBhjCSY5ANEC/MP+5aFNSsQvlNEayJKDwK/V7EPXsMRwlT
+         W1yXwj5QTZ7pg==
+Date:   Mon, 8 Jul 2019 13:03:51 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bernard Metzler <bmt@zurich.ibm.com>
+Subject: linux-next: build failure after merge of the rdma tree
+Message-ID: <20190708130351.2141a39b@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kA.hB=1qdLs1zSTZSdnbIXv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+--Sig_/kA.hB=1qdLs1zSTZSdnbIXv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-i.MX8MN is a new SoC of i.MX8M series, it also uses speed
-grading and market segment fuses for OPP definitions, add
-support for this SoC.
+Hi all,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/cpufreq/imx-cpufreq-dt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+After merging the rdma tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
-index b54fd26..4f85f31 100644
---- a/drivers/cpufreq/imx-cpufreq-dt.c
-+++ b/drivers/cpufreq/imx-cpufreq-dt.c
-@@ -44,10 +44,11 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
- 	 * According to datasheet minimum speed grading is not supported for
- 	 * consumer parts so clamp to 1 to avoid warning for "no OPPs"
- 	 *
--	 * Applies to 8mq and 8mm.
-+	 * Applies to i.MX8M series SoCs.
- 	 */
- 	if (mkt_segment == 0 && speed_grade == 0 && (
- 			of_machine_is_compatible("fsl,imx8mm") ||
-+			of_machine_is_compatible("fsl,imx8mn") ||
- 			of_machine_is_compatible("fsl,imx8mq")))
- 		speed_grade = 1;
- 
--- 
-2.7.4
+In file included from include/asm-generic/percpu.h:7,
+                 from arch/x86/include/asm/percpu.h:544,
+                 from arch/x86/include/asm/preempt.h:6,
+                 from include/linux/preempt.h:78,
+                 from include/linux/spinlock.h:51,
+                 from include/linux/seqlock.h:36,
+                 from include/linux/time.h:6,
+                 from include/linux/ktime.h:24,
+                 from include/linux/timer.h:6,
+                 from include/linux/netdevice.h:24,
+                 from drivers/infiniband/sw/siw/siw_main.c:8:
+include/linux/percpu-defs.h:92:33: warning: '__pcpu_unique_use_cnt' initial=
+ized and declared 'extern'
+  extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;  \
+                                 ^~~~~~~~~~~~~~
+include/linux/percpu-defs.h:115:2: note: in expansion of macro 'DEFINE_PER_=
+CPU_SECTION'
+  DEFINE_PER_CPU_SECTION(type, name, "")
+  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
+include/linux/percpu-defs.h:93:26: error: redefinition of '__pcpu_unique_us=
+e_cnt'
+  __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;   \
+                          ^~~~~~~~~~~~~~
+include/linux/percpu-defs.h:115:2: note: in expansion of macro 'DEFINE_PER_=
+CPU_SECTION'
+  DEFINE_PER_CPU_SECTION(type, name, "")
+  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
+include/linux/percpu-defs.h:92:33: note: previous definition of '__pcpu_uni=
+que_use_cnt' was here
+  extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;  \
+                                 ^~~~~~~~~~~~~~
+include/linux/percpu-defs.h:115:2: note: in expansion of macro 'DEFINE_PER_=
+CPU_SECTION'
+  DEFINE_PER_CPU_SECTION(type, name, "")
+  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:33: warning: 'use_cnt' initialized=
+ and declared 'extern'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+                                 ^~~~~~~
+include/linux/percpu-defs.h:94:44: note: in definition of macro 'DEFINE_PER=
+_CPU_SECTION'
+  extern __PCPU_ATTRS(sec) __typeof__(type) name;   \
+                                            ^~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:33: error: redefinition of 'use_cn=
+t'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+                                 ^~~~~~~
+include/linux/percpu-defs.h:95:44: note: in definition of macro 'DEFINE_PER=
+_CPU_SECTION'
+  __PCPU_ATTRS(sec) __weak __typeof__(type) name
+                                            ^~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_main.c:129:33: note: previous definition of '=
+use_cnt' was here
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+                                 ^~~~~~~
+include/linux/percpu-defs.h:94:44: note: in definition of macro 'DEFINE_PER=
+_CPU_SECTION'
+  extern __PCPU_ATTRS(sec) __typeof__(type) name;   \
+                                            ^~~~
+drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro 'DE=
+FINE_PER_CPU'
+ static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+        ^~~~~~~~~~~~~~
 
+Caused by commit
+
+  bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+
+I have used the rdma tree from 20190628 again today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kA.hB=1qdLs1zSTZSdnbIXv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ispcACgkQAVBC80lX
+0Gw0cAgAkKRy9OxJPfFu0rHajKiGMPyuq+s1F8tFQU/e+EGZF0V4uee9OMtdvo3S
+EvhOAjnSiK4KjhaUomqXAozjbKfA+ltfM/NRfdM7UpXToG9KXTa3Q+05xlcEuVeK
+zKSjh6kouMuv4p+W+IBls6YaSnWTpdFLN9v5+FjpcCFGNZa8gLD7GHmEckTc3a0D
+rFUm+ht43wWWjPJN4/9g/bMTzfWwY40mT/BR7fvpBZKai5t3amfMDF6y2EqVZQv7
+l7cl+NntiNqI7zkUnDsxIfUUNo7Tc6WEsH6CmD7w62KDQvE97oh0Y2f57GfAjvlq
+5JdnLCY+GoYcgiuIioK4BJBo7l++Gg==
+=L+GM
+-----END PGP SIGNATURE-----
+
+--Sig_/kA.hB=1qdLs1zSTZSdnbIXv--
