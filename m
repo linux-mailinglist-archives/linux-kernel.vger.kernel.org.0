@@ -2,73 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BFB62C61
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 01:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108D962C6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 01:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfGHXMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 19:12:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:44579 "EHLO ozlabs.org"
+        id S1726981AbfGHXP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 19:15:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:53127 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbfGHXMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 19:12:48 -0400
+        id S1725977AbfGHXP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 19:15:26 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jLp518FDz9s3Z;
-        Tue,  9 Jul 2019 09:12:45 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jLs7063lz9sML;
+        Tue,  9 Jul 2019 09:15:22 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562627565;
-        bh=nd0L5KvIlUBThUk3llUF/iTHenWnlgmOQfj8lXdA6Tc=;
+        s=201702; t=1562627723;
+        bh=ba8FWgVE23b8w0JrUPK9RJHVOQCWVSjZAuL38KMiQZ0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dUvryMtEwm3xpq0uikBGgNNa6koRF2gFM8NUjoojFkqiz5+a03fHNDvve0YGXuCBk
-         dOzPd4v5O7KgVvJsVCeURe5UuMSc8BV3Qh8EZ0zgpH6HFAfU0vKWFzsRD6K4HDBNQK
-         hp6JeUJrrXFbvdmZsawhQGdWK6BKJMszBaclWWlPEm+uUc4wFl5hROcIsl3ZP1TPa7
-         s5zkB3uZwMcP+fIKLOz2Arz+ni4EzIQY6gvpY/VJRD01SzfjzHAp3cgxgdd91t+BjO
-         pdneCPSC6ioVXLrDtfehvxKvmPSk+Qr4MBtbrGvrzrPCSiovUcqTh5qW3+gy2ZZsjo
-         bQde4CtMvjm8w==
-Date:   Tue, 9 Jul 2019 09:12:36 +1000
+        b=DYIsz984BFjPVioJPMLCRak6MW8GlW3AIhcu6oYa3DJ9edo/0ttUbM9JUae853zLT
+         yugV+dQIPrgJR/RYV3OG2hUIHkYQL49xBeI0PUIQ3sUugOJtlpSWAq7f22iM4lb08e
+         w8xm8LCvMTptbJckztH0WHLP44HR24gY4n8iiOxEIO9MK8UrPF06hvyN80u2IRYGov
+         FqKppfbhmuOteMSlqkPpJGUv4UCCOam/x4jeIMqTOdjMo2xbLxEOPvnkjLPgd1m0a2
+         nY2vFeUmQcfw21bd6SehUDdh9HTEtL4oMOKnROQ4aEASP218nOf4CUlNisao+bdweB
+         dHxrZzNnUco5w==
+Date:   Tue, 9 Jul 2019 09:15:21 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- pidfd tree
-Message-ID: <20190709091236.3b658262@canb.auug.org.au>
-In-Reply-To: <20190522114314.515b410d@canb.auug.org.au>
-References: <20190522114314.515b410d@canb.auug.org.au>
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: Re: linux-next: manual merge of the userns tree with the
+ arc-current tree
+Message-ID: <20190709091521.0b264257@canb.auug.org.au>
+In-Reply-To: <20190530131721.0af603a4@canb.auug.org.au>
+References: <20190530131721.0af603a4@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IRDCyuFiV/FuGuV+Q6a9QFe"; protocol="application/pgp-signature"
+ boundary="Sig_/qKsjICntNxKwVqJjy3ZMRsz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IRDCyuFiV/FuGuV+Q6a9QFe
+--Sig_/qKsjICntNxKwVqJjy3ZMRsz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 22 May 2019 11:43:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 30 May 2019 13:17:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Today's linux-next merge of the akpm-current tree got a conflict in:
+> Today's linux-next merge of the userns tree got a conflict in:
 >=20
->   kernel/pid.c
+>   arch/arc/mm/fault.c
 >=20
-> between commit:
+> between commits:
 >=20
->   99e9da7f2796 ("pid: add pidfd_open()")
+>   a8c715b4dd73 ("ARC: mm: SIGSEGV userspace trying to access kernel virtu=
+al memory")
+>   ea3885229b0f ("ARC: mm: do_page_fault refactor #5: scoot no_context to =
+end")
+>   acc639eca380 ("ARC: mm: do_page_fault refactor #6: error handlers to us=
+e same pattern")
+>   0c85612550a4 ("ARC: mm: do_page_fault refactor #7: fold the various err=
+or handling")
+>   c5d7f7610d88 ("ARC: mm: do_page_fault refactor #8: release mmap_sem soo=
+ner")
 >=20
-> from the pidfd tree and commit:
+> from the arc-current tree and commits:
 >=20
->   51c59c914840 ("kernel/pid.c: convert struct pid:count to refcount_t")
+>   351b6825b3a9 ("signal: Explicitly call force_sig_fault on current")
+>   2e1661d26736 ("signal: Remove the task parameter from force_sig_fault")
 >=20
-> from the akpm-current tree.
+> from the userns tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -81,42 +91,62 @@ wrote:
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc kernel/pid.c
-> index 39181ccca846,b59681973dd6..000000000000
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@@ -37,8 -36,7 +37,8 @@@
->   #include <linux/init_task.h>
->   #include <linux/syscalls.h>
->   #include <linux/proc_ns.h>
-> - #include <linux/proc_fs.h>
-> + #include <linux/refcount.h>
->  +#include <linux/sched/signal.h>
->   #include <linux/sched/task.h>
->   #include <linux/idr.h>
+> diff --cc arch/arc/mm/fault.c
+> index e93ea06c214c,5001f6418e92..000000000000
+> --- a/arch/arc/mm/fault.c
+> +++ b/arch/arc/mm/fault.c
+> @@@ -187,21 -228,14 +187,21 @@@ bad_area
+>   		return;
+>   	}
 >  =20
+>  -	goto no_context;
+>  +	if (fault & VM_FAULT_SIGBUS) {
+>  +		sig =3D SIGBUS;
+>  +		si_code =3D BUS_ADRERR;
+>  +	}
+>  +	else {
+>  +		sig =3D SIGSEGV;
+>  +	}
+>  =20
+>  -do_sigbus:
+>  -	up_read(&mm->mmap_sem);
+>  +	tsk->thread.fault_address =3D address;
+> - 	force_sig_fault(sig, si_code, (void __user *)address, tsk);
+> ++	force_sig_fault(sig, si_code, (void __user *)address);
+>  +	return;
+>  =20
+>  -	if (!user_mode(regs))
+>  -		goto no_context;
+>  +no_context:
+>  +	if (fixup_exception(regs))
+>  +		return;
+>  =20
+>  -	tsk->thread.fault_address =3D address;
+>  -	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address);
+>  +	die("Oops", regs, address);
+>   }
 
-I am still getting this conflict.  Just a reminder in case you think
-Linus may need to know.
+I am still getting this conflict (the commit ids may have changed).
+Just a reminder in case you think Linus may need to know.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/IRDCyuFiV/FuGuV+Q6a9QFe
+--Sig_/qKsjICntNxKwVqJjy3ZMRsz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jzeQACgkQAVBC80lX
-0Gwb1wf+IPW9D2u1iKzZgxiBMWjepDrUjwjHC9DHUXJclpawkF4A0nR4sW3vZnP+
-RyDNy1UrE377NY5XNWviBBIrWUhynPslxMTbDNYcLZT5phMCsmqUWNx0ZtAYUEQT
-jmupMjSjwVd4mbr2ar33LQgP3FVZcaefmGXBl5v1LCdYmPlKiDCjm00jtObLJae+
-/wsyT9INHXVPHrMFcjlOhToeDrRuy8Wmvw8RHtALVLV1uhv2Q3+0l6TB9ryEHMlW
-/sQBicaMnY/jrV3MzvY3NV5nEPDyN0s9Ls1PwjYGyamQQKqWNB40ZtdQTDDjzzV0
-9d4bsLeZg1OAA3Xx/1Z/3Jg0+slE7Q==
-=5GWn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jzooACgkQAVBC80lX
+0Gws/wf+KzZstLr2a+CXAaiI0oVlQi0NTSF2GaDUPm1vo2Y6TGboEIXfEPAUfUJf
+bRbwBBIU+ThpDyS1rpXKaf7acuoj42J8pGsdsFz82Ul7y/9128LjoSLJ0vlksina
+RSD9iXq5/tXMmBKTwCmLc6mLw1+Q+eTeAMYftIfph+CZ8iN+2NyfNTh/21DSd6Uk
+dcccvuSvlH0qZCzPbYM8pdRo7VS8iYazoS9tcvbFibYoJlBUMezzl7TzdainN/5/
+E+NibMtxkzdj3p27GqXGNiRX9jOOhwkfl3f/Aue0BacBDVfsovn86H+p4jpnVv7K
+eHGS0aOLPjw0lUinVEV/EstBZmc7Fw==
+=Saob
 -----END PGP SIGNATURE-----
 
---Sig_/IRDCyuFiV/FuGuV+Q6a9QFe--
+--Sig_/qKsjICntNxKwVqJjy3ZMRsz--
