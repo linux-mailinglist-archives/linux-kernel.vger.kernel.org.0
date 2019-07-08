@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3CA621DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B21C621D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387564AbfGHPUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:20:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43836 "EHLO mail.kernel.org"
+        id S1733259AbfGHPTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:19:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729037AbfGHPT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:19:28 -0400
+        id S1733238AbfGHPTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:19:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672F6216E3;
-        Mon,  8 Jul 2019 15:19:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EFB42173C;
+        Mon,  8 Jul 2019 15:19:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599167;
-        bh=2VdFkdk9SIaAdzepBOAW1EfUckj2mgK2DM94z7kTn2A=;
+        s=default; t=1562599170;
+        bh=gecknaLnpxJAkcz09//PUVx/i0m8/5EUXaITOfUOD1g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G+oQ6GiDxlOVcjsMYGss0P7+YM2q63aMt5lSHdcvxAQ/PQD7iTZ9qFYw65hPqw4/w
-         gu2HzWbPtCLKTCD6NQ4KK/rMokJ9nvvcCQd1QGtHnqqtC2xfR+IwI36mXHHGc5agsr
-         YDyEJ+0xd72EElih9MUrSFjygHxwOvemsaADVtlE=
+        b=GWpjZnNbzVqi+UjaD58QZzUCBcQKNk09Ra55/Rz4rNCkBvFwkvARV4oMSdpzJt9xt
+         IPefWFAf8p4ZIgimwpLV0YNQX9mPhqvIZQoxXxKfoByok6bSlB/vocSHEELCsmojF+
+         JpQSlA4IR/iNSIJ+cbWfdCQmaUTu9gZWjusfAqlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
+        stable@vger.kernel.org,
+        syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com,
+        Willem de Bruijn <willemb@google.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.9 027/102] can: flexcan: fix timeout when set small bitrate
-Date:   Mon,  8 Jul 2019 17:12:20 +0200
-Message-Id: <20190708150527.701988108@linuxfoundation.org>
+Subject: [PATCH 4.9 028/102] can: purge socket error queue on sock destruct
+Date:   Mon,  8 Jul 2019 17:12:21 +0200
+Message-Id: <20190708150527.767788014@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
 References: <20190708150525.973820964@linuxfoundation.org>
@@ -44,55 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joakim Zhang <qiangqing.zhang@nxp.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 247e5356a709eb49a0d95ff2a7f07dac05c8252c upstream.
+commit fd704bd5ee749d560e86c4f1fd2ef486d8abf7cf upstream.
 
-Current we can meet timeout issue when setting a small bitrate like
-10000 as follows on i.MX6UL EVK board (ipg clock = 66MHZ, per clock =
-30MHZ):
+CAN supports software tx timestamps as of the below commit. Purge
+any queued timestamp packets on socket destroy.
 
-| root@imx6ul7d:~# ip link set can0 up type can bitrate 10000
-
-A link change request failed with some changes committed already.
-Interface can0 may have been left with an inconsistent configuration,
-please check.
-
-| RTNETLINK answers: Connection timed out
-
-It is caused by calling of flexcan_chip_unfreeze() timeout.
-
-Originally the code is using usleep_range(10, 20) for unfreeze
-operation, but the patch (8badd65 can: flexcan: avoid calling
-usleep_range from interrupt context) changed it into udelay(10) which is
-only a half delay of before, there're also some other delay changes.
-
-After double to FLEXCAN_TIMEOUT_US to 100 can fix the issue.
-
-Meanwhile, Rasmus Villemoes reported that even with a timeout of 100,
-flexcan_probe() fails on the MPC8309, which requires a value of at least
-140 to work reliably. 250 works for everyone.
-
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Fixes: 51f31cabe3ce ("ip: support for TX timestamps on UDP and RAW sockets")
+Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/flexcan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/can/af_can.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -171,7 +171,7 @@
- #define FLEXCAN_MB_CNT_LENGTH(x)	(((x) & 0xf) << 16)
- #define FLEXCAN_MB_CNT_TIMESTAMP(x)	((x) & 0xffff)
+--- a/net/can/af_can.c
++++ b/net/can/af_can.c
+@@ -113,6 +113,7 @@ EXPORT_SYMBOL(can_ioctl);
+ static void can_sock_destruct(struct sock *sk)
+ {
+ 	skb_queue_purge(&sk->sk_receive_queue);
++	skb_queue_purge(&sk->sk_error_queue);
+ }
  
--#define FLEXCAN_TIMEOUT_US		(50)
-+#define FLEXCAN_TIMEOUT_US		(250)
- 
- /* FLEXCAN hardware feature flags
-  *
+ static const struct can_proto *can_get_proto(int protocol)
 
 
