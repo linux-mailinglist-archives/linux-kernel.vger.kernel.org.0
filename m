@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C78E262422
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C46E562206
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389144AbfGHP1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:27:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55998 "EHLO mail.kernel.org"
+        id S2387439AbfGHPVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389116AbfGHP1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:27:45 -0400
+        id S2387757AbfGHPVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:21:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97DCF2166E;
-        Mon,  8 Jul 2019 15:27:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E09D2216E3;
+        Mon,  8 Jul 2019 15:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599664;
-        bh=EeN8P+8ubVqVRWHrFYaLidONZiymiRhuZH2JS9gXpZg=;
+        s=default; t=1562599293;
+        bh=UqYaX4fyRfNX1yoi0yvqj0iqzoEcaynzbhGcyc602uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0S2bSYC8wVBsBaFZW/pzDoYUS8usVHt5ZAetNCyW3yorM8QhMLdC+gsP/KTzgh4Uc
-         4/p5pwXOMQE06zeaI6sbsOwPpSZt6/RYvjtKPkpl159y36IMJJM5A+Ma4+I0wlWyt+
-         ylgSia1NMmGhsxfZXC1QyAtSpYVUFV8yYasbdo8o=
+        b=JuEIyF0KctulsjWnQrmvLl8p4EmbAL/HCAavb/afvovwyC8lkK+U+4otI8gxBOk/n
+         n9vnlC+uyOGXC5uuNi1oqUiXXTQuFuWwD3kmacCfNXj36I8qcgmesU+euPIplmrZKt
+         u0aJ6LnaGNFq/2iLy8rHIW3oDfGE7eZSMahPvxNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Phil Auld <pauld@redhat.com>, Joel Savitz <jsavitz@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 34/90] cpuset: restore sanity to cpuset_cpus_allowed_fallback()
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 068/102] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
 Date:   Mon,  8 Jul 2019 17:13:01 +0200
-Message-Id: <20190708150524.329971848@linuxfoundation.org>
+Message-Id: <20190708150529.976019125@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
-References: <20190708150521.829733162@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,141 +48,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d477f8c202d1f0d4791ab1263ca7657bbe5cf79e ]
+[ Upstream commit 5caaf29af5ca82d5da8bc1d0ad07d9e664ccf1d8 ]
 
-In the case that a process is constrained by taskset(1) (i.e.
-sched_setaffinity(2)) to a subset of available cpus, and all of those are
-subsequently offlined, the scheduler will set tsk->cpus_allowed to
-the current value of task_cs(tsk)->effective_cpus.
+If spi_register_master fails in spi_bitbang_start
+because device_add failure, We should return the
+error code other than 0, otherwise calling
+spi_bitbang_stop may trigger NULL pointer dereference
+like this:
 
-This is done via a call to do_set_cpus_allowed() in the context of
-cpuset_cpus_allowed_fallback() made by the scheduler when this case is
-detected. This is the only call made to cpuset_cpus_allowed_fallback()
-in the latest mainline kernel.
+BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
+Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
 
-However, this is not sane behavior.
+CPU: 0 PID: 3661 Comm: syz-executor.0 Not tainted 5.1.0+ #28
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ dump_stack+0xa9/0x10e
+ ? __list_del_entry_valid+0x45/0xd0
+ ? __list_del_entry_valid+0x45/0xd0
+ __kasan_report+0x171/0x18d
+ ? __list_del_entry_valid+0x45/0xd0
+ kasan_report+0xe/0x20
+ __list_del_entry_valid+0x45/0xd0
+ spi_unregister_controller+0x99/0x1b0
+ spi_lm70llp_attach+0x3ae/0x4b0 [spi_lm70llp]
+ ? 0xffffffffc1128000
+ ? klist_next+0x131/0x1e0
+ ? driver_detach+0x40/0x40 [parport]
+ port_check+0x3b/0x50 [parport]
+ bus_for_each_dev+0x115/0x180
+ ? subsys_dev_iter_exit+0x20/0x20
+ __parport_register_driver+0x1f0/0x210 [parport]
+ ? 0xffffffffc1150000
+ do_one_initcall+0xb9/0x3b5
+ ? perf_trace_initcall_level+0x270/0x270
+ ? kasan_unpoison_shadow+0x30/0x40
+ ? kasan_unpoison_shadow+0x30/0x40
+ do_init_module+0xe0/0x330
+ load_module+0x38eb/0x4270
+ ? module_frob_arch_sections+0x20/0x20
+ ? kernel_read_file+0x188/0x3f0
+ ? find_held_lock+0x6d/0xd0
+ ? fput_many+0x1a/0xe0
+ ? __do_sys_finit_module+0x162/0x190
+ __do_sys_finit_module+0x162/0x190
+ ? __ia32_sys_init_module+0x40/0x40
+ ? __mutex_unlock_slowpath+0xb4/0x3f0
+ ? wait_for_completion+0x240/0x240
+ ? vfs_write+0x160/0x2a0
+ ? lockdep_hardirqs_off+0xb5/0x100
+ ? mark_held_locks+0x1a/0x90
+ ? do_syscall_64+0x14/0x2a0
+ do_syscall_64+0x72/0x2a0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I will demonstrate this on a system running the latest upstream kernel
-with the following initial configuration:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	ffffffff,fffffff
-	Cpus_allowed_list:	0-63
-
-(Where cpus 32-63 are provided via smt.)
-
-If we limit our current shell process to cpu2 only and then offline it
-and reonline it:
-
-	# taskset -p 4 $$
-	pid 2272's current affinity mask: ffffffffffffffff
-	pid 2272's new affinity mask: 4
-
-	# echo off > /sys/devices/system/cpu/cpu2/online
-	# dmesg | tail -3
-	[ 2195.866089] process 2272 (bash) no longer affine to cpu2
-	[ 2195.872700] IRQ 114: no longer affine to CPU2
-	[ 2195.879128] smpboot: CPU 2 is now offline
-
-	# echo on > /sys/devices/system/cpu/cpu2/online
-	# dmesg | tail -1
-	[ 2617.043572] smpboot: Booting Node 0 Processor 2 APIC 0x4
-
-We see that our current process now has an affinity mask containing
-every cpu available on the system _except_ the one we originally
-constrained it to:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:   ffffffff,fffffffb
-	Cpus_allowed_list:      0-1,3-63
-
-This is not sane behavior, as the scheduler can now not only place the
-process on previously forbidden cpus, it can't even schedule it on
-the cpu it was originally constrained to!
-
-Other cases result in even more exotic affinity masks. Take for instance
-a process with an affinity mask containing only cpus provided by smt at
-the moment that smt is toggled, in a configuration such as the following:
-
-	# taskset -p f000000000 $$
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	000000f0,00000000
-	Cpus_allowed_list:	36-39
-
-A double toggle of smt results in the following behavior:
-
-	# echo off > /sys/devices/system/cpu/smt/control
-	# echo on > /sys/devices/system/cpu/smt/control
-	# grep -i cpus /proc/$$/status
-	Cpus_allowed:	ffffff00,ffffffff
-	Cpus_allowed_list:	0-31,40-63
-
-This is even less sane than the previous case, as the new affinity mask
-excludes all smt-provided cpus with ids less than those that were
-previously in the affinity mask, as well as those that were actually in
-the mask.
-
-With this patch applied, both of these cases end in the following state:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	ffffffff,ffffffff
-	Cpus_allowed_list:	0-63
-
-The original policy is discarded. Though not ideal, it is the simplest way
-to restore sanity to this fallback case without reinventing the cpuset
-wheel that rolls down the kernel just fine in cgroup v2. A user who wishes
-for the previous affinity mask to be restored in this fallback case can use
-that mechanism instead.
-
-This patch modifies scheduler behavior by instead resetting the mask to
-task_cs(tsk)->cpus_allowed by default, and cpu_possible mask in legacy
-mode. I tested the cases above on both modes.
-
-Note that the scheduler uses this fallback mechanism if and only if
-_every_ other valid avenue has been traveled, and it is the last resort
-before calling BUG().
-
-Suggested-by: Waiman Long <longman@redhat.com>
-Suggested-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
-Acked-by: Phil Auld <pauld@redhat.com>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cpuset.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/spi/spi-bitbang.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 266f10cb7222..ff956ccbb6df 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2432,10 +2432,23 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 	spin_unlock_irqrestore(&callback_lock, flags);
+diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+index 3aa9e6e3dac8..4ef54436b9d4 100644
+--- a/drivers/spi/spi-bitbang.c
++++ b/drivers/spi/spi-bitbang.c
+@@ -392,7 +392,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
+ 	if (ret)
+ 		spi_master_put(master);
+ 
+-	return 0;
++	return ret;
  }
+ EXPORT_SYMBOL_GPL(spi_bitbang_start);
  
-+/**
-+ * cpuset_cpus_allowed_fallback - final fallback before complete catastrophe.
-+ * @tsk: pointer to task_struct with which the scheduler is struggling
-+ *
-+ * Description: In the case that the scheduler cannot find an allowed cpu in
-+ * tsk->cpus_allowed, we fall back to task_cs(tsk)->cpus_allowed. In legacy
-+ * mode however, this value is the same as task_cs(tsk)->effective_cpus,
-+ * which will not contain a sane cpumask during cases such as cpu hotplugging.
-+ * This is the absolute last resort for the scheduler and it is only used if
-+ * _every_ other avenue has been traveled.
-+ **/
-+
- void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
- {
- 	rcu_read_lock();
--	do_set_cpus_allowed(tsk, task_cs(tsk)->effective_cpus);
-+	do_set_cpus_allowed(tsk, is_in_v2_mode() ?
-+		task_cs(tsk)->cpus_allowed : cpu_possible_mask);
- 	rcu_read_unlock();
- 
- 	/*
 -- 
 2.20.1
 
