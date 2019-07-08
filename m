@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D164629A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9858629AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 21:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404576AbfGHTaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 15:30:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36728 "EHLO mail.kernel.org"
+        id S1732170AbfGHTao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 15:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404551AbfGHTaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404532AbfGHTaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 8 Jul 2019 15:30:07 -0400
-Subject: Re: [GIT pull] core/debugobjects for 5.3-rc1
+Subject: Re: [GIT pull] core/rslib for 5.3-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1562614206;
-        bh=R2XBA85tA3T6+y/zKgz/yuQnaBT2Cnhozmru+9lqhz0=;
+        bh=Ps7CZ/ksNfe5LYkYWHU88lDOueLYAIm3z3gPoqk1Tvc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=sVcK4PcawzOmTIPOyMzTRqtJM6sB3YWt33CXZBeJeVnk4yQ+mjxCSNg9nWuxBkazE
-         tFxlnf/BLZz1ZtEITq+CJ2oRupLeXdhx0rd/fRxQZpcGEc9R+xHbl9qBNZ1eIcUErM
-         jDkpp75x1xn9OCBcmd/v/cGJYvSPPAq4fQ/6vCCo=
+        b=HGsZebLs12+aV6N106W1KqG+bdSsRfxP7Ysdakkxsvn2asoJ522eph3C2ohA7BMg6
+         2BXXQFNYUxjMd9TKxyaUnaVblZgDaa0woJWF67jThPIeFYpQ1oriwm7MuAk9y/FfbC
+         gzdaFN2UU/w6NKNAbFMPha+nbgGfwDZGy3iy8fiI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <156257673794.14831.1593297636367057887.tglx@nanos.tec.linutronix.de>
+In-Reply-To: <156257673794.14831.15719816342504721108.tglx@nanos.tec.linutronix.de>
 References: <156257673794.14831.1593297636367057887.tglx@nanos.tec.linutronix.de>
+ <156257673794.14831.15719816342504721108.tglx@nanos.tec.linutronix.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <156257673794.14831.1593297636367057887.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Message-Id: <156257673794.14831.15719816342504721108.tglx@nanos.tec.linutronix.de>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- core-debugobjects-for-linus
-X-PR-Tracked-Commit-Id: d5f34153e526903abe71869dbbc898bfc0f69373
+ core-rslib-for-linus
+X-PR-Tracked-Commit-Id: ede7c247abfaeef62484cfff320b072ec2b1dca0
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6b37754790067c9b25cf75fbf72b69edd6d7fffd
-Message-Id: <156261420679.31351.9412634215783758887.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 568521d058aaab18f01ac39d7a6ef00b75e5cc79
+Message-Id: <156261420637.31351.1514329168101450859.pr-tracker-bot@kernel.org>
 Date:   Mon, 08 Jul 2019 19:30:06 +0000
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -42,10 +43,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The pull request you sent on Mon, 08 Jul 2019 09:05:37 -0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-debugobjects-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-rslib-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6b37754790067c9b25cf75fbf72b69edd6d7fffd
+https://git.kernel.org/torvalds/c/568521d058aaab18f01ac39d7a6ef00b75e5cc79
 
 Thank you!
 
