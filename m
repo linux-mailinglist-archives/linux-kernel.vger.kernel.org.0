@@ -2,199 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F9D61C12
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD4561C18
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 11:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbfGHJGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 05:06:51 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41655 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfGHJGu (ORCPT
+        id S1729668AbfGHJJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 05:09:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35671 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfGHJJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 05:06:50 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p15so3381888eds.8;
-        Mon, 08 Jul 2019 02:06:47 -0700 (PDT)
+        Mon, 8 Jul 2019 05:09:26 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y4so7541526wrm.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 02:09:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EPnyh5rZxy97NIsSIT+52JsZe68udpUPoW6KlPRY7mA=;
-        b=IwhQLpmBM5ojaI1AlTpVrEhKVx8liExrkoAIqm0tUWlOlmF7qu0/Kc166pq+5h/VxW
-         bzdk/fVwSdWI+bbTYXUN/tmiCre4bYPK3VefGC4GvTc9pHHNoV/LhpJFl3aHotUzliDA
-         t5q2VktFEK+IRHjD9PcbhDBEDxS5BKUzxUUFHHhrDt2p47+8zjrTYhy6ggbss4sF6leD
-         2vi2EKPPZHjx8wTDZ4SNwNBcxWXwI7m8ghs1iOBHwXZvb0sV7PNhc+U17MvIk3cwo5kx
-         CgoMo97m8nWbVUiExGcPPf17Wby7XzNQazvCQU/k++86+a8oI/U+DhXOkSiqbgyvJdgS
-         Mf1A==
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=tKAJbh75lFXDsmlEactm1A3egstkfVUzjG6Bu8j0qEs=;
+        b=HzkhDVrLZAOmZfAW6kJk8eAsqILthXM4A3njVXq4sPVbbmVRKI5RXtRvgl3h8ApZkR
+         cQkBzenkjMVAPPum9GTIH5dS38eh5zRFBg6Q3L2+y0UXUYgrlv/4ViHSnGIs7/rzA4ds
+         2BI079HmtDXI6wf8yMCJVHJWmyGLokpr7M6bSBKYSJTTa7WgUTGsPVHn2s+yIfufWfyW
+         2LYfuyp79/fQCu/rx/yd4sYoiS6mb3qQcQkJFY1TNjKFelwaiYzQTu/89YyBGIg8iqJS
+         YeDTw31OLH7Uc29nNJd77Xee/uIGfaLYblSNQJMTnZrGiywt+sxXbXhtWHL1dF68f8EH
+         inSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=EPnyh5rZxy97NIsSIT+52JsZe68udpUPoW6KlPRY7mA=;
-        b=fi8LsFPvfWyzHLxi57Ok/a2LrlaIE7yvNGICOv0hdDKYSYpK098X/BMkN/kCa9mLOT
-         d54yZv/mke3YvVaKng/8QdSsqIVYKSbh1mhTDtAbUXW/vhpHfcBeofIRVUA+4U/R9tRk
-         6Qr1gX/AglPJkOtCOR2SncQxGx6+QaD4jkGx02R+qhpVqfZgQeAd9NTg/rAyL1zC65Ov
-         IaI/whLWq4fqxkHSD+4TsSgCkCalAfMrLNQ29qzYBzlaUTBDCpkTE+kB3RFlSe+6uAI+
-         /Jh1VtZ5G9rvEXJHNjzsKlNj8Os1A5DuhBLQrtoa9kOxoPAgtuHwxm812GIOcXhkM422
-         9Wrg==
-X-Gm-Message-State: APjAAAW/yb9LvGLpfAu6N67G5F4HFBqgzHla9yhOan2uwwR6eKMPilmr
-        +pc3V5J4TWPDziQpg2Qr4afR3DutWO4=
-X-Google-Smtp-Source: APXvYqwEda80SAI5WlUbSRPFWI1WlVWG3tnBsq1AyVyn+e9zYKgR78uDacN15izIXlI1O4CMrhUltw==
-X-Received: by 2002:a50:eb8b:: with SMTP id y11mr18873611edr.154.1562576805792;
-        Mon, 08 Jul 2019 02:06:45 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.141.54])
-        by smtp.gmail.com with ESMTPSA id h2sm5081660edq.33.2019.07.08.02.06.44
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 02:06:44 -0700 (PDT)
-Subject: Re: [PATCH] [media] media: mtk-mdp: fix reference count on old device
- tree
-To:     minghsiu.tsai@mediatek.com, houlong.wei@mediatek.com,
-        andrew-ct.chen@mediatek.com, mchehab@kernel.org,
-        djkurtz@chromium.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20190621113250.4946-1-matthias.bgg@gmail.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
- fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
- OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
- gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
- 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
- EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
- fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
- ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
- HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
- 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABtClNYXR0aGlhcyBC
- cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPokCUgQTAQIAPAIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
- VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
- ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
- YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
- c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
- DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
- 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
- 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
- aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
- jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
- wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyybkCDQRT9c4FARAAqdGWpdzcSM8q
- 6I2oTPS5J4KXXIJS8O2jbUcxoNuaSBnUkhwp2eML/i30oLbEC+akmagcOLD0kOY46yRFeSEC
- SPM9SWLxKvKUTQYGLX2sphPVZ3hEdFYKen3+cbvo6GyYTnm8ropHM9uqmXPZFFfLJDL76Nau
- kFsRfPMQUuwMe3hFVLmF7ntvdX3Z3jKImoMWrgA/SnsT6K40n/GCl1HNz2T8PSnqAUQjvSoI
- FAenxb23NtW6kg50xIxlb7DKbncnQGGTwoYn8u9Lgxkh8gJ03IMiSDHZ9o+wl21U8B3OXr1K
- L08vXmdR70d6MJSmt6pKs7yTjxraF0ZS6gz+F2BTy080jxceZwEWIIbK7zU3tm1hnr7QIbj/
- H6W2Pv9p5CXzQCIw17FXFXjpGPa9knzd4WMzJv2Rgx/m8/ZG91aKq+4Cbz9TLQ7OyRdXqhPJ
- CopfKgZ2l/Fc5+AGhogJLxOopBoELIdHgB50Durx4YJLmQ1z/oimD0O/mUb5fJu0FUQ5Boc1
- kHHJ8J8bZTuFrGAomfvnsek+dyenegqBpZCDniCSfdgeAx9oWNoXG4cgo8OVG7J/1YIWBHRa
- Wnk+WyXGBfbY/8247Gy8oaXtQs1OnehbMKBHRIY0tgoyUlag3wXuUzeK+0PKtWC7ZYelKNC0
- Fn+zL9XpnK3HLE5ckhBLgK8AEQEAAYkCHwQYAQIACQUCU/XOBQIbDAAKCRDZFAuyVhMC8Yyu
- D/9g6+JZZ+oEy7HoGZ0Bawnlxu/xQrzaK/ltQhA2vtiMaxCN46gOvEF/x+IvFscAucm3q4Dy
- bJJkW2qY30ISK9MDELnudPmHRqCxTj8koabvcI1cP8Z0Fw1reMNZVgWgVZJkwHuPYnkhY15u
- 3vHDzcWnfnvmguKgYoJxkqqdp/acb0x/qpQgufrWGeYv2yb1YNidXBHTJSuelFcGp/oBXeJz
- rQ2IP1JBbQmQfPSePZzWdSLlrR+3jcBJEP/A/73lSObOQpiYJomXPcla6dH+iyV0IiiZdYgU
- Htwru4Stv/cFVFsUJk1fIOP1qjSa+L6Y0dWX6JMniqUXHhaXo6OPf7ArpVbBygMuzvy99LtS
- FSkMcYXn359sXOYsRy4V+Yr7Bs0lzdnHnKdpVqHiDvNgrrLoPNrKTiYwTmzTVbb9u/BjUGhC
- YUS705vcjBgXhdXS44kgO22kaB5c6Obg7WP7cucFomITovtZs5Rm1iaZZc31lzobfFPUwDSc
- YXOj6ckS9bF9lDG26z3C/muyiifZeiQvvG1ygexrHtnKYTNxqisOGjjcXzDzpS8egIOtIEI/
- arzlqK5RprMLVOl6n/npxEWmInjBetsBsaX/9kJNZFM4Yais5scOnP+tuTnFTW2K9xKySyuD
- q/iLORJYRYMloJPaDAftiYfjFa8zuw1XnQyG17kCDQRT9gX3ARAAsL2UwyvSLQuMxOW2GRLv
- CiZuxtIEoUuhaBWdC/Yq3c6rWpTu692lhLd4bRpKJkE4nE3saaTVxIHFF3tt3IHSa3Qf831S
- lW39EkcFxr7DbO17kRThOyU1k7KDhUQqhRaUoT1NznrykvpTlNszhYNjA0CMYWH249MJXgck
- iKOezSHbQ2bZWtFG3uTloWSKloFsjsmRsb7Vn2FlyeP+00PVC6j7CRqczxpkyYoHuqIS0w1z
- Aq8HP5DDSH7+arijtPuJhVv9uaiD6YFLgSIQy4ZCZuMcdzKJz2j6KCw2kUXLehk4BU326O0G
- r9+AojZT8J3qvZYBpvCmIhGliKhZ7pYDKZWVseRw7rJS5UFnst5OBukBIjOaSVdp6JMpe99o
- caLjyow2By6DCEYgLCrquzuUxMQ8plEMfPD1yXBo00bLPatkuxIibM0G4IstKL5hSAKiaFCc
- 2f73ppp7eby3ZceyF4uCIxN3ABjW9ZCEAcEwC40S3rnh2wZhscBFZ+7sO7+Fgsd0w67zjpt+
- YHFNv/chRJiPnDGGRt0jPWryaasDnQtAAf59LY3qd4GVHu8RA1G0Rz4hVw27yssHGycc4+/Z
- ZX7sPpgNKlpsToMaB5NWgc389HdqOG80Ia+sGkNj9ylp74MPbd0t3fzQnKXzBSHOCNuS67sc
- lUAw7HB+wa3BqgsAEQEAAYkEPgQYAQIACQUCU/YF9wIbAgIpCRDZFAuyVhMC8cFdIAQZAQIA
- BgUCU/YF9wAKCRC0OWJbLPHTQ14xD/9crEKZOwhIWX32UXvB/nWbhEx6+PQG2uWsnah7oc5D
- 7V+aY7M1jy5af8yhlhVdaxL5xUoepfOP08lkCEuSdrYbS5wBcQj4NE1QUoeAjJKbq4JwxUkX
- Baq2Lu91UZpdKxEVFfSkEzmeMaVvClGjGOtNCUKl8lwLuthU7dGTW74mJaW5jjlXldgzfzFd
- BkS3fsXfcmeDhHh5TpA4e3MYVBIJrq6Repv151g/zxdA02gjJgGvJlXTb6OgEZGNFr8LGJDh
- LP7MSksBw6IxCAJSicMESu5kXsJfcODlm4zFaV8QDBevI/s/TgOQ9KQ/EJQsG+XBAuh0dqpu
- ImmCdhlHx+YaGmwKO1/yhfWvg1h1xbVn98izeotmq1+0J1jt9tgM17MGvgHjmvqlaY+oUXfj
- OkHkcCGOvao5uAsddQhZcSLmLhrSot8WJI0z3NIM30yiNx/r6OMu47lzTobdYCU8/8m7Rhsq
- fyW68D+XR098NIlU2oYy1zUetw59WJLf2j5u6D6a9p10doY5lYUEeTjy9Ejs/cL+tQbGwgWh
- WwKVal1lAtZVaru0GMbSQQ2BycZsZ+H+sbVwpDNEOxQaQPMmEzwgv2Sk2hvR3dTnhUoUaVoR
- hQE3/+fVRbWHEEroh/+vXV6n4Ps5bDd+75NCQ/lfPZNzGxgxqbd/rd2wStVZpQXkhofMD/4k
- Z8IivHZYaTA+udUk3iRm0l0qnuX2M5eUbyHW0sZVPnL7Oa4OKXoOir1EWwzzq0GNZjHCh6Cz
- vLOb1+pllnMkBky0G/+txtgvj5T/366ErUF+lQfgNtENKY6In8tw06hPJbu1sUTQIs50Jg9h
- RNkDSIQ544ack0fzOusSPM+vo6OkvIHt8tV0fTO1muclwCX/5jb7zQIDgGiUIgS8y0M4hIkP
- KvdmgurPywi74nEoQQrKF6LpPYYHsDteWR/k2m2BOj0ciZDIIxVR09Y9moQIjBLJKN0J21XJ
- eAgam4uLV2p1kRDdw/ST5uMCqD4Qi5zrZyWilCci6jF1TR2VEt906E2+AZ3BEheRyn8yb2KO
- +cJD3kB4RzOyBC/Cq/CGAujfDkRiy1ypFF3TkZdya0NnMgka9LXwBV29sAw9vvrxHxGa+tO+
- RpgKRywr4Al7QGiw7tRPbxkcatkxg67OcRyntfT0lbKlSTEQUxM06qvwFN7nobc9YiJJTeLu
- gfa4fCqhQCyquWVVoVP+MnLqkzu1F6lSB6dGIpiW0s3LwyE/WbCAVBraPoENlt69jI0WTXvH
- 4v71zEffYaGWqtrSize20x9xZf5c/Aukpx0UmsqheKeoSprKyRD/Wj/LgsuTE2Uod85U36Xk
- eFYetwQY1h3lok2Zb/3uFhWr0NqmT14EL7kCDQRT9gkSARAApxtQ4zUMC512kZ+gCiySFcIF
- /mAf7+l45689Tn7LI1xmPQrAYJDoqQVXcyh3utgtvBvDLmpQ+1BfEONDWc8KRP6Abo35YqBx
- 3udAkLZgr/RmEg3+Tiof+e1PJ2zRh5zmdei5MT8biE2zVd9DYSJHZ8ltEWIALC9lAsv9oa+2
- L6naC+KFF3i0m5mxklgFoSthswUnonqvclsjYaiVPoSldDrreCPzmRCUd8znf//Z4BxtlTw3
- SulF8weKLJ+Hlpw8lwb3sUl6yPS6pL6UV45gyWMe677bVUtxLYOu+kiv2B/+nrNRDs7B35y/
- J4t8dtK0S3M/7xtinPiYRmsnJdk+sdAe8TgGkEaooF57k1aczcJlUTBQvlYAEg2NJnqaKg3S
- CJ4fEuT8rLjzuZmLkoHNumhH/mEbyKca82HvANu5C9clyQusJdU+MNRQLRmOAd/wxGLJ0xmA
- ye7Ozja86AIzbEmuNhNH9xNjwbwSJNZefV2SoZUv0+V9EfEVxTzraBNUZifqv6hernMQXGxs
- +lBjnyl624U8nnQWnA8PwJ2hI3DeQou1HypLFPeY9DfWv4xYdkyeOtGpueeBlqhtMoZ0kDw2
- C3vzj77nWwBgpgn1Vpf4hG/sW/CRR6tuIQWWTvUM3ACa1pgEsBvIEBiVvPxyAtL+L+Lh1Sni
- 7w3HBk1EJvUAEQEAAYkCHwQYAQIACQUCU/YJEgIbDAAKCRDZFAuyVhMC8QndEACuN16mvivn
- WwLDdypvco5PF8w9yrfZDKW4ggf9TFVB9skzMNCuQc+tc+QM+ni2c4kKIdz2jmcg6QytgqVu
- m6V1OsNmpjADaQkVp5jL0tmg6/KA9Tvr07Kuv+Uo4tSrS/4djDjJnXHEp/tB+Fw7CArNtUtL
- lc8SuADCmMD+kBOVWktZyzkBkDfBXlTWl46T/8291lEspDWe5YW1ZAH/HdCR1rQNZWjNCpB2
- Cic58CYMD1rSonCnbfUeyZYNNhNHZosl4dl7f+am87Q2x3pK0DLSoJRxWb7vZB0uo9CzCSm3
- I++aYozF25xQoT+7zCx2cQi33jwvnJAK1o4VlNx36RfrxzBqc1uZGzJBCQu48UjmUSsTwWC3
- HpE/D9sM+xACs803lFUIZC5H62G059cCPAXKgsFpNMKmBAWweBkVJAisoQeX50OP+/11ArV0
- cv+fOTfJj0/KwFXJaaYh3LUQNILLBNxkSrhCLl8dUg53IbHx4NfIAgqxLWGfXM8DY1aFdU79
- pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
- AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <e4d178ae-f43e-21d0-b0ab-78cc2ac71e7e@gmail.com>
-Date:   Mon, 8 Jul 2019 11:06:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=tKAJbh75lFXDsmlEactm1A3egstkfVUzjG6Bu8j0qEs=;
+        b=injkROtBa6Qf82KMTj1S0WStB9UjhqoaQ4NAnmcTU1/bcEoL48mWEQqAiviNUvGZ0h
+         VhnsEiXriTQk96SFWwSbsc5ACDaxCHAXRb7Sigd1HEjO5PAISezSMce7jFaQUbgSjPLY
+         G1qNzOda7vSBGjR19lLrt+5OJgi4MqShlrAhZx25RUa4JSjfj+xTfRqtpFROuPV2PkRV
+         PgtGL9n2CL9KKdmtPkYbwZO+tMrbtnG1hvp7YfItHMD9ysS06Y50aswegbwBJ1LFylMS
+         7aSJwkstHOnA9bNgYcWTlJ0rAgfvIIBHjamrrRcFlPxY4cUNYZDMiyA85o56CTCrND3P
+         NabQ==
+X-Gm-Message-State: APjAAAWJf/TEaiEMYZJt/iKoMq6wQQnZklPSKp5cL2dqDYvkNz4jWRRK
+        /KD5Td1Hwp3eyL23UfK2aZRAJzs8
+X-Google-Smtp-Source: APXvYqzzK+ADM2fl5qFsjFRxo3oax/lSg1aulpUbJLS+lPR39rb93aiucXoZCDjUXXdtB6x8vLPGNQ==
+X-Received: by 2002:a5d:4489:: with SMTP id j9mr18077883wrq.15.1562576963176;
+        Mon, 08 Jul 2019 02:09:23 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z7sm5718477wrh.67.2019.07.08.02.09.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 02:09:22 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 11:09:20 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@us.ibm.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] RCU changes for v5.3
+Message-ID: <20190708090920.GA16500@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190621113250.4946-1-matthias.bgg@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
+
+Please pull the latest core-rcu-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-rcu-for-linus
+
+   # HEAD: 83086d654dd08c0f57381522e6819f421677706e Merge branch 'for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu into core/rcu
+
+The changes in this cycle are:
+
+ - RCU flavor consolidation cleanups and optmizations
+ - Documentation updates
+ - Miscellaneous fixes
+ - SRCU updates
+ - RCU-sync flavor consolidation
+ - Torture-test updates
+ - Linux-kernel memory-consistency-model updates, most notably the addition of plain C-language accesses
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Alan Stern (7):
+      tools/memory-model: Prepare for data-race detection
+      tools/memory-model: Add definitions of plain and marked accesses
+      tools/memory-model: Add data-race detection
+      Documentation: atomic_t.txt: Explain ordering provided by smp_mb__{before,after}_atomic()
+      tools/memory-model: Expand definition of barrier
+      tools/memory-model: Change definition of rcu-fence
+      tools/memory-model: Improve data-race detection
+
+Andrea Parri (3):
+      rcu: Don't return a value from rcu_assign_pointer()
+      tools/memory-model: Fix comment in MP+poonceonces.litmus
+      tools/memory-model: Do not use "herd" to refer to "herd7"
+
+Jiang Biao (2):
+      rcu: Remove unused rdp local from synchronize_rcu_expedited()
+      rcu: Make __call_srcu static
+
+Joel Fernandes (Google) (7):
+      lockdep: Add assertion to check if in an interrupt
+      rcu: Add checks for dynticks counters in rcu_is_cpu_rrupt_from_idle()
+      doc/rcuref: Document real world examples in kernel
+      srcu: Remove unused vmlinux srcu linker entries
+      module: Make srcu_struct ptr array as read-only
+      rcutorture: Select from only online CPUs
+      rcutorture: Add cpu0 to the set of CPUs to add jitter
+
+Neeraj Upadhyay (2):
+      rcu: Dump specified number of blocked tasks
+      rcu: Correctly unlock root node in rcu_check_gp_start_stall()
+
+Oleg Nesterov (4):
+      rcu/sync: Kill rcu_sync_type/gp_type
+      uprobes: Use DEFINE_STATIC_PERCPU_RWSEM() to initialize dup_mmap_sem
+      locking/percpu-rwsem: Add DEFINE_PERCPU_RWSEM(), use it to initialize cgroup_threadgroup_rwsem
+      rcu/sync: Simplify the state machine
+
+Paul E. McKenney (32):
+      rcu: Check for wakeup-safe conditions in rcu_read_unlock_special()
+      rcu: Only do rcu_read_unlock_special() wakeups if expedited
+      rcu: Allow rcu_read_unlock_special() to raise_softirq() if in_irq()
+      rcu: Use irq_work to get scheduler's attention in clean context
+      rcu: Inline invoke_rcu_callbacks() into its sole remaining caller
+      rcu: Avoid self-IPI in sync_rcu_exp_select_node_cpus()
+      rcu: Avoid self-IPI in sync_sched_exp_online_cleanup()
+      rcu: Rename rcu_data's ->deferred_qs to ->exp_deferred_qs
+      rcu: Make kfree_rcu() ignore NULL pointers
+      rcu: Set a maximum limit for back-to-back callback invocation
+      doc: Remove ".vnet" from paulmck email addresses
+      srcu: Allocate per-CPU data for DEFINE_SRCU() in modules
+      rcutorture: Add cond_resched() to forward-progress free-up loop
+      rcutorture: Fix stutter_wait() return value and freelist checks
+      torture: Allow inter-stutter interval to be specified
+      torture: Make kvm-find-errors.sh and kvm-recheck.sh provide exit status
+      rcutorture: Provide rudimentary Makefile
+      rcutorture: Exempt tasks RCU from timely draining of grace periods
+      rcutorture: Exempt TREE01 from forward-progress testing
+      rcutorture: Give the scheduler a chance on PREEMPT && NO_HZ_FULL kernels
+      rcutorture: Halt forward-progress checks at end of run
+      rcutorture: Add trivial RCU implementation
+      torture: Capture qemu output
+      torture: Add function graph-tracing cheat sheet
+      torture: Run kernel build in source directory
+      torture: Make --cpus override idleness calculations
+      torture: Add --trust-make to suppress "make clean"
+      rcutorture: Dump trace buffer for callback pipe drain failures
+      torture: Suppress propagating trace_printk() warning
+      rcutorture: Upper case solves the case of the vanishing NULL pointer
+      rcu: Upgrade sync_exp_work_done() to smp_mb()
+      rcu: Fix irritating whitespace error in rcu_assign_pointer()
+
+Sebastian Andrzej Siewior (2):
+      rcu: Enable elimination of Tree-RCU softirq processing
+      rcutorture: Tweak kvm options
+
+Waiman Long (1):
+      rcu: Force inlining of rcu_read_lock()
+
+Zhenzhong Duan (1):
+      doc: Fixup definition of rcupdate.rcu_task_stall_timeout
 
 
-On 21/06/2019 13:32, Matthias Brugger wrote:
-> of_get_next_child() increments the reference count of the returning
-> device_node. Decrement it in the check if we are using the old or the
-> new DTB.
-> 
-> Fixes: ba1f1f70c2c0 ("[media] media: mtk-mdp: Fix mdp device tree")
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+ Documentation/RCU/rcuref.txt                       |  21 +-
+ Documentation/RCU/stallwarn.txt                    |   2 +-
+ Documentation/RCU/whatisRCU.txt                    |   8 +-
+ Documentation/admin-guide/kernel-parameters.txt    |   6 +
+ Documentation/atomic_t.txt                         |  17 +-
+ Documentation/core-api/circular-buffers.rst        |   2 +-
+ Documentation/memory-barriers.txt                  |   2 +-
+ .../translations/ko_KR/memory-barriers.txt         |   2 +-
+ include/linux/lockdep.h                            |   7 +
+ include/linux/module.h                             |   5 +
+ include/linux/percpu-rwsem.h                       |  10 +-
+ include/linux/rcu_sync.h                           |  40 ++--
+ include/linux/rcupdate.h                           |  21 +-
+ include/linux/sched.h                              |   2 +-
+ include/linux/srcutree.h                           |  14 +-
+ include/linux/torture.h                            |   2 +-
+ kernel/cgroup/cgroup.c                             |   3 +-
+ kernel/events/uprobes.c                            |   4 +-
+ kernel/locking/locktorture.c                       |   2 +-
+ kernel/locking/percpu-rwsem.c                      |   2 +-
+ kernel/module.c                                    |   5 +
+ kernel/rcu/rcu.h                                   |   5 +
+ kernel/rcu/rcutorture.c                            |  96 +++++++--
+ kernel/rcu/srcutree.c                              |  69 ++++++-
+ kernel/rcu/sync.c                                  | 214 ++++++++++-----------
+ kernel/rcu/tree.c                                  | 164 +++++++++++++---
+ kernel/rcu/tree.h                                  |   6 +-
+ kernel/rcu/tree_exp.h                              |  53 +++--
+ kernel/rcu/tree_plugin.h                           | 195 ++++++-------------
+ kernel/rcu/tree_stall.h                            |   4 +-
+ kernel/rcu/update.c                                |  13 ++
+ kernel/torture.c                                   |  23 ++-
+ tools/include/linux/rcu.h                          |   4 +-
+ tools/memory-model/linux-kernel.bell               |   6 +
+ tools/memory-model/linux-kernel.cat                | 102 +++++++---
+ tools/memory-model/linux-kernel.def                |   1 +
+ .../litmus-tests/MP+poonceonces.litmus             |   2 +-
+ tools/memory-model/litmus-tests/README             |   2 +-
+ tools/memory-model/lock.cat                        |   2 +-
+ tools/memory-model/scripts/README                  |   4 +-
+ tools/memory-model/scripts/checkalllitmus.sh       |   2 +-
+ tools/memory-model/scripts/checklitmus.sh          |   2 +-
+ tools/memory-model/scripts/parseargs.sh            |   2 +-
+ tools/memory-model/scripts/runlitmushist.sh        |   2 +-
+ tools/testing/radix-tree/linux/rcupdate.h          |   2 +-
+ tools/testing/selftests/rcutorture/Makefile        |   3 +
+ .../testing/selftests/rcutorture/bin/configinit.sh |  39 ++--
+ tools/testing/selftests/rcutorture/bin/cpus2use.sh |   5 +
+ .../testing/selftests/rcutorture/bin/functions.sh  |  13 +-
+ tools/testing/selftests/rcutorture/bin/jitter.sh   |  13 +-
+ .../testing/selftests/rcutorture/bin/kvm-build.sh  |   9 +-
+ .../selftests/rcutorture/bin/kvm-find-errors.sh    |   3 +
+ .../selftests/rcutorture/bin/kvm-recheck.sh        |  13 +-
+ .../selftests/rcutorture/bin/kvm-test-1-run.sh     |  23 +--
+ tools/testing/selftests/rcutorture/bin/kvm.sh      |  14 +-
+ .../selftests/rcutorture/bin/parse-build.sh        |   2 +-
+ .../selftests/rcutorture/bin/parse-console.sh      |   1 +
+ .../selftests/rcutorture/configs/rcu/CFcommon      |   3 +
+ .../selftests/rcutorture/configs/rcu/TREE01.boot   |   1 +
+ .../selftests/rcutorture/configs/rcu/TRIVIAL       |  14 ++
+ .../selftests/rcutorture/configs/rcu/TRIVIAL.boot  |   3 +
+ 61 files changed, 845 insertions(+), 466 deletions(-)
+ create mode 100644 tools/testing/selftests/rcutorture/Makefile
+ create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL
+ create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL.boot
 
-Any comments on that?
-
-> ---
->  drivers/media/platform/mtk-mdp/mtk_mdp_core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-> index bbb24fb95b95..bafe53c5d54a 100644
-> --- a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-> +++ b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-> @@ -118,7 +118,9 @@ static int mtk_mdp_probe(struct platform_device *pdev)
->  	mutex_init(&mdp->vpulock);
->  
->  	/* Old dts had the components as child nodes */
-> -	if (of_get_next_child(dev->of_node, NULL)) {
-> +	parent = of_get_next_child(dev->of_node, NULL);
-> +	if (parent) {
-> +		of_node_put(parent);
->  		parent = dev->of_node;
->  		dev_warn(dev, "device tree is out of date\n");
->  	} else {
-> 
