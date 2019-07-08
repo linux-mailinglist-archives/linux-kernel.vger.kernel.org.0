@@ -2,112 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FD1626CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD42E626D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbfGHRGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:06:51 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40252 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730562AbfGHRGu (ORCPT
+        id S1730698AbfGHRI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:08:56 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:37421 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728323AbfGHRI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:06:50 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so8600684pla.7
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:06:50 -0700 (PDT)
+        Mon, 8 Jul 2019 13:08:56 -0400
+Received: by mail-vk1-f201.google.com with SMTP id v135so6839275vke.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 10:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=4XiK7cNOF46bWFR8m4DNHaIOk38+dsjAxLZcmKLCeZQ=;
-        b=OJxVXCxfMK+mwCEENRbSUCDzOGN83p9YGujVxQsC48TwIJ6IuNUW7JkBszAJ8njCFM
-         vdsQ0qQ8nOUAUnn7wQqqVEOCcE0nlYFqGh4mHkhKPJqK+NiKvxG8PQgmdDZVsa+WcOdM
-         qIKfxugHejd4pBwzINR1yecpk6ve7vuc3rZvZe6RoTKmsn47IPsIY9H3QeK5dKunK23J
-         /yVfO+W2saMiJGb2qTuAuE2vpr9Rc2nZiiUwsKeNvNfm4JjZpZ28R+eq1nA5SiGBL8Iv
-         DXZjEcGH/kq4dPzpQSnvxLoTJUYR3THxtg9DqKEg82UU6Uj46pKlxsq0MGuc3cLECotz
-         Erlg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=rkb+RBbpaLSwWUUB7g0A+rsu7yIfnRDIumBvHSjiI6g=;
+        b=su70wQ6/2hTT+J8ES8WXMRV7++oOFKiaJoXI1tHyVzzTCdE5I1E5DVYHktmK7xoyLH
+         iZb/vfep+BIeL3PrullH6dkk5V4/AmuWTC4WBFI/bMTAhsjNYBYn6ySN8XAKZYkF+uiP
+         /QutnYKWRFTxmwrZGCr6CmPBC/PSe9LZI5m5LU2EeHPCw7wxiCOF0TAe+0xJSMxjHVFE
+         4y24R1PdKke1XPauJk+Z6WuRwhl7JisBrF/xvMt0cdsXlh+0PZiu45rvNKxWd1vmthVU
+         h0d4arZgDyJcJRGTZnIyatkhKFDNCFMlQpm5jbPlJtLFtTpWD0P6d5SUFIGnBwSgWvB4
+         dCXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=4XiK7cNOF46bWFR8m4DNHaIOk38+dsjAxLZcmKLCeZQ=;
-        b=ufkVPlc9hywWzi27eEEIVuymZ4EaCWbOVlfBBfkmVwblvDvniEqUyeJvytCv2zgfEB
-         oY2RnppkWucK+9Y0710ZMpAbpdK6ovvzrkHRoupx98LihotgMtUKgdcJMwQ1HOLfqHfP
-         fh0qApgG0nveoTX+UvTWoZN+0EAWqfZqe/PFClKuSAm69kkuMeI3BYJQTq1VfwrWAlc1
-         B6/YK1a79IyiyvjmaAbsn+y6OEzmFcvkeSyfoNKZWEzkofnvnhdnyjLXwh3WrPMsBqwA
-         a2TyeCs8QJqCRtGL9MRGI/XysH8HuIRmxL/rVJj9YoTOcIO42K0ocjY6ahekOj0V1haK
-         JDhQ==
-X-Gm-Message-State: APjAAAXyh1XvQmOUNl+q1W5yjZdfTL8hp7Xz+QMvVeWAG5EEBphDFjt/
-        U0pQUt6q7JXS7pDJi7OlB5M=
-X-Google-Smtp-Source: APXvYqz1ckv+LdozavwqdnPaMMRC1ba1JzLoqD2K3M8QzZeR28vMiS+/Pi6qU0wTvuO5I+IY7KfXJg==
-X-Received: by 2002:a17:902:20ec:: with SMTP id v41mr24871190plg.142.1562605609923;
-        Mon, 08 Jul 2019 10:06:49 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p187sm11889437pfg.89.2019.07.08.10.06.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 10:06:48 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 10:06:47 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-m68k@lists.linux-m68k.org
-Subject: m68k build failures in -next: undefined reference to
- `arch_dma_prep_coherent'
-Message-ID: <20190708170647.GA12313@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=rkb+RBbpaLSwWUUB7g0A+rsu7yIfnRDIumBvHSjiI6g=;
+        b=oDNx5HT9PUttcBFkhaxMmApUM4/JXpZ0yq4FD/3lHSzHg/rM9OsXnUtLFwSINspad4
+         iqzz8RukIF047V+fAHxUHazu1yvXRVW/JssAdc/+DE1IBX+kkor4lDSWlsMvfMSNvr2c
+         nPX9ucw1RDFxYXD0Lx/Z0smOaSM27ZLnIfxyaqhrHlGQmzX8vfb2fCXyQJpjg8x4cqJQ
+         bRICpancpJwv1h/A4JoxnO+1z6uve5hXu0N3HNwdk4SrzfXPJiBvzXqB5trvOSoqElwk
+         4FB5X1Uhb3AFwYZ1750U7zmcH4JhgKy8NkO7FDAjOPEoAmavIgFohqHrZKFiNRrJdAIm
+         WJfw==
+X-Gm-Message-State: APjAAAW0AsEaxnVDMzmbZFvFaaRUxfRuxs6YfKKJYGiOp9VPTIRdWL0T
+        1fgsHJh8JKWJa81eYXoTOdApUPSuwA==
+X-Google-Smtp-Source: APXvYqxlNqCP7Is+7VGSJcZtIKkF90xpT2ulacUW8J0j4jU3IIAPg9yY4ZS6OegNMF29BsHeoXjMsqH8RA==
+X-Received: by 2002:ab0:7143:: with SMTP id k3mr10372932uao.91.1562605734773;
+ Mon, 08 Jul 2019 10:08:54 -0700 (PDT)
+Date:   Mon,  8 Jul 2019 19:07:02 +0200
+Message-Id: <20190708170706.174189-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v5 0/5] Add object validation in ksize()
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     linux-kernel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, Qian Cai <cai@lca.pw>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I see the following build error in -next:
+This version fixes several build issues --
+Reported-by: kbuild test robot <lkp@intel.com>
 
-kernel/dma/direct.o: In function `dma_direct_alloc_pages':
-direct.c:(.text+0x4d8): undefined reference to `arch_dma_prep_coherent'
+Previous version here:
+http://lkml.kernel.org/r/20190627094445.216365-1-elver@google.com
 
-Example: m68k:allnoconfig.
+Marco Elver (5):
+  mm/kasan: Introduce __kasan_check_{read,write}
+  mm/kasan: Change kasan_check_{read,write} to return boolean
+  lib/test_kasan: Add test for double-kzfree detection
+  mm/slab: Refactor common ksize KASAN logic into slab_common.c
+  mm/kasan: Add object validation in ksize()
 
-Bisect log is ambiguous and points to the merge of m68k/for-next into
--next. Yet, I think the problem is with commit 69878ef47562 ("m68k:
-Implement arch_dma_prep_coherent()") which is supposed to introduce
-the function. The problem is likely that arch_dma_prep_coherent()
-is only declared if CONFIG_MMU is enabled, but it is called from code
-outside CONFIG_MMU.
+ include/linux/kasan-checks.h | 43 +++++++++++++++++++++++++++------
+ include/linux/kasan.h        |  7 ++++--
+ include/linux/slab.h         |  1 +
+ lib/test_kasan.c             | 17 +++++++++++++
+ mm/kasan/common.c            | 14 +++++------
+ mm/kasan/generic.c           | 13 +++++-----
+ mm/kasan/kasan.h             | 10 +++++++-
+ mm/kasan/tags.c              | 12 ++++++----
+ mm/slab.c                    | 28 +++++-----------------
+ mm/slab_common.c             | 46 ++++++++++++++++++++++++++++++++++++
+ mm/slob.c                    |  4 ++--
+ mm/slub.c                    | 14 ++---------
+ 12 files changed, 144 insertions(+), 65 deletions(-)
 
-Guenter
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
----
-# bad: [d58b5ab90ee7528126fd5833df7fc5bda8331ce8] Add linux-next specific files for 20190708
-# good: [6fbc7275c7a9ba97877050335f290341a1fd8dbf] Linux 5.2-rc7
-git bisect start 'HEAD' 'v5.2-rc7'
-# bad: [ba30fb6d5d6464bd7d3759408ea7f178d8c9fe87] Merge remote-tracking branch 'crypto/master'
-git bisect bad ba30fb6d5d6464bd7d3759408ea7f178d8c9fe87
-# bad: [4226c2bec4757a3acbf86bb836375d3966ab72ce] Merge remote-tracking branch 'i2c/i2c/for-next'
-git bisect bad 4226c2bec4757a3acbf86bb836375d3966ab72ce
-# good: [e41aad4a290783ec7d3730542cbed0e99b2dcb4a] Merge remote-tracking branch 'tegra/for-next'
-git bisect good e41aad4a290783ec7d3730542cbed0e99b2dcb4a
-# bad: [e495984468b15cb8fa276b63fff3986111a513a5] Merge remote-tracking branch 'ceph/master'
-git bisect bad e495984468b15cb8fa276b63fff3986111a513a5
-# bad: [8e8fefda572360f00854547f3458a9c2cf932ff5] Merge remote-tracking branch 'powerpc/next'
-git bisect bad 8e8fefda572360f00854547f3458a9c2cf932ff5
-# bad: [01fd0e565283d69adf0ff1da95cab5bb4cb58acb] Merge remote-tracking branch 'm68k/for-next'
-git bisect bad 01fd0e565283d69adf0ff1da95cab5bb4cb58acb
-# good: [7dcbe273f9c61b83e398a19152f6529d1676751d] Merge branch 'clk-allwinner' into clk-next
-git bisect good 7dcbe273f9c61b83e398a19152f6529d1676751d
-# good: [59f375866fa68888fedc7bcd2dad381ceb6ba4dc] Merge branch 'clk-sprd' into clk-next
-git bisect good 59f375866fa68888fedc7bcd2dad381ceb6ba4dc
-# good: [49193327486022abc85b24d058aefa666367ffff] Merge branch 'clk-lochnagar' into clk-next
-git bisect good 49193327486022abc85b24d058aefa666367ffff
-# good: [7b4e6f9a4b8daa37a86cd7bca46bf70b522dbb62] csky: Add new asid lib code from arm
-git bisect good 7b4e6f9a4b8daa37a86cd7bca46bf70b522dbb62
-# good: [c6d41a2a548b8b684a006ab77d42c73815105011] Merge remote-tracking branch 'csky/linux-next'
-git bisect good c6d41a2a548b8b684a006ab77d42c73815105011
-# good: [69878ef47562f32e02d0b7975c990e1c0339320d] m68k: Implement arch_dma_prep_coherent()
-git bisect good 69878ef47562f32e02d0b7975c990e1c0339320d
-# good: [ccd1eda4ac7a73806ccc6afa899bb58e00c7772f] Merge remote-tracking branch 'h8300/h8300-next'
-git bisect good ccd1eda4ac7a73806ccc6afa899bb58e00c7772f
-# first bad commit: [01fd0e565283d69adf0ff1da95cab5bb4cb58acb] Merge remote-tracking branch 'm68k/for-next'
