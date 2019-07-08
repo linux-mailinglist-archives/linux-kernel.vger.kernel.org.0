@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B6A62450
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B136231B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388736AbfGHP0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:26:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
+        id S2390082AbfGHPcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:32:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388722AbfGHP0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:26:00 -0400
+        id S2390065AbfGHPcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:32:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F1EB20665;
-        Mon,  8 Jul 2019 15:25:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF3D6216C4;
+        Mon,  8 Jul 2019 15:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599559;
-        bh=849QI4FgZ5IFRTyySZdZyjabtM3ze9NF08JsXOOQ4q4=;
+        s=default; t=1562599928;
+        bh=KTN/ndANs2Qeh0B+53eCPBQqeM5dLons4wh1sPJ3kY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M4IYFhlOc5zt7Y5h17qKmQ+NJQgQDy0E7ssqdePwgzVbBM3gK/JxNE46rfc/PsCGI
-         jrFKJp64hiOsxpE1fh4FdhOw8M09LtCVoN0Jw1wkDBRj/bsDjOpOo/WBZrraFA8vBw
-         8tSfSyNq8pFXYPD7jT2p4hLxAfFtjwZiX4nl7NnQ=
+        b=qAAnvlLkWqARdVOMD3Ke1ZMQem9jNTuJ+maAghtk41r8eifZX8davbhbhWXQx5Ta4
+         LgYTeb9gZ8g27dOmd3hwHiBA4UVQMzhcsmzCSO+Jwrj8vOeknGPDH4lAgvCRGhDO3j
+         H+O7Q7jsCwcIn0NUMVedA18WEsYyZDgTG6ehHryU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bader Ali - Saleh <bader.alisaleh@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Matt Perricone <matt.perricone@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 14/56] scsi: hpsa: correct ioaccel2 chaining
-Date:   Mon,  8 Jul 2019 17:13:06 +0200
-Message-Id: <20190708150519.519975443@linuxfoundation.org>
+Subject: [PATCH 5.1 35/96] ASoC: core: move DAI pre-links initiation to snd_soc_instantiate_card
+Date:   Mon,  8 Jul 2019 17:13:07 +0200
+Message-Id: <20190708150528.462560432@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,62 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 625d7d3518875c4d303c652a198feaa13d9f52d9 ]
+[ Upstream commit 70fc53734e71ce51f46dfcfd1a1c319e1cfe080c ]
 
-- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_LAST_SG for
-  the last s/g element.
+Kernel crashes when an ASoC component rebinding.
 
-- set ioaccel2_sg_element member 'chain_indicator' to IOACCEL2_CHAIN when
-  chaining.
+The dai_link->platforms has been reset to NULL by soc_cleanup_platform()
+in soc_cleanup_card_resources() when un-registering component.  However,
+it has no chance to re-allocate the dai_link->platforms when registering
+the component again.
 
-Reviewed-by: Bader Ali - Saleh <bader.alisaleh@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Matt Perricone <matt.perricone@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Move the DAI pre-links initiation from snd_soc_register_card() to
+snd_soc_instantiate_card() to make sure all DAI pre-links get initiated
+when component rebinding.
+
+As an example, by using the following commands:
+- echo -n max98357a > /sys/bus/platform/drivers/max98357a/unbind
+- echo -n max98357a > /sys/bus/platform/drivers/max98357a/bind
+
+Got the error message:
+"Unable to handle kernel NULL pointer dereference at virtual address".
+
+The call trace:
+snd_soc_is_matching_component+0x30/0x6c
+soc_bind_dai_link+0x16c/0x240
+snd_soc_bind_card+0x1e4/0xb10
+snd_soc_add_component+0x270/0x300
+snd_soc_register_component+0x54/0x6c
+
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/hpsa.c     | 7 ++++++-
- drivers/scsi/hpsa_cmd.h | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ sound/soc/soc-core.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 5b4b7f9be2d7..6d520e8945f7 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -4800,7 +4800,7 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
- 			curr_sg->reserved[0] = 0;
- 			curr_sg->reserved[1] = 0;
- 			curr_sg->reserved[2] = 0;
--			curr_sg->chain_indicator = 0x80;
-+			curr_sg->chain_indicator = IOACCEL2_CHAIN;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index a4668a788ed5..9df3bdeb5c47 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2069,6 +2069,16 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
+ 	int ret, i, order;
  
- 			curr_sg = h->ioaccel2_cmd_sg_list[c->cmdindex];
- 		}
-@@ -4817,6 +4817,11 @@ static int hpsa_scsi_ioaccel2_queue_command(struct ctlr_info *h,
- 			curr_sg++;
- 		}
+ 	mutex_lock(&client_mutex);
++	for_each_card_prelinks(card, i, dai_link) {
++		ret = soc_init_dai_link(card, dai_link);
++		if (ret) {
++			soc_cleanup_platform(card);
++			dev_err(card->dev, "ASoC: failed to init link %s: %d\n",
++				dai_link->name, ret);
++			mutex_unlock(&client_mutex);
++			return ret;
++		}
++	}
+ 	mutex_lock_nested(&card->mutex, SND_SOC_CARD_CLASS_INIT);
  
-+		/*
-+		 * Set the last s/g element bit
-+		 */
-+		(curr_sg - 1)->chain_indicator = IOACCEL2_LAST_SG;
-+
- 		switch (cmd->sc_data_direction) {
- 		case DMA_TO_DEVICE:
- 			cp->direction &= ~IOACCEL2_DIRECTION_MASK;
-diff --git a/drivers/scsi/hpsa_cmd.h b/drivers/scsi/hpsa_cmd.h
-index 078afe448115..ecf15344b55d 100644
---- a/drivers/scsi/hpsa_cmd.h
-+++ b/drivers/scsi/hpsa_cmd.h
-@@ -516,6 +516,7 @@ struct ioaccel2_sg_element {
- 	u8 reserved[3];
- 	u8 chain_indicator;
- #define IOACCEL2_CHAIN 0x80
-+#define IOACCEL2_LAST_SG 0x40
- };
+ 	card->dapm.bias_level = SND_SOC_BIAS_OFF;
+@@ -2793,26 +2803,9 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
+  */
+ int snd_soc_register_card(struct snd_soc_card *card)
+ {
+-	int i, ret;
+-	struct snd_soc_dai_link *link;
+-
+ 	if (!card->name || !card->dev)
+ 		return -EINVAL;
  
- /*
+-	mutex_lock(&client_mutex);
+-	for_each_card_prelinks(card, i, link) {
+-
+-		ret = soc_init_dai_link(card, link);
+-		if (ret) {
+-			soc_cleanup_platform(card);
+-			dev_err(card->dev, "ASoC: failed to init link %s\n",
+-				link->name);
+-			mutex_unlock(&client_mutex);
+-			return ret;
+-		}
+-	}
+-	mutex_unlock(&client_mutex);
+-
+ 	dev_set_drvdata(card->dev, card);
+ 
+ 	snd_soc_initialize_card_lists(card);
 -- 
 2.20.1
 
