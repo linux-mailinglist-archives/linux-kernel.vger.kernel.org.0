@@ -2,90 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC6A62726
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36FD762728
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 19:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389055AbfGHRbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 13:31:40 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36013 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbfGHRbk (ORCPT
+        id S2390502AbfGHRcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 13:32:05 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39854 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbfGHRcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:31:40 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z4so15385399qtc.3;
-        Mon, 08 Jul 2019 10:31:39 -0700 (PDT)
+        Mon, 8 Jul 2019 13:32:05 -0400
+Received: by mail-pg1-f196.google.com with SMTP id u17so7550840pgi.6;
+        Mon, 08 Jul 2019 10:32:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F3Z8ODmIuThf6qIMsRJ9IwagYSAnPtGl9RN+7VHHChg=;
-        b=aqE1xvZMtT7tlMKN0uI2aPhS+B7q7NPQx57ZzTXE3rm2BGvJMUQYHZdGbsSR+ZNHfg
-         KfCyif2Z5T+CAzVEI8+uNEiuZ86jaLvvcnbumD1DftZwskChw61iCaejgttVDYeo+puX
-         EMcYe4mqQRkut1balpM3jphqF+6LvTpJVgsDGjeKNcaL2HrtEEceP6faQACtVF2GbCnH
-         EnfW9OChjLrUTnLaic14bALWa2BZWvwWjb4HbOhssw6ZZDbanIOucVyKb3DXFQID3zzN
-         6PaxqH4Gy69wl4Cd+/ST6a+M1Yks+kZdteW72v8EtAfrgEC6A0/zqxo7tvMMEc0VlKUl
-         /AcA==
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QjUEkPv4P+Cy2J8UDrDe7tC4X9k/PrOqSnXPrXrMZ0o=;
+        b=P7OmmvT9qUPz4Q2jOi6EudZyZpLai3Ujd4NkWZsBXpfttOPyaUi/fO+JX+fzH5i+jc
+         icZ+H55j+LYgHnYyCT/8Wq3CRakvbuaUSWkpnrZ8vPxKliFgk79dG9yMrkH0OiQMV7/A
+         dgcovcZ8hCWWjE1JHg8gjGuPqN9VKz0J8Xe56huTYb61LCrzKel6/Yl24vwcDMCcQKDf
+         BLd7haQjUftRSO+9sUqs3Eno2RTbkwu4rnI55pdXWT3JDNnln981CcRZq/Kd2W0p+YxG
+         Y7Cwt06zNErLLPdWEiQ9Ec2yNZaN7l/slFh0G99w/ny3p21HvMpCSEm1V6TRK9qLPPH6
+         pL7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F3Z8ODmIuThf6qIMsRJ9IwagYSAnPtGl9RN+7VHHChg=;
-        b=BVMfdo+CNJi8nbWz7KKml47a5Goq8IzdzN0kmr9EBWQqncPfGlMzMqYUowBqKdGVeB
-         8qdt6Nv3z5pXjJ6szNvoLpLjfjntkeIHN0cL1sAfyrHjvgNFHfpLdXJbNN8mI0xIrz+O
-         aRJ1MnkGgFn6Spd4pH1LFcH8ipprfkPUprraD3Nvpkr1XLOu3YFbIJla7NWEIlFA5RRd
-         XN2B8/PvPhBU+LzACo3M7ruKrnk78u5CC7xqfIoHBCcyaJKZzvjv2IL+6fcxtfvUse11
-         5VqHPUqaRUbuOIHDSzp9LZ1KfAtJJ11rJDqgbNu57uh6IEdIdA/vZPbjYkrCzVJQ33mt
-         1cIA==
-X-Gm-Message-State: APjAAAU9IjvhyNawQP2RDl2yx19ZZI1iChyKlUqO6Z5IsyuoFh1h2KBO
-        oTn1wYTf1WuRwKBNnJXS8Ro=
-X-Google-Smtp-Source: APXvYqzGrhEv1gxKVd1/9J9mYvxXMWJHhzWdHoqmqPs9JYDKKxlkOivbY+dTn6S37VhKMXYfjeiwoA==
-X-Received: by 2002:aed:2d67:: with SMTP id h94mr10495706qtd.154.1562607099035;
-        Mon, 08 Jul 2019 10:31:39 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:fa50])
-        by smtp.gmail.com with ESMTPSA id m44sm8984785qtm.54.2019.07.08.10.31.38
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QjUEkPv4P+Cy2J8UDrDe7tC4X9k/PrOqSnXPrXrMZ0o=;
+        b=UpswYZWr+w2wVmFn+P9uL+xzZiQ1JBDX5D8ZY9x4VBd5wr3DYMl/CnW0PalrLQL/n/
+         8rx6UtpxWTFxC88oWJGW5TsHr4NnB1eJA/HFJNTFIngSxv28bR5IO0wGmpfvzKNlmxgH
+         1U0gkPk5oCGq/QB1yV1QAJVfbxS+7PqgTAKk78hTo286EVdwVJyiZ7KrPQDpBW7H/v/s
+         HTj++k7VGM+Hn6PZfH1lBi//pNK/aWMl6E97f9ZnLTHdSbwDp08Z6tI0BnfdmDttRVve
+         pLALj+6cSpr+knDlZpQ5dmNsCtEx9fZmpccDowKc0Ru+diib8gccz2Id3AwHz2Ci2zkD
+         lyKA==
+X-Gm-Message-State: APjAAAWa/qUj9fbli1Xkn9luxJhyADIN+gsLnw25FTrA1iu/T3EsSnDj
+        51dFj85xUdeTPJsFdmIwC8Ek/+jl
+X-Google-Smtp-Source: APXvYqyDtH5XEv0eDy+zBirZWyA+V6EBbNsJFDgWLiV0z5QhjjEBc3y33bzuvYg3Y7d9hp/Lrxz9ug==
+X-Received: by 2002:a17:90a:cb12:: with SMTP id z18mr26151131pjt.82.1562607123901;
+        Mon, 08 Jul 2019 10:32:03 -0700 (PDT)
+Received: from ?IPv6:2405:4800:58c7:1881:3232:ec6:81a5:864b? ([2405:4800:58c7:1881:3232:ec6:81a5:864b])
+        by smtp.gmail.com with ESMTPSA id c5sm13926328pgq.80.2019.07.08.10.32.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 10:31:38 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 10:31:37 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Peng Wang <rocking@whu.edu.cn>,
-        "lizefan@huawei.com" <lizefan@huawei.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cgroup: minor tweak for logic to get cgroup css
-Message-ID: <20190708173137.GH657710@devbig004.ftw2.facebook.com>
-References: <20190703020749.22988-1-rocking@whu.edu.cn>
- <20190708164243.GE657710@devbig004.ftw2.facebook.com>
- <20190708172944.GA24662@tower.DHCP.thefacebook.com>
+        Mon, 08 Jul 2019 10:32:03 -0700 (PDT)
+Cc:     linux-kernel@vger.kernel.org, tranmanphong@gmail.com,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/90] 4.19.58-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20190708150521.829733162@linuxfoundation.org>
+From:   Phong Tran <tranmanphong@gmail.com>
+Message-ID: <dc42cab7-d124-e4bf-2ddc-0d57cc338662@gmail.com>
+Date:   Tue, 9 Jul 2019 00:31:59 +0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708172944.GA24662@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190708150521.829733162@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 05:29:49PM +0000, Roman Gushchin wrote:
-> On Mon, Jul 08, 2019 at 09:42:43AM -0700, Tejun Heo wrote:
-> > On Wed, Jul 03, 2019 at 10:07:49AM +0800, Peng Wang wrote:
-> > > We could only handle the case that css exists
-> > > and css_try_get_online() fails.
-> > 
-> > As css_tryget_online() can't handle NULL input, this is a bug fix.
-> > Can you please clarify that in the description?
+Hi Greg,
+
+On 7/8/19 10:12 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.58 release.
+> There are 90 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> -       if (!css || !css_tryget_online(css))
-> +       if (css && !css_tryget_online(css))
+> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
+> Anything received after that time might be too late.
 > 
-> If css == NULL, !css is true, and the second part of the || statement
-> will not be evaluated. So it's not a bug fix.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.58-rc1.gz
 
-Ah right, it's just confusing.  Will apply after the merge window.
 
-Thanks.
+compile and boot fine with  qemu-system-riscv64 -nographic -machine virt 
+      -kernel riscv-pk/build/bbl -append "root=/dev/vda ro 
+console=/dev/ttyS0"      -drive 
+file=busybear-linux/busybear.bin,format=raw,id=hd0      -device 
+virtio-blk-device,drive=hd0
 
--- 
-tejun
+
+root@(none):~# uname -a
+Linux (none) 4.19.58-rc1-00091-gc4064b656955 #3 SMP Tue Jul 9 00:25:27 
++07 2019 riscv64 GNU/Linux
+root@(none):~# cat /proc/cpuinfo
+hart	: 0
+isa	: rv64imafdcsu
+mmu	: sv48
+
+Regards,
+Phong.
