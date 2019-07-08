@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B6662172
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30492624DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732534AbfGHPQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:16:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39170 "EHLO mail.kernel.org"
+        id S2387694AbfGHPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:20:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730447AbfGHPQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:16:15 -0400
+        id S2387656AbfGHPUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:20:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA05F2166E;
-        Mon,  8 Jul 2019 15:16:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC47A2182B;
+        Mon,  8 Jul 2019 15:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562598975;
-        bh=aYAo/xr3vWfROcvFgtq0lwGDp0XPObai2tK1AZ7l1R4=;
+        s=default; t=1562599250;
+        bh=lXgYJ88QjOuOoYufTSd5UBKHmsWzYrpuGVb1Luvt/P0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SOSdp4wLFTRs6ii4fwhq+If4r++4X5HJXq11vS4X9bxvYiRUOJstp1FewhojZhWF1
-         D66H5Qpj5DgToiCBsGNvysZstwjTEdVFQUaoQaahP1kBKQRGaExH+c+xpEMba44L+T
-         42u8uayXgOFYw2d9ZnCZGb4UWGPyJ+MevUpFkABY=
+        b=tHFKlfurHW1qWXoR0GEVYkFz7WDLzEjTEr5d6r3suORi7KzEOljVfUgmwq+kAnNV3
+         6ad0vLDU1BTGVCWYXhT65uaeHjmEwVqamMBbxucr+BixB9LC8kuRnwEReWyYlRUXSm
+         3Dn5hbfA63uD0B/wNrFjz/temhJt9RJ8scaLNO4E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
-Subject: [PATCH 4.4 37/73] ovl: modify ovl_permission() to do checks on two inodes
+        stable@vger.kernel.org,
+        syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com,
+        syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 054/102] sctp: change to hold sk after auth shkey is created successfully
 Date:   Mon,  8 Jul 2019 17:12:47 +0200
-Message-Id: <20190708150523.283666939@linuxfoundation.org>
+Message-Id: <20190708150529.248380860@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
-References: <20190708150513.136580595@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+References: <20190708150525.973820964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,66 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit c0ca3d70e8d3cf81e2255a217f7ca402f5ed0862 upstream.
+[ Upstream commit 25bff6d5478b2a02368097015b7d8eb727c87e16 ]
 
-Right now ovl_permission() calls __inode_permission(realinode), to do
-permission checks on real inode and no checks are done on overlay inode.
+Now in sctp_endpoint_init(), it holds the sk then creates auth
+shkey. But when the creation fails, it doesn't release the sk,
+which causes a sk defcnf leak,
 
-Modify it to do checks both on overlay inode as well as underlying inode.
-Checks on overlay inode will be done with the creds of calling task while
-checks on underlying inode will be done with the creds of mounter.
+Here to fix it by only holding the sk when auth shkey is created
+successfully.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-[ Srivatsa: 4.4.y backport:
-  - Skipped the hunk modifying non-existent function ovl_get_acl()
-  - Adjusted the error path
-  - Included linux/cred.h to get prototype for revert_creds() ]
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+Fixes: a29a5bd4f5c3 ("[SCTP]: Implement SCTP-AUTH initializations.")
+Reported-by: syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com
+Reported-by: syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/overlayfs/inode.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/sctp/endpointola.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -9,6 +9,7 @@
+--- a/net/sctp/endpointola.c
++++ b/net/sctp/endpointola.c
+@@ -125,10 +125,6 @@ static struct sctp_endpoint *sctp_endpoi
+ 	/* Initialize the bind addr area */
+ 	sctp_bind_addr_init(&ep->base.bind_addr, 0);
  
- #include <linux/fs.h>
- #include <linux/slab.h>
-+#include <linux/cred.h>
- #include <linux/xattr.h>
- #include "overlayfs.h"
+-	/* Remember who we are attached to.  */
+-	ep->base.sk = sk;
+-	sock_hold(ep->base.sk);
+-
+ 	/* Create the lists of associations.  */
+ 	INIT_LIST_HEAD(&ep->asocs);
  
-@@ -91,6 +92,7 @@ int ovl_permission(struct inode *inode,
- 	struct ovl_entry *oe;
- 	struct dentry *alias = NULL;
- 	struct inode *realinode;
-+	const struct cred *old_cred;
- 	struct dentry *realdentry;
- 	bool is_upper;
- 	int err;
-@@ -143,7 +145,18 @@ int ovl_permission(struct inode *inode,
- 			goto out_dput;
- 	}
+@@ -165,6 +161,10 @@ static struct sctp_endpoint *sctp_endpoi
+ 	ep->auth_chunk_list = auth_chunks;
+ 	ep->prsctp_enable = net->sctp.prsctp_enable;
  
-+	/*
-+	 * Check overlay inode with the creds of task and underlying inode
-+	 * with creds of mounter
-+	 */
-+	err = generic_permission(inode, mask);
-+	if (err)
-+		goto out_dput;
++	/* Remember who we are attached to.  */
++	ep->base.sk = sk;
++	sock_hold(ep->base.sk);
 +
-+	old_cred = ovl_override_creds(inode->i_sb);
- 	err = __inode_permission(realinode, mask);
-+	revert_creds(old_cred);
-+
- out_dput:
- 	dput(alias);
- 	return err;
+ 	return ep;
+ 
+ nomem_hmacs:
 
 
