@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 331906223D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8A06623DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388252AbfGHPXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50846 "EHLO mail.kernel.org"
+        id S2389763AbfGHPb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:31:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731166AbfGHPXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:42 -0400
+        id S1732229AbfGHPb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:31:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07925204EC;
-        Mon,  8 Jul 2019 15:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD24620665;
+        Mon,  8 Jul 2019 15:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599421;
-        bh=9L0SttTa0BIq1Uf+MGhfQMvOxZrYpehlrhdYX9je6l8=;
+        s=default; t=1562599887;
+        bh=ONtoK3BXZ/toMaRLrlTctSDqZ492BitQ+Z3AMHfxM84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h/woEQIty6LoQIiOZZmD5m/96GVvyHlzuuLM4/AGMNGUa0smJnWw2TtOlMUSpQY15
-         jVwXfBF8JURMBFfxNr+opHXD4jRCeflLSrsQ2+lca5OBpXYfwMuLLbuBjmkVUE9GSi
-         8EDX832M5gL11R7XDqf0ilnFyxcQPDJGe9Xk5T0E=
+        b=F7BTSWC8ktSNbLI2FlQxdg5p2GbouLYKyXJHpSIBCBR4+yxkkOYzZXznzwhOrp2m8
+         1pFflH2DEJ7xXaQeCZq+1tzjKetvez4Cb5H3k7HEaMxAJRtHmxoiWlS15O86yngW37
+         v3PRnXnivnWJvPUwGvWr2R/aDgGGxBBSJQZ7K+io=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Flax <flatmax@flatmax.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 02/56] ASoC : cs4265 : readable register too low
+        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 22/96] drm/mediatek: clear num_pipes when unbind driver
 Date:   Mon,  8 Jul 2019 17:12:54 +0200
-Message-Id: <20190708150517.052324446@linuxfoundation.org>
+Message-Id: <20190708150527.653822146@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
-References: <20190708150514.376317156@linuxfoundation.org>
+In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
+References: <20190708150526.234572443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f3df05c805983427319eddc2411a2105ee1757cf ]
+[ Upstream commit a4cd1d2b016d5d043ab2c4b9c4ec50a5805f5396 ]
 
-The cs4265_readable_register function stopped short of the maximum
-register.
+num_pipes is used for mutex created in mtk_drm_crtc_create(). If we
+don't clear num_pipes count, when rebinding driver, the count will
+be accumulated. From mtk_disp_mutex_get(), there can only be at most
+10 mutex id. Clear this number so it starts from 0 in every rebind.
 
-An example bug is taken from :
-https://github.com/Audio-Injector/Ultra/issues/25
-
-Where alsactl store fails with :
-Cannot read control '2,0,0,C Data Buffer,0': Input/output error
-
-This patch fixes the bug by setting the cs4265 to have readable
-registers up to the maximum hardware register CS4265_MAX_REGISTER.
-
-Signed-off-by: Matt Flax <flatmax@flatmax.org>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/cs4265.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
-index 6e8eb1f5a041..bed64723e5d9 100644
---- a/sound/soc/codecs/cs4265.c
-+++ b/sound/soc/codecs/cs4265.c
-@@ -60,7 +60,7 @@ static const struct reg_default cs4265_reg_defaults[] = {
- static bool cs4265_readable_register(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
--	case CS4265_CHIP_ID ... CS4265_SPDIF_CTL2:
-+	case CS4265_CHIP_ID ... CS4265_MAX_REGISTER:
- 		return true;
- 	default:
- 		return false;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 8718d123ccaa..bbfe3a464aea 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -400,6 +400,7 @@ static void mtk_drm_unbind(struct device *dev)
+ 	drm_dev_unregister(private->drm);
+ 	mtk_drm_kms_deinit(private->drm);
+ 	drm_dev_put(private->drm);
++	private->num_pipes = 0;
+ 	private->drm = NULL;
+ }
+ 
 -- 
 2.20.1
 
