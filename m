@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10E586249B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9459621AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2019 17:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbfGHPXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 11:23:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50118 "EHLO mail.kernel.org"
+        id S1733050AbfGHPSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 11:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388144AbfGHPXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:23:11 -0400
+        id S1733027AbfGHPS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 11:18:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70E9B204EC;
-        Mon,  8 Jul 2019 15:23:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56F5C216C4;
+        Mon,  8 Jul 2019 15:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562599390;
-        bh=fYiUsu4wzAHAeLPGcXP9HexqGaEUj1/KrAmDgh4Lwl8=;
+        s=default; t=1562599106;
+        bh=ChJGXPZW5+ab7V9V6J/vKor5vqH2dXwhMNFmBatqo+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6+D6u10p2AjlOTDkJ4uvLK7ospfaHpUQM1NkpBYmpyr1uHqmPqgyKYfEt0RWnL9t
-         aFeVj72zRZz4NBXXZqUwe2W5qwipSqAaovw0jmEBzhVyvbb7hcE6oqr7nG65Lngusp
-         Ewfh9mi7Sandru0BsSMw1rTRPtZBJwSSDpmlPAfA=
+        b=0S4oy47+JssXQ6i0tuXFgizJVDFbhGOauRpfk2g4jtpeiZWJTdI+pOJ3Hf5lSwDL5
+         QgLxGqmDk7Rc1eFH1rBNQ3vuWPEWLZ8uIntPC7sv2p5BUZKDsjYKBsNkchRM69CrW3
+         ZvPFV+VXXd/fX0ln2tir3f+RCIe3yD3y/IsIiC24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 089/102] ALSA: firewire-lib/fireworks: fix miss detection of received MIDI messages
-Date:   Mon,  8 Jul 2019 17:13:22 +0200
-Message-Id: <20190708150531.071686088@linuxfoundation.org>
+        stable@vger.kernel.org, Robin Gong <yibin.gong@nxp.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Michael Olbrich <m.olbrich@pengutronix.de>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.4 73/73] dmaengine: imx-sdma: remove BD_INTR for channel0
+Date:   Mon,  8 Jul 2019 17:13:23 +0200
+Message-Id: <20190708150525.081783641@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
-References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150513.136580595@linuxfoundation.org>
+References: <20190708150513.136580595@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Robin Gong <yibin.gong@nxp.com>
 
-commit 7fbd1753b64eafe21cf842348a40a691d0dee440 upstream.
+commit 3f93a4f297961c12bb17aa16cb3a4d1291823cae upstream.
 
-In IEC 61883-6, 8 MIDI data streams are multiplexed into single
-MIDI conformant data channel. The index of stream is calculated by
-modulo 8 of the value of data block counter.
+It is possible for an irq triggered by channel0 to be received later
+after clks are disabled once firmware loaded during sdma probe. If
+that happens then clearing them by writing to SDMA_H_INTR won't work
+and the kernel will hang processing infinite interrupts. Actually,
+don't need interrupt triggered on channel0 since it's pollling
+SDMA_H_STATSTOP to know channel0 done rather than interrupt in
+current code, just clear BD_INTR to disable channel0 interrupt to
+avoid the above case.
+This issue was brought by commit 1d069bfa3c78 ("dmaengine: imx-sdma:
+ack channel 0 IRQ in the interrupt handler") which didn't take care
+the above case.
 
-In fireworks, the value of data block counter in CIP header has a quirk
-with firmware version v5.0.0, v5.7.3 and v5.8.0. This brings ALSA
-IEC 61883-1/6 packet streaming engine to miss detection of MIDI
-messages.
-
-This commit fixes the miss detection to modify the value of data block
-counter for the modulo calculation.
-
-For maintainers, this bug exists since a commit 18f5ed365d3f ("ALSA:
-fireworks/firewire-lib: add support for recent firmware quirk") in Linux
-kernel v4.2. There're many changes since the commit.  This fix can be
-backported to Linux kernel v4.4 or later. I tagged a base commit to the
-backport for your convenience.
-
-Besides, my work for Linux kernel v5.3 brings heavy code refactoring and
-some structure members are renamed in 'sound/firewire/amdtp-stream.h'.
-The content of this patch brings conflict when merging -rc tree with
-this patch and the latest tree. I request maintainers to solve the
-conflict to replace 'tx_first_dbc' with 'ctx_data.tx.first_dbc'.
-
-Fixes: df075feefbd3 ("ALSA: firewire-lib: complete AM824 data block processing layer")
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 1d069bfa3c78 ("dmaengine: imx-sdma: ack channel 0 IRQ in the interrupt handler")
+Cc: stable@vger.kernel.org #5.0+
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
+Tested-by: Sven Van Asbroeck <thesven73@gmail.com>
+Reviewed-by: Michael Olbrich <m.olbrich@pengutronix.de>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/amdtp-am824.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/imx-sdma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/amdtp-am824.c
-+++ b/sound/firewire/amdtp-am824.c
-@@ -388,7 +388,7 @@ static void read_midi_messages(struct am
- 	u8 *b;
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -614,7 +614,7 @@ static int sdma_load_script(struct sdma_
+ 	spin_lock_irqsave(&sdma->channel_0_lock, flags);
  
- 	for (f = 0; f < frames; f++) {
--		port = (s->data_block_counter + f) % 8;
-+		port = (8 - s->tx_first_dbc + s->data_block_counter + f) % 8;
- 		b = (u8 *)&buffer[p->midi_position];
+ 	bd0->mode.command = C0_SETPM;
+-	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
++	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
+ 	bd0->mode.count = size / 2;
+ 	bd0->buffer_addr = buf_phys;
+ 	bd0->ext_buffer_addr = address;
+@@ -883,7 +883,7 @@ static int sdma_load_context(struct sdma
+ 	context->gReg[7] = sdmac->watermark_level;
  
- 		len = b[0] - 0x80;
+ 	bd0->mode.command = C0_SETDM;
+-	bd0->mode.status = BD_DONE | BD_INTR | BD_WRAP | BD_EXTD;
++	bd0->mode.status = BD_DONE | BD_WRAP | BD_EXTD;
+ 	bd0->mode.count = sizeof(*context) / 4;
+ 	bd0->buffer_addr = sdma->context_phys;
+ 	bd0->ext_buffer_addr = 2048 + (sizeof(*context) / 4) * channel;
 
 
