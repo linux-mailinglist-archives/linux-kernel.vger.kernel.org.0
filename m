@@ -2,69 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1467D634D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0714634DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfGILVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 07:21:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49838 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfGILVu (ORCPT
+        id S1726721AbfGILYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 07:24:00 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44742 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfGILYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 07:21:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jD6kJP1W3EItQJ+7NNHoZaZ3Nsj5zGBFCoAMXOtbtkc=; b=PMXEfxna18N7zoPtVghvBrl82
-        6CkURbmbsnlWPeKpUv8cQ0w5J7tX+k7iuusTSIBL3JVnKeIQCAnaVa+XdZClEXxIB8bdThXlz179v
-        lntKfy3styjyfDlHqBP7ulfChcswyUC9neH2NAmWDhMQDMD1x55IORK+C2Hr79YpdWu/4dpJt9Gwm
-        kRrEtsQHjzUijSV8oGHJIuQzuG5JOC1DUnQHHxIAxUrqnnDWcgWaYSh00zS+KwMdkoulU0Zs3HEVN
-        JwjrAucNjUS2tvA1l7kClQV+NSnVKEcWBOe5tIjrphQLqs+RCKC5aUL5C73Vly1RoapBtXGB/v6kL
-        nwgIcXK2A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkoBk-000168-UK; Tue, 09 Jul 2019 11:21:36 +0000
-Date:   Tue, 9 Jul 2019 04:21:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: Re: Procedure questions - new filesystem driver..
-Message-ID: <20190709112136.GI32320@bombadil.infradead.org>
-References: <21080.1562632662@turing-police>
- <20190709045020.GB23646@mit.edu>
+        Tue, 9 Jul 2019 07:24:00 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x69BNlHP023028;
+        Tue, 9 Jul 2019 06:23:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562671427;
+        bh=b8hnSaDtAsosEIqS3Wtlk/YzhxSQT2YsI/k+98clIo4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=pAXArl2RZan427WEUzWy9FensFk4A0hpvp9/x8sbuF1yxrtUBLgCbUTKad7XwGZNf
+         TqwzAlaNy9ga3jmP4K7U+LemryiE61ZvgIefs6CvPvKfpcTiyUWrWF5VHcwQWL7Spb
+         pwr0Ui2qd4Km4UgVISbtWeSe1wE3RDPm8ER/MX0Y=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x69BNlV0097963
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 9 Jul 2019 06:23:47 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 9 Jul
+ 2019 06:23:47 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 9 Jul 2019 06:23:47 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x69BNeuB048589;
+        Tue, 9 Jul 2019 06:23:41 -0500
+Subject: Re: [PATCH] PCI: dwc: pci-dra7xx: Add missing include file
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        YueHaibing <yuehaibing@huawei.com>
+CC:     <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20190614154044.4972-1-yuehaibing@huawei.com>
+ <20190705152905.GA6284@e121166-lin.cambridge.arm.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <619055c4-7d18-a77e-f7c6-267e4340bc4e@ti.com>
+Date:   Tue, 9 Jul 2019 16:52:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709045020.GB23646@mit.edu>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190705152905.GA6284@e121166-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 12:50:20AM -0400, Theodore Ts'o wrote:
-> How have you dealt with the patent claims which Microsoft has
-> asserted[1] on the exFAT file system design?
-> 
-> [1] https://www.microsoft.com/en-us/legal/intellectualproperty/mtl/exfat-licensing.aspx
-> 
-> I am not making any claims about the validity of Microsoft's patent
-> assertions on exFAT, one way or another.  But it might be a good idea
-> for some laywers from the Linux Foundation to render some legal advice
-> to their employees (namely Greg K-H and Linus Torvalds) regarding the
-> advisability of taking exFAT into the official Linux tree.
-> 
-> Personally, if Microsoft is going to be unfriendly about not wanting
-> others to use their file system technology by making patent claims,
-> why should we reward them by making their file system better by
-> improvings its interoperability?  (My personal opinion only.)
 
-How does
-https://www.zdnet.com/article/microsoft-open-sources-its-entire-patent-portfolio/
-change your personal opinion?
+
+On 05/07/19 8:59 PM, Lorenzo Pieralisi wrote:
+> On Fri, Jun 14, 2019 at 11:40:44PM +0800, YueHaibing wrote:
+>> Fix build error:
+>>
+>> drivers/pci/controller/dwc/pci-dra7xx.c:
+>>  In function dra7xx_pcie_probe:
+>> drivers/pci/controller/dwc/pci-dra7xx.c:777:10:
+>>  error: implicit declaration of function devm_gpiod_get_optional;
+>>  did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
+>>
+>>   reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
+> 
+> Adding the reason (in particular the config options) that triggers
+> this error would not hurt.
+> 
+> Kishon please let me know if I can merge it (ACK it if so).
+
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> Thanks,
+> Lorenzo
+> 
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/pci/controller/dwc/pci-dra7xx.c | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> 
+>>
+>> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+>> index 419451e..4234ddb 100644
+>> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+>> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+>> @@ -26,6 +26,7 @@
+>>  #include <linux/types.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/regmap.h>
+>> +#include <linux/gpio/consumer.h>
+>>  
+>>  #include "../../pci.h"
+>>  #include "pcie-designware.h"
+>> -- 
+>> 2.7.4
+>>
+>>
