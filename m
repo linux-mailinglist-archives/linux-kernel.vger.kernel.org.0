@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6980C63A72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5657263A85
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfGISFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:05:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35882 "EHLO mail.kernel.org"
+        id S1727608AbfGISFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:05:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727407AbfGISFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:05:13 -0400
-Subject: Re: [GIT PULL] Power management updates for v5.3-rc1
+        id S1727395AbfGISFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:05:12 -0400
+Subject: Re: [GIT PULL] EDAC driver changes for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562695512;
-        bh=JXFlGuoJXpneeEIC1DGQOldTVYNYQFEZ4HClAl0Zq6Y=;
+        s=default; t=1562695511;
+        bh=qszUkIfcBTyOQhKXVOSyQwkIUIByxv8jYBX0D7tdbwY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=2R/9EQI0jqaMfRBpti9I3/WhrPn0eydtZ30+RCt47segUyREPb973WxkhpR+KrtM2
-         7mbcCN1i6IU5Szsx6fK+2y5BZAdt9gd9weFI1GNuUDtsYmdlxouumTTmWzeyO4+cVh
-         dj2EBrQeRPUrEmShAMZP9Bjj4n/rICnTahuLPh3E=
+        b=S32nPDDsdOkYJ6qPvW7o38ru7MUY0je4IfBaE8ypoxPxiMbCJEAmAkOpXHnw7z2ZC
+         YdzNFJV2KiWle4vWAX0P/z3tqL87kRUrORVkTkT3xEZcCRftPAGY470G4rrYe1JpDo
+         ZRXAiuE195QeS4yB39bvoNZPYgERf/pLgse29Ano=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0jfQX=QmX9NFRu7M98=WjeVhSW4X0nTW93-MeB3FR1uWw@mail.gmail.com>
-References: <CAJZ5v0jfQX=QmX9NFRu7M98=WjeVhSW4X0nTW93-MeB3FR1uWw@mail.gmail.com>
+In-Reply-To: <20190708161550.GA23045@agluck-desk2.amr.corp.intel.com>
+References: <20190708161550.GA23045@agluck-desk2.amr.corp.intel.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0jfQX=QmX9NFRu7M98=WjeVhSW4X0nTW93-MeB3FR1uWw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc1
-X-PR-Tracked-Commit-Id: 586a07dca8c51b966960d1f0d8be9c27d7e0a95c
+X-PR-Tracked-Message-Id: <20190708161550.GA23045@agluck-desk2.amr.corp.intel.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
+ tags/please-pull-for_5.3
+X-PR-Tracked-Commit-Id: d8655e7630dafa88bc37f101640e39c736399771
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cf2d213e49fdf47e4c10dc629a3659e0026a54b8
-Message-Id: <156269551195.14383.18023006962596679738.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 947fbd4ca9fb38f320b076e68cfccab977c5ea01
+Message-Id: <156269551136.14383.16902388026142482452.pr-tracker-bot@kernel.org>
 Date:   Tue, 09 Jul 2019 18:05:11 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+To:     "Luck, Tony" <tony.luck@intel.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 8 Jul 2019 23:36:26 +0200:
+The pull request you sent on Mon, 8 Jul 2019 09:15:51 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/please-pull-for_5.3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cf2d213e49fdf47e4c10dc629a3659e0026a54b8
+https://git.kernel.org/torvalds/c/947fbd4ca9fb38f320b076e68cfccab977c5ea01
 
 Thank you!
 
