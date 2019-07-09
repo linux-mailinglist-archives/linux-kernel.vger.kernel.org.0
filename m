@@ -2,109 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0714634DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8211A634E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfGILYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 07:24:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:44742 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfGILYA (ORCPT
+        id S1726823AbfGIL0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 07:26:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55538 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfGIL0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 07:24:00 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x69BNlHP023028;
-        Tue, 9 Jul 2019 06:23:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562671427;
-        bh=b8hnSaDtAsosEIqS3Wtlk/YzhxSQT2YsI/k+98clIo4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pAXArl2RZan427WEUzWy9FensFk4A0hpvp9/x8sbuF1yxrtUBLgCbUTKad7XwGZNf
-         TqwzAlaNy9ga3jmP4K7U+LemryiE61ZvgIefs6CvPvKfpcTiyUWrWF5VHcwQWL7Spb
-         pwr0Ui2qd4Km4UgVISbtWeSe1wE3RDPm8ER/MX0Y=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x69BNlV0097963
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 9 Jul 2019 06:23:47 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 9 Jul
- 2019 06:23:47 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 9 Jul 2019 06:23:47 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x69BNeuB048589;
-        Tue, 9 Jul 2019 06:23:41 -0500
-Subject: Re: [PATCH] PCI: dwc: pci-dra7xx: Add missing include file
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        YueHaibing <yuehaibing@huawei.com>
-CC:     <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <20190614154044.4972-1-yuehaibing@huawei.com>
- <20190705152905.GA6284@e121166-lin.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <619055c4-7d18-a77e-f7c6-267e4340bc4e@ti.com>
-Date:   Tue, 9 Jul 2019 16:52:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190705152905.GA6284@e121166-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 9 Jul 2019 07:26:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A20F360214; Tue,  9 Jul 2019 11:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562671562;
+        bh=uKSWUAXdnQaxp8dsA2ymp5mDBfLzuxXNVt3rRqgqkp4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IkyJcM65zanwIs65zgg0OLmPOtdx8k0Kl1mIgrSkheulGVfq4LenSHX7rcjGHMORM
+         AmZHiu2xluCdtweGY5lm8EDVzA71w8BodrgLDLkIrnPjQTwURdH5lel3+qDRdRCPeR
+         MXGFKZpVu4n+uD7o4qAVfo8pPQGJttzXzMRKoV8E=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from neeraju-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: neeraju@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1EAEB605A5;
+        Tue,  9 Jul 2019 11:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562671561;
+        bh=uKSWUAXdnQaxp8dsA2ymp5mDBfLzuxXNVt3rRqgqkp4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jmG13T43GS/jFFdWzpUPiTLAFjmuznX7vquZYQSgRyvq5ihId4Omat8c3SPw2CFOY
+         LCEP1Fh6r/oHcryqnkxc17mbCVS6DtujcF9WPa5QSm92Xxxzp5Pbs8aq05PF2hszrp
+         Ad+CC20LrH3FalYL+kGITs5PFlequiZ/tTaxeowM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1EAEB605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
+From:   Neeraj Upadhyay <neeraju@codeaurora.org>
+To:     will@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com,
+        julien.thierry@arm.com, tglx@linutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, gkohli@codeaurora.org,
+        parthd@codeaurora.org, Neeraj Upadhyay <neeraju@codeaurora.org>
+Subject: [PATCH] arm64: Explicitly set pstate.ssbs for el0 on kernel entry
+Date:   Tue,  9 Jul 2019 16:52:13 +0530
+Message-Id: <1562671333-3563-1-git-send-email-neeraju@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For cpus which do not support pstate.ssbs feature, el0
+might not retain spsr.ssbs. This is problematic, if this
+task migrates to a cpu supporting this feature, thus
+relying on its state to be correct. On kernel entry,
+explicitly set spsr.ssbs, so that speculation is enabled
+for el0, when this task migrates to a cpu supporting
+ssbs feature. Restoring state at kernel entry ensures
+that el0 ssbs state is always consistent while we are
+in el1.
 
+As alternatives are applied by boot cpu, at the end of smp
+init, presence/absence of ssbs feature on boot cpu, is used
+for deciding, whether the capability is uniformly provided.
 
-On 05/07/19 8:59 PM, Lorenzo Pieralisi wrote:
-> On Fri, Jun 14, 2019 at 11:40:44PM +0800, YueHaibing wrote:
->> Fix build error:
->>
->> drivers/pci/controller/dwc/pci-dra7xx.c:
->>  In function dra7xx_pcie_probe:
->> drivers/pci/controller/dwc/pci-dra7xx.c:777:10:
->>  error: implicit declaration of function devm_gpiod_get_optional;
->>  did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
->>
->>   reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
-> 
-> Adding the reason (in particular the config options) that triggers
-> this error would not hurt.
-> 
-> Kishon please let me know if I can merge it (ACK it if so).
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+---
+ arch/arm64/kernel/cpu_errata.c | 16 ++++++++++++++++
+ arch/arm64/kernel/entry.S      | 26 +++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
 
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> 
-> Thanks,
-> Lorenzo
-> 
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/pci/controller/dwc/pci-dra7xx.c | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> 
->>
->> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
->> index 419451e..4234ddb 100644
->> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
->> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
->> @@ -26,6 +26,7 @@
->>  #include <linux/types.h>
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/regmap.h>
->> +#include <linux/gpio/consumer.h>
->>  
->>  #include "../../pci.h"
->>  #include "pcie-designware.h"
->> -- 
->> 2.7.4
->>
->>
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index ca11ff7..c84a56d 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -336,6 +336,22 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
+ 		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
+ }
+ 
++void __init arm64_restore_ssbs_state(struct alt_instr *alt,
++				     __le32 *origptr, __le32 *updptr,
++				     int nr_inst)
++{
++	BUG_ON(nr_inst != 1);
++	/*
++	 * Only restore EL0 SSBS state on EL1 entry if cpu does not
++	 * support the capability and capability is present for at
++	 * least one cpu and if the SSBD state allows it to
++	 * be changed.
++	 */
++	if (!this_cpu_has_cap(ARM64_SSBS) && cpus_have_cap(ARM64_SSBS) &&
++	    arm64_get_ssbd_state() != ARM64_SSBD_FORCE_ENABLE)
++		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
++}
++
+ void arm64_set_ssbd_mitigation(bool state)
+ {
+ 	if (!IS_ENABLED(CONFIG_ARM64_SSBD)) {
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 9cdc459..7e79305 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -143,6 +143,25 @@ alternative_cb_end
+ #endif
+ 	.endm
+ 
++	// This macro updates spsr. It also corrupts the condition
++	// codes state.
++	.macro	restore_ssbs_state, saved_spsr, tmp
++#ifdef CONFIG_ARM64_SSBD
++alternative_cb	arm64_restore_ssbs_state
++	b	.L__asm_ssbs_skip\@
++alternative_cb_end
++	ldr	\tmp, [tsk, #TSK_TI_FLAGS]
++	tbnz	\tmp, #TIF_SSBD, .L__asm_ssbs_skip\@
++	tst	\saved_spsr, #PSR_MODE32_BIT	// native task?
++	b.ne	.L__asm_ssbs_compat\@
++	orr	\saved_spsr, \saved_spsr, #PSR_SSBS_BIT
++	b	.L__asm_ssbs_skip\@
++.L__asm_ssbs_compat\@:
++	orr	\saved_spsr, \saved_spsr, #PSR_AA32_SSBS_BIT
++.L__asm_ssbs_skip\@:
++#endif
++	.endm
++
+ 	.macro	kernel_entry, el, regsize = 64
+ 	.if	\regsize == 32
+ 	mov	w0, w0				// zero upper 32 bits of x0
+@@ -182,8 +201,13 @@ alternative_cb_end
+ 	str	x20, [tsk, #TSK_TI_ADDR_LIMIT]
+ 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
+ 	.endif /* \el == 0 */
+-	mrs	x22, elr_el1
+ 	mrs	x23, spsr_el1
++
++	.if	\el == 0
++	restore_ssbs_state x23, x22
++	.endif
++
++	mrs	x22, elr_el1
+ 	stp	lr, x21, [sp, #S_LR]
+ 
+ 	/*
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
+
