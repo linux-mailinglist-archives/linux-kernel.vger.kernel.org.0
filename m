@@ -2,94 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63E85634C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F10634CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfGILJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 07:09:51 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37207 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfGILJu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 07:09:50 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w13so17376693eds.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 04:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gehOANnmao3oV9pvw/seZIFQrg9raLUC+jG0ZPx31LY=;
-        b=if2Hz2BqVzUt4QQgiVKhPFAHrTuSwx++ynxvI9kucQ/hCQ4NKAdcr3h0NAqK0eo5un
-         G/Zuzdg1MF00I42wSwHPQzZyeIZTe6WwKyWUwAWshEQpNeKym5rVtg8DtE+Tjxjrnvt4
-         0vF1LQDXFN4uzZ0zRtlCqwXhHErUGFemvAS+gIQf00lfJ6Dxs2Q+fJ8X7gL2lFurldC/
-         Aqmx1/AhtP2Mrps0BxvJrKCkO6EaEkXTNnTdMn3JC+Gm9fhnAdtOFMS1s9RS9nl43mPH
-         PGHNFdBqklG3CP02tCEGBpnXCPX7Y8SeBIIdgCiUG8TvG/UdKjyQpi/eTgzgwZdxhgd9
-         sT7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gehOANnmao3oV9pvw/seZIFQrg9raLUC+jG0ZPx31LY=;
-        b=cUJWgRh96DfAjiL5uHsgI38yYa/KZm0jIqBNhrX/skD8M30zZSS1XnDvasgj2Bu0PY
-         W9NEM3oxicXn0CjpEUVSIATYRHVza1NxkZiFG6+5BXHkAJ9cxUTYZgJSdrgvrmbtDOqE
-         wllsirPvJOQtlatSGp8EQn46pD0tv80PypE3Vymf6d/hmkSIZLqtsqNlINrIT44omvqn
-         2KpVj5uYoD0mm4ctqMUSXyKMrM9AAGIULyfVhG4cfKY/X8nSLV52jZuLyjyUZltOOWuu
-         jyjJR/s++X72aEmLUfNLPw5yTCD9OaCFQGu+U9zpZPeyenkvtejPQh1Ab+nZrMuuHYo7
-         BbZg==
-X-Gm-Message-State: APjAAAUMX3S4a+mJcX+plzELGw0PVpALWbDDNgmZPqyH+x1cj+9ayzHX
-        1ytxPnJAyMSF4gJ/smluz3FStA==
-X-Google-Smtp-Source: APXvYqwXkn8xyad1jqyqlkrPyOu0b8MAuKCEqbDbhML8lngOBJTEn5Yb2Bt3BRofTOjHR1UNC8MRJQ==
-X-Received: by 2002:a17:906:f91:: with SMTP id q17mr21051364ejj.297.1562670589083;
-        Tue, 09 Jul 2019 04:09:49 -0700 (PDT)
-Received: from maco2.ams.corp.google.com (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
-        by smtp.gmail.com with ESMTPSA id o21sm4494788edt.26.2019.07.09.04.09.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 04:09:48 -0700 (PDT)
-From:   Martijn Coenen <maco@android.com>
-To:     gregkh@linuxfoundation.org, john.stultz@linaro.org,
-        tkjos@google.com, arve@android.com, amit.pundir@linaro.org
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        maco@google.com, stable@vger.kernel.org,
-        Martijn Coenen <maco@android.com>
-Subject: [PATCH] binder: Set end of SG buffer area properly.
-Date:   Tue,  9 Jul 2019 13:09:23 +0200
-Message-Id: <20190709110923.220736-1-maco@android.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726411AbfGILQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 07:16:46 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:29726 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbfGILQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 07:16:45 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 58C4C37B3ABEEA91A434
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2019 19:16:43 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x69BEa6o016939
+        for <linux-kernel@vger.kernel.org>; Tue, 9 Jul 2019 19:14:36 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070919144690-2212250 ;
+          Tue, 9 Jul 2019 19:14:46 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH 0/2] fix use-after-free in mpc831x_usb_cfg() and do some cleanups
+Date:   Tue, 9 Jul 2019 19:12:46 +0800
+Message-Id: <1562670768-23178-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-09 19:14:47,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-09 19:14:39,
+        Serialize complete at 2019-07-09 19:14:39
+X-MAIL: mse-fl1.zte.com.cn x69BEa6o016939
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the target node requests a security context, the
-extra_buffers_size is increased with the size of the security context.
-But, that size is not available for use by regular scatter-gather
-buffers; make sure the ending of that buffer is marked correctly.
+Fix use-after-free in mpc831x_usb_cfg() and do some cleanups.
+According to Markus's suggestion, split it into two small patches:
+https://lkml.org/lkml/2019/7/8/520
 
-Acked-by: Todd Kjos <tkjos@google.com>
-Fixes: ec74136ded79 ("binder: create node flag to request sender's
-security context")
-Signed-off-by: Martijn Coenen <maco@android.com>
-Cc: stable@vger.kernel.org # 5.1+
----
- drivers/android/binder.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Wen Yang (2):
+  powerpc/83xx: fix use-after-free in mpc831x_usb_cfg()
+  powerpc/83xx: cleanup error paths in mpc831x_usb_cfg()
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 38a59a630cd4c..5bde08603fbc2 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3239,7 +3239,8 @@ static void binder_transaction(struct binder_proc *proc,
- 	buffer_offset = off_start_offset;
- 	off_end_offset = off_start_offset + tr->offsets_size;
- 	sg_buf_offset = ALIGN(off_end_offset, sizeof(void *));
--	sg_buf_end_offset = sg_buf_offset + extra_buffers_size;
-+	sg_buf_end_offset = sg_buf_offset + extra_buffers_size -
-+		ALIGN(secctx_sz, sizeof(u64));
- 	off_min = 0;
- 	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
- 	     buffer_offset += sizeof(binder_size_t)) {
+ arch/powerpc/platforms/83xx/usb.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.9.5
 
