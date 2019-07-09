@@ -2,105 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC9962D35
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 02:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4396362D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 03:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbfGIA6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 20:58:33 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:51432 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725935AbfGIA6c (ORCPT
+        id S1726701AbfGIBH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 21:07:57 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:26826 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfGIBH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 20:58:32 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x690wVaE028615
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Jul 2019 20:58:31 -0400
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x690wQFA018650
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Jul 2019 20:58:31 -0400
-Received: by mail-qt1-f197.google.com with SMTP id s22so17910089qtb.22
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 17:58:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=gzjvIBvyoxXf9yZx+IjvTDWM/EMMxHOR9DhJMARvWU4=;
-        b=PqLuGz8nhv3fHYlPYDc33PJO90b45LssCSRtyKBwcoj5kWIvsqJjxIl04FRlJr/0Kj
-         gxghC3VIKrEOKEobxJxC3nmFGllrtcULkieNeImjLZQQEWiuSWJr3vpibBnrRebiCiDO
-         ilcsL3D219Uaa6c5uS0159gh7QawJRIBjqCzlr5uBrumS9RMJqbN0xtQy6AkRVXuRKen
-         IzTEBRYaGfaFmN2zWwfoOX81gJo70PfJSXnminqnBZapwPOqcnGjvZn6UkltbJg0GCr4
-         S5AqzWJYCOpvJo7dwrU2GrzkTGVgkGxKDagiHOR9IFO9p830WawIslk+SqnS2zrZNoNo
-         S0jg==
-X-Gm-Message-State: APjAAAURupoTrN9U8qFZa71uFE75R8r4DgixGaZ0vD7J7YJwALfHFxuy
-        6wSSzP9aPGMdR97Bjkfuymc0xnAsLYtfNtgUDXzmiciReRgwmpsCkip3Uq8r3aY5KwaH3th6uVU
-        Yv7fcvoUFMmmGgWoFEuBVfiXMCwe/uSHpaOo=
-X-Received: by 2002:aed:3e7c:: with SMTP id m57mr16325648qtf.204.1562633906032;
-        Mon, 08 Jul 2019 17:58:26 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqysL21EgSuDTcXeor1Ws1wtBJMH7dhipNrrhZP3IsCALzATUekN4qK2xdB6CIFg63K4PfkUCw==
-X-Received: by 2002:aed:3e7c:: with SMTP id m57mr16325637qtf.204.1562633905878;
-        Mon, 08 Jul 2019 17:58:25 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::7ca])
-        by smtp.gmail.com with ESMTPSA id r40sm7679907qtk.2.2019.07.08.17.58.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 17:58:24 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: Re: Procedure questions - new filesystem driver..
-In-Reply-To: <20190709005220.GZ17978@ZenIV.linux.org.uk>
-References: <21080.1562632662@turing-police>
- <20190709005220.GZ17978@ZenIV.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1562633903_2389P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 08 Jul 2019 20:58:23 -0400
-Message-ID: <3099.1562633903@turing-police>
+        Mon, 8 Jul 2019 21:07:56 -0400
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6917aNE015671;
+        Tue, 9 Jul 2019 10:07:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6917aNE015671
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562634457;
+        bh=Oi+gJ4HjdFeJYGIhOMRbLASYMIcmJKxUKb0BC5utJb8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2n5CkPq4Drp9hqyl8EXSdGfcIVC/5h5DCr5xhvF9ZEf9FrRVRAPkHTLq8r1gT3eF5
+         1A3+QcCEiTo1G0+0erm6MjYheXIkn2HNUs+smuzipXKPXB0rv3uCxB9+Aep8trlFLS
+         lSE5j2qvmsnU452++kbGZh3x+U6cNVKYsDN+g4wnyuNAubzWAc0B8A0bGl5hLgNrrZ
+         KMFSed5LJk9VmKbDBvCx15L1DGkJH3WM9ivXiA8zMV76zt6q7qKOVOVDrZZiIn1p2p
+         zlCQcwGS+ckY9h/UC/jNJjTF3dTT37gtHZlwt3oiS7gBy38vmoUvL3AMGeU3q6MDl9
+         VbSoWv7G712cA==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id j2so5742102uaq.5;
+        Mon, 08 Jul 2019 18:07:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAXyqcdex+LcOt4n56IRt+KK/vFwygnviP8nETa3gtzj//l/WWFg
+        1aBiOcLJWYwDPaviByV89m2TrME9ehv26Vy3KXk=
+X-Google-Smtp-Source: APXvYqytdy+Rsj1ktWvl7YXRGUOeJJcZxpwUHQgkKNLEvfRVRLhEJTgLnhE0we6l52NZwC93vFQP8FceJKJd6vYz6No=
+X-Received: by 2002:ab0:234e:: with SMTP id h14mr1976914uao.25.1562634455710;
+ Mon, 08 Jul 2019 18:07:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190706162508.8529-1-yamada.masahiro@socionext.com> <20190708140223.39d15d56@lwn.net>
+In-Reply-To: <20190708140223.39d15d56@lwn.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 9 Jul 2019 10:06:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR50AdaOUZ9taD9rcD_mhKYR47YqWnxN0T9SbD9+j9vBA@mail.gmail.com>
+Message-ID: <CAK7LNAR50AdaOUZ9taD9rcD_mhKYR47YqWnxN0T9SbD9+j9vBA@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: get rid of misleading $(AS) from documents
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1562633903_2389P
-Content-Type: text/plain; charset=us-ascii
-
-On Tue, 09 Jul 2019 01:52:20 +0100, Al Viro said:
-> On Mon, Jul 08, 2019 at 08:37:42PM -0400, Valdis Klētnieks wrote:
-> > I have an out-of-tree driver for the exfat file system that I beaten into shape
-> > for upstreaming. The driver works, and passes sparse and checkpatch (except
-> > for a number of line-too-long complaints).
-> >
-> > Do you want this taken straight to the fs/ tree, or through drivers/staging?
+On Tue, Jul 9, 2019 at 5:02 AM Jonathan Corbet <corbet@lwn.net> wrote:
 >
-> First of all, post it...
+> On Sun,  7 Jul 2019 01:25:08 +0900
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>
+> > The assembler files in the kernel are *.S instead of *.s, so they must
+> > be preprocessed. Since 'as' of GNU binutils is not able to preprocess,
+> > we always use $(CC) as an assembler driver.
+> >
+> > $(AS) is almost unused in Kbuild. As of writing, there is just one place
+> > that directly invokes $(AS).
+> >
+> >   $ git grep -e '$(AS)' -e '${AS}' -e '$AS' -e '$(AS:' -e '${AS:' -- :^Documentation
+> >   drivers/net/wan/Makefile:  AS68K = $(AS)
+> >
+> > The documentation about *_AFLAGS* sounds like the flags were passed
+> > to $(AS). This is somewhat misleading.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> Would you like me to send this up through the docs tree?
 
-OK... Ill post it as if it's going in fs/ and if people disagree, I'll repost it for
-drivers/staging (once any other complaints have been corrected)...
+No, I will apply it to linux-kbuild shortly.
+
+Thanks.
 
 
---==_Exmh_1562633903_2389P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXSPmrgdmEQWDXROgAQKCHxAAurpyzrYfy7Qc1FjCJnO+WfvaWzgpnXOC
-tD2BSYOKhkrsKYl2phZvfPT+O4jbhq3dgSZ0z/ibewHPe4+9ePTaahxGArr0YZ1a
-eogU7nGc5RDE/PGQhfR/Aawk853YMxyDCZs5EWSjjR+gYbVCt2LsN6A2DcEMjPPt
-Af9/Qa3Jl8fkJIJgEd3Y7ysjmos+9caFDSvGC0n1xG3OgRHvyDkNFR32CbXsQQ/n
-gZT/D6HCzYkL8+x1b7jBD4Ow+tMolC00Itw+8Bn9hsvd6fVqWOH/gs2QatyPUzum
-2kbQmq6qHUNBr3qiDwwLyegBHvkzlX+pwZN9djGnKz313uxBZTQxJOQHTVjLJ5Ct
-AVwzYYGloc3eiGniTTWKLzO/KEe10UapSwhH0kVih1q4NKWHYXAewPMsfQssWPjZ
-dhcxSt5pKULnm3TCTM3oqcOuprx3FRzsR4GAKDy92H2tK6oqfuiJL3yLVWiUa6/v
-2BV6e6q3jq8CRwNuU1d1Ko6WOBfWFJXUd9ALsmg9JVlFpjmUZdhkD3oWeYOY0pV9
-1n5Ceyt3jOrxi58qyX1CQsA0lvYVUPYMmjvCjk68/pQ5TByMs6YF3A1CArihRPuP
-/kcD3GFFjx9WC2bmE+yaednjs/SEUBUHBKfGbJ7K3fCaBhJJHOASyuh+aRpn0zTF
-6zCXSRzm+bQ=
-=6ylh
------END PGP SIGNATURE-----
-
---==_Exmh_1562633903_2389P--
+-- 
+Best Regards
+Masahiro Yamada
