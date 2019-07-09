@@ -2,85 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714EB63130
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B30BD63136
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:48:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbfGIGq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:46:27 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:57850 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725832AbfGIGq0 (ORCPT
+        id S1726025AbfGIGso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:48:44 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37122 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfGIGso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:46:26 -0400
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.53 with ESMTP; 9 Jul 2019 15:46:24 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.125 with ESMTP; 9 Jul 2019 15:46:24 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Tue, 9 Jul 2019 15:45:31 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Message-ID: <20190709064531.GA15734@X58A-UD3R>
-References: <1562565609-12482-1-git-send-email-byungchul.park@lge.com>
- <20190708125013.GG26519@linux.ibm.com>
- <20190708130359.GA42888@google.com>
- <20190709055815.GA19459@X58A-UD3R>
+        Tue, 9 Jul 2019 02:48:44 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x696iJWS139709;
+        Tue, 9 Jul 2019 06:48:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=bKPTYTYFDEM18GaVLlsonaaA8WdGe2vNwwhUnfVmTxo=;
+ b=OCuEESWGRH6TLz9bsEuOM4kbfoSXjg8POFgn1nevaxmmB5b8zQfW8vbJTvo1ZMgKPHSg
+ 1LZGJkmfuc4/c3Yli6nq/+117hNGkvOXnPMUP5BW0XhPMVgmWmmixkBG5ZRlnJ7cg+Ws
+ WIo9QFzzbYJncNiP2CPXwZ1hTYKFkg3FqPfGdBIF+KTorskIn3NHXo+dLHkXiP97a6RF
+ TbPViBmFrfAVqrL/Ix9cJqUI5C/ntroDl4Hoq+3jqFdx6VXwOxBGtjTEtIQGDBmyQQWT
+ nj1LDht+PxyHf6FpYTECqrSS/B1BBWcoYnZhi7rcHlMvi1UTV9AICFDGTL8nGbB+jGr+ pg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2tjk2tjbct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 06:48:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x696ghJF165121;
+        Tue, 9 Jul 2019 06:46:00 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2tjgrtwq7x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 06:46:00 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x696jw2a021969;
+        Tue, 9 Jul 2019 06:45:58 GMT
+Received: from Subhras-MacBook-Pro.local (/103.217.243.158)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jul 2019 23:45:58 -0700
+Subject: Re: [RFC 0/2] Optimize the idle CPU search
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Parth Shah <parth@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        vincent.guittot@linaro.org
+References: <20190708045432.18774-1-parth@linux.ibm.com>
+ <20190708080836.GW3402@hirez.programming.kicks-ass.net>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <ebbe2d76-c8b5-e52f-897b-7bcbfe0d820a@oracle.com>
+Date:   Tue, 9 Jul 2019 12:15:53 +0530
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709055815.GA19459@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190708080836.GW3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9312 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907090081
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9312 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907090081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 02:58:16PM +0900, Byungchul Park wrote:
-> On Mon, Jul 08, 2019 at 09:03:59AM -0400, Joel Fernandes wrote:
-> > > Actually, the intent was to only allow this to be changed at boot time.
-> > > Of course, if there is now a good reason to adjust it, it needs
-> > > to be adjustable.  So what situation is making you want to change
-> > > jiffies_till_sched_qs at runtime?  To what values is it proving useful
-> > > to adjust it?  What (if any) relationships between this timeout and the
-> > > various other RCU timeouts need to be maintained?  What changes to
-> > > rcutorture should be applied in order to test the ability to change
-> > > this at runtime?
-> > 
-> > I am also interested in the context, are you changing it at runtime for
-> > experimentation? I recently was doing some performance experiments and it is
-> > quite interesting how reducing this value can shorten grace period times :)
-> 
-> Hi Joel,
-> 
-> I've read a thread talking about your experiment to see how the grace
-> periods change depending on the tunnable variables which was interesting
-> to me. While reading it, I found out jiffies_till_sched_qs is not
-> tunnable at runtime unlike jiffies_till_{first,next}_fqs which looks
-> like non-sense to me that's why I tried this patch. :)
-> 
-> Hi Paul,
-> 
-> IMHO, as much as we want to tune the time for fqs to be initiated, we
-> can also want to tune the time for the help from scheduler to start.
 
-Let me mention one more thing here...
+On 7/8/19 1:38 PM, Peter Zijlstra wrote:
+> On Mon, Jul 08, 2019 at 10:24:30AM +0530, Parth Shah wrote:
+>> When searching for an idle_sibling, scheduler first iterates to search for
+>> an idle core and then for an idle CPU. By maintaining the idle CPU mask
+>> while iterating through idle cores, we can mark non-idle CPUs for which
+>> idle CPU search would not have to iterate through again. This is especially
+>> true in a moderately load system
+>>
+>> Optimize idle CPUs search by marking already found non idle CPUs during
+>> idle core search. This reduces iteration count when searching for idle
+>> CPUs, resulting in lower iteration count.
+> Have you seen these patches:
+>
+>    https://lkml.kernel.org/r/20180530142236.667774973@infradead.org
+>
+> I've meant to get back to that, but never quite had the time :/
+The most relevant bit of this was folding select_idle_core and
+select_idle_cpu. But it may be good to keep them separate as workloads
+which just want any idle cpu can find one and break early by disabling
+the idle core search. And this can still work with latency-nice which can
+moderate both idle core and idle cpu search.
 
-This is about jiffies_till_sched_qs, I think, used to directly set
-jiffies_to_sched_qs.
-
-> I thought only difference between them is a level of urgency.
-
-Of course, they are coupled in case jiffies_to_sched_qs is calculated
-from jiffies_till_{first,next}_fqs though, I'm just talking about its
-original motivation or concept.
-
-Thanks,
-Byungchul
