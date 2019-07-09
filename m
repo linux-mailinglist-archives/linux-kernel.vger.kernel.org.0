@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC25B63B1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D4963AF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfGISdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:33:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfGISdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:33:05 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8EF720665;
-        Tue,  9 Jul 2019 18:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562697184;
-        bh=+AHHhdCKUtduEQJ0K9mVtwS+3cT8oze/CNUH/7f6WcY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qNlo2WDshInz0LxZHziyFOQ7IticF2B5seQoqdwNEkGwXb7NjkejRO2Kx6c49thQo
-         rBHeqnABe6q9slbHT66Dfoz0U9uQScNpFgsMSgWevK8Mhyzpo18byI7gnQSeLeYlFt
-         ontlmBoLOc1jbLxNSxMPktzZFaxgzFZLp4R7aj94=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/25] perf cs-etm: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Tue,  9 Jul 2019 15:31:20 -0300
-Message-Id: <20190709183126.30257-20-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190709183126.30257-1-acme@kernel.org>
-References: <20190709183126.30257-1-acme@kernel.org>
-MIME-Version: 1.0
+        id S1728987AbfGISbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:31:25 -0400
+Received: from mail-qt1-f174.google.com ([209.85.160.174]:46848 "EHLO
+        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfGISbY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:31:24 -0400
+Received: by mail-qt1-f174.google.com with SMTP id h21so20450309qtn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pB9dO1YoSFCBt5VqzlZlYrCP0I0wMvKymwW5GOWPpKE=;
+        b=jI8IubuELbmmKNncJfTqWmP+f9zvxt+ULoPrMyeL77bS9w8hq6YecHEc205qXD15al
+         9L85FNMg9SN4XHzK4g5mkKz6lpYGJ8YIV2//WPmbS6Q/wRkdjD/BUC7Y7dZk5FUbVQ61
+         AIABW8VOZ3wAPf7hDmV0DuHRLFxFG1ZDkt3aSzrD4Hi/eQ/rJO9ePJrOaJkbTEdHxt4u
+         KEnrcITkTc3ZpMgx4MDYtzz17UTuuAYY7+bMPHdu+3YNLpOuu85jY+suc3zhsY87Qbcx
+         kAGiv/l9M3R/sOOZHKY5k+VuhAlIayNg38swphmhtovOKnFIPwAv0SoNJhA2kAni1eTk
+         0b2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pB9dO1YoSFCBt5VqzlZlYrCP0I0wMvKymwW5GOWPpKE=;
+        b=mqImsYTyfX4iniVuo/Nk4JTA3vy/9qkGJC581pY0bKKzaxXqUQwoL0eIP+/0/ygjlu
+         j///h2T+5ciFHinLwzYC1+P+/ZYfNYegpCWxD/FhEbGZc/0RWUK4JF4QyuDERi3o+h6W
+         j4TjE9sF0Rtn1acO8Z1RMQvMzq9WkfGNOaLpS8KQqQawqxV88TtneAKUEAnIBQsrmfs4
+         D0mB/DYh8XbPOwaOtmv4G/J9RNcuE3PwO13P+FjYce0AIsW3uWrOvwqpK6v3WSQOLP2u
+         YZml3tFXzS65Ea7j4zFsjalGcEnkuZKZuo+1KlUqV8CdyUr6ZaL5aF3HptLSSAMGfNBy
+         zEAg==
+X-Gm-Message-State: APjAAAVR91IJbn/SEnjI+Q+ya3KrvcL2gV8PnFu0r9QaCvtlFumolDEr
+        Y8iWhG5YBYgrYn5V+z8tUOIhkQ==
+X-Google-Smtp-Source: APXvYqzQbs8wLB91EIFIdM/HDibRu80Gnv/0PS61jRGBz092aGBNDw1iOxO5ZeHzT1FrxgFLIIEKRw==
+X-Received: by 2002:a0c:91bc:: with SMTP id n57mr21158460qvn.141.1562697083769;
+        Tue, 09 Jul 2019 11:31:23 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id i16sm8864623qkk.1.2019.07.09.11.31.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2019 11:31:22 -0700 (PDT)
+Message-ID: <1562697081.8510.16.camel@lca.pw>
+Subject: Re: memory leaks from xfs_rw_bdev()
+From:   Qian Cai <cai@lca.pw>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     darrick.wong@oracle.com, david@fromorbit.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 09 Jul 2019 14:31:21 -0400
+In-Reply-To: <20190708213515.GB18177@lst.de>
+References: <1562616489.8510.15.camel@lca.pw>
+         <20190708213515.GB18177@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+On Mon, 2019-07-08 at 23:35 +0200, Christoph Hellwig wrote:
+> We actually have a discussion on that in another thread, but if you
+> can easily reproduce the issue, can you test the patch below?
+> 
+> diff --git a/fs/xfs/xfs_bio_io.c b/fs/xfs/xfs_bio_io.c
+> index 757c1d9293eb..e2148f2d5d6b 100644
+> --- a/fs/xfs/xfs_bio_io.c
+> +++ b/fs/xfs/xfs_bio_io.c
+> @@ -43,7 +43,7 @@ xfs_rw_bdev(
+>  			bio_copy_dev(bio, prev);
+>  			bio->bi_iter.bi_sector = bio_end_sector(prev);
+>  			bio->bi_opf = prev->bi_opf;
+> -			bio_chain(bio, prev);
+> +			bio_chain(prev, bio);
+>  
+>  			submit_bio(prev);
+>  		}
 
-Based on the following report from Smatch, fix the potential NULL
-pointer dereference check.
-
-  tools/perf/util/cs-etm.c:2545
-  cs_etm__process_auxtrace_info() error: we previously assumed
-  'session->itrace_synth_opts' could be null (see line 2541)
-
-  tools/perf/util/cs-etm.c
-  2541         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-  2542                 etm->synth_opts = *session->itrace_synth_opts;
-  2543         } else {
-  2544                 itrace_synth_opts__set_default(&etm->synth_opts,
-  2545                                 session->itrace_synth_opts->default_no_sample);
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2546                 etm->synth_opts.callchain = false;
-  2547         }
-
-'session->itrace_synth_opts' is impossible to be a NULL pointer in
-cs_etm__process_auxtrace_info(), thus this patch removes the NULL
-test for 'session->itrace_synth_opts'.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190708143937.7722-5-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 508e4a3ddc8c..67b88b599a53 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -2538,7 +2538,7 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 		return 0;
- 	}
- 
--	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-+	if (session->itrace_synth_opts->set) {
- 		etm->synth_opts = *session->itrace_synth_opts;
- 	} else {
- 		itrace_synth_opts__set_default(&etm->synth_opts,
--- 
-2.21.0
-
+Yes, it works fine.
