@@ -2,111 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBBDA63BEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:29:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 917A863BF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbfGIT25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 15:28:57 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38821 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfGIT25 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 15:28:57 -0400
-Received: by mail-qk1-f195.google.com with SMTP id a27so14177qkk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 12:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=qFPYMlatRmetzjaVywzD1EkupZI+i6KZ4Te6RX2Ssgg=;
-        b=IqFeC6lqXbdZ3dpbNj3MGYkWGyiAaZVTE68AzWEvPyH4U3Si1l43DWpa2CyOJzFxaD
-         MTb7VJKkn6UIHASdo7JQ9V9d4c1ythaZULvzJt7fggl/SvsAjJsRptHHGmEtgUTHnR+6
-         OATTQitRgXk6Rn1E3BoFgh0xNdo7Re5Rs+5ktOVDwndn3TPrmKBOVlsNXgxnxW9UnPPg
-         s71UovCRFpFCjJLBLX/b51pywqQafrbHj0UL9RUuvxaQ0hDEl8tPG6RBpvpnjQWJ1Zxu
-         j3l7IdDnFpLWU/SRTHiSySFYCwaTXSZqw1SI1koykt9u+S0WhVWFWLzl+KUSEZtqMue2
-         WVBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=qFPYMlatRmetzjaVywzD1EkupZI+i6KZ4Te6RX2Ssgg=;
-        b=ZkXfvllwIowa/6+iIax7/1+uuf6+6JZoh5EZIHE82HmLnD/YGwGzk2YFM0VCdSi4oS
-         U8qTZ1gPEln6ZpVQt+ae1VySePPTvoEQbjr7eYJLqPskRt7OTihOI4o19UCgcccBt4lp
-         ymsh98dwG0GxVYW37bdqLx2wYFRiH4HCcdvPPUGc2iEaf6Ydl/n2HW8WsSEYYwxUlSDR
-         +cjErbKd2OE23WovozC4YiKORh4MBK97jxuAM9rUGbUWiUrc1f80V7kPBSCAa4f5DjVX
-         XThKAaSxgrpbQfGbOy/BIcmzNHNnJU3LeSGT+Jb/ddwRdSuDIqjczscIc+SacRnB97Vj
-         qGng==
-X-Gm-Message-State: APjAAAU9OYUPZoTFqOZF+P5T0r8FHsK9BXdD8y2HjcQp/wyvyUdNL6EJ
-        IECSzcC6ghX0ASZbCRIwD7xHog==
-X-Google-Smtp-Source: APXvYqydueDl0D/JjLFTX2AApJcCgVVN/PpcndLlhFoKS7FDyH88DTIHJqagcA0jndtpPm4ifnljYg==
-X-Received: by 2002:ae9:f809:: with SMTP id x9mr20461177qkh.86.1562700535890;
-        Tue, 09 Jul 2019 12:28:55 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id c82sm8224941qkb.112.2019.07.09.12.28.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Jul 2019 12:28:55 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hkvnK-0003m5-Te; Tue, 09 Jul 2019 16:28:54 -0300
-Date:   Tue, 9 Jul 2019 16:28:54 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dag Moxnes <dag.moxnes@oracle.com>
-Cc:     dledford@redhat.com, leon@kernel.org, parav@mellanox.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] RDMA/core: Fix race when resolving IP address
-Message-ID: <20190709192854.GA14462@ziepe.ca>
-References: <1562673026-31996-1-git-send-email-dag.moxnes@oracle.com>
+        id S1729099AbfGITce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 15:32:34 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41957 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727248AbfGITc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 15:32:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 12:32:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,471,1557212400"; 
+   d="scan'208";a="317124773"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jul 2019 12:32:27 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hkvqk-0003hv-Dy; Wed, 10 Jul 2019 03:32:26 +0800
+Date:   Wed, 10 Jul 2019 03:32:24 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     kbuild-all@01.org, Grygorii Strashko <grygorii.strashko@ti.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [linux-next:master 13028/13492]
+ drivers/net/ethernet/ti/davinci_cpdma.c:725:5: sparse: sparse: symbol
+ 'cpdma_chan_split_pool' was not declared. Should it be static?
+Message-ID: <201907100329.bQl3UgMB%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1562673026-31996-1-git-send-email-dag.moxnes@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 01:50:26PM +0200, Dag Moxnes wrote:
-> Use the neighbour lock when copying the MAC address from the neighbour
-> data struct in dst_fetch_ha.
-> 
-> When not using the lock, it is possible for the function to race with
-> neigh_update(), causing it to copy an torn MAC address:
-> 
-> rdma_resolve_addr()
->   rdma_resolve_ip()
->     addr_resolve()
->       addr_resolve_neigh()
->         fetch_ha()
->           dst_fetch_ha()
-> 	     memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN)
-> 
-> and
-> 
-> net_ioctl()
->   arp_ioctl()
->     arp_rec_delete()
->       arp_invalidate()
->         neigh_update()
->           __neigh_update()
-> 	    memcpy(&neigh->ha, lladdr, dev->addr_len)
-> 
-> It is possible to provoke this error by calling rdma_resolve_addr() in a
-> tight loop, while deleting the corresponding ARP entry in another tight
-> loop.
-> 
-> Fixes: 51d45974515c ("infiniband: addr: Consolidate code to fetch neighbour hardware address from dst.")
-> Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> Reviewed-by: Parav Pandit <parav@mellanox.com>
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-> ---
->  drivers/infiniband/core/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   4608a726c66807c27bc7d91bdf8a288254e29985
+commit: 962fb618909ef64e0c89af5b79ba0fed910b78e3 [13028/13492] net: ethernet: ti: davinci_cpdma: allow desc split while down
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        git checkout 962fb618909ef64e0c89af5b79ba0fed910b78e3
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Applied to for-next, thanks
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Jason
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/net/ethernet/ti/davinci_cpdma.c:725:5: sparse: sparse: symbol 'cpdma_chan_split_pool' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
