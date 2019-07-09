@@ -2,93 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E61D63049
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1AD26304B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfGIGHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:07:04 -0400
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:56225 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfGIGHE (ORCPT
+        id S1726062AbfGIGIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:08:06 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43671 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfGIGIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:07:04 -0400
-Received: by mail-wm1-f53.google.com with SMTP id a15so1703790wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:07:02 -0700 (PDT)
+        Tue, 9 Jul 2019 02:08:06 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 16so18278501ljv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=5r7j4jcC3kETlGar58okHQ/hAZ22Gk6JgZUxbgvrRnk=;
-        b=rNAgDbmuKgNJZMynFbdggadet2LTtPAbaBIVeGU3d6qB9AsDBtuSA+WkzkGaN1VURm
-         rzKCHrxqPXHUZBbAzvytljp//FHhLpd2ATAbCrCDili2x5WOTMmE9psmF10wFwX27iVc
-         bmIb+HulS/ulHRjnz119s2vNPHcC+vopgpJbe5Qzu73c1R+HdiJogKlelAdFd2JZEEhC
-         AV93CS62fW1Fimf5OhwJQqt4wXZ0avXQCvfiT0MT22TRADM8+SSqc7RAXqrzUrJv+vy+
-         TGg7ld1wGFd8ViLHES0p3e6aOBCLzE0IppWsvpdSQ2we7M3I2eq5ptKv5J+IAYX+Hnv0
-         RWLw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lDoNVvD7C6FVcsC+DxIkAkGU9HfgXYwnu4pCiukVnKg=;
+        b=OrZHEjNOCtylYw84fC1KfxMdEzFsbZSw7fZg5zCvFhhJuUaGWEnLR27vQDCRcRwgaT
+         9GyynzHzhdcKF9exXfKzTxPRivGNDDjDGrbHHWgqDp0fBCifMmRFsbrgAx/c4xtRvn0J
+         i8nkczgxvAyBDj03wVyc96CnFZlm5En3admqzyz7Hseb3/h4PHpol8Yl8kB49PVpCafb
+         b8tmwfctMyTprU7brLnvzEAdL9ma9n/Ks1xhjt4RAsVDju+0399Q/LtE1JOFHM7Y6W3H
+         KfrxBZlKJRxcFS1uhvFnMjeWPr5e1nOQtbSgLJxuDN7/aIoAIUdA/esya9g2+p8ppoAH
+         Iulg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=5r7j4jcC3kETlGar58okHQ/hAZ22Gk6JgZUxbgvrRnk=;
-        b=k5N8LyI1wC5O56q9Ln6rvsdwIU/k4b0y+04/zv8uuFHGGkQQqhLwiWT0QD/ozfKB1X
-         vR75IomoJv89TM4aJ8DLrPDmfbUEfPp2RjZPTAu6AmhISuNTyXGG3b4aPDlo2XU4+07J
-         POfBoxaqTLva1MLpTUz29Ss/qwIycDfbeJt4iX1U1w+zly8lxr3jOz6TBm883fPytKwr
-         iePZCQ8KPZ4TO0o/J3qTKdWCyo2z1mw9z78FmmE98kAI+89sdWg1NJ5vpna3zkWokkhc
-         +nOnq3IGQa2azj0k/mg+8wvB9TBYk67fLfOJdpKIRE7/aSoUMJPhdXkYzGUSvgGezcMs
-         9oSg==
-X-Gm-Message-State: APjAAAUOmshUzitRasv8nP5ZBabqH8L/z1VHWKRGPcr5YfWkpfBfCuA8
-        CnJ5iRh2uzItgkR/wYbbBey4X0bm
-X-Google-Smtp-Source: APXvYqwvCleyOiwvTzur+ReFglm/fTj9nl+DjhubmesC7MQGjCOkskRAN2yIHeCqEBngA1moTaRh4w==
-X-Received: by 2002:a7b:c0d0:: with SMTP id s16mr20608500wmh.141.1562652421414;
-        Mon, 08 Jul 2019 23:07:01 -0700 (PDT)
-Received: from [192.168.1.20] ([213.122.212.45])
-        by smtp.googlemail.com with ESMTPSA id b186sm647263wmb.3.2019.07.08.23.07.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 23:07:00 -0700 (PDT)
-To:     LKML <linux-kernel@vger.kernel.org>
-From:   Chris Clayton <chris2553@googlemail.com>
-Subject: Warnings whilst building 5.2.0+
-Message-ID: <df7c7cfc-25cf-5b92-91ab-ac355b660233@googlemail.com>
-Date:   Tue, 9 Jul 2019 07:06:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lDoNVvD7C6FVcsC+DxIkAkGU9HfgXYwnu4pCiukVnKg=;
+        b=LB5GXv17D80EQfU8fuOoBCI24br5JDQswFVKRwuCI6VJZtYX/0VqOrZA5UdtcqmmOw
+         GHCqv6z14W039fcHbBsvTCiGoFJcOGP3FPGI+/yRDXBmmbvVyqa3Ujr0UiezdIY6RlMb
+         7pEL7TPvOxgREHaKSpS/sNaSqr4OzKqCYYZPJwvuvx0YcUq8H4SCHa8HW+nKVph9pYio
+         7SXQksqKLnSDnf6X0W6bOlzldGlwuAncqf/BYbI3Ey1y6h8YcyXUSQQsFUHj2bcSZ7RQ
+         NiQzWzgKu/wvinGGSwEh8Ohk3lgMXZQkkvXmt6VGn7VcVcl9rt9nFfPhksClgXvqN4gv
+         kxxQ==
+X-Gm-Message-State: APjAAAUaw7M/rd66eLVzl/WOhkvezhjk/FyzfgH7MnAkMBgZjrKo4XHX
+        Qm2xNMGcqg0FDqZ0yoqURkp54AB5dSJ1Sa5hWVU=
+X-Google-Smtp-Source: APXvYqw7hzD5rcX0X5fJY2QJLnYDxenhwuSWFlNbLQLOvrGptJ4aoCEzYA8ep7K7I8g3JFw2VbutLGsDMzyoEzAhBUE=
+X-Received: by 2002:a2e:92c6:: with SMTP id k6mr12837360ljh.148.1562652484113;
+ Mon, 08 Jul 2019 23:08:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190708123952.3341920-1-arnd@arndb.de>
+In-Reply-To: <20190708123952.3341920-1-arnd@arndb.de>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 9 Jul 2019 09:07:37 +0300
+Message-ID: <CAFCwf12rQ8Rgr37qPOrN7k0Ru+_jJk-XnXEOGi4Vhp0S8iZB+Q@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: use %pad for printing a dma_addr_t
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tomer Tayar <ttayar@habana.ai>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 8, 2019 at 3:39 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> dma_addr_t might be different sizes depending on the configuration,
+> so we cannot print it as %llx:
+>
+> drivers/misc/habanalabs/goya/goya.c: In function 'goya_sw_init':
+> drivers/misc/habanalabs/goya/goya.c:698:21: error: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'dma_addr_t' {aka 'unsigned int'} [-Werror=format=]
+>
+> Use the special %pad format string. This requires passing the
+> argument by reference.
+>
+> Fixes: 2a51558c8c7f ("habanalabs: remove DMA mask hack for Goya")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/misc/habanalabs/goya/goya.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+> index 75294ec65257..60e509f64051 100644
+> --- a/drivers/misc/habanalabs/goya/goya.c
+> +++ b/drivers/misc/habanalabs/goya/goya.c
+> @@ -695,8 +695,8 @@ static int goya_sw_init(struct hl_device *hdev)
+>                 goto free_dma_pool;
+>         }
+>
+> -       dev_dbg(hdev->dev, "cpu accessible memory at bus address 0x%llx\n",
+> -               hdev->cpu_accessible_dma_address);
+> +       dev_dbg(hdev->dev, "cpu accessible memory at bus address %pad\n",
+> +               &hdev->cpu_accessible_dma_address);
+>
+>         hdev->cpu_accessible_dma_pool = gen_pool_create(ilog2(32), -1);
+>         if (!hdev->cpu_accessible_dma_pool) {
+> --
+> 2.20.0
+>
 
-I've pulled Linus' tree this morning and, after running 'make oldconfig', tried a build. During that build I got the
-following warnings, which look to me like they should be fixed. 'git describe' shows v5.2-915-g5ad18b2e60b7 and my
-compiler is the 20190706 snapshot of gcc 9.
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
 
-In file included from arch/x86/kernel/head64.c:35:
-In function 'sanitize_boot_params',
-    inlined from 'copy_bootdata' at arch/x86/kernel/head64.c:391:2:
-./arch/x86/include/asm/bootparam_utils.h:40:3: warning: 'memset' offset [197, 448] from the object at 'boot_params' is
-out of the bounds of referenced subobject 'ext_ramdisk_image' with type 'unsigned int' at offset 192 [-Warray-bounds]
-   40 |   memset(&boot_params->ext_ramdisk_image, 0,
-      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   41 |          (char *)&boot_params->efi_info -
-      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   42 |    (char *)&boot_params->ext_ramdisk_image);
-      |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./arch/x86/include/asm/bootparam_utils.h:43:3: warning: 'memset' offset [493, 497] from the object at 'boot_params' is
-out of the bounds of referenced subobject 'kbd_status' with type 'unsigned char' at offset 491 [-Warray-bounds]
-   43 |   memset(&boot_params->kbd_status, 0,
-      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   44 |          (char *)&boot_params->hdr -
-      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   45 |          (char *)&boot_params->kbd_status);
-      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Happy to test any patches, but please cc me as I'm not subscribed to LKML.
-
-Chris
+Thanks! applied to -next
