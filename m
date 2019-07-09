@@ -2,87 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A939963053
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D53B063059
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfGIGNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:13:14 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:42787 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfGIGNO (ORCPT
+        id S1726374AbfGIGPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:15:23 -0400
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:35599 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfGIGPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:13:14 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x696D2LL030773;
-        Tue, 9 Jul 2019 15:13:02 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x696D2LL030773
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562652783;
-        bh=lnTkZOWAozqElNoBWK0L63rALMGbDSyFD2Pe++T0T9Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MUCfYy4xiocaxazb9OPb1wu3bZjr11ZoUaQhOL2mzlVOn0YNgKj/kI74R5A84fuOg
-         OOPZHSMwYdcyJ1o7r+tvuqdoxwDB79XLIPFFB4emL6t4nawhBBRzedhxFKcbZrJsR0
-         Oz6jh9syQ0ix49Z/UynsefJtrajshefVhoUaoyALBvioOiG43iTZ+qVMhr48ZSl2kj
-         OU40LwLlWL+hOpLFjrjMKMGrEIoXtQ1tLEbKeK1MzVXJKcoTd4UFat8aHPbkoC4W/8
-         ENQ8o9Ma+QgGDraRjXKPQ04ViJPKYqh9O27E1REWlKMaHBTkZ4FhuygZI8H8qwTJhJ
-         wkwpZxXLXm8yA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: use -- separater intead of $(filter-out ...) for cc-cross-prefix
-Date:   Tue,  9 Jul 2019 15:13:00 +0900
-Message-Id: <20190709061300.527-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 9 Jul 2019 02:15:22 -0400
+Received: by mail-ed1-f46.google.com with SMTP id w20so16605999edd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GDzjMWxwokXwvdx7TqR3+5NdbnOSDiEOotLEa/Zg7Nk=;
+        b=K8xZ2RJnipyWngJ53bOuctxIW7TEMd/MljxkcYd6t7879ub/ZQHx6ZxQZy8GuM0iwI
+         Q5Xa5YlgWnVqTQW6ZlzrLxzHSRhystAdkSKYbgzd6bTh6hbXMwUvVRiwdEvqPESnJnGH
+         9JJjZVW0WbeXMlXKAWelEJw+GYI5HoFrFU06k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GDzjMWxwokXwvdx7TqR3+5NdbnOSDiEOotLEa/Zg7Nk=;
+        b=YJu9mgEcf2GMhdo6LY+IJuTmoVkii+K2p6xR4Ln+ct6OmgnfA7Ym1EJn8+vgtgKGjy
+         C4aQKhhKr5sJFrC67r8PQAiZ1l3l5+vdYK4+kumxuil8fh/NJVGQm52Nqwy4kTgz3YWz
+         yYfOpseObmoI2nHBs4ChsPxvB7l2s+KjDXCQzgWBifZPUKdUZaymEK3rzL4YfyE/YVcb
+         wdUXNry/hUNf37myyaJ5aVN5AH5zMrAjuQr9t9NgYyiIAQlCt9I/ToA8ps0YKSApXFqP
+         NwXFRva5Qhl0exaQsNAyDLmPzxRW4FPqRrqcPQzhbhw4sIEW3deaimQBK3bUl4fK9aRf
+         E+Bw==
+X-Gm-Message-State: APjAAAVsePnY3Rf1KkKG0SaMstceCeX4ywmgIfk/eRRtZFjiCJ5ycWLm
+        N58lxL1dbmo4O8lg1yD+NQltYVx3tbA=
+X-Google-Smtp-Source: APXvYqxWd3B1Kh0VkZpObuRf3P7sB5FCpNx++dFCGr9oaRYLRlt+ovsV6co822Rd0vKVV5iiIzk5Ug==
+X-Received: by 2002:a17:906:b203:: with SMTP id p3mr19660586ejz.223.1562652920364;
+        Mon, 08 Jul 2019 23:15:20 -0700 (PDT)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id q21sm3962635ejo.76.2019.07.08.23.15.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 23:15:19 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id p13so408797wru.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:15:18 -0700 (PDT)
+X-Received: by 2002:a5d:5012:: with SMTP id e18mr12159590wrt.166.1562652917666;
+ Mon, 08 Jul 2019 23:15:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190620073505.33819-1-acourbot@chromium.org>
+In-Reply-To: <20190620073505.33819-1-acourbot@chromium.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 9 Jul 2019 15:15:05 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Cn9GzXEj+tBtJsL8GXouJEyj+HSUng5StqNsCxKZK9yw@mail.gmail.com>
+Message-ID: <CAAFQd5Cn9GzXEj+tBtJsL8GXouJEyj+HSUng5StqNsCxKZK9yw@mail.gmail.com>
+Subject: Re: [PATCH v5] media: docs-rst: Document m2m stateless video decoder interface
+To:     Alexandre Courbot <acourbot@chromium.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/mips/Makefile passes prefixes that start with '-' to cc-cross-prefix
-when $(tool-archpref) evaluates to the empty string.
+On Thu, Jun 20, 2019 at 4:35 PM Alexandre Courbot <acourbot@chromium.org> wrote:
+[snip]
+> +Initialization
+> +==============
+> +
+[snip]
+> +5. *[optional]* Choose a different ``CAPTURE`` format than suggested via
+> +   :c:func:`VIDIOC_S_FMT` on ``CAPTURE`` queue. It is possible for the client to
+> +   choose a different format than selected/suggested by the driver in
+> +   :c:func:`VIDIOC_G_FMT`.
+> +
+> +    * **Required fields:**
+> +
+> +      ``type``
+> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``.
+> +
+> +      ``pixelformat``
+> +          a raw pixel format.
 
-They are filtered-out before the $(shell ...) invocation. Otherwise,
-'command -v' would be confused.
+We should be able to set different width and height as well, to allow
+strided and padded frame buffers. Otherwise we wouldn't be able to
+import DMA-bufs allocated from some other sources.
 
-  $ command -v -linux-gcc
-  bash: command: -l: invalid option
-  command: usage: command [-pVv] command [arg ...]
+(FYI, I've posted a similar comment to the stateful interface too.)
 
-Since commit 913ab9780fc0 ("kbuild: use more portable 'command -v' for
-cc-cross-prefix"), cc-cross-prefix throws away the stderr output, so
-the console is not polluted in any way.
-
-This is not a big deal in practice, but I see a slightly better taste
-in adding '--' to teach it that '-linux-gcc' is an argument instead of
-a command option.
-
-This will cause extra forking of subshell, but it will not be noticeable
-performance regression.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/Kbuild.include | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 222fd1d7d3ae..c62d690c7dcf 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -79,8 +79,8 @@ endef
- # would try to directly execute the shell builtin 'command'. This workaround
- # should be kept for a long time since this issue was fixed only after the
- # GNU Make 4.2.1 release.
--cc-cross-prefix = $(firstword $(foreach c, $(filter-out -%, $(1)), \
--			$(if $(shell command -v $(c)gcc 2>/dev/null), $(c))))
-+cc-cross-prefix = $(firstword $(foreach c, $(1), \
-+			$(if $(shell command -v -- $(c)gcc 2>/dev/null), $(c))))
- 
- # output directory for tests below
- TMPOUT := $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/)
--- 
-2.17.1
-
+Best regards,
+Tomasz
