@@ -2,55 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4CC63A76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2616963A92
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfGISFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727434AbfGISFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:05:14 -0400
-Subject: Re: [GIT PULL] sound updates for 5.3-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562695514;
-        bh=99SpozWSmz3j36MYseE/9sfo6OneKKzvGyjGIZ2MP/E=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=TAe8LPWA1mcBxuPA+zLMDyBTsSeAmCR3QfDRkcWoYf+YyFTrRp3YEBv9Z/IuEJr9B
-         PA0xzxgeA0GrcbldLFnhiNPpsm/5KubJE54mKHW5bxlQXFhiGrjqeCyrno6KfBDIsR
-         G2TffqISg+++HOgMEbDgu3xRQM5HDK1SKygoJMpI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <s5ha7dntgg7.wl-tiwai@suse.de>
-References: <s5ha7dntgg7.wl-tiwai@suse.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <s5ha7dntgg7.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
- tags/sound-5.3-rc1
-X-PR-Tracked-Commit-Id: 0dcb4efb1095d0a1f5f681c2b94e98b009cc5d77
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4cdd5f9186bbe80306e76f11da7ecb0b9720433c
-Message-Id: <156269551427.14383.17767776329103236283.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Jul 2019 18:05:14 +0000
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1727796AbfGISG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:06:26 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46835 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbfGISGZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:06:25 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z23so20823280ote.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:06:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G9m9jbjNt70Oo3GkYvW+I8zMmltGr9hFx9mcNFoVY0c=;
+        b=tNib1DuZwYbhWrh+JQlUm722vhagLSFBF65C0E2Tev4RJQsT8ZLxaxcM1ra+k6nfnn
+         VZHCvMowGbW8QAWZlcxmPNZuPp1xWZBjboZVtYEEIEARXTSdikTtaHwk28lR6PzJc+2W
+         rGRwkxbrzM+AhyhcGBiN9Fo9fahmSOmb2T21y8wJQhUGegWPKHJlBK/Sky3amoZ8ockh
+         OZo41mcy7eZBfckfa5LDBQPlQGoNf71gbptiRVz6D7M0xoRp8kWkPQKVI941ElKUscpo
+         rLnkoSatsnzFJovwX8WvQzpULemMsJGIznWMPzTcp1tnJbdqQIlW1oOIIdW4NbjfrWH4
+         hkBQ==
+X-Gm-Message-State: APjAAAWh8QlbTzn6+A4SuoAj/Kd4UdGIl4A6HPFjhurR6OtHgoU68ptt
+        O1u5y3apb9xtmogd2zxnhSofuzcrj8eN9uZv/0k=
+X-Google-Smtp-Source: APXvYqxLC1ZAyVrB8W4kmmo7reQUrDGdcGCr54mx0wK6kjwsfF7qv/ET7sPo4H2Y57rLnoHvmSfZ97NrA3ECQYergsI=
+X-Received: by 2002:a9d:7a90:: with SMTP id l16mr8386870otn.297.1562695584580;
+ Tue, 09 Jul 2019 11:06:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190620141039.9874-1-ferdinand.blomqvist@gmail.com> <20190620141039.9874-2-ferdinand.blomqvist@gmail.com>
+In-Reply-To: <20190620141039.9874-2-ferdinand.blomqvist@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 9 Jul 2019 20:06:13 +0200
+Message-ID: <CAMuHMdV96dj7=b9NTLua=-_kr18yQxjZhuiOFAEA8m22rSobNw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] rslib: Add tests for the encoder and decoder
+To:     Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 09 Jul 2019 16:45:12 +0200:
+Hi Ferdinand,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.3-rc1
+On Thu, Jun 20, 2019 at 4:13 PM Ferdinand Blomqvist
+<ferdinand.blomqvist@gmail.com> wrote:
+> A Reed-Solomon code with minimum distance d can correct any error and
+> erasure pattern that satisfies 2 * #error + #erasures < d. If the
+> error correction capacity is exceeded, then correct decoding cannot be
+> guaranteed. The decoder must, however, return a valid codeword or report
+> failure.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4cdd5f9186bbe80306e76f11da7ecb0b9720433c
+> Note that the tests take a couple of minutes to complete.
 
-Thank you!
+On which hardware? ;-)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+JFTR, the test succeeded on m68k, after 6 hours and 12 minutes of runtime
+on an emulated Atari Falcon (ARAnyM hosted by an i7-4770).
+So far I have no plans to run it on bare metal.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
