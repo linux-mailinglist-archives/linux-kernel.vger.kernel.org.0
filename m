@@ -2,168 +2,526 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D070635F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C102635F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfGIMdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:33:01 -0400
-Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:53571
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725947AbfGIMdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:33:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X/BL0v6xhfL3iKyD0ro2usGuoe2ot5zH0vzTzQ9t+jsxud79xWIJOGmOQhdNq7XBr6lEJjJ8L8kxv9eBmYZYAGjMplQR/8BBvIDSGMB8jYaeQdMpdtWp+Nnoo8yMYW+uh+4aqEYKKlayExL4yB5Fc1O4ogCWbf3D5qFoNQUNsse5xxKt510Yl1iOQWunQu1LmHPry2taqzEDMA41bA9Thog2aGU62kYipt1W6Uc5zTFtSKixjlLczcxuEWQnU6iVAFaKCR56J0OPAstjs8rI0WgdocVZfoKdNOKNnRxcukm4enxVzWJjWtEjbnUEYo9uv+S0BWtofSxKDNiyIQUjKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sjFfj90INbQ4kWYmZ3+Z58P2+OBk32BPDKQHMwgMQO0=;
- b=QFBOxnBQXIwMb8/04gKjMzMEHu8tHERntF8szTcbKuWt297NZW/7I7n0F2opdVEGhKdurxS8LFkHfWSFObYYhXoXScRk77C6+9p65mGGQVxXPJG2pPgbqIUGifSnSrWe+CdjvyAtyLnVk8q15pR0VbxqOiAdlDEAflfN+m6tiKhQsRvxnovCxHlt9sgGbtzp0TQ35dub7OMrRUv/vl2wNnhI6jR68/mKjNovao2H7jVqvw65p+mMgOEgtQH7mR0tfLhoaCXruhl4QiHf+Uyz/4sYCwG1uX+GPeXrzajFcpF1TEvzf2wnOTgm2aAKkEWCPhse4v9c3NbzNiDE7oNxgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sjFfj90INbQ4kWYmZ3+Z58P2+OBk32BPDKQHMwgMQO0=;
- b=XdV7sSlOVuiqqIe8fxQ9SwSnrV+QD3E1AN358ULbT4Ifel3irTt5JeP7oDA4ohyDBMNgbeciWYCMRrRHz3sV6jEBtTInGZSQsSSZKPESeNvaD00C59G1La9fdfdYeWccor7ZP8Z0gqpob3grGJUvXrnNosHTb2iyED6Lh1f2jLw=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5984.eurprd05.prod.outlook.com (20.178.127.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.10; Tue, 9 Jul 2019 12:32:54 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 12:32:54 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: linux-next: build failure after merge of the hmm tree
-Thread-Topic: linux-next: build failure after merge of the hmm tree
-Thread-Index: AQHVL/1llyAK+KM7wk6DgNO5k5IMqqbBeI+AgADMTQA=
-Date:   Tue, 9 Jul 2019 12:32:54 +0000
-Message-ID: <20190709123250.GF3436@mellanox.com>
-References: <20190701210853.0c72240b@canb.auug.org.au>
- <20190709102137.421d1dd1@canb.auug.org.au>
-In-Reply-To: <20190709102137.421d1dd1@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR13CA0034.namprd13.prod.outlook.com
- (2603:10b6:208:160::47) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ff82d768-028f-425f-6c16-08d704699092
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5984;
-x-ms-traffictypediagnostic: VI1PR05MB5984:
-x-microsoft-antispam-prvs: <VI1PR05MB5984C5B2C4827EC85BA1EDAECFF10@VI1PR05MB5984.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:530;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(43544003)(53434003)(189003)(199004)(53754006)(486006)(81166006)(6436002)(11346002)(2616005)(81156014)(7736002)(6116002)(3846002)(446003)(229853002)(33656002)(6916009)(8676002)(6486002)(478600001)(14444005)(256004)(6246003)(316002)(36756003)(25786009)(476003)(54906003)(86362001)(6512007)(8936002)(53936002)(76176011)(99286004)(71190400001)(5660300002)(52116002)(1076003)(73956011)(66476007)(26005)(66446008)(64756008)(66946007)(4326008)(102836004)(305945005)(386003)(186003)(66066001)(68736007)(6506007)(66556008)(53546011)(14454004)(71200400001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5984;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: e/7VdZV5vB/6lr9eKDa/9R9CZ1KYS/BJN4jZZGBZCNc8T8Nf3jHmLq7OlvDuWguuU1UtKaMnV1Wr6gUXi4gK7hjJNjtWNbEboto5i6kXMmBs1j74MnlnovUvJddvfpDm9AwvC41aEDUiznO1Vebbm6Nwb2lAHO4NRARXnfEIcYBebRY4+WK4XdV+DESitcVkPkiTjl/QXlXV0gKFZvoit7EOW9c+cwPBKE17sz2KRzAXc1Cc8BL3GhhQBMkdeGNYF+OPd0LLfMNFdHKX7jROMBhtlo5Vu9yY+/mtwiCxaTLP9O5MJwDgXe1HNmEIn34ZqOONrx4TGnGlwCHxeXTNWYGMAse5AvkrD98qpVTD+5d0bUHfzmlptyPVjhTpeoor3I+r1CylUyg5ekbS1gSqwWIBRUtaN16vlPNj+DtoETk=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <282AF135E21D614296B5EABDB7547021@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff82d768-028f-425f-6c16-08d704699092
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 12:32:54.1935
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5984
+        id S1726762AbfGIMeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:34:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45100 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfGIMeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 08:34:06 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hkpJq-0006GZ-F6; Tue, 09 Jul 2019 14:34:02 +0200
+Date:   Tue, 09 Jul 2019 12:33:14 -0000
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] x86/kdump for 5.3-rc1
+References: <156267559466.6547.5675975755906539836.tglx@nanos.tec.linutronix.de>
+Message-ID: <156267559466.6547.2199213187743143427.tglx@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 10:21:37AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Mon, 1 Jul 2019 21:08:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > After merging the hmm tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > failed like this:
-> >=20
-> > mm/hmm.c: In function 'hmm_get_or_create':
-> > mm/hmm.c:50:2: error: implicit declaration of function 'lockdep_assert_=
-held_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=3Dimplic=
-it-function-declaration]
-> >   lockdep_assert_held_exclusive(&mm->mmap_sem);
-> >   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   lockdep_assert_held_once
-> >=20
-> > Caused by commit
-> >=20
-> >   8a9320b7ec5d ("mm/hmm: Simplify hmm_get_or_create and make it reliabl=
-e")
-> >=20
-> > interacting with commit
-> >=20
-> >   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive(=
-) -> lockdep_assert_held_write()")
-> >=20
-> > from the tip tree.
-> >=20
-> > I have added the following merge fix.
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 1 Jul 2019 21:05:59 +1000
-> > Subject: [PATCH] mm/hmm: fixup for "locking/lockdep: Rename
-> >  lockdep_assert_held_exclusive() -> lockdep_assert_held_write()"
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >  mm/hmm.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/mm/hmm.c b/mm/hmm.c
-> > index c1bdcef403ee..2ddbd589b207 100644
-> > +++ b/mm/hmm.c
-> > @@ -47,7 +47,7 @@ static struct hmm *hmm_get_or_create(struct mm_struct=
- *mm)
-> >  {
-> >  	struct hmm *hmm;
-> > =20
-> > -	lockdep_assert_held_exclusive(&mm->mmap_sem);
-> > +	lockdep_assert_held_write(&mm->mmap_sem);
-> > =20
-> >  	/* Abuse the page_table_lock to also protect mm->hmm. */
-> >  	spin_lock(&mm->page_table_lock);
-> > @@ -248,7 +248,7 @@ static const struct mmu_notifier_ops hmm_mmu_notifi=
-er_ops =3D {
-> >   */
-> >  int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *m=
-m)
-> >  {
-> > -	lockdep_assert_held_exclusive(&mm->mmap_sem);
-> > +	lockdep_assert_held_write(&mm->mmap_sem);
-> > =20
-> >  	/* Sanity check */
-> >  	if (!mm || !mirror || !mirror->ops)
->=20
-> I am still getting this conflict (the commit ids may have changed).
-> Just a reminder in case you think Linus may need to know.
+Linus,
 
-Ingo already sent the PR to Linus with the function rename, so I will
-take care of it.
+please pull the latest x86-kdump-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-kdump-for-linus
+
+up to:  4eb5fec31e61: fs/proc/vmcore: Enable dumping of encrypted memory when SEV was active
+
+Yet more kexec/kdump updates:
+
+  - Properly support kexec when AMD's memory encryption (SME) is enabled
+
+  - Pass reserved e820 ranges to the kexec kernel so both PCI and SME can
+    work.
+    
+
 
 Thanks,
-Jason
+
+	tglx
+
+------------------>
+Lianbo Jiang (6):
+      x86/e820, ioport: Add a new I/O resource descriptor IORES_DESC_RESERVED
+      x86/mm: Rework ioremap resource mapping determination
+      x86/crash: Add e820 reserved ranges to kdump kernel's e820 table
+      x86/kexec: Do not map kexec area as decrypted when SEV is active
+      x86/kexec: Set the C-bit in the identity map page table when SEV is active
+      fs/proc/vmcore: Enable dumping of encrypted memory when SEV was active
+
+Thomas Lendacky (2):
+      x86/mm: Identify the end of the kernel area to be reserved
+      x86/mm: Create a workarea in the kernel for SME early encryption
+
+
+ arch/x86/include/asm/sections.h    |  2 ++
+ arch/x86/kernel/crash.c            |  6 ++++
+ arch/x86/kernel/e820.c             |  2 +-
+ arch/x86/kernel/machine_kexec_64.c | 31 +++++++++++++++--
+ arch/x86/kernel/setup.c            |  8 ++++-
+ arch/x86/kernel/vmlinux.lds.S      | 34 +++++++++++++++++-
+ arch/x86/mm/ioremap.c              | 71 ++++++++++++++++++++++++--------------
+ arch/x86/mm/mem_encrypt_identity.c | 22 ++++++++++--
+ fs/proc/vmcore.c                   |  6 ++--
+ include/linux/ioport.h             | 10 ++++++
+ 10 files changed, 155 insertions(+), 37 deletions(-)
+
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index 8ea1cfdbeabc..71b32f2570ab 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -13,4 +13,6 @@ extern char __end_rodata_aligned[];
+ extern char __end_rodata_hpage_align[];
+ #endif
+ 
++extern char __end_of_kernel_reserve[];
++
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index 576b2e1bfc12..32c956705b8e 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -381,6 +381,12 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+ 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
+ 			memmap_entry_callback);
+ 
++	/* Add e820 reserved ranges */
++	cmd.type = E820_TYPE_RESERVED;
++	flags = IORESOURCE_MEM;
++	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
++			   memmap_entry_callback);
++
+ 	/* Add crashk_low_res region */
+ 	if (crashk_low_res.end) {
+ 		ei.addr = crashk_low_res.start;
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 8f32e705a980..e69408bf664b 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1063,10 +1063,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+ 	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
+ 	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
+ 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
++	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+ 	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		/* Fall-through: */
+ 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+-	case E820_TYPE_RESERVED:	/* Fall-through: */
+ 	default:			return IORES_DESC_NONE;
+ 	}
+ }
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index ceba408ea982..16c37fe489bc 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -50,12 +50,13 @@ static void free_transition_pgtable(struct kimage *image)
+ 
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+ {
++	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
++	unsigned long vaddr, paddr;
++	int result = -ENOMEM;
+ 	p4d_t *p4d;
+ 	pud_t *pud;
+ 	pmd_t *pmd;
+ 	pte_t *pte;
+-	unsigned long vaddr, paddr;
+-	int result = -ENOMEM;
+ 
+ 	vaddr = (unsigned long)relocate_kernel;
+ 	paddr = __pa(page_address(image->control_code_page)+PAGE_SIZE);
+@@ -92,7 +93,11 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+ 		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
+ 	}
+ 	pte = pte_offset_kernel(pmd, vaddr);
+-	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
++
++	if (sev_active())
++		prot = PAGE_KERNEL_EXEC;
++
++	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
+ 	return 0;
+ err:
+ 	return result;
+@@ -129,6 +134,11 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+ 	level4p = (pgd_t *)__va(start_pgtable);
+ 	clear_page(level4p);
+ 
++	if (sev_active()) {
++		info.page_flag   |= _PAGE_ENC;
++		info.kernpg_flag |= _PAGE_ENC;
++	}
++
+ 	if (direct_gbpages)
+ 		info.direct_gbpages = true;
+ 
+@@ -559,8 +569,20 @@ void arch_kexec_unprotect_crashkres(void)
+ 	kexec_mark_crashkres(false);
+ }
+ 
++/*
++ * During a traditional boot under SME, SME will encrypt the kernel,
++ * so the SME kexec kernel also needs to be un-encrypted in order to
++ * replicate a normal SME boot.
++ *
++ * During a traditional boot under SEV, the kernel has already been
++ * loaded encrypted, so the SEV kexec kernel needs to be encrypted in
++ * order to replicate a normal SEV boot.
++ */
+ int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, gfp_t gfp)
+ {
++	if (sev_active())
++		return 0;
++
+ 	/*
+ 	 * If SME is active we need to be sure that kexec pages are
+ 	 * not encrypted because when we boot to the new kernel the
+@@ -571,6 +593,9 @@ int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, gfp_t gfp)
+ 
+ void arch_kexec_pre_free_pages(void *vaddr, unsigned int pages)
+ {
++	if (sev_active())
++		return;
++
+ 	/*
+ 	 * If SME is active we need to reset the pages back to being
+ 	 * an encrypted mapping before freeing them.
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 08a5f4a131f5..dac60ad37e5e 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -827,8 +827,14 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
+ 
+ void __init setup_arch(char **cmdline_p)
+ {
++	/*
++	 * Reserve the memory occupied by the kernel between _text and
++	 * __end_of_kernel_reserve symbols. Any kernel sections after the
++	 * __end_of_kernel_reserve symbol must be explicitly reserved with a
++	 * separate memblock_reserve() or they will be discarded.
++	 */
+ 	memblock_reserve(__pa_symbol(_text),
+-			 (unsigned long)__bss_stop - (unsigned long)_text);
++			 (unsigned long)__end_of_kernel_reserve - (unsigned long)_text);
+ 
+ 	/*
+ 	 * Make sure page 0 is always reserved because on systems with
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 0850b5149345..147cd020516a 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -368,6 +368,14 @@ SECTIONS
+ 		__bss_stop = .;
+ 	}
+ 
++	/*
++	 * The memory occupied from _text to here, __end_of_kernel_reserve, is
++	 * automatically reserved in setup_arch(). Anything after here must be
++	 * explicitly reserved using memblock_reserve() or it will be discarded
++	 * and treated as available memory.
++	 */
++	__end_of_kernel_reserve = .;
++
+ 	. = ALIGN(PAGE_SIZE);
+ 	.brk : AT(ADDR(.brk) - LOAD_OFFSET) {
+ 		__brk_base = .;
+@@ -379,10 +387,34 @@ SECTIONS
+ 	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
+ 	_end = .;
+ 
++#ifdef CONFIG_AMD_MEM_ENCRYPT
++	/*
++	 * Early scratch/workarea section: Lives outside of the kernel proper
++	 * (_text - _end).
++	 *
++	 * Resides after _end because even though the .brk section is after
++	 * __end_of_kernel_reserve, the .brk section is later reserved as a
++	 * part of the kernel. Since it is located after __end_of_kernel_reserve
++	 * it will be discarded and become part of the available memory. As
++	 * such, it can only be used by very early boot code and must not be
++	 * needed afterwards.
++	 *
++	 * Currently used by SME for performing in-place encryption of the
++	 * kernel during boot. Resides on a 2MB boundary to simplify the
++	 * pagetable setup used for SME in-place encryption.
++	 */
++	. = ALIGN(HPAGE_SIZE);
++	.init.scratch : AT(ADDR(.init.scratch) - LOAD_OFFSET) {
++		__init_scratch_begin = .;
++		*(.init.scratch)
++		. = ALIGN(HPAGE_SIZE);
++		__init_scratch_end = .;
++	}
++#endif
++
+ 	STABS_DEBUG
+ 	DWARF_DEBUG
+ 
+-	/* Sections to be discarded */
+ 	DISCARDS
+ 	/DISCARD/ : {
+ 		*(.eh_frame)
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 4b6423e7bd21..e500f1df1140 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -28,9 +28,11 @@
+ 
+ #include "physaddr.h"
+ 
+-struct ioremap_mem_flags {
+-	bool system_ram;
+-	bool desc_other;
++/*
++ * Descriptor controlling ioremap() behavior.
++ */
++struct ioremap_desc {
++	unsigned int flags;
+ };
+ 
+ /*
+@@ -62,13 +64,14 @@ int ioremap_change_attr(unsigned long vaddr, unsigned long size,
+ 	return err;
+ }
+ 
+-static bool __ioremap_check_ram(struct resource *res)
++/* Does the range (or a subset of) contain normal RAM? */
++static unsigned int __ioremap_check_ram(struct resource *res)
+ {
+ 	unsigned long start_pfn, stop_pfn;
+ 	unsigned long i;
+ 
+ 	if ((res->flags & IORESOURCE_SYSTEM_RAM) != IORESOURCE_SYSTEM_RAM)
+-		return false;
++		return 0;
+ 
+ 	start_pfn = (res->start + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	stop_pfn = (res->end + 1) >> PAGE_SHIFT;
+@@ -76,28 +79,44 @@ static bool __ioremap_check_ram(struct resource *res)
+ 		for (i = 0; i < (stop_pfn - start_pfn); ++i)
+ 			if (pfn_valid(start_pfn + i) &&
+ 			    !PageReserved(pfn_to_page(start_pfn + i)))
+-				return true;
++				return IORES_MAP_SYSTEM_RAM;
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+-static int __ioremap_check_desc_other(struct resource *res)
++/*
++ * In a SEV guest, NONE and RESERVED should not be mapped encrypted because
++ * there the whole memory is already encrypted.
++ */
++static unsigned int __ioremap_check_encrypted(struct resource *res)
+ {
+-	return (res->desc != IORES_DESC_NONE);
++	if (!sev_active())
++		return 0;
++
++	switch (res->desc) {
++	case IORES_DESC_NONE:
++	case IORES_DESC_RESERVED:
++		break;
++	default:
++		return IORES_MAP_ENCRYPTED;
++	}
++
++	return 0;
+ }
+ 
+-static int __ioremap_res_check(struct resource *res, void *arg)
++static int __ioremap_collect_map_flags(struct resource *res, void *arg)
+ {
+-	struct ioremap_mem_flags *flags = arg;
++	struct ioremap_desc *desc = arg;
+ 
+-	if (!flags->system_ram)
+-		flags->system_ram = __ioremap_check_ram(res);
++	if (!(desc->flags & IORES_MAP_SYSTEM_RAM))
++		desc->flags |= __ioremap_check_ram(res);
+ 
+-	if (!flags->desc_other)
+-		flags->desc_other = __ioremap_check_desc_other(res);
++	if (!(desc->flags & IORES_MAP_ENCRYPTED))
++		desc->flags |= __ioremap_check_encrypted(res);
+ 
+-	return flags->system_ram && flags->desc_other;
++	return ((desc->flags & (IORES_MAP_SYSTEM_RAM | IORES_MAP_ENCRYPTED)) ==
++			       (IORES_MAP_SYSTEM_RAM | IORES_MAP_ENCRYPTED));
+ }
+ 
+ /*
+@@ -106,15 +125,15 @@ static int __ioremap_res_check(struct resource *res, void *arg)
+  * resource described not as IORES_DESC_NONE (e.g. IORES_DESC_ACPI_TABLES).
+  */
+ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+-				struct ioremap_mem_flags *flags)
++				struct ioremap_desc *desc)
+ {
+ 	u64 start, end;
+ 
+ 	start = (u64)addr;
+ 	end = start + size - 1;
+-	memset(flags, 0, sizeof(*flags));
++	memset(desc, 0, sizeof(struct ioremap_desc));
+ 
+-	walk_mem_res(start, end, flags, __ioremap_res_check);
++	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
+ }
+ 
+ /*
+@@ -131,15 +150,15 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+  * have to convert them into an offset in a page-aligned mapping, but the
+  * caller shouldn't need to know that small detail.
+  */
+-static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+-		unsigned long size, enum page_cache_mode pcm,
+-		void *caller, bool encrypted)
++static void __iomem *
++__ioremap_caller(resource_size_t phys_addr, unsigned long size,
++		 enum page_cache_mode pcm, void *caller, bool encrypted)
+ {
+ 	unsigned long offset, vaddr;
+ 	resource_size_t last_addr;
+ 	const resource_size_t unaligned_phys_addr = phys_addr;
+ 	const unsigned long unaligned_size = size;
+-	struct ioremap_mem_flags mem_flags;
++	struct ioremap_desc io_desc;
+ 	struct vm_struct *area;
+ 	enum page_cache_mode new_pcm;
+ 	pgprot_t prot;
+@@ -158,12 +177,12 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+ 		return NULL;
+ 	}
+ 
+-	__ioremap_check_mem(phys_addr, size, &mem_flags);
++	__ioremap_check_mem(phys_addr, size, &io_desc);
+ 
+ 	/*
+ 	 * Don't allow anybody to remap normal RAM that we're using..
+ 	 */
+-	if (mem_flags.system_ram) {
++	if (io_desc.flags & IORES_MAP_SYSTEM_RAM) {
+ 		WARN_ONCE(1, "ioremap on RAM at %pa - %pa\n",
+ 			  &phys_addr, &last_addr);
+ 		return NULL;
+@@ -201,7 +220,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+ 	 * resulting mapping.
+ 	 */
+ 	prot = PAGE_KERNEL_IO;
+-	if ((sev_active() && mem_flags.desc_other) || encrypted)
++	if ((io_desc.flags & IORES_MAP_ENCRYPTED) || encrypted)
+ 		prot = pgprot_encrypted(prot);
+ 
+ 	switch (pcm) {
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index 4aa9b1480866..6a8dd483f7d9 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -73,6 +73,19 @@ struct sme_populate_pgd_data {
+ 	unsigned long vaddr_end;
+ };
+ 
++/*
++ * This work area lives in the .init.scratch section, which lives outside of
++ * the kernel proper. It is sized to hold the intermediate copy buffer and
++ * more than enough pagetable pages.
++ *
++ * By using this section, the kernel can be encrypted in place and it
++ * avoids any possibility of boot parameters or initramfs images being
++ * placed such that the in-place encryption logic overwrites them.  This
++ * section is 2MB aligned to allow for simple pagetable setup using only
++ * PMD entries (see vmlinux.lds.S).
++ */
++static char sme_workarea[2 * PMD_PAGE_SIZE] __section(.init.scratch);
++
+ static char sme_cmdline_arg[] __initdata = "mem_encrypt";
+ static char sme_cmdline_on[]  __initdata = "on";
+ static char sme_cmdline_off[] __initdata = "off";
+@@ -314,8 +327,13 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
+ 	}
+ #endif
+ 
+-	/* Set the encryption workarea to be immediately after the kernel */
+-	workarea_start = kernel_end;
++	/*
++	 * We're running identity mapped, so we must obtain the address to the
++	 * SME encryption workarea using rip-relative addressing.
++	 */
++	asm ("lea sme_workarea(%%rip), %0"
++	     : "=r" (workarea_start)
++	     : "p" (sme_workarea));
+ 
+ 	/*
+ 	 * Calculate required number of workarea bytes needed:
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 7bb96fdd38ad..57957c91c6df 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -166,7 +166,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
+  */
+ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+ {
+-	return read_from_oldmem(buf, count, ppos, 0, false);
++	return read_from_oldmem(buf, count, ppos, 0, sev_active());
+ }
+ 
+ /*
+@@ -174,7 +174,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+  */
+ ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
+ {
+-	return read_from_oldmem(buf, count, ppos, 0, sme_active());
++	return read_from_oldmem(buf, count, ppos, 0, mem_encrypt_active());
+ }
+ 
+ /*
+@@ -374,7 +374,7 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+ 					    buflen);
+ 			start = m->paddr + *fpos - m->offset;
+ 			tmp = read_from_oldmem(buffer, tsz, &start,
+-					       userbuf, sme_active());
++					       userbuf, mem_encrypt_active());
+ 			if (tmp < 0)
+ 				return tmp;
+ 			buflen -= tsz;
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index da0ebaec25f0..5db386cfc2d4 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -12,6 +12,7 @@
+ #ifndef __ASSEMBLY__
+ #include <linux/compiler.h>
+ #include <linux/types.h>
++#include <linux/bits.h>
+ /*
+  * Resources are tree-like, allowing
+  * nesting etc..
+@@ -133,6 +134,15 @@ enum {
+ 	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+ 	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+ 	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
++	IORES_DESC_RESERVED			= 8,
++};
++
++/*
++ * Flags controlling ioremap() behavior.
++ */
++enum {
++	IORES_MAP_SYSTEM_RAM		= BIT(0),
++	IORES_MAP_ENCRYPTED		= BIT(1),
+ };
+ 
+ /* helpers to define resources */
+
