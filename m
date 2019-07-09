@@ -2,102 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DED363635
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B216363A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfGIMv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:51:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfGIMv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:51:29 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC70B21707;
-        Tue,  9 Jul 2019 12:51:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562676688;
-        bh=Wvi5s3WedjqogbAaNrsX5TXkPhLeMsvF5uGn/Uxzsh4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bmqEUr9FMEgK8+zus9QgRNDCy93aL8OTIYxXlb0UfCR6NSUTRs4zdUA60wBy/3Gwz
-         9AUUKgm0xofbU+KyMZXtDsCFJ8Z/GsR0kawkhq1Kmbp5HO+vH76+fqbanZGMhlxtSq
-         VJIAAPKxS2WhSzdDde7GkTJtq/BxKqWDk0eFlBM4=
-Date:   Tue, 9 Jul 2019 21:51:24 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
- postcore_initcall
-Message-Id: <20190709215124.979ef648aabbae2fc0cd91d3@kernel.org>
-In-Reply-To: <20190703102504.13344555@gandalf.local.home>
-References: <20190526191828.466305460@goodmis.org>
-        <20190526191848.266163206@goodmis.org>
-        <20190702165008.GC34718@lakrids.cambridge.arm.com>
-        <20190703100205.0b58f3bf@gandalf.local.home>
-        <20190703140832.GD48312@arrakis.emea.arm.com>
-        <20190703102402.1319b928@gandalf.local.home>
-        <20190703102504.13344555@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726721AbfGIMw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:52:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36432 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfGIMw3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 08:52:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k8so10068036plt.3;
+        Tue, 09 Jul 2019 05:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+IweNL8b+xDveqKnIe4yQ0cAQMLQTrEEGoWLgF1UZaM=;
+        b=VnB9rsG1ayhuLWLCiI2Rnwv/s6i6uzac1x8SOhCCmqC3du9UH4lK/dXzHM0XOtLIg7
+         AuqSX/Dn6a3gGykrA7yBRXr6TpEMvCIy1GtZmiHdaBxCYLU8k881b/mOQorwhN6jjDr0
+         jKF1c6xxTUcX7/Yi5DFkDP6b43EXRvSM/Q2HL8z9mSOklZDiSlRxhQ/iDUcLzxCqPnWH
+         yYblC5ndnasaqB5C3i9d6NUDRYAsDRKa+x4JoJZOqAH3XABTcRMEsJc7Q9l56mOaRwjk
+         H4yJ3JVMfvWzhSxkYxsy4ABxvCiylPYJ9UFlgsZDKTuP+gmTf21F5dyF/Fm2Swd9qf1h
+         ziYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+IweNL8b+xDveqKnIe4yQ0cAQMLQTrEEGoWLgF1UZaM=;
+        b=B+Zj7bRCyPWvp6b7aBAZsjadN4BFHEJMFZM/Jwk3oS8QmtVIAA2w1rD2R463lmf+vu
+         QM1nl3egn/4BIlnR8copCnZdAJQmLlWrxl8D7V1CTWJFUQIorBn437OWEUldH6lH7gHO
+         6VMVZK4B77P85d04FZOgj5wlMYUibCUNKAXbiKfMQEt/raswD1Nll/ABO+A7wC9dNC3o
+         r5y6U57CR5T+AHzR9/oZvxbKoYivndTAlEzakDhNEYhqiNuZeMG1c9cy/Bl630eN3zLj
+         shzwprrz24pBnckoVbpXlJ+k7golAv8hxjy1pBQP4AM4jsAiSdbz1W9tHdqQaidfKYL+
+         PZZA==
+X-Gm-Message-State: APjAAAWJQQpkNTr2AItcAX0tbt8K81OLgbZZMu5/0+p08jFpI5Pfh9dx
+        ZfdOxD96qC7n5sFfbc3rA3Vufiuk
+X-Google-Smtp-Source: APXvYqw7PTSyG9r7PlsPDG2x50xcB7+tl80pu8CuoCSymahAZuOGpl5hSlURUUBlmRHfb3wyWAkAGQ==
+X-Received: by 2002:a17:902:654f:: with SMTP id d15mr30174110pln.253.1562676748406;
+        Tue, 09 Jul 2019 05:52:28 -0700 (PDT)
+Received: from icarus ([2001:268:c145:6825:1c79:bf4:8232:d614])
+        by smtp.gmail.com with ESMTPSA id v4sm6100824pgf.20.2019.07.09.05.52.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Jul 2019 05:52:27 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 21:52:10 +0900
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Marcus Folkesson <marcus.folkesson@gmail.com>,
+        linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: driver-api: generic-counter: fix file path to
+ ABI doc
+Message-ID: <20190709125210.GA6234@icarus>
+References: <20190709075436.7294-1-marcus.folkesson@gmail.com>
+ <20190709110613.GA4476@icarus>
+ <20190709064845.6be66cd2@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190709064845.6be66cd2@lwn.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Jul 2019 10:25:04 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Wed, 3 Jul 2019 10:24:02 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Jul 09, 2019 at 06:48:45AM -0600, Jonathan Corbet wrote:
+> On Tue, 9 Jul 2019 20:06:33 +0900
+> William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 > 
-> > On Wed, 3 Jul 2019 15:08:32 +0100
-> > Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > Fixes: 09e7d4ed8991 ("docs: Add Generic Counter interface documentation")
+> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 > > 
-> > 
-> > > > +static int __init run_init_test_probes(void)
-> > > > +{
-> > > > +	if (run_kprobe_tests)
-> > > > +		init_test_probes();    
-> > > 
-> > > A return 0 here.  
-> > 
-> > Will update (would have triggered a failure on my test suite anyway ;-)
-> > 
-> > >   
-> > > > +}
-> > > > +module_init(run_init_test_probes);    
-> > > 
-> > > This does the trick. I prefer your fix as it leaves the arch code
-> > > unchanged. In case you need it:
-> > > 
-> > > Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-> > >   
-> >
+> > Jonathan, would you be able to pick this up in your tree?
 > 
-> Masami,
+> I can apply it, yes.  But why are you supplying an SOB for it?
 > 
-> If you give me an Acked-by, I'll add it to my tree.
+> Thanks,
+> 
+> jon
 
-Sorry for late reply, but I want to keep the test running right after
-initialization as the first user of kprobes at that timing, since
-other user can start using kprobes right after init_kprobes().
-So this issue must be fixed in moving the init_kprobes() itself
-right after arch_initcall() (and that is subsys_initcall)
+I'm sorry, that should be an Acked-by line.
 
-Catalin, Mark, could you ensure the below patch can fix your issue?
+Thanks,
 
-https://lore.kernel.org/lkml/20190625191545.245259106@goodmis.org/
-
-And if so, Steve, could you push above one (which seems already in your
-tree) to next as a fix?
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+William Breathitt Gray.
