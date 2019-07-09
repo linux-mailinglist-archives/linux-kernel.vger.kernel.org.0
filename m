@@ -2,139 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AEAC63588
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81A8635A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfGIMW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:22:26 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:61707 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfGIMW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:22:26 -0400
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x69CMKZC012244;
-        Tue, 9 Jul 2019 21:22:21 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x69CMKZC012244
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562674941;
-        bh=s/dMvs8eRlfbHNunWA9MxkzWSv0qolGiWLffGStjx7k=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CYNSEga2nPu7THXvvpTuVPXOOJoOMk05l1RBRFckfq2v/3iHSyzgRsxYoAjxbQh7B
-         2FcnSK3sjQ+VcRTNka7Ym14BuAyIEz3BFxEnHJOumUwFD2AyW/nzSVi7TktzBdY1Tf
-         uGXIP78m59Dfp8DjT+DVWy75kw8QAbDsPXqM4RkkrqY1VCnWL0V9TsAOQs28Vg73k8
-         sjUFkwq/wfDyXemd2KIv85jtFAi3nHPjV8REFuoRxikAyjWJU21r0cTefEXyG9u8Z/
-         t2KhrTCsyZ11a2GEuTbf8thuPBrsdzeQTEdzxDBKrc7vrO7/hXxXp93ZJEntirJRLX
-         seexPIfAVjzbA==
-X-Nifty-SrcIP: [209.85.222.54]
-Received: by mail-ua1-f54.google.com with SMTP id o19so6307709uap.13;
-        Tue, 09 Jul 2019 05:22:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAWDgqT9HP5UzWqtlY5NN2B/XTPsB+vkBL2j6eJY36mK8tXcxwe9
-        xlctIr3+dkqNSgyx7vXaeG46iZDt6swILHpOKXM=
-X-Google-Smtp-Source: APXvYqwzOwXe4sIRylbKVb28bYAtmrOPXWkHFX1As+qU0ivcxqCVk9Sz0a5C15GRIF17CJFW4MC7xgvYUxVf10f9jto=
-X-Received: by 2002:ab0:70d9:: with SMTP id r25mr12782778ual.109.1562674940309;
- Tue, 09 Jul 2019 05:22:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <1554633831-10303-1-git-send-email-yamada.masahiro@socionext.com> <CAMuHMdUH46_yvYc840uvMoOOqXuU3mDOjaT65vZ=6WKGq7-Kqg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUH46_yvYc840uvMoOOqXuU3mDOjaT65vZ=6WKGq7-Kqg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 9 Jul 2019 21:21:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASuEQqb7w8qD9ZKx-LKp0+CqvybEqFtYxVk5d0YJt-Nfg@mail.gmail.com>
-Message-ID: <CAK7LNASuEQqb7w8qD9ZKx-LKp0+CqvybEqFtYxVk5d0YJt-Nfg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: check arch/$(SRCARCH)/include/generated before
- out-of-tree build
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726851AbfGIMZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:25:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:1737 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbfGIMZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 08:25:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 05:25:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
+   d="scan'208";a="249133728"
+Received: from ngote-system-product-name.iind.intel.com ([10.106.124.92])
+  by orsmga001.jf.intel.com with ESMTP; 09 Jul 2019 05:25:33 -0700
+From:   NitinGote <nitin.r.gote@intel.com>
+To:     joe@perches.com, akpm@linux-foundation.org
+Cc:     corbet@lwn.net, apw@canonical.com, keescook@chromium.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        Nitin Gote <nitin.r.gote@intel.com>
+Subject: [PATCH v3] Added warnings in checkpatch.pl script to :
+Date:   Tue,  9 Jul 2019 17:54:17 +0530
+Message-Id: <20190709122417.25778-1-nitin.r.gote@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+From: Nitin Gote <nitin.r.gote@intel.com>
 
-On Tue, Jul 9, 2019 at 5:31 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Yamada-san,
->
-> On Sun, Apr 7, 2019 at 12:45 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > After cross-compiling the kernel, "make mrproper" should be executed
-> > with the proper ARCH= option. Otherwise, stale objects will remain
-> > under arch/$(SRCARCH)/.
-> >
-> > One bad scenario is like this:
-> >
-> >   $ make ARCH=arm defconfig all   # cross-compile the kernel for arm
-> >   $ make mrproper                 # mrproper for host-arch (i.e. x86)
-> >   $ make ARCH=arm O=build_dir defconfig all
-> >
-> > If you miss ARCH= for mrproper and cross-compile the kernel with O=
-> > and ARCH= options, Kbuild will happily start to build, but may fail
-> > due to stale objects in the srctree.
-> >
-> > If $(srctree)/arch/$(SRCARCH)/include/generated/ exists, let's stop
-> > the out-of-tree build. To detect this, mrproper should clean only
-> > arch/$(SRCARCH)/include/generated/.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  Makefile | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 10643c3..17945ce 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1091,7 +1091,9 @@ PHONY += prepare archprepare prepare1 prepare3
-> >  prepare3: include/config/kernel.release
-> >  ifneq ($(srctree),.)
-> >         @$(kecho) '  Using $(srctree) as source for kernel'
-> > -       $(Q)if [ -f $(srctree)/.config -o -d $(srctree)/include/config ]; then \
-> > +       $(Q)if [ -f $(srctree)/.config -o \
-> > +                -d $(srctree)/include/config -o \
-> > +                -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then \
-> >                 echo >&2 "  $(srctree) is not clean, please run 'make mrproper'"; \
-> >                 echo >&2 "  in the '$(srctree)' directory.";\
->
-> This took me a bit to find out what was wrong...
->
-> Usually I don't run "make mrproper", as it removes files I may want to
-> keep (e.g. tags).  Hence I ran "git ls-files -o | grep m68k | xargs rm"
-> (I usually build in separate output directories), confirmed with "git
-> ls-files -o" there were no remaining build artefacts, and was surprised
-> to discover I still got the error message above?!?
->
-> Apparently arch/m68k/include/generated was still present, but as "git
-> ls-files -o" only shows files, not directories, it was not listed.
-> Perhaps the directory checks above can be changed to directory exists
-> _and_ is not empty?
+1. Deprecate strcpy() in favor of strscpy().
+2. Deprecate strlcpy() in favor of strscpy().
+3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
 
-No.
+Updated strncpy() section in Documentation/process/deprecated.rst
+to cover strscpy_pad() case.
 
-Since you did not run mrproper,
-Kbuild _correctly_ showed error.
-This is the expected and correct behavior. :)
+Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
+---
+ Change log:
+ v1->v2
+ - For string related apis, created different %deprecated_string_api
+   and these will get emitted at CHECK Level using command line option
+   -f/--file to avoid bad patched from novice script users.
 
-The upstream kernel is not a place
-to be customized for your workflow. Sorry.
+ v2->v3
+ - Avoided use of $check in implementation.
+ - Incorporated trivial comments.
 
+ Documentation/process/deprecated.rst |  6 +++---
+ scripts/checkpatch.pl                | 24 ++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-Every developer has a set of handy custom commands.
+diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+index 49e0f64a3427..f564de3caf76 100644
+--- a/Documentation/process/deprecated.rst
++++ b/Documentation/process/deprecated.rst
+@@ -93,9 +93,9 @@ will be NUL terminated. This can lead to various linear read overflows
+ and other misbehavior due to the missing termination. It also NUL-pads the
+ destination buffer if the source contents are shorter than the destination
+ buffer size, which may be a needless performance penalty for callers using
+-only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
+-(Users of :c:func:`strscpy` still needing NUL-padding will need an
+-explicit :c:func:`memset` added.)
++only NUL-terminated strings. In this case, the safe replacement is
++:c:func:`strscpy`. If, however, the destination buffer still needs
++NUL-padding, the safe replacement is :c:func:`strscpy_pad`.
 
-Since you are already running a long command,
-why don't you add one more line, and put in ~/.bash_aliases or somewhere?
+ If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
+ still be used, but destinations should be marked with the `__nonstring
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index bb28b178d929..e6fbf4cf4be4 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -605,6 +605,20 @@ foreach my $entry (keys %deprecated_apis) {
+ }
+ $deprecated_apis_search = "(?:${deprecated_apis_search})";
 
-my_mrproper()
-{
-    git ls-files -o | grep m68k | xargs rm
-    rm -rf arch/m68k/include/generated
-}
++our %deprecated_string_apis = (
++        "strcpy"				=> "strscpy",
++        "strlcpy"				=> "strscpy",
++        "strncpy"				=> "strscpy, strscpy_pad or for non-NUL-terminated strings, strncpy() can still be used, but destinations should be marked with the __nonstring",
++);
++
++#Create a search pattern for all these strings apis to speed up a loop below
++our $deprecated_string_apis_search = "";
++foreach my $entry (keys %deprecated_string_apis) {
++        $deprecated_string_apis_search .= '|' if ($deprecated_string_apis_search ne "");
++        $deprecated_string_apis_search .= $entry;
++}
++$deprecated_string_apis_search = "(?:${deprecated_string_apis_search})";
++
+ our $mode_perms_world_writable = qr{
+ 	S_IWUGO		|
+ 	S_IWOTH		|
+@@ -6446,6 +6460,16 @@ sub process {
+ 			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
+ 		}
 
++# check for string deprecated apis
++		if ($line =~ /\b($deprecated_string_apis_search)\b\s*\(/) {
++			my $deprecated_string_api = $1;
++			my $new_api = $deprecated_string_apis{$deprecated_string_api};
++			my $msg_level = \&WARN;
++			$msg_level = \&CHK if ($file);
++			&{$msg_level}("DEPRECATED_API",
++				      "Deprecated use of '$deprecated_string_api', prefer '$new_api' instead\n" . $herecurr);
++		}
++
+ # check for various structs that are normally const (ops, kgdb, device_tree)
+ # and avoid what seem like struct definitions 'struct foo {'
+ 		if ($line !~ /\bconst\b/ &&
+--
+2.17.1
 
--- 
-Best Regards
-Masahiro Yamada
