@@ -2,79 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF5963E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C762363E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfGIWuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 18:50:14 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43711 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfGIWuO (ORCPT
+        id S1726980AbfGIW6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 18:58:30 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33806 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGIW6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 18:50:14 -0400
-Received: by mail-io1-f65.google.com with SMTP id k20so483659ios.10;
-        Tue, 09 Jul 2019 15:50:13 -0700 (PDT)
+        Tue, 9 Jul 2019 18:58:30 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p17so115285ljg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 15:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F1q4TA7V+oBcDgmqSY6j6ZlCOYtkPjgIBwS25WUZLTs=;
+        b=QKimPJQvVZxi7GGt2IK1wSGVwVlf4++Q5OMJBzPPYYowi8Envs3WSce6Gh6UtIGn7p
+         mMKAlA/kneX13lMFTJKpO7ij59QRaHjSt/QfGE9ZB6jk35NiPPjRmvTbmNKN0ehzBGxA
+         zyxh0P4ALP4P+wbKb/tJ0Mbl8WsNRtZvaujAom76uQk7w7Kx6RRDzBbgfDjAhBuCqqrc
+         7JGBAc2nihErYrwfyD+Yp/S7DVlpCbM2jqSYhX4tCZC3CcBuONBCNN3NMDysY8fsf/qv
+         UnUHv51vUsvmObHPcD6MQrJ5iWSwo8SF9ejOhIxDPhTaUnQR4sRnrdc+XPZEdGX4JSUy
+         zC2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nvvoh+fbNkBLPpXy4Y6lZA9c7jtYP7QeOvjrEV4cBIw=;
-        b=E152u+zQeaNBnPpxaN3G5IWMXpMaQpMLd010lSDCikFET9slcst5Zoxa/lUtl6ccxh
-         pCEkqrRhpo6lxIQ2t7QS9oYJOilukZoKbVGiY1XoxEii4ojKe3XXo4+cE/1YM/vONEXk
-         WcZmw46W/E5aNdxj7INMJD44+keaTIvS/N9HN76TzIe/2kTzT130wKpj8cBHgQGEWbkn
-         lgR3oyfB+BpgqQl48gqzoVvM+xhqrYrffFRGJ9ttkaQCKu17Ye18ElrvQ4uBpNJRZLT3
-         x53tLU9jkKia5vBRM4blxKfuA7Z3EH2xG/YamXI5vndFkX681kAbKCY0hn8nKlOPyaqO
-         7dAA==
-X-Gm-Message-State: APjAAAVPphKBeq8WKNo9RwBx3rPAy3EWUqVGQb7fVk47V/nPEC/PgX0X
-        AJdunqHYy0GG84RO6ObSNQ==
-X-Google-Smtp-Source: APXvYqyIRybL0nbRMpxsdXhfMWV2kUc5p622WEvGhc+cnLHFcA7qWZGwS/KW4h4GpNKPh1jLWlazuQ==
-X-Received: by 2002:a05:6602:144:: with SMTP id v4mr27703160iot.202.1562712612914;
-        Tue, 09 Jul 2019 15:50:12 -0700 (PDT)
-Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id i4sm292005iog.31.2019.07.09.15.50.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 15:50:12 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 16:50:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
-        Sean Paul <seanpaul@chromium.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: display: rockchip: document VOP
- gamma LUT address
-Message-ID: <20190709225011.GA11245@bogus>
-References: <20190621211346.1324-1-ezequiel@collabora.com>
- <20190621211346.1324-2-ezequiel@collabora.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F1q4TA7V+oBcDgmqSY6j6ZlCOYtkPjgIBwS25WUZLTs=;
+        b=h90UyiUk9iLNjtJaoi9mnXI+VuhSwmJgACQ4MEAofjgS6wLU1bcRPDeSAjG1+gX22H
+         h1i0pY3UrUt314TFJyr6bChcJ1uULD4lOnfFrr9ZsmYoBiPl+3y6aXTcM/gGqhKWA93n
+         QTTB7/NtKza2bnXVy/Lo9SnCUwSo0R/Jiks/rEWB0ca4xxFPrubzYLbKXkD/ZvTGA+rk
+         NysyMnW/2PdQWSlbBGw7vxyEazq/mCDYTAXMGJUBD/wUZ177DZDYhhwawrkrQLoxqCJs
+         O/0Nzm9uEPuAa5oJVyMI3kq+sNw/4WqCAkLORo767RmuzCL4EHqw7+Zcvd7MK5UyeXVe
+         Ylpw==
+X-Gm-Message-State: APjAAAU9cmgnxreZvlxvltz9dnSZvGUBr1aeBN4KFSNWrfsWRuBymdf4
+        1+SgkxqJMX0QOY/nTYUP8u9BEQFDGjLD3pfYCyo=
+X-Google-Smtp-Source: APXvYqxbFGUwEu2uaJdKJTp5ypFTyrjL1JHgGSn+2cAk5GRU6ARJ8/16eg6flo1l5iygVqe1kZ2+pFWrBsTQu9VGrl8=
+X-Received: by 2002:a2e:86cc:: with SMTP id n12mr14985598ljj.146.1562713108067;
+ Tue, 09 Jul 2019 15:58:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621211346.1324-2-ezequiel@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190703001842.12238-1-alistair.francis@wdc.com>
+ <20190703001842.12238-3-alistair.francis@wdc.com> <CAK8P3a37GLzp+w6m0SEV+9j_6sH91SuStyAEW-VzuJ5_dUCnZw@mail.gmail.com>
+ <CAKmqyKP07futGV1WsZwvqGzeR646eo-ysVy9RCqaSOG-2qhH_g@mail.gmail.com>
+ <CAK8P3a1zJPiR06uxZ5QVoEyDU64v=oUu_p9X-mULLeXN-som8A@mail.gmail.com>
+ <CAKmqyKMtsQaq9DpfPY=T0pixrH2sntewDz42dTvD5rDcK+ZV0w@mail.gmail.com> <CAK8P3a36CXf+HGgL=nNYzc-1Qhh=tu6to0opwYjO4fO5KDxUDA@mail.gmail.com>
+In-Reply-To: <CAK8P3a36CXf+HGgL=nNYzc-1Qhh=tu6to0opwYjO4fO5KDxUDA@mail.gmail.com>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Tue, 9 Jul 2019 15:55:18 -0700
+Message-ID: <CAKmqyKMx8JqGw7uhUO5pDkgyRDCixv6TXPCZUSHrAu8efZNBRQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] riscv/include/uapi: Define a custom __SIGINFO struct
+ for RV32
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alistair Francis <alistair.francis@wdc.com>,
+        linux-riscv-bounces@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 18:13:44 -0300, Ezequiel Garcia wrote:
-> Add the register specifier description for an
-> optional gamma LUT address.
-> 
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
-> Changes from v1:
-> * Drop reg-names, suggested by Doug.
-> ---
->  .../devicetree/bindings/display/rockchip/rockchip-vop.txt   | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+On Thu, Jul 4, 2019 at 1:34 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Jul 4, 2019 at 12:18 AM Alistair Francis <alistair23@gmail.com> wrote:
+> > On Wed, Jul 3, 2019 at 12:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Wed, Jul 3, 2019 at 8:45 PM Alistair Francis <alistair23@gmail.com> wrote:
+> > > > What I don't understand though is how that impacted this struct, it
+> > > > doesn't use clock_t at all, everything in the struct is an int or
+> > > > void*.
+> > >
+> > > si_utime/si_stime in siginfo are clock_t.
+> >
+> > But they are further down the struct. I just assumed that GCC would
+> > align those as required, I guess it aligns the start of the struct to
+> > match some 64-bit members which seems strange.
+>
+> These are the regular struct alignment rules. Essentially you would
+> get something like
+>
+> struct s {
+>     int a;
+>     int b;
+>     int c;
+>     union {
+>          int d;
+>          long long e;
+>    };
+>    int f;
+> };
+>
+> Since 'e' has 8 byte alignment, the same is true for the union,
+> and putting the union in a struct also requires the same alignment
+> for the struct itself, so now you get padding after 'c' and 'f'.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Now that I think about it more it does make sense. Thanks for the help
+with this and all the glibc stuff.
+
+I have a new patch set that seems to work on RV32 and RV64. I'm now
+hitting issues with syscalls that glibc doesn't use but other projects
+do like io_getevents in OpenSSL.
+
+Alistair
+
+>
+>        Arnd
