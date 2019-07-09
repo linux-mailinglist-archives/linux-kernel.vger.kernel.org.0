@@ -2,46 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C32B62E6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB5362E53
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfGIC5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 22:57:43 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34146 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfGIC5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 22:57:42 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0599E133E97B7;
-        Mon,  8 Jul 2019 19:57:41 -0700 (PDT)
-Date:   Mon, 08 Jul 2019 19:57:41 -0700 (PDT)
-Message-Id: <20190708.195741.202712281331944867.davem@davemloft.net>
-To:     sfr@canb.auug.org.au
-Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mcroce@redhat.com, fw@strlen.de
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190709102728.70299ba8@canb.auug.org.au>
-References: <20190702121357.65f9b0b4@canb.auug.org.au>
-        <20190709102728.70299ba8@canb.auug.org.au>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1727190AbfGICxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 22:53:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:44565 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbfGICxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 22:53:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 19:53:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
+   d="scan'208";a="364443279"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Jul 2019 19:53:16 -0700
+Message-ID: <5D2402E6.7060104@intel.com>
+Date:   Tue, 09 Jul 2019 10:58:46 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+MIME-Version: 1.0
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
+        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
+        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
+Subject: Re: [PATCH v7 07/12] perf/x86: no counter allocation support
+References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-8-git-send-email-wei.w.wang@intel.com> <20190708142947.GM3402@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190708142947.GM3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 08 Jul 2019 19:57:42 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 9 Jul 2019 10:27:28 +1000
+On 07/08/2019 10:29 PM, Peter Zijlstra wrote:
 
-> I am still getting this conflict (the commit ids may have changed).
-> Just a reminder in case you think Linus may need to know.
+Thanks for the comments.
 
-I'm resolving this right now, thanks Stephen.
+>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 0ab99c7..19e6593 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -528,6 +528,7 @@ typedef void (*perf_overflow_handler_t)(struct perf_event *,
+>>    */
+>>   #define PERF_EV_CAP_SOFTWARE		BIT(0)
+>>   #define PERF_EV_CAP_READ_ACTIVE_PKG	BIT(1)
+>> +#define PERF_EV_CAP_NO_COUNTER		BIT(2)
+>>   
+>>   #define SWEVENT_HLIST_BITS		8
+>>   #define SWEVENT_HLIST_SIZE		(1 << SWEVENT_HLIST_BITS)
+>> @@ -895,6 +896,13 @@ extern int perf_event_refresh(struct perf_event *event, int refresh);
+>>   extern void perf_event_update_userpage(struct perf_event *event);
+>>   extern int perf_event_release_kernel(struct perf_event *event);
+>>   extern struct perf_event *
+>> +perf_event_create(struct perf_event_attr *attr,
+>> +		  int cpu,
+>> +		  struct task_struct *task,
+>> +		  perf_overflow_handler_t overflow_handler,
+>> +		  void *context,
+>> +		  bool counter_assignment);
+>> +extern struct perf_event *
+>>   perf_event_create_kernel_counter(struct perf_event_attr *attr,
+>>   				int cpu,
+>>   				struct task_struct *task,
+> Why the heck are you creating this wrapper nonsense?
+
+(please see early discussions: https://lkml.org/lkml/2018/9/20/868)
+I thought we agreed that the perf event created here don't need to consume
+an extra counter.
+
+In the previous version, we added a "no_counter" bit to perf_event_attr, and
+that will be exposed to user ABI, which seems not good.
+(https://lkml.org/lkml/2019/2/14/791)
+So we wrap a new kernel API above to support this.
+
+Do you have a different suggestion to do this?
+(exclude host/guest just clears the enable bit when on VM-exit/entry,
+still consumes the counter)
+
+Best,
+Wei
