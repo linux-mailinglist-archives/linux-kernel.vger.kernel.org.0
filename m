@@ -2,100 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 566DB631B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5FDE63225
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:34:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfGIHSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 03:18:40 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:39650 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725886AbfGIHSj (ORCPT
+        id S1726031AbfGIHea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 03:34:30 -0400
+Received: from mickerik.phytec.de ([195.145.39.210]:61820 "EHLO
+        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfGIHe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:18:39 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id D282C2E0D96;
-        Tue,  9 Jul 2019 10:18:36 +0300 (MSK)
-Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id akmrB41YWg-IaU4L3b8;
-        Tue, 09 Jul 2019 10:18:36 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1562656716; bh=HVi/4mii0aOLlDy7iHHak1FI+515jxoexIoDkfss/1A=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=KDE2FjPstQZ1JWZ8y87Fy8Px3Mh8orINWRH+1EOfNxxQHiQLYHWfGVHIMa/ShuluM
-         Qf6dUMrJmXHj6E0x24mRGYnuhU5YSwAR6sRTChUEt/OlmSWNakUQoMGBKHJGaEBK4N
-         /1geVVpagIy7GU7iyswpuG5DG9YoWpreUdoEST0I=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
-        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 4g1gL3BDrd-IaQCCUKv;
-        Tue, 09 Jul 2019 10:18:36 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] blk-throttle: fix zero wait time for iops throttled group
-To:     bo.liu@linux.alibaba.com
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <156259979778.2486.6296077059654653057.stgit@buzz>
- <20190708190809.l4fdhigexzdujvuv@US-160370MP2.local>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <2240c382-502d-d112-418b-d44aa67d0ab2@yandex-team.ru>
-Date:   Tue, 9 Jul 2019 10:18:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190708190809.l4fdhigexzdujvuv@US-160370MP2.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+        Tue, 9 Jul 2019 03:34:29 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Jul 2019 03:34:29 EDT
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
+        q=dns/txt; i=@phytec.de; t=1562656767; x=1565248767;
+        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IKnKR+7MnhE7QQSAv7QSA+JPPlLOOURTMuIT2GV5+rc=;
+        b=ncXc0bvgabXx7oBwILfY/8GPH5ENCTnXxsnuJC3Vk+ePQik4u3MI8iGzSNYVFzPb
+        OJRUPPpVPCj9iXX1+d8AVph1biit+rD5Q3mbChsDAcGlbMK9VLu/xy/jdL3epQWY
+        u5VQGyaOwNnAJz5SA8CX8cfvdsNo9sx/iwKo2MG7RwU=;
+X-AuditID: c39127d2-17dff70000001aee-ff-5d243fff46f1
+Received: from idefix.phytec.de (idefix.phytec.de [172.16.0.10])
+        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 17.B0.06894.FFF342D5; Tue,  9 Jul 2019 09:19:27 +0200 (CEST)
+Received: from augenblix2.phytec.de ([172.16.21.122])
+          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
+          with ESMTP id 2019070909192732-309703 ;
+          Tue, 9 Jul 2019 09:19:27 +0200 
+From:   Stefan Riedmueller <s.riedmueller@phytec.de>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, martyn.welch@collabora.com,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com
+Subject: [PATCH 00/10] Add further support for PHYTEC phyBOARD-Segin
+Date:   Tue, 9 Jul 2019 09:19:17 +0200
+Message-Id: <1562656767-273566-1-git-send-email-s.riedmueller@phytec.de>
+X-Mailer: git-send-email 2.7.4
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 09.07.2019 09:19:27,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 09.07.2019 09:19:27,
+        Serialize complete at 09.07.2019 09:19:27
+X-TNEFEvaluated: 1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWyRoCBS/e/vUqswfc+PYv5R86xWjy86m+x
+        aupOFotNj6+xWnT9WslscXnXHDaLpdcvMlk8uNjFYtG69wi7xd/tm1gsXmwRd+D2WDNvDaPH
+        jrtLGD12zrrL7rFpVSebx+Yl9R4b3+1g8uj/a+DxeZNcAEcUl01Kak5mWWqRvl0CV8a3pkmM
+        BS9EK75PecXcwHhKqIuRk0NCwERi/am1rF2MXBxCAjsYJTZNPsIO4VxglLiweTYLSBWbgJHE
+        gmmNTCC2iECkxLvtv8GKmAX2MEpMu36dESQhLOAi8WfnajYQm0VARWL53BZ2EJtXwENi+8IP
+        7BDr5CRunutkBmmWEGhkkmi/eoAVIiEkcXrxWeYJjDwLGBlWMQrlZiZnpxZlZusVZFSWpCbr
+        paRuYgSG3uGJ6pd2MPbN8TjEyMTBeIhRgoNZSYR3n7tyrBBvSmJlVWpRfnxRaU5q8SFGaQ4W
+        JXHeDbwlYUIC6YklqdmpqQWpRTBZJg5OqQbGtW9P/3e7v863II/94YeCo9uKNOXPJUlIiAcu
+        39KsE6C2JjVR8pxk1vanUokGqmW/eFdrxLGseLDriiRDQNm/GSvO3cspv2pj8ueLr/aMA1Ir
+        jp2Y+7/pXroh+zObCyEPP/wRSs6UO71DYrV9mWRfu/jqnv2HPz3QYZBrWXUjd8m6B596qs++
+        VmIpzkg01GIuKk4EAF0Fd88rAgAA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.07.2019 22:08, Liu Bo wrote:
-> On Mon, Jul 08, 2019 at 06:29:57PM +0300, Konstantin Khlebnikov wrote:
->> After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops
->> limit is enforced") wait time could be zero even if group is throttled and
->> cannot issue requests right now. As a result throtl_select_dispatch() turns
->> into busy-loop under irq-safe queue spinlock.
->>
->> Fix is simple: always round up target time to the next throttle slice.
->>
->> Fixes: 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops limit is enforced")
->> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->> Cc: stable@vger.kernel.org # v4.19+
->> ---
->>   block/blk-throttle.c |    9 +++------
->>   1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
->> index 9ea7c0ecad10..8ab6c8153223 100644
->> --- a/block/blk-throttle.c
->> +++ b/block/blk-throttle.c
->> @@ -881,13 +881,10 @@ static bool tg_with_in_iops_limit(struct throtl_grp *tg, struct bio *bio,
->>   	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
->>   	u64 tmp;
->>   
->> -	jiffy_elapsed = jiffy_elapsed_rnd = jiffies - tg->slice_start[rw];
->> -
->> -	/* Slice has just started. Consider one slice interval */
->> -	if (!jiffy_elapsed)
->> -		jiffy_elapsed_rnd = tg->td->throtl_slice;
->> +	jiffy_elapsed = jiffies - tg->slice_start[rw];
->>   
->> -	jiffy_elapsed_rnd = roundup(jiffy_elapsed_rnd, tg->td->throtl_slice);
->> +	/* Round up to the next throttle slice, wait time must be nonzero */
->> +	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
->>   
->>   	/*
->>   	 * jiffy_elapsed_rnd should not be a big value as minimum iops can be
-> 
-> Did you use a tiny iops limit to run into this?
+This patchstack adjusts the already existing naming for the PHYTEC
+phyBOARD-Segin to the PHYTEC naming scheme that is already used with the
+phyCORE-i.MX 6 and the phyBOARD-Mira.
 
-Yep. 25 iops
+Furthermore it introduces some small fixes and adds support for the PHYTEC
+phyCORE-i.MX 6ULL which also comes with the phyBORAD-Segin. It comes in a
+full featured option with either NAND flash or eMMC and a low cost option
+only with NAND flash.
 
-also kernel built with HZ=250, this might be related
+Stefan Riedmueller (10):
+  ARM: dts: imx6ul: phyboard-segin: Rename dts to PHYTEC name scheme
+  ARM: dts: imx6ul: segin: Add boot media to dts filename
+  ARM: dts: imx6ul: segin: Reduce eth drive strength
+  ARM: dts: imx6ul: segin: Fix LED naming for phyCORE and PEB-EVAL-01
+  ARM: dts: imx6ul: segin: Make FEC and ethphy configurable in dts
+  ARM: dts: imx6ul: segin: Only enable NAND if it is populated
+  ARM: dts: imx6ul: phycore: Add eMMC at usdhc2
+  ARM: dts: imx6ul: segin: Move ECSPI interface to board include file
+  ARM: dts: imx6ul: segin: Move machine include to dts files
+  ARM: dts: imx6ull: Add support for PHYTEC phyBOARD-Segin with i.MX
+    6ULL
 
-> 
-> thanks,
-> -liubo
-> 
+ arch/arm/boot/dts/Makefile                         |  5 +-
+ ...-pcl063.dtsi => imx6ul-phytec-phycore-som.dtsi} | 51 ++++++++----
+ ...ull.dts => imx6ul-phytec-segin-ff-rdk-nand.dts} | 42 +++++-----
+ ...1.dtsi => imx6ul-phytec-segin-peb-eval-01.dtsi} | 16 ++--
+ ...hyboard-segin.dtsi => imx6ul-phytec-segin.dtsi} | 31 ++++++--
+ arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi  | 24 ++++++
+ .../boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts  | 93 ++++++++++++++++++++++
+ .../boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts  | 93 ++++++++++++++++++++++
+ .../boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts  | 45 +++++++++++
+ .../boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi | 19 +++++
+ arch/arm/boot/dts/imx6ull-phytec-segin.dtsi        | 38 +++++++++
+ 11 files changed, 409 insertions(+), 48 deletions(-)
+ rename arch/arm/boot/dts/{imx6ul-phytec-pcl063.dtsi => imx6ul-phytec-phycore-som.dtsi} (72%)
+ rename arch/arm/boot/dts/{imx6ul-phytec-phyboard-segin-full.dts => imx6ul-phytec-segin-ff-rdk-nand.dts} (51%)
+ rename arch/arm/boot/dts/{imx6ul-phytec-peb-eval-01.dtsi => imx6ul-phytec-segin-peb-eval-01.dtsi} (84%)
+ rename arch/arm/boot/dts/{imx6ul-phytec-phyboard-segin.dtsi => imx6ul-phytec-segin.dtsi} (91%)
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin.dtsi
+
+-- 
+2.7.4
+
