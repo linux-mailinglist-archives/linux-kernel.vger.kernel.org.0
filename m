@@ -2,151 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8949962FC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C73E862FD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfGIEvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 00:51:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38025 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfGIEvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 00:51:13 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z75so8785621pgz.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 21:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NHGXxZKoUC+etV5J4TA2pzGAE32N1lUMWS0xtU10i5g=;
-        b=SagoGHLwdhyzez71wGl/CWUd7JfpmwBlosfeoAMty1PvK2lxm4NEetTyojTrzhwaud
-         Ts1+0xOhHRFwpsMA3AASevOpJhCQpHPI498ZcCp2Qj9585GB+tRmt389Z+LWTJKx/y7s
-         mH1FVgB0X1hwFpGEC/wHgqIXjB8rWZKfMla1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NHGXxZKoUC+etV5J4TA2pzGAE32N1lUMWS0xtU10i5g=;
-        b=H+PAnm0QGf8Yj5eXbf9wx45Ue5SleysCDmEczjUZiEF75Ib3XGv7NCHNwUJNYBHfnP
-         Al78hVqtSVvDiBaiUdvJl1gVCun/VnN0cBuMRRGdYT/YPR3ojFzr86geQAeGID+CcwEU
-         gsWvtERo+T58p+oeDQnP+je1gQ+7A9WLgC/T5W3Unsh9P55+jVDa5OS9G0bZqCV9i2Sg
-         oBwVua05upVbIywbByaafOpfPjRKbhYoqvdjnzxYb27IQs5XoBNlmCy9QhQi0DsEVmqW
-         KNU+9IywwJ1bdC6ypWYlED18UvwVIyqzgUKMQdM01MzoRZwa4BFbOBembfyVuuE/YQhd
-         pLRw==
-X-Gm-Message-State: APjAAAWnAXAUbUknivVsUXxCBggzhX27w7sHYUg4W12hlg26I0zwTMS/
-        ZCuiDljeIrklT7mwVuxWFinQ5A==
-X-Google-Smtp-Source: APXvYqyra4dBr6pwAJEejOYr3AfqsfOhUfKQCLpljKcJwOvohsdTUY/A0C/0JPVAWBLwSN9mXPaIsg==
-X-Received: by 2002:a63:7a5b:: with SMTP id j27mr28067294pgn.242.1562647873177;
-        Mon, 08 Jul 2019 21:51:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n7sm23797582pff.59.2019.07.08.21.51.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Jul 2019 21:51:12 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 21:51:11 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jann Horn <jannh@google.com>, PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH v5 06/12] S.A.R.A.: WX protection
-Message-ID: <201907082140.51E0B9E2@keescook>
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
- <20190706192852.GO17978@ZenIV.linux.org.uk>
- <CAJHCu1+JYWN7mEHprmCc+osP=K4qGA9xB3Jxg53_K4kwo4J6dA@mail.gmail.com>
+        id S1726045AbfGIE7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 00:59:11 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44405 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfGIE7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 00:59:11 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jVTm1pTKz9sML;
+        Tue,  9 Jul 2019 14:59:07 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562648348;
+        bh=IEHeoS2OgHpqNZ7RELfpQGH8kplCB5dwSy4q0KPos0k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OZKQLhJxih1lN4cUZMw8FEwHhcgUDjlrHwstYYhpMI2eoOpy+SUkBFG4SXkJGopoK
+         rgua0ScZVtumLQsgQXjDKgOF9jinSnefrm5EF3pUyEI8TyPk4lJzunrwNjBgsyoR13
+         ARpTPS/vhWxdFChvgWxIDKNeRsuPwf1nSXFzQAeYLZ9HLZaKpctpfBB0NiZ7F6LmWf
+         InqSMSRy5L8EvSVrT9urgEdWGJ3gMhpO6Gadh6mStJ0QAmFmzhVY+cX549D5l5xBoG
+         Aq5v96M2TSsZNM8Pkm3u9OZF8lYLip9DdD95zokbaG1fewzEw8LPR7hiojqZ2X/su3
+         xHiVET0BvLLoQ==
+Date:   Tue, 9 Jul 2019 14:59:07 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: please clean up the mali-dp tree
+Message-ID: <20190709145907.70b1db61@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJHCu1+JYWN7mEHprmCc+osP=K4qGA9xB3Jxg53_K4kwo4J6dA@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EUyOlaD3MNJCHo52EGHEtNo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 07, 2019 at 05:49:35PM +0200, Salvatore Mesoraca wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Sat, Jul 06, 2019 at 12:54:47PM +0200, Salvatore Mesoraca wrote:
-> >
-> > > +#define sara_warn_or_return(err, msg) do {           \
-> > > +     if ((sara_wxp_flags & SARA_WXP_VERBOSE))        \
-> > > +             pr_wxp(msg);                            \
-> > > +     if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))      \
-> > > +             return -err;                            \
-> > > +} while (0)
-> > > +
-> > > +#define sara_warn_or_goto(label, msg) do {           \
-> > > +     if ((sara_wxp_flags & SARA_WXP_VERBOSE))        \
-> > > +             pr_wxp(msg);                            \
-> > > +     if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))      \
-> > > +             goto label;                             \
-> > > +} while (0)
-> >
-> > No.  This kind of "style" has no place in the kernel.
-> >
-> > Don't hide control flow.  It's nasty enough to reviewers,
-> > but it's pure hell on anyone who strays into your code while
-> > chasing a bug or doing general code audit.  In effect, you
-> > are creating your oh-so-private C dialect and assuming that
-> > everyone who ever looks at your code will start with learning
-> > that *AND* incorporating it into their mental C parser.
-> > I'm sorry, but you are not that important.
-> >
-> > If it looks like a function call, a casual reader will assume
-> > that this is exactly what it is.  And when one is scanning
-> > through a function (e.g. to tell if handling of some kind
-> > of refcounts is correct, with twentieth grep through the
-> > tree having brought something in your code into the view),
-> > the last thing one wants is to switch between the area-specific
-> > C dialects.  Simply because looking at yours is sandwiched
-> > between digging through some crap in drivers/target/ and that
-> > weird thing in kernel/tracing/, hopefully staying limited
-> > to 20 seconds of glancing through several functions in your
-> > code.
-> >
-> > Don't Do That.  Really.
-> 
-> I understand your concerns.
-> The first version of SARA didn't use these macros,
-> they were added because I was asked[1] to do so.
-> 
-> I have absolutely no problems in reverting this change.
-> I just want to make sure that there is agreement on this matter.
-> Maybe Kees can clarify his stance.
-> 
-> Thank you for your suggestions.
-> 
-> [1] https://lkml.kernel.org/r/CAGXu5jJuQx2qOt_aDqDQDcqGOZ5kmr5rQ9Zjv=MRRCJ65ERfGw@mail.gmail.com
+--Sig_/EUyOlaD3MNJCHo52EGHEtNo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I just didn't like how difficult it was to review the repeated checking.
-I thought then (and still think now) it's worth the unusual style to
-improve the immediate readability. Obviously Al disagrees. I'm not
-against dropping my suggestion; it's just a pain to review it and it
-seems like an area that would be highly prone to subtle typos. Perhaps
-some middle ground:
+Hi,
 
-#define sara_warn(msg)	({				\
-		if ((sara_wxp_flags & SARA_WXP_VERBOSE))	\
-			pr_wxp(msg);				\
-		!(sara_wxp_flags & SARA_WXP_COMPLAIN);		\
-	})
+Now that a rebased copy of the mali-dp tree has been merged into the
+drm tree, please clean up the mali-dp tree as it is causing conflicts.
 
-...
+--=20
+Cheers,
+Stephen Rothwell
 
-	if (unlikely(sara_wxp_flags & SARA_WXP_WXORX &&
-		     vm_flags & VM_WRITE &&
-		     vm_flags & VM_EXEC &&
-		     sara_warn("W^X")))
-		return -EPERM;
+--Sig_/EUyOlaD3MNJCHo52EGHEtNo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-that way the copy/pasting isn't present but the control flow is visible?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Kees Cook
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kHxsACgkQAVBC80lX
+0GznVwf/TbsXGoGT9+vTZufyCsyXI4HmngURGAIHUTEfOZuRVzfLvnoSu3ANi2D9
+fnQDtygdt39Z1sEONyBKJGXHEJIW6jpfdLC+qsDGIvU7qK0NSyBsFQGSPUkM0r0M
+Fn5DACu7eCqHscvS6f0pIrX8DqiQfvHTXKuG711gHdcvyQSjpPNjDPrUXaU0umQc
+DhMJ/icsaJ+d88L3eu94Jcy5ZKuaqKtUkzAiU7trpdkuj21V56cLpt6xuhfvTiTk
+keL/2X4V9wUx3mQ/evJ8++F562vi9L9nCfPUHRjgWNVOuYtHxAhbla691+akrpb9
+w4+M8zbIOTF3PKrTCaYwPPRNVHVHUg==
+=wJoE
+-----END PGP SIGNATURE-----
+
+--Sig_/EUyOlaD3MNJCHo52EGHEtNo--
