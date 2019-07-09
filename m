@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE71063726
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:40:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A029B6372B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfGINkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:40:52 -0400
-Received: from ms.lwn.net ([45.79.88.28]:58352 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbfGINkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:40:52 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id A67C2737;
-        Tue,  9 Jul 2019 13:40:51 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 07:40:50 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     NitinGote <nitin.r.gote@intel.com>
-Cc:     joe@perches.com, akpm@linux-foundation.org, apw@canonical.com,
-        keescook@chromium.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Added warnings in checkpatch.pl script to :
-Message-ID: <20190709074050.289aab82@lwn.net>
-In-Reply-To: <20190709122417.25778-1-nitin.r.gote@intel.com>
-References: <20190709122417.25778-1-nitin.r.gote@intel.com>
-Organization: LWN.net
+        id S1727028AbfGINmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:42:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38640 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfGINmY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 09:42:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iqcAiKYT4gA3rRqHSRay8KcZmspIO/HAMHELnfctPNU=; b=C6E2IXvkLucSzRjvmxW7AvezT
+        hHZ5tFdWyohw28iCmr6u2OXylUVkQUrZmjM6R/jrTFLAEnRXriRt/usru/tjwIyOOonfGh5MAyB78
+        KGUVmMHeDMCPlzhv+Omayd9frO6RLyW4aEre6eXMj1dmkK3XFrYBhOG43dYzbOHMoWzG5asjZ5MC7
+        85zoPE6/T5asqQIlJd1PgoNL5Yim5xfnZwBkXifRttu5wQ+APhLv5/C/lx5lOPJalW6+vWFyEF5VC
+        a0+vKLU6KsiFdjmUcyZlja8oIDMrXoKHcM8BLdOR1Mw3OMrjaA1z2pDYu1KMt14C5ku/ETglE0UJC
+        5ehwBatvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hkqNf-0006sb-Sv; Tue, 09 Jul 2019 13:42:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 247A520976D63; Tue,  9 Jul 2019 15:42:00 +0200 (CEST)
+Date:   Tue, 9 Jul 2019 15:42:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     luca abeni <luca.abeni@santannapisa.it>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [RFC PATCH 3/6] sched/dl: Try better placement even for deadline
+ tasks that do not block
+Message-ID: <20190709134200.GD3402@hirez.programming.kicks-ass.net>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-4-luca.abeni@santannapisa.it>
+ <20190708135536.GK3402@hirez.programming.kicks-ass.net>
+ <20190709152436.51825f98@luca64>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709152436.51825f98@luca64>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  9 Jul 2019 17:54:17 +0530
-NitinGote <nitin.r.gote@intel.com> wrote:
-
-> From: Nitin Gote <nitin.r.gote@intel.com>
-
-The patch needs a proper subject line.
-
-> 1. Deprecate strcpy() in favor of strscpy().
-> 2. Deprecate strlcpy() in favor of strscpy().
-> 3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
+On Tue, Jul 09, 2019 at 03:24:36PM +0200, luca abeni wrote:
+> Hi Peter,
 > 
-> Updated strncpy() section in Documentation/process/deprecated.rst
-> to cover strscpy_pad() case.
+> On Mon, 8 Jul 2019 15:55:36 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
-> ---
->  Change log:
->  v1->v2
->  - For string related apis, created different %deprecated_string_api
->    and these will get emitted at CHECK Level using command line option
->    -f/--file to avoid bad patched from novice script users.
+> > On Mon, May 06, 2019 at 06:48:33AM +0200, Luca Abeni wrote:
+> > > @@ -1223,8 +1250,17 @@ static void update_curr_dl(struct rq *rq)
+> > >  			dl_se->dl_overrun = 1;
+> > >  
+> > >  		__dequeue_task_dl(rq, curr, 0);
+> > > -		if (unlikely(dl_se->dl_boosted
+> > > || !start_dl_timer(curr)))
+> > > +		if (unlikely(dl_se->dl_boosted
+> > > || !start_dl_timer(curr))) { enqueue_task_dl(rq, curr,
+> > > ENQUEUE_REPLENISH); +#ifdef CONFIG_SMP
+> > > +		} else if (dl_se->dl_adjust) {
+> > > +			if (rq->migrating_task == NULL) {
+> > > +				queue_balance_callback(rq,
+> > > &per_cpu(dl_migrate_head, rq->cpu), migrate_dl_task);  
+> > 
+> > I'm not entirely sure about this one.
+> > 
+> > That is, we only do those callbacks from:
+> > 
+> >   schedule_tail()
+> >   __schedule()
+> >   rt_mutex_setprio()
+> >   __sched_setscheduler()
+> > 
+> > and the above looks like it can happen outside of those.
 > 
->  v2->v3
->  - Avoided use of $check in implementation.
->  - Incorporated trivial comments.
+> Sorry, I did not know the constraints or requirements for using
+> queue_balance_callback()...
 > 
->  Documentation/process/deprecated.rst |  6 +++---
->  scripts/checkpatch.pl                | 24 ++++++++++++++++++++++++
->  2 files changed, 27 insertions(+), 3 deletions(-)
+> I used it because I wanted to trigger a migration from
+> update_curr_dl(), but invoking double_lock_balance() from this function
+> obviously resulted in a warning. So, I probably misunderstood the
+> purpose of the balance callback API, and I misused it.
 > 
-> diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-> index 49e0f64a3427..f564de3caf76 100644
-> --- a/Documentation/process/deprecated.rst
-> +++ b/Documentation/process/deprecated.rst
-> @@ -93,9 +93,9 @@ will be NUL terminated. This can lead to various linear read overflows
->  and other misbehavior due to the missing termination. It also NUL-pads the
->  destination buffer if the source contents are shorter than the destination
->  buffer size, which may be a needless performance penalty for callers using
-> -only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
-> -(Users of :c:func:`strscpy` still needing NUL-padding will need an
-> -explicit :c:func:`memset` added.)
-> +only NUL-terminated strings. In this case, the safe replacement is
-> +:c:func:`strscpy`. If, however, the destination buffer still needs
-> +NUL-padding, the safe replacement is :c:func:`strscpy_pad`.
+> What would have been the "right way" to trigger a migration for a task
+> when it is throttled?
 
-Please don't use :c:func: in anything new; just write that as strscpy()
-(or whatever) and The Right Thing will happen.
-
-(Maybe we need a checkpatch rule for that :)
-
-Thanks,
-
-jon
+I'm thinking we'll end up in schedule() pretty soon after a throttle to
+make 'current' go away, right? We could put the queue_balance_callback()
+in dequeue_task_dl() or something.
