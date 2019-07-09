@@ -2,133 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D33662E4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D5B62E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfGICw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 22:52:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63622 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725886AbfGICw1 (ORCPT
+        id S1727428AbfGICyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 22:54:11 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44662 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727391AbfGICyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 22:52:27 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x692pPF5045355;
-        Mon, 8 Jul 2019 22:52:00 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tmf1fdu7e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 Jul 2019 22:52:00 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x692pxhj046997;
-        Mon, 8 Jul 2019 22:51:59 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tmf1fdu6u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 Jul 2019 22:51:59 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x692oQTk000936;
-        Tue, 9 Jul 2019 02:51:59 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 2tjk96a903-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 Jul 2019 02:51:59 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x692pwIQ43385274
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 9 Jul 2019 02:51:58 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 323B028059;
-        Tue,  9 Jul 2019 02:51:58 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE5FC28058;
-        Tue,  9 Jul 2019 02:51:55 +0000 (GMT)
-Received: from [9.102.0.209] (unknown [9.102.0.209])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Jul 2019 02:51:55 +0000 (GMT)
-Subject: Re: [PATCH 4/4] powerpc/64: reuse PPC32 static inline
- flush_dcache_range()
-To:     "Oliver O'Halloran" <oohall@gmail.com>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <239d1c8f15b8bedc161a234f9f1a22a07160dbdf.1557824379.git.christophe.leroy@c-s.fr>
- <d6f628ffdeb9c7863da722a8f6ef2949e57bb360.1557824379.git.christophe.leroy@c-s.fr>
- <87y318d2th.fsf@linux.ibm.com>
- <CAOSf1CG-oxpSDsAPw8xHV5367MrMn2Ty_yDpPY9TvA6wMrMZHA@mail.gmail.com>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Message-ID: <c0461069-8ef8-cb56-6807-71cc79793ac4@linux.ibm.com>
-Date:   Tue, 9 Jul 2019 08:21:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CAOSf1CG-oxpSDsAPw8xHV5367MrMn2Ty_yDpPY9TvA6wMrMZHA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Mon, 8 Jul 2019 22:54:06 -0400
+X-UUID: e54a938dbb3841b2821206c79fe148af-20190709
+X-UUID: e54a938dbb3841b2821206c79fe148af-20190709
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1677781939; Tue, 09 Jul 2019 10:53:54 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 9 Jul 2019 10:53:52 +0800
+Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 9 Jul 2019 10:53:52 +0800
+Message-ID: <1562640832.9077.32.camel@mtksdccf07>
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+CC:     Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Date:   Tue, 9 Jul 2019 10:53:52 +0800
+In-Reply-To: <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+         <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+         <1560447999.15814.15.camel@mtksdccf07>
+         <1560479520.15814.34.camel@mtksdccf07>
+         <1560744017.15814.49.camel@mtksdccf07>
+         <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
+         <1560774735.15814.54.camel@mtksdccf07>
+         <1561974995.18866.1.camel@mtksdccf07>
+         <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
+         <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-09_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907090036
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/9/19 7:50 AM, Oliver O'Halloran wrote:
-> On Tue, Jul 9, 2019 at 12:22 AM Aneesh Kumar K.V
-> <aneesh.kumar@linux.ibm.com> wrote:
->>
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>
->>> *snip*
->>> +     if (IS_ENABLED(CONFIG_PPC64))
->>> +             isync();
->>>   }
->>
->>
->> Was checking with Michael about why we need that extra isync. Michael
->> pointed this came via
->>
->> https://github.com/mpe/linux-fullhistory/commit/faa5ee3743ff9b6df9f9a03600e34fdae596cfb2#diff-67c7ffa8e420c7d4206cae4a9e888e14
->>
->> for 970 which doesn't have coherent icache. So possibly isync there is
->> to flush the prefetch instructions? But even so we would need an icbi
->> there before that isync.
+On Mon, 2019-07-08 at 19:33 +0300, Andrey Ryabinin wrote:
 > 
-> I don't think it's that, there's some magic in flush_icache_range() to
-> handle dropping prefetched instructions on 970.
+> On 7/5/19 4:34 PM, Dmitry Vyukov wrote:
+> > On Mon, Jul 1, 2019 at 11:56 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> >>>>>>>>> This patch adds memory corruption identification at bug report for
+> >>>>>>>>> software tag-based mode, the report show whether it is "use-after-free"
+> >>>>>>>>> or "out-of-bound" error instead of "invalid-access" error.This will make
+> >>>>>>>>> it easier for programmers to see the memory corruption problem.
+> >>>>>>>>>
+> >>>>>>>>> Now we extend the quarantine to support both generic and tag-based kasan.
+> >>>>>>>>> For tag-based kasan, the quarantine stores only freed object information
+> >>>>>>>>> to check if an object is freed recently. When tag-based kasan reports an
+> >>>>>>>>> error, we can check if the tagged addr is in the quarantine and make a
+> >>>>>>>>> good guess if the object is more like "use-after-free" or "out-of-bound".
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> We already have all the information and don't need the quarantine to make such guess.
+> >>>>>>>> Basically if shadow of the first byte of object has the same tag as tag in pointer than it's out-of-bounds,
+> >>>>>>>> otherwise it's use-after-free.
+> >>>>>>>>
+> >>>>>>>> In pseudo-code it's something like this:
+> >>>>>>>>
+> >>>>>>>> u8 object_tag = *(u8 *)kasan_mem_to_shadow(nearest_object(cacche, page, access_addr));
+> >>>>>>>>
+> >>>>>>>> if (access_addr_tag == object_tag && object_tag != KASAN_TAG_INVALID)
+> >>>>>>>>   // out-of-bounds
+> >>>>>>>> else
+> >>>>>>>>   // use-after-free
+> >>>>>>>
+> >>>>>>> Thanks your explanation.
+> >>>>>>> I see, we can use it to decide corruption type.
+> >>>>>>> But some use-after-free issues, it may not have accurate free-backtrace.
+> >>>>>>> Unfortunately in that situation, free-backtrace is the most important.
+> >>>>>>> please see below example
+> >>>>>>>
+> >>>>>>> In generic KASAN, it gets accurate free-backrace(ptr1).
+> >>>>>>> In tag-based KASAN, it gets wrong free-backtrace(ptr2). It will make
+> >>>>>>> programmer misjudge, so they may not believe tag-based KASAN.
+> >>>>>>> So We provide this patch, we hope tag-based KASAN bug report is the same
+> >>>>>>> accurate with generic KASAN.
+> >>>>>>>
+> >>>>>>> ---
+> >>>>>>>     ptr1 = kmalloc(size, GFP_KERNEL);
+> >>>>>>>     ptr1_free(ptr1);
+> >>>>>>>
+> >>>>>>>     ptr2 = kmalloc(size, GFP_KERNEL);
+> >>>>>>>     ptr2_free(ptr2);
+> >>>>>>>
+> >>>>>>>     ptr1[size] = 'x';  //corruption here
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> static noinline void ptr1_free(char* ptr)
+> >>>>>>> {
+> >>>>>>>     kfree(ptr);
+> >>>>>>> }
+> >>>>>>> static noinline void ptr2_free(char* ptr)
+> >>>>>>> {
+> >>>>>>>     kfree(ptr);
+> >>>>>>> }
+> >>>>>>> ---
+> >>>>>>>
+> >>>>>> We think of another question about deciding by that shadow of the first
+> >>>>>> byte.
+> >>>>>> In tag-based KASAN, it is immediately released after calling kfree(), so
+> >>>>>> the slub is easy to be used by another pointer, then it will change
+> >>>>>> shadow memory to the tag of new pointer, it will not be the
+> >>>>>> KASAN_TAG_INVALID, so there are many false negative cases, especially in
+> >>>>>> small size allocation.
+> >>>>>>
+> >>>>>> Our patch is to solve those problems. so please consider it, thanks.
+> >>>>>>
+> >>>>> Hi, Andrey and Dmitry,
+> >>>>>
+> >>>>> I am sorry to bother you.
+> >>>>> Would you tell me what you think about this patch?
+> >>>>> We want to use tag-based KASAN, so we hope its bug report is clear and
+> >>>>> correct as generic KASAN.
+> >>>>>
+> >>>>> Thanks your review.
+> >>>>> Walter
+> >>>>
+> >>>> Hi Walter,
+> >>>>
+> >>>> I will probably be busy till the next week. Sorry for delays.
+> >>>
+> >>> It's ok. Thanks your kindly help.
+> >>> I hope I can contribute to tag-based KASAN. It is a very important tool
+> >>> for us.
+> >>
+> >> Hi, Dmitry,
+> >>
+> >> Would you have free time to discuss this patch together?
+> >> Thanks.
+> > 
+> > Sorry for delays. I am overwhelm by some urgent work. I afraid to
+> > promise any dates because the next week I am on a conference, then
+> > again a backlog and an intern starting...
+> > 
+> > Andrey, do you still have concerns re this patch? This change allows
+> > to print the free stack.
 > 
->> So overall wondering why we need that extra barriers there.
-> 
-> I think the isync is needed there because the architecture only
-> requires sync to provide ordering. A sync alone doesn't guarantee the
-> dcbfs have actually completed so the isync is necessary to ensure the
-> flushed cache lines are back in memory. That said, as far as I know
-> all the IBM book3s chips from power4 onwards will wait for pending
-> dcbfs when they hit a sync, but that might change in the future.
+> I 'm not sure that quarantine is a best way to do that. Quarantine is made to delay freeing, but we don't that here.
+> If we want to remember more free stacks wouldn't be easier simply to remember more stacks in object itself?
+> Same for previously used tags for better use-after-free identification.
 > 
 
-ISA doesn't list that as the sequence. Only place where isync was 
-mentioned was w.r.t  icbi where want to discards the prefetch.
+Hi Andrey,
+
+We ever tried to use object itself to determine use-after-free
+identification, but tag-based KASAN immediately released the pointer
+after call kfree(), the original object will be used by another
+pointer, if we use object itself to determine use-after-free issue, then
+it has many false negative cases. so we create a lite quarantine(ring
+buffers) to record recent free stacks in order to avoid those false
+negative situations.
+
+We hope to have one solution to cover all cases and be accurate. Our
+patch is configurable feature option, it can provide some programmers to
+easy see the tag-based KASAN report.
 
 
+> > We also have a quarantine for hwasan in user-space. Though it works a
+> > bit differently then the normal asan quarantine. We keep a per-thread
+> > fixed-size ring-buffer of recent allocations:
+> > https://github.com/llvm-mirror/compiler-rt/blob/master/lib/hwasan/hwasan_report.cpp#L274-L284
+> > and scan these ring buffers during reports.
+> > 
 
-> If it's a problem we could add a cpu-feature section around the isync
-> to no-op it in the common case. However, when I had a look with perf
-> it always showed that the sync was the hotspot so I don't think it'll
-> help much.
-> 
+Thanks your information, it looks like the same idea with our patch.
 
-What about the preceding barriers (sync; isync;) before dcbf? Why are 
-they needed?
-
--aneesh
