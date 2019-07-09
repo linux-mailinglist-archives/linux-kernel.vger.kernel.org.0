@@ -2,155 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E1963133
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8385A63138
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfGIGqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:46:47 -0400
-Received: from first.geanix.com ([116.203.34.67]:46434 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbfGIGqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:46:44 -0400
-Received: from zen.localdomain (unknown [85.184.140.241])
-        by first.geanix.com (Postfix) with ESMTPSA id 18CA0A74F;
-        Tue,  9 Jul 2019 06:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1562654713; bh=//FC8cP/LBlrTVTEX+Si3DQLq5jHCa1lNoWmCf1K6tU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=f8nqL4Qvf0BtE5vqLb7BmyM6Jirv1I0Dhbb1il4D/3fsfqMS6i+oI8EsCRY8KhnRO
-         cz4L+c6qzaHemRUFNW1IexOFYFPv4jtJvuIDdhAp6WGf3F0I1GYA6/FT3WlVujWoql
-         Bd1rcM8sg1Og7unlUEZKQA132N1hdOBrppCXT8p4IeNUa7fHXtcEvhE8b4EpQSQvGW
-         qnCvUdOa0/r9Rix/HVxw5bs19QEV1+gRjkgXgDMLub/80fe8CrLsptV0SdMgYdNgRK
-         iGwHNHqKL5Uncw0RtxqN42lX95WUS3aODi4t5KSqCtyMB+NJrs345Ar7zGHdiNh6ND
-         6uHa05GL6Xu5Q==
-From:   =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-        =?UTF-8?q?Sean=20Nyekj=C3=A6r?= <sean@geanix.com>,
-        Esben Haabendal <esben@geanix.com>
-Subject: [PATCHv2 4/4] tty: n_gsm: add ioctl to map serial device to mux'ed tty
-Date:   Tue,  9 Jul 2019 08:46:33 +0200
-Message-Id: <20190709064633.45411-4-martin@geanix.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190709064633.45411-1-martin@geanix.com>
-References: <20190709064633.45411-1-martin@geanix.com>
+        id S1726238AbfGIGtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:49:40 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33868 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfGIGtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 02:49:40 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x696iEeB045896;
+        Tue, 9 Jul 2019 06:48:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ii8UsH5Elf/Y7v3ZXq66I3D5hvstpMiGUJOQc95FiB0=;
+ b=dvyDiGzb7aGwx+2hxOPmVTySKjYie1i9xH7dfNFbcJPfLjdpSAm7aRMn8oq0Iwsya1rE
+ OjUbPVp2KOWeC79K+ud806gHpv1ZxwyAuPBVAf6R0H7DOASz+piv+7XH42JetUymfSKO
+ StgQq5DhSInRnedB0dv3RAClWrhKRr8WWy5MqeJCjAL++LhpnUe7GaDeZvQgCdlOJXIQ
+ AQuD5wMi/jQKejUjsnWZGFBii4JAPJDJztf9CVsNuVmYyQCPkGT8uf//joe2S40yIxbN
+ iZ3l2unklEOkHAX6T8hyn4kKFJKBjeWkG8Qwv9xa5hs5Rxo0v9uKcpCq2n1bePnohhRL Lw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2tjkkpjakw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 06:48:57 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x696lbYl023908;
+        Tue, 9 Jul 2019 06:48:57 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2tmmh2s7p0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 06:48:57 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x696mtca012680;
+        Tue, 9 Jul 2019 06:48:56 GMT
+Received: from Subhras-MacBook-Pro.local (/103.217.243.158)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jul 2019 23:48:55 -0700
+Subject: Re: [RFC 0/2] Optimize the idle CPU search
+To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org
+References: <20190708045432.18774-1-parth@linux.ibm.com>
+ <839c6cc8-b550-3066-d856-3c8a919cc318@oracle.com>
+ <708a2726-628c-196b-1fc0-43067e1e740f@linux.ibm.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <e688119a-5acd-0304-bb44-62408fc42ca7@oracle.com>
+Date:   Tue, 9 Jul 2019 12:18:47 +0530
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
-        autolearn=disabled version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on 884f5ce5917a
+In-Reply-To: <708a2726-628c-196b-1fc0-43067e1e740f@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9312 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907090082
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9312 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907090081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guessing the base tty for a gsm0710 multiplexed serial device is not
-currently possible, which makes it racy to use with multiple modems.
 
-Add a way to map the physical serial tty to its related mux devices
-using a ioctl.
-
-Signed-off-by: Martin Hundebøll <martin@geanix.com>
----
-
-Changes since v1:
- * use put_user() instead of copy_to_user()
- * add missing opening quote
-
- Documentation/serial/n_gsm.rst | 12 ++++++++++--
- drivers/tty/n_gsm.c            |  4 ++++
- include/uapi/linux/gsmmux.h    |  2 ++
- 3 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/serial/n_gsm.rst b/Documentation/serial/n_gsm.rst
-index 0ba731ab00b2..4a52499567f5 100644
---- a/Documentation/serial/n_gsm.rst
-+++ b/Documentation/serial/n_gsm.rst
-@@ -18,10 +18,12 @@ How to use it
- 2. switch the serial line to using the n_gsm line discipline by using
-    TIOCSETD ioctl,
- 3. configure the mux using GSMIOC_GETCONF / GSMIOC_SETCONF ioctl,
-+4. obtain base gsmtty number for the used serial port,
- 
- Major parts of the initialization program :
- (a good starting point is util-linux-ng/sys-utils/ldattach.c)::
- 
-+  #include <stdio.h>
-   #include <linux/gsmmux.h>
-   #include <linux/tty.h>
-   #define DEFAULT_SPEED	B115200
-@@ -30,6 +32,7 @@ Major parts of the initialization program :
- 	int ldisc = N_GSM0710;
- 	struct gsm_config c;
- 	struct termios configuration;
-+	int base;
- 
- 	/* open the serial port connected to the modem */
- 	fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
-@@ -58,19 +61,24 @@ Major parts of the initialization program :
- 	c.mtu = 127;
- 	/* set the new configuration */
- 	ioctl(fd, GSMIOC_SETCONF, &c);
-+	/* get base gsmtty device node */
-+	ioctl(fd, GSMIOC_GETBASE, &base);
-+	/* the base node is used for mux control by the driver */
-+	printf("first muxed line: /dev/gsmtty%i\n", base + 1);
-+
- 
- 	/* and wait for ever to keep the line discipline enabled */
- 	daemon(0,0);
- 	pause();
- 
--4. use these devices as plain serial ports.
-+5. use these devices as plain serial ports.
- 
-    for example, it's possible:
- 
-    - and to use gnokii to send / receive SMS on ttygsm1
-    - to use ppp to establish a datalink on ttygsm2
- 
--5. first close all virtual ports before closing the physical port.
-+6. first close all virtual ports before closing the physical port.
- 
-    Note that after closing the physical port the modem is still in multiplexing
-    mode. This may prevent a successful re-opening of the port later. To avoid
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index cba06063c44a..e7aea4ccbebd 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -2612,6 +2612,7 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
- {
- 	struct gsm_config c;
- 	struct gsm_mux *gsm = tty->disc_data;
-+	int base;
- 
- 	switch (cmd) {
- 	case GSMIOC_GETCONF:
-@@ -2623,6 +2624,9 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
- 		if (copy_from_user(&c, (void *)arg, sizeof(c)))
- 			return -EFAULT;
- 		return gsm_config(gsm, &c);
-+	case GSMIOC_GETBASE:
-+		base = mux_num_to_base(gsm);
-+		return put_user(base, (int __user *)arg);
- 	default:
- 		return n_tty_ioctl_helper(tty, file, cmd, arg);
- 	}
-diff --git a/include/uapi/linux/gsmmux.h b/include/uapi/linux/gsmmux.h
-index 101d3c469acb..6eb63be3ed9e 100644
---- a/include/uapi/linux/gsmmux.h
-+++ b/include/uapi/linux/gsmmux.h
-@@ -37,5 +37,7 @@ struct gsm_netconfig {
- #define GSMIOC_ENABLE_NET      _IOW('G', 2, struct gsm_netconfig)
- #define GSMIOC_DISABLE_NET     _IO('G', 3)
- 
-+/* get the base tty number for a configured gsmmux tty */
-+#define GSMIOC_GETBASE		_IOR('G', 4, int)
- 
- #endif
--- 
-2.22.0
-
+On 7/9/19 11:08 AM, Parth Shah wrote:
+>
+> On 7/9/19 5:38 AM, Subhra Mazumdar wrote:
+>> On 7/8/19 10:24 AM, Parth Shah wrote:
+>>> When searching for an idle_sibling, scheduler first iterates to search for
+>>> an idle core and then for an idle CPU. By maintaining the idle CPU mask
+>>> while iterating through idle cores, we can mark non-idle CPUs for which
+>>> idle CPU search would not have to iterate through again. This is especially
+>>> true in a moderately load system
+>>>
+>>> Optimize idle CPUs search by marking already found non idle CPUs during
+>>> idle core search. This reduces iteration count when searching for idle
+>>> CPUs, resulting in lower iteration count.
+>>>
+>> I believe this can co-exist with latency-nice? We can derive the 'nr' in
+>> select_idle_cpu from latency-nice and use the new mask to iterate.
+>>
+> I agree, can be done with latency-nice.
+>
+> Maybe something like below?
+> smt = nr_cpus / nr_cores
+> nr = smt + (p->latency_nice * (total_cpus-smt) / max_latency_nice)
+>
+> This limits lower bounds to 1 core and goes through all the cores if
+> latency_nice is maximum for a task.
+Yes I had similar in mind.
