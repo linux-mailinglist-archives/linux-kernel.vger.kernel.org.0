@@ -2,117 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B3162F99
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A15062F51
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfGIE0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 00:26:12 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:42157 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfGIEZm (ORCPT
+        id S1726108AbfGIEY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 00:24:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43761 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfGIEY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 00:25:42 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x694OqVu009969;
-        Tue, 9 Jul 2019 13:25:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x694OqVu009969
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562646302;
-        bh=RaJaeLmuuIEfd1ef6k7J45/hiRecyMkN2GAogQXZ22k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uX7zdjII0oCqxZzVB7KNqMSkUpgWJcg2+oGORop6+ZNSxaG2CYCOqh/GOR8icFu3Q
-         CfiIsKHyRYYQu1fBH4ij4Te9U443p9CU77yeyG9VM29BMrhDBg7n81ewSihoBeAyFe
-         4U5zMONyEdv7cUg5/U6ehb9rwOypgnO+0H6ZNjqtDUMzuQLMvb78wqKD2w57Jgn7rb
-         Q8WdH+Wmsq91Fc096FnuQ56/TDWP2UHmcVlXm+gRvSAFA2sGux17CyoZcHc3MxcZN5
-         YllouM6hj9oUsrjVuION2dLviX8+NEgx/CpHmhz8baLZrcGtvsQ16g+AOjdKGqxguZ
-         W/D3cS1Q0Rf8g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Nicolas Pitre <nico@fluxnic.net>, Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] kbuild: split out *.mod out of {single,multi}-used-m rules
-Date:   Tue,  9 Jul 2019 13:24:15 +0900
-Message-Id: <20190709042416.27554-12-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190709042416.27554-1-yamada.masahiro@socionext.com>
-References: <20190709042416.27554-1-yamada.masahiro@socionext.com>
+        Tue, 9 Jul 2019 00:24:28 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i189so8621667pfg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 21:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=F+Oin8y+EIH8ELQCYmC4I4So1tZyUi3NnGz7vhdeqmo=;
+        b=Lv0JlsOW1n2ZicN2jgqiK9kzHhsTVUcMz/W/h7SJ8+gc7qVRFBeXyVKv9fK+/Gb7/G
+         D8kFkTzNmn2hn8QX/87Yg07PdDAVs30Gu+viVV80EZac8e4cUE3UlBn+1l2yXmNjvGMn
+         SryK7pbSfTzRtCXNsKquOOgrkZ99BMjsrST8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=F+Oin8y+EIH8ELQCYmC4I4So1tZyUi3NnGz7vhdeqmo=;
+        b=iFoVunxgsx8eAodNfmtzWzgTQV6r1kSNZrVs+E6fowZlT6cdNniIrc9ai2G1WfR+cf
+         YRXKOMlSxcaoBLJoNKVWXG+d3ph4s2c82RrMBcaK9qC4wy0V/QVjGs2e06Q/GXxkpbro
+         ZTF49yS5RWBtuPZ7yVP3B5PVbc5JWfyN74hrogP9B+OYO0XoYQpZTxyURDxt1w4IhTQo
+         GC5mDn+1U8CTp8kFRZWHUIplw4Q/0mu9Nfzs/5YRPhXi1Da5DzI2aDx+xBZ/1IAxqNPU
+         JeN5h5ZkSvKQWQ1wtflV585e5Jz8JAoANoGLp6ZSbZYyh/ufm1iVScnbFVx9CCrppQrX
+         9I/w==
+X-Gm-Message-State: APjAAAX8PTeUQSbyhYTAc1X9D8/GcepBQzC6XoXWdL05wi1rQGRq/kj1
+        fA0r4eOGpi/RuKZvAprWPPVqcA==
+X-Google-Smtp-Source: APXvYqyVa/GzCt+39N/LJAhpraRBJZSq8cFfRC98o721wKHP4dmb7d5TC7WEleMmLOHLQc/bZMyvlg==
+X-Received: by 2002:a63:2264:: with SMTP id t36mr22286321pgm.87.1562646268174;
+        Mon, 08 Jul 2019 21:24:28 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x67sm20209337pfb.21.2019.07.08.21.24.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Jul 2019 21:24:27 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 21:24:26 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kbuild test robot <lkp@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Subject: Re: [PATCH] selftests/seccomp/seccomp_bpf: update for
+ PTRACE_GET_SYSCALL_INFO
+Message-ID: <201907082124.F358ED0@keescook>
+References: <20190708090627.GO17490@shao2-debian>
+ <20190708182904.GA12332@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708182904.GA12332@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, *.mod is created as a side-effect of obj-m.
+On Mon, Jul 08, 2019 at 09:29:04PM +0300, Dmitry V. Levin wrote:
+> The syscall entry/exit is now exposed via PTRACE_GETEVENTMSG,
+> update the test accordingly.
 
-Split out *.mod as a dedicated build rule, which allows to
-unify the %.c -> %.o rule, and remove the single-used-m rule.
+Oh yes, thank you!
 
-This also makes the incremental build of allmodconfig faster because
-it saves $(NM) invocation when there is no change in the module.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+-Kees
 
- scripts/Makefile.build | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index dc66fe852768..6ef7f16c4cf5 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -1775,13 +1775,18 @@ void tracer_ptrace(struct __test_metadata *_metadata, pid_t tracee,
+>  	unsigned long msg;
+>  	static bool entry;
+>  
+> -	/* Make sure we got an empty message. */
+> +	/*
+> +	 * The traditional way to tell PTRACE_SYSCALL entry/exit
+> +	 * is by counting.
+> +	 */
+> +	entry = !entry;
+> +
+> +	/* Make sure we got an appropriate message. */
+>  	ret = ptrace(PTRACE_GETEVENTMSG, tracee, NULL, &msg);
+>  	EXPECT_EQ(0, ret);
+> -	EXPECT_EQ(0, msg);
+> +	EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+> +			: PTRACE_EVENTMSG_SYSCALL_EXIT, msg);
+>  
+> -	/* The only way to tell PTRACE_SYSCALL entry/exit is by counting. */
+> -	entry = !entry;
+>  	if (!entry)
+>  		return;
+>  
+> -- 
+> ldv
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index f34f941c3b9b..00bd3bc1d6ba 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -69,8 +69,10 @@ modorder-target := $(obj)/modules.order
- endif
- endif
- 
-+mod-targets := $(patsubst %.o, %.mod, $(obj-m))
-+
- __build: $(if $(KBUILD_BUILTIN),$(builtin-target) $(lib-target) $(extra-y)) \
--	 $(if $(KBUILD_MODULES),$(obj-m) $(modorder-target)) \
-+	 $(if $(KBUILD_MODULES),$(obj-m) $(mod-targets) $(modorder-target)) \
- 	 $(subdir-ym) $(always)
- 	@:
- 
-@@ -268,7 +270,7 @@ endef
- 
- # List module undefined symbols (or empty line if not enabled)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
--cmd_undef_syms = $(NM) $@ | sed -n 's/^  *U //p' | xargs echo
-+cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | xargs echo
- else
- cmd_undef_syms = echo
- endif
-@@ -278,11 +280,15 @@ $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
- 	$(call cmd,force_checksrc)
- 	$(call if_changed_rule,cc_o_c)
- 
--$(single-used-m): $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
--	$(call cmd,force_checksrc)
--	$(call if_changed_rule,cc_o_c)
--	@{ echo $@; \
--	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
-+cmd_mod = { \
-+	echo $(if $($*-objs)$($*-y)$($*-m), $(addprefix $(obj)/, $($*-objs) $($*-y) $($*-m)), $(@:.mod=.o)); \
-+	$(cmd_undef_syms); \
-+	} > $@
-+
-+$(obj)/%.mod: $(obj)/%.o FORCE
-+	$(call if_changed,mod)
-+
-+targets += $(mod-targets)
- 
- quiet_cmd_cc_lst_c = MKLST   $@
-       cmd_cc_lst_c = $(CC) $(c_flags) -g -c -o $*.o $< && \
-@@ -463,8 +469,6 @@ cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^) $(cmd_secanalysis
- 
- $(multi-used-m): FORCE
- 	$(call if_changed,link_multi-m)
--	@{ echo $(filter %.o,$^); \
--	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
- $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
- 
- targets += $(multi-used-m)
 -- 
-2.17.1
-
+Kees Cook
