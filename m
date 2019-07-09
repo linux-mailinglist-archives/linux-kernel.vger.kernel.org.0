@@ -2,121 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DED8633BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 11:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3091633D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfGIJzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 05:55:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47032 "EHLO mx1.suse.de"
+        id S1726765AbfGIKCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 06:02:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48546 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726126AbfGIJzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 05:55:22 -0400
+        id S1726623AbfGIKCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 06:02:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7524CAD3E;
-        Tue,  9 Jul 2019 09:55:20 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 11:55:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
-        hdanton@sina.com, lizeb@google.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v3 4/5] mm: introduce MADV_PAGEOUT
-Message-ID: <20190709095518.GF26380@dhcp22.suse.cz>
-References: <20190627115405.255259-1-minchan@kernel.org>
- <20190627115405.255259-5-minchan@kernel.org>
+        by mx1.suse.de (Postfix) with ESMTP id 96B1CAC2D;
+        Tue,  9 Jul 2019 10:02:05 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     axboe@kernel.dk
+Cc:     linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        linux-ide@vger.kernel.org
+Subject: [PATCH v2 1/3] ata: Documentation, fix function names
+Date:   Tue,  9 Jul 2019 12:02:01 +0200
+Message-Id: <20190709100203.19049-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627115405.255259-5-minchan@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 27-06-19 20:54:04, Minchan Kim wrote:
-> When a process expects no accesses to a certain memory range
-> for a long time, it could hint kernel that the pages can be
-> reclaimed instantly but data should be preserved for future use.
-> This could reduce workingset eviction so it ends up increasing
-> performance.
-> 
-> This patch introduces the new MADV_PAGEOUT hint to madvise(2)
-> syscall. MADV_PAGEOUT can be used by a process to mark a memory
-> range as not expected to be used for a long time so that kernel
-> reclaims *any LRU* pages instantly. The hint can help kernel in
-> deciding which pages to evict proactively.
-> 
-> - man-page material
-> 
-> MADV_PAGEOUT (since Linux x.x)
-> 
-> Do not expect access in the near future so pages in the specified
-> regions could be reclaimed instantly regardless of memory pressure.
-> Thus, access in the range after successful operation could cause
-> major page fault but never lose the up-to-date contents unlike
-> MADV_DONTNEED.
+ata_qc_prep no longer exists, there are ata_bmdma_qc_prep and
+ata_bmdma_dumb_qc_prep instead. And most drivers do not use them, so
+reword the paragraph.
 
-> It works for only private anonymous mappings and
-> non-anonymous mappings that belong to files that the calling process
-> could successfully open for writing; otherwise, it could be used for
-> sidechannel attack.
+ata_qc_issue_prot was renamed to ata_sff_qc_issue. ->tf_load is now
+->sff_tf_load. Fix them.
 
-I would rephrase this way:
-"
-Pages belonging to a shared mapping are only processed if a write access
-is allowed for the calling process.
-"
+And fix spelling supercede -> supersede.
 
-I wouldn't really mention side channel attacks for a man page. You can
-mention can_do_mincore check and the side channel prevention in the
-changelog that is not aimed for the man page.
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-ide@vger.kernel.org
+---
+ Documentation/driver-api/libata.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> MADV_PAGEOUT cannot be applied to locked pages, Huge TLB pages, or
-> VM_PFNMAP pages.
-> 
-> * v2
->  * add comment about SWAP_CLUSTER_MAX - mhocko
->  * add permission check to prevent sidechannel attack - mhocko
->  * add man page stuff - dave
-> 
-> * v1
->  * change pte to old and rely on the other's reference - hannes
->  * remove page_mapcount to check shared page - mhocko
-> 
-> * RFC v2
->  * make reclaim_pages simple via factoring out isolate logic - hannes
-> 
-> * RFCv1
->  * rename from MADV_COLD to MADV_PAGEOUT - hannes
->  * bail out if process is being killed - Hillf
->  * fix reclaim_pages bugs - Hillf
-> 
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-> ---
-
-
-I am still not convinced about the SWAP_CLUSTER_MAX batching and the
-udnerlying OOM argument. Is one pmd worth of pages really an OOM risk?
-Sure you can have many invocations in parallel and that would add on
-but the same might happen with SWAP_CLUSTER_MAX. So I would just remove
-the batching for now and think of it only if we really see this being a
-problem for real. Unless you feel really strong about this, of course.
-
-Anyway the patch looks ok to me otherwise.
-
-Acked-by: Michal Hocko <mhocko@suse.co>
+diff --git a/Documentation/driver-api/libata.rst b/Documentation/driver-api/libata.rst
+index 70e180e6b93d..c2ee38098e85 100644
+--- a/Documentation/driver-api/libata.rst
++++ b/Documentation/driver-api/libata.rst
+@@ -254,19 +254,19 @@ High-level taskfile hooks
+     int (*qc_issue) (struct ata_queued_cmd *qc);
+ 
+ 
+-Higher-level hooks, these two hooks can potentially supercede several of
++Higher-level hooks, these two hooks can potentially supersede several of
+ the above taskfile/DMA engine hooks. ``->qc_prep`` is called after the
+ buffers have been DMA-mapped, and is typically used to populate the
+-hardware's DMA scatter-gather table. Most drivers use the standard
+-:c:func:`ata_qc_prep` helper function, but more advanced drivers roll their
+-own.
++hardware's DMA scatter-gather table. Some drivers use the standard
++:c:func:`ata_bmdma_qc_prep` and :c:func:`ata_bmdma_dumb_qc_prep` helper
++functions, but more advanced drivers roll their own.
+ 
+ ``->qc_issue`` is used to make a command active, once the hardware and S/G
+ tables have been prepared. IDE BMDMA drivers use the helper function
+-:c:func:`ata_qc_issue_prot` for taskfile protocol-based dispatch. More
++:c:func:`ata_sff_qc_issue` for taskfile protocol-based dispatch. More
+ advanced drivers implement their own ``->qc_issue``.
+ 
+-:c:func:`ata_qc_issue_prot` calls ``->tf_load()``, ``->bmdma_setup()``, and
++:c:func:`ata_sff_qc_issue` calls ``->sff_tf_load()``, ``->bmdma_setup()``, and
+ ``->bmdma_start()`` as necessary to initiate a transfer.
+ 
+ Exception and probe handling (EH)
 -- 
-Michal Hocko
-SUSE Labs
+2.22.0
+
