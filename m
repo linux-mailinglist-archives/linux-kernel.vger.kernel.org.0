@@ -2,61 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413BA63AB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FE4863ACE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfGISUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:20:25 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37131 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729002AbfGISUX (ORCPT
+        id S1727519AbfGISWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:22:31 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42584 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGISWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:20:23 -0400
-Received: by mail-qt1-f196.google.com with SMTP id y26so10046868qto.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:23 -0700 (PDT)
+        Tue, 9 Jul 2019 14:22:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so9688538pff.9;
+        Tue, 09 Jul 2019 11:22:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=AiVVzsQgxExtlPdXUQO7u3KIlgj9fJXNjXAFaENAUkA=;
-        b=AqunWWWxGh4NAhLbFvISj8wCzu6id3JXejuIXa4TvV30VuMXGIT0XEXhkQJ6p4TGgR
-         DjjKaYUsaAaVrwO0CP1uVEJp5OBZ4ZkazaAVcwwTVNPZpUvUow0ckU9EpwWik/tlIupX
-         b/5dCH7k5TtiD1e3G4JHhANhB95vpUm8sKLXx6E1+5Ay29tkvlxkYf9asnwd2JcpbkDs
-         ZflCqDPNQ9DDfGOkeI1EgEgDY8Txm1qrd14+8P75qq+3BJyby4paKruB3BM8iwSL5wRi
-         Q8JvaJDDY7rxp4ujqvGLkI1MTqlzc4WcOryOl/Sk1EbjnjIndttpQuVZgDtUlgTT7MXp
-         Xqbg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=U1sP01z1tONmh5GWSZICOzts+V0dp/K1omZR11yOJpM=;
+        b=QhDmc+Yt7aX/kWNLZfJwZOkYHx9rRWnvs9Q7XumHFVJueP44+phWYld4rqJ7+Jan5A
+         dB4aglS09c/iFyWcxpuedXPoL17EamixBumDreIPRpbc5z91QjFwsiqGUudikuZdEJfs
+         oJM9VA1klnM026G0WG+eK8wRf/7YlpJd1rBS4PpLe7vrK7FWh94t3BgDjropr0lHKXjX
+         kryWHkGO6xozBFsCHbchzhjxTFJ1fIRKeAi8YVebHlo7/7VyJXzS2ASqsyS6NCnyk93D
+         q1dVYIMmAS/kJrb2SthctcWyaR9mYTUUXidpFVbmY5vVRtjNKvokkG3THJ4Hq4wbyMJb
+         I9Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AiVVzsQgxExtlPdXUQO7u3KIlgj9fJXNjXAFaENAUkA=;
-        b=m3vVyKv/jDW4qoP826Hm9i8rfFBFN5bx0JpV6Z8yQ25SHayp+nC8IXxsG2OFXks4X7
-         fqFjoKnnYd0nz2irR/ryj7gOErhsabUHCgtoA73ngV/BKxHZT3ty6dgL4KknyZkMKRGe
-         8fww3IScVOemG09b6IdMGuq3NCfkt622DWzVzEN4T4HDPcQppovFT2EFoAG6P4lZ1JdC
-         ynP9CjpbtTb5IaC8soeEQ8MKF24Ucxtex/WGhZCu9XR/s6s/fBc9M0oPhxVT2vyVqOlG
-         rSrDT3MjtFhNACty09658e2lDUHSCEvAofK+UE/YfGK9vSfLF24XmeRuin6K6b2yk2RQ
-         p+4g==
-X-Gm-Message-State: APjAAAWH/P6ssUCuETJsjRyTbE08K1jJsykt/+/imoMjL7VuZ8FchVtT
-        rbpHzv/oLYvH6CZwno1WahcEbA==
-X-Google-Smtp-Source: APXvYqypFDORJK55t4/iPYv6UX1UCBaFaqAzD+I5UAklLCwgFf6Nywn8Ipf3ouT61bmq39qnWmnv5Q==
-X-Received: by 2002:ac8:1195:: with SMTP id d21mr19311947qtj.278.1562696422992;
-        Tue, 09 Jul 2019 11:20:22 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.21
+        bh=U1sP01z1tONmh5GWSZICOzts+V0dp/K1omZR11yOJpM=;
+        b=rpDKAJHwcg88lBfWKr8faR34bmMrINzSufLGc13lUX08Nr8WeSSZFd2nVGGZv26G9y
+         9IR5aXC9B1DrQ9SEeUmgljgvr3dtl3n+i4VTumDlpMNUd319ZHzcTp3ewTGyYEn1dDZL
+         6ma/cetzFdmsrHxjtV/mdR+ZiXOkZGAdhzfqsDZOyoFGwSMo8yhFH3Kj6fzxnRIcBCf4
+         Qov1d06t4dh9gmWlRoCvA/1eWEGQJXCX5/59QqZAvbLg3YQr+7wBsWqvlB6xVV/1ULrX
+         sTHSO+meUfLmZNaB+YmQj9j4iATlexJRln6JVH1JkSpBBMtwXPetaIK2efpZAzU1ww8O
+         EXXQ==
+X-Gm-Message-State: APjAAAVV1FGC262KF671yyNyELLDm8dPQkvgL+V22JD3AOQoDTFgpT2p
+        vOEtv81dDxgMW+d9GLCsFoIVtdNrmoWAaQ==
+X-Google-Smtp-Source: APXvYqwCnW4w0GnKlSp4Yh+i8KGhW25g9e/rE8dDky2tYSa1fXAAuNXjpzRmzhHD/9ijDv8cfFPdLw==
+X-Received: by 2002:a63:e356:: with SMTP id o22mr32326590pgj.150.1562696549596;
+        Tue, 09 Jul 2019 11:22:29 -0700 (PDT)
+Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
+        by smtp.gmail.com with ESMTPSA id m69sm21008639pga.11.2019.07.09.11.22.06
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 11:20:22 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        ebiederm@xmission.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v2 5/5] arm64, kexec: reserve kexeckernel region
-Date:   Tue,  9 Jul 2019 14:20:14 -0400
-Message-Id: <20190709182014.16052-6-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190709182014.16052-1-pasha.tatashin@soleen.com>
-References: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+        Tue, 09 Jul 2019 11:22:12 -0700 (PDT)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
+        linux-mips@vger.kernel.org (open list:MIPS),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
+        Chuanhong Guo <gch981213@gmail.com>
+Subject: [PATCH 2/5] MIPS: ralink: fix cpu clock of mt7621 and add dt clk devices
+Date:   Wed, 10 Jul 2019 02:20:15 +0800
+Message-Id: <20190709182018.23193-3-gch981213@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190709182018.23193-1-gch981213@gmail.com>
+References: <20190709182018.23193-1-gch981213@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,185 +75,230 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kexeckernel= is used to reserve memory for normal kexec kernel for
-faster reboot.
+For a long time the mt7621 uses a fixed cpu clock which causes a problem
+if the cpu frequency is not 880MHz.
 
-Rename reserve_crashkernel() to reserve_crash_or_kexec_kernel(), and
-generalize it by adding an argument that specifies what is reserved:
-"crashkernel=" for crash kernel region
-"kexeckernel=" for normal kexec region
+This patch fixes the cpu clock calculation and adds the cpu/bus clkdev
+which will be used in dts.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Ported from OpenWrt:
+c7ca224299 ramips: fix cpu clock of mt7621 and add dt clk devices
+
+Signed-off-by: Weijie Gao <hackpascal@gmail.com>
+Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 10 +--
- arch/arm64/kernel/setup.c                     |  5 ++
- arch/arm64/mm/init.c                          | 83 ++++++++++++-------
- 3 files changed, 63 insertions(+), 35 deletions(-)
+ arch/mips/include/asm/mach-ralink/mt7621.h |  20 ++++
+ arch/mips/ralink/mt7621.c                  | 102 ++++++++++++++-------
+ arch/mips/ralink/timer-gic.c               |   4 +-
+ 3 files changed, 93 insertions(+), 33 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0f5ce665c7f5..a18222c1fbee 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -740,11 +740,11 @@
- 			or memory reserved is below 4G.
- 
- 	kexeckernel=size[KMG][@offset[KMG]]
--			[KNL] Using kexec, Linux can reboot to a new kernel.
--			This parameter reserves the physical memory region
--			[offset, offset + size] for that kernel. If '@offset' is
--			omitted, then a suitable offset is selected
--			automatically.
-+			[KNL, ARM64] Using kexec, Linux can reboot to a new
-+			kernel. This parameter reserves the physical memory
-+			region [offset, offset + size] for that kernel. If
-+			'@offset' is omitted, then a suitable offset is
-+			selected automatically.
- 
- 	cryptomgr.notests
- 			[KNL] Disable crypto self-tests
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 7e541f947b4c..9f308fa103c5 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -235,6 +235,11 @@ static void __init request_standard_resources(void)
- 		if (crashk_res.end && crashk_res.start >= res->start &&
- 		    crashk_res.end <= res->end)
- 			request_resource(res, &crashk_res);
+diff --git a/arch/mips/include/asm/mach-ralink/mt7621.h b/arch/mips/include/asm/mach-ralink/mt7621.h
+index 65483a4681ab..51a6e51aef3f 100644
+--- a/arch/mips/include/asm/mach-ralink/mt7621.h
++++ b/arch/mips/include/asm/mach-ralink/mt7621.h
+@@ -17,6 +17,10 @@
+ #define SYSC_REG_CHIP_REV		0x0c
+ #define SYSC_REG_SYSTEM_CONFIG0		0x10
+ #define SYSC_REG_SYSTEM_CONFIG1		0x14
++#define SYSC_REG_CLKCFG0		0x2c
++#define SYSC_REG_CUR_CLK_STS		0x44
 +
-+		/* Userspace will find "Kexec kernel" region in /proc/iomem. */
-+		if (kexeck_res.end && kexeck_res.start >= res->start &&
-+		    kexeck_res.end <= res->end)
-+			request_resource(res, &kexeck_res);
- #endif
- 	}
- }
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index f3c795278def..dfef39f72faf 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -54,61 +54,83 @@ phys_addr_t arm64_dma_phys_limit __ro_after_init;
++#define MEMC_REG_CPU_PLL		0x648
  
- #ifdef CONFIG_KEXEC_CORE
- /*
-- * reserve_crashkernel() - reserves memory for crash kernel
-+ * reserve_crash_or_kexec_kernel() - reserves memory for crash kernel or
-+ * for normal kexec kernel.
-  *
-- * This function reserves memory area given in "crashkernel=" kernel command
-- * line parameter. The memory reserved is used by dump capture kernel when
-- * primary kernel is crashing.
-+ * This function reserves memory area given in "crashkernel=" or "kexeckenel="
-+ * kernel command line parameter. The memory reserved is used by dump capture
-+ * kernel when primary kernel is crashing, or to load new kexec kernel for
-+ * faster reboot without relocation.
-  */
--static void __init reserve_crashkernel(void)
-+static void __init reserve_crash_or_kexec_kernel(char *cmd)
+ #define CHIP_REV_PKG_MASK		0x1
+ #define CHIP_REV_PKG_SHIFT		16
+@@ -24,6 +28,22 @@
+ #define CHIP_REV_VER_SHIFT		8
+ #define CHIP_REV_ECO_MASK		0xf
+ 
++#define XTAL_MODE_SEL_MASK		0x7
++#define XTAL_MODE_SEL_SHIFT		6
++
++#define CPU_CLK_SEL_MASK		0x3
++#define CPU_CLK_SEL_SHIFT		30
++
++#define CUR_CPU_FDIV_MASK		0x1f
++#define CUR_CPU_FDIV_SHIFT		8
++#define CUR_CPU_FFRAC_MASK		0x1f
++#define CUR_CPU_FFRAC_SHIFT		0
++
++#define CPU_PLL_PREDIV_MASK		0x3
++#define CPU_PLL_PREDIV_SHIFT		12
++#define CPU_PLL_FBDIV_MASK		0x7f
++#define CPU_PLL_FBDIV_SHIFT		4
++
+ #define MT7621_DRAM_BASE                0x0
+ #define MT7621_DDR2_SIZE_MIN		32
+ #define MT7621_DDR2_SIZE_MAX		256
+diff --git a/arch/mips/ralink/mt7621.c b/arch/mips/ralink/mt7621.c
+index 9415be0d57b8..31158b88bcb6 100644
+--- a/arch/mips/ralink/mt7621.c
++++ b/arch/mips/ralink/mt7621.c
+@@ -7,22 +7,22 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <dt-bindings/clock/mt7621-clk.h>
+ 
+ #include <asm/mipsregs.h>
+ #include <asm/smp-ops.h>
+ #include <asm/mips-cps.h>
+ #include <asm/mach-ralink/ralink_regs.h>
+ #include <asm/mach-ralink/mt7621.h>
++#include <asm/time.h>
+ 
+ #include <pinmux.h>
+ 
+ #include "common.h"
+ 
+-#define SYSC_REG_SYSCFG		0x10
+-#define SYSC_REG_CPLL_CLKCFG0	0x2c
+-#define SYSC_REG_CUR_CLK_STS	0x44
+-#define CPU_CLK_SEL		(BIT(30) | BIT(31))
+-
+ #define MT7621_GPIO_MODE_UART1		1
+ #define MT7621_GPIO_MODE_I2C		2
+ #define MT7621_GPIO_MODE_UART3_MASK	0x3
+@@ -108,49 +108,89 @@ static struct rt2880_pmx_group mt7621_pinmux_data[] = {
+ 	{ 0 }
+ };
+ 
++static struct clk *clks[MT7621_CLK_MAX];
++static struct clk_onecell_data clk_data = {
++	.clks = clks,
++	.clk_num = ARRAY_SIZE(clks),
++};
++
+ phys_addr_t mips_cpc_default_phys_base(void)
  {
--	unsigned long long crash_base, crash_size;
-+	unsigned long long base, size;
-+	struct resource *res;
-+	char s[16];
- 	int ret;
- 
--	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--				&crash_size, &crash_base);
--	/* no crashkernel= or invalid value specified */
--	if (ret || !crash_size)
-+	/* cmd must be either: "crashkernel=" or "kexeckernel=" */
-+	if (!strcmp(cmd, "crashkernel=")) {
-+		res = &crashk_res;
-+	} else if (!strcmp(cmd, "kexeckernel=")) {
-+		res = &kexeck_res;
-+	} else {
-+		pr_err("%s: invalid cmd %s\n", __func__, cmd);
-+		return;
-+	}
-+
-+	/* remove trailing '=' for a nicer printfs */
-+	strcpy(s, cmd);
-+	s[strlen(s) - 1] = '\0';
-+
-+	ret = parse_crash_or_kexec_kernel(boot_command_line,
-+					  memblock_phys_mem_size(),
-+					  &size, &base, cmd, NULL);
-+	/* no specified command or invalid value specified */
-+	if (ret || !size)
- 		return;
- 
--	crash_size = PAGE_ALIGN(crash_size);
-+	size = PAGE_ALIGN(size);
- 
--	if (crash_base == 0) {
-+	if (base == 0) {
- 		/* Current arm64 boot protocol requires 2MB alignment */
--		crash_base = memblock_find_in_range(0, ARCH_LOW_ADDRESS_LIMIT,
--				crash_size, SZ_2M);
--		if (crash_base == 0) {
--			pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
--				crash_size);
-+		base = memblock_find_in_range(0, ARCH_LOW_ADDRESS_LIMIT,
-+					      size, SZ_2M);
-+		if (base == 0) {
-+			pr_warn("cannot allocate %s (size:0x%llx)\n",
-+				s, size);
- 			return;
- 		}
- 	} else {
- 		/* User specifies base address explicitly. */
--		if (!memblock_is_region_memory(crash_base, crash_size)) {
--			pr_warn("cannot reserve crashkernel: region is not memory\n");
-+		if (!memblock_is_region_memory(base, size)) {
-+			pr_warn("cannot reserve %s: region is not memory\n",
-+				s);
- 			return;
- 		}
- 
--		if (memblock_is_region_reserved(crash_base, crash_size)) {
--			pr_warn("cannot reserve crashkernel: region overlaps reserved memory\n");
-+		if (memblock_is_region_reserved(base, size)) {
-+			pr_warn("cannot reserve %s: region overlaps reserved memory\n",
-+				s);
- 			return;
- 		}
- 
--		if (!IS_ALIGNED(crash_base, SZ_2M)) {
--			pr_warn("cannot reserve crashkernel: base address is not 2MB aligned\n");
-+		if (!IS_ALIGNED(base, SZ_2M)) {
-+			pr_warn("cannot reserve %s: base address is not 2MB aligned\n",
-+				s);
- 			return;
- 		}
- 	}
--	memblock_reserve(crash_base, crash_size);
-+	memblock_reserve(base, size);
- 
--	pr_info("crashkernel reserved: 0x%016llx - 0x%016llx (%lld MB)\n",
--		crash_base, crash_base + crash_size, crash_size >> 20);
-+	pr_info("%s reserved: 0x%016llx - 0x%016llx (%lld MB)\n",
-+		s, base, base + size, size >> 20);
- 
--	crashk_res.start = crash_base;
--	crashk_res.end = crash_base + crash_size - 1;
-+	res->start = base;
-+	res->end = base + size - 1;
+ 	panic("Cannot detect cpc address");
  }
- #else
--static void __init reserve_crashkernel(void)
-+static void __init reserve_crash_or_kexec_kernel(char *cmd)
+ 
++static struct clk *__init mt7621_add_sys_clkdev(
++	const char *id, unsigned long rate)
++{
++	struct clk *clk;
++	int err;
++
++	clk = clk_register_fixed_rate(NULL, id, NULL, 0, rate);
++	if (IS_ERR(clk))
++		panic("failed to allocate %s clock structure", id);
++
++	err = clk_register_clkdev(clk, id, NULL);
++	if (err)
++		panic("unable to register %s clock device", id);
++
++	return clk;
++}
++
+ void __init ralink_clk_init(void)
  {
+-	int cpu_fdiv = 0;
+-	int cpu_ffrac = 0;
+-	int fbdiv = 0;
+-	u32 clk_sts, syscfg;
+-	u8 clk_sel = 0, xtal_mode;
+-	u32 cpu_clk;
++	const static u32 prediv_tbl[] = {0, 1, 2, 2};
++	u32 syscfg, xtal_sel, clkcfg, clk_sel, curclk, ffiv, ffrac;
++	u32 pll, prediv, fbdiv;
++	u32 xtal_clk, cpu_clk, bus_clk;
++
++	syscfg = rt_sysc_r32(SYSC_REG_SYSTEM_CONFIG0);
++	xtal_sel = (syscfg >> XTAL_MODE_SEL_SHIFT) & XTAL_MODE_SEL_MASK;
+ 
+-	if ((rt_sysc_r32(SYSC_REG_CPLL_CLKCFG0) & CPU_CLK_SEL) != 0)
+-		clk_sel = 1;
++	clkcfg = rt_sysc_r32(SYSC_REG_CLKCFG0);
++	clk_sel = (clkcfg >> CPU_CLK_SEL_SHIFT) & CPU_CLK_SEL_MASK;
++
++	curclk = rt_sysc_r32(SYSC_REG_CUR_CLK_STS);
++	ffiv = (curclk >> CUR_CPU_FDIV_SHIFT) & CUR_CPU_FDIV_MASK;
++	ffrac = (curclk >> CUR_CPU_FFRAC_SHIFT) & CUR_CPU_FFRAC_MASK;
++
++	if (xtal_sel <= 2)
++		xtal_clk = 20 * 1000 * 1000;
++	else if (xtal_sel <= 5)
++		xtal_clk = 40 * 1000 * 1000;
++	else
++		xtal_clk = 25 * 1000 * 1000;
+ 
+ 	switch (clk_sel) {
+ 	case 0:
+-		clk_sts = rt_sysc_r32(SYSC_REG_CUR_CLK_STS);
+-		cpu_fdiv = ((clk_sts >> 8) & 0x1F);
+-		cpu_ffrac = (clk_sts & 0x1F);
+-		cpu_clk = (500 * cpu_ffrac / cpu_fdiv) * 1000 * 1000;
++		cpu_clk = 500 * 1000 * 1000;
+ 		break;
+-
+ 	case 1:
+-		fbdiv = ((rt_sysc_r32(0x648) >> 4) & 0x7F) + 1;
+-		syscfg = rt_sysc_r32(SYSC_REG_SYSCFG);
+-		xtal_mode = (syscfg >> 6) & 0x7;
+-		if (xtal_mode >= 6) {
+-			/* 25Mhz Xtal */
+-			cpu_clk = 25 * fbdiv * 1000 * 1000;
+-		} else if (xtal_mode >= 3) {
+-			/* 40Mhz Xtal */
+-			cpu_clk = 40 * fbdiv * 1000 * 1000;
+-		} else {
+-			/* 20Mhz Xtal */
+-			cpu_clk = 20 * fbdiv * 1000 * 1000;
+-		}
++		pll = rt_memc_r32(MEMC_REG_CPU_PLL);
++		fbdiv = (pll >> CPU_PLL_FBDIV_SHIFT) & CPU_PLL_FBDIV_MASK;
++		prediv = (pll >> CPU_PLL_PREDIV_SHIFT) & CPU_PLL_PREDIV_MASK;
++		cpu_clk = ((fbdiv + 1) * xtal_clk) >> prediv_tbl[prediv];
+ 		break;
++	default:
++		cpu_clk = xtal_clk;
+ 	}
++
++	cpu_clk = cpu_clk / ffiv * ffrac;
++	bus_clk = cpu_clk / 4;
++
++	clks[MT7621_CLK_CPU] = mt7621_add_sys_clkdev("cpu", cpu_clk);
++	clks[MT7621_CLK_BUS] = mt7621_add_sys_clkdev("bus", bus_clk);
++
++	pr_info("CPU Clock: %dMHz\n", cpu_clk / 1000000);
++	mips_hpt_frequency = cpu_clk / 2;
  }
- #endif /* CONFIG_KEXEC_CORE */
-@@ -411,7 +433,8 @@ void __init arm64_memblock_init(void)
- 	else
- 		arm64_dma_phys_limit = PHYS_MASK + 1;
  
--	reserve_crashkernel();
-+	reserve_crash_or_kexec_kernel("crashkernel=");
-+	reserve_crash_or_kexec_kernel("kexeckernel=");
++static void __init mt7621_clocks_init_dt(struct device_node *np)
++{
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
++}
++
++CLK_OF_DECLARE(mt7621_clk, "mediatek,mt7621-pll", mt7621_clocks_init_dt);
++
+ void __init ralink_of_remap(void)
+ {
+ 	rt_sysc_membase = plat_of_remap_node("mtk,mt7621-sysc");
+diff --git a/arch/mips/ralink/timer-gic.c b/arch/mips/ralink/timer-gic.c
+index 944fbe0fc741..9bbaa37a0da1 100644
+--- a/arch/mips/ralink/timer-gic.c
++++ b/arch/mips/ralink/timer-gic.c
+@@ -9,14 +9,14 @@
  
- 	reserve_elfcorehdr();
+ #include <linux/of.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clocksource.h>
++#include <asm/time.h>
  
+ #include "common.h"
+ 
+ void __init plat_time_init(void)
+ {
+ 	ralink_of_remap();
+-
++	ralink_clk_init();
+ 	of_clk_init(NULL);
+ 	timer_probe();
+ }
 -- 
-2.22.0
+2.21.0
 
