@@ -2,81 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1628663E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 420A963E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfGIW5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 18:57:46 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35552 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfGIW5q (ORCPT
+        id S1726992AbfGIW6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 18:58:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46489 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGIW6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 18:57:46 -0400
-Received: by mail-io1-f68.google.com with SMTP id m24so604570ioo.2;
-        Tue, 09 Jul 2019 15:57:46 -0700 (PDT)
+        Tue, 9 Jul 2019 18:58:46 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i8so170894pgm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 15:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VfBNRjMW96lNOTO1+wc8G+mqG3/RxD26VY8ohNb7l7s=;
+        b=g+2aDXwaj0DzsFicoZrXvoungL+MWOPC0VtEH2gPXuj8zlNnwwgyIhkxF0bkqpoWcm
+         8TboO6bKfQEBXG8g8wp2IMRGW/TvAviOydq287DyBpvxHMXEz6+WOc0/hqAIcJYCcTju
+         BoRstaqm8JPuzjtT4y8KqxFrOGp53xRR93cJ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0HhbqTghHejLe1IY3m94WTWIBE7MbWIJpDPEeXowAHc=;
-        b=tizoNsD60YhGXtNHmNU3uOq7hMCWRdwyPXSVNnUxr1LYHlLOzPCDhF2kdJteNdhayc
-         Rhbn1U3wZiAVotRcDu+5h/rVMHiCtJmM7b/+Veitwmv1PF3uJj+Hwni5+fJ2j/3X7fEO
-         boUP3uYgSSVSLArKAUQoiSCKAWYMwn3wlnIP7DbxntIZ1Jx1m5ETBosfzIpUbpCDrDxs
-         f7yCBPNhyoOXmQBNfzGKidqNFkISSJMMFzSQZDZeT2iPVQdDlinvsVdQ9hCjr8kd52l3
-         YIDWL4iMkjKzv+jYjkdkckURi+MfZMgI0lnKUfoOIpU4A9/6VaGKuxAOs0aqZhe8S/2u
-         uYpA==
-X-Gm-Message-State: APjAAAVuxEA1qlvxvzievjJ+8uFkYeFCi9fTFkqwo12umSsaZyL46qE7
-        Ughl8mCQMvpdmTyoss9D5EfcFRTIWw==
-X-Google-Smtp-Source: APXvYqyapzttXsRNBkAiCzkE5cycXATjK8Ppd4rWGXk1+uAUTMH/Jp0hgxaeXExotfHxwMiG3rpOrQ==
-X-Received: by 2002:a5d:8451:: with SMTP id w17mr29707761ior.226.1562713065527;
-        Tue, 09 Jul 2019 15:57:45 -0700 (PDT)
-Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id b20sm120313ios.44.2019.07.09.15.57.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VfBNRjMW96lNOTO1+wc8G+mqG3/RxD26VY8ohNb7l7s=;
+        b=JQ4d+RBAKrxl0xYU4qxMdR8Bhiat5EriEOsQvrGpCQt9nn/UyRh2NWsA73fzRXxAHC
+         +9iSOLiw8LiDfjgOa5Jv94swbnpd9gdLRMQ+ipkitXWHdmPEQB1vE4b0NoQH7S0ujXf4
+         A+HZQZo2fPorvz/sl87A9EnuQ0jbEehgEef53bsS66WK13IMjhqeU6eLOiUDFmxs0pcK
+         nnLcieywFn2WQVqHVQaYjq+f4hDyaKgAjsQ6VQCKtiny7627pdSz0gOJyiPPb86DhAEx
+         mJvhbU6RUjpBGlaFHBMXXTRoU074skz0dcpCgGan5YQfBXIAHHjdAiFSbjxpU9TGyDXc
+         xExg==
+X-Gm-Message-State: APjAAAXSqxzOGxDB+gQTavJqxPJRSalYHB0y1+N7dqRvW3Vs5V8/tcsr
+        NexBAjFhJ0wTMU7YGP+Zde9d4rEGTGg=
+X-Google-Smtp-Source: APXvYqzHCjdRgs8T2Gzw/2FP8RssoOjRLpdQrKxiGCNwSt8p03lTof0IAKIZqNN5ejjfFbu9SwHkpQ==
+X-Received: by 2002:a17:90a:20c6:: with SMTP id f64mr2812506pjg.57.1562713125358;
+        Tue, 09 Jul 2019 15:58:45 -0700 (PDT)
+Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
+        by smtp.gmail.com with ESMTPSA id 201sm152939pfz.24.2019.07.09.15.58.43
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 15:57:44 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 16:57:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v3 7/9] dt-bindings: vendor-prefixes: add Sipeed
-Message-ID: <20190709225744.GA25215@bogus>
-References: <20190623043801.14040-1-icenowy@aosc.io>
- <20190623043801.14040-8-icenowy@aosc.io>
+        Tue, 09 Jul 2019 15:58:44 -0700 (PDT)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH v6 0/4] Panel rotation patches
+Date:   Tue,  9 Jul 2019 15:58:36 -0700
+Message-Id: <20190709225840.144038-1-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190623043801.14040-8-icenowy@aosc.io>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Jun 2019 12:37:59 +0800, Icenowy Zheng wrote:
-> Shenzhen Sipeed Technology Co., Ltd. is a company focused on development
-> kits, which also contains rebranded Lichee Pi series.
-> 
-> Add its vendor prefix binding.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - Rebased because of the addition of sinlinx and sinovoip.
-> 
-> Patch introduced in v2.
-> 
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+This adds the plumbing for reading panel rotation from the devicetree
+and sets up adding a panel property for the panel orientation on
+Mediatek SoCs when a rotation is present.
 
-Applied, thanks.
+v6 changes:
+-added enum declaration to drm_panel.h header
 
-Rob
+v5 changes:
+-rebased
+
+v4 changes:
+-fixed some changes made to the i915 driver
+-clarified comments on of orientation helper
+
+v3 changes:
+-changed from attach/detach callbacks to directly setting fixed panel
+ values in drm_panel_attach
+-removed update to Documentation
+-added separate function for quirked panel orientation property init
+
+v2 changes:
+fixed build errors in i915
+
+Derek Basehore (4):
+  drm/panel: Add helper for reading DT rotation
+  drm/panel: set display info in panel attach
+  drm/connector: Split out orientation quirk detection
+  drm/mtk: add panel orientation property
+
+ drivers/gpu/drm/drm_connector.c    | 45 ++++++++++++++-----
+ drivers/gpu/drm/drm_panel.c        | 70 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/i915/intel_dp.c    |  4 +-
+ drivers/gpu/drm/i915/vlv_dsi.c     |  5 +--
+ drivers/gpu/drm/mediatek/mtk_dsi.c |  8 ++++
+ include/drm/drm_connector.h        |  2 +
+ include/drm/drm_panel.h            | 21 +++++++++
+ 7 files changed, 138 insertions(+), 17 deletions(-)
+
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
