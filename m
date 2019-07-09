@@ -2,126 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B33638E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAEE638DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfGIPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 11:49:13 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50139 "EHLO mga02.intel.com"
+        id S1726374AbfGIPs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 11:48:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfGIPtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 11:49:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 08:49:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
-   d="scan'208";a="176532235"
-Received: from ngote-system-product-name.iind.intel.com ([10.106.124.92])
-  by orsmga002.jf.intel.com with ESMTP; 09 Jul 2019 08:49:09 -0700
-From:   NitinGote <nitin.r.gote@intel.com>
-To:     corbet@lwn.net
-Cc:     joe@perches.com, akpm@linux-foundation.org, apw@canonical.com,
-        keescook@chromium.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Nitin Gote <nitin.r.gote@intel.com>
-Subject: [PATCH v4] Added warnings in checkpatch.pl script to :
-Date:   Tue,  9 Jul 2019 21:18:06 +0530
-Message-Id: <20190709154806.26363-1-nitin.r.gote@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726060AbfGIPs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 11:48:28 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3E7721743;
+        Tue,  9 Jul 2019 15:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562687306;
+        bh=8uRt2LckP8V6eOMg2L1MMuumGINZ1eU0bTBj8g3A81c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KON4ngr4Z1oJj/l8kSJhRwNeUk2R1NwwJID4TkmcPIl+MyUHNX7S9wJWmLi5kcXKR
+         9yQxDgx12Pr9RsOFxewTO1k23CslxM8Urly5NjQV84pjT6TLgiu+KpOv98L6F8TVW0
+         OXrssDvfqBv5JToN0eDMoLBPFu4Trx+79enV2b4E=
+Received: by mail-qt1-f169.google.com with SMTP id h18so14673216qtm.9;
+        Tue, 09 Jul 2019 08:48:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAUBtqYLDPGN0x+RA9MmxX6sGsFbECumxVvTNbQEZvJTMgaDU/n7
+        spKsZz3u9SM/9FbyWgBKX43YQ61fZd4CvDhPeA==
+X-Google-Smtp-Source: APXvYqwUwZzNp9+krU8sgcmMHMgX3VqOxwtH/223QreLrdzSam3oenUJ5tLIk/dBBxOlEo8N5HAE7gFB0xXhMGeAItk=
+X-Received: by 2002:ac8:3908:: with SMTP id s8mr19233318qtb.224.1562687305930;
+ Tue, 09 Jul 2019 08:48:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190605141253.38554-1-ghung.quanta@gmail.com>
+ <20190605141253.38554-2-ghung.quanta@gmail.com> <20190709014058.GA30269@bogus>
+ <0c90f9376c0e425c9a226379f7e5bfad@quantatw.com>
+In-Reply-To: <0c90f9376c0e425c9a226379f7e5bfad@quantatw.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 9 Jul 2019 09:48:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKf+Z9XJJvqcOw-0L-BLCt_Yv-qv-eu+zhoNFnk8rH8Og@mail.gmail.com>
+Message-ID: <CAL_JsqKf+Z9XJJvqcOw-0L-BLCt_Yv-qv-eu+zhoNFnk8rH8Og@mail.gmail.com>
+Subject: Re: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC documentation
+To:     =?UTF-8?B?R2VvcmdlIEh1bmcgKOa0quW/oOaVrCk=?= 
+        <George.Hung@quantatw.com>
+Cc:     George Hung <ghung.quanta@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tali Perry <tali.perry1@gmail.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "wak@google.com" <wak@google.com>,
+        "benjaminfair@google.com" <benjaminfair@google.com>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "tomer.maimon@nuvoton.com" <tomer.maimon@nuvoton.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Avi.Fishman@nuvoton.com" <Avi.Fishman@nuvoton.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Patrick Venture <venture@google.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nitin Gote <nitin.r.gote@intel.com>
+On Tue, Jul 9, 2019 at 3:50 AM George Hung (=E6=B4=AA=E5=BF=A0=E6=95=AC)
+<George.Hung@quantatw.com> wrote:
+>
+> Hi Rob,
+>
+>
+> > -----Original Message-----
+> > From: openbmc
+> > [mailto:openbmc-bounces+george.hung=3Dquantatw.com@lists.ozlabs.org] On
+> > Behalf Of Rob Herring
+> > Sent: Tuesday, July 09, 2019 9:41 AM
+> > To: George Hung
+> > Cc: Mark Rutland; Linus Walleij; Tali Perry; paulmck@linux.ibm.com;
+> > wak@google.com; benjaminfair@google.com; openbmc@lists.ozlabs.org;
+> > tomer.maimon@nuvoton.com; devicetree@vger.kernel.org; Borislav Petkov;
+> > Avi.Fishman@nuvoton.com; Jonathan Cameron; Mauro Carvalho Chehab;
+> > linux-edac; Patrick Venture; Nicolas Ferre; linux-kernel; James Morse; =
+Greg
+> > Kroah-Hartman; davem@davemloft.net
+> > Subject: Re: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC
+> > documentation
+> >
+> > On Wed, Jun 05, 2019 at 10:12:53PM +0800, George Hung wrote:
+> > > Add device tree documentation for Nuvoton BMC ECC
+> > >
+> > > Signed-off-by: George Hung <ghung.quanta@gmail.com>
+> > > ---
+> > >  .../bindings/edac/npcm7xx-sdram-edac.txt        | 17
+> > +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> > > b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> > > new file mode 100644
+> > > index 000000000000..dd4dac59a5bd
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> > > @@ -0,0 +1,17 @@
+> > > +Nuvoton NPCM7xx SoC EDAC device driver
+> > > +
+> > > +The Nuvoton NPCM7xx SoC supports DDR4 memory with/without ECC and
+> > the
+> > > +driver uses the EDAC framework to implement the ECC detection and
+> > corrtection.
+> > > +
+> > > +Required properties:
+> > > +- compatible:      should be "nuvoton,npcm7xx-sdram-edac"
+> >
+> > Is this for the whole SDRAM controller or just ECC related registers?
+> > In the former case, the naming should just reflect the block name and n=
+ot a
+> > Linux term.
+>
+> Sorry for confused naming, the address space is for the whole memory cont=
+roller registers indeed,
+> but the driver only uses the ECC related registers.
+> Should I change the name to "nuvoton,npcm7xx-edac" ?
 
-1. Deprecate strcpy() in favor of strscpy().
-2. Deprecate strlcpy() in favor of strscpy().
-3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
+No, you should drop the 'edac' part. The DT describes the h/w, not
+what one driver (currently) uses.
 
-Updated strncpy() section in Documentation/process/deprecated.rst
-to cover strscpy_pad() case.
-
-Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
----
- Change log:
- v1->v2
- - For string related apis, created different %deprecated_string_api
-   and these will get emitted at CHECK Level using command line option
-   -f/--file to avoid bad patched from novice script users.
-
- v2->v3
- - Avoided use of $check in implementation.
- - Incorporated trivial comments.
-
- v3->v4
- - Incorporated comment by removing "c:func:"
-
- Documentation/process/deprecated.rst |  6 +++---
- scripts/checkpatch.pl                | 24 ++++++++++++++++++++++++
- 2 files changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-index 49e0f64a3427..0fb37ebe3ad9 100644
---- a/Documentation/process/deprecated.rst
-+++ b/Documentation/process/deprecated.rst
-@@ -93,9 +93,9 @@ will be NUL terminated. This can lead to various linear read overflows
- and other misbehavior due to the missing termination. It also NUL-pads the
- destination buffer if the source contents are shorter than the destination
- buffer size, which may be a needless performance penalty for callers using
--only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
--(Users of :c:func:`strscpy` still needing NUL-padding will need an
--explicit :c:func:`memset` added.)
-+only NUL-terminated strings. In this case, the safe replacement is
-+`strscpy()`. If, however, the destination buffer still needs NUL-padding,
-+the safe replacement is `strscpy_pad()`.
-
- If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
- still be used, but destinations should be marked with the `__nonstring
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index bb28b178d929..e6fbf4cf4be4 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -605,6 +605,20 @@ foreach my $entry (keys %deprecated_apis) {
- }
- $deprecated_apis_search = "(?:${deprecated_apis_search})";
-
-+our %deprecated_string_apis = (
-+        "strcpy"				=> "strscpy",
-+        "strlcpy"				=> "strscpy",
-+        "strncpy"				=> "strscpy, strscpy_pad or for non-NUL-terminated strings, strncpy() can still be used, but destinations should be marked with the __nonstring",
-+);
-+
-+#Create a search pattern for all these strings apis to speed up a loop below
-+our $deprecated_string_apis_search = "";
-+foreach my $entry (keys %deprecated_string_apis) {
-+        $deprecated_string_apis_search .= '|' if ($deprecated_string_apis_search ne "");
-+        $deprecated_string_apis_search .= $entry;
-+}
-+$deprecated_string_apis_search = "(?:${deprecated_string_apis_search})";
-+
- our $mode_perms_world_writable = qr{
- 	S_IWUGO		|
- 	S_IWOTH		|
-@@ -6446,6 +6460,16 @@ sub process {
- 			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
- 		}
-
-+# check for string deprecated apis
-+		if ($line =~ /\b($deprecated_string_apis_search)\b\s*\(/) {
-+			my $deprecated_string_api = $1;
-+			my $new_api = $deprecated_string_apis{$deprecated_string_api};
-+			my $msg_level = \&WARN;
-+			$msg_level = \&CHK if ($file);
-+			&{$msg_level}("DEPRECATED_API",
-+				      "Deprecated use of '$deprecated_string_api', prefer '$new_api' instead\n" . $herecurr);
-+		}
-+
- # check for various structs that are normally const (ops, kgdb, device_tree)
- # and avoid what seem like struct definitions 'struct foo {'
- 		if ($line !~ /\bconst\b/ &&
---
-2.17.1
-
+Rob
