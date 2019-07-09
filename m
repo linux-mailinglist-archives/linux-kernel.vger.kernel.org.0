@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D256C63DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B22B363DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfGIWH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 18:07:26 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41279 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbfGIWHZ (ORCPT
+        id S1726787AbfGIWJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 18:09:12 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41950 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfGIWJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 18:07:25 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 62so115716lfa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 15:07:24 -0700 (PDT)
+        Tue, 9 Jul 2019 18:09:11 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d17so272279qtj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 15:09:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TwNKZrnOf/DNtoznfTJOHcvnivCBkILoiDNMbeTEGBQ=;
-        b=JATPJXNDe3eXMuuaSA9OL8x2LTxnMibTuFzwAxuPITicQsTa3ZQyZLu2m5SP7RUqwk
-         vhjkfoaH05Iv8q5Sua2MKOT19+T6EfibpXyx4otzHwW//6vdgq+Wb4TjK1cDIYXp+LIq
-         zvAZxl28HN13vpadRziHbRobwBDQxt/whrWjQ=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GYzOMbWpyE1lpwp1gCViZuHJwd8p/Nxm1g5Qq1Zdkcw=;
+        b=KV/SGOHdvmhgCqJWFoOzRwBc6ErsjMfqtHDV+pTiII7F+O3dn3Fy7nHifFR2fURgds
+         nAg4WD/HU1faHzclkZ0+AKGFSQCrj/viPhtjUVc7V16cIBFAEA6o5PmX1ALqcOoFqL8+
+         O4dHVaP5kW4p2qP/S7mWOsgkY4/xRReTjvpGQOBcFF81S73FAu/jPXPRmsPtrkU+9kLi
+         +ceHzw96mQ3yvw5QDJXnNH0E4GOOaA3eGt1ZmaOfID3EWRuVl3IyWllRZu4HMMfU5Tk4
+         Zj4XnThw/5oqQ/mmJmkHjqEzXztN1zkl9Ou3EE72R9MipmBWe6Ck42mQa3F91aVcOuaV
+         1gfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TwNKZrnOf/DNtoznfTJOHcvnivCBkILoiDNMbeTEGBQ=;
-        b=swT2tZS9FwerY8R+aH5VYoRhBmk/Y/LoKcYXF5dHiIdVJMqRca5qWR13dBUq8G+AM1
-         lalytVJvzmDZM+cKmxYnabiWng1jflmsS0lt+hOV1p8X+KGGf9/L1QYgB6jOX6FPCtk6
-         yhiyGL3LqJ3DYioL2UMWdvj8vxcFrstICWloN2ajgWGwtFfWj/WTw4fJIa56XpxKAX+k
-         TmbVvyB0kUn+IcGxjBTVqFpXiOCX4/kn9XGdAa6/0qBPXCt8/5KaJx6rtnxY7ZPsHaLw
-         rpOQk0oXOBcDoP8dpbH59Q/Gjs8XpBweXwT/XN5J7V5dsmgjJlacLH5/4sGmg0kxg6HW
-         +oKw==
-X-Gm-Message-State: APjAAAUxtfTj8QsHFqTC2g3ziZxTNOQR2rw2K8+7Ho8VXJYiTrbwsKzV
-        Ba2ULhUJJUPaw+jueMb1z3mVRu6bVnw=
-X-Google-Smtp-Source: APXvYqxwOBTsoRCtHesz1n4xosIoHGTnav2z715JNpKQbjQ19PbMKTC/PZ+6CWSP8WMcfRIQdt4yEA==
-X-Received: by 2002:ac2:5a1c:: with SMTP id q28mr11431522lfn.131.1562710043156;
-        Tue, 09 Jul 2019 15:07:23 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id e12sm26986lfb.66.2019.07.09.15.07.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2019 15:07:22 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id p17so21562ljg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 15:07:21 -0700 (PDT)
-X-Received: by 2002:a2e:b003:: with SMTP id y3mr15421380ljk.72.1562710041715;
- Tue, 09 Jul 2019 15:07:21 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GYzOMbWpyE1lpwp1gCViZuHJwd8p/Nxm1g5Qq1Zdkcw=;
+        b=SZMnCWht06uoQtkWsAumF6Bb7Sd1uWDeY5WHS0SsU2sVgUIjklkRq6iS8wtMH0Vbsv
+         lMzkW5P9yWHFcJ6zUhHKkWV0RRrkr/Yqz41gxn+6muJEXE/hbR6U7TC9Lh7soah969bi
+         c3rL/X3olV5j8YSIYGUeoQUkP3kokCcSQNTt5rZBPnTKv+0MQt02OXEwlHt5VzrtkjqH
+         z1gYuJHNtHj5ITP7ZC8c74GHy1VFxHAe5WQrP56cy2vgWhM14FkFUUS7zd/PrrnqvWLM
+         8fb2O2Z9F5VFs7A+7nmkLn15mbwFO0ni0tLFgaVecQWlStHleEHn6OIkVckWncpbcAKo
+         Z5cw==
+X-Gm-Message-State: APjAAAUKtMlaRbdQ9D2MJuHLn8q7i3T55eM75bLY9jazTlE9oGSUfyG/
+        uTBWxxAuwFGn52tx9nf882k=
+X-Google-Smtp-Source: APXvYqz2sBsIZwfeXtkQccwfxxUfpSUIBIICzSK/Pv9S94ogQhIf0ai5BtTeVlHd/1H6wcHChp4qwA==
+X-Received: by 2002:a0c:d066:: with SMTP id d35mr21305945qvh.221.1562710150579;
+        Tue, 09 Jul 2019 15:09:10 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:fa50])
+        by smtp.gmail.com with ESMTPSA id z12sm161251qkf.20.2019.07.09.15.09.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2019 15:09:09 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 15:09:08 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Corey Minyard <minyard@acm.org>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH] ipmi_si_intf: use usleep_range() instead of busy looping
+Message-ID: <20190709220908.GL657710@devbig004.ftw2.facebook.com>
+References: <20190709210643.GJ657710@devbig004.ftw2.facebook.com>
+ <20190709214602.GD19430@minyard.net>
 MIME-Version: 1.0
-References: <20190708162756.GA69120@gmail.com> <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>
- <CAHk-=wgkWTtW-JWVAO0Y6s=dRgZGAaTWAsOuYaTFNJzkF+Z_Jg@mail.gmail.com>
- <CAHk-=whJtbQFHNtNG7t7y6+oEKLpjj3eSQOrr3OPCVGbMaRz-A@mail.gmail.com> <CAHk-=wh7NChJP+WkaDd3qCz847Fq4NdQ6z6m-VFpbr3py_EknQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wh7NChJP+WkaDd3qCz847Fq4NdQ6z6m-VFpbr3py_EknQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 9 Jul 2019 15:07:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8sXuH13b+qm0kK+q7KMU-ZDDaziEHeAAHtfn+kw3SSw@mail.gmail.com>
-Message-ID: <CAHk-=wj8sXuH13b+qm0kK+q7KMU-ZDDaziEHeAAHtfn+kw3SSw@mail.gmail.com>
-Subject: Re: [GIT PULL] x86/topology changes for v5.3
-To:     Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709214602.GD19430@minyard.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 3:00 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I haven't confirmed yet whether reverting just that one commit is
-> required, or if I need to revert the cr0 one too.
+Hello, Corey.
 
-Oh, I can't revert just the cr4 one, because the cr0 one depends on it.
+On Tue, Jul 09, 2019 at 04:46:02PM -0500, Corey Minyard wrote:
+> I'm also a little confused because the CPU in question shouldn't
+> be doing anything else if the schedule() immediately returns here,
+> so it's not wasting CPU that could be used on another process.  Or
+> is it lock contention that is causing an issue on other CPUs?
 
-But reverting both gets my desktop back to life. My laptop (that hung
-earlier) seems to be another (possibly additional) issue.
+Yeah, pretty pronounced too and it also keeps the CPU busy which makes
+the load balancer deprioritize that CPU.  Busy looping is never free.
 
-                      Linus
+> IMHO, this whole thing is stupid; if you design hardware with
+> stupid interfaces (byte at a time, no interrupts) you should
+> expect to get bad performance.  But I can't control what the
+> hardware vendors do.  This whole thing is a carefully tuned
+> compromise.
+
+I'm really not sure "carefully tuned" is applicable on indefinite busy
+looping.
+
+> So I can't really take this as-is.
+
+We can go for shorter timeouts for sure but I don't think this sort of
+busy looping is acceptable.  Is your position that this must be a busy
+loop?
+
+Thanks.
+
+-- 
+tejun
