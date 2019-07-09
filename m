@@ -2,137 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F83635BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 515D4635D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfGIM0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:26:08 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41517 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfGIM0I (ORCPT
+        id S1727092AbfGIM1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:27:41 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:37851 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfGIM1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:26:08 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d17so19968703qtj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 05:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wcigI1ZGeo8eeTEnwECE+YFE0TGljJQaiCrYDUmdPoY=;
-        b=WVLNrS8kRPuxvyBdWG7zDP6SEPUBYofpJ2EvO8ewlhlmj+JtcYvU+ubEfXnLaR+pYF
-         00h1TFt7LTW/PVmJNM8kIBVI1rELrWpvy6BaUCc3wbUEXrb8YASn1gF1T4ngpXJyiL7K
-         m0fniPYck0eAKIwb0Jn/kABVeifrxxb/tRyZR68eGTBKyUqSqAGe1cnO4/HFD4yF4Ur8
-         H7WlIOTWZuwjoyjkE2yb9SIoLVCOwef4y9zoimZSKZfb3Rug5X4MmF1DHLEHWClUG/wP
-         97+9Gr/p9To7e6DsinFumDPpx3c5rxWuY5AV9h3E6IHOqFT5d5nCU77+Yphj3xs6Ca4p
-         jS3g==
+        Tue, 9 Jul 2019 08:27:08 -0400
+Received: by mail-io1-f71.google.com with SMTP id v3so16364651ios.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 05:27:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wcigI1ZGeo8eeTEnwECE+YFE0TGljJQaiCrYDUmdPoY=;
-        b=hZymbcfWiqn0XSl2qCJ5/tzCWxi62iqXHPDyUKCGMjDzVKefFvGGTOqypUT4HLPdg7
-         JpS8XxV0iL0RcR+8ZLlrS6FFRreNwLi/M3tnopxcv2M7Xj7LEjYo0eTc5c/SvOevJ74G
-         KJ5gpF17PEExp3RllNH4WZdG6+YuGfY1HaohiHGK5Z/U62kPH3OHw48eC8mOSLf8Pxde
-         iXob1xCp87Xi1857HMZ9AkwISocMN3/H3G4+GBot0lWbVTTmtKMQaB/xqH+H5LxnLzpV
-         8d+qTv++mOVQdqpFGlhF6Up36iJiq9TQ3GW1T3piUGoKPYgx4aOeABlqcB2Yi5cn+V9x
-         ts7w==
-X-Gm-Message-State: APjAAAUu5HBPc/gISv42GX2BD05nbEQhTybfyU3ad3gsbOKVWrtKD4fr
-        e7SpP+sSjsvmIqQOCiDsqCjufQ==
-X-Google-Smtp-Source: APXvYqwmHmW4GNgj2/bw7KDrHJUCO1ymp1USSwOdh8JdsUvhsapUIhpm65qVHY72kCQumxVyPi372Q==
-X-Received: by 2002:ac8:1a9d:: with SMTP id x29mr18851142qtj.128.1562675167390;
-        Tue, 09 Jul 2019 05:26:07 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id c18sm8566404qkk.73.2019.07.09.05.26.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Jul 2019 05:26:07 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hkpCA-0001GG-Hq; Tue, 09 Jul 2019 09:26:06 -0300
-Date:   Tue, 9 Jul 2019 09:26:06 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     Parav Pandit <pandit.parav@gmail.com>,
-        Dag Moxnes <dag.moxnes@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] RDMA/core: Fix race when resolving IP address
-Message-ID: <20190709122606.GB3422@ziepe.ca>
-References: <1561711763-24705-1-git-send-email-dag.moxnes@oracle.com>
- <CAG53R5VQqqr0S6OU+13tcuxcvz922iuqoP-mWbaQERPc48964A@mail.gmail.com>
- <20190705040950.GO7212@mtr-leonro.mtl.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NebuMAkCn1+znBhCDmKMJxR+15w2PZJUV9MwEwc6ooc=;
+        b=drNJ2Pb6hzPKBgb9Y8LLRSgotpwLPY3EzNjBV4bFyqtLbzBokz0MSAb9OACzqzX2P/
+         N+evsfSB6hlxuqiUzxBQCiI40SQd22nrXsHK7l6AoMyVKAh3yc43RtdV29zn4gH/yoVo
+         bWA7gcDx3rFhBZALDrcfcsFldHTP23hn1q7bZJvGCxH1fBXq4oE44BssxKbsKVCQCxxH
+         XprpFiUKs/G4zstlMkmUA45xLHNL+BuDt0v6mE5F+qigUeugFbNZiQWyEhHlyDwESk14
+         tp9lwZUpK3nyJauNoofCDQdBJ5abUhx0xowj+qVZ/w3h1YXrczMKiyJfoE9Fu4quo1co
+         54eA==
+X-Gm-Message-State: APjAAAU7TVb81axgokLmuytjylGedpXYrmO7uXRPejkMu95NkXgl1hXo
+        hMT91d1tqLmIX5PURuwelb1mq5y4Z/q5kh+8gG4BzDTXeGAl
+X-Google-Smtp-Source: APXvYqxOnYwlM/KwfZvRBaNh/afE0RR6116tCNtS6/Reiv8S1pCZegG1cKFDfqh8NqnK8YMGCdy5qXYdKkDVtdhbvxfaQWKUamSh
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190705040950.GO7212@mtr-leonro.mtl.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a5e:8b43:: with SMTP id z3mr3852350iom.287.1562675227812;
+ Tue, 09 Jul 2019 05:27:07 -0700 (PDT)
+Date:   Tue, 09 Jul 2019 05:27:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000da6a0e058d3ead50@google.com>
+Subject: general protection fault in vidioc_querycap
+From:   syzbot <syzbot+646272341e25afebff05@syzkaller.appspotmail.com>
+To:     allison@lohutok.net, andreyknvl@google.com,
+        gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org, mchehab@kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 07:09:50AM +0300, Leon Romanovsky wrote:
-> On Fri, Jul 05, 2019 at 07:49:06AM +0530, Parav Pandit wrote:
-> > On Fri, Jun 28, 2019 at 2:20 PM Dag Moxnes <dag.moxnes@oracle.com> wrote:
-> > >
-> > > Use neighbour lock when copying MAC address from neighbour data struct
-> > > in dst_fetch_ha.
-> > >
-> > > When not using the lock, it is possible for the function to race with
-> > > neigh_update, causing it to copy an invalid MAC address.
-> > >
-> > > It is possible to provoke this error by calling rdma_resolve_addr in a
-> > > tight loop, while deleting the corresponding ARP entry in another tight
-> > > loop.
-> > >
-> > > Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-> > > Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> > >
-> > > v1 -> v2:
-> > >    * Modified implementation to improve readability
-> > >  drivers/infiniband/core/addr.c | 9 ++++++---
-> > >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> > > index 2f7d141598..51323ffbc5 100644
-> > > +++ b/drivers/infiniband/core/addr.c
-> > > @@ -333,11 +333,14 @@ static int dst_fetch_ha(const struct dst_entry *dst,
-> > >         if (!n)
-> > >                 return -ENODATA;
-> > >
-> > > -       if (!(n->nud_state & NUD_VALID)) {
-> > > +       read_lock_bh(&n->lock);
-> > > +       if (n->nud_state & NUD_VALID) {
-> > > +               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
-> > > +               read_unlock_bh(&n->lock);
-> > > +       } else {
-> > > +               read_unlock_bh(&n->lock);
-> > >                 neigh_event_send(n, NULL);
-> > >                 ret = -ENODATA;
-> > > -       } else {
-> > > -               memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
-> > >         }
-> > >
-> > >         neigh_release(n);
-> > >
-> > Reviewed-by: Parav Pandit <parav@mellanox.com>
-> >
-> > A sample trace such as below in commit message would be good to have.
-> > Or the similar one that you noticed with ARP delete sequence.
-> >
-> > neigh_changeaddr()
-> >   neigh_flush_dev()
-> >    n->nud_state = NUD_NOARP;
-> >
-> > Having some issues with office outlook, so replying via gmail.
-> 
-> Your replies from gmail looks much better when you used Outlook - proper
-> spacing between quoted text and your reply.
+Hello,
 
-Why not use thunderbird or something?
+syzbot found the following crash on:
 
-Jason
+HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1321f9a3a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
+dashboard link: https://syzkaller.appspot.com/bug?extid=646272341e25afebff05
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ac261ba00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171d6739a00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+646272341e25afebff05@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 1878 Comm: v4l_id Not tainted 5.2.0-rc6+ #13
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:usb_make_path include/linux/usb.h:913 [inline]
+RIP: 0010:vidioc_querycap+0x12d/0x3e0  
+drivers/media/usb/usbvision/usbvision-video.c:461
+Code: 3c 02 00 0f 85 ba 02 00 00 49 8b ac 24 58 16 00 00 48 b8 00 00 00 00  
+00 fc ff df 48 8d 7d 48 4c 8d 45 04 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 7d 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffff8881cc727a28 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff8881cc727c20 RCX: 0000000000000000
+RDX: 0000000000000009 RSI: 451f481f4b404f27 RDI: 0000000000000048
+RBP: 0000000000000000 R08: 0000000000000004 R09: fffffbfff0c9ba38
+R10: fffffbfff0c9ba37 R11: ffffffff864dd1b8 R12: ffff8881cc9aa100
+R13: ffff8881cc9ab804 R14: ffff8881cc9aa998 R15: ffff8881cc727c50
+FS:  00007f579210f700(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000625208 CR3: 00000001cd192000 CR4: 00000000001406e0
+Call Trace:
+  v4l_querycap+0x121/0x340 drivers/media/v4l2-core/v4l2-ioctl.c:1058
+  __video_do_ioctl+0x5b0/0xb30 drivers/media/v4l2-core/v4l2-ioctl.c:2871
+  video_usercopy+0x446/0xee0 drivers/media/v4l2-core/v4l2-ioctl.c:3053
+  v4l2_ioctl+0x147/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:360
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xcda/0x12e0 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f5791c42347
+Code: 90 90 90 48 8b 05 f1 fa 2a 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff  
+ff c3 90 90 90 90 90 90 90 90 90 90 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 01 c3 48 8b 0d c1 fa 2a 00 31 d2 48 29 c2 64
+RSP: 002b:00007ffced1878d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f5791c42347
+RDX: 00007ffced1878e0 RSI: 0000000080685600 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000400884
+R13: 00007ffced187a30 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 5550531bc37b28bc ]---
+RIP: 0010:usb_make_path include/linux/usb.h:913 [inline]
+RIP: 0010:vidioc_querycap+0x12d/0x3e0  
+drivers/media/usb/usbvision/usbvision-video.c:461
+Code: 3c 02 00 0f 85 ba 02 00 00 49 8b ac 24 58 16 00 00 48 b8 00 00 00 00  
+00 fc ff df 48 8d 7d 48 4c 8d 45 04 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 7d 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffff8881cc727a28 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff8881cc727c20 RCX: 0000000000000000
+RDX: 0000000000000009 RSI: 451f481f4b404f27 RDI: 0000000000000048
+RBP: 0000000000000000 R08: 0000000000000004 R09: fffffbfff0c9ba38
+R10: fffffbfff0c9ba37 R11: ffffffff864dd1b8 R12: ffff8881cc9aa100
+R13: ffff8881cc9ab804 R14: ffff8881cc9aa998 R15: ffff8881cc727c50
+FS:  00007f579210f700(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000625208 CR3: 00000001cd192000 CR4: 00000000001406e0
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
