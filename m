@@ -2,61 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5882763AB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2678963AC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfGISUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:20:23 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44499 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGISUV (ORCPT
+        id S1726764AbfGISWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:22:01 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36498 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGISWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:20:21 -0400
-Received: by mail-qt1-f193.google.com with SMTP id 44so18751964qtg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:20 -0700 (PDT)
+        Tue, 9 Jul 2019 14:22:00 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k8so10529442plt.3;
+        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=vxweX2U2+Z856CcsxOG088urab10u3d6VzbrdBwUe6o=;
-        b=fROPV6xgBSJhQ01nOcdaPocwDpq/tgqFMzKuQ1aRxe0BdHGYSbE7Mx44Vo+unqXPkG
-         2iQxFwNOSDAL+6xrRHgsE+5oOTpNUcaTtUnWzBQnoArvLe1SZxJuhHKRqH6oJXqWWaJp
-         mYmJUMNp0hMmxuR5+lUvmF10SjSgGCn+X92RBQXE9trtp4e1hWtwVG70nLYhqgZMEneU
-         8FmJGF1qVgPlKmCQFFhG0OpQiGa2Sk5FjgCfMZI5LZbu1a0BxKAkQuR29zt1kcT31VdG
-         IC8BDEXiFHBmdYydbK6a2ULNeXX78BJpyz62xQihfh1Y656wUkRhF7ksMuPF83a9UM3a
-         2t6Q==
+        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
+        b=sOurpNYCJgDeWdvGkMj8ayoABPRE6fc/4zOsZC7FyTAo8Tr+q1gjS4BcBv72AAs3a8
+         UtGvCQrz7Z8RYFwMSpWwIz0cfoq5O82WShkcOmdIWpkjsWgSpNcDvNEiafl7UO/6CfP1
+         W58CGB/DxmA52/5HglaJeRUzcXaCg231oj4dvcutHMlW+6WgWebC/cRRpE08FE0ChO2U
+         cQ3T/gEQtah4pCv/pmweD6I1gkA37bNO0Al1gScGvbVoqNkPtg2zCLOfeRsVUkf7a8xD
+         LkjUGWca7W4+mB9/BBjp/mdmeuf2ScqDH2yB96txiYab9HzIyqE+v9HhNcoFkntQkhvq
+         Tmow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vxweX2U2+Z856CcsxOG088urab10u3d6VzbrdBwUe6o=;
-        b=hFhctdaHDtZwywQhgNTr+daKfbr4NzbnA3ejYV/NlmX2me2TJQjJ/WpARGde1i314W
-         ZBn9S/wknNjOb4mQtiQhZLJkBoyRbIZsPSolTbe0iSCXiy+rzXWrX/5miXNV5MGX9dvG
-         ADKPkqKGFNlVx6S74KieqzX1zn30Kqa/Iw5CxnalBrjepTc5c0SBFL/zwE3uzUCJE7DB
-         jjh8RPAV7kwZ+Hf5F6gVsaD1l/rPkHnIG5mKB/ouUmlGPy6eXXJgOmbJdrlw5UsPHYca
-         jegF2WafdxjxWpyiTDt5MOx8mP3mnbuFUSw2ST+goPnYRGtf+GWaeiPMyrIJ6lqIKGbK
-         p3NQ==
-X-Gm-Message-State: APjAAAVa3QYX9oIEJhn0o0o2UyUEROuFOBTYwTxP3IU/f34Fosa2UUVQ
-        BceUjvkZu2zzzAHxidjyfZBGcA==
-X-Google-Smtp-Source: APXvYqwpag+IBIQrGBDcCLRZVOWUUlgFjtMGgOzroSxhP3WwPBpgsirFrCOkxvY0XxfGhw6CZgULUQ==
-X-Received: by 2002:ac8:1106:: with SMTP id c6mr18604187qtj.332.1562696420496;
-        Tue, 09 Jul 2019 11:20:20 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
+        b=qDprZY5/ehuPgkQIppB2ORnA0vCgiznjjyhrzzUgE1l2qd0XL6V2I1ffzXl3yNMP1x
+         +AlolWtUKVyWGOM35xt8B4Zv0iZywMrzpAw1qmrIRhN/mZ7AjpNgkIB6wnRcfgJXsx/H
+         EiZNaKvqo2v8l9j/H6VRPm7sRys6aV7Vr9RN4QTvrdda6hn1AQvbj756+Bf5pb+14kSl
+         pXS1aa8Y50XvSQxIXBeEa+jf19GM4qshNLIhE3geMG6s1ZvLnS1vcoqjAy86kHC1Gj+6
+         71+py1ICtGmVCf87Os+UNRxn+FQfsOgzK4b8vVdy8BFhx5TgiJYpTvpLs2+zgK8/Ak0z
+         1HKw==
+X-Gm-Message-State: APjAAAUWKU34bTrVXo6F3OYARaAIjNaSYs1Ogj3DYnu7th1v274gzbGp
+        85g2+a6LTxOs6NgQpdBTnPnidoWxvOee7A==
+X-Google-Smtp-Source: APXvYqypFlpEDviSy2ejpUywzPdVRNwYyo/yvYMiyCSTuDOWShCdGVsakrtlrPCv8wbj+TvDK+OTfA==
+X-Received: by 2002:a17:902:86:: with SMTP id a6mr34117842pla.244.1562696519377;
+        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
+Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
+        by smtp.gmail.com with ESMTPSA id m69sm21008639pga.11.2019.07.09.11.21.52
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 11:20:19 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        ebiederm@xmission.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v2 3/5] kexec: export common crashkernel/kexeckernel parser
-Date:   Tue,  9 Jul 2019 14:20:12 -0400
-Message-Id: <20190709182014.16052-4-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190709182014.16052-1-pasha.tatashin@soleen.com>
-References: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+        Tue, 09 Jul 2019 11:21:58 -0700 (PDT)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
+        linux-mips@vger.kernel.org (open list:MIPS),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
+        Chuanhong Guo <gch981213@gmail.com>
+Subject: [PATCH 0/5] MIPS: ralink: add CPU clock detection for MT7621
+Date:   Wed, 10 Jul 2019 02:20:13 +0800
+Message-Id: <20190709182018.23193-1-gch981213@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,114 +73,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To reserve memory for normal kexec reboot, the new parameter:
-kexeckernel=size[KMG][@offset[KMG]] is used. Its syntax is the
-same as craskernel=, therefore they can use the same function to
-parse parameter settings.
+This patchset ports CPU clock detection for MT7621 from OpenWrt.
 
-Rename: __parse_crashkernel() to parse_crash_or_kexec_kernel(), and
-make it public.
+Last time I sent this, I forgot to add an binding include which
+caused a compile error and the patch doesn't stay in linux-next.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
----
- .../admin-guide/kernel-parameters.txt         |  7 +++++
- include/linux/crash_core.h                    |  6 +++++
- kernel/crash_core.c                           | 27 ++++++++++---------
- 3 files changed, 28 insertions(+), 12 deletions(-)
+This patchset resent the first two commits and also added binding
+documentation for mt7621-pll and used it in mt7621-dts at
+drivers/staging.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 5c7a0f5b0a2f..0f5ce665c7f5 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -739,6 +739,13 @@
- 			It will be ignored when crashkernel=X,high is not used
- 			or memory reserved is below 4G.
- 
-+	kexeckernel=size[KMG][@offset[KMG]]
-+			[KNL] Using kexec, Linux can reboot to a new kernel.
-+			This parameter reserves the physical memory region
-+			[offset, offset + size] for that kernel. If '@offset' is
-+			omitted, then a suitable offset is selected
-+			automatically.
-+
- 	cryptomgr.notests
- 			[KNL] Disable crypto self-tests
- 
-diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
-index 525510a9f965..e90789ff0bec 100644
---- a/include/linux/crash_core.h
-+++ b/include/linux/crash_core.h
-@@ -74,5 +74,11 @@ int parse_crashkernel_high(char *cmdline, unsigned long long system_ram,
- 		unsigned long long *crash_size, unsigned long long *crash_base);
- int parse_crashkernel_low(char *cmdline, unsigned long long system_ram,
- 		unsigned long long *crash_size, unsigned long long *crash_base);
-+int parse_crash_or_kexec_kernel(char *cmdline,
-+				unsigned long long system_ram,
-+				unsigned long long *crash_size,
-+				unsigned long long *crash_base,
-+				const char *name,
-+				const char *suffix);
- 
- #endif /* LINUX_CRASH_CORE_H */
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 9f1557b98468..11e0f9837a32 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -224,12 +224,12 @@ static __init char *get_last_crashkernel(char *cmdline,
- 	return ck_cmdline;
- }
- 
--static int __init __parse_crashkernel(char *cmdline,
--			     unsigned long long system_ram,
--			     unsigned long long *crash_size,
--			     unsigned long long *crash_base,
--			     const char *name,
--			     const char *suffix)
-+int __init parse_crash_or_kexec_kernel(char *cmdline,
-+				       unsigned long long system_ram,
-+				       unsigned long long *crash_size,
-+				       unsigned long long *crash_base,
-+				       const char *name,
-+				       const char *suffix)
- {
- 	char	*first_colon, *first_space;
- 	char	*ck_cmdline;
-@@ -270,8 +270,9 @@ int __init parse_crashkernel(char *cmdline,
- 			     unsigned long long *crash_size,
- 			     unsigned long long *crash_base)
- {
--	return __parse_crashkernel(cmdline, system_ram, crash_size, crash_base,
--					"crashkernel=", NULL);
-+	return parse_crash_or_kexec_kernel(cmdline, system_ram, crash_size,
-+					   crash_base, "crashkernel=",
-+					   NULL);
- }
- 
- int __init parse_crashkernel_high(char *cmdline,
-@@ -279,8 +280,9 @@ int __init parse_crashkernel_high(char *cmdline,
- 			     unsigned long long *crash_size,
- 			     unsigned long long *crash_base)
- {
--	return __parse_crashkernel(cmdline, system_ram, crash_size, crash_base,
--				"crashkernel=", suffix_tbl[SUFFIX_HIGH]);
-+	return parse_crash_or_kexec_kernel(cmdline, system_ram, crash_size,
-+					   crash_base, "crashkernel=",
-+					   suffix_tbl[SUFFIX_HIGH]);
- }
- 
- int __init parse_crashkernel_low(char *cmdline,
-@@ -288,8 +290,9 @@ int __init parse_crashkernel_low(char *cmdline,
- 			     unsigned long long *crash_size,
- 			     unsigned long long *crash_base)
- {
--	return __parse_crashkernel(cmdline, system_ram, crash_size, crash_base,
--				"crashkernel=", suffix_tbl[SUFFIX_LOW]);
-+	return parse_crash_or_kexec_kernel(cmdline, system_ram, crash_size,
-+					   crash_base, "crashkernel=",
-+					   suffix_tbl[SUFFIX_LOW]);
- }
- 
- Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+BTW: What should I do with such a patchset that touches multiple
+parts in kernel?
+Is it correct to send the entire patchset to lists of all involved
+subsystems?
+
+Chuanhong Guo (5):
+  MIPS: ralink: add dt binding header for mt7621-pll
+  MIPS: ralink: fix cpu clock of mt7621 and add dt clk devices
+  dt: bindings: add mt7621-pll dt binding documentation
+  staging: mt7621-dts: add dt nodes for mt7621-pll
+  staging: mt7621-dts: fix register range of memc node in mt7621.dtsi
+
+ .../bindings/clock/mediatek,mt7621-pll.txt    |  19 ++++
+ arch/mips/include/asm/mach-ralink/mt7621.h    |  20 ++++
+ arch/mips/ralink/mt7621.c                     | 102 ++++++++++++------
+ arch/mips/ralink/timer-gic.c                  |   4 +-
+ drivers/staging/mt7621-dts/mt7621.dtsi        |  17 ++-
+ include/dt-bindings/clock/mt7621-clk.h        |  14 +++
+ 6 files changed, 134 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+
 -- 
-2.22.0
+2.21.0
 
