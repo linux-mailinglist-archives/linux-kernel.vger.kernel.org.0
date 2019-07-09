@@ -2,70 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2678963AC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A46363AB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfGISWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:22:01 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36498 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfGISWA (ORCPT
+        id S1729099AbfGISUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:20:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41329 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728972AbfGISUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:22:00 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k8so10529442plt.3;
-        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
+        Tue, 9 Jul 2019 14:20:22 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d17so21200109qtj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
-        b=sOurpNYCJgDeWdvGkMj8ayoABPRE6fc/4zOsZC7FyTAo8Tr+q1gjS4BcBv72AAs3a8
-         UtGvCQrz7Z8RYFwMSpWwIz0cfoq5O82WShkcOmdIWpkjsWgSpNcDvNEiafl7UO/6CfP1
-         W58CGB/DxmA52/5HglaJeRUzcXaCg231oj4dvcutHMlW+6WgWebC/cRRpE08FE0ChO2U
-         cQ3T/gEQtah4pCv/pmweD6I1gkA37bNO0Al1gScGvbVoqNkPtg2zCLOfeRsVUkf7a8xD
-         LkjUGWca7W4+mB9/BBjp/mdmeuf2ScqDH2yB96txiYab9HzIyqE+v9HhNcoFkntQkhvq
-         Tmow==
+        bh=0AMQxB8fjID6n1nIoBRP/bexLOV4+LcL9MqYB3dLbp0=;
+        b=alGd9MvUbfRqM3kWiylqGdR8tXCWntU7urG6O/GicndbUQb45Df3lZ60ss0lN4iTMX
+         jILCKJ8XZjIJdyeJ9PcMuePTuVByoJd0pIN6Zvi/4M5oIPlwrKJ9CLBWGL1jSDoRpkf0
+         7X2QpEiClR1Sqxlu/X0MWv0BSWiGKT7v524JLl7HEKf6FhOOLIOozehl9Jf+5Bybqzb3
+         Yq18ArXRnGQthoo3H5BaaEHVGZOc/wySgb/UPR0PjLwFUdTbZAL5xBFZQi23eAr5VBtf
+         IN7pVQ8wypit/IlAEFI+AYFsKgAOblvL17tMEno3+sg80gzfyoxh8k12uI7mGYUEGlMz
+         VC2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
-        b=qDprZY5/ehuPgkQIppB2ORnA0vCgiznjjyhrzzUgE1l2qd0XL6V2I1ffzXl3yNMP1x
-         +AlolWtUKVyWGOM35xt8B4Zv0iZywMrzpAw1qmrIRhN/mZ7AjpNgkIB6wnRcfgJXsx/H
-         EiZNaKvqo2v8l9j/H6VRPm7sRys6aV7Vr9RN4QTvrdda6hn1AQvbj756+Bf5pb+14kSl
-         pXS1aa8Y50XvSQxIXBeEa+jf19GM4qshNLIhE3geMG6s1ZvLnS1vcoqjAy86kHC1Gj+6
-         71+py1ICtGmVCf87Os+UNRxn+FQfsOgzK4b8vVdy8BFhx5TgiJYpTvpLs2+zgK8/Ak0z
-         1HKw==
-X-Gm-Message-State: APjAAAUWKU34bTrVXo6F3OYARaAIjNaSYs1Ogj3DYnu7th1v274gzbGp
-        85g2+a6LTxOs6NgQpdBTnPnidoWxvOee7A==
-X-Google-Smtp-Source: APXvYqypFlpEDviSy2ejpUywzPdVRNwYyo/yvYMiyCSTuDOWShCdGVsakrtlrPCv8wbj+TvDK+OTfA==
-X-Received: by 2002:a17:902:86:: with SMTP id a6mr34117842pla.244.1562696519377;
-        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
-Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
-        by smtp.gmail.com with ESMTPSA id m69sm21008639pga.11.2019.07.09.11.21.52
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0AMQxB8fjID6n1nIoBRP/bexLOV4+LcL9MqYB3dLbp0=;
+        b=YkMWcJRTVzn1VoRGfBRjzwNnNYbHz0MWadwF93Iv/Qm6+3tSZIdzea1Z4CkixnbzCj
+         SQ9mEIfh+MU4tpeDIMwS1AAvOJnevEgz9W9oHIU7T0/RCNNJfaPw8bNlbxKkJC8zrc8t
+         6KjPcckT3wub1X9Mzb/ssp7bCrx93hSufsbMIj7X+aeRcegik+15yTjY3reH6EBl6jXY
+         Sfp+i+ZDLiQFLw+JMZBf9Iim+TDS4AXVYI5oCXcSFcwFdh1aeQRzEN1ESZsVyObq/N2c
+         nNV5xitoIn2g0ngrcqMRD0/ykRO3Iz6acJDSArwUgYpTxfjuku+ZU+DMqP9tPf4fhP7z
+         QesA==
+X-Gm-Message-State: APjAAAVNb+bEExdLjUYidfAaVXbsvMLCQ2AZvKl5ZudWM4CCuaNPVGYC
+        1H6nib0K/TuL536qpYKx3UUvFlG6b9g=
+X-Google-Smtp-Source: APXvYqw8hj3zXjnTBHv5EU0i1mynT0zTuqlV/Rhh2l9bHQwU9e09NhIl+cnbQoA6x9C2nK4A4lK5kg==
+X-Received: by 2002:a0c:81b8:: with SMTP id 53mr19886187qvd.91.1562696421760;
+        Tue, 09 Jul 2019 11:20:21 -0700 (PDT)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.20
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 11:21:58 -0700 (PDT)
-From:   Chuanhong Guo <gch981213@gmail.com>
-To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
-        linux-mips@vger.kernel.org (open list:MIPS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
-        Chuanhong Guo <gch981213@gmail.com>
-Subject: [PATCH 0/5] MIPS: ralink: add CPU clock detection for MT7621
-Date:   Wed, 10 Jul 2019 02:20:13 +0800
-Message-Id: <20190709182018.23193-1-gch981213@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Tue, 09 Jul 2019 11:20:21 -0700 (PDT)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [v2 4/5] kexec: use reserved memory for normal kexec reboot
+Date:   Tue,  9 Jul 2019 14:20:13 -0400
+Message-Id: <20190709182014.16052-5-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+References: <20190709182014.16052-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,37 +64,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset ports CPU clock detection for MT7621 from OpenWrt.
+If memory was reserved for the given segment use it directly instead of
+allocating on per-page bases. This will avoid relocating this segment to
+final destination when machine is rebooted.
 
-Last time I sent this, I forgot to add an binding include which
-caused a compile error and the patch doesn't stay in linux-next.
+This is done on a per segment bases because user might decide to always
+load kernel segments at the given address (i.e. non-relocatable kernel),
+but load initramfs at reserved address, and thus save reboot time on
+copying initramfs if it is large, and reduces reboot performance.
 
-This patchset resent the first two commits and also added binding
-documentation for mt7621-pll and used it in mt7621-dts at
-drivers/staging.
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+---
+ kernel/kexec_core.c | 39 ++++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 13 deletions(-)
 
-BTW: What should I do with such a patchset that touches multiple
-parts in kernel?
-Is it correct to send the entire patchset to lists of all involved
-subsystems?
-
-Chuanhong Guo (5):
-  MIPS: ralink: add dt binding header for mt7621-pll
-  MIPS: ralink: fix cpu clock of mt7621 and add dt clk devices
-  dt: bindings: add mt7621-pll dt binding documentation
-  staging: mt7621-dts: add dt nodes for mt7621-pll
-  staging: mt7621-dts: fix register range of memc node in mt7621.dtsi
-
- .../bindings/clock/mediatek,mt7621-pll.txt    |  19 ++++
- arch/mips/include/asm/mach-ralink/mt7621.h    |  20 ++++
- arch/mips/ralink/mt7621.c                     | 102 ++++++++++++------
- arch/mips/ralink/timer-gic.c                  |   4 +-
- drivers/staging/mt7621-dts/mt7621.dtsi        |  17 ++-
- include/dt-bindings/clock/mt7621-clk.h        |  14 +++
- 6 files changed, 134 insertions(+), 42 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
- create mode 100644 include/dt-bindings/clock/mt7621-clk.h
-
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 932feadbeb3a..2a8d8746e0a1 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -154,6 +154,18 @@ static struct page *kimage_alloc_page(struct kimage *image,
+ 				       gfp_t gfp_mask,
+ 				       unsigned long dest);
+ 
++/* Check whether this segment is fully within the resource */
++static bool segment_is_reserved(struct kexec_segment *seg, struct resource *res)
++{
++	unsigned long mstart = seg->mem;
++	unsigned long mend = mstart + seg->memsz - 1;
++
++	if (mstart < phys_to_boot_phys(res->start) ||
++	    mend > phys_to_boot_phys(res->end))
++		return false;
++	return true;
++}
++
+ int sanity_check_segment_list(struct kimage *image)
+ {
+ 	int i;
+@@ -246,13 +258,9 @@ int sanity_check_segment_list(struct kimage *image)
+ 
+ 	if (image->type == KEXEC_TYPE_CRASH) {
+ 		for (i = 0; i < nr_segments; i++) {
+-			unsigned long mstart, mend;
+-
+-			mstart = image->segment[i].mem;
+-			mend = mstart + image->segment[i].memsz - 1;
+ 			/* Ensure we are within the crash kernel limits */
+-			if ((mstart < phys_to_boot_phys(crashk_res.start)) ||
+-			    (mend > phys_to_boot_phys(crashk_res.end)))
++			if (!segment_is_reserved(&image->segment[i],
++						 &crashk_res))
+ 				return -EADDRNOTAVAIL;
+ 		}
+ 	}
+@@ -848,12 +856,13 @@ static int kimage_load_normal_segment(struct kimage *image,
+ 	return result;
+ }
+ 
+-static int kimage_load_crash_segment(struct kimage *image,
+-					struct kexec_segment *segment)
++static int kimage_load_crash_or_reserved_segment(struct kimage *image,
++						 struct kexec_segment *segment)
+ {
+-	/* For crash dumps kernels we simply copy the data from
+-	 * user space to it's destination.
+-	 * We do things a page at a time for the sake of kmap.
++	/*
++	 * For crash dumps and kexec-reserved kernels we simply copy the data
++	 * from user space to it's destination. We do things a page at a time
++	 * for the sake of kmap.
+ 	 */
+ 	unsigned long maddr;
+ 	size_t ubytes, mbytes;
+@@ -923,10 +932,14 @@ int kimage_load_segment(struct kimage *image,
+ 
+ 	switch (image->type) {
+ 	case KEXEC_TYPE_DEFAULT:
+-		result = kimage_load_normal_segment(image, segment);
++		if (segment_is_reserved(segment, &kexeck_res))
++			result = kimage_load_crash_or_reserved_segment(image,
++								       segment);
++		else
++			result = kimage_load_normal_segment(image, segment);
+ 		break;
+ 	case KEXEC_TYPE_CRASH:
+-		result = kimage_load_crash_segment(image, segment);
++		result = kimage_load_crash_or_reserved_segment(image, segment);
+ 		break;
+ 	}
+ 
 -- 
-2.21.0
+2.22.0
 
