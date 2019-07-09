@@ -2,101 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E75163896
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 310E2638A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfGIPZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 11:25:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfGIPZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 11:25:51 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F397621537;
-        Tue,  9 Jul 2019 15:25:49 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 11:25:48 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <masami.hiramatsu@gmail.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: kprobes sanity test fails on next-20190708
-Message-ID: <20190709112548.25edc9a7@gandalf.local.home>
-In-Reply-To: <20190709213657.1447f508bd6b72495ec225d9@gmail.com>
-References: <20190708141136.GA3239@localhost.localdomain>
-        <a19faa89-d318-fe21-9952-b0f842240ba5@arm.com>
-        <CADYN=9LBQ4NYFe8BPguJmxJFMiAJ405AZNU7W6gHXLSrZOSgTA@mail.gmail.com>
-        <20190709213657.1447f508bd6b72495ec225d9@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726530AbfGIPbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 11:31:00 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36107 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726444AbfGIPa6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 11:30:58 -0400
+Received: from callcc.thunk.org ([199.116.118.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x69FUe61012204
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 Jul 2019 11:30:42 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id D86D942002E; Tue,  9 Jul 2019 11:30:39 -0400 (EDT)
+Date:   Tue, 9 Jul 2019 11:30:39 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Re: Procedure questions - new filesystem driver..
+Message-ID: <20190709153039.GA3200@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+References: <21080.1562632662@turing-police>
+ <20190709045020.GB23646@mit.edu>
+ <20190709112136.GI32320@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709112136.GI32320@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Jul 2019 21:36:57 +0900
-Masami Hiramatsu <masami.hiramatsu@gmail.com> wrote:
+On Tue, Jul 09, 2019 at 04:21:36AM -0700, Matthew Wilcox wrote:
+> How does
+> https://www.zdnet.com/article/microsoft-open-sources-its-entire-patent-portfolio/
+> change your personal opinion?
 
-> On Tue, 9 Jul 2019 12:19:15 +0200
-> Anders Roxell <anders.roxell@linaro.org> wrote:
-> 
-> > On Mon, 8 Jul 2019 at 17:56, James Morse <james.morse@arm.com> wrote:  
-> > >
-> > > Hi,
-> > >
-> > > On 08/07/2019 15:11, Anders Roxell wrote:  
-> > > > argh... resending, with plaintext... Sorry =/
-> > > >
-> > > > I tried to build a next-201908 defconfig + CONFIG_KPROBES=y and
-> > > > CONFIG_KPROBES_SANITY_TEST=y
-> > > >
-> > > > I get the following Call trace, any ideas?
-> > > > I've tried tags back to next-20190525 and they also failes... I haven't
-> > > > found a commit that works yet.
-> > > >
-> > > > [    0.098694] Kprobe smoke test: started
-> > > > [    0.102001] audit: type=2000 audit(0.088:1): state=initialized
-> > > > audit_enabled=0 res=1
-> > > > [    0.104753] Internal error: aarch64 BRK: f2000004 [#1] PREEMPT SMP  
-> > >
-> > > This sounds like the issue Mark reported:
-> > > https://lore.kernel.org/r/20190702165008.GC34718@lakrids.cambridge.arm.com
-> > >
-> > > It doesn't look like Steve's patch has percolated into next yet:
-> > > https://lore.kernel.org/lkml/20190703103715.32579c25@gandalf.local.home/
+According to SFC's legal analysis, Microsoft joining the OIN doesn't
+mean that the eXFAT patents are covered, unless *Microsoft*
+contributes the code to the Linux usptream kernel.  That's because the
+OIN is governed by the Linux System Definition, and until MS
+contributes code which covered by the exFAT patents, it doesn't count.
 
-I forgot to push it after sending it. :-(
+For more details:
 
-> > >
-> > > Could you give that a try to see if this is a new issue?  
-> > 
-> > The patch didn't apply cleanly.
-> > However, when I resolved the issue it works.
-> > I'm a bit embarrassed since I now remembered that I reported it a while back.
-> > https://lore.kernel.org/lkml/20190625191545.245259106@goodmis.org/
-> > 
-> > Both patches resolved the issue.
-> > I've tested both.  
-> 
-> In that case, the later one (move postcore to subsys) seems good to me.
-> 
-> Delaying the test is just avoiding the issue that the selftest found,
-> since right after init_kprobes() are called, the kprobe is ready for use.
-> This means that the selftest must be run as the first user of the kprobes
-> and it must be run right after initialize kprobes.
+https://sfconservancy.org/blog/2018/oct/10/microsoft-oin-exfat/
 
-I agree. I pushed to my repo in the for-next branch. Care to test that?
+(This is not legal advice, and I am not a lawyer.)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-
--- Steve
-
+						- Ted
