@@ -2,176 +2,337 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052CA63752
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2893463758
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfGIN4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:56:06 -0400
-Received: from foss.arm.com ([217.140.110.172]:44664 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfGIN4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:56:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBA7328;
-        Tue,  9 Jul 2019 06:56:04 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E5953F738;
-        Tue,  9 Jul 2019 06:56:03 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 14:55:58 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Neeraj Upadhyay <neeraju@codeaurora.org>, will@kernel.org,
-        julien.thierry@arm.com, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, gkohli@codeaurora.org,
-        parthd@codeaurora.org
-Subject: Re: [PATCH] arm64: Explicitly set pstate.ssbs for el0 on kernel entry
-Message-ID: <20190709135557.GA10123@lakrids.cambridge.arm.com>
-References: <1562671333-3563-1-git-send-email-neeraju@codeaurora.org>
- <62c4fed5-39ac-adc9-3bc5-56eb5234a9d1@arm.com>
+        id S1727087AbfGIN5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:57:23 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:1588 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726060AbfGIN5X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 09:57:23 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x69DtNoi022872;
+        Tue, 9 Jul 2019 06:56:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=G5VjWCCtjdEnySWs2qs9MxTfqYJ3feBx5SRszABcQZE=;
+ b=ifNuv9SmJjiVwXxcc4OxgU9679JwETsa3n2QZtDOFyDrPoADcmpeEeEgpWTTfkKwbNXr
+ +IvdTKK3raG9gIlG75r0djrruxcOvz7i7feyG0eBJe4pyxzKIQkJtd8k/f9MsXK96emU
+ szOs98ptDvK56DUoCWNVFEd9e2SyfByiozU= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2tmebu2dv2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 09 Jul 2019 06:56:53 -0700
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Tue, 9 Jul 2019 06:56:52 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Tue, 9 Jul 2019 06:56:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G5VjWCCtjdEnySWs2qs9MxTfqYJ3feBx5SRszABcQZE=;
+ b=FDDy0mNbf5NZYuD0dVKqE4l7a1Br+cJn/rq2VWV698ZRNb9iIUUPR+KnBPWzQrVxE4S1kWrX4t8K4G7qPfTwMNQoZL/rQNHMk8RbHC6npmGuny0SnnGRI/XvePqRd8e/j5xMK8qyEGt40ma91IKaEjyAHt7cIoti6XI054rbgU0=
+Received: from BN6PR15MB1380.namprd15.prod.outlook.com (10.172.151.150) by
+ BN6PR15MB1250.namprd15.prod.outlook.com (10.172.205.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Tue, 9 Jul 2019 13:56:49 +0000
+Received: from BN6PR15MB1380.namprd15.prod.outlook.com
+ ([fe80::f426:9b2b:dbbf:dcaa]) by BN6PR15MB1380.namprd15.prod.outlook.com
+ ([fe80::f426:9b2b:dbbf:dcaa%11]) with mapi id 15.20.2052.019; Tue, 9 Jul 2019
+ 13:56:49 +0000
+From:   Josef Bacik <jbacik@fb.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+CC:     Kernel Team <Kernel-team@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+Subject: Re: [PATCH 04/11] trace-cmd: add global functions for live tracing
+Thread-Topic: [PATCH 04/11] trace-cmd: add global functions for live tracing
+Thread-Index: AQHVNleOuLpgwbsJSEOYB0Yq9lXov6bCT5/q
+Date:   Tue, 9 Jul 2019 13:56:49 +0000
+Message-ID: <0C57E3DE-5CA6-4958-B1B7-A19E5F95C7C6@fb.com>
+References: <1448053053-24188-1-git-send-email-jbacik@fb.com>
+        <1448053053-24188-5-git-send-email-jbacik@fb.com>,<20190709090917.7705c1da@gandalf.local.home>
+In-Reply-To: <20190709090917.7705c1da@gandalf.local.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2600:387:2:811::16]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8dca52c5-39a2-4d1a-63c6-08d7047549f1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR15MB1250;
+x-ms-traffictypediagnostic: BN6PR15MB1250:
+x-microsoft-antispam-prvs: <BN6PR15MB12504766FAFF6AA07C51B497B9F10@BN6PR15MB1250.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:227;
+x-forefront-prvs: 0093C80C01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(136003)(39860400002)(376002)(189003)(199004)(9886003)(86362001)(8936002)(68736007)(5024004)(14444005)(256004)(73956011)(229853002)(66946007)(76116006)(25786009)(66476007)(66556008)(64756008)(66446008)(6486002)(76176011)(305945005)(478600001)(316002)(7736002)(6246003)(6116002)(6506007)(5660300002)(53546011)(54906003)(102836004)(6512007)(2616005)(33656002)(486006)(6436002)(476003)(11346002)(71200400001)(8676002)(2906002)(71190400001)(186003)(46003)(81166006)(6916009)(81156014)(14454004)(99286004)(446003)(36756003)(4326008)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1250;H:BN6PR15MB1380.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LMpIksfRiQqUwzuKOhZo44Te7hd9SlQkVHxrkKv09Z/ozFx6Wgd+mA4AmRX9HnvltuN9FN44+PwzzfE9ATxa1x+EkaKfjT0hRBcNX3Zf+JNE/3Fuy9kqBLMChZHWMWe+dKBDIxx7EcOpdXNHWfd3Uv2ln54AkydcihfIKLcaEmbZFCITnlo0NxNOtlUpCsMrYyqYP4D8d6QG5fjkTUgx/UFyka4gsz1QbAJwGPyrBJyTDPDt+6E3V3RNRd71idT1le24vkub0rQhAtctxh2/Fj/E0uQg6gjzERFUl3drQhWhh2nkjgbDySDo1TyiHd1YQL4IIdzsGnWQbw3wPKfdbFz3H1cud1mU7jcnBwpCHUKAYIo5Kthw3iGJVGIw3bGnq3y8NOSUvegjEWTFe5cnwi7B7UTiReMeJgd/13P8dCE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62c4fed5-39ac-adc9-3bc5-56eb5234a9d1@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dca52c5-39a2-4d1a-63c6-08d7047549f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 13:56:49.1726
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jbacik@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1250
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907090166
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Yup go for it, thanks,
 
-On Tue, Jul 09, 2019 at 02:08:28PM +0100, Marc Zyngier wrote:
-> From 7d4314d1ef3122d8bf56a7ef239c8c68e0c81277 Mon Sep 17 00:00:00 2001
-> From: Marc Zyngier <marc.zyngier@arm.com>
-> Date: Tue, 4 Jun 2019 17:35:18 +0100
-> Subject: [PATCH] arm64: Force SSBS on context switch
-> 
-> On a CPU that doesn't support SSBS, PSTATE[12] is RES0.  In a system
-> where only some of the CPUs implement SSBS, we end-up losing track of
-> the SSBS bit across task migration.
-> 
-> To address this issue, let's force the SSBS bit on context switch.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm64/include/asm/processor.h | 14 ++++++++++++--
->  arch/arm64/kernel/process.c        | 14 ++++++++++++++
->  2 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-> index fd5b1a4efc70..844e2964b0f5 100644
-> --- a/arch/arm64/include/asm/processor.h
-> +++ b/arch/arm64/include/asm/processor.h
-> @@ -193,6 +193,16 @@ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
->  		regs->pmr_save = GIC_PRIO_IRQON;
->  }
->  
-> +static inline void set_ssbs_bit(struct pt_regs *regs)
-> +{
-> +	regs->pstate |= PSR_SSBS_BIT;
-> +}
-> +
-> +static inline void set_compat_ssbs_bit(struct pt_regs *regs)
-> +{
-> +	regs->pstate |= PSR_AA32_SSBS_BIT;
-> +}
-> +
->  static inline void start_thread(struct pt_regs *regs, unsigned long pc,
->  				unsigned long sp)
->  {
-> @@ -200,7 +210,7 @@ static inline void start_thread(struct pt_regs *regs, unsigned long pc,
->  	regs->pstate = PSR_MODE_EL0t;
->  
->  	if (arm64_get_ssbd_state() != ARM64_SSBD_FORCE_ENABLE)
-> -		regs->pstate |= PSR_SSBS_BIT;
-> +		set_ssbs_bit(regs);
->  
->  	regs->sp = sp;
->  }
-> @@ -219,7 +229,7 @@ static inline void compat_start_thread(struct pt_regs *regs, unsigned long pc,
->  #endif
->  
->  	if (arm64_get_ssbd_state() != ARM64_SSBD_FORCE_ENABLE)
-> -		regs->pstate |= PSR_AA32_SSBS_BIT;
-> +		set_compat_ssbs_bit(regs);
->  
->  	regs->compat_sp = sp;
->  }
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index 9856395ccdb7..d451b3b248cf 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -442,6 +442,19 @@ void uao_thread_switch(struct task_struct *next)
->  	}
->  }
->  
-> +static void ssbs_thread_switch(struct task_struct *next)
-> +{
-> +	if (arm64_get_ssbd_state() != ARM64_SSBD_FORCE_ENABLE &&
-> +	    !test_tsk_thread_flag(next, TIF_SSBD)) {
-> +		struct pt_regs *regs = task_pt_regs(next);
-> +
-> +		if (compat_user_mode(regs))
-> +			set_compat_ssbs_bit(regs);
-> +		else if (user_mode(regs))
-> +			set_ssbs_bit(regs);
-> +	}
-> +}
+Josef
 
-I think this isn't quite right, and it's not always safe to call
-task_pt_regs() on a task.
+Sent from my iPhone
 
-For user tasks, the kernel stack looks like:
-
-  +---------+ <=== task_stack_page(tsk) + THREAD_SIZE;
-  |         |
-  | pt_regs |
-  |         |
-  +---------+ <=== task_pt_regs(tsk)
-  |         |
-  |         |
-  |         |
-  |  stack  |
-  |         |
-  |         |
-  |         |
-  +---------+ <=== task_stack_page(tsk)
-
-... where:
-
-#define task_pt_regs(p) \
-	((struct pt_regs *)(THREAD_SIZE + task_stack_page(p)) - 1)
-
-... and in copy_thread() we initialize a new tsk's SP to start at
-task_pt_regs(tsk).
-
-However, in __cpu_up() we start the idle threads stacks without the
-pt_regs bias, at task_stack_page(tsk) + THREAD_SIZE. Likewise for the
-initial thread in __primary_switched(). So task_pt_regs(idle) will
-return an aliasing portion of stack, rather than a pt_regs.
-
-So when switching to those, we'll look at unrelated stack, and corrupt
-it.
-
-We could add a pt_regs bias to those to prevent stack corruption, though
-assuming stacks are zero-initialized, user_mode(task_pt_regs(tsk))
-should always be true, since:
-
-#define PSR_MODE_EL0t      0x00000000
-
-#define user_mode(regs) \
-	(((regs)->pstate & PSR_MODE_MASK) == PSR_MODE_EL0t)
-
-We could:
-
-(a) Check for PF_KTRHEAD in ssbs_thread_switch(), and skip when this is set.
-
-(b) Add the pt_regs bias to all stacks, and not care about the pointless
-    manipulation of the junk regs.
-
-(c) Make task_pt_regs() return NULL for kthreads, and fix up the fallout. I'm
-    very tempted to do this longer term even if we do (a) or (b) for now.
-
-Thanks,
-Mark.
+> On Jul 9, 2019, at 9:09 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>=20
+> On Fri, 20 Nov 2015 15:57:26 -0500
+> Josef Bacik <jbacik@fb.com> wrote:
+>=20
+>> We need a few functions to disable/enable tracing as well as add events =
+to be
+>> enabled on the first instance, this patch turns a couple of these local
+>> functions into library functions.  Thanks,
+>=20
+> Hi Josef,
+>=20
+> Not sure you still use this, as it's not really a library function
+> anymore. But we are currently cleaning up the trace-cmd code to create
+> a real library, and doing it in baby steps. The
+> tracecmd_enable_events() function is causing some issues and it was
+> added by you. Are you OK if we remove it. At least temporarily until we
+> separate out the "enabling" part into the library?
+>=20
+> Thanks!
+>=20
+> -- Steve
+>=20
+>=20
+>>=20
+>> Signed-off-by: Josef Bacik <jbacik@fb.com>
+>> ---
+>> trace-cmd.h    |  5 +++++
+>> trace-record.c | 45 +++++++++++++++++++++++++++------------------
+>> 2 files changed, 32 insertions(+), 18 deletions(-)
+>>=20
+>> diff --git a/trace-cmd.h b/trace-cmd.h
+>> index b4fa7fd..9a9ca30 100644
+>> --- a/trace-cmd.h
+>> +++ b/trace-cmd.h
+>> @@ -268,6 +268,11 @@ int tracecmd_start_recording(struct tracecmd_record=
+er *recorder, unsigned long s
+>> void tracecmd_stop_recording(struct tracecmd_recorder *recorder);
+>> void tracecmd_stat_cpu(struct trace_seq *s, int cpu);
+>> long tracecmd_flush_recording(struct tracecmd_recorder *recorder);
+>> +int tracecmd_add_event(const char *event_str, int stack);
+>> +void tracecmd_enable_events(void);
+>> +void tracecmd_disable_all_tracing(int disable_tracer);
+>> +void tracecmd_disable_tracing(void);
+>> +void tracecmd_enable_tracing(void);
+>>=20
+>> /* --- Plugin handling --- */
+>> extern struct pevent_plugin_option trace_ftrace_options[];
+>> diff --git a/trace-record.c b/trace-record.c
+>> index 417b701..7c471ab 100644
+>> --- a/trace-record.c
+>> +++ b/trace-record.c
+>> @@ -841,7 +841,6 @@ static void update_ftrace_pids(int reset)
+>>=20
+>> static void update_event_filters(struct buffer_instance *instance);
+>> static void update_pid_event_filters(struct buffer_instance *instance);
+>> -static void enable_tracing(void);
+>>=20
+>> /**
+>>  * make_pid_filter - create a filter string to all pids against @field
+>> @@ -1106,7 +1105,7 @@ static void run_cmd(enum trace_type type, int argc=
+, char **argv)
+>>    if (!pid) {
+>>        /* child */
+>>        update_task_filter();
+>> -        enable_tracing();
+>> +        tracecmd_enable_tracing();
+>>        enable_ptrace();
+>>        /*
+>>         * If we are using stderr for stdout, switch
+>> @@ -1795,7 +1794,7 @@ static int read_tracing_on(struct buffer_instance =
+*instance)
+>>    return ret;
+>> }
+>>=20
+>> -static void enable_tracing(void)
+>> +void tracecmd_enable_tracing(void)
+>> {
+>>    struct buffer_instance *instance;
+>>=20
+>> @@ -1808,7 +1807,7 @@ static void enable_tracing(void)
+>>        reset_max_latency();
+>> }
+>>=20
+>> -static void disable_tracing(void)
+>> +void tracecmd_disable_tracing(void)
+>> {
+>>    struct buffer_instance *instance;
+>>=20
+>> @@ -1816,9 +1815,9 @@ static void disable_tracing(void)
+>>        write_tracing_on(instance, 0);
+>> }
+>>=20
+>> -static void disable_all(int disable_tracer)
+>> +void tracecmd_disable_all_tracing(int disable_tracer)
+>> {
+>> -    disable_tracing();
+>> +    tracecmd_disable_tracing();
+>>=20
+>>    if (disable_tracer) {
+>>        disable_func_stack_trace();
+>> @@ -1991,6 +1990,11 @@ static void enable_events(struct buffer_instance =
+*instance)
+>>    }
+>> }
+>>=20
+>> +void tracecmd_enable_events(void)
+>> +{
+>> +    enable_events(first_instance);
+>> +}
+>> +
+>> static void set_clock(struct buffer_instance *instance)
+>> {
+>>    char *path;
+>> @@ -3074,15 +3078,15 @@ static char *get_date_to_ts(void)
+>>    }
+>>=20
+>>    for (i =3D 0; i < date2ts_tries; i++) {
+>> -        disable_tracing();
+>> +        tracecmd_disable_tracing();
+>>        clear_trace();
+>> -        enable_tracing();
+>> +        tracecmd_enable_tracing();
+>>=20
+>>        gettimeofday(&start, NULL);
+>>        write(tfd, STAMP, 5);
+>>        gettimeofday(&end, NULL);
+>>=20
+>> -        disable_tracing();
+>> +        tracecmd_disable_tracing();
+>>        ts =3D find_time_stamp(pevent);
+>>        if (!ts)
+>>            continue;
+>> @@ -3699,6 +3703,11 @@ profile_add_event(struct buffer_instance *instanc=
+e, const char *event_str, int s
+>>    return 0;
+>> }
+>>=20
+>> +int tracecmd_add_event(const char *event_str, int stack)
+>> +{
+>> +    return profile_add_event(first_instance, event_str, stack);
+>> +}
+>> +
+>> static void enable_profile(struct buffer_instance *instance)
+>> {
+>>    int stacktrace =3D 0;
+>> @@ -3891,7 +3900,7 @@ void trace_record (int argc, char **argv)
+>>=20
+>>        }
+>>        update_first_instance(instance, topt);
+>> -        disable_tracing();
+>> +        tracecmd_disable_tracing();
+>>        exit(0);
+>>    } else if (strcmp(argv[1], "restart") =3D=3D 0) {
+>>        for (;;) {
+>> @@ -3922,7 +3931,7 @@ void trace_record (int argc, char **argv)
+>>=20
+>>        }
+>>        update_first_instance(instance, topt);
+>> -        enable_tracing();
+>> +        tracecmd_enable_tracing();
+>>        exit(0);
+>>    } else if (strcmp(argv[1], "reset") =3D=3D 0) {
+>>        /* if last arg is -a, then -b and -d apply to all instances */
+>> @@ -3984,7 +3993,7 @@ void trace_record (int argc, char **argv)
+>>            }
+>>        }
+>>        update_first_instance(instance, topt);
+>> -        disable_all(1);
+>> +        tracecmd_disable_all_tracing(1);
+>>        set_buffer_size();
+>>        clear_filters();
+>>        clear_triggers();
+>> @@ -4314,7 +4323,7 @@ void trace_record (int argc, char **argv)
+>>=20
+>>    if (!extract) {
+>>        fset =3D set_ftrace(!disable, total_disable);
+>> -        disable_all(1);
+>> +        tracecmd_disable_all_tracing(1);
+>>=20
+>>        for_all_instances(instance)
+>>            set_clock(instance);
+>> @@ -4365,7 +4374,7 @@ void trace_record (int argc, char **argv)
+>>    } else {
+>>        if (!(type & (TRACE_TYPE_RECORD | TRACE_TYPE_STREAM))) {
+>>            update_task_filter();
+>> -            enable_tracing();
+>> +            tracecmd_enable_tracing();
+>>            exit(0);
+>>        }
+>>=20
+>> @@ -4373,7 +4382,7 @@ void trace_record (int argc, char **argv)
+>>            run_cmd(type, (argc - optind) - 1, &argv[optind + 1]);
+>>        else {
+>>            update_task_filter();
+>> -            enable_tracing();
+>> +            tracecmd_enable_tracing();
+>>            /* We don't ptrace ourself */
+>>            if (do_ptrace && filter_pid >=3D 0)
+>>                ptrace_attach(filter_pid);
+>> @@ -4383,7 +4392,7 @@ void trace_record (int argc, char **argv)
+>>                trace_or_sleep(type);
+>>        }
+>>=20
+>> -        disable_tracing();
+>> +        tracecmd_disable_tracing();
+>>        if (!latency)
+>>            stop_threads(type);
+>>    }
+>> @@ -4391,7 +4400,7 @@ void trace_record (int argc, char **argv)
+>>    record_stats();
+>>=20
+>>    if (!keep)
+>> -        disable_all(0);
+>> +        tracecmd_disable_all_tracing(0);
+>>=20
+>>    /* extract records the date after extraction */
+>>    if (extract && date) {
+>> @@ -4399,7 +4408,7 @@ void trace_record (int argc, char **argv)
+>>         * We need to start tracing, don't let other traces
+>>         * screw with our trace_marker.
+>>         */
+>> -        disable_all(1);
+>> +        tracecmd_disable_all_tracing(1);
+>>        date2ts =3D get_date_to_ts();
+>>    }
+>>=20
+>=20
