@@ -2,74 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7CB63A35
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C96B63A32
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:32:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfGIRdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 13:33:14 -0400
-Received: from mga05.intel.com ([192.55.52.43]:42018 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfGIRdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 13:33:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 10:33:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
-   d="scan'208";a="167481530"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Jul 2019 10:33:12 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hktzL-0007ry-SG; Wed, 10 Jul 2019 01:33:11 +0800
-Date:   Wed, 10 Jul 2019 01:32:17 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "J. Bruce Fields" <bfields@redhat.com>
-Cc:     kbuild-all@01.org, Jeff Layton <jlayton@kernel.org>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [linux-next:master 11868/13492] fs/nfsd/nfs4state.c:2508:6: sparse:
- sparse: symbol 'force_expire_client' was not declared. Should it be static?
-Message-ID: <201907100149.XLk4C7WJ%lkp@intel.com>
+        id S1726530AbfGIRcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 13:32:43 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46121 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfGIRcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 13:32:42 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 65so15945826oid.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 10:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KzQBi+No8ph3UEJD2VAcK9TOC9/dG2woHn2ySVokkbA=;
+        b=ETwRLHzWaCjexBzhMiLsQW5sSwoEpykycj/oT4Mm3+BM1ASKQYYp9nANFQkqIEo9VH
+         fDTONrWhFj6eQq/YstmDB9znc9kMTXievTkLEmbVQlntYk7u3XniFCciHp17el38ptqW
+         25B1nl6puEZ++ekvORfKaesjtzV/qytTztHR8ZJSV4pc8Cm1EXc6zeV1WyGwRInt/5cq
+         8JvSqh2tLOnYlWU5GlJ4khR8pusZfQAYM2kvLpxqf6AhiMneDtfO3NxJwkvtkNzP8zhk
+         fWqSI1zRZbkMxlL0Jfngnwz9XVqnajOomVwGhPQIXj0OJqCZ68P5diCOFJ3Oyd2ivn9X
+         JUlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KzQBi+No8ph3UEJD2VAcK9TOC9/dG2woHn2ySVokkbA=;
+        b=ogUgd318bFOZ4+umYj6DlSCJd/yDil6hN87HrEkaxIk+5LRqD3gJIIEMF+xuz+9aGh
+         9ynlHya6mv5YdhXgOEFB0Bfp17zLcxnIuq/MPTx1vFKstLjHCsXqsjguoGXJ8fOec9bc
+         f2dZpX4Kvb62AkVtL2LaRyLEyA4FyDYk0mwTQU5SNtVK55LJgqe+bz0vEG8tQPM7WrQV
+         IrEuaZY57rjN7476yc8JhUaJZKQ7DegNgoeUUYbcVFIDY9qOGZCJt0fPKfZ3be9WhTed
+         DXhGuJzNc16siqcJhrbkExk6dfeuJsFqBMGqXx/mvJ4jRLEqeicpmjoH/yb8LWPHNJ5I
+         iKfg==
+X-Gm-Message-State: APjAAAWbFanBAicCBtusIr+pe0Sq+tJiVMP7ySJnPUDHMmHJskL7CFZr
+        fOnm5Nv3wILpKc56V1uORRskAHTK79t5NANqUSg=
+X-Google-Smtp-Source: APXvYqwA2y25ROEAfu3IQAf9dlBIx3F7JHdPH966F11KyaUMveWUzVZE3t4HxD5ee8XVUFBiT0C3hcmFwVf+LxNfuig=
+X-Received: by 2002:a05:6808:6c5:: with SMTP id m5mr664260oih.89.1562693562016;
+ Tue, 09 Jul 2019 10:32:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CAHhAz+hVweYwjxFuwMw2Hsb74trWiwacH3Qdk=5c78e01==drw@mail.gmail.com>
+ <CAHj3AV=v9ub2BYDZE_q3u9YEWbCLJaSNTVUC+z-nOVw-XQUziQ@mail.gmail.com>
+In-Reply-To: <CAHj3AV=v9ub2BYDZE_q3u9YEWbCLJaSNTVUC+z-nOVw-XQUziQ@mail.gmail.com>
+From:   Muni Sekhar <munisekharrms@gmail.com>
+Date:   Tue, 9 Jul 2019 23:02:30 +0530
+Message-ID: <CAHhAz+gSnj8O+sM-939EqLvj_HL0BSQF4C452kn-GBxhyXODmw@mail.gmail.com>
+Subject: Re: CONFIG_CC_STACKPROTECTOR_STRONG
+To:     Denis Kirjanov <kirjanov@gmail.com>
+Cc:     kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
-head:   4608a726c66807c27bc7d91bdf8a288254e29985
-commit: 89c905beccbbafa88490c8c4c35eaec5ce4c1329 [11868/13492] nfsd: allow forced expiration of NFSv4 clients
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
-        git checkout 89c905beccbbafa88490c8c4c35eaec5ce4c1329
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+On Tue, Jul 9, 2019 at 10:56 PM Denis Kirjanov <kirjanov@gmail.com> wrote:
+>
+>
+>
+> On Tuesday, July 9, 2019, Muni Sekhar <munisekharrms@gmail.com> wrote:
+>>
+>> Hi All,
+>>
+>>
+>> My Kernel is built with the following options:
+>>
+>>
+>>
+>> CONFIG_CC_STACKPROTECTOR=3Dy
+>>
+>> CONFIG_CC_STACKPROTECTOR_STRONG=3Dy
+>>
+>>
+>>
+>>
+>>
+>> We use out-of-tree kernel modules in our project and I need to measure t=
+he performance of it by using a bit older gcc version 4.8.5.
+>>
+>>
+>>
+>> I can build the modules with gcc above 5 version, but when I try to use =
+gcc version 4.8.5 I=E2=80=99m getting the following error:
+>>
+>>
+>>
+>> Makefile:693: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protec=
+tor-strong not supported by compiler
+>>
+>>
+>>
+>> So it looks like gcc 4.8.5 does not support CONFIG_CC_STACKPROTECTOR_STR=
+ONG option, but how to instruct gcc to ignore this one?
+>>
+>>
+>>
+>> In runtime, is it possible to instruct kernel to ignore =E2=80=9CCONFIG_=
+CC_STACKPROTECTOR_STRONG=3Dy=E2=80=9D (without building the kernel) by usin=
+g sysctl or any other method?
+>>
+>>
+>
+>
+> Just disable it in your .config file
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+I disabled in /lib/modules/$(uname -r)/build/.config, but still get
+that error. Does kernel needs to be recompiled?
+
+CONFIG_CC_STACKPROTECTOR=3Dy
+# CONFIG_CC_STACKPROTECTOR_NONE is not set
+# CONFIG_CC_STACKPROTECTOR_REGULAR is not set
+# CONFIG_CC_STACKPROTECTOR_STRONG is not set
+
+>
+>
+>>
+>> Any help is appreciated.
+>>
+>>
+>>
+>> --
+>> Thanks,
+>> Sekhar
+>
+>
+>
+> --
+> Regards / Mit besten Gr=C3=BC=C3=9Fen,
+> Denis
+>
 
 
-sparse warnings: (new ones prefixed by >>)
-
-   fs/nfsd/nfs4state.c:2352:23: sparse: sparse: unknown escape sequence: '%'
-   fs/nfsd/nfs4state.c:2352:23: sparse: sparse: unknown escape sequence: '%'
-   fs/nfsd/nfs4state.c:2355:23: sparse: sparse: unknown escape sequence: '%'
-   fs/nfsd/nfs4state.c:2355:23: sparse: sparse: unknown escape sequence: '%'
-   fs/nfsd/nfs4state.c:1907:6: sparse: sparse: symbol 'drop_client' was not declared. Should it be static?
->> fs/nfsd/nfs4state.c:2508:6: sparse: sparse: symbol 'force_expire_client' was not declared. Should it be static?
-   include/linux/rculist.h:455:20: sparse: sparse: context imbalance in 'put_nfs4_file' - unexpected unlock
-   include/linux/list.h:125:25: sparse: sparse: context imbalance in 'put_clnt_odstate' - unexpected unlock
-   fs/nfsd/nfs4state.c:915:9: sparse: sparse: context imbalance in 'nfs4_put_stid' - unexpected unlock
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--=20
+Thanks,
+Sekhar
