@@ -2,140 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C96B63A32
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90B6E63A3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbfGIRcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 13:32:43 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46121 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfGIRcm (ORCPT
+        id S1726436AbfGIRhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 13:37:54 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:60058 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfGIRhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 13:32:42 -0400
-Received: by mail-oi1-f196.google.com with SMTP id 65so15945826oid.13
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 10:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KzQBi+No8ph3UEJD2VAcK9TOC9/dG2woHn2ySVokkbA=;
-        b=ETwRLHzWaCjexBzhMiLsQW5sSwoEpykycj/oT4Mm3+BM1ASKQYYp9nANFQkqIEo9VH
-         fDTONrWhFj6eQq/YstmDB9znc9kMTXievTkLEmbVQlntYk7u3XniFCciHp17el38ptqW
-         25B1nl6puEZ++ekvORfKaesjtzV/qytTztHR8ZJSV4pc8Cm1EXc6zeV1WyGwRInt/5cq
-         8JvSqh2tLOnYlWU5GlJ4khR8pusZfQAYM2kvLpxqf6AhiMneDtfO3NxJwkvtkNzP8zhk
-         fWqSI1zRZbkMxlL0Jfngnwz9XVqnajOomVwGhPQIXj0OJqCZ68P5diCOFJ3Oyd2ivn9X
-         JUlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KzQBi+No8ph3UEJD2VAcK9TOC9/dG2woHn2ySVokkbA=;
-        b=ogUgd318bFOZ4+umYj6DlSCJd/yDil6hN87HrEkaxIk+5LRqD3gJIIEMF+xuz+9aGh
-         9ynlHya6mv5YdhXgOEFB0Bfp17zLcxnIuq/MPTx1vFKstLjHCsXqsjguoGXJ8fOec9bc
-         f2dZpX4Kvb62AkVtL2LaRyLEyA4FyDYk0mwTQU5SNtVK55LJgqe+bz0vEG8tQPM7WrQV
-         IrEuaZY57rjN7476yc8JhUaJZKQ7DegNgoeUUYbcVFIDY9qOGZCJt0fPKfZ3be9WhTed
-         DXhGuJzNc16siqcJhrbkExk6dfeuJsFqBMGqXx/mvJ4jRLEqeicpmjoH/yb8LWPHNJ5I
-         iKfg==
-X-Gm-Message-State: APjAAAWbFanBAicCBtusIr+pe0Sq+tJiVMP7ySJnPUDHMmHJskL7CFZr
-        fOnm5Nv3wILpKc56V1uORRskAHTK79t5NANqUSg=
-X-Google-Smtp-Source: APXvYqwA2y25ROEAfu3IQAf9dlBIx3F7JHdPH966F11KyaUMveWUzVZE3t4HxD5ee8XVUFBiT0C3hcmFwVf+LxNfuig=
-X-Received: by 2002:a05:6808:6c5:: with SMTP id m5mr664260oih.89.1562693562016;
- Tue, 09 Jul 2019 10:32:42 -0700 (PDT)
+        Tue, 9 Jul 2019 13:37:54 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id C754C161342;
+        Tue,  9 Jul 2019 13:37:51 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:in-reply-to:message-id:references:mime-version
+        :content-type; s=sasl; bh=ZPzL96906deSPszntNDHK2QFX3M=; b=gufTxB
+        zNSe+0divwYcBXwLhl9W3sFW7BjvHwmRzFddQ05k36d7tv2a25UjIIOxanJXoOtD
+        ynWmKEeObbiHF4Wvmzj5VKMD2JqVBTuU5B/1bWCi1zttldwtRQOxwxGPf3VwFHae
+        ZTVdmAa/irDQ+ccsim1Jzz0QckHhqwsrggLFU=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id BE41C161341;
+        Tue,  9 Jul 2019 13:37:51 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=JUWCum9pcbTPQLn3Li5UWdFaYelziHmHH3PL7HgMqUA=; b=xks7+qKO5WD+kKbJjFOF8VQyA5IpsnEK4OFwGE8D3PZDdxs5jke6gTQYNTNVpTuw+9lZxor+rnj4Og4V3l/KkAFJFxOEdbqgqYP59TtxNtwcnTTVeAbnmcjK6S4EqKV6l5owBWQteKjscyC6KqLyM/GwiQFONIgs423mD66FaEE=
+Received: from yoda.home (unknown [70.82.130.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 43457161340;
+        Tue,  9 Jul 2019 13:37:51 -0400 (EDT)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTPSA id 5E86E2DA0192;
+        Tue,  9 Jul 2019 13:37:50 -0400 (EDT)
+Date:   Tue, 9 Jul 2019 13:37:50 -0400 (EDT)
+From:   Nicolas Pitre <nico@fluxnic.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH 08/11] kbuild: create *.mod with full directory path and
+ remove MODVERDIR
+In-Reply-To: <20190709042416.27554-9-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1907091332150.4190@knanqh.ubzr>
+References: <20190709042416.27554-1-yamada.masahiro@socionext.com> <20190709042416.27554-9-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-References: <CAHhAz+hVweYwjxFuwMw2Hsb74trWiwacH3Qdk=5c78e01==drw@mail.gmail.com>
- <CAHj3AV=v9ub2BYDZE_q3u9YEWbCLJaSNTVUC+z-nOVw-XQUziQ@mail.gmail.com>
-In-Reply-To: <CAHj3AV=v9ub2BYDZE_q3u9YEWbCLJaSNTVUC+z-nOVw-XQUziQ@mail.gmail.com>
-From:   Muni Sekhar <munisekharrms@gmail.com>
-Date:   Tue, 9 Jul 2019 23:02:30 +0530
-Message-ID: <CAHhAz+gSnj8O+sM-939EqLvj_HL0BSQF4C452kn-GBxhyXODmw@mail.gmail.com>
-Subject: Re: CONFIG_CC_STACKPROTECTOR_STRONG
-To:     Denis Kirjanov <kirjanov@gmail.com>
-Cc:     kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID: 466A70CC-A270-11E9-96DF-46F8B7964D18-78420484!pb-smtp1.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 10:56 PM Denis Kirjanov <kirjanov@gmail.com> wrote:
->
->
->
-> On Tuesday, July 9, 2019, Muni Sekhar <munisekharrms@gmail.com> wrote:
->>
->> Hi All,
->>
->>
->> My Kernel is built with the following options:
->>
->>
->>
->> CONFIG_CC_STACKPROTECTOR=3Dy
->>
->> CONFIG_CC_STACKPROTECTOR_STRONG=3Dy
->>
->>
->>
->>
->>
->> We use out-of-tree kernel modules in our project and I need to measure t=
-he performance of it by using a bit older gcc version 4.8.5.
->>
->>
->>
->> I can build the modules with gcc above 5 version, but when I try to use =
-gcc version 4.8.5 I=E2=80=99m getting the following error:
->>
->>
->>
->> Makefile:693: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protec=
-tor-strong not supported by compiler
->>
->>
->>
->> So it looks like gcc 4.8.5 does not support CONFIG_CC_STACKPROTECTOR_STR=
-ONG option, but how to instruct gcc to ignore this one?
->>
->>
->>
->> In runtime, is it possible to instruct kernel to ignore =E2=80=9CCONFIG_=
-CC_STACKPROTECTOR_STRONG=3Dy=E2=80=9D (without building the kernel) by usin=
-g sysctl or any other method?
->>
->>
->
->
-> Just disable it in your .config file
+On Tue, 9 Jul 2019, Masahiro Yamada wrote:
 
-I disabled in /lib/modules/$(uname -r)/build/.config, but still get
-that error. Does kernel needs to be recompiled?
+> --- a/scripts/adjust_autoksyms.sh
+> +++ b/scripts/adjust_autoksyms.sh
+> @@ -47,13 +47,10 @@ cat > "$new_ksyms_file" << EOT
+>   */
+>  
+>  EOT
+> -[ "$(ls -A "$MODVERDIR")" ] &&
+> -for mod in "$MODVERDIR"/*.mod; do
+> -	sed -n -e '3{s/ /\n/g;/^$/!p;}' "$mod"
+> -done | sort -u |
+> -while read sym; do
+> -	echo "#define __KSYM_${sym} 1"
+> -done >> "$new_ksyms_file"
+> +sed 's/ko$/mod/' modules.order |
+> +xargs -r -n1 sed -n -e '3{s/ /\n/g;/^$/!p;}' |
+> +sort -u |
+> +sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
 
-CONFIG_CC_STACKPROTECTOR=3Dy
-# CONFIG_CC_STACKPROTECTOR_NONE is not set
-# CONFIG_CC_STACKPROTECTOR_REGULAR is not set
-# CONFIG_CC_STACKPROTECTOR_STRONG is not set
+Did you consider the case when CONFIG_MODULES=y but no modules are 
+selected? Also -r to xargs is a GNU extension and there were some 
+efforts to remove theur use in the past (no idea if this is still a 
+concern).
 
->
->
->>
->> Any help is appreciated.
->>
->>
->>
->> --
->> Thanks,
->> Sekhar
->
->
->
-> --
-> Regards / Mit besten Gr=C3=BC=C3=9Fen,
-> Denis
->
+Other than that, looks good to me.
+
+Acked-by: Nicolas Pitre <nico@fluxnic.net>
 
 
---=20
-Thanks,
-Sekhar
+Nicolas
