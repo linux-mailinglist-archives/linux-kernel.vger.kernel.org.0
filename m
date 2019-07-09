@@ -2,122 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1035A63A45
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333D663A59
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:59:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfGIRsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 13:48:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53422 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfGIRsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 13:48:02 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA25788E59;
-        Tue,  9 Jul 2019 17:47:56 +0000 (UTC)
-Received: from treble (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D927C9D4C;
-        Tue,  9 Jul 2019 17:47:46 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 12:47:44 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <songliubraving@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kairui Song <kasong@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/urgent] bpf: Fix ORC unwinding in non-JIT BPF code
-Message-ID: <20190709174744.dtbjm72cbu5fepar@treble>
-References: <tip-b22cf36c189f31883ad0238a69ccf82aa1f3b16b@git.kernel.org>
- <20190706202942.GA123403@gmail.com>
- <20190707013206.don22x3tfldec4zm@treble>
- <20190707055209.xqyopsnxfurhrkxw@treble>
- <CAADnVQJqT8o=_6P6xHjwxrXqX9ToSb0cTfoOcm2Xcha3KRNNSw@mail.gmail.com>
- <20190708223834.zx7u45a4uuu2yyol@treble>
- <CAADnVQKWDvzsvyjGoFvSQV7VGr2hF2zzCsC9vnpncWMxOJWYdw@mail.gmail.com>
- <20190708225359.ewk44pvrv6a4oao7@treble>
- <20190708230201.mol27wzansuy3n2v@treble>
- <CAADnVQ+imsK-reGBiSzY02e+KdyGYZxm1su7T1bWvti=YmSV-Q@mail.gmail.com>
+        id S1726885AbfGIR7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 13:59:39 -0400
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:39464 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726133AbfGIR7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 13:59:38 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id A73A7100E86C5;
+        Tue,  9 Jul 2019 17:59:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3876:3877:4321:5007:6114:6312:6642:6742:10004:10400:10848:10967:11232:11473:11658:11914:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:21810:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: earth64_192839cbcd232
+X-Filterd-Recvd-Size: 1636
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  9 Jul 2019 17:59:32 +0000 (UTC)
+Message-ID: <ff4ce6a96a922cff2dd929560b9167207b4899e9.camel@perches.com>
+Subject: Re: [PATCH v2 2/4] edac: Add support for Amazon's Annapurna Labs L1
+ EDAC
+From:   Joe Perches <joe@perches.com>
+To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hanna Hawa <hhhawa@amazon.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, bp@alien8.de,
+        mchehab@kernel.org, james.morse@arm.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+        nicolas.ferre@microchip.com, paulmck@linux.ibm.com,
+        dwmw@amazon.co.uk, benh@amazon.com, ronenk@amazon.com,
+        talel@amazon.com, jonnyc@amazon.com, hanochu@amazon.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org
+Date:   Tue, 09 Jul 2019 10:59:31 -0700
+In-Reply-To: <20190709173229.0000135f@huawei.com>
+References: <1562500658-14717-1-git-send-email-hhhawa@amazon.com>
+         <1562500658-14717-3-git-send-email-hhhawa@amazon.com>
+         <20190709173229.0000135f@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAADnVQ+imsK-reGBiSzY02e+KdyGYZxm1su7T1bWvti=YmSV-Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 09 Jul 2019 17:48:02 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 04:16:25PM -0700, Alexei Starovoitov wrote:
-> total time is hard to compare.
-> Could you compare few tests?
-> like two that are called "tcpdump *"
-> 
-> I think small regression is ok.
-> Folks that care about performance should be using JIT.
+On Tue, 2019-07-09 at 17:32 +0800, Jonathan Cameron wrote:
+> On Sun, 7 Jul 2019 14:57:36 +0300
+[]
+> > +#define ARM_CA57_CPUMERRSR_REPEAT		GENMASK(39, 32)
+> > +#define ARM_CA57_CPUMERRSR_OTHER		GENMASK(47, 40)
+> > +#define ARM_CA57_CPUMERRSR_FATAL		GENMASK(63, 63)
 
-I did each test 20 times and computed the averages:
+GENMASK_ULL
 
-"tcpdump port 22":
- default:	0.00743175s
- -fno-gcse:	0.00709920s (~4.5% speedup)
 
-"tcpdump complex":
- default:	0.00876715s
- -fno-gcse:	0.00854895s (~2.5% speedup)
-
-So there does seem to be a small performance gain by disabling this
-optimization.
-
-We could change it for the whole file, by adjusting CFLAGS_core.o in the
-BPF makefile, or we could change it for the function only with something
-like the below patch.
-
-Thoughts?
-
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index e8579412ad21..d7ee4c6bad48 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -170,3 +170,5 @@
- #else
- #define __diag_GCC_8(s)
- #endif
-+
-+#define __no_fgcse __attribute__((optimize("-fno-gcse")))
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 095d55c3834d..599c27b56c29 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -189,6 +189,10 @@ struct ftrace_likely_data {
- #define asm_volatile_goto(x...) asm goto(x)
- #endif
- 
-+#ifndef __no_fgcse
-+# define __no_fgcse
-+#endif
-+
- /* Are two types/vars the same type (ignoring qualifiers)? */
- #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
- 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 7e98f36a14e2..8191a7db2777 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -1295,7 +1295,7 @@ bool bpf_opcode_in_insntable(u8 code)
-  *
-  * Decode and execute eBPF instructions.
-  */
--static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
-+static u64 __no_fgcse ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
- {
- #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
- #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
