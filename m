@@ -2,94 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F20D162E82
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 780B362E85
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfGIDL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:11:29 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34459 "EHLO ozlabs.org"
+        id S1727127AbfGIDOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:14:05 -0400
+Received: from fieldses.org ([173.255.197.46]:38332 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbfGIDL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:11:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jS5V2FSmz9sML;
-        Tue,  9 Jul 2019 13:11:26 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562641886;
-        bh=VBoxWR+50ZGyksTH5yBOU1Om+w5nu2WIrA1jcIXIrU4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dzycMjTrO/QsKznZiOrSCEQ0tAhD36Nq5btf0wc7JAwt6Vn64HwHwPz6i49LarzKF
-         acef3sSC4xTfwn3roOk6G1lTvldDceQQ4N0kwbcVQjNX7/JB+bVWUkv8eQHy18mLsy
-         5AObkUZeV5u4y7LIGN4xzehK1Ow1ha2bdR94obeoQm1fH+lkvWZ0/qjX5iWSY912Sf
-         mUlqh/KJ3rzWf1CUtHkSELbmz9H5JH0u3Q3yePVtzg1pOR4OAsleydF84LEnLlalCL
-         evSV4OWkMrAYrLBQdzEsJPtmoUFMhK9kaMFwKPggT2lH4D4+8XmTeChyfDUDIYxzvU
-         uaNrR41q6pCSw==
-Date:   Tue, 9 Jul 2019 13:11:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kamenee Arumugam <kamenee.arumugam@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Message-ID: <20190709131125.6f418604@canb.auug.org.au>
-In-Reply-To: <20190708160823.GH23966@mellanox.com>
-References: <20190708125725.25c38fa7@canb.auug.org.au>
-        <20190708160823.GH23966@mellanox.com>
+        id S1725905AbfGIDOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:14:05 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id B01192013; Mon,  8 Jul 2019 23:14:04 -0400 (EDT)
+Date:   Mon, 8 Jul 2019 23:14:04 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] nfsd: Fix misuse of strlcpy
+Message-ID: <20190709031404.GD14439@fieldses.org>
+References: <cover.1562283944.git.joe@perches.com>
+ <b51141d12de77eb22101e81f9eb2c9cc44104d7a.1562283944.git.joe@perches.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xpRz/sKV_eSTYFZMnZeN56N"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b51141d12de77eb22101e81f9eb2c9cc44104d7a.1562283944.git.joe@perches.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xpRz/sKV_eSTYFZMnZeN56N
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 04, 2019 at 04:57:48PM -0700, Joe Perches wrote:
+> Probable cut&paste typo - use the correct field size.
 
-Hi Jason,
+Huh, that's been there forever, I wonder why we haven't seen crashes?
+Oh, I see, name and authname both have the same size.
 
-On Mon, 8 Jul 2019 16:08:27 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> From f10ff380fd7dfba4a36d40f8dd00fe17da8a1a10 Mon Sep 17 00:00:00 2001
-> From: Jason Gunthorpe <jgg@mellanox.com>
-> Date: Mon, 8 Jul 2019 12:17:48 -0300
-> Subject: [PATCH] RDMA/rvt: Do not use a kernel header in the ABI
->=20
-> rvt was using ib_sge as part of it's ABI, which is not allowed. Introduce
-> a new struct with the same layout and use it instead.
->=20
-> Fixes: dabac6e460ce ("IB/hfi1: Move receive work queue struct into uapi d=
-irectory")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Anyway, makes sense, thanks.  Will apply for 5.3.
 
-I applied that to linux-next today.
+(Unless someone else is getting this; I didn't get copied on the rest of
+the series.)
 
---=20
-Cheers,
-Stephen Rothwell
+--b.
 
---Sig_/xpRz/sKV_eSTYFZMnZeN56N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kBd0ACgkQAVBC80lX
-0Gw93wf/SQWCdSWkpPFGR32ZzI8fL6eoL9YxZn04jTHTC86aqB1JspaIfU9xigm1
-y0sSlxesiknfHp7oIK8NWdLAYxYis5yHr5yYq9b1VdM0JvIsWYzR5j2wtXReFxlC
-tGWHTdsr8Vsb2RzroMnC8j3DEhvqgGS8DKzVQbuBTcriQVEg4pOzSbyFl5KtgbB2
-gjWyN67CPPs6gRPPYLtXaxiUkqk9cl4eTYYwwIZq5CUXKSdubbH36zZTwSiFdkYi
-F3iZ8RzryCbt2YccPpYEtOKACt9HSS7sc/yriAaQaiPzN3EoNH73ssdGI2UJZST4
-Uu7toaOvC5uz4AdSqUGhH2TbRaBoRg==
-=FhlC
------END PGP SIGNATURE-----
-
---Sig_/xpRz/sKV_eSTYFZMnZeN56N--
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  fs/nfsd/nfs4idmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
+> index 2961016097ac..d1f285245af8 100644
+> --- a/fs/nfsd/nfs4idmap.c
+> +++ b/fs/nfsd/nfs4idmap.c
+> @@ -83,7 +83,7 @@ ent_init(struct cache_head *cnew, struct cache_head *citm)
+>  	new->type = itm->type;
+>  
+>  	strlcpy(new->name, itm->name, sizeof(new->name));
+> -	strlcpy(new->authname, itm->authname, sizeof(new->name));
+> +	strlcpy(new->authname, itm->authname, sizeof(new->authname));
+>  }
+>  
+>  static void
+> -- 
+> 2.15.0
