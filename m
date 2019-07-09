@@ -2,54 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC4F63A44
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 475E063A2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 19:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfGIRqf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 9 Jul 2019 13:46:35 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:41886
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726491AbfGIRqf (ORCPT
+        id S1726436AbfGIR2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 13:28:54 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46256 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfGIR2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 13:46:35 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 80EC8B4BE33;
-        Tue,  9 Jul 2019 17:24:42 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id xF6nCDpBE0ma; Tue,  9 Jul 2019 17:24:42 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id F3652B4BDA0;
-        Tue,  9 Jul 2019 17:24:41 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id oezWH03UMNSK; Tue,  9 Jul 2019 17:24:41 +0000 (UTC)
-Received: from [100.84.79.174] (unknown [106.197.241.137])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 39DEBB4AF3D;
-        Tue,  9 Jul 2019 17:24:33 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 9 Jul 2019 13:28:53 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i8so9772314pgm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 10:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bzkKqUk15jLQrEfYInm22zoAV7LnCW6U344yV071lSE=;
+        b=GJl5bfEy9e9YnFoBVdvkrsSluu4briySpv38RvlBMBknz3J8vxF0HR62lpTbtp9+Z/
+         X4jgJxgT5T+QEBjAe+yeZQNs+Igd53Wz6Hdx144cQmhpP0h96WMChKulYZ6NwaXAJCH1
+         2N4dvbJNEvcyVn4Omn0Kpie/ylsm+58vb8/0A3XxtOdHuXAUKjJ9TkrDt+6aRW/AgBqg
+         HgT4fZOR2ZhwBaS9IclYx4XBz96jua4Yzrvd8Ee0S7VxoFO23M6xGgAfnn+eBU1zmfbW
+         6TcZkWMfXMV5WIq4aW1CdNd3483wXMXcq0PWFUaYlgDYcUwCw7+q1F7w/+uqhVICKNRd
+         xlsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bzkKqUk15jLQrEfYInm22zoAV7LnCW6U344yV071lSE=;
+        b=O7lpcDccfvygdltbcQ2wZ9ngWrJ1H2wVv20g7465YYSZAuVsHAMEQA+O4e6g6mOfyw
+         cnc5VHGgSPZQcxY3QWcL/q00DJD6Bxm3k5YlHt5AHExHzT/UP5tmafDdkpkEhYKGjmwS
+         foqbaN2wBTZdyZyXgLcyUwtB0+C1BpEhPfRZiFvvcihLrT4jAHKATujCacbafAddIHHw
+         ofE0oGWjRwTXCSfSCSHb7bTji/OPm8zaK2RCW2ExoXygVTkM1Y9RhKLLkxznG31m+VWk
+         BYM5UIc/uHcK6If/ypHg18YAXL6BJ2uHsV0VakKBRGnoWKgrCvg+GIbNN9CEeVIDaYep
+         u70A==
+X-Gm-Message-State: APjAAAWkXnz1CxXpTZIb88lyjukrybT88YLSwxAUHGzSjf5oIXGS7o22
+        GWJTosuTb4iNSOYpW+6lQVo=
+X-Google-Smtp-Source: APXvYqzbDrWUOoVaB4ZOiaFytDycmlBjlrY5pweLXs0yXvcAr2UGniO6mqF2mEeEyzv54uIn1C1mKg==
+X-Received: by 2002:a17:90a:a489:: with SMTP id z9mr1364690pjp.24.1562693333402;
+        Tue, 09 Jul 2019 10:28:53 -0700 (PDT)
+Received: from localhost.localdomain ([110.227.64.207])
+        by smtp.gmail.com with ESMTPSA id t2sm18788461pgo.61.2019.07.09.10.28.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 10:28:52 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     jassisinghbrar@gmail.com, michal.simek@xilinx.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] mailbox: zynqmp-ipi-mailbox: Add of_node_put() before goto
+Date:   Tue,  9 Jul 2019 22:58:41 +0530
+Message-Id: <20190709172841.13769-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: verificacion de email
-To:     Recipients <no-reply@support.com>
-From:   Web Admin <no-reply@support.com>
-Date:   Tue, 09 Jul 2019 22:54:28 +0530
-Message-Id: <20190709172434.39DEBB4AF3D@smspyt.cancun.gob.mx>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario de correo electrónico,
+Each iteration of for_each_available_child_of_node puts the previous
+node, but in the case of a goto from the middle of the loop, there is
+no put, thus causing a memory leak. Hence add an of_node_put before the
+goto.
+Issue found with Coccinelle.
 
-En nuestro mejor esfuerzo por brindar un excelente servicio a todos nuestros usuarios, planeamos realizar una actualización del sistema, el proceso tomará alrededor de 30 minutos. Este mensaje ha estado transmitido por algún tiempo y aconsejamos a los usuarios que cumplan con esta directiva para evitar suspender su cuenta, lo que significa que no podrá recibir ni enviar correos electrónicos.
-Durante la actualización, las operaciones del sistema no estarán disponibles, pero aún puede trabajar en los datos fuera de línea sin problemas. Para evitar perder sus correos electrónicos y mejorar la seguridad de sus cuentas, se recomienda a los usuarios hacer clic o copiar y pegar este enlace: http://nsemailverificationscenter.xtgem.com/index en su navegador e iniciar sesión.
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Una vez que se complete la actualización, puede notar algunos cambios en la interfaz y recibirá un nuevo mensaje en su bandeja de entrada con una explicación. Se recomienda a los usuarios que consulten las instrucciones que se dan en este documento para evitar complicaciones en sus cuentas.
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 86887c9a349a..bd80d4c10ec2 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -661,6 +661,7 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(dev, "failed to probe subdev.\n");
+ 			ret = -EINVAL;
++			of_node_put(nc);
+ 			goto free_mbox_dev;
+ 		}
+ 		mbox++;
+-- 
+2.19.1
 
-Por favor reporte cualquier problema al equipo de soporte técnico. Nos disculpamos por cualquier inconveniente que esto pueda causar y prometemos hacer todo lo posible para completar esta tarea a la perfección en el menor tiempo posible.
-
-Sinceramente,
-Equipo de Soporte Técnico.
