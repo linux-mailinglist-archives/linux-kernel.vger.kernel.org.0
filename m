@@ -2,110 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD0763AAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38DD63AAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfGISUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:20:15 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.194]:30918 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726335AbfGISUP (ORCPT
+        id S1728969AbfGISUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:20:21 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41322 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbfGISUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:20:15 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 3E14D4FC4
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2019 13:20:14 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id kuishIMGb2qH7kuishOVwN; Tue, 09 Jul 2019 13:20:14 -0500
-X-Authority-Reason: nr=8
-Received: from cablelink149-185.telefonia.intercable.net ([201.172.149.185]:54240 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hkuiq-000EUM-Of; Tue, 09 Jul 2019 13:20:13 -0500
-Date:   Tue, 9 Jul 2019 13:20:10 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc1
-Message-ID: <20190709182010.GA32200@embeddedor>
+        Tue, 9 Jul 2019 14:20:20 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d17so21199931qtj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=VdsesycGrscxvl9VUJv2OrYGiO6I5hjIVNNGDZpPz+A=;
+        b=Lxz1gcUMBjd/teRSMIUe0VCxgzAsMdo3Rrn2b801LIo6TpuHTsRwusYzWVPRKkazNn
+         aAdOj2lu6GpB5lRRJHygM5I8HppPYWYDQAaywxAfo2xqyv64cDjnnOeOHkGgezgBW6Nu
+         djzd2PEL9D+Qec4rkUSmWz1H+lTOHJEjt7GhXcSO4imn4ddhyK3Hk7AQ70/qN00gW7hu
+         wIEFtsDNWfbhO2cfJblKWFwp6D9W3cUBuqCUlw0F2/VglB2QrsaAsobfraWn1QISADWD
+         dpJWu9FxbHD/vEFNL3NozHPeDPJcYEXDBomOxuPMe6xhnzj7RHJpqS2pUV7nuPeTWBA3
+         oM5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VdsesycGrscxvl9VUJv2OrYGiO6I5hjIVNNGDZpPz+A=;
+        b=HbS+NhLHOuESGtnP752fYg2Ajf1I0bIDrDWw7pUcX30e8G7NwQcxXJfuvAECXVGzrz
+         IKh38BNotBKmn/Sy10l5Evks4gumzEtyHg1d3RG52hv47hxfLbTL76waSoOUR+u7tAg+
+         GjMqbzMSTmkBt5I317PgV1SKnOK4QLgHOsnwrnTHzll+2ClJPuPnsYKZ7M46WjtM0VPZ
+         L+OaSR0MXy6AWxMktniQWHIezbpjShLg4iek1WTjQg7mB4bp5YQIrwhxYSccyknHb5LF
+         XO/8mC40Aat60unsBvs+s0MeurzC35pPm/gXdhOOAT9t4LazYgo0HNOez16aEJPGRH+A
+         TK+A==
+X-Gm-Message-State: APjAAAVXGhD1ppwk2qmvOSnxnxqULAvSpH29wbI+yXuuZSSKFRPOBPLa
+        0TrufP7VokFdBrLj20DNGqM1Gg==
+X-Google-Smtp-Source: APXvYqwAG4/7u8EKC7EBi9MHlMvmuFXHJunA2cypRFYP7aL7Lw7iEQ73R7gZHDrIdOHZAo9JKHhQaw==
+X-Received: by 2002:ac8:35ae:: with SMTP id k43mr19635975qtb.259.1562696419082;
+        Tue, 09 Jul 2019 11:20:19 -0700 (PDT)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 11:20:18 -0700 (PDT)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [v2 2/5] kexec: add resource for normal kexec region
+Date:   Tue,  9 Jul 2019 14:20:11 -0400
+Message-Id: <20190709182014.16052-3-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+References: <20190709182014.16052-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.149.185
-X-Source-L: No
-X-Exim-ID: 1hkuiq-000EUM-Of
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink149-185.telefonia.intercable.net (embeddedor) [201.172.149.185]:54240
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+crashk_res resource is used to reserve memory for crash kernel. There is
+also, however, a benefit to reserve memory for normal kernel to speed up
+reboot performance. This is because during regular kexec reboot, kernel
+performs relocations to the final destination of the loaded segments, and
+the relocation might take a long time especially if initramfs is big.
 
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+Therefore, similarly to crashk_res, add kexeck_res that will be used to
+reserve memory for normal kexec kernel.
 
-are available in the Git repository at:
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+---
+ include/linux/ioport.h | 1 +
+ include/linux/kexec.h  | 6 ++++--
+ kernel/kexec_core.c    | 9 +++++++++
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc1
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index da0ebaec25f0..3b18a3c112f3 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -133,6 +133,7 @@ enum {
+ 	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+ 	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+ 	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
++	IORES_DESC_KEXEC_KERNEL			= 8,
+ };
+ 
+ /* helpers to define resources */
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index b9b1bc5f9669..4c1121b385fb 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -303,12 +303,14 @@ extern int kexec_load_disabled;
+ #define KEXEC_FILE_FLAGS	(KEXEC_FILE_UNLOAD | KEXEC_FILE_ON_CRASH | \
+ 				 KEXEC_FILE_NO_INITRAMFS)
+ 
+-/* Location of a reserved region to hold the crash kernel.
+- */
++/* Location of a reserved region to hold the crash kernel. */
+ extern struct resource crashk_res;
+ extern struct resource crashk_low_res;
+ extern note_buf_t __percpu *crash_notes;
+ 
++/* Location of a reserved region to hold normal kexec kernel. */
++extern struct resource kexeck_res;
++
+ /* flag to track if kexec reboot is in progress */
+ extern bool kexec_in_progress;
+ 
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 2c5b72863b7b..932feadbeb3a 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -70,6 +70,15 @@ struct resource crashk_low_res = {
+ 	.desc  = IORES_DESC_CRASH_KERNEL
+ };
+ 
++/* Location of the reserved area for the normal kexec kernel */
++struct resource kexeck_res = {
++	.name  = "Kexec kernel",
++	.start = 0,
++	.end   = 0,
++	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
++	.desc  = IORES_DESC_KEXEC_KERNEL
++};
++
+ int kexec_should_crash(struct task_struct *p)
+ {
+ 	/*
+-- 
+2.22.0
 
-for you to fetch changes up to d93512ef0f0efa17eded6b9edf8e88e8418f44bd:
-
-  Makefile: Globally enable fall-through warning (2019-07-08 15:23:22 -0500)
-
-----------------------------------------------------------------
-Wimplicit-fallthrough patches for 5.3-rc1
-
-Hi Linus,
-
-Please, pull the following patches that mark switch cases where we are
-expecting to fall through. These patches are part of the ongoing efforts
-to enable -Wimplicit-fallthrough. All of them have been baking in linux-next
-for a whole development cycle.
-
-Also, pull the Makefile patch that universally enables the
--Wimplicit-fallthrough option.
-
-Thanks
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (6):
-      afs: fsclient: Mark expected switch fall-throughs
-      afs: yfsclient: Mark expected switch fall-throughs
-      can: mark expected switch fall-throughs
-      firewire: mark expected switch fall-throughs
-      platform/x86: acer-wmi: Mark expected switch fall-throughs
-      Makefile: Globally enable fall-through warning
-
- Documentation/process/deprecated.rst          | 14 +++++++
- Makefile                                      |  3 ++
- drivers/firewire/core-device.c                |  2 +-
- drivers/firewire/core-iso.c                   |  2 +-
- drivers/firewire/core-topology.c              |  1 +
- drivers/net/can/at91_can.c                    |  6 ++-
- drivers/net/can/peak_canfd/peak_pciefd_main.c |  2 +-
- drivers/net/can/spi/mcp251x.c                 |  3 +-
- drivers/net/can/usb/peak_usb/pcan_usb.c       |  2 +-
- drivers/platform/x86/acer-wmi.c               |  4 ++
- fs/afs/fsclient.c                             | 51 ++++++++++++++++---------
- fs/afs/yfsclient.c                            | 54 +++++++++++++++++----------
- 12 files changed, 100 insertions(+), 44 deletions(-)
