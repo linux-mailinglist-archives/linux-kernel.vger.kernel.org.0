@@ -2,96 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B45E863D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1DD63D3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfGIVVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 17:21:08 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36380 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfGIVVH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 17:21:07 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so21008988ljj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 14:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PyOalFl+LpnRq+Sf5WkkuvdPIYl6jGnFKnBN6iCgqk8=;
-        b=Zm/IjcRhOmpCYyMjt8s7PUw/5Sq+thMqxHpNV7qHYcdgPBRJhHdF9JxRi+c3KvXqTV
-         4qJ1Emr57xWvkQSthseBxldVCM3R2GqAEJXJXng+DW81GEsnI5MXGn7FTpe5CFe0XrEL
-         rVSPpJqyKjmVcpLOeduHuJXBFNjsXzc9lzzpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PyOalFl+LpnRq+Sf5WkkuvdPIYl6jGnFKnBN6iCgqk8=;
-        b=meHPfeM50XvT85+k2LfccRWm2Oy+QknERhz1E4Om5JokRsXWnJdEWbrY2yHFWoWlX5
-         rOx4wT+XPIe46y7LtlSA8o+Un8y1KAen4fyDRfn6Lefsca1HMPFF67atgd6RjRZ1uSwo
-         F4cU4VGZf+f0iA/uaTs4JoHyR5mSdWxHrafvByK6WmmXLSPl2GJCCG5daChJtpMmT+S8
-         aAx1rOF+SP0N/kZKDyE4zA1Vzad9SJd0PgYgf8GLvh5swjeDkFLBNXZwP4XMkeJM7P41
-         RtPiOM2Xm+MeKZ1eFkNDMXz9glWOnSfxda8d/OIH0VpgOqDxyfUChErMPtAMdswBhMHZ
-         M7kA==
-X-Gm-Message-State: APjAAAWOk5IPya4CqoK2EQyPgKi/xfZCd/cPi8nk/oHGarajS0Gsip8Z
-        +n8tnCe5zRcr/1ZkjkBnp3HFGs0UbYQ=
-X-Google-Smtp-Source: APXvYqyAI80S6T1/CBTlBvpRWTWRgcwwstGbkL3Ke0DtTLxA1o+do/NBpkHOoxn8eSIzfsQKmgb7ig==
-X-Received: by 2002:a2e:80d6:: with SMTP id r22mr4318931ljg.83.1562707264994;
-        Tue, 09 Jul 2019 14:21:04 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id x18sm12543lfe.42.2019.07.09.14.21.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id m23so20954201lje.12
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
-X-Received: by 2002:a2e:9bc6:: with SMTP id w6mr15452233ljj.156.1562707263461;
- Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
+        id S1729049AbfGIVWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 17:22:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:45661 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726318AbfGIVWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 17:22:08 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 878DB68B02; Tue,  9 Jul 2019 23:22:06 +0200 (CEST)
+Date:   Tue, 9 Jul 2019 23:22:06 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kbusch@kernel.org, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        palmer@sifive.com, paul.walmsley@sifive.com
+Subject: Re: [PATCH v2] nvme-pci: Check for null on pci_alloc_p2pmem()
+Message-ID: <20190709212206.GE9518@lst.de>
+References: <1562605511-6564-1-git-send-email-alan.mikhak@sifive.com>
 MIME-Version: 1.0
-References: <20190708162756.GA69120@gmail.com>
-In-Reply-To: <20190708162756.GA69120@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 9 Jul 2019 14:20:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>
-Message-ID: <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>
-Subject: Re: [GIT PULL] x86/topology changes for v5.3
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562605511-6564-1-git-send-email-alan.mikhak@sifive.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After doing a lot of build testing and merging, I finally got around
-to actually boot-testing the result.
+Thanks,
 
-Something in this series has broken booting for me. Or rather, things
-*boot*, but then it hangs in user space, with
-
-   A start job is running for udev Wait for Complete Device Initialization
-
-it does this on both my desktop and laptop, although the exact hang is
-different (on my laptop, it hangs earlier - I don't even get to input
-the disk encryption keys).
-
-I'm bisecting, and it will take a while to pinpoint, but I can already
-tell that it's from one of these pulls:
-
-    Pull x86 topology updates from Ingo Molnar:
-    Pull x86 platform updayes from Ingo Molnar:
-    Pull x86 paravirt updates from Ingo Molnar:
-    Pull x86 AVX512 status update from Ingo Molnar:
-    Pull x86 cleanups from Ingo Molnar:
-    Pull x86 cache resource control update from Ingo Molnar:
-    Pull x86 build updates from Ingo Molnar:
-    Pull x86 asm updates from Ingo Molnar:
-    Pull scheduler updates from Ingo Molnar:
-
-Will keep you updated as bisection narrows it down.
-
-              Linus
+applied to nvme-5.3.
