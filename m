@@ -2,44 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5518635C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4BC635D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:27:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfGIM1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:27:09 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:55100 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbfGIM1I (ORCPT
+        id S1727078AbfGIM1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:27:34 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:37860 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfGIM1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:27:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id n8so22824303ioo.21
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 05:27:07 -0700 (PDT)
+        Tue, 9 Jul 2019 08:27:09 -0400
+Received: by mail-io1-f72.google.com with SMTP id v3so16364708ios.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 05:27:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hGo8EbEA3ZKfqUVxyvabXM+z4gyY4A3JpCgTFSwOIxY=;
-        b=NjJjiGZlWXgcNUmDOhLUEZBWSsWkPxo/M3nwKnDkBbluGSc5/Kj1WTCyfF4WwK6zjJ
-         dMiC0szWPKAF+67QClr+c6HXCJy0BKN4x8R3cskIXstOqNXS1xBwm5b55cNeuihlgWEw
-         TaiitxTYabpgoA2qpxraAwa2g5OqmOJOMBb7RmqbxwqHGfADwHiINaXhDswNYxd/JYV6
-         9uBc5z19KWA2sBeStmGe0hJ+2ernq7+MqTw367Q8OLs06UtzQf0m7ARsj+wccvhQu6uH
-         yGSZdSF0t/5/Z9Ac5qdc2RL2Ti52huiu6Ew+SzQSydfr2FmoWjAK2RhSFvlbyDtvgcb/
-         2+Lg==
-X-Gm-Message-State: APjAAAW518U8Lsrxm6ZLi0VFmMwinZNsHrt9FHSjRWsu9R1auAxuOeq+
-        feENol9/gydRQeOfa5ICuTCpj8xyrKuIRXFfDBTdX046fx8u
-X-Google-Smtp-Source: APXvYqxfFL7rbB9NNuNdYve/wnQ+LnO/p1FfoKru10JjwRiTTBhM1RedITaDY+N8Dre9ohQuLEBEKe+9QOz+lFWoQJQqCKLl4a+D
+        bh=UZp0N+xOAAczyA3pZl0OsLZcXAkB435anjzhpRD0vtc=;
+        b=ejUOTboBIz42IH3903wQamETuajyYuEESdOnL4+uqvWLp3uLdufj91kcvsLJiCnPHd
+         6ctrBN/ezcEVD9P8+CyVT5IqD+OWDPKjKqEmSZm3lIgYnhTqocL65hBPUNFbTdoIccJn
+         j2EAv3KzTb6q+mbcSU7c1E5e5WtvQur63A1MEJu9U13+cPf/2hrNRnXtryphwA35ar3S
+         r5I7Sg2JOVS2q8XqHlgfdNlhBuk2P2B7n8bsUxfhbWwR6ze4+qmo2WosVPBfJ1BU4/vH
+         nBpBSf5CnA96dZDphnp5lLQ//KHu1SNYWJkuRrpcnaZ/rLqf7jDUi72T+O1LfzCuWK4F
+         erbw==
+X-Gm-Message-State: APjAAAXIGK+btIjAvR6hFS3LQKQhf3vywM4v8WfafIec7EvC09mm4F/Z
+        +DLLgqc38qC9gyYFm1eomsF6+Rn4H2AZ8ch9S6Fhuhg7CAbz
+X-Google-Smtp-Source: APXvYqwErajSFEr7tGtQtEfYiBupcBnj0BvRo16vOfzsOxFx8naQtm9prx+l7V6z9OJaad4fgSlPeKIF91YAWnZwqKoL1zjEypX+
 MIME-Version: 1.0
-X-Received: by 2002:a02:2245:: with SMTP id o66mr28683555jao.53.1562675227511;
- Tue, 09 Jul 2019 05:27:07 -0700 (PDT)
-Date:   Tue, 09 Jul 2019 05:27:07 -0700
+X-Received: by 2002:a02:ab83:: with SMTP id t3mr27669942jan.133.1562675228114;
+ Tue, 09 Jul 2019 05:27:08 -0700 (PDT)
+Date:   Tue, 09 Jul 2019 05:27:08 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5d567058d3eadcf@google.com>
-Subject: general protection fault in vmk80xx_write_packet
-From:   syzbot <syzbot+009f546aa1370056b1c2@syzkaller.appspotmail.com>
-To:     abbotti@mev.co.uk, andreyknvl@google.com,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        hsweeten@visionengravers.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000df0913058d3ead47@google.com>
+Subject: KASAN: global-out-of-bounds Read in load_next_firmware_from_table
+From:   syzbot <syzbot+98156c174c5a2cad9f8f@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, kvalo@codeaurora.org,
+        libertas-dev@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,78 +54,58 @@ syzbot found the following crash on:
 
 HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=126dd493a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12fd0e9ba00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-dashboard link: https://syzkaller.appspot.com/bug?extid=009f546aa1370056b1c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=98156c174c5a2cad9f8f
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1684570ba00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132c91f5a00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125f669ba00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146b806ba00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+009f546aa1370056b1c2@syzkaller.appspotmail.com
+Reported-by: syzbot+98156c174c5a2cad9f8f@syzkaller.appspotmail.com
 
-usb 1-1: config 0 interface 160 has no altsetting 0
-usb 1-1: New USB device found, idVendor=10cf, idProduct=5501,  
-bcdDevice=eb.5b
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
+usb 1-1: Direct firmware load for libertas/usb8388_v5.bin failed with error  
+-2
+usb 1-1: Direct firmware load for libertas/usb8388.bin failed with error -2
+usb 1-1: Direct firmware load for usb8388.bin failed with error -2
+==================================================================
+BUG: KASAN: global-out-of-bounds in  
+load_next_firmware_from_table+0x267/0x2d0  
+drivers/net/wireless/marvell/libertas/firmware.c:99
+Read of size 8 at addr ffffffff860942b8 by task kworker/1:1/21
+
 CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #13
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:vmk80xx_write_packet+0x75/0x260  
-drivers/staging/comedi/drivers/vmk80xx.c:204
-Code: 48 8d 7b 68 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 d3 01 00 00 48 b8  
-00 00 00 00 00 fc ff df 4c 8b 6b 68 4c 89 ea 48 c1 ea 03 <0f> b6 04 02 4c  
-89 ea 83 e2 07 38 d0 7f 08 84 c0 0f 85 84 01 00 00
-RSP: 0018:ffff8881d9eff1b0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff8881d4f596c0 RCX: 0000000000000000
-RDX: 0000000000000002 RSI: ffffffff847cda93 RDI: ffff8881d4f59728
-RBP: ffff8881cfc79900 R08: ffff8881d9e36000 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881c5d84c80
-R13: 0000000000000010 R14: 0000000000000000 R15: ffff8881d2690128
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9c904c4000 CR3: 00000001d2b52000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Workqueue: events request_firmware_work_func
 Call Trace:
-  vmk80xx_reset_device drivers/staging/comedi/drivers/vmk80xx.c:226 [inline]
-  vmk80xx_auto_attach+0x13b1/0x17c0  
-drivers/staging/comedi/drivers/vmk80xx.c:814
-  comedi_auto_config+0x16e/0x250 drivers/staging/comedi/drivers.c:1067
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x67/0x231 mm/kasan/report.c:188
+  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
+  kasan_report+0xe/0x20 mm/kasan/common.c:614
+  load_next_firmware_from_table+0x267/0x2d0  
+drivers/net/wireless/marvell/libertas/firmware.c:99
+  helper_firmware_cb+0xdc/0x100  
+drivers/net/wireless/marvell/libertas/firmware.c:70
+  request_firmware_work_func+0x126/0x242  
+drivers/base/firmware_loader/main.c:785
   process_one_work+0x905/0x1570 kernel/workqueue.c:2269
   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
   kthread+0x30b/0x410 kernel/kthread.c:255
   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 8425c817ce1da187 ]---
+
+The buggy address belongs to the variable:
+  fw_table+0x98/0x5c0
+
+Memory state around the buggy address:
+  ffffffff86094180: fa fa fa fa 00 04 fa fa fa fa fa fa 00 00 05 fa
+  ffffffff86094200: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
+> ffffffff86094280: 00 00 00 00 00 00 fa fa fa fa fa fa 00 00 00 00
+                                         ^
+  ffffffff86094300: 00 00 00 01 fa fa fa fa 00 00 00 00 02 fa fa fa
+  ffffffff86094380: fa fa fa fa 00 03 fa fa fa fa fa fa 00 00 00 00
+==================================================================
 
 
 ---
