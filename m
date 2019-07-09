@@ -2,68 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B6363D35
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B45E863D38
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfGIVU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 17:20:29 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45782 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfGIVU2 (ORCPT
+        id S1729016AbfGIVVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 17:21:08 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36380 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfGIVVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 17:20:28 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2B5BD141FD75F;
-        Tue,  9 Jul 2019 14:20:28 -0700 (PDT)
-Date:   Tue, 09 Jul 2019 14:20:27 -0700 (PDT)
-Message-Id: <20190709.142027.1850904278953075536.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        paweldembicki@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: vsc73xx: Fix Kconfig warning and
- build errors
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190709030224.40292-1-yuehaibing@huawei.com>
-References: <20190708172808.GG9027@lunn.ch>
-        <20190709030224.40292-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 09 Jul 2019 14:20:28 -0700 (PDT)
+        Tue, 9 Jul 2019 17:21:07 -0400
+Received: by mail-lj1-f193.google.com with SMTP id i21so21008988ljj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 14:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PyOalFl+LpnRq+Sf5WkkuvdPIYl6jGnFKnBN6iCgqk8=;
+        b=Zm/IjcRhOmpCYyMjt8s7PUw/5Sq+thMqxHpNV7qHYcdgPBRJhHdF9JxRi+c3KvXqTV
+         4qJ1Emr57xWvkQSthseBxldVCM3R2GqAEJXJXng+DW81GEsnI5MXGn7FTpe5CFe0XrEL
+         rVSPpJqyKjmVcpLOeduHuJXBFNjsXzc9lzzpw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PyOalFl+LpnRq+Sf5WkkuvdPIYl6jGnFKnBN6iCgqk8=;
+        b=meHPfeM50XvT85+k2LfccRWm2Oy+QknERhz1E4Om5JokRsXWnJdEWbrY2yHFWoWlX5
+         rOx4wT+XPIe46y7LtlSA8o+Un8y1KAen4fyDRfn6Lefsca1HMPFF67atgd6RjRZ1uSwo
+         F4cU4VGZf+f0iA/uaTs4JoHyR5mSdWxHrafvByK6WmmXLSPl2GJCCG5daChJtpMmT+S8
+         aAx1rOF+SP0N/kZKDyE4zA1Vzad9SJd0PgYgf8GLvh5swjeDkFLBNXZwP4XMkeJM7P41
+         RtPiOM2Xm+MeKZ1eFkNDMXz9glWOnSfxda8d/OIH0VpgOqDxyfUChErMPtAMdswBhMHZ
+         M7kA==
+X-Gm-Message-State: APjAAAWOk5IPya4CqoK2EQyPgKi/xfZCd/cPi8nk/oHGarajS0Gsip8Z
+        +n8tnCe5zRcr/1ZkjkBnp3HFGs0UbYQ=
+X-Google-Smtp-Source: APXvYqyAI80S6T1/CBTlBvpRWTWRgcwwstGbkL3Ke0DtTLxA1o+do/NBpkHOoxn8eSIzfsQKmgb7ig==
+X-Received: by 2002:a2e:80d6:: with SMTP id r22mr4318931ljg.83.1562707264994;
+        Tue, 09 Jul 2019 14:21:04 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id x18sm12543lfe.42.2019.07.09.14.21.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id m23so20954201lje.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
+X-Received: by 2002:a2e:9bc6:: with SMTP id w6mr15452233ljj.156.1562707263461;
+ Tue, 09 Jul 2019 14:21:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190708162756.GA69120@gmail.com>
+In-Reply-To: <20190708162756.GA69120@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 9 Jul 2019 14:20:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>
+Message-ID: <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/topology changes for v5.3
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 9 Jul 2019 11:02:24 +0800
+After doing a lot of build testing and merging, I finally got around
+to actually boot-testing the result.
 
-> Fix Kconfig dependency warning and subsequent build errors
-> caused by OF is not set:
-> 
-> WARNING: unmet direct dependencies detected for NET_DSA_VITESSE_VSC73XX
->   Depends on [n]: NETDEVICES [=y] && HAVE_NET_DSA [=y] && OF [=n] && NET_DSA [=m]
->   Selected by [m]:
->   - NET_DSA_VITESSE_VSC73XX_PLATFORM [=m] && NETDEVICES [=y] && HAVE_NET_DSA [=y] && HAS_IOMEM [=y]
-> 
-> Make NET_DSA_VITESSE_VSC73XX_SPI and NET_DSA_VITESSE_VSC73XX_PLATFORM
-> depends on NET_DSA_VITESSE_VSC73XX to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Fixes: 95711cd5f0b4 ("net: dsa: vsc73xx: Split vsc73xx driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: Use "depends on" instead of "select" NET_DSA_VITESSE_VSC73XX
+Something in this series has broken booting for me. Or rather, things
+*boot*, but then it hangs in user space, with
 
-I ended up applying Arnd's version of this fix which was very similar.
+   A start job is running for udev Wait for Complete Device Initialization
 
-If there is anything you want to change just submit a relative patch
-on top of Arnd's change.
+it does this on both my desktop and laptop, although the exact hang is
+different (on my laptop, it hangs earlier - I don't even get to input
+the disk encryption keys).
 
-Thank you.
+I'm bisecting, and it will take a while to pinpoint, but I can already
+tell that it's from one of these pulls:
+
+    Pull x86 topology updates from Ingo Molnar:
+    Pull x86 platform updayes from Ingo Molnar:
+    Pull x86 paravirt updates from Ingo Molnar:
+    Pull x86 AVX512 status update from Ingo Molnar:
+    Pull x86 cleanups from Ingo Molnar:
+    Pull x86 cache resource control update from Ingo Molnar:
+    Pull x86 build updates from Ingo Molnar:
+    Pull x86 asm updates from Ingo Molnar:
+    Pull scheduler updates from Ingo Molnar:
+
+Will keep you updated as bisection narrows it down.
+
+              Linus
