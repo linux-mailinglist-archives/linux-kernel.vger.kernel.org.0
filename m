@@ -2,124 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C302C634E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:29:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5CED634FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfGIL26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 07:28:58 -0400
-Received: from mga11.intel.com ([192.55.52.93]:54993 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbfGIL26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 07:28:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 04:28:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
-   d="scan'208";a="173539452"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Jul 2019 04:28:55 -0700
-Message-ID: <5D247BC2.70104@intel.com>
-Date:   Tue, 09 Jul 2019 19:34:26 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1726309AbfGILen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 07:34:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33009 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfGILem (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 07:34:42 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x69BYRpj1893497
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 9 Jul 2019 04:34:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x69BYRpj1893497
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562672068;
+        bh=FuvtqhZa0w3lMifnK35Py0gpFtop77VfgXn4b6ItiEc=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=kBrbqBSRW7oH9L+78XjyE1a4u7TSNmGwuC8IbCfuIkLikLn6e1gCUQWtOexFHnH9P
+         GLhK1nQh2A0014mJ0tAVDdSeTc3IhqKZ09E2Bya7ADP92ERULZZqdE7EXjQdqPEPS2
+         m1JBT1ekp7vYB0uT/GiHH6mb8F4Q46iUu3etbbkKgTH1VZGVOcqBnrYbdV0tIEZiUh
+         JXM9M+vxDLMgu4VisWnpRfEi8cXadD8fj8S05eO2q04kLYwipQVd0WPvu6yRx63AoK
+         +531Mx/Di1IQl5UxNlO0brATKMpOuZ2YSAYQsJrUFxf0kDpPuZYTUhmBa74ys9LFUj
+         Lpm0Uibr55U+A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x69BYQdi1893494;
+        Tue, 9 Jul 2019 04:34:26 -0700
+Date:   Tue, 9 Jul 2019 04:34:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-yfy3ch53agmklwu9o7rlgf9c@git.kernel.org>
+Cc:     hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, tglx@linutronix.de, fweimer@redhat.com,
+        eranian@google.com, mingo@kernel.org, labbott@redhat.com,
+        namhyung@kernel.org, acme@redhat.com
+Reply-To: namhyung@kernel.org, fweimer@redhat.com, eranian@google.com,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, jolsa@kernel.org, acme@redhat.com,
+          labbott@redhat.com, mingo@kernel.org, hpa@zytor.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools build: Check if gettid() is available before
+ providing helper
+Git-Commit-ID: 05c78468a60f2fd961cd0a0c01c27f288bf81204
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
-Subject: Re: [PATCH v7 08/12] KVM/x86/vPMU: Add APIs to support host save/restore
- the guest lbr stack
-References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-9-git-send-email-wei.w.wang@intel.com> <20190708144831.GN3402@hirez.programming.kicks-ass.net> <5D240435.2040801@intel.com> <20190709093917.GS3402@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190709093917.GS3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2019 05:39 PM, Peter Zijlstra wrote:
-> On Tue, Jul 09, 2019 at 11:04:21AM +0800, Wei Wang wrote:
->> On 07/08/2019 10:48 PM, Peter Zijlstra wrote:
->>> *WHY* does the host need to save/restore? Why not make VMENTER/VMEXIT do
->>> this?
->> Because the VMX transition is much more frequent than the vCPU switching.
->> On SKL, saving 32 LBR entries could add 3000~4000 cycles overhead, this
->> would be too large for the frequent VMX transitions.
->>
->> LBR state is saved when vCPU is scheduled out to ensure that this
->> vCPU's LBR data doesn't get lost (as another vCPU or host thread that
->> is scheduled in may use LBR)
-> But VMENTER/VMEXIT still have to enable/disable the LBR, right?
-> Otherwise the host will pollute LBR contents. And you then rely on this
-> 'fake' event to ensure the host doesn't use LBR when the VCPU is
-> running.
+Commit-ID:  05c78468a60f2fd961cd0a0c01c27f288bf81204
+Gitweb:     https://git.kernel.org/tip/05c78468a60f2fd961cd0a0c01c27f288bf81204
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 13 Jun 2019 12:04:19 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Sun, 7 Jul 2019 17:53:09 -0300
 
-Yes, only the debugctl msr is save/restore on vmx tranisions.
+tools build: Check if gettid() is available before providing helper
 
+Laura reported that the perf build failed in fedora when we got a glibc
+that provides gettid(), which I reproduced using fedora rawhide with the
+glibc-devel-2.29.9000-26.fc31.x86_64 package.
 
->
-> But what about the counter scheduling rules;
+Add a feature check to avoid providing a gettid() helper in such
+systems.
 
-The counter is emulated independent of the lbr emulation.
+On a fedora rawhide system with this patch applied we now get:
 
-Here is the background reason:
+  [root@7a5f55352234 perf]# grep gettid /tmp/build/perf/FEATURE-DUMP
+  feature-gettid=1
+  [root@7a5f55352234 perf]# cat /tmp/build/perf/feature/test-gettid.make.output
+  [root@7a5f55352234 perf]# ldd /tmp/build/perf/feature/test-gettid.bin
+          linux-vdso.so.1 (0x00007ffc6b1f6000)
+          libc.so.6 => /lib64/libc.so.6 (0x00007f04e0a74000)
+          /lib64/ld-linux-x86-64.so.2 (0x00007f04e0c47000)
+  [root@7a5f55352234 perf]# nm /tmp/build/perf/feature/test-gettid.bin | grep -w gettid
+                   U gettid@@GLIBC_2.30
+  [root@7a5f55352234 perf]#
 
-The direction we are going is the architectural emulation, where the 
-features
-are emulated based on the hardware behavior described in the spec. So 
-the lbr
-emulation path only offers the lbr feature to the guest (no counters 
-associated, as
-the lbr feature doesn't have a counter essentially).
+While on a fedora:29 system:
 
-If the above isn't clear, please see this example: the guest could run 
-any software
-to use the lbr feature (non-perf or non-linux, or even a testing kernel 
-module to try
-lbr for their own purpose), and it could choose to use a regular timer 
-to do sampling.
-If the lbr emulation takes a counter to generate a PMI to the guest to 
-do sampling,
-that pmi isn't expected from the guest perspective.
+  [acme@quaco perf]$ grep gettid /tmp/build/perf/FEATURE-DUMP
+  feature-gettid=0
+  [acme@quaco perf]$ cat /tmp/build/perf/feature/test-gettid.make.output
+  test-gettid.c: In function ‘main’:
+  test-gettid.c:8:9: error: implicit declaration of function ‘gettid’; did you mean ‘getgid’? [-Werror=implicit-function-declaration]
+    return gettid();
+           ^~~~~~
+           getgid
+  cc1: all warnings being treated as errors
+  [acme@quaco perf]$
 
-So the counter scheduling isn't considered by the lbr emulation here, it 
-is considered
-by the counter emulation. If the guest needs a counter, it configures 
-the related msr,
-which traps to KVM, and the counter emulation has it own emulation path
-(e.g. reprogram_gp_counter which is called when the guest writes to the 
-emulated
-eventsel msr).
+Reported-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: https://lkml.kernel.org/n/tip-yfy3ch53agmklwu9o7rlgf9c@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/build/Makefile.feature                                       | 1 +
+ tools/build/feature/Makefile                                       | 4 ++++
+ tools/build/feature/test-all.c                                     | 5 +++++
+ tools/build/feature/{test-get_current_dir_name.c => test-gettid.c} | 6 +++---
+ tools/perf/Makefile.config                                         | 4 ++++
+ tools/perf/jvmti/jvmti_agent.c                                     | 2 ++
+ 6 files changed, 19 insertions(+), 3 deletions(-)
 
-
-> what happens when a CPU
-> event claims the LBR before the task event can claim it? CPU events have
-> precedence over task events.
-
-I think the precedence (cpu pined and task pined) is for the counter 
-multiplexing,
-right?
-
-For the lbr feature, could we thought of it as first come, first served?
-For example, if we have 2 host threads who want to use lbr at the same time,
-I think one of them would simply fail to use.
-
-So if guest first gets the lbr, host wouldn't take over unless some 
-userspace
-command (we added to QEMU) is executed to have the vCPU actively
-stop using lbr.
-
-
->
-> I'm missing all these details in the Changelogs. Please describe the
-> whole setup and explain why this approach.
-
-OK, just shared some important background above.
-I'll see if any more important details missed.
-
-Best,
-Wei
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 3b24231c58a2..50377cc2f5f9 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -36,6 +36,7 @@ FEATURE_TESTS_BASIC :=                  \
+         fortify-source                  \
+         sync-compare-and-swap           \
+         get_current_dir_name            \
++        gettid				\
+         glibc                           \
+         gtk2                            \
+         gtk2-infobar                    \
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 4b8244ee65ce..523ee42db0c8 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -54,6 +54,7 @@ FILES=                                          \
+          test-get_cpuid.bin                     \
+          test-sdt.bin                           \
+          test-cxx.bin                           \
++         test-gettid.bin			\
+          test-jvmti.bin				\
+          test-jvmti-cmlr.bin			\
+          test-sched_getcpu.bin			\
+@@ -267,6 +268,9 @@ $(OUTPUT)test-sdt.bin:
+ $(OUTPUT)test-cxx.bin:
+ 	$(BUILDXX) -std=gnu++11
+ 
++$(OUTPUT)test-gettid.bin:
++	$(BUILD)
++
+ $(OUTPUT)test-jvmti.bin:
+ 	$(BUILD)
+ 
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index a59c53705093..3b3d5d72124a 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -38,6 +38,10 @@
+ # include "test-get_current_dir_name.c"
+ #undef main
+ 
++#define main main_test_gettid
++# include "test-gettid.c"
++#undef main
++
+ #define main main_test_glibc
+ # include "test-glibc.c"
+ #undef main
+@@ -195,6 +199,7 @@ int main(int argc, char *argv[])
+ 	main_test_libelf();
+ 	main_test_libelf_mmap();
+ 	main_test_get_current_dir_name();
++	main_test_gettid();
+ 	main_test_glibc();
+ 	main_test_dwarf();
+ 	main_test_dwarf_getlocations();
+diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-gettid.c
+similarity index 53%
+copy from tools/build/feature/test-get_current_dir_name.c
+copy to tools/build/feature/test-gettid.c
+index c3c201691b4f..ef24e42d3f1b 100644
+--- a/tools/build/feature/test-get_current_dir_name.c
++++ b/tools/build/feature/test-gettid.c
+@@ -1,11 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2019, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+ #define _GNU_SOURCE
+ #include <unistd.h>
+-#include <stdlib.h>
+ 
+ int main(void)
+ {
+-	free(get_current_dir_name());
+-	return 0;
++	return gettid();
+ }
++
+ #undef _GNU_SOURCE
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 85fbcd265351..a6251e622c7e 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -332,6 +332,10 @@ ifeq ($(feature-get_current_dir_name), 1)
+   CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
+ endif
+ 
++ifeq ($(feature-gettid), 1)
++  CFLAGS += -DHAVE_GETTID
++endif
++
+ ifdef NO_LIBELF
+   NO_DWARF := 1
+   NO_DEMANGLE := 1
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index f7eb63cbbc65..88108598d6e9 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -45,10 +45,12 @@
+ static char jit_path[PATH_MAX];
+ static void *marker_addr;
+ 
++#ifndef HAVE_GETTID
+ static inline pid_t gettid(void)
+ {
+ 	return (pid_t)syscall(__NR_gettid);
+ }
++#endif
+ 
+ static int get_e_machine(struct jitheader *hdr)
+ {
