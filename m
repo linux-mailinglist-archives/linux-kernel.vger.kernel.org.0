@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3750963B20
+	by mail.lfdr.de (Postfix) with ESMTP id A5D5963B21
 	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfGISdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:33:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55072 "EHLO mail.kernel.org"
+        id S1729336AbfGISd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:33:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729311AbfGISdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:33:19 -0400
+        id S1729096AbfGISdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:33:24 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99D61214AF;
-        Tue,  9 Jul 2019 18:33:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 338B320665;
+        Tue,  9 Jul 2019 18:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562697198;
-        bh=fDZbMwjg6rYu7jprZLww4XnXl8EckXxuaj91Q1Y8GPo=;
+        s=default; t=1562697202;
+        bh=yHkKoGD86pkN+7stgd+uP0ofZTcNoxDdiAluQJh5XWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K9X4rWoIN+uCWiLqIF7tBW1wfjBtBr/6c+awV07N+HzTY405keS4mJTIFGE2u90C4
-         cA4DyOx3fqgC8XoBkxF2lWshtX6g43bE8GWtbIQrYMxgG2Y0Hdq2XYxYA/Xt4ptccG
-         xzBH1ZhBQLLEO6smVAsNNkKI7j7rq6HT8X77I7/A=
+        b=OhgwGTrSCVsyY6l35y3Jwar5V8OjWGbU3pdvsAamp+EyeBAqawP4TvOEmNTcy94ro
+         Itr+QH/iIyv+Xr00I/LOdAogXZTUU/JFqTXbdT8OV/JzNPm57UHIpjHz4bj6w5ThC0
+         P1HfLZyCRM++zp4UoAf94V3S2jHMYnEs5qFysq1w=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        David Carrillo Cisneros <davidca@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com,
-        stable@vger.kernel.org
-Subject: [PATCH 23/25] perf script: Assume native_arch for pipe mode
-Date:   Tue,  9 Jul 2019 15:31:24 -0300
-Message-Id: <20190709183126.30257-24-acme@kernel.org>
+        Leo Yan <leo.yan@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 24/25] perf intel-bts: Fix potential NULL pointer dereference found by the smatch tool
+Date:   Tue,  9 Jul 2019 15:31:25 -0300
+Message-Id: <20190709183126.30257-25-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190709183126.30257-1-acme@kernel.org>
 References: <20190709183126.30257-1-acme@kernel.org>
@@ -47,54 +50,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+From: Leo Yan <leo.yan@linaro.org>
 
-In pipe mode, session->header.env.arch is not populated until the events
-are processed. Therefore, the following command crashes:
+Based on the following report from Smatch, fix the potential NULL
+pointer dereference check.
 
-   perf record -o - | perf script
+  tools/perf/util/intel-bts.c:898
+  intel_bts_process_auxtrace_info() error: we previously assumed
+  'session->itrace_synth_opts' could be null (see line 894)
 
-(gdb) bt
+  tools/perf/util/intel-bts.c:899
+  intel_bts_process_auxtrace_info() warn: variable dereferenced before
+  check 'session->itrace_synth_opts' (see line 898)
 
-It fails when we try to compare env.arch against uts.machine:
+  tools/perf/util/intel-bts.c
+  894         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+  895                 bts->synth_opts = *session->itrace_synth_opts;
+  896         } else {
+  897                 itrace_synth_opts__set_default(&bts->synth_opts,
+  898                                 session->itrace_synth_opts->default_no_sample);
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  899                 if (session->itrace_synth_opts)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  900                         bts->synth_opts.thread_stack =
+  901                                 session->itrace_synth_opts->thread_stack;
+  902         }
 
-        if (!strcmp(uts.machine, session->header.env.arch) ||
-            (!strcmp(uts.machine, "x86_64") &&
-             !strcmp(session->header.env.arch, "i386")))
-                native_arch = true;
+'session->itrace_synth_opts' is impossible to be a NULL pointer in
+intel_bts_process_auxtrace_info(), thus this patch removes the NULL test
+for 'session->itrace_synth_opts'.
 
-In pipe mode, it is tricky to find env.arch at this stage. To keep it
-simple, let's just assume native_arch is always true for pipe mode.
-
-Reported-by: David Carrillo Cisneros <davidca@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: kernel-team@fb.com
-Cc: stable@vger.kernel.org #v5.1+
-Fixes: 3ab481a1cfe1 ("perf script: Support insn output for normal samples")
-Link: http://lkml.kernel.org/r/20190621014438.810342-1-songliubraving@fb.com
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190708143937.7722-3-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-bts.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index b3536820f9a8..79367087bd18 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3752,7 +3752,8 @@ int cmd_script(int argc, const char **argv)
- 		goto out_delete;
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 5a21bcdb8ef7..5560e95afdda 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -891,13 +891,12 @@ int intel_bts_process_auxtrace_info(union perf_event *event,
+ 	if (dump_trace)
+ 		return 0;
  
- 	uname(&uts);
--	if (!strcmp(uts.machine, session->header.env.arch) ||
-+	if (data.is_pipe ||  /* assume pipe_mode indicates native_arch */
-+	    !strcmp(uts.machine, session->header.env.arch) ||
- 	    (!strcmp(uts.machine, "x86_64") &&
- 	     !strcmp(session->header.env.arch, "i386")))
- 		native_arch = true;
+-	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
++	if (session->itrace_synth_opts->set) {
+ 		bts->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+ 		itrace_synth_opts__set_default(&bts->synth_opts,
+ 				session->itrace_synth_opts->default_no_sample);
+-		if (session->itrace_synth_opts)
+-			bts->synth_opts.thread_stack =
++		bts->synth_opts.thread_stack =
+ 				session->itrace_synth_opts->thread_stack;
+ 	}
+ 
 -- 
 2.21.0
 
