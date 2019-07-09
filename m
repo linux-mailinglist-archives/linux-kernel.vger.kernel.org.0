@@ -2,163 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B71163196
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FDE6319F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbfGIHEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 03:04:21 -0400
-Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:18014
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725818AbfGIHEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:04:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
+        id S1726115AbfGIHJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 03:09:22 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:58046 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbfGIHJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:09:21 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6972i7N019636;
+        Tue, 9 Jul 2019 00:07:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=NEPuBJ+gFwGLH06FQcjhEbO0a19NvhJYfjOIoJZB4LQ=;
+ b=pON6Otu56/1YlpDtIP3vrHHxdT293Qr+CvzjUOHR2m/HKVWk2+iKi8RdO/B720dUyjPD
+ 3IJxslVxIRD5JRuSET377T1hyaJg+hf9+uMKJHzSJUiixIRkFs7EdI9KQyG4BPr8q21O
+ hMtOIn1H+2dv/ne+8Ks5OzrDYJAEXk7vov1fFDqP4I4iDErFr7OizaRpVb5NLWSMVOEQ
+ 6q5zUg6DXshcLs14G2IiLXfQl4hKuXajAcYsyil1dKkqkRnP7GP1+FatQJZpQ8XvTDoO
+ AcHR8M/TeJyuZaWsSeYAT8Ensb07h20eSgdTb+HLjdvhW4/rtcNIaqI27ddjkG4W9e0Z tQ== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2055.outbound.protection.outlook.com [104.47.48.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2tjr6vjhhb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 Jul 2019 00:07:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3t26rAb6VdH5rRyxQqvYdKkzoBzfNiEGLiopPUw5R8I=;
- b=C8iUPPrgSQ5YhoSLsEwlds7FmrIpUkCyd3Vy4jaLnKsUzkzFumkycIeJMywm+HTNwuACW7sizGa7vPyDIxjC0eK+ze/5UQgmEZTFSvLZCCxA5kTA1t9xHZcHf4SrWmF6QtRrZPbIrUYRmdcWxE1LbqfkvHxr/VpavpKLOD+3OIg=
-Received: from AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) by
- AM6PR05MB6151.eurprd05.prod.outlook.com (20.178.93.223) with Microsoft SMTP
+ bh=NEPuBJ+gFwGLH06FQcjhEbO0a19NvhJYfjOIoJZB4LQ=;
+ b=fgvDJSwvMOkeRK15HlmVAPstHW9cTklGgQ+WqNaNM4DI4qFLYOvVohPYvGY5i6v6l0LvNutA5IwVQDLfiTEF1mhPwyKbQXLuGNAtVqMOJIRYctayRc8UX1mkhrnAMZVAVBV5sCLo1w0+3dBpddJuJGSlW6wSSWZtvtigEMVf6Cs=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4231.namprd07.prod.outlook.com (52.135.223.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Tue, 9 Jul 2019 07:04:16 +0000
-Received: from AM6PR05MB4472.eurprd05.prod.outlook.com
- ([fe80::b8a9:c816:7e52:b47]) by AM6PR05MB4472.eurprd05.prod.outlook.com
- ([fe80::b8a9:c816:7e52:b47%3]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 07:04:16 +0000
-From:   Mark Zhang <markz@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Majd Dibbiny <majd@mellanox.com>,
-        asahiro Yamada <yamada.masahiro@socionext.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVNgam1ySKRGHBz0+LGfGH8/fuJ6bB3PCA
-Date:   Tue, 9 Jul 2019 07:04:16 +0000
-Message-ID: <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
-References: <20190709133019.25a8cd27@canb.auug.org.au>
-In-Reply-To: <20190709133019.25a8cd27@canb.auug.org.au>
+ 15.20.2052.19; Tue, 9 Jul 2019 07:07:30 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::fd8c:399c:929b:33e2]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::fd8c:399c:929b:33e2%6]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
+ 07:07:30 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHVMyCBLRb+XoB9zUqxphM8AIPBC6a76sKAgAN7ISCAAOC4gIAAeMvwgAEbwYCAAATIEA==
+Date:   Tue, 9 Jul 2019 07:07:30 +0000
+Message-ID: <BYAPR07MB47092C1E19FD36FB336A55C2DDF10@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com>
+ <1562324238-16655-6-git-send-email-pawell@cadence.com>
+ <87r274lmqk.fsf@linux.intel.com>
+ <BYAPR07MB4709EF3753AC0B87606B1182DDF70@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <87a7dpm442.fsf@linux.intel.com>
+ <BYAPR07MB47094B372CEC6DFD25FC78E1DDF10@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <87pnmj67ee.fsf@linux.intel.com>
+In-Reply-To: <87pnmj67ee.fsf@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR01CA0117.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::21) To AM6PR05MB4472.eurprd05.prod.outlook.com
- (2603:10a6:209:43::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=markz@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [115.196.38.205]
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMzU4ZmM4OGMtYTIxOC0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDM1OGZjODhkLWEyMTgtMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMzU5OCIgdD0iMTMyMDcxMjk2NDgzNTMwNjg1IiBoPSJIMjdkK21qWVpqcW1POXNaQ2NZNjkwM1Q1cEk9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4396a993-735d-4f88-97d2-08d7043ba7fa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR05MB6151;
-x-ms-traffictypediagnostic: AM6PR05MB6151:
-x-microsoft-antispam-prvs: <AM6PR05MB6151A4BBC689071BF06F22E9CAF10@AM6PR05MB6151.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-ms-office365-filtering-correlation-id: bc5bcb15-5ec6-4828-0bc3-08d7043c1be0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB4231;
+x-ms-traffictypediagnostic: BYAPR07MB4231:
+x-microsoft-antispam-prvs: <BYAPR07MB4231E4ED4EA16EF3DA28FB59DDF10@BYAPR07MB4231.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(39860400002)(396003)(53754006)(189003)(199004)(7736002)(305945005)(6636002)(66066001)(68736007)(31686004)(3846002)(81166006)(6116002)(73956011)(53936002)(81156014)(8936002)(8676002)(6436002)(5660300002)(66446008)(64756008)(2906002)(66556008)(66946007)(66476007)(386003)(256004)(486006)(478600001)(26005)(99286004)(316002)(54906003)(31696002)(110136005)(11346002)(2616005)(476003)(186003)(36756003)(446003)(14454004)(86362001)(53546011)(102836004)(6486002)(6506007)(229853002)(107886003)(6246003)(71190400001)(71200400001)(52116002)(76176011)(25786009)(6512007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6151;H:AM6PR05MB4472.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(366004)(376002)(39860400002)(36092001)(199004)(189003)(446003)(11346002)(8936002)(4326008)(66066001)(6116002)(81166006)(256004)(14454004)(74316002)(476003)(33656002)(71190400001)(229853002)(2906002)(14444005)(71200400001)(8676002)(107886003)(55016002)(9686003)(64756008)(53936002)(6436002)(99286004)(66476007)(7416002)(66556008)(305945005)(26005)(66946007)(81156014)(76116006)(73956011)(2501003)(86362001)(7736002)(316002)(5660300002)(54906003)(186003)(52536014)(25786009)(102836004)(486006)(66446008)(110136005)(68736007)(6506007)(76176011)(6246003)(478600001)(7696005)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4231;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RIXnNDpiFQu5/uOg/Nipsb5BHheArzeCBfmLRzKDkt9/cRvzukCHliBbAAU5AmV5WQu1bYZF+1ghyansu9y1VKzzsCIavdxP8HG53ad0q7XvweYmwbxvQQX+4L0XycJ+HvdfdHM6dXQUUkBsm58QrUgWujD16H0DLBNFOOol3LOyjlD2jYUUNCP+I/AyVnFEZTOSrG+UvTnCornBlNRC4OX/puvHOBq36XckC/lh4xuLeWVo8OY43pupLhLZVfzJp/y5/K9eWc0c1D3QgLHb2NGxuhpflav0XhxTImQMUhF6znHDHKbpVMQWWG+hDyF7KW/31IQP8FNMPHaruiOxqyTw3kA2jCk1cQ0ZU1+lf3mAy0FSNGvLNoeQjY172rNrq2Y43QOc9imHKdgM4geHVg37uvy6tEyQBgczcwFm8y8=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <3368234182CC824389CEFA42EF8F76B0@eurprd05.prod.outlook.com>
+x-microsoft-antispam-message-info: DfYpXpAK8ASbieV7TPRvSFXdhLPp0ul5pm+iAKkr7dJCcCCOByi2OElv2NgRpL+geCInjP9Vo7XyD49vDlRb3xzThnKL8b82t7/ayHbDBJI0Bw+QyyfJVRzQ2x9pXv3lwvszBiOX+xEquia7ep20RajCVpCnERVkoZrxAGKkgJn/MEDtya86HoyTqR7jVyTvzrdL+Njw8BrklaJBIdq4AZ/M2FjV0LDtdN5Nz00iwFz2/MnKE3Mj4UgsOoIUT1yr4L0BpA46P83BR2YFNYA/cHRTnX1l4zVpUI6hjJLvLxVvG30C9o5G93TyGfjaCZLMgJO2fpS5eMXbjwqdAWh7pjnzsXXwF2pso3pYgXkMwK8uwXAGkDINtQXJwd5Gy9LuxPpJ8YUFnSGSDrvGZlHaIKOevAClhnCEK3To6LGllaY=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4396a993-735d-4f88-97d2-08d7043ba7fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:04:16.6052
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc5bcb15-5ec6-4828-0bc3-08d7043c1be0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:07:30.6602
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: markz@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6151
+X-MS-Exchange-CrossTenant-userprincipalname: pawell@global.cadence.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4231
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=795 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907090085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+>
+>Hi,
+>
+>Pawel Laszczak <pawell@cadence.com> writes:
+>>>> IRQF_ONESHOT can be used  only in threaded handled.
+>>>> "
+>>>>  * IRQF_ONESHOT - Interrupt is not reenabled after the hardirq handler=
+ finished.
+>>>>  *                Used by threaded interrupts which need to keep the
+>>>>  *                irq line disabled until the threaded handler has bee=
+n run.
+>>>> "
+>>>
+>>>so?
+>>
+>> I don't understand why If I don't have threaded handler why I need IRQF_=
+ONESHOT.
+>> Why interrupt cannot be reenabled after hardirq handler finished ?
+>> I do not use threaded handler so this flag seem unnecessary.
+>
+>Unless this has changed over the years, it was a requirement from IRQ susb=
+ystem.
+>
+>	/*
+>	 * Drivers are often written to work w/o knowledge about the
+>	 * underlying irq chip implementation, so a request for a
+>	 * threaded irq without a primary hard irq context handler
+>	 * requires the ONESHOT flag to be set. Some irq chips like
+>	 * MSI based interrupts are per se one shot safe. Check the
+>	 * chip flags, so we can avoid the unmask dance at the end of
+>	 * the threaded handler for those.
+>	 */
+>	if (desc->irq_data.chip->flags & IRQCHIP_ONESHOT_SAFE)
+>		new->flags &=3D ~IRQF_ONESHOT;
 
-Can you please try the patch below, thank you.
+From description I understand that it should be set when driver uses only=20
+threaded handler without hard irq handler.
+eg.=20
 
-net/mlx5: Remove include ib_verbs.h in rdma_counter.h
+	ret =3D devm_request_threaded_irq(dev, data->usb_id_irq,
+					NULL, int3496_thread_isr,
+					IRQF_SHARED | IRQF_ONESHOT |
+					IRQF_TRIGGER_RISING |
+					IRQF_TRIGGER_FALLING,
+					dev_name(dev), data);
 
-rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-from rdma_counter.h, but it is not defined yet.
+It make sense, we don't have hard irq handler so we can't clear source of i=
+nterrupt.=20
+If we clear it immediately in interrupt controller then the same interrupt =
+could=20
+be raised again, because it was not cleared e.g in controller register.=20
 
-Fixes: 413d3347503b ("RDMA/counter: Add set/clear per-port auto mode=20
-support")
-Signed-off-by: Mark Zhang <markz@mellanox.com>
 
-diff --git a/include/rdma/rdma_counter.h b/include/rdma/rdma_counter.h
-index 68827700ba95..eb99856e8b30 100644
---- a/include/rdma/rdma_counter.h
-+++ b/include/rdma/rdma_counter.h
-@@ -9,10 +9,10 @@
-  #include <linux/mutex.h>
-  #include <linux/pid_namespace.h>
-
--#include <rdma/ib_verbs.h>
-  #include <rdma/restrack.h>
-  #include <rdma/rdma_netlink.h>
-
-+struct ib_device;
-  struct ib_qp;
-
-  struct auto_mode_param {
-
-On 7/9/2019 11:30 AM, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> In file included from /home/sfr/next/next/include/rdma/rdma_counter.h:12,
->                   from <command-line>:
-> /home/sfr/next/next/include/rdma/ib_verbs.h:2126:27: error: field 'port_c=
-ounter' has incomplete type
->    struct rdma_port_counter port_counter;
->                             ^~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->    413d3347503b ("RDMA/counter: Add set/clear per-port auto mode support"=
-)
->=20
-> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> from rdma_counter.h, but it is not defined yet :-(
->=20
-> I have applied the following patch for today.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 9 Jul 2019 13:17:49 +1000
-> Subject: [PATCH] RDMA: don't try to build rdma_counter.h for now
->=20
-> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> from rdma_counter.h, but it is not defined yet :-(
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   include/Kbuild | 1 +
->   1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/Kbuild b/include/Kbuild
-> index 78434c59701f..8dab85cdf4f4 100644
-> --- a/include/Kbuild
-> +++ b/include/Kbuild
-> @@ -939,6 +939,7 @@ header-test-			+=3D rdma/ib.h
->   header-test-			+=3D rdma/iw_portmap.h
->   header-test-			+=3D rdma/opa_port_info.h
->   header-test-			+=3D rdma/rdmavt_cq.h
-> +header-test-			+=3D rdma/rdma_counter.h
->   header-test-			+=3D rdma/restrack.h
->   header-test-			+=3D rdma/signature.h
->   header-test-			+=3D rdma/tid_rdma_defs.h
->=20
-
+>>>>>> +	} else {
+>>>>>> +		struct usb_request *request;
+>>>>>> +
+>>>>>> +		if (priv_dev->eps[index]->flags & EP_WEDGE) {
+>>>>>> +			cdns3_select_ep(priv_dev, 0x00);
+>>>>>> +			return 0;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		cdns3_dbg(priv_ep->cdns3_dev, "Clear Stalled endpoint %s\n",
+>>>>>> +			  priv_ep->name);
+>>>>>
+>>>>>why do you need your own wrapper around dev_dbg()? This looks quite un=
+necessary.
+>>>>
+>>>> It's generic function used for adding message to trace.log.  It's not =
+wrapper to dev_dbg
+>>>>
+>>>> void cdns3_dbg(struct cdns3_device *priv_dev, const char *fmt, ...)
+>>>> {
+>>>> 	struct va_format vaf;
+>>>> 	va_list args;
+>>>>
+>>>> 	va_start(args, fmt);
+>>>> 	vaf.fmt =3D fmt;
+>>>> 	vaf.va =3D &args;
+>>>> 	trace_cdns3_log(priv_dev, &vaf);
+>>>> 	va_end(args);
+>>>> }
+>>>
+>>>oh. Don't do it like that. Add a proper trace event that actually
+>>>decodes the information you want. These random messages will give you
+>>>trouble in the future. I had this sort of construct in dwc3 for a while
+>>>and it became clear that it's a bad idea. It's best to have trace events
+>>>that decode information coming from the HW. That way your trace logs
+>>>have a "predictable" shape/format and you can easily find problem areas.
+>>
+>> Ok , I will change this.
+>> I used such solution because I didn't want to create to many trace event=
+s.
+>> I used it only for rely used messages.
+>
+>If you have these messages that are *really* needed, then you should add
+>a trace event for it. Look at the events we have on dwc3 if you need
+>some inspiration. Could also look at the history of our trace events to
+>figure out how things changed over time.
+>
+>cheers
+>
+>--
+>balbi
