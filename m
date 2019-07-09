@@ -2,68 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7D463B6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6CDD63B7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbfGISxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:53:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfGISxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:53:25 -0400
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 819BB21670;
-        Tue,  9 Jul 2019 18:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562698404;
-        bh=0ImkJUz3uR/+DVGq2bXGZLAIbe6zf2CjaYLEOlRY4ps=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2hvgQEnOPWC1SvHHrf8dXGJxWxD4yWceJdhi4hloTlumiiTegaZkuaI/tFneSFCDK
-         3xeoJtlqtM5pHiqMQ3Mc7kzVGgFdQQZzikumbGqCF12E+X0WA3Aj7p9WbrTWsEAv7l
-         g+RCorpwnDSB1brEdg6kE1alx6PSeliKzH9aqnSI=
-Received: by mail-qt1-f178.google.com with SMTP id h18so15298441qtm.9;
-        Tue, 09 Jul 2019 11:53:24 -0700 (PDT)
-X-Gm-Message-State: APjAAAVoqC2G9l4l0DyZPF52x8I+Irxe75tHiF2Y6pfUk/N/jpYd19m/
-        5RWG+hdtwtwdcdZEmo1OPnrOGKIBg5cSZPsJqQ==
-X-Google-Smtp-Source: APXvYqylibJKKbin92OddAtVOLNyjL4xzmkeD9zXAOF4W4EKSaAZ0cVt6KqwCFYn1XAIrYpKX6ExRt5TG60yMAb0li0=
-X-Received: by 2002:aed:3f10:: with SMTP id p16mr20147515qtf.110.1562698403737;
- Tue, 09 Jul 2019 11:53:23 -0700 (PDT)
+        id S1729443AbfGIS4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:56:07 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:50211 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfGIS4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:56:07 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MV6Bs-1ht4UM2gFi-00SAJu; Tue, 09 Jul 2019 20:55:32 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Lecopzer Chen <lecopzer.chen@mediatek.com>,
+        Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/sparse.c: mark sparse_buffer_free as __meminit
+Date:   Tue,  9 Jul 2019 20:55:07 +0200
+Message-Id: <20190709185528.3251709-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1562184069-22332-1-git-send-email-hongweiz@ami.com>
-In-Reply-To: <1562184069-22332-1-git-send-email-hongweiz@ami.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 9 Jul 2019 12:53:12 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+0z4OZ7qbaiUva1v5xCKXpsaPBZ9tj_M4HbEihsU_MfA@mail.gmail.com>
-Message-ID: <CAL_Jsq+0z4OZ7qbaiUva1v5xCKXpsaPBZ9tj_M4HbEihsU_MfA@mail.gmail.com>
-Subject: Re: [linux,dev-5.1 v1] dt-bindings: gpio: aspeed: Add SGPIO support
-To:     Hongwei Zhang <hongweiz@ami.com>
-Cc:     devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-aspeed@lists.ozlabs.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:dVuJ+e4kut2pBGD0f44Tc4g9wI+Sx6SMYC65vDceSfeBL8Yrh+N
+ QNGHbxDD8YGcxeGUylFBPh2+1bqSGZD7fY2xzD4DuBrL6v+lkqQlguvHdgwjCswrVGx0YTH
+ Ei8xRNQutUg89MivWr34gzxK4A0qtbmc/bwPqX+Ro6d0AKd1DALUkvtQnCKRHpDo8N4C/cH
+ PXTpKClIVFlzJz6klNUKQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:m6/WP9gsIM8=://qaXXPJjdjdLwFXs/UQEw
+ +imM3iOlc931kOkt2KJoAkJMtnNtcB+ECAqcccp5LqSZ3ZDoYw7uVgg/aT3s3kBDKyU4CZ91+
+ 2Vv8UpHhZZoJXqrINVUJ8Du1cwhPcS4ZsnJ21M5qOYaKY1jkttUcJCkKERpJq1IpUCifqgOze
+ mKvXl0BLByMoOsx0q3wapfs4860AqLAaqyz48b9NGKVcne1njGvfLfitEQC5RzGOLwJG9Xe1Z
+ F6/zmu4tTBuXiw90z5Ux0bs1+KAkSfgqXDaupSq7BAbQnLVdlXaHNkL9VK/eb4B2ezZ/34NeV
+ MiiefBC8t4cjbufi6ryt5N3y2yroSgI2eWwz2FcrpGYb4lsJd5WYCo6AbNqdXnPC+OVUyB6Wc
+ MLYwE0vTk91UACyfh2+tle7bfjU3ClroCy9kGhBi+mjWKm1jc58gmuMlR+Jaqwu8TewKdLmQv
+ XNl8NaGgSEcGsFWzlV8BcB7MIn7u/tIs0jQ8nDWHyxygclcwEk/Yd4D6V692Om8veoGdlx1gu
+ TzYzg9SKzJhRwiPUDRI3k+WyNZWezRG/2qvOpIMDFTUQRLD0ffbTGoTCsNpFnOgp6wVdO5/EA
+ lZrmXTsVfpFEaMWIvX8u+xilTzIr8Lr9SdU273CuvBlAMW1Rz5tIwmVLSdqw+JaR3QdVcXSIq
+ LBIa5aiZKVRYszZlP3mu3UyXhpUxO3LxicJ+8O6JszIV2dLW1Guy37mq6jWmxne7b4rfIoisw
+ 2m3oWKIhTpFb0cn56zAlG3ImsCaDSmHu1cS8Dg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 2:01 PM Hongwei Zhang <hongweiz@ami.com> wrote:
->
-> Add bindings to support SGPIO on AST2400 or AST2500.
->
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> ---
->  .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 36 ++++++++++++++++++++++
+Calling an __init function from a __meminit function is not allowed:
 
-Is this SGPIO as in the blinky lights for HDDs in servers? If so, that
-has nothing to do with Linux GPIO subsystem.
+WARNING: vmlinux.o(.meminit.text+0x30ff): Section mismatch in reference from the function sparse_buffer_alloc() to the function .init.text:sparse_buffer_free()
+The function __meminit sparse_buffer_alloc() references
+a function __init sparse_buffer_free().
+If sparse_buffer_free is only used by sparse_buffer_alloc then
+annotate sparse_buffer_free with a matching annotation.
 
-BTW, You might want to look at Calxeda highbank SATA driver. It has a
-bit-banged SGPIO interface using GPIO lines in it.
+Downgrade the annotation to __meminit for both, as they may be
+used in the hotplug case.
 
+Fixes: mmotm ("mm/sparse.c: fix memory leak of sparsemap_buf in aliged memory")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ mm/sparse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 3267c4001c6d..4801d45bd66e 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -470,7 +470,7 @@ struct page __init *__populate_section_memmap(unsigned long pfn,
+ static void *sparsemap_buf __meminitdata;
+ static void *sparsemap_buf_end __meminitdata;
+ 
+-static inline void __init sparse_buffer_free(unsigned long size)
++static inline void __meminit sparse_buffer_free(unsigned long size)
+ {
+ 	WARN_ON(!sparsemap_buf || size == 0);
+ 	memblock_free_early(__pa(sparsemap_buf), size);
+-- 
+2.20.0
+
