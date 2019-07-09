@@ -2,96 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681E56304A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4376304C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfGIGHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:07:50 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33427 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfGIGHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:07:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jX0z2lnrz9sN4;
-        Tue,  9 Jul 2019 16:07:46 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562652468;
-        bh=ScPQiVHWvxusIeahC6BhnSyrNxd4vqY2c+dtXKHyx2I=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KlxcZ2tftktbdup16b4ST9t6Gbc74uAG1Dil95bMpb34SERV/KRE4j1SlOc3LDH9f
-         fUvr1FpRy7pSHOjWREdHhaURJGrf6ck3Jb6GI5s8RpaZdh9viV3bhtN4xEB+Cwoafx
-         E6phGD8uj6snya/oA0mMuyKqCs5px5IQtzgsO0OtK3iBfYGIWURZZhwWncuu4w5Uui
-         pHcA+awpXa/CDo+3WrXZP4KB4NJNUHwIsnJAAsoyiw5GLRkVB9bLCYsKKuXCjX77GT
-         HObZFSX7fUqEBvNxBgpS91Oqyt1jZGn3+yHn7MfsBLP5K+ImcbeutBiXUc0zuGWEsi
-         +zMX3Z0usAgzA==
-Date:   Tue, 9 Jul 2019 16:07:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Wim Van Sebroeck <wim@iguana.be>, Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: linux-next: manual merge of the watchdog tree with the jc_docs tree
-Message-ID: <20190709160746.19bbaa37@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8poHyZdIldWWirZsFGM/IWt"; protocol="application/pgp-signature"
+        id S1726154AbfGIGIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:08:10 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:44555 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfGIGIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 02:08:09 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190709060807epoutp01f7e2fbf7d792c5d7783919dcfb38b19e~vqCh_EcL72167921679epoutp016
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2019 06:08:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190709060807epoutp01f7e2fbf7d792c5d7783919dcfb38b19e~vqCh_EcL72167921679epoutp016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1562652487;
+        bh=fBiaLjVRBBfHwy5oM6/n3Hq8ZdYU5NBcVwh0x+P9gVQ=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=tnh6bm5rx3FCteCOGptr7bLoEJ4RKnrhai3XHI3BYBVlQPZQevJBKGf6ieO3xEXLi
+         oXpI8eXl8/dY7P8H5L1Lwc0s098ykYYe7mRC38MKuT/KWMfio4LlyJjFw0F6mwhcUo
+         H9O+O97ZBkJ35fveiq0SkNd5kWwSQEjk2oSxcMNI=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190709060805epcas1p44363f2a3a0bbb79d69ae94bf99c3adf1~vqCfq-XrI2940329403epcas1p4f;
+        Tue,  9 Jul 2019 06:08:05 +0000 (GMT)
+X-AuditID: b6c32a35-973ff7000000102b-5c-5d242f447680
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        38.30.04139.44F242D5; Tue,  9 Jul 2019 15:08:04 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH] devfreq: tegra20: add COMMON_CLK dependency
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+CC:     Dmitry Osipenko <digetx@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <87564032-015a-323f-6d15-0abc67f6cc60@samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190709060804epcms1p6222bcb63ae886de2f94246ed92dbdc4b@epcms1p6>
+Date:   Tue, 09 Jul 2019 15:08:04 +0900
+X-CMS-MailID: 20190709060804epcms1p6222bcb63ae886de2f94246ed92dbdc4b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZdlhTT9dFXyXWYMtkDYu/k46xW1z/8pzV
+        YvXHx4wWZ5vesFtc3jWHzeJz7xFGBzaP378mMXrsnHWX3aNvyypGj8+b5AJYorJtMlITU1KL
+        FFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4CWKymUJeaUAoUCEouL
+        lfTtbIryS0tSFTLyi0tslVILUnIKLAv0ihNzi0vz0vWS83OtDA0MjEyBChOyM479XcBacICn
+        4vCDyawNjJN4uhg5OSQETCRmfbzG2MXIxSEksINR4sTx40AOBwevgKDE3x3CIDXCAi4SD9sO
+        MILYQgJKEg039zFDxPUlOh5sA4uzCehKbN1wlwXEFhEokXg/az8byExmgQVAM098YYNYxisx
+        o/0pC4QtLbF9+VawZk4Be4lb6xYwQ8RFJW6ufssOY78/Np8RwhaRaL13FqpGUOLBz92MMHNm
+        TPkPNbNa4tr0xewgiyUEWhgleldPgSrSlzgz9yTYEbwCvhKN5+4ygdgsAqoS5/beh2p2kdh2
+        5Q8riM0soC2xbOFrZlBAMAtoSqzfpQ9Roiix8/dcRogSPol3X3tYYf7aMe8JE4StJnFo9xKo
+        +2UkTk9fCHWzh8TS5f3MkIDeyChx/k034wRGhVmIsJ6FZPMshM0LGJlXMYqlFhTnpqcWGxYY
+        IkfvJkZwStQy3cE45ZzPIUYBDkYlHl6BQOVYIdbEsuLK3EOMEhzMSiK8+9yBQrwpiZVVqUX5
+        8UWlOanFhxhNgQEwkVlKNDkfmK7zSuINTY2MjY0tTAzNTA0NlcR5Mx7KxgoJpCeWpGanphak
+        FsH0MXFwSjUwLvZfXqReOj/p4+qyzS+s7ii9Vb8x48/fv+xR0ht/dnLc2rk5sShlOzPvk+KS
+        1zXlPzT/xO+/6OF5U8q4Lst9o3RzY6HXX7n13c4mf0KEHl6UC/td92BRpUYso2HF6Sop6/nm
+        fvu9Zm5gj7tm9mixyapND2YXq+zjX/NVW4LDLfuZ2VGVr5NeK7EUZyQaajEXFScCAKaGvamf
+        AwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190628103243epcas4p133102dfa6709970b1dd49296f82425b2
+References: <87564032-015a-323f-6d15-0abc67f6cc60@samsung.com>
+        <20190628103232.2467959-1-arnd@arndb.de>
+        <CGME20190628103243epcas4p133102dfa6709970b1dd49296f82425b2@epcms1p6>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8poHyZdIldWWirZsFGM/IWt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the watchdog tree got a conflict in:
-
-  Documentation/watchdog/hpwdt.rst
-  Documentation/watchdog/watchdog-parameters.rst
-
-between commit:
-
-  cc2a2d19f896 ("docs: watchdog: convert docs to ReST and rename to *.rst")
-
-from the jc_docs tree and commit:
-
-  74665686f0e2 ("docs: watchdog: convert docs to ReST and rename to *.rst")
-
-from the watchdog tree.
-
-These are the same patch with only a coouple of differences.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8poHyZdIldWWirZsFGM/IWt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kLzIACgkQAVBC80lX
-0GxzQgf8DMjEgCmSXdueF39iOi40Ann5AA2fp/1Imj4W8Lde4h4JbwkuwghYM0W1
-9lY7dqEcVKCAeD9mjLsPsA6aYHbyDPQ6+iFmJVaZaI0g92NBKDstswRXEF56XWcj
-MHQdnKa4mMPfBCutFB2gN/SfsY1PA25mt3zF+qqPEvIrhwBz3+PVPOkG0q0fpzcn
-e5AbgovOj9tNqCe68SP2GxYtjneUHW5DYEvR4K3JM1YNJ7tTkDJBah6Hi9A68Np8
-Ncr7c/jC8t44X/iemLOmC+6ufplCan6rC+Hrji16Jlglxo8CWdZ4LJAj586lELJw
-NnzRkbOAVtXnff8/gBsyQSqr2CH9Qw==
-=f/QO
------END PGP SIGNATURE-----
-
---Sig_/8poHyZdIldWWirZsFGM/IWt--
+On 19. 6. 28. =EC=98=A4=ED=9B=84=207:32,=20Arnd=20Bergmann=20wrote:=0D=0A>=
+=20Compile-testing=20the=20new=20driver=20on=20platforms=20without=20CONFIG=
+_COMMON_CLK=0D=0A>=20leads=20to=20a=20link=20error:=0D=0A>=20=0D=0A>=20driv=
+ers/devfreq/tegra20-devfreq.o:=20In=20function=20=60tegra_devfreq_target':=
+=0D=0A>=20tegra20-devfreq.c:(.text+0x288):=20undefined=20reference=20to=20=
+=60clk_set_min_rate'=0D=0A>=20=0D=0A>=20Add=20a=20dependency=20on=20COMMON_=
+CLK=20to=20avoid=20this.=0D=0A>=20=0D=0A>=20Fixes:=201d39ee8dad6d=20(=22PM=
+=20/=20devfreq:=20Introduce=20driver=20for=20NVIDIA=20Tegra20=22)=0D=0A>=20=
+Signed-off-by:=20Arnd=20Bergmann=20<arnd=40arndb.de>=0D=0A>=20---=0D=0A>=20=
+=20drivers/devfreq/Kconfig=20=7C=201=20+=0D=0A>=20=201=20file=20changed,=20=
+1=20insertion(+)=0D=0A>=20=0D=0A>=20diff=20--git=20a/drivers/devfreq/Kconfi=
+g=20b/drivers/devfreq/Kconfig=0D=0A>=20index=20f3b242987fd9..defe1d438710=
+=20100644=0D=0A>=20---=20a/drivers/devfreq/Kconfig=0D=0A>=20+++=20b/drivers=
+/devfreq/Kconfig=0D=0A>=20=40=40=20-107,6=20+107,7=20=40=40=20config=20ARM_=
+TEGRA_DEVFREQ=0D=0A>=20=20config=20ARM_TEGRA20_DEVFREQ=0D=0A>=20=20=09trist=
+ate=20=22NVIDIA=20Tegra20=20DEVFREQ=20Driver=22=0D=0A>=20=20=09depends=20on=
+=20(TEGRA_MC=20&&=20TEGRA20_EMC)=20=7C=7C=20COMPILE_TEST=0D=0A>=20+=09depen=
+ds=20on=20COMMON_CLK=0D=0A>=20=20=09select=20DEVFREQ_GOV_SIMPLE_ONDEMAND=0D=
+=0A>=20=20=09select=20PM_OPP=0D=0A>=20=20=09help=0D=0A>=20=0D=0A=0D=0AAcked=
+-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.com>=0D=0A=0D=0AThanks=21=
+=0D=0A=0D=0A=0D=0ACheers,=0D=0AMyungJoo.=0D=0A
