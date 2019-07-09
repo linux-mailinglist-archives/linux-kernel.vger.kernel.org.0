@@ -2,148 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1F563D9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F9A63DAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 23:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfGIV5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 17:57:14 -0400
-Received: from mail-eopbgr690059.outbound.protection.outlook.com ([40.107.69.59]:63872
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729786AbfGIV5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 17:57:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mckTv+s/JRdf5bao4dcLRovMz1xHK4RThrrFPOl6nyk=;
- b=n0t0UVLmwUqfES969ujA5JLNHv1EUjPGwMdQju2b9lFpmRmaaTSK6gKvqImA5AQc6ZZWXJh0eU1ngWHgKY13j1psRhr6z/1Z3mTVPoiG+wHKDVcSeDiTgICNi23bZLpS6hRhiI3c2NrpPLCEliH4pXSpsaBRDrMtMrw+m8eJUFE=
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2718.namprd12.prod.outlook.com (52.135.103.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.19; Tue, 9 Jul 2019 21:56:58 +0000
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::fd06:e03b:2b06:e8d7]) by SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::fd06:e03b:2b06:e8d7%6]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 21:56:58 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>
-Subject: [PATCH v2 7/7] EDAC/amd64: Support Asymmetric Dual-Rank DIMMs
-Thread-Topic: [PATCH v2 7/7] EDAC/amd64: Support Asymmetric Dual-Rank DIMMs
-Thread-Index: AQHVNqE6J4H7oRniNEKmFoXEUgkvBA==
-Date:   Tue, 9 Jul 2019 21:56:58 +0000
-Message-ID: <20190709215643.171078-8-Yazen.Ghannam@amd.com>
-References: <20190709215643.171078-1-Yazen.Ghannam@amd.com>
-In-Reply-To: <20190709215643.171078-1-Yazen.Ghannam@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0401CA0034.namprd04.prod.outlook.com
- (2603:10b6:803:2a::20) To SN6PR12MB2639.namprd12.prod.outlook.com
- (2603:10b6:805:6f::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [165.204.78.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 834f5b18-c139-4e0a-c40e-08d704b85d37
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2718;
-x-ms-traffictypediagnostic: SN6PR12MB2718:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <SN6PR12MB271817D3C285DC4015B8F76DF8F10@SN6PR12MB2718.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(199004)(189003)(6506007)(53936002)(386003)(76176011)(26005)(2351001)(186003)(2501003)(14444005)(256004)(6116002)(99286004)(52116002)(102836004)(6306002)(2906002)(6512007)(68736007)(1076003)(6916009)(305945005)(5660300002)(66066001)(3846002)(6436002)(50226002)(66446008)(66556008)(66476007)(66946007)(64756008)(71200400001)(36756003)(71190400001)(2616005)(8676002)(81166006)(966005)(25786009)(316002)(81156014)(446003)(4326008)(54906003)(11346002)(8936002)(14454004)(486006)(478600001)(86362001)(5640700003)(7736002)(6486002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2718;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mH5lwuyTeUlDQRg3KHHjdO/BfXo0sTAs0J4jjCSU+yEj3DoEcw+9pb+qCL0DEHIRfUlGAZ0vpGy/7zDQSpFYG/IzSP09s4oqPx/MtoJwJJ/HsBNlpRNimCO777ALkJIQ1GH6ZTbFCC6gMH8151DDHC+8v+XX3HN0gXXVXZ5UMYW+ovfutV5a3jMnI/oemoJUN0YATUsgGZNe44TmzGY3Oid0t/1TnuVXJAs+76Kehtu4NWCQiSdrdk0AIbCS8MwqDwaDWKY3da47C/H+OZeIDACszl1BznXNMOoLxgtzDoYeyjmD4SfIp3uJ6hYBhqbWn6+g0FOfFxU5VAx/e7UDJ0viKkGkj026BWth/eM9UxO2HwFf84I+drnCH8zi/yLgajC73i+8zqnFZyYFP34WtTXu3qMfL8fgN9ChnGp90Q8=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729132AbfGIV6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 17:58:14 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44702 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfGIV6N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 17:58:13 -0400
+Received: by mail-io1-f66.google.com with SMTP id s7so234894iob.11;
+        Tue, 09 Jul 2019 14:58:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Ey61egmeTzlJzdnS3KXDPWo7KaDWydr+b+uOUD/PhiM=;
+        b=dGy6QPfFr0GGfn2v93VPxlUrS+5pK+zHvIe+iSUVvUgt53VxHWunGpJC6N9Hd/IfUi
+         BFLVQaRYukKyDoaVIct6TNZgZsgl+P5RNNhkx/Ie2hA6+smDyI7ilD6ewgU22LQEHXhI
+         CUZCfiuLVyhq5FWbOYGJK26I/rGEBsVIZPhuXHR1DNvfXsQiEPT9BVroU+LRtp+cJvVr
+         7jEm70/kZuFRkFDVQe/lsoqJrqYmOIrP5V7gRrm9LChqJqEBrMNKUaVvAPrNbCuJg/79
+         GmPinNXqX3r9KjlOSuvcorEOuKlEc7VDd6Jnd7zI5Z28a9vaSoZIw8asjct/jxIp5WMH
+         8xCQ==
+X-Gm-Message-State: APjAAAXoVtJz01e6xru2Ch7rPzOywAnCaLMqjX7f6+XtYiHHi6K0rV04
+        u8J6OeLcfLvItgOsiM5/9A==
+X-Google-Smtp-Source: APXvYqw5juZHQchjp5SSeEn+D8SjtVO4k6VtZq4TP772vPqxBVFTwIGj7pgz0nnUSAKu0HaFyjkq1Q==
+X-Received: by 2002:a5d:87d6:: with SMTP id q22mr7694894ios.2.1562709492517;
+        Tue, 09 Jul 2019 14:58:12 -0700 (PDT)
+Received: from localhost ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id p3sm58971iom.7.2019.07.09.14.58.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 14:58:11 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 15:58:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     sre@kernel.org, lee.jones@linaro.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: mfd: max8998: Add charger subnode
+ binding
+Message-ID: <20190709215810.GB26049@bogus>
+References: <20190621115602.17559-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 834f5b18-c139-4e0a-c40e-08d704b85d37
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 21:56:58.2552
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yghannam@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2718
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Fri, Jun 21, 2019 at 01:56:02PM +0200, Paweł Chmiel wrote:
+> This patch adds devicetree bindings documentation for
+> battery charging controller as the subnode of MAX8998 PMIC.
+> 
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+> Changes from v3:
+>   - Property prefix should be maxim, not max8998
+>   - Describe what End of Charge in percent means
+> 
+> Changes from v2:
+>   - Make charge-restart-level-microvolt optional.
+>   - Make charge-timeout-hours optional.
+> 
+> Changes from v1:
+>   - Removed unneeded Fixes tag
+>   - Correct description of all charger values
+>   - Added missing property unit
+> ---
+>  .../devicetree/bindings/mfd/max8998.txt       | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
+> index 5f2f07c09c90..368f787d6079 100644
+> --- a/Documentation/devicetree/bindings/mfd/max8998.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max8998.txt
+> @@ -48,6 +48,25 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
+>  - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
+>    for buck2 regulator that can be selected using dvs gpio.
+>  
+> +Charger: Configuration for battery charging controller should be added
+> +inside a child node named 'charger'.
+> +  Required properties:
+> +  - maxim,end-of-charge-percentage: End of Charge in percent.
+> +    When the charge current in constant-voltage phase drops below
+> +    end-of-charge-percentage of it's start value, charging is terminated.
+> +    If value equals 0, leave it unchanged. Otherwise it should be value
+> +    from 10 to 45 by 5 step.
+> +
+> +  Optional properties:
+> +  - maxim,charge-restart-threshold: Charge restart threshold in millivolts.
+> +    If property is not present, this will be disabled.
+> +    Valid values are: 0, 100, 150, 200. If the value equals 0, leave it
+> +    unchanged.
 
-Future AMD systems will support "Asymmetric" Dual-Rank DIMMs. These are
-DIMMs were the ranks are of different sizes.
+Needs a unit suffix as defined in property-units.txt.
 
-The even rank will use the Primary Even Chip Select registers and the
-odd rank will use the Secondary Odd Chip Select registers.
+> +
+> +  - maxim,charge-timeout: Charge timeout in hours. If property is not
+> +    present, this will be disabled. Valid values are: 0, 5, 6, 7.
+> +    If the value equals 0, leave it unchanged.
 
-Recognize if a Secondary Odd Chip Select is being used. Use the
-Secondary Odd Address Mask when calculating the chip select size.
+Needs a unit suffix as defined in property-units.txt.
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
----
-Link:
-https://lkml.kernel.org/r/20190531234501.32826-9-Yazen.Ghannam@amd.com
-
-v1->v2:
-* No change.
-
- drivers/edac/amd64_edac.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 006417cb79dc..6c284a4f980c 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -790,6 +790,9 @@ static void debug_dump_dramcfg_low(struct amd64_pvt *pv=
-t, u32 dclr, int chan)
-=20
- #define CS_EVEN_PRIMARY		BIT(0)
- #define CS_ODD_PRIMARY		BIT(1)
-+#define CS_ODD_SECONDARY	BIT(2)
-+
-+#define csrow_sec_enabled(i, dct, pvt)	((pvt)->csels[(dct)].csbases_sec[(i=
-)] & DCSB_CS_ENABLE)
-=20
- static int f17_get_cs_mode(int dimm, u8 ctrl, struct amd64_pvt *pvt)
- {
-@@ -801,6 +804,10 @@ static int f17_get_cs_mode(int dimm, u8 ctrl, struct a=
-md64_pvt *pvt)
- 	if (csrow_enabled(2 * dimm + 1, ctrl, pvt))
- 		cs_mode |=3D CS_ODD_PRIMARY;
-=20
-+	/* Asymmetric Dual-Rank DIMM support. */
-+	if (csrow_sec_enabled(2 * dimm + 1, ctrl, pvt))
-+		cs_mode |=3D CS_ODD_SECONDARY;
-+
- 	return cs_mode;
- }
-=20
-@@ -1590,7 +1597,11 @@ static int f17_addr_mask_to_cs_size(struct amd64_pvt=
- *pvt, u8 umc,
- 	 */
- 	dimm =3D csrow_nr >> 1;
-=20
--	addr_mask_orig =3D pvt->csels[umc].csmasks[dimm];
-+	/* Asymmetric Dual-Rank DIMM support. */
-+	if (cs_mode & CS_ODD_SECONDARY)
-+		addr_mask_orig =3D pvt->csels[umc].csmasks_sec[dimm];
-+	else
-+		addr_mask_orig =3D pvt->csels[umc].csmasks[dimm];
-=20
- 	/*
- 	 * The number of zero bits in the mask is equal to the number of bits
---=20
-2.17.1
-
+> +
+>  Regulators: All the regulators of MAX8998 to be instantiated shall be
+>  listed in a child node named 'regulators'. Each regulator is represented
+>  by a child node of the 'regulators' node.
+> @@ -97,6 +116,13 @@ Example:
+>  		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
+>  		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
+>  
+> +		/* Charger configuration */
+> +		charger {
+> +			maxim,end-of-charge-percentage = <20>;
+> +			maxim,charge-restart-threshold = <100>;
+> +			maxim,charge-timeout = <7>;
+> +		};
+> +
+>  		/* Regulators to instantiate */
+>  		regulators {
+>  			ldo2_reg: LDO2 {
+> -- 
+> 2.17.1
+> 
