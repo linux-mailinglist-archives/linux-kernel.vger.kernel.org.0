@@ -2,117 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 125E363A9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FFA63AAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbfGISLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:11:50 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33542 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbfGISLu (ORCPT
+        id S1727456AbfGISUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:20:19 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41921 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727019AbfGISUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:11:50 -0400
-Received: by mail-pg1-f194.google.com with SMTP id m4so9866622pgk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:11:49 -0700 (PDT)
+        Tue, 9 Jul 2019 14:20:17 -0400
+Received: by mail-qk1-f194.google.com with SMTP id v22so16753591qkj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V9rTJgMykVUW5gRfUWEDbI//Knjbwf3ukGtodkxh/fo=;
-        b=Ib8kP9oMyOKVcnaKmSIHd6rHEWZCy37dxMh2409gx7EBVJDKMAwFDcYqFqGzBgpUtZ
-         VU8hhKl4BFnaWmKa6ZuW5qF8sd9KCpHVkOHJMmTkLfhRC67PlNc5QeHCwk1RKSFEZfhg
-         RIws28WMU8JDV6IX16FkaPswhYoc/H3yTwv51VUTNW/xToHrf0cJ+lQF/kCxTkQ3oLru
-         1331wGDxjru01KelnPfhqVbp+Jk7WxLFbKvp0CAftrysStSiwCWEBEfK0kixUwgKWX8B
-         XmWENcr/vEpBA6wyJN9eviaR7xxJaZjog2JBokuUmPSG2cILj7vuJp8g+Q5Gk62Pxwd0
-         HFPw==
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=07lbMtNvRAMyX/POjVIPF1YJUTpi61TvrSJ6roJeVPs=;
+        b=nsdWBt1+R1ve8tCsDIWPrNy0y/NCDmw+8vDsI/xQ0qqlV/ZxUzX4XqCrlGrImpvaxv
+         bpKrt+60Fa3kB29M/KXQjapzKaDStgaZ7nQXw/WldmvXgddhp8rPPpJae/df0oZGQy4h
+         gVHsFN7crraEJnzfrq/y9JWg5aTPEv1/kkAx1s6m3jHG5VIGRQWfIODhRs8AkBKyXXso
+         fX4ZYxnGYoaxXW254flFRzCTVyUMDsXyUQPsr7UTYZJ683KQ/nPgb2LwR0NlJgTrhleL
+         OVQ+4zEfOSArBal5dVyMakYw9h0xf4hFLt0LnHZ7Wi9shjUez3sbBFm0jzjbMZlB9NNl
+         0NCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V9rTJgMykVUW5gRfUWEDbI//Knjbwf3ukGtodkxh/fo=;
-        b=a608mINhmSCjZs94SlikVbaYDIsa2HHjJHAldtk81S4eUvUzZsybz+uX58p0RFxIWh
-         M3qDowQ2KjwoLikzL0iuyxznrRZKbBO98906J5vIRqcvKSB40jUzNBpUgDjetwKdDylg
-         twgfkSkTGlsVqsNXwdfypFO0cNg800a/0g0pnzrsB43jBq/jbcUxgVrJFyVEZbtnUEQ/
-         Cgca0ZZ6TgnJk44muhQHp8DbFqunbGSJgqa+EinNXj+B5aLrmN8ksC4Qc3FcDRMj/t0q
-         I8e9ebQODm8O2FNaNN5dlyh4Es2FZvvSWpujZpTkiGGFp58psGDZvGSwYH7jXmKN/+Xs
-         ID5w==
-X-Gm-Message-State: APjAAAU3E+FDGo7/Oq+zn/QUs4DjLFOw+M2cRambYGQWewnwuiECoAhi
-        BraQ983NL7fhf7hfAzG5/suzBAJwLZelxW8DMnsj3w==
-X-Google-Smtp-Source: APXvYqyCzXINahX1VlGhs9c/oK3Wfch2QJxcoiaKsuMM7YX+ttAe/oQtJzp/cCY4PXLL09MpDinhSocxbmrKB1E0hCI=
-X-Received: by 2002:a65:4087:: with SMTP id t7mr21641518pgp.10.1562695908809;
- Tue, 09 Jul 2019 11:11:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=07lbMtNvRAMyX/POjVIPF1YJUTpi61TvrSJ6roJeVPs=;
+        b=nu+GtEv59dX/0nHh9VdXrg7/6TEDH3Twl9VGunlmpm4TVtj6ZofDfJzc03QpT3pE0t
+         DevABdoxNVGejOHeEjSWuyOvWeMYun7vGkQZvU7xfLDYQM8q8Vv0i7yG0BxAjd+H9Bpa
+         Z9783eVq5VMPCGmO5kfOsrdSepFfBuit9IVBEetnCgeWxXWmPpPQi9f5WsP5W8AzghR3
+         beQr1eSjtEDp7z2euctuWrlOf5UiXeq5eMfuk+9IGAdHUjRhxGFuZsjLKC8LrwBZFXM+
+         RwoGgfagJLCwoQ4g1WzIkCAvS7js3C3m4mDGFzuJIzc0tCO/TWMghjEBZILknf/oznVU
+         PMug==
+X-Gm-Message-State: APjAAAVRThCBzc9lai2PmXb6wemr1Rfk9p4g6xP2dxN29RYraUvht/KY
+        YK7CUpWsuaaZDU1b59nr/XrNaw==
+X-Google-Smtp-Source: APXvYqwZyzZlJCfnfaRBNAPrTgjGG/pRCaQYSyhIHt8cn7HXaH8O6U0lFii9rAJ8o1Oxephvp24BSQ==
+X-Received: by 2002:a37:bf07:: with SMTP id p7mr19214845qkf.315.1562696416701;
+        Tue, 09 Jul 2019 11:20:16 -0700 (PDT)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 11:20:15 -0700 (PDT)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [v2 0/5] arm64: allow to reserve memory for normal kexec kernel
+Date:   Tue,  9 Jul 2019 14:20:09 -0400
+Message-Id: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190708203049.3484750-1-arnd@arndb.de> <CACRpkdZO6to2UsJ64FCYi3aOC79PEb9pxOBABBkgcmR_d82dYg@mail.gmail.com>
- <20190709122550.nau44z32valjd5ir@shell.armlinux.org.uk>
-In-Reply-To: <20190709122550.nau44z32valjd5ir@shell.armlinux.org.uk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 9 Jul 2019 11:11:37 -0700
-Message-ID: <CAKwvOdnbVFQZNFaZs7Yh4C=OnR8k3CyrRc=NQEQqFvPL=Qo9Vg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: mtd-xip: work around clang/llvm bug
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 5:26 AM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Jul 09, 2019 at 02:17:58PM +0200, Linus Walleij wrote:
-> > On Mon, Jul 8, 2019 at 10:31 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > > -#define xip_iprefetch()        do { asm volatile (".rep 8; nop; .endr"); } while (0)
-> > > +#define xip_iprefetch()        do {                                            \
-> > > +        asm volatile ("nop; nop; nop; nop; nop; nop; nop; nop;");      \
-> > > +} while (0)                                                            \
-> >
-> > This is certainly an OK fix since we use a row of inline nop at
-> > other places.
-> >
-> > However after Russell explained the other nops I didn't understand I located
-> > these in boot/compressed/head.S as this in __start:
-> >
-> >                 .rept   7
-> >                 __nop
-> >                 .endr
-> > #ifndef CONFIG_THUMB2_KERNEL
-> >                 mov     r0, r0
-> > #else
-> >
-> > And certainly this gets compiled, right?
-> >
-> > So does .rept/.endr work better than .rep/.endr, is it simply mis-spelled?
-> >
-> > I.e. s/.rep/.rept/g
-> > ?
-> >
-> > In that case we should explain in the commit that .rep doesn't work
-> > but .rept does.
->
-> According to the info pages for gas:
->
-> 7.96 `.rept COUNT'
-> ==================
->
-> Repeat the sequence of lines between the `.rept' directive and the next
-> `.endr' directive COUNT times.
->
-> So yes, ".rep" is mis-spelled, and it brings up the obvious question:
-> why isn't gas issuing an error for ".rep"?  There is no mention of
-> ".rep" in the manual.
+Changelog
+v1 - v2
+	- No changes to patches, addressed suggestion from James Morse
+	  to add "arm64" tag to cover letter.
+	- Improved cover letter information based on discussion.
 
-I swear I had looked this up somewhere and found that GNU as and
-clang's integrated assembler supported alternative spellings for
-assembly directives.  Just checked the manual
-https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_7.html#SEC116
-and indeed no mention of the alternatives...must have been looking at
-the source...
+Currently, it is only allowed to reserve memory for crash kernel, because
+it is a requirement in order to be able to boot into crash kernel without
+touching memory of crashed kernel is to have memory reserved.
+
+The second benefit for having memory reserved for kexec kernel is
+that it does not require a relocation after segments are loaded into
+memory.
+
+If kexec functionality is used for a fast system update, with a minimal
+downtime, the relocation of kernel + initramfs might take a significant
+portion of reboot.
+
+In fact, on the machine that we are using, that has ARM64 processor
+it takes 0.35s to relocate during kexec, thus taking 52% of kernel reboot
+time:
+
+kernel shutdown	0.03s
+relocation	0.35s
+kernel startup	0.29s
+
+Image: 13M and initramfs is 24M. If initramfs increases, the relocation
+time increases proportionally.
+
+While, it is possible to add 'kexeckernel=' parameters support to other
+architectures by modifying reserve_crashkernel(), in this series this is
+done for arm64 only.
+
+The reason it is so slow on arm64 to relocate kernel is because the code
+that does relocation does this with MMU disabled, and thus D-Cache and
+I-Cache must also be disabled.
+
+Alternative solution is more complicated: Setup a temporary page table
+for relocation_routine and also for code from cpu_soft_restart. Perform
+relocation with MMU enabled, do cpu_soft_restart where MMU and caching
+are disabled, jump to purgatory. A similar approach was suggested for
+purgatory and was rejected due to making purgatory too complicated.
+On, the other hand hibernate does something similar already, but there
+MMU never needs to be disabled, and also by the time machine_kexec()
+is called, allocator is not available, as we can't fail to do reboot,
+so page table must be pre-allocated during kernel load time.
+
+Note: the above time is relocation time only. Purgatory usually also
+computes checksum, but that is skipped, because --no-check is used when
+kernel image is loaded via kexec.
+
+Pavel Tatashin (5):
+  kexec: quiet down kexec reboot
+  kexec: add resource for normal kexec region
+  kexec: export common crashkernel/kexeckernel parser
+  kexec: use reserved memory for normal kexec reboot
+  arm64, kexec: reserve kexeckernel region
+
+ .../admin-guide/kernel-parameters.txt         |  7 ++
+ arch/arm64/kernel/setup.c                     |  5 ++
+ arch/arm64/mm/init.c                          | 83 ++++++++++++-------
+ include/linux/crash_core.h                    |  6 ++
+ include/linux/ioport.h                        |  1 +
+ include/linux/kexec.h                         |  6 +-
+ kernel/crash_core.c                           | 27 +++---
+ kernel/kexec_core.c                           | 50 +++++++----
+ 8 files changed, 127 insertions(+), 58 deletions(-)
+
 -- 
-Thanks,
-~Nick Desaulniers
+2.22.0
+
