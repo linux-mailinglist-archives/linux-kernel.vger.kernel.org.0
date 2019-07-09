@@ -2,100 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A136319C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62123631BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbfGIHIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 03:08:14 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39975 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfGIHIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:08:14 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e8so18874240otl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 00:08:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O19F1XdbORvvsa9/iz6Bm4Omhn64/xhWxSpwGFNbhbw=;
-        b=sijRVUdzmJMLMoB0GqU4aajr65RgT4FNyZJ8G8YA7Vd6IBkK3Nv2cOwVrbFF3AMuZZ
-         6gBiqrNDZTvcLQiyimfpZQMzXgRM1gAlqNcil3p3NKwybtFCIb7dVLvmwUKp/FZRndj3
-         HuX0ka+G6Nu6WJ/5zAZrJAiNlluj2gdMNq0UZIlQZD5I8+4GhihDGubbVDuRI8gGkCyY
-         w7BUW5UOlAjiE21XrZBjLLaTZbEB6a7XlV8fXv7dBOOYMBHbNcmC7YnZMy0wZoI4p/xv
-         UQlh8xKipnHxaQQinJDHyBoXHHhKr9BRcb/wHugBHOzgUQbMsMUhZ+3RI7aL0pMXnXxc
-         8P8Q==
-X-Gm-Message-State: APjAAAUxOTg4THsJEUyIqzQR1/vMi89aqHtLBg4jD/Z0mGBv//4Bfe5H
-        xJ9HGXExEl/QSOZ2w944RXBmb/LV7VA89rBjPhluaQ==
-X-Google-Smtp-Source: APXvYqweOPA8E1biO6mxO0Vz38DTDQedjM6a8vQAaat/XSjQGEMmEj4p57tMYFKSRGTdGyTJK1f8taIOB8P16I00A68=
-X-Received: by 2002:a9d:5c11:: with SMTP id o17mr3291785otk.107.1562656093641;
- Tue, 09 Jul 2019 00:08:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190708175101.19990-1-hch@lst.de> <CAMuHMdVrAVYWvQCh7AF1O7SRbuZb9fQp9fi0yQyZMeaOpfHyEw@mail.gmail.com>
- <20190708212325.GA17641@lst.de>
-In-Reply-To: <20190708212325.GA17641@lst.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 9 Jul 2019 09:08:02 +0200
-Message-ID: <CAMuHMdVqCOwxG1ru-wvgDmtNfezgR92qBOVhtEJjaLrXAjaE+A@mail.gmail.com>
-Subject: Re: [PATCH] m68k: don't select ARCH_HAS_DMA_PREP_COHERENT for nommu
- or coldfire
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726045AbfGIHUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 03:20:23 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43942 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbfGIHUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:20:23 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D6373200D6A;
+        Tue,  9 Jul 2019 09:20:20 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 86FA9200D69;
+        Tue,  9 Jul 2019 09:20:08 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DBFDE402D3;
+        Tue,  9 Jul 2019 15:19:54 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
+        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        daniel.baluta@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de,
+        abel.vesa@nxp.com, ccaione@baylibre.com, angus@akkea.ca,
+        andrew.smirnov@gmail.com, agx@sigxcpu.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] opp: of: Support multiple suspend OPPs defined in DT
+Date:   Tue,  9 Jul 2019 15:10:54 +0800
+Message-Id: <20190709071056.26361-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On Mon, Jul 8, 2019 at 11:23 PM Christoph Hellwig <hch@lst.de> wrote:
-> On Mon, Jul 08, 2019 at 10:39:48PM +0200, Geert Uytterhoeven wrote:
-> > On Mon, Jul 8, 2019 at 7:51 PM Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > m68k only provides the dma_prep_coherent symbol when an mmu is enabled
-> >
-> > arch_dma_prep_coherent
-> >
-> > > and not on the coldfire platform.  Fix the Kconfig symbol selection
-> > > up to match this.
-> > >
-> > > Fixes: 69878ef47562 ("m68k: Implement arch_dma_prep_coherent()")
-> >
-> > Do you know the SHA1 for the other commit, that causes the issue when
-> > combined with the above?
->
-> I think the culprit is:
->
-> commit c30700db9eaabb35e0b123301df35a6846e6b6b4
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Mon Jun 3 08:43:51 2019 +0200
->
->     dma-direct: provide generic support for uncached kernel segments
->
->
-> Ad it turns out I can't just apply this fix to the dma-mapping tree
-> because it doesn't have the m68k changes.  So either you'll have to
-> queue it up, or I'll have to do secondary pull request to fix up
-> the first one.  Maybe it is eiter if you just send it to Linus
-> before I send the dma-mapping PR?
+With property "opp-supported-hw" introduced, the OPP table
+in DT could be a large OPP table and ONLY a subset of OPPs
+are available, based on the version of the hardware running
+on. That introduces restriction of using "opp-suspend"
+property to define the suspend OPP, as we are NOT sure if the
+OPP containing "opp-suspend" property is available for the
+hardware running on, and the of opp core does NOT allow multiple
+suspend OPPs defined in DT OPP table.
 
-OK, will do, after a cycle in next.
+To eliminate this restrition, make of opp core allow multiple
+suspend OPPs defined in DT, and pick the OPP with highest rate
+and with "opp-suspend" property present to be suspend OPP, it
+can speed up the suspend/resume process.
 
-I assume you just forgot to add your SoB, and I can add it?
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/opp/of.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index b313aca..7e8ec6c 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -617,9 +617,12 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+ 	/* OPP to select on device suspend */
+ 	if (of_property_read_bool(np, "opp-suspend")) {
+ 		if (opp_table->suspend_opp) {
+-			dev_warn(dev, "%s: Multiple suspend OPPs found (%lu %lu)\n",
+-				 __func__, opp_table->suspend_opp->rate,
+-				 new_opp->rate);
++			/* Pick the OPP with higher rate as suspend OPP */
++			if (new_opp->rate > opp_table->suspend_opp->rate) {
++				opp_table->suspend_opp->suspend = false;
++				new_opp->suspend = true;
++				opp_table->suspend_opp = new_opp;
++			}
+ 		} else {
+ 			new_opp->suspend = true;
+ 			opp_table->suspend_opp = new_opp;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
