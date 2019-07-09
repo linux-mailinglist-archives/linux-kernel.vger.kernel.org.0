@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 197E662E9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F2F62EA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfGIDPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60996 "EHLO mail.kernel.org"
+        id S1727582AbfGIDPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:15:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbfGIDPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:15:08 -0400
-Subject: Re: [GIT PULL] SELinux patches for v5.3
+        id S1727540AbfGIDPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:15:09 -0400
+Subject: Re: [GIT PULL] Keys: Set 2 - request_key() improvements for 5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562642107;
-        bh=UD5AJS0o2Oz7QrHl8e7s76+5e1eQEf5QyFJ2MnmL0CA=;
+        s=default; t=1562642108;
+        bh=bhI5nRtP7I46rw87zwlc1TgXY5dZsMFgbNno8ecg+WI=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=DWfVoGXzUVMKNBZTmBaiUGKhpSXceQelJPsoHlWhm7a7HiAqBV0vkoULqB8fyG+2P
-         j1d6TtJLcBC1dRZ+iwt5cnbodvvVvquzwiZB14mY7UrO7OvlaFIqjVjfbPSvGl5z8M
-         MIS8ZVmwNT7abZKl1zRnBWx6m8wbnj8OdLx5LPO4=
+        b=f3oUwImdKjQ6v12txKshRctFBzFNQBLY3DqIiYTrWn/QCCpXd5n5NBiNuUcbV8tN5
+         RCsHiTBzFAxgRmrRvkeS9ssn2XGgLXdsig0eI5K5t0KyQ8QA2cPKDHFJzzV4t2t1KG
+         mZjJh/0dcxj8V9wPRgb43dH3K/fQ4nyX+xW7k08A=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhSERNCM2d42y8fBT236D62mco=B_ZM_vytEoBP1qicvCA@mail.gmail.com>
-References: <CAHC9VhSERNCM2d42y8fBT236D62mco=B_ZM_vytEoBP1qicvCA@mail.gmail.com>
+In-Reply-To: <27327.1562361214@warthog.procyon.org.uk>
+References: <27327.1562361214@warthog.procyon.org.uk>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhSERNCM2d42y8fBT236D62mco=B_ZM_vytEoBP1qicvCA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
- tags/selinux-pr-20190702
-X-PR-Tracked-Commit-Id: ea74a685ad819aeed316a9bae3d2a5bf762da82d
+X-PR-Tracked-Message-Id: <27327.1562361214@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+ tags/keys-request-20190626
+X-PR-Tracked-Commit-Id: 3b8c4a08a471d56ecaaca939c972fdf5b8255629
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7c0f89634892693fc0b46f25e0a6d57bd6dd5698
-Message-Id: <156264210736.2709.1861861527088813337.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Jul 2019 03:15:07 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: f771fde82051976a6fc0fd570f8b86de4a92124b
+Message-Id: <156264210874.2709.11032841563948507768.pr-tracker-bot@kernel.org>
+Date:   Tue, 09 Jul 2019 03:15:08 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 2 Jul 2019 13:28:37 -0400:
+The pull request you sent on Fri, 05 Jul 2019 22:13:34 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190702
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-request-20190626
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7c0f89634892693fc0b46f25e0a6d57bd6dd5698
+https://git.kernel.org/torvalds/c/f771fde82051976a6fc0fd570f8b86de4a92124b
 
 Thank you!
 
