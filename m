@@ -2,113 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD07638D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B33638E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfGIPqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 11:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39488 "EHLO mail.kernel.org"
+        id S1726601AbfGIPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 11:49:13 -0400
+Received: from mga02.intel.com ([134.134.136.20]:50139 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfGIPqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 11:46:51 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A9CD21707;
-        Tue,  9 Jul 2019 15:46:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562687210;
-        bh=4f3MOO8zcd+5CtA6PP6zPt3BLYAEsqlHl7hOpTexx+I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Nu/W7DL+FL92KLTyNHww2Nb1KodWLchrMgI7cuVRB4QWi+/Uhhg4t8tzDx/Ifitsv
-         gnYak4Ph65a5Z0KFTMtOJvcHHQYCHe2sfvLFYEeIIXrtTNBdTfmDicDsfBjhUzzXcr
-         TfNjRvgu0nsTE8b0Ko/P7Rskv1ehTYAw1zRqkpmU=
-Received: by mail-qt1-f180.google.com with SMTP id d17so20677431qtj.8;
-        Tue, 09 Jul 2019 08:46:50 -0700 (PDT)
-X-Gm-Message-State: APjAAAXI++Q+XHWFpelfswKXSQJTX+4t7ZpFQhWDSm75xdWyz79aIhtI
-        iqJ7AuK8M0AiN2OVl8qt5JcBaIlF56FV5Yc/RQ==
-X-Google-Smtp-Source: APXvYqydRCRswf88vjxavUG/qgoU+4yXgYQVD+q2t75PqwMNmeOfzwJzAfkQW1pTkrQVapqMI74TYwhjY2kifHq7aDs=
-X-Received: by 2002:aed:3f10:: with SMTP id p16mr19409167qtf.110.1562687209443;
- Tue, 09 Jul 2019 08:46:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190607154410.10633-1-paul@crapouillou.net> <20190607154410.10633-2-paul@crapouillou.net>
- <20190709020425.GA7984@bogus> <1562642299.1834.0@crapouillou.net>
-In-Reply-To: <1562642299.1834.0@crapouillou.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 9 Jul 2019 09:46:37 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJKqhnt1a7vhF+4RA53dSNUaB==8Tmcida3z63nDSZGKA@mail.gmail.com>
-Message-ID: <CAL_JsqJKqhnt1a7vhF+4RA53dSNUaB==8Tmcida3z63nDSZGKA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: Remove unused compatible strings
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1726133AbfGIPtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 11:49:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 08:49:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
+   d="scan'208";a="176532235"
+Received: from ngote-system-product-name.iind.intel.com ([10.106.124.92])
+  by orsmga002.jf.intel.com with ESMTP; 09 Jul 2019 08:49:09 -0700
+From:   NitinGote <nitin.r.gote@intel.com>
+To:     corbet@lwn.net
+Cc:     joe@perches.com, akpm@linux-foundation.org, apw@canonical.com,
+        keescook@chromium.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Nitin Gote <nitin.r.gote@intel.com>
+Subject: [PATCH v4] Added warnings in checkpatch.pl script to :
+Date:   Tue,  9 Jul 2019 21:18:06 +0530
+Message-Id: <20190709154806.26363-1-nitin.r.gote@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 8, 2019 at 9:18 PM Paul Cercueil <paul@crapouillou.net> wrote:
->
->
->
-> Le lun. 8 juil. 2019 =C3=A0 22:04, Rob Herring <robh@kernel.org> a =C3=A9=
-crit :
-> > On Fri, Jun 07, 2019 at 05:44:05PM +0200, Paul Cercueil wrote:
-> >>  Right now none of the Ingenic-based boards probe this driver from
-> >>  devicetree. This driver defined three compatible strings for the
-> >> exact
-> >>  same behaviour. Before these strings are used, we can remove two of
-> >>  them.
-> >>
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
-> >>
-> >>  Notes:
-> >>      v2: Rebase on v5.2-rc3
-> >>
-> >>   Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt | 5
-> >> +----
-> >>   1 file changed, 1 insertion(+), 4 deletions(-)
-> >>
-> >>  diff --git
-> >> a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> >> b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> >>  index 7d9d3f90641b..493bec80d59b 100644
-> >>  --- a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> >>  +++ b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> >>  @@ -2,10 +2,7 @@ Ingenic JZ47xx PWM Controller
-> >>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >>   Required properties:
-> >>  -- compatible: One of:
-> >>  -  * "ingenic,jz4740-pwm"
-> >>  -  * "ingenic,jz4770-pwm"
-> >>  -  * "ingenic,jz4780-pwm"
-> >>  +- compatible: Should be "ingenic,jz4740-pwm"
-> >
-> > Are you sure all 3 chips are exactly the same features and bugs?
->
-> The hardware on these chips have tiny differences, but the current
-> driver code works on all the SoCs.
->
->
-> > The correct thing to do here generally is the 4770 and 4780 would also
-> > have ingenic,jz4740-pwm as a fallback compatible. Then the driver can
-> > match on that until you find some difference and can use the more
-> > specific compatible.
->
-> Why not just update the devicetree with the new compatible string when
-> a difference is found?
+From: Nitin Gote <nitin.r.gote@intel.com>
 
-Because dtb's should be part of the firmware/bootloader and can be
-updated independently. Maybe you don't care on your platform, but
-that's the preferred model for DT and what we follow. DTs live in the
-kernel tree for convenience, but are independent from the kernel.
+1. Deprecate strcpy() in favor of strscpy().
+2. Deprecate strlcpy() in favor of strscpy().
+3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
 
-Rob
+Updated strncpy() section in Documentation/process/deprecated.rst
+to cover strscpy_pad() case.
+
+Signed-off-by: Nitin Gote <nitin.r.gote@intel.com>
+---
+ Change log:
+ v1->v2
+ - For string related apis, created different %deprecated_string_api
+   and these will get emitted at CHECK Level using command line option
+   -f/--file to avoid bad patched from novice script users.
+
+ v2->v3
+ - Avoided use of $check in implementation.
+ - Incorporated trivial comments.
+
+ v3->v4
+ - Incorporated comment by removing "c:func:"
+
+ Documentation/process/deprecated.rst |  6 +++---
+ scripts/checkpatch.pl                | 24 ++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+index 49e0f64a3427..0fb37ebe3ad9 100644
+--- a/Documentation/process/deprecated.rst
++++ b/Documentation/process/deprecated.rst
+@@ -93,9 +93,9 @@ will be NUL terminated. This can lead to various linear read overflows
+ and other misbehavior due to the missing termination. It also NUL-pads the
+ destination buffer if the source contents are shorter than the destination
+ buffer size, which may be a needless performance penalty for callers using
+-only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
+-(Users of :c:func:`strscpy` still needing NUL-padding will need an
+-explicit :c:func:`memset` added.)
++only NUL-terminated strings. In this case, the safe replacement is
++`strscpy()`. If, however, the destination buffer still needs NUL-padding,
++the safe replacement is `strscpy_pad()`.
+
+ If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
+ still be used, but destinations should be marked with the `__nonstring
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index bb28b178d929..e6fbf4cf4be4 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -605,6 +605,20 @@ foreach my $entry (keys %deprecated_apis) {
+ }
+ $deprecated_apis_search = "(?:${deprecated_apis_search})";
+
++our %deprecated_string_apis = (
++        "strcpy"				=> "strscpy",
++        "strlcpy"				=> "strscpy",
++        "strncpy"				=> "strscpy, strscpy_pad or for non-NUL-terminated strings, strncpy() can still be used, but destinations should be marked with the __nonstring",
++);
++
++#Create a search pattern for all these strings apis to speed up a loop below
++our $deprecated_string_apis_search = "";
++foreach my $entry (keys %deprecated_string_apis) {
++        $deprecated_string_apis_search .= '|' if ($deprecated_string_apis_search ne "");
++        $deprecated_string_apis_search .= $entry;
++}
++$deprecated_string_apis_search = "(?:${deprecated_string_apis_search})";
++
+ our $mode_perms_world_writable = qr{
+ 	S_IWUGO		|
+ 	S_IWOTH		|
+@@ -6446,6 +6460,16 @@ sub process {
+ 			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
+ 		}
+
++# check for string deprecated apis
++		if ($line =~ /\b($deprecated_string_apis_search)\b\s*\(/) {
++			my $deprecated_string_api = $1;
++			my $new_api = $deprecated_string_apis{$deprecated_string_api};
++			my $msg_level = \&WARN;
++			$msg_level = \&CHK if ($file);
++			&{$msg_level}("DEPRECATED_API",
++				      "Deprecated use of '$deprecated_string_api', prefer '$new_api' instead\n" . $herecurr);
++		}
++
+ # check for various structs that are normally const (ops, kgdb, device_tree)
+ # and avoid what seem like struct definitions 'struct foo {'
+ 		if ($line !~ /\bconst\b/ &&
+--
+2.17.1
+
