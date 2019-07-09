@@ -2,165 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A19A762FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 324F862FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 06:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbfGIEna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 00:43:30 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44425 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfGIEna (ORCPT
+        id S1727623AbfGIEpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 00:45:11 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46962 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727606AbfGIEpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 00:43:30 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k18so18145764ljc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 21:43:29 -0700 (PDT)
+        Tue, 9 Jul 2019 00:45:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i8so8753907pgm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 21:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3yICwhxosFrogk8JNVO3Jqk1hLwdCCqstmVXBk7Lr2o=;
-        b=BFg96rAstkqVoZNhu3L6EIPnbSp/uHbmADzU8YmYsMXgrrQ4P4coJw5aX6zCP/74o3
-         g2dXL2M6/eqyQx4wSqFZO4nAbrvEX1ez68wab5rozsGAJhWPNJipxDIaS5yiRSs+wlT2
-         GIm0xalLkUVdYfj7DvsrqLyvz6ifX6MJX38wZeDzIo77qSzyWzS80qbGC8+dIFmi5JHy
-         bJqInH4xOPbxpsV6WtneC8MSj8V0cKMCFH83bKMCUFds90F+wAGQeiAnbgDqpieA5WY+
-         CmAJ3r5kprC3DtCqv2uwSyUheOGDSrca1fLro6OUXtK+88agkFtLgrAVwGMO+jmTwAJ+
-         QLXQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w8T1boIzFFoSOnmUYhW8pmkZUoG7ex2MB+rDKpzf8fs=;
+        b=XfZKXd7gmjz5FPaPLVypAzfMeQL7XUAQdYsunJCY3edTML1McnkNitbWb6ADc6SBhM
+         Qo0eMq66Gu9Gv56plq3V0zoMDHhQApGnazKdIpO84Qk9i6oqX32jNLCetDrieaCdg+v8
+         EJrv1Cy3o3HIijQtdKVW1jbOnR62iGkmeLqCOrMOtR7lQwTf7qKtB6WW50HzQHvyaW6e
+         w7Oiq41vBHBavgTsowi5sXY3Wm/rL+7C+KAK/1lwea//U4oQmdcylRmlpNm8diu/JF3+
+         M9vnE/7+ELnEwQikJXNppyxGHxZjtjIm3Nz+RMt9X0D6uI/jIQg0NYt6YEOV8gY8gTXt
+         zIUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3yICwhxosFrogk8JNVO3Jqk1hLwdCCqstmVXBk7Lr2o=;
-        b=R2+KMLBDYtYb+tW3cMb8o62RXZ5E4WBziouJxz0BDwOYca06GRI1+u6fX6H51uzO4J
-         pAv0CGcKkpiVxLEQAvrm1RIsfIfKypL8cZmrOG8hCVdeC2eFUGp9xViOaQdhdOjiiLQd
-         VzBRWJWMStlkNOlPi38NzOlTgQ0V0h7jby2MlXEszyi8mhv/nnQm6jciNf41ZSU8Mqf+
-         8LwjFyGaiYH9tnw3t9NmrdCBYQjrVTX+0JohPpY4ERSda3qjv+Lf/H8O1EMc+yeIY55h
-         aQXGfx84Pcrz9LO4NzhM1wo5xx22zs6Un0s6ewGU90CyXFMy9vn7Zcgu4cWvsl6/v7sQ
-         SnFw==
-X-Gm-Message-State: APjAAAWiwDGq3Aooqx0zymNXGhODVoEQkXrU41RigxfihLBs6N9BZ9m+
-        b9+fZMtgASeVHZ5BMnffXLelP8bKEpuNChL30n4UiA==
-X-Google-Smtp-Source: APXvYqzI60rUCzoRQoaLHbbNvS6BHusb/FQ0G3MKagSKyJzePAcNl7wJfWDAJRi30YYYxP076YGBQWvubyFpxgZDnws=
-X-Received: by 2002:a2e:6e0c:: with SMTP id j12mr12417486ljc.123.1562647408450;
- Mon, 08 Jul 2019 21:43:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w8T1boIzFFoSOnmUYhW8pmkZUoG7ex2MB+rDKpzf8fs=;
+        b=mqMpvpvfUYoKFcyUdP/9meFgkghVneUb0pyuQUo4mTNuz5CulwUL/mHwGb+QsmOwrp
+         7WTSDL5wrHTcq63iFY1Xzek3PA/W//JC35L/EDa8dIRYjZ6ew2iqR1PYkloqTfzAcXOe
+         9Qnosx9YpMKSS44xX8zvck1yPUlWNe8+xl9pRc5hOkVvCU5XlBwuIHlmAI3tMJQgtJig
+         hChNpkjuaDypMex7w1I/U3/3V+EwG98JsgweWlOhBaF7htAWDK2Ky3SM4S59uxGJjhiY
+         1+gTjIlmyXtPcZnFjlNh8S34n04K4geDS7OI7zMmx2qOl8pDeu0Tsb2STz1ouAg/Ndim
+         wvBA==
+X-Gm-Message-State: APjAAAX2aSOW5j0i42V4aHGXwihQqowJMiPWJ4YjXwDSahWTO7TNYH8x
+        S7228kLnshWAbBFt3uoXvXMERg==
+X-Google-Smtp-Source: APXvYqxS1+TfUWQ4K5tWV/rky+PwoP/Nuue4PVUm0srLpT8NGOpInpCXQV6wKkHekUNntK1m1G9cwg==
+X-Received: by 2002:a63:e953:: with SMTP id q19mr28343284pgj.313.1562647508410;
+        Mon, 08 Jul 2019 21:45:08 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id 14sm38828425pfj.36.2019.07.08.21.45.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 21:45:06 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 10:15:04 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 2/2] arm64: dts: imx8mm: Assign highest opp as suspend opp
+Message-ID: <20190709044504.gyljwwnxdt5niur5@vireshk-i7>
+References: <20190704061403.8249-1-Anson.Huang@nxp.com>
+ <20190704061403.8249-2-Anson.Huang@nxp.com>
+ <DB7PR04MB50519C02D90675070F21501DEEFA0@DB7PR04MB5051.eurprd04.prod.outlook.com>
+ <20190708082511.py7gnjbqyp7bnhqx@vireshk-i7>
+ <DB3PR0402MB391622133CD116FDE26A4F9AF5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20190708084957.waiwdun327pgvfv4@vireshk-i7>
+ <DB3PR0402MB39164E2F386181255ED37F45F5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190708150526.234572443@linuxfoundation.org>
-In-Reply-To: <20190708150526.234572443@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 9 Jul 2019 10:13:17 +0530
-Message-ID: <CA+G9fYuUEib3uaKkTSf4Sfqv9DEUyXjx+nKcdPN70w15JU6AFQ@mail.gmail.com>
-Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB39164E2F386181255ED37F45F5F60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Jul 2019 at 21:02, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.1.17 release.
-> There are 96 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.1.17-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 08-07-19, 08:54, Anson Huang wrote:
+> Each OPP has "opp-supported-hw" property as below, the first value needs to be
+> checked with speed grading fuse, and the second one needs to be checked with
+> market segment fuse, ONLY both of them passed, then this OPP is supported. It
+> calls dev_pm_opp_set_supported_hw() to tell OPP framework to parse the OPP
+> table, this is my understanding.
+> 
+> opp-supported-hw = <0x8>, <0x3>;
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Right, so that's what I was expecting.
 
-Summary
-------------------------------------------------------------------------
+One thing we can do is change the binding of OPP core a bit to allow
+multiple OPP nodes to contain the "opp-suspend" property and select
+the one finally with the highest frequency. That would be a better as
+a generic solution IMO.
 
-kernel: 5.1.17-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.1.y
-git commit: b64119f8dffe14ab62bbe65e01e72c102be085a9
-git describe: v5.1.16-97-gb64119f8dffe
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.1-oe/bui=
-ld/v5.1.16-97-gb64119f8dffe
+And then a small OPP core patch will fix it.
 
-
-No regressions (compared to build v5.1.16)
-
-No fixes (compared to build v5.1.16)
-
-Ran 18086 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+viresh
