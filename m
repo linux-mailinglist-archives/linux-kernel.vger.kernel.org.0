@@ -2,62 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 517A163C08
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E2D63C12
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbfGITkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 15:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbfGITkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 15:40:04 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 163062082A;
-        Tue,  9 Jul 2019 19:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562701203;
-        bh=oS2Acvk9n7QZUDRZRWI2hJ5hiJ/akB4hbMEUJJl1dxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZiTINaQ9y1fuiilmmJ9Rh6nqxxRKORUXIRuK/aFSgM+An/z72pzIkewiHPpJvf6mk
-         xRdFANzjWM1VcHeWLYb4nqDRJs5IJptMUTr0YpB7yvPkloiFXIMp19c2yR3CuQMagU
-         fTbEKTpx7VevL6WUr105j2nsVo5pIjOjYrX7ofjw=
-Date:   Tue, 9 Jul 2019 12:40:01 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] vfs: move_mount: reject moving kernel internal mounts
-Message-ID: <20190709194001.GG641@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629202744.12396-1-ebiggers@kernel.org>
- <20190701164536.GA202431@gmail.com>
- <20190701182239.GA17978@ZenIV.linux.org.uk>
- <20190702182258.GB110306@gmail.com>
+        id S1729099AbfGITnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 15:43:41 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45376 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfGITnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 15:43:41 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: koike)
+        with ESMTPSA id 4786F28AFAE
+From:   Helen Koike <helen.koike@collabora.com>
+To:     linux-media@vger.kernel.org
+Cc:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, skhan@linuxfoundation.org,
+        Helen Koike <helen.koike@collabora.com>
+Subject: [PATCH 1/2] media: Revert "media: vimc: Remove or modify stream checks"
+Date:   Tue,  9 Jul 2019 16:43:26 -0300
+Message-Id: <e144e6f5aae4e3d932e464fbf741d7cbaaf55980.1562701396.git.helen.koike@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702182258.GB110306@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 11:22:59AM -0700, Eric Biggers wrote:
-> 
-> Sure, but the new mount syscalls still need tests.  Where are the tests?
-> 
+This reverts commit 3c1b9ac753e99005d7ee0a883d6e5b577ba32aa9.
 
-Still waiting for an answer to this question.
+Required to Revert "media: vimc: propagate pixel format in the stream"
+which introduced the stream object in the vimc_ent_device struct.
 
-Did we just release 6 new syscalls with no tests?
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+---
+ drivers/media/platform/vimc/vimc-debayer.c | 5 ++++-
+ drivers/media/platform/vimc/vimc-scaler.c  | 7 +++++--
+ drivers/media/platform/vimc/vimc-sensor.c  | 6 +++++-
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-I don't understand how that is even remotely acceptable.
+diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
+index 00598fbf3cba..72adba6cf892 100644
+--- a/drivers/media/platform/vimc/vimc-debayer.c
++++ b/drivers/media/platform/vimc/vimc-debayer.c
+@@ -262,7 +262,7 @@ static int vimc_deb_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vdeb->ved.stream)
++		if (vdeb->src_frame)
+ 			return -EBUSY;
+ 
+ 		sink_fmt = &vdeb->sink_fmt;
+@@ -329,6 +329,9 @@ static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vdeb->src_frame)
++			return 0;
++
+ 		/* We only support translating bayer to RGB24 */
+ 		if (src_pixelformat != V4L2_PIX_FMT_RGB24) {
+ 			dev_err(vdeb->dev,
+diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
+index c7123a45c55b..5f31c1e351a3 100644
+--- a/drivers/media/platform/vimc/vimc-scaler.c
++++ b/drivers/media/platform/vimc/vimc-scaler.c
+@@ -148,7 +148,7 @@ static int vimc_sca_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vsca->ved.stream)
++		if (vsca->src_frame)
+ 			return -EBUSY;
+ 
+ 		sink_fmt = &vsca->sink_fmt;
+@@ -203,6 +203,9 @@ static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vsca->src_frame)
++			return 0;
++
+ 		if (!vimc_sca_is_pixfmt_supported(pixelformat)) {
+ 			dev_err(vsca->dev, "pixfmt (0x%08x) is not supported\n",
+ 				pixelformat);
+@@ -324,7 +327,7 @@ static void *vimc_sca_process_frame(struct vimc_ent_device *ved,
+ 						    ved);
+ 
+ 	/* If the stream in this node is not active, just return */
+-	if (!ved->stream)
++	if (!vsca->src_frame)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	vimc_sca_fill_src_frame(vsca, sink_frame);
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 51359472eef2..c47454cc7f70 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -131,7 +131,7 @@ static int vimc_sen_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vsen->ved.stream)
++		if (vsen->frame)
+ 			return -EBUSY;
+ 
+ 		mf = &vsen->mbus_format;
+@@ -187,6 +187,10 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vsen->kthread_sen)
++			/* tpg is already executing */
++			return 0;
++
+ 		/* Calculate the frame size */
+ 		pix_info = v4l2_format_info(pixelformat);
+ 		frame_size = vsen->mbus_format.width * pix_info->bpp[0] *
+-- 
+2.20.1
 
-- Eric
