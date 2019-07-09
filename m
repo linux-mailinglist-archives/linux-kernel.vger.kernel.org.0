@@ -2,98 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD58A63913
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 18:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2A0A63915
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 18:10:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbfGIQKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 12:10:21 -0400
-Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:43578 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726060AbfGIQKU (ORCPT
+        id S1726609AbfGIQKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 12:10:34 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41497 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfGIQKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:10:20 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 23F1518039537;
-        Tue,  9 Jul 2019 16:10:19 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2828:2859:2895:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:3871:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:6119:7576:7903:8957:8985:9025:9545:10004:10400:10848:11026:11232:11658:11914:12043:12297:12438:12555:12679:12740:12760:12895:12986:13019:13069:13161:13229:13311:13357:13439:14096:14097:14181:14659:14721:14777:21080:21433:21451:21627:21811:30054:30064:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: front40_59e25574f9562
-X-Filterd-Recvd-Size: 2588
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  9 Jul 2019 16:10:17 +0000 (UTC)
-Message-ID: <040b50f00501ae131256bb13a5362731ebdd6bfe.camel@perches.com>
-Subject: Re: [PATCH v4] Added warnings in checkpatch.pl script to :
-From:   Joe Perches <joe@perches.com>
-To:     NitinGote <nitin.r.gote@intel.com>, corbet@lwn.net
-Cc:     akpm@linux-foundation.org, apw@canonical.com,
-        keescook@chromium.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Date:   Tue, 09 Jul 2019 09:10:16 -0700
-In-Reply-To: <20190709154806.26363-1-nitin.r.gote@intel.com>
-References: <20190709154806.26363-1-nitin.r.gote@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Tue, 9 Jul 2019 12:10:34 -0400
+Received: by mail-pl1-f194.google.com with SMTP id m9so6649927pls.8;
+        Tue, 09 Jul 2019 09:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Sg8Y/+nJCqL5nneX2knQ5cyB6HIpIg84jtKACGxUrtw=;
+        b=hac0RIVrFQWNBa7HyDu3rESY+4QAmgxOZDpne12VkNC2JObfBJGw36vTlr+lEnPSQB
+         2Wb+y3VrIKcvyzxXb7qRITLG546QEqXnc5retHQ+rIWq21lVxTb6XXRxo3oM6NA4Jtez
+         utAx29+Pgy9BSI2mo7gqC5lVKYAxWsP3IpiWkVA5ENyf47Q3w+rrtN+CCQhiNyANXZLP
+         GIDEhvxGpO1h9IKl9XcNK8rRHOJ6MDl8Owe7Imy/TuQtwdTUGu5WYa5caSIs+5eTyBSS
+         uQ2UOc0Lo7yhl08iWaXw4DEvcNR9Z2Zf3YqCTeIZjn+4HPCOoxR7nXBfhgTir9k3H/nY
+         vs1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sg8Y/+nJCqL5nneX2knQ5cyB6HIpIg84jtKACGxUrtw=;
+        b=Zu1NgcZmTZa2Uo1S4taymuFK2uJqTFycqv87pIaca0QnPBWEOWLXzhfV1/ojwMbWfx
+         AY0kS+muxGG2a4SdbEU+cf7EueyEq1i+iiVwNNGM9Yu0uPcBw4Q4bCLGcB6Mv+hJXHP1
+         KIz7OiEKDIy1XhZI9RpY9kOP96oXPVd+wcJnnWtbBN/iCEyRzm1/ZJISHn/PNBGLvDWF
+         o4VhE1sR2MpoV9DBX4CTI05Vo/VcjKJNbRWxw2Hv4pvxZqUTtsGCxffFFanYKJ9mmFZJ
+         8qhXqNDRpCNeIqCytCHPI37vj5bfnE2Lo2Q1wp+kt/GBfW7V3UEs6Jn5xBim4m9Wgg7+
+         Q5aA==
+X-Gm-Message-State: APjAAAWDXG/r8h+RJ06BFNtOZ73H83C7DKOUvA7Pzt6ueLTNpBKXo1+v
+        Zfus4wIy1h7zFTvq5DJLrJEMlwb1
+X-Google-Smtp-Source: APXvYqwVCKjVczwu6Z4CpF0VZnh+8Dmbi51CLTfiYlVD+b4tl0+NtgaI7USMXSMQt3RuERkP1h5DlA==
+X-Received: by 2002:a17:902:f01:: with SMTP id 1mr33110232ply.170.1562688633691;
+        Tue, 09 Jul 2019 09:10:33 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id u6sm2967708pjx.23.2019.07.09.09.10.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2019 09:10:32 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 09:10:31 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH -next] btrfs: Select LIBCRC32C again
+Message-ID: <20190709161031.GA7703@roeck-us.net>
+References: <1562593403-19545-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562593403-19545-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-09 at 21:18 +0530, NitinGote wrote:
-> From: Nitin Gote <nitin.r.gote@intel.com>
+On Mon, Jul 08, 2019 at 06:43:23AM -0700, Guenter Roeck wrote:
+> With CONFIG_BTRFS_FS=y and CONFIG_CRYPTO_CRC32C=m, we get:
 > 
-> 1. Deprecate strcpy() in favor of strscpy().
-> 2. Deprecate strlcpy() in favor of strscpy().
-> 3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
+> fs/btrfs/super.o: In function `btrfs_mount_root':
+> fs/btrfs/super.c:1557: undefined reference to `crc32c_impl'
+> fs/btrfs/super.o: In function `btrfs_print_mod_info':
+> fs/btrfs/super.c:2348: undefined reference to `crc32c_impl'
+> fs/btrfs/extent-tree.o: In function `btrfs_crc32c':
+> fs/btrfs/ctree.h:2609: undefined reference to `crc32c'
+> fs/btrfs/ctree.h:2609: undefined reference to `crc32c'
+> fs/btrfs/ctree.h:2609: undefined reference to `crc32c'
+> fs/btrfs/dir-item.o: In function `btrfs_name_hash':
+> fs/btrfs/ctree.h:2619: undefined reference to `crc32c'
+> fs/btrfs/ctree.h:2619: undefined reference to `crc32c'
 > 
-> Updated strncpy() section in Documentation/process/deprecated.rst
-> to cover strscpy_pad() case.
-
-Please slow down your patch submission rate for
-this instance and respond appropriately to the
-comments you've been given.
-
-This stuff is not critical bug fixing.
-
-The subject could be something like:
-
-Subject: [PATCH v#] Documentation/checkpatch: Prefer strscpy over strcpy/strlcpy
-
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -605,6 +605,20 @@ foreach my $entry (keys %deprecated_apis) {
->  }
->  $deprecated_apis_search = "(?:${deprecated_apis_search})";
+> and more.
 > 
-> +our %deprecated_string_apis = (
-> +        "strcpy"				=> "strscpy",
-> +        "strlcpy"				=> "strscpy",
-> +        "strncpy"				=> "strscpy, strscpy_pad or for non-NUL-terminated strings, strncpy() can still be used, but destinations should be marked with the __nonstring",
+> Note that the comment in the offending commit "The module dependency on
+> crc32c is preserved via MODULE_SOFTDEP("pre: crc32c"), which was previously
+> provided by LIBCRC32C config option doing the same." is wrong, since it
+> permits CONFIG_BTRFS_FS=y in combination with CONFIG_CRYPTO_CRC32C=m.
+> 
 
-'the' is not necessary.
+Meh, that should have been CONFIG_LIBCRC32C=m. Sorry for the confusion.
 
-There could likely also be a strscat created for
-strcat, strlcat and strncat.
+Anyway, I'll select CONFIG_LIBCRC32C=y in conjunction with CONFIG_BTRFS_FS=y
+in my own build/boot tests going forward. That won't fix the problem, but
+it will avoid loss of test coverage.
 
-btw:
+Guenter
 
-There were several defects in the kernel for misuses
-of strlcpy.
-
-Did you or anyone else have an opinion on stracpy
-to avoid duplicating the first argument in a
-sizeof()?
-
-	strlcpy(foo, bar, sizeof(foo))
-to
-	stracpy(foo, bar)
-
-where foo must be char array compatible ?
-
-https://lore.kernel.org/lkml/d1524130f91d7cfd61bc736623409693d2895f57.camel@perches.com/
-
-
-
+> Cc: David Sterba <dsterba@suse.com>
+> Fixes: d5178578bcd4 ("btrfs: directly call into crypto framework for checksumming")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  fs/btrfs/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/btrfs/Kconfig b/fs/btrfs/Kconfig
+> index 212b4a854f2c..4c80c70597f9 100644
+> --- a/fs/btrfs/Kconfig
+> +++ b/fs/btrfs/Kconfig
+> @@ -2,6 +2,7 @@
+>  
+>  config BTRFS_FS
+>  	tristate "Btrfs filesystem support"
+> +	select LIBCRC32C
+>  	select CRYPTO
+>  	select CRYPTO_CRC32C
+>  	select ZLIB_INFLATE
+> -- 
+> 2.7.4
+> 
