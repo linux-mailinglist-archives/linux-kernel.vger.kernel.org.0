@@ -2,136 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FAEE638DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B65D638DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 17:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbfGIPs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 11:48:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfGIPs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 11:48:28 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3E7721743;
-        Tue,  9 Jul 2019 15:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562687306;
-        bh=8uRt2LckP8V6eOMg2L1MMuumGINZ1eU0bTBj8g3A81c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KON4ngr4Z1oJj/l8kSJhRwNeUk2R1NwwJID4TkmcPIl+MyUHNX7S9wJWmLi5kcXKR
-         9yQxDgx12Pr9RsOFxewTO1k23CslxM8Urly5NjQV84pjT6TLgiu+KpOv98L6F8TVW0
-         OXrssDvfqBv5JToN0eDMoLBPFu4Trx+79enV2b4E=
-Received: by mail-qt1-f169.google.com with SMTP id h18so14673216qtm.9;
-        Tue, 09 Jul 2019 08:48:26 -0700 (PDT)
-X-Gm-Message-State: APjAAAUBtqYLDPGN0x+RA9MmxX6sGsFbECumxVvTNbQEZvJTMgaDU/n7
-        spKsZz3u9SM/9FbyWgBKX43YQ61fZd4CvDhPeA==
-X-Google-Smtp-Source: APXvYqwUwZzNp9+krU8sgcmMHMgX3VqOxwtH/223QreLrdzSam3oenUJ5tLIk/dBBxOlEo8N5HAE7gFB0xXhMGeAItk=
-X-Received: by 2002:ac8:3908:: with SMTP id s8mr19233318qtb.224.1562687305930;
- Tue, 09 Jul 2019 08:48:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190605141253.38554-1-ghung.quanta@gmail.com>
- <20190605141253.38554-2-ghung.quanta@gmail.com> <20190709014058.GA30269@bogus>
- <0c90f9376c0e425c9a226379f7e5bfad@quantatw.com>
-In-Reply-To: <0c90f9376c0e425c9a226379f7e5bfad@quantatw.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 9 Jul 2019 09:48:14 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKf+Z9XJJvqcOw-0L-BLCt_Yv-qv-eu+zhoNFnk8rH8Og@mail.gmail.com>
-Message-ID: <CAL_JsqKf+Z9XJJvqcOw-0L-BLCt_Yv-qv-eu+zhoNFnk8rH8Og@mail.gmail.com>
-Subject: Re: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC documentation
-To:     =?UTF-8?B?R2VvcmdlIEh1bmcgKOa0quW/oOaVrCk=?= 
-        <George.Hung@quantatw.com>
-Cc:     George Hung <ghung.quanta@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "wak@google.com" <wak@google.com>,
-        "benjaminfair@google.com" <benjaminfair@google.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "tomer.maimon@nuvoton.com" <tomer.maimon@nuvoton.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "Avi.Fishman@nuvoton.com" <Avi.Fishman@nuvoton.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Patrick Venture <venture@google.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
+        id S1726565AbfGIPst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 11:48:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44886 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfGIPst (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 11:48:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+SqRiX7dUQs2pjbdLNxkSvo5c+sYbuHqLzt+2iHVymw=; b=X0dXNaHO5xVa5gXR+XNOgRO+/
+        mm0iPB3e+bjQdJuAUv0hWybDRpjMBrpAwKK492/V4sMCeOu4fMQruNKRn65uSQS+jkmZJsQu//4kd
+        i3tDBLfEPUeCQQHvkQENkF+IXjj8CvQjw2clBSB0MXYYg6KRRUIn2T6A2mn/kuu2tMio02tQ6VvS4
+        phihrF88G+0fgyUm6xhaiUhxYF09uPTymaEfVu1RmRhKOZo9Uus32yWg90QzDLWvfO6z7i82NTzOq
+        9oBQR4dcQF5B5mb4sIWpmHkbmGFFSY+0kEYD3S+d0QmsSDmV9+MYdBUe9ZV4hszI2toHglLy8LcwN
+        OqZt+NyEw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hksM6-00031j-Ut; Tue, 09 Jul 2019 15:48:34 +0000
+Date:   Tue, 9 Jul 2019 08:48:34 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, kys@microsoft.com
+Cc:     Sasha Levin <sashal@kernel.org>
+Subject: exfat filesystem
+Message-ID: <20190709154834.GJ32320@bombadil.infradead.org>
+References: <21080.1562632662@turing-police>
+ <20190709045020.GB23646@mit.edu>
+ <20190709112136.GI32320@bombadil.infradead.org>
+ <20190709153039.GA3200@mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709153039.GA3200@mit.edu>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 3:50 AM George Hung (=E6=B4=AA=E5=BF=A0=E6=95=AC)
-<George.Hung@quantatw.com> wrote:
->
-> Hi Rob,
->
->
-> > -----Original Message-----
-> > From: openbmc
-> > [mailto:openbmc-bounces+george.hung=3Dquantatw.com@lists.ozlabs.org] On
-> > Behalf Of Rob Herring
-> > Sent: Tuesday, July 09, 2019 9:41 AM
-> > To: George Hung
-> > Cc: Mark Rutland; Linus Walleij; Tali Perry; paulmck@linux.ibm.com;
-> > wak@google.com; benjaminfair@google.com; openbmc@lists.ozlabs.org;
-> > tomer.maimon@nuvoton.com; devicetree@vger.kernel.org; Borislav Petkov;
-> > Avi.Fishman@nuvoton.com; Jonathan Cameron; Mauro Carvalho Chehab;
-> > linux-edac; Patrick Venture; Nicolas Ferre; linux-kernel; James Morse; =
-Greg
-> > Kroah-Hartman; davem@davemloft.net
-> > Subject: Re: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC
-> > documentation
-> >
-> > On Wed, Jun 05, 2019 at 10:12:53PM +0800, George Hung wrote:
-> > > Add device tree documentation for Nuvoton BMC ECC
-> > >
-> > > Signed-off-by: George Hung <ghung.quanta@gmail.com>
-> > > ---
-> > >  .../bindings/edac/npcm7xx-sdram-edac.txt        | 17
-> > +++++++++++++++++
-> > >  1 file changed, 17 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-> > > b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-> > > new file mode 100644
-> > > index 000000000000..dd4dac59a5bd
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-> > > @@ -0,0 +1,17 @@
-> > > +Nuvoton NPCM7xx SoC EDAC device driver
-> > > +
-> > > +The Nuvoton NPCM7xx SoC supports DDR4 memory with/without ECC and
-> > the
-> > > +driver uses the EDAC framework to implement the ECC detection and
-> > corrtection.
-> > > +
-> > > +Required properties:
-> > > +- compatible:      should be "nuvoton,npcm7xx-sdram-edac"
-> >
-> > Is this for the whole SDRAM controller or just ECC related registers?
-> > In the former case, the naming should just reflect the block name and n=
-ot a
-> > Linux term.
->
-> Sorry for confused naming, the address space is for the whole memory cont=
-roller registers indeed,
-> but the driver only uses the ECC related registers.
-> Should I change the name to "nuvoton,npcm7xx-edac" ?
+On Tue, Jul 09, 2019 at 11:30:39AM -0400, Theodore Ts'o wrote:
+> On Tue, Jul 09, 2019 at 04:21:36AM -0700, Matthew Wilcox wrote:
+> > How does
+> > https://www.zdnet.com/article/microsoft-open-sources-its-entire-patent-portfolio/
+> > change your personal opinion?
+> 
+> According to SFC's legal analysis, Microsoft joining the OIN doesn't
+> mean that the eXFAT patents are covered, unless *Microsoft*
+> contributes the code to the Linux usptream kernel.  That's because the
+> OIN is governed by the Linux System Definition, and until MS
+> contributes code which covered by the exFAT patents, it doesn't count.
+> 
+> For more details:
+> 
+> https://sfconservancy.org/blog/2018/oct/10/microsoft-oin-exfat/
+> 
+> (This is not legal advice, and I am not a lawyer.)
 
-No, you should drop the 'edac' part. The DT describes the h/w, not
-what one driver (currently) uses.
-
-Rob
+Interesting analysis.  It seems to me that the correct forms would be
+observed if someone suitably senior at Microsoft accepted the work from
+Valdis and submitted it with their sign-off.  KY, how about it?
