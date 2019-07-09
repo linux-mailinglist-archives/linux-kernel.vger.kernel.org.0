@@ -2,141 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FEA0636DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 274DB636E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfGINYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:24:46 -0400
-Received: from mail.sssup.it ([193.205.80.98]:38767 "EHLO mail.santannapisa.it"
+        id S1727035AbfGINZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:25:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfGINYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:24:45 -0400
-Received: from [10.30.3.195] (account l.abeni@santannapisa.it HELO luca64)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 140673049; Tue, 09 Jul 2019 15:24:41 +0200
-Date:   Tue, 9 Jul 2019 15:24:36 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [RFC PATCH 3/6] sched/dl: Try better placement even for
- deadline tasks that do not block
-Message-ID: <20190709152436.51825f98@luca64>
-In-Reply-To: <20190708135536.GK3402@hirez.programming.kicks-ass.net>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
-        <20190506044836.2914-4-luca.abeni@santannapisa.it>
-        <20190708135536.GK3402@hirez.programming.kicks-ass.net>
-Organization: Scuola Superiore S. Anna
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726047AbfGINZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 09:25:46 -0400
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8F73217F9;
+        Tue,  9 Jul 2019 13:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562678745;
+        bh=2Pu//gdRw8xl7g3w+j9PqFIaEyA7c1GFTHnPsYQLEfM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OzzxHCoo1uBNd3c9YxIPGssh+/Jx2PVbGQT9/Bh2m6tY/G6FckB4NNCB2m2Xd/uZ2
+         3lMUZhSIRiIkijEOtWoUPMP6/uIYS4AYfAsHWAiaX/sJ7a7qMp/Y9sCVUv+MsOK86P
+         wlPirOz+ColfHRQn5wqZjljqN3JMmdlfld92YBK0=
+Received: by mail-qt1-f176.google.com with SMTP id j19so21527974qtr.12;
+        Tue, 09 Jul 2019 06:25:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAW6N03eN+Jt5fOwrD5S9sZfLPIGV0aDALNZjC2tw+D8VIPqTy40
+        GfNbSz0rApvZvEzeyugZLLLT6Gl5BSTZrqkjvw==
+X-Google-Smtp-Source: APXvYqzNgeDDk6JGVfv4FyCVfvJ+ZYxm57dh5Q1YBNuhIpjWSbaApc03TqOi2O1VrurMm3HooVZD1GBjAucXOFEk5aY=
+X-Received: by 2002:a0c:b786:: with SMTP id l6mr19486021qve.148.1562678744997;
+ Tue, 09 Jul 2019 06:25:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1560155683-29584-1-git-send-email-talel@amazon.com>
+ <1560155683-29584-2-git-send-email-talel@amazon.com> <20190709022301.GA8734@bogus>
+ <f1fd393d-0b8c-16f1-9ac2-0589e9cb9ea7@amazon.com>
+In-Reply-To: <f1fd393d-0b8c-16f1-9ac2-0589e9cb9ea7@amazon.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 9 Jul 2019 07:25:33 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLNWAw2LtCvnsDkrUTmk-Vy1ncwR4XuCN7=_Sg8vbTr2w@mail.gmail.com>
+Message-ID: <CAL_JsqLNWAw2LtCvnsDkrUTmk-Vy1ncwR4XuCN7=_Sg8vbTr2w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: interrupt-controller: Amazon's
+ Annapurna Labs FIC
+To:     "Shenhar, Talel" <talel@amazon.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dwmw@amazon.co.uk,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        jonnyc@amazon.com, hhhawa@amazon.com, ronenk@amazon.com,
+        hanochu@amazon.com, barakw@amazon.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Tue, Jul 9, 2019 at 12:00 AM Shenhar, Talel <talel@amazon.com> wrote:
+>
+> Marc, should I publish those fixes as new patch that updates the
+> dt-bindings or new patchset to this list?
+>
+> On 7/9/2019 5:23 AM, Rob Herring wrote:
+> > On Mon, Jun 10, 2019 at 11:34:42AM +0300, Talel Shenhar wrote:
+> >> +- #interrupt-cells: must be 2.
+> >> +  First cell defines the index of the interrupt within the controller.
+> >> +  Second cell is used to specify the trigger type and must be one of the
+> >> +  following:
+> >> +    - bits[3:0] trigger type and level flags
+> >> +    1 = low-to-high edge triggered
+> >> +    4 = active high level-sensitive
+> > No need to define this here. Reference the standard definition.
+>
+> This device only support those two modes.
+>
+> This definition tries to capture the supported modes.
+>
+> Should I just state that those two modes are supported and then avoid
+> the actual bits and values?
 
-On Mon, 8 Jul 2019 15:55:36 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Yes.
 
-> On Mon, May 06, 2019 at 06:48:33AM +0200, Luca Abeni wrote:
-> > @@ -1223,8 +1250,17 @@ static void update_curr_dl(struct rq *rq)
-> >  			dl_se->dl_overrun = 1;
-> >  
-> >  		__dequeue_task_dl(rq, curr, 0);
-> > -		if (unlikely(dl_se->dl_boosted
-> > || !start_dl_timer(curr)))
-> > +		if (unlikely(dl_se->dl_boosted
-> > || !start_dl_timer(curr))) { enqueue_task_dl(rq, curr,
-> > ENQUEUE_REPLENISH); +#ifdef CONFIG_SMP
-> > +		} else if (dl_se->dl_adjust) {
-> > +			if (rq->migrating_task == NULL) {
-> > +				queue_balance_callback(rq,
-> > &per_cpu(dl_migrate_head, rq->cpu), migrate_dl_task);  
-> 
-> I'm not entirely sure about this one.
-> 
-> That is, we only do those callbacks from:
-> 
->   schedule_tail()
->   __schedule()
->   rt_mutex_setprio()
->   __sched_setscheduler()
-> 
-> and the above looks like it can happen outside of those.
-
-Sorry, I did not know the constraints or requirements for using
-queue_balance_callback()...
-
-I used it because I wanted to trigger a migration from
-update_curr_dl(), but invoking double_lock_balance() from this function
-obviously resulted in a warning. So, I probably misunderstood the
-purpose of the balance callback API, and I misused it.
-
-What would have been the "right way" to trigger a migration for a task
-when it is throttled?
-
-
-> 
-> The pattern in those sites is:
-> 
-> 	rq_lock();
-> 	... do crap that leads to queue_balance_callback()
-> 	rq_unlock()
-> 	if (rq->balance_callback) {
-> 		raw_spin_lock_irqsave(rq->lock, flags);
-> 		... do callbacks
-> 		raw_spin_unlock_irqrestore(rq->lock, flags);
-> 	}
-> 
-> So I suppose can catch abuse of this API by doing something like the
-> below; can you validate?
-
-Sorry; right now I cannot run tests on big.LITTLE machines... 
-Maybe Dietmar (added in cc), who is working on mainlining this patcset,
-can test?
-
-
-
-				Thanks,
-					Luca
-
-> 
-> ---
-> 
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index aaca0e743776..89e615f1eae6 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1134,6 +1134,14 @@ static inline void rq_pin_lock(struct rq *rq,
-> struct rq_flags *rf) rf->cookie = lockdep_pin_lock(&rq->lock);
->  
->  #ifdef CONFIG_SCHED_DEBUG
-> +#ifdef CONFIG_SMP
-> +	/*
-> +	 * There should not be pending callbacks at the start of
-> rq_lock();
-> +	 * all sites that handle them flush them at the end.
-> +	 */
-> +	WARN_ON_ONCE(rq->balance_callback);
-> +#endif
-> +
->  	rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
->  	rf->clock_update_flags = 0;
->  #endif
-
+Rob
