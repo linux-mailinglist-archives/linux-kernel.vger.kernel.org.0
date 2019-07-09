@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F89A63750
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA73E6375E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfGINxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:53:49 -0400
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:49006 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725947AbfGINxs (ORCPT
+        id S1727066AbfGIN7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:59:12 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:33439 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfGIN7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:53:48 -0400
-Received: from faui03f.informatik.uni-erlangen.de (faui03f.informatik.uni-erlangen.de [131.188.30.118])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 9B4BB241306;
-        Tue,  9 Jul 2019 15:53:46 +0200 (CEST)
-Received: by faui03f.informatik.uni-erlangen.de (Postfix, from userid 30501)
-        id 838F9341CCE; Tue,  9 Jul 2019 15:53:46 +0200 (CEST)
-Date:   Tue, 9 Jul 2019 15:53:46 +0200
-From:   Thomas Preisner <linux@tpreisner.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Thomas Preisner <linux@tpreisner.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: add simple oneshot function tracer
-Message-ID: <20190709135346.r4m4izzhgk55kniy@stud.informatik.uni-erlangen.de>
-References: <20190529104552.146fa97c@oasis.local.home>
- <20190612212935.4xq6dyua5d5vrrvj@stud.informatik.uni-erlangen.de>
- <20190617201627.647547c7@gandalf.local.home>
- <20190623120555.nka2357agpqovxla@stud.informatik.uni-erlangen.de>
- <20190626120412.662e8cf9@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626120412.662e8cf9@gandalf.local.home>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 9 Jul 2019 09:59:12 -0400
+X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Jul 2019 09:59:11 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 11FD618383;
+        Tue,  9 Jul 2019 15:54:07 +0200 (CEST)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id QvO7OHhFl5QD; Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 656A718485;
+        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5471F1A06F;
+        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4915E1A065;
+        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: from pc32929-1845.se.axis.com (pc32929-1845.se.axis.com [10.88.129.17])
+        by seth.se.axis.com (Postfix) with ESMTP id 3CF0C2262;
+        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+Received: by pc32929-1845.se.axis.com (Postfix, from userid 20456)
+        id 3950E40B30; Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
+From:   Lars Persson <lars.persson@axis.com>
+To:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org
+Cc:     jespern@axis.com, linux-kernel@vger.kernel.org,
+        Lars Persson <larper@axis.com>
+Subject: [PATCH] mmc: usdhi6rol0: Add maintainers
+Date:   Tue,  9 Jul 2019 15:53:51 +0200
+Message-Id: <20190709135351.25628-1-larper@axis.com>
+X-Mailer: git-send-email 2.11.0
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 12:04:12PM -0400, Steven Rostedt wrote:
-> On Sun, 23 Jun 2019 14:05:55 +0200
-> Thomas Preisner <linux@tpreisner.de> wrote:
-> > I've created this tracer with kernel tailoring in mind since the
-> > tailoring process of e.g. undertaker heavily benefits from a more
-> > precise set of input data.
-> > 
-> > A "oneshot" option for the function tracer would be a viable
-> > possibility. However, this may add a lot of overhead (performance wise)
-> > in comparison to my current approach? After all, the use case of my
-> > tracer would be some sort of kernel activity monitoring during "normal
-> > usage" in order to get a grasp of (hopefully) all required kernel
-> > functions.
-> 
-> Coming back from vacation and not having this threaded in my inbox,
-> I have to ask (to help cache this back into my head), what was the
-> "current approach" compared to the "oneshot" option, and why would it
-> have better performance?
+The usdhi6rol0 driver is exclusively used for the ARTPEC family of
+SoCs. Other SoCs with the same IP of Panasonic origin use the tmio_mmc
+driver. Therefore we assigner maintainer responsibility to us at Axis
+until the two drivers become unified.
 
-The current approach makes use of ftrace's profiling capabilities in
-conjunction with a hashtable and preallocated memory for its entries.
-When active, this oneshot-profiler will only perform lookups for ip and
-parent_ip and insert those when necessary. Compared to the "oneshot"
-option this allows to omit values that are not required for kernel
-profiling such as interrupt flags, etc. However, I am not sure how huge
-this may impact the performance.
+Change-Id: I38b6fd0addc1d93ae172332b67e6eb71c0871508
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Nonetheless, the profiling variant allows to remove duplicated entries
-(due to there being one hashset per CPU core) before outputting its
-gathered data. Additionally, it is independent of the ringbuffer which
-may overflow due to other tracers being active (However, I am not sure
-if or in which way different tracers are isolated from each other when
-using the ringbuffer, so this may as well be false).
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 677ef41cb012..a91d04e5c084 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1432,6 +1432,7 @@ F:	arch/arm/mach-artpec
+ F:	arch/arm/boot/dts/artpec6*
+ F:	drivers/clk/axis
+ F:	drivers/crypto/axis
++F:	drivers/mmc/host/usdhi6rol0.c
+ F:	drivers/pinctrl/pinctrl-artpec*
+ F:	Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
+ 
+-- 
+2.11.0
 
-> > 
-> > Also, there is no strong reason to add a new event type,
-> > this was just a means of reducing the collected data (which may as well
-> > be omitted since there is no real benefit).
-> 
-> +1
-> 
-> > 
-> > My "oneshot tracer" actually collects and outputs every parent in order
-> > to get a more thorough view on used kernel code. Therefore, I would
-> > suggest to keep this functionality and maybe make it configurable
-> > instead?
-> 
-> Configure which? (again, coming back from vacation, I need a refresher
-> on this ;-)
-
-In case you want to incorporate this oneshot functionality directly into
-the function tracer as a new option it may be useful to allow
-configuring the tracer's oneshot capabilities. This way, one could
-disable tracing of a function after its first occurrence or instead keep
-tracing enabled in order to get a better overview over where it was
-called from (-> recording the parent_ip is also interesting).
-
-Yours sincerely,
-Thomas
