@@ -2,75 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD5762E06
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF16C62E09
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfGICR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 22:17:56 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44333 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfGICRz (ORCPT
+        id S1726680AbfGICUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 22:20:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46662 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfGICUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 22:17:55 -0400
-Received: by mail-io1-f65.google.com with SMTP id s7so39781024iob.11;
-        Mon, 08 Jul 2019 19:17:55 -0700 (PDT)
+        Mon, 8 Jul 2019 22:20:24 -0400
+Received: by mail-io1-f67.google.com with SMTP id i10so39750820iol.13
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 19:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PqqLzTYgfQxqS7WeMJ8j0MU1nn2fiHKsb4BBFyiKEmI=;
+        b=OMGu7W8ASNA2F50nIS4M1xfIwcL/esB9I9lXSnfIXcIbD874tTTaEF1ABDM8SALR6I
+         n4S1WMnJCTe3/W6z9o8Lx7wq1YFF65hvl68HKz1nvhu5cygsDrkUVtXB+EksGde1w1mR
+         rwC7HnmzOfAJfnECJ7lsdg+9CFA3OV601tC5q9MNIwItgRxOX+WafU/xHe6rGzCdl9ds
+         FOHOQGhVTdyhq3RFBTvV1asJ7PQD+ajEoGch0X06+xtwe9svY1vXfyBC+1W3Qv7SB+EH
+         T+1fJs8HsgLu+yOZkjJJ26e7x3HqY+fNFKD6CCOSlqCOksT9F5CIYwRpiovXz0oPELzQ
+         YY1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YjoGM7Wxe563lt2QEMzedfEv/oSE8kILweoYwhow1Iw=;
-        b=cdYu33aCcEFvOlz9LtCEyc+0YfKwXyeAOHKB6EgmMcLHti1T+juraNUaUMFdLrQO0i
-         UqKYLSOmHLSazuKr3QYTQSilsWb+ySrBewj+N+8BBcfrOWbmowluKw3xGbN9I8/fEADL
-         Mhbc09P4qSJv5xUrO4etftB6n28IVpudDjrLrwR6q4j8Na3/PBJAc236Hcil7DS0YZtg
-         jMZHzn5zAKJRlD1nOUqhr//iIkB0+QSilRHJPW5BzcfUXfoRA3y84oBmCTFPl7x0IWz+
-         On7fm6hg2IhU1QLMqpvFoiZ8WyWldA7HwosmHr2G/iKL1r8paiaXOlVqlpMIWVv/Q2W5
-         uT3A==
-X-Gm-Message-State: APjAAAWgFpq2d+EImPq9s5YmqcUvfsnqF7XwPSkiBxCcQOWCuX9HPSDf
-        JRM6wivWCkbXPjRRIa4rkg==
-X-Google-Smtp-Source: APXvYqw2MSMSTPDKr0hezGEPUjDdJtsCKqWkhfbqCfu9I/mUn4AvK/Y9H6kSLF5ZreFy1Ml/afZiGg==
-X-Received: by 2002:a02:ac09:: with SMTP id a9mr11371164jao.48.1562638674579;
-        Mon, 08 Jul 2019 19:17:54 -0700 (PDT)
-Received: from localhost ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id e26sm16401377iod.10.2019.07.08.19.17.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 19:17:53 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 20:17:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     yibin.gong@nxp.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, broonie@kernel.org,
-        festevam@gmail.com, vkoul@kernel.org, dan.j.williams@intel.com,
-        u.kleine-koenig@pengutronix.de, catalin.marinas@arm.com,
-        l.stach@pengutronix.de, will.deacon@arm.com,
-        linux-spi@vger.kernel.org, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 08/15] spi: imx: add new i.mx6ul compatible name in
- binding doc
-Message-ID: <20190709021753.GA8533@bogus>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
- <20190610081753.11422-9-yibin.gong@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PqqLzTYgfQxqS7WeMJ8j0MU1nn2fiHKsb4BBFyiKEmI=;
+        b=I8J4eFeyzroTCW7uB7YZU5VImY80wA1idoUkmQcErNUurgE4vaDxcQKXZyf8sfKags
+         h84rzykS13RKXQDBiH9DpOlTFS/fWVW28nkYs9jl6OygtXd8kt0Sw83FFeIWkGUrZqNc
+         KEDe1ok1uM0dYR2SfgQCnkH00j/1RXJ6q+Vcz1QA4CKn9TvrJgBbpAPYm179UV/Oj4HO
+         q/7d8hiZkMuGRy8XPn8AswcAto2tHNSmb+7EA/vCxXnHPfvosbaaxWOoddAobMHlMBIC
+         8LjeNFhr2Ui2pwsxhnRYUxeVrSIQJfGCcW1bVsTsZxYgyBNKTuwVBG4GDTb9twoyAVJd
+         U/gg==
+X-Gm-Message-State: APjAAAUf1kyaXTMY6KLE5Xlv6h9fe+vjiQ+n5PzpTPYbDSQoJ5pAcEtx
+        UZvq5SyrDUaeVCNtINouMPcx5rFFEdKZQJ2Hmao=
+X-Google-Smtp-Source: APXvYqzwwSPcBygzgpPc++VFRInbOx3Vxz9b08adPYXTcT1Fz+zr8amDiOvv+RltV/YRKkW51A1K3UDPLktZFZDjEIU=
+X-Received: by 2002:a5d:8497:: with SMTP id t23mr2052187iom.298.1562638823991;
+ Mon, 08 Jul 2019 19:20:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610081753.11422-9-yibin.gong@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <239d1c8f15b8bedc161a234f9f1a22a07160dbdf.1557824379.git.christophe.leroy@c-s.fr>
+ <d6f628ffdeb9c7863da722a8f6ef2949e57bb360.1557824379.git.christophe.leroy@c-s.fr>
+ <87y318d2th.fsf@linux.ibm.com>
+In-Reply-To: <87y318d2th.fsf@linux.ibm.com>
+From:   "Oliver O'Halloran" <oohall@gmail.com>
+Date:   Tue, 9 Jul 2019 12:20:12 +1000
+Message-ID: <CAOSf1CG-oxpSDsAPw8xHV5367MrMn2Ty_yDpPY9TvA6wMrMZHA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] powerpc/64: reuse PPC32 static inline flush_dcache_range()
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Jun 2019 16:17:46 +0800, yibin.gong@nxp.com wrote:
-> From: Robin Gong <yibin.gong@nxp.com>
-> 
-> ERR009165 fixed from i.mx6ul, add its compatible name in binding
-> doc.
-> 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> ---
->  Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Tue, Jul 9, 2019 at 12:22 AM Aneesh Kumar K.V
+<aneesh.kumar@linux.ibm.com> wrote:
+>
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>
+> > *snip*
+> > +     if (IS_ENABLED(CONFIG_PPC64))
+> > +             isync();
+> >  }
+>
+>
+> Was checking with Michael about why we need that extra isync. Michael
+> pointed this came via
+>
+> https://github.com/mpe/linux-fullhistory/commit/faa5ee3743ff9b6df9f9a03600e34fdae596cfb2#diff-67c7ffa8e420c7d4206cae4a9e888e14
+>
+> for 970 which doesn't have coherent icache. So possibly isync there is
+> to flush the prefetch instructions? But even so we would need an icbi
+> there before that isync.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I don't think it's that, there's some magic in flush_icache_range() to
+handle dropping prefetched instructions on 970.
+
+> So overall wondering why we need that extra barriers there.
+
+I think the isync is needed there because the architecture only
+requires sync to provide ordering. A sync alone doesn't guarantee the
+dcbfs have actually completed so the isync is necessary to ensure the
+flushed cache lines are back in memory. That said, as far as I know
+all the IBM book3s chips from power4 onwards will wait for pending
+dcbfs when they hit a sync, but that might change in the future.
+
+If it's a problem we could add a cpu-feature section around the isync
+to no-op it in the common case. However, when I had a look with perf
+it always showed that the sync was the hotspot so I don't think it'll
+help much.
+
+Oliver
