@@ -2,104 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE542632A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 10:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8498632B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 10:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbfGIIH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 04:07:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfGIIH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 04:07:58 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 112E2216C4;
-        Tue,  9 Jul 2019 08:07:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562659676;
-        bh=DNUvEwIMLQXTZD5Y7EQdCgb2qw8MYQFBfgOVVb6NjT4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kmtOfnghaj1Mzr2LXNuXxUfNoz7LaSROB2zmH2/0rPSZJ+qpyVmBml/XTgtME+Be4
-         GdxemR2q0+/UmrpTxDujV99zKURn6bqU4KtxogUGYqiTZSWeQqUBo4eZ/lsTgEqeeA
-         xOFDCGIQhnPJ6T8PyjOShW6TYGHDLJIZtMOWS720=
-Date:   Tue, 9 Jul 2019 09:07:52 +0100
-From:   Will Deacon <will@kernel.org>
-To:     "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        "indou.takao@fujitsu.com" <indou.takao@fujitsu.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 0/2] arm64: Introduce boot parameter to disable TLB flush
- instruction within the same inner shareable domain
-Message-ID: <20190709080751.3nm2llg64g44hmwn@willie-the-truck>
-References: <20190617143255.10462-1-indou.takao@jp.fujitsu.com>
- <20190617170328.GJ30800@fuggles.cambridge.arm.com>
- <e8fe8faa-72ef-8185-1a9d-dc1bbe0ae15d@jp.fujitsu.com>
- <20190627102724.vif6zh6zfqktpmjx@willie-the-truck>
- <5999ed84-72d0-9d42-bf7d-b8d56eaa4d4a@jp.fujitsu.com>
+        id S1726034AbfGIILC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 04:11:02 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:48295 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfGIILC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 04:11:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id D33D9183C4;
+        Tue,  9 Jul 2019 10:10:58 +0200 (CEST)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id dCYuBJE3n5uX; Tue,  9 Jul 2019 10:10:57 +0200 (CEST)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id A3C36183A0;
+        Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EB8A1E080;
+        Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7304D1E05C;
+        Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id 66F562761;
+        Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 60FE980211; Tue,  9 Jul 2019 10:10:56 +0200 (CEST)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH] printk: Do not lose last line in kmsg dump
+Date:   Tue,  9 Jul 2019 10:10:42 +0200
+Message-Id: <20190709081042.31551-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5999ed84-72d0-9d42-bf7d-b8d56eaa4d4a@jp.fujitsu.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 02:45:43AM +0000, qi.fuli@fujitsu.com wrote:
-> We used FWQ [1] to do an experiment on 1 node of our HPC environment,
-> we expected it would be tens of microseconds of maximum OS jitter, but 
-> it was
-> hundreds of microseconds, which didn't meet our requirement. We tried to 
-> find
-> out the cause by using ftrace, but we cannot find any processes which would
-> cause noise and only knew the extension of processing time. Then we 
-> confirmed
-> the CPU instruction count through CPU PMU, we also didn't find any changes.
-> However, we found that with the increase of that the TLB flash was called,
-> the noise was also increasing. Here we understood that the cause of this 
-> issue
-> is the implementation of Linux's TLB flush for arm64, especially use of 
-> TLBI-is
-> instruction which is a broadcast to all processor core on the system. 
-> Therefore,
-> we made this patch set to fix this issue. After testing for several 
-> times, the
-> noise was reduced and our original goal was achieved, so we do think 
-> this patch
-> makes sense.
-> 
-> As I mentioned, the OS jitter is a vital issue for large-scale HPC 
-> environment.
-> We tried a lot of things to reduce the OS jitter. One of them is task 
-> separation
-> between the CPUs which are used for computing and the CPUs which are 
-> used for
-> maintenance. All of the daemon processes and I/O interrupts are bounden 
-> to the
-> maintenance CPUs. Further more, we used nohz_full to avoid the noise 
-> caused by
-> computing CPU interruption, but all of the CPUs were affected by TLBI-is
-> instruction, the task separation of CPUs didn't work. Therefore, we 
-> would like
-> to implement that TLB flush is done on minimal CPUs to reducing the OS 
-> jitter
-> by using this patch set.
+kmsg_dump_get_buffer() is supposed to select the youngest log messages
+which fit into the provided buffer.  When that function determines the
+correct start index, by looping and calling msg_print_text() with a NULL
+buffer, msg_print_text() calculates a length which would allow the
+youngest log messages to completely fill the provided buffer.
 
-So have you confirmed that this is due to TLBI traffic and not, for example,
-stores sitting in remote store buffers that get flushed by the IPI or
-something else like that? It feels like you're inferring things about the
-underlying behaviour, whereas you should be in a position to simulate this
-if nothing else.
+However, when doing the actual printing, an off-by-one error in
+msg_print_text() leads to that function allowing the provided buffer to
+only be filled to (size - 1).
 
-If it *is* because of TLBI, then where are they coming from? Is FWQ calling
-munmap/mprotect all the time? Why?
+So if the lengths of the selected youngest log messages happen to
+precisely fill up the provided buffer, the last log message is not
+included.
 
-Will
+For example, with the following two final prints:
+
+[    6.427502] AAAAAAAAAAAAA
+[    6.427769] BBBBBBBB12345
+
+A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
+patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
+ 00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
+ 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+ 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+After this patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 32 37 35 30 32  <0>[    6.427502
+ 00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
+ 00000020: 3c 30 3e 5b 20 20 20 20 36 2e 34 32 37 37 36 39  <0>[    6.427769
+ 00000030: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
+
+Note that this bug only affects the kmsg dump code.  msg_print_text() is
+also used from the syslog code and console_unlock() but this bug does
+trigger there since the buffers used there are never filled up
+completely (since they are only used to print individual lines, and
+their size is always LOG_LINE_MAX + PREFIX_MAX, and PREFIX_MAX has a
+value which is larger than the largest possible prefix).
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+I posted this patch two years ago and received no replies.  This problem is
+still present in mainline.  https://lore.kernel.org/patchwork/patch/781106/
+
+ kernel/printk/printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1888f6a3b694..7679d779d5cc 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1318,7 +1318,7 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog,
+ 		}
+ 
+ 		if (buf) {
+-			if (prefix_len + text_len + 1 >= size - len)
++			if (prefix_len + text_len + 1 > size - len)
+ 				break;
+ 
+ 			memcpy(buf + len, prefix, prefix_len);
+-- 
+2.20.0
+
