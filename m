@@ -2,120 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 365C762ED7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA89262EF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfGIDaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:30:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:42495 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfGIDaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:30:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jSWJ2P1hz9sBt;
-        Tue,  9 Jul 2019 13:30:20 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562643020;
-        bh=dI3cbrreY/pe91HvhaAdQmzhXmces8JK6j4ZY+4UmBs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lT61xPdwS+lf7ohs+0KdHaeBL3GGjAAEyjy84kwPI/mK38Ntuc2gds7/At5FQdVQc
-         +C4q8k2pH38h7ZMS4igmfZH0uN/0h923tR6tNvOl1Fb9v+fuSqRVdRjnKq+qlhBi67
-         xH5Z+MfPtnex/MQ0l9KQGx9XuaVFC/MT8uvTPCPPkqFvJ5e4+uhhV3TRXJpJyf9PTJ
-         Y8pbYnHZm7PaeIxJtjPJJJlmTI+ZVqg7ZRoGS+hNNRrLU7v5q3NC0+lf6NmwRz05ps
-         2xVbJepD2aIT/jNN1el2wxN49jYGLdZDsdzaZ4HZ3vTcjTjim1JEXtETf0Bmybqfhh
-         eEomFxjr2gLCg==
-Date:   Tue, 9 Jul 2019 13:30:19 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Zhang <markz@mellanox.com>,
-        Majd Dibbiny <majd@mellanox.com>,
-        asahiro Yamada <yamada.masahiro@socionext.com>
-Subject: linux-next: build failure after merge of the rdma tree
-Message-ID: <20190709133019.25a8cd27@canb.auug.org.au>
+        id S1727619AbfGIDb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:31:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51602 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727294AbfGIDbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:31:34 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 914E36710C36FFFF234A;
+        Tue,  9 Jul 2019 11:31:29 +0800 (CST)
+Received: from huawei.com (10.67.189.167) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 9 Jul 2019
+ 11:31:20 +0800
+From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+To:     <davem@davemloft.net>, <robh+dt@kernel.org>,
+        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+        <mark.rutland@arm.com>, <dingtianhong@huawei.com>,
+        <xiaojiangfeng@huawei.com>
+CC:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
+        <nixiaoming@huawei.com>, <jianping.liu@huawei.com>,
+        <xiekunxun@huawei.com>
+Subject: [PATCH v2 00/10] net: hisilicon: Add support for HI13X1 to hip04_eth
+Date:   Tue, 9 Jul 2019 11:31:01 +0800
+Message-ID: <1562643071-46811-1-git-send-email-xiaojiangfeng@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dHZ61SP4nfg2f27kLX5QSWg"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.167]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/dHZ61SP4nfg2f27kLX5QSWg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The main purpose of this patch series is to extend the
+hip04_eth driver to support HI13X1_GMAC.
 
-Hi all,
+The offset and bitmap of some registers of HI13X1_GMAC
+are different from hip04_eth common soc. In addition,
+the definition of send descriptor and parsing descriptor
+are different from hip04_eth common soc. So the macro
+of the register offset is redefined to adapt the HI13X1_GMAC.
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Clean up the sparse warning by the way.
 
-In file included from /home/sfr/next/next/include/rdma/rdma_counter.h:12,
-                 from <command-line>:
-/home/sfr/next/next/include/rdma/ib_verbs.h:2126:27: error: field 'port_cou=
-nter' has incomplete type
-  struct rdma_port_counter port_counter;
-                           ^~~~~~~~~~~~
+Change since v1:
+* Add a cover letter.
 
-Caused by commit
+Jiangfeng Xiao (10):
+  net: hisilicon: Add support for HI13X1 to hip04_eth
+  net: hisilicon: Cleanup for got restricted __be32
+  net: hisilicon: Cleanup for cast to restricted __be32
+  net: hisilicon: HI13X1_GMAX skip write LOCAL_PAGE_REG
+  net: hisilicon: HI13X1_GMAX need dreq reset at first
+  net: hisilicon: dt-bindings: Add an field of port-handle
+  net: hisilicon: Add group field to adapt HI13X1_GMAC
+  net: hisilicon: Offset buf address to adapt HI13X1_GMAC
+  net: hisilicon: Add an rx_desc to adapt HI13X1_GMAC
+  net: hisilicon: Add an tx_desc to adapt HI13X1_GMAC
 
-  413d3347503b ("RDMA/counter: Add set/clear per-port auto mode support")
+ .../bindings/net/hisilicon-hip04-net.txt           |   7 +-
+ drivers/net/ethernet/hisilicon/Kconfig             |  10 ++
+ drivers/net/ethernet/hisilicon/hip04_eth.c         | 142 ++++++++++++++++++---
+ 3 files changed, 136 insertions(+), 23 deletions(-)
 
-rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-from rdma_counter.h, but it is not defined yet :-(
+-- 
+1.8.5.6
 
-I have applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 9 Jul 2019 13:17:49 +1000
-Subject: [PATCH] RDMA: don't try to build rdma_counter.h for now
-
-rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-from rdma_counter.h, but it is not defined yet :-(
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/Kbuild | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/Kbuild b/include/Kbuild
-index 78434c59701f..8dab85cdf4f4 100644
---- a/include/Kbuild
-+++ b/include/Kbuild
-@@ -939,6 +939,7 @@ header-test-			+=3D rdma/ib.h
- header-test-			+=3D rdma/iw_portmap.h
- header-test-			+=3D rdma/opa_port_info.h
- header-test-			+=3D rdma/rdmavt_cq.h
-+header-test-			+=3D rdma/rdma_counter.h
- header-test-			+=3D rdma/restrack.h
- header-test-			+=3D rdma/signature.h
- header-test-			+=3D rdma/tid_rdma_defs.h
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/dHZ61SP4nfg2f27kLX5QSWg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kCksACgkQAVBC80lX
-0GyA6Qf+P1ofM482Lg/qG/3VmyWW9WbsLIZZyT7Y3fsxL8oyCCQDhfLficQ8RXkO
-K2DkUtJ9SmpyaDZgz0k8k69PSy1mcHrOUcWb97d7RVnS/+5U/mMvLf6BrHivFla2
-U3/zRz+aSYPmKbOCMkuIGcXt7EqxN9UXB28pR6oMx0ZWzH/wbTeen4aGjV2VG4hC
-OcOGL0zolz0s9W/gu48qP2rtnS0H1tT8jUwoOyq+rF29FMk5ibsKXx1QX1n/oe7z
-QPtDhJMu75ykJ+hON7wt1d/DA5vFcvBVFXUprTDEbrM5idAD8hVbDrBNqCUZ8RLM
-sOK/xo9RZC0xKcg0gdDJLFDbaIasUQ==
-=k7wb
------END PGP SIGNATURE-----
-
---Sig_/dHZ61SP4nfg2f27kLX5QSWg--
