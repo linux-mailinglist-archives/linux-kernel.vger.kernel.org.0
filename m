@@ -2,273 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B3163DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF5963E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 00:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfGIWs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 18:48:57 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40991 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfGIWs5 (ORCPT
+        id S1726811AbfGIWuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 18:50:14 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43711 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfGIWuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 18:48:57 -0400
-Received: by mail-io1-f68.google.com with SMTP id j5so504091ioj.8;
-        Tue, 09 Jul 2019 15:48:56 -0700 (PDT)
+        Tue, 9 Jul 2019 18:50:14 -0400
+Received: by mail-io1-f65.google.com with SMTP id k20so483659ios.10;
+        Tue, 09 Jul 2019 15:50:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eyGsWrRed7Jq2fWkYfn59iLgEVDakSTfvuCH22V1pT0=;
-        b=Yf6YEbG07pNKdUv25S9LVWe+AqZqc/E6EArIsHPEjwLkJV31wXpONBztVKeaUqGKas
-         82pR6AymX5IGmFUIihoZvrths2yn0Gado5sEJT8hrLgYJDoYvpsaioFGCYGYnh51xjfJ
-         BTwbKURKcJJs26lDUfdXfK+i/C8bbiPaZHWW+zKAsXhbha7nla6Cvx45ipdf5pqqogVJ
-         VXm+q26YGrnrfgD5ASwHVPCsln88zQC7omIZh+pt916UJ32gNqfoGBriL1X3xXhwj6qV
-         5SpY9YIs2YZdtSq+Px8aTWGji6+CNYaJwHLej9oxIWxw7AzFOmL1KtP4s+lRNa5Q2ipf
-         tVxA==
-X-Gm-Message-State: APjAAAXp+BHwsdn4C6MQ7A2FT8Xev/8XVOxYidcW76lozEswucSCCvdO
-        aW9hpfvEqhLQZT1L0jjOr2Fbin7NZg==
-X-Google-Smtp-Source: APXvYqwzP6rx57Vi77awxmcfPlql9muZaKdh7hCav0/eA+7kxPRhZTDjpr4e1FcFWE5jTSJM89JiQA==
-X-Received: by 2002:a02:bb08:: with SMTP id y8mr30746646jan.51.1562712536023;
-        Tue, 09 Jul 2019 15:48:56 -0700 (PDT)
+        bh=nvvoh+fbNkBLPpXy4Y6lZA9c7jtYP7QeOvjrEV4cBIw=;
+        b=E152u+zQeaNBnPpxaN3G5IWMXpMaQpMLd010lSDCikFET9slcst5Zoxa/lUtl6ccxh
+         pCEkqrRhpo6lxIQ2t7QS9oYJOilukZoKbVGiY1XoxEii4ojKe3XXo4+cE/1YM/vONEXk
+         WcZmw46W/E5aNdxj7INMJD44+keaTIvS/N9HN76TzIe/2kTzT130wKpj8cBHgQGEWbkn
+         lgR3oyfB+BpgqQl48gqzoVvM+xhqrYrffFRGJ9ttkaQCKu17Ye18ElrvQ4uBpNJRZLT3
+         x53tLU9jkKia5vBRM4blxKfuA7Z3EH2xG/YamXI5vndFkX681kAbKCY0hn8nKlOPyaqO
+         7dAA==
+X-Gm-Message-State: APjAAAVPphKBeq8WKNo9RwBx3rPAy3EWUqVGQb7fVk47V/nPEC/PgX0X
+        AJdunqHYy0GG84RO6ObSNQ==
+X-Google-Smtp-Source: APXvYqyIRybL0nbRMpxsdXhfMWV2kUc5p622WEvGhc+cnLHFcA7qWZGwS/KW4h4GpNKPh1jLWlazuQ==
+X-Received: by 2002:a05:6602:144:: with SMTP id v4mr27703160iot.202.1562712612914;
+        Tue, 09 Jul 2019 15:50:12 -0700 (PDT)
 Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id j5sm81947iom.69.2019.07.09.15.48.54
+        by smtp.gmail.com with ESMTPSA id i4sm292005iog.31.2019.07.09.15.50.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 15:48:55 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 16:48:53 -0600
+        Tue, 09 Jul 2019 15:50:12 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 16:50:11 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     netdev@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH v4 net-next 05/11] dt-bindings: net: ti: add new cpsw
- switch driver bindings
-Message-ID: <20190709224853.GA2365@bogus>
-References: <20190621181314.20778-1-grygorii.strashko@ti.com>
- <20190621181314.20778-6-grygorii.strashko@ti.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: rockchip: document VOP
+ gamma LUT address
+Message-ID: <20190709225011.GA11245@bogus>
+References: <20190621211346.1324-1-ezequiel@collabora.com>
+ <20190621211346.1324-2-ezequiel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190621181314.20778-6-grygorii.strashko@ti.com>
+In-Reply-To: <20190621211346.1324-2-ezequiel@collabora.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 09:13:08PM +0300, Grygorii Strashko wrote:
-> Add bindings for the new TI CPSW switch driver. Comparing to the legacy
-> bindings (net/cpsw.txt):
-> - ports definition follows DSA bindings (net/dsa/dsa.txt) and ports can be
-> marked as "disabled" if not physically wired.
-> - ports definition follows DSA bindings (net/dsa/dsa.txt) and ports can be
-> marked as "disabled" if not physically wired.
-> - all deprecated properties dropped;
-> - all legacy propertiies dropped which represents constant HW cpapbilities
-> (cpdma_channels, ale_entries, bd_ram_size, mac_control, slaves,
-> active_slave)
-> - cpts properties grouped in "cpts" sub-node
+On Fri, 21 Jun 2019 18:13:44 -0300, Ezequiel Garcia wrote:
+> Add the register specifier description for an
+> optional gamma LUT address.
 > 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 > ---
->  .../bindings/net/ti,cpsw-switch.txt           | 147 ++++++++++++++++++
->  1 file changed, 147 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,cpsw-switch.txt
+> Changes from v1:
+> * Drop reg-names, suggested by Doug.
+> ---
+>  .../devicetree/bindings/display/rockchip/rockchip-vop.txt   | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/ti,cpsw-switch.txt b/Documentation/devicetree/bindings/net/ti,cpsw-switch.txt
-> new file mode 100644
-> index 000000000000..787219cddccd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/ti,cpsw-switch.txt
-> @@ -0,0 +1,147 @@
-> +TI SoC Ethernet Switch Controller Device Tree Bindings (new)
-> +------------------------------------------------------
-> +
-> +The 3-port switch gigabit ethernet subsystem provides ethernet packet
-> +communication and can be configured as an ethernet switch. It provides the
-> +gigabit media independent interface (GMII),reduced gigabit media
-> +independent interface (RGMII), reduced media independent interface (RMII),
-> +the management data input output (MDIO) for physical layer device (PHY)
-> +management.
-> +
-> +Required properties:
-> +- compatible : be one of the below:
-> +	  "ti,cpsw-switch" for backward compatible
-> +	  "ti,am335x-cpsw-switch" for AM335x controllers
-> +	  "ti,am4372-cpsw-switch" for AM437x controllers
-> +	  "ti,dra7-cpsw-switch" for DRA7x controllers
-> +- reg : physical base address and size of the CPSW module IO range
-> +- ranges : shall contain the CPSW module IO range available for child devices
-> +- clocks : should contain the CPSW functional clock
-> +- clock-names : should be "fck"
-> +	See bindings/clock/clock-bindings.txt
-> +- interrupts : should contain CPSW RX, TX, MISC, RX_THRESH interrupts
-> +- interrupt-names : should contain "rx_thresh", "rx", "tx", "misc"
 
-What's the defined order because it's not consistent here.
-
-> +	See bindings/interrupt-controller/interrupts.txt
-> +
-> +Optional properties:
-> +- syscon : phandle to the system control device node which provides access to
-> +	efuse IO range with MAC addresses
-> +
-> +Required Sub-nodes:
-> +- ports	: contains CPSW external ports descriptions
-
-Use ethernet-ports to avoid 'ports' from the graph binding.
-
-> +	Required properties:
-> +	- #address-cells : Must be 1
-> +	- #size-cells : Must be 0
-> +	- reg : CPSW port number. Should be 1 or 2
-> +	- phys : phandle on phy-gmii-sel PHY (see phy/ti-phy-gmii-sel.txt)
-> +	- phy-mode : operation mode of the PHY interface [1]
-> +	- phy-handle : phandle to a PHY on an MDIO bus [1]
-> +
-> +	Optional properties:
-> +	- ti,label : Describes the label associated with this port
-
-What's wrong with standard 'label' property.
-
-> +	- ti,dual_emac_pvid : Specifies default PORT VID to be used to segregate
-
-s/_/-/
-
-> +		ports. Default value - CPSW port number.
-> +	- mac-address : array of 6 bytes, specifies the MAC address. Always
-> +		accounted first if present [1]
-
-No need to re-define this here. 
-
-> +	- local-mac-address : See [1]
-> +
-> +- mdio : CPSW MDIO bus block description
-> +	- bus_freq : MDIO Bus frequency
-> +	See bindings/net/mdio.txt and davinci-mdio.txt
-
-Standard properties clock-frequency or bus-frequency would have been 
-better...
-
-> +
-> +- cpts : The Common Platform Time Sync (CPTS) module description
-> +	- clocks : should contain the CPTS reference clock
-> +	- clock-names : should be "cpts"
-> +	See bindings/clock/clock-bindings.txt
-> +
-> +	Optional properties - all ports:
-> +	- cpts_clock_mult : Numerator to convert input clock ticks into ns
-> +	- cpts_clock_shift : Denominator to convert input clock ticks into ns
-> +			  Mult and shift will be calculated basing on CPTS
-> +			  rftclk frequency if both cpts_clock_shift and
-> +			  cpts_clock_mult properties are not provided.
-
-Should have 'ti' prefix and use '-' rather than '_'. However, these are 
-already defined somewhere else, right? I can't tell that from reading 
-this.
-
-> +
-> +[1] See Documentation/devicetree/bindings/net/ethernet.txt
-> +
-> +Examples - SOC:
-
-Please don't split example into SoC and board. Just show the flat 
-example.
-
-> +mac_sw: ethernet_switch@0 {
-
-switch@0
-
-> +	compatible = "ti,dra7-cpsw-switch","ti,cpsw-switch";
-> +	reg = <0x0 0x4000>;
-> +	ranges = <0 0 0x4000>;
-> +	clocks = <&gmac_main_clk>;
-> +	clock-names = "fck";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	syscon = <&scm_conf>;
-> +	status = "disabled";
-> +
-> +	interrupts = <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>;
-> +	interrupt-names = "rx_thresh", "rx", "tx", "misc"
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpsw_port1: port@1 {
-> +			reg = <1>;
-> +			ti,label = "port1";
-
-Not really any better than the node name. Do you really even need this 
-property?
-
-> +			/* Filled in by U-Boot */
-> +			mac-address = [ 00 00 00 00 00 00 ];
-> +			phys = <&phy_gmii_sel 1>;
-> +		};
-> +
-> +		cpsw_port2: port@2 {
-> +			reg = <2>;
-> +			ti,label = "port2";
-> +			/* Filled in by U-Boot */
-> +			mac-address = [ 00 00 00 00 00 00 ];
-> +			phys = <&phy_gmii_sel 2>;
-> +		};
-> +	};
-> +
-> +	davinci_mdio_sw: mdio@1000 {
-> +		compatible = "ti,cpsw-mdio","ti,davinci_mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		ti,hwmods = "davinci_mdio";
-> +		bus_freq = <1000000>;
-> +		reg = <0x1000 0x100>;
-> +	};
-> +
-> +	cpts {
-> +		clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
-> +		clock-names = "cpts";
-> +	};
-> +};
-> +
-> +Examples - platform/board:
-> +
-> +&mac_sw {
-> +	pinctrl-names = "default", "sleep";
-> +	status = "okay";
-> +};
-> +
-> +&cpsw_port1 {
-> +	phy-handle = <&ethphy0_sw>;
-> +	phy-mode = "rgmii";
-> +	ti,dual_emac_pvid = <1>;
-> +};
-> +
-> +&cpsw_port2 {
-> +	phy-handle = <&ethphy1_sw>;
-> +	phy-mode = "rgmii";
-> +	ti,dual_emac_pvid = <2>;
-> +};
-> +
-> +&davinci_mdio_sw {
-> +	ethphy0_sw: ethernet-phy@0 {
-> +		reg = <0>;
-> +	};
-> +
-> +	ethphy1_sw: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +};
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
