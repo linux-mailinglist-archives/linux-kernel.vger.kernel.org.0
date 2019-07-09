@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D161A63A8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E73063A87
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfGISGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:06:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
+        id S1727669AbfGISF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbfGISFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:05:08 -0400
-Subject: Re: [GIT PULL] bulk GPIO changes for v5.3
+        id S1727377AbfGISFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:05:10 -0400
+Subject: Re: [GIT PULL] regulator updates for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562695508;
-        bh=qvM0afr/s4GLXs/4HLboaJ/wWsE7WBUL5bD+8PFYeGw=;
+        s=default; t=1562695509;
+        bh=ghjBSTXZMw4bhBUM5vo1tj6zKilMYLAktNjcCapsocc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=dec5kEyX6Ki7K/q/lmxi7PM48Ai5f5x89m6qoeptCBP78naaJ/1SoK1AuBQhRu8Sj
-         GoBEW/DlgSqLeXgdnXYcrD+I1WMEPsNs4CxXZ9n9087hc+A6E1EG1t3/CBJLC+44xw
-         RCgnqHD5BXMQMkW3aiHJrOrXMU4sIF+glMOpamTU=
+        b=uqU4fGGoos3fC4dMzaI1AkxLjN41TAWegdGgAFqmAgPt8V9oHcj7kO/ISHQ61/Ge3
+         X4/kmCjnc8laVhCCDMPtIbucFcVuLNgcsTvmFdWLvT6yand8dFHEznJ8Wa/D0iGGkf
+         jTgHSxcVfzscUtZ6kptX6Wiuy70XltZEZ438sz8k=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdYAJNVj98VjpmhY+suKfjH+WA4KWOvoHNAQvD60hzStbQ@mail.gmail.com>
-References: <CACRpkdYAJNVj98VjpmhY+suKfjH+WA4KWOvoHNAQvD60hzStbQ@mail.gmail.com>
+In-Reply-To: <20190708124152.GA12731@sirena.co.uk>
+References: <20190708124152.GA12731@sirena.co.uk>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdYAJNVj98VjpmhY+suKfjH+WA4KWOvoHNAQvD60hzStbQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.3-1
-X-PR-Tracked-Commit-Id: 9b3b623804a67d2274ee372c1587926ab0275833
+X-PR-Tracked-Message-Id: <20190708124152.GA12731@sirena.co.uk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+ tags/regulator-v5.3
+X-PR-Tracked-Commit-Id: 0ed4513c9a32a479b4dc41685be68edf1e99c139
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2ec98f567888501df0140c858af5f5ea10216a6f
-Message-Id: <156269550857.14383.8389829429625869463.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Jul 2019 18:05:08 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
+X-PR-Merge-Commit-Id: 98537ee92fb1b17a7f36dcbc8d2e4087af300da6
+Message-Id: <156269550972.14383.4746859513517354703.pr-tracker-bot@kernel.org>
+Date:   Tue, 09 Jul 2019 18:05:09 +0000
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 8 Jul 2019 09:26:55 +0200:
+The pull request you sent on Mon, 8 Jul 2019 13:41:52 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.3-1
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v5.3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2ec98f567888501df0140c858af5f5ea10216a6f
+https://git.kernel.org/torvalds/c/98537ee92fb1b17a7f36dcbc8d2e4087af300da6
 
 Thank you!
 
