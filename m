@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 030A762EA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A8E62E9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfGIDPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:15:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60886 "EHLO mail.kernel.org"
+        id S1727563AbfGIDPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:15:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727463AbfGIDPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:15:04 -0400
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.3
+        id S1726569AbfGIDPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:15:07 -0400
+Subject: Re: [GIT PULL] Audit patches for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562642103;
-        bh=qAIXHIQXCwN4ZY9FkQ6TQ4y9mrlyzDm/W9EdCYOL7cc=;
+        s=default; t=1562642106;
+        bh=kUCUIuuvcBdKnEGzrNhNOlf6e4V0XnVxsJjaK1hFxbI=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=PP/R6lKRJcJNwHSUvQRE5AIzAKuEJpH/97s45voVnql/I2NM9VBslcsttUE7/Y0k4
-         RsbxT+tSeSUd8i5W2aJl6UCej+Q8Yzb2iFsipT/q10l/NiD22aeI8qoOSYHGZ0McHs
-         ANfFs8v8fV5wswTfZBT7r4tLVVni558TSjn2WNH0=
+        b=uvQkHgu3l/Ol/y/obZbi6XnmVTkkVtO+9DM6Hi8ezGRBl+53MNJNk3IuS51XGyzeH
+         NQ3tx1rM+wrnBe6g/7lZLHx/Vue3K+lY0FxZ0MKS0OzBdFqySo59H2Xn5IgsXPQekw
+         iCi/u7AxaPPCFxFXtglXgmXzEd0PvaYp9pD48zpk=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <2595b4f6ce49cc3d413c75f86a63ad9d26f0f1fd.camel@linux.intel.com>
-References: <2595b4f6ce49cc3d413c75f86a63ad9d26f0f1fd.camel@linux.intel.com>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2595b4f6ce49cc3d413c75f86a63ad9d26f0f1fd.camel@linux.intel.com>
-X-PR-Tracked-Remote: git://git.infradead.org/users/jjs/linux-tpmdd.git
- tags/tpmdd-next-20190625
-X-PR-Tracked-Commit-Id: 166a2809d65b282272c474835ec22c882a39ca1b
+In-Reply-To: <CAHC9VhQ7md3PmUkzv8DNL-RTrq_4r2sRzGjwwaT0ZS-CPOxGBw@mail.gmail.com>
+References: <CAHC9VhQ7md3PmUkzv8DNL-RTrq_4r2sRzGjwwaT0ZS-CPOxGBw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhQ7md3PmUkzv8DNL-RTrq_4r2sRzGjwwaT0ZS-CPOxGBw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+ tags/audit-pr-20190702
+X-PR-Tracked-Commit-Id: 839d05e413856bd686a33b59294d4e8238169320
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 884922591e2b58fd7f1018701f957446d1ffac4d
-Message-Id: <156264210349.2709.1195958711800929519.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Jul 2019 03:15:03 +0000
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org,
-        mjg59@google.com
+X-PR-Merge-Commit-Id: 61fc5771f5e729a2ce235af42f69c8506725e84a
+Message-Id: <156264210680.2709.714753527819815674.pr-tracker-bot@kernel.org>
+Date:   Tue, 09 Jul 2019 03:15:06 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 27 Jun 2019 01:50:47 +0300:
+The pull request you sent on Tue, 2 Jul 2019 13:28:33 -0400:
 
-> git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190625
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git tags/audit-pr-20190702
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/884922591e2b58fd7f1018701f957446d1ffac4d
+https://git.kernel.org/torvalds/c/61fc5771f5e729a2ce235af42f69c8506725e84a
 
 Thank you!
 
