@@ -2,129 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8492563BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D3C63BE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 21:27:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfGIT1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 15:27:10 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42541 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfGIT1K (ORCPT
+        id S1728985AbfGIT1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 15:27:36 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44489 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbfGIT1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 15:27:10 -0400
-Received: by mail-io1-f67.google.com with SMTP id u19so45621978ior.9
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 12:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=T97Y7Xhc+iNinb7J95m1ClDnpftj8xDW9+inLk5U/ys=;
-        b=vA9eHWFFKZzn9UHXFg38aVO/i848nLoffBQU9YEjFhMbM7Nezm1bh2liAketQATXM9
-         oFVv5w54Ln9LfK3riZFBO+0ULgKfV2bp6BoFjTeufJdUOv7ch7ndYnhKP1QrX2FnW2GG
-         HlcJeWJjtqrZeznsnxFdH/NXF1ml7owpMNnkMK81W23wPNlFQ77YiS3//QEtdH6iQLjp
-         Yfc5aU2WKPjXfW04uYI2oZXmyq8VD5ekXN7e9x2p1PR539ix1WNM1DYNiPtrkvb9sQUo
-         p8BIFuiCa83cCe2g+XKHFU7/79D2XUs/Ducv1bITj8cS0OeAmKB/Akfm5ejqQEUBcmiL
-         VeQw==
+        Tue, 9 Jul 2019 15:27:35 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 44so18970907qtg.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 12:27:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=T97Y7Xhc+iNinb7J95m1ClDnpftj8xDW9+inLk5U/ys=;
-        b=OzMMg8w6mjnQH+HgvthmWVfkYf9jZQaHwJoR0z/gwGoUsULcux4Hc0ry8ul86ISvvK
-         Cwms9gt6dyxAhoGQZep/6nPcmTve1TI6ssyKOD/M/EgmTjtzvGii4w3yiapVf8bc61Uz
-         tj2edp2CFNCclRAU53DEvq0Z9xKRsxmNSJ4GZhpxtO7kh6D2olaaKvXd6YBwQR99giZt
-         LP2pPyzrdgCN4Xm0wFnvDrtpH0UwDSnRD/Cj4anpKKQpU6H2auOBuJgrYdep3LT4zeIU
-         aUCza0ajczb3OSVHGbzhRNv7acKP++thDqwH+coAZvYr8PlzSSsjWJ91Dmyen/chVyAR
-         PwTg==
-X-Gm-Message-State: APjAAAWabbRBbtiKVctfwUpRG7yBA6KhU1+AzFtbRn0oTOLSFiSXFatb
-        U4u7lcAFyFw8Bn51uaIHMx79/1369AxLBNQ1A49Avw==
-X-Google-Smtp-Source: APXvYqxV7yiLjk3v4LoPbcmdRk8c+zTn6LbS+P4RQ9YJ9CNx6wJD13fR3jqidFhcTLiOP8moLpZ9fZSElhLLLP/iTxA=
-X-Received: by 2002:a5e:a712:: with SMTP id b18mr26557129iod.220.1562700429190;
- Tue, 09 Jul 2019 12:27:09 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=ut1CYKEdUPaAKuaQJzRmmI/090yVlVYJHVfrpV3nW+k=;
+        b=ccwi3lXSkf7HxJgn5IA+weYBloyBR0EabWDPBEFq7iGrwPIHKaaPWh9X2J86rtGeV9
+         URTeXzeV42FoydBryZnoDlKAAFGp5RY2ZnCYh2u13H8WSgDfXoPq8oDJuRcF1R7hWzgl
+         DxlKVrjn6R9/eRrjJdRiGA+nqCGoZ4wERvsgXa/EZnj/icd4iRCyIjuWd6pVl5v0SbKu
+         X9WTBb+ZbaOdR60W9hM/oiflzyhdeHqdpB8pQWn2xgp0ASzXEHLSo6xhTDf5HABiu8rz
+         q/2iVXaC3DdVbUrnAWlHZCEG/Q1Xsd/4AjDu2X4OMPrMCxUHY6MCgKKe/X6577abKmGG
+         3dfQ==
+X-Gm-Message-State: APjAAAVHMf8Iav/ecc6mzKQ7N0fUG2vZdC76u2NYV5+PbjoWVXtsMuIx
+        5s5LdR/GzaGFUUr5H4rYvppBrTF5j/i4ENFulcA=
+X-Google-Smtp-Source: APXvYqzfGd7Ka9GO7cFWo++Fz82uuQceqJevKSYwYmmRgURi2D0/da8cUUiufL7EbHa7gDrNFtpAr2AC1iG5Sby45rE=
+X-Received: by 2002:aed:3e7c:: with SMTP id m57mr20206906qtf.204.1562700454881;
+ Tue, 09 Jul 2019 12:27:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190528154601.7597-1-brgl@bgdev.pl> <CAMuHMdV=eVJKVENkLUi1pj7MY8RGwUGZEt=MG4fdfvToZZquNQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV=eVJKVENkLUi1pj7MY8RGwUGZEt=MG4fdfvToZZquNQ@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 9 Jul 2019 21:26:58 +0200
-Message-ID: <CAMRc=Mf0--Yc+S_EEiFxSXbip7JX3y8Qz1fsxFPTUt_fR6dOTg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: em: use the managed version of gpiochip_add_data()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190703081119.209976-1-arnd@arndb.de> <20190703175845.GA68011@archlinux-epyc>
+In-Reply-To: <20190703175845.GA68011@archlinux-epyc>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 9 Jul 2019 21:27:17 +0200
+Message-ID: <CAK8P3a041S8KFTz4ZjmByDUTM9pDxsWi=hGPeamkFfn4B1dcxQ@mail.gmail.com>
+Subject: Re: [PATCH] waitqueue: fix clang -Wuninitialized warnings
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 9 lip 2019 o 20:49 Geert Uytterhoeven <geert@linux-m68k.org> napisa=C5=
-=82(a):
+On Wed, Jul 3, 2019 at 7:58 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+> On Wed, Jul 03, 2019 at 10:10:55AM +0200, Arnd Bergmann wrote:
+> > When CONFIG_LOCKDEP is set, every use of DECLARE_WAIT_QUEUE_HEAD_ONSTACK()
+> > produces an annoying warning from clang, which is particularly annoying
+> > for allmodconfig builds:
+> >
+> > fs/namei.c:1646:34: error: variable 'wq' is uninitialized when used within its own initialization [-Werror,-Wuninitialized]
+> >         DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+> >                                         ^~
+> > include/linux/wait.h:74:63: note: expanded from macro 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
+> >         struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
+> >                                ~~~~                                  ^~~~
+> > include/linux/wait.h:72:33: note: expanded from macro '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
+> >         ({ init_waitqueue_head(&name); name; })
+> >                                        ^~~~
+> >
+> > After playing with it for a while, I have found a way to rephrase the
+> > macro in a way that should work well with both gcc and clang and not
+> > produce this warning. The open-coded __WAIT_QUEUE_HEAD_INIT_ONSTACK
+> > is a little more verbose than the original version by Peter Zijlstra,
+> > but avoids the gcc-ism that suppresses warnings when assigning a
+> > variable to itself.
+> >
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >
-> Hi Bartosz,
->
-> On Tue, May 28, 2019 at 5:46 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Use the managed variant of gpiochip_add_data() and remove the call to
-> > gpiochip_remove().
-> >
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/gpio/gpio-em.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-> > index 40f8c38bec1c..299101d25fa8 100644
-> > --- a/drivers/gpio/gpio-em.c
-> > +++ b/drivers/gpio/gpio-em.c
-> > @@ -359,7 +359,7 @@ static int em_gio_probe(struct platform_device *pde=
-v)
-> >                 goto err1;
-> >         }
-> >
-> > -       ret =3D gpiochip_add_data(gpio_chip, p);
-> > +       ret =3D devm_gpiochip_add_data(&pdev->dev, gpio_chip, p);
-> >         if (ret) {
-> >                 dev_err(&pdev->dev, "failed to add GPIO controller\n");
-> >                 goto err1;
-> > @@ -376,8 +376,6 @@ static int em_gio_remove(struct platform_device *pd=
-ev)
-> >  {
-> >         struct em_gio_priv *p =3D platform_get_drvdata(pdev);
-> >
-> > -       gpiochip_remove(&p->gpio_chip);
-> > -
-> >         irq_domain_remove(p->irq_domain);
->
-> On a second thought, is it safe to call irq_domain_remove() before
-> gpiochip_remove() (which calls gpiochip_irqchip_remove())?
->
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Good call. I think the most elegant solution here would be to use
-devm_add_action() to keep the ordering right. I'll send a follow-up
-tomorrow morning.
+Who would be the right person to pick this patch up for mainline?
 
-Bart
+I guess it may have to wait until the end of the merge window now,
+but I'd still like this to be part of 4.3 and possibly backported to
+the stable kernels as we build those with clang as well.
 
-> >         return 0;
->
-> >  }
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+       Arnd
