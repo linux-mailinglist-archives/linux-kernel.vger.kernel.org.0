@@ -2,74 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3419A62EB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E52A62ED3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfGIDSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:18:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27127 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfGIDSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:18:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 20:18:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
-   d="scan'208";a="156048700"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jul 2019 20:18:37 -0700
-Message-ID: <5D2408D7.3000002@intel.com>
-Date:   Tue, 09 Jul 2019 11:24:07 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727006AbfGIDZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:25:28 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44660 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfGIDZ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:25:28 -0400
+Received: by mail-lf1-f68.google.com with SMTP id r15so12326692lfm.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 20:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F3rWTmIZ2TItJD9vaocdwFtzxzYX0cQ1R1FA0/bqwWg=;
+        b=FAQvo0GTz6RjfnQ70KNGhN3vKI7sj9c4duyQu/7bXaNXaeuHaVhHZSntRfoYxOA1Nl
+         MSHo1X7i1Ty/AAb8O0talfCEVK5lTu33jFHYfQpTBxa8Muk8ppfQ1J+GXpb8abDF/41c
+         OV0NwiPqxGUf8sgE+vzQzA+mjaR0V5jmed8tg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F3rWTmIZ2TItJD9vaocdwFtzxzYX0cQ1R1FA0/bqwWg=;
+        b=qGzpagZdwSsEjlSt0IBEtt1AhnLXTrMcA6hmi1mwJZK9nBNVqIbBftABY+hcIjuk1q
+         FM6uRmqAqYSkSonbuZ0L8ujuBZUY3Wr50X3cLsY7FnE4VBt4LpAPylBRbPeBWRdzDYWO
+         zSnCFdxMfJoS/08gM3lLCROEhaYxqvlE4PzV/+0uKt3u9eMHCKsJfmXmzgyVItYsZPRu
+         AjrLV7NVt73WgnxO45ocxzjjdtvWkYZjShNXWN07bX9z12Ja84aMMyy5TdjG4JVxSKlb
+         LrKMbRmx70Zge8xgnF/KoRVAaEjL+sJ298LcuwUnVxpaDKzoxDkzH4USmRRgNf+xxlbV
+         svVw==
+X-Gm-Message-State: APjAAAV1/YoGZIxz+HtnKD+wR1grHCqyzQejpohOo7kzuF/8Qxs44cZQ
+        1RZzeuLTANrCbcwyxYm/TZDgQ32DQZQ=
+X-Google-Smtp-Source: APXvYqz20v0Hy/iD8K0doyauwYr4kZwC5BxabQAOFUwp5rpVGNHolFNwRPHIyTFrbghTBQU+uP42Mw==
+X-Received: by 2002:ac2:4565:: with SMTP id k5mr10442750lfm.170.1562642725073;
+        Mon, 08 Jul 2019 20:25:25 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id t23sm3988599ljd.98.2019.07.08.20.25.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 20:25:24 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id v85so9393967lfa.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 20:25:23 -0700 (PDT)
+X-Received: by 2002:a19:641a:: with SMTP id y26mr9564597lfb.29.1562642723658;
+ Mon, 08 Jul 2019 20:25:23 -0700 (PDT)
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
-Subject: Re: [PATCH v7 12/12] KVM/VMX/vPMU: support to report GLOBAL_STATUS_LBRS_FROZEN
-References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-13-git-send-email-wei.w.wang@intel.com> <20190708150909.GP3402@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190708150909.GP3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <10976.1562256893@warthog.procyon.org.uk>
+In-Reply-To: <10976.1562256893@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 8 Jul 2019 20:25:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjEowdfG7v_4ttu3xhf9gqopj1+q1nGG86+mGfGDTEBBg@mail.gmail.com>
+Message-ID: <CAHk-=wjEowdfG7v_4ttu3xhf9gqopj1+q1nGG86+mGfGDTEBBg@mail.gmail.com>
+Subject: Re: keyrings pull requests for the next merge window
+To:     David Howells <dhowells@redhat.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 11:09 PM, Peter Zijlstra wrote:
-> On Mon, Jul 08, 2019 at 09:23:19AM +0800, Wei Wang wrote:
->> This patch enables the LBR related features in Arch v4 in advance,
->> though the current vPMU only has v2 support. Other arch v4 related
->> support will be enabled later in another series.
->>
->> Arch v4 supports streamlined Freeze_LBR_on_PMI. According to the SDM,
->> the LBR_FRZ bit is set to global status when debugctl.freeze_lbr_on_pmi
->> has been set and a PMI is generated. The CTR_FRZ bit is set when
->> debugctl.freeze_perfmon_on_pmi is set and a PMI is generated.
-> (that's still a misnomer; it is: freeze_perfmon_on_overflow)
+[ Adding a few mailing lists, since the thrust of my email is about
+more people being around and involved, and the pull requests
+themselves were indeed cc'd to the mailing lists too ]
 
-OK. (but that was directly copied from the sdm 18.2.4.1)
-
-
-> Why?
+On Thu, Jul 4, 2019 at 9:15 AM David Howells <dhowells@redhat.com> wrote:
 >
-> Who uses that v4 crud?
+> I have a bunch of keyrings patches to be pulled in during the merge window.  I
+> believe you want security patches to go directly to you rather than through
+> James now?
+>
+> I've divided these patches into four logical sets, though due to conflicting
+> changes the sets are in a sequence, built one upon another.
+>
+> How do you want them presenting?  Do you want a pull request for each set, one
+> for all of them or would you prefer they go through James's security tree?
 
-I saw the native perf driver has been updated to v4.
-After the vPMU gets updated to v4, the guest perf would use that.
+So I was traveling when this email came in, but in the meantime you
+sent the four pull requests and I have now pulled them all. You should
+have gotten the pr-tracker-bot notification already (or it will happen
+soon).
 
-If you prefer to hold on this patch until vPMU v4 support,
-we could do that as well.
+An initial very positive comment: the pull requests themselves with
+all the explanations were very good. That part of the process worked
+very well, I think.
 
+I felt like I got an explanation of what I pulled, and I think the
+merge commits themselves are the better for it, so that the
+explanation now remains in the git history, and other people too can
+see what got merged and why.
 
-> It's broken. It looses events between overflow
-> and PMI.
+HOWEVER.
 
-Do you mean it's a v4 hardware issue?
+There are parts I really didn't much like was when I look at all the
+individual commits themselves.
 
-Best,
-Wei
+Again, the commit messages there are good and that part all looks fine.
+
+BUT.
+
+The history itself looks questionable. The dates don't make sense, and
+the different branches were obviously all done together as a linear
+history, rebased, and worked on as one single branch, . Fine - it was
+then at least partitioned into sensible parts, and sometimes this is
+how it really ends up working, but I did get the feeling that this was
+all very artificial and more importantly I get the feeling that none
+of the commits had any real-life exposure.
+
+That lack of real-life exposure also shows in the almost complete lack
+of any reviews, any commentary from other people, and absolutely
+nobody else seems to have been involved. Not as an author, but not in
+any other capacity either. There were a couple of initial commits that
+had reviewed-by's, but apart from that there really was *no* sign of
+any outside involvement at all.
+
+I looked up a couple of the patches on patchwork too, and saw zero
+discussion. Maybe the ones I picked just happened to have none, but I
+really get the feeling that pretty much none of this had any external
+input what-so-ever.
+
+And that makes me unhappy.
+
+In other words: the pull requests, the explanations, everything looked
+very good and I enjoyed that part. I don't see any new warnings, and
+everything built fine at every stage. I have no real technical
+complaints from that angle.
+
+But I absolutely abhor how this seems to all have been developed in a
+complete and utter vacuum. That just fundamentally worries me.  I
+can't point to anything being bad, but the lack of any kind of work
+from anybody else just makes me antsy.
+
+Is there really nobody else working or caring about this at all?
+
+This is not new, and I do note that your afs work tends to have the
+same pattern (but honestly, when it comes to one particular odd
+filesystem or driver, it's not something I react to). It's just
+perhaps more noticeable to me now that I pull directly, and it's much
+more noticeable when it's a _subsystem_ rather than something like a
+end-point driver/filesystem. I think the pulls themselves worked, and
+I don't mind the direct pulling, but I *do* notice that I end up
+minding the fact that now with the direct pulls, there's even _less_
+of a "at least somebody else looked and cared".
+
+Put another way: I'd like other people to be involved. Either as
+reviewers, or as intermediate people, or _something_. The "David
+Howells lives in his own world and nobody else looks at it and then he
+sends it directly to Linus" model makes me somewhat unhappy.
+
+Again, I'd like to stress that the pull requests themselves were fine,
+and I have no complaints on that side and I have (at least as of yet)
+no reason to worry about the code itself. It's really the "lone
+developer sends directly to me" that stands out as not happening
+elsewhere that I'm worried about.
+
+Hmm?
+
+                   Linus
