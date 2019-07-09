@@ -2,105 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133F063AB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD0763AAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbfGISUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:20:38 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38088 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbfGISUS (ORCPT
+        id S1727014AbfGISUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:20:15 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.194]:30918 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726335AbfGISUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:20:18 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n11so22598849qtl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 11:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=O8sp7Ivz1alrz3xXygPalicyjdu3OPu+GkykS7h2DZg=;
-        b=XSW61kWTCXRdscVw0OH+r9e4vwdXvYbKjBz6k2VZ4GjxPw4990pNb4BAwrNmmRtsKa
-         WtJJtAVYm0yQyc0gT9qSB2/HJ82+H/MyS3XC9ctMBPbmW7oIgk6eANZnGVKs2HBNiQ31
-         /bHZn6IWmWrVDAl4L6vMC+WdnQz/McJp0xLy9cq1x0N7urntIF/8qUhPuZMeitTr6tYj
-         seq7y1K4rV+ZnPT/cE9I0rwd7rtanJ3jIDMOql2+Ikg4jcapC2ZEhDEL5dbgh2nC9Yd7
-         7VxNW+sDRKWTWxuTciOBY6N/SjEJM6T2DfzfKRi5ZSX4eCt/ImtICLCJ7wV7q6H4hJ/t
-         hxMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=O8sp7Ivz1alrz3xXygPalicyjdu3OPu+GkykS7h2DZg=;
-        b=hNtlWOSSIuFGuIiyp4y5XE6ikKM9SWqdFouMtHGy2AkwqtJoyvOBhjK1CoDDN5mSmp
-         lP000sPH1gxSrSBH/JR9GfecmGsmY6ljaCvF/b6NMhuhIpd04JDWQYKDghNVo0vCotKs
-         PxAcMdMnC+wVA+4TDeUIyB8UeysXebBlqxm3OABMaA6A/CVs3AMcHP2pjZxPR6AIwtBv
-         3Vvo3XN+RQTo9UrVV27hu7SjxXdJ+zCntI+HYE1UTyQK5V+4scAroRbie/S3g7KGIhJZ
-         N8EWVSbe/vkYMQ8Ktd35it9jPbujuCHp4bNCMXOaQYnO0QUnATJS5QO7wjwMm9+FIH3B
-         F2CQ==
-X-Gm-Message-State: APjAAAVj8075ULG1mqzVq2XDFMA6CwjPRU8a8Mp9XjGMQj8bz8YKyMkU
-        uZVMRT/iDEi+oZq9FOZGtljzGw==
-X-Google-Smtp-Source: APXvYqwK3sHb+R0eRvj6/WADS1T4iF+JrbGV2Q7udh84kzeXGKKiVV5f5NzGnIT7DBMyye2cxX8F5w==
-X-Received: by 2002:ac8:4758:: with SMTP id k24mr19729228qtp.20.1562696417894;
-        Tue, 09 Jul 2019 11:20:17 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id k123sm9113056qkf.13.2019.07.09.11.20.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 11:20:17 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        ebiederm@xmission.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v2 1/5] kexec: quiet down kexec reboot
-Date:   Tue,  9 Jul 2019 14:20:10 -0400
-Message-Id: <20190709182014.16052-2-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190709182014.16052-1-pasha.tatashin@soleen.com>
-References: <20190709182014.16052-1-pasha.tatashin@soleen.com>
+        Tue, 9 Jul 2019 14:20:15 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 3E14D4FC4
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2019 13:20:14 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id kuishIMGb2qH7kuishOVwN; Tue, 09 Jul 2019 13:20:14 -0500
+X-Authority-Reason: nr=8
+Received: from cablelink149-185.telefonia.intercable.net ([201.172.149.185]:54240 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hkuiq-000EUM-Of; Tue, 09 Jul 2019 13:20:13 -0500
+Date:   Tue, 9 Jul 2019 13:20:10 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc1
+Message-ID: <20190709182010.GA32200@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.149.185
+X-Source-L: No
+X-Exim-ID: 1hkuiq-000EUM-Of
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink149-185.telefonia.intercable.net (embeddedor) [201.172.149.185]:54240
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a regular kexec command sequence and output:
-=====
-$ kexec --reuse-cmdline -i --load Image
-$ kexec -e
-[  161.342002] kexec_core: Starting new kernel
+The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
 
-Welcome to Buildroot
-buildroot login:
-=====
+  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
 
-Even when "quiet" kernel parameter is specified, "kexec_core: Starting
-new kernel" is printed.
+are available in the Git repository at:
 
-This message has  KERN_EMERG level, but there is no emergency, it is a
-normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc1
 
-Machines that have slow console baud rate benefit from less output.
+for you to fetch changes up to d93512ef0f0efa17eded6b9edf8e88e8418f44bd:
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Simon Horman <horms@verge.net.au>
----
- kernel/kexec_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Makefile: Globally enable fall-through warning (2019-07-08 15:23:22 -0500)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index d5870723b8ad..2c5b72863b7b 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1169,7 +1169,7 @@ int kernel_kexec(void)
- 		 * CPU hotplug again; so re-enable it here.
- 		 */
- 		cpu_hotplug_enable();
--		pr_emerg("Starting new kernel\n");
-+		pr_notice("Starting new kernel\n");
- 		machine_shutdown();
- 	}
- 
--- 
-2.22.0
+----------------------------------------------------------------
+Wimplicit-fallthrough patches for 5.3-rc1
 
+Hi Linus,
+
+Please, pull the following patches that mark switch cases where we are
+expecting to fall through. These patches are part of the ongoing efforts
+to enable -Wimplicit-fallthrough. All of them have been baking in linux-next
+for a whole development cycle.
+
+Also, pull the Makefile patch that universally enables the
+-Wimplicit-fallthrough option.
+
+Thanks
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+----------------------------------------------------------------
+Gustavo A. R. Silva (6):
+      afs: fsclient: Mark expected switch fall-throughs
+      afs: yfsclient: Mark expected switch fall-throughs
+      can: mark expected switch fall-throughs
+      firewire: mark expected switch fall-throughs
+      platform/x86: acer-wmi: Mark expected switch fall-throughs
+      Makefile: Globally enable fall-through warning
+
+ Documentation/process/deprecated.rst          | 14 +++++++
+ Makefile                                      |  3 ++
+ drivers/firewire/core-device.c                |  2 +-
+ drivers/firewire/core-iso.c                   |  2 +-
+ drivers/firewire/core-topology.c              |  1 +
+ drivers/net/can/at91_can.c                    |  6 ++-
+ drivers/net/can/peak_canfd/peak_pciefd_main.c |  2 +-
+ drivers/net/can/spi/mcp251x.c                 |  3 +-
+ drivers/net/can/usb/peak_usb/pcan_usb.c       |  2 +-
+ drivers/platform/x86/acer-wmi.c               |  4 ++
+ fs/afs/fsclient.c                             | 51 ++++++++++++++++---------
+ fs/afs/yfsclient.c                            | 54 +++++++++++++++++----------
+ 12 files changed, 100 insertions(+), 44 deletions(-)
