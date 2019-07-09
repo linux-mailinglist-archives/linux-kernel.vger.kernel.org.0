@@ -2,235 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C83635CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FC4635E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 14:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfGIM1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 08:27:12 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:44858 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbfGIM1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 08:27:09 -0400
-Received: by mail-io1-f69.google.com with SMTP id s9so19628732iob.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 05:27:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=k6gpGJRx5KDVYEIoEkstzb1OJRWoZUjdawWJXyXiKv0=;
-        b=C/3gFH8QmM/JzTewEAq7ofP5E+Hw+xQpXxMFB4/ctCP4ZWw7F8Wb7agXQ3OYt/n/6a
-         d0XFKCLuD9IzE3foN69QDuI9EiFyO8Jyc3L2ogaQ+Hb6ZR6JwDb0Q2eQ2qy9LJZcYgiB
-         68X2/y06gvkwXSza1OJBhn8qC2xA0O+uSWJSP3OUcFjKTg/U570yPAOodCHnmtDN1Pbx
-         aOxBYeLbCQOuls3/zMOS3ETtD9E0zpTadDztYAdHtNI1DXU039unnuRusMSwtxOssHyL
-         eTjBi80InzzQyyoe6eBS1QGW6vFNeeFbISCX5kw0z0c72MbUbP4C6h/Z8dcb1IqC9700
-         brkQ==
-X-Gm-Message-State: APjAAAXk1gh6+lw60qvW/D28Yz995vlaBmts/10DXKXBRhQTFpA8tQBJ
-        K8c/2h/xk2xCxNVKjWVl4dHbV7l/HmS1v2NRVTEd51zb3MNY
-X-Google-Smtp-Source: APXvYqwkDvMd7+7j3ishzaNuwU5KWhtrA1TIgSFDlPt6TKBdgXwqr/hFApQEVK/USzLIzBUIZM5VPhMMqMzZzkAQBbrP3dsIg+zs
-MIME-Version: 1.0
-X-Received: by 2002:a02:ab99:: with SMTP id t25mr27286633jan.113.1562675229088;
- Tue, 09 Jul 2019 05:27:09 -0700 (PDT)
-Date:   Tue, 09 Jul 2019 05:27:09 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ede4ad058d3ead9e@google.com>
-Subject: KASAN: use-after-free Write in usb_anchor_resume_wakeups
-From:   syzbot <syzbot+6c355f8d5f11884fa38e@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1726218AbfGIMay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 08:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfGIMay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 08:30:54 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0073D214AF;
+        Tue,  9 Jul 2019 12:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562675453;
+        bh=BCctahsZCXIi3y2EElHt4wtbP9jSttNX4X4IVfwp7AI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ElWcx5thcaH0OKL05/0EQXZFk++2rdKvYBeTSr72PVp0JIxTRStMffQ9pqzLFiCxc
+         UVVOiyKMsXEibzIOiG0HdNySMPIzJUf9J/DgbtcrvM33CllOebVJSU0SQuUTj9D1Wt
+         BmSF2kIv67+6kLj+2q+mCp6zKE9orOgakyFeQHto=
+Date:   Tue, 9 Jul 2019 21:30:49 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
+ postcore_initcall
+Message-Id: <20190709213049.f84b4df6562250ac6ef0b51d@kernel.org>
+In-Reply-To: <20190703100205.0b58f3bf@gandalf.local.home>
+References: <20190526191828.466305460@goodmis.org>
+        <20190526191848.266163206@goodmis.org>
+        <20190702165008.GC34718@lakrids.cambridge.arm.com>
+        <20190703100205.0b58f3bf@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Steve,
 
-syzbot found the following crash on:
+On Wed, 3 Jul 2019 10:02:05 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=160b9e93a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-dashboard link: https://syzkaller.appspot.com/bug?extid=6c355f8d5f11884fa38e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6c355f8d5f11884fa38e@syzkaller.appspotmail.com
-
-dummy_hcd dummy_hcd.4: no ep configured for urb 0000000001b02d23
-xpad 5-1:0.169: xpad_irq_out - usb_submit_urb failed with result -19
-==================================================================
-BUG: KASAN: use-after-free in register_lock_class+0xeb7/0x1240  
-kernel/locking/lockdep.c:1156
-Write of size 8 at addr ffff8881c7e89b78 by task kworker/0:4/2785
-
-CPU: 0 PID: 2785 Comm: kworker/0:4 Not tainted 5.2.0-rc6+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x67/0x231 mm/kasan/report.c:188
-  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
-  kasan_report+0xe/0x20 mm/kasan/common.c:614
-  register_lock_class+0xeb7/0x1240 kernel/locking/lockdep.c:1156
-  __lock_acquire+0x11d/0x5340 kernel/locking/lockdep.c:3674
-  lock_acquire+0x100/0x2b0 kernel/locking/lockdep.c:4303
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
-  __wake_up_common_lock+0xb0/0x170 kernel/sched/wait.c:121
-  __usb_unanchor_urb drivers/usb/core/urb.c:154 [inline]
-  usb_anchor_resume_wakeups+0xbe/0xe0 drivers/usb/core/urb.c:148
-  __usb_hcd_giveback_urb+0x1fa/0x470 drivers/usb/core/hcd.c:1760
-  usb_hcd_giveback_urb+0x34a/0x400 drivers/usb/core/hcd.c:1823
-  dummy_timer+0x1022/0x2df4 drivers/usb/gadget/udc/dummy_hcd.c:1965
-  call_timer_fn+0x15e/0x5e0 kernel/time/timer.c:1322
-  expire_timers kernel/time/timer.c:1366 [inline]
-  __run_timers kernel/time/timer.c:1685 [inline]
-  __run_timers kernel/time/timer.c:1653 [inline]
-  run_timer_softirq+0x597/0x1410 kernel/time/timer.c:1698
-  __do_softirq+0x219/0x8b0 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x17c/0x1a0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0xe2/0x480 arch/x86/kernel/apic/apic.c:1068
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:806
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/irqflags.h:85 [inline]
-RIP: 0010:console_unlock+0x9db/0xbf0 kernel/printk/printk.c:2471
-Code: 00 89 ee 48 c7 c7 e0 eb f2 86 e8 50 a4 03 00 65 ff 0d 51 56 da 7e e9  
-11 fa ff ff e8 af 43 15 00 e8 ba 69 1a 00 ff 74 24 30 9d <e9> 31 fe ff ff  
-e8 9b 43 15 00 48 8b bc 24 80 00 00 00 c7 05 d9 e6
-RSP: 0018:ffff8881aeeff148 EFLAGS: 00000216 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: 0000000000000200 RCX: 1ffff11035dc8a24
-RDX: 0000000000000000 RSI: ffff8881aee45100 RDI: ffff8881aee45034
-RBP: 0000000000000000 R08: ffff8881aee44800 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000004e
-R13: ffffffff828cb580 R14: ffffffff8726a520 R15: dffffc0000000000
-  vprintk_emit+0x171/0x3e0 kernel/printk/printk.c:1986
-  vprintk_func+0x75/0x113 kernel/printk/printk_safe.c:386
-  printk+0xba/0xed kernel/printk/printk.c:2046
-  really_probe.cold+0x69/0x122 drivers/base/dd.c:577
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 2853:
-  save_stack+0x1b/0x80 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:489 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
-  kmalloc include/linux/slab.h:547 [inline]
-  kzalloc include/linux/slab.h:742 [inline]
-  xpad_probe+0x24b/0x1b20 drivers/input/joystick/xpad.c:1717
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 107:
-  save_stack+0x1b/0x80 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
-  slab_free_hook mm/slub.c:1421 [inline]
-  slab_free_freelist_hook mm/slub.c:1448 [inline]
-  slab_free mm/slub.c:2994 [inline]
-  kfree+0xd7/0x280 mm/slub.c:3949
-  xpad_disconnect+0x1cb/0x4a3 drivers/input/joystick/xpad.c:1865
-  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
-  __device_release_driver drivers/base/dd.c:1081 [inline]
-  device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1112
-  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
-  device_del+0x460/0xb80 drivers/base/core.c:2274
-  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
-  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2197
-  hub_port_connect drivers/usb/core/hub.c:4940 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1409/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the object at ffff8881c7e89b00
-  which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 120 bytes inside of
-  1024-byte region [ffff8881c7e89b00, ffff8881c7e89f00)
-The buggy address belongs to the page:
-page:ffffea00071fa200 refcount:1 mapcount:0 mapping:ffff8881dac02a00  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 dead000000000100 dead000000000200 ffff8881dac02a00
-raw: 0000000000000000 00000000000e000e 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881c7e89a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c7e89a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8881c7e89b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                 ^
-  ffff8881c7e89b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c7e89c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+> On Tue, 2 Jul 2019 17:50:09 +0100
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > On Sun, May 26, 2019 at 03:18:40PM -0400, Steven Rostedt wrote:
+> > > From: Masami Hiramatsu <mhiramat@kernel.org>
+> > > 
+> > > Initialize kprobes at postcore_initcall level instead of module_init
+> > > since kprobes is not a module, and it depends on only subsystems
+> > > initialized in core_initcall.
+> > > This will allow ftrace kprobe event to add new events when it is
+> > > initializing because ftrace kprobe event is initialized at
+> > > later initcall level.
+> > > 
+> > > Link: http://lkml.kernel.org/r/155851394736.15728.13626739508905120098.stgit@devnote2
+> > > 
+> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > ---
+> > >  kernel/kprobes.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > > index b1ea30a5540e..54aaaad00a47 100644
+> > > --- a/kernel/kprobes.c
+> > > +++ b/kernel/kprobes.c
+> > > @@ -2289,6 +2289,7 @@ static int __init init_kprobes(void)
+> > >  		init_test_probes();
+> > >  	return err;
+> > >  }
+> > > +postcore_initcall(init_kprobes);  
+> > 
+> > As a heads-up, this is causing boot-time failures on arm64.
+> 
+> Thanks for the report.
+> 
+> > 
+> > On arm64 kprobes depends on the BRK handler we register in
+> > debug_traps_init(), which is an arch_initcall.
+> > 
+> > As of this change, init_krprobes() calls init_test_probes() before
+> > that's registered, so we end up hitting a BRK before we can handle it.
+> > 
+> 
+> Would something like this help?
+> 
+> -- Steve
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 5471efbeb937..0ca6f53c8505 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
+>  extern unsigned long __start_kprobe_blacklist[];
+>  extern unsigned long __stop_kprobe_blacklist[];
+>  
+> +static bool run_kprobe_tests __initdata;
+> +
+>  static int __init init_kprobes(void)
+>  {
+>  	int i, err = 0;
+> @@ -2286,11 +2288,18 @@ static int __init init_kprobes(void)
+>  	kprobes_initialized = (err == 0);
+>  
+>  	if (!err)
+> -		init_test_probes();
+> +		run_kprobe_tests = true;
+>  	return err;
+>  }
+>  subsys_initcall(init_kprobes);
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Just out of curious, if arm64's handler code initialized in arch_initcall,
+why this subsys_initcall() function causes a problem?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This is actually related to my boot-time tracing series, so I would like
+fix this issue without this patch.
+
+Thank you,
+
+>  
+> +static int __init run_init_test_probes(void)
+> +{
+> +	if (run_kprobe_tests)
+> +		init_test_probes();
+> +}
+> +module_init(run_init_test_probes);
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  static void report_probe(struct seq_file *pi, struct kprobe *p,
+>  		const char *sym, int offset, char *modname, struct kprobe *pp)
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
