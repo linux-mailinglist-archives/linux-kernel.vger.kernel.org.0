@@ -2,71 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3489462E79
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5DB62E97
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfGIDJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:09:25 -0400
-Received: from mga11.intel.com ([192.55.52.93]:31235 "EHLO mga11.intel.com"
+        id S1727512AbfGIDPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:15:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbfGIDJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:09:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 20:09:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
-   d="scan'208";a="173437779"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Jul 2019 20:09:22 -0700
-Message-ID: <5D2406AC.20402@intel.com>
-Date:   Tue, 09 Jul 2019 11:14:52 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
-Subject: Re: [PATCH v7 10/12] KVM/x86/lbr: lazy save the guest lbr stack
-References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-11-git-send-email-wei.w.wang@intel.com> <20190708145326.GO3402@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190708145326.GO3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1726569AbfGIDPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:15:04 -0400
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562642102;
+        bh=ffJpmiG3YCVrmSdb4Ds3CGUQgDaz+9N4x55s4P3dlvo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=gquIdpoSw1zf4tIdWE/tortMRjaZsdQquNItwfubAGAx7ABS6Jg++fZscnR0BnsTY
+         IBuaA0rawGY1tLdIcROynx/7Ndt8b7dpg8G33y+ze2Xv6bNom2fBgUYdFNSu1/eoIZ
+         WpG6iyy5q1f4L2tWwnRPvv2jW+B6HfkehCwoYY2E=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <28477.1562362239@warthog.procyon.org.uk>
+References: <28477.1562362239@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <28477.1562362239@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+ tags/keys-acl-20190703
+X-PR-Tracked-Commit-Id: 7a1ade847596dadc94b37e49f8c03f167fd71748
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0f75ef6a9cff49ff612f7ce0578bced9d0b38325
+Message-Id: <156264210283.2709.18395042155936707106.pr-tracker-bot@kernel.org>
+Date:   Tue, 09 Jul 2019 03:15:02 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        netdev@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 10:53 PM, Peter Zijlstra wrote:
-> On Mon, Jul 08, 2019 at 09:23:17AM +0800, Wei Wang wrote:
->> When the vCPU is scheduled in:
->> - if the lbr feature was used in the last vCPU time slice, set the lbr
->>    stack to be interceptible, so that the host can capture whether the
->>    lbr feature will be used in this time slice;
->> - if the lbr feature wasn't used in the last vCPU time slice, disable
->>    the vCPU support of the guest lbr switching.
->>
->> Upon the first access to one of the lbr related MSRs (since the vCPU was
->> scheduled in):
->> - record that the guest has used the lbr;
->> - create a host perf event to help save/restore the guest lbr stack;
->> - pass the stack through to the guest.
-> I don't understand a word of that.
->
-> Who cares if the LBR MSRs are touched; the guest expects up-to-date
-> values when it does reads them.
+The pull request you sent on Fri, 05 Jul 2019 22:30:39 +0100:
 
-Another host thread who shares the same pCPU with this vCPU thread
-may use the lbr stack, so the host needs to save/restore the vCPU's lbr 
-state.
-Otherwise the guest perf inside the vCPU wouldn't read the correct data
-from the lbr msr (as the msrs are changed by another host thread already).
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-acl-20190703
 
-As Andi also replied, if the vCPU isn't using lbr anymore, host doesn't need
-to save the lbr msr then.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0f75ef6a9cff49ff612f7ce0578bced9d0b38325
 
-Best,
-Wei
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
