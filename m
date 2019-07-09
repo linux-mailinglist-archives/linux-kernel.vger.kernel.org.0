@@ -2,67 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 780B362E85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3489462E79
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfGIDOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:14:05 -0400
-Received: from fieldses.org ([173.255.197.46]:38332 "EHLO fieldses.org"
+        id S1727215AbfGIDJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:09:25 -0400
+Received: from mga11.intel.com ([192.55.52.93]:31235 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfGIDOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:14:05 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id B01192013; Mon,  8 Jul 2019 23:14:04 -0400 (EDT)
-Date:   Mon, 8 Jul 2019 23:14:04 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] nfsd: Fix misuse of strlcpy
-Message-ID: <20190709031404.GD14439@fieldses.org>
-References: <cover.1562283944.git.joe@perches.com>
- <b51141d12de77eb22101e81f9eb2c9cc44104d7a.1562283944.git.joe@perches.com>
+        id S1726046AbfGIDJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:09:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 20:09:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
+   d="scan'208";a="173437779"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Jul 2019 20:09:22 -0700
+Message-ID: <5D2406AC.20402@intel.com>
+Date:   Tue, 09 Jul 2019 11:14:52 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b51141d12de77eb22101e81f9eb2c9cc44104d7a.1562283944.git.joe@perches.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
+        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
+        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
+Subject: Re: [PATCH v7 10/12] KVM/x86/lbr: lazy save the guest lbr stack
+References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-11-git-send-email-wei.w.wang@intel.com> <20190708145326.GO3402@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190708145326.GO3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 04:57:48PM -0700, Joe Perches wrote:
-> Probable cut&paste typo - use the correct field size.
+On 07/08/2019 10:53 PM, Peter Zijlstra wrote:
+> On Mon, Jul 08, 2019 at 09:23:17AM +0800, Wei Wang wrote:
+>> When the vCPU is scheduled in:
+>> - if the lbr feature was used in the last vCPU time slice, set the lbr
+>>    stack to be interceptible, so that the host can capture whether the
+>>    lbr feature will be used in this time slice;
+>> - if the lbr feature wasn't used in the last vCPU time slice, disable
+>>    the vCPU support of the guest lbr switching.
+>>
+>> Upon the first access to one of the lbr related MSRs (since the vCPU was
+>> scheduled in):
+>> - record that the guest has used the lbr;
+>> - create a host perf event to help save/restore the guest lbr stack;
+>> - pass the stack through to the guest.
+> I don't understand a word of that.
+>
+> Who cares if the LBR MSRs are touched; the guest expects up-to-date
+> values when it does reads them.
 
-Huh, that's been there forever, I wonder why we haven't seen crashes?
-Oh, I see, name and authname both have the same size.
+Another host thread who shares the same pCPU with this vCPU thread
+may use the lbr stack, so the host needs to save/restore the vCPU's lbr 
+state.
+Otherwise the guest perf inside the vCPU wouldn't read the correct data
+from the lbr msr (as the msrs are changed by another host thread already).
 
-Anyway, makes sense, thanks.  Will apply for 5.3.
+As Andi also replied, if the vCPU isn't using lbr anymore, host doesn't need
+to save the lbr msr then.
 
-(Unless someone else is getting this; I didn't get copied on the rest of
-the series.)
-
---b.
-
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  fs/nfsd/nfs4idmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
-> index 2961016097ac..d1f285245af8 100644
-> --- a/fs/nfsd/nfs4idmap.c
-> +++ b/fs/nfsd/nfs4idmap.c
-> @@ -83,7 +83,7 @@ ent_init(struct cache_head *cnew, struct cache_head *citm)
->  	new->type = itm->type;
->  
->  	strlcpy(new->name, itm->name, sizeof(new->name));
-> -	strlcpy(new->authname, itm->authname, sizeof(new->name));
-> +	strlcpy(new->authname, itm->authname, sizeof(new->authname));
->  }
->  
->  static void
-> -- 
-> 2.15.0
+Best,
+Wei
