@@ -2,75 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA2262DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E6762DF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbfGICIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 22:08:41 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46425 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfGICIl (ORCPT
+        id S1726784AbfGICLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 22:11:02 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34902 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfGICLC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 22:08:41 -0400
-Received: by mail-io1-f65.google.com with SMTP id i10so39707184iol.13;
-        Mon, 08 Jul 2019 19:08:40 -0700 (PDT)
+        Mon, 8 Jul 2019 22:11:02 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p197so12258847lfa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 19:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=b2d61h/e8K7gOexBQzZ4oZE/XD/sRT3CTsvG5+H3A4Q=;
+        b=Az8wDUbxlJdsuRoTLXS8WpGGYc5jVO+MA1eR/qCcI5Mq8AhJqHP35faax/F5lL1Odb
+         bc/gcnb2WCIDMS0dF1vKT7pAXmPdkZ8wGfuyXw4ipLbUsprXxY4J3+k2AWCsAbkpfYkf
+         slwrauPARr48uLoKMmsABzbBSJCcvgFN6Ga7ytTObRW8nTBuYvCdQnS/wpO8oqzk5sxM
+         ZafCsFj1mg822AhxmBfU9Ji0DAMMgTPz4eEMlr4A94bnMO5oiq1hmVLTdjl33DzwUFAO
+         CJMKhYYxhBfWvhQIs2lyIPVVR8SrSPfqLPoZRGeK2rW0y5nGojy+NJK8yraVkfKw6iU2
+         b8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wW02jFZSaX8A4fbGCTcNYrXs8wdG93m32ZsgP4TKJAY=;
-        b=jI7QSZhTpwVUXjFXjn5lrzcBSe21pZtTlbeVw3pKle99gI1itxn0ZKJm5cPlqT5jKk
-         2QD3FliixHoJ4vMkX3Hg7yTZnMIDVwlzmTKTmxmxSPOyMyXKazQb2mD+mEkzuxJgbyDT
-         YFRqatC9ELVbUkH+HDcsW29gGCycw6pIhjjK2dkU/Yg6pz6lgej0zzyaHnL390GvLDuz
-         lBCPofWDblpiXVeE0hz7T9VkujyRbJfDTlxx/VWPbdSmBN4qw8zsr4ujVA4MMpLoxy7l
-         UOp8elV0VZizx+i6ls1kh6xOAQNqS+nRyRiNYKISVJwDjlgtr4vJOD/L5h70qWUUmJzz
-         gqBg==
-X-Gm-Message-State: APjAAAUTBmQyJSQh++tEm0wvfeQHk7FKrZLryrVUjb2pVCub4iIt34Gv
-        dQ/Ma5DRPKAHcsoIQPoc05Cx0K0=
-X-Google-Smtp-Source: APXvYqxcQQE5qQSk7Mm64m/hLZNPpvvL4cOTHW4gDvJJAiCHDSQbpnBAXAreRsYB2rcKBCJdwN/+Jg==
-X-Received: by 2002:a5d:91d7:: with SMTP id k23mr2335199ior.163.1562638120102;
-        Mon, 08 Jul 2019 19:08:40 -0700 (PDT)
-Received: from localhost ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id k2sm15537532iom.50.2019.07.08.19.08.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 19:08:39 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 20:08:38 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Sean Young <sean@mess.org>
-Subject: Re: [PATCH v5 10/13] dt-bindings: media: sunxi-ir: Add H6 compatible
-Message-ID: <20190709020838.GA23382@bogus>
-References: <20190607231100.5894-1-peron.clem@gmail.com>
- <20190607231100.5894-11-peron.clem@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=b2d61h/e8K7gOexBQzZ4oZE/XD/sRT3CTsvG5+H3A4Q=;
+        b=p54V61kwE07lBcUpaskofWXIbouSg/lTxU3OJa5pTYkoPXpq9KovADWacgZuCnwjpq
+         +tFAMyghuHd46OTBMOQRfQzwnHxllGOmspZCHH0jTHwBixrJTMcko4Ve5gLZWOYqdfFN
+         Q47oYy13JHmNp37loJZigQBdjf9ocisI5OyuZSltw5NXubl+kGW6FwqLhees7bOFQC3K
+         SQbX7hQ7OS7PHpMIj/KrVBXxG27F2fqhGHt3MTl/MKmnY21cnpMfnP8gvP4o96+edhg7
+         +CrD82MleA/b5dVWQnFYT8FKg5dNM8EpmrgnHcHh3Crmghb2zTslMOzoNCDJhXeg/C7x
+         pX2A==
+X-Gm-Message-State: APjAAAXR/4szZFd4zmgDjjz6Nc7Gx3KzwnTivspOnJrLty98JB4DDdfT
+        pTADmXBobwh9nXnWn8KZ52KNRAVPtb8xEoKMWCPlRq521GY=
+X-Google-Smtp-Source: APXvYqyEXn5Zj5tRUTNMBjRTanMF9aoy0uQ9svpDftElzBhGVu2a8UNMWA9QdZkDQjIELvV07tM+mUdIrOEmWBXmb08=
+X-Received: by 2002:a19:ed0c:: with SMTP id y12mr9946172lfy.191.1562638260033;
+ Mon, 08 Jul 2019 19:11:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190607231100.5894-11-peron.clem@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190708150525.973820964@linuxfoundation.org>
+In-Reply-To: <20190708150525.973820964@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 9 Jul 2019 07:40:48 +0530
+Message-ID: <CA+G9fYuRfaWnZ4x5PO6fPj9-8wQZkco-imJD8HGT35ePvAXqMA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 000/102] 4.9.185-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  8 Jun 2019 01:10:57 +0200, =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= wrote:
-> There are some minor differences between A31 or A64 with H6 IR peripheral.
-> 
-> But A31 IR driver is compatible with H6.
-> 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> Acked-by: Sean Young <sean@mess.org>
-> ---
->  Documentation/devicetree/bindings/media/sunxi-ir.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Mon, 8 Jul 2019 at 20:50, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.185 release.
+> There are 102 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.185-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.185-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: bb7044a09b6bd0f3b0a78afd25a4eb42ca85f50d
+git describe: v4.9.184-103-gbb7044a09b6b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.184-103-gbb7044a09b6b
+
+
+No regressions (compared to build v4.9.184)
+
+No fixes (compared to build v4.9.184)
+
+
+Ran 23371 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* network-basic-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
