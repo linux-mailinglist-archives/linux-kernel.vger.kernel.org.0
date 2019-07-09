@@ -2,129 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763F262EEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B3862EFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfGIDbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 23:31:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2244 "EHLO huawei.com"
+        id S1726984AbfGIDik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:38:40 -0400
+Received: from mail-eopbgr00063.outbound.protection.outlook.com ([40.107.0.63]:43424
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727395AbfGIDbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:31:37 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1B449C352392AD38BA6E;
-        Tue,  9 Jul 2019 11:31:34 +0800 (CST)
-Received: from huawei.com (10.67.189.167) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 9 Jul 2019
- 11:31:23 +0800
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-To:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <mark.rutland@arm.com>, <dingtianhong@huawei.com>,
-        <xiaojiangfeng@huawei.com>
-CC:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
-        <nixiaoming@huawei.com>, <jianping.liu@huawei.com>,
-        <xiekunxun@huawei.com>
-Subject: [PATCH v2 10/10] net: hisilicon: Add an tx_desc to adapt HI13X1_GMAC
-Date:   Tue, 9 Jul 2019 11:31:11 +0800
-Message-ID: <1562643071-46811-11-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-In-Reply-To: <1562643071-46811-1-git-send-email-xiaojiangfeng@huawei.com>
-References: <1562643071-46811-1-git-send-email-xiaojiangfeng@huawei.com>
+        id S1726341AbfGIDij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:38:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OX4rKEGLdam9UCJUPoJejNFiKqVs/jmJB0trusfsHI1ZkPBO4T6itYcuY2kAXkwGSqKVE+0ScVMtlg7MED1CznAfQi+cTvIDiGqijBICqovhpIxDgy9tFoPzZuzLtPT6wCYo3v7dTg/Qz4rbF+iuNCCV6U63uqHZfCvKG1IkaarLzR0tEDb1PKTs4nCb1QRfasAdH6sVNHTBMroYAnAiJ8Jje0NyRYfb5OLcgsLwp7BpWMJlJzbn1JGAOnTBhuPAaZI7CV1IUOlcSkO3N0Uk6luQlT+Qmynt/h0nGMimbVORKgqc4jhHzeHxoMPXw7WInk+kQ3jnm1dSTqlzE7Nlmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=huOkNqQOkNf6RW6RjMupOGnDJsrlFbyhC+whMPQAauQ=;
+ b=CSsP88CyhAE20u3AG19tVjDVTNRFpJe50F9Fsjs9eTnDAVePoRQZ7+W1aA2kaqQCAVI+l/MwfUpgxTzXP6854RGXij9MDJsXsdUI6huS1qw61SgV6JINYviqrGjcmxfNqfl7MZdXG844/EmwFGrpCkPq2hWHD163rGRHvYF4VvqIEirsRXtqt7uqBkLFuDIw45AFFAHIOsK9UKTW1x9suFKNRLmSpfTtKh2CClOEdB5JM9l5An03ak4zww8QG79PxPLVQBfa06iYGbfDHdPzMLoCPPvLZsQwoWE+0Ml8RWHrRmcrorE83RPnk+qQG6yc7wbVzEtEcU39DeiDuCdZFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=huOkNqQOkNf6RW6RjMupOGnDJsrlFbyhC+whMPQAauQ=;
+ b=ZMEHdqxbQDIeXs3XL+z3x1u0PwbquukEdLIQCm58r3ycjR6ArJlYBIiEhJrLl2gOC+/9zwiiXr0JQAgyOafCHy2BE43TCH1r6nW3CDzPGnN3RFfVqud6VWMuu8lzky94xRLN439lf0nYbDUxbC78N9r1pd18JEeuSp2nWuYnt1k=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
+ VE1SPR01MB0007.eurprd04.prod.outlook.com (20.179.193.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.10; Tue, 9 Jul 2019 03:38:36 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::218e:ee37:1e81:e157]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::218e:ee37:1e81:e157%3]) with mapi id 15.20.2052.019; Tue, 9 Jul 2019
+ 03:38:36 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+CC:     "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 2/2] ASoC: fsl_esai: recover the channel swap after
+ xrun
+Thread-Topic: [PATCH V2 2/2] ASoC: fsl_esai: recover the channel swap after
+ xrun
+Thread-Index: AdU2B0WWYdAyRfftRKe3kHbe3589Jg==
+Date:   Tue, 9 Jul 2019 03:38:36 +0000
+Message-ID: <VE1PR04MB64797B5172DB5EC9EBA8232BE3F10@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4a88d812-30ba-4402-14d6-08d7041eecad
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1SPR01MB0007;
+x-ms-traffictypediagnostic: VE1SPR01MB0007:
+x-microsoft-antispam-prvs: <VE1SPR01MB0007B4D85981DDDCE2999FCBE3F10@VE1SPR01MB0007.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0093C80C01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(136003)(396003)(346002)(39860400002)(199004)(189003)(478600001)(7736002)(1411001)(6506007)(4326008)(6436002)(5660300002)(99286004)(2906002)(66066001)(52536014)(229853002)(74316002)(8936002)(186003)(26005)(54906003)(14444005)(256004)(7696005)(316002)(305945005)(102836004)(9686003)(6246003)(81166006)(81156014)(33656002)(486006)(55016002)(25786009)(86362001)(6116002)(3846002)(53936002)(8676002)(68736007)(476003)(6916009)(73956011)(76116006)(66446008)(66476007)(66556008)(64756008)(14454004)(66946007)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1SPR01MB0007;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fAQ1lR7BTNuLiwG/an5SbhBxMlFnnxWvWLDDc56aHop6NRQZ75/n21L46B+hyREojhWrBtjLQ/NFQrcIMfeSyvnsWQMBZjcGmLgEvQzuO/Y/ccFNL+vEWTE2FIak+BOtj0R9IpdA8l65OCQsf8asEhaUeGiSBDiuV+SShTQUPFBPyyfmQp+dkLeDlyniuEWeihK37RJ1kXroTJoHyRdT1C0M7kVj0Ph3dC3Xtm/nBp/NsxoyK3SGCh4EWC5Yn51w5+7JzEGU1jZI85BVvnRVtNcvHIlMgIl69osViUMhT3sCtRtLgY+ic07p68MUOllI7ZaIRfqWMi8oQ8Wwtrq+Nsaehb1H2v1ouBcXd0x+JK1lg58I8+2PtR2SELkeuHXBo88ij38SkNuUSc3td3WJ0CAh8Eyp4qVxGOi2MTvCYvg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.167]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a88d812-30ba-4402-14d6-08d7041eecad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 03:38:36.0761
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: shengjiu.wang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1SPR01MB0007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI13X1 changed the offsets and bitmaps for tx_desc
-registers in the same peripheral device on different
-models of the hip04_eth.
 
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
----
- drivers/net/ethernet/hisilicon/hip04_eth.c | 34 +++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+> > > > +
+> > > > +     /* restore registers by regcache_sync */
+> > > > +     fsl_esai_register_restore(esai_priv);
+> > > > +
+> > > > +     regmap_update_bits(esai_priv->regmap, REG_ESAI_TCR,
+> > > > +                        ESAI_xCR_xPR_MASK, 0);
+> > > > +     regmap_update_bits(esai_priv->regmap, REG_ESAI_RCR,
+> > > > +                        ESAI_xCR_xPR_MASK, 0);
+> > >
+> > > And just for curious, can (or shall) we stuff this personal reset to
+> > > the reset() function? I found this one is a part of the reset
+> > > routine being mentioned in the RM -- it was done after ESAI reset is
+> done via ECR register.
+> > >
+> >
+> > There is a problem to do this, TPR/RPR need to be clear after
+> > configure the control register. (TCCR, TCR). So it seems not only one
+> > place (reset function) need to be changed.
+>=20
+> Do you know (or remember) why we suddenly involve this TPR/PRP?
+> The driver has no problem so far, even if we don't have them.
+>=20
+> The "personal reset" sounds like a feature that we would use to reset TX =
+or
+> RX individually, while this hw_reset() does a full reset for both TX and =
+RX.
+> So I wonder whether they're necessary.
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 780fc46..6256357 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -76,8 +76,15 @@
- /* TX descriptor config */
- #define TX_FREE_MEM			BIT(0)
- #define TX_READ_ALLOC_L3		BIT(1)
--#define TX_FINISH_CACHE_INV		BIT(2)
-+#if defined(CONFIG_HI13X1_GMAC)
-+#define TX_CLEAR_WB			BIT(7)
-+#define TX_RELEASE_TO_PPE		BIT(4)
-+#define TX_FINISH_CACHE_INV		BIT(6)
-+#define TX_POOL_SHIFT			16
-+#else
- #define TX_CLEAR_WB			BIT(4)
-+#define TX_FINISH_CACHE_INV		BIT(2)
-+#endif
- #define TX_L3_CHECKSUM			BIT(5)
- #define TX_LOOP_BACK			BIT(11)
- 
-@@ -124,6 +131,7 @@
- /* buf unit size is cache_line_size, which is 64, so the shift is 6 */
- #define PPE_BUF_SIZE_SHIFT		6
- #define PPE_TX_BUF_HOLD			BIT(31)
-+#define CACHE_LINE_MASK			0x3F
- #else
- #define PPE_CFG_QOS_VMID_GRP_SHIFT	8
- #define PPE_CFG_RX_CTRL_ALIGN_SHIFT	11
-@@ -163,11 +171,22 @@
- #define HIP04_MIN_TX_COALESCE_FRAMES	100
- 
- struct tx_desc {
-+#if defined(CONFIG_HI13X1_GMAC)
-+	u32 reserved1[2];
-+	u32 send_addr;
-+	u16 send_size;
-+	u16 data_offset;
-+	u32 reserved2[7];
-+	u32 cfg;
-+	u32 wb_addr;
-+	u32 reserved3[3];
-+#else
- 	u32 send_addr;
- 	u32 send_size;
- 	u32 next_addr;
- 	u32 cfg;
- 	u32 wb_addr;
-+#endif
- } __aligned(64);
- 
- struct rx_desc {
-@@ -505,11 +524,20 @@ static void hip04_start_tx_timer(struct hip04_priv *priv)
- 
- 	priv->tx_skb[tx_head] = skb;
- 	priv->tx_phys[tx_head] = phys;
--	desc->send_addr = (__force u32)cpu_to_be32(phys);
-+
- 	desc->send_size = (__force u32)cpu_to_be32(skb->len);
-+#if defined(CONFIG_HI13X1_GMAC)
-+	desc->cfg = (__force u32)cpu_to_be32(TX_CLEAR_WB | TX_FINISH_CACHE_INV
-+		| TX_RELEASE_TO_PPE | priv->port << TX_POOL_SHIFT);
-+	desc->data_offset = (__force u32)cpu_to_be32(phys & CACHE_LINE_MASK);
-+	desc->send_addr =  (__force u32)cpu_to_be32(phys & ~CACHE_LINE_MASK);
-+#else
- 	desc->cfg = (__force u32)cpu_to_be32(TX_CLEAR_WB | TX_FINISH_CACHE_INV);
-+	desc->send_addr = (__force u32)cpu_to_be32(phys);
-+#endif
- 	phys = priv->tx_desc_dma + tx_head * sizeof(struct tx_desc);
--	desc->wb_addr = (__force u32)cpu_to_be32(phys);
-+	desc->wb_addr = (__force u32)cpu_to_be32(phys +
-+		offsetof(struct tx_desc, send_addr));
- 	skb_tx_timestamp(skb);
- 
- 	hip04_set_xmit_desc(priv, phys);
--- 
-1.8.5.6
+The hw_reset flow is suggested by design team, so involve TRP/RPP is from
+them, I don't know the detail.
 
+Best regards
+Wang shengjiu =20
