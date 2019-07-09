@@ -2,140 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53B56342B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69ECA63422
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbfGIKW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 06:22:27 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37232 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfGIKW1 (ORCPT
+        id S1726380AbfGIKVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 06:21:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44704 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfGIKVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 06:22:27 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 19so9080011pfa.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 03:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ys5VCG//C+7d/Mv4iPcZy1mrBP7z7sVwq8ShwHAlzGY=;
-        b=EYqSBY5RYT3l0wkuw1OiniPSthEwR1m6QScRVqkNRuncNcPiHi18uDfiPzlQ64tyOT
-         tFnG4+QleLyJ5BINvC4LqWUj6LzpVUIwfmTehOtXgG+QCpSO2kmuYWp4LBvDqw4TAycS
-         rUPJnPjVy196wMzOuZn7AILaZrq5Otwr4AfORpaIWUOi8XFXWgYvtdPXoso5l+txhymh
-         3kr4MOeTNuPTCctGwVMZnXh4EeeJGe2tiGybWZlLLrOrRpCTaKMwQpUdPkM8bettx8Wr
-         fS9nzTh9CWZuuNv6NWzmVBkaHo/g7OgOJFLMdKB7JtjNZvusIkI0fUWh6GaLzdxhiZM+
-         WRLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ys5VCG//C+7d/Mv4iPcZy1mrBP7z7sVwq8ShwHAlzGY=;
-        b=X7h7Mw2806ek8sAjoo45QJX1fXD/XO4RRluhNMnzQAlm6XlJyHxn4P5sGnECe4vMUQ
-         Xhz/dF9EtzpIFSvUDfTadtj6ggKxsdmJKhzjADMmxNgh3Bjz54B8t7QqCHTWrNjfnLBN
-         aAKXQrRm4lffXMBY/hYDEFjYxwCqmZSaSMJZJlXxZl8bJMFQFg+yfhyNy4Rz5srK2AMh
-         eAdtsijaZJGstnJPbnNCFnkex9Q4BYZXdp1nnL0OP4W9qwt6AC3O9cVOnZ65TV03iY3C
-         y+BEgHYhpVHN835WmkLSbxCeZEt4eH9sAX4xBL40KEjY07D+v9DAxQxIC7PC3HgowFuF
-         20Zg==
-X-Gm-Message-State: APjAAAVrOvXbTyvqJD0I3041VKZm4CJYJ7SwWZW+fGKlQb3vfrjLzDDG
-        DW7A7LibGAC8+MjlK6uiJQiOcQ==
-X-Google-Smtp-Source: APXvYqy4rOzsSukM8QjFevK1EGTmIXDq4LXaDasAKMlIyOuWJyyfPkpJ2F67P17lv+jigztmLW01bw==
-X-Received: by 2002:a65:56c1:: with SMTP id w1mr25026367pgs.395.1562667746195;
-        Tue, 09 Jul 2019 03:22:26 -0700 (PDT)
-Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id j1sm40161849pgl.12.2019.07.09.03.22.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 03:22:25 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        David Laight <David.Laight@aculab.com>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com,
-        Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH v2 2/2] rtw88: pci: Use DMA sync instead of remapping in RX ISR
-Date:   Tue,  9 Jul 2019 18:21:01 +0800
-Message-Id: <20190709102059.7036-2-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190708063252.4756-1-jian-hong@endlessm.com>
-References: <20190708063252.4756-1-jian-hong@endlessm.com>
+        Tue, 9 Jul 2019 06:21:10 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1hknF8-0004PR-S0; Tue, 09 Jul 2019 12:21:02 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH POC] printk_ringbuffer: Alternative implementation of lockless printk ringbuffer
+References: <20190621140516.h36g4in26pe3rmly@pathway.suse.cz>
+        <20190704103321.10022-1-pmladek@suse.com>
+        <20190704103321.10022-1-pmladek@suse.com>
+        <87r275j15h.fsf@linutronix.de>
+        <20190708152311.7u6hs453phhjif3q@pathway.suse.cz>
+        <20190708152311.7u6hs453phhjif3q@pathway.suse.cz>
+        <874l3wng7g.fsf@linutronix.de>
+        <20190709090609.shx7j2mst7wlkbqm@pathway.suse.cz>
+Date:   Tue, 09 Jul 2019 12:21:01 +0200
+In-Reply-To: <20190709090609.shx7j2mst7wlkbqm@pathway.suse.cz> (Petr Mladek's
+        message of "Tue, 9 Jul 2019 11:06:09 +0200")
+Message-ID: <87tvbv33w2.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since each skb in RX ring is reused instead of new allocation, we can
-treat the DMA in a more efficient way by DMA synchronization.
+On 2019-07-09, Petr Mladek <pmladek@suse.com> wrote:
+>>>> 1. The code claims that the cmpxchg(seq_newest) in
+>>>> prb_reserve_desc() guarantees that "The descriptor is ours until
+>>>> the COMMITTED bit is set."  This is not true if in that wind
+>>>> seq_newest wraps, allowing another writer to gain ownership of the
+>>>> same descriptor. For small descriptor arrays (such as in my test
+>>>> module), this situation is quite easy to reproduce.
+>>>
+>> Let me inline the function are talking about and add commentary to
+>> illustrate what I am saying:
+>> 
+>> static int prb_reserve_desc(struct prb_reserved_entry *entry)
+>> {
+>> 	unsigned long seq, seq_newest, seq_prev_wrap;
+>> 	struct printk_ringbuffer *rb = entry->rb;
+>> 	struct prb_desc *desc;
+>> 	int err;
+>> 
+>> 	/* Get descriptor for the next sequence number. */
+>> 	do {
+>> 		seq_newest = READ_ONCE(rb->seq_newest);
+>> 		seq = (seq_newest + 1) & PRB_SEQ_MASK;
+>> 		seq_prev_wrap = (seq - PRB_DESC_SIZE(rb)) & PRB_SEQ_MASK;
+>> 
+>> 		/*
+>> 		 * Remove conflicting descriptor from the previous wrap
+>> 		 * if ever used. It might fail when the related data
+>> 		 * have not been committed yet.
+>> 		 */
+>> 		if (seq_prev_wrap == READ_ONCE(rb->seq_oldest)) {
+>> 			err = prb_remove_desc_oldest(rb, seq_prev_wrap);
+>> 			if (err)
+>> 				return err;
+>> 		}
+>> 	} while (cmpxchg(&rb->seq_newest, seq_newest, seq) != seq_newest);
+>> 
+>> I am referring to this point in the code, after the
+>> cmpxchg(). seq_newest has been incremented but the descriptor is
+>> still in the unused state and seq is still 1 wrap behind. If an NMI
+>> occurs here and the NMI (or some other CPU) inserts enough entries to
+>> wrap the descriptor array, this descriptor will be reserved again,
+>> even though it has already been reserved.
+>
+> Not really, the NMI will not reach the cmpxchg() in this case.
+> prb_remove_desc_oldest() will return error.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
----
- drivers/net/wireless/realtek/rtw88/pci.c | 35 ++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 3 deletions(-)
+Why will prb_remove_desc_oldest() fail? IIUC, it will return success
+because the descriptor is in the desc_miss state.
 
-diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
-index e9fe3ad896c8..28ca76f71dfe 100644
---- a/drivers/net/wireless/realtek/rtw88/pci.c
-+++ b/drivers/net/wireless/realtek/rtw88/pci.c
-@@ -206,6 +206,35 @@ static int rtw_pci_reset_rx_desc(struct rtw_dev *rtwdev, struct sk_buff *skb,
- 	return 0;
- }
- 
-+static int rtw_pci_sync_rx_desc_cpu(struct rtw_dev *rtwdev, dma_addr_t dma)
-+{
-+	struct device *dev = rtwdev->dev;
-+	int buf_sz = RTK_PCI_RX_BUF_SIZE;
-+
-+	dma_sync_single_for_cpu(dev, dma, buf_sz, PCI_DMA_FROMDEVICE);
-+
-+	return 0;
-+}
-+
-+static int rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr_t dma,
-+				       struct rtw_pci_rx_ring *rx_ring,
-+				       u32 idx, u32 desc_sz)
-+{
-+	struct device *dev = rtwdev->dev;
-+	struct rtw_pci_rx_buffer_desc *buf_desc;
-+	int buf_sz = RTK_PCI_RX_BUF_SIZE;
-+
-+	dma_sync_single_for_device(dev, dma, buf_sz, PCI_DMA_FROMDEVICE);
-+
-+	buf_desc = (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
-+						     idx * desc_sz);
-+	memset(buf_desc, 0, sizeof(*buf_desc));
-+	buf_desc->buf_size = cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
-+	buf_desc->dma = cpu_to_le32(dma);
-+
-+	return 0;
-+}
-+
- static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
- 				struct rtw_pci_rx_ring *rx_ring,
- 				u8 desc_size, u32 len)
-@@ -782,8 +811,7 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
- 		rtw_pci_dma_check(rtwdev, ring, cur_rp);
- 		skb = ring->buf[cur_rp];
- 		dma = *((dma_addr_t *)skb->cb);
--		pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
--				 PCI_DMA_FROMDEVICE);
-+		rtw_pci_sync_rx_desc_cpu(rtwdev, dma);
- 		rx_desc = skb->data;
- 		chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_status);
- 
-@@ -818,7 +846,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
- 
- next_rp:
- 		/* new skb delivered to mac80211, re-enable original skb DMA */
--		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
-+		rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
-+					    buf_desc_sz);
- 
- 		/* host read next element in ring */
- 		if (++cur_rp >= ring->r.len)
--- 
-2.22.0
+> It will not be able to remove the conflicting descriptor because
+> it will still be occupied by a two-wraps-old descriptor.
 
+Please explain why with more details. Perhaps providing a function call
+chain?  Sorry if I'm missing the obvious here.
+
+This is really the critical point that drove me to use lists: multiple
+writers expiring and reserving the same descriptors.
+
+John Ogness
