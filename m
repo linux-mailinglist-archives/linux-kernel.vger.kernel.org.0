@@ -2,142 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EABE63B23
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFEE463B01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:32:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbfGISd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:33:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbfGISd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:33:27 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65E3D20656;
-        Tue,  9 Jul 2019 18:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562697207;
-        bh=yAP7lLk8scvs8z72JtKyaa3K2i32Wc49Nr1SyOz2l3M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wKFilR8ZSDMQ1SkWeWA3Li198T/E6FamZeMgPqVQ6ToJ38qlAhi99VtfYYPROyasb
-         pjvJQfxgjUiT2IbDYEICDj3cffL3tGgoY13Cm6D2Nypc9DXTkwOlFTwt3t6x5WgO56
-         9L37svk73hrJY1BnddgDill4IWSC8nS4stvKIm8U=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Leo Yan <leo.yan@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 25/25] perf intel-pt: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Tue,  9 Jul 2019 15:31:26 -0300
-Message-Id: <20190709183126.30257-26-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190709183126.30257-1-acme@kernel.org>
-References: <20190709183126.30257-1-acme@kernel.org>
+        id S1729091AbfGIScS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:32:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:53537 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbfGIScS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:32:18 -0400
+Received: from localhost ([62.96.34.174]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MfbwW-1iQYBn3fGi-00fx9T; Tue, 09 Jul 2019 20:32:11 +0200
+Date:   Tue, 9 Jul 2019 20:32:11 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     linux-omap@vger.kernel.org
+Cc:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: am335x-wega.dtsi: fix wrong card detect pin level
+Message-ID: <20190709183209.y64keopah5rkismc@arbad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:mLpKUvjdvDUhw3C0lESUlBgRztaW463jyV9JDLd5qtkB543lknY
+ rIBnmPz36XRigau/3NKaC3TAsaxMDXC4NaCyqjPC8RcEXKdxhvin7U01RAqOctwMD9YZ7qa
+ BSTsrY6woa0Eds6yU4hxhleCtR/u9XWRT+qJO4aa7/ugO4oBIVAe2qk+Eu0E2glhAM//uXE
+ GnpmYk7Jji1o0VIr/WT5g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SKpnKGbIXBI=:rcghbSGCxoLumohil+yF4H
+ 8lyqKSiqeOgBB8F2doLaLc/kBrfRbzdHHjTQsPpEewP+DzGYTFkKqcE8EiDpTVBZ4yiBOocXk
+ wjnbiJbN1l6jEqX2vvdlhUbkQ6KCSZIaZGK0WyBcvpP7/B5O98E6ZrsT8CmtHeZnuuteGdDaW
+ oT5ptLr5Aq7z6CAqHMF5HUwRzOvAy7pWyv9oGTInD2yOJWk4kJxv1cHZ+UGGPqDNiIrPjQlLH
+ 9tLta9HsQ9cg1gVa2k9P1+0BXh9eILXsOuMGJ5Y35R4XfAV3PNaeGI3nqyoMkJOwHBAhqkwHM
+ 4nxBnYv+QS/GA1M2ow1nPG11SYyRcUxyJl9GwHb/i57qaTo8+zbUJ07cTv8Tv3dXciedTyGEU
+ 5o5ibZzwKVPnQZuhZw7lXkUPFUGqVNhDSlBPTaNyrXpGULxxU2RY0rb5xcrElXUA4p0xSQAKJ
+ qAwDVg61fQOXvrRlKNZp8v4ZTuXKmNd1buEVt3zLoGDnn6+4AX1eJsjm+f2LsOEVZClP8VbhI
+ YIK9H4FBe4XgoMjPy1PAL/bwyS8DrvwmTf6wpJUz9RuPu/z+DfbWTM2VP5cbYAGKReEetqfS0
+ 8++qHzVBO3Nfh1XXJyR344Asf4dD4P07lIQOkTnv5rCFLYdyzEp8vz14BlF98vyUWGImOMetU
+ GCulqD45dpCA7/5i9NO5WexlyX6O6R9C1Kes+LibxHO3mDvGYhZDWcEAppkns7oMyhk6Y9OW0
+ dm421jvAkvj59UgWcSyx2mCPnNxHkZeS8YhnaQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+mmc cards on mmc1 are not detected because of wrong card detect (cd) level.
 
-Based on the following report from Smatch, fix the potential NULL
-pointer dereference check.
+Change cd from GPIO_ACTIVE_HIGH to GPIO_ACTIVE_LOW.
 
-  tools/perf/util/intel-pt.c:3200
-  intel_pt_process_auxtrace_info() error: we previously assumed
-  'session->itrace_synth_opts' could be null (see line 3196)
+This is necessary because of commit e63201f19438 ("mmc: omap_hsmmc:
+Delete platform data GPIO CD and WP")
 
-  tools/perf/util/intel-pt.c:3206
-  intel_pt_process_auxtrace_info() warn: variable dereferenced before
-  check 'session->itrace_synth_opts' (see line 3200)
-
-  tools/perf/util/intel-pt.c
-  3196         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-  3197                 pt->synth_opts = *session->itrace_synth_opts;
-  3198         } else {
-  3199                 itrace_synth_opts__set_default(&pt->synth_opts,
-  3200                                 session->itrace_synth_opts->default_no_sample);
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3201                 if (!session->itrace_synth_opts->default_no_sample &&
-  3202                     !session->itrace_synth_opts->inject) {
-  3203                         pt->synth_opts.branches = false;
-  3204                         pt->synth_opts.callchain = true;
-  3205                 }
-  3206                 if (session->itrace_synth_opts)
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3207                         pt->synth_opts.thread_stack =
-  3208                                 session->itrace_synth_opts->thread_stack;
-  3209         }
-
-'session->itrace_synth_opts' is impossible to be a NULL pointer in
-intel_pt_process_auxtrace_info(), thus this patch removes the NULL test
-for 'session->itrace_synth_opts'.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190708143937.7722-4-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 ---
- tools/perf/util/intel-pt.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/am335x-wega.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index c76a96f777fb..df061599fef4 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -3210,7 +3210,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
- 		goto err_delete_thread;
- 	}
+diff --git a/arch/arm/boot/dts/am335x-wega.dtsi b/arch/arm/boot/dts/am335x-wega.dtsi
+index b7d28a20341f..84581fed3d06 100644
+--- a/arch/arm/boot/dts/am335x-wega.dtsi
++++ b/arch/arm/boot/dts/am335x-wega.dtsi
+@@ -157,7 +157,7 @@
+ 	bus-width = <4>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc1_pins>;
+-	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
++	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
  
--	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-+	if (session->itrace_synth_opts->set) {
- 		pt->synth_opts = *session->itrace_synth_opts;
- 	} else {
- 		itrace_synth_opts__set_default(&pt->synth_opts,
-@@ -3220,8 +3220,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
- 			pt->synth_opts.branches = false;
- 			pt->synth_opts.callchain = true;
- 		}
--		if (session->itrace_synth_opts)
--			pt->synth_opts.thread_stack =
-+		pt->synth_opts.thread_stack =
- 				session->itrace_synth_opts->thread_stack;
- 	}
- 
-@@ -3241,11 +3240,9 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
- 		pt->cbr2khz = tsc_freq / pt->max_non_turbo_ratio / 1000;
- 	}
- 
--	if (session->itrace_synth_opts) {
--		err = intel_pt_setup_time_ranges(pt, session->itrace_synth_opts);
--		if (err)
--			goto err_delete_thread;
--	}
-+	err = intel_pt_setup_time_ranges(pt, session->itrace_synth_opts);
-+	if (err)
-+		goto err_delete_thread;
- 
- 	if (pt->synth_opts.calls)
- 		pt->branches_filter |= PERF_IP_FLAG_CALL | PERF_IP_FLAG_ASYNC |
 -- 
-2.21.0
+2.11.0
 
+
+-- 
