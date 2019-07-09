@@ -2,128 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E9262D10
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 02:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BA262D40
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 03:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfGIA1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 20:27:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49499 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfGIA1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 20:27:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jNSK1HYJz9s8m;
-        Tue,  9 Jul 2019 10:27:29 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562632050;
-        bh=jKvKlrFXe07Fpw3txFGQXGR5J2AXGtNYEGJMdD5adJ0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ljg9018W1CfPYY7OP0Z79VM7KwIphqePyLGfwxoBC2GcxeRzvtnjBGKFYKuZFlxxE
-         y56glV/BvdwfbObqPEnEWqd8Y1j777rM15dJ1+qktiyYmZz9X8s86WJPg7HCF6753o
-         ogO9vk7rD+9xIiFVtqLSNJBNFF+tBkwATXOUsJPxDH5Qr31l1v7RPF7OzgsAxtv1M1
-         AXvHxBIjCw1/uaR91VCKnXf5a0s1AYClAjLKjfwbTRY6cgnahAEkCag7PvuIYITwiS
-         JWpOusNm7XqtQCiilPfl++IXwuzNWi90qKAK7ETVOzB825nwBuz3DhPN3CqwBdylKj
-         0XI5c80q9PaSQ==
-Date:   Tue, 9 Jul 2019 10:27:28 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matteo Croce <mcroce@redhat.com>,
-        Florian Westphal <fw@strlen.de>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190709102728.70299ba8@canb.auug.org.au>
-In-Reply-To: <20190702121357.65f9b0b4@canb.auug.org.au>
-References: <20190702121357.65f9b0b4@canb.auug.org.au>
+        id S1726302AbfGIBCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 21:02:31 -0400
+Received: from edison.jonmasters.org ([173.255.233.168]:59276 "EHLO
+        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfGIBCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 21:02:30 -0400
+X-Greylist: delayed 2192 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jul 2019 21:02:30 EDT
+Received: from boston.jonmasters.org ([50.195.43.97] helo=tonnant.bos.jonmasters.org)
+        by edison.jonmasters.org with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.71)
+        (envelope-from <jcm@jonmasters.org>)
+        id 1hke0d-0003pR-Ii; Tue, 09 Jul 2019 00:29:27 +0000
+From:   Jon Masters <jcm@jonmasters.org>
+To:     "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        "indou.takao@fujitsu.com" <indou.takao@fujitsu.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190617143255.10462-1-indou.takao@jp.fujitsu.com>
+ <20190617170328.GJ30800@fuggles.cambridge.arm.com>
+ <e8fe8faa-72ef-8185-1a9d-dc1bbe0ae15d@jp.fujitsu.com>
+ <20190627102724.vif6zh6zfqktpmjx@willie-the-truck>
+ <5999ed84-72d0-9d42-bf7d-b8d56eaa4d4a@jp.fujitsu.com>
+ <675313fe-007b-c850-d730-a629b82ccfc8@jonmasters.org>
+Message-ID: <d0879ecc-78c6-b66f-3525-aa1ce175178f@jonmasters.org>
+Date:   Mon, 8 Jul 2019 20:29:26 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/V3hnu3YvyhoLQaqhVeqx3Ds"; protocol="application/pgp-signature"
+In-Reply-To: <675313fe-007b-c850-d730-a629b82ccfc8@jonmasters.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 50.195.43.97
+X-SA-Exim-Mail-From: jcm@jonmasters.org
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
+        edison.jonmasters.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED autolearn=ham version=3.3.1
+Subject: Re: [PATCH 0/2] arm64: Introduce boot parameter to disable TLB flush
+ instruction within the same inner shareable domain
+X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
+X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/V3hnu3YvyhoLQaqhVeqx3Ds
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/8/19 8:25 PM, Jon Masters wrote:
+> On 7/2/19 10:45 PM, qi.fuli@fujitsu.com wrote:
+> 
+>> However, we found that with the increase of that the TLB flash was called,
+>> the noise was also increasing. Here we understood that the cause of this 
+>> issue is the implementation of Linux's TLB flush for arm64, especially use of 
+>> TLBI-is instruction which is a broadcast to all processor core on the system. 
+> 
+> Are you saying that for a microbenchmark in which very large numbers of
+> threads are created and destroyed rapidly there are a large number of
+> associated tlb range flushes which always use broadcast TLBIs?
+> 
+> If that's the case, and the hardware doesn't do any ASID filtering and
+> each TLBI results in a DVM to every PE, would it make sense to look at
+> whether there are ways to improve batching/switch to an IPI approach
+> rather than relying on broadcasts, as a more generic solution?
 
-Hi all,
+What I meant was a heuristic to do this automatically, rather than via a
+command line.
 
-On Tue, 2 Jul 2019 12:13:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   net/ipv4/devinet.c
->=20
-> between commit:
->=20
->   2e6054636816 ("ipv4: don't set IPv6 only flags to IPv4 addresses")
->=20
-> from the net tree and commit:
->=20
->   2638eb8b50cf ("net: ipv4: provide __rcu annotation for ifa_list")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc net/ipv4/devinet.c
-> index c5ebfa199794,137d1892395d..000000000000
-> --- a/net/ipv4/devinet.c
-> +++ b/net/ipv4/devinet.c
-> @@@ -473,11 -482,10 +487,13 @@@ static int __inet_insert_ifa(struct in_
->   	ifa->ifa_flags &=3D ~IFA_F_SECONDARY;
->   	last_primary =3D &in_dev->ifa_list;
->  =20
->  +	/* Don't set IPv6 only flags to IPv4 addresses */
->  +	ifa->ifa_flags &=3D ~IPV6ONLY_FLAGS;
->  +
-> - 	for (ifap =3D &in_dev->ifa_list; (ifa1 =3D *ifap) !=3D NULL;
-> - 	     ifap =3D &ifa1->ifa_next) {
-> + 	ifap =3D &in_dev->ifa_list;
-> + 	ifa1 =3D rtnl_dereference(*ifap);
-> +=20
-> + 	while (ifa1) {
->   		if (!(ifa1->ifa_flags & IFA_F_SECONDARY) &&
->   		    ifa->ifa_scope <=3D ifa1->ifa_scope)
->   			last_primary =3D &ifa1->ifa_next;
-
-
-I am still getting this conflict (the commit ids may have changed).
-Just a reminder in case you think Linus may need to know.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/V3hnu3YvyhoLQaqhVeqx3Ds
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j33AACgkQAVBC80lX
-0GwB1gf/bYeymsjEJKZD7rtNgI+l/u3G+WhPHOMWD4mqBf9HDXEbuhm9eh6w0eiH
-UwCykKCsLEn0/xhDcOkhRXSkoMX/UkgxdfX2meLcXJIHIRISVjv+xu4+0cw1892T
-ik+L/JWA1hdUOAvVQmVWHX16/CUHwluS3fsT/teiZ0GUeKDMEvRShcXg5PguXomY
-gjX0LE1WOIn7Y4+wYeuBUHoo4lYgOFb00WYjGpf4zaJ/4Lar6mP3ZNclbG7TQNk8
-HxkIn284NvLARWuAxHk5fEb2t4lH/WNz9WrLBdqLCFrbBNHcS22MzyS1LSv3/wDU
-Zkezcwet1MPmiTw/UrDWUIiyXPtNuQ==
-=qFgw
------END PGP SIGNATURE-----
-
---Sig_/V3hnu3YvyhoLQaqhVeqx3Ds--
+Jon.
