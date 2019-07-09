@@ -2,166 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C47763AE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A5663AE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfGISXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:23:12 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43718 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbfGISXL (ORCPT
+        id S1727372AbfGIS0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:26:05 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:52184 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726318AbfGIS0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:23:11 -0400
-Received: by mail-pl1-f193.google.com with SMTP id cl9so10484863plb.10;
-        Tue, 09 Jul 2019 11:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=LCMLgHJ1KXlp99Gv2wkxAzbZDPVeSL8C2PTBny9wQ7g=;
-        b=pujEg6308qU0RMwp+4YjFwJaOlPrDWNNTdKt100PKX/zrDybn2fzbTR8Wwgj+9Sbyd
-         FRZeq5sWEoE2IvgiqW2Chy6WH+NwiaOUtYyb75bk1CSI7V9oo/Zv4YWbgAniYM8W/P98
-         DBC2DARiffAlT9NG1cjNNKft/7+f0tkHvYHD1ISY3haeZEsAnXKn+qN4fkw9J6QPFh3p
-         /0WDsSsHUxWLKQiKKk389rHhtclMXyPPHQ4XdvHXLqjJOqobrUEh6qlGJiSYGMbeGuW2
-         8jpHv2NHWbtMUcWb8cWP72ApS9QZZsfMW3frL2PkbBJRqA5uLeaYD27j3uG/SQM9pT8t
-         /pXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=LCMLgHJ1KXlp99Gv2wkxAzbZDPVeSL8C2PTBny9wQ7g=;
-        b=dDDBMeCx8pQwWO3E2clJHJ3u3rVzWjsMnKNkzZP2PzDhJRc8ZD1nE2BgluHi0anpbK
-         wvmEsDZn7DTRh7WdtTzoEGOaxlmeJSFuHDQZYrlgSNbRN5Y1BLtL0wkE/bvxQkRzXMOF
-         2Xakk+74dglH5Iyq/CQJXZ1VvpTvt9mTpFtH4AvS5OC7XrhRGweJpgHkWoM2hm0SBEgc
-         /XYHOlp6SzjI+nM5csurX3I8NFQnaNqGjkvqJIXDrXJHHyce/6rAK4RtQMFzI5Do8UlT
-         1mv7yCm1a3C2hOAl+C9o83h8s+B+Dc1QBv6udKdRx6G4jMnY3fG5Qs5ztzI0oxmW78RE
-         XpKA==
-X-Gm-Message-State: APjAAAXuETXtQEXOwKx7iVZAvbchvHEWDuCrcYGT3vv7nLWP4oCMw+mu
-        Lb/lpKoTwN03fFX+/AfNTyGJHjbn
-X-Google-Smtp-Source: APXvYqzS72n4+wpP4CGHtXqb0vKR0fQMrpbZKIus1+TruDS9xGrw1cfE/ybkj05w7VuXsKD/5dOYOA==
-X-Received: by 2002:a17:902:28:: with SMTP id 37mr31614085pla.188.1562696590472;
-        Tue, 09 Jul 2019 11:23:10 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m4sm18377689pgs.71.2019.07.09.11.23.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2019 11:23:09 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon updates for hwmon-for-v5.3
-Date:   Tue,  9 Jul 2019 11:23:08 -0700
-Message-Id: <1562696588-26554-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Tue, 9 Jul 2019 14:26:05 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 08634634C7B;
+        Tue,  9 Jul 2019 21:25:01 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1hkunU-000294-9D; Tue, 09 Jul 2019 21:25:00 +0300
+Date:   Tue, 9 Jul 2019 21:25:00 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Luis de Oliveira <Luis.Oliveira@synopsys.com>
+Cc:     "mchehab@kernel.org" <mchehab@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>
+Subject: Re: [v4 1/6] dt-bindings: media: Document bindings for DW MIPI CSI-2
+ Host
+Message-ID: <20190709182500.3x544axnrgy72aje@valkosipuli.retiisi.org.uk>
+References: <1560280855-18085-1-git-send-email-luis.oliveira@synopsys.com>
+ <1560280855-18085-2-git-send-email-luis.oliveira@synopsys.com>
+ <20190628141326.swgl3kg4fj5pmlqx@valkosipuli.retiisi.org.uk>
+ <MN2PR12MB37109D7AADCE4823CB458CB9CBF60@MN2PR12MB3710.namprd12.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MN2PR12MB37109D7AADCE4823CB458CB9CBF60@MN2PR12MB3710.namprd12.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Luis,
 
-Please pull hwmon updates for Linux hwmon-for-v5.3 from signed tag:
+On Mon, Jul 08, 2019 at 03:21:50PM +0000, Luis de Oliveira wrote:
+> Hi Sakari,
+> 
+> Thank you for your feedback.
+> I have my comments inline.
+> 
+> From: Sakari Ailus <sakari.ailus@iki.fi>
+> Date: Fri, Jun 28, 2019 at 15:13:26
+> 
+> > Hi Luis,
+> > 
+> > Thank you for the patchset.
+> > 
+> > On Tue, Jun 11, 2019 at 09:20:50PM +0200, Luis Oliveira wrote:
+> > > From: Luis Oliveira <lolivei@synopsys.com>
+> > > 
+> > > Add bindings for Synopsys DesignWare MIPI CSI-2 host.
+> > > 
+> > > Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> > > ---
+> > > Changelog
+> > > v3-v4
+> > > - remove "plat" from the block name @rob @laurent
+> > > - remove "phy-names" when single-entry @rob
+> > > - remove "snps,output-type" -> went to the driver config @laurent
+> > > 
+> > >  .../devicetree/bindings/media/snps,dw-csi.txt      | 41 ++++++++++++++++++++++
+> > >  1 file changed, 41 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/media/snps,dw-csi.txt b/Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > new file mode 100644
+> > > index 0000000..613b7f9
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > @@ -0,0 +1,41 @@
+> > > +Synopsys DesignWare CSI-2 Host controller
+> > > +
+> > > +Description
+> > > +-----------
+> > > +
+> > > +This HW block is used to receive image coming from an MIPI CSI-2 compatible
+> > > +camera.
+> > > +
+> > > +Required properties:
+> > > +- compatible		: shall be "snps,dw-csi"
+> > > +- reg			: physical base address and size of the device memory
+> > > +			  mapped registers;
+> > > +- interrupts		: DW CSI-2 Host interrupts
+> > > +- phys			: List of one PHY specifier (as defined in
+> > > +			  Documentation/devicetree/bindings/phy/phy-bindings.txt).
+> > > +			  This PHY is a MIPI DPHY working in RX mode.
+> > > +- resets		: Reference to a reset controller (optional)
+> > > +
+> > > +The per-board settings:
+> > > + - port sub-node describing a single endpoint connected to the camera as
+> > > +   described in video-interfaces.txt[1].
+> > 
+> > Which endpoint properties in video-interfaces.txt are relevant for the
+> > hardware? Which values may they have?
+> > 
+> 
+> Currently I'm using only two properties "data-lanes" and "bus-width", but 
+> I have plans to add blanking info also.
+> I will add more info.
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.3
+Isn't blanking defined by what the transmitter seneds? Or do you have
+hardware limitations on the receiver side?
 
-Thanks,
-Guenter
-------
+I've only heard of one such case before, and it was a very old parallel
+receiver.
 
-The following changes since commit 4b972a01a7da614b4796475f933094751a295a2f:
+If you have a CSI-2 receiver, bus-width isn't relevant --- it's for paralle
+interfaces only. Please add data-lanes to required endpoint properties.
 
-  Linux 5.2-rc6 (2019-06-22 16:01:36 -0700)
+-- 
+Regards,
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v5.3
-
-for you to fetch changes up to 9f7546570bcb20debfaa97bcf720fa0fcb8fc05a:
-
-  hwmon: (ina3221) Add of_node_put() before return (2019-07-08 18:11:32 -0700)
-
-----------------------------------------------------------------
-hwmon updates for v5.3
-
-New drivers for Infineon PXE1610 and IRPS5401
-Minor improvements, cleanup, and fixes in several drivers
-
-----------------------------------------------------------------
-Adamski, Krzysztof (Nokia - PL/Wroclaw) (1):
-      hwmon: (pmbus/adm1275) support PMBUS_VIRT_*_SAMPLES
-
-Alexander Soldatov (1):
-      hwmon: (occ) Add temp sensor value check
-
-Arnd Bergmann (1):
-      hwmon: (max6650) Fix unused variable warning
-
-Boyang Yu (1):
-      hwmon: (lm90) Fix max6658 sporadic wrong temperature reading
-
-Christian Schneider (2):
-      hwmon: (gpio-fan) move fan_alarm_init after devm_hwmon_device_register_with_groups
-      hwmon: (gpio-fan) fix sysfs notifications and udev events for gpio-fan alarms
-
-Greg Kroah-Hartman (1):
-      hwmon: (asus_atk0110) no need to check return value of debugfs_create functions
-
-Guenter Roeck (17):
-      hwmon: (gpio-fan) Check return value from devm_add_action_or_reset
-      hwmon: (pwm-fan) Check return value from devm_add_action_or_reset
-      hwmon: (core) Add comment describing how hwdev is freed in error path
-      hwmon: (max6650) Use devm function to register thermal device
-      hwmon: (max6650) Introduce pwm_to_dac and dac_to_pwm
-      hwmon: (max6650) Improve error handling in max6650_init_client
-      hwmon: (max6650) Declare valid as boolean
-      hwmon: (max6650) Cache alarm_en register
-      hwmon: (max6650) Simplify alarm handling
-      hwmon: (max6650) Convert to use devm_hwmon_device_register_with_info
-      hwmon: (max6650) Read non-volatile registers only once
-      hwmon: (max6650) Improve error handling in max6650_update_device
-      hwmon: (max6650) Fix minor formatting issues
-      hwmon: (pmbus/adm1275) Fix power sampling support
-      hwmon: Convert remaining drivers to use SPDX identifier
-      hwmon: (lm90) Cache configuration register value
-      hwmon: (lm90) Introduce function to update configuration register
-
-Masahiro Yamada (1):
-      hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings
-
-Nishka Dasgupta (1):
-      hwmon: (ina3221) Add of_node_put() before return
-
-Robert Hancock (1):
-      hwmon: (pmbus) Add Infineon IRPS5401 driver
-
-Vijay Khemka (2):
-      hwmon: (pmbus) Add Infineon PXE1610 VR driver
-      hwmon: (pmbus) Document Infineon PXE1610 driver
-
-Wolfram Sang (1):
-      hwmon: (lm90) simplify getting the adapter of a client
-
-amy.shih (3):
-      hwmon: (nct7904) Fix the incorrect value of tcpu_mask in nct7904_data struct.
-      hwmon: (nct7904) Add error handling in probe function.
-      hwmon: (nct7904) Changes comments in probe function.
-
- Documentation/hwmon/pxe1610    |  90 ++++++
- drivers/hwmon/adm1029.c        |  10 -
- drivers/hwmon/asus_atk0110.c   |  23 +-
- drivers/hwmon/gpio-fan.c       |  22 +-
- drivers/hwmon/hwmon.c          |   6 +
- drivers/hwmon/ina3221.c        |   4 +-
- drivers/hwmon/lm90.c           | 106 +++---
- drivers/hwmon/max6650.c        | 710 +++++++++++++++++++++--------------------
- drivers/hwmon/nct7904.c        |  81 ++++-
- drivers/hwmon/occ/common.c     |   6 +
- drivers/hwmon/pmbus/Kconfig    |  18 ++
- drivers/hwmon/pmbus/Makefile   |   2 +
- drivers/hwmon/pmbus/adm1275.c  | 105 +++++-
- drivers/hwmon/pmbus/irps5401.c |  67 ++++
- drivers/hwmon/pmbus/pxe1610.c  | 139 ++++++++
- drivers/hwmon/pwm-fan.c        |  10 +-
- drivers/hwmon/scpi-hwmon.c     |  10 +-
- drivers/hwmon/smsc47m1.c       |   2 +
- 18 files changed, 954 insertions(+), 457 deletions(-)
- create mode 100644 Documentation/hwmon/pxe1610
- create mode 100644 drivers/hwmon/pmbus/irps5401.c
- create mode 100644 drivers/hwmon/pmbus/pxe1610.c
+Sakari Ailus
