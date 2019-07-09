@@ -2,104 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E680762D60
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 03:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB2662D68
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 03:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfGIB0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 21:26:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2187 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725886AbfGIB0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 21:26:15 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 48593A0AEE318C646116;
-        Tue,  9 Jul 2019 09:26:11 +0800 (CST)
-Received: from [127.0.0.1] (10.184.225.177) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 9 Jul 2019
- 09:26:00 +0800
-Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
- max_softirq_time_usecs
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     <corbet@lwn.net>, <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, <akpm@linux-foundation.org>,
-        <manfred@colorfullife.com>, <jwilk@jwilk.net>,
-        <dvyukov@google.com>, <feng.tang@intel.com>,
-        <sunilmut@microsoft.com>, <quentin.perret@arm.com>,
-        <linux@leemhuis.info>, <alex.popov@linux.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, <tedheadster@gmail.com>,
-        Eric Dumazet <edumazet@google.com>
-References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
- <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
- <0099726a-ead3-bdbe-4c66-c8adc9a4f11b@huawei.com>
- <alpine.DEB.2.21.1906241141370.32342@nanos.tec.linutronix.de>
- <c1b7a345-fa22-e52a-4db8-1f1288e7ad15@huawei.com>
- <alpine.DEB.2.21.1907081558400.4709@nanos.tec.linutronix.de>
-From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Message-ID: <cbd68d63-ac48-7b36-d317-7bb2b480e6f7@huawei.com>
-Date:   Tue, 9 Jul 2019 09:25:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1726690AbfGIBaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 21:30:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbfGIBaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 21:30:01 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 667E421537;
+        Tue,  9 Jul 2019 01:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562635800;
+        bh=ad3uQLD2dB/YrTL4QBuQgs1ohLJES1Q7t/kkDshS8Ik=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QY3av3dE07+y2dMsQhCjQ2wnckkX3zos3ofRPt1+pfrxDb/Ih2RV8BtHojXqg28fl
+         WwSrYW/1HiElZ3Udnv7UlaMEMBBw6uZBSkoTWX8RXOlNFiu/kWM0k7m+gUP/tH+QFt
+         Bp3lwzMjM5V8ry8quhfzaqWGKxMnwofCAmPyuqr8=
+Subject: Re: [PATCH 4.14 00/56] 4.14.133-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190708150514.376317156@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <8ec266e2-ea45-2235-4c56-45ec2aac9a6e@kernel.org>
+Date:   Mon, 8 Jul 2019 19:29:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1907081558400.4709@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="gb18030"
+In-Reply-To: <20190708150514.376317156@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.225.177]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/8/19 9:12 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.133 release.
+> There are 56 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.133-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
+Compiled and booted on my test system. No dmesg regressions.
 
-On 2019/7/8 22:14, Thomas Gleixner wrote:
-> Zhiqiang,
-> 
->> If HZ satisfies the condition: HZ <= MSEC_PER_SEC && !(MSEC_PER_SEC %
->> HZ), the return value of _msecs_to_jiffies func with m=0 is different
->> with different HZ setting.
-> 
->> ------------------------------------
->> | HZ |	MSEC_PER_SEC / HZ | return |
->> ------------------------------------
->> |1000|		1	  |   0	   |
->> |500 |		2	  |   1	   |
->> |200 |		5	  |   1	   |
->> |100 |		10	  |   1	   |
->> ------------------------------------
->>
->> Why only the return value of HZ=1000 is equal to 0 with m=0 ?
-> 
-> I don't know how you tested that, but obviously all four HZ values use
-> this variant:
-> 
->>     #if HZ <= MSEC_PER_SEC && !(MSEC_PER_SEC % HZ)
->>     static inline unsigned long _msecs_to_jiffies(const unsigned int m)
->>     {
->>             return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
->>     }
-> 
-> and for all four HZ values the result is 0. Why?
-> 
-> For m = 0 the calculation reduces to:
-> 
->       ((MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ)
-> 
-> i.e.
-> 
-> 	(x - 1) / x	where x = [1, 2, 5, 10]
-> 
-> which is guaranteed to be 0 for integer math. If not, you have a compiler
-> problem.
-> 
-> Thanks,
-> 
-> 	tglx
-Thanks for your reply. Actually, I have made a low-level mistake.
-I am really sorry for that.
-Thanks again.
-
+thanks,
+-- Shuah
