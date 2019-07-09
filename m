@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB5362E53
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 04:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D49862E74
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 05:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfGICxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 8 Jul 2019 22:53:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:44565 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfGICxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Jul 2019 22:53:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 19:53:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
-   d="scan'208";a="364443279"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jul 2019 19:53:16 -0700
-Message-ID: <5D2402E6.7060104@intel.com>
-Date:   Tue, 09 Jul 2019 10:58:46 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727054AbfGIDEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 8 Jul 2019 23:04:40 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2190 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725886AbfGIDEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:04:40 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A7D0215961FB8D5B5554;
+        Tue,  9 Jul 2019 11:04:35 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 9 Jul 2019
+ 11:04:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
+        <f.fainelli@gmail.com>, <davem@davemloft.net>,
+        <paweldembicki@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: dsa: vsc73xx: Fix Kconfig warning and build errors
+Date:   Tue, 9 Jul 2019 11:02:24 +0800
+Message-ID: <20190709030224.40292-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190708172808.GG9027@lunn.ch>
+References: <20190708172808.GG9027@lunn.ch>
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
-Subject: Re: [PATCH v7 07/12] perf/x86: no counter allocation support
-References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-8-git-send-email-wei.w.wang@intel.com> <20190708142947.GM3402@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190708142947.GM3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 10:29 PM, Peter Zijlstra wrote:
+Fix Kconfig dependency warning and subsequent build errors
+caused by OF is not set:
 
-Thanks for the comments.
+WARNING: unmet direct dependencies detected for NET_DSA_VITESSE_VSC73XX
+  Depends on [n]: NETDEVICES [=y] && HAVE_NET_DSA [=y] && OF [=n] && NET_DSA [=m]
+  Selected by [m]:
+  - NET_DSA_VITESSE_VSC73XX_PLATFORM [=m] && NETDEVICES [=y] && HAVE_NET_DSA [=y] && HAS_IOMEM [=y]
 
->
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->> index 0ab99c7..19e6593 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -528,6 +528,7 @@ typedef void (*perf_overflow_handler_t)(struct perf_event *,
->>    */
->>   #define PERF_EV_CAP_SOFTWARE		BIT(0)
->>   #define PERF_EV_CAP_READ_ACTIVE_PKG	BIT(1)
->> +#define PERF_EV_CAP_NO_COUNTER		BIT(2)
->>   
->>   #define SWEVENT_HLIST_BITS		8
->>   #define SWEVENT_HLIST_SIZE		(1 << SWEVENT_HLIST_BITS)
->> @@ -895,6 +896,13 @@ extern int perf_event_refresh(struct perf_event *event, int refresh);
->>   extern void perf_event_update_userpage(struct perf_event *event);
->>   extern int perf_event_release_kernel(struct perf_event *event);
->>   extern struct perf_event *
->> +perf_event_create(struct perf_event_attr *attr,
->> +		  int cpu,
->> +		  struct task_struct *task,
->> +		  perf_overflow_handler_t overflow_handler,
->> +		  void *context,
->> +		  bool counter_assignment);
->> +extern struct perf_event *
->>   perf_event_create_kernel_counter(struct perf_event_attr *attr,
->>   				int cpu,
->>   				struct task_struct *task,
-> Why the heck are you creating this wrapper nonsense?
+Make NET_DSA_VITESSE_VSC73XX_SPI and NET_DSA_VITESSE_VSC73XX_PLATFORM
+depends on NET_DSA_VITESSE_VSC73XX to fix this.
 
-(please see early discussions: https://lkml.org/lkml/2018/9/20/868)
-I thought we agreed that the perf event created here don't need to consume
-an extra counter.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 95711cd5f0b4 ("net: dsa: vsc73xx: Split vsc73xx driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: Use "depends on" instead of "select" NET_DSA_VITESSE_VSC73XX
+---
+ drivers/net/dsa/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-In the previous version, we added a "no_counter" bit to perf_event_attr, and
-that will be exposed to user ABI, which seems not good.
-(https://lkml.org/lkml/2019/2/14/791)
-So we wrap a new kernel API above to support this.
+diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
+index cf9dbd1..618853d 100644
+--- a/drivers/net/dsa/Kconfig
++++ b/drivers/net/dsa/Kconfig
+@@ -99,7 +99,7 @@ config NET_DSA_SMSC_LAN9303_MDIO
+ 	  for MDIO managed mode.
+ 
+ config NET_DSA_VITESSE_VSC73XX
+-	tristate
++	tristate "Vitesse VSC7385/7388/7395/7398 support"
+ 	depends on OF
+ 	depends on NET_DSA
+ 	select FIXED_PHY
+@@ -112,7 +112,7 @@ config NET_DSA_VITESSE_VSC73XX
+ config NET_DSA_VITESSE_VSC73XX_SPI
+ 	tristate "Vitesse VSC7385/7388/7395/7398 SPI mode support"
+ 	depends on SPI
+-	select NET_DSA_VITESSE_VSC73XX
++	depends on NET_DSA_VITESSE_VSC73XX
+ 	---help---
+ 	  This enables support for the Vitesse VSC7385, VSC7388, VSC7395
+ 	  and VSC7398 SparX integrated ethernet switches in SPI managed mode.
+@@ -120,7 +120,7 @@ config NET_DSA_VITESSE_VSC73XX_SPI
+ config NET_DSA_VITESSE_VSC73XX_PLATFORM
+ 	tristate "Vitesse VSC7385/7388/7395/7398 Platform mode support"
+ 	depends on HAS_IOMEM
+-	select NET_DSA_VITESSE_VSC73XX
++	depends on NET_DSA_VITESSE_VSC73XX
+ 	---help---
+ 	  This enables support for the Vitesse VSC7385, VSC7388, VSC7395
+ 	  and VSC7398 SparX integrated ethernet switches, connected over
+-- 
+2.7.4
 
-Do you have a different suggestion to do this?
-(exclude host/guest just clears the enable bit when on VM-exit/entry,
-still consumes the counter)
 
-Best,
-Wei
