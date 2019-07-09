@@ -2,95 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E777063268
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9159163278
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfGIHwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 03:52:35 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43556 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfGIHwf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:52:35 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c19so7096056lfm.10;
-        Tue, 09 Jul 2019 00:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DuuUrAgsz3xn2IqR+NT+Aj6rVjOzsXF/3wR7kdRlWbE=;
-        b=dQ/PcvYdgxFItwCLBKfdLyjVcvNvYsUJ5Q+51qBcdq9eubZbqj8syBaBfP0KESHSLY
-         Z918J4YDsa+RLt0a3HQmNjmzG61kTbpPjvgStXkuT9gmtPINmN5jXR86f5tQ0C8P+VL8
-         d8sGsEIDo4VpwF/AkusGrMrKMRHPcZN4ykusdAnVdYF67aFHIMCAyqed7MZZUSUCuYkK
-         gR2VECe4aClsoCqGZErRXZo8p1+ft3gTEgmf6XAg1HizFW7bffyZ0STu6ZH2MxSsC4zf
-         Ahs1M5N5J2ynG3zxHo162n0Md5zrJxUYcP/40eOtIC2D/nKSNx9qlqZ27/FmSIAIUeox
-         NpPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DuuUrAgsz3xn2IqR+NT+Aj6rVjOzsXF/3wR7kdRlWbE=;
-        b=Be/pE0rN0BzW/qdMRxhvfFgfoM98pI1jDmCC8bVdDWkDZIVMi/kGt+BIioSZ91Z4KS
-         M6QW4+Qn6DS+Z15pAKRF0oBfucGRFZxWSUUFpMx571zZKITCA+RADrfpGwDkiVhArWQc
-         SzPNu3r3XyJiYbsKSGwXcku3cgKxtPEz+rvQE5CXxftbxKZeU2/d1TlU6u6SktLsYnsR
-         GpZZFY2nxB6MS3a/ru2pcJTuIP8/AIQnq5Q5LbuRFS8ZQCWq8nVIOs5hS+9wL0mijPaY
-         7WvGuZElPO26uU43+DyAIMZP+carupr2C3HM/X5QC/nwGGLaEO3GRBHk8aypZBUca0u5
-         m3Ag==
-X-Gm-Message-State: APjAAAXLY83syJMiF9fN6QrpnXjIR23nrO+uaPsyY2mOLmUaaYgcMVf4
-        hvDmnsNcZfjO/HgN7TyV3ds=
-X-Google-Smtp-Source: APXvYqzX6Zf6etGzbp7h/9xS8RJsEHNI1ZI78gvlpwc7B8V0aOtNh951rX5ZyXmbLZFvDCLcBjXXaQ==
-X-Received: by 2002:ac2:4901:: with SMTP id n1mr10968478lfi.153.1562658752587;
-        Tue, 09 Jul 2019 00:52:32 -0700 (PDT)
-Received: from localhost.localdomain (c-5eea3126-74736162.cust.telenor.se. [94.234.49.38])
-        by smtp.gmail.com with ESMTPSA id z22sm2467055ljz.20.2019.07.09.00.52.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 00:52:31 -0700 (PDT)
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2] docs: driver-api: generic-counter: fix file path to ABI doc
-Date:   Tue,  9 Jul 2019 09:54:36 +0200
-Message-Id: <20190709075436.7294-1-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        id S1726403AbfGIHzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 03:55:40 -0400
+Received: from mail-eopbgr50079.outbound.protection.outlook.com ([40.107.5.79]:42887
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725911AbfGIHzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:55:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l7JOqoZNLF1ch2AXaETC6HGqHaRuhuy6+juS3/DgGdc=;
+ b=XhtqQP9aiQyyWmUlJ2fsn6lQ9DnHBOi9cR0RE8+Ur4APKHlRTp4wQrmsXq+pqUslTWWmWwKmKpvzRSnjUMha01K+66Wixt0NejRapsc9M8iTwJvdRQ0XHPXhJ/iscCK8OUA846b6M/Jt+js67ZvZalaNhjZySGaGmk+k6Ge6y74=
+Received: from VE1PR04MB6655.eurprd04.prod.outlook.com (20.179.235.94) by
+ VE1PR04MB6735.eurprd04.prod.outlook.com (20.179.235.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Tue, 9 Jul 2019 07:55:31 +0000
+Received: from VE1PR04MB6655.eurprd04.prod.outlook.com
+ ([fe80::846e:134d:2731:fcd]) by VE1PR04MB6655.eurprd04.prod.outlook.com
+ ([fe80::846e:134d:2731:fcd%7]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
+ 07:55:31 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Leo Li <leoyang.li@nxp.com>
+Subject: RE: [PATCH] usb: dwc3: Enable the USB snooping
+Thread-Topic: [PATCH] usb: dwc3: Enable the USB snooping
+Thread-Index: AQHTXdpMV/QBUrO8J0eNmcCmR0ATg6MVIlkAgAAD6zCAABVWgINueaJwgAAMz4CAAwpoAIAF38DwgBavPgCACkIu0IAASk0AgBejzDA=
+Date:   Tue, 9 Jul 2019 07:55:30 +0000
+Message-ID: <VE1PR04MB6655D052B076C52F7F24A387F1F10@VE1PR04MB6655.eurprd04.prod.outlook.com>
+References: <20171115060459.45375-1-ran.wang_1@nxp.com>
+ <87ineb9b5v.fsf@linux.intel.com>
+ <VI1PR04MB1504776EF3D4D8C374F0C069F1290@VI1PR04MB1504.eurprd04.prod.outlook.com>
+ <87shdfet90.fsf@linux.intel.com>
+ <AM5PR0402MB28654EBE2D431CC2F8061CF8F11E0@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+ <87k1eaanjw.fsf@linux.intel.com>
+ <AM5PR0402MB2865F3735D808E1BC9F67968F1180@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+ <AM5PR0402MB2865D0F0E2B4F65C86D051F8F1140@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+ <87o92wgyqj.fsf@linux.intel.com>
+ <VE1PR04MB66557834D3588FC8B558950AF1E00@VE1PR04MB6655.eurprd04.prod.outlook.com>
+ <87v9wvsex3.fsf@linux.intel.com>
+In-Reply-To: <87v9wvsex3.fsf@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c9c4a4c7-3feb-476e-7082-08d70442d097
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6735;
+x-ms-traffictypediagnostic: VE1PR04MB6735:
+x-microsoft-antispam-prvs: <VE1PR04MB6735CFA97D7A01FA7A5ADF27F1F10@VE1PR04MB6735.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0093C80C01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(366004)(396003)(136003)(189003)(199004)(504964003)(3846002)(7696005)(186003)(6116002)(74316002)(6246003)(102836004)(6506007)(26005)(53546011)(76176011)(52536014)(86362001)(229853002)(33656002)(486006)(8676002)(81166006)(81156014)(5660300002)(2906002)(446003)(8936002)(316002)(9686003)(25786009)(14454004)(76116006)(73956011)(55016002)(478600001)(4326008)(476003)(71190400001)(54906003)(99286004)(71200400001)(110136005)(305945005)(68736007)(66446008)(64756008)(66556008)(66946007)(66476007)(7736002)(53936002)(256004)(14444005)(66066001)(6436002)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6735;H:VE1PR04MB6655.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /LBlbvyE4InEq3vOIdp05vwA/+sTkagOMRYEP8wQNKiN0N8MN6MBVh0DM2P2AJ+Me5NKpXA7HLzfc3/a0HCjuErNQiYpz/mf4TW3UCLOsrRzd41lctK+GvJu+KattMuWG+mPbXs8jrCUseoi/g/S3f66jc1VBLoDVmjnN2NsESakVXl8w+ZgQOqt8XlMdXILEFVGwvYNRKU0neyjOLCztSr8bBxgw1Oa2kpSDzFZMf3WK9O9FsW5KayQJeSTTKYTT62TPPXzVFvO0OEYRZMrViVbJ9CWD+ANSmTeE4cIRnH22H68/3Ae9ueaFxRNO+12o9LJztw/SrrglINeKz7cEgmel7U4VrUsDVoJOdoV5PNvCfo5OiayI878z0COKmw+ySduzWQngKuZnghEr9celEtSepvQpORfMdZg8CBb5SE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9c4a4c7-3feb-476e-7082-08d70442d097
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:55:30.8443
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ran.wang_1@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6735
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
-v2: Correct the other place as well..
+Hi Felipe,
 
- Documentation/driver-api/generic-counter.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Monday, June 24, 2019 13:58, Felipe Balbi wrote:
+>=20
+> Hi,
+>=20
+> Ran Wang <ran.wang_1@nxp.com> writes:
+> >> >> > >> >> >  /* Global Debug Queue/FIFO Space Available Register */
+> >> >> > >> >> >  #define DWC3_GDBGFIFOSPACE_NUM(n)	((n) & 0x1f)
+> >> >> > >> >> >  #define DWC3_GDBGFIFOSPACE_TYPE(n)	(((n) << 5) & 0x1e0)
+> >> >> > >> >> > @@ -859,6 +867,7 @@ struct dwc3_scratchpad_array {
+> >> >> > >> >> >   * 	3	- Reserved
+> >> >> > >> >> >   * @imod_interval: set the interrupt moderation interval=
+ in
+> 250ns
+> >> >> > >> >> >   *                 increments or 0 to disable.
+> >> >> > >> >> > + * @dma_coherent: set if enable dma-coherent.
+> >> >> > >> >>
+> >> >> > >> >> you're not enabling dma coherency, you're enabling cache
+> snooping.
+> >> >> > >> >> And this property should describe that. Also, keep in mind
+> >> >> > >> >> that different devices may want different cache types for
+> >> >> > >> >> each of those fields, so your property would have to be a
+> >> >> > >> >> lot more complex. Something
+> >> >> > like:
+> >> >> > >> >>
+> >> >> > >> >> 	snps,cache-type =3D <foobar "cacheable">, <baz "cacheable"=
+>, ...
+> >> >> > >> >>
+> >> >> > >> >> Then driver would have to parse this properly to setup GSBU=
+SCFG0.
+> >> >> > >
+> >> >> > > According to the DesignWare Cores SuperSpeed USB 3.0
+> >> >> > > Controller Databook (v2.60a), it has described Type Bit
+> >> >> > > Assignments for all supported
+> >> >> > master bus type:
+> >> >> > > AHB, AXI3, AXI4 and Native. I found the bit definition are
+> >> >> > > different among
+> >> >> > them.
+> >> >> > > So, for the example you gave above, feel a little bit confused.
+> >> >> > > Did you mean:
+> >> >> > >     snps,cache-type =3D <DATA_RD  "write allocate">, <DESC_RD
+> >> >> > > "cacheable">, <DATA_WR  "bufferable">, <DESC_WR  "read
+> >> >> > > allocate">
+> >> >> >
+> >> >> > yeah, something like that.
+> >> >>
+> >> >> I think DATA_RD  should be a macro, right? So, where I can put its =
+define?
+> >> >> Create a dwc3.h in include/dt-bindings/usb/ ?
+> >> >
+> >> > Could you please give me some advice here? I'd like to prepare next
+> >> > version patch after getting this settled.
+> >> >
+> >> >> Another question about this remain open is: DWC3 data book's Table
+> >> >> 6-5 Cache Type Bit Assignments show that bits definition will
+> >> >> differ per MBUS_TYPEs as
+> >> >> below:
+> >> >> ----------------------------------------------------------------
+> >> >>  MBUS_TYPE| bit[3]       |bit[2]       |bit[1]     |bit[0]
+> >> >>  ----------------------------------------------------------------
+> >> >>  AHB      |Cacheable     |Bufferable   |Privilegge |Data
+> >> >>  AXI3     |Write Allocate|Read Allocate|Cacheable  |Bufferable
+> >> >>  AXI4     |Allocate Other|Allocate     |Modifiable |Bufferable
+> >> >>  AXI4     |Other Allocate|Allocate     |Modifiable |Bufferable
+> >> >>  Native   |Same as AXI   |Same as AXI  |Same as AXI|Same as AXI
+> >> >>  ----------------------------------------------------------------
+> >> >>  Note: The AHB, AXI3, AXI4, and PCIe busses use different names
+> >> >> for certain  signals, which have the same meaning:
+> >> >>    Bufferable =3D Posted
+> >> >>    Cacheable =3D Modifiable =3D Snoop (negation of No Snoop)
+> >> >>
+> >> >> For Layerscape SoCs, MBUS_TYPE is AXI3. So I am not sure how to
+> >> >> use snps,cache-type =3D <DATA_RD  "write allocate">, to cover all
+> MBUS_TYPE?
+> >> >> (you can notice that AHB and AXI3's cacheable are on different
+> >> >> bit) Or I just need to handle AXI3 case?
+> >> >
+> >> > Also on this open. Thank you in advance.
+> >>
+> >> You could pass two strings and let the driver process them. Something
+> >> like:
+> >>
+> >> 	snps,cache_type =3D <"data_wr" "write allocate">, <"desc_rd"
+> >> "cacheable">...
+> >>
+> >> And so on. The only thing missing is for the mbus_type to be known by =
+the
+> driver.
+> >> Is that something we can figure out on any of the HWPARAMS registers
+> >> or does it have to be told explicitly?
+> >
+> > I have checked Layerscape Reference manual, HWPARAMS0~8 doesn't
+> > contain mbus_type Info, and I didn't know where have declared it explic=
+itly.
+> >
+> >> Another option would be to pass a string followed by one hex digit for=
+ the
+> bits:
+> >>
+> >> 	snps,cache_type =3D <"data_wr" 0x8>, <"desc_rd" 0x2>...;
+> >>
+> >> Then we don't need to describe mbus_type since the bits are what matte=
+rs.
 
-diff --git a/Documentation/driver-api/generic-counter.rst b/Documentation/driver-api/generic-counter.rst
-index 0c161b1a3be6..8382f01a53e3 100644
---- a/Documentation/driver-api/generic-counter.rst
-+++ b/Documentation/driver-api/generic-counter.rst
-@@ -233,7 +233,7 @@ Userspace Interface
- Several sysfs attributes are generated by the Generic Counter interface,
- and reside under the /sys/bus/counter/devices/counterX directory, where
- counterX refers to the respective counter device. Please see
--Documentation/ABI/testing/sys-bus-counter-generic-sysfs for detailed
-+Documentation/ABI/testing/sysfs-bus-counter for detailed
- information on each Generic Counter interface sysfs attribute.
- 
- Through these sysfs attributes, programs and scripts may interact with
-@@ -325,7 +325,7 @@ sysfs attributes, where Y is the unique ID of the respective Count:
- 
- For a more detailed breakdown of the available Generic Counter interface
- sysfs attributes, please refer to the
--Documentation/ABI/testing/sys-bus-counter file.
-+Documentation/ABI/testing/sysfs-bus-counter file.
- 
- The Signals and Counts associated with the Counter device are registered
- to the system as well by the counter_register function. The
--- 
-2.22.0
+For this option, looks like DTC doesn't allow form of <"data_wr" 0x8>, <"de=
+sc_rd" 0x2>...=20
+It will report error when compiling:
 
+DTC     arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dtb
+Error: arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi:383.23-24 syntax erro=
+r
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:294: recipe for target 'arch/arm64/boot/dts/freescale/=
+fsl-ls1088a-qds.dtb' failed
+make[2]: *** [arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+Error: arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi:383.23-24 syntax erro=
+r
+FATAL ERROR: Unable to parse input tree
+
+One of the solution I can figure out is to use macro to replace "data_wr", =
+like below:
+<DATA_WR 0x8>, <DESC_RD 0x2>...
+
+However, it will require creating file in include/dt-bindings/usb/dwc3.h to
+place macro definitions.
+
+Or may I use:  "data_wr", <0x8>,  "desc_rd",  <0x2>... ?
+
+Thanks & Regards,
+Ran
+
+> > Yes, it's also what we prefer to use, it will be more flexible, I can
+> > add above Table
+> > 6-5 Cache Type Bit Assignments in binding to help user decide which
+> > value they would use.
+> >
+> > I would submit another version of patch for further review, thank you v=
+ery
+> much.
+>=20
+> cool, thanks
+>=20
+> --
+> balbi
