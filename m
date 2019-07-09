@@ -2,64 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA458639A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 18:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8278639A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 18:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfGIQnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 12:43:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36736 "EHLO mx1.redhat.com"
+        id S1726519AbfGIQpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 12:45:07 -0400
+Received: from foss.arm.com ([217.140.110.172]:47154 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726154AbfGIQnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:43:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C540A3EB2;
-        Tue,  9 Jul 2019 16:43:13 +0000 (UTC)
-Received: from treble (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43CA35C2FC;
-        Tue,  9 Jul 2019 16:43:11 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 11:43:08 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for Jul 9 (objtool)
-Message-ID: <20190709164308.33gzhuu6xtqy32jb@treble>
-References: <20190709220008.42ef7b47@canb.auug.org.au>
- <660371c5-60e9-2882-8993-21edc5e3814c@infradead.org>
+        id S1726318AbfGIQpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 12:45:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42EAD2B;
+        Tue,  9 Jul 2019 09:45:06 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58C3C3F59C;
+        Tue,  9 Jul 2019 09:45:05 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 17:45:03 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     kishon@ti.com, bhelgaas@google.com, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: pci-dra7xx: Add missing include file
+Message-ID: <20190709164503.GB19709@e121166-lin.cambridge.arm.com>
+References: <20190614154044.4972-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <660371c5-60e9-2882-8993-21edc5e3814c@infradead.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 09 Jul 2019 16:43:18 +0000 (UTC)
+In-Reply-To: <20190614154044.4972-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 09:07:09AM -0700, Randy Dunlap wrote:
-> On 7/9/19 5:00 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20190708:
-> > 
+On Fri, Jun 14, 2019 at 11:40:44PM +0800, YueHaibing wrote:
+> Fix build error:
 > 
-> on x86_64, with an older gcc:  gcc (SUSE Linux) 4.8.5
+> drivers/pci/controller/dwc/pci-dra7xx.c:
+>  In function dra7xx_pcie_probe:
+> drivers/pci/controller/dwc/pci-dra7xx.c:777:10:
+>  error: implicit declaration of function devm_gpiod_get_optional;
+>  did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
 > 
-> some builds (3) say:
-> kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0xb2: sibling call from callable instruction with modified stack frame
-> (see core.o.r6235)
+>   reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
 > 
-> and one build says:
-> kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0x2a: can't find switch jump table
-> (see core.o.r6238)
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Still working on it.
+Applied to pci/dwc for v5.3, thanks.
 
--- 
-Josh
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 419451e..4234ddb 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/types.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+> +#include <linux/gpio/consumer.h>
+>  
+>  #include "../../pci.h"
+>  #include "pcie-designware.h"
+> -- 
+> 2.7.4
+> 
+> 
