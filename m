@@ -2,80 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA73E6375E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655E463757
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGIN7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:59:12 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:33439 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfGIN7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:59:12 -0400
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Jul 2019 09:59:11 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 11FD618383;
-        Tue,  9 Jul 2019 15:54:07 +0200 (CEST)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id QvO7OHhFl5QD; Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 656A718485;
-        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5471F1A06F;
-        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4915E1A065;
-        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder02.se.axis.com (Postfix) with ESMTP;
-        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: from pc32929-1845.se.axis.com (pc32929-1845.se.axis.com [10.88.129.17])
-        by seth.se.axis.com (Postfix) with ESMTP id 3CF0C2262;
-        Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-Received: by pc32929-1845.se.axis.com (Postfix, from userid 20456)
-        id 3950E40B30; Tue,  9 Jul 2019 15:54:06 +0200 (CEST)
-From:   Lars Persson <lars.persson@axis.com>
-To:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org
-Cc:     jespern@axis.com, linux-kernel@vger.kernel.org,
-        Lars Persson <larper@axis.com>
-Subject: [PATCH] mmc: usdhi6rol0: Add maintainers
-Date:   Tue,  9 Jul 2019 15:53:51 +0200
-Message-Id: <20190709135351.25628-1-larper@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        id S1727064AbfGIN4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:56:50 -0400
+Received: from mga12.intel.com ([192.55.52.136]:53036 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbfGIN4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 09:56:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 06:56:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
+   d="scan'208";a="340759424"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 09 Jul 2019 06:56:40 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hkqbn-000DFm-OL; Tue, 09 Jul 2019 21:56:39 +0800
+Date:   Tue, 9 Jul 2019 21:55:42 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "J. Bruce Fields" <bfields@redhat.com>
+Cc:     kbuild-all@01.org, Jeff Layton <jlayton@kernel.org>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [linux-next:master 11860/13492] fs/nfsd/nfsctl.c:1221:22: sparse:
+ sparse: symbol '__get_nfsdfs_client' was not declared. Should it be static?
+Message-ID: <201907092159.SKYltvLT%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usdhi6rol0 driver is exclusively used for the ARTPEC family of
-SoCs. Other SoCs with the same IP of Panasonic origin use the tmio_mmc
-driver. Therefore we assigner maintainer responsibility to us at Axis
-until the two drivers become unified.
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   4608a726c66807c27bc7d91bdf8a288254e29985
+commit: 97ad4031e29521894fc28765f14247e79b0ef263 [11860/13492] nfsd4: add a client info file
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        git checkout 97ad4031e29521894fc28765f14247e79b0ef263
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Change-Id: I38b6fd0addc1d93ae172332b67e6eb71c0871508
-Signed-off-by: Lars Persson <larper@axis.com>
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> fs/nfsd/nfsctl.c:1221:22: sparse: sparse: symbol '__get_nfsdfs_client' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 677ef41cb012..a91d04e5c084 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1432,6 +1432,7 @@ F:	arch/arm/mach-artpec
- F:	arch/arm/boot/dts/artpec6*
- F:	drivers/clk/axis
- F:	drivers/crypto/axis
-+F:	drivers/mmc/host/usdhi6rol0.c
- F:	drivers/pinctrl/pinctrl-artpec*
- F:	Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
- 
--- 
-2.11.0
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
