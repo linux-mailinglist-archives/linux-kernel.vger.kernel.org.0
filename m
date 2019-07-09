@@ -2,129 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 049E563E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 01:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCAE63FBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfGIXr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 19:47:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfGIXr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 19:47:57 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E659720693;
-        Tue,  9 Jul 2019 23:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562716075;
-        bh=qFrC8sxMr5sSrn21isAFo4hDzPkoKULEHPfDpSXwACA=;
-        h=Date:From:To:cc:Subject:From;
-        b=HsyXjQwZVvCHi2dLho7lj6f8hXjLxdN+5XWkvvM082htUjjP6OirhoLjvr3aPcXst
-         8vsnx8T7XZt+bZTPk7KrzwLNnsibFNdU9tOON++bh2PN3++pgGUqhx9s7GdWssBmMU
-         wGYJX6k1xlgmB0bvlWIKpAuuIr7LM71ZnOgBAIh8=
-Date:   Wed, 10 Jul 2019 01:47:48 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        id S1725994AbfGJEAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 00:00:04 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46577 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfGJEAD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 00:00:03 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so946279qtn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 21:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bVijEPpZkHSMCYZyf6qY35aBcvTy8wAdN6VIFPPyhnE=;
+        b=duj5SZfXX2LbjWs+NHlLrYz8EWUV1bLTt+b2ja1JbDclSXPZ91vbCP3OFJr2xzopeO
+         VHk5gOE9EMsqUnZrd8+Un/0tmFGNXhH4OBAtlhO5lS7n2gWnGYzrbm6J5h2EHBFBpTsF
+         R+64rokrSEcxjZbibVxeKl/l7ydC9hl4Ok3MDkUbO7tU4NadF+2tC09Eck7YWsidl4Sv
+         lLdOidpmJl31Hr5nhk5ncSaOEXoV28596JN4KsjaZWGLbgboHEuAGHhmei6HKxM6PTZg
+         xYBDRWUO1Bqdb28qH9qRo4Bdds+iqJmeFTwHM3T6bCrcak20oxnr3GCD7efEeT8V67Ww
+         gUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bVijEPpZkHSMCYZyf6qY35aBcvTy8wAdN6VIFPPyhnE=;
+        b=C2n0hWDm82aUgU9M3H3A7E0onzIm2QOausLPAPdlzC4LEuSbBJbuPTbprc5BUi8KgP
+         qLVX6EHBfGPtvDotwY0JSTxqzhOEi61SUsgKk5aC1IksVg5vmhEWBSEZwkeaQnqI8poV
+         vx1PuSG4y7b4E/G8EKUS6vjiAMcZTJtA+/tgbgsYAuPg4SsHynSz/DO+H4aR2MxPC/DR
+         WDOPm3ocwKoKOzR/dPlTV5Wk9Jtc3glXihZZQkiuMDcdFgYiKk9H93g0dY68EaLD4qIX
+         jUYe+bwJGWvci7EOnQ5g8aAmx0GwqGz/nY3I1IokiQjHjuJ9l2wvpKtVpRgt2g2lsX2w
+         GQ7g==
+X-Gm-Message-State: APjAAAWtBkJA5mrARFXcej99c5KKKgdh/ZqwO4Jgs0VKqNVR2rcKbTER
+        uYi6fBjXDpJTkrLJ41+zpw==
+X-Google-Smtp-Source: APXvYqw+Jk3f5TgssbnTBSWfsuzbx1fFah2szeE3SL0x7E8E7G7nnjgZq0CN5iGOwN1wDJLkpFJVPw==
+X-Received: by 2002:ac8:244f:: with SMTP id d15mr21112167qtd.32.1562731202768;
+        Tue, 09 Jul 2019 21:00:02 -0700 (PDT)
+Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.googlemail.com with ESMTPSA id f5sm369088qth.35.2019.07.09.21.00.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 21:00:02 -0700 (PDT)
+From:   Keyur Patel <iamkeyur96@gmail.com>
+Cc:     iamkeyur96@gmail.com, Johan Hovold <johan@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID for 5.3
-Message-ID: <nycvar.YFH.7.76.1907100143190.5899@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+Subject: [PATCH v2] gnss: core: added logging statement when kfifo_alloc fails
+Date:   Tue,  9 Jul 2019 19:59:56 -0400
+Message-Id: <20190709235957.2481-1-iamkeyur96@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <61c2ba4e229a6971e90627433bedae2dd28ea6a1.camel@perches.com>
+References: <61c2ba4e229a6971e90627433bedae2dd28ea6a1.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Added missing logging statement when kfifo_alloc fails, to improve
+debugging.
 
-please pull from
+Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
+---
+Changes in v2:
+- fixed braces
+---
+ drivers/gnss/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-
-to receive 5.3 merge window HID subsystem updates. Highlights:
-
-=====
-- Documentation conversion to ReST, from Mauro Carvalho Chehab
-- Wacom MobileStudio Pro support, from Ping Cheng
-- Wacom 2nd Gen Intuos Pro Small support, from Aaron Armstrong Skomra
-- assorted small fixes and device ID additions
-=====
-
-Thanks.
-
-----------------------------------------------------------------
-Aaron Armstrong Skomra (8):
-      HID: wacom: generic: only switch the mode on devices with LEDs
-      HID: wacom: generic: Correct pad syncing
-      HID: wacom: correct touch resolution x/y typo
-      HID: wacom: Add 2nd gen Intuos Pro Small support
-      HID: wacom: generic: read HID_DG_CONTACTMAX from any feature report
-      HID: wacom: generic: support the 'report valid' usage for touch
-      HID: wacom: generic: read the number of expected touches on a per collection basis
-      HID: wacom: generic: add touchring adjustment for 2nd Gen Pro Small
-
-Colin Ian King (2):
-      HID: logitech-dj: make const array template static
-      HID: logitech-hidpp: HID: make const array consumer_rdesc_start static
-
-Hans de Goede (1):
-      HID: logitech-dj: Add usb-id for the 27MHz MX3000 receiver
-
-Mauro Carvalho Chehab (1):
-      docs: hid: convert to ReST
-
-Ping Cheng (1):
-      HID: wacom: add new MobileStudio Pro support
-
-Sebastian Parschauer (1):
-      HID: Add another Primax PIXART OEM mouse quirk
-
-Song Hongyan (1):
-      HID: remove NO_D3 flag when remove driver
-
-Wang Xuerui (1):
-      HID: uclogic: Add support for Ugee Rainbow CV720
-
-YueHaibing (1):
-      HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
-
- Documentation/hid/{hid-alps.txt => hid-alps.rst}   |  87 +++-
- .../hid/{hid-sensor.txt => hid-sensor.rst}         | 194 +++++----
- .../hid/{hid-transport.txt => hid-transport.rst}   |  82 +++-
- Documentation/hid/{hiddev.txt => hiddev.rst}       | 154 ++++---
- Documentation/hid/{hidraw.txt => hidraw.rst}       |  53 ++-
- Documentation/hid/index.rst                        |  18 +
- Documentation/hid/intel-ish-hid.rst                | 485 +++++++++++++++++++++
- Documentation/hid/intel-ish-hid.txt                | 454 -------------------
- Documentation/hid/{uhid.txt => uhid.rst}           |  46 +-
- Documentation/input/input.rst                      |   2 +-
- MAINTAINERS                                        |   2 +-
- drivers/hid/hid-ids.h                              |   2 +
- drivers/hid/hid-lg.c                               |   2 -
- drivers/hid/hid-logitech-dj.c                      |  19 +-
- drivers/hid/hid-logitech-hidpp.c                   |   2 +-
- drivers/hid/hid-quirks.c                           |   1 +
- drivers/hid/hid-uclogic-core.c                     |   2 +
- drivers/hid/hid-uclogic-params.c                   |   2 +
- drivers/hid/intel-ish-hid/ipc/pci-ish.c            |   1 +
- drivers/hid/wacom_sys.c                            |  13 +-
- drivers/hid/wacom_wac.c                            | 152 +++++--
- drivers/hid/wacom_wac.h                            |   3 +
- 22 files changed, 1049 insertions(+), 727 deletions(-)
- rename Documentation/hid/{hid-alps.txt => hid-alps.rst} (64%)
- rename Documentation/hid/{hid-sensor.txt => hid-sensor.rst} (61%)
- rename Documentation/hid/{hid-transport.txt => hid-transport.rst} (93%)
- rename Documentation/hid/{hiddev.txt => hiddev.rst} (77%)
- rename Documentation/hid/{hidraw.txt => hidraw.rst} (89%)
- create mode 100644 Documentation/hid/index.rst
- create mode 100644 Documentation/hid/intel-ish-hid.rst
- delete mode 100644 Documentation/hid/intel-ish-hid.txt
- rename Documentation/hid/{uhid.txt => uhid.rst} (94%)
-
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index e6f94501cb28..1b7387ee643b 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -255,8 +255,10 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+ 	init_waitqueue_head(&gdev->read_queue);
+ 
+ 	ret = kfifo_alloc(&gdev->read_fifo, GNSS_READ_FIFO_SIZE, GFP_KERNEL);
+-	if (ret)
++	if (ret) {
++		pr_err("kfifo_alloc failed\n");
+ 		goto err_put_device;
++	}
+ 
+ 	gdev->write_buf = kzalloc(GNSS_WRITE_BUF_SIZE, GFP_KERNEL);
+ 	if (!gdev->write_buf)
 -- 
-Jiri Kosina
-SUSE Labs
+2.22.0
 
