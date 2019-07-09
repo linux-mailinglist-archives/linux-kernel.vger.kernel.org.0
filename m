@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6CDD63B7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D0F63B75
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:55:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbfGIS4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:56:07 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:50211 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfGIS4H (ORCPT
+        id S1729432AbfGISza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:55:30 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43270 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfGISza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:56:07 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MV6Bs-1ht4UM2gFi-00SAJu; Tue, 09 Jul 2019 20:55:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Lecopzer Chen <lecopzer.chen@mediatek.com>,
-        Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/sparse.c: mark sparse_buffer_free as __meminit
-Date:   Tue,  9 Jul 2019 20:55:07 +0200
-Message-Id: <20190709185528.3251709-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 9 Jul 2019 14:55:30 -0400
+Received: by mail-qk1-f193.google.com with SMTP id m14so16813029qka.10;
+        Tue, 09 Jul 2019 11:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f9RwapZGzyFkNT+dfGo5wVJbdzZuRB3mHC5GSj9LmJ8=;
+        b=BmHqjFAfGGPLYECr2mLWMITHeNaZHCOuICzgPdidHDiuAYl1DuB9BIHuF8L9YXZZBN
+         32fRp3SSz8YfQ9ebbRhi1MUTYnu1W5q4U5padrZzDoWDxjK6w4+GHDvFUEwCbWXuKhqQ
+         V7H7zH65QGE6QRGOlLq4y3gwm6gwv1/GmzVS2ZP7A0B+6NObpJq/lCNkAoMvopXqhkZ4
+         +hUhPTWV+2R/amH37Qw08ey3hykfYDMrk12/z8xg6aea9RvC6oPbm/ESUCy8qmGl44pc
+         DPUY9/SJ4EOJ+RqTBxKQnK7lqFCMmjI8al7q6nuhAW9Tq7Wo/bHQ1F97J72/Ae8WDwOt
+         gDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f9RwapZGzyFkNT+dfGo5wVJbdzZuRB3mHC5GSj9LmJ8=;
+        b=lqg16nVC/bz+2PTeyO8sWBlLajeDTXNwHulKb9uaxWyriUQHbLGSR6TTMR4xKSFM6N
+         XkYtVmjluqmr4wrAHHMvQt6S31Is9HLKRxe0UbNeO83bc1+EzvqK3weYN7XvCw8FMqgo
+         hNxf50/jAfuNPHS3Tg4QuprTAyA0U9+k6bleFgTB2X24OwxMOx9xoGFHtfC+WLWN5IfS
+         Zo9hy72V3YDX1JJ835wQ4nUMC134i2fBgi1C+4SHMQ5Ip5U0o5iEzT2tsZC2GqrRPQ7w
+         2ZZ0bOC5bfgZRoDK88fy2zHZfXy/mN42FH5aJNTZKY5Fxqlgox/TJ13cikagl5Dy3goO
+         szwQ==
+X-Gm-Message-State: APjAAAV+sMML6jXhbFyoaJr+a2WSwdRI7bgEMrl1uCQycjXDEdh6VT1Z
+        asH9G1kzYcd+xRhPr77hWgiM5T4wWJ0QR0lsCPI=
+X-Google-Smtp-Source: APXvYqy2K48JPuWKCtWjDTYwAWXMIBHAHIA2ef38g1U6AO2efdVySfxR3FLKDJCS+JpAxv2GrF7QjA5Xj7T/w8AyjhQ=
+X-Received: by 2002:a37:660d:: with SMTP id a13mr20589208qkc.36.1562698528762;
+ Tue, 09 Jul 2019 11:55:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:dVuJ+e4kut2pBGD0f44Tc4g9wI+Sx6SMYC65vDceSfeBL8Yrh+N
- QNGHbxDD8YGcxeGUylFBPh2+1bqSGZD7fY2xzD4DuBrL6v+lkqQlguvHdgwjCswrVGx0YTH
- Ei8xRNQutUg89MivWr34gzxK4A0qtbmc/bwPqX+Ro6d0AKd1DALUkvtQnCKRHpDo8N4C/cH
- PXTpKClIVFlzJz6klNUKQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:m6/WP9gsIM8=://qaXXPJjdjdLwFXs/UQEw
- +imM3iOlc931kOkt2KJoAkJMtnNtcB+ECAqcccp5LqSZ3ZDoYw7uVgg/aT3s3kBDKyU4CZ91+
- 2Vv8UpHhZZoJXqrINVUJ8Du1cwhPcS4ZsnJ21M5qOYaKY1jkttUcJCkKERpJq1IpUCifqgOze
- mKvXl0BLByMoOsx0q3wapfs4860AqLAaqyz48b9NGKVcne1njGvfLfitEQC5RzGOLwJG9Xe1Z
- F6/zmu4tTBuXiw90z5Ux0bs1+KAkSfgqXDaupSq7BAbQnLVdlXaHNkL9VK/eb4B2ezZ/34NeV
- MiiefBC8t4cjbufi6ryt5N3y2yroSgI2eWwz2FcrpGYb4lsJd5WYCo6AbNqdXnPC+OVUyB6Wc
- MLYwE0vTk91UACyfh2+tle7bfjU3ClroCy9kGhBi+mjWKm1jc58gmuMlR+Jaqwu8TewKdLmQv
- XNl8NaGgSEcGsFWzlV8BcB7MIn7u/tIs0jQ8nDWHyxygclcwEk/Yd4D6V692Om8veoGdlx1gu
- TzYzg9SKzJhRwiPUDRI3k+WyNZWezRG/2qvOpIMDFTUQRLD0ffbTGoTCsNpFnOgp6wVdO5/EA
- lZrmXTsVfpFEaMWIvX8u+xilTzIr8Lr9SdU273CuvBlAMW1Rz5tIwmVLSdqw+JaR3QdVcXSIq
- LBIa5aiZKVRYszZlP3mu3UyXhpUxO3LxicJ+8O6JszIV2dLW1Guy37mq6jWmxne7b4rfIoisw
- 2m3oWKIhTpFb0cn56zAlG3ImsCaDSmHu1cS8Dg==
+References: <CAEf4BzaUEWwGL3k0VeiFYFqyJexQU9cDZWN69jSDpBjP1ZEcpw@mail.gmail.com>
+ <000000000000a94981058d37f1a4@google.com>
+In-Reply-To: <000000000000a94981058d37f1a4@google.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 9 Jul 2019 11:55:17 -0700
+Message-ID: <CAEf4BzYTGuXgN+vNJEoMbH_GFAVnSsBvq_YhvoFOeGG5Y+N_ug@mail.gmail.com>
+Subject: Re: WARNING in mark_chain_precision
+To:     syzbot <syzbot+f21251a7468cd46efc60@syzkaller.appspotmail.com>
+Cc:     aaron.f.brown@intel.com, Alexei Starovoitov <ast@kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>, hawk@kernel.org,
+        intel-wired-lan@lists.osuosl.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        jeffrey.t.kirsher@intel.com,
+        john fastabend <john.fastabend@gmail.com>,
+        Martin Lau <kafai@fb.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, sasha.neftin@intel.com,
+        Song Liu <songliubraving@fb.com>,
+        syzkaller-bugs@googlegroups.com, xdp-newbies@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling an __init function from a __meminit function is not allowed:
+Original reproducer is almost identical to the one that is fixed by
+https://patchwork.ozlabs.org/patch/1129479/.
 
-WARNING: vmlinux.o(.meminit.text+0x30ff): Section mismatch in reference from the function sparse_buffer_alloc() to the function .init.text:sparse_buffer_free()
-The function __meminit sparse_buffer_alloc() references
-a function __init sparse_buffer_free().
-If sparse_buffer_free is only used by sparse_buffer_alloc then
-annotate sparse_buffer_free with a matching annotation.
+bpf_prog_free_deferred bug that's undeterministically exposed after
+this fix seems to be the cause of a bunch of other bug reports and is
+not related to verifier precision tracking.
 
-Downgrade the annotation to __meminit for both, as they may be
-used in the hotplug case.
-
-Fixes: mmotm ("mm/sparse.c: fix memory leak of sparsemap_buf in aliged memory")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- mm/sparse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3267c4001c6d..4801d45bd66e 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -470,7 +470,7 @@ struct page __init *__populate_section_memmap(unsigned long pfn,
- static void *sparsemap_buf __meminitdata;
- static void *sparsemap_buf_end __meminitdata;
- 
--static inline void __init sparse_buffer_free(unsigned long size)
-+static inline void __meminit sparse_buffer_free(unsigned long size)
- {
- 	WARN_ON(!sparsemap_buf || size == 0);
- 	memblock_free_early(__pa(sparsemap_buf), size);
--- 
-2.20.0
-
+#syz dup: WARNING in __mark_chain_precision
