@@ -2,82 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2641763747
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E745963749
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 15:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfGINtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 09:49:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50978 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725947AbfGINtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 09:49:19 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5E58C7DF4F8011129D08;
-        Tue,  9 Jul 2019 21:49:06 +0800 (CST)
-Received: from [127.0.0.1] (10.65.87.206) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 9 Jul 2019
- 21:48:56 +0800
-Subject: Re: [PATCH v2 05/10] net: hisilicon: HI13X1_GMAX need dreq reset at
- first
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <mark.rutland@arm.com>, <dingtianhong@huawei.com>
-References: <1562643071-46811-1-git-send-email-xiaojiangfeng@huawei.com>
- <1562643071-46811-6-git-send-email-xiaojiangfeng@huawei.com>
- <890c48d1-76b8-5aea-e175-aa7d9967acd2@cogentembedded.com>
-CC:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
-        <nixiaoming@huawei.com>, <jianping.liu@huawei.com>,
-        <xiekunxun@huawei.com>
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Message-ID: <101b8c68-75f5-00a7-9845-e59c0467768c@huawei.com>
-Date:   Tue, 9 Jul 2019 21:48:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726851AbfGINvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 09:51:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38728 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfGINvA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 09:51:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Hl0+rltCj7A4DwHLnmy+27zNEkIbfMaqSjIVhe+Ho0M=; b=xzCXfbzr5fF5j7nABfmHnBPAw
+        S2zMXTMeX7gnhCmYSookkMqPcBPcNweok0psXUJwS3/7vv10XlH+m9EfOplvE8vRxySc9iKxFloNJ
+        j5OtxT37aagyEbj8zVuH2AEQejbzVuZaOZrV0SzbxMcp8j4Wx501XroNMb1xf2qSdvwP7pxFvp38i
+        La+R7ekABmbSWsMmrOz+szPJOuj7HOyULQaHjkI1noEgsY5AViDO/Okp3CmNmmRlJC1+72qOeS/X2
+        JC+GMM9bmOI0Cjlcsu2JLCESnyYF2Sc2CiCAUdZM2hx7JgA6ehnPOioK2QchxEWAplLxfH83xMMJT
+        8XP3noOcA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hkqWF-0006uy-NH; Tue, 09 Jul 2019 13:50:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 76FD320976EE5; Tue,  9 Jul 2019 15:50:54 +0200 (CEST)
+Date:   Tue, 9 Jul 2019 15:50:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Chris Redpath <chris.redpath@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched/fair: Update rq_clock, cfs_rq before migrating for
+ asym cpu capacity
+Message-ID: <20190709135054.GF3402@hirez.programming.kicks-ass.net>
+References: <20190709115759.10451-1-chris.redpath@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <890c48d1-76b8-5aea-e175-aa7d9967acd2@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.65.87.206]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709115759.10451-1-chris.redpath@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019/7/9 17:35, Sergei Shtylyov wrote:
-> Hello!
+On Tue, Jul 09, 2019 at 12:57:59PM +0100, Chris Redpath wrote:
+> The ancient workaround to avoid the cost of updating rq clocks in the
+> middle of a migration causes some issues on asymmetric CPU capacity
+> systems where we use task utilization to determine which cpus fit a task.
+> On quiet systems we can inflate task util after a migration which
+> causes misfit to fire and force-migrate the task.
 > 
-> On 09.07.2019 6:31, Jiangfeng Xiao wrote:
+> This occurs when:
 > 
->> HI13X1_GMAC delete request for soft reset at first,
->> otherwise, the subsequent initialization will not
->> take effect.
->>
->> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
->> ---
->>   drivers/net/ethernet/hisilicon/hip04_eth.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
->> index fe61b01..19d8cfd 100644
->> --- a/drivers/net/ethernet/hisilicon/hip04_eth.c
->> +++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-> [...]
->> @@ -853,6 +867,15 @@ static int hip04_mac_probe(struct platform_device *pdev)
->>           goto init_fail;
->>       }
->>   +#if defined(CONFIG_HI13X1_GMAC)
->> +    res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->> +    priv->sysctrl_base = devm_ioremap_resource(d, res);
+> (a) a task has util close to the non-overutilized capacity limit of a
+>     particular cpu (cpu0 here); and
+> (b) the prev_cpu was quiet otherwise, such that rq clock is
+>     sufficiently out of date (cpu1 here).
 > 
->    There's devm_platform_ioremap_resource() now.
+> e.g.
+>                               _____
+> cpu0: ________________________|   |______________
+> 
+>                                   |<- misfit happens
+>           ______                  ___         ___
+> cpu1: ____|    |______________|___| |_________|
+> 
+>              ->|              |<- wakeup migration time
+> last rq clock update
+> 
+> When the task util is in just the right range for the system, we can end
+> up migrating an unlucky task back and forth many times until we are lucky
+> and the source rq happens to be updated close to the migration time.
+> 
+> In order to address this, lets update both rq_clock and cfs_rq where
+> this could be an issue.
 
-Thank you for your review, Great issue, which makes my code more concise.
+Can you quantify how much of a problem this really is? It is really sad,
+but this is already the second place where we take rq->lock on
+migration. We worked so hard to avoid having to acquire it :/
 
-I will fix it in v3. Or submit a patch to modify it separately, if maintainer
-applies this patch series.
+> Signed-off-by: Chris Redpath <chris.redpath@arm.com>
+> ---
+>  kernel/sched/fair.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b798fe7ff7cd..51791db26a2a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6545,6 +6545,21 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
+>  		 * wakee task is less decayed, but giving the wakee more load
+>  		 * sounds not bad.
+>  		 */
+> +		if (static_branch_unlikely(&sched_asym_cpucapacity) &&
+> +			p->state == TASK_WAKING) {
 
+nit: indent fail.
+
+> +			/*
+> +			 * On asymmetric capacity systems task util guides
+> +			 * wake placement so update rq_clock and cfs_rq
+> +			 */
+> +			struct cfs_rq *cfs_rq = task_cfs_rq(p);
+> +			struct rq *rq = task_rq(p);
+> +			struct rq_flags rf;
+> +
+> +			rq_lock_irqsave(rq, &rf);
+> +			update_rq_clock(rq);
+> +			update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
+> +			rq_unlock_irqrestore(rq, &rf);
+> +		}
+>  		remove_entity_load_avg(&p->se);
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
