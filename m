@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9D263AFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD37963B03
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbfGIScK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:32:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53464 "EHLO mail.kernel.org"
+        id S1729124AbfGIScX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:32:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726592AbfGIScJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:32:09 -0400
+        id S1729094AbfGIScV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 14:32:21 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFCAC2087F;
-        Tue,  9 Jul 2019 18:32:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FE342171F;
+        Tue,  9 Jul 2019 18:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562697128;
-        bh=uKY1upGstB9eyiC2tvMjOQrnpwH5zhKS9cvZBMmwlRY=;
+        s=default; t=1562697136;
+        bh=JjyDoauJ+WYz56YyYDKCZ3keOnFJy6NiR6Q0BlDn5EY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R5NqjC4skuB80xSqY6Wwp1WwLiCweXwZ4voKnG+hZZIIGLatgkiHk+63fQN4xEqr8
-         SvuRJwGK0s2OPCDFsud6JvVO/9KhewPXZZLlxe6R8inbDBGyOn/YUFfL1UrrWJ82oC
-         /KSRamxD4VurvzRcHPHPaEYLPpkeV2JjNtjxj8Q4=
+        b=ESqkemMNPwhyxKwOQR1gPTIAR2g071vi5m0lY8XDTWTk9gxiQcipmE/K7Zan3h6h4
+         Hf3SBt9jwNbo5P0pUS1hf4uidv2b5RDrvxbykDHuwGO8ZT1TTc4GojtJ/VnVOuxZet
+         b7Jb7VD996e5+fP2saq8AJCYYDH9elce/osSNPYE=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -49,9 +49,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Thomas Richter <tmricht@linux.ibm.com>,
         linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/25] perf trace: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Tue,  9 Jul 2019 15:31:06 -0300
-Message-Id: <20190709183126.30257-6-acme@kernel.org>
+Subject: [PATCH 06/25] perf map: Fix potential NULL pointer dereference found by smatch tool
+Date:   Tue,  9 Jul 2019 15:31:07 -0300
+Message-Id: <20190709183126.30257-7-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190709183126.30257-1-acme@kernel.org>
 References: <20190709183126.30257-1-acme@kernel.org>
@@ -67,23 +67,31 @@ From: Leo Yan <leo.yan@linaro.org>
 Based on the following report from Smatch, fix the potential NULL
 pointer dereference check.
 
-  tools/perf/builtin-trace.c:1044
-  thread_trace__new() error: we previously assumed 'ttrace' could be
-  null (see line 1041).
+  tools/perf/util/map.c:479
+  map__fprintf_srccode() error: we previously assumed 'state' could be
+  null (see line 466)
 
-  tools/perf/builtin-trace.c
-  1037 static struct thread_trace *thread_trace__new(void)
-  1038 {
-  1039         struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
-  1040
-  1041         if (ttrace)
-  1042                 ttrace->files.max = -1;
-  1043
-  1044         ttrace->syscall_stats = intlist__new(NULL);
-               ^^^^^^^^
-  1045
-  1046         return ttrace;
-  1047 }
+  tools/perf/util/map.c
+  465         /* Avoid redundant printing */
+  466         if (state &&
+  467             state->srcfile &&
+  468             !strcmp(state->srcfile, srcfile) &&
+  469             state->line == line) {
+  470                 free(srcfile);
+  471                 return 0;
+  472         }
+  473
+  474         srccode = find_sourceline(srcfile, line, &len);
+  475         if (!srccode)
+  476                 goto out_free_line;
+  477
+  478         ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
+  479         state->srcfile = srcfile;
+              ^^^^^^^
+  480         state->line = line;
+              ^^^^^^^
+
+This patch validates 'state' pointer before access its elements.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -107,31 +115,31 @@ Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-6-leo.yan@linaro.org
-[ Just made it look like other tools/perf constructors, same end result ]
+Fixes: dd2e18e9ac20 ("perf tools: Support 'srccode' output")
+Link: http://lkml.kernel.org/r/20190702103420.27540-8-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/map.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index d0eb7224dd36..e3fc9062f136 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1038,10 +1038,10 @@ static struct thread_trace *thread_trace__new(void)
- {
- 	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 6fce983c6115..5f87975d2562 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -476,8 +476,11 @@ int map__fprintf_srccode(struct map *map, u64 addr,
+ 		goto out_free_line;
  
--	if (ttrace)
-+	if (ttrace) {
- 		ttrace->files.max = -1;
--
--	ttrace->syscall_stats = intlist__new(NULL);
-+		ttrace->syscall_stats = intlist__new(NULL);
+ 	ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
+-	state->srcfile = srcfile;
+-	state->line = line;
++
++	if (state) {
++		state->srcfile = srcfile;
++		state->line = line;
 +	}
+ 	return ret;
  
- 	return ttrace;
- }
+ out_free_line:
 -- 
 2.21.0
 
