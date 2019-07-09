@@ -2,80 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEE463B01
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AD4963B2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 20:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbfGIScS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 14:32:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:53537 "EHLO
+        id S1729035AbfGIShL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 14:37:11 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:35105 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfGIScS (ORCPT
+        with ESMTP id S1727666AbfGIShL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 14:32:18 -0400
-Received: from localhost ([62.96.34.174]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MfbwW-1iQYBn3fGi-00fx9T; Tue, 09 Jul 2019 20:32:11 +0200
-Date:   Tue, 9 Jul 2019 20:32:11 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     linux-omap@vger.kernel.org
-Cc:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        Tue, 9 Jul 2019 14:37:11 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MmU1H-1iBULr1JYX-00iS69; Tue, 09 Jul 2019 20:36:26 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Marco Elver <elver@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Kees Cook <keescook@chromium.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        "ndesaulniers@google.com" <ndesaulniers@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: am335x-wega.dtsi: fix wrong card detect pin level
-Message-ID: <20190709183209.y64keopah5rkismc@arbad>
+Subject: [PATCH] mm/kasan: fix kasan_check_read() compiler warning
+Date:   Tue,  9 Jul 2019 20:35:40 +0200
+Message-Id: <20190709183612.2693974-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K1:mLpKUvjdvDUhw3C0lESUlBgRztaW463jyV9JDLd5qtkB543lknY
- rIBnmPz36XRigau/3NKaC3TAsaxMDXC4NaCyqjPC8RcEXKdxhvin7U01RAqOctwMD9YZ7qa
- BSTsrY6woa0Eds6yU4hxhleCtR/u9XWRT+qJO4aa7/ugO4oBIVAe2qk+Eu0E2glhAM//uXE
- GnpmYk7Jji1o0VIr/WT5g==
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:f9tLUWPoDVBA60LLEiX/NkMOqicieII3W/k/YIGKz7X2J9Lxb/h
+ 5riQyTf13phU14Nz5hQgZ+cFzoe84RnrWqOLP1PaXV1ZX4N5wC+wyB/+hrwnd5Ae7LeSZTA
+ qhKdUB2jwKoIzuYwqlMcKX4C0H4tMxU76bpQTDI1UXvHOgcvWRuj1rgceDPbyGmT8DntxUn
+ 0o8CKBHmZ1d6Qw7SZg74g==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:SKpnKGbIXBI=:rcghbSGCxoLumohil+yF4H
- 8lyqKSiqeOgBB8F2doLaLc/kBrfRbzdHHjTQsPpEewP+DzGYTFkKqcE8EiDpTVBZ4yiBOocXk
- wjnbiJbN1l6jEqX2vvdlhUbkQ6KCSZIaZGK0WyBcvpP7/B5O98E6ZrsT8CmtHeZnuuteGdDaW
- oT5ptLr5Aq7z6CAqHMF5HUwRzOvAy7pWyv9oGTInD2yOJWk4kJxv1cHZ+UGGPqDNiIrPjQlLH
- 9tLta9HsQ9cg1gVa2k9P1+0BXh9eILXsOuMGJ5Y35R4XfAV3PNaeGI3nqyoMkJOwHBAhqkwHM
- 4nxBnYv+QS/GA1M2ow1nPG11SYyRcUxyJl9GwHb/i57qaTo8+zbUJ07cTv8Tv3dXciedTyGEU
- 5o5ibZzwKVPnQZuhZw7lXkUPFUGqVNhDSlBPTaNyrXpGULxxU2RY0rb5xcrElXUA4p0xSQAKJ
- qAwDVg61fQOXvrRlKNZp8v4ZTuXKmNd1buEVt3zLoGDnn6+4AX1eJsjm+f2LsOEVZClP8VbhI
- YIK9H4FBe4XgoMjPy1PAL/bwyS8DrvwmTf6wpJUz9RuPu/z+DfbWTM2VP5cbYAGKReEetqfS0
- 8++qHzVBO3Nfh1XXJyR344Asf4dD4P07lIQOkTnv5rCFLYdyzEp8vz14BlF98vyUWGImOMetU
- GCulqD45dpCA7/5i9NO5WexlyX6O6R9C1Kes+LibxHO3mDvGYhZDWcEAppkns7oMyhk6Y9OW0
- dm421jvAkvj59UgWcSyx2mCPnNxHkZeS8YhnaQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IH6JMBtZ3W8=:d8iGHkyJLAZyJgAL5R+EKT
+ wDHfL0miZNRPQrzvx9brg+EoYFDH+5liuU0k4GN8LTfX/WTZKJaiZyUcIm0V+Sgfwm0aIy49o
+ yYAmWZdWGzJoPr2dILKw7YGqBILQxrbVqsn9KwipJSRvhzp9ke7mYQ9gyUd+Gqg6SyXa2p8qm
+ oGeJUyScwk5YwWrnwQCNoBIcR2FKsn8Ws3Ea0gLruUbcuzySPux2m3g3NXMTokg2vQvky/msP
+ f2Hg9KtBBeAt90bphBX0p5ogo7fXNrxTV/2W5EVfVaRfkNEL5nTEMnLVlyNEf1j31PH9Kbbd0
+ IhbpmSigld2AQXAzmXl1DVfN9WDRzMwO5zVtqhin9FFImc7Q1mcvY1Ny3ZMIP1v0WALDOK2OY
+ g6+0K9tWyYtBNz0sPgle8UL7oBGJksGCrNBHZw1iywlAjRdoSvqTrFTA9bppTgC/5Jhr8wUjt
+ 1PcHSxOY8rgE3AIRlXe/9+p1DbG/+XdA26x+n3l+xWxmNEbZtFBje9TN/aqE47mWlNP6ScnQd
+ rhXQXh/P22dEdovRNYJSkbroGE9Fd7a3blYvQk2DBhc4n/ONGxz1UW/xyVYyVqLG2L2GKW3dS
+ HBNLxoYMdca0CIDY/2CdJTHu/P/hoQ0KkAIKilsNjhZkVcpiUa29XeCJ+xVlm6i8hAr3FPXSt
+ V2cOqL9+xIg5B6W3ErQwOiOLWeuTwLJUFEYDwzQTYq/gTNpE0Gty/M2WkHH1YZelrCl7XLhvS
+ v/9SZ8DBn0EGEfs3U7sLn2fDmMWbLwtHBhaZFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmc cards on mmc1 are not detected because of wrong card detect (cd) level.
+The kasan_check_read() is marked 'inline', which usually includes
+the 'always_inline' attribute. In some configuration, gcc decides that
+it cannot inline this, causing a build failure:
 
-Change cd from GPIO_ACTIVE_HIGH to GPIO_ACTIVE_LOW.
+In file included from include/linux/compiler.h:257,
+                 from arch/x86/include/asm/current.h:5,
+                 from include/linux/sched.h:12,
+                 from include/linux/ratelimit.h:6,
+                 from fs/dcache.c:18:
+include/linux/compiler.h: In function 'read_word_at_a_time':
+include/linux/kasan-checks.h:31:20: error: inlining failed in call to always_inline 'kasan_check_read': function attribute mismatch
+ static inline bool kasan_check_read(const volatile void *p, unsigned int size)
+                    ^~~~~~~~~~~~~~~~
+In file included from arch/x86/include/asm/current.h:5,
+                 from include/linux/sched.h:12,
+                 from include/linux/ratelimit.h:6,
+                 from fs/dcache.c:18:
+include/linux/compiler.h:280:2: note: called from here
+  kasan_check_read(addr, 1);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is necessary because of commit e63201f19438 ("mmc: omap_hsmmc:
-Delete platform data GPIO CD and WP")
+While I have no idea why it does this, but changing the call to the
+internal __kasan_check_read() fixes the issue.
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Fixes: dc55b51f312c ("mm/kasan: introduce __kasan_check_{read,write}")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/boot/dts/am335x-wega.dtsi | 2 +-
+ include/linux/compiler.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am335x-wega.dtsi b/arch/arm/boot/dts/am335x-wega.dtsi
-index b7d28a20341f..84581fed3d06 100644
---- a/arch/arm/boot/dts/am335x-wega.dtsi
-+++ b/arch/arm/boot/dts/am335x-wega.dtsi
-@@ -157,7 +157,7 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index f0fd5636fddb..22909500ba1d 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -277,7 +277,7 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+ static __no_kasan_or_inline
+ unsigned long read_word_at_a_time(const void *addr)
+ {
+-	kasan_check_read(addr, 1);
++	__kasan_check_read(addr, 1);
+ 	return *(unsigned long *)addr;
+ }
  
 -- 
-2.11.0
+2.20.0
 
-
--- 
