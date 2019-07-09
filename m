@@ -2,477 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 929A96322E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C05A631D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 09:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfGIHez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 03:34:55 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:61846 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfGIHes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:34:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1562656770; x=1565248770;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TFYVH++ymITTvRsNe27dgjYWVA/VnBsrmCSeRpwRHtw=;
-        b=kv1V60DK4fdYX3dIFnj/j/cZYAgdMKdIDnX9DtgBiJMUaIQz0YX9k0T0PC8Fx/aB
-        y57TRqwI/Z9c2xqNwVxuvb9zkG6+sa8HMpZfVITwIk1ZMRYLsLXOQR/R7fnM7f88
-        pgyAjqBhUtIILjSRl5ANLRr/kh3q8GOcRWfoC0EOxOk=;
-X-AuditID: c39127d2-17dff70000001aee-0b-5d2440025fc4
-Received: from idefix.phytec.de (idefix.phytec.de [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id BE.B0.06894.200442D5; Tue,  9 Jul 2019 09:19:30 +0200 (CEST)
-Received: from augenblix2.phytec.de ([172.16.21.122])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2019070909192976-309713 ;
-          Tue, 9 Jul 2019 09:19:29 +0200 
-From:   Stefan Riedmueller <s.riedmueller@phytec.de>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, martyn.welch@collabora.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com
-Subject: [PATCH 10/10] ARM: dts: imx6ull: Add support for PHYTEC phyBOARD-Segin with i.MX 6ULL
-Date:   Tue, 9 Jul 2019 09:19:27 +0200
-Message-Id: <1562656767-273566-11-git-send-email-s.riedmueller@phytec.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562656767-273566-1-git-send-email-s.riedmueller@phytec.de>
-References: <1562656767-273566-1-git-send-email-s.riedmueller@phytec.de>
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 09.07.2019 09:19:29,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 09.07.2019 09:19:30,
-        Serialize complete at 09.07.2019 09:19:30
-X-TNEFEvaluated: 1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWyRoCBS5fJQSXWoOsjp8X8I+dYLR5e9bdY
-        NXUni8Wmx9dYLbp+rWS2uLxrDpvF0usXmSweXOxisWjde4Td4u/2TSwWL7aIO3B7rJm3htFj
-        x90ljB47Z91l99i0qpPNY/OSeo+N73YwefT/NfD4vEkugCOKyyYlNSezLLVI3y6BK2P1tFam
-        gkceFWe3LGNrYNxn3cXIySEhYCLRPbWZpYuRi0NIYAejROOEs4wQzgVGiQdvLrCBVLEJGEks
-        mNbIBGKLCERKvNv+mx2kiFlgD6PEtOvXGUESwgJxEg0X74M1sAioSEzuncIKYvMKeEqcOH2B
-        EWKdnMTNc53MIDYnUPzoxV9gtpCAh8TlBdPAzpAQaGSSaPi+hh2iQUji9OKzzBMY+RYwMqxi
-        FMrNTM5OLcrM1ivIqCxJTdZLSd3ECAzVwxPVL+1g7JvjcYiRiYPxEKMEB7OSCO8+d+VYId6U
-        xMqq1KL8+KLSnNTiQ4zSHCxK4rwbeEvChATSE0tSs1NTC1KLYLJMHJxSDYy8d+SNrul4mMhM
-        Cak42/P2cKCDe5iLVa+AtFqMgFpSloS52fIHUSWrXdtUp5uzTzerX1y8LmGxeLDjui01Wp/5
-        mJW4NilEPH0mN2HW46anXN0/+ucxLBF/om7FffhhwG3958tCbvgdi/VZa79jUkPSxGfzDrG8
-        OScZf1hU89Dn2npthXdL+5VYijMSDbWYi4oTAd4pPhdDAgAA
+        id S1726089AbfGIHWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 03:22:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:26090 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbfGIHWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:22:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 00:22:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
+   d="scan'208";a="188746591"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga004.fm.intel.com with ESMTP; 09 Jul 2019 00:22:41 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Pawel Laszczak <pawell@cadence.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede\@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus\@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt\@kernel.org" <robh+dt@kernel.org>,
+        "rogerq\@ti.com" <rogerq@ti.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen\@nxp.com" <peter.chen@nxp.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <BYAPR07MB47092C1E19FD36FB336A55C2DDF10@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com> <1562324238-16655-6-git-send-email-pawell@cadence.com> <87r274lmqk.fsf@linux.intel.com> <BYAPR07MB4709EF3753AC0B87606B1182DDF70@BYAPR07MB4709.namprd07.prod.outlook.com> <87a7dpm442.fsf@linux.intel.com> <BYAPR07MB47094B372CEC6DFD25FC78E1DDF10@BYAPR07MB4709.namprd07.prod.outlook.com> <87pnmj67ee.fsf@linux.intel.com> <BYAPR07MB47092C1E19FD36FB336A55C2DDF10@BYAPR07MB4709.namprd07.prod.outlook.com>
+Date:   Tue, 09 Jul 2019 10:22:40 +0300
+Message-ID: <87muhn65a7.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In addition to the PHYTEC phyCORE-i.MX 6UL the PHYTEC phyBOARD-Segin is
-also available with the PHYTEC phyCORE-i.MX 6ULL. So this adds support
-for this SOM and its baseboards.
 
-It comes in a full featured option with either NAND flash or eMMC and in
-a low cost option only available with NAND flash.
+Hi,
 
-The hardware specs are:
+Pawel Laszczak <pawell@cadence.com> writes:
+>>>>> IRQF_ONESHOT can be used  only in threaded handled.
+>>>>> "
+>>>>>  * IRQF_ONESHOT - Interrupt is not reenabled after the hardirq handler finished.
+>>>>>  *                Used by threaded interrupts which need to keep the
+>>>>>  *                irq line disabled until the threaded handler has been run.
+>>>>> "
+>>>>
+>>>>so?
+>>>
+>>> I don't understand why If I don't have threaded handler why I need IRQF_ONESHOT.
+>>> Why interrupt cannot be reenabled after hardirq handler finished ?
+>>> I do not use threaded handler so this flag seem unnecessary.
+>>
+>>Unless this has changed over the years, it was a requirement from IRQ susbystem.
+>>
+>>	/*
+>>	 * Drivers are often written to work w/o knowledge about the
+>>	 * underlying irq chip implementation, so a request for a
+>>	 * threaded irq without a primary hard irq context handler
+>>	 * requires the ONESHOT flag to be set. Some irq chips like
+>>	 * MSI based interrupts are per se one shot safe. Check the
+>>	 * chip flags, so we can avoid the unmask dance at the end of
+>>	 * the threaded handler for those.
+>>	 */
+>>	if (desc->irq_data.chip->flags & IRQCHIP_ONESHOT_SAFE)
+>>		new->flags &= ~IRQF_ONESHOT;
+>
+> From description I understand that it should be set when driver uses only 
+> threaded handler without hard irq handler.
+> eg. 
+>
+> 	ret = devm_request_threaded_irq(dev, data->usb_id_irq,
+> 					NULL, int3496_thread_isr,
+> 					IRQF_SHARED | IRQF_ONESHOT |
+> 					IRQF_TRIGGER_RISING |
+> 					IRQF_TRIGGER_FALLING,
+> 					dev_name(dev), data);
+>
+> It make sense, we don't have hard irq handler so we can't clear source of interrupt. 
+> If we clear it immediately in interrupt controller then the same interrupt could 
+> be raised again, because it was not cleared e.g in controller register. 
 
- - Full featured with NAND or eMMC:
-    * i.MX 6ULL Y2
-    * 512MB DDR3 memory
-    * 512MB NAND flash or 4GB/8GB eMMC
-    * Dual 10/100 Ethernet
-    * USB Host and USB OTG
-    * RS232
-    * MicroSD external storage
-    * Audio, RS232, I2C, SPI, CAN headers
-    * Further I/O options via A/V and Expansion headers
+You are correct. Big mistake on my side. Apologies.
 
- - Low cost with NAND:
-    * i.MX 6ULL Y0
-    * 256MB DDR3 memory
-    * 128MB NAND flash
-    * Single 10/100 Ethernet
-    * USB OTG
-    * RS232
-    * MicroSD external storage
-    * I2C
-    * Further I/O options via Expansion headers
-
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
----
- arch/arm/boot/dts/Makefile                         |  3 +
- arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi  | 24 ++++++
- .../boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts  | 93 ++++++++++++++++++++++
- .../boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts  | 93 ++++++++++++++++++++++
- .../boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts  | 45 +++++++++++
- .../boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi | 19 +++++
- arch/arm/boot/dts/imx6ull-phytec-segin.dtsi        | 38 +++++++++
- 7 files changed, 315 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ull-phytec-segin.dtsi
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 668b57c8cc57..16efd11cf20f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -580,6 +580,9 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ull-14x14-evk.dtb \
- 	imx6ull-colibri-eval-v3.dtb \
- 	imx6ull-colibri-wifi-eval-v3.dtb \
-+	imx6ull-phytec-segin-ff-rdk-nand.dtb \
-+	imx6ull-phytec-segin-ff-rdk-emmc.dtb \
-+	imx6ull-phytec-segin-lc-rdk-nand.dtb \
- 	imx6ulz-14x14-evk.dtb
- dtb-$(CONFIG_SOC_IMX7D) += \
- 	imx7d-cl-som-imx7.dtb \
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi b/arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi
-new file mode 100644
-index 000000000000..56cd16e5a77f
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-phycore-som.dtsi
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+#include "imx6ul-phytec-phycore-som.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyCORE-i.MX6 ULL";
-+	compatible = "phytec,imx6ull-pcl063", "fsl,imx6ull";
-+};
-+
-+&iomuxc {
-+	/delete-node/ gpioledssomgrp;
-+};
-+
-+&iomuxc_snvs {
-+	pinctrl_gpioleds_som: gpioledssomgrp {
-+		fsl,pins = <
-+			MX6ULL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x0b0b0
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts b/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts
-new file mode 100644
-index 000000000000..9648d4ecaf58
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-emmc.dts
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+/dts-v1/;
-+#include "imx6ull.dtsi"
-+#include "imx6ull-phytec-phycore-som.dtsi"
-+#include "imx6ull-phytec-segin.dtsi"
-+#include "imx6ull-phytec-segin-peb-eval-01.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyBOARD-Segin i.MX6 ULL Full Featured with eMMC";
-+	compatible = "phytec,imx6ull-pbacd10-emmc", "phytec,imx6ull-pbacd10",
-+		     "phytec,imx6ull-pcl063","fsl,imx6ull";
-+};
-+
-+&adc1 {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&tlv320 {
-+	status = "okay";
-+};
-+
-+&ecspi3 {
-+	status = "okay";
-+};
-+
-+&ethphy1 {
-+	status = "okay";
-+};
-+
-+&ethphy2 {
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	status = "okay";
-+};
-+
-+&fec2 {
-+	status = "okay";
-+};
-+
-+&i2c_rtc {
-+	status = "okay";
-+};
-+
-+&reg_can1_en {
-+	status = "okay";
-+};
-+
-+&reg_sound_1v8 {
-+	status = "okay";
-+};
-+
-+&reg_sound_3v3 {
-+	status = "okay";
-+};
-+
-+&sai2 {
-+	status = "okay";
-+};
-+
-+&sound {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts b/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts
-new file mode 100644
-index 000000000000..656baf846453
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-segin-ff-rdk-nand.dts
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+/dts-v1/;
-+#include "imx6ull.dtsi"
-+#include "imx6ull-phytec-phycore-som.dtsi"
-+#include "imx6ull-phytec-segin.dtsi"
-+#include "imx6ull-phytec-segin-peb-eval-01.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyBOARD-Segin i.MX6 ULL Full Featured with NAND";
-+	compatible = "phytec,imx6ull-pbacd10-nand", "phytec,imx6ull-pbacd10",
-+		     "phytec,imx6ull-pcl063", "fsl,imx6ull";
-+};
-+
-+&adc1 {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&tlv320 {
-+	status = "okay";
-+};
-+
-+&ecspi3 {
-+	status = "okay";
-+};
-+
-+&ethphy1 {
-+	status = "okay";
-+};
-+
-+&ethphy2 {
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	status = "okay";
-+};
-+
-+&fec2 {
-+	status = "okay";
-+};
-+
-+&gpmi {
-+	status = "okay";
-+};
-+
-+&i2c_rtc {
-+	status = "okay";
-+};
-+
-+&reg_can1_en {
-+	status = "okay";
-+};
-+
-+&reg_sound_1v8 {
-+	status = "okay";
-+};
-+
-+&reg_sound_3v3 {
-+	status = "okay";
-+};
-+
-+&sai2 {
-+	status = "okay";
-+};
-+
-+&sound {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts b/arch/arm/boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts
-new file mode 100644
-index 000000000000..e168494e0a6d
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-segin-lc-rdk-nand.dts
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+/dts-v1/;
-+#include "imx6ull.dtsi"
-+#include "imx6ull-phytec-phycore-som.dtsi"
-+#include "imx6ull-phytec-segin.dtsi"
-+#include "imx6ull-phytec-segin-peb-eval-01.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyBOARD-Segin i.MX6 ULL Low Cost with NAND";
-+	compatible = "phytec,imx6ull-pbacd10-nand", "phytec,imx6ull-pbacd10",
-+		     "phytec,imx6ull-pcl063", "fsl,imx6ull";
-+};
-+
-+&adc1 {
-+	status = "okay";
-+};
-+
-+&ethphy1 {
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	status = "okay";
-+};
-+
-+&gpmi {
-+	status = "okay";
-+};
-+
-+&i2c_rtc {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi b/arch/arm/boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi
-new file mode 100644
-index 000000000000..ff08d95a1aa2
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-segin-peb-eval-01.dtsi
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+#include "imx6ul-phytec-segin-peb-eval-01.dtsi"
-+
-+&iomuxc {
-+	/delete-node/ gpio_keysgrp;
-+};
-+
-+&iomuxc_snvs {
-+	pinctrl_gpio_keys: gpio_keysgrp {
-+		fsl,pins = <
-+			MX6ULL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x79
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6ull-phytec-segin.dtsi b/arch/arm/boot/dts/imx6ull-phytec-segin.dtsi
-new file mode 100644
-index 000000000000..c1595fc785f7
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-phytec-segin.dtsi
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 PHYTEC Messtechnik GmbH
-+ * Author: Stefan Riedmueller <s.riedmueller@phytec.de>
-+ */
-+
-+#include "imx6ul-phytec-segin.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyBOARD-Segin i.MX6 ULL";
-+	compatible = "phytec,imx6ull-pbacd-10", "phytec,imx6ull-pcl063","fsl,imx6ull";
-+};
-+
-+&iomuxc {
-+	/delete-node/ flexcan1engrp;
-+	/delete-node/ rtcintgrp;
-+	/delete-node/ stmpegrp;
-+};
-+
-+&iomuxc_snvs {
-+	princtrl_flexcan1_en: flexcan1engrp {
-+		fsl,pins = <
-+			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x17059
-+		>;
-+	};
-+
-+	pinctrl_rtc_int: rtcintgrp {
-+		fsl,pins = <
-+			MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x17059
-+		>;
-+	};
-+
-+	pinctrl_stmpe: stmpegrp {
-+		fsl,pins = <
-+			MX6ULL_PAD_SNVS_TAMPER3__GPIO5_IO03	0x17059
-+		>;
-+	};
-+};
 -- 
-2.7.4
-
+balbi
