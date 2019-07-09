@@ -2,108 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69ECA63422
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A2F63431
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfGIKVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 06:21:10 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44704 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfGIKVK (ORCPT
+        id S1726154AbfGIKZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 06:25:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfGIKZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 06:21:10 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1hknF8-0004PR-S0; Tue, 09 Jul 2019 12:21:02 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH POC] printk_ringbuffer: Alternative implementation of lockless printk ringbuffer
-References: <20190621140516.h36g4in26pe3rmly@pathway.suse.cz>
-        <20190704103321.10022-1-pmladek@suse.com>
-        <20190704103321.10022-1-pmladek@suse.com>
-        <87r275j15h.fsf@linutronix.de>
-        <20190708152311.7u6hs453phhjif3q@pathway.suse.cz>
-        <20190708152311.7u6hs453phhjif3q@pathway.suse.cz>
-        <874l3wng7g.fsf@linutronix.de>
-        <20190709090609.shx7j2mst7wlkbqm@pathway.suse.cz>
-Date:   Tue, 09 Jul 2019 12:21:01 +0200
-In-Reply-To: <20190709090609.shx7j2mst7wlkbqm@pathway.suse.cz> (Petr Mladek's
-        message of "Tue, 9 Jul 2019 11:06:09 +0200")
-Message-ID: <87tvbv33w2.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Tue, 9 Jul 2019 06:25:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SFTO/dK8SIeELbyjmWLxRQjDXjnyydcKlq+hFQch7Xk=; b=kaTYe12YjtXiZyDx7eArbT8N7
+        tp56ndNM22Z2sEqW/o4XYuU6REDbGGlDQI5mCtzdOxLjv6DvzQ/CIihog3RU2TnN4SrBGWw9MlMlZ
+        9abWY6HKcIcoVSxcrvJlZCFIer9cOy8LCJNoJ+X4rW9PPbafjDudIr+ItpYbHhjrUz0Cwl1oyjzKB
+        d3We1Q5OD1sKsaMU2I2ydIWQGKIMHV/X7Uf7Suhs1wPxnY8TKvMMIdg5TMQMX7i0Hh3pNCubP6/8q
+        aNZc0XZL2HJp3NuOF015JQOppeJWT2w44lwvGjOw7CvgkSFTxMqEuKGZePyekzkxWFgB83rGxr8Dk
+        2T6JX4geg==;
+Received: from 177.43.30.58.dynamic.adsl.gvt.net.br ([177.43.30.58] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hknJ3-0005Wy-CQ; Tue, 09 Jul 2019 10:25:05 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hknJ1-0001Ts-5f; Tue, 09 Jul 2019 07:25:03 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] docs: pdf: add all Documentation/*/index.rst to PDF output
+Date:   Tue,  9 Jul 2019 07:25:02 -0300
+Message-Id: <534357e57c539b421a745536dcf95cef78252b1e.1562667900.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-09, Petr Mladek <pmladek@suse.com> wrote:
->>>> 1. The code claims that the cmpxchg(seq_newest) in
->>>> prb_reserve_desc() guarantees that "The descriptor is ours until
->>>> the COMMITTED bit is set."  This is not true if in that wind
->>>> seq_newest wraps, allowing another writer to gain ownership of the
->>>> same descriptor. For small descriptor arrays (such as in my test
->>>> module), this situation is quite easy to reproduce.
->>>
->> Let me inline the function are talking about and add commentary to
->> illustrate what I am saying:
->> 
->> static int prb_reserve_desc(struct prb_reserved_entry *entry)
->> {
->> 	unsigned long seq, seq_newest, seq_prev_wrap;
->> 	struct printk_ringbuffer *rb = entry->rb;
->> 	struct prb_desc *desc;
->> 	int err;
->> 
->> 	/* Get descriptor for the next sequence number. */
->> 	do {
->> 		seq_newest = READ_ONCE(rb->seq_newest);
->> 		seq = (seq_newest + 1) & PRB_SEQ_MASK;
->> 		seq_prev_wrap = (seq - PRB_DESC_SIZE(rb)) & PRB_SEQ_MASK;
->> 
->> 		/*
->> 		 * Remove conflicting descriptor from the previous wrap
->> 		 * if ever used. It might fail when the related data
->> 		 * have not been committed yet.
->> 		 */
->> 		if (seq_prev_wrap == READ_ONCE(rb->seq_oldest)) {
->> 			err = prb_remove_desc_oldest(rb, seq_prev_wrap);
->> 			if (err)
->> 				return err;
->> 		}
->> 	} while (cmpxchg(&rb->seq_newest, seq_newest, seq) != seq_newest);
->> 
->> I am referring to this point in the code, after the
->> cmpxchg(). seq_newest has been incremented but the descriptor is
->> still in the unused state and seq is still 1 wrap behind. If an NMI
->> occurs here and the NMI (or some other CPU) inserts enough entries to
->> wrap the descriptor array, this descriptor will be reserved again,
->> even though it has already been reserved.
->
-> Not really, the NMI will not reach the cmpxchg() in this case.
-> prb_remove_desc_oldest() will return error.
+Currently, all index files should be manually added to the
+latex_documents array at conf.py.
 
-Why will prb_remove_desc_oldest() fail? IIUC, it will return success
-because the descriptor is in the desc_miss state.
+While this allows fine-tuning some LaTeX specific things, like
+the name of the output file and the name of the document, it
+is not uncommon to forget adding new documents there.
 
-> It will not be able to remove the conflicting descriptor because
-> it will still be occupied by a two-wraps-old descriptor.
+So, add a logic that will seek for all Documentation/*/index.rst.
+If the index is not yet at latex_documents, it includes using
+a reasonable default.
 
-Please explain why with more details. Perhaps providing a function call
-chain?  Sorry if I'm missing the obvious here.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/conf.py | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-This is really the critical point that drove me to use lists: multiple
-writers expiring and reserving the same descriptors.
+diff --git a/Documentation/conf.py b/Documentation/conf.py
+index a502baecbb85..191bd380c523 100644
+--- a/Documentation/conf.py
++++ b/Documentation/conf.py
+@@ -410,6 +410,21 @@ latex_documents = [
+      'The kernel development community', 'manual'),
+ ]
+ 
++# Add all other index files from Documentation/ subdirectories
++for fn in os.listdir('.'):
++    doc = os.path.join(fn, "index")
++    if os.path.exists(doc + ".rst"):
++        has = False
++        for l in latex_documents:
++            if l[0] == doc:
++                has = True
++                break
++        if not has:
++            latex_documents.append((doc, fn + '.tex',
++                                    'Linux %s Documentation' % fn.capitalize(),
++                                    'The kernel development community',
++                                    'manual'))
++
+ # The name of an image file (relative to this directory) to place at the top of
+ # the title page.
+ #latex_logo = None
+-- 
+2.21.0
 
-John Ogness
