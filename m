@@ -2,122 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A91263137
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5F563139
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbfGIGtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:49:11 -0400
-Received: from mail-wm1-f51.google.com ([209.85.128.51]:54371 "EHLO
-        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfGIGtL (ORCPT
+        id S1726377AbfGIGt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:49:57 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39204 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfGIGt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:49:11 -0400
-Received: by mail-wm1-f51.google.com with SMTP id p74so1808556wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:49:10 -0700 (PDT)
+        Tue, 9 Jul 2019 02:49:56 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so19658034wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Nb0pkc+k4Qz3CzHqObu3Bzh+hOHM655Cn2712+LoHC0=;
+        b=Djoi1z+OJdSQcbc/LHWSmwd9/9O9pkUGvPL14F6N7LW+l0FNebr+OsMd06cuG1vmiq
+         9pmmo5vgmdUxRkJ/ClYyBf8TXiMy45EGTo8PjW1nO5ACH5Nlswhavg1yZP2f1sB/6Jt+
+         bLiVFFTFIwWIYSFgwBCk4pMUiUgXnPOn+YFGc2ujMYz+xBJkxJn9NuZV5Aw4R4Rdvrj4
+         xsHkHQ8G3CD0OJjE+Cr+HjCIKVjIUAVeUOjGWWlAF/WrAEP9Ymvqb6I3xRcGp3nhdQp9
+         0HQ2MXRlz4O1ffK9GMUfoJx+7rBFQJQ/e4EB2xbgCcw8VLKhe+FWoVe/B3h1EXh1PG1w
+         TZLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+D1dtkeztSg9ZN0okPlSnO7cNlz4k8nPPeW/C3hyevM=;
-        b=Ygqu1q66A6gZNoU7qczFP9h4d8vPBGL358cYqOYdhaMLbYWMs1x0OsVbawh4tbWggS
-         I2uIJ2vFJHp3YksDgCsRi8Xv0hqzI6e5nl3d01TOXtA6+bTMG+J+1GbVHOOGbAah3bQ5
-         3zixmdvJXNkkUAk6fMYI96G+oREgtn9DsihMZYcmnG516XDvc0h704eet4pmTE+w4Zan
-         CjiLpcxgh9GZmB0K0m6EIf4ZY0WVvRPhPE3/K7YyIhuhS2mImEdxZYU5wsZRYEJJCIV9
-         +faTgls8SXaH07UuCfkVC9c9X0c2Y9ZbdyXOJ6QCRpg7lhUjh7eTqjaeM0Zm+609xFqk
-         SqGA==
-X-Gm-Message-State: APjAAAVGx/qJK5m4lFjCi/ec6UET4EEGv3f5Sh/9A2VceJtBIWxY7axt
-        DgECGedCsO+R9vcS7/cUCOdhGiNc
-X-Google-Smtp-Source: APXvYqyIvKFqv+uq/RLHddW0TgM0cXj7Xq1TecXG4iYbXdXMt1Dp6DjxrB81sqob8pyq86IMhjVdmQ==
-X-Received: by 2002:a1c:be19:: with SMTP id o25mr19471467wmf.54.1562654949441;
-        Mon, 08 Jul 2019 23:49:09 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id a6sm2195368wmj.15.2019.07.08.23.49.07
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 23:49:08 -0700 (PDT)
-Subject: Re: [PATCHv2 4/4] tty: n_gsm: add ioctl to map serial device to
- mux'ed tty
-To:     =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin@geanix.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Esben Haabendal <esben@geanix.com>,
-        =?UTF-8?Q?Sean_Nyekj=c3=a6r?= <sean@geanix.com>
-References: <20190709064633.45411-1-martin@geanix.com>
- <20190709064633.45411-4-martin@geanix.com>
-From:   Jiri Slaby <jslaby@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <97618a78-36e7-f071-47e2-beadbd505cb6@suse.com>
-Date:   Tue, 9 Jul 2019 08:49:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Nb0pkc+k4Qz3CzHqObu3Bzh+hOHM655Cn2712+LoHC0=;
+        b=TfSDVWZTgl1LjhT0UHsoyeeLfdYsWcXHbUPaMekCxixV8qRfaeoth1B4BSkdUJDd4M
+         xISWD2ADf/Qh8KBcFst25jC3rW+mVwF2Yg1ka5X2J/QxSnngcH6pAZ7UGVBVRa+zHxE/
+         bZWRcArEU6Y+9f2Ozxsebbg43va5kDGVc9cbdDjqqngrepnHENfsWFjV3xNKqfPbF2xt
+         FytUrZLGapqcuzGkEmcEOMtB0/0I5PYoUOS9tsVp6nErNwN/RpTSsXpVEOCQkh2AF4a8
+         8lE742WIdPIwK05jSKoJTGS++1N7WawBBAbx20AjzHDDGfO9KaU/LJ5dcF5q6yhssAWf
+         hUww==
+X-Gm-Message-State: APjAAAVAVEGRLWjema5TVLpqkwwedlb6kBq1Scl9H8lEQaUxPXO+WYGN
+        aDd8fneDUTo1byMGt88vlJk=
+X-Google-Smtp-Source: APXvYqxbWBP22Hj6gv+5vEr97/SBM8AtFOB6BACIXVuXsQzH0yNmZQ/xlOJZPUbpeE4pwgOrMQHNug==
+X-Received: by 2002:adf:dd51:: with SMTP id u17mr21977289wrm.218.1562654994345;
+        Mon, 08 Jul 2019 23:49:54 -0700 (PDT)
+Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id n3sm10904758wrt.31.2019.07.08.23.49.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 23:49:53 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 23:49:52 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2] powerpc: slightly improve cache helpers
+Message-ID: <20190709064952.GA40851@archlinux-threadripper>
+References: <c6ff2faba7fbb56a7f5b5f08cd3453f89fc0aaf4.1557480165.git.christophe.leroy@c-s.fr>
+ <45hnfp6SlLz9sP0@ozlabs.org>
+ <20190708191416.GA21442@archlinux-threadripper>
+ <a5864549-40c3-badd-8c41-d5b7bf3c4f3c@c-s.fr>
 MIME-Version: 1.0
-In-Reply-To: <20190709064633.45411-4-martin@geanix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a5864549-40c3-badd-8c41-d5b7bf3c4f3c@c-s.fr>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09. 07. 19, 8:46, Martin HundebÃ¸ll  wrote:
-> @@ -2623,6 +2624,9 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
->  		if (copy_from_user(&c, (void *)arg, sizeof(c)))
->  			return -EFAULT;
->  		return gsm_config(gsm, &c);
-> +	case GSMIOC_GETBASE:
-> +		base = mux_num_to_base(gsm);
-> +		return put_user(base, (int __user *)arg);
+On Tue, Jul 09, 2019 at 07:04:43AM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 08/07/2019 à 21:14, Nathan Chancellor a écrit :
+> > On Mon, Jul 08, 2019 at 11:19:30AM +1000, Michael Ellerman wrote:
+> > > On Fri, 2019-05-10 at 09:24:48 UTC, Christophe Leroy wrote:
+> > > > Cache instructions (dcbz, dcbi, dcbf and dcbst) take two registers
+> > > > that are summed to obtain the target address. Using 'Z' constraint
+> > > > and '%y0' argument gives GCC the opportunity to use both registers
+> > > > instead of only one with the second being forced to 0.
+> > > > 
+> > > > Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
+> > > > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> > > 
+> > > Applied to powerpc next, thanks.
+> > > 
+> > > https://git.kernel.org/powerpc/c/6c5875843b87c3adea2beade9d1b8b3d4523900a
+> > > 
+> > > cheers
+> > 
+> > This patch causes a regression with clang:
+> 
+> Is that a Clang bug ?
 
-I am not sure, but do you need the local variable at all?
+No idea, it happens with clang-8 and clang-9 though (pretty sure there
+were fixes for PowerPC in clang-8 so something before it probably won't
+work but I haven't tried).
 
->  	default:
->  		return n_tty_ioctl_helper(tty, file, cmd, arg);
->  	}
+> 
+> Do you have a disassembly of the code both with and without this patch in
+> order to compare ?
 
+I can give you whatever disassembly you want (or I can upload the raw
+files if that is easier).
 
--- 
-js
-suse labs
+Cheers,
+Nathan
+
+> 
+> Segher, any idea ?
+> 
+> Christophe
+> 
+> > 
+> > https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/213944668
+> > 
+> > I've attached my local bisect/build log.
+> > 
+> > Cheers,
+> > Nathan
+> > 
