@@ -2,130 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FABF634F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C302C634E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 13:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfGILeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 07:34:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34685 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfGILeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 07:34:01 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x69BXadQ1893442
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 9 Jul 2019 04:33:36 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x69BXadQ1893442
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1562672017;
-        bh=3H3cDTlCH4TY9KiGzd57F33WCbQ+/Vikpi7l9koU8x8=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Ogx19RZ3P0e34lSqwcUq+trL1Mlp/M0QHfk7MFlPfK4M7DTZoxAmEOjL9wlO3GoMN
-         aarV2qM8ERdbi2drX3arMzvg/Lx28WDiUrYdiW1GSFbZJKsyCCyIym53ZY1w5zH5P+
-         6Wd/5qGPxb13dux2PwDGz0oVc9kxAjx/WMGrKbXu5ALt7YlZ/RJg+i14QBBcI6CBCt
-         n6b3QaL2QVuMqYF6rSBkztxQhm4D3FwMM6VusD6AW7HvZ61LLEMGMcvy7tnnC4G0wM
-         w/QucgXkkKdORx10g3hLpEf32Haor98SCakTeg3pLugwUi7pzk2OGvAvx2lXPhzMp0
-         T4q5Ao0AxuxDg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x69BXZO61893435;
-        Tue, 9 Jul 2019 04:33:35 -0700
-Date:   Tue, 9 Jul 2019 04:33:35 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-dab0f4ebb22ee6d16051011d624cff79a99baa8a@git.kernel.org>
-Cc:     ben.gainey@arm.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com, acme@redhat.com,
-        jolsa@redhat.com, mingo@kernel.org, namhyung@kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, alexander.shishkin@linux.intel.com,
-          jolsa@redhat.com, acme@redhat.com, ben.gainey@arm.com,
-          peterz@infradead.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, eranian@google.com,
-          namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <20190531131321.GB1281@krava>
-References: <20190531131321.GB1281@krava>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf jvmti: Address gcc string overflow warning for
- strncpy()
-Git-Commit-ID: dab0f4ebb22ee6d16051011d624cff79a99baa8a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726010AbfGIL26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 07:28:58 -0400
+Received: from mga11.intel.com ([192.55.52.93]:54993 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfGIL26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 07:28:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 04:28:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
+   d="scan'208";a="173539452"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Jul 2019 04:28:55 -0700
+Message-ID: <5D247BC2.70104@intel.com>
+Date:   Tue, 09 Jul 2019 19:34:26 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
+        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
+        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
+Subject: Re: [PATCH v7 08/12] KVM/x86/vPMU: Add APIs to support host save/restore
+ the guest lbr stack
+References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-9-git-send-email-wei.w.wang@intel.com> <20190708144831.GN3402@hirez.programming.kicks-ass.net> <5D240435.2040801@intel.com> <20190709093917.GS3402@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190709093917.GS3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dab0f4ebb22ee6d16051011d624cff79a99baa8a
-Gitweb:     https://git.kernel.org/tip/dab0f4ebb22ee6d16051011d624cff79a99baa8a
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Fri, 31 May 2019 15:13:21 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Sun, 7 Jul 2019 12:33:32 -0300
+On 07/09/2019 05:39 PM, Peter Zijlstra wrote:
+> On Tue, Jul 09, 2019 at 11:04:21AM +0800, Wei Wang wrote:
+>> On 07/08/2019 10:48 PM, Peter Zijlstra wrote:
+>>> *WHY* does the host need to save/restore? Why not make VMENTER/VMEXIT do
+>>> this?
+>> Because the VMX transition is much more frequent than the vCPU switching.
+>> On SKL, saving 32 LBR entries could add 3000~4000 cycles overhead, this
+>> would be too large for the frequent VMX transitions.
+>>
+>> LBR state is saved when vCPU is scheduled out to ensure that this
+>> vCPU's LBR data doesn't get lost (as another vCPU or host thread that
+>> is scheduled in may use LBR)
+> But VMENTER/VMEXIT still have to enable/disable the LBR, right?
+> Otherwise the host will pollute LBR contents. And you then rely on this
+> 'fake' event to ensure the host doesn't use LBR when the VCPU is
+> running.
 
-perf jvmti: Address gcc string overflow warning for strncpy()
+Yes, only the debugctl msr is save/restore on vmx tranisions.
 
-We are getting false positive gcc warning when we compile with gcc9 (9.1.1):
 
-     CC       jvmti/libjvmti.o
-   In file included from /usr/include/string.h:494,
-                    from jvmti/libjvmti.c:5:
-   In function ‘strncpy’,
-       inlined from ‘copy_class_filename.constprop’ at jvmti/libjvmti.c:166:3:
-   /usr/include/bits/string_fortified.h:106:10: error: ‘__builtin_strncpy’ specified bound depends on the length of the source argument [-Werror=stringop-overflow=]
-     106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   jvmti/libjvmti.c: In function ‘copy_class_filename.constprop’:
-   jvmti/libjvmti.c:165:26: note: length computed here
-     165 |   size_t file_name_len = strlen(file_name);
-         |                          ^~~~~~~~~~~~~~~~~
-   cc1: all warnings being treated as errors
+>
+> But what about the counter scheduling rules;
 
-As per Arnaldo's suggestion use strlcpy(), which does the same thing and keeps
-gcc silent.
+The counter is emulated independent of the lbr emulation.
 
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ben Gainey <ben.gainey@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190531131321.GB1281@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/jvmti/libjvmti.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Here is the background reason:
 
-diff --git a/tools/perf/jvmti/libjvmti.c b/tools/perf/jvmti/libjvmti.c
-index aea7b1fe85aa..c441a34cb1c0 100644
---- a/tools/perf/jvmti/libjvmti.c
-+++ b/tools/perf/jvmti/libjvmti.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/compiler.h>
-+#include <linux/string.h>
- #include <sys/types.h>
- #include <stdio.h>
- #include <string.h>
-@@ -162,8 +163,7 @@ copy_class_filename(const char * class_sign, const char * file_name, char * resu
- 		result[i] = '\0';
- 	} else {
- 		/* fallback case */
--		size_t file_name_len = strlen(file_name);
--		strncpy(result, file_name, file_name_len < max_length ? file_name_len : max_length);
-+		strlcpy(result, file_name, max_length);
- 	}
- }
- 
+The direction we are going is the architectural emulation, where the 
+features
+are emulated based on the hardware behavior described in the spec. So 
+the lbr
+emulation path only offers the lbr feature to the guest (no counters 
+associated, as
+the lbr feature doesn't have a counter essentially).
+
+If the above isn't clear, please see this example: the guest could run 
+any software
+to use the lbr feature (non-perf or non-linux, or even a testing kernel 
+module to try
+lbr for their own purpose), and it could choose to use a regular timer 
+to do sampling.
+If the lbr emulation takes a counter to generate a PMI to the guest to 
+do sampling,
+that pmi isn't expected from the guest perspective.
+
+So the counter scheduling isn't considered by the lbr emulation here, it 
+is considered
+by the counter emulation. If the guest needs a counter, it configures 
+the related msr,
+which traps to KVM, and the counter emulation has it own emulation path
+(e.g. reprogram_gp_counter which is called when the guest writes to the 
+emulated
+eventsel msr).
+
+
+> what happens when a CPU
+> event claims the LBR before the task event can claim it? CPU events have
+> precedence over task events.
+
+I think the precedence (cpu pined and task pined) is for the counter 
+multiplexing,
+right?
+
+For the lbr feature, could we thought of it as first come, first served?
+For example, if we have 2 host threads who want to use lbr at the same time,
+I think one of them would simply fail to use.
+
+So if guest first gets the lbr, host wouldn't take over unless some 
+userspace
+command (we added to QEMU) is executed to have the vCPU actively
+stop using lbr.
+
+
+>
+> I'm missing all these details in the Changelogs. Please describe the
+> whole setup and explain why this approach.
+
+OK, just shared some important background above.
+I'll see if any more important details missed.
+
+Best,
+Wei
