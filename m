@@ -2,97 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53B063059
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8BE6305B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 08:15:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbfGIGPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 02:15:23 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:35599 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfGIGPW (ORCPT
+        id S1726436AbfGIGPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 02:15:39 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56555 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725906AbfGIGPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:15:22 -0400
-Received: by mail-ed1-f46.google.com with SMTP id w20so16605999edd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GDzjMWxwokXwvdx7TqR3+5NdbnOSDiEOotLEa/Zg7Nk=;
-        b=K8xZ2RJnipyWngJ53bOuctxIW7TEMd/MljxkcYd6t7879ub/ZQHx6ZxQZy8GuM0iwI
-         Q5Xa5YlgWnVqTQW6ZlzrLxzHSRhystAdkSKYbgzd6bTh6hbXMwUvVRiwdEvqPESnJnGH
-         9JJjZVW0WbeXMlXKAWelEJw+GYI5HoFrFU06k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GDzjMWxwokXwvdx7TqR3+5NdbnOSDiEOotLEa/Zg7Nk=;
-        b=YJu9mgEcf2GMhdo6LY+IJuTmoVkii+K2p6xR4Ln+ct6OmgnfA7Ym1EJn8+vgtgKGjy
-         C4aQKhhKr5sJFrC67r8PQAiZ1l3l5+vdYK4+kumxuil8fh/NJVGQm52Nqwy4kTgz3YWz
-         yYfOpseObmoI2nHBs4ChsPxvB7l2s+KjDXCQzgWBifZPUKdUZaymEK3rzL4YfyE/YVcb
-         wdUXNry/hUNf37myyaJ5aVN5AH5zMrAjuQr9t9NgYyiIAQlCt9I/ToA8ps0YKSApXFqP
-         NwXFRva5Qhl0exaQsNAyDLmPzxRW4FPqRrqcPQzhbhw4sIEW3deaimQBK3bUl4fK9aRf
-         E+Bw==
-X-Gm-Message-State: APjAAAVsePnY3Rf1KkKG0SaMstceCeX4ywmgIfk/eRRtZFjiCJ5ycWLm
-        N58lxL1dbmo4O8lg1yD+NQltYVx3tbA=
-X-Google-Smtp-Source: APXvYqxWd3B1Kh0VkZpObuRf3P7sB5FCpNx++dFCGr9oaRYLRlt+ovsV6co822Rd0vKVV5iiIzk5Ug==
-X-Received: by 2002:a17:906:b203:: with SMTP id p3mr19660586ejz.223.1562652920364;
-        Mon, 08 Jul 2019 23:15:20 -0700 (PDT)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
-        by smtp.gmail.com with ESMTPSA id q21sm3962635ejo.76.2019.07.08.23.15.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 23:15:19 -0700 (PDT)
-Received: by mail-wr1-f47.google.com with SMTP id p13so408797wru.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2019 23:15:18 -0700 (PDT)
-X-Received: by 2002:a5d:5012:: with SMTP id e18mr12159590wrt.166.1562652917666;
- Mon, 08 Jul 2019 23:15:17 -0700 (PDT)
+        Tue, 9 Jul 2019 02:15:39 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id E80D721B84;
+        Tue,  9 Jul 2019 02:15:37 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 09 Jul 2019 02:15:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=BTV6iO8RThZ5fsKAHSAGBt0Wwad
+        7LKhI0GOblcqZsC0=; b=Rs7URDoz0SqmXkO3VTWnl3quxKnXPxPyEUJF/aA4cDS
+        3MVUQ//kipgRcKHIStVal/bjLDo3urtYIduls3of5j3Bz/w8jtfyYHD08BbUeE9r
+        VvIDM7YnJyZsCBT2PiQ+DDHdvOhvzXKFAkMWCCuejeBEG1FheRxEIhtrBG09OOA+
+        3otI7oxs2Ah32XDm+RDMhE06RJ0LTGZNRdL7cC+NP6NXu2AERjDEZSfv85NHDKY/
+        V2u/3MQPTrYBIeudgCPttrNI1lAW/bxS2x+xa2bbXsQv34Kh1I29towKb/YipLgG
+        g6iJOHm+hj57Uv4vTEAvUUTfMeQtiFpDCsud03WOGCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=BTV6iO
+        8RThZ5fsKAHSAGBt0Wwad7LKhI0GOblcqZsC0=; b=exMTT7cZOd6PfrTuAirnj3
+        qzYoeaaHbRoFh59aMikbDMyrx07xAvglUZvltwpXGeLkmlNXhcTsJvcxPGyk35oG
+        6/PkFShhNkydzRcKn6y7NorbrJrEFsaRE8NPIs0v1LEmnCh8x3vjU5y5MtHHiLGL
+        ca3CcCkqXs3AW9d4XpcnpKxJs40I1F4JLeq3w1Lf4WGZz8xBbJa39V/VB7V1xKGt
+        JsMKdjHRPQubBdJKOpJFBA7FUYNkRp2XbFQ0P7xj5G5pJeAntVZ/Ab04KH3TFA3q
+        IBRiricID6y9jiCWa9JhVa+2RfQJg7jT9iwIxLViyhJ85JnCQL9TjQHA56frOeBw
+        ==
+X-ME-Sender: <xms:CTEkXZKHkZrn4SEv2jz26TDuY8VSY3jJO_NH7on1bqGZ0nOBFKz-jg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrgedugddutdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:CTEkXYYMB1O_wTCO_FCY8-BY0CuXFVeyxrfZRmaxLQSNr3C_L93BTw>
+    <xmx:CTEkXVwlWHirIAvjo7KmJYL9al2XHjmwC0LmNhrKXBFFn6o1XbPLIw>
+    <xmx:CTEkXUbLc3CvTMFq_u6Y0u_n51kfe0HQdKzv-w9rOklhxCQ-JNqrtA>
+    <xmx:CTEkXWN1v6SrQnH_t3QYy_mzlu7ARUsofUFLXgWycz7xLaMuWY2y-Q>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A7C878005C;
+        Tue,  9 Jul 2019 02:15:36 -0400 (EDT)
+Date:   Tue, 9 Jul 2019 08:15:34 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <20190709061534.GA9285@kroah.com>
+References: <20190613155344.64fce8b9@canb.auug.org.au>
+ <20190709092003.6087a9c4@canb.auug.org.au>
+ <A3330909-6201-4FB6-B20B-89D8C1CE7A0C@vmware.com>
 MIME-Version: 1.0
-References: <20190620073505.33819-1-acourbot@chromium.org>
-In-Reply-To: <20190620073505.33819-1-acourbot@chromium.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 9 Jul 2019 15:15:05 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Cn9GzXEj+tBtJsL8GXouJEyj+HSUng5StqNsCxKZK9yw@mail.gmail.com>
-Message-ID: <CAAFQd5Cn9GzXEj+tBtJsL8GXouJEyj+HSUng5StqNsCxKZK9yw@mail.gmail.com>
-Subject: Re: [PATCH v5] media: docs-rst: Document m2m stateless video decoder interface
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A3330909-6201-4FB6-B20B-89D8C1CE7A0C@vmware.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 4:35 PM Alexandre Courbot <acourbot@chromium.org> wrote:
-[snip]
-> +Initialization
-> +==============
-> +
-[snip]
-> +5. *[optional]* Choose a different ``CAPTURE`` format than suggested via
-> +   :c:func:`VIDIOC_S_FMT` on ``CAPTURE`` queue. It is possible for the client to
-> +   choose a different format than selected/suggested by the driver in
-> +   :c:func:`VIDIOC_G_FMT`.
-> +
-> +    * **Required fields:**
-> +
-> +      ``type``
-> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``.
-> +
-> +      ``pixelformat``
-> +          a raw pixel format.
+On Mon, Jul 08, 2019 at 11:25:12PM +0000, Nadav Amit wrote:
+> > On Jul 8, 2019, at 4:20 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > Hi all,
+> > 
+> > On Thu, 13 Jun 2019 15:53:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> Today's linux-next merge of the char-misc tree got a conflict in:
+> >> 
+> >>  drivers/misc/vmw_balloon.c
+> >> 
+> >> between commit:
+> >> 
+> >>  225afca60b8a ("vmw_balloon: no need to check return value of debugfs_create functions")
+> >> 
+> >> from the driver-core tree and commits:
+> >> 
+> >>  83a8afa72e9c ("vmw_balloon: Compaction support")
+> >>  5d1a86ecf328 ("vmw_balloon: Add memory shrinker")
+> >> 
+> >> from the char-misc tree.
+> >> 
+> >> I fixed it up (see below) and can carry the fix as necessary. This
+> >> is now fixed as far as linux-next is concerned, but any non trivial
+> >> conflicts should be mentioned to your upstream maintainer when your tree
+> >> is submitted for merging.  You may also want to consider cooperating
+> >> with the maintainer of the conflicting tree to minimise any particularly
+> >> complex conflicts.
+> >> 
+> >> -- 
+> >> Cheers,
+> >> Stephen Rothwell
+> >> 
+> >> diff --cc drivers/misc/vmw_balloon.c
+> >> index fdf5ad757226,043eed845246..000000000000
+> >> --- a/drivers/misc/vmw_balloon.c
+> >> +++ b/drivers/misc/vmw_balloon.c
+> >> @@@ -1553,15 -1942,26 +1932,24 @@@ static int __init vmballoon_init(void
+> >>  	if (x86_hyper_type != X86_HYPER_VMWARE)
+> >>  		return -ENODEV;
+> >> 
+> >> - 	for (page_size = VMW_BALLOON_4K_PAGE;
+> >> - 	     page_size <= VMW_BALLOON_LAST_SIZE; page_size++)
+> >> - 		INIT_LIST_HEAD(&balloon.page_sizes[page_size].pages);
+> >> - 
+> >> - 
+> >>  	INIT_DELAYED_WORK(&balloon.dwork, vmballoon_work);
+> >> 
+> >> + 	error = vmballoon_register_shrinker(&balloon);
+> >> + 	if (error)
+> >> + 		goto fail;
+> >> + 
+> >> -	error = vmballoon_debugfs_init(&balloon);
+> >> -	if (error)
+> >> -		goto fail;
+> >> +	vmballoon_debugfs_init(&balloon);
+> >> 
+> >> + 	/*
+> >> + 	 * Initialization of compaction must be done after the call to
+> >> + 	 * balloon_devinfo_init() .
+> >> + 	 */
+> >> + 	balloon_devinfo_init(&balloon.b_dev_info);
+> >> + 	error = vmballoon_compaction_init(&balloon);
+> >> + 	if (error)
+> >> + 		goto fail;
+> >> + 
+> >> + 	INIT_LIST_HEAD(&balloon.huge_pages);
+> >>  	spin_lock_init(&balloon.comm_lock);
+> >>  	init_rwsem(&balloon.conf_sem);
+> >>  	balloon.vmci_doorbell = VMCI_INVALID_HANDLE;
+> > 
+> > I am still getting this conflict (the commit ids may have changed).
+> > Just a reminder in case you think Linus may need to know.
+> 
+> Greg,
+> 
+> Can you please take care of it, as you are the maintainer of char-misc
+> and the committer of the patch?
 
-We should be able to set different width and height as well, to allow
-strided and padded frame buffers. Otherwise we wouldn't be able to
-import DMA-bufs allocated from some other sources.
+It's hard to "take care" as this is in two different trees.  I'll worry
+about it when they start to get merged together in Linus's tree...
 
-(FYI, I've posted a similar comment to the stateful interface too.)
+thanks,
 
-Best regards,
-Tomasz
+greg k-h
