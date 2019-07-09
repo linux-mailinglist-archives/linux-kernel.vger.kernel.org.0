@@ -2,110 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC69D63484
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1818663497
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2019 12:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfGIKtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 06:49:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfGIKtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 06:49:33 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8AC7C369CC;
-        Tue,  9 Jul 2019 10:49:32 +0000 (UTC)
-Received: from gondolin (unknown [10.40.205.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B8118441C;
-        Tue,  9 Jul 2019 10:49:23 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 12:49:20 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
-        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        pmorel@linux.ibm.com, pasic@linux.ibm.com,
-        alex.williamson@redhat.com, kwankhede@nvidia.com
-Subject: Re: [PATCH v4 3/7] s390: zcrypt: driver callback to indicate
- resource in use
-Message-ID: <20190709124920.3a910dca.cohuck@redhat.com>
-In-Reply-To: <c771961d-f840-fe8a-09b7-a11b39a74d4c@linux.ibm.com>
-References: <1560454780-20359-1-git-send-email-akrowiak@linux.ibm.com>
-        <1560454780-20359-4-git-send-email-akrowiak@linux.ibm.com>
-        <20190618182558.7d7e025a.cohuck@redhat.com>
-        <2366c6b6-fd9e-0c32-0e9d-018cd601a0ad@linux.ibm.com>
-        <20190701212643.0dd7d4ab.cohuck@redhat.com>
-        <c771961d-f840-fe8a-09b7-a11b39a74d4c@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1726780AbfGIKz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 06:55:56 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40070 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfGIKz4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 06:55:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k8so17319140eds.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 03:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CuR0e69I7mgSfC2aZ+6Blt0AlnXi6b5+QGMHj0cl8wQ=;
+        b=H3WlmKuijQsSU0a7TLuEFl5089i9cBj5bQlzW0gPvihWPMgP7G94S30SDDV2haeICa
+         pGMt/tK8FnppDqzcxSyDW/ZGHEBCDZF9y+SItMZORqBsUrYu7gWSBoRGhqvDlsRgCk3L
+         CJFf3ltd8JZY5lsUyIPS3BcsvbXDX+aEDXSYvTa69E4sO6vP3fGrxCVgD3jxFxcK3kWc
+         7HgLFC117OAk1gqAJL9/arNhNxDJv5ZGq02OWiM5Qfyr+bIicJ4bYEBP7ydQ+0WcFv/L
+         bDTQbUbW7RbXsY8zovPUrWR5ZXV+ttIdrqIfu0jz4gftf9++zkA4rDA/sSp6z/o/n0Et
+         6f6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CuR0e69I7mgSfC2aZ+6Blt0AlnXi6b5+QGMHj0cl8wQ=;
+        b=ul3PmaiYDKp9fdaeNt0SeDwTtZoZ8OS9sdaXHJZyeIoiTrgdmAvbhp2vv1XnQoAy26
+         imNmlkc6hQ+kWLwduWnLeJyvjyvzcMLRI3EJlO0n0QI23kMfPPIePnMVRBk2atMOFq9d
+         tBfbIyE/ZxaKH5wwv3dJp+W2CNloFO+sK7UKFbx34cI3Ji4n2JIEw0ORcqH7J5H3IAlS
+         bPfOyIpJ9fYDedVegAL5SDPwP28PVJ2Wd1LYjMBc9GHW+wSbq0iV/UKRb8uEBUSJiDWv
+         gt4kXY2QAd5vWk7XWYWsQHJqgOqTW5RBBohbHUdTxh7xEdvkKZX397jYDlKOUzJt6F7z
+         TN9Q==
+X-Gm-Message-State: APjAAAXQkiAwDWH3wXR0HjszYC++Wtkj/ddMxysosTss3I7i9VKtieYX
+        l5nDVCVWhbmBErr/1fmIXX6R2cDK33DWP7/8B0mCqg==
+X-Google-Smtp-Source: APXvYqx/6vJ3gKcKwyl7lr8xaD9C3sEOSHeUsI11wzdsW0Z+TsR9S678RUXH+ItREyVctYyP5WUXtxp+9zz/FamrbHo=
+X-Received: by 2002:a05:6402:782:: with SMTP id d2mr25261183edy.80.1562669754543;
+ Tue, 09 Jul 2019 03:55:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 09 Jul 2019 10:49:32 +0000 (UTC)
+References: <20190708211528.12392-1-pasha.tatashin@soleen.com> <CACi5LpNGWhTnXyM8gB0Tn=682+08s-ppfDpX2SawfxMvue1GTQ@mail.gmail.com>
+In-Reply-To: <CACi5LpNGWhTnXyM8gB0Tn=682+08s-ppfDpX2SawfxMvue1GTQ@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Tue, 9 Jul 2019 06:55:43 -0400
+Message-ID: <CA+CK2bBrwBHhD-PFO_gVnDYoFi0Su6t456WNdtBWpOe4qM+oww@mail.gmail.com>
+Subject: Re: [v1 0/5] allow to reserve memory for normal kexec kernel
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Jul 2019 10:27:11 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Tue, Jul 9, 2019 at 6:36 AM Bhupesh Sharma <bhsharma@redhat.com> wrote:
+>
+> Hi Pavel,
+>
+> On Tue, Jul 9, 2019 at 2:46 AM Pavel Tatashin <pasha.tatashin@soleen.com> wrote:
+> >
+> > Currently, it is only allowed to reserve memory for crash kernel, because
+> > it is a requirement in order to be able to boot into crash kernel without
+> > touching memory of crashed kernel is to have memory reserved.
+> >
+> > The second benefit for having memory reserved for kexec kernel is
+> > that it does not require a relocation after segments are loaded into
+> > memory.
+> >
+> > If kexec functionality is used for a fast system update, with a minimal
+> > downtime, the relocation of kernel + initramfs might take a significant
+> > portion of reboot.
+> >
+> > In fact, on the machine that we are using, that has ARM64 processor
+> > it takes 0.35s to relocate during kexec, thus taking 52% of kernel reboot
+> > time:
+> >
+> > kernel shutdown 0.03s
+> > relocation      0.35s
+> > kernel startup  0.29s
+> >
+> > Image: 13M and initramfs is 24M. If initramfs increases, the relocation
+> > time increases proportionally.
+> >
+> > While, it is possible to add 'kexeckernel=' parameters support to other
+> > architectures by modifying reserve_crashkernel(), in this series this is
+> > done for arm64 only.
+> >
+> > Pavel Tatashin (5):
+> >   kexec: quiet down kexec reboot
+> >   kexec: add resource for normal kexec region
+> >   kexec: export common crashkernel/kexeckernel parser
+> >   kexec: use reserved memory for normal kexec reboot
+> >   arm64, kexec: reserve kexeckernel region
+> >
+> >  .../admin-guide/kernel-parameters.txt         |  7 ++
+> >  arch/arm64/kernel/setup.c                     |  5 ++
+> >  arch/arm64/mm/init.c                          | 83 ++++++++++++-------
+> >  include/linux/crash_core.h                    |  6 ++
+> >  include/linux/ioport.h                        |  1 +
+> >  include/linux/kexec.h                         |  6 +-
+> >  kernel/crash_core.c                           | 27 +++---
+> >  kernel/kexec_core.c                           | 50 +++++++----
+> >  8 files changed, 127 insertions(+), 58 deletions(-)
+> >
+> > --
+> > 2.22.0
+>
+> This seems like an issue with time spent while doing sha256
+> verification while in purgatory.
+>
+> Can you please try the following two patches which enable D-cache in
+> purgatory before SHA verification and disable it before switching to
+> kernel:
+>
+> http://lists.infradead.org/pipermail/kexec/2017-May/018839.html
+> http://lists.infradead.org/pipermail/kexec/2017-May/018840.html
 
-> On 7/1/19 3:26 PM, Cornelia Huck wrote:
-> > On Wed, 19 Jun 2019 09:04:18 -0400
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+Hi Bhupesh,
 
-> >> Allow me to first address your fear that a bad actor can hog
-> >> resources that can't be removed by root. With this enhancement,
-> >> there is nothing preventing a root user from taking resources
-> >> from a matrix mdev, it simply forces him/her to follow the
-> >> proper procedure. The resources to be removed must first be
-> >> unassigned from the matrix mdev to which they are assigned.
-> >> The AP bus's /sys/bus/ap/apmask and /sys/bus/ap/aqmask
-> >> sysfs attributes can then be edited to transfer ownership
-> >> of the resources to zcrypt.  
-> > 
-> > What is the suggested procedure when root wants to unbind a queue
-> > device? Find the mdev using the queue (is that easy enough?), unassign
-> > it, then unbind? Failing to unbind is a bit unexpected; can we point
-> > the admin to the correct mdev from which the queue has to be removed
-> > first?  
-> 
-> The proper procedure is to first unassign the adapter, domain, or both
-> from the mdev to which the APQN is assigned. The difficulty in finding
-> the queue depends upon how many mdevs have been created. I would expect
-> that an admin would keep records of who owns what, but in the case he or
-> she doesn't, it would be a matter of printing out the matrix attribute
-> of each mdev until you find the mdev to which the APQN is assigned.
+The verification was taking 2.31s. This is why it is disabled via
+kexec's '-i' flag. Therefore 0.35s is only the relocation part where
+time is spent, and with my patches the time is completely gone.
+Actually, I am glad you showed these patches to me because I might
+pull them and enable verification for our needs.
 
-Ok, so the information is basically available, if needed.
+>
+> Note that these were not accepted upstream but are included in several
+> distros in some form or the other :)
 
-> The only means I know of for informing the admin to which mdev a given
-> APQN is assigned is to log the error when it occurs. 
+Enabling MMU and D-Cache for relocation  would essentially require the
+same changes in kernel. Could you please share exactly why these were
+not accepted upstream into kexec-tools?
 
-That might be helpful, if it's easy to do.
+Thank you,
+Pasha
 
-> I think Matt is
-> also looking to provide query functions in the management tool on which
-> he is currently working.
-
-That also sounds helpful.
-
-(...)
-
-> >> * It forces the use of the proper procedure to change ownership of AP
-> >>     queues.  
-> > 
-> > This needs to be properly documented, and the admin needs to have a
-> > chance to find out why unbinding didn't work and what needs to be done
-> > (see my comments above).  
-> 
-> I will create a section in the vfio-ap.txt document that comes with this
-> patch set describing the proper procedure for unbinding queues. Of
-> course, we'll make sure the official IBM doc also more thoroughly
-> describes this.
-
-+1 for good documentation.
-
-With that, I don't really object to this change.
+>
+> Thanks,
+> Bhupesh
