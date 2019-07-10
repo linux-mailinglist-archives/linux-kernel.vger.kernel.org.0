@@ -2,141 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE5E643BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7385B643A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfGJIoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:44:15 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37437 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfGJIoP (ORCPT
+        id S1727477AbfGJIin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:38:43 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9701 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfGJIim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:44:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 19so770367pfa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 01:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZxB6K90WEOCOsXFUiDbe1sddkLrl4+FMawAXBSkTyfs=;
-        b=Yv02FiX2qw7jZOKTrsoiIMkDDSP78zsxI2V+pkdLGpN8sQ2V9lYpCBTujbjLOd4+XX
-         cDHNZGrU/OY6+FRbsNHKPd9Pi/5iY4BUy8RRb4v/YuXTqTo96k3IM3BvQBPijRhv5ykC
-         3M8lrau2R5HxxkFPUp0vn7kIiIuFkU0VmWVtqF8NQ8810MvhOKhoHVeynE63w6hpwNtX
-         zqpv0eFQplEjHM793bOPiK6GZZjpPSpLCWoz9X38kBQ8V6Pt15H4jijSHphDEN+Qtimw
-         aurOy9tnyBXRUbgisvNaPCNVSUb0EOgeJPbdyErfH7PHrnO69wdgHiS3AqX/zHyZLQcm
-         S23w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZxB6K90WEOCOsXFUiDbe1sddkLrl4+FMawAXBSkTyfs=;
-        b=r6jrlS7zVhI9OFxS1b+KzXctsgS1jFzp5SS4lPaKvPp62r2ioSKmAyBZwEGCcBShkR
-         T8CCY9KvmL8OhWUxEd0cVBXzZuaT3foole7KgTolhs9KlHbQ3VmNEtHXY0hoMLa1c9Ib
-         nYwQrYsDQbnBa5ib4eNgxWzCcStUTBX6s2jYvXpvH9sAnBV3IiXpIMHgGODG2OMWawln
-         qjwNEu9bg4XZiLjnVIaHMrRAOHxjSjddvIgeKrtAqu3PfI3UEGWjWzluiaFUydKefgx1
-         g/JQ1OFdbttS6jCm6Jx4Zkl7CMUxu0q8KPNG2zKICM7eN5DPFdrdjV7DiAuODQpUFYbM
-         sXtg==
-X-Gm-Message-State: APjAAAW7fBZeqMaqqSRY8WIpoLFUxhBoDms2ZhZY3mUL51Yd4VGL5JD4
-        UwsN4A4bHT6APrOfhMiG9CWHCQ==
-X-Google-Smtp-Source: APXvYqx6r3nK/XJfM+4IfR4WIlijQtiFKtASr2UXeXiYiziTXmlsNyQAr1EFL/V112AK8JqshhpfCw==
-X-Received: by 2002:a63:7d05:: with SMTP id y5mr32971869pgc.425.1562748254525;
-        Wed, 10 Jul 2019 01:44:14 -0700 (PDT)
-Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id v5sm1378133pgq.66.2019.07.10.01.44.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 01:44:14 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com,
-        Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, stable@vger.kernel.org
-Subject: [PATCH v3 2/2] rtw88: pci: Use DMA sync instead of remapping in RX ISR
-Date:   Wed, 10 Jul 2019 16:38:27 +0800
-Message-Id: <20190710083825.7115-2-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190709161550.GA8703@infradead.org>
-References: <20190709161550.GA8703@infradead.org>
+        Wed, 10 Jul 2019 04:38:42 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d25a4100000>; Wed, 10 Jul 2019 01:38:40 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 10 Jul 2019 01:38:41 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 10 Jul 2019 01:38:41 -0700
+Received: from [10.26.11.158] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 10 Jul
+ 2019 08:38:39 +0000
+Subject: Re: [PATCH] dmaengine: tegra210-adma: Fix unused function warnings
+To:     YueHaibing <yuehaibing@huawei.com>, <ldewangan@nvidia.com>,
+        <vkoul@kernel.org>, <dan.j.williams@intel.com>,
+        <thierry.reding@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20190709083258.57112-1-yuehaibing@huawei.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5cda4486-d875-4f66-c7f9-0ed11e35d44c@nvidia.com>
+Date:   Wed, 10 Jul 2019 09:38:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190709083258.57112-1-yuehaibing@huawei.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1562747920; bh=1FBvMektmbZBOzVKmJaAz9QLeVX25uyKcUKzcf9Hdc0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=T9Pms+Zrm7JkZZNSCGxO4a298/jArN10Cp+rQr/lxgrDM70EAU2KYkR93A75VFXt+
+         jkpj0A2Wi4y87LlBNCvQhpvkGAd00yzdVgoVZOODKI30WznCPPTAfIuog2S3rdQaA1
+         ynXq3sE1v0nDpuBTPN1iAB0ll8oZtrDULou9vNS5Z/Xu2v/ffM80aLF+OAz3GUd8vt
+         m8mmYL4ZnfZvgbJxQ/CZJBAD4TfjZlHMuEzX2UdYdT740Jb4GPpPgl9REDRRURXhj/
+         EiSTaumDmU19T8kN2qFDMFn39Km2YtALrYTwYWu6qBNsB2jzmTB2RpbhMeykYWsIW/
+         KNJbEG5qKWldw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since each skb in RX ring is reused instead of new allocation, we can
-treat the DMA in a more efficient way by DMA synchronization.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: <stable@vger.kernel.org>
----
-v2:
- - New patch by following [PATCH v3 1/2] rtw88: pci: Rearrange the
-   memory usage for skb in RX ISR.
+On 09/07/2019 09:32, YueHaibing wrote:
+> If CONFIG_PM is not set, build warnings:
+> 
+> drivers/dma/tegra210-adma.c:747:12: warning: tegra_adma_runtime_resume defined but not used [-Wunused-function]
+>  static int tegra_adma_runtime_resume(struct device *dev)
+> drivers/dma/tegra210-adma.c:715:12: warning: tegra_adma_runtime_suspend defined but not used [-Wunused-function]
+>  static int tegra_adma_runtime_suspend(struct device *dev)
+> 
+> Mark the two function as __maybe_unused.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/dma/tegra210-adma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index 2805853..b33cf6e 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -712,7 +712,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+>  	return chan;
+>  }
+>  
+> -static int tegra_adma_runtime_suspend(struct device *dev)
+> +static int __maybe_unused tegra_adma_runtime_suspend(struct device *dev)
+>  {
+>  	struct tegra_adma *tdma = dev_get_drvdata(dev);
+>  	struct tegra_adma_chan_regs *ch_reg;
+> @@ -744,7 +744,7 @@ static int tegra_adma_runtime_suspend(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int tegra_adma_runtime_resume(struct device *dev)
+> +static int __maybe_unused tegra_adma_runtime_resume(struct device *dev)
+>  {
+>  	struct tegra_adma *tdma = dev_get_drvdata(dev);
+>  	struct tegra_adma_chan_regs *ch_reg;
+> 
 
-v3:
- - Remove rtw_pci_sync_rx_desc_cpu and call dma_sync_single_for_cpu in
-   rtw_pci_rx_isr directly.
- - Remove the return value of rtw_pci_sync_rx_desc_device.
- - Use DMA_FROM_DEVICE instead of PCI_DMA_FROMDEVICE.
+Thanks!
 
- drivers/net/wireless/realtek/rtw88/pci.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
-index e9fe3ad896c8..485d30c06935 100644
---- a/drivers/net/wireless/realtek/rtw88/pci.c
-+++ b/drivers/net/wireless/realtek/rtw88/pci.c
-@@ -206,6 +206,23 @@ static int rtw_pci_reset_rx_desc(struct rtw_dev *rtwdev, struct sk_buff *skb,
- 	return 0;
- }
- 
-+static void rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr_t dma,
-+					struct rtw_pci_rx_ring *rx_ring,
-+					u32 idx, u32 desc_sz)
-+{
-+	struct device *dev = rtwdev->dev;
-+	struct rtw_pci_rx_buffer_desc *buf_desc;
-+	int buf_sz = RTK_PCI_RX_BUF_SIZE;
-+
-+	dma_sync_single_for_device(dev, dma, buf_sz, DMA_FROM_DEVICE);
-+
-+	buf_desc = (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
-+						     idx * desc_sz);
-+	memset(buf_desc, 0, sizeof(*buf_desc));
-+	buf_desc->buf_size = cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
-+	buf_desc->dma = cpu_to_le32(dma);
-+}
-+
- static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
- 				struct rtw_pci_rx_ring *rx_ring,
- 				u8 desc_size, u32 len)
-@@ -782,8 +799,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
- 		rtw_pci_dma_check(rtwdev, ring, cur_rp);
- 		skb = ring->buf[cur_rp];
- 		dma = *((dma_addr_t *)skb->cb);
--		pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
--				 PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_cpu(rtwdev->dev, dma, RTK_PCI_RX_BUF_SIZE,
-+					DMA_FROM_DEVICE);
- 		rx_desc = skb->data;
- 		chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_status);
- 
-@@ -818,7 +835,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
- 
- next_rp:
- 		/* new skb delivered to mac80211, re-enable original skb DMA */
--		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
-+		rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
-+					    buf_desc_sz);
- 
- 		/* host read next element in ring */
- 		if (++cur_rp >= ring->r.len)
+Cheers
+Jon
+
 -- 
-2.22.0
-
+nvpublic
