@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8CF9643F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B81E643FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfGJI77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:59:59 -0400
+        id S1727900AbfGJJAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:00:10 -0400
 Received: from mga12.intel.com ([192.55.52.136]:35496 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbfGJI7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:59:54 -0400
+        id S1727850AbfGJI7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:59:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:54 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,474,1557212400"; 
-   d="scan'208";a="186102594"
+   d="scan'208";a="186102598"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:52 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:54 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/21] perf scripts python: export-to-sqlite.py: Export switch events
-Date:   Wed, 10 Jul 2019 11:58:09 +0300
-Message-Id: <20190710085810.1650-21-adrian.hunter@intel.com>
+Subject: [PATCH 21/21] perf scripts python: export-to-postgresql.py: Export switch events
+Date:   Wed, 10 Jul 2019 11:58:10 +0300
+Message-Id: <20190710085810.1650-22-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190710085810.1650-1-adrian.hunter@intel.com>
 References: <20190710085810.1650-1-adrian.hunter@intel.com>
@@ -43,19 +43,19 @@ If the table ends up empty, then it and the view are dropped.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/export-to-sqlite.py | 41 +++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ .../scripts/python/export-to-postgresql.py    | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index 9156f6a1e5f0..8043a7272a56 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -306,6 +306,17 @@ do_query(query, 'CREATE TABLE pwrx ('
- 		'last_cstate	integer,'
- 		'wake_reason	integer)')
+diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
+index 13205e4e5b3b..7bd73a904b4e 100644
+--- a/tools/perf/scripts/python/export-to-postgresql.py
++++ b/tools/perf/scripts/python/export-to-postgresql.py
+@@ -482,6 +482,17 @@ do_query(query, 'CREATE TABLE pwrx ('
+ 	'last_cstate	integer,'
+ 	'wake_reason	integer)')
  
 +do_query(query, 'CREATE TABLE context_switches ('
-+		'id		integer		NOT NULL	PRIMARY KEY,'
++		'id		bigint		NOT NULL,'
 +		'machine_id	bigint,'
 +		'time		bigint,'
 +		'cpu		integer,'
@@ -65,12 +65,12 @@ index 9156f6a1e5f0..8043a7272a56 100644
 +		'comm_in_id	bigint,'
 +		'flags		integer)')
 +
- # printf was added to sqlite in version 3.8.3
- sqlite_has_printf = False
- try:
-@@ -530,6 +541,29 @@ do_query(query, 'CREATE VIEW power_events_view AS '
- 	' INNER JOIN selected_events ON selected_events.id = evsel_id'
- 	' WHERE selected_events.name IN (\'cbr\',\'mwait\',\'exstop\',\'pwre\',\'pwrx\')')
+ do_query(query, 'CREATE VIEW machines_view AS '
+ 	'SELECT '
+ 		'id,'
+@@ -695,6 +706,29 @@ do_query(query, 'CREATE VIEW power_events_view AS '
+ 	' INNER JOIN selected_events ON selected_events.id = samples.evsel_id'
+ 	' ORDER BY samples.id')
  
 +do_query(query, 'CREATE VIEW context_switches_view AS '
 +	'SELECT '
@@ -87,7 +87,7 @@ index 9156f6a1e5f0..8043a7272a56 100644
 +		'CASE	  WHEN context_switches.flags = 0 THEN \'in\''
 +			' WHEN context_switches.flags = 1 THEN \'out\''
 +			' WHEN context_switches.flags = 3 THEN \'out preempt\''
-+			' ELSE context_switches.flags '
++			' ELSE CAST ( context_switches.flags AS VARCHAR(11) )'
 +		'END AS flags'
 +	' FROM context_switches'
 +	' INNER JOIN threads AS th_out ON th_out.id   = context_switches.thread_out_id'
@@ -95,19 +95,55 @@ index 9156f6a1e5f0..8043a7272a56 100644
 +	' INNER JOIN comms AS comm_out ON comm_out.id = context_switches.comm_out_id'
 +	' INNER JOIN comms AS comm_in  ON comm_in.id  = context_switches.comm_in_id')
 +
- do_query(query, 'END TRANSACTION')
+ file_header = struct.pack("!11sii", b"PGCOPY\n\377\r\n\0", 0, 0)
+ file_trailer = b"\377\377"
  
- evsel_query = QSqlQuery(db)
-@@ -571,6 +605,8 @@ exstop_query = QSqlQuery(db)
- exstop_query.prepare("INSERT INTO exstop VALUES (?, ?)")
- pwrx_query = QSqlQuery(db)
- pwrx_query.prepare("INSERT INTO pwrx VALUES (?, ?, ?, ?)")
-+context_switch_query = QSqlQuery(db)
-+context_switch_query.prepare("INSERT INTO context_switches VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+@@ -759,6 +793,7 @@ mwait_file		= open_output_file("mwait_table.bin")
+ pwre_file		= open_output_file("pwre_table.bin")
+ exstop_file		= open_output_file("exstop_table.bin")
+ pwrx_file		= open_output_file("pwrx_table.bin")
++context_switches_file	= open_output_file("context_switches_table.bin")
  
  def trace_begin():
- 	printdate("Writing records...")
-@@ -620,6 +656,8 @@ def trace_end():
+ 	printdate("Writing to intermediate files...")
+@@ -807,6 +842,7 @@ def trace_end():
+ 	copy_output_file(pwre_file,		"pwre")
+ 	copy_output_file(exstop_file,		"exstop")
+ 	copy_output_file(pwrx_file,		"pwrx")
++	copy_output_file(context_switches_file,	"context_switches")
+ 
+ 	printdate("Removing intermediate files...")
+ 	remove_output_file(evsel_file)
+@@ -828,6 +864,7 @@ def trace_end():
+ 	remove_output_file(pwre_file)
+ 	remove_output_file(exstop_file)
+ 	remove_output_file(pwrx_file)
++	remove_output_file(context_switches_file)
+ 	os.rmdir(output_dir_name)
+ 	printdate("Adding primary keys")
+ 	do_query(query, 'ALTER TABLE selected_events ADD PRIMARY KEY (id)')
+@@ -849,6 +886,7 @@ def trace_end():
+ 	do_query(query, 'ALTER TABLE pwre            ADD PRIMARY KEY (id)')
+ 	do_query(query, 'ALTER TABLE exstop          ADD PRIMARY KEY (id)')
+ 	do_query(query, 'ALTER TABLE pwrx            ADD PRIMARY KEY (id)')
++	do_query(query, 'ALTER TABLE context_switches ADD PRIMARY KEY (id)')
+ 
+ 	printdate("Adding foreign keys")
+ 	do_query(query, 'ALTER TABLE threads '
+@@ -900,6 +938,12 @@ def trace_end():
+ 					'ADD CONSTRAINT idfk        FOREIGN KEY (id)           REFERENCES samples   (id)')
+ 	do_query(query, 'ALTER TABLE  pwrx '
+ 					'ADD CONSTRAINT idfk        FOREIGN KEY (id)           REFERENCES samples   (id)')
++	do_query(query, 'ALTER TABLE  context_switches '
++					'ADD CONSTRAINT machinefk   FOREIGN KEY (machine_id)    REFERENCES machines (id),'
++					'ADD CONSTRAINT toutfk      FOREIGN KEY (thread_out_id) REFERENCES threads  (id),'
++					'ADD CONSTRAINT tinfk       FOREIGN KEY (thread_in_id)  REFERENCES threads  (id),'
++					'ADD CONSTRAINT coutfk      FOREIGN KEY (comm_out_id)   REFERENCES comms    (id),'
++					'ADD CONSTRAINT cinfk       FOREIGN KEY (comm_in_id)    REFERENCES comms    (id)')
+ 
+ 	printdate("Dropping unused tables")
+ 	if is_table_empty("ptwrite"):
+@@ -912,6 +956,8 @@ def trace_end():
  		drop("pwrx")
  		if is_table_empty("cbr"):
  			drop("cbr")
@@ -116,13 +152,15 @@ index 9156f6a1e5f0..8043a7272a56 100644
  
  	if (unhandled_count):
  		printdate("Warning: ", unhandled_count, " unhandled events")
-@@ -753,3 +791,6 @@ def synth_data(id, config, raw_buf, *x):
+@@ -1058,3 +1104,8 @@ def synth_data(id, config, raw_buf, *x):
  		pwrx(id, raw_buf)
  	elif config == 5:
  		cbr(id, raw_buf)
 +
-+def context_switch_table(*x):
-+	bind_exec(context_switch_query, 9, x)
++def context_switch_table(id, machine_id, time, cpu, thread_out_id, comm_out_id, thread_in_id, comm_in_id, flags, *x):
++	fmt = "!hiqiqiqiiiqiqiqiqii"
++	value = struct.pack(fmt, 9, 8, id, 8, machine_id, 8, time, 4, cpu, 8, thread_out_id, 8, comm_out_id, 8, thread_in_id, 8, comm_in_id, 4, flags)
++	context_switches_file.write(value)
 -- 
 2.17.1
 
