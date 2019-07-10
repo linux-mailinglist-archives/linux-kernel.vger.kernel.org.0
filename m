@@ -2,108 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6ED064F4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 01:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C4464F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 01:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfGJXmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 19:42:21 -0400
-Received: from smtprelay0155.hostedemail.com ([216.40.44.155]:37444 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727220AbfGJXmV (ORCPT
+        id S1727860AbfGJXm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 19:42:56 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35476 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbfGJXm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 19:42:21 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id AC286180115DE;
-        Wed, 10 Jul 2019 23:42:19 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 90,9,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3653:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:5007:6119:7903:8660:9545:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12740:12760:12895:13071:13095:13148:13230:13439:14180:14181:14659:14721:14819:21060:21080:21221:21433:21451:21627:21740:21741:30054:30070:30080:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: straw32_14309c62bb12e
-X-Filterd-Recvd-Size: 3096
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 10 Jul 2019 23:42:18 +0000 (UTC)
-Message-ID: <1918c98b8f25207dc45d46492944f2bcb464cd5d.camel@perches.com>
-Subject: Re: [PATCH] checkpatch.pl: warn on invalid commit hash
-From:   Joe Perches <joe@perches.com>
-To:     Matteo Croce <mcroce@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Wed, 10 Jul 2019 16:42:17 -0700
-In-Reply-To: <20190710231919.9631-1-mcroce@redhat.com>
-References: <20190710231919.9631-1-mcroce@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 10 Jul 2019 19:42:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so1833933pfn.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 16:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/8wra02GeEP0SVg5sdKoUvO7OcYTQnTWkeSeWCcrhT0=;
+        b=oIfExlZfIRhZ7FVUoexMOfO3VzFoeSLUjFHiaCi687FqmnIAHRxj5m5nV1R7MqGbzW
+         Gd+wzR3f4AhjQJji14ivA5zoW6MrZTP6ZBk1+uasXwmBAcrW0/rXkD7MJAkr+WEZq/pa
+         drBy+kVqVv9Iqxufv/pap5vDKWplfS15m1hBM+PSp7QdaniIesWMfm79UTPrPu685bNa
+         U8E9a0NRTIUFvzpOUd5KqugCTzWhKHuSAnHKZaT5SmRnFnSuH/94N5SoyEdYbxaDJiqv
+         vMPE2VaOYA90T3iAR+fpuI/ScZHT7ZLvU+FbY6d7gz+vpbYDRh96LvGKE3euIvko5q23
+         2UaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/8wra02GeEP0SVg5sdKoUvO7OcYTQnTWkeSeWCcrhT0=;
+        b=B+TePBcsfwG9IgXrxbeD17w0C76bdiI04uAA6E4Cm3oP/Mx3ggRhPloQPRzo07/cH2
+         nOTTdsPwS5NI8TQ2pcg7OOMDMpkkZ0BPc8wLDeKeFNTuOsXkfN7BTkuNFNrCoRDhHfTo
+         ct9riI8vwnsn5hEV/AfdWBKSpULydH4BTOEiKNxMEDW0QP3XRch1VQQGfoCSTb0FF2QB
+         qhS7EiggLlUGuRuEwKDIbv7Y7z6+/xuo3R2PFH6Ljm12+q1IrxMmReMwzdF03VJ7tg3C
+         I1QEkB+ejKJXuDE2jbU2tns5QcFxxVOxSWsJwmec9gr2rKCbMm/QC8nd43fyFSYEDjbX
+         s9gA==
+X-Gm-Message-State: APjAAAVLL9Uj7cGl8kTyhBVu4LFX056IuhmbV+xxTt1a80opAU/2idbw
+        T0Y2hrAcdEriglLFGhH1hflXMoFhFDg2nABZm76tvA==
+X-Google-Smtp-Source: APXvYqxppDsOItDIT2YaELr43k74ClVedLV7sA/RnILraBhZZyo5avdE5zTyXJhFMqrri9Sx4SWOX07jkPYf4o/PBwM=
+X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr1070268pje.123.1562802174886;
+ Wed, 10 Jul 2019 16:42:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+ <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
+ <20190706155001.yrfxqj7c2bmqtbid@treble> <20190710232244.to73phlufdetf5os@treble>
+In-Reply-To: <20190710232244.to73phlufdetf5os@treble>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 10 Jul 2019 16:42:43 -0700
+Message-ID: <CAKwvOdmSQUjDUeL-rG5q=EyfhWstHeCVDn+=9spEQmw5BJGaaA@mail.gmail.com>
+Subject: Re: objtool warnings in prerelease clang-9
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Craig Topper <craig.topper@intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Stephen Hines <srhines@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-11 at 01:19 +0200, Matteo Croce wrote:
-> It can happen that a commit message refers to an invalid hash, because
-> the referenced hash changed following a rebase, or simply by mistake.
-> Add a check in checkpatch.pl which checks that an hash referenced by a Fixes
-> tag or just cited in the commit message is a valid commit hash.
+On Wed, Jul 10, 2019 at 4:22 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Sat, Jul 06, 2019 at 10:50:01AM -0500, Josh Poimboeuf wrote:
+> > On Tue, Jul 02, 2019 at 11:58:27PM +0200, Thomas Gleixner wrote:
+> > > platform-quirks.o:
+> > >
+> > >         if (x86_platform.set_legacy_features)
+> > >   74:   4c 8b 1d 00 00 00 00    mov    0x0(%rip),%r11        # 7b <x86_early_init_platform_quirks+0x7b>
+> > >   7b:   4d 85 db                test   %r11,%r11
+> > >   7e:   0f 85 00 00 00 00       jne    84 <x86_early_init_platform_quirks+0x84>
+> > >                 x86_platform.set_legacy_features();
+> > > }
+> > >   84:   c3                      retq
+> > >
+> > > That jne jumps to __x86_indirect_thunk_r11, aka. ratpoutine.
+> > >
+> > > No idea why objtool thinks that the instruction at 0x84 is not
+> > > reachable. Josh?
+> >
+> > That's a conditional tail call, which is something GCC never does.
+> > Objtool doesn't understand that, so we'll need to fix it.
+>
+> Can somebody test this patch to see if it fixes the platform-quirks.o
+> warning?
 
-Hi Matteo
+$ make CC=clang -j71 2>&1 | grep platform-quirks
+  CC      arch/x86/kernel/platform-quirks.o
+arch/x86/kernel/platform-quirks.o: warning: objtool:
+x86_early_init_platform_quirks()+0x84: unreachable instruction
+$ git am /tmp/objtool.patch
+$ make CC=clang -j71 clean
+$ make CC=clang -j71 2>&1 | grep platform-quirks
+  CC      arch/x86/kernel/platform-quirks.o
+arch/x86/kernel/platform-quirks.o: warning: objtool:
+x86_early_init_platform_quirks()+0x84: unreachable instruction
 
->     $ scripts/checkpatch.pl <<'EOF'
->     Subject: [PATCH] test commit
-> 
->     Sample test commit to test checkpatch.pl
->     Commit 1da177e4c3f4 ("Linux-2.6.12-rc2") really exists,
->     commit 0bba044c4ce7 ("tree") is valid but not a commit,
->     while commit b4cc0b1c0cca ("unknown") is invalid.
-> 
->     Fixes: f0cacc14cade ("unknown")
->     Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->     EOF
->     WARNING: Invalid hash 0bba044c4ce7
->     WARNING: Invalid hash b4cc0b1c0cca
->     WARNING: Invalid hash f0cacc14cade
->     total: 0 errors, 3 warnings, 4 lines checked
+:(
 
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -2898,6 +2898,13 @@ sub process {
->  			}
->  		}
->  
-> +# check for invalid hashes
-> +		if ($in_commit_log && $line =~ /(^fixes:|commit)\s+([0-9a-f]{6,40})\b/i) {
-> +			if (`git cat-file -t $2 2>/dev/null` ne "commit\n") {
-> +				WARN('INVALID_COMMIT_HASH', "Invalid commit hash $2");
+$ llvm-objdump -dr arch/x86/kernel/platform-quirks.o
 
-This seems fine as a concept, but this should use a
-'\n' and . $herecurr like:
-
-> 				WARN('INVALID_COMMIT_HASH', "Invalid commit hash $2\n" . $herecurr);
-
-And while a single quote around the identifier works, please
-use the double quote style like all the other uses of WARN.
-
-Maybe call it "UNKNOWN_COMMIT_ID" too as it might be valid
-for someone else's tree that has not yet been pulled and all
-other references in checkpatch use ID rather than hash.
-
-				WARN("UNKNOWN_COMMIT_HASH",
-				     "Unknown commit id '$2', maybe rebased or not pulled?\n" . $herecurr);
-
-Finally, why wouldn't the existing git_commit_info subroutine
-be used instead of an independent 'git cat-file' which may not
-even run if git is not available?
-
-Perhaps use something like:
-
-		my $id;
-		my $description;
-		($id, $description) = git_commit_info($2, undef, undef);
-		if (!defined($id)) {
-			WARN(etc...);
-		}
+arch/x86/kernel/platform-quirks.o: file format ELF64-x86-64
 
 
+Disassembly of section .init.text:
+
+0000000000000000 x86_early_init_platform_quirks:
+       0: 48 b8 02 00 00 00 01 00 00 00 movabsq $4294967298, %rax
+       a: 48 89 05 00 00 00 00          movq %rax, (%rip)
+000000000000000d:  R_X86_64_PC32 x86_platform+84
+      11: c7 05 00 00 00 00 01 00 00 00 movl $1, (%rip)
+0000000000000013:  R_X86_64_PC32 x86_platform+88
+      1b: 48 b8 00 00 00 00 01 00 00 00 movabsq $4294967296, %rax
+      25: 48 89 05 00 00 00 00          movq %rax, (%rip)
+0000000000000028:  R_X86_64_PC32 x86_platform+100
+      2c: 8b 05 00 00 00 00            movl (%rip), %eax
+000000000000002e:  R_X86_64_PC32 boot_params+568
+      32: 8d 48 fd                      leal -3(%rax), %ecx
+      35: 83 f9 02                      cmpl $2, %ecx
+      38: 72 15                        jb 21
+<x86_early_init_platform_quirks+0x4f>
+      3a: 83 f8 02                      cmpl $2, %eax
+      3d: 74 27                        je 39
+<x86_early_init_platform_quirks+0x66>
+      3f: 85 c0                        testl %eax, %eax
+      41: 75 31                        jne 49
+<x86_early_init_platform_quirks+0x74>
+      43: c7 05 00 00 00 00 01 00 00 00 movl $1, (%rip)
+0000000000000045:  R_X86_64_PC32 x86_platform+96
+      4d: eb 25                        jmp 37
+<x86_early_init_platform_quirks+0x74>
+      4f: c7 05 00 00 00 00 00 00 00 00 movl $0, (%rip)
+0000000000000051:  R_X86_64_PC32 x86_platform+100
+      59: 48 c7 05 00 00 00 00 00 00 00 00      movq $0, (%rip)
+000000000000005c:  R_X86_64_PC32 x86_platform+80
+      64: eb 0e                        jmp 14
+<x86_early_init_platform_quirks+0x74>
+      66: 31 c0                        xorl %eax, %eax
+      68: 89 05 00 00 00 00            movl %eax, (%rip)
+000000000000006a:  R_X86_64_PC32 x86_platform+104
+      6e: 89 05 00 00 00 00            movl %eax, (%rip)
+0000000000000070:  R_X86_64_PC32 x86_platform+88
+      74: 4c 8b 1d 00 00 00 00          movq (%rip), %r11
+0000000000000077:  R_X86_64_PC32 x86_platform+108
+      7b: 4d 85 db                      testq %r11, %r11
+      7e: 0f 85 00 00 00 00            jne 0
+<x86_early_init_platform_quirks+0x84>
+0000000000000080:  R_X86_64_PC32 __x86_indirect_thunk_r11-4
+      84: c3                            retq
+
+I've sent you the .o file off thread as well.  Thanks for taking a
+look into this. :D
+-- 
+Thanks,
+~Nick Desaulniers
