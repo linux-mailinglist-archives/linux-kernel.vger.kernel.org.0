@@ -2,213 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D58643E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9486441A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfGJI5L convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 04:57:11 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:29137 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727633AbfGJI5K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:57:10 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id uk-mta-2-4HiJB3f0O5ih7mDxN9zvxw-1;
- Wed, 10 Jul 2019 09:57:07 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 10 Jul 2019 09:57:06 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 10 Jul 2019 09:57:06 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jian-Hong Pan' <jian-hong@endlessm.com>,
-        Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "Christoph Hellwig" <hch@infradead.org>
-CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@endlessm.com" <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] rtw88: pci: Rearrange the memory usage for skb in
- RX ISR
-Thread-Topic: [PATCH v3 1/2] rtw88: pci: Rearrange the memory usage for skb in
- RX ISR
-Thread-Index: AQHVNvuWDqPl2ETkN0u921df1UOWrqbDip8w
-Date:   Wed, 10 Jul 2019 08:57:06 +0000
-Message-ID: <81a2b91c4b084617bab8656fca932f6d@AcuMS.aculab.com>
-References: <20190709161550.GA8703@infradead.org>
- <20190710083825.7115-1-jian-hong@endlessm.com>
-In-Reply-To: <20190710083825.7115-1-jian-hong@endlessm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1727677AbfGJJGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:06:00 -0400
+Received: from mta-02.yadro.com ([89.207.88.252]:39082 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726580AbfGJJF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 05:05:59 -0400
+X-Greylist: delayed 508 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jul 2019 05:05:57 EDT
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 33068404CB;
+        Wed, 10 Jul 2019 08:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-type:content-type:in-reply-to:mime-version:user-agent
+        :date:date:message-id:organization:from:from:references:subject
+        :subject:received:received:received; s=mta-01; t=1562749046; x=
+        1564563447; bh=LhWEa2Id3LIYjkm9wZEFKYi5Dtn9EgTe/6BhUhNP2Sw=; b=o
+        GObuqhYQ7J4gMv+t5L6pTJyA3R5RIoCdh4eg0zOiIhFqSN3T0fQ15iQbHBOQHzK/
+        LJnWLJfmZyCRTJCSa4bS1Z5u6U6ElB5XXpUEk05pMkYD7RCIxPVdt0Q1doKv9In7
+        VdrmbtpP5l5ubk+x/NMlRvi7umNR6BGYy7WT8W02OM=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6E_ZYmdHbjt7; Wed, 10 Jul 2019 11:57:26 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 77BB341209;
+        Wed, 10 Jul 2019 11:57:26 +0300 (MSK)
+Received: from [172.17.14.197] (172.17.14.197) by T-EXCH-02.corp.yadro.com
+ (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Wed, 10
+ Jul 2019 11:57:25 +0300
+Subject: Re: [PATCH] hwmon (occ): Add temp sensor value check
+To:     Joel Stanley <joel@jms.id.au>
+CC:     Guenter Roeck <linux@roeck-us.net>, <linux-hwmon@vger.kernel.org>,
+        Eddie James <eajames@linux.ibm.com>,
+        Lei YU <mine260309@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20190710072606.4849-1-joel@jms.id.au>
+From:   Alexander Amelkin <a.amelkin@yadro.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=a.amelkin@yadro.com; prefer-encrypt=mutual; keydata=
+ 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
+ dTYsE5wSxM06T2l/MILupCNZ7A==
+Organization: YADRO
+Message-ID: <d8617f81-ed54-1d5f-de93-abf5410c4a78@yadro.com>
+Date:   Wed, 10 Jul 2019 11:57:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MC-Unique: 4HiJB3f0O5ih7mDxN9zvxw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190710072606.4849-1-joel@jms.id.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature";
+        boundary="nrdfzVufGHCEucwqkkiYbemcIzvnNchnH"
+X-Originating-IP: [172.17.14.197]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan
-> Sent: 10 July 2019 09:38
-> 
-> Testing with RTL8822BE hardware, when available memory is low, we
-> frequently see a kernel panic and system freeze.
-> 
-> First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
-> 
-> rx routine starvation
-> WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:822
-> rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
-> [ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
-> 
-> Then we see a variety of different error conditions and kernel panics,
-> such as this one (trimmed):
-> 
-> rtw_pci 0000:02:00.0: pci bus timeout, check dma status
-> skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:00000000d2880c6f
-> data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
-> ------------[ cut here ]------------
-> kernel BUG at net/core/skbuff.c:105!
-> invalid opcode: 0000 [#1] SMP NOPTI
-> RIP: 0010:skb_panic+0x43/0x45
-> 
-> When skb allocation fails and the "rx routine starvation" is hit, the
-> function returns immediately without updating the RX ring. At this
-> point, the RX ring may continue referencing an old skb which was already
-> handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
-> bad things happen.
-> 
-> This patch allocates a new, data-sized skb first in RX ISR. After
-> copying the data in, we pass it to the upper layers. However, if skb
-> allocation fails, we effectively drop the frame. In both cases, the
-> original, full size ring skb is reused.
-> 
-> In addition, by fixing the kernel crash, the RX routine should now
-> generally behave better under low memory conditions.
+--nrdfzVufGHCEucwqkkiYbemcIzvnNchnH
+Content-Type: multipart/mixed; boundary="2dQYpAQWAa888nHozIP3eb5YJVbiYgjlr";
+ protected-headers="v1"
+From: Alexander Amelkin <a.amelkin@yadro.com>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+ Eddie James <eajames@linux.ibm.com>, Lei YU <mine260309@gmail.com>,
+ linux-kernel@vger.kernel.org
+Message-ID: <d8617f81-ed54-1d5f-de93-abf5410c4a78@yadro.com>
+Subject: Re: [PATCH] hwmon (occ): Add temp sensor value check
+References: <20190710072606.4849-1-joel@jms.id.au>
+In-Reply-To: <20190710072606.4849-1-joel@jms.id.au>
 
-A couple of minor nits (see below).
-You may want to do a followup patch that changes the rx buffers
-(used by the hardware) to by just memory buffers.
-Nothing (probably) relies on them being skb with all the accociated
-baggage.
+--2dQYpAQWAa888nHozIP3eb5YJVbiYgjlr
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-	David
+Thanks, Joel!
 
-> 
-> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204053
-> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-> Cc: <stable@vger.kernel.org>
+JFYI, Alexander Soldatov has left the YADRO team some time ago, so his e-=
+mail @yadro.com isn't valid anymore.
+
+Should anyone have any questions regarding this patch, feel free to email=
+ me.
+
+With best regards,
+Alexander Amelkin,
+Leading BMC Software Engineer, YADRO
+https://yadro.com
+
+10.07.2019 10:26, Joel Stanley wrote:
+> From: Alexander Soldatov <a.soldatov@yadro.com>
+>
+> The occ driver supports two formats for the temp sensor value.
+>
+> The OCC firmware for P8 supports only the first format, for which
+> no range checking or error processing is performed in the driver.
+> Inspecting the OCC sources for P8 reveals that OCC may send
+> a special value 0xFFFF to indicate that a sensor read timeout
+> has occurred, see
+>
+> https://github.com/open-power/occ/blob/master_p8/src/occ/cmdh/cmdh_fsp_=
+cmds.c#L395
+>
+> That situation wasn't handled in the driver. This patch adds invalid
+> temp value check for the sensor data format 1 and handles it the same
+> way as it is done for the format 2, where EREMOTEIO is reported for
+> this case.
+>
+> Fixes: 54076cb3b5ff ("hwmon (occ): Add sensor attributes and register h=
+wmon device")
+> Signed-off-by: Alexander Soldatov <a.soldatov@yadro.com>
+> Signed-off-by: Alexander Amelkin <a.amelkin@yadro.com>
+> Reviewed-by: Alexander Amelkin <a.amelkin@yadro.com>
+> Reviewed-by: Eddie James <eajames@linux.ibm.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 > ---
-> v2:
->  - Allocate new data-sized skb and put data into it, then pass it to
->    mac80211. Reuse the original skb in RX ring by DMA sync.
->  - Modify the commit message.
->  - Introduce following [PATCH v3 2/2] rtw88: pci: Use DMA sync instead
->    of remapping in RX ISR.
-> 
-> v3:
->  - Same as v2.
-> 
->  drivers/net/wireless/realtek/rtw88/pci.c | 49 +++++++++++-------------
->  1 file changed, 22 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
-> index cfe05ba7280d..e9fe3ad896c8 100644
-> --- a/drivers/net/wireless/realtek/rtw88/pci.c
-> +++ b/drivers/net/wireless/realtek/rtw88/pci.c
-> @@ -763,6 +763,7 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
->  	u32 pkt_offset;
->  	u32 pkt_desc_sz = chip->rx_pkt_desc_sz;
->  	u32 buf_desc_sz = chip->rx_buf_desc_sz;
-> +	u32 new_len;
->  	u8 *rx_desc;
->  	dma_addr_t dma;
-> 
-> @@ -790,40 +791,34 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
->  		pkt_offset = pkt_desc_sz + pkt_stat.drv_info_sz +
->  			     pkt_stat.shift;
-> 
-> -		if (pkt_stat.is_c2h) {
-> -			/* keep rx_desc, halmac needs it */
-> -			skb_put(skb, pkt_stat.pkt_len + pkt_offset);
-> +		/* discard current skb if the new skb cannot be allocated as a
-> +		 * new one in rx ring later
+>  drivers/hwmon/occ/common.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+> index cccf91742c1a..a7d2b16dd702 100644
+> --- a/drivers/hwmon/occ/common.c
+> +++ b/drivers/hwmon/occ/common.c
+> @@ -241,6 +241,12 @@ static ssize_t occ_show_temp_1(struct device *dev,=
+
+>  		val =3D get_unaligned_be16(&temp->sensor_id);
+>  		break;
+>  	case 1:
+> +		/*
+> +		 * If a sensor reading has expired and couldn't be refreshed,
+> +		 * OCC returns 0xFFFF for that sensor.
 > +		 */
+> +		if (temp->value =3D=3D 0xFFFF)
+> +			return -EREMOTEIO;
+>  		val =3D get_unaligned_be16(&temp->value) * 1000;
+>  		break;
+>  	default:
 
-That comment isn't quite right.
-maybe: "Allocate a new skb for this frame, discard if none available"
 
-> +		new_len = pkt_stat.pkt_len + pkt_offset;
-> +		new = dev_alloc_skb(new_len);
-> +		if (WARN_ONCE(!new, "rx routine starvation\n"))
+--2dQYpAQWAa888nHozIP3eb5YJVbiYgjlr--
 
-I think you should count these??
+--nrdfzVufGHCEucwqkkiYbemcIzvnNchnH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-> +			goto next_rp;
-> +
-> +		/* put the DMA data including rx_desc from phy to new skb */
-> +		skb_put_data(new, skb->data, new_len);
-> 
-> -			/* pass offset for further operation */
-> -			*((u32 *)skb->cb) = pkt_offset;
-> -			skb_queue_tail(&rtwdev->c2h_queue, skb);
-> +		if (pkt_stat.is_c2h) {
-> +			 /* pass rx_desc & offset for further operation */
-> +			*((u32 *)new->cb) = pkt_offset;
-> +			skb_queue_tail(&rtwdev->c2h_queue, new);
->  			ieee80211_queue_work(rtwdev->hw, &rtwdev->c2h_work);
->  		} else {
-> -			/* remove rx_desc, maybe use skb_pull? */
-> -			skb_put(skb, pkt_stat.pkt_len);
-> -			skb_reserve(skb, pkt_offset);
-> -
-> -			/* alloc a smaller skb to mac80211 */
-> -			new = dev_alloc_skb(pkt_stat.pkt_len);
-> -			if (!new) {
-> -				new = skb;
-> -			} else {
-> -				skb_put_data(new, skb->data, skb->len);
-> -				dev_kfree_skb_any(skb);
-> -			}
-> -			/* TODO: merge into rx.c */
-> -			rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
-> +			/* remove rx_desc */
-> +			skb_pull(new, pkt_offset);
-> +
-> +			rtw_rx_stats(rtwdev, pkt_stat.vif, new);
->  			memcpy(new->cb, &rx_status, sizeof(rx_status));
->  			ieee80211_rx_irqsafe(rtwdev->hw, new);
->  		}
-> 
-> -		/* skb delivered to mac80211, alloc a new one in rx ring */
-> -		new = dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
-> -		if (WARN(!new, "rx routine starvation\n"))
-> -			return;
-> -
-> -		ring->buf[cur_rp] = new;
-> -		rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_desc_sz);
-> +next_rp:
-> +		/* new skb delivered to mac80211, re-enable original skb DMA */
-> +		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
-> 
->  		/* host read next element in ring */
->  		if (++cur_rp >= ring->r.len)
-> --
-> 2.22.0
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+iQIcBAEBCAAGBQJdJah1AAoJEOiTWHtbdBeN25oQALdidpJJ0OPk2zG00XUGJssP
+nVfissnr3GF0AsBTtIMuLqziS75dPq1OY/uW36+EOKdazXOMH0rkD3llhd1i9Wl3
+8CJ04XpOE+eNRcGe77SBcxEwyh0+71A9KiIm3lG2tRb0k8O29Adx9//gJ+rGziwg
+Z+Qb9uYttU7jTp7ojqRyoRs71w7b4zstE0AmQTg5tyqEt0hbtUBgnD/sNpsxIvMk
++PxJ7o6LaP++AOZR5XBLFtanXgjIxKKdmeGc3RayyWh0IYd5KuERaqFBqICKhPXE
+kmntiIcs99vFzu6lwVp3Y6qxcYEWl5aohIlWEycip7MtTeaUk1v5rRqTFeGVN1SQ
+hdo0cfboSzT2s/sDg5ky8Qq0+ycANdRaoMYWoZoo7kldWBKGg2YsGAT89WQOXrZb
+Ce8LaMJOqxS6EKWXTt3gaIlwAR3vSrVJrK++h20dePfYoXfPE0cS/BvHL71DzG4O
+5XlkIw5G1MTAn0cAkC48vcSw+9fZRNGXXNQY0avVlfstG+b3fVLQO5WRNhiChLJw
+Ex/L8W2RH7TvTMlycxOtjzKjhjJ/1O5moe1f3MG29D1ywVY/OsgILkLZkZx3AVLZ
+XBOmmD79lVyWouDq9n30ahVvy+k2CYap8q4vbe9D/ykujjI453USC+XwR8DW8i/n
+ZxnvnTJCkp69jYRbQlad
+=lmWr
+-----END PGP SIGNATURE-----
 
+--nrdfzVufGHCEucwqkkiYbemcIzvnNchnH--
