@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE83C64BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A72EE64BC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfGJRxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:53:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33926 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727427AbfGJRxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:53:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8fcd7IbnIeaKZRDWGNY647WsqvJ1v4ulGC4wdseyzjU=; b=tWJ+nMiWEt+cTSzgkEfK4ty17
-        p285HhZgqGVQOTNP8uv+ahVLDfACpGUHQpS+e2XwQQIF1SlEdaDwCLqCEg58g0GsCKAurrVl/mlQt
-        4aetyL5Lq1it5JU1B2tfyCgS3WFLlG01Y1lHnfunj9DizxuS90uq/WMRvxyqfgj4hxd1CbDulER0U
-        pNW8i1l3DgieGo+dXDOLd1SdeJKcnwuQdN1qWuw9ZhKZiIU/OpSRCR3Xy++YvGDlC2sQiZwwPa6qu
-        mG1thk1E8xOlMGjXeX0xOJ4X0Jv71AE71WiP2Dw7aZcvS+UWB3ygJqx+CnGcC3kLTVi92Fk52bpYH
-        s8lSmyJuA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlGmD-0006lK-Hh; Wed, 10 Jul 2019 17:53:09 +0000
-Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
- hook for fs notifications
-To:     Joe Perches <joe@perches.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org
-References: <20190710133403.855-1-acgoide@tycho.nsa.gov>
- <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
- <cb754dda-fbce-8169-4cd7-eef66e8d809e@infradead.org>
- <6ce2ce60b2435940bc8dfa07fa2553c4524d2db5.camel@perches.com>
- <079745c94c232591453dcb01c9d9406b721bb6bf.camel@perches.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <60654c12-0742-8653-231b-312f48e0149b@infradead.org>
-Date:   Wed, 10 Jul 2019 10:53:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <079745c94c232591453dcb01c9d9406b721bb6bf.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728176AbfGJR7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 13:59:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727222AbfGJR7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 13:59:16 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 83E8330C1D17;
+        Wed, 10 Jul 2019 17:59:16 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-55.sin2.redhat.com [10.67.116.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCDAA60148;
+        Wed, 10 Jul 2019 17:59:03 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     virtualization@lists.linux-foundation.org, dan.j.williams@intel.com
+Cc:     yuval.shaia@oracle.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, cohuck@redhat.com, mst@redhat.com,
+        lcapitulino@redhat.com, pagupta@redhat.com
+Subject: [PATCH v2] virtio_pmem: fix sparse warning
+Date:   Wed, 10 Jul 2019 23:28:32 +0530
+Message-Id: <20190710175832.17252-1-pagupta@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 10 Jul 2019 17:59:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/19 10:22 AM, Joe Perches wrote:
-> On Wed, 2019-07-10 at 10:18 -0700, Joe Perches wrote:
->> On Wed, 2019-07-10 at 09:49 -0700, Randy Dunlap wrote:
->>> On 7/10/19 9:38 AM, Casey Schaufler wrote:
->>>> On 7/10/2019 6:34 AM, Aaron Goidel wrote:
->>>>> @@ -3261,6 +3262,26 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
->>>>>  	return -EACCES;
->>>>>  }
->>>>>  
->>>>> +static int selinux_inode_notify(struct inode *inode, u64 mask)
->>>>> +{
->>>>> +	u32 perm = FILE__WATCH; // basic permission, can a watch be set?
->>>>
->>>> We don't use // comments in the Linux kernel.
->>>>
->>>
->>> I thought that we had recently moved into the 21st century on that issue,
->>> but I don't see it mentioned in coding-style.rst.  Maybe we need a Doc update.
->>>
->>> checkpatch allows C99 comments by default.
->>> Joe, do you recall about this?
->>
->> My recollection is it was something I thought was
->> just simple and useful so I added it to checkpatch
->> without going through the negative of the nominal
->> approvals required by modifying CodingStyle.
-> 
-> https://lkml.org/lkml/2016/7/8/625
-> 
+This patch fixes below sparse warning related to __virtio
+type in virtio pmem driver. This is reported by Intel test
+bot on linux-next tree.
 
-Aha, thanks, I don't recall seeing that one.
+nd_virtio.c:56:28: warning: incorrect type in assignment 
+				(different base types)
+nd_virtio.c:56:28:    expected unsigned int [unsigned] [usertype] type
+nd_virtio.c:56:28:    got restricted __virtio32
+nd_virtio.c:93:59: warning: incorrect type in argument 2 
+				(different base types)
+nd_virtio.c:93:59:    expected restricted __virtio32 [usertype] val
+nd_virtio.c:93:59:    got unsigned int [unsigned] [usertype] ret
 
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+---
+
+This fixes a warning, so submitting it as a separate
+patch on top of virtio pmem series.
+
+ include/uapi/linux/virtio_pmem.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
+index efcd72f2d20d..7a7435281362 100644
+--- a/include/uapi/linux/virtio_pmem.h
++++ b/include/uapi/linux/virtio_pmem.h
+@@ -10,7 +10,7 @@
+ #ifndef _UAPI_LINUX_VIRTIO_PMEM_H
+ #define _UAPI_LINUX_VIRTIO_PMEM_H
+ 
+-#include <linux/types.h>
++#include <linux/virtio_types.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_config.h>
+ 
+@@ -23,12 +23,12 @@ struct virtio_pmem_config {
+ 
+ struct virtio_pmem_resp {
+ 	/* Host return status corresponding to flush request */
+-	__u32 ret;
++	__virtio32 ret;
+ };
+ 
+ struct virtio_pmem_req {
+ 	/* command type */
+-	__u32 type;
++	__virtio32 type;
+ };
+ 
+ #endif
 -- 
-~Randy
+2.20.1
+
