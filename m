@@ -2,87 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76BB964951
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2D264952
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfGJPFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:05:36 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35147 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728254AbfGJPFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:05:31 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45kMtx2lmXz9sPj; Thu, 11 Jul 2019 01:05:29 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9e005b761e7ad153dcf40a6cba1d681fe0830ac6
-In-Reply-To: <20190705100144.28785-1-yamada.masahiro@socionext.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linuxppc-dev@lists.ozlabs.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] powerpc/boot: add {get, put}_unaligned_be32 to xz_config.h
-Message-Id: <45kMtx2lmXz9sPj@ozlabs.org>
-Date:   Thu, 11 Jul 2019 01:05:29 +1000 (AEST)
+        id S1728039AbfGJPGl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 11:06:41 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:56619 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727412AbfGJPGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 11:06:41 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 17201151-1500050 
+        for multiple; Wed, 10 Jul 2019 16:05:53 +0100
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To:     Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20190710145955.16104-1-janusz.krzysztofik@linux.intel.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?utf-8?q?Micha=C5=82_Wajdeczko?= <michal.wajdeczko@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+References: <20190710145955.16104-1-janusz.krzysztofik@linux.intel.com>
+Message-ID: <156277115126.4055.4509642156764653822@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [RFC PATCH] drm/i915: Join quoted strings and align them with open
+ parenthesis
+Date:   Wed, 10 Jul 2019 16:05:51 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-07-05 at 10:01:43 UTC, Masahiro Yamada wrote:
-> The next commit will make the way of passing CONFIG options more robust.
-> Unfortunately, it would uncover another hidden issue; without this
-> commit, skiroot_defconfig would be broken like this:
-> 
-> |   WRAP    arch/powerpc/boot/zImage.pseries
-> | arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
-> | decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
-> | decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
-> | make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
-> | make: *** [arch/powerpc/Makefile;295: zImage] Error 2
-> 
-> skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
-> for ppc, which has never been correctly built before.
-> 
-> I figured out the root cause in lib/decompress_unxz.c:
-> 
-> | #ifdef CONFIG_PPC
-> | #      define XZ_DEC_POWERPC
-> | #endif
-> 
-> CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
-> is not included except by arch/powerpc/boot/serial.c
-> 
-> XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
-> for the bootwrapper.
-> 
-> With the next commit passing CONFIG_PPC correctly, we would realize that
-> {get,put}_unaligned_be32 was missing.
-> 
-> Unlike the other decompressors, the ppc bootwrapper duplicates all the
-> necessary helpers in arch/powerpc/boot/.
-> 
-> The other architectures define __KERNEL__ and pull in helpers for
-> building the decompressors.
-> 
-> If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
-> have included <asm/unaligned.h>:
-> 
-> | #ifdef __KERNEL__
-> | #       include <linux/xz.h>
-> | #       include <linux/kernel.h>
-> | #       include <asm/unaligned.h>
-> 
-> However, doing so would cause tons of definition conflicts since the
-> bootwrapper has duplicated everything.
-> 
-> I just added copies of {get,put}_unaligned_be32, following the
-> bootwrapper coding convention.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Quoting Janusz Krzysztofik (2019-07-10 15:59:55)
+> Follow dim checkpatch recommendations so it doesn't complain now and
+> again on consistent modifications of i915_params.c
 
-Series applied to powerpc next, thanks.
-
-https://git.kernel.org/powerpc/c/9e005b761e7ad153dcf40a6cba1d681fe0830ac6
-
-cheers
+This is one where we've considered the merits of not rigorously applying
+checkpatch.pl and adopted a different convention.
+-Chris
