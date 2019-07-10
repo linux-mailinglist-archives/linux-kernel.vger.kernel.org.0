@@ -2,111 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D6E64C04
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FAB64841
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 16:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbfGJSYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:24:06 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38324 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfGJSYF (ORCPT
+        id S1727846AbfGJOYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 10:24:21 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:59424 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725911AbfGJOYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:24:05 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so3500994qtl.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 11:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zAcgUolazA7luBwp8paMkjhRVKLXRJL6TdvFMDHQKzA=;
-        b=Kt1bVy3oXSYkybEb7FUQPCdO097Dt4isI9Ses2ujAL1YsDGwte6PKN8oQ6YNdAwuSN
-         ZWA8xM1IqoPVmtmjACl8m7STmZpn9rSDaorGYvusAi4iUZQycD4VR3E26NVAQ/DXlaNr
-         4T49PxWMzreb34xbe+bgLiSrQHJ9hBVn5h1sDRvClBmYRNwC3yCYGLD/D5IKqIR6yW26
-         g4rnvI96pinGTapFoziC5ozDI++h/b34Drw4qdW9uraNL5a5BnELNTL8FhzRombuLIt6
-         dTPBJw4syTd15RmDgETe7pRIcm9NloYcxbkNxbuPLNK1D7DciqH0CnZhkCGSXqc8I5k+
-         iDaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zAcgUolazA7luBwp8paMkjhRVKLXRJL6TdvFMDHQKzA=;
-        b=BIt5wdm5gHKEY8E03o95+Sd4md1KmXjB2UYV5m04Eiyp54Ycc6WfzEG/jLdTu+PVQi
-         i7ko6BxiWv493uhKI07BDDS6iAbHvJ/XrOZahQOTgxUhlr5zcDhXahooXvRVk1qyKO9Q
-         sldHyxyY9wOEBCBgMy4H/xTCD0bgyx4kBXzR2dZJGykrV6+DbLBHFogsB50zB8WkRTFr
-         vq+fvVhReXXTpg9pSSY5XhkjSrk5IEVVcKsnJM60Ag7SZfKJ1Z4iSg1n7pKO4TjvYICp
-         jwe8IjnP/R/EHIqqxVS96cAawYVwuhiR4Z1xv53GSiE3Ga4CfXl7jwqgzCHUH4iSsSg4
-         986g==
-X-Gm-Message-State: APjAAAWiILA/tOoPVWLCQ/ewgsBblJWKDv/1aBw+RsmOQNz/elG9/dKt
-        bP3D2L5SNJJJ3IXu4C04UA==
-X-Google-Smtp-Source: APXvYqx9x9Hv8Yb01z7kNT2uDT6YWO3K7fCYZ/dkH2TwctUQ9egiiR8ut6bSAfySZQU4uXvTVDUyAw==
-X-Received: by 2002:ac8:374b:: with SMTP id p11mr24711189qtb.316.1562783044890;
-        Wed, 10 Jul 2019 11:24:04 -0700 (PDT)
-Received: from keyur-pc (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
-        by smtp.gmail.com with ESMTPSA id f25sm1608616qta.81.2019.07.10.11.24.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 11:24:03 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 10:24:06 -0400
-From:   Keyur Patel <iamkeyur96@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>,
-        Johan Hovold <johan@kernel.org>, David Lin <dtwlin@gmail.com>,
-        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: add logging statement when kfifo_alloc
- fails
-Message-ID: <20190710142406.GA6669@keyur-pc>
-References: <20190710122018.2250-1-iamkeyur96@gmail.com>
- <20190710163538.GA30902@kroah.com>
+        Wed, 10 Jul 2019 10:24:21 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 84F472E148C;
+        Wed, 10 Jul 2019 17:24:17 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id P99c9oXlfq-OGtaLe0V;
+        Wed, 10 Jul 2019 17:24:17 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1562768657; bh=uyHdLmnNK6wDjc0FbiZHSr4crktRu3Qh+meXtiizJCA=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=pVHBABQlzV1NxxP+TDNxdXd1oAjFvsQubsq0/n8lPjX7gYejh2cdj9CGgt87MAY6s
+         oV89O1eIFr9zBpXb+vmGuEaQ/JhiseBjUArrxtZha1U1f24xbfMEXZUj9hivWwmsgX
+         aOBxGayo32RadXonR90WJBUiMFD2Im4fEaqsOwXY=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id wy86eJmWtT-OGw4BaM7;
+        Wed, 10 Jul 2019 17:24:16 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] blk-throttle: fix zero wait time for iops throttled group
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Liu Bo <bo.liu@linux.alibaba.com>, stable@vger.kernel.org
+References: <156259979778.2486.6296077059654653057.stgit@buzz>
+ <30caacb5-4d45-016b-a97d-db8b37010218@kernel.dk>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <f4be51ff-e426-cc44-db94-3c26e2cfbca9@yandex-team.ru>
+Date:   Wed, 10 Jul 2019 17:24:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710163538.GA30902@kroah.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <30caacb5-4d45-016b-a97d-db8b37010218@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 06:35:38PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 10, 2019 at 08:20:17AM -0400, Keyur Patel wrote:
-> > Added missing logging statement when kfifo_alloc fails, to improve
-> > debugging.
-> > 
-> > Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
-> > ---
-> >  drivers/staging/greybus/uart.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
-> > index b3bffe91ae99..86a395ae177d 100644
-> > --- a/drivers/staging/greybus/uart.c
-> > +++ b/drivers/staging/greybus/uart.c
-> > @@ -856,8 +856,10 @@ static int gb_uart_probe(struct gbphy_device *gbphy_dev,
-> >  
-> >  	retval = kfifo_alloc(&gb_tty->write_fifo, GB_UART_WRITE_FIFO_SIZE,
-> >  			     GFP_KERNEL);
-> > -	if (retval)
-> > +	if (retval) {
-> > +		pr_err("kfifo_alloc failed\n");
-> >  		goto exit_buf_free;
-> > +	}
+On 10.07.2019 17:00, Jens Axboe wrote:
+> On 7/8/19 9:29 AM, Konstantin Khlebnikov wrote:
+>> After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops
+>> limit is enforced") wait time could be zero even if group is throttled and
+>> cannot issue requests right now. As a result throtl_select_dispatch() turns
+>> into busy-loop under irq-safe queue spinlock.
+>>
+>> Fix is simple: always round up target time to the next throttle slice.
 > 
-> You should have already gotten an error message from the log if this
-> fails, from the kmalloc_array() call failing, right?
+> Applied, thanks. In the future, please break lines at 72 chars in
+> commit messages, I fixed it up.
 > 
-> So why is this needed?  We have been trying to remove these types of
-> messages and keep them in the "root" place where the failure happens.
-> 
-> thanks,
-> 
-> greg k-h
 
-Didn't notice that. I agree that this will result only into redundancy. 
-Quick look over files reveal that there are multiple places
-where people are using print statements after memory allocation fails. 
-Should I go ahead and send patches to remove those
-redundant print statements?
-
-Sorry, if you're receiving this message again.
-
-Thnaks.
-Keyur Patel
+Ok, but Documentation/process/submitting-patches.rst and
+scripts/checkpatch.pl recommends 75 chars per line.
