@@ -2,70 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C463563F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 05:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E5963FA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 05:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfGJDXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 23:23:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726318AbfGJDXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 23:23:14 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D914520693;
-        Wed, 10 Jul 2019 03:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562728994;
-        bh=6VM69cjMR62DOFam6wRJOf7DU+65RZThCwGfDpt5tl4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cn0LZTICeh1nxbAizoAtW8xwe+ZUjm/iQei9c7Yi1sc3XOKFhjQlSed3gZm+z4i9p
-         kgYKk/e/4TOnrk9yEZqHna0Rb6OG+Q5eDXjx8JhtKZcz2ZVi3pGqGY/MDt1DbfPhvB
-         0xkEPwG1N+HTraHEGGVQ7hO6aXPG4IJcdTMejo4U=
-Date:   Tue, 9 Jul 2019 20:23:12 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: 6 new syscalls without tests (was: [PATCH] vfs: move_mount: reject
- moving kernel internal mounts)
-Message-ID: <20190710032312.GA2152@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629202744.12396-1-ebiggers@kernel.org>
- <20190701164536.GA202431@gmail.com>
- <20190701182239.GA17978@ZenIV.linux.org.uk>
- <20190702182258.GB110306@gmail.com>
- <20190709194001.GG641@sol.localdomain>
- <20190709205424.GB17978@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709205424.GB17978@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726765AbfGJDZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 23:25:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45020 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbfGJDZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 23:25:55 -0400
+Received: by mail-pf1-f196.google.com with SMTP id t16so360989pfe.11;
+        Tue, 09 Jul 2019 20:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=15M7WtsSmQl2ff1icum2yjGhSPOxTksf56SOBnOQIjo=;
+        b=b/6ObEsHY/DVy/UVBK+q8Hpl1DC+wb4ckyoA/WVfMgoVSOA0mKm9aEdGQXWCp0kQdO
+         mSV/fQCu8ilEg2AWjEftgS9jyJN8VK/ObTvdIKJb89/J9BtS7hCeLADH7K/Ojv8KP7Q0
+         Ihvi+evIgxeY5Cwzbs9W+ITvmZ0wBBgLrL8HXwkBWvRxfAeooycV9KiIBq5adtIWzQ+S
+         ZUnoF/6Mu8ZifUskgrBn9TVYFKA3oebIAwVC1PAdfjDrog49hIzxDXtNkHBAR5G32tWF
+         pu/YJT6KB53hSM2lfWOyxRwnZZmmZQKZmAiXGhUI8kh7kM6IEEM4ZQTk7zLt3v/cF3aw
+         9A8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=15M7WtsSmQl2ff1icum2yjGhSPOxTksf56SOBnOQIjo=;
+        b=LfZCGYiRA/fs41ORSpOQuP+uJr/cQnJXIFga8rGenHLtmobsmsmTrpB46OG4FyQ+vF
+         FJ5RVpa31RuZMPq/NtnTpbyoAjaSc5W7CeJoKv9OsfMEUQe5NGdUkSntDTNvoUCpOSW7
+         iMsJyME/hNTCU+fJfwSB643Ao60WNgP7Kh9n49+MPXrbthjMLcJRuB4rB/JAqTCNhGmv
+         wjBFna9ddVKTbqbx2XTvl6EaIoBGr8jle/CeSIXCnhrey59hMQGIpeXOmubMbHDL265B
+         Hk1iMVC7SqkOSAvSpY1ribb21/cZGIV75osTBil0paAzx58Hf3JKuYjLnZU/RQc/sA9Q
+         8iNw==
+X-Gm-Message-State: APjAAAVho0ooG1ujffntTItzzEcK8viRxQtnIyoFrfzkaP3zwgJZA8WX
+        oil6hUQOoG3CO2RdoyiFa3j1g8pM5M8=
+X-Google-Smtp-Source: APXvYqwhNGncyF/X54VTPqKF4dc6/bWvETlP0smj9mmziDh9oZGzb2vSDT9HGLgGJtHX3e+9oz79Yw==
+X-Received: by 2002:a63:231a:: with SMTP id j26mr33742246pgj.389.1562729154131;
+        Tue, 09 Jul 2019 20:25:54 -0700 (PDT)
+Received: from localhost.localdomain (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
+        by smtp.gmail.com with ESMTPSA id a1sm459002pfc.97.2019.07.09.20.25.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 09 Jul 2019 20:25:53 -0700 (PDT)
+From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
+To:     willy@infradead.org, Jonathan Corbet <corbet@lwn.net>,
+        skhan@linuxfoundation.org
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shobhit Kukreti <shobhitkukreti@gmail.com>
+Subject: [PATCH v2] Documentation: filesystems: Convert jfs.txt to
+Date:   Tue,  9 Jul 2019 20:25:25 -0700
+Message-Id: <1562729125-31475-1-git-send-email-shobhitkukreti@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20190708195717.GG32320@bombadil.infradead.org>
+References: <20190708195717.GG32320@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 09:54:24PM +0100, Al Viro wrote:
-> On Tue, Jul 09, 2019 at 12:40:01PM -0700, Eric Biggers wrote:
-> > On Tue, Jul 02, 2019 at 11:22:59AM -0700, Eric Biggers wrote:
-> > > 
-> > > Sure, but the new mount syscalls still need tests.  Where are the tests?
-> > > 
-> > 
-> > Still waiting for an answer to this question.
-> 
-> In samples/vfs/fsmount.c, IIRC, and that's not much of a test.
+This converts the plain text documentation of jfs.txt to reStructuredText format.
+Added to documentation build process and verified with make htmldocs
 
-A sample program doesn't count.  There need to be tests that can be run
-automatically as part of a well known test suite, such as LTP, kselftests, or
-xfstests.  Why is this not mandatory for new syscalls to be accepted?  What if
-they are broken and we don't know?  See what happened with copy_file_range():
-https://lwn.net/Articles/774114/
+Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
+---
+Changes in v2:
+        1. Removed flat-table.
+        2. Moved jfs.rst from filesystem to admin-guide
 
-- Eric
+ Documentation/admin-guide/index.rst |  1 +
+ Documentation/admin-guide/jfs.rst   | 50 +++++++++++++++++++++++++++++++++++
+ Documentation/filesystems/jfs.txt   | 52 -------------------------------------
+ 3 files changed, 51 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/admin-guide/jfs.rst
+ delete mode 100644 Documentation/filesystems/jfs.txt
+
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 8001917..2871b79 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -70,6 +70,7 @@ configure specific aspects of kernel behavior to your liking.
+    ras
+    bcache
+    ext4
++   jfs
+    pm/index
+    thunderbolt
+    LSM/index
+diff --git a/Documentation/admin-guide/jfs.rst b/Documentation/admin-guide/jfs.rst
+new file mode 100644
+index 0000000..a0a95e5
+--- /dev/null
++++ b/Documentation/admin-guide/jfs.rst
+@@ -0,0 +1,50 @@
++===========================================
++IBM's Journaled File System (JFS) for Linux
++===========================================
++
++JFS Homepage:  `<http://jfs.sourceforge.net/>`_
++
++The following mount options are supported:
++(*) == default
++
++**iocharset=name**      Character set to use for converting from Unicode to ASCII. The default is to do no conversion.
++
++**iocharset=utf8**      Use for UTF-8 translations. This requires CONFIG_NLS_UTF8 to be set in the kernel .config file.
++
++**iocharset=none**      specifies the default behavior explicitly.
++
++**resize=value**        Resize the volume to <value> blocks. JFS only supports growing a volume, not shrinking it.
++This option is only valid during a remount, when the volume is mounted read-write. The resize keyword with no value 
++will grow the volume to the full size of the partition.
++
++
++**nointegrity**	        Do not write to the journal. The primary use of this option is to allow for higher performance 
++when restoring a volume from backup media. The integrity of the volume is not guaranteed if the system abnormally abends.
++
++**integrity(*)**	Commit metadata changes to the journal. Use this option to remount a volume where the nointegrity 
++option was previously specified in order to restore normal behavior.
++
++**errors=continue**	Keep going on a filesystem error.
++
++**errors=remount-ro(*)**	Remount the filesystem read-only on an error.
++
++**errors=panic**	Panic and halt the machine if an error occurs.
++
++**uid=value**	Override on-disk uid with specified value
++
++**gid=value**	Override on-disk gid with specified value
++
++**umask=value**	Override on-disk umask with specified octal value. For directories, the execute bit will be set if the 
++corresponding  read bit is set.
++
++**discard=minlen, discard, nodiscard(*)**
++
++This enables/disables the use of discard/TRIM commands. The discard/TRIM 
++commands are sent to the underlying block device when blocks are freed. This is useful for SSD devices and 
++sparse/thinly-provisioned LUNs. The FITRIM ioctl command is also available together with the nodiscard option.
++The value of minlen specifies the minimum blockcount, when a TRIM command to the block device is considered useful.
++When no value is given to the discard option, it defaults to 64 blocks, which means 256KiB in JFS. The minlen value 
++of discard overrides the minlen value given on an FITRIM ioctl().
++
++The JFS mailing list can be subscribed to by using the link labeled
++"Mail list Subscribe" at our web page `<http://jfs.sourceforge.net/>`_
+diff --git a/Documentation/filesystems/jfs.txt b/Documentation/filesystems/jfs.txt
+deleted file mode 100644
+index 41fd757..0000000
+--- a/Documentation/filesystems/jfs.txt
++++ /dev/null
+@@ -1,52 +0,0 @@
+-IBM's Journaled File System (JFS) for Linux
+-
+-JFS Homepage:  http://jfs.sourceforge.net/
+-
+-The following mount options are supported:
+-(*) == default
+-
+-iocharset=name	Character set to use for converting from Unicode to
+-		ASCII.  The default is to do no conversion.  Use
+-		iocharset=utf8 for UTF-8 translations.  This requires
+-		CONFIG_NLS_UTF8 to be set in the kernel .config file.
+-		iocharset=none specifies the default behavior explicitly.
+-
+-resize=value	Resize the volume to <value> blocks.  JFS only supports
+-		growing a volume, not shrinking it.  This option is only
+-		valid during a remount, when the volume is mounted
+-		read-write.  The resize keyword with no value will grow
+-		the volume to the full size of the partition.
+-
+-nointegrity	Do not write to the journal.  The primary use of this option
+-		is to allow for higher performance when restoring a volume
+-		from backup media.  The integrity of the volume is not
+-		guaranteed if the system abnormally abends.
+-
+-integrity(*)	Commit metadata changes to the journal.  Use this option to
+-		remount a volume where the nointegrity option was
+-		previously specified in order to restore normal behavior.
+-
+-errors=continue		Keep going on a filesystem error.
+-errors=remount-ro(*)	Remount the filesystem read-only on an error.
+-errors=panic		Panic and halt the machine if an error occurs.
+-
+-uid=value	Override on-disk uid with specified value
+-gid=value	Override on-disk gid with specified value
+-umask=value	Override on-disk umask with specified octal value.  For
+-		directories, the execute bit will be set if the corresponding
+-		read bit is set.
+-
+-discard=minlen	This enables/disables the use of discard/TRIM commands.
+-discard		The discard/TRIM commands are sent to the underlying
+-nodiscard(*)	block device when blocks are freed. This is useful for SSD
+-		devices and sparse/thinly-provisioned LUNs.  The FITRIM ioctl
+-		command is also available together with the nodiscard option.
+-		The value of minlen specifies the minimum blockcount, when
+-		a TRIM command to the block device is considered useful.
+-		When no value is given to the discard option, it defaults to
+-		64 blocks, which means 256KiB in JFS.
+-		The minlen value of discard overrides the minlen value given
+-		on an FITRIM ioctl().
+-
+-The JFS mailing list can be subscribed to by using the link labeled
+-"Mail list Subscribe" at our web page http://jfs.sourceforge.net/
+-- 
+2.7.4
+
