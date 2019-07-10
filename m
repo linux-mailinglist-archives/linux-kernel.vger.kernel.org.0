@@ -2,288 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A03964DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 22:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7513B64DE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 22:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbfGJUwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 16:52:04 -0400
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:41979 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbfGJUwB (ORCPT
+        id S1727487AbfGJU4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 16:56:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44028 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfGJU4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 16:52:01 -0400
-Received: by mail-pf1-f173.google.com with SMTP id m30so1640231pff.8;
-        Wed, 10 Jul 2019 13:52:00 -0700 (PDT)
+        Wed, 10 Jul 2019 16:56:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f25so1786474pgv.10;
+        Wed, 10 Jul 2019 13:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=y8wraf8puacOAsAWoN8K43bVqmeTn5VVKkp0ec1V58c=;
-        b=nGSYJliRWTLrF7w3MdB+pFsBZKCdeI3/0q70sUjMT1lyOtJD6XvcB2u1stPrUmF/e4
-         M/RduEZKWKgjjFs1wJqUnZEKWvBBcJRKqS0j/KpPp5+A5KQLKwYBLH2e7HiNynRju8Dt
-         15gjUTeMDW8cqj81lVQM6yETw8VLg9ebyeQin1kUxC3IyZxTDtmSvAw11yaILg8w4cyx
-         Sztah3IsoGSQ2aQUkd0sIYX7WAkJ1MT6PSIJra8/B1Vo/pov0tBU8ei6l6hXLf2jDpo6
-         Tj21AiwtFh2x6HHtCiTL1wGDTw9bGy0m0xPw4TyKwNS58e4lpOzn2KOuEaXdLKWmjGNM
-         kw9A==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4GDlvVIbuEMSjpog68D853qJdshnlOic8vHoIJzFbR8=;
+        b=ivw+OD5nX4iQuO1JTrBDV5FzrEry3ElHLfV4wuZyAJCyH++EJYSwauxZJRmw1Y5Cw6
+         mP9bOLVYebi+a77jr2fYBmyYQDa9SMtCkL9GtaLdq865LJtjeKFJ7x9TkQuMZIPHXrAI
+         ZIsHQwNv+Fq93FOnnHwGxQnhXPGDrSPGUsfQVzHNzImw70uTHIKnaP+RWbZGvJcUwnq+
+         tIbXt5ux8DyT5ZITZ2LQG8Vxfsl6EU6T7S8rFhj4kAuJc9Tb4GWlyTa+jIrmum0efIWD
+         mE0Y8ozfhhrliHgMITG/V5D2LVNnxmYp2lSyciEY8NgdbsrakEyTDYYvw40ijWy6Yy//
+         FKsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=y8wraf8puacOAsAWoN8K43bVqmeTn5VVKkp0ec1V58c=;
-        b=WSGES7WfJkWnOI8dq/xHno71Y60bikk5L1QYcEfyCiY2uOsMLF5HGMIbFGOCCh9fZA
-         xS9pJMQhskwtHh42RUn6XpVf/pnOLKsuWV4lFPbzuVmM2PFQq2A4404nYJiScYudVYxl
-         eFhGyKD2d0JNt0AUkKakwsqfrxaisB7y5yHnf/01gteXN7AfxGD04zRAZ4Sh4aIceMqs
-         v4mfKkGazSajdevazUIv/5jO1aDGWafmASdT1YXFt7+qdAT+qXu7UilZp3xXa9W+5upX
-         8LSECJ0ST1NgOUSBAtiKq/GA2vzFc2mDf/iv7NaZriZFvpS9aQQ0zd4SuIzn+jW8gYRM
-         7Z7w==
-X-Gm-Message-State: APjAAAUPfPlCXsbbXT5Pfs7VITXhA6IJQq4iYp1CwyASsY1NI0x++Uhg
-        VQQ0IZYMGwiZ/qzbuQ0w6xg=
-X-Google-Smtp-Source: APXvYqzxgx/YKaHWNMM4BpxvN1Doz2ynkgLufcqIMw5gdhFxAgEgJDOTnU/gCJCfF2LnGGaWAXfT+g==
-X-Received: by 2002:a63:f14:: with SMTP id e20mr199223pgl.227.1562791919976;
-        Wed, 10 Jul 2019 13:51:59 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:2bbe])
-        by smtp.gmail.com with ESMTPSA id 143sm6327934pgc.6.2019.07.10.13.51.59
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4GDlvVIbuEMSjpog68D853qJdshnlOic8vHoIJzFbR8=;
+        b=LkYT5If7SBOx81vK67F5VYUThfqSDr7vZa5l6rv7Z+drTqJo15PQVgPpc7/0fLhfmc
+         K1BXW3TkpPcqEHyf9Jen9UbusBoeAAHaljZq0OcLu0x53nmNbjOQLqx2/OFCyQmuWryN
+         PLo6SH/VAKyH8X5WRApfwWr7Vxps231r+9Be5onUUh0/0TVkylPjbacfk1lohXbfgi+O
+         XT6eUG02JrHwNLf/H6OOhZl0hs3+330G3qyswWLRH1qqpjiGkrsHH2T35DnN09BnMvaC
+         6PlLBSLPqPbaIhoZ0IA7qnOztjAOFQc5egoxeCw1X+UQ1BsBl1BDjkFZJsZQerhwR7LJ
+         LAoQ==
+X-Gm-Message-State: APjAAAXJ6uTp1S/5zsW/wHcDQJsKTX98FxVcoEp1xEQMGD9k0bQuX/1H
+        vsuqs6q+sZ4IGFcy9kbKjhA=
+X-Google-Smtp-Source: APXvYqz9wvasYcGFZOAF/O+EHv/0f99oo5XH+0E6bgjvB2lvBle5sQTAm3dgUwqxMFDZFcC/TXPdqA==
+X-Received: by 2002:a63:2c8e:: with SMTP id s136mr205549pgs.277.1562792167340;
+        Wed, 10 Jul 2019 13:56:07 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id v14sm2462422pfm.164.2019.07.10.13.56.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 13:51:59 -0700 (PDT)
-From:   Tejun Heo <tj@kernel.org>
-To:     axboe@kernel.dk, newella@fb.com, clm@fb.com, josef@toxicpanda.com,
-        dennisz@fb.com, lizefan@huawei.com, hannes@cmpxchg.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 10/10] blkcg: add tools/cgroup/iocost_coef_gen.py
-Date:   Wed, 10 Jul 2019 13:51:28 -0700
-Message-Id: <20190710205128.1316483-11-tj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190710205128.1316483-1-tj@kernel.org>
-References: <20190710205128.1316483-1-tj@kernel.org>
+        Wed, 10 Jul 2019 13:56:06 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 13:56:05 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     linux-hwmon@vger.kernel.org, Eddie James <eajames@linux.ibm.com>,
+        Alexander Amelkin <a.amelkin@yadro.com>,
+        Lei YU <mine260309@gmail.com>,
+        Alexander Soldatov <a.soldatov@yadro.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon (occ): Add temp sensor value check
+Message-ID: <20190710205605.GA7749@roeck-us.net>
+References: <20190710072606.4849-1-joel@jms.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710072606.4849-1-joel@jms.id.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a script which can be used to generate device-specific iocost
-linear model coefficients.
+On Wed, Jul 10, 2019 at 04:56:06PM +0930, Joel Stanley wrote:
+> From: Alexander Soldatov <a.soldatov@yadro.com>
+> 
+> The occ driver supports two formats for the temp sensor value.
+> 
+> The OCC firmware for P8 supports only the first format, for which
+> no range checking or error processing is performed in the driver.
+> Inspecting the OCC sources for P8 reveals that OCC may send
+> a special value 0xFFFF to indicate that a sensor read timeout
+> has occurred, see
+> 
+> https://github.com/open-power/occ/blob/master_p8/src/occ/cmdh/cmdh_fsp_cmds.c#L395
+> 
+> That situation wasn't handled in the driver. This patch adds invalid
+> temp value check for the sensor data format 1 and handles it the same
+> way as it is done for the format 2, where EREMOTEIO is reported for
+> this case.
+> 
+> Fixes: 54076cb3b5ff ("hwmon (occ): Add sensor attributes and register hwmon device")
+> Signed-off-by: Alexander Soldatov <a.soldatov@yadro.com>
+> Signed-off-by: Alexander Amelkin <a.amelkin@yadro.com>
+> Reviewed-by: Alexander Amelkin <a.amelkin@yadro.com>
+> Reviewed-by: Eddie James <eajames@linux.ibm.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- Documentation/admin-guide/cgroup-v2.rst |   3 +
- block/blk-iocost.c                      |   3 +
- tools/cgroup/iocost_coef_gen.py         | 178 ++++++++++++++++++++++++
- 3 files changed, 184 insertions(+)
- create mode 100644 tools/cgroup/iocost_coef_gen.py
+Applied.
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index aff812631c40..e683c51f7ba3 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1519,6 +1519,9 @@ IO Interface Files
- 	The IO cost model isn't expected to be accurate in absolute
- 	sense and is scaled to the device behavior dynamically.
- 
-+	If needed, tools/cgroup/iocost_coef_gen.py can be used to
-+	generate device-specific coefficients.
-+
-   io.weight
- 	A read-write flat-keyed file which exists on non-root cgroups.
- 	The default is "default 100".
-diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-index d608c5aa84ed..a8d5c90de0c2 100644
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -46,6 +46,9 @@
-  * If needed, tools/cgroup/iocost_coef_gen.py can be used to generate
-  * device-specific coefficients.
-  *
-+ * If needed, tools/cgroup/iocost_coef_gen.py can be used to generate
-+ * device-specific coefficients.
-+ *
-  * 2. Control Strategy
-  *
-  * The device virtual time (vtime) is used as the primary control metric.
-diff --git a/tools/cgroup/iocost_coef_gen.py b/tools/cgroup/iocost_coef_gen.py
-new file mode 100644
-index 000000000000..df17a2ae80e5
---- /dev/null
-+++ b/tools/cgroup/iocost_coef_gen.py
-@@ -0,0 +1,178 @@
-+#!/usr/bin/env python3
-+#
-+# Copyright (C) 2019 Tejun Heo <tj@kernel.org>
-+# Copyright (C) 2019 Andy Newell <newella@fb.com>
-+# Copyright (C) 2019 Facebook
-+
-+desc = """
-+Generate linear IO cost model coefficients used by the blk-iocost
-+controller.  If the target raw testdev is specified, destructive tests
-+are performed against the whole device; otherwise, on
-+./iocost-coef-fio.testfile.  The result can be written directly to
-+/sys/fs/cgroup/io.cost.model.
-+
-+On high performance devices, --numjobs > 1 is needed to achieve
-+saturation.
-+
-+See Documentation/admin-guide/cgroup-v2.rst and block/blk-iocost.c
-+for more details.
-+"""
-+
-+import argparse
-+import re
-+import json
-+import glob
-+import os
-+import sys
-+import atexit
-+import shutil
-+import tempfile
-+import subprocess
-+
-+parser = argparse.ArgumentParser(description=desc,
-+                                 formatter_class=argparse.RawTextHelpFormatter)
-+parser.add_argument('--testdev', metavar='DEV',
-+                    help='Raw block device to use for testing, ignores --testfile-size')
-+parser.add_argument('--testfile-size-gb', type=float, metavar='GIGABYTES', default=16,
-+                    help='Testfile size in gigabytes (default: %(default)s)')
-+parser.add_argument('--duration', type=int, metavar='SECONDS', default=120,
-+                    help='Individual test run duration in seconds (default: %(default)s)')
-+parser.add_argument('--seqio-block-mb', metavar='MEGABYTES', type=int, default=128,
-+                    help='Sequential test block size in megabytes (default: %(default)s)')
-+parser.add_argument('--seq-depth', type=int, metavar='DEPTH', default=64,
-+                    help='Sequential test queue depth (default: %(default)s)')
-+parser.add_argument('--rand-depth', type=int, metavar='DEPTH', default=64,
-+                    help='Random test queue depth (default: %(default)s)')
-+parser.add_argument('--numjobs', type=int, metavar='JOBS', default=1,
-+                    help='Number of parallel fio jobs to run (default: %(default)s)')
-+parser.add_argument('--quiet', action='store_true')
-+parser.add_argument('--verbose', action='store_true')
-+
-+def info(msg):
-+    if not args.quiet:
-+        print(msg)
-+
-+def dbg(msg):
-+    if args.verbose and not args.quiet:
-+        print(msg)
-+
-+# determine ('DEVNAME', 'MAJ:MIN') for @path
-+def dir_to_dev(path):
-+    # find the block device the current directory is on
-+    devname = subprocess.run(f'findmnt -nvo SOURCE -T{path}',
-+                             stdout=subprocess.PIPE, shell=True).stdout
-+    devname = os.path.basename(devname).decode('utf-8').strip()
-+
-+    # partition -> whole device
-+    parents = glob.glob('/sys/block/*/' + devname)
-+    if len(parents):
-+        devname = os.path.basename(os.path.dirname(parents[0]))
-+    rdev = os.stat(f'/dev/{devname}').st_rdev
-+    return (devname, f'{os.major(rdev)}:{os.minor(rdev)}')
-+
-+def create_testfile(path, size):
-+    global args
-+
-+    if os.path.isfile(path) and os.stat(path).st_size == size:
-+        return
-+
-+    info(f'Creating testfile {path}')
-+    subprocess.check_call(f'rm -f {path}', shell=True)
-+    subprocess.check_call(f'touch {path}', shell=True)
-+    subprocess.call(f'chattr +C {path}', shell=True)
-+    subprocess.check_call(
-+        f'pv -s {size} -pr /dev/urandom {"-q" if args.quiet else ""} | '
-+        f'dd of={path} count={size} '
-+        f'iflag=count_bytes,fullblock oflag=direct bs=16M status=none',
-+        shell=True)
-+
-+def run_fio(testfile, duration, iotype, iodepth, blocksize, jobs):
-+    global args
-+
-+    eta = 'never' if args.quiet else 'always'
-+    outfile = tempfile.NamedTemporaryFile()
-+    cmd = (f'fio --direct=1 --ioengine=libaio --name=coef '
-+           f'--filename={testfile} --runtime={round(duration)} '
-+           f'--readwrite={iotype} --iodepth={iodepth} --blocksize={blocksize} '
-+           f'--eta={eta} --output-format json --output={outfile.name} '
-+           f'--time_based --numjobs={jobs}')
-+    if args.verbose:
-+        dbg(f'Running {cmd}')
-+    subprocess.check_call(cmd, shell=True)
-+    with open(outfile.name, 'r') as f:
-+        d = json.loads(f.read())
-+    return sum(j['read']['bw_bytes'] + j['write']['bw_bytes'] for j in d['jobs'])
-+
-+def restore_elevator_nomerges():
-+    global elevator_path, nomerges_path, elevator, nomerges
-+
-+    info(f'Restoring elevator to {elevator} and nomerges to {nomerges}')
-+    with open(elevator_path, 'w') as f:
-+        f.write(elevator)
-+    with open(nomerges_path, 'w') as f:
-+        f.write(nomerges)
-+
-+
-+args = parser.parse_args()
-+
-+missing = False
-+for cmd in [ 'findmnt', 'pv', 'dd', 'fio' ]:
-+    if not shutil.which(cmd):
-+        print(f'Required command "{cmd}" is missing', file=sys.stderr)
-+        missing = True
-+if missing:
-+    sys.exit(1)
-+
-+if args.testdev:
-+    devname = os.path.basename(args.testdev)
-+    rdev = os.stat(f'/dev/{devname}').st_rdev
-+    devno = f'{os.major(rdev)}:{os.minor(rdev)}'
-+    testfile = f'/dev/{devname}'
-+    info(f'Test target: {devname}({devno})')
-+else:
-+    devname, devno = dir_to_dev('.')
-+    testfile = 'iocost-coef-fio.testfile'
-+    testfile_size = int(args.testfile_size_gb * 2 ** 30)
-+    create_testfile(testfile, testfile_size)
-+    info(f'Test target: {testfile} on {devname}({devno})')
-+
-+elevator_path = f'/sys/block/{devname}/queue/scheduler'
-+nomerges_path = f'/sys/block/{devname}/queue/nomerges'
-+
-+with open(elevator_path, 'r') as f:
-+    elevator = re.sub(r'.*\[(.*)\].*', r'\1', f.read().strip())
-+with open(nomerges_path, 'r') as f:
-+    nomerges = f.read().strip()
-+
-+info(f'Temporarily disabling elevator and merges')
-+atexit.register(restore_elevator_nomerges)
-+with open(elevator_path, 'w') as f:
-+    f.write('none')
-+with open(nomerges_path, 'w') as f:
-+    f.write('1')
-+
-+info('Determining rbps...')
-+rbps = run_fio(testfile, args.duration, 'read',
-+               1, args.seqio_block_mb * (2 ** 20), args.numjobs)
-+info(f'\nrbps={rbps}, determining rseqiops...')
-+rseqiops = round(run_fio(testfile, args.duration, 'read',
-+                         args.seq_depth, 4096, args.numjobs) / 4096)
-+info(f'\nrseqiops={rseqiops}, determining rrandiops...')
-+rrandiops = round(run_fio(testfile, args.duration, 'randread',
-+                          args.rand_depth, 4096, args.numjobs) / 4096)
-+info(f'\nrrandiops={rrandiops}, determining wbps...')
-+wbps = run_fio(testfile, args.duration, 'write',
-+               1, args.seqio_block_mb * (2 ** 20), args.numjobs)
-+info(f'\nwbps={wbps}, determining wseqiops...')
-+wseqiops = round(run_fio(testfile, args.duration, 'write',
-+                         args.seq_depth, 4096, args.numjobs) / 4096)
-+info(f'\nwseqiops={wseqiops}, determining wrandiops...')
-+wrandiops = round(run_fio(testfile, args.duration, 'randwrite',
-+                          args.rand_depth, 4096, args.numjobs) / 4096)
-+info(f'\nwrandiops={wrandiops}')
-+restore_elevator_nomerges()
-+atexit.unregister(restore_elevator_nomerges)
-+info('')
-+
-+print(f'{devno} rbps={rbps} rseqiops={rseqiops} rrandiops={rrandiops} '
-+      f'wbps={wbps} wseqiops={wseqiops} wrandiops={wrandiops}')
--- 
-2.17.1
+Thanks,
+Guenter
 
+> ---
+>  drivers/hwmon/occ/common.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+> index cccf91742c1a..a7d2b16dd702 100644
+> --- a/drivers/hwmon/occ/common.c
+> +++ b/drivers/hwmon/occ/common.c
+> @@ -241,6 +241,12 @@ static ssize_t occ_show_temp_1(struct device *dev,
+>  		val = get_unaligned_be16(&temp->sensor_id);
+>  		break;
+>  	case 1:
+> +		/*
+> +		 * If a sensor reading has expired and couldn't be refreshed,
+> +		 * OCC returns 0xFFFF for that sensor.
+> +		 */
+> +		if (temp->value == 0xFFFF)
+> +			return -EREMOTEIO;
+>  		val = get_unaligned_be16(&temp->value) * 1000;
+>  		break;
+>  	default:
