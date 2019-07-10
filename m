@@ -2,115 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7376A64B82
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C2464B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfGJRfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:35:37 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:43278 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726097AbfGJRfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:35:37 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CE1698EE24C;
-        Wed, 10 Jul 2019 10:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562780136;
-        bh=B70gAXooxvZK/Lf3HwD7p1V8t+7FlnkHdVRJexmSkFw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=okWIQmP9GmOEZoBgruAKHEKyShJaVoqPbC0/vxxvqvwNL6cXmo1bjWaVEsOZc2GtZ
-         dDnwoHAnt2DPX5g+Eoa/v9aScrOrFOppGatpMky2n2yplzfXszVU9wy9swQsUxGQe2
-         yi5qacgvwVo31QseTxnEA5fsIinkjskyi8KvVqxM=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HoVGSRes2uiH; Wed, 10 Jul 2019 10:35:36 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.68.20])
+        id S1727964AbfGJRlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 13:41:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727095AbfGJRlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 13:41:45 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 566D48EE147;
-        Wed, 10 Jul 2019 10:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562780136;
-        bh=B70gAXooxvZK/Lf3HwD7p1V8t+7FlnkHdVRJexmSkFw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=okWIQmP9GmOEZoBgruAKHEKyShJaVoqPbC0/vxxvqvwNL6cXmo1bjWaVEsOZc2GtZ
-         dDnwoHAnt2DPX5g+Eoa/v9aScrOrFOppGatpMky2n2yplzfXszVU9wy9swQsUxGQe2
-         yi5qacgvwVo31QseTxnEA5fsIinkjskyi8KvVqxM=
-Message-ID: <1562780135.3213.58.camel@HansenPartnership.com>
-Subject: Re: screen freeze with 5.2-rc6 Dell XPS-13 skylake  i915
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Paul Bolle <pebolle@tiscali.nl>, intel-gfx@lists.freedesktop.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Jul 2019 10:35:35 -0700
-In-Reply-To: <5245d2b3d82f11d2f988a3154814eb42dcb835c5.camel@tiscali.nl>
-References: <1561834612.3071.6.camel@HansenPartnership.com>
-         <1562770874.3213.14.camel@HansenPartnership.com>
-         <93b8a186f4c8b4dae63845a20bd49ae965893143.camel@tiscali.nl>
-         <1562776339.3213.50.camel@HansenPartnership.com>
-         <5245d2b3d82f11d2f988a3154814eb42dcb835c5.camel@tiscali.nl>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id BBBC020693;
+        Wed, 10 Jul 2019 17:41:43 +0000 (UTC)
+Date:   Wed, 10 Jul 2019 13:41:42 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-trace-users@vger.kernel.org" 
+        <linux-trace-users@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+Subject: Submit to the Tracing Microconference at Linux Plumbers 2019
+Message-ID: <20190710134142.6aeafa38@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-10 at 18:45 +0200, Paul Bolle wrote:
-> James Bottomley schreef op wo 10-07-2019 om 09:32 [-0700]:
-> > You seem to be getting it to happen much more often than I can.
-> > Last
-> > night, on the below pull request it took me a good hour to see the
-> > freeze.
-> 
-> Yes. Sometimes within a minute of resuming. Typing stuff into
-> evolution seems to help with triggering this. It's all a bit
-> mysterious, but this message alone frooze my laptop a few times.
-> Seriously!
-> 
-> > Sure, my current testing indicates it's somewhere inside this pull
-> > request:
-> > 
-> > Merge: 89c3b37af87e eb85d03e01c3
-> > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > Date:   Wed May 8 21:35:19 2019 -0700
-> > 
-> >     Merge tag 'drm-next-2019-05-09' of
-> > git://anongit.freedesktop.org/drm/drm
-> >     
-> >     Pull drm updates from Dave Airlie:
-> 
-> Lazy question: how does one determine the first and last commit
-> inside a merge request? Can I simply do
->     good   a2d635decbfa9c1e4ae15cb05b68b2559f7f827c^
->     bad    a2d635decbfa9c1e4ae15cb05b68b2559f7f827c
-> 
-> for git bisect?
+Hi folks,
 
-I think so.  I actually did
+There will be a Tracing microconference this year at Linux Plumbers.
+Linux Plumbers (https://linuxplumbersconf.org) will be held in Lisbon,
+Portugal from September 9-11. The Tracing MC will be approximately a
+four hour session focused on improving the Linux tracing infrastructure.
 
-	bad	a2d635decbfa9c1e4ae15cb05b68b2559f7f827c
-	good	89c3b37af87ec183b666d83428cb28cc421671a6
+If there's a subject you would like to discuss at this microconference,
+please submit a topic and abstract here:
 
-But I think ^ steps down in the main branch.  Note, I've only done a
-couple of hours run on what I think is the good commit ... and actually
-I'd already marked a2d635decbfa9c1e4ae15cb05b68b2559f7f827c as good
-until the screen froze just after I'd built the new bisect kernel, so
-there's still some chance 89c3b37af87ec183b666d83428cb28cc421671a6 is
-bad.
+  https://linuxplumbersconf.org/event/4/abstracts/
 
-> > So I was about to test out the i915 changes in that but since my
-> > laptop is what I use for daily work, it's a bit hard (can't freeze
-> > up on video calls for instance).
-> 
-> I usually use one of the ThinkPads from my embarrassing pile of
-> outdated hardware to do nasty bisects, but I'm not about to loose any
-> income if my much appreciated XPS 13 is out of order for a while.
+Select "Submit new proposal"
 
-I can get back to it this afternoon, when I'm done with the meeting
-requirements and doing other dev stuff.
+Fill out the title, the content and who will be leading the session,
+then select the "Tracing MC topic" track and hit "Submit". Of course
+you will also need to agree to follow the anti-harassment policy.
 
-James
+Remember, we are looking for discussions on improving tracing within
+Linux. You can have up to 5 (maybe 7) minutes of presentation to bring
+the audience up to speed with the issues at hand, but then the rest of
+the time will be dedicated to discussion on how to solve and/or
+implement the solution.
 
+All submissions should be in by August 2, and I will hopefully be able
+to decided what to discuss by August 9.
+
+Even if you don't submit a topic, I hope to see you there to discuss
+Linux tracing at Linux Plumbers in Lisbon.
+
+Cheers,
+
+-- Steve
