@@ -2,69 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1F564A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE67664A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbfGJQCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 12:02:35 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40568 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727910AbfGJQCe (ORCPT
+        id S1728412AbfGJQDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 12:03:08 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36672 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbfGJQDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 12:02:34 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a15so2977650qtn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 09:02:34 -0700 (PDT)
+        Wed, 10 Jul 2019 12:03:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i21so2643049ljj.3;
+        Wed, 10 Jul 2019 09:03:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=AC+JysO1v7hiMPuJ82baaEu63vs9RmmoelhSWD247e8=;
-        b=B6k0mel78DMU3QnumvI1r0iwk1gqYDtwNkZ4w/+U92FO0EKuhDpiQZjlfarQkgCF59
-         vbEU3K0Ib+txq48TJuCnn1ixXYprkJyUzMMBlz3n/6vY9PbLYL5CJCDWdtOiSmemIovi
-         5FsROWZrrsVpzQibzAYrjoxZZp5VXWxi2aULYb+ZvLK6txKQSBcNMACF4DHlhV0XrooW
-         UotS3vc39K1aMR6gMm80Tm6wzPo2psgx4MqSSa+NvEf5EWaV0G0GkQh46sb6tkgUAP5d
-         Zyf+l4IA5kGGLSjlQUDmwfbp1WUrE75e9PG7DWAUQI4qqogIKYtEcbCvLSMIGS24oMRy
-         BuJw==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lLmMkhctNEuFU/NWee/rLpEm39VeDGOXHzQDHvN/6EY=;
+        b=sQ8w4vB3vSSSnSSYSg6EQMicHo3+SIxaVI/Vim0+5d+LgR3sk6ohsUDnCq45RH98Wh
+         g/prrYculst+mQNxN6577hhFE2ZnRV/dGejnhJi5m+IL8aWdO40RvlPo3Hlx6Ebj5zIK
+         Z9P/xymgI822DhULMO3zviWbZYobAnhVTAc7bILNPTauET4Xwu/K56ZelNcnu5Jol6Hq
+         kIXa3BBFszmIpErbA41AcYMJTkgnyjBUxu4zJl67FiJg7SFPb8+RPgVEKiy8KiObfTbv
+         YxhfzT+UlpSng0XwxhPcu3i2ACIw31aEyVjSjn5xIdSdy7nwrWg34WFg8AVS1dScTMpC
+         mXDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=AC+JysO1v7hiMPuJ82baaEu63vs9RmmoelhSWD247e8=;
-        b=HbXfq0swxymmNBA1BRzklkS8RU9MG/6LIemU+zrn4nAuwWi1VskTaJBuZroiZD2Jpw
-         hsdiz78EU05nn7lIy1yiWLIpUqD/ddw/EwbeMV6CowcRoD71T7BYBGPpmQ7fCASgtJLU
-         y3ZUrr1OFpw/pUb+gF2csWJQKiHL7x+Z4Jto1y+hLFir0xDtHUJ4UTQS8P69z22C/lzM
-         lrj2RzQ8a4JlUHCMvymTWSXFyJTjmamC1ZXVNj0FPKLBrZif711o0H/WIckZwuwK42YL
-         xX51bbBFfAT5GBR5w6BEc/PsdVPTkl5zsHqie4GhaSIaxCoHvKbyeY0Yp1OMGlEqSfmh
-         ooKQ==
-X-Gm-Message-State: APjAAAXH10GNbIxggGFwM7wQrYBpIdDJsFXOnRoKI77OnuOTvSKBULTL
-        eQPQTuf4YlkeZ1y9WsPXNc6hEUnApUQTmrcQViY=
-X-Google-Smtp-Source: APXvYqweQ6GJXAg3ZDMp21rRPfEmHqAMDYNqYLubm9bUUApbyq4BP81MwlR1eQQaCusIhvucg5hnlqlQNFsmkLvazA8=
-X-Received: by 2002:ac8:16a2:: with SMTP id r31mr24223312qtj.302.1562774554041;
- Wed, 10 Jul 2019 09:02:34 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lLmMkhctNEuFU/NWee/rLpEm39VeDGOXHzQDHvN/6EY=;
+        b=TyfqFC5cVOYwJtyG6kG7LtUYV3qy40TqWZgndlGeGbQhyOhqhgl2Wp9Z0PvRiEKiD6
+         i1vB+qaH78CsDAKJCFn17aF5xUR/IZk0eE+JzTIAP1AiABYe4kVOlmQfo5TD8ljdu6tX
+         ss1zM6TL8Z/KlW4363jjmHTsgoSCQ2KxYc2LGFjmT97jSxfbR9patL5cYPS49vJhnVuy
+         nXC3+TmxVUjKnej0eIjssnX07hMt4gbevBP9maoS2ikl7qXjlhw1B60V5cdJcO2IBcLB
+         x/TXECHhBdjU1sTC1SVR7SnH/gqpfWqSaP20U+HlNYw67hcP3LW8gdu+fb1SsVsR/FXB
+         J6Ug==
+X-Gm-Message-State: APjAAAXQMmaoC19A5HhtekeyFq8tNQ/1Z7ubXVRg2a3MqAbCpT4ijxu8
+        orgXJw15pNqIlXJRWHx98cC3z2FZ
+X-Google-Smtp-Source: APXvYqx96rnUQTsomSZgymS/cSn16dapx8+CRxKVlAnq4xASCJqCh4A+Y5s4lFuEgrTSZN3XuqiTQQ==
+X-Received: by 2002:a2e:9d8a:: with SMTP id c10mr15473673ljj.147.1562774585004;
+        Wed, 10 Jul 2019 09:03:05 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id t25sm413719lfg.7.2019.07.10.09.03.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 09:03:04 -0700 (PDT)
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190709145151.23086-1-digetx@gmail.com>
+ <20190710101229.54ufuhmh22dfxclr@flea>
+ <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
+ <20190710140504.t5lsk36gnn5cdn6b@flea>
+ <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
+ <2b17baa6-0d16-acac-f626-51799f0d3293@gmail.com>
+Message-ID: <5b6bc04d-391e-3370-ffe5-17094ae4b365@gmail.com>
+Date:   Wed, 10 Jul 2019 19:03:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Received: by 2002:a0c:d684:0:0:0:0:0 with HTTP; Wed, 10 Jul 2019 09:02:33
- -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <kagnalex@gmail.com>
-Date:   Wed, 10 Jul 2019 18:02:33 +0200
-Message-ID: <CACemp=6mXNj7rVHCTXyO9ebpMF0HedyiK=vrFaee=fjUoRR2UA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2b17baa6-0d16-acac-f626-51799f0d3293@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+10.07.2019 18:45, Dmitry Osipenko пишет:
+> 10.07.2019 18:05, Dmitry Osipenko пишет:
+>> 10.07.2019 17:05, Maxime Ripard пишет:
+>>> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+>>>> This works:
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+>>>> index 56d36779d213..e5a2f9c8f404 100644
+>>>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>>>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>>>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
+>>>>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
+>>>>         if (mode)
+>>>>                 list_add(&mode->head, &connector->modes);
+>>>> +       else
+>>>> +               cmdline_mode->specified = false;
+>>>
+>>> Hmmm, it's not clear to me why that wouldn't be the case.
+>>>
+>>> If we come back to the beginning of that function, we retrieve the
+>>> cmdline_mode buffer from the connector pointer, that will probably
+>>> have been parsed a first time using drm_mode_create_from_cmdline_mode
+>>> in drm_helper_probe_add_cmdline_mode.
+>>>
+>>> Now, I'm guessing that the issue is that in
+>>> drm_mode_parse_command_line_for_connector, if we have a named mode, we
+>>> just copy the mode over and set mode->specified.
+>>>
+>>> And we then move over to do other checks, and that's probably what
+>>> fails and returns, but our drm_cmdline_mode will have been modified.
+>>>
+>>> I'm not entirely sure how to deal with that though.
+>>>
+>>> I guess we could allocate a drm_cmdline_mode structure on the stack,
+>>> fill that, and if successful copy over its content to the one in
+>>> drm_connector. That would allow us to only change the content on
+>>> success, which is what I would expect from such a function?
+>>>
+>>> How does that sound?
+>>
+>> I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
+>> for the "cmdline" mode and drm_client_rotation() is the only place in
+>> DRM code that cares about whether mode is from cmdline, hence looks like
+>> it will be more correct to do the following:
+>>
+>> diff --git a/drivers/gpu/drm/drm_client_modeset.c
+>> b/drivers/gpu/drm/drm_client_modeset.c
+>> index 56d36779d213..e5b3be9ed689 100644
+>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>> @@ -825,6 +825,7 @@ bool drm_client_rotation(struct drm_mode_set
+>> *modeset, unsigned int *rotation)
+>>  {
+>>         struct drm_connector *connector = modeset->connectors[0];
+>>         struct drm_plane *plane = modeset->crtc->primary;
+>> +       struct drm_display_mode *mode = modeset->mode;
+>>         struct drm_cmdline_mode *cmdline;
+>>         u64 valid_mask = 0;
+>>         unsigned int i;
+>> @@ -859,7 +860,7 @@ bool drm_client_rotation(struct drm_mode_set
+>> *modeset, unsigned int *rotation)
+>>          * simple XOR between the two handle the addition nicely.
+>>          */
+>>         cmdline = &connector->cmdline_mode;
+>> -       if (cmdline->specified) {
+>> +       if (mode->flags & DRM_MODE_TYPE_USERDEF) {
+>>                 unsigned int cmdline_rest, panel_rest;
+>>                 unsigned int cmdline_rot, panel_rot;
+>>                 unsigned int sum_rot, sum_rest;
+>>
+> 
+> Although, then rotation won't be applied to the named mode in that case.
+> 
+> Seems the fix could be even simpler:
+> 
+> @@ -859,7 +859,7 @@ bool drm_client_rotation(struct drm_mode_set
+> *modeset, unsigned int *rotation)
+>          * simple XOR between the two handle the addition nicely.
+>          */
+>         cmdline = &connector->cmdline_mode;
+> -       if (cmdline->specified) {
+> +       if (cmdline->specified && cmdline->rotation_reflection) {
+>                 unsigned int cmdline_rest, panel_rest;
+>                 unsigned int cmdline_rot, panel_rot;
+>                 unsigned int sum_rot, sum_rest;
+> 
+> And looks like there is another problem here.. the cmdline's rotation
+> overrides *all* modes while the doc/fb/modedb.rst claims that rotation
+> is applied only to the *initial* mode.
+> 
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+Actually, I was wrong here. This rotation is getting applied only to the
+framebuffer's console, so looks fine.
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0003gmail.com
-
-Many thanks in advance,
-Mr.Eddy William ,
+I guess it's also okay to just keep applying cmdline's rotation even if
+the mode is invalid. Please let me know if you have any objections.
