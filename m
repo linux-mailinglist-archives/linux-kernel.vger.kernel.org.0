@@ -2,61 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D026446E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E936447B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:37:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfGJJbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 05:31:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbfGJJbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 05:31:45 -0400
-Received: from localhost (unknown [37.142.3.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C01A020838;
-        Wed, 10 Jul 2019 09:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562751104;
-        bh=vy0Mr4Uol6rxl9Ul5HNef3JkghGVfMZzH2ZYvBEDPNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v3AUO4eYGlcdf0/mRSZxPbZ2Xs+pJEVLj+7ECL67ahfXbHScUC+ItJ93D0h1evUJv
-         X4xwiL//KM6HoaGu1aq2/XwMq3fleodsYyTzpDjOQ25Ie/Vz+b4bt39sAJRumpGlLl
-         PWR5BVOMD3BBROb3E3q6OTjafSO/4YRLR5rXa9ME=
-Date:   Wed, 10 Jul 2019 12:31:39 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Saeed Mahameed <saeedm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Boris Pismenny <borisp@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH net-next v3] net/mlx5e: Convert single case statement
- switch statements into if statements
-Message-ID: <20190710093139.GG7034@mtr-leonro.mtl.com>
-References: <20190710044748.3924-1-natechancellor@gmail.com>
- <20190710060614.6155-1-natechancellor@gmail.com>
+        id S1727196AbfGJJh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:37:29 -0400
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:40122 "EHLO
+        anchovy3.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfGJJh2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 05:37:28 -0400
+Received: (qmail 20338 invoked by uid 5089); 10 Jul 2019 09:37:26 -0000
+Received: by simscan 1.2.0 ppid: 20261, pid: 20262, t: 0.0524s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.128?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy2.45ru.net.au with ESMTPA; 10 Jul 2019 09:37:25 -0000
+Subject: Re: [PATCH 1/2] gpio: em: remove the gpiochip before removing the irq
+ domain
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org
+References: <20190710090852.9239-1-brgl@bgdev.pl>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <510f14c9-fc3b-734c-53ff-cbf4a7579e32@electromag.com.au>
+Date:   Wed, 10 Jul 2019 17:37:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710060614.6155-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190710090852.9239-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 11:06:15PM -0700, Nathan Chancellor wrote:
-> During the review of commit 1ff2f0fa450e ("net/mlx5e: Return in default
-> case statement in tx_post_resync_params"), Leon and Nick pointed out
-> that the switch statements can be converted to single if statements
-> that return early so that the code is easier to follow.
->
-> Suggested-by: Leon Romanovsky <leon@kernel.org>
-> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
+G'day Bartosz,
 
-Thanks again,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+One comment below
+
+On 10/07/2019 17:08, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> In commit 8764c4ca5049 ("gpio: em: use the managed version of
+> gpiochip_add_data()") we implicitly altered the ordering of resource
+> freeing: since gpiochip_remove() calls gpiochip_irqchip_remove()
+> internally, we now can potentially use the irq_domain after it was
+> destroyed in the remove() callback (as devm resources are freed after
+> remove() has returned).
+> 
+> Use devm_add_action() to keep the ordering right and entirely kill
+> the remove() callback in the driver.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: 8764c4ca5049 ("gpio: em: use the managed version of gpiochip_add_data()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/gpio/gpio-em.c | 35 +++++++++++++++++------------------
+>   1 file changed, 17 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+> index b6af705a4e5f..c88028ac66f2 100644
+> --- a/drivers/gpio/gpio-em.c
+> +++ b/drivers/gpio/gpio-em.c
+> @@ -259,6 +259,13 @@ static const struct irq_domain_ops em_gio_irq_domain_ops = {
+>   	.xlate	= irq_domain_xlate_twocell,
+>   };
+>   
+> +static void em_gio_irq_domain_remove(void *data)
+> +{
+> +	struct irq_domain *domain = data;
+> +
+> +	irq_domain_remove(domain);
+> +}
+> +
+>   static int em_gio_probe(struct platform_device *pdev)
+>   {
+>   	struct em_gio_priv *p;
+> @@ -333,39 +340,32 @@ static int em_gio_probe(struct platform_device *pdev)
+>   		return -ENXIO;
+>   	}
+>   
+> +	ret = devm_add_action(&pdev->dev,
+> +			      em_gio_irq_domain_remove, p->irq_domain);
+
+Could devm_add_action_or_reset be used?
+
+> +	if (ret) {
+> +		irq_domain_remove(p->irq_domain);
+> +		return ret;
+> +	}
+> +
+>   	if (devm_request_irq(&pdev->dev, irq[0]->start,
+>   			     em_gio_irq_handler, 0, name, p)) {
+>   		dev_err(&pdev->dev, "failed to request low IRQ\n");
+> -		ret = -ENOENT;
+> -		goto err1;
+> +		return -ENOENT;
+>   	}
+>   
+>   	if (devm_request_irq(&pdev->dev, irq[1]->start,
+>   			     em_gio_irq_handler, 0, name, p)) {
+>   		dev_err(&pdev->dev, "failed to request high IRQ\n");
+> -		ret = -ENOENT;
+> -		goto err1;
+> +		return -ENOENT;
+>   	}
+>   
+>   	ret = devm_gpiochip_add_data(&pdev->dev, gpio_chip, p);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "failed to add GPIO controller\n");
+> -		goto err1;
+> +		return ret;
+>   	}
+>   
+>   	return 0;
+> -
+> -err1:
+> -	irq_domain_remove(p->irq_domain);
+> -	return ret;
+> -}
+> -
+> -static int em_gio_remove(struct platform_device *pdev)
+> -{
+> -	struct em_gio_priv *p = platform_get_drvdata(pdev);
+> -
+> -	irq_domain_remove(p->irq_domain);
+> -	return 0;
+>   }
+>   
+>   static const struct of_device_id em_gio_dt_ids[] = {
+> @@ -376,7 +376,6 @@ MODULE_DEVICE_TABLE(of, em_gio_dt_ids);
+>   
+>   static struct platform_driver em_gio_device_driver = {
+>   	.probe		= em_gio_probe,
+> -	.remove		= em_gio_remove,
+>   	.driver		= {
+>   		.name	= "em_gio",
+>   		.of_match_table = em_gio_dt_ids,
+> 
+
+
+-- 
+Regards
+Phil Reid
+
