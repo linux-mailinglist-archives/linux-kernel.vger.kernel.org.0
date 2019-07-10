@@ -2,147 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99EA564943
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:05:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76BB964951
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfGJPFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:05:25 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42813 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728022AbfGJPFX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:05:23 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t28so2428773lje.9;
-        Wed, 10 Jul 2019 08:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=plj7Pya5YTb4+cAp/1kpLYGyDPb7au0yoFGuKe+7qFY=;
-        b=dn1ffGe6dth9Oa2U3ErOvNerY11cGz6vSJElqa5YXlbDwn30Ve3ooVZEXWn4IUU6Bs
-         lCd4gQbTwemMSWty9NBDGmwbHsUYE3SYt3Q5RV8UKmx8O138s11CuV12EnV9F+6IpHAb
-         BC0Brhev7dXYSCFMTz1QEuWxB2Xfo2dha2glR6d3oEAN3ws7f0FMV4pUfG89QFFEldk6
-         bwqBAcgMOdy2IJcN3zGmbusThrE1zwx+jZfXZdb1Xdw/cYIqz7r8I5N6Wqtp9dal1XgZ
-         QZL0oVaomRXUvUQQTu/Av76U3o4gWyuwRR03ThcHSdG0j8xI4LYEXFpxfoXFlxDKr4cM
-         7hYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=plj7Pya5YTb4+cAp/1kpLYGyDPb7au0yoFGuKe+7qFY=;
-        b=dLYshCtYYrjkUX4yTQRqY3uTyyeZwod3gBtabqsCKRwm0HeGg8jM92WPJPnOObeZl2
-         TczSyuUaZMJwy4kZIqSoLYEXxlaRytzFo+U9MFGKog2wPPmkB4Km3ATyCkmvOdtQBlaA
-         ilGt7JqzjGG4anexonTCYFkXTruQI43kPGH0BWNrj4NJOn8JQMmi0K5FxWCKqQleWriw
-         ISRkv/bMQEbxyPxsGOcHUyz3SyVtvDsTDNBEGMZqoogJT5eJ619iUJcUlf4lDLsNbtE6
-         yWn7CiLPzdpmNW2j+/FGpiWwevBOugoZAhM5rYtZCz9wjAurZTEIF0R3QGMgV6I2fRgI
-         zW5A==
-X-Gm-Message-State: APjAAAVkzn73i3NJE/2ZVCSk+dPZiFd57Z9PwB1zyrQmVGhEKucldh5S
-        hmK2w2tmdMOOVo/GoZpEuR1gOfyn
-X-Google-Smtp-Source: APXvYqyE3tu3WfUYC8HKZAgmJ8SO73hKeBP5o5kHfZaJXhL6Y/c0NQz/jCvjk3O3RopNPtYNbJJP5w==
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr17934150ljm.180.1562771121206;
-        Wed, 10 Jul 2019 08:05:21 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id u17sm393025lfq.69.2019.07.10.08.05.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 08:05:19 -0700 (PDT)
-Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190709145151.23086-1-digetx@gmail.com>
- <20190710101229.54ufuhmh22dfxclr@flea>
- <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
- <20190710125552.qvmnh6qs63ikiu2k@flea>
- <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
- <20190710130615.gvi2jwgr2cds66xr@flea>
- <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
- <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
- <20190710140504.t5lsk36gnn5cdn6b@flea>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
-Date:   Wed, 10 Jul 2019 18:05:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190710140504.t5lsk36gnn5cdn6b@flea>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728457AbfGJPFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:05:36 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:35147 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728254AbfGJPFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 11:05:31 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 45kMtx2lmXz9sPj; Thu, 11 Jul 2019 01:05:29 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 9e005b761e7ad153dcf40a6cba1d681fe0830ac6
+In-Reply-To: <20190705100144.28785-1-yamada.masahiro@socionext.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linuxppc-dev@lists.ozlabs.org
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] powerpc/boot: add {get, put}_unaligned_be32 to xz_config.h
+Message-Id: <45kMtx2lmXz9sPj@ozlabs.org>
+Date:   Thu, 11 Jul 2019 01:05:29 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-10.07.2019 17:05, Maxime Ripard пишет:
-> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
->> This works:
->>
->> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
->> index 56d36779d213..e5a2f9c8f404 100644
->> --- a/drivers/gpu/drm/drm_client_modeset.c
->> +++ b/drivers/gpu/drm/drm_client_modeset.c
->> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
->>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
->>         if (mode)
->>                 list_add(&mode->head, &connector->modes);
->> +       else
->> +               cmdline_mode->specified = false;
+On Fri, 2019-07-05 at 10:01:43 UTC, Masahiro Yamada wrote:
+> The next commit will make the way of passing CONFIG options more robust.
+> Unfortunately, it would uncover another hidden issue; without this
+> commit, skiroot_defconfig would be broken like this:
 > 
-> Hmmm, it's not clear to me why that wouldn't be the case.
+> |   WRAP    arch/powerpc/boot/zImage.pseries
+> | arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
+> | decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
+> | decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
+> | make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
+> | make: *** [arch/powerpc/Makefile;295: zImage] Error 2
 > 
-> If we come back to the beginning of that function, we retrieve the
-> cmdline_mode buffer from the connector pointer, that will probably
-> have been parsed a first time using drm_mode_create_from_cmdline_mode
-> in drm_helper_probe_add_cmdline_mode.
+> skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
+> for ppc, which has never been correctly built before.
 > 
-> Now, I'm guessing that the issue is that in
-> drm_mode_parse_command_line_for_connector, if we have a named mode, we
-> just copy the mode over and set mode->specified.
+> I figured out the root cause in lib/decompress_unxz.c:
 > 
-> And we then move over to do other checks, and that's probably what
-> fails and returns, but our drm_cmdline_mode will have been modified.
+> | #ifdef CONFIG_PPC
+> | #      define XZ_DEC_POWERPC
+> | #endif
 > 
-> I'm not entirely sure how to deal with that though.
+> CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
+> is not included except by arch/powerpc/boot/serial.c
 > 
-> I guess we could allocate a drm_cmdline_mode structure on the stack,
-> fill that, and if successful copy over its content to the one in
-> drm_connector. That would allow us to only change the content on
-> success, which is what I would expect from such a function?
+> XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
+> for the bootwrapper.
 > 
-> How does that sound?
+> With the next commit passing CONFIG_PPC correctly, we would realize that
+> {get,put}_unaligned_be32 was missing.
+> 
+> Unlike the other decompressors, the ppc bootwrapper duplicates all the
+> necessary helpers in arch/powerpc/boot/.
+> 
+> The other architectures define __KERNEL__ and pull in helpers for
+> building the decompressors.
+> 
+> If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
+> have included <asm/unaligned.h>:
+> 
+> | #ifdef __KERNEL__
+> | #       include <linux/xz.h>
+> | #       include <linux/kernel.h>
+> | #       include <asm/unaligned.h>
+> 
+> However, doing so would cause tons of definition conflicts since the
+> bootwrapper has duplicated everything.
+> 
+> I just added copies of {get,put}_unaligned_be32, following the
+> bootwrapper coding convention.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
-for the "cmdline" mode and drm_client_rotation() is the only place in
-DRM code that cares about whether mode is from cmdline, hence looks like
-it will be more correct to do the following:
+Series applied to powerpc next, thanks.
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c
-b/drivers/gpu/drm/drm_client_modeset.c
-index 56d36779d213..e5b3be9ed689 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -825,6 +825,7 @@ bool drm_client_rotation(struct drm_mode_set
-*modeset, unsigned int *rotation)
- {
-        struct drm_connector *connector = modeset->connectors[0];
-        struct drm_plane *plane = modeset->crtc->primary;
-+       struct drm_display_mode *mode = modeset->mode;
-        struct drm_cmdline_mode *cmdline;
-        u64 valid_mask = 0;
-        unsigned int i;
-@@ -859,7 +860,7 @@ bool drm_client_rotation(struct drm_mode_set
-*modeset, unsigned int *rotation)
-         * simple XOR between the two handle the addition nicely.
-         */
-        cmdline = &connector->cmdline_mode;
--       if (cmdline->specified) {
-+       if (mode->flags & DRM_MODE_TYPE_USERDEF) {
-                unsigned int cmdline_rest, panel_rest;
-                unsigned int cmdline_rot, panel_rot;
-                unsigned int sum_rot, sum_rest;
+https://git.kernel.org/powerpc/c/9e005b761e7ad153dcf40a6cba1d681fe0830ac6
+
+cheers
