@@ -2,62 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FDB664C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89ABE64C5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfGJSnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:43:31 -0400
-Received: from smtp3.jd.com ([59.151.64.88]:2126 "EHLO smtp3.jd.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbfGJSnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:43:31 -0400
-Received: from BJMAILD1MBX36.360buyAD.local (172.31.0.36) by
- BJMAILD1MBX48.360buyAD.local (172.31.0.48) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Thu, 11 Jul 2019 02:43:20 +0800
-Received: from BJMAILD1MBX36.360buyAD.local (172.31.0.36) by
- BJMAILD1MBX36.360buyAD.local (172.31.0.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Thu, 11 Jul 2019 02:43:20 +0800
-Received: from BJMAILD1MBX36.360buyAD.local ([fe80::2116:e90b:d89d:e893]) by
- BJMAILD1MBX36.360buyAD.local ([fe80::2116:e90b:d89d:e893%24]) with mapi id
- 15.01.1415.002; Thu, 11 Jul 2019 02:43:20 +0800
-From:   =?utf-8?B?6buE5LmQ?= <huangle1@jd.com>
-To:     "bfields@fieldses.org" <bfields@fieldses.org>
-CC:     "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nfsd4: fix a deadlock on state owner replay mutex
-Thread-Topic: [PATCH] nfsd4: fix a deadlock on state owner replay mutex
-Thread-Index: AQHVLRYrJwxAvKxXXkKWwBVCcQfpA6bChWMAgAG9lPU=
-Date:   Wed, 10 Jul 2019 18:43:20 +0000
-Message-ID: <4dd1fe21e11344e5969bb112e954affb@jd.com>
-References: <720b91b1204b4c73be1b6ec2ff44dbab@jd.com>,<20190710000300.GD1536@fieldses.org>
-In-Reply-To: <20190710000300.GD1536@fieldses.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.31.14.12]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727641AbfGJSov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:44:51 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34049 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727242AbfGJSov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 14:44:51 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w9so5265185wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 11:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fIomvM0g/tNuUQqug//yGa4pni5MNqzRL2MaCAq6LXE=;
+        b=XlcS+fnlGIMenCwHbTphXlDMuJjiwGMPtSN0MoOwQ/hyJ0HY59K79/4tts2l5+Cuw+
+         VkdAlAUt1sODk+fqdGoymPnRdqiS139x1exmbo8Ftcw9BIYMWPpIakt01KtSydzA+tQ8
+         PbfSfak7HBu7Jp1B7M/pgM5yoDD0VB4pggisZ/c2BI92h+TRYKuVFZqhDNCpDw3Jtjlr
+         orH3R0qB26LAHr0ph+54ZXdJNvKpVxJN9yGEBo0OAcV7XtXbkCul3t7aK6SmaSpoEYQ+
+         N1zLjOIjg5Bo6E7ZUXdE35oClA259GeSrrQSispO0f4i8tdjIfr2QknL/Xqf7IERe20p
+         0QxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fIomvM0g/tNuUQqug//yGa4pni5MNqzRL2MaCAq6LXE=;
+        b=tn0LIYAEYUR7nEVA2qJ1cwWx7imkeB7S703vhJOTGU8peROsWzrm3K4+cY/7QsqioB
+         Y7J12n6l/c/2Szv+Bxx+bOSwYpwfczUcp4QGWwkzMS3hv2/Ic+EVvOEUbIpf9e9ekJ2S
+         BkaURghoaPRgtE8uU8oRMN7FhEaF2aQ3OfawfNrQ/cRMFN04nPZvPOeE/cG9oIYwve8p
+         eubqxzoKcX6svYxN5yIjyMGG7VWDwxT5v/gtKiuj8P37YtbHKaG9vwM255+yLKZo1Vv1
+         u829+VpL06z7sIWtG6ElD29PRP66rl8aEsVkmy/RP8Xrb6e6of06CRtY/HycAuJ9QXhI
+         B0tQ==
+X-Gm-Message-State: APjAAAUSgf9HzoCb17dsj5CWk88LM42NQqMjRlvwayNMtMOO8USJMxW1
+        BGQeNQpUDccRyiCMJ13LkYY=
+X-Google-Smtp-Source: APXvYqxVnf4BpifQf73xCJ6D45mRIZKAKpcvnjlNctqAc/Lel97RloPdPK92YrGC4RcHOKzwLXjZ+g==
+X-Received: by 2002:a7b:c7c2:: with SMTP id z2mr6045994wmk.147.1562784289277;
+        Wed, 10 Jul 2019 11:44:49 -0700 (PDT)
+Received: from [192.168.8.147] (31.172.185.81.rev.sfr.net. [81.185.172.31])
+        by smtp.gmail.com with ESMTPSA id v65sm3376512wme.31.2019.07.10.11.44.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 11:44:48 -0700 (PDT)
+Subject: Re: BUG: MAX_STACK_TRACE_ENTRIES too low! (2)
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        syzbot <syzbot+6f39a9deb697359fe520@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+References: <00000000000089a718058556e1d8@google.com>
+ <f71aaffa-ecf4-1def-fe50-91f37c677537@acm.org>
+ <20190710053030.GB2152@sol.localdomain>
+ <b378a903-d0fc-a137-e6b9-dec55277cf16@acm.org>
+ <20190710170057.GB801@sol.localdomain> <20190710172123.GC801@sol.localdomain>
+ <f498d8cc-ba82-d3dc-7557-142a1b35976a@acm.org>
+ <20190710180242.GA193819@gmail.com>
+ <a19779d0-0192-8dc0-d51b-e6938a455f31@acm.org>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <47a9287d-1f02-95d5-a5cf-55f0c0d38378@gmail.com>
+Date:   Wed, 10 Jul 2019 20:44:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <a19779d0-0192-8dc0-d51b-e6938a455f31@acm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SXQncyBzYWZlIGJlY2F1c2Ugd2hlbiB3ZSByZWFjaCBtb3ZlX3RvX2Nsb3NlX2xydSgpLCB3ZSBr
-bm93IHdlIGFyZSB0aGUNCipsb2dpY2FsKiBsYXN0IGNhbGwgYW1vbmcgYWxsIHJhY2luZyBjYWxs
-cywgaXQgaXMgYWN0dWFsbHkgdGhlIHJlYXNvbiB3ZQ0KZG8gdGhlIHdhaXRpbmcgaGVyZSBhdCBm
-aXN0IHBsYWNlLiAgTm93IGp1c3QgYmVjYXVzZSBvZiByYWNpbmcsIHdlIGdhaW4NCnRoZSBycF9t
-dXRleCBmaXJzdCBhbmQgaGF2ZSBhICpsb3dlciogc2VxaWQgdmFsdWUsIHNvIGl0IGlzIHdoYXQg
-d2UgbmVlZA0KZXhhY3RseSB0byBsZXQgdGhlIHNlcWlkIGJ1bXAgd2l0aCBvdGhlciByYWNpbmcg
-Y2FsbHMgYmVmb3JlIHdlIGNvbnRpbnVlLA0KdGhhdCBlbnN1cmVzIHBvc3NpYmxlIGZ1dHVyZSBD
-TE9TRSBjYWxsIGNvdWxkIGJlIHJlcGxheWVkIGNvcnJlY3RseS4NCg0KDQpPbiBXZWQsIEp1bCAx
-MCwgMjAxOSwgYmZpZWxkc0BmaWVsZHNlcy5vcmcgd3JvdGU6DQo+IEkgZG9uJ3QgdW5kZXJzdGFu
-ZCB3aHkgdGhhdCdzIHNhZmUuwqAgTWF5YmUgaXQgaXMsIGJ1dCBJIGRvbid0IHVuZGVyc3RhbmQN
-Cj4geWV0LsKgIElmIHdlIHRha2UgdGhlIG11dGV4LCBidW1wIHRoZSBzZXFpZCwgZHJvcCB0aGUg
-bXV0ZXgsIHNvbWVvbmUgZWxzZQ0KPiBjb21lcyBpbiBhbmQgYnVtcHMgdGhlIHNlcWlkIGFnYWlu
-LCB0aGVuIHdlIHJlYWNxdWlyZSB0aGUgbXV0ZXguLi4gd2hhdA0KPiBoYXBwZW5zPw0KPiANCj4g
-LS1iLg0K
+
+
+On 7/10/19 8:36 PM, Bart Van Assche wrote:
+> On 7/10/19 11:02 AM, Eric Biggers wrote:
+>> I already mentioned that io_uring triggers it too.
+>>
+>> Those are just 2 cases that syzbot happened to generate reproducers for.  I
+>> expect there are many others too, since many places in the kernel allocate
+>> workqueues.  AFAICS most are placed in static or global variables which avoids
+>> this issue, but there are still many cases where a workqueue is owned by some
+>> dynamic structure that can have a much shorter lifetime.
+>>
+>> You can also check the other syzbot reports that look similar
+>> (https://lore.kernel.org/lkml/20190710055838.GC2152@sol.localdomain/).
+>> Two of them have C reproducers too.
+> 
+> As you may know lockdep cannot use dynamic memory allocation because
+> doing so would introduce a circular dependency between lockdep and the
+> memory allocator. Hence the fixed size arrays in the lockdep code.
+> Additionally, as far as I know lockdep works fine for human kernel
+> developers and only syzbot runs code that triggers the lockdep limits.
+> So I think it's up to the syzbot authors to come up with a solution. I
+> mean another solution than finger pointing at kernel developers.
+
+This is silly, syzbot simply uses kernel standard system calls.
+
+If anything using workqueues in dynamically allocated objects can turn off lockdep,
+we have a serious issue.
+
+Please work on this issue instead of trying to blame someone else.
+
+Thank you.
+
