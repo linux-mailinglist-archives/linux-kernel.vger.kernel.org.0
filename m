@@ -2,118 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0B964E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 23:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B20864E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 23:38:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfGJVhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 17:37:33 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38891 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfGJVhd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 17:37:33 -0400
-Received: by mail-qk1-f194.google.com with SMTP id a27so3165254qkk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 14:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=St1qYh9tlVeaUB7eh4n72DWxZ8GSBB5lPnCn4WHYVHw=;
-        b=SVtPgNJ4ZIv0M43ejuyHAoXp14LcG2YNYCLbuptnvVYUFBvaYofNKYUM+z0OB/1aoC
-         o9XLnsSpDDfFesjJAkj5VQTU4+coitlcwGHfTMh7+UOgiU2r2vWzPtkKne+tISqHX6kR
-         oH/4ISlffM3fENAdWCMtvJS/ZC8B+KbTYjj4vVe40e4i2L+7NcAGkuAmgTVUfAJYQNNU
-         J8WRG5hlE5y2LGHYuvz7y0v+VjGIhk7AIlhVa4EcYr1ICxvXe5Lhh2TNSPvmVCglMtd9
-         sjJoDmyPSgDJCFghTRWf/6Nw2aTfxUV3w6ojnp4eNkDtmw1+t+CeMIYs+HMQCfNeHmEi
-         cjXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=St1qYh9tlVeaUB7eh4n72DWxZ8GSBB5lPnCn4WHYVHw=;
-        b=Zz5bBdHAqUGhLRDiDps4FmdVIeIkykIAWY0RLZshRHKZAgDML2wHpp33xhVInZXuf8
-         aokEfye0cTKdptKv5T0aId1iuY4CY+BO2GivQYlpKHBT9pwOpyab5zM+30xSctKiuJmE
-         lCI/nYF3pA6mO0R9RUNZ9j7rEJtK4BgAhhkRQUm1t442BiZECcjgxisgyIWSOlBWOK0w
-         DTRnNc/priwwH5PwZ5DPoFroN5GXFSTfE3lRYSqhDPqHjn70DUxmakKi5Hq9mvsid2CO
-         fNvGBTKsOmqNsIAynX5s1lsyLCs88HuxCVmo04Emeh3X0KjST48gRaPF6YIw6hCyAKbW
-         U0xw==
-X-Gm-Message-State: APjAAAWAzu2POhVK1VTX4fmTnFkw9b6NC8f3oNRfbgMFPvAhUXziTuwj
-        GWLVz+nkUQhnE4LfnjEPrTYv8ZBIpANXkQ==
-X-Google-Smtp-Source: APXvYqxtsgCH3Yb5EvQyvFkbLrmMWRJmYeFGMIyDCPFqJarGrAZ+ibbxy/7KEh30njTYCZ7k1vQUmA==
-X-Received: by 2002:a05:620a:685:: with SMTP id f5mr293718qkh.238.1562794651499;
-        Wed, 10 Jul 2019 14:37:31 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id y3sm1729926qtj.46.2019.07.10.14.37.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 14:37:30 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     jroedel@suse.de
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] iommu/amd: fix a crash in iova_magazine_free_pfns
-Date:   Wed, 10 Jul 2019 17:37:15 -0400
-Message-Id: <1562794635-8988-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727910AbfGJVif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 17:38:35 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37587 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfGJVif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 17:38:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kXcP6ft9z9sN6;
+        Thu, 11 Jul 2019 07:38:29 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562794712;
+        bh=xQ3HrnTRQwPLFyO/CnTD4dLIFe8+jtE4NPO9L/af/aM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SBoocK3KkGhnC3PxZLfoug8FLuVs0OMpscW/cFQr0/3c8AfEADJGNkX0+N6RkfUbj
+         a6ppwgh2L8Ptl/FetHAHx7oKokCf2KFYzh/MWdqg7lTJU+a+Fh/9AEEtHTNpvWHMZW
+         gCR+s76nHI2GSzJxAF50mYjPontAKJ8sT1vQ5sFrI+/8Rq+Sct7bgno5jc5rcfC16W
+         BjBg6OBTL/PnrV5Fvxp1D0+520ZBizXuROLZuQf9wOF8Zlxb0Hv74GNjfuLhz4bVpw
+         kUx7DVF1a35vx0fbX4u0nUbR9VpogwnJqf05E6micr3RnSuk94v8OpKPXlmVI04LXy
+         NTg0BRD3/Zi/w==
+Date:   Thu, 11 Jul 2019 07:38:28 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Sage Weil <sage@newdream.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190711073828.063b534c@canb.auug.org.au>
+In-Reply-To: <CAOi1vP8wsFDzmdwHw8HwvuycPnOChAjzAOLgajLHqxMadoWojQ@mail.gmail.com>
+References: <20190709165459.11b353d8@canb.auug.org.au>
+        <20190710100138.0aa36d47@canb.auug.org.au>
+        <CAOi1vP8wsFDzmdwHw8HwvuycPnOChAjzAOLgajLHqxMadoWojQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qMqdXEy7FW0l3m2Xb.djr01"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a system is under heavy memory pressure, the allocation in
-alloc_iova_fast() could still fail even flush_rcache=true, and then
-causes dma_ops_alloc_iova() return 0.
+--Sig_/qMqdXEy7FW0l3m2Xb.djr01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-pqi_scsi_queue_command
-  pqi_raid_submit_scsi_cmd_with_io_request
-    scsi_dma_map
-      map_sg
-        dma_ops_alloc_iova
-         alloc_iova_fast
+Hi Ilya,
 
-Later, map_sg()->iommu_map_page() would probably fail due to the invalid
-PFN 0, and call free_iova_fast()->iova_rcache_insert() to insert it to
-the rcache. Finally, it will trigger the BUG_ON(!iova) here.
+On Wed, 10 Jul 2019 20:21:33 +0200 Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> Yes, that is what I figured would happen.  I assume you would keep
+> carrying this fixup until the ceph tree is merged.
 
-    kernel BUG at drivers/iommu/iova.c:801!
-    Workqueue: kblockd blk_mq_run_work_fn
-    RIP: 0010:iova_magazine_free_pfns+0x7d/0xc0
-    Call Trace:
-     free_cpu_cached_iovas+0xbd/0x150
-     alloc_iova_fast+0x8c/0xba
-     dma_ops_alloc_iova.isra.6+0x65/0xa0
-     map_sg+0x8c/0x2a0
-     scsi_dma_map+0xc6/0x160
-     pqi_aio_submit_io+0x1f6/0x440 [smartpqi]
-     pqi_scsi_queue_command+0x90c/0xdd0 [smartpqi]
-     scsi_queue_rq+0x79c/0x1200
-     blk_mq_dispatch_rq_list+0x4dc/0xb70
-     blk_mq_sched_dispatch_requests+0x249/0x310
-     __blk_mq_run_hw_queue+0x128/0x200
-     blk_mq_run_work_fn+0x27/0x30
-     process_one_work+0x522/0xa10
-     worker_thread+0x63/0x5b0
-     kthread+0x1d2/0x1f0
-     ret_from_fork+0x22/0x40
+Of course.
 
-Fix it by validating the return from the 2nd alloc_iova_fast() in
-dma_ops_alloc_iova(), so map_sg() could handle the error condition
-immediately.
+--=20
+Cheers,
+Stephen Rothwell
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- drivers/iommu/amd_iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
+--Sig_/qMqdXEy7FW0l3m2Xb.djr01
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 73740b969e62..f24c689b4e01 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -1697,6 +1697,8 @@ static unsigned long dma_ops_alloc_iova(struct device *dev,
- 	if (!pfn)
- 		pfn = alloc_iova_fast(&dma_dom->iovad, pages,
- 				      IOVA_PFN(dma_mask), true);
-+	if (!pfn)
-+		return DMA_MAPPING_ERROR;
- 
- 	return (pfn << PAGE_SHIFT);
- }
--- 
-1.8.3.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mWtQACgkQAVBC80lX
+0Gza1gf/aerGthD0YS4W/eCgBMMyml2K3lFzn8K5fWlvZymUolz/n6JTDNh6yR/n
+MU/9KsdNWl918aEBX1k3ioCtHTxDvbKtRsN76pxsZktEJXLCR7N78bFCN6x4UYTX
+09K5PCYPnh/nkMuFnecjx5w+fYtCsv2CjnM0BwcydcPSAGMZtkWqjWrzjMulYqeO
+Jc149ERGJF1JNVD7ZCyw7xtUsYdLKkYBL00nhn1usVRD+ygNC9a/f90TcZykbOn9
+R0jIbFBsjZfV4m3od3sN0f6jt0iHvyNJhDswDZ9qlMoRIYVaThse0vJrDwZTgwyL
+3C2wVLBc2qZ6t7DQmY6GRX0EApJU6w==
+=bauX
+-----END PGP SIGNATURE-----
+
+--Sig_/qMqdXEy7FW0l3m2Xb.djr01--
