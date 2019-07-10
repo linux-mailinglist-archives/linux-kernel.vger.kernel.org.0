@@ -2,142 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCB364AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E8C64982
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbfGJQU4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 12:20:56 -0400
-Received: from m4a0041g.houston.softwaregrp.com ([15.124.2.87]:44631 "EHLO
-        m4a0041g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727377AbfGJQU4 (ORCPT
+        id S1727644AbfGJP02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:26:28 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:32992 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfGJP02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 12:20:56 -0400
-X-Greylist: delayed 2090 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jul 2019 12:20:02 EDT
-Received: FROM m4a0041g.houston.softwaregrp.com (15.120.17.146) BY m4a0041g.houston.softwaregrp.com WITH ESMTP;
- Wed, 10 Jul 2019 16:19:52 +0000
-Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
- M4W0334.microfocus.com (2002:f78:1192::f78:1192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Wed, 10 Jul 2019 15:26:04 +0000
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (15.124.72.11) by
- M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Wed, 10 Jul 2019 15:26:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b9X8jDCKGhL7vIGJw80VKuAughKxm+U3ZDVfl0no8f825xmZlWHcCWSKfsrx8nLY3HeZMqw4wHzwoka61fZuItF8Bg0ZdNoA6vYrC5AJfNrEjHGEBX9bk6cz0hWzWYPK6XLNkDCIJblxC6f3rBlDi++9i4om7WczJvJ+BRmi9X8NWaXZhPGjgEXlhQcC/OEWlctyyHogs+SbY8leAdLn4ivaJ2ECPfyObdRrewZFK5kmyVfZW0Pi/ipX055+QxoxopO6rUbj/dQp44pnHto+DZs42He4VLl2EakUlp7iZU5ucKFgSTkxGhIkNWlBZw6kKw6j2DQMJ1E2JdUrzZJRLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TTt3N137NfPoRDi/y3O0RFORyFm1UZDYTHsKxAtBcxU=;
- b=WRhaKsPL0ddaLcXsf9ah/oP//k1nZluJLqg+qQR+Q/ZI8qXMRRKTH3/ZNUUuv9g8BOqhreP+tABQzhhyYakgZZms7a37G62tcSdsTIuM+QhTiR22xazr8PMhou5DDM+Rsy8zOze3cRmCnJIXt5/S+cFSU7JI+5wVJHT185xeD8WnLu3a7gq20EPa1FKZz8/J94GtnnzzvGDWOF673EAvPF+SoZ5AjpJiU8KZf/7vPxhMd3kR2g+Pd5MLpjHbp0d7pnv4Gl1JELzHIyQMqzUj1URumU7pZFbICvdoYtkw1clmsvpzQdNe43cmdFB33RHWQ8P0uxzYbcJEB01oPTKTNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
- header.d=suse.com;arc=none
-Received: from BYAPR18MB2725.namprd18.prod.outlook.com (20.179.56.95) by
- BYAPR18MB2952.namprd18.prod.outlook.com (20.179.59.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.10; Wed, 10 Jul 2019 15:26:02 +0000
-Received: from BYAPR18MB2725.namprd18.prod.outlook.com
- ([fe80::9c11:600:7b6b:6a32]) by BYAPR18MB2725.namprd18.prod.outlook.com
- ([fe80::9c11:600:7b6b:6a32%7]) with mapi id 15.20.2073.008; Wed, 10 Jul 2019
- 15:26:02 +0000
-From:   Joey Lee <JLee@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>
-CC:     Pavel Machek <pavel@ucw.cz>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        "David Howells" <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V34 10/29] hibernate: Disable when the kernel is locked
- down
-Thread-Topic: [PATCH V34 10/29] hibernate: Disable when the kernel is locked
- down
-Thread-Index: AQHVNzPImMFF/5PBvEamjEIg+L0CxQ==
-Date:   Wed, 10 Jul 2019 15:26:02 +0000
-Message-ID: <20190710152547.GQ11107@linux-l9pv.suse>
-References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-11-matthewgarrett@google.com>
- <20190622175208.GB30317@amd>
- <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB3PR0102CA0017.eurprd01.prod.exchangelabs.com
- (2603:10a6:8::30) To BYAPR18MB2725.namprd18.prod.outlook.com
- (2603:10b6:a03:103::31)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [124.11.22.254]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 07506e7d-26ce-47f0-4cfc-08d7054aeaf2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR18MB2952;
-x-ms-traffictypediagnostic: BYAPR18MB2952:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR18MB2952B346C50EF33585D3D476A3F00@BYAPR18MB2952.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0094E3478A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(376002)(39860400002)(366004)(396003)(189003)(199004)(2906002)(14454004)(66446008)(66556008)(4326008)(11346002)(64756008)(446003)(66476007)(66946007)(1076003)(486006)(186003)(86362001)(305945005)(71200400001)(102836004)(478600001)(7416002)(6916009)(76176011)(966005)(229853002)(9686003)(81156014)(6512007)(81166006)(54906003)(6246003)(68736007)(3846002)(6116002)(25786009)(386003)(8936002)(7736002)(476003)(66066001)(36756003)(80792005)(4744005)(5660300002)(6436002)(99286004)(53936002)(6506007)(8676002)(52116002)(316002)(6306002)(71190400001)(6486002)(33656002)(14444005)(26005)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR18MB2952;H:BYAPR18MB2725.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hiKQ1IQsNuUV2S7ta13UgQBfp1hWIIs8SgzgRcq9d651ornEXB/gQNKkRD4WY1Db5cSXNfYVTjSwadtmRYTtCMkxCzzhRFCbOUV+QY4AILGJQb6r9j49g1V7L74001p6DhK0QMzw6287VPnAgtMkGxae6sQW0Nrz78DhuZpu7WqTyUs9GHKEnqNUFQNl4JSZOzI/n5jvq1mS0T4S/HR+yr0tJ3ktT0AyQDE5jtT26lFk7OB899PlFmRxgCYsRu0sVGg2zvkmLgtqqtNBJrPd+5mCGQEs/Ltbz2LQ4ZkCJOFh3di0w/9/GoKvDdcu8WtRL+6coC1qWaBjELWFwcEZh9gHXbQf8xh1FJ6ghLgdO+UHn7Y3kJHlNCVqSp/E23qJz0lrZhc+6mGmNu/39kmRSk95cpLJ2ZddQC2hn2JtXow=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <570ACDF99ABAD3428E41574A4B38E684@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Wed, 10 Jul 2019 11:26:28 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i11so2594036edq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 08:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HvP9tTAwaaYJMZBGKOx/DXOnWdBe7zTCNsTQBUNN9UU=;
+        b=VE9DvZ7tmj0h7eXR7nx6Y/YBeM0ouoY0jSH+AKwdDxRg1jMJ3ZAe6qYjsPHKrfNvCp
+         IB4k743Buiu9MvGx1Fap8pBYM3ufk2ygUOnCSObcdgLRSwMnWLLbTKLXz1FpegaaCLcU
+         cpc5lSpvwthHG5nAS4DFOKnVLt4PXeuVxW1sE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=HvP9tTAwaaYJMZBGKOx/DXOnWdBe7zTCNsTQBUNN9UU=;
+        b=pInQk5rZaLvWQCLm2pbIFU/BhhPuS8v0EYLMAsQtuGPgOud2goGGXkWWQ1YqEPDpBP
+         Ezs3LeIooe10olUUMXcBmIGRnIwIYcakZ6p20540p5YVOSTEeGA88bXz1faEJCRiosm9
+         q3/8VMwczLAxmZTQ5YzfQQkYOzzcMbY3ZVSmnruC5DKejiuwjIErH/76WgXIlxtEmMYY
+         KiogyLcD/XnYCt1nH/Oi5lOTaY4Or8665V/8Ou1rG6vw+80x9R9PSLoiUe+OAPnDde9w
+         J4mLzNWLN2Xx8rjvJ3jiPvabCod7tes9xijT3mn9qe9eZcJXFkZAmIeSYaUAEAmsHjAw
+         G/GQ==
+X-Gm-Message-State: APjAAAXS+TExYz7yXfYwz6nOqQUI9sM9n+N47v5xVZ72IjXNT26zz6IM
+        wLKnYL8Iv0W0G7BD98HtssUBbQ==
+X-Google-Smtp-Source: APXvYqwZSKTcqghlbKyxkHf0tDpdI8vigua52BxvTNHkEi7ce7m7sGHenyW6atReTQ2tdo2izE3LaQ==
+X-Received: by 2002:a50:ad01:: with SMTP id y1mr31465279edc.180.1562772385633;
+        Wed, 10 Jul 2019 08:26:25 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id o22sm817784edc.37.2019.07.10.08.26.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 08:26:24 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 17:26:22 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Pekka Paalanen <ppaalanen@gmail.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>, tzimmermann@suse.de,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH 1/2] drm/vram: store dumb bo dimensions.
+Message-ID: <20190710152622.GQ15868@phenom.ffwll.local>
+Mail-Followup-To: Pekka Paalanen <ppaalanen@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>, tzimmermann@suse.de,
+        Sean Paul <sean@poorly.run>
+References: <20190626065551.12956-1-kraxel@redhat.com>
+ <20190626065551.12956-2-kraxel@redhat.com>
+ <20190626144013.GB12510@ravnborg.org>
+ <20190626162754.GV12905@phenom.ffwll.local>
+ <20190708163945.1d3757b3@eldfell.localdomain>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07506e7d-26ce-47f0-4cfc-08d7054aeaf2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2019 15:26:02.5570
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JLee@suse.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR18MB2952
-X-OriginatorOrg: suse.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708163945.1d3757b3@eldfell.localdomain>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Jun 24, 2019 at 03:21:23PM +0200, Jiri Kosina wrote:
-> On Sat, 22 Jun 2019, Pavel Machek wrote:
+On Mon, Jul 08, 2019 at 04:39:45PM +0300, Pekka Paalanen wrote:
+> On Wed, 26 Jun 2019 18:27:54 +0200
+> Daniel Vetter <daniel@ffwll.ch> wrote:
 > 
-> > > There is currently no way to verify the resume image when returning
-> > > from hibernate.  This might compromise the signed modules trust model,
-> > > so until we can work with signed hibernate images we disable it when the
-> > > kernel is locked down.
+> > On Wed, Jun 26, 2019 at 04:40:13PM +0200, Sam Ravnborg wrote:
+> > > Hi Gerd.
+> > > 
+> > > On Wed, Jun 26, 2019 at 08:55:50AM +0200, Gerd Hoffmann wrote:  
+> > > > Store width and height of the bo.  Needed in case userspace
+> > > > sets up a framebuffer with fb->width != bo->width..
+> > > > 
+> > > > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > > > ---
+> > > >  include/drm/drm_gem_vram_helper.h     | 1 +
+> > > >  drivers/gpu/drm/drm_gem_vram_helper.c | 2 ++
+> > > >  2 files changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
+> > > > index 1a0ea18e7a74..3692dba167df 100644
+> > > > --- a/include/drm/drm_gem_vram_helper.h
+> > > > +++ b/include/drm/drm_gem_vram_helper.h
+> > > > @@ -39,6 +39,7 @@ struct drm_gem_vram_object {
+> > > >  	struct drm_gem_object gem;
+> > > >  	struct ttm_buffer_object bo;
+> > > >  	struct ttm_bo_kmap_obj kmap;
+> > > > +	unsigned int width, height;
+> > > >  
+> > > >  	/* Supported placements are %TTM_PL_VRAM and %TTM_PL_SYSTEM */
+> > > >  	struct ttm_placement placement;
+> > > > diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+> > > > index 4de782ca26b2..c02bf7694117 100644
+> > > > --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> > > > +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> > > > @@ -377,6 +377,8 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
+> > > >  	gbo = drm_gem_vram_create(dev, bdev, size, pg_align, interruptible);
+> > > >  	if (IS_ERR(gbo))
+> > > >  		return PTR_ERR(gbo);
+> > > > +	gbo->width = args->width;
+> > > > +	gbo->height = args->height;
+> > > >  
+> > > >  	ret = drm_gem_handle_create(file, &gbo->gem, &handle);
+> > > >  	if (ret)  
+> > > 
+> > > Be warned, I may have missed something in the bigger picture.
+> > > 
+> > > Your patch will set width and height only for dumb bo's
+> > > But we have several users of drm_gem_vram_create() that will
+> > > not set the width and height.
+> > > 
+> > > So only in some cases can we rely on them being set.
+> > > Should this be refactored so we always set width, height.
+> > > Or maybe say in a small comment that width,height are only
+> > > set for dumb bo's?  
 > > 
-> > I keep getting these...
-> > 
-> > IIRC suse has patches to verify the images.
+> > Also for dumb bo allocated buffers if userspace gets the dimensions wrong
+> > between dumb_create and the addfb, something is wrong. Papering over that
+> > by remembering the right dimensions doesn't look like a good solution.
 > 
-> Yeah, Joey Lee is taking care of those. CCing.
->
+> Hi,
+> 
+> just a note irrelevant to this particular driver:
+> 
+> I have deliberately allocated a too high dumb buffer in userspace and
+> created multiple smaller DRM FBs out of it with different offsets
+> (i * 128 * stride). This has been a very useful hack to see that a
+> GPU-less driver actually honours fences correctly, because if it
+> doesn't, the whole image will be off by the offset delta, which is
+> epileptically easy to see.
+> 
+> So I'm not getting the height wrong, I am deliberately overallocating
+> and aliasing.
 
-The last time that I sent for hibernation encryption and authentication is
-here:
-    https://lkml.org/lkml/2019/1/3/281 
-
-It needs some big changes after review:
- - Simplify the design: remove keyring dependency and trampoline. 
- - Encrypted whole snapshot image instead of only data pages.
- - Using TPM:
-	- Direct use TPM API in hibernation instead of keyring
-	- Localities (suggested by James Bottomley)
-
-I am still finding enough time to implement those changes, especial TPM
-parts.
-
-Thanks
-Joey Lee
+Yeah that's the other reason for why this patch is wrong: It would break
+things like this trickery here :-) The separation between backing storage
+and drm_fb is intentional, multiple fb in one overall fb is explicitly ok.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
