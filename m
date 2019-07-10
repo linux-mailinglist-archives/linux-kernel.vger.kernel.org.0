@@ -2,90 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C014C6409C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4029640A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfGJFWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 01:22:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfGJFWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 01:22:24 -0400
-Received: from localhost (unknown [37.142.3.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9141A20665;
-        Wed, 10 Jul 2019 05:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562736143;
-        bh=yG9MOOky9cIIKLWWBpb40bH8p8EqcI4EC3OhoeA5xYg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dhrijKo73nXgq0AeyoQfoW2qeSTr20RagZelBGmapoJcaiUKziOWhAWgwpd6b6+0Y
-         L7u3fZpD99BFkV/DQHkAItENtRZaJ+rnaXAOZH6tmX3dcKyaS9OEZE27Cwe+wFbymf
-         dL8zzhTH9O1NOcMPU+PCHuLkwEKnY5IWxdO5zSEg=
-Date:   Wed, 10 Jul 2019 08:22:19 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Saeed Mahameed <saeedm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Boris Pismenny <borisp@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] net/mlx5e: Refactor switch statements to avoid using
- uninitialized variables
-Message-ID: <20190710052219.GC7034@mtr-leonro.mtl.com>
-References: <20190708231154.89969-1-natechancellor@gmail.com>
- <20190710044748.3924-1-natechancellor@gmail.com>
+        id S1727030AbfGJFY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 01:24:58 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40216 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfGJFY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 01:24:58 -0400
+Received: by mail-ot1-f67.google.com with SMTP id e8so899551otl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 22:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ioMDB4xCRfyih9blEfQfFq/5H+9f5r/eOiGuXZsKTpM=;
+        b=mNA1e83gi656UXPR8nqOQSjw8wH59lM6GanNHXNRGXbg3bq0gEGgsCw16oi+sZU9DJ
+         eQZNOeldrdnuV/5hnGKQpKr1o2kQF/+U+p3TsmIt5rF6zYyIyCNLkjBN4/L5YKqKT399
+         fjPfPjemWu2HGAWRYhrVRBy+683K0HsvchE32sejFHgVZACcqHIZ+f/pqMUocPt7Vl4L
+         KWMDPgOhI1YaN2NTfaA9ps2KehruPFGrFg/YgM5cP42ecPkX2bSaw3Ozx3KQ593gVsOd
+         gw5i9X/nIAPz3i1KLeKE3PdtZ5ohiIMDa+//oPJUWKzQddrhWXjk6v1O30WeFi5CPm/K
+         /Etg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ioMDB4xCRfyih9blEfQfFq/5H+9f5r/eOiGuXZsKTpM=;
+        b=trz9ZFUoMmpYF2As7Hq3/v0oo12LDMbwpQNSZs8+aQ+oYf0thm/Z4VURIclTIlR7GN
+         t4tJ1j2mQlN7Oe19zFpx/wlWqCMhvsykFtatFFCSZtD1xHzDTy2ba26jmHECZtXxohCK
+         LskumLex6DG0ylLnl8TaUyfsBANSoRwtgrp5Syns9aswiRlJeFPmFe9+4IJaTCmGcWh2
+         ElH4hcArYbQW9dPq820ps6W5dEF1ePRrWJiuLb52h787ugZ7r3ds9b9kze1HamDEXVjp
+         Uu4d0VnEhRyZMX51Ba5PXCF44SU/K0t+/YiZbzO+rNNrkt5UifEDh9MCVIDoRj6l3HeH
+         Qe6g==
+X-Gm-Message-State: APjAAAUmRQc/VQTOWFiwfKzJFK4Sn5Uw1IytskYdVO3dFsR5tkM22zAW
+        77fXkcJzuxKeNwel59om9WAQjqVSzKibZ2pLrl1JTg==
+X-Google-Smtp-Source: APXvYqzNWCTp+PGnXinfRndYKaIVZTZf7jZeNiuotZqNqZys/IitGZeb1egfuAbp/LgydGLR3qx1qbqBFaufmhseWLw=
+X-Received: by 2002:a05:6830:2010:: with SMTP id e16mr9197123otp.344.1562736296734;
+ Tue, 09 Jul 2019 22:24:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710044748.3924-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190709182543.GA6611@hari-Inspiron-1545>
+In-Reply-To: <20190709182543.GA6611@hari-Inspiron-1545>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Wed, 10 Jul 2019 13:24:45 +0800
+Message-ID: <CA+Px+wVMn-wZ_aoAV2OMEg4zE7aoYG__my2EJM_PP5ghaXjoFw@mail.gmail.com>
+Subject: Re: [PATCH] sound: soc: codecs: mt6358: change return type of mt6358_codec_init_reg
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shunli Wang <shunli.wang@mediatek.com>,
+        ALSA development <alsa-devel@alsa-project.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 09:47:49PM -0700, Nathan Chancellor wrote:
-> clang warns:
+On Wed, Jul 10, 2019 at 2:25 AM Hariprasad Kelam
+<hariprasad.kelam@gmail.com> wrote:
 >
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:251:2:
-> warning: variable 'rec_seq_sz' is used uninitialized whenever switch
-> default is taken [-Wsometimes-uninitialized]
->         default:
->         ^~~~~~~
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:255:46: note:
-> uninitialized use occurs here
->         skip_static_post = !memcmp(rec_seq, &rn_be, rec_seq_sz);
->                                                     ^~~~~~~~~~
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:239:16: note:
-> initialize the variable 'rec_seq_sz' to silence this warning
->         u16 rec_seq_sz;
->                       ^
->                        = 0
-> 1 warning generated.
+> As mt6358_codec_init_reg function always returns 0 , change return type
+> from int to void.
 >
-> The default case statement should return in tx_post_resync_params like
-> in fill_static_params_ctx. However, as Nick and Leon point out, the
-> switch statements converted into if statements to clean up the code a
-> bit since there is only one cipher supported. Do that to clear up the
-> code.
+> fixes below issue reported by coccicheck
+> sound/soc/codecs/mt6358.c:2260:5-8: Unneeded variable: "ret". Return "0"
+> on line 2289
 >
-> Fixes: d2ead1f360e8 ("net/mlx5e: Add kTLS TX HW offload support")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/590
-> Suggested-by: Leon Romanovsky <leon@kernel.org>
-> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
->
-> * Refactor switch statements into if statements
->
->  .../mellanox/mlx5/core/en_accel/ktls_tx.c     | 33 +++++++------------
->  1 file changed, 11 insertions(+), 22 deletions(-)
->
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Acked-by: Tzung-Bi Shih <tzungbi@google.com>
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Thanks for cleaning this up.
