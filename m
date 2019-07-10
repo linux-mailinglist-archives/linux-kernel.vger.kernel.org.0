@@ -2,93 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCAE63FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C48E63E81
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 02:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725994AbfGJEAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 00:00:04 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46577 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfGJEAD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 00:00:03 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h21so946279qtn.13
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 21:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bVijEPpZkHSMCYZyf6qY35aBcvTy8wAdN6VIFPPyhnE=;
-        b=duj5SZfXX2LbjWs+NHlLrYz8EWUV1bLTt+b2ja1JbDclSXPZ91vbCP3OFJr2xzopeO
-         VHk5gOE9EMsqUnZrd8+Un/0tmFGNXhH4OBAtlhO5lS7n2gWnGYzrbm6J5h2EHBFBpTsF
-         R+64rokrSEcxjZbibVxeKl/l7ydC9hl4Ok3MDkUbO7tU4NadF+2tC09Eck7YWsidl4Sv
-         lLdOidpmJl31Hr5nhk5ncSaOEXoV28596JN4KsjaZWGLbgboHEuAGHhmei6HKxM6PTZg
-         xYBDRWUO1Bqdb28qH9qRo4Bdds+iqJmeFTwHM3T6bCrcak20oxnr3GCD7efEeT8V67Ww
-         gUlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bVijEPpZkHSMCYZyf6qY35aBcvTy8wAdN6VIFPPyhnE=;
-        b=C2n0hWDm82aUgU9M3H3A7E0onzIm2QOausLPAPdlzC4LEuSbBJbuPTbprc5BUi8KgP
-         qLVX6EHBfGPtvDotwY0JSTxqzhOEi61SUsgKk5aC1IksVg5vmhEWBSEZwkeaQnqI8poV
-         vx1PuSG4y7b4E/G8EKUS6vjiAMcZTJtA+/tgbgsYAuPg4SsHynSz/DO+H4aR2MxPC/DR
-         WDOPm3ocwKoKOzR/dPlTV5Wk9Jtc3glXihZZQkiuMDcdFgYiKk9H93g0dY68EaLD4qIX
-         jUYe+bwJGWvci7EOnQ5g8aAmx0GwqGz/nY3I1IokiQjHjuJ9l2wvpKtVpRgt2g2lsX2w
-         GQ7g==
-X-Gm-Message-State: APjAAAWtBkJA5mrARFXcej99c5KKKgdh/ZqwO4Jgs0VKqNVR2rcKbTER
-        uYi6fBjXDpJTkrLJ41+zpw==
-X-Google-Smtp-Source: APXvYqw+Jk3f5TgssbnTBSWfsuzbx1fFah2szeE3SL0x7E8E7G7nnjgZq0CN5iGOwN1wDJLkpFJVPw==
-X-Received: by 2002:ac8:244f:: with SMTP id d15mr21112167qtd.32.1562731202768;
-        Tue, 09 Jul 2019 21:00:02 -0700 (PDT)
-Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
-        by smtp.googlemail.com with ESMTPSA id f5sm369088qth.35.2019.07.09.21.00.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 21:00:02 -0700 (PDT)
-From:   Keyur Patel <iamkeyur96@gmail.com>
-Cc:     iamkeyur96@gmail.com, Johan Hovold <johan@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] gnss: core: added logging statement when kfifo_alloc fails
-Date:   Tue,  9 Jul 2019 19:59:56 -0400
-Message-Id: <20190709235957.2481-1-iamkeyur96@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <61c2ba4e229a6971e90627433bedae2dd28ea6a1.camel@perches.com>
-References: <61c2ba4e229a6971e90627433bedae2dd28ea6a1.camel@perches.com>
+        id S1726623AbfGJABo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 20:01:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:43261 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726284AbfGJABn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 20:01:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jzr24tKxz9sN4;
+        Wed, 10 Jul 2019 10:01:38 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562716900;
+        bh=ZWT4dSLXGeBs9XVigkI+30TBQ9J8kSZ60+J4UqtPvYM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LafklzLdksK/zVUdYrI/ey0rB/HWstyncJSsMtWq0eDwGu/awoMl+ujmWHD7c4DaB
+         YJ0E6aD4Ze7MsDDVdb8YGIKMnKFs9s6D+fJJxoRMVAVNmNLBnsC+vDk3hkPrJcsYtH
+         2jYoYNrr+0/xY8N8ORenC23+mytneUu6m5ru81PAxTO0g/4wKOxzFhEqnDHz9Y36Gg
+         s8T1W63kTEUAQQXDAKWnFc3op6KPsi4weshNR7W6WtHYMwVYxFnZK/5bmEgBRcnoy1
+         lTKUmHzIhqB5LpjynDDRCwxu3llfOiNbP7biNmOyCwIiC398/Mr372LjiojWqCseaP
+         DHlxys483Ll+A==
+Date:   Wed, 10 Jul 2019 10:01:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sage Weil <sage@newdream.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190710100138.0aa36d47@canb.auug.org.au>
+In-Reply-To: <20190709165459.11b353d8@canb.auug.org.au>
+References: <20190709165459.11b353d8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/K8zLqV=lrMVaNpLiLljZFRd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added missing logging statement when kfifo_alloc fails, to improve
-debugging.
+--Sig_/K8zLqV=lrMVaNpLiLljZFRd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
----
-Changes in v2:
-- fixed braces
----
- drivers/gnss/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hi all,
 
-diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
-index e6f94501cb28..1b7387ee643b 100644
---- a/drivers/gnss/core.c
-+++ b/drivers/gnss/core.c
-@@ -255,8 +255,10 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
- 	init_waitqueue_head(&gdev->read_queue);
- 
- 	ret = kfifo_alloc(&gdev->read_fifo, GNSS_READ_FIFO_SIZE, GFP_KERNEL);
--	if (ret)
-+	if (ret) {
-+		pr_err("kfifo_alloc failed\n");
- 		goto err_put_device;
-+	}
- 
- 	gdev->write_buf = kzalloc(GNSS_WRITE_BUF_SIZE, GFP_KERNEL);
- 	if (!gdev->write_buf)
--- 
-2.22.0
+On Tue, 9 Jul 2019 16:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> drivers/block/rbd.c: In function 'wake_lock_waiters':
+> drivers/block/rbd.c:3933:2: error: implicit declaration of function 'lock=
+dep_assert_held_exclusive'; did you mean 'lockdep_assert_held_write'? [-Wer=
+ror=3Dimplicit-function-declaration]
+>   lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   lockdep_assert_held_write
+>=20
+> Caused by commit
+>=20
+>   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() =
+-> lockdep_assert_held_write()")
+>=20
+> interacting with commits
+>=20
+>   637cd060537d ("rbd: new exclusive lock wait/wake code")
+>   a2b1da09793d ("rbd: lock should be quiesced on reacquire")
+>=20
+> from the ceph tree.
+>=20
+> I have added the following merge fix patch for today.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 9 Jul 2019 16:46:12 +1000
+> Subject: [PATCH] rbd: fix up for lockdep_assert_held_exclusive rename
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/block/rbd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 723c3ef4bd59..02216fbdb854 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -3930,7 +3930,7 @@ static void wake_lock_waiters(struct rbd_device *rb=
+d_dev, int result)
+>  	struct rbd_img_request *img_req;
+> =20
+>  	dout("%s rbd_dev %p result %d\n", __func__, rbd_dev, result);
+> -	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+> +	lockdep_assert_held_write(&rbd_dev->lock_rwsem);
+> =20
+>  	cancel_delayed_work(&rbd_dev->lock_dwork);
+>  	if (!completion_done(&rbd_dev->acquire_wait)) {
+> @@ -4209,7 +4209,7 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd=
+_dev)
+>  	bool need_wait;
+> =20
+>  	dout("%s rbd_dev %p\n", __func__, rbd_dev);
+> -	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+> +	lockdep_assert_held_write(&rbd_dev->lock_rwsem);
+> =20
+>  	if (rbd_dev->lock_state !=3D RBD_LOCK_STATE_LOCKED)
+>  		return false;
 
+This fix now needs to be applied to the merge of the ceph tree.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/K8zLqV=lrMVaNpLiLljZFRd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0lKuIACgkQAVBC80lX
+0Gzkhwf9HBh6ZtEpp4PTwOrsoynTc3CYF5zxyUoT7jOwCjrWBNvxSwhzrM/fdbKs
+0YSAtiOQEWC7BJo1DpYgs0XQIig/LkJAoVFuOETE7AB14qTLaxjlvLnJ1dkhaM2l
+9sZmbsbuJgGlJV/MbxVgVlbh0hb4S/lg+DQqXndjgxgt5C0rA+K4FjCBx0mwMv99
+lmJIn+o1car8FcF+BXQKs2X+dzFByjhQCnrWzso+HvJnL09vLga6DYsrcsZUTeEm
+wQ2L6JzM0GvPjnuZHaf/nlLOE1FVv4tPnsvf5CmDBlDiZT10XiUEXUP85rMKvn6E
+B3VSAWgTYDkkkarDl7NhNf/NtDWy4A==
+=o5q5
+-----END PGP SIGNATURE-----
+
+--Sig_/K8zLqV=lrMVaNpLiLljZFRd--
