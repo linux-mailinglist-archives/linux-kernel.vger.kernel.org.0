@@ -2,156 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D4164A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBB4564A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfGJP6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:58:18 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36246 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfGJP6R (ORCPT
+        id S1728339AbfGJP66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:58:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbfGJP66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:58:17 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k21so2695015edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 08:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a2hs0dyIQnh/sqo6KZ61rFm4L2r82B8qQvgfu80yNSo=;
-        b=gUROxfvOCyof5ttodsBwlj38d9Umt2I6xGHrwlqIsUPaybPlSEyo4PeNiLuLBswZBu
-         P2LmcnGTqODgeD4cMmrLHxkm4Iq/LqAXgBIhK2Dx55nA07tPc3wGPSLpk1/msnl6E/Zm
-         GYl49EaZAKHk8zVTYx91QARCB83H+wvpSxA90NlBeMIVCcAo15xoY54JpX7JHcIMTKoc
-         UsuJnGacdA2AzPTi8L4x6/cRVu1dtBW5/FSXWhxzF2GVvq1x5chEg9DO2wO+GpoyJpz8
-         bOu2Oyb4yZhXQsckMoHRzjJsZAv4Q7Jzrfqjb3xwTCrnMTLbJAEvxOBLVwkwPMyH9GOb
-         zn+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a2hs0dyIQnh/sqo6KZ61rFm4L2r82B8qQvgfu80yNSo=;
-        b=sK+KSrbv9hJxTj129BLp+YrtB/kavIYwXn3pFre7up2A+kfIeKkNEkexHCNoDFijli
-         V+gHLdvng3hpFy0zIhL+KelGY2tVfbH+80VKOL8aSiJDtGVwsmPF3rin2N05evlq2XhY
-         HM07ahcMImeapd1LJwNWa2AtkZTJXX/Z8sVYzyO7t8sBV/OWDo+pq2pUQGyr2R8IFvPO
-         22cSC5czQJrrR3lWwrNCJKCn/YzygHsHzN9+rUTZH0YFQ3zjl4lENcNsG5VHKUciVxBf
-         hteJHk88xNNrKv7BYebyTJCA6YB0t/AcFLfUnRmuWEDkDJ6yXm0U/BKZTtdpj+lWubUJ
-         4XSA==
-X-Gm-Message-State: APjAAAVp5VKCtlqt4qAPDRWsj6QNp1NEvIkdhnrZ1nmmH7a9TBXoYcQd
-        3mPmNA1crW0V05diQSF9RU+E+sDv7vABxmhNiqwruQ==
-X-Google-Smtp-Source: APXvYqzjnwEQ5TMXiUq18EB46BY4ST+24XYmOoYFpr+h9ihRCO3FuxJVvZCtqNTGY1LYXAg4KvZi2LZiyzoe+Acj8C8=
-X-Received: by 2002:a17:906:d1d0:: with SMTP id bs16mr26806724ejb.286.1562774294818;
- Wed, 10 Jul 2019 08:58:14 -0700 (PDT)
+        Wed, 10 Jul 2019 11:58:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ye5D+69oXsL3ZSs+9dVCnYnrCkxo5vD05Afm448wymE=; b=oL1AsU5FoQd4Mf9VU+4awTZLX
+        3JAYkeJFzj6XEY4LsS0y9W6HJtW0QvVizzzKM3k9SQwP74YdTjPJeF8d9bdV5U+1w1Y7SE+X+cocj
+        xHwjx7Sl5UG5RQIhLiUKKAYqLypx+laOf1e3H70xkKpMZ6Lw3X3n8cZs0gjF0DEwV93RBjFpFnBPU
+        OQPUBFUVwQ5QOC3uYpPxSm+s8L2s+saPyAjmSWuV6KTe4sX0xFB7Z5o5Vzp97EZZmQthuhG0Imjt/
+        s+pdrvG86YTJBIZzwMIcYT9yIQ9goOpBwNhP2stSAgQuIb2dYRr46+vF4rNbgGZBxoTZbYNDC/EXG
+        4UFy68UZg==;
+Received: from 177.41.133.216.dynamic.adsl.gvt.net.br ([177.41.133.216] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlEzc-0000em-QW; Wed, 10 Jul 2019 15:58:53 +0000
+Date:   Wed, 10 Jul 2019 12:58:49 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Shobhit Kukreti <shobhitkukreti@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation: filesystems: Convert ufs.txt to
+ reStructuredText format
+Message-ID: <20190710125849.38f30c43@coco.lan>
+In-Reply-To: <1562772683-32422-1-git-send-email-shobhitkukreti@gmail.com>
+References: <20190710092605.73ddee8b@coco.lan>
+        <1562772683-32422-1-git-send-email-shobhitkukreti@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20190709182014.16052-1-pasha.tatashin@soleen.com> <0a141018-c09e-56e4-6a73-45b951e8490f@gmail.com>
-In-Reply-To: <0a141018-c09e-56e4-6a73-45b951e8490f@gmail.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 10 Jul 2019 11:58:04 -0400
-Message-ID: <CA+CK2bBJydDGSGtQ49RDLR-WdiH=8G4WfDe5PEe8DE1rfEFONQ@mail.gmail.com>
-Subject: Re: [v2 0/5] arm64: allow to reserve memory for normal kexec kernel
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 11:28 AM Matthias Brugger
-<matthias.bgg@gmail.com> wrote:
->
->
->
-> On 09/07/2019 20:20, Pavel Tatashin wrote:
-> > Changelog
-> > v1 - v2
-> >       - No changes to patches, addressed suggestion from James Morse
-> >         to add "arm64" tag to cover letter.
-> >       - Improved cover letter information based on discussion.
-> >
-> > Currently, it is only allowed to reserve memory for crash kernel, because
-> > it is a requirement in order to be able to boot into crash kernel without
-> > touching memory of crashed kernel is to have memory reserved.
-> >
-> > The second benefit for having memory reserved for kexec kernel is
-> > that it does not require a relocation after segments are loaded into
-> > memory.
-> >
-> > If kexec functionality is used for a fast system update, with a minimal
-> > downtime, the relocation of kernel + initramfs might take a significant
-> > portion of reboot.
-> >
-> > In fact, on the machine that we are using, that has ARM64 processor
-> > it takes 0.35s to relocate during kexec, thus taking 52% of kernel reboot
-> > time:
-> >
-> > kernel shutdown       0.03s
-> > relocation    0.35s
-> > kernel startup        0.29s
-> >
-> > Image: 13M and initramfs is 24M. If initramfs increases, the relocation
-> > time increases proportionally.
-> >
-> > While, it is possible to add 'kexeckernel=' parameters support to other
-> > architectures by modifying reserve_crashkernel(), in this series this is
-> > done for arm64 only.
-> >
->
-> I wonder if we couldn't use the crashkernel reserved memory area for that and
-> just add logic to kexec-tools to pass to the kernel a flag (a new magic reboot
-> number?) to use the crashkernel memory for that?
-> The kernel would then unload the crash/capture system in the reserved memory
-> area and reuse the latter for kexec.
-> This would also enable the feature for all architectures.
+Em Wed, 10 Jul 2019 08:31:23 -0700
+Shobhit Kukreti <shobhitkukreti@gmail.com> escreveu:
 
-I decided to take another route: enable MMU during kernel relocation
-on ARM64. This will eliminate the problem that I am experiencing with
-slow relocation.
+> This converts the plain text documentation of ufs.txt to
+> reStructuredText format. Added to documentation build process
+> and verified with make htmldocs
+> 
+> Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
 
-Pasha
+Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
->
-> Regards,
-> Matthias
->
-> > The reason it is so slow on arm64 to relocate kernel is because the code
-> > that does relocation does this with MMU disabled, and thus D-Cache and
-> > I-Cache must also be disabled.
-> >
-> > Alternative solution is more complicated: Setup a temporary page table
-> > for relocation_routine and also for code from cpu_soft_restart. Perform
-> > relocation with MMU enabled, do cpu_soft_restart where MMU and caching
-> > are disabled, jump to purgatory. A similar approach was suggested for
-> > purgatory and was rejected due to making purgatory too complicated.
-> > On, the other hand hibernate does something similar already, but there
-> > MMU never needs to be disabled, and also by the time machine_kexec()
-> > is called, allocator is not available, as we can't fail to do reboot,
-> > so page table must be pre-allocated during kernel load time.
-> >
-> > Note: the above time is relocation time only. Purgatory usually also
-> > computes checksum, but that is skipped, because --no-check is used when
-> > kernel image is loaded via kexec.
-> >
-> > Pavel Tatashin (5):
-> >   kexec: quiet down kexec reboot
-> >   kexec: add resource for normal kexec region
-> >   kexec: export common crashkernel/kexeckernel parser
-> >   kexec: use reserved memory for normal kexec reboot
-> >   arm64, kexec: reserve kexeckernel region
-> >
-> >  .../admin-guide/kernel-parameters.txt         |  7 ++
-> >  arch/arm64/kernel/setup.c                     |  5 ++
-> >  arch/arm64/mm/init.c                          | 83 ++++++++++++-------
-> >  include/linux/crash_core.h                    |  6 ++
-> >  include/linux/ioport.h                        |  1 +
-> >  include/linux/kexec.h                         |  6 +-
-> >  kernel/crash_core.c                           | 27 +++---
-> >  kernel/kexec_core.c                           | 50 +++++++----
-> >  8 files changed, 127 insertions(+), 58 deletions(-)
-> >
+> ---
+> Changes in v3:
+>         1. Reverted to minimally changed ufs.rst
+> 	2. Fix Minor Space Issues
+>         3. Used -M1 in git format-patch to show files as renamed
+> Changes in v2:
+>         1. Removed flat-table
+>         2. Moved ufs.rst to admin-guide
+> 
+>  Documentation/admin-guide/index.rst                |  1 +
+>  .../{filesystems/ufs.txt => admin-guide/ufs.rst}   | 36 +++++++++++++---------
+>  2 files changed, 23 insertions(+), 14 deletions(-)
+>  rename Documentation/{filesystems/ufs.txt => admin-guide/ufs.rst} (69%)
+> 
+> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+> index 2871b79..9bfb076 100644
+> --- a/Documentation/admin-guide/index.rst
+> +++ b/Documentation/admin-guide/index.rst
+> @@ -71,6 +71,7 @@ configure specific aspects of kernel behavior to your liking.
+>     bcache
+>     ext4
+>     jfs
+> +   ufs
+>     pm/index
+>     thunderbolt
+>     LSM/index
+> diff --git a/Documentation/filesystems/ufs.txt b/Documentation/admin-guide/ufs.rst
+> similarity index 69%
+> rename from Documentation/filesystems/ufs.txt
+> rename to Documentation/admin-guide/ufs.rst
+> index 7a602ad..55d1529 100644
+> --- a/Documentation/filesystems/ufs.txt
+> +++ b/Documentation/admin-guide/ufs.rst
+> @@ -1,37 +1,45 @@
+> -USING UFS
+> +=========
+> +Using UFS
+>  =========
+>  
+>  mount -t ufs -o ufstype=type_of_ufs device dir
+>  
+>  
+> -UFS OPTIONS
+> +UFS Options
+>  ===========
+>  
+>  ufstype=type_of_ufs
+>  	UFS is a file system widely used in different operating systems.
+>  	The problem are differences among implementations. Features of
+>  	some implementations are undocumented, so its hard to recognize
+> -	type of ufs automatically. That's why user must specify type of 
+> +	type of ufs automatically. That's why user must specify type of
+>  	ufs manually by mount option ufstype. Possible values are:
+>  
+> -	old	old format of ufs
+> +	old
+> +                old format of ufs
+>  		default value, supported as read-only
+>  
+> -	44bsd	used in FreeBSD, NetBSD, OpenBSD
+> +	44bsd
+> +                used in FreeBSD, NetBSD, OpenBSD
+>  		supported as read-write
+>  
+> -	ufs2    used in FreeBSD 5.x
+> +	ufs2
+> +                used in FreeBSD 5.x
+>  		supported as read-write
+>  
+> -	5xbsd	synonym for ufs2
+> +	5xbsd
+> +                synonym for ufs2
+>  
+> -	sun	used in SunOS (Solaris)
+> +	sun
+> +                used in SunOS (Solaris)
+>  		supported as read-write
+>  
+> -	sunx86	used in SunOS for Intel (Solarisx86)
+> +	sunx86
+> +                used in SunOS for Intel (Solarisx86)
+>  		supported as read-write
+>  
+> -	hp	used in HP-UX
+> +	hp
+> +                used in HP-UX
+>  		supported as read-only
+>  
+>  	nextstep
+> @@ -47,14 +55,14 @@ ufstype=type_of_ufs
+>  		supported as read-only
+>  
+>  
+> -POSSIBLE PROBLEMS
+> -=================
+> +Possible Problems
+> +-----------------
+>  
+>  See next section, if you have any.
+>  
+>  
+> -BUG REPORTS
+> -===========
+> +Bug Reports
+> +-----------
+>  
+>  Any ufs bug report you can send to daniel.pirkl@email.cz or
+>  to dushistov@mail.ru (do not send partition tables bug reports).
+
+
+
+Thanks,
+Mauro
