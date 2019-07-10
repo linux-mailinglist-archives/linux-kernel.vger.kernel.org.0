@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D1F645A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 13:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F37A464582
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 13:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfGJLNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 07:13:51 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33052 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfGJLNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 07:13:50 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D804200707;
-        Wed, 10 Jul 2019 13:13:48 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 36D682006FF;
-        Wed, 10 Jul 2019 13:13:43 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C92E402DB;
-        Wed, 10 Jul 2019 19:13:36 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        leoyang.li@nxp.com
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [v2,2/2] Documentation: dt: binding: rtc: add binding for ftm alarm driver
-Date:   Wed, 10 Jul 2019 19:04:24 +0800
-Message-Id: <20190710110424.4254-2-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190710110424.4254-1-biwen.li@nxp.com>
-References: <20190710110424.4254-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727500AbfGJLAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 07:00:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38974 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725994AbfGJLAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 07:00:06 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 32D0F41754D70F5E80C6;
+        Wed, 10 Jul 2019 19:00:02 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 10 Jul 2019 18:59:53 +0800
+From:   SunKe <sunke32@huawei.com>
+To:     <jlbec@evilplan.org>, <hch@lst.de>, <sunke32@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sample_configfs: bin_file read and write
+Date:   Wed, 10 Jul 2019 19:05:37 +0800
+Message-ID: <1562756737-124703-1-git-send-email-sunke32@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds binding for ftm alarm driver
+Add bin_file read and write function
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Signed-off-by: SunKe <sunke32@huawei.com>
 ---
-Change in v2:
-    - replace ls1043a with ls1088a as example
-    - add rcpm node and fsl,rcpm-wakeup property
+ samples/configfs/configfs_sample.c | 43 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
- .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-new file mode 100644
-index 0000000..010984a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-@@ -0,0 +1,40 @@
-+Freescale FlexTimer Module (FTM) Alarm
+diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
+index 004a4e2..c76b784 100644
+--- a/samples/configfs/configfs_sample.c
++++ b/samples/configfs/configfs_sample.c
+@@ -146,6 +146,8 @@ static struct childless childless_subsys = {
+ struct simple_child {
+ 	struct config_item item;
+ 	int storeme;
++	void *data;
++	size_t len;
+ };
+ 
+ static inline struct simple_child *to_simple_child(struct config_item *item)
+@@ -153,6 +155,46 @@ static inline struct simple_child *to_simple_child(struct config_item *item)
+ 	return item ? container_of(item, struct simple_child, item) : NULL;
+ }
+ 
++static ssize_t simple_child_bin_storeme_bin_write(struct config_item *item,
++				    const void *data, size_t size)
++{
++	struct simple_child *simple_child = to_simple_child(item);
 +
-+Note: The driver need work with RCPM driver to wake up system in sleep.
++	kfree(simple_child->data);
++	simple_child->data = NULL;
 +
-+Required properties:
++	simple_child->data = kmemdup(data, size, GFP_KERNEL);
++	if (!simple_child->data)
++		return -ENOMEM;
++	simple_child->len = size;
 +
-+- compatible : Should be "fsl,ftm-alarm" or "fsl,<chip>-ftm-alarm", the
-+	       supported chips include
-+	       "fsl,ls1012a-ftm-alarm"
-+	       "fsl,ls1021a-ftm-alarm"
-+	       "fsl,ls1028a-ftm-alarm"
-+	       "fsl,ls1043a-ftm-alarm"
-+	       "fsl,ls1046a-ftm-alarm"
-+	       "fsl,ls1088a-ftm-alarm"
-+	       "fsl,ls208xa-ftm-alarm"
-+- reg : Specifies base physical address and size of the register sets for the
-+  FlexTimer Module and base physical address of IP Powerdown Exception Control
-+  Register.
-+- reg-names: names of the mapped memory regions listed in regs property.
-+  should include the following entries:
-+  "ftm":    Address of the register sets for FlexTimer Module
-+- interrupts : Should be the FlexTimer Module interrupt.
-+- fsl,rcpm-wakeup property and rcpm node : Please refer
-+	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+- big-endian: If the host controller is big-endian mode, specify this property.
-+  The default endian mode is little-endian.
-+
-+Example:
-+rcpm: rcpm@1e34050 {
-+	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+	reg = <0x0 0x1e34050 0x0 0x4>;
-+	fsl,#rcpm-wakeup-cells = <1>;
++	return 0;
 +}
 +
-+ftm_alarm0: timer@2800000 {
-+	compatible = "fsl,ftm-alarm";
-+	reg = <0x0 0x2800000 0x0 0x10000>;
-+	fsl,rcpm-wakeup = <&rcpm 0x0 0x4000>;
-+	interrupts = <0 44 4>;
++static ssize_t simple_child_bin_storeme_bin_read(struct config_item *item,
++				   void *data, size_t size)
++{
++	struct simple_child *simple_child = to_simple_child(item);
++
++	if (!data) {
++		size = simple_child->len;
++	} else {
++		memcpy(data, simple_child->data, simple_child->len);
++		size = simple_child->len;
++	}
++
++	return size;
 +}
++
++#define MAX_SIZE (128 * 1024)
++
++CONFIGFS_BIN_ATTR(simple_child_bin_, storeme_bin, NULL, MAX_SIZE);
++
++static struct configfs_bin_attribute *simple_child_bin_attrs[] = {
++	&simple_child_bin_attr_storeme_bin,
++	NULL,
++};
++
+ static ssize_t simple_child_storeme_show(struct config_item *item, char *page)
+ {
+ 	return sprintf(page, "%d\n", to_simple_child(item)->storeme);
+@@ -196,6 +238,7 @@ static struct configfs_item_operations simple_child_item_ops = {
+ static const struct config_item_type simple_child_type = {
+ 	.ct_item_ops	= &simple_child_item_ops,
+ 	.ct_attrs	= simple_child_attrs,
++	.ct_bin_attrs	= simple_child_bin_attrs,
+ 	.ct_owner	= THIS_MODULE,
+ };
+ 
 -- 
 2.7.4
 
