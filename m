@@ -2,92 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0AEF64547
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 12:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC5F64551
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 12:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfGJKmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 06:42:46 -0400
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:40776 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726140AbfGJKmq (ORCPT
+        id S1727376AbfGJKoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 06:44:07 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:41511 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbfGJKoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 06:42:46 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id B99FB2E0EBF;
-        Wed, 10 Jul 2019 13:42:42 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id uC97EkyPww-ggUe3vPG;
-        Wed, 10 Jul 2019 13:42:42 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1562755362; bh=MuHsnMCLNYQMR7LQcEktY+8kMNp1AKabcUeHAMKR+Lw=;
-        h=In-Reply-To:Message-ID:Date:References:To:From:Subject:Cc;
-        b=BGZjj8D8y+oFQMhHbtp28s9y8KPUGvHMIb/s6H6Ut3D7K4rDQ3yblRq9KWrkzEY8w
-         NYDruSUJfsGJ6x8IyfFvwIrbt+Ymq5XA375GgGcf1DVrVrry/OlFf2RQo2zy37kyRf
-         OcDTCr5S3/TY58oAHlb6vbZaxkdzoMP8DCWQCL2U=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id maOvm5OG9B-gfwmJY11;
-        Wed, 10 Jul 2019 13:42:41 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] blk-throttle: fix zero wait time for iops throttled group
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-Cc:     Liu Bo <bo.liu@linux.alibaba.com>, Stable <stable@vger.kernel.org>,
-        cgroups@vger.kernel.org
-References: <156259979778.2486.6296077059654653057.stgit@buzz>
-Message-ID: <50aa6400-6128-0344-d7c8-0d73fccff350@yandex-team.ru>
-Date:   Wed, 10 Jul 2019 13:42:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 10 Jul 2019 06:44:07 -0400
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x6AAhulH025671
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 19:43:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6AAhulH025671
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562755437;
+        bh=Ycj0dyamrlngknPhL2bExuJe6wzl8U1lzkiHAV69cic=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=To7D/hMWUJ9IgtCP9MIO9lJA3JgygoIzD+wsYK1Q8ZZXAfwR9Kk6N8YSydk/e3Ony
+         rPA40GkCVJLulLetS8DlfW77JLx3id0tIZ/N8v2TfO8rVOusM5p+ktQ42k1IPhdyYw
+         IuK4otHCZpVOsRnZ+qBJRVCicJCoOKgccl5XWXrfneaLNXj/Qzt4/mIMj1d3PhjiC+
+         p98Gxo5tZbCVvKxoMwe2mT44m0i48i/GDRCJ8fPS8GZBFexAhjHvqG1ij7oH5Kt+fN
+         VSzsIQxonworOeyGG2v2OALrOfj407ogv9m64cxVEtAuzkgbn4frMwaj4d4Zd8MmAr
+         UONU1+81zAp7Q==
+X-Nifty-SrcIP: [209.85.222.47]
+Received: by mail-ua1-f47.google.com with SMTP id 8so658898uaz.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 03:43:56 -0700 (PDT)
+X-Gm-Message-State: APjAAAVZkS8NLKHECPns96gf3Ad9QTkLVBnBIOP28Zsg5Dh21ISAOzQ5
+        YdWE+iwZskCNSKXvELfF8qjyeL5QKrtwAY6FOC8=
+X-Google-Smtp-Source: APXvYqwHEsdcYnCzgd67nXlol5ygPmUMo59QTZTYbMA0kTqb141HuIHVhJyLIYrjDKw0CAeYYkhkDhhWT5i7r4YelaA=
+X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr7900708uag.40.1562755435802;
+ Wed, 10 Jul 2019 03:43:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <156259979778.2486.6296077059654653057.stgit@buzz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <CAK7LNASSCvLSXVikR7GenXyb8KywpWKVc1Z=5v3c93rxJ+G73w@mail.gmail.com>
+ <20190710082335.uzusesefimzpjd3f@shell.armlinux.org.uk> <CAK7LNAQpiY4CBawEFhQHeTPSrbrRkNoYCtK4jBak+skyyMqESA@mail.gmail.com>
+ <20190710100206.yls4piu36wciefbz@shell.armlinux.org.uk>
+In-Reply-To: <20190710100206.yls4piu36wciefbz@shell.armlinux.org.uk>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 10 Jul 2019 19:43:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT3NDem7_oTyPuDVC7QGY=HuyG-GBE9QQhUuuL_Q=CeNg@mail.gmail.com>
+Message-ID: <CAK7LNAT3NDem7_oTyPuDVC7QGY=HuyG-GBE9QQhUuuL_Q=CeNg@mail.gmail.com>
+Subject: Re: Question about ARM FASTFPE
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.07.2019 18:29, Konstantin Khlebnikov wrote:
-> After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops
-> limit is enforced") wait time could be zero even if group is throttled and
-> cannot issue requests right now. As a result throtl_select_dispatch() turns
-> into busy-loop under irq-safe queue spinlock.
+On Wed, Jul 10, 2019 at 7:02 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Wed, Jul 10, 2019 at 06:54:06PM +0900, Masahiro Yamada wrote:
+> > On Wed, Jul 10, 2019 at 5:23 PM Russell King - ARM Linux admin
+> > <linux@armlinux.org.uk> wrote:
+> > >
+> > > On Wed, Jul 10, 2019 at 01:30:24PM +0900, Masahiro Yamada wrote:
+> > > > Hi.
+> > > >
+> > > > I have a question about the following code
+> > > > in arch/arm/Makefile:
+> > > >
+> > > >
+> > > > # Do we have FASTFPE?
+> > > > FASTFPE :=arch/arm/fastfpe
+> > > > ifeq ($(FASTFPE),$(wildcard $(FASTFPE)))
+> > > > FASTFPE_OBJ :=$(FASTFPE)/
+> > > > endif
+> > > >
+> > > >
+> > > > Since arch/arm/fastfpe does not exist in the upstream tree,
+> > > > I guess this is a hook to compile downstream source code.
+> > > >
+> > > > If a user puts arch/arm/fastfpe/ into their local source tree,
+> > > > Kbuild is supposed to compile the files in it.
+> > > >
+> > > > Is this correct?
+> > > >
+> > > >
+> > > > If so, I am afraid this would not work for O= building.
+> > > >
+> > > > $(wildcard ...) checks if this directory exists in the *objtree*,
+> > > > while scripts/Makefile.build needs to include
+> > > > arch/arm/fastfpe/Makefile from *srctree*.
+> > > >
+> > > > I think the correct code should be like follows:
+> > > >
+> > > > # Do we have FASTFPE?
+> > > > FASTFPE :=arch/arm/fastfpe
+> > > > ifneq ($(wildcard $(srctree)/$(FASTFPE)),)
+> > > > FASTFPE_OBJ :=$(FASTFPE)/
+> > > > endif
+> > > >
+> > > >
+> > > > Having said that, I am not sure this code is worth fixing.
+> > > >
+> > > > This code was added around v2.5.1.9,
+> > >
+> > > ... as a _result_ of a discussion and deciding not to upstream it,
+> > > but to still allow its use.  Fastfpe is faster than nwfpe (so has
+> > > a definite advantage for FP intensive applications) but we decided
+> > > we didn't want two FP emulation codes in the kernel.  However, if
+> > > someone wants to use it, it has to be built into the kernel, it
+> > > can't be modular.
+> >
+> >
+> > IMHO, the entry in Makefile and Kconfig should be removed
+> > from upstream, then moved to a part of the fastfpe local patch.
+>
+> Nope.  It means that rather than it being merely a drop-in, it has
+> to be maintained against changes to both these files.  Sorry, that's
+> more work.
 
-To be clear: this almost instantly kills entire machine - other cpus stuck at sending ipi.
 
-> 
-> Fix is simple: always round up target time to the next throttle slice.
-> 
-> Fixes: 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops limit is enforced")
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Cc: stable@vger.kernel.org # v4.19+
-> ---
->   block/blk-throttle.c |    9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-> index 9ea7c0ecad10..8ab6c8153223 100644
-> --- a/block/blk-throttle.c
-> +++ b/block/blk-throttle.c
-> @@ -881,13 +881,10 @@ static bool tg_with_in_iops_limit(struct throtl_grp *tg, struct bio *bio,
->   	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
->   	u64 tmp;
->   
-> -	jiffy_elapsed = jiffy_elapsed_rnd = jiffies - tg->slice_start[rw];
-> -
-> -	/* Slice has just started. Consider one slice interval */
-> -	if (!jiffy_elapsed)
-> -		jiffy_elapsed_rnd = tg->td->throtl_slice;
-> +	jiffy_elapsed = jiffies - tg->slice_start[rw];
->   
-> -	jiffy_elapsed_rnd = roundup(jiffy_elapsed_rnd, tg->td->throtl_slice);
-> +	/* Round up to the next throttle slice, wait time must be nonzero */
-> +	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
->   
->   	/*
->   	 * jiffy_elapsed_rnd should not be a big value as minimum iops can be
-> 
+This is the motivation of upstreaming for everybody.
+
+We never know the code that does not exist in upstream.
+Downstream code must pay maintenance cost for ever.
+
+
+-- 
+Best Regards
+Masahiro Yamada
