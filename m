@@ -2,81 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3920C64B99
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:44:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 026DB64BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbfGJRoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:44:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46414 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbfGJRoY (ORCPT
+        id S1727770AbfGJRqE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 13:46:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43121 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727330AbfGJRqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:44:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c73so1412871pfb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 10:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iWMY9Ra6fhg6EXLcSiaO3PQbn2oiv74r4PYLZuZM2BU=;
-        b=axQtLVlxBbG2rukB4uIEh3aDgpy4FVcpO0GP/piahI3Obgr+rZibgLCVElkJiFLY7w
-         3JeU1pgGcUvAjJcRn1s0c75htzs2+FGj/9N0jRvMyrTOIrRKuoNx+MB+l7IkG8G+s71L
-         89cqtxOCVpM5EfPFLvBjibAvHWJvgCpc2nVLRUGbBX0UKtG1lxR7l/ToMmPkdPDSn7So
-         fZ9asLA/swzK89Ng61WiyMSN19TnEfEsP0wWxWd6vVTYQ59wz7HTFto7++v2UlC/wnZt
-         XCH/XEdhlxPfFZJ0WwkBRJ1tgzdA8vKk19ExiwlatWdYZVOo1JH5BsmesMvm1aWejERz
-         pSig==
+        Wed, 10 Jul 2019 13:46:04 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so1575041pgv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 10:46:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iWMY9Ra6fhg6EXLcSiaO3PQbn2oiv74r4PYLZuZM2BU=;
-        b=rcYFSv9B8N6nQVyKPveEjXmmc0QiBmUSWYNEf+bIVSuSef51E0dIMpISOp0g4OLBkH
-         j5ke6Vdcmf1T3des4Xp+r5PJi/ZUOoXnzBODOEfj/7rKCszJ0YcSxnzkMgdP7Rmff0Xe
-         BH42+R5kBt6ELEwiCS5wMD4u0Dn1WsTX+PKA660nKCEQw262ge8A6WBaOQnpDcJS7Fn9
-         RZgfXM8OOyPl5juZaDVnkXYHWSXMCDNFqmtUl+JdFyj6Zo62jjKnPD2AWyvcMS3T1sY7
-         B2pDiWmaAuuZ/VdoeXylUh/guoUZWNsgJUhm+Z2AgDj9h922ZW5qmsTaRzP4aG9n4ZRK
-         sYgw==
-X-Gm-Message-State: APjAAAXpxvZhhGJ3AuBOLt6pl0Hp5RY2BB/80JIS3No/pe/mhDSqyMIG
-        PM1dO7aJOvJ4Narsd42u4KyL4Q==
-X-Google-Smtp-Source: APXvYqzEHvJg5Hy2iDWq+GUuLPTBgqSstjUxb2RpWlYFGd98AAweC/ipWaTWFhYqPANU2G6KTh+dcQ==
-X-Received: by 2002:a63:2606:: with SMTP id m6mr38342826pgm.436.1562780663359;
-        Wed, 10 Jul 2019 10:44:23 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:5b9d])
-        by smtp.gmail.com with ESMTPSA id l189sm2874023pfl.7.2019.07.10.10.44.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 10:44:22 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 13:44:18 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, akpm@linux-foundation.org,
-        hdanton@sina.com
-Subject: Re: [PATCH v9 1/6] filemap: check compound_head(page)->mapping in
- filemap_fault()
-Message-ID: <20190710174418.GA11197@cmpxchg.org>
-References: <20190625001246.685563-1-songliubraving@fb.com>
- <20190625001246.685563-2-songliubraving@fb.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BhKBNyGYuDW2lcc8q3UKIy1/Ot87NeMwn9SCW5GMqCM=;
+        b=Esf46IovtUTax+ZrbNQ6jnph6jHDcTUG9KdOZ4QUxZHgU6DsCKtgTciC5I4plH4KtD
+         k+u9j+4urOJOwCUaSYKuXdXdXPakn4FmToL4pyGyTjoA6+81oC/VTCcY11JidCPnNkH5
+         5Fd5dgtk4f69gihqF4i5hIPdtmAAWd93vOonsRZIZBH6ue2KiuuvTzfKvzgNvE+G0j6x
+         YAdwHAD5kIWwbZESuBHdoAtSW8pZUSJ7WUAlmjWfgbsHCCyk6beP4FM0k56hkaBhid0O
+         TDC0FqlTKUG9LMUJK5IauDoKBC4AwAVV1iLmud+dTOeC0D3fNBoVPn7KLVnlhCdud9IY
+         Hh6w==
+X-Gm-Message-State: APjAAAUonggeaocuN0zWV2zmab8qGVsv5gUGEFTlffjdl7rBrnmqEtJN
+        BStFamdcldjCYF4HDvgne40=
+X-Google-Smtp-Source: APXvYqxPI+HXvLvWR0UABwLpNihucLsVrRaMtIocJj++h+5ihAMD9gwgou7eyAZUM53sEiirvMZMkg==
+X-Received: by 2002:a17:90a:ad41:: with SMTP id w1mr8298926pjv.52.1562780763119;
+        Wed, 10 Jul 2019 10:46:03 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
+        by smtp.gmail.com with ESMTPSA id r188sm8044323pfr.16.2019.07.10.10.46.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 10:46:01 -0700 (PDT)
+Subject: Re: BUG: MAX_STACK_TRACE_ENTRIES too low! (2)
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        syzbot <syzbot+6f39a9deb697359fe520@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+References: <00000000000089a718058556e1d8@google.com>
+ <f71aaffa-ecf4-1def-fe50-91f37c677537@acm.org>
+ <20190710053030.GB2152@sol.localdomain>
+ <b378a903-d0fc-a137-e6b9-dec55277cf16@acm.org>
+ <20190710170057.GB801@sol.localdomain> <20190710172123.GC801@sol.localdomain>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <f498d8cc-ba82-d3dc-7557-142a1b35976a@acm.org>
+Date:   Wed, 10 Jul 2019 10:46:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625001246.685563-2-songliubraving@fb.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190710172123.GC801@sol.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:12:41PM -0700, Song Liu wrote:
-> Currently, filemap_fault() avoids trace condition with truncate by
+On 7/10/19 10:21 AM, Eric Biggers wrote:
+> With my simplified reproducer, on commit 669de8bda87b ("kernel/workqueue: Use
+> dynamic lockdep keys for workqueues") I see:
+> 
+> 	WARNING: CPU: 3 PID: 189 at kernel/locking/lockdep.c:747 register_lock_class+0x4f6/0x580
+> 
+> and then somewhat later:
+> 
+> 	BUG: MAX_LOCKDEP_KEYS too low!
+> 
+> If on top of that I cherry pick commit 28d49e282665 ("locking/lockdep: Shrink
+> struct lock_class_key"), I see instead:
+> 
+> 	BUG: MAX_STACK_TRACE_ENTRIES too low!
+> 
+> I also see that on mainline.
+> 
+> Alternatively, if I check out 669de8bda87b and revert it, I don't see anything.
 
-                                   -t
+Hi Eric,
 
-> checking page->mapping == mapping. This does not work for compound
-> pages. This patch let it check compound_head(page)->mapping instead.
->
-> Acked-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+Is the rdma_ucm code the only code that triggers the "BUG:
+MAX_STACK_TRACE_ENTRIES too low!" complaint or is this complaint also
+triggered by other kernel code? I'm asking this because I think that
+fixing this would require to implement garbage collection for the
+stack_trace[] array in the lockdep code. That would make the lockdep
+code slower. I don't think that making the lockdep code slower would be
+welcome.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Bart.
+
