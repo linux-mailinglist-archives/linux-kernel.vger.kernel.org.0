@@ -2,130 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB8A6416A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F49864182
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfGJGjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 02:39:25 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:27331 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725844AbfGJGjY (ORCPT
+        id S1726259AbfGJGpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 02:45:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726159AbfGJGpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 02:39:24 -0400
-X-UUID: 0ed553817a1347c0a387db5d197cb9de-20190710
-X-UUID: 0ed553817a1347c0a387db5d197cb9de-20190710
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 686314786; Wed, 10 Jul 2019 14:39:17 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 10 Jul 2019 14:39:16 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 10 Jul 2019 14:39:16 +0800
-Message-ID: <1562740756.1879.1.camel@mtksdaap41>
-Subject: Re: [PATCH v10 03/12] dt-binding: gce: add binding for gce client
- reg property
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        CK HU <ck.hu@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>
-Date:   Wed, 10 Jul 2019 14:39:16 +0800
-In-Reply-To: <20190701074842.15401-4-bibby.hsieh@mediatek.com>
-References: <20190701074842.15401-1-bibby.hsieh@mediatek.com>
-         <20190701074842.15401-4-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 10 Jul 2019 02:45:00 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6A6iL17116144
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 02:44:59 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tn8fv51fe-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 02:44:59 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Wed, 10 Jul 2019 07:44:55 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 10 Jul 2019 07:44:53 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6A6iprZ54853712
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Jul 2019 06:44:51 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6137042042;
+        Wed, 10 Jul 2019 06:44:51 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E172E42047;
+        Wed, 10 Jul 2019 06:44:50 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.224.114])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 10 Jul 2019 06:44:50 +0000 (GMT)
+Subject: Re: [PATCH] s390/zcrypt: remove the exporting of
+ ap_query_configuration
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190709122507.11158-1-efremov@linux.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Wed, 10 Jul 2019 08:44:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190709122507.11158-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19071006-0016-0000-0000-00000290D7CE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071006-0017-0000-0000-000032EE8EC0
+Message-Id: <a71450e5-892c-3841-22d6-9f5c7b2d4ca4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907100082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Rob,
-
-Sorry to bother you, could you please review this patch when you are
-available? Thanks.
-
-
-On Mon, 2019-07-01 at 15:48 +0800, Bibby Hsieh wrote:
-> cmdq driver provide a function that get the relationship
-> of sub system number from device node for client.
-> add specification for #subsys-cells, mediatek,gce-client-reg.
-> 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+On 09.07.19 14:25, Denis Efremov wrote:
+> The function ap_query_configuration is declared static and marked
+> EXPORT_SYMBOL, which is at best an odd combination. Because the
+> function is not used outside of the drivers/s390/crypto/ap_bus.c
+> file it is defined in, this commit removes the EXPORT_SYMBOL() marking.
+>
+> Fixes: f1b0a4343c41 ("s390/zcrypt: Integrate ap_asm.h into include/asm/ap.h.")
+> Fixes: 050349b5b71d ("s390/zcrypt: externalize AP config info query")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 > ---
->  .../devicetree/bindings/mailbox/mtk-gce.txt    | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> index 1f7f8f2a3f49..d48282d6b02d 100644
-> --- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> @@ -21,12 +21,21 @@ Required properties:
->  	priority: Priority of GCE thread.
->  	atomic_exec: GCE processing continuous packets of commands in atomic
->  		way.
-> +- #subsys-cells: Should be 3.
-> +	<&phandle subsys_number start_offset size>
-> +	phandle: Label name of a gce node.
-> +	subsys_number: specify the sub-system id which is corresponding
-> +		       to the register address.
-> +	start_offset: the start offset of register address that GCE can access.
-> +	size: the total size of register address that GCE can access.
+>  drivers/s390/crypto/ap_bus.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+> index b9fc502c58c2..379e43b79006 100644
+> --- a/drivers/s390/crypto/ap_bus.c
+> +++ b/drivers/s390/crypto/ap_bus.c
+> @@ -208,7 +208,6 @@ static inline int ap_query_configuration(struct ap_config_info *info)
+>  		return -EINVAL;
+>  	return ap_qci(info);
+>  }
+> -EXPORT_SYMBOL(ap_query_configuration);
 >  
->  Required properties for a client device:
->  - mboxes: Client use mailbox to communicate with GCE, it should have this
->    property and list of phandle, mailbox specifiers.
-> -- mediatek,gce-subsys: u32, specify the sub-system id which is corresponding
-> -  to the register address.
-> +Optional properties for a client device:
-> +- mediatek,gce-client-reg: Specify the sub-system id which is corresponding
-> +  to the register address, it should have this property and list of phandle,
-> +  sub-system specifiers.
->  
->  Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
->  or 'dt-binding/gce/mt8183-gce.h'. Such as sub-system ids, thread priority, event ids.
-> @@ -40,6 +49,7 @@ Example:
->  		clocks = <&infracfg CLK_INFRA_GCE>;
->  		clock-names = "gce";
->  		#mbox-cells = <3>;
-> +		#subsys-cells = <3>;
->  	};
->  
->  Example for a client device:
-> @@ -48,9 +58,9 @@ Example for a client device:
->  		compatible = "mediatek,mt8173-mmsys";
->  		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
->  			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
-> -		mediatek,gce-subsys = <SUBSYS_1400XXXX>;
->  		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
->  				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
-> -
-> +		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
-> +					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
->  		...
->  	};
+>  /**
+>   * ap_init_configuration(): Allocate and query configuration array.
+This function was exported a while ago for KVM code. However, never used.
+So removing the export is the right thing. Thanks Denis
 
--- 
-Bibby
+Heiko/Vasily will you pick this patch please?
+
+Reviewed-by: Harald Freudenberger <freude@linux.ibm.com>
 
