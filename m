@@ -2,183 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E50C56413F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF576415C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfGJGYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 02:24:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47422 "EHLO mail.kernel.org"
+        id S1726392AbfGJG1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 02:27:39 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:32459 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727199AbfGJGX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 02:23:59 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9B362083D;
-        Wed, 10 Jul 2019 06:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562739838;
-        bh=JTGns6p7OAqlz2mMPRTsjr8VGWN/afiuC92QNMdncxo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WWwMViM+9962VnK387VtomtsQHL6wHHyVkGs6um8Jpkor6A2F0toZ/nOsyEbj6MZj
-         C+bq+cyuFXRbN/qYl8RkXN38cjbzufM5pgR8+j3AKNvVcBmmdVf+JzhXVd/vxGprt1
-         YoZSs0+RnrntJuTVdW+c4AOeM8JDjfsWNDeMnPsI=
-Date:   Tue, 9 Jul 2019 23:23:56 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 6 open syzbot bugs in mm subsystem
-Message-ID: <20190710062356.GD2152@sol.localdomain>
-Mail-Followup-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+        id S1725844AbfGJG1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 02:27:38 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45k8PL3n6LzB09ZJ;
+        Wed, 10 Jul 2019 08:27:34 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=iMEF+SDR; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kZJ0oZwqf6QV; Wed, 10 Jul 2019 08:27:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45k8PL2KCZzB09ZH;
+        Wed, 10 Jul 2019 08:27:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1562740054; bh=5TKgHRk+ZhXPsN436WT7n5/+4+4dtwAsOBIgxcM04Oc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iMEF+SDR/JTZbuCdrjKLQHwP439R9Zt2pXbklgTaNevchf62aJgEuqher1yOA20gs
+         epxjVHwTlhR+2ViWSCvd8Cq3G56ke4RYjALs7SuFgGMBFTLaHhhgLHQ7ZwaRzln6vx
+         vobsQHfXQ5reY/sFqyE+G7DFj8yFLGd1HYrwySYE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3DEA58B7F2;
+        Wed, 10 Jul 2019 08:27:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 1kiCeoAIjYgE; Wed, 10 Jul 2019 08:27:35 +0200 (CEST)
+Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9DF2D8B7EE;
+        Wed, 10 Jul 2019 08:27:34 +0200 (CEST)
+Subject: Re: [PATCH v3 2/3] Powerpc64/Watchpoint: Don't ignore extraneous
+ exceptions
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au,
+        mikey@neuling.org
+Cc:     benh@kernel.crashing.org, paulus@samba.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+References: <20190710045445.31037-1-ravi.bangoria@linux.ibm.com>
+ <20190710045445.31037-3-ravi.bangoria@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <1f3fd425-3d2f-8d18-eff1-01ca5b605ba0@c-s.fr>
+Date:   Wed, 10 Jul 2019 08:27:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190710045445.31037-3-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[This email was generated by a script.  Let me know if you have any suggestions
- to make it better, or if you want it re-generated with the latest status.
 
- Note: currently the mm bugs look hard to do anything with and most look
- outdated, but I figured I'd send them out just in case someone has any ideas...]
 
-Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 6 of them as possibly being bugs in the mm subsystem.  I've listed these
-reports below, sorted by an algorithm that tries to list first the reports most
-likely to be still valid, important, and actionable.
+Le 10/07/2019 à 06:54, Ravi Bangoria a écrit :
+> On Powerpc64, watchpoint match range is double-word granular. On
+> a watchpoint hit, DAR is set to the first byte of overlap between
+> actual access and watched range. And thus it's quite possible that
+> DAR does not point inside user specified range. Ex, say user creates
+> a watchpoint with address range 0x1004 to 0x1007. So hw would be
+> configured to watch from 0x1000 to 0x1007. If there is a 4 byte
+> access from 0x1002 to 0x1005, DAR will point to 0x1002 and thus
+> interrupt handler considers it as extraneous, but it's actually not,
+> because part of the access belongs to what user has asked. So, let
+> kernel pass it on to user and let user decide what to do with it
+> instead of silently ignoring it. The drawback is, it can generate
+> false positive events.
 
-If you believe a bug is no longer valid, please close the syzbot report by
-sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
-original thread, as explained at https://goo.gl/tpsmEJ#status
+Why adding some #ifdefs based on CONFIG_8xx ?
 
-If you believe I misattributed a bug to the mm subsystem, please let me know,
-and if possible forward the report to the correct people or mailing list.
+I see your commit log mentions 'Powerpc64'. What about BOOK3S/32 ?
 
-Here are the bugs:
+Christophe
 
---------------------------------------------------------------------------------
-Title:              kernel BUG at mm/huge_memory.c:LINE!
-Last occurred:      17 days ago
-Reported:           187 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=ce0353d7d140e57d81b6f1cb9252a76e50454955
-Original thread:    https://lkml.kernel.org/lkml/0000000000004d2e19057e8b6d78@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-The original thread for this bug received 3 replies; the last was 154 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+8e075128f7db8555391a@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000004d2e19057e8b6d78@google.com
-
---------------------------------------------------------------------------------
-Title:              KASAN: use-after-free Read in shmem_fault
-Last occurred:      77 days ago
-Reported:           143 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=53e0b9f6b68687a4c24339c7a9713c26055d4f63
-Original thread:    https://lkml.kernel.org/lkml/00000000000045d4f10581fe59a7@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-No one replied to the original thread for this bug.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+56fbe62f8c55f860fd99@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/00000000000045d4f10581fe59a7@google.com
-
---------------------------------------------------------------------------------
-Title:              WARNING in untrack_pfn
-Last occurred:      153 days ago
-Reported:           351 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=149d7751733001d683eca36df500722bff6cc350
-Original thread:    https://lkml.kernel.org/lkml/000000000000f70a0e0571ad8ffb@google.com/T/#u
-
-This bug has a syzkaller reproducer only.
-
-syzbot has bisected this bug, but I think the bisection result is incorrect.
-
-The original thread for this bug received 3 replies; the last was 62 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+e1a4f80c370d2381e49f@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/000000000000f70a0e0571ad8ffb@google.com
-
---------------------------------------------------------------------------------
-Title:              WARNING: locking bug in split_huge_page_to_list
-Last occurred:      82 days ago
-Reported:           77 days ago
-Branches:           Mainline
-Dashboard link:     https://syzkaller.appspot.com/bug?id=867f27bec5181128ff0b1729bde7eed6786ec6bc
-Original thread:    https://lkml.kernel.org/lkml/0000000000003c9bea058734dc28@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-The original thread for this bug has received 1 reply, 77 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+35a50f1f6dfd5a0d7378@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000003c9bea058734dc28@google.com
-
---------------------------------------------------------------------------------
-Title:              kernel BUG at mm/page_alloc.c:LINE!
-Last occurred:      94 days ago
-Reported:           174 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=858f3346ce928ea82fba5e952e44b7c2758a3609
-Original thread:    https://lkml.kernel.org/lkml/000000000000cdc61b057f9e360e@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-The original thread for this bug received 3 replies; the last was 173 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/000000000000cdc61b057f9e360e@google.com
-
---------------------------------------------------------------------------------
-Title:              kernel BUG at mm/internal.h:LINE!
-Last occurred:      108 days ago
-Reported:           106 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=ffde950cd7002300185185998616192428c11981
-Original thread:    https://lkml.kernel.org/lkml/0000000000007311ca0584e690c1@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-No one replied to the original thread for this bug.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+ce4fa49466985039fb35@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000007311ca0584e690c1@google.com
-
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>   arch/powerpc/kernel/hw_breakpoint.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+> index 5c876e986c18..c457d52778e3 100644
+> --- a/arch/powerpc/kernel/hw_breakpoint.c
+> +++ b/arch/powerpc/kernel/hw_breakpoint.c
+> @@ -204,9 +204,10 @@ int hw_breakpoint_handler(struct die_args *args)
+>   #ifndef CONFIG_PPC_8xx
+>   	int stepped = 1;
+>   	unsigned int instr;
+> +#else
+> +	unsigned long dar = regs->dar;
+>   #endif
+>   	struct arch_hw_breakpoint *info;
+> -	unsigned long dar = regs->dar;
+>   
+>   	/* Disable breakpoints during exception handling */
+>   	hw_breakpoint_disable();
+> @@ -240,14 +241,14 @@ int hw_breakpoint_handler(struct die_args *args)
+>   
+>   	/*
+>   	 * Verify if dar lies within the address range occupied by the symbol
+> -	 * being watched to filter extraneous exceptions.  If it doesn't,
+> -	 * we still need to single-step the instruction, but we don't
+> -	 * generate an event.
+> +	 * being watched to filter extraneous exceptions.
+>   	 */
+>   	info->type &= ~HW_BRK_TYPE_EXTRANEOUS_IRQ;
+> +#ifdef CONFIG_PPC_8xx
+>   	if (!((bp->attr.bp_addr <= dar) &&
+>   	      (dar - bp->attr.bp_addr < bp->attr.bp_len)))
+>   		info->type |= HW_BRK_TYPE_EXTRANEOUS_IRQ;
+> +#endif
+>   
+>   #ifndef CONFIG_PPC_8xx
+>   	/* Do not emulate user-space instructions, instead single-step them */
+> 
