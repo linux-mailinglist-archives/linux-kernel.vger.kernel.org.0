@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 806916436A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E1F64374
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbfGJIPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726257AbfGJIPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:15:23 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B7620693;
-        Wed, 10 Jul 2019 08:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562746522;
-        bh=0hVSMMzYKhoDy/P2YBDNHPfBe2NC0mq8TrsMJzmaHwg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TmJZmlKlnaFfL5jmZfXyc1SwABp4fxxLEIH0I4NI0PTc9Jckm0hy/G292/9EH0ULM
-         dyGiwnSKwxIjKWP40NPCTClD6HbFwyFD9KvJRovS6HODiUAZn0LmbCiq/Lu+ToImqD
-         7du/8H2Z1tKHqbrjS7OhtuInc3rJLBFGwSQ66WGE=
-Date:   Wed, 10 Jul 2019 09:15:16 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Laura Abbott <labbott@redhat.com>, yamada.masahiro@socionext.com
-Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Alan Hayward <alan.hayward@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64/sve: fix genksyms generation
-Message-ID: <20190710081515.ffghx4kouqpsh4m3@willie-the-truck>
-References: <20190617104237.2082388-1-arnd@arndb.de>
- <20190617112652.GB30800@fuggles.cambridge.arm.com>
- <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
- <20190617161330.GD30800@fuggles.cambridge.arm.com>
- <CAKv+Gu9Fh3anh6-TeDWZ+pL7rs7EBWZqvLXASRNjicGu7k+WKw@mail.gmail.com>
- <20190617164553.GI30800@fuggles.cambridge.arm.com>
- <20190618120259.GA31041@fuggles.cambridge.arm.com>
- <CAK8P3a2NQSm3sPcJq=6=Espa5da_L+2RNtyS=jkkzD3tx-4ehA@mail.gmail.com>
- <95d721d1-2ccc-321c-f688-15e5bb53c30b@redhat.com>
+        id S1727510AbfGJIT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:19:28 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41300 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfGJIT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:19:28 -0400
+Received: by mail-pg1-f195.google.com with SMTP id q4so858131pgj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 01:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N6SercxtoSKSRCScJgllC9YsDuWHEtkF2Gy5vLajuYI=;
+        b=f5pcFIr4KEnuKujSw0PCI8+ne2ZPT/eTiNxYlV/Fjw+Q+q0Vu48E8I1wCOX1vQXJej
+         xust2dEsnBU/pTvXSaBLTG21oarZ2Xepwu3XxlB1zEXsusT4uDJeiTo4r/JZG9KPch2Y
+         qx84ao943+2eOxQcCjY+J34bWcbEyPxGT9yvre2IP8ZwcndXohe+JD6DrT+vScM6ndC0
+         dh2+0sJf0NLvFZq5iroWefzcT/bIm00EpY1cBiEsBQ0jiE0FP9Mkj0V831eO3Bqsa99r
+         9PicD7cGit2+UXfs/qVeNN7PYuDeIlfXWYSQP9nx1NMvYQ8nNGWusHe+seyTprY7EOlN
+         IWZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N6SercxtoSKSRCScJgllC9YsDuWHEtkF2Gy5vLajuYI=;
+        b=IGsPNDLN0czgkiqsuQAJUw3Pzz7OJ2e45ms1We4ydN85mZfyCnx0fgXvlXrruYtbRR
+         27pWK/WeUX8JrVNreD15kz8ZEkVAnYJ+ScMaaDIO+47shAGJ8qgDtBJ+WxXvK29CsVcV
+         hLp0iIlkL5tVccwNaMj9YLz48ia59CiCX6ca6/olD0sFzJB9Ro5Oje0TW0rSjLztg481
+         ZY3TwW7ha5uelGOiohhFgce75FK0iOw/gz0f8zr/P/0TPfsEbHUZpA4mKwghHNjG6ISC
+         FQSxxLw4nMkLLBh+s0OujqKfyS3IlMBzQgsrZ94rTADops+uY85gWEN9p36//FtH7+J/
+         gRBA==
+X-Gm-Message-State: APjAAAXLC13jP2P1ylo0NY+k9QTWyPP6K5En0WXgCZHXQuN6XFb/6oF0
+        5Oq9wuTb7qCAq+tdgM7TSjc=
+X-Google-Smtp-Source: APXvYqwbWG/EgQGeyQs7s7Fp/DdmsOs7K4ad8V6aBkUpsRLK8b9OdhhMxuEWNxE1nlhfrWj4c0gUcg==
+X-Received: by 2002:a17:90a:9505:: with SMTP id t5mr5443039pjo.96.1562746767357;
+        Wed, 10 Jul 2019 01:19:27 -0700 (PDT)
+Received: from localhost ([175.223.19.33])
+        by smtp.gmail.com with ESMTPSA id j15sm2809810pfn.150.2019.07.10.01.19.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 01:19:26 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 17:19:22 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printk: Do not lose last line in kmsg dump
+Message-ID: <20190710081922.GA7020@jagdpanzerIV>
+References: <20190709081042.31551-1-vincent.whitchurch@axis.com>
+ <20190709101230.GA16909@jagdpanzerIV>
+ <20190709142939.luqhbd6x6bzdkydr@pathway.suse.cz>
+ <20190710080402.ab3f4qfnvez6dhtc@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95d721d1-2ccc-321c-f688-15e5bb53c30b@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190710080402.ab3f4qfnvez6dhtc@axis.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura, [+Masahiro]
+On (07/10/19 10:04), Vincent Whitchurch wrote:
+> > > [..]
+> > > 
+> > > > @@ -1318,7 +1318,7 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog,
+> > > >  		}
+> > > >  
+> > > >  		if (buf) {
+> > > > -			if (prefix_len + text_len + 1 >= size - len)
+> > > > +			if (prefix_len + text_len + 1 > size - len)
+> > > >  				break;
+> > > 
+> > > So with this patch the last byte of the buffer is 0xA. It's a bit
+> > > uncomfortable that `len', which we return from msg_print_text(),
+> > > now points one byte beyond the buffer:
+> > > 
+> > > 	buf[len++] = '\n';
+> > > 	return len;
+> > > 
+> > > This is not very common. Not sure what usually happens to kmsg_dump
+> > > buffers, but anyone who'd do a rather innocent
+> > > 
+> > > 	kmsg_dump(buf, &len);
+> > > 	buf[len] = 0x00;
+> > > 
+> > > will write to something which is not a kmsg buffer (in some cases).
 
-On Tue, Jul 09, 2019 at 03:06:49PM -0400, Laura Abbott wrote:
-> On 6/18/19 10:15 AM, Arnd Bergmann wrote:
-> > On Tue, Jun 18, 2019 at 2:03 PM Will Deacon <will.deacon@arm.com> wrote:
-> > >  From 6e004b8824d4eb6a4e61cd794fbc3a761b50135b Mon Sep 17 00:00:00 2001
-> > > From: Will Deacon <will.deacon@arm.com>
-> > > Date: Tue, 18 Jun 2019 12:56:49 +0100
-> > > Subject: [PATCH] genksyms: Teach parse about __uint128_t built-in type
-> > > 
-> > > __uint128_t crops up in a few files that export symbols to modules, so
-> > > teach genksyms about it so that we don't end up skipping the CRC
-> > > generation for some symbols due to the parser failing to spot them:
-> > > 
-> > >    | WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version
-> > >    |          generation failed, symbol will not be versioned.
-> > >    | ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against
-> > >    |     `__crc_kernel_neon_begin' can not be used when making a shared
-> > >    |     object
-> > >    | ld: arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation:
-> > >    |     unsupported relocation
-> > > 
-> > > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > Reported-by: Arnd Bergmann <arnd@arndb.de>
-> > > Signed-off-by: Will Deacon <will.deacon@arm.com>
-> > 
-> > Looks good to me,
-> > 
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > I've added this to my randconfig build setup, replacing my earlier
-> > patch, and will let you know if any problems with it remain.
-> > 
+[..]
+
+> arch/powerpc/xmon/xmon.c
+> 2836:	while (kmsg_dump_get_line_nolock(&dumper, false, buf, sizeof(buf), &len)) {
+> 2837-		buf[len] = '\0';
 > 
-> I just hit this on 5ad18b2e60b75c7297a998dea702451d33a052ed on Linus'
-> branch. The fix works for me (feel free to add Tested-by). Is this
-> already queued up for Linus?
+> arch/um/kernel/kmsg_dump.c
+> 29:	while (kmsg_dump_get_line(dumper, true, line, sizeof(line), &len)) {
+> 30-		line[len] = '\0';
+> 
+> I guess we should fix these first and leave this patch as is?
 
-I think there's a fix queued via the kbuild tree:
+We certainly need to fix something here, and I'd say that we
+better handle it on the msg_print_text() side. There might be
+more kmsg_dump_get_line() users doing `buf[len] = '\0'' in the
+future.
 
-https://lkml.kernel.org/r/CAK7LNAQRMnovWQA0F8A6mEqDjPxXOGM-1AHoyh1gQa367f+FqQ@mail.gmail.com
-
-Will
+	-ss
