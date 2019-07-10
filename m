@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 026DB64BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0704964C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfGJRqE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 13:46:04 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43121 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbfGJRqE (ORCPT
+        id S1728296AbfGJS3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:29:05 -0400
+Received: from m4a0041g.houston.softwaregrp.com ([15.124.2.87]:42463 "EHLO
+        m4a0041g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727242AbfGJS3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:46:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so1575041pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 10:46:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BhKBNyGYuDW2lcc8q3UKIy1/Ot87NeMwn9SCW5GMqCM=;
-        b=Esf46IovtUTax+ZrbNQ6jnph6jHDcTUG9KdOZ4QUxZHgU6DsCKtgTciC5I4plH4KtD
-         k+u9j+4urOJOwCUaSYKuXdXdXPakn4FmToL4pyGyTjoA6+81oC/VTCcY11JidCPnNkH5
-         5Fd5dgtk4f69gihqF4i5hIPdtmAAWd93vOonsRZIZBH6ue2KiuuvTzfKvzgNvE+G0j6x
-         YAdwHAD5kIWwbZESuBHdoAtSW8pZUSJ7WUAlmjWfgbsHCCyk6beP4FM0k56hkaBhid0O
-         TDC0FqlTKUG9LMUJK5IauDoKBC4AwAVV1iLmud+dTOeC0D3fNBoVPn7KLVnlhCdud9IY
-         Hh6w==
-X-Gm-Message-State: APjAAAUonggeaocuN0zWV2zmab8qGVsv5gUGEFTlffjdl7rBrnmqEtJN
-        BStFamdcldjCYF4HDvgne40=
-X-Google-Smtp-Source: APXvYqxPI+HXvLvWR0UABwLpNihucLsVrRaMtIocJj++h+5ihAMD9gwgou7eyAZUM53sEiirvMZMkg==
-X-Received: by 2002:a17:90a:ad41:: with SMTP id w1mr8298926pjv.52.1562780763119;
-        Wed, 10 Jul 2019 10:46:03 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
-        by smtp.gmail.com with ESMTPSA id r188sm8044323pfr.16.2019.07.10.10.46.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 10:46:01 -0700 (PDT)
-Subject: Re: BUG: MAX_STACK_TRACE_ENTRIES too low! (2)
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        syzbot <syzbot+6f39a9deb697359fe520@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <00000000000089a718058556e1d8@google.com>
- <f71aaffa-ecf4-1def-fe50-91f37c677537@acm.org>
- <20190710053030.GB2152@sol.localdomain>
- <b378a903-d0fc-a137-e6b9-dec55277cf16@acm.org>
- <20190710170057.GB801@sol.localdomain> <20190710172123.GC801@sol.localdomain>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <f498d8cc-ba82-d3dc-7557-142a1b35976a@acm.org>
-Date:   Wed, 10 Jul 2019 10:46:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190710172123.GC801@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
+        Wed, 10 Jul 2019 14:29:04 -0400
+X-Greylist: delayed 1729 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jul 2019 14:28:58 EDT
+Received: FROM m4a0041g.houston.softwaregrp.com (15.120.17.147) BY m4a0041g.houston.softwaregrp.com WITH ESMTP;
+ Wed, 10 Jul 2019 18:28:48 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 10 Jul 2019 17:47:34 +0000
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (15.124.8.13) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 10 Jul 2019 17:47:34 +0000
+Received: from BN6PR18MB1172.namprd18.prod.outlook.com (10.172.207.147) by
+ BN6PR18MB1266.namprd18.prod.outlook.com (10.172.210.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Wed, 10 Jul 2019 17:47:32 +0000
+Received: from BN6PR18MB1172.namprd18.prod.outlook.com
+ ([fe80::38f3:d27c:6480:d073]) by BN6PR18MB1172.namprd18.prod.outlook.com
+ ([fe80::38f3:d27c:6480:d073%3]) with mapi id 15.20.2052.020; Wed, 10 Jul 2019
+ 17:47:31 +0000
+From:   Lee Duncan <LDuncan@suse.com>
+To:     Yang Bin <yang.bin18@zte.com.cn>
+CC:     "open-iscsi@googlegroups.com" <open-iscsi@googlegroups.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "cleech@redhat.com" <cleech@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "wang.liang82@zte.com.cn" <wang.liang82@zte.com.cn>,
+        "wang.yi59@zte.com.cn" <wang.yi59@zte.com.cn>,
+        "xue.zhihong@zte.com.cn" <xue.zhihong@zte.com.cn>
+Subject: Re: [PATCH] Check sk before sendpage
+Thread-Topic: [PATCH] Check sk before sendpage
+Thread-Index: AQHVNvHttUE0icmf0Uic+RrHE7gyJ6bEISiA
+Date:   Wed, 10 Jul 2019 17:47:31 +0000
+Message-ID: <1bc364ff-5bff-47ac-611a-f75c43f4bd1b@suse.com>
+References: <1562743809-31133-1-git-send-email-yang.bin18@zte.com.cn>
+In-Reply-To: <1562743809-31133-1-git-send-email-yang.bin18@zte.com.cn>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: DB6PR07CA0011.eurprd07.prod.outlook.com
+ (2603:10a6:6:2d::21) To BN6PR18MB1172.namprd18.prod.outlook.com
+ (2603:10b6:404:eb::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=LDuncan@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [73.25.22.216]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 556321fc-1cb4-4059-7736-08d7055eaea7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR18MB1266;
+x-ms-traffictypediagnostic: BN6PR18MB1266:
+x-microsoft-antispam-prvs: <BN6PR18MB1266F6A8BC0BF729D3DB010DDAF00@BN6PR18MB1266.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 0094E3478A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(4636009)(376002)(396003)(136003)(366004)(39860400002)(346002)(199004)(189003)(68736007)(8676002)(31686004)(316002)(6486002)(478600001)(14454004)(31696002)(186003)(5660300002)(36756003)(4326008)(6916009)(86362001)(25786009)(6436002)(6506007)(80792005)(66556008)(81166006)(26005)(7736002)(81156014)(486006)(2906002)(71200400001)(71190400001)(53546011)(229853002)(446003)(64756008)(76176011)(66946007)(386003)(99286004)(6116002)(54906003)(476003)(102836004)(6512007)(66476007)(6246003)(53936002)(11346002)(8936002)(2616005)(256004)(7416002)(4744005)(52116002)(66066001)(305945005)(66446008)(3846002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR18MB1266;H:BN6PR18MB1172.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LrqtibLnWL2tJF5btRWJ0Cw7rDxKCZNDs9c8kU/nRpW58exwVDexAD0PkRGRFNqDrIOIcgeCYDvVGZmzz8nIAlL/ss4TCCgjly0j4/B/z+Fj/qj/TjA+ocO1a7EuzRkIq9OGvR4xo00qykDorRRO0DxrMrjkcz5PpDCkMV9BL/YzPa3/6ujfqJ4WYkf290/2aRHj3qJcGDlZrDOC7W6x6/EutEsvBxGzDvbPtZn5VypuqJcUSgR5/cALGKn7ib+l5+SUGNzjl4PAIeOM1oLKgTK+VLY0Oy4sk4dt8McCDGcj8tGOld1rm5Jb5zx5/GbWPLvh34oJ1ctCouDPzR0jzl6176ZvEgc+BlfI6VZJBRBCZyb6QogKDvkOFbeQ9rgYb0R6bGI1fmWbjN9lT3ZbJkwgOpfNKLSsXxIAc+t+ccU=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F3B3AF6B642FCC40B3B4B1F936A8554A@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 556321fc-1cb4-4059-7736-08d7055eaea7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2019 17:47:31.7946
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LDuncan@suse.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR18MB1266
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/19 10:21 AM, Eric Biggers wrote:
-> With my simplified reproducer, on commit 669de8bda87b ("kernel/workqueue: Use
-> dynamic lockdep keys for workqueues") I see:
-> 
-> 	WARNING: CPU: 3 PID: 189 at kernel/locking/lockdep.c:747 register_lock_class+0x4f6/0x580
-> 
-> and then somewhat later:
-> 
-> 	BUG: MAX_LOCKDEP_KEYS too low!
-> 
-> If on top of that I cherry pick commit 28d49e282665 ("locking/lockdep: Shrink
-> struct lock_class_key"), I see instead:
-> 
-> 	BUG: MAX_STACK_TRACE_ENTRIES too low!
-> 
-> I also see that on mainline.
-> 
-> Alternatively, if I check out 669de8bda87b and revert it, I don't see anything.
-
-Hi Eric,
-
-Is the rdma_ucm code the only code that triggers the "BUG:
-MAX_STACK_TRACE_ENTRIES too low!" complaint or is this complaint also
-triggered by other kernel code? I'm asking this because I think that
-fixing this would require to implement garbage collection for the
-stack_trace[] array in the lockdep code. That would make the lockdep
-code slower. I don't think that making the lockdep code slower would be
-welcome.
-
-Bart.
-
+T24gNy8xMC8xOSAxMjozMCBBTSwgWWFuZyBCaW4gd3JvdGU6DQoNCj4gRnJvbTogIiBZYW5nIEJp
+biAiPHlhbmcuYmluMThAenRlLmNvbS5jbj4NCj4NCj4gQmVmb3JlIHhtaXQsaXNjc2kgbWF5IGRp
+c2Nvbm5lY3QganVzdCBub3cuDQo+IFNvIG11c3QgY2hlY2sgY29ubmVjdGlvbiBzb2NrIE5VTEwg
+b3Igbm90LG9yIGtlcm5lbCB3aWxsIGNyYXNoIGZvcg0KPiBhY2Nlc3NpbmcgTlVMTCBwb2ludGVy
+Lg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBZYW5nIEJpbiA8eWFuZy5iaW4xOEB6dGUuY29tLmNuPg0K
+PiAtLS0NCj4gIGRyaXZlcnMvc2NzaS9pc2NzaV90Y3AuYyB8IDMgKysrDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgMyBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvaXNj
+c2lfdGNwLmMgYi9kcml2ZXJzL3Njc2kvaXNjc2lfdGNwLmMNCj4gaW5kZXggN2JlZGJlOC4uYTU5
+YzQ5ZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zY3NpL2lzY3NpX3RjcC5jDQo+ICsrKyBiL2Ry
+aXZlcnMvc2NzaS9pc2NzaV90Y3AuYw0KPiBAQCAtMjY0LDYgKzI2NCw5IEBAIHN0YXRpYyBpbnQg
+aXNjc2lfc3dfdGNwX3htaXRfc2VnbWVudChzdHJ1Y3QgaXNjc2lfdGNwX2Nvbm4gKnRjcF9jb25u
+LA0KPiAgCXVuc2lnbmVkIGludCBjb3BpZWQgPSAwOw0KPiAgCWludCByID0gMDsNCj4gIA0KPiAr
+CWlmICghc2spDQo+ICsJCXJldHVybiAtRU5PVENPTk47DQo+ICsNCj4gIAl3aGlsZSAoIWlzY3Np
+X3RjcF9zZWdtZW50X2RvbmUodGNwX2Nvbm4sIHNlZ21lbnQsIDAsIHIpKSB7DQo+ICAJCXN0cnVj
+dCBzY2F0dGVybGlzdCAqc2c7DQo+ICAJCXVuc2lnbmVkIGludCBvZmZzZXQsIGNvcHk7DQo+DQoN
+CklmIHRoZSBzb2NrZXQgY2FuIGJlIGNsb3NlZCByaWdodCBiZWZvcmUgaXNjc2lfc3dfdGNwX3ht
+aXRfc2VnbWVudCgpIGlzDQpjYWxsZWQsIGNhbiBpdCBiZSBjYWxsZWQgaW4gdGhlIG1pZGRsZSBv
+ZiBzZW5kaW5nIHNlZ21lbnRzPyAoSW4gd2hpY2gNCmNhc2UgdGhlIGNoZWNrIHdvdWxkIGhhdmUg
+dG8gYmUgaW4gdGhlIHdoaWxlIGxvb3AuKQ0KDQotLSANCg0KTGVlIER1bmNhbg0KDQo=
