@@ -2,162 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A022864F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 01:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8823364F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 01:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfGJXPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 19:15:17 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46031 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbfGJXPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 19:15:16 -0400
-Received: by mail-lj1-f193.google.com with SMTP id m23so3746999lje.12
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 16:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KQboB9+e5px7PkIQYt9TxvsS0wLCuRZrok0YN+xW9qU=;
-        b=N9XqQaAoPIac0JgRLKRl24GB5pv/laq9/aLbMTAMPG3ugr4LWVOZT31hk9asJq2PbT
-         4vbRER2CYPSpBipbp6megRSlHCqNJlQDHS6DIHW8KXk5qcQB1oYqNHmHvRK3CDE41AoQ
-         KEElx4br0/fmL3uJ3KZjwiQChE+aU6reGumrPGx6/rnfvrzPpeTl2hoCtaeMgj/3jDfS
-         N6aOulMiEveT0MBg8c+bNMd7dLPA3chriCRktpHuLXq7iUBcd9JufPpb7Ch78NSDaUbM
-         L6+dE+/INbvwqYLzXVPt0uFUdJjehkjavB871hg4vQ6vOnN5/vcLB10xqGY0pWLh9xHv
-         KOfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KQboB9+e5px7PkIQYt9TxvsS0wLCuRZrok0YN+xW9qU=;
-        b=eqbO2qwcYIhssTMXsOsThFbre1hwwv6mZR2kV5fkdJM3afGWBpPG+pUl8EV2mZImir
-         SBaVfdzul1IJoS1zV7ZiSX5BZAtglYI2zyVPamdmH+AS6GzrffiL4Cl7uWv/wrgfLH43
-         AQ54WrZcOLg9fCHtrrmOBfF8kN2k3/32dMSbhn0Cu8MeHFNGyiX0zbnbku6cA/I3o9R7
-         9U2KkKTu8wC7CtFzazmZAzKd5giER2qb5qiRIcxypJujnBN/+futYgQuygviMCQGp5+y
-         5DDeYoFFuyCxKwkC+Bh+ZsNEAlT47N371FdPkJTVo2p4nuIV6e7inU0V11N/jKzlluyb
-         GH0g==
-X-Gm-Message-State: APjAAAXFnUGf3K/cYdW6klFGlSFEg2ZKp+H7W4FuEL6nz7hI8R7B6Tql
-        lZBbSweJWzxSWx2xgIUIkDmNjn53aSPsDYYRKUaaBg==
-X-Google-Smtp-Source: APXvYqwdA4hJIQGF0PNM45a6g8O+FEFfKyJo3wL3XhbJp0NMRVgo11Jh/3mf/hNrzNIKK4AkK0jZ9VZODakhNdWe6b8=
-X-Received: by 2002:a2e:890a:: with SMTP id d10mr411931lji.145.1562800514229;
- Wed, 10 Jul 2019 16:15:14 -0700 (PDT)
+        id S1727805AbfGJXPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 19:15:45 -0400
+Received: from mga01.intel.com ([192.55.52.88]:6112 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727220AbfGJXPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 19:15:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 16:15:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,476,1557212400"; 
+   d="scan'208";a="159901023"
+Received: from teutenbb-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.50.108])
+  by orsmga008.jf.intel.com with ESMTP; 10 Jul 2019 16:15:39 -0700
+Date:   Thu, 11 Jul 2019 02:15:38 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        kai.svahn@intel.com, kai.huang@intel.com
+Subject: Re: [RFC PATCH v2 0/3] An alternative __vdso_sgx_enter_enclave() to
+ allow enclave/host parameter passing using untrusted stack
+Message-ID: <20190710231538.dkc7tyeyvns53737@linux.intel.com>
+References: <cover.1555965327.git.cedric.xing@intel.com>
+ <20190424062623.4345-1-cedric.xing@intel.com>
+ <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
+ <686e47d2-f45c-6828-39d1-48374925de6c@intel.com>
+ <20190710224628.epjxwlpqqxdurmzo@linux.intel.com>
 MIME-Version: 1.0
-References: <20190709040147.111927-1-levinale@chromium.org> <20190709114519.GW9224@smile.fi.intel.com>
-In-Reply-To: <20190709114519.GW9224@smile.fi.intel.com>
-From:   Curtis Malainey <cujomalainey@google.com>
-Date:   Wed, 10 Jul 2019 16:15:03 -0700
-Message-ID: <CAOReqxirZdKJQ59Z4789wT5Cxh2fyQrUcuB1pm9AidYLiPEs1A@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: Intel: Atom: read timestamp moved to period_elapsed
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alex Levin <levinale@chromium.org>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ben Zhang <benzh@chromium.org>,
-        Curtis Malainey <cujomalainey@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710224628.epjxwlpqqxdurmzo@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 4:45 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Jul 08, 2019 at 09:01:47PM -0700, Alex Levin wrote:
-> > sst_platform_pcm_pointer is called from both snd_pcm_period_elapsed and
-> > from snd_pcm_ioctl. Calling read timestamp results in recalculating
-> > pcm_delay and buffer_ptr (sst_calc_tstamp) which consumes buffers in a
-> > faster rate than intended.
-> > In a tested BSW system with chtrt5650, for a rate of 48000, the
-> > measured rate was sometimes 10 times more than that.
-> > After moving the timestamp read to period elapsed, buffer consumption is
-> > as expected.
->
-> From code prospective it looks good. You may take mine
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> Though I'm not an expert in the area, Pierre and / or Liam should give
-> their blessing.
->
-Agreed, Liam or Pierre should also give their ok since this is one of
-the closed source firmware drivers.
+On Thu, Jul 11, 2019 at 01:46:28AM +0300, Jarkko Sakkinen wrote:
+> On Wed, Jul 10, 2019 at 11:08:37AM -0700, Xing, Cedric wrote:
+> > > With these conclusions I think the current vDSO API is sufficient for
+> > > Linux.
+> > 
+> > The new vDSO API is to support data exchange on stack. It has nothing to do
+> > with debugging. BTW, the community has closed on this.
+> 
+> And how that is useful?
+> 
+> > The CFI directives are for stack unwinding. They don't affect what the code
+> > does so you can just treat them as NOPs if you don't understand what they
+> > do. However, they are useful to not only debuggers but also exception
+> > handling code. libunwind also has a setjmp()/longjmp() implementation based
+> > on CFI directives.
+> 
+> Of course I won't merge code of which usefulness I don't understand.
 
-Reviewed-by: Curtis Malainey <cujomalainey@chromium.org>
-> >
-> > Signed-off-by: Alex Levin <levinale@chromium.org>
-> > ---
-> >  sound/soc/intel/atom/sst-mfld-platform-pcm.c | 23 +++++++++++++-------
-> >  1 file changed, 15 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/sound/soc/intel/atom/sst-mfld-platform-pcm.c b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-> > index 0e8b1c5eec88..196af0b30b41 100644
-> > --- a/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-> > +++ b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-> > @@ -265,16 +265,28 @@ static void sst_period_elapsed(void *arg)
-> >  {
-> >       struct snd_pcm_substream *substream = arg;
-> >       struct sst_runtime_stream *stream;
-> > -     int status;
-> > +     struct snd_soc_pcm_runtime *rtd;
-> > +     int status, ret_val;
-> >
-> >       if (!substream || !substream->runtime)
-> >               return;
-> >       stream = substream->runtime->private_data;
-> >       if (!stream)
-> >               return;
-> > +
-> > +     rtd = substream->private_data;
-> > +     if (!rtd)
-> > +             return;
-> > +
-> >       status = sst_get_stream_status(stream);
-> >       if (status != SST_PLATFORM_RUNNING)
-> >               return;
-> > +
-> > +     ret_val = stream->ops->stream_read_tstamp(sst->dev, &stream->stream_info);
-> > +     if (ret_val) {
-> > +             dev_err(rtd->dev, "stream_read_tstamp err code = %d\n", ret_val);
-> > +             return;
-> > +     }
-> >       snd_pcm_period_elapsed(substream);
-> >  }
-> >
-> > @@ -658,20 +670,15 @@ static snd_pcm_uframes_t sst_platform_pcm_pointer
-> >                       (struct snd_pcm_substream *substream)
-> >  {
-> >       struct sst_runtime_stream *stream;
-> > -     int ret_val, status;
-> > +     int status;
-> >       struct pcm_stream_info *str_info;
-> > -     struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> >
-> >       stream = substream->runtime->private_data;
-> >       status = sst_get_stream_status(stream);
-> >       if (status == SST_PLATFORM_INIT)
-> >               return 0;
-> > +
-> >       str_info = &stream->stream_info;
-> > -     ret_val = stream->ops->stream_read_tstamp(sst->dev, str_info);
-> > -     if (ret_val) {
-> > -             dev_err(rtd->dev, "sst: error code = %d\n", ret_val);
-> > -             return ret_val;
-> > -     }
-> >       substream->runtime->delay = str_info->pcm_delay;
-> >       return str_info->buffer_ptr;
-> >  }
-> > --
-> > 2.22.0.410.gd8fdbe21b5-goog
-> >
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+I re-read the cover letter [1] because it usually is the place
+to "pitch" a feature.
+
+It fails to address two things:
+
+1. How and in what circumstances is an untrusted stack is a better
+   vessel for handling exceptions than the register based approach
+   that we already have?
+2. How is it simpler approach? There is a strong claim of simplicity
+   and convenience without anything backing it.
+3. Why we need both register and stack based approach co-exist? I'd go
+   with one approach for a new API without any legacy whatsoever.
+
+This really needs a better pitch before we can consider doing anything
+to it.
+
+Also, in [2] there is talk about the next revision. Maybe the way go
+forward is to address the three issues I found in the cover letter
+and fix whatever needed to be fixed in the actual patches?
+
+[1] https://lkml.org/lkml/2019/4/24/84
+[2] https://lkml.org/lkml/2019/4/25/1170
+
+/Jarkko
