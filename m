@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9646364592
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 13:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1871664597
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 13:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfGJLHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 07:07:11 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:33584 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfGJLHJ (ORCPT
+        id S1727512AbfGJLHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 07:07:23 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:50522 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbfGJLHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 10 Jul 2019 07:07:09 -0400
-Received: by mail-io1-f72.google.com with SMTP id 132so2489993iou.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:07:08 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id m26so2447482ioh.17
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:07:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=1MZwEpypxQO+6zRNPb9qlpdItDM+J+AtMhEGHFtFWHo=;
-        b=eBUzzSg8HVX9oaDnLs+feRe9VnUeD6twUu8iNeUBUag0tfn+77+zmJg9rigRi3PL2k
-         cSqgEMLEGoGknqWsAS7texWR7BJs+SrQVH2ncLfhCPrOmXM4FbN/V3ye0+zJUhGEH11+
-         ABcubbf5hAkKzp7EwAFfEPEzP33npi5adYSfeqWgKS3L8N8ZB7cNPUwJTMFXAo8Lq+4c
-         8zJukszdpxwv2y7F6cWAwqAYKx9ZkPfiTKxF13B7+4jWddx2y59IuHvYfZCJrNk50UxZ
-         QialrWkJkY+gHt6z2RwW46tF63f7qhN70SgXrLD+HpM7C8ifBZdCFnBxcder+lD3Zzoy
-         KCxA==
-X-Gm-Message-State: APjAAAVi+SMaKaeq17ErOBviLCad0jX4lon1RAW8Lc7WmREhG4L0SVx9
-        qT9Nynn3IZOBQlFOrMI74kt6oK69FJabjpQjZ9LtVk5yVY6H
-X-Google-Smtp-Source: APXvYqyPeqU+29B36BoWRNMAb1fARNBlBZK/g/natA4JnNo0RMnzmZQKisMK/JthoaTWYN65SJcdMH8gGMeNUWbHemmq6DYtlBaz
+        bh=Ogn6J9wBnNd+qiyGp5MPo0aVOG3dSwUiE1ddTm3jyXw=;
+        b=Wb0D84NHSXFi2m0TueCZskdgBjHqTFD2t/BYOjBkIEAUgY96CmgeWvHWlAF+KCcImp
+         5nv6eX4xy84lKHDnDCCjELFMT1ES/XCbRJYhZbvwOkEKkGR6trYWe+ZXrN8/zx2dcqIW
+         0iEuqWTj1ko4fNrb/uqm2agEOC3ookVAINAaDwUwEyTgiBy9JE269q7qmAqrLy4TCq5/
+         3fh3pZYgjnQFWJkQuOkO42Nyx9Nmc19zTirGpfXUv8LQAkf34WNnUgzZZMAsR7Mt5i+D
+         wSP5Ha2dD/Fczr1Ir7CBbOuITcs8Mf4ihg8/Ks6xyxM0eFDMqO11S7HkiNyrN6cFgmGv
+         lkag==
+X-Gm-Message-State: APjAAAWhLWk+7p3d55rJW4S43MsRolYQB8ZRKkCBV7bRlWlOFY6D5A2I
+        K87uwNW0gFFGy1aTmLvH68Kt2e2wY0jvlvCMKRLXS6Uo3Zb9
+X-Google-Smtp-Source: APXvYqxDN4HBNpz8tVe81MedwIcb26MRg6Xs059pfF4x67YZXT2usgGsomZf9MGHLhmGqe0qBo7wTuNGfSX9RV7NI0BLFO0tJL1D
 MIME-Version: 1.0
-X-Received: by 2002:a6b:bf01:: with SMTP id p1mr902038iof.181.1562756828063;
+X-Received: by 2002:a6b:b7d5:: with SMTP id h204mr30444814iof.188.1562756828952;
  Wed, 10 Jul 2019 04:07:08 -0700 (PDT)
 Date:   Wed, 10 Jul 2019 04:07:08 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009b6e7f058d51adba@google.com>
-Subject: WARNING in i2400mu_bus_bm_wait_for_ack/usb_submit_urb
-From:   syzbot <syzbot+7886801de1cc3958a0d1@syzkaller.appspotmail.com>
+Message-ID: <000000000000a901ed058d51adc3@google.com>
+Subject: WARNING in iforce_get_id_packet/usb_submit_urb
+From:   syzbot <syzbot+9584b712baf1965b590c@syzkaller.appspotmail.com>
 To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
         gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
@@ -51,25 +51,26 @@ syzbot found the following crash on:
 
 HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=1590cba0600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b6b3f8600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-dashboard link: https://syzkaller.appspot.com/bug?extid=7886801de1cc3958a0d1
+dashboard link: https://syzkaller.appspot.com/bug?extid=9584b712baf1965b590c
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e19490600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c2667ba00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d09e28600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1410e1f7a00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7886801de1cc3958a0d1@syzkaller.appspotmail.com
+Reported-by: syzbot+9584b712baf1965b590c@syzkaller.appspotmail.com
 
-i2400m_usb 1-1:64.149: W: __i2400mu_send_barker: cannot send URB: -8
-i2400m_usb 1-1:64.149: W: __i2400mu_send_barker: cannot send URB: -8
-i2400m_usb 1-1:64.149: E: __i2400mu_send_barker: maximum errors in URB  
-exceeded; resetting device
-i2400m_usb 1-1:64.149: warm reset failed (-8); trying USB reset
+usb 1-1: config 0 interface 47 altsetting 0 bulk endpoint 0x8A has invalid  
+maxpacket 0
+usb 1-1: New USB device found, idVendor=061c, idProduct=c0a4,  
+bcdDevice=4e.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
 ------------[ cut here ]------------
-usb 1-1: BOGUS urb xfer, pipe 1 != type 3
-WARNING: CPU: 0 PID: 12 at drivers/usb/core/urb.c:477  
-usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+URB 0000000044363614 submitted while active
+WARNING: CPU: 0 PID: 12 at drivers/usb/core/urb.c:362  
+usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
 Kernel panic - not syncing: panic_on_warn set ...
 CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc6+ #13
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
@@ -86,23 +87,21 @@ Call Trace:
   do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
   do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
-Code: 4d 85 ed 74 2c e8 78 db e8 fd 4c 89 f7 e8 a0 36 13 ff 41 89 d8 44 89  
-e1 4c 89 ea 48 89 c6 48 c7 c7 80 23 1a 86 e8 03 a0 be fd <0f> 0b e9 20 f4  
-ff ff e8 4c db e8 fd 4c 89 f2 48 b8 00 00 00 00 00
-RSP: 0018:ffff8881d9e0ebb0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3c1d68
-RBP: ffff8881d0498dd0 R08: ffff8881d9df9800 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8881cde9db10 R14: ffff8881d07122a0 R15: ffff8881d9e0ed30
-  i2400mu_notif_submit drivers/net/wimax/i2400m/usb-fw.c:259 [inline]
-  i2400mu_bus_bm_wait_for_ack+0x4bf/0xb45  
-drivers/net/wimax/i2400m/usb-fw.c:303
-  i2400m_bm_cmd+0x346/0x7f0 drivers/net/wimax/i2400m/fw.c:611
-  i2400m_bootrom_init+0x319/0x1060 drivers/net/wimax/i2400m/fw.c:909
-  i2400m_setup+0x29c/0x990 drivers/net/wimax/i2400m/driver.c:871
-  i2400mu_probe+0x6bf/0xdf0 drivers/net/wimax/i2400m/usb.c:532
+RIP: 0010:usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
+Code: 89 de e8 72 dd e8 fd 84 db 0f 85 42 f6 ff ff e8 35 dc e8 fd 4c 89 fe  
+48 c7 c7 00 23 1a 86 c6 05 4b 78 57 04 01 e8 ca a0 be fd <0f> 0b e9 20 f6  
+ff ff c7 44 24 14 01 00 00 00 e9 d7 f6 ff ff 41 bd
+RSP: 0018:ffff8881d9e0f010 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3c1df4
+RBP: ffff8881d4b67d00 R08: ffff8881d9df9800 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881cf2c9980
+R13: 00000000fffffff0 R14: ffffffff862df820 R15: ffff8881d4b67d00
+  iforce_get_id_packet+0x19c/0x52c  
+drivers/input/joystick/iforce/iforce-packets.c:238
+  iforce_init_device+0x391/0x138d  
+drivers/input/joystick/iforce/iforce-main.c:293
+  iforce_usb_probe+0x97c/0xd90 drivers/input/joystick/iforce/iforce-usb.c:163
   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
   really_probe+0x281/0x660 drivers/base/dd.c:509
   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
