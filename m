@@ -2,108 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B25064BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60E1A64BFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfGJSLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:11:03 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43192 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbfGJSLC (ORCPT
+        id S1728253AbfGJSUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:20:42 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41408 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbfGJSUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:11:02 -0400
-Received: by mail-pl1-f194.google.com with SMTP id cl9so1602088plb.10;
-        Wed, 10 Jul 2019 11:11:02 -0700 (PDT)
+        Wed, 10 Jul 2019 14:20:41 -0400
+Received: by mail-yb1-f195.google.com with SMTP id 13so1081977ybx.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 11:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tkiQUH7jKLkTwFwCHjeNvDKd8Do7Dj+FovhMf1Vuvic=;
-        b=eHNzvQHZfuEWGmRvlZNBGGtTB7xHUpJw6zdvQOKaJTkoQY/Ik8OyEfgE6TapG82OLm
-         CXlSWeNtwDVj7Sty7PQnddjjMsvJN61sj1IcUgQYBTl/ieHiZTORfxjM9CX7lL2dv9mE
-         0kXrYzOhVqovdKceYEl2el/h8Ewk3HnuBW6VS6xhJQxy9TErXviuRpRFXKOgzT9sLeTy
-         ww3ONk/P1aC69XA5pmvE6JtKQugquHjEA3rwwuqh6JEmRp2ajpvAGJ4SNldP54Xs9chQ
-         WeGZh3TnRh3LXF935EacLaoNy1PcnmHntbjCf+VSXBTFPRxpu5gcia+ETnAh+78bTMAe
-         9UqQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i1+UD1I9LOzdxuTZsCLZbyXguKS89Lx3a1U1xfAOFks=;
+        b=vh+2Jwx6JrbYMXBMbxhjpIH/ZBTSBPT1Hq0fZUUo4CLxMXsgClXgdGZzdNqBizZYlo
+         zhJQA0IIppOmWVwv8uuUvvj0iCesRd6XV0aDIIBVahEILoVe1T9AW8JfH7kgk94vMKro
+         1YxRItIpCfOnxBTFOlWh1mbbG3KcV76/yGbOs9SLqSCmWNSxZ4bkBGFjYPPmm0214DZa
+         m+/mGrDxki6GraUyhLKD0bMjRthpHkwNJDnmPQhgydiCPDItFS8Qkilhu9XkebC4izeV
+         CqeOfzKf7aPgziSQVFITTVtf898bXqVaVQz+XlH3sFvlUn8jPh904YXhpaniInK4iLKF
+         YEyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tkiQUH7jKLkTwFwCHjeNvDKd8Do7Dj+FovhMf1Vuvic=;
-        b=t5gc0lornCnVgCo+3AvRTrvELpsvA8JkIYd+ySmigjyF8EyF0T6OpiUdPVy2UxLjNp
-         5cYx09KjFUIpIc0RL84srYGQRz/UM1SUu1tuV87PP5M8jGncrTvPTdDtkPzvPjujY2aV
-         B2iUVcPITCn08dbWfJkgRa6++8PXRbi5tXW/70qkXolH9gqEGDuLUXc/KKprHs32DOnz
-         eT0UUohtHPXgnzrlpgIRjk4W6zj4TVtjdj+Awep0z7wWlbUtvgfbAqVZ8ErWdufGBUmy
-         Y9a6cUW8V+ezk/b0lg8KPnFQ4LH0ZEaJ6lHSXghtgY3XtmIVBtt0tcm8KlijHhsJG7Gj
-         bqaQ==
-X-Gm-Message-State: APjAAAWq0kpNgVU7XUgapE5Nfo2KszKeL+J7R7AOiQmbyP2aAS0623F+
-        exvCToqCaSKZC9d1NB+AywM=
-X-Google-Smtp-Source: APXvYqyIm7dBPHQaeOhsZwKT4qMnmJ4MiYO6k+j5Dggp01zUoz5MZTRxBxhAwOD7Z0Ja+Sa3bMGAqw==
-X-Received: by 2002:a17:902:9a95:: with SMTP id w21mr40075670plp.126.1562782262024;
-        Wed, 10 Jul 2019 11:11:02 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.16.82])
-        by smtp.gmail.com with ESMTPSA id s193sm8046179pgc.32.2019.07.10.11.10.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 10 Jul 2019 11:11:01 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     adaplas@gmail.com, b.zolnierkie@samsung.com
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] video: fbdev: nvidia: Remove dead code
-Date:   Wed, 10 Jul 2019 23:46:26 +0530
-Message-Id: <1562782586-3994-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i1+UD1I9LOzdxuTZsCLZbyXguKS89Lx3a1U1xfAOFks=;
+        b=aaD7Zt4mxYSDZRmcyyjK+JhVwYaKS491gnFoEO75wjAyce0f/V2MQdgEodOPtv848T
+         qo8RtrbtOd0nN8JNU3CR5h5X8QbBL1PE+KvgHCo133Hri4l4Gj4zQ4+rcPlbVzg8CDiJ
+         AMi03PTlIJXKQg+wSqfFkZ36/9T+/XHod/6AFXouHhPTfOKK5VA1Q+6yey1FTiL4Cr/A
+         vTenQw1JCsUpSpGY+R2p12QH7oPxEEVKaKMtTxlqyZH+U+6PTd3J2he1654mV7Cp9Anf
+         2GPJtVch/dlco4GX4qL1+IQRyH6DyKds0YXJ8ZCv6cAlzUstomOQKuRUGR35/ag9NlZi
+         j3wA==
+X-Gm-Message-State: APjAAAXOcHnAIgtsFXrgd9ciMBqFfdv/SaMX9+zOVSz/PVGQt1Ggt8ac
+        3vqdZnA5EUKUkWVBc/LV5S0smSkZbe2+hX+nkFcGqg==
+X-Google-Smtp-Source: APXvYqx+vlSRtb8++KxN6l3lI5xV7xySoJM2J9G54cgNHJ9R2fIXItQ5mVlTjT+IFK4RmuL4qyjo9+PWSQkFxsipuHY=
+X-Received: by 2002:a25:d658:: with SMTP id n85mr19270594ybg.172.1562782840404;
+ Wed, 10 Jul 2019 11:20:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
+In-Reply-To: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 10 Jul 2019 11:20:29 -0700
+Message-ID: <CALvZod45JPt_89GRzpWyuxSJHtNQSiweR2-dh+hpbTBi1EbPWw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] zpool: Add malloc_support_movable to zpool_driver
+To:     Hui Zhu <teawaterz@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dan Streetman <ddstreet@ieee.org>,
+        Minchan Kim <minchan@kernel.org>, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com,
+        Seth Jennings <sjenning@redhat.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is dead code since 3.15. If there is no plan to use it
-further, this can be removed forever.
+Cc: akpm@linux-foundation.org
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/video/fbdev/nvidia/nv_setup.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
+On Wed, Jun 5, 2019 at 3:06 AM Hui Zhu <teawaterz@linux.alibaba.com> wrote:
+>
+> As a zpool_driver, zsmalloc can allocate movable memory because it
+> support migate pages.
+> But zbud and z3fold cannot allocate movable memory.
+>
+> This commit adds malloc_support_movable to zpool_driver.
+> If a zpool_driver support allocate movable memory, set it to true.
+> And add zpool_malloc_support_movable check malloc_support_movable
+> to make sure if a zpool support allocate movable memory.
+>
+> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
 
-diff --git a/drivers/video/fbdev/nvidia/nv_setup.c b/drivers/video/fbdev/nvidia/nv_setup.c
-index b17acd2..2fa6866 100644
---- a/drivers/video/fbdev/nvidia/nv_setup.c
-+++ b/drivers/video/fbdev/nvidia/nv_setup.c
-@@ -119,34 +119,10 @@ u8 NVReadMiscOut(struct nvidia_par *par)
- {
- 	return (VGA_RD08(par->PVIO, VGA_MIS_R));
- }
--#if 0
--void NVEnablePalette(struct nvidia_par *par)
--{
--	volatile u8 tmp;
--
--	tmp = VGA_RD08(par->PCIO, par->IOBase + 0x0a);
--	VGA_WR08(par->PCIO, VGA_ATT_IW, 0x00);
--	par->paletteEnabled = 1;
--}
--void NVDisablePalette(struct nvidia_par *par)
--{
--	volatile u8 tmp;
--
--	tmp = VGA_RD08(par->PCIO, par->IOBase + 0x0a);
--	VGA_WR08(par->PCIO, VGA_ATT_IW, 0x20);
--	par->paletteEnabled = 0;
--}
--#endif  /*  0  */
- void NVWriteDacMask(struct nvidia_par *par, u8 value)
- {
- 	VGA_WR08(par->PDIO, VGA_PEL_MSK, value);
- }
--#if 0
--u8 NVReadDacMask(struct nvidia_par *par)
--{
--	return (VGA_RD08(par->PDIO, VGA_PEL_MSK));
--}
--#endif  /*  0  */
- void NVWriteDacReadAddr(struct nvidia_par *par, u8 value)
- {
- 	VGA_WR08(par->PDIO, VGA_PEL_IR, value);
--- 
-1.9.1
+I was wondering why this patch is not picked up by Andrew yet. You
+forgot to CC Andrew.
 
+Andrew, the thread starts at:
+
+http://lkml.kernel.org/r/20190605100630.13293-1-teawaterz@linux.alibaba.com
+
+> ---
+>  include/linux/zpool.h |  3 +++
+>  mm/zpool.c            | 16 ++++++++++++++++
+>  mm/zsmalloc.c         | 19 ++++++++++---------
+>  3 files changed, 29 insertions(+), 9 deletions(-)
+>
+> diff --git a/include/linux/zpool.h b/include/linux/zpool.h
+> index 7238865e75b0..51bf43076165 100644
+> --- a/include/linux/zpool.h
+> +++ b/include/linux/zpool.h
+> @@ -46,6 +46,8 @@ const char *zpool_get_type(struct zpool *pool);
+>
+>  void zpool_destroy_pool(struct zpool *pool);
+>
+> +bool zpool_malloc_support_movable(struct zpool *pool);
+> +
+>  int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
+>                         unsigned long *handle);
+>
+> @@ -90,6 +92,7 @@ struct zpool_driver {
+>                         struct zpool *zpool);
+>         void (*destroy)(void *pool);
+>
+> +       bool malloc_support_movable;
+>         int (*malloc)(void *pool, size_t size, gfp_t gfp,
+>                                 unsigned long *handle);
+>         void (*free)(void *pool, unsigned long handle);
+> diff --git a/mm/zpool.c b/mm/zpool.c
+> index a2dd9107857d..863669212070 100644
+> --- a/mm/zpool.c
+> +++ b/mm/zpool.c
+> @@ -238,6 +238,22 @@ const char *zpool_get_type(struct zpool *zpool)
+>         return zpool->driver->type;
+>  }
+>
+> +/**
+> + * zpool_malloc_support_movable() - Check if the zpool support
+> + * allocate movable memory
+> + * @zpool:     The zpool to check
+> + *
+> + * This returns if the zpool support allocate movable memory.
+> + *
+> + * Implementations must guarantee this to be thread-safe.
+> + *
+> + * Returns: true if if the zpool support allocate movable memory, false if not
+> + */
+> +bool zpool_malloc_support_movable(struct zpool *zpool)
+> +{
+> +       return zpool->driver->malloc_support_movable;
+> +}
+> +
+>  /**
+>   * zpool_malloc() - Allocate memory
+>   * @zpool:     The zpool to allocate from.
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 0787d33b80d8..8f3d9a4d46f4 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -437,15 +437,16 @@ static u64 zs_zpool_total_size(void *pool)
+>  }
+>
+>  static struct zpool_driver zs_zpool_driver = {
+> -       .type =         "zsmalloc",
+> -       .owner =        THIS_MODULE,
+> -       .create =       zs_zpool_create,
+> -       .destroy =      zs_zpool_destroy,
+> -       .malloc =       zs_zpool_malloc,
+> -       .free =         zs_zpool_free,
+> -       .map =          zs_zpool_map,
+> -       .unmap =        zs_zpool_unmap,
+> -       .total_size =   zs_zpool_total_size,
+> +       .type =                   "zsmalloc",
+> +       .owner =                  THIS_MODULE,
+> +       .create =                 zs_zpool_create,
+> +       .destroy =                zs_zpool_destroy,
+> +       .malloc_support_movable = true,
+> +       .malloc =                 zs_zpool_malloc,
+> +       .free =                   zs_zpool_free,
+> +       .map =                    zs_zpool_map,
+> +       .unmap =                  zs_zpool_unmap,
+> +       .total_size =             zs_zpool_total_size,
+>  };
+>
+>  MODULE_ALIAS("zpool-zsmalloc");
+> --
+> 2.21.0 (Apple Git-120)
+>
