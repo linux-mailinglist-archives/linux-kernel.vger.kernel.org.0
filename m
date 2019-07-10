@@ -2,188 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D856481E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 16:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85BFD64823
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 16:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfGJOTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 10:19:22 -0400
-Received: from foss.arm.com ([217.140.110.172]:34390 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbfGJOTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 10:19:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A34B72B;
-        Wed, 10 Jul 2019 07:19:20 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17BC03F71F;
-        Wed, 10 Jul 2019 07:19:17 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 15:19:08 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, digetx@gmail.com,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V13 05/12] PCI: dwc: Add ext config space capability
- search API
-Message-ID: <20190710141900.GA8781@e121166-lin.cambridge.arm.com>
-References: <20190710062212.1745-1-vidyas@nvidia.com>
- <20190710062212.1745-6-vidyas@nvidia.com>
- <20190710103709.GA4063@e121166-lin.cambridge.arm.com>
- <fd1fc10e-47d0-aaac-158d-1c19363ec8d3@nvidia.com>
+        id S1727628AbfGJOUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 10:20:02 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37501 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfGJOUB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 10:20:01 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z28so2285166ljn.4;
+        Wed, 10 Jul 2019 07:19:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PfXp9O7NkxQUzXeKEd8RHmqfUCQPLxouDpd9A/Tc3mg=;
+        b=RksVEUHero0wvQ1UcYgh96O6ZP2FyuowK7EqMgdY8AFRdUbDQCaVPIU0oaYLqYF+X7
+         ipF7LoRLHh2LjpZdICDvYRm3oF9tSLpw40GdgEBpS8jbwxgpoKP4HLPByJsE4rVotiFL
+         Q5UFDvX2E2J2FBkZN627uwpy6fZtVuOttHsvjzSmIRXAxU4Kf4X2rPbUpTfvkSpz9235
+         zMwi1albNT6qJPj/ECFOJ7tg/aWUUc/ixwJ0pJC+DHMo2Q3DAwIvCcdy8c6eBtVzGgOw
+         1UslE3BXlr6eNJj6eQYkvZlbPivsc8JkMXRw5VnMXfwXiaJxlqGDRNuX0ECQQ7ZNym4C
+         mUBQ==
+X-Gm-Message-State: APjAAAUN3LcovAwmRIw0ZP5e22lXJpW3E1KnV7uxsG52bdr32uGGkXnY
+        2MoSCyfJE0bzRN8yOmAiSw7adlPan4R7oq42pnhl4pBA
+X-Google-Smtp-Source: APXvYqzPPqJ5Um9RE3P5Mh6iXGaD0KDMa3tuZzVJrMnQ1d95d45Xx642SUQwvj61pR1zzl/Y33AaK/wwgZVtva+atxU=
+X-Received: by 2002:a2e:b0c4:: with SMTP id g4mr17000838ljl.155.1562768398488;
+ Wed, 10 Jul 2019 07:19:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd1fc10e-47d0-aaac-158d-1c19363ec8d3@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190708124743.3585020-1-arnd@arndb.de> <1562765663.2597.16.camel@intel.com>
+In-Reply-To: <1562765663.2597.16.camel@intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 10 Jul 2019 16:19:41 +0200
+Message-ID: <CAK8P3a09EHDzjhz9dD9DPGujuBz-=RqhtTM58rqBedJVSxLFjg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: thermal: processor_thermal: mark pm function __maybe_unused
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:57:23PM +0530, Vidya Sagar wrote:
-> On 7/10/2019 4:07 PM, Lorenzo Pieralisi wrote:
-> > On Wed, Jul 10, 2019 at 11:52:05AM +0530, Vidya Sagar wrote:
-> > > Add extended configuration space capability search API using struct dw_pcie *
-> > > pointer
-> > 
-> > Sentences are terminated with a period and this is v13 not v1, which
-> > proves that you do not read the commit logs you write.
-> > 
-> > I need you guys to understand that I can't rewrite commit logs all
-> > the time, I do not want to go as far as not accepting your patches
-> > anymore so please do pay attention to commit log details they
-> > are as important as the code itself.
-> > 
-> > https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-> My sincere apologies.
-> Since I didn't touch this patch much all through this series, I missed it.
-> I'll make a point to not make such mistakes again.
-> Do you want me to send a new version fixing it?
+On Wed, Jul 10, 2019 at 3:34 PM Zhang Rui <rui.zhang@intel.com> wrote:
 
-I will update it, I just wanted to get the point across, no
-problems.
+>
+> From 6c395f66e98c895cf3ebf87c0b2fc63b6a57a196 Mon Sep 17 00:00:00 2001
+> From: Zhang Rui <rui.zhang@intel.com>
+> Date: Tue, 9 Jul 2019 21:19:12 +0800
+> Subject: [PATCH] drivers: thermal: processor_thermal_device: Fix build warning
+>
+> As a system sleep callback, proc_thermal_resume() should be defined only
+> if CONFIG_PM_SLEEP is set.
+>
+> This fixes a build warning when CONFIG_PM_SLEEP is not set,
+> drivers/thermal/intel/int340x_thermal/processor_thermal_device.c:446:12: error: 'proc_thermal_resume' defined but not used [-Werror=unused-function]
+>  static int proc_thermal_resume(struct device *dev)
+>
+> Fixes: aaba9791fbb4 ("drivers: thermal: processor_thermal: Read PPCC on resume")
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 
-Lorenzo
+This looks correct to me as well.
 
-> Thanks,
-> Vidya Sagar
-> 
-> > 
-> > Thanks,
-> > Lorenzo
-> > 
-> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> > > Acked-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > V13:
-> > > * None
-> > > 
-> > > V12:
-> > > * None
-> > > 
-> > > V11:
-> > > * None
-> > > 
-> > > V10:
-> > > * None
-> > > 
-> > > V9:
-> > > * Added Acked-by from Thierry
-> > > 
-> > > V8:
-> > > * Changed data types of return and arguments to be inline with data being returned
-> > >    and passed.
-> > > 
-> > > V7:
-> > > * None
-> > > 
-> > > V6:
-> > > * None
-> > > 
-> > > V5:
-> > > * None
-> > > 
-> > > V4:
-> > > * None
-> > > 
-> > > V3:
-> > > * None
-> > > 
-> > > V2:
-> > > * This is a new patch in v2 series
-> > > 
-> > >   drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
-> > >   drivers/pci/controller/dwc/pcie-designware.h |  1 +
-> > >   2 files changed, 42 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > > index 7818b4febb08..181449e342f1 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > @@ -53,6 +53,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
-> > > +static u16 dw_pcie_find_next_ext_capability(struct dw_pcie *pci, u16 start,
-> > > +					    u8 cap)
-> > > +{
-> > > +	u32 header;
-> > > +	int ttl;
-> > > +	int pos = PCI_CFG_SPACE_SIZE;
-> > > +
-> > > +	/* minimum 8 bytes per capability */
-> > > +	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> > > +
-> > > +	if (start)
-> > > +		pos = start;
-> > > +
-> > > +	header = dw_pcie_readl_dbi(pci, pos);
-> > > +	/*
-> > > +	 * If we have no capabilities, this is indicated by cap ID,
-> > > +	 * cap version and next pointer all being 0.
-> > > +	 */
-> > > +	if (header == 0)
-> > > +		return 0;
-> > > +
-> > > +	while (ttl-- > 0) {
-> > > +		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-> > > +			return pos;
-> > > +
-> > > +		pos = PCI_EXT_CAP_NEXT(header);
-> > > +		if (pos < PCI_CFG_SPACE_SIZE)
-> > > +			break;
-> > > +
-> > > +		header = dw_pcie_readl_dbi(pci, pos);
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
-> > > +{
-> > > +	return dw_pcie_find_next_ext_capability(pci, 0, cap);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
-> > > +
-> > >   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-> > >   {
-> > >   	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > index d8c66a6827dc..11c223471416 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > @@ -252,6 +252,7 @@ struct dw_pcie {
-> > >   		container_of((endpoint), struct dw_pcie, ep)
-> > >   u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-> > > +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
-> > >   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
-> > >   int dw_pcie_write(void __iomem *addr, int size, u32 val);
-> > > -- 
-> > > 2.17.1
-> > > 
-> 
+> ---
+>  drivers/thermal/intel/int340x_thermal/processor_thermal_device.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> index a3210f0..77dae1e 100644
+> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> @@ -443,6 +443,7 @@ static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+>         pci_disable_device(pdev);
+>  }
+>
+> +#ifdef CONFIG_PM_SLEEP
+>  static int proc_thermal_resume(struct device *dev)
+>  {
+>         struct proc_thermal_device *proc_dev;
+> @@ -452,6 +453,9 @@ static int proc_thermal_resume(struct device *dev)
+>
+>         return 0;
+>  }
+> +#else
+> +#define proc_thermal_resume NULL
+> +#endif
+
+I would suggest you drop the #else part though, as it is not needed here.
+
+Please apply whichever version you find most readable otherwise.
+
+Thanks,
+
+       Arnd
