@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E43643F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EFE7643F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfGJI7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:59:43 -0400
+        id S1727807AbfGJI7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:59:47 -0400
 Received: from mga12.intel.com ([192.55.52.136]:35469 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbfGJI7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:59:37 -0400
+        id S1727763AbfGJI7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:59:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:38 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,474,1557212400"; 
-   d="scan'208";a="186102539"
+   d="scan'208";a="186102544"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:36 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:37 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/21] perf scripts python: export-to-sqlite.py: Export comm details
-Date:   Wed, 10 Jul 2019 11:57:58 +0300
-Message-Id: <20190710085810.1650-10-adrian.hunter@intel.com>
+Subject: [PATCH 10/21] perf scripts python: export-to-postgresql.py: Export comm details
+Date:   Wed, 10 Jul 2019 11:57:59 +0300
+Message-Id: <20190710085810.1650-11-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190710085810.1650-1-adrian.hunter@intel.com>
 References: <20190710085810.1650-1-adrian.hunter@intel.com>
@@ -39,35 +39,26 @@ Add table columns for thread id, comm start time and exec flag.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/export-to-sqlite.py | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ tools/perf/scripts/python/export-to-postgresql.py | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index 021326c46285..97aa66dd2fe1 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -177,7 +177,10 @@ do_query(query, 'CREATE TABLE threads ('
+diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
+index 92713d93e956..01f37877f5bb 100644
+--- a/tools/perf/scripts/python/export-to-postgresql.py
++++ b/tools/perf/scripts/python/export-to-postgresql.py
+@@ -353,7 +353,10 @@ do_query(query, 'CREATE TABLE threads ('
  		'tid		integer)')
  do_query(query, 'CREATE TABLE comms ('
- 		'id		integer		NOT NULL	PRIMARY KEY,'
+ 		'id		bigint		NOT NULL,'
 -		'comm		varchar(16))')
 +		'comm		varchar(16),'
 +		'c_thread_id	bigint,'
 +		'c_time		bigint,'
 +		'exec_flag	boolean)')
  do_query(query, 'CREATE TABLE comm_threads ('
- 		'id		integer		NOT NULL	PRIMARY KEY,'
+ 		'id		bigint		NOT NULL,'
  		'comm_id	bigint,'
-@@ -536,7 +539,7 @@ machine_query.prepare("INSERT INTO machines VALUES (?, ?, ?)")
- thread_query = QSqlQuery(db)
- thread_query.prepare("INSERT INTO threads VALUES (?, ?, ?, ?, ?)")
- comm_query = QSqlQuery(db)
--comm_query.prepare("INSERT INTO comms VALUES (?, ?)")
-+comm_query.prepare("INSERT INTO comms VALUES (?, ?, ?, ?, ?)")
- comm_thread_query = QSqlQuery(db)
- comm_thread_query.prepare("INSERT INTO comm_threads VALUES (?, ?, ?)")
- dso_query = QSqlQuery(db)
-@@ -576,7 +579,7 @@ def trace_begin():
+@@ -763,7 +766,7 @@ def trace_begin():
  	evsel_table(0, "unknown")
  	machine_table(0, 0, "unknown")
  	thread_table(0, 0, 0, -1, -1)
@@ -76,15 +67,30 @@ index 021326c46285..97aa66dd2fe1 100644
  	dso_table(0, 0, "unknown", "unknown", "")
  	symbol_table(0, 0, 0, 0, 0, "unknown")
  	sample_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-@@ -642,7 +645,7 @@ def thread_table(*x):
- 	bind_exec(thread_query, 5, x)
+@@ -851,6 +854,8 @@ def trace_end():
+ 	do_query(query, 'ALTER TABLE threads '
+ 					'ADD CONSTRAINT machinefk  FOREIGN KEY (machine_id)   REFERENCES machines   (id),'
+ 					'ADD CONSTRAINT processfk  FOREIGN KEY (process_id)   REFERENCES threads    (id)')
++	do_query(query, 'ALTER TABLE comms '
++					'ADD CONSTRAINT threadfk   FOREIGN KEY (c_thread_id)  REFERENCES threads    (id)')
+ 	do_query(query, 'ALTER TABLE comm_threads '
+ 					'ADD CONSTRAINT commfk     FOREIGN KEY (comm_id)      REFERENCES comms      (id),'
+ 					'ADD CONSTRAINT threadfk   FOREIGN KEY (thread_id)    REFERENCES threads    (id)')
+@@ -935,11 +940,11 @@ def thread_table(thread_id, machine_id, process_id, pid, tid, *x):
+ 	value = struct.pack("!hiqiqiqiiii", 5, 8, thread_id, 8, machine_id, 8, process_id, 4, pid, 4, tid)
+ 	thread_file.write(value)
  
- def comm_table(*x):
--	bind_exec(comm_query, 2, x)
-+	bind_exec(comm_query, 5, x)
+-def comm_table(comm_id, comm_str, *x):
++def comm_table(comm_id, comm_str, thread_id, time, exec_flag, *x):
+ 	comm_str = toserverstr(comm_str)
+ 	n = len(comm_str)
+-	fmt = "!hiqi" + str(n) + "s"
+-	value = struct.pack(fmt, 2, 8, comm_id, n, comm_str)
++	fmt = "!hiqi" + str(n) + "s" + "iqiqiB"
++	value = struct.pack(fmt, 5, 8, comm_id, n, comm_str, 8, thread_id, 8, time, 1, exec_flag)
+ 	comm_file.write(value)
  
- def comm_thread_table(*x):
- 	bind_exec(comm_thread_query, 3, x)
+ def comm_thread_table(comm_thread_id, comm_id, thread_id, *x):
 -- 
 2.17.1
 
