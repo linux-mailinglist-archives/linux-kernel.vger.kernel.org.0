@@ -2,92 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFC764B93
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C6064B9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:44:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfGJRlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:41:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727095AbfGJRlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:41:50 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B753130C34C0;
-        Wed, 10 Jul 2019 17:41:50 +0000 (UTC)
-Received: from gimli.home (ovpn-116-83.phx2.redhat.com [10.3.116.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C84D60BFB;
-        Wed, 10 Jul 2019 17:41:48 +0000 (UTC)
-Subject: [PATCH v3] mdev: Send uevents around parent device registration
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     kwankhede@nvidia.com, alex.williamson@redhat.com, cohuck@redhat.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 10 Jul 2019 11:41:48 -0600
-Message-ID: <156278027422.16516.5157992389394627876.stgit@gimli.home>
-User-Agent: StGit/0.19-dirty
+        id S1728082AbfGJRom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 13:44:42 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37452 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbfGJRol (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 13:44:41 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b3so1584067plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 10:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=dmbO34ZqHStfI2tyC7TtDVBbhxIxp0PXVd1n64+drE0=;
+        b=HRta48ewWh4wUetmF/uhzeoaKvUbzTYOovVQGptvjp+13DOThY1SWptjuP/5K8XcA6
+         ZuKIDh+WJdYux9Qkl17HmLvGPw7NdvG4whGU32bV4//+DOYJICMIynku4p4L8jtS00UJ
+         c8y+Re0K7yU4LAxSGwBpR/C9Ba48op3KpeJJ0h770D6vCk7ZUI3NKWexZD2Y4MrL8+83
+         l/Wz4cauTJALHBGjfkHJF+caw/MabdvYkooqtMFZX5KI/Yz6F9GtbBNnQoz5J7zsJfVy
+         r1ooR88MKCmW5nTghd8s/5D27NbDJACnfOPUpcVKlydK5v1iIJdOaXTCH/zlRA+gqYHr
+         wJnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dmbO34ZqHStfI2tyC7TtDVBbhxIxp0PXVd1n64+drE0=;
+        b=Fn/kjDMa2g68xaucYNDojbKuyT+sPDoYUB6sjtNCmd6iQ0WbGKBrp01FZZ67I5dXr+
+         8r5Ck/kcGIeGNsX6cE6Cfn+TUWZ1EdMH1tmsgVOT6UFGmknFdy48vLP+6AOMKUW+YhsU
+         75Aw0vXxScboVGX1DUT1uR/wR22aYA01ZNv5M0QOqpqblSuM42+BAzu/nbTE0dSEMhRV
+         6caXS5CHQ/+ho4t8tMxEq6funtpvXRG9hGKUro9IYodW4zOt7HaC3tYES2XI4FtRQ6Xu
+         uBMeQZUthugkNKbuc7fKjQmuyBZzb3aF7u5uIU1D6az4dn2hHXa6zCyacsojeJ4EbZCp
+         xnXQ==
+X-Gm-Message-State: APjAAAUbEwOtQXIRnL3ugy0iL/tjper8CXLuWNDtIdDTwAr6EWQ2rY/i
+        1Q1cHes60rXKY+fvvLwKbjhzBfpdWNYPlZjsVxxOUg==
+X-Google-Smtp-Source: APXvYqxQjUcYJsZ6u/BVsrh0Z2/kl5tzSysXuxGU6exHCzTmppV6MJsHqLj/ZSssqOAuDOc4mUj6dVY7LXZra1W5dwM=
+X-Received: by 2002:a17:902:fe93:: with SMTP id x19mr37478959plm.77.1562780681028;
+ Wed, 10 Jul 2019 10:44:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 10 Jul 2019 17:41:50 +0000 (UTC)
+From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date:   Wed, 10 Jul 2019 23:14:04 +0530
+Message-ID: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
+Subject: BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+To:     rostedt@goodmis.org, andriy.shevchenko@linux.intel.com,
+        alexander.shishkin@linux.intel.com, tobin@kernel.org,
+        ndesaulniers@google.com
+Cc:     lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows udev to trigger rules when a parent device is registered
-or unregistered from mdev.
+hello all ,
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
+i encountered a KASAN bug related .    here are some related information...
 
-v3: Add Connie's R-b
-    Add comment clarifying expected device requirements for unreg
 
- drivers/vfio/mdev/mdev_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+-------------------x-----------------------------x------------------
+[   30.037312] BUG: KASAN: global-out-of-bounds in
+ata_exec_internal_sg+0x50f/0xc70
+[   30.037447] Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
 
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index ae23151442cb..23976db6c6c7 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -146,6 +146,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- {
- 	int ret;
- 	struct mdev_parent *parent;
-+	char *env_string = "MDEV_STATE=registered";
-+	char *envp[] = { env_string, NULL };
- 
- 	/* check for mandatory ops */
- 	if (!ops || !ops->create || !ops->remove || !ops->supported_type_groups)
-@@ -197,6 +199,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- 	mutex_unlock(&parent_list_lock);
- 
- 	dev_info(dev, "MDEV: Registered\n");
-+	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
-+
- 	return 0;
- 
- add_dev_err:
-@@ -220,6 +224,8 @@ EXPORT_SYMBOL(mdev_register_device);
- void mdev_unregister_device(struct device *dev)
- {
- 	struct mdev_parent *parent;
-+	char *env_string = "MDEV_STATE=unregistered";
-+	char *envp[] = { env_string, NULL };
- 
- 	mutex_lock(&parent_list_lock);
- 	parent = __find_parent_device(dev);
-@@ -243,6 +249,9 @@ void mdev_unregister_device(struct device *dev)
- 	up_write(&parent->unreg_sem);
- 
- 	mdev_put_parent(parent);
-+
-+	/* We still have the caller's reference to use for the uevent */
-+	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
- }
- EXPORT_SYMBOL(mdev_unregister_device);
- 
 
+[   30.039935] The buggy address belongs to the variable:
+[   30.040059]  cdb.48319+0x0/0x40
+
+[   30.040241] Memory state around the buggy address:
+[   30.040362]  ffffffff91f41e80: fa fa fa fa 00 00 fa fa fa fa fa fa
+00 00 07 fa
+[   30.040498]  ffffffff91f41f00: fa fa fa fa 00 00 00 00 00 00 00 03
+fa fa fa fa
+[   30.040628] >ffffffff91f41f80: 00 04 fa fa fa fa fa fa 00 00 fa fa
+fa fa fa fa
+[   30.040755]                       ^
+[   30.040868]  ffffffff91f42000: 00 00 00 04 fa fa fa fa 00 fa fa fa
+fa fa fa fa
+[   30.041003]  ffffffff91f42080: 04 fa fa fa fa fa fa fa 00 04 fa fa
+fa fa fa fa
+
+---------------------------x--------------------------x----------------
+$uname -a
+Linux debian 5.2.0-rc7+ #4 SMP Tue Jul 9 02:54:07 IST 2019 x86_64 GNU/Linux
+$
+
+--------------------x----------------------------x---------------------------
+(gdb) l *ata_exec_internal_sg+0x50f
+0xffffffff81c7b59f is in ata_exec_internal_sg (./include/linux/string.h:359).
+354 if (q_size < size)
+355 __read_overflow2();
+356 }
+357 if (p_size < size || q_size < size)
+358 fortify_panic(__func__);
+359 return __builtin_memcpy(p, q, size);
+360 }
+361
+362 __FORTIFY_INLINE void *memmove(void *p, const void *q, __kernel_size_t size)
+363 {
+(gdb)
+--------------------------x--------------------------
+GNU Make            4.2.1
+Binutils            2.31.1
+Util-linux          2.33.1
+Mount                2.33.1
+Linux C Library      2.28
+Dynamic linker (ldd) 2.28
+Procps              3.3.15
+Kbd                  2.0.4
+Console-tools        2.0.4
+Sh-utils            8.30
+Udev                241
+---------------------x--------------------------------x
+Thread model: posix
+gcc version 8.3.0 (Debian 8.3.0-7)
+---------------------x--------------------------------x
+
+Please ask if more information is needed.
+
+-- 
+software engineer
+rajagiri school of engineering and technology
