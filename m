@@ -2,111 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4692E642C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D28A642D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfGJH0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:26:18 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41989 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbfGJH0S (ORCPT
+        id S1727364AbfGJH3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:29:52 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41198 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfGJH3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:26:18 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q10so657125pff.9;
-        Wed, 10 Jul 2019 00:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cdSf9Bk39d2jsEwtirbUFvZR6WuTUDxY23e5Q3Gyu54=;
-        b=KBYkAkycZiz8DZ1DdXQ09DtirV6eaCKk3fmVFyIBKxbjrT7BHk2fATKnvMqjuFKqtL
-         2VVWpAxLUOf2sFvSR1Ki+Vto7jYVcUKMF6E0/b9zXN1h6LCaQx5xuVlomf8/omMtm2et
-         J61gvJfNmZcJkmMt3N3ZhKRPU0TPtsG97ISH+wksw7N8TBZF4MOFBRuJ4ONbmbjlBl9S
-         IWZfsW+wyHljkFz3b4S9mOX+bA0Z5/byG4Ds6TrkkqZ2FZiJ6MkQHhyZLyZN4Q4riLMN
-         3XRZrOR5pnbAlhfcgRX7/z1bIYZR8JEbt7v3quprl6EpQwiiRneIx6UXRrL7tZSYOhwO
-         oWQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=cdSf9Bk39d2jsEwtirbUFvZR6WuTUDxY23e5Q3Gyu54=;
-        b=HhVGBsKUrHWhGdLJgz736QeIEdkx3HJC64L45FnOtJQI13VUhy86Qxeb+YdkPC1jkZ
-         WSjJdIT7qMUSl0+Kzl3cPoucBU+vT/UoVebyFlLgI2hexr1aHD7wegm13cFzqFIH/n+v
-         pt4urQogTviJrS+OlYaOyzP0iVg8qumJgQK+KX4Cnx3/KFILruHmtW0PIvQbEh3c4ChI
-         vj+4fF073ZmEw+6oI/o5nxcK0z0yrHi/w61LOrMioGP7XW5Gp7XQdZuFYuNY9Rr9qHUg
-         yoN6VxkXBoCeR0M+V7dCKs2mJa0HIjoMjG5R6PbMIcBEsOWWiRqmXYnpmdq0b5fZs6GB
-         tzhg==
-X-Gm-Message-State: APjAAAVIX32zucHmmR+7zZgeizk+DSc2lADambnQzx50qCj12/JknSrh
-        MHh1va+2QGs9SJl0/SkfEJMPnhvv
-X-Google-Smtp-Source: APXvYqyA6lkiug68fbXg2b3s/HCFJWhdOBMdkW5CUmBV9eiZBbo2xrJFzH3CGhvgc5LdiqbxL0WpEw==
-X-Received: by 2002:a63:da52:: with SMTP id l18mr35850153pgj.131.1562743577006;
-        Wed, 10 Jul 2019 00:26:17 -0700 (PDT)
-Received: from voyager.ozlabs.ibm.com ([36.255.48.244])
-        by smtp.gmail.com with ESMTPSA id o130sm2802358pfg.171.2019.07.10.00.26.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 00:26:15 -0700 (PDT)
-From:   Joel Stanley <joel@jms.id.au>
-To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     Eddie James <eajames@linux.ibm.com>,
-        Alexander Amelkin <a.amelkin@yadro.com>,
-        Lei YU <mine260309@gmail.com>,
-        Alexander Soldatov <a.soldatov@yadro.com>,
+        Wed, 10 Jul 2019 03:29:52 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4429E25B7D5;
+        Wed, 10 Jul 2019 17:29:50 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 3CF689402F1; Wed, 10 Jul 2019 09:29:48 +0200 (CEST)
+Date:   Wed, 10 Jul 2019 09:29:48 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     xianfengting221@163.com, Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     wensong@linux-vs.org, ja@ssi.bg, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon (occ): Add temp sensor value check
-Date:   Wed, 10 Jul 2019 16:56:06 +0930
-Message-Id: <20190710072606.4849-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.20.1
+Subject: Re: [PATCH] ipvs: Delete some unused space characters in Kconfig
+Message-ID: <20190710072948.mpg4niors42zrqhc@verge.net.au>
+References: <1562473009-29726-1-git-send-email-xianfengting221@163.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562473009-29726-1-git-send-email-xianfengting221@163.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Soldatov <a.soldatov@yadro.com>
+On Sun, Jul 07, 2019 at 12:16:49PM +0800, xianfengting221@163.com wrote:
+> From: Hu Haowen <xianfengting221@163.com>
+> 
+> The space characters at the end of lines are always unused and
+> not easy to find. This patch deleted some of them I have found
+> in Kconfig.
+> 
+> Signed-off-by: Hu Haowen <xianfengting221@163.com>
+> ---
+> 
+> This is my first patch to the Linux kernel, so please forgive
+> me if anything went wrong.
 
-The occ driver supports two formats for the temp sensor value.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-The OCC firmware for P8 supports only the first format, for which
-no range checking or error processing is performed in the driver.
-Inspecting the OCC sources for P8 reveals that OCC may send
-a special value 0xFFFF to indicate that a sensor read timeout
-has occurred, see
+Thanks Hu,
 
-https://github.com/open-power/occ/blob/master_p8/src/occ/cmdh/cmdh_fsp_cmds.c#L395
+this looks good to me.
 
-That situation wasn't handled in the driver. This patch adds invalid
-temp value check for the sensor data format 1 and handles it the same
-way as it is done for the format 2, where EREMOTEIO is reported for
-this case.
+Pablo, please consider this for inclusion in nf-next.
 
-Fixes: 54076cb3b5ff ("hwmon (occ): Add sensor attributes and register hwmon device")
-Signed-off-by: Alexander Soldatov <a.soldatov@yadro.com>
-Signed-off-by: Alexander Amelkin <a.amelkin@yadro.com>
-Reviewed-by: Alexander Amelkin <a.amelkin@yadro.com>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/hwmon/occ/common.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
-index cccf91742c1a..a7d2b16dd702 100644
---- a/drivers/hwmon/occ/common.c
-+++ b/drivers/hwmon/occ/common.c
-@@ -241,6 +241,12 @@ static ssize_t occ_show_temp_1(struct device *dev,
- 		val = get_unaligned_be16(&temp->sensor_id);
- 		break;
- 	case 1:
-+		/*
-+		 * If a sensor reading has expired and couldn't be refreshed,
-+		 * OCC returns 0xFFFF for that sensor.
-+		 */
-+		if (temp->value == 0xFFFF)
-+			return -EREMOTEIO;
- 		val = get_unaligned_be16(&temp->value) * 1000;
- 		break;
- 	default:
--- 
-2.20.1
-
+> 
+>  net/netfilter/ipvs/Kconfig | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/Kconfig b/net/netfilter/ipvs/Kconfig
+> index f6f1a0d..54afad5 100644
+> --- a/net/netfilter/ipvs/Kconfig
+> +++ b/net/netfilter/ipvs/Kconfig
+> @@ -120,7 +120,7 @@ config	IP_VS_RR
+>  
+>  	  If you want to compile it in kernel, say Y. To compile it as a
+>  	  module, choose M here. If unsure, say N.
+> - 
+> +
+>  config	IP_VS_WRR
+>  	tristate "weighted round-robin scheduling"
+>  	---help---
+> @@ -138,7 +138,7 @@ config	IP_VS_LC
+>          tristate "least-connection scheduling"
+>  	---help---
+>  	  The least-connection scheduling algorithm directs network
+> -	  connections to the server with the least number of active 
+> +	  connections to the server with the least number of active
+>  	  connections.
+>  
+>  	  If you want to compile it in kernel, say Y. To compile it as a
+> @@ -193,7 +193,7 @@ config  IP_VS_LBLCR
+>  	tristate "locality-based least-connection with replication scheduling"
+>  	---help---
+>  	  The locality-based least-connection with replication scheduling
+> -	  algorithm is also for destination IP load balancing. It is 
+> +	  algorithm is also for destination IP load balancing. It is
+>  	  usually used in cache cluster. It differs from the LBLC scheduling
+>  	  as follows: the load balancer maintains mappings from a target
+>  	  to a set of server nodes that can serve the target. Requests for
+> @@ -250,8 +250,8 @@ config	IP_VS_SED
+>  	tristate "shortest expected delay scheduling"
+>  	---help---
+>  	  The shortest expected delay scheduling algorithm assigns network
+> -	  connections to the server with the shortest expected delay. The 
+> -	  expected delay that the job will experience is (Ci + 1) / Ui if 
+> +	  connections to the server with the shortest expected delay. The
+> +	  expected delay that the job will experience is (Ci + 1) / Ui if
+>  	  sent to the ith server, in which Ci is the number of connections
+>  	  on the ith server and Ui is the fixed service rate (weight)
+>  	  of the ith server.
+> -- 
+> 2.7.4
+> 
+> 
