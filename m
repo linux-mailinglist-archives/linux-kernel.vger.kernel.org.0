@@ -2,85 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B64E6467D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C72E64688
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfGJMrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 08:47:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfGJMre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 08:47:34 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BCF12064B;
-        Wed, 10 Jul 2019 12:47:33 +0000 (UTC)
-Date:   Wed, 10 Jul 2019 08:47:31 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] printk: Do not lose last line in kmsg dump
-Message-ID: <20190710084731.2e3caa29@gandalf.local.home>
-In-Reply-To: <20190710121049.rwhk7fknfzn3cfkz@pathway.suse.cz>
-References: <20190709081042.31551-1-vincent.whitchurch@axis.com>
-        <20190709101230.GA16909@jagdpanzerIV>
-        <20190709142939.luqhbd6x6bzdkydr@pathway.suse.cz>
-        <20190710080402.ab3f4qfnvez6dhtc@axis.com>
-        <20190710081922.GA7020@jagdpanzerIV>
-        <20190710121049.rwhk7fknfzn3cfkz@pathway.suse.cz>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727165AbfGJMyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 08:54:05 -0400
+Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:49022
+        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725956AbfGJMyF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 08:54:05 -0400
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+        by mail.dev.tdt.de (Postfix) with ESMTP id 478B5216E4;
+        Wed, 10 Jul 2019 12:54:03 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Wed, 10 Jul 2019 14:54:03 +0200
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Eckert.Florian@googlemail.com,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Update pcengines-apuv2 platform device
+In-Reply-To: <4b43316c-3e05-0ce9-3ada-db22996205b9@metux.net>
+References: <20190704090205.19400-1-fe@dev.tdt.de>
+ <CAHp75Vcocs=9AwX32ouOWFc+wAduCFv2DT_p4JYPUVV0BumjqA@mail.gmail.com>
+ <4b43316c-3e05-0ce9-3ada-db22996205b9@metux.net>
+Message-ID: <cc5bbcd7148ece53a075948f240bc66b@dev.tdt.de>
+X-Sender: fe@dev.tdt.de
+User-Agent: Roundcube Webmail/1.1.5
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Jul 2019 14:10:49 +0200
-Petr Mladek <pmladek@suse.com> wrote:
-
-> On Wed 2019-07-10 17:19:22, Sergey Senozhatsky wrote:
- 
-> > > arch/powerpc/xmon/xmon.c
-> > > 2836:	while (kmsg_dump_get_line_nolock(&dumper, false, buf, sizeof(buf), &len)) {
-> > > 2837-		buf[len] = '\0';
-> > > 
-> > > arch/um/kernel/kmsg_dump.c
-> > > 29:	while (kmsg_dump_get_line(dumper, true, line, sizeof(line), &len)) {
-> > > 30-		line[len] = '\0';
-> > > 
-> > > I guess we should fix these first and leave this patch as is?  
-> > 
-> > We certainly need to fix something here, and I'd say that we
-> > better handle it on the msg_print_text() side. There might be
-> > more kmsg_dump_get_line() users doing `buf[len] = '\0'' in the
-> > future.  
-
-So basically the issues is that callers may expect that the return size
-is still in the buffer and they append a '\0' to it. This is the same
-issue with strncpy() and will cause the same kinds of bugs.
-
+On 2019-07-08 21:45, Enrico Weigelt, metux IT consult wrote:
+> On 04.07.19 15:39, Andy Shevchenko wrote:
+>> On Thu, Jul 4, 2019 at 12:02 PM Florian Eckert <fe@dev.tdt.de> wrote:
+>>> 
+>>> This patchset adds the following changes to this pcengines-apuv2
+>>> platform device.
+>>> 
+>> 
+>> Before doing anything to this driver, what is the plan for previously
+>> upstreamed:
+>> 
+>> drivers/leds/leds-apu.c
 > 
-> I though more about it and I agree with Sergey. One unused byte does
-> not look worth the risk. Especially when we are talking about strings
-> where many people expect the trailing '\0'.
+> Only supports the three front LEDs, nothing else. (we've got more gpios
+> that are not LEDs, eg. the front button, simsw, ...)
 > 
-> I would even modify msg_print_text() to always add the trailing '\0'.
-> All bytes will be used and it will be more error-proof API. I guess
-> that this is what Sergey meant by better handling it on the
-> msg_print_text() side.
+>> arch/x86/platform/geode/alix.c
+> 
+> completely unrelated - very different chipset.
+> 
+> 
+> --mtx
 
-I agree too. We either keep it as is and let the callers be able to add
-the '\0', or we preferably add the '\0' ourselves and return the length
-written (not counting the terminating '\0'), and we can then remove the
-callers adding the '\0' later.
+I'm going to sum it all what we have
 
-That's the safest approach.
+ALIX family boards (https://www.pcengines.ch/alix.htm):
+CPU -> AMD Geode LX CPU
+Stays as it is different because it has a different CPU
 
--- Steve
+APU family boards (https://www.pcengines.ch/apu.htm):
+CPU -> AMD G series T40E APU
+Remove the related APU2 family stuff from the LEDs driver
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c
+this will be handled in the future by the platform device
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c
+The other GPIOs are not supported by this platform. Only LEDs are 
+supported for now.
 
+APU2 family boards (https://www.pcengines.ch/apu2.htm):
+CPU -> AMD Embedded G series GX-412TC
+Add the additional mpcie reset pins and add additional board 
+descriptions to
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c?h=v5.2#n61
+so we can distinguish between the APU2,APU3 and APU4 boards of the APU2 
+board family.
+
+My research in the pcengines documentation shows the following GPIO pins 
+for the individual boards which we can support.
+
+APU2:
+front-led1
+front-led2
+front-led3
+front-button
+mpcie2_reset
+mpcie3_reset
+
+APU3:
+front-led1
+front-led2
+front-led3
+front-button
+mpcie2_reset
+mpcie3_reset
+simswap
+
+APU4:
+front-led1
+front-led2
+front-led3
+front-button
+mpcie2_reset
+mpcie3_reset
+
+Until now we support aAPU2 and APU3 and treat it the same way. But the 
+APU2 does not have a simswap.
+
+Kind regards
+
+Florian
