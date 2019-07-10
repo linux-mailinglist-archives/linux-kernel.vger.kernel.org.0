@@ -2,177 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18B4F6439F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76CA8643A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:38:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfGJIhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:37:25 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42938 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfGJIhZ (ORCPT
+        id S1727451AbfGJIiJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 04:38:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726097AbfGJIiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:37:25 -0400
-Received: by mail-pg1-f194.google.com with SMTP id t132so881812pgb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 01:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=uULVVNf+00uTXLBlTk+5ZpHg9JZ7/DLSlO8BujKHgOA=;
-        b=Z8yKh+6C8SBN1Mos1npqTjLIAXadVhs0pYArp4XHXzVQcUhEq7SBlkne2dUIJUHFiZ
-         aASwenuNR/xGEM3udLpaONc7GSg7Od+yKG8LRt3V+PnMvETokuduR4HeES3wVjGgRWPZ
-         FB8hqs14ywgMeEek3j89BnPbCqDFBrvuA8Sz3xCIVnJ+ttc4aaOw86Q7BV8HhZhhWVeB
-         RKcphfAn3OU3RN4FktbNxkMakv/6AMmtKRMJeWRxN09osj7npSeIsGGk3O6F8KO0K8IG
-         Km4vEJDhKw91EBNsgUAxAy2fkBZIK+8VkMOWEsWlLsxgxBvOk/vVWkzXyG0F4sOAMU3v
-         g2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uULVVNf+00uTXLBlTk+5ZpHg9JZ7/DLSlO8BujKHgOA=;
-        b=cDmJnbfQqbe+OwlrT/K79xtfXUbMfqx03Y9eT84n+yQaoGe0p2AweDBSbLHObon7Vf
-         xoRxVBlYzcAti5E8Bdt/1xAEtX2zUD2bx6XmZoJQb5adoeD5OILSJXO2qQ6JkmQUdIVC
-         Q71sNGxIQjRj8C6pwbGBXZ3tLTnCAMQ/S7MqCabFRsyvCZwBn2dN/tzfKqE2OGmhlUwW
-         2n7rcvpXMLAHUIZL7gNTkGuQfJBYPYLM4056gcIL+anm9XhaMMjBycJ7owtFNYCQl5Bl
-         p2kklctgJwAfXW0KYjGzjG1ROMIgh6NnVMh471/M4UfEoR8+8O8FSBYG9Fs07nL9Qvyp
-         70GA==
-X-Gm-Message-State: APjAAAWvBih+kRRVlokwH9plhv6G08nCe9mHyqX8cGnljWoMUdi1wlkx
-        s/dH1nztt6ogcO6h9E6Zjg==
-X-Google-Smtp-Source: APXvYqyV8BGGYxZMldErHuMZ25Le9QBc4K9Gg2WB0AjAq7NBLwrUpHgyb3ycy6oeRIf/7XcKncfnZg==
-X-Received: by 2002:a65:5144:: with SMTP id g4mr1168743pgq.202.1562747844462;
-        Wed, 10 Jul 2019 01:37:24 -0700 (PDT)
-Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r188sm3809271pfr.16.2019.07.10.01.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 01:37:23 -0700 (PDT)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     x86@kernel.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] smp: force all cpu to boot once under maxcpus option
-Date:   Wed, 10 Jul 2019 16:37:03 +0800
-Message-Id: <1562747823-16972-1-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.5
+        Wed, 10 Jul 2019 04:38:09 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6A8aRCo115827
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:38:08 -0400
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tnas1vww9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:38:07 -0400
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <BMT@zurich.ibm.com>;
+        Wed, 10 Jul 2019 08:38:07 -0000
+Received: from us1b3-smtp07.a3dr.sjc01.isc4sb.com (10.122.203.198)
+        by smtp.notes.na.collabserv.com (10.122.47.46) with smtp.notes.na.collabserv.com ESMTP;
+        Wed, 10 Jul 2019 08:38:00 -0000
+Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
+          by us1b3-smtp07.a3dr.sjc01.isc4sb.com
+          with ESMTP id 2019071008375974-184574 ;
+          Wed, 10 Jul 2019 08:37:59 +0000 
+In-Reply-To: <20190710043554.GA7034@mtr-leonro.mtl.com>
+From:   "Bernard Metzler" <BMT@zurich.ibm.com>
+To:     "Leon Romanovsky" <leon@kernel.org>
+Cc:     "YueHaibing" <yuehaibing@huawei.com>, dledford@redhat.com,
+        jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Date:   Wed, 10 Jul 2019 08:38:00 +0000
+MIME-Version: 1.0
+Sensitivity: 
+Importance: Normal
+X-Priority: 3 (Normal)
+References: <20190710043554.GA7034@mtr-leonro.mtl.com>,<20190710015009.57120-1-yuehaibing@huawei.com>
+X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
+ SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
+X-KeepSent: B29B4146:7E46891A-00258433:002BBAD4;
+ type=4; name=$KeepSent
+X-LLNOutbound: False
+X-Disclaimed: 59203
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+x-cbid: 19071008-3017-0000-0000-0000004E3DB3
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.064514
+X-IBM-SpamModules-Versions: BY=3.00011404; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01230075; UDB=6.00647874; IPR=6.01011341;
+ MB=3.00027663; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-10 08:38:05
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-07-10 03:22:57 - 6.00010146
+x-cbparentid: 19071008-3018-0000-0000-000000835860
+Message-Id: <OFB29B4146.7E46891A-ON00258433.002BBAD4-00258433.002F6CB8@notes.na.collabserv.com>
+Subject: Re:  Re: [PATCH] RDMA/siw: Print error code while kthread_create failed
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On x86 it's required to boot all logical CPUs at least once so that the
-init code can get a chance to set CR4.MCE on each CPU. Otherwise, a
-broadacasted MCE observing CR4.MCE=0b on any core will shutdown the
-machine.
+-----"Leon Romanovsky" <leon@kernel.org> wrote: -----
 
-The option 'nosmt' has already complied with the above rule. In the case of
-maxcpus, the initialization of capped out cpus may be deferred indefinitely
-until a user brings them up. This exposes the machine under the risk of
-sudden shutdown indefinitely.
+>To: "YueHaibing" <yuehaibing@huawei.com>
+>From: "Leon Romanovsky" <leon@kernel.org>
+>Date: 07/10/2019 06:36AM
+>Cc: bmt@zurich.ibm.com, dledford@redhat.com, jgg@ziepe.ca,
+>linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+>Subject: [EXTERNAL] Re: [PATCH] RDMA/siw: Print error code while
+>kthread_create failed
+>
+>On Wed, Jul 10, 2019 at 09:50:09AM +0800, YueHaibing wrote:
+>> In iw_create_tx_threads(), if we failed to create kthread,
+>> we should print the 'rv', this fix gcc warning:
+>>
+>> drivers/infiniband/sw/siw/siw_main.c: In function
+>'siw_create_tx_threads':
+>> drivers/infiniband/sw/siw/siw_main.c:91:11: warning:
+>>  variable 'rv' set but not used [-Wunused-but-set-variable]
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/infiniband/sw/siw/siw_main.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/infiniband/sw/siw/siw_main.c
+>b/drivers/infiniband/sw/siw/siw_main.c
+>> index fd2552a..2a70830d 100644
+>> --- a/drivers/infiniband/sw/siw/siw_main.c
+>> +++ b/drivers/infiniband/sw/siw/siw_main.c
+>> @@ -101,7 +101,8 @@ static int siw_create_tx_threads(void)
+>>  		if (IS_ERR(siw_tx_thread[cpu])) {
+>>  			rv = PTR_ERR(siw_tx_thread[cpu]);
+>>  			siw_tx_thread[cpu] = NULL;
+>> -			pr_info("Creating TX thread for CPU %d failed", cpu);
+>> +			pr_info("Creating TX thread for CPU%d failed %d\n",
+>> +				cpu, rv);
+>
+>Delete this print together with variable, failure to create kthread
+>is basic failure, which affect performance only. The whole kthread
+>creation spam in this driver looked suspicious during submission
+>and it continues to be.
+>
+>Thanks
 
-Minimize the risk window by initializing all cpus at boot time.
+Right, I agree with Leon. Better remove all those printouts. We
+already have a warning if we cannot start any thread. Also
+stopping those threads is not worth spamming the console. I just
+forgot to remove after Leon's comment. Would it be possible
+to apply the following?
 
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: linux-kernel@vger.kernel.org
+Thanks a lot!
+Bernard.
+
+From e4ca3d4dec86bb5731f8e3cb0cdd01e84b315d80 Mon Sep 17 00:00:00 2001
+From: Bernard Metzler <bmt@zurich.ibm.com>
+Date: Wed, 10 Jul 2019 10:03:17 +0200
+Subject: [PATCH] remove kthread create/destroy printouts
+
+Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
 ---
- include/linux/smp.h |  1 +
- kernel/cpu.c        | 20 ++++++++++++++++++--
- kernel/smp.c        |  4 ++++
- 3 files changed, 23 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/siw/siw_main.c  | 4 +---
+ drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ----
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index a56f08f..9d2c692 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -130,6 +130,7 @@ extern void __init setup_nr_cpu_ids(void);
- extern void __init smp_init(void);
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index fd2552a9091d..f55c4e80aea4 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -88,7 +88,7 @@ static void siw_device_cleanup(struct ib_device *base_dev)
  
- extern int __boot_cpu_id;
-+extern bool smp_boot_done;
- 
- static inline int get_boot_cpu_id(void)
+ static int siw_create_tx_threads(void)
  {
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index ef1c565..ab19dc8 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -439,6 +439,21 @@ static inline bool cpu_smt_allowed(unsigned int cpu)
- static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
- #endif
+-	int cpu, rv, assigned = 0;
++	int cpu, assigned = 0;
  
-+static inline bool maxcpus_allowed(unsigned int cpu)
-+{
-+	/* maxcpus only takes effect during system bootup */
-+	if (smp_boot_done)
-+		return true;
-+	if (num_online_cpus() < setup_max_cpus)
-+		return true;
-+	/*
-+	 * maxcpus should allow cpu to set CR4.MCE asap, otherwise the set may
-+	 * be deferred indefinitely.
-+	 */
-+	if (!per_cpu(cpuhp_state, cpu).booted_once)
-+		return true;
-+}
-+
- static inline enum cpuhp_state
- cpuhp_set_state(struct cpuhp_cpu_state *st, enum cpuhp_state target)
- {
-@@ -525,8 +540,9 @@ static int bringup_wait_for_ap(unsigned int cpu)
- 	 * CPU marked itself as booted_once in cpu_notify_starting() so the
- 	 * cpu_smt_allowed() check will now return false if this is not the
- 	 * primary sibling.
-+	 * In case of maxcpus, the capped out cpus comply with the same rule.
- 	 */
--	if (!cpu_smt_allowed(cpu))
-+	if (!cpu_smt_allowed(cpu) || !maxcpus_allowed(cpu))
- 		return -ECANCELED;
+ 	for_each_online_cpu(cpu) {
+ 		/* Skip HT cores */
+@@ -99,9 +99,7 @@ static int siw_create_tx_threads(void)
+ 			kthread_create(siw_run_sq, (unsigned long *)(long)cpu,
+ 				       "siw_tx/%d", cpu);
+ 		if (IS_ERR(siw_tx_thread[cpu])) {
+-			rv = PTR_ERR(siw_tx_thread[cpu]);
+ 			siw_tx_thread[cpu] = NULL;
+-			pr_info("Creating TX thread for CPU %d failed", cpu);
+ 			continue;
+ 		}
+ 		kthread_bind(siw_tx_thread[cpu], cpu);
+diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
+index 2c3d250ee57c..fff02b56d38a 100644
+--- a/drivers/infiniband/sw/siw/siw_qp_tx.c
++++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
+@@ -1200,8 +1200,6 @@ int siw_run_sq(void *data)
+ 	init_llist_head(&tx_task->active);
+ 	init_waitqueue_head(&tx_task->waiting);
  
- 	if (st->target <= CPUHP_AP_ONLINE_IDLE)
-@@ -1177,7 +1193,7 @@ static int do_cpu_up(unsigned int cpu, enum cpuhp_state target)
- 		err = -EBUSY;
- 		goto out;
+-	pr_info("Started siw TX thread on CPU %u\n", nr_cpu);
+-
+ 	while (1) {
+ 		struct llist_node *fifo_list = NULL;
+ 
+@@ -1239,8 +1237,6 @@ int siw_run_sq(void *data)
+ 			siw_sq_resume(qp);
+ 		}
  	}
--	if (!cpu_smt_allowed(cpu)) {
-+	if (!cpu_smt_allowed(cpu) || !maxcpus_allowed(cpu)) {
- 		err = -EPERM;
- 		goto out;
- 	}
-diff --git a/kernel/smp.c b/kernel/smp.c
-index d155374..a5f82d53 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -560,6 +560,9 @@ void __init setup_nr_cpu_ids(void)
- 	nr_cpu_ids = find_last_bit(cpumask_bits(cpu_possible_mask),NR_CPUS) + 1;
+-	pr_info("Stopped siw TX thread on CPU %u\n", nr_cpu);
+-
+ 	return 0;
  }
  
-+bool smp_boot_done __read_mostly;
-+EXPORT_SYMBOL(smp_boot_done);
-+
- /* Called by boot processor to activate the rest. */
- void __init smp_init(void)
- {
-@@ -587,6 +590,7 @@ void __init smp_init(void)
- 
- 	/* Any cleanup work */
- 	smp_cpus_done(setup_max_cpus);
-+	smp_boot_done = true;
- }
- 
- /*
 -- 
-2.7.5
+2.17.2
+
+
+ 
+
 
