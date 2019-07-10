@@ -2,127 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF36764453
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABCB56446B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfGJJZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 05:25:18 -0400
-Received: from mout.web.de ([212.227.17.12]:54951 "EHLO mout.web.de"
+        id S1727296AbfGJJbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:31:34 -0400
+Received: from relay.sw.ru ([185.231.240.75]:56410 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbfGJJZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 05:25:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1562750690;
-        bh=UWQsBYlELnAYysk2mtM7AdDfEOErIPJ0ROaaHxCVQxs=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=XRoYyZXYDivkNcB/t/1j7EiIQApsYPOkhM/geeTahr2vEQEADhDHgnHBQq8Yc6p/L
-         YJko79Jp5XLc/ZhOI82urXCnKKykSMZmBtNxuKPMVazdcJ891WPv5IGc5xrCR3U1WU
-         TJNyNwUvsvJZyTR+0DO8hl3lmTZ5+Bd2C9N/PRkc=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.132.42.76]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LzsGF-1iXj3B1Cqp-014zk9; Wed, 10
- Jul 2019 11:24:50 +0200
-Subject: Re: [1/2] powerpc/83xx: fix use-after-free in mpc831x_usb_cfg()
-To:     Wen Yang <wen.yang99@zte.com.cn>, linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>,
-        Xue Zhihong <xue.zhihong@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <201907101533443009168@zte.com.cn>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <ef968d9a-785e-dbf7-dfe6-9572fc241e63@web.de>
-Date:   Wed, 10 Jul 2019 11:24:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <201907101533443009168@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:u8YF1F7kU0eryeuNCAgxxNLtq1skRg8kO+bDl9Qx1VNi5KbWU52
- da522RyNmIHaH5nwXU4VySQbrXiQ90rR7mAg65Dca2oSG6TJVOIyckD5vPH27HsvPNzpqtF
- K2G+GKRzevvkWBpuVT0TH6PwMTre/wxnDnrtvhHFiOVfnKs3eNH5pttzQ707WRdLo7nTS0X
- 8Tgp8R/Oakl9JGYopBZKQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jVmT6SyvKd0=:jEbVcml8nJtdSC97HCysHC
- SW+yUsScvjRFJEQi6t22gIrim5WE5ffuwlLP4L5LUvN37lttkAAC4QoNrPdX6jwNb/8qsWQtF
- /w3Xer4ieL4obybJDnQ567SvRdJVAqB9SutbrNDwW8ireuR3/7ODd9nlxgGgGTjNNLeHQmhnb
- 3lSj0Y0oj8Fo8JHp7rH/dibh+FO4sAGJrm7sfg32p+MdRknp+dwwyqIh1VXnJtDyGiMh1LW8N
- VBdhOaVMepRmEV8Z/qLZCzUgkF8U133PY021jG+b6ysDM3ov1swSIhv8Mie92oELoisOmls7y
- iV9MVUqpTXs1hayQIDtf6K8ma4yc9rD2A6ke7W4G/HWByQiuiLQGbZTES8UoKspqjwVLDNQ2Z
- FsInyzcFecqOsTJa2dEDRZsk95u0F51nSFSFXVOHf1Q+i1n9MOer3VQWPsYloCyir8HvcJy/h
- rErpqjY4+pQWkeU/jB6sfJK3T9IpEnD+kppalZdKjRQnph95evGKn2QI3g59bCi4RWorrC3QB
- dJRXmoqx7+veiFdHYzAyJig8K62Ax18/hZvUujdVT9u9GWLrWWDS7m2hcbWkpTCPtZch2HSTV
- xD6MRI8+Hj+vlz/lx2oay5mrZIrdahxV1Jdc7aAZBRlf3Wz2XnKc+FFfVnKgAxpINYzgndqx2
- +P+OOM2ZbGNHY+AF4kOnG3e22vJT9jxhqBK6rnV76GthSrjgJc+Z7w4Ugl0Fl+wSBd5QvHdM5
- sUb5zFqhk8Td6ui5oSYMx/HrAeqNkrEEk9xOxGI/pGIB4RKXYQXA/LLC3gSW7LAi8zUW4PrQF
- d3gqRtAXr9gGo6VdgKrGi5C+arvWoTwUEI/J3Grl89mRTPd5lKtjMhMIMpR96H30c4qgwhym2
- ETpaC/1Xk8QkUc8zOmhRDWWT+biYg9xtEjvCd0t7iD1wuyNNjQXyFRUk2o2yOxRac8XoQNOwB
- IddJQVb0Y/9AbpezJ0DMga4ZjQk7j/sCIhREQ0LbxgLeCGLsCu+mLfa5O5YmiOdUB2ICyyRFd
- vY9rOwYYPMn7aEcJbDkFUnFkSFZiKKfJPevIgJv5gMOe2tzNgvsitt5Bs93SpkJsftsUSwd8j
- W/JNwrvn2nQvJvY1CwMVgdNGyT2F6s74ugX
+        id S1727064AbfGJJb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 05:31:26 -0400
+Received: from [10.94.4.83] (helo=finist-ce7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <khorenko@virtuozzo.com>)
+        id 1hl8wV-0003b5-Bg; Wed, 10 Jul 2019 12:31:15 +0300
+From:   Konstantin Khorenko <khorenko@virtuozzo.com>
+To:     Prasad B Munirathnam <prasad.munirathnam@microsemi.com>,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Andrey Jr . Melnikov" <temnota.am@gmail.com>
+Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+Subject: [PATCH v2 0/2] aacraid: Host adapter Adaptec 6405 constantly resets under high io load
+Date:   Wed, 10 Jul 2019 12:31:11 +0300
+Message-Id: <20190710093113.27936-1-khorenko@virtuozzo.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <2a6f5cc2-40cb-647c-003d-aae594d05062@virtuozzo.com>
+References: <2a6f5cc2-40cb-647c-003d-aae594d05062@virtuozzo.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> we developed a coccinelle script to detect such problems.
+Problem description:
+====================
+A node with Adaptec 6405 controller, latest BIOS V5.3-0[19204]
+A lot of disks attached to the controller.
+Simple test: running mkfs.ext4 on many disks on the same controller in
+parallel
+(mkfs is not important here, any serious io load triggers controller aborts)
 
-How do you think about to give any attribution to this development software
-in your commit descriptions?
+Results:
+* no problems (controller resets) with kernels prior to
+  395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
 
+* latest ms kernel v5.2-rc6-15-g249155c20f9b - mkfs processes are in D state,
+  lot of complains in logs like:
 
-> After a period of testing, we will send it to the LMKL mailing list later.
+  [  654.894633] aacraid: Host adapter abort request.
+  aacraid: Outstanding commands on (0,1,43,0):
+  [  699.441034] aacraid: Host adapter abort request.
+  aacraid: Outstanding commands on (0,1,40,0):
+  [  699.442950] aacraid: Host adapter reset request. SCSI hang ?
+  [  714.457428] aacraid: Host adapter reset request. SCSI hang ?
+  ...
+  [  759.514759] aacraid: Host adapter reset request. SCSI hang ?
+  [  759.514869] aacraid 0000:03:00.0: outstanding cmd: midlevel-0
+  [  759.514870] aacraid 0000:03:00.0: outstanding cmd: lowlevel-0
+  [  759.514872] aacraid 0000:03:00.0: outstanding cmd: error handler-498
+  [  759.514873] aacraid 0000:03:00.0: outstanding cmd: firmware-471
+  [  759.514875] aacraid 0000:03:00.0: outstanding cmd: kernel-60
+  [  759.514912] aacraid 0000:03:00.0: Controller reset type is 3
+  [  759.515013] aacraid 0000:03:00.0: Issuing IOP reset
+  [  850.296705] aacraid 0000:03:00.0: IOP reset succeeded
 
-I am also curious then on how this area will evolve further.
+Same complains on Ubuntu kernel 4.15.0-50-generic:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1777586
 
-Regards,
-Markus
+Controller:
+===========
+03:00.0 RAID bus controller: Adaptec Series 6 - 6G SAS/PCIe 2 (rev 01)
+         Subsystem: Adaptec Series 6 - ASR-6405 - 4 internal 6G SAS ports
+
+Test:
+=====
+# cat dev.list
+/dev/sdq1
+/dev/sde1
+/dev/sds1
+/dev/sdb1
+/dev/sdk1
+/dev/sdaj1
+/dev/sdaf1
+/dev/sdd1
+/dev/sdac1
+/dev/sdai1
+/dev/sdz1
+/dev/sdj1
+/dev/sdy1
+/dev/sdn1
+/dev/sdae1
+/dev/sdg1
+/dev/sdi1
+/dev/sdc1
+/dev/sdf1
+/dev/sdl1
+/dev/sda1
+/dev/sdab1
+/dev/sdr1
+/dev/sdo1
+/dev/sdah1
+/dev/sdm1
+/dev/sdt1
+/dev/sdp1
+/dev/sdad1
+/dev/sdh1
+
+===========================================
+# cat run_mkfs.sh
+#!/bin/bash
+
+while read i; do
+   mkfs.ext4 $i -q -E lazy_itable_init=1 -O uninit_bg -m 0 &
+done
+
+=================================
+# cat dev.list | ./run_mkfs.sh
+
+The issue is 100% reproducible.
+
+i've bisected to the culprit patch, it's
+395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
+
+it changes arc ctrl checks for Series-6 controllers
+and i've checked that resurrection of original logic in arc ctrl checks
+eliminates controller hangs/resets.
+
+Konstantin Khorenko (2):
+  Revert "scsi: aacraid: Remove reference to Series-9"
+  scsi: aacraid: Remove references to Series-9 (only)
+
+ drivers/scsi/aacraid/aacraid.h  | 11 -----------
+ drivers/scsi/aacraid/comminit.c | 15 +++++++++++----
+ drivers/scsi/aacraid/commsup.c  |  4 +++-
+ drivers/scsi/aacraid/linit.c    |  8 +++++---
+ 4 files changed, 19 insertions(+), 19 deletions(-)
+
+-- 
+2.15.1
+
