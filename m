@@ -2,91 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8AD664AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C39864622
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbfGJQUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 12:20:33 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44344 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbfGJQUd (ORCPT
+        id S1727123AbfGJM0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 08:26:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35340 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfGJM0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 12:20:33 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d79so2323189qke.11
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 09:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QibyFGWnGdatOh5nsBNwpo+J2I04tbVTYJ/VYtxRgmY=;
-        b=T4+Fnl7gXl1bl8llcUm3/9pqHh0ZYkmBG6TpVmEq6dIxAwEVcCJQYVUOULCPceUcP9
-         1Jl0GyE7nKC6qh7eInjKVNdp+cGBk0t7j4n1/wgmJUYQUC0XAWqXhPWe0Gf3lBL3dsRI
-         djqj0npByspo8KYXIBmm3hkfHblagArY9vZMISTbJgrOpLWTZMz4aYcy1RXorOgbomym
-         gcuyshTAhmEsFg1JtVem18bXWhof2PEtVztmnuTKNaQiS2ph3cy5u6X5iqju6l0mkp8O
-         uTjjNrHc0Lb/zF4Q3ZjfHrrjfUKjo+xIEyTLFLT5Cdrd/yQFocMMWb22PFKKxOCMZkeB
-         3hxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QibyFGWnGdatOh5nsBNwpo+J2I04tbVTYJ/VYtxRgmY=;
-        b=YPyW13MuMxZEdyEjM1GvMfLzbTCzYtVfk+b5FSrqS9UZA/sIAbnEgViRWDIw4CcRe1
-         k1DBKnW7wiAkbkyo0Y8VA73oUj0t466ca/K8VX6ymZRvM2SWYLiyQqKX7qLj3wasTFw+
-         OHprPRV9o0NhsmR1I3fHAbaI79OSyj9ug1NMu1DG1vRLjEEUpCx310I44JOiAzejXwN6
-         qseS4ikjYvrBdTszeFd9iMabILUUfRwEM3U/BgZ5B9u1d3VXs1nGl3ePtoHrmIwJK6PK
-         FJicrcuHzku6x2pqt52DSSAUosH8dLvcU3JaCWcHiDyotOHId3GMvTLHCvM0r2RiJZNt
-         m27g==
-X-Gm-Message-State: APjAAAUn6g7IMnXayNPLfvps2+ccHZDsFealZUV/LR1/FP+OgDUB94yC
-        YxNCenoiOPUL6eC5b9n5ag==
-X-Google-Smtp-Source: APXvYqxVssmy8QQI7rLDeD1eZVdZ4DW7d8qWxdxiaMn/YNYrzpr6p+bYlVuIkxf22mrsNYDvJMmv7Q==
-X-Received: by 2002:a37:4c4e:: with SMTP id z75mr24407869qka.230.1562775632730;
-        Wed, 10 Jul 2019 09:20:32 -0700 (PDT)
-Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
-        by smtp.googlemail.com with ESMTPSA id 6sm1546208qkp.82.2019.07.10.09.20.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 09:20:32 -0700 (PDT)
-From:   Keyur Patel <iamkeyur96@gmail.com>
-Cc:     iamkeyur96@gmail.com, David Lin <dtwlin@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: greybus: add logging statement when kfifo_alloc fails
-Date:   Wed, 10 Jul 2019 08:20:17 -0400
-Message-Id: <20190710122018.2250-1-iamkeyur96@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Wed, 10 Jul 2019 08:26:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oFDADlC2ju9lttZIwCvIydgfwE/7qWdsHDo+YyNGXHQ=; b=Hd33JvtV6D0Lc+VAeX5f7BDSn
+        DZPLB9IpmgMoQ3Lz8zUyiAN5/zX9A0sNVbPwDE+xK5B/XKkN81SSua4C8fuNGp+KsgHdqzv5+hvIt
+        MBaMBQ4Zl1TaYR+Vz5fEp3AVfb5neEc7+w77ThFjsJP4C4HuvrBajIohm2dAwiRpDYcalsd/djy0l
+        Gh6+B4+dszsX4ysMUMj9uYe2TuiE7ds8mc5z5QMwcz5wo7xMuijMmx6jhlnc2lTbyGBqrgVCGnGEe
+        5GHn/aOGvSwJjE8dNeZAHQSUHKsC2Hl0rpMZcS083Ck63zVetnxtnUvi0vf9l//1nAp27AfELFA1P
+        S27fnLbXA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlBfR-000675-Kh; Wed, 10 Jul 2019 12:25:49 +0000
+Date:   Wed, 10 Jul 2019 05:25:49 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     bsauce <bsauce00@gmail.com>
+Cc:     alexander.h.duyck@intel.com, vbabka@suse.cz, mgorman@suse.de,
+        l.stach@pengutronix.de, vdavydov.dev@gmail.com,
+        akpm@linux-foundation.org, alex@ghiti.fr, adobriyan@gmail.com,
+        mike.kravetz@oracle.com, rientjes@google.com,
+        rppt@linux.vnet.ibm.com, mhocko@suse.com, ksspiers@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/seq_file.c: Fix a UAF vulnerability in seq_release()
+Message-ID: <20190710122549.GM32320@bombadil.infradead.org>
+References: <1562754389-29217-1-git-send-email-bsauce00@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562754389-29217-1-git-send-email-bsauce00@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added missing logging statement when kfifo_alloc fails, to improve
-debugging.
+On Wed, Jul 10, 2019 at 06:26:29PM +0800, bsauce wrote:
+> In seq_release(), 'm->buf' points to a chunk. It is freed but not cleared to null right away. It can be reused by seq_read() or srm_env_proc_write().
 
-Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
----
- drivers/staging/greybus/uart.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Well, no.  The ->release method is called when there are no more file
+descriptors referring to this file.  So there's no way to call seq_read()
+or srm_env_proc_write() after seq_release() is called.
 
-diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
-index b3bffe91ae99..86a395ae177d 100644
---- a/drivers/staging/greybus/uart.c
-+++ b/drivers/staging/greybus/uart.c
-@@ -856,8 +856,10 @@ static int gb_uart_probe(struct gbphy_device *gbphy_dev,
- 
- 	retval = kfifo_alloc(&gb_tty->write_fifo, GB_UART_WRITE_FIFO_SIZE,
- 			     GFP_KERNEL);
--	if (retval)
-+	if (retval) {
-+		pr_err("kfifo_alloc failed\n");
- 		goto exit_buf_free;
-+	}
- 
- 	gb_tty->credits = GB_UART_FIRMWARE_CREDITS;
- 	init_completion(&gb_tty->credits_complete);
--- 
-2.22.0
+> For example, /arch/alpha/kernel/srm_env.c provide several interfaces to userspace, like 'single_release', 'seq_read' and 'srm_env_proc_write'.
+> Thus in userspace, one can exploit this UAF vulnerability to escape privilege.
 
+Please provide a PoC.
