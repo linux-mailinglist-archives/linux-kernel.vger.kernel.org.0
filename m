@@ -2,102 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1015064C54
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:43:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E3FA64C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbfGJSnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:43:05 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44185 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbfGJSnE (ORCPT
+        id S1727948AbfGJSne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:43:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37201 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfGJSnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:43:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i18so1637359pgl.11;
-        Wed, 10 Jul 2019 11:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0Hm/9BlG2vs6dalxd4Lxl0B723YTAQ0cgyoNTbJ0CW4=;
-        b=ViG9maV71yomRUGX8jU5hhY5FVev8TYVmQqF/yL4Rt2nkfJS0UWVtCUg0F8uGgMBQ0
-         v/h4zXJ5uYVk9Lr7XNnNzUJ2wI3XITjx8HyNTX7cOlA40N/JZ2eaJueAfF6grg3NssY+
-         lYVhizviWNbIZJNhSF53wq+A1xp/iulzeBsQLuy52pT3IcXFo56Pw2x1AK6TiNAUlmJT
-         GQNg3uTrhUyo9ArPgFz5HHAqpjf08fPU6NgJaKrPVxxdf+z5zBLa7a3hGLhdwcDB2MOi
-         NMmszQVoEOlBa2oLL4zDYSxTpRCtCw9QQtbaoEXMQA9JwfW6S//mHLQKy51BLSFgHYFN
-         EFVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0Hm/9BlG2vs6dalxd4Lxl0B723YTAQ0cgyoNTbJ0CW4=;
-        b=csB5tVyVPflzroDp29JgZe4fTx7iIEge5Wu6/uQRw2lPRZEdB/+U/dxSZImfBCAVyH
-         aTpbG0Fb7BhllVwzma2l8VUrNS5Dumr+399w7ieKCHlwTaH8vyqQsKUeRMXd3ziM5NQO
-         1skI6U0EvNg7NzXc2o91/cGGz62n75ILQzQ+xqQG7wAOCzMYf+61cXPBqIv5I5gyJBOe
-         /yeKTwf3+PQ/n2tcLI2nqKZk29a3kZtyzBLeiZVExaItyPZwRLQsbS5PUcBlzv+MoroZ
-         cI8gz/v8Usp6KFThV/c4nSMQiy9GXKX9WdCMkjTLm8BxJ6DgssXqO9vYnqsRq/QVeu4D
-         wySQ==
-X-Gm-Message-State: APjAAAXebIl8RlxaJRGX3LSQHtVwi4OfHTa6+3K7P+fV2mMZN2nhmpfM
-        JRfTWCWxLMAc+LcQiTwjrX4=
-X-Google-Smtp-Source: APXvYqwEY9f/6Aqc9JPG54Pxy9aLQuyajI9Ihr11NbBTwvDbuIOfGWIMRv1meOxBcIUf0FABfqdSog==
-X-Received: by 2002:a63:e1e:: with SMTP id d30mr38588995pgl.100.1562784183684;
-        Wed, 10 Jul 2019 11:43:03 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m4sm5238919pgs.71.2019.07.10.11.43.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 11:43:02 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 11:43:01 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: digicolor_wdt: drop unused variable
-Message-ID: <20190710184301.GA2961@roeck-us.net>
-References: <20190710080904.317599-1-arnd@arndb.de>
+        Wed, 10 Jul 2019 14:43:31 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6AIhGfV2541654
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 10 Jul 2019 11:43:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6AIhGfV2541654
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562784196;
+        bh=jmBnu3T2PgSdwgYSqr1z4MBYxeHZf+emBUh2okLE/Xs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=0JgoCRt2srBioc4CAv4xhgGBWPTz2bhGRUKtuT6gFvdiX6p0ZnpRb1gdt/+mkcj+D
+         0CYuQl2jMCmR8g6K+qru2L47MNL7FqcyJ2MI2WGRdsaQreY/zdm0R4TvTrXz2HO+9H
+         h+ZtdJx5WmqvFE0Y6QZP+s5kai/yWhUAAhe/hjBrYP1pznsQIFQDiIvXcr6uwNE6Vr
+         zFq4jUhYI1L7y/TiO8z2lMOisS0Trm2b8oXn3DeRT1UJ1YWj53rA2YAZYafqC9AhDU
+         lm70Cc7G5y83kG7nPkDqXG6OZsDYOmDV2BgdT6M6Fljjq0DCTU0aeTH2r3MkvoW6SZ
+         Ly5vXGJF87RIA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6AIhFFj2541648;
+        Wed, 10 Jul 2019 11:43:15 -0700
+Date:   Wed, 10 Jul 2019 11:43:15 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-0df1c9868c3a1916198ee09c323ca5932a0b8a11@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, hpa@zytor.com,
+        natechancellor@gmail.com, tglx@linutronix.de, mingo@kernel.org
+Reply-To: mingo@kernel.org, natechancellor@gmail.com, tglx@linutronix.de,
+          hpa@zytor.com, arnd@arndb.de, linux-kernel@vger.kernel.org
+In-Reply-To: <20190710130206.1670830-1-arnd@arndb.de>
+References: <20190710130206.1670830-1-arnd@arndb.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] timekeeping/vsyscall: Use __iter_div_u64_rem()
+Git-Commit-ID: 0df1c9868c3a1916198ee09c323ca5932a0b8a11
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190710080904.317599-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 10:08:57AM +0200, Arnd Bergmann wrote:
-> The last cleanup patch left behind an unused variable
-> that should have been removed as well:
-> 
-> drivers/watchdog/digicolor_wdt.c:121:6: error: unused variable 'ret' [-Werror,-Wunused-variable]
-> 
-> Fixes: cdad26977e3f ("watchdog: digicolor_wdt: drop warning after registering device")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Commit-ID:  0df1c9868c3a1916198ee09c323ca5932a0b8a11
+Gitweb:     https://git.kernel.org/tip/0df1c9868c3a1916198ee09c323ca5932a0b8a11
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Wed, 10 Jul 2019 15:01:53 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 10 Jul 2019 20:37:49 +0200
 
-Already submitted as https://patchwork.kernel.org/patch/11037487/ ...
+timekeeping/vsyscall: Use __iter_div_u64_rem()
 
-Guenter
+On 32-bit x86 when building with clang-9, the 'division' loop gets turned
+back into an inefficient division that causes a link error:
 
-> ---
->  drivers/watchdog/digicolor_wdt.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/digicolor_wdt.c b/drivers/watchdog/digicolor_wdt.c
-> index 33cda95bd238..073d37867f47 100644
-> --- a/drivers/watchdog/digicolor_wdt.c
-> +++ b/drivers/watchdog/digicolor_wdt.c
-> @@ -118,7 +118,6 @@ static int dc_wdt_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct dc_wdt *wdt;
-> -	int ret;
->  
->  	wdt = devm_kzalloc(dev, sizeof(struct dc_wdt), GFP_KERNEL);
->  	if (!wdt)
-> -- 
-> 2.20.0
-> 
+kernel/time/vsyscall.o: In function `update_vsyscall':
+vsyscall.c:(.text+0xe3): undefined reference to `__udivdi3'
+
+Use the existing __iter_div_u64_rem() function which is used to address the
+same issue in other places.
+
+Fixes: 44f57d788e7d ("timekeeping: Provide a generic update_vsyscall() implementation")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lkml.kernel.org/r/20190710130206.1670830-1-arnd@arndb.de
+---
+ kernel/time/vsyscall.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index a80893180826..8cf3596a4ce6 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -104,11 +104,7 @@ void update_vsyscall(struct timekeeper *tk)
+ 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+ 	nsec		= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+-	while (nsec >= NSEC_PER_SEC) {
+-		nsec = nsec - NSEC_PER_SEC;
+-		vdso_ts->sec++;
+-	}
+-	vdso_ts->nsec	= nsec;
++	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+ 	if (__arch_use_vsyscall(vdata))
+ 		update_vdso_data(vdata, tk);
