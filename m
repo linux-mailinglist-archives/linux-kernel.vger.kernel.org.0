@@ -2,149 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C58FB6461A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8AD664AA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:20:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfGJMTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 08:19:33 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47545 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfGJMTd (ORCPT
+        id S1727878AbfGJQUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 12:20:33 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:44344 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbfGJQUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 08:19:33 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hlBZI-0001sp-BD; Wed, 10 Jul 2019 14:19:28 +0200
-Date:   Wed, 10 Jul 2019 14:19:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xi Ruoyao <xry111@mengyan1223.wang>
-cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Jiri Kosina <jkosina@suse.cz>,
-        Bob Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [GIT PULL] x86/topology changes for v5.3
-In-Reply-To: <cb6d381ed7cd0bf732ae9d8f30c806b849b0f94b.camel@mengyan1223.wang>
-Message-ID: <alpine.DEB.2.21.1907101404570.1758@nanos.tec.linutronix.de>
-References: <20190708162756.GA69120@gmail.com>  <CAHk-=wigbHd6wXcrpH+6jnDe=e+OHFy6-KdVSUP2yU5aip-UAg@mail.gmail.com>  <CAHk-=wgkWTtW-JWVAO0Y6s=dRgZGAaTWAsOuYaTFNJzkF+Z_Jg@mail.gmail.com>  <CAHk-=whJtbQFHNtNG7t7y6+oEKLpjj3eSQOrr3OPCVGbMaRz-A@mail.gmail.com>
-  <CAHk-=wh7NChJP+WkaDd3qCz847Fq4NdQ6z6m-VFpbr3py_EknQ@mail.gmail.com>  <alpine.DEB.2.21.1907100023020.1758@nanos.tec.linutronix.de>  <alpine.DEB.2.21.1907100039540.1758@nanos.tec.linutronix.de>  <alpine.DEB.2.21.1907100115220.1758@nanos.tec.linutronix.de>
-  <201907091727.91CC6C72D8@keescook>  <1ad2de95e694a29909801d022fe2d556df9a4bd5.camel@mengyan1223.wang> <cb6d381ed7cd0bf732ae9d8f30c806b849b0f94b.camel@mengyan1223.wang>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 10 Jul 2019 12:20:33 -0400
+Received: by mail-qk1-f193.google.com with SMTP id d79so2323189qke.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 09:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QibyFGWnGdatOh5nsBNwpo+J2I04tbVTYJ/VYtxRgmY=;
+        b=T4+Fnl7gXl1bl8llcUm3/9pqHh0ZYkmBG6TpVmEq6dIxAwEVcCJQYVUOULCPceUcP9
+         1Jl0GyE7nKC6qh7eInjKVNdp+cGBk0t7j4n1/wgmJUYQUC0XAWqXhPWe0Gf3lBL3dsRI
+         djqj0npByspo8KYXIBmm3hkfHblagArY9vZMISTbJgrOpLWTZMz4aYcy1RXorOgbomym
+         gcuyshTAhmEsFg1JtVem18bXWhof2PEtVztmnuTKNaQiS2ph3cy5u6X5iqju6l0mkp8O
+         uTjjNrHc0Lb/zF4Q3ZjfHrrjfUKjo+xIEyTLFLT5Cdrd/yQFocMMWb22PFKKxOCMZkeB
+         3hxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QibyFGWnGdatOh5nsBNwpo+J2I04tbVTYJ/VYtxRgmY=;
+        b=YPyW13MuMxZEdyEjM1GvMfLzbTCzYtVfk+b5FSrqS9UZA/sIAbnEgViRWDIw4CcRe1
+         k1DBKnW7wiAkbkyo0Y8VA73oUj0t466ca/K8VX6ymZRvM2SWYLiyQqKX7qLj3wasTFw+
+         OHprPRV9o0NhsmR1I3fHAbaI79OSyj9ug1NMu1DG1vRLjEEUpCx310I44JOiAzejXwN6
+         qseS4ikjYvrBdTszeFd9iMabILUUfRwEM3U/BgZ5B9u1d3VXs1nGl3ePtoHrmIwJK6PK
+         FJicrcuHzku6x2pqt52DSSAUosH8dLvcU3JaCWcHiDyotOHId3GMvTLHCvM0r2RiJZNt
+         m27g==
+X-Gm-Message-State: APjAAAUn6g7IMnXayNPLfvps2+ccHZDsFealZUV/LR1/FP+OgDUB94yC
+        YxNCenoiOPUL6eC5b9n5ag==
+X-Google-Smtp-Source: APXvYqxVssmy8QQI7rLDeD1eZVdZ4DW7d8qWxdxiaMn/YNYrzpr6p+bYlVuIkxf22mrsNYDvJMmv7Q==
+X-Received: by 2002:a37:4c4e:: with SMTP id z75mr24407869qka.230.1562775632730;
+        Wed, 10 Jul 2019 09:20:32 -0700 (PDT)
+Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.googlemail.com with ESMTPSA id 6sm1546208qkp.82.2019.07.10.09.20.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 09:20:32 -0700 (PDT)
+From:   Keyur Patel <iamkeyur96@gmail.com>
+Cc:     iamkeyur96@gmail.com, David Lin <dtwlin@gmail.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: greybus: add logging statement when kfifo_alloc fails
+Date:   Wed, 10 Jul 2019 08:20:17 -0400
+Message-Id: <20190710122018.2250-1-iamkeyur96@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Jul 2019, Xi Ruoyao wrote:
-> On 2019-07-10 19:27 +0800, Xi Ruoyao wrote:
-> > On 2019-07-09 17:31 -0700, Kees Cook wrote:
-> > > On Wed, Jul 10, 2019 at 01:17:11AM +0200, Thomas Gleixner wrote:
-> > > > On Wed, 10 Jul 2019, Thomas Gleixner wrote:
-> > > > > That still does not explain the cr4/0 issue you have. Can you send me
-> > > > > your
-> > > > > .config please?
-> > > > 
-> > > > Does your machine have UMIP support? None of my test boxes has. So that'd
-> > > > be the difference of bits enforced in CR4. Should not matter because it's
-> > > > User mode instruction prevention, but who knows.
-> > > 
-> > > Ew. Yeah, I don't have i9 nor i7 for testing this. I did try everything
-> > > else I had (and hibernation). Is only Linus able to reproduce this so far?
-> > 
-> > I can, too.
-> > 
-> > > To rule out (in?) UMIP, this would remove UMIP from the pinning:
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> > > index 309b6b9b49d4..f3beedb6da8a 100644
-> > > --- a/arch/x86/kernel/cpu/common.c
-> > > +++ b/arch/x86/kernel/cpu/common.c
-> > > @@ -380,7 +380,7 @@ static void __init setup_cr_pinning(void)
-> > >  {
-> > >  	unsigned long mask;
-> > >  
-> > > -	mask = (X86_CR4_SMEP | X86_CR4_SMAP | X86_CR4_UMIP);
-> > > +	mask = (X86_CR4_SMEP | X86_CR4_SMAP);
-> > >  	cr4_pinned_bits = this_cpu_read(cpu_tlbstate.cr4) & mask;
-> > >  	static_key_enable(&cr_pinning.key);
-> > >  }
-> > 
-> > I'll try it.
-> 
-> That doesn't work, sadly.
->
-> My laptop is an old i3-3217u.
-> 
-> My .config and syslog snip are attached.
+Added missing logging statement when kfifo_alloc fails, to improve
+debugging.
 
-From the log:
+Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
+---
+ drivers/staging/greybus/uart.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-BUG: unable to handle page fault for address: ffffffff9edc1598
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0003) - permissions violation
-PGD 1a20c067 P4D 1a20c067 PUD 1a20d063 PMD 8000000019e000e1 
-Oops: 0003 [#1] SMP PTI
-2 PID: 151 Comm: systemd-udevd Not tainted 5.2.0+ #54
-Hardware name: LENOVO 20175/INVALID, BIOS 66CN54WW 01/21/2013
-RIP: 0010:static_key_set_mod.isra.0+0x10/0x30
-Code: 48 8b 37 83 e6 03 48 09 c6 48 89 37 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f0 a8 03 75 0d 48 8b 37 83 e6 03 48 09 c6 <48> 89 37 c3 0f 0b 48 8b 37 83 e6 03 48 09 c6 48 89 37 c3 66 66 2e
-RSP: 0000:ffffa606c032bc98 EFLAGS: 00010286
-RAX: ffff9981ddce30a0 RBX: ffffffff9edc1590 RCX: 0000000000000000
-RDX: 0000000000000020 RSI: ffff9981ddce30a0 RDI: ffffffff9edc1598
-RBP: ffffffffc06f4000 R08: ffff9981e6003980 R09: ffff9981ddce30a0
-R10: 0000000000000000 R11: 0000000000028b56 R12: ffffffffc06f8880
-R13: ffff9981ddce3080 R14: ffffffffc06f4008 R15: ffffffffc06f6dc0
-FS:  00007f992dd9a680(0000) GS:ffff9981e7080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff9edc1598 CR3: 00000002233aa001 CR4: 00000000001606e0
-Call Trace:
-  jump_label_module_notify+0x1e7/0x2b0
-  notifier_call_chain+0x44/0x70
-  blocking_notifier_call_chain+0x43/0x60
-  load_module+0x1bcb/0x2490
-  ? vfs_read+0x11f/0x150
-  ? __do_sys_finit_module+0xbf/0xe0
-  __do_sys_finit_module+0xbf/0xe0
-  do_syscall_64+0x43/0x110
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
+index b3bffe91ae99..86a395ae177d 100644
+--- a/drivers/staging/greybus/uart.c
++++ b/drivers/staging/greybus/uart.c
+@@ -856,8 +856,10 @@ static int gb_uart_probe(struct gbphy_device *gbphy_dev,
+ 
+ 	retval = kfifo_alloc(&gb_tty->write_fifo, GB_UART_WRITE_FIFO_SIZE,
+ 			     GFP_KERNEL);
+-	if (retval)
++	if (retval) {
++		pr_err("kfifo_alloc failed\n");
+ 		goto exit_buf_free;
++	}
+ 
+ 	gb_tty->credits = GB_UART_FIRMWARE_CREDITS;
+ 	init_completion(&gb_tty->credits_complete);
+-- 
+2.22.0
 
-Josh, didn't you mention that yesterday or so?
-
-
-RIP: 0033:0x7f992e2eeaf9
-Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 67 73 0d 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffca220d288 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 00000000009b8da0 RCX: 00007f992e2eeaf9
-RDX: 0000000000000000 RSI: 00007f992e464885 RDI: 0000000000000010
-RBP: 0000000000020000 R08: 0000000000000000 R09: 00000000009c45c0
-R10: 0000000000000010 R11: 0000000000000246 R12: 00007f992e464885
-R13: 0000000000000000 R14: 00000000009acc50 R15: 00000000009b8da0
-Modules linked in: kvm_intel(+) kvm irqbypass hid_sensor_hub crc32_pclmul mfd_core i2c_i801 snd_hda_intel i915(+) intel_gtt snd_hda_codec i2c_algo_bit snd_hwdep snd_hda_core drm_kms_helper snd_pcm syscopyarea sysfillrect sysimgblt fb_sys_fops drm hid_multitouch ideapad_laptop sparse_keymap hid_generic wmi efivarfs
-CR2: ffffffff9edc1598
-[ end trace dbeb7e66daa9bdca ]---
-
-RIP: 0010:static_key_set_mod.isra.0+0x10/0x30
-Code: 48 8b 37 83 e6 03 48 09 c6 48 89 37 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f0 a8 03 75 0d 48 8b 37 83 e6 03 48 09 c6 <48> 89 37 c3 0f 0b 48 8b 37 83 e6 03 48 09 c6 48 89 37 c3 66 66 2e
-RSP: 0000:ffffa606c032bc98 EFLAGS: 00010286
-RAX: ffff9981ddce30a0 RBX: ffffffff9edc1590 RCX: 0000000000000000
-RDX: 0000000000000020 RSI: ffff9981ddce30a0 RDI: ffffffff9edc1598
-RBP: ffffffffc06f4000 R08: ffff9981e6003980 R09: ffff9981ddce30a0
-R10: 0000000000000000 R11: 0000000000028b56 R12: ffffffffc06f8880
-R13: ffff9981ddce3080 R14: ffffffffc06f4008 R15: ffffffffc06f6dc0
-FS:  00007f992dd9a680(0000) GS:ffff9981e7080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff9edc1598 CR3: 00000002233aa001 CR4: 00000000001606e0
