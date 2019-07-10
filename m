@@ -2,126 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A4D6417A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E6564166
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfGJGkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 02:40:36 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:57974 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbfGJGkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 02:40:33 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6D09E1A0147;
-        Wed, 10 Jul 2019 08:40:31 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D4A51A00BC;
-        Wed, 10 Jul 2019 08:40:18 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DFA614031C;
-        Wed, 10 Jul 2019 14:40:04 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     catalin.marinas@arm.com, will@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
-        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        daniel.baluta@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de,
-        abel.vesa@nxp.com, andrew.smirnov@gmail.com, ccaione@baylibre.com,
-        angus@akkea.ca, agx@sigxcpu.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V5 5/5] arm64: dts: imx8mm: Enable cpu-idle driver
-Date:   Wed, 10 Jul 2019 14:30:56 +0800
-Message-Id: <20190710063056.35689-5-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190710063056.35689-1-Anson.Huang@nxp.com>
-References: <20190710063056.35689-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726792AbfGJGeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 02:34:08 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42957 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfGJGeI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 02:34:08 -0400
+Received: by mail-ed1-f66.google.com with SMTP id v15so1010048eds.9
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 23:34:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J5KipV70foUU8ZDHSfbxKtNUPFs4vS9J459AyOxAvGM=;
+        b=m44bwsFepRbM1TyvN9blBbrkC8X44eTQOSj5dmiAPmFMLNLU5g8QX7849r1f+MnOUH
+         westRnqQpE8k1A1CISqRNmBiqaXcUYk72Kw25ACmKJsJ5mBmgSzQr6qSUmgLECfvTaG0
+         pY1+2bSZ57xRfN6GZQzuW/aL2XDeA/MR0UxeEeGV+n8we2Cd9S6SFWAP6hQ6ODLJ9eGt
+         DHG/AhXpmgrsxSDpwpBay1H7dq575+7p/eW+5GHY4Ldj/7KIap4EiBj1vafJmKJnbECH
+         nNAX3sctkwxsShgsztB4mEUYQwq77KHHpNP2RgG++7E3/MUagqohHgZc3BwGwgyb/X1m
+         ChmA==
+X-Gm-Message-State: APjAAAWECErAxpi80HEgOnGqSHMYnjXxvz7Do6TR74c3k4NAa1WMOeOg
+        3MoYsYg52rTO3rP2I0RnwkVmfg==
+X-Google-Smtp-Source: APXvYqzqTMPNjCwtT/7mZ0wnEqoDGAx/LQ2+vzGyWcOQdNOsLF0bRspAi2qapk8oaWANI1ig6TID8g==
+X-Received: by 2002:a05:6402:1456:: with SMTP id d22mr29919969edx.57.1562740446759;
+        Tue, 09 Jul 2019 23:34:06 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:19db:ad53:90ea:9423? ([2001:b07:6468:f312:19db:ad53:90ea:9423])
+        by smtp.gmail.com with ESMTPSA id y16sm1041817wrw.33.2019.07.09.23.34.06
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2019 23:34:06 -0700 (PDT)
+Subject: Re: [PATCH 5/5] KVM: cpuid: remove has_leaf_count from struct
+ kvm_cpuid_param
+To:     Jing Liu <jing2.liu@linux.intel.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20190704140715.31181-1-pbonzini@redhat.com>
+ <20190704140715.31181-6-pbonzini@redhat.com>
+ <bb5e81f4-bb34-2841-0fa1-63876b97e54c@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5a7d222e-3c49-2485-e11d-45c9e9ece8c8@redhat.com>
+Date:   Wed, 10 Jul 2019 08:34:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <bb5e81f4-bb34-2841-0fa1-63876b97e54c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On 08/07/19 09:09, Jing Liu wrote:
+> It seems the two func are introduced by 2b5e97e, as paravirtual cpuid.
+> But when searching KVM_CPUID_SIGNATURE, there seems no caller requesting
+> this cpuid. Meanwhile, I felt curious if KVM_CPUID_FEATURES is still in
+> use but it seems kvm_update_cpuid() uses that. Not sure which spec
+> introduces the latest pv cpuid.
 
-Enable i.MX8MM cpu-idle using generic ARM cpu-idle driver, 2 states
-are supported, details as below:
+Yes, KVM_CPUID_SIGNATURE is generally not very interesting for
+userspace.  But KVM_CPUID_FEATURES is called here:
 
-root@imx8mmevk:~# cat /sys/devices/system/cpu/cpu0/cpuidle/state0/name
-WFI
-root@imx8mmevk:~# cat /sys/devices/system/cpu/cpu0/cpuidle/state0/usage
-3973
-root@imx8mmevk:~# cat /sys/devices/system/cpu/cpu0/cpuidle/state1/name
-cpu-sleep-wait
-root@imx8mmevk:~# cat /sys/devices/system/cpu/cpu0/cpuidle/state1/usage
-6647
+        for (w = 0; w < FEATURE_WORDS; w++) {
+            /* Override only features that weren't set explicitly
+             * by the user.
+             */
+            env->features[w] |=
+                x86_cpu_get_supported_feature_word(w, cpu->migratable) &
+                ~env->user_features[w] & \
+                ~feature_word_info[w].no_autoenable_flags;
+        }
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-New patch, as this patch is based on other patches in this series, so I include it.
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 8cf7f34..8f3ed39 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -44,6 +44,20 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		idle-states {
-+			entry-method = "psci";
-+
-+			cpu_sleep_wait: cpu-sleep-wait {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010033>;
-+				local-timer-stop;
-+				entry-latency-us = <1000>;
-+				exit-latency-us = <700>;
-+				min-residency-us = <2700>;
-+				wakeup-latency-us = <1500>;
-+			};
-+		};
-+
- 		A53_0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53";
-@@ -56,6 +70,7 @@
- 			nvmem-cells = <&cpu_speed_grade>;
- 			nvmem-cell-names = "speed_grade";
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&cpu_sleep_wait>;
- 		};
- 
- 		A53_1: cpu@1 {
-@@ -68,6 +83,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&cpu_sleep_wait>;
- 		};
- 
- 		A53_2: cpu@2 {
-@@ -80,6 +96,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&cpu_sleep_wait>;
- 		};
- 
- 		A53_3: cpu@3 {
-@@ -92,6 +109,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&cpu_sleep_wait>;
- 		};
- 
- 		A53_L2: l2-cache0 {
--- 
-2.7.4
-
+Paolo
