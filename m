@@ -2,140 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE51C63FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6529C63FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfGJEKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 00:10:43 -0400
-Received: from mx1.supremebox.com ([198.23.53.39]:58873 "EHLO
-        mx1.supremebox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfGJEKn (ORCPT
+        id S1726089AbfGJEAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 00:00:25 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:63681 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfGJEAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 00:10:43 -0400
-X-Greylist: delayed 1756 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jul 2019 00:10:42 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jilayne.com
-        ; s=default; h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:
-        In-Reply-To:From:Subject:Mime-Version:Content-Type:Sender:Reply-To:Content-ID
-        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
-        Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
-        :List-Post:List-Owner:List-Archive;
-        bh=AYOKcfGVOYIwtnBpJskuZTTWudypmg8tOCQ67JADO40=; b=dJM475y+qQShcOTAhRStkp5NwL
-        jhmtFFzuzeFwyduNeAEOLv/dvMSsoqagk34N8LSdXbQIQHoS9BIRso2BrhMavjMFb1+wfdg8u3XDH
-        RfqC+cGxeXuZM1RwzbbBRwypWa0uCes4fBH0BpjZ2UkNp+Jv5B90LBwMIWlsQDt/n7m8=;
-Received: from 184-96-235-43.hlrn.qwest.net ([184.96.235.43] helo=[192.168.0.12])
-        by mx1.supremebox.com with esmtpa (Exim 4.89)
-        (envelope-from <opensource@jilayne.com>)
-        id 1hl3VT-0006mr-KH; Wed, 10 Jul 2019 03:42:59 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH v2] gpu/drm_memory: fix a few warnings
-From:   J Lovejoy <opensource@jilayne.com>
-In-Reply-To: <alpine.DEB.2.21.1907082150170.1961@nanos.tec.linutronix.de>
-Date:   Tue, 9 Jul 2019 21:42:57 -0600
-Cc:     Qian Cai <cai@lca.pw>, Ilia Mirkin <imirkin@alum.mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, joe@perches.com,
-        linux-spdx@vger.kernel.org,
+        Wed, 10 Jul 2019 00:00:25 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6A407t3006697;
+        Wed, 10 Jul 2019 13:00:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6A407t3006697
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562731208;
+        bh=KknRHaSkhBMpTs1BmzD59wJGTvSH88jZgscNwiE3MlQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Zcv8Y/m8P8X292YdVCGzvjt8eh3zKthkL/tKU8hgl0+kZFK/TCidt2YnUJeXwRY2C
+         53gnnvfR1V5a/tZ3oft3dU87Wv/na0I6Cs7CUbLYQQ/tTgfsks7h1YrnLQlPvFedYE
+         CUXVrkPfqD5VgYstJJ7CydXBopsxsIxYrwFsxgwx6d60uk5NaU0HmmUFrWcRa0Ma+X
+         JP4vrMHlCl+oWvWoNYTtWzS8BRJaI99Vvewq8PDOryzMVp2NXYrBOU+OgPSCXtaQVR
+         iBpoKf4mR5G2BIwMVbOsyg7IXjsTJdhgiZepcEUeuFghjpTnMBJ19Lf/0+rRb7AENC
+         me1vWrlscZvww==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id m8so625105vsj.0;
+        Tue, 09 Jul 2019 21:00:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAUOzUg7dewpDpaEaEwdms+J+YjUAAAn+8Q5wRx/H0vBF2T/33CF
+        O4/8l42f2KO7ypeZySrTpPfE7/o10ZbDtcOBLrA=
+X-Google-Smtp-Source: APXvYqzEJesQV2n3K1HZLU8Wx1IHWCC1QIw58D6BP7vlVU/X0PRT9+zSoni+Ubl8ut/dwkZUzYEjYnFrduUZ0sj9y38=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr16708917vsn.54.1562731207027;
+ Tue, 09 Jul 2019 21:00:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190709063023.251446-1-brendanhiggins@google.com> <20190709063023.251446-7-brendanhiggins@google.com>
+In-Reply-To: <20190709063023.251446-7-brendanhiggins@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 10 Jul 2019 12:59:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATx30AhZ51xozde=nO06-8UzuC0M9nfZXrqkyfmEFdu5w@mail.gmail.com>
+Message-ID: <CAK7LNATx30AhZ51xozde=nO06-8UzuC0M9nfZXrqkyfmEFdu5w@mail.gmail.com>
+Subject: Re: [PATCH v7 06/18] kbuild: enable building KUnit
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Cc: Shuah Khan" <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, DTML <devicetree@vger.kernel.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, rfontana@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <472DABBB-81E5-4E79-9910-BA3C26936B40@jilayne.com>
-References: <1562609151-7283-1-git-send-email-cai@lca.pw>
- <CAKb7UvhoW2F5LSf4B=vJhLykPCme_ixwbUBup_sBXjoQa72Fzw@mail.gmail.com>
- <1562614919.8510.9.camel@lca.pw>
- <alpine.DEB.2.21.1907082150170.1961@nanos.tec.linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Sender-Ident-agJab5osgicCis: opensource@jilayne.com
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Tim Bird <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 9, 2019 at 3:34 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> KUnit is a new unit testing framework for the kernel and when used is
+> built into the kernel as a part of it. Add KUnit to the root Kconfig and
+> Makefile to allow it to be actually built.
+>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  Kconfig  | 2 ++
+>  Makefile | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Kconfig b/Kconfig
+> index 48a80beab6853..10428501edb78 100644
+> --- a/Kconfig
+> +++ b/Kconfig
+> @@ -30,3 +30,5 @@ source "crypto/Kconfig"
+>  source "lib/Kconfig"
+>
+>  source "lib/Kconfig.debug"
+> +
+> +source "kunit/Kconfig"
+> diff --git a/Makefile b/Makefile
+> index 3e4868a6498b2..60cf4f0813e0d 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -991,7 +991,7 @@ endif
+>  PHONY += prepare0
+>
+>  ifeq ($(KBUILD_EXTMOD),)
+> -core-y         += kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+> +core-y         += kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/ kunit/
+>
+>  vmlinux-dirs   := $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
+>                      $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
+> --
+> 2.22.0.410.gd8fdbe21b5-goog
 
 
-> On Jul 8, 2019, at 1:57 PM, Thomas Gleixner <tglx@linutronix.de> =
-wrote:
->=20
-> On Mon, 8 Jul 2019, Qian Cai wrote:
->> On Mon, 2019-07-08 at 15:21 -0400, Ilia Mirkin wrote:
->>>> -/**
->>>> +// SPDX-License-Identifier: MIT
->>>> +/*
->>>>   * \file drm_memory.c
->>>>   * Memory management wrappers for DRM
->>>>   *
->>>> @@ -12,25 +13,6 @@
->>>>   * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.
->>>>   * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.
->>>>   * All Rights Reserved.
->>>> - *
->>>> - * Permission is hereby granted, free of charge, to any person =
-obtaining a
->>>> - * copy of this software and associated documentation files (the
->>>> "Software"),
->>>> - * to deal in the Software without restriction, including without
->>>> limitation
->>>> - * the rights to use, copy, modify, merge, publish, distribute, =
-sublicense,
->>>> - * and/or sell copies of the Software, and to permit persons to =
-whom the
->>>> - * Software is furnished to do so, subject to the following =
-conditions:
->>>> - *
->>>> - * The above copyright notice and this permission notice =
-(including the
->>>> next
->>>> - * paragraph) shall be included in all copies or substantial =
-portions of
->>>> the
->>>> - * Software.
->>>> - *
->>>> - * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, =
-EXPRESS
->>>> OR
->>>> - * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF =
-MERCHANTABILITY,
->>>> - * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO =
-EVENT SHALL
->>>> - * VA LINUX SYSTEMS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, =
-DAMAGES
->>>> OR
->>>=20
->>> This talks about VA Linux Systems and/or its suppliers, while the =
-MIT
->>> licence talks about authors or copyright holders.
->=20
-> That's looks lika a valid substitution and does not change the meaning =
-of
-> the license, AFAICT.=20
+This is so trivial, and do not need to get ack from me.
 
-As of the 3.6 release of the SPDX License List, we will have added =
-markup to denote that the name in the disclaimer can be changed and =
-still considered a match. This is a common scenario in other licenses =
-(like the BSD family), but I don=E2=80=99t think we=E2=80=99d come =
-across it until the work on the kernel and adding SPDX identifiers. So, =
-yes, MIT would be the correct SPDX identifier here as of 3.6 (which will =
-be posted in a few days).
+Just a nit.
 
-For reference, the SPDX License List matching guidelines can be found =
-here: https://spdx.org/spdx-license-list/matching-guidelines - see =
-Guideline 2.1.3 specifically. Replaceable text is marked up in the =
-master files that comprise the SPDX License List according the the XML =
-schema and then displayed in color coded text on the website pages (see, =
-for example, BSD-3-Clause - https://spdx.org/licenses/BSD-3-Clause.html
 
-Of course, if anyone finds any other license text that deserves this =
-kind of accommodation, you can always make a PR here: =
-https://github.com/spdx/license-list-XML :)
+When CONFIG_KUNIT is disable, is there any point in descending into kunit/ ?
 
-thanks,
-Jilayne
-SPDX legal team co-lead=
+core-$(CONFIG_KUNIT) += kunit/
+
+... might be useful to skip kunit/ entirely.
+
+If you look at the top-level Makefile, some entries are doing this:
+
+
+init-y          := init/
+drivers-y       := drivers/ sound/
+drivers-$(CONFIG_SAMPLES) += samples/
+drivers-$(CONFIG_KERNEL_HEADER_TEST) += include/
+net-y           := net/
+libs-y          := lib/
+core-y          := usr/
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
