@@ -2,108 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3514F640CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BEBE6416E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 08:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfGJFtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 01:49:42 -0400
-Received: from relay.sw.ru ([185.231.240.75]:49196 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfGJFtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 01:49:41 -0400
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1hl5Ti-0002oO-18; Wed, 10 Jul 2019 08:49:18 +0300
-Subject: Re: [PATCH v3 0/3] kernel/notifier.c: avoid duplicate registration
-To:     Xiaoming Ni <nixiaoming@huawei.com>, adobriyan@gmail.com,
-        akpm@linux-foundation.org, anna.schumaker@netapp.com,
-        arjan@linux.intel.com, bfields@fieldses.org,
-        chuck.lever@oracle.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jlayton@kernel.org, luto@kernel.org,
-        mingo@kernel.org, Nadia.Derbey@bull.net,
-        paulmck@linux.vnet.ibm.com, semen.protsenko@linaro.org,
-        stable@kernel.org, stern@rowland.harvard.edu, tglx@linutronix.de,
-        torvalds@linux-foundation.org, trond.myklebust@hammerspace.com,
-        viresh.kumar@linaro.org
-Cc:     alex.huangjianhui@huawei.com, dylix.dailei@huawei.com,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <1562728147-30251-1-git-send-email-nixiaoming@huawei.com>
-From:   Vasily Averin <vvs@virtuozzo.com>
-Message-ID: <f628ff03-eb47-62f3-465b-fe4ed046b30c@virtuozzo.com>
-Date:   Wed, 10 Jul 2019 08:49:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <1562728147-30251-1-git-send-email-nixiaoming@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726684AbfGJGkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 02:40:08 -0400
+Received: from host.euro-space.net ([87.117.239.2]:56336 "EHLO
+        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfGJGkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 02:40:07 -0400
+X-Greylist: delayed 2969 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jul 2019 02:40:05 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.com;
+         s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version
+        :Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=VdUiBxCjMnnmnjRuqrh2wCzPM35P1D7GGN/3U9qGim4=; b=WEi8z93dlEvDji1OYcR9r4X+7l
+        x8qMDa/++VDfFFL3krpXjXvEmDLcDD2axsSVHU77qip5WiZmVe7mqUXQYDzRGI6zwpDvOQxdikdlE
+        uFmqY4KfKtUj6v5gLULr6CdWY4Hue0C5hKbjAv3g1s92MwZG56l/KJGQbplFLBniNRXV9vM80FwB9
+        FcvBt+GppAYBL7IOgvdN9AU8tiy7GEQs3oi3dZBJBISYA09CgHSh4Gt6Gm42gdoiXNaZK6kBbZS0g
+        li0FE2LqF1ZWT1klTvnJ2tiF6grxK+24OgvYbzvdsGxOIP09tMKWCFaNqZDcSYTGppL7msKeS8vg8
+        gktyp/IQ==;
+Received: from x4dbf9360.dyn.telefonica.de ([77.191.147.96]:58102 helo=gentoo0.localdomain)
+        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <kmarinushkin@birdec.com>)
+        id 1hl5Uw-0002Cb-DB; Wed, 10 Jul 2019 06:50:34 +0100
+From:   Kirill Marinushkin <kmarinushkin@birdec.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Kirill Marinushkin <kmarinushkin@birdec.com>
+Subject: [PATCH] ASoC: Relocate my e-mail to .com domain zone
+Date:   Wed, 10 Jul 2019 07:51:35 +0200
+Message-Id: <20190710055135.21377-1-kmarinushkin@birdec.com>
+X-Mailer: git-send-email 2.13.6
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - host.euro-space.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - birdec.com
+X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.com
+X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/19 6:09 AM, Xiaoming Ni wrote:
-> Registering the same notifier to a hook repeatedly can cause the hook
-> list to form a ring or lose other members of the list.
+Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.com>
+---
+ MAINTAINERS                    | 2 +-
+ sound/soc/codecs/pcm3060-i2c.c | 4 ++--
+ sound/soc/codecs/pcm3060-spi.c | 4 ++--
+ sound/soc/codecs/pcm3060.c     | 4 ++--
+ sound/soc/codecs/pcm3060.h     | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
-I think is not enough to _prevent_ 2nd register attempt,
-it's enough to detect just attempt and generate warning to mark host in bad state.
-
-Unexpected 2nd register of the same hook most likely will lead to 2nd unregister,
-and it can lead to host crash in any time: 
-you can unregister notifier on first attempt it can be too early, it can be still in use.
-on the other hand you can never call 2nd unregister at all.
-
-Unfortunately I do not see any ways to handle such cases properly,
-and it seems for me your patches does not resolve this problem.
-
-Am I missed something probably?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 558acf24ea1e..9cdc10e80d78 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15829,7 +15829,7 @@ S:	Maintained
+ F:	drivers/net/ethernet/ti/netcp*
  
-> case1: An infinite loop in notifier_chain_register() can cause soft lockup
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test2);
-> 
-> case2: An infinite loop in notifier_chain_register() can cause soft lockup
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_call_chain(&test_notifier_list, 0, NULL);
-> 
-> case3: lose other hook test2
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test2);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
-> 
-> case4: Unregister returns 0, but the hook is still in the linked list,
->         and it is not really registered. If you call notifier_call_chain
->         after ko is unloaded, it will trigger oops. if the system is
->        	configured with softlockup_panic and the same hook is repeatedly
->        	registered on the panic_notifier_list, it will cause a loop panic.
-> 
-> so. need add a check in in notifier_chain_register() to avoid duplicate
-> registration
-> 
-> v1:
-> * use notifier_chain_cond_register replace notifier_chain_register
-> 
-> v2:
-> * Add a check in notifier_chain_register() to avoid duplicate registration
-> * remove notifier_chain_cond_register() to avoid duplicate code 
-> * remove blocking_notifier_chain_cond_register() to avoid duplicate code
-> 
-> v3:
-> * Add a cover letter.
-> 
-> Xiaoming Ni (3):
->   kernel/notifier.c: avoid duplicate registration
->   kernel/notifier.c: remove notifier_chain_cond_register()
->   kernel/notifier.c: remove blocking_notifier_chain_cond_register()
-> 
->  include/linux/notifier.h |  4 ----
->  kernel/notifier.c        | 41 +++--------------------------------------
->  net/sunrpc/rpc_pipe.c    |  2 +-
->  3 files changed, 4 insertions(+), 43 deletions(-)
-> 
+ TI PCM3060 ASoC CODEC DRIVER
+-M:	Kirill Marinushkin <kmarinushkin@birdec.tech>
++M:	Kirill Marinushkin <kmarinushkin@birdec.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/pcm3060.txt
+diff --git a/sound/soc/codecs/pcm3060-i2c.c b/sound/soc/codecs/pcm3060-i2c.c
+index cdc8314882bc..abcdeb922201 100644
+--- a/sound/soc/codecs/pcm3060-i2c.c
++++ b/sound/soc/codecs/pcm3060-i2c.c
+@@ -2,7 +2,7 @@
+ //
+ // PCM3060 I2C driver
+ //
+-// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
+ 
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+@@ -56,5 +56,5 @@ static struct i2c_driver pcm3060_i2c_driver = {
+ module_i2c_driver(pcm3060_i2c_driver);
+ 
+ MODULE_DESCRIPTION("PCM3060 I2C driver");
+-MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.tech>");
++MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/codecs/pcm3060-spi.c b/sound/soc/codecs/pcm3060-spi.c
+index f6f19fa80932..3b79734b832b 100644
+--- a/sound/soc/codecs/pcm3060-spi.c
++++ b/sound/soc/codecs/pcm3060-spi.c
+@@ -2,7 +2,7 @@
+ //
+ // PCM3060 SPI driver
+ //
+-// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
+ 
+ #include <linux/module.h>
+ #include <linux/spi/spi.h>
+@@ -55,5 +55,5 @@ static struct spi_driver pcm3060_spi_driver = {
+ module_spi_driver(pcm3060_spi_driver);
+ 
+ MODULE_DESCRIPTION("PCM3060 SPI driver");
+-MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.tech>");
++MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
+index 32b26f1c2282..b2358069cf9b 100644
+--- a/sound/soc/codecs/pcm3060.c
++++ b/sound/soc/codecs/pcm3060.c
+@@ -2,7 +2,7 @@
+ //
+ // PCM3060 codec driver
+ //
+-// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
+ 
+ #include <linux/module.h>
+ #include <sound/pcm_params.h>
+@@ -342,5 +342,5 @@ int pcm3060_probe(struct device *dev)
+ EXPORT_SYMBOL(pcm3060_probe);
+ 
+ MODULE_DESCRIPTION("PCM3060 codec driver");
+-MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.tech>");
++MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/codecs/pcm3060.h b/sound/soc/codecs/pcm3060.h
+index 75931c9a9d85..18d51e5dac2c 100644
+--- a/sound/soc/codecs/pcm3060.h
++++ b/sound/soc/codecs/pcm3060.h
+@@ -2,7 +2,7 @@
+ /*
+  * PCM3060 codec driver
+  *
+- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
++ * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
+  */
+ 
+ #ifndef _SND_SOC_PCM3060_H
+-- 
+2.13.6
+
