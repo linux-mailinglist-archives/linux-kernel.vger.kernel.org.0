@@ -2,188 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76CA8643A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6597D643B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfGJIiJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 04:38:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726097AbfGJIiJ (ORCPT
+        id S1727585AbfGJInp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:43:45 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40641 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfGJIno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:38:09 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6A8aRCo115827
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:38:08 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tnas1vww9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 04:38:07 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <BMT@zurich.ibm.com>;
-        Wed, 10 Jul 2019 08:38:07 -0000
-Received: from us1b3-smtp07.a3dr.sjc01.isc4sb.com (10.122.203.198)
-        by smtp.notes.na.collabserv.com (10.122.47.46) with smtp.notes.na.collabserv.com ESMTP;
-        Wed, 10 Jul 2019 08:38:00 -0000
-Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
-          by us1b3-smtp07.a3dr.sjc01.isc4sb.com
-          with ESMTP id 2019071008375974-184574 ;
-          Wed, 10 Jul 2019 08:37:59 +0000 
-In-Reply-To: <20190710043554.GA7034@mtr-leonro.mtl.com>
-From:   "Bernard Metzler" <BMT@zurich.ibm.com>
-To:     "Leon Romanovsky" <leon@kernel.org>
-Cc:     "YueHaibing" <yuehaibing@huawei.com>, dledford@redhat.com,
-        jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Date:   Wed, 10 Jul 2019 08:38:00 +0000
+        Wed, 10 Jul 2019 04:43:44 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a93so867475pla.7
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 01:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nkpqbWFq6iVL9u3b/aoSDyMFKVVWjq2ho0SU87Ve9EA=;
+        b=niCiiEw89B6+M1qSVHe0m9LiMfF3eX8mzaVfbsqSLV9SzUHmROxyvUU6zcgi1CqOS6
+         7yJAHOZI+j+MCieTg2qcgsd/gn7Bok4JlEB6msHfAnbKDf4IYU/h30wpSMGpfykU9yrP
+         pn+UElSBRFX6MdyZa/AGBKyvwEHYO7lENKSVV3URDlGB/HPR4581snqAqNTqaMKblyAq
+         MvD2RvzQL4iEcK/pPB2wU+pS4KiwR/25VmlwvR6lNcqYLuSk7Cmgq7h5PKJvI8e7vvTi
+         8wpu37jzAij1POC44xa0O2ruCNYqMiJNNtV5FTgOYYJMxdsvUy5VrODWTMXV7yoIqK1r
+         Ofuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nkpqbWFq6iVL9u3b/aoSDyMFKVVWjq2ho0SU87Ve9EA=;
+        b=D+ULVZi8LpdL807d4YTy9jVGfcrFi3UUQ0GwE6GFK0q6nuMbbELlYJGP/rxxVLM30R
+         gsuuL/vTtwPwuot+muLSjzR2PgIDVIwo7A7nI21nLv9wmHbosFKfxU9UNhb0+oVImnbc
+         BDGF8IGYwylgqI9s71JptbSuqu1kfaJLqDv7DfZtMX2MZZg/Aft7yzzYUCdWjy705UMw
+         VtJ/rzvQdwMsgylztbAdz3YBBo29x3NMIZNNdvkGXaRzTmnSuKvlfg3s3nA+sops/LqZ
+         nx1dlnowxJRsQd4Dn3sNADjuf/iag3KT7XbaL5qtAMY+6wWHjE45CjSjrvnJNH6kdLnZ
+         bYZg==
+X-Gm-Message-State: APjAAAVgBCQ2tCcTkTVTrZGbu/Zg+Fbe51NbQexkE4eVu8kcOsE1gUNf
+        g56uNYTroOF42+/lUWBtP3xVIg==
+X-Google-Smtp-Source: APXvYqyGtjVkFZ27qMNV9S8bC9+HxMoJIumIUViBQDClbzBgmvLYf57pAXcmR80wQre9lSTKM/e0Bw==
+X-Received: by 2002:a17:902:fa2:: with SMTP id 31mr38219781plz.38.1562748223109;
+        Wed, 10 Jul 2019 01:43:43 -0700 (PDT)
+Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id v5sm1378133pgq.66.2019.07.10.01.43.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 01:43:42 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, stable@vger.kernel.org
+Subject: [PATCH v3 1/2] rtw88: pci: Rearrange the memory usage for skb in RX ISR
+Date:   Wed, 10 Jul 2019 16:38:25 +0800
+Message-Id: <20190710083825.7115-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190709161550.GA8703@infradead.org>
+References: <20190709161550.GA8703@infradead.org>
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20190710043554.GA7034@mtr-leonro.mtl.com>,<20190710015009.57120-1-yuehaibing@huawei.com>
-X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
- SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
-X-KeepSent: B29B4146:7E46891A-00258433:002BBAD4;
- type=4; name=$KeepSent
-X-LLNOutbound: False
-X-Disclaimed: 59203
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19071008-3017-0000-0000-0000004E3DB3
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.064514
-X-IBM-SpamModules-Versions: BY=3.00011404; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01230075; UDB=6.00647874; IPR=6.01011341;
- MB=3.00027663; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-10 08:38:05
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-07-10 03:22:57 - 6.00010146
-x-cbparentid: 19071008-3018-0000-0000-000000835860
-Message-Id: <OFB29B4146.7E46891A-ON00258433.002BBAD4-00258433.002F6CB8@notes.na.collabserv.com>
-Subject: Re:  Re: [PATCH] RDMA/siw: Print error code while kthread_create failed
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-10_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------"Leon Romanovsky" <leon@kernel.org> wrote: -----
+Testing with RTL8822BE hardware, when available memory is low, we
+frequently see a kernel panic and system freeze.
 
->To: "YueHaibing" <yuehaibing@huawei.com>
->From: "Leon Romanovsky" <leon@kernel.org>
->Date: 07/10/2019 06:36AM
->Cc: bmt@zurich.ibm.com, dledford@redhat.com, jgg@ziepe.ca,
->linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
->Subject: [EXTERNAL] Re: [PATCH] RDMA/siw: Print error code while
->kthread_create failed
->
->On Wed, Jul 10, 2019 at 09:50:09AM +0800, YueHaibing wrote:
->> In iw_create_tx_threads(), if we failed to create kthread,
->> we should print the 'rv', this fix gcc warning:
->>
->> drivers/infiniband/sw/siw/siw_main.c: In function
->'siw_create_tx_threads':
->> drivers/infiniband/sw/siw/siw_main.c:91:11: warning:
->>  variable 'rv' set but not used [-Wunused-but-set-variable]
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/infiniband/sw/siw/siw_main.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/infiniband/sw/siw/siw_main.c
->b/drivers/infiniband/sw/siw/siw_main.c
->> index fd2552a..2a70830d 100644
->> --- a/drivers/infiniband/sw/siw/siw_main.c
->> +++ b/drivers/infiniband/sw/siw/siw_main.c
->> @@ -101,7 +101,8 @@ static int siw_create_tx_threads(void)
->>  		if (IS_ERR(siw_tx_thread[cpu])) {
->>  			rv = PTR_ERR(siw_tx_thread[cpu]);
->>  			siw_tx_thread[cpu] = NULL;
->> -			pr_info("Creating TX thread for CPU %d failed", cpu);
->> +			pr_info("Creating TX thread for CPU%d failed %d\n",
->> +				cpu, rv);
->
->Delete this print together with variable, failure to create kthread
->is basic failure, which affect performance only. The whole kthread
->creation spam in this driver looked suspicious during submission
->and it continues to be.
->
->Thanks
+First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
 
-Right, I agree with Leon. Better remove all those printouts. We
-already have a warning if we cannot start any thread. Also
-stopping those threads is not worth spamming the console. I just
-forgot to remove after Leon's comment. Would it be possible
-to apply the following?
+rx routine starvation
+WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:822 rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+[ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
 
-Thanks a lot!
-Bernard.
+Then we see a variety of different error conditions and kernel panics,
+such as this one (trimmed):
 
-From e4ca3d4dec86bb5731f8e3cb0cdd01e84b315d80 Mon Sep 17 00:00:00 2001
-From: Bernard Metzler <bmt@zurich.ibm.com>
-Date: Wed, 10 Jul 2019 10:03:17 +0200
-Subject: [PATCH] remove kthread create/destroy printouts
+rtw_pci 0000:02:00.0: pci bus timeout, check dma status
+skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:00000000d2880c6f data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:105!
+invalid opcode: 0000 [#1] SMP NOPTI
+RIP: 0010:skb_panic+0x43/0x45
 
-Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+When skb allocation fails and the "rx routine starvation" is hit, the
+function returns immediately without updating the RX ring. At this
+point, the RX ring may continue referencing an old skb which was already
+handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
+bad things happen.
+
+This patch allocates a new, data-sized skb first in RX ISR. After
+copying the data in, we pass it to the upper layers. However, if skb
+allocation fails, we effectively drop the frame. In both cases, the
+original, full size ring skb is reused.
+
+In addition, by fixing the kernel crash, the RX routine should now
+generally behave better under low memory conditions.
+
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204053
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
 ---
- drivers/infiniband/sw/siw/siw_main.c  | 4 +---
- drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ----
- 2 files changed, 1 insertion(+), 7 deletions(-)
+v2:
+ - Allocate new data-sized skb and put data into it, then pass it to
+   mac80211. Reuse the original skb in RX ring by DMA sync.
+ - Modify the commit message.
+ - Introduce following [PATCH v3 2/2] rtw88: pci: Use DMA sync instead
+   of remapping in RX ISR.
 
-diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
-index fd2552a9091d..f55c4e80aea4 100644
---- a/drivers/infiniband/sw/siw/siw_main.c
-+++ b/drivers/infiniband/sw/siw/siw_main.c
-@@ -88,7 +88,7 @@ static void siw_device_cleanup(struct ib_device *base_dev)
+v3:
+ - Same as v2.
+
+ drivers/net/wireless/realtek/rtw88/pci.c | 49 +++++++++++-------------
+ 1 file changed, 22 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
+index cfe05ba7280d..e9fe3ad896c8 100644
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -763,6 +763,7 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
+ 	u32 pkt_offset;
+ 	u32 pkt_desc_sz = chip->rx_pkt_desc_sz;
+ 	u32 buf_desc_sz = chip->rx_buf_desc_sz;
++	u32 new_len;
+ 	u8 *rx_desc;
+ 	dma_addr_t dma;
  
- static int siw_create_tx_threads(void)
- {
--	int cpu, rv, assigned = 0;
-+	int cpu, assigned = 0;
+@@ -790,40 +791,34 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
+ 		pkt_offset = pkt_desc_sz + pkt_stat.drv_info_sz +
+ 			     pkt_stat.shift;
  
- 	for_each_online_cpu(cpu) {
- 		/* Skip HT cores */
-@@ -99,9 +99,7 @@ static int siw_create_tx_threads(void)
- 			kthread_create(siw_run_sq, (unsigned long *)(long)cpu,
- 				       "siw_tx/%d", cpu);
- 		if (IS_ERR(siw_tx_thread[cpu])) {
--			rv = PTR_ERR(siw_tx_thread[cpu]);
- 			siw_tx_thread[cpu] = NULL;
--			pr_info("Creating TX thread for CPU %d failed", cpu);
- 			continue;
- 		}
- 		kthread_bind(siw_tx_thread[cpu], cpu);
-diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
-index 2c3d250ee57c..fff02b56d38a 100644
---- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-+++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-@@ -1200,8 +1200,6 @@ int siw_run_sq(void *data)
- 	init_llist_head(&tx_task->active);
- 	init_waitqueue_head(&tx_task->waiting);
+-		if (pkt_stat.is_c2h) {
+-			/* keep rx_desc, halmac needs it */
+-			skb_put(skb, pkt_stat.pkt_len + pkt_offset);
++		/* discard current skb if the new skb cannot be allocated as a
++		 * new one in rx ring later
++		 */
++		new_len = pkt_stat.pkt_len + pkt_offset;
++		new = dev_alloc_skb(new_len);
++		if (WARN_ONCE(!new, "rx routine starvation\n"))
++			goto next_rp;
++
++		/* put the DMA data including rx_desc from phy to new skb */
++		skb_put_data(new, skb->data, new_len);
  
--	pr_info("Started siw TX thread on CPU %u\n", nr_cpu);
+-			/* pass offset for further operation */
+-			*((u32 *)skb->cb) = pkt_offset;
+-			skb_queue_tail(&rtwdev->c2h_queue, skb);
++		if (pkt_stat.is_c2h) {
++			 /* pass rx_desc & offset for further operation */
++			*((u32 *)new->cb) = pkt_offset;
++			skb_queue_tail(&rtwdev->c2h_queue, new);
+ 			ieee80211_queue_work(rtwdev->hw, &rtwdev->c2h_work);
+ 		} else {
+-			/* remove rx_desc, maybe use skb_pull? */
+-			skb_put(skb, pkt_stat.pkt_len);
+-			skb_reserve(skb, pkt_offset);
 -
- 	while (1) {
- 		struct llist_node *fifo_list = NULL;
- 
-@@ -1239,8 +1237,6 @@ int siw_run_sq(void *data)
- 			siw_sq_resume(qp);
+-			/* alloc a smaller skb to mac80211 */
+-			new = dev_alloc_skb(pkt_stat.pkt_len);
+-			if (!new) {
+-				new = skb;
+-			} else {
+-				skb_put_data(new, skb->data, skb->len);
+-				dev_kfree_skb_any(skb);
+-			}
+-			/* TODO: merge into rx.c */
+-			rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
++			/* remove rx_desc */
++			skb_pull(new, pkt_offset);
++
++			rtw_rx_stats(rtwdev, pkt_stat.vif, new);
+ 			memcpy(new->cb, &rx_status, sizeof(rx_status));
+ 			ieee80211_rx_irqsafe(rtwdev->hw, new);
  		}
- 	}
--	pr_info("Stopped siw TX thread on CPU %u\n", nr_cpu);
--
- 	return 0;
- }
  
+-		/* skb delivered to mac80211, alloc a new one in rx ring */
+-		new = dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
+-		if (WARN(!new, "rx routine starvation\n"))
+-			return;
+-
+-		ring->buf[cur_rp] = new;
+-		rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_desc_sz);
++next_rp:
++		/* new skb delivered to mac80211, re-enable original skb DMA */
++		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
+ 
+ 		/* host read next element in ring */
+ 		if (++cur_rp >= ring->r.len)
 -- 
-2.17.2
-
-
- 
-
+2.22.0
 
