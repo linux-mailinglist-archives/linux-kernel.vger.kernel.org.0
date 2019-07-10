@@ -2,83 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C9864293
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81AA9642D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfGJHYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50114 "EHLO mail.kernel.org"
+        id S1727046AbfGJH3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:29:10 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:64506 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbfGJHYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:24:06 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AB5D2064A;
-        Wed, 10 Jul 2019 07:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562743445;
-        bh=07abPqHi0bx/2V6DX3mR/4wGcFkZzvDnRhGgdklDc9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ILoG/RDAWFrlvtKlF4riZ3+q0NwHP0NTPHSafg2g1jlb+pFkcu4Yr1MwLFQkNXfaG
-         ajRFr0akoFFeR/6yAeoxlU81kjldRDFkLSTc8TE4nnVwjFMWMtWlkm8hWzkUWZKq3+
-         k0N0rAxCHR9nfeoIhxP6mfcZioHe+CTzDkMVP3Oo=
-Date:   Wed, 10 Jul 2019 09:24:03 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
-Message-ID: <20190710072403.GB12087@kroah.com>
-References: <20190708150526.234572443@linuxfoundation.org>
- <65c41248-f391-1231-c2b3-9c65922a696e@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65c41248-f391-1231-c2b3-9c65922a696e@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726089AbfGJH3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 03:29:10 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id B55A27F94F288FAB2B71;
+        Wed, 10 Jul 2019 15:29:08 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x6A7RUab070756;
+        Wed, 10 Jul 2019 15:27:30 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019071015275036-2237130 ;
+          Wed, 10 Jul 2019 15:27:50 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     lgirdwood@gmail.com
+Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH 0/4] Fix some use-after-free problems in sound/soc/generic
+Date:   Wed, 10 Jul 2019 15:25:05 +0800
+Message-Id: <1562743509-30496-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-10 15:27:50,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-10 15:27:33,
+        Serialize complete at 2019-07-10 15:27:33
+X-MAIL: mse-fl2.zte.com.cn x6A7RUab070756
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 07:14:05AM +0100, Jon Hunter wrote:
-> 
-> On 08/07/2019 16:12, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.17 release.
-> > There are 96 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.17-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.1:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     32 tests:	32 pass, 0 fail
-> 
-> Linux version:	5.1.17-rc1-gb64119f8dffe
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+We developed a coccinelle SmPL to detect sound/sooc/generic code and
+found some use-after-free problems.
+This patch series fixes those problems.
 
-Thanks for testing all of these and letting me know.
+Wen Yang (4):
+  ASoC: simple-card: fix an use-after-free in simple_dai_link_of_dpcm()
+  ASoC: simple-card: fix an use-after-free in simple_for_each_link()
+  ASoC: audio-graph-card: fix use-after-free in graph_dai_link_of_dpcm()
+  ASoC: audio-graph-card: fix an use-after-free in graph_get_dai_id()
 
-greg k-h
+ sound/soc/generic/audio-graph-card.c | 30 ++++++++++++++++--------------
+ sound/soc/generic/simple-card.c      | 26 +++++++++++++-------------
+ 2 files changed, 29 insertions(+), 27 deletions(-)
+
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
+
+-- 
+2.9.5
+
