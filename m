@@ -2,34 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B7664039
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 438B16403A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfGJFEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 01:04:36 -0400
-Received: from smtprelay0016.hostedemail.com ([216.40.44.16]:43557 "EHLO
+        id S1726230AbfGJFEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 01:04:39 -0400
+Received: from smtprelay0104.hostedemail.com ([216.40.44.104]:46353 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725938AbfGJFEf (ORCPT
+        by vger.kernel.org with ESMTP id S1725938AbfGJFEi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 01:04:35 -0400
+        Wed, 10 Jul 2019 01:04:38 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 7644B18225E0E;
-        Wed, 10 Jul 2019 05:04:34 +0000 (UTC)
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id E12FD7832;
+        Wed, 10 Jul 2019 05:04:36 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1345:1359:1437:1534:1541:1711:1730:1747:1777:1792:2197:2198:2199:2200:2393:2559:2562:2731:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3871:3872:4605:5007:6119:6261:7903:10004:10848:11658:11914:12043:12297:12555:12895:13069:13215:13229:13311:13357:14181:14384:14394:14721:21080:21221:21451:21627:30054:30070,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
-X-HE-Tag: point79_abbc6ba6bd53
-X-Filterd-Recvd-Size: 1939
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:973:988:989:1260:1345:1359:1437:1534:1539:1567:1711:1714:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3867:5007:6261:6642:10004:10848:11026:11473:11658:11914:12043:12048:12297:12438:12555:12895:13069:13311:13357:14096:14181:14384:14394:14721:21080:21451:21627:30054,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: bit87_aed68f386556
+X-Filterd-Recvd-Size: 1794
 Received: from joe-laptop.perches.com (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
         (Authenticated sender: joe@perches.com)
         by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 10 Jul 2019 05:04:33 +0000 (UTC)
+        Wed, 10 Jul 2019 05:04:34 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 01/12] checkpatch: Add GENMASK tests
-Date:   Tue,  9 Jul 2019 22:04:14 -0700
-Message-Id: <c5cf9dd30360a395b50514f8fece2231e0180ce1.1562734889.git.joe@perches.com>
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 02/12] clocksource/drivers/npcm: Fix misuse of GENMASK macro
+Date:   Tue,  9 Jul 2019 22:04:15 -0700
+Message-Id: <d6a9d49c9837d38816b71d783f5aed7235e8ca94.1562734889.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1562734889.git.joe@perches.com>
 References: <cover.1562734889.git.joe@perches.com>
@@ -38,45 +45,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This macro is easy to misuse as it's odd argument order.
-
-If specified with simple decimal values, make sure the arguments are
-ordered high then low.
-
-Also check if any argument is > 32 where instead of GENMASK,
-GENMASK_ULL should be used.
+Arguments are supposed to be ordered high then low.
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- scripts/checkpatch.pl | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/clocksource/timer-npcm7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 6cb99ec62000..d37bbe33524b 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6368,6 +6368,21 @@ sub process {
- 			     "switch default: should use break\n" . $herectx);
- 		}
- 
-+# check for misuses of GENMASK
-+		if ($line =~ /\b(GENMASK(?:_ULL)?)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/) {
-+			my $type = $1;
-+			my $high = $2;
-+			my $low = $3;
-+			if ($high < $low) {
-+				ERROR("GENMASK",
-+				      "$type argument order is high then low\n" . $herecurr);
-+			}
-+			if ($type eq "GENMASK" && ($high >= 32 || $low >= 32)) {
-+				ERROR("GENMASK",
-+				      "$type with arguments >= 32 should use GENMASK_ULL\n" . $herecurr);
-+			}
-+		}
-+
- # check for gcc specific __FUNCTION__
- 		if ($line =~ /\b__FUNCTION__\b/) {
- 			if (WARN("USE_FUNC",
+diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
+index 7a9bb5532d99..8a30da7f083b 100644
+--- a/drivers/clocksource/timer-npcm7xx.c
++++ b/drivers/clocksource/timer-npcm7xx.c
+@@ -32,7 +32,7 @@
+ #define NPCM7XX_Tx_INTEN		BIT(29)
+ #define NPCM7XX_Tx_COUNTEN		BIT(30)
+ #define NPCM7XX_Tx_ONESHOT		0x0
+-#define NPCM7XX_Tx_OPER			GENMASK(3, 27)
++#define NPCM7XX_Tx_OPER			GENMASK(27, 3)
+ #define NPCM7XX_Tx_MIN_PRESCALE		0x1
+ #define NPCM7XX_Tx_TDR_MASK_BITS	24
+ #define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
 -- 
 2.15.0
 
