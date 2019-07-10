@@ -2,46 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDEB649B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99359649BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfGJPe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:34:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45796 "EHLO
+        id S1728210AbfGJPfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:35:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45838 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfGJPez (ORCPT
+        with ESMTP id S1727521AbfGJPe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:34:55 -0400
+        Wed, 10 Jul 2019 11:34:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zEYE/fM+fUJTvgouP0rSljrDT6m2g/ZvpYi2J8zq2LE=; b=I4oKAsPY+oqd
-        VXcXW9Fd5O5Vlz4I+Fw2ljqe+xYQ/Tv983hPXypZ6SbOwTqMunupGDIJAsnA5mHq8K+G2y7Spa4d4
-        znZh/swdVLUrESDCmBL493UFuhgVHwY9XpZ++QhtqouX7oMfPRZ8qVHXBj5Yq8Ag2HdXjRBYBagDm
-        mAn+o=;
+        List-Archive; bh=7QYvFls9cFFESC1iCFjHNVMcABi/vx5KKko2y+ogruc=; b=DCTWJJmqSBmc
+        Cg/2D57XqG2bNMWH+/z9If72M7H90alUmHKY3e9c6j1/+lRKN4s6EColac2SYyUKff/GYuQNU2VNa
+        K/a5wqetVmYCREYGAqrxPv2DOK2JWZWcXqx+po0mBGD7H+p0vw/ZBCgci4yiOCi0PEnJ+ieTi+ZlB
+        8DybQ=;
 Received: from [217.140.106.53] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hlEcL-00083I-Nr; Wed, 10 Jul 2019 15:34:49 +0000
+        id 1hlEcQ-00083v-8X; Wed, 10 Jul 2019 15:34:54 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 62FF6D02DA6; Wed, 10 Jul 2019 16:34:49 +0100 (BST)
+        id F057BD02D84; Wed, 10 Jul 2019 16:34:53 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     alsa-devel <alsa-devel@alsa-project.org>,
-        alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
-        Derek Fang <derek.fang@realtek.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>
-Subject: Applied "ASoC: rt1308: Remove executable attribute from source files" to the asoc tree
-In-Reply-To: <d198a3e6ed3a0e9070afeb6aca69903c3e985149.camel@perches.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Applied "spi: dt-bindings: spi-controller: remove unnecessary 'maxItems: 1' from reg" to the spi tree
+In-Reply-To: <20190709192631.16394-1-robh@kernel.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190710153449.62FF6D02DA6@fitzroy.sirena.org.uk>
-Date:   Wed, 10 Jul 2019 16:34:49 +0100 (BST)
+Message-Id: <20190710153453.F057BD02D84@fitzroy.sirena.org.uk>
+Date:   Wed, 10 Jul 2019 16:34:53 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt1308: Remove executable attribute from source files
+   spi: dt-bindings: spi-controller: remove unnecessary 'maxItems: 1' from reg
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -74,29 +71,38 @@ to this mail.
 Thanks,
 Mark
 
-From 72365164cbefe3afa7a146d27d502ed688bf7323 Mon Sep 17 00:00:00 2001
-From: Joe Perches <joe@perches.com>
-Date: Tue, 9 Jul 2019 10:22:16 -0700
-Subject: [PATCH] ASoC: rt1308: Remove executable attribute from source files
+From 43167bb1f6bb7efa73adc40d2dd700bb6546cc2c Mon Sep 17 00:00:00 2001
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 9 Jul 2019 13:26:31 -0600
+Subject: [PATCH] spi: dt-bindings: spi-controller: remove unnecessary
+ 'maxItems: 1' from reg
 
-These are source files not executable.
+Mixing array constraints like 'maxItems' and string or integer value
+constraints like 'minimum' don't make sense. Also, with only value
+constraints, it is implied we have a single value. So lets remove
+'maxItems: 1'.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Link: https://lore.kernel.org/r/d198a3e6ed3a0e9070afeb6aca69903c3e985149.camel@perches.com
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20190709192631.16394-1-robh@kernel.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt1308.c | 0
- sound/soc/codecs/rt1308.h | 0
- 2 files changed, 0 insertions(+), 0 deletions(-)
- mode change 100755 => 100644 sound/soc/codecs/rt1308.c
- mode change 100755 => 100644 sound/soc/codecs/rt1308.h
+ Documentation/devicetree/bindings/spi/spi-controller.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt1308.c b/sound/soc/codecs/rt1308.c
-old mode 100755
-new mode 100644
-diff --git a/sound/soc/codecs/rt1308.h b/sound/soc/codecs/rt1308.h
-old mode 100755
-new mode 100644
+diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+index 876c0623f322..a02e2fe2bfb2 100644
+--- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+@@ -73,7 +73,6 @@ patternProperties:
+           Compatible of the SPI device.
+ 
+       reg:
+-        maxItems: 1
+         minimum: 0
+         maximum: 256
+         description:
 -- 
 2.20.1
 
