@@ -2,162 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172B764B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9504864B5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfGJRSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:18:10 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:41939 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbfGJRSK (ORCPT
+        id S1727932AbfGJRTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 13:19:24 -0400
+Received: from smtprelay0183.hostedemail.com ([216.40.44.183]:33112 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726617AbfGJRTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:18:10 -0400
-Received: by mail-io1-f72.google.com with SMTP id x17so3559130iog.8
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 10:18:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=N+nVQfn9OhvXMYxEbgglbdkopqMyXUoX5ywftFYxY8Q=;
-        b=SW5ANqxQdppV19I5h0m0QUoQr4lEkCAnJvZxrTksunzDgCZUFJcV4xWtK/VuN7OJuX
-         L+/xPpm0TKPQyMhsmMjBlvTSIbwm4t+5MYkdqQSMY2r3RqVethmaZkaFMg/CealgXN1Q
-         N7+S9bfyOBcqlOWZVfqZXCJ/vgZgkFLLMScGAjHfAWp0xtkhqTMSNHptHrpmWNsv3+J4
-         mBj3sRXi3Jf4HsNb5NcLUXiG95zP8Mmhy3dr0kDox6+7YaRX5+4W86/6CRVsOV7M1sXR
-         MwltPoC/m76xhwQ32GQwNmR7qaho33wYL6ViCHcJi5edo+s+Mcw626UJUbB7iNitMjNe
-         K6Bg==
-X-Gm-Message-State: APjAAAXnkWQAGAIJfV8L2qztiSVMF9LJbHBiA0+YLsUEyx9rQjIAGhkO
-        lhR5T0kGZduaNXOaOhYoZ1KMs/zvxt/DRQwkJKJ5tUJ8semN
-X-Google-Smtp-Source: APXvYqx9OG26o/Opi8hTxF8cE4ksPs2QrbCxbRsjQZkqxriuSHOE56TCnRqkbB7yn5Alxt0l76sXjUV+00jZkxKfTfdJh7ZxKRJj
+        Wed, 10 Jul 2019 13:19:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 39B65181D3419;
+        Wed, 10 Jul 2019 17:19:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6120:7901:7903:8957:9038:10004:10128:10234:10400:10848:11026:11232:11658:11914:12043:12048:12297:12438:12740:12760:12895:13019:13069:13141:13160:13229:13230:13255:13311:13357:13439:14096:14097:14181:14659:14721:21080:21212:21627:21660:30029:30054:30070:30091,0,RBL:172.56.44.31:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: need92_16e176f97c651
+X-Filterd-Recvd-Size: 2181
+Received: from XPS-9350 (unknown [172.56.44.31])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 10 Jul 2019 17:19:16 +0000 (UTC)
+Message-ID: <6ce2ce60b2435940bc8dfa07fa2553c4524d2db5.camel@perches.com>
+Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
+ hook for fs notifications
+From:   Joe Perches <joe@perches.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
+        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 10 Jul 2019 10:18:46 -0700
+In-Reply-To: <cb754dda-fbce-8169-4cd7-eef66e8d809e@infradead.org>
+References: <20190710133403.855-1-acgoide@tycho.nsa.gov>
+         <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
+         <cb754dda-fbce-8169-4cd7-eef66e8d809e@infradead.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-Received: by 2002:a02:8a:: with SMTP id 132mr35327597jaa.89.1562779088676;
- Wed, 10 Jul 2019 10:18:08 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 10:18:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000717347058d56dcc2@google.com>
-Subject: KASAN: global-out-of-bounds Read in dvb_pll_attach
-From:   syzbot <syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, andreyknvl@google.com,
-        hverkuil-cisco@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        mchehab@kernel.org, rfontana@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tskd08@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 2019-07-10 at 09:49 -0700, Randy Dunlap wrote:
+> On 7/10/19 9:38 AM, Casey Schaufler wrote:
+> > On 7/10/2019 6:34 AM, Aaron Goidel wrote:
+> > > @@ -3261,6 +3262,26 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
+> > >  	return -EACCES;
+> > >  }
+> > >  
+> > > +static int selinux_inode_notify(struct inode *inode, u64 mask)
+> > > +{
+> > > +	u32 perm = FILE__WATCH; // basic permission, can a watch be set?
+> > 
+> > We don't use // comments in the Linux kernel.
+> > 
+> 
+> I thought that we had recently moved into the 21st century on that issue,
+> but I don't see it mentioned in coding-style.rst.  Maybe we need a Doc update.
+> 
+> checkpatch allows C99 comments by default.
+> Joe, do you recall about this?
 
-syzbot found the following crash on:
-
-HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=150f8c47a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a8f48672560c8ca59dd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16384e27a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16056038600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com
-
-usb 1-1: dvb_usb_v2: will pass the complete MPEG2 transport stream to the  
-software demuxer
-dvbdev: DVB: registering new adapter (774 Friio White ISDB-T USB2.0)
-usb 1-1: media controller created
-dvbdev: dvb_create_media_entity: media entity 'dvb-demux' registered.
-tc90522 0-0018: Toshiba TC90522 attached.
-usb 1-1: DVB: registering adapter 0 frontend 0 (Toshiba TC90522 ISDB-T  
-module)...
-dvbdev: dvb_create_media_entity: media entity 'Toshiba TC90522 ISDB-T  
-module' registered.
-==================================================================
-BUG: KASAN: global-out-of-bounds in dvb_pll_attach+0x6c5/0x830  
-drivers/media/dvb-frontends/dvb-pll.c:798
-Read of size 4 at addr ffffffff89c9e5e0 by task kworker/0:1/12
-
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc6+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x67/0x231 mm/kasan/report.c:188
-  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
-  kasan_report+0xe/0x20 mm/kasan/common.c:614
-  dvb_pll_attach+0x6c5/0x830 drivers/media/dvb-frontends/dvb-pll.c:798
-  dvb_pll_probe+0xfe/0x174 drivers/media/dvb-frontends/dvb-pll.c:877
-  i2c_device_probe+0x790/0xaa0 drivers/i2c/i2c-core-base.c:389
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  i2c_new_client_device+0x5b3/0xc40 drivers/i2c/i2c-core-base.c:778
-  i2c_new_device+0x19/0x50 drivers/i2c/i2c-core-base.c:821
-  dvb_module_probe+0xf9/0x220 drivers/media/dvb-core/dvbdev.c:985
-  friio_tuner_attach+0x125/0x1d0 drivers/media/usb/dvb-usb-v2/gl861.c:536
-  dvb_usbv2_adapter_frontend_init  
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:675 [inline]
-  dvb_usbv2_adapter_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:804  
-[inline]
-  dvb_usbv2_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:865 [inline]
-  dvb_usbv2_probe.cold+0x24dc/0x255d  
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:980
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the variable:
-  id+0x100/0x120
-
-Memory state around the buggy address:
-  ffffffff89c9e480: fa fa fa fa 00 00 fa fa fa fa fa fa 00 00 00 00
-  ffffffff89c9e500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffffffff89c9e580: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
-                                                        ^
-  ffffffff89c9e600: 04 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-  ffffffff89c9e680: 04 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-==================================================================
+My recollection is it was something I thought was
+just simple and useful so I added it to checkpatch
+without going through the negative of the nominal
+approvals required by modifying CodingStyle.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
