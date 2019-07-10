@@ -2,73 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12B7642F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291A0642DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbfGJHdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:33:52 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:36690 "EHLO mxct.zte.com.cn"
+        id S1727158AbfGJHbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:31:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:56798 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfGJHdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:33:51 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 9744B65CB9B0520C0A0A;
-        Wed, 10 Jul 2019 15:33:46 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x6A7Vu2q076458;
-        Wed, 10 Jul 2019 15:31:56 +0800 (GMT-8)
-        (envelope-from yang.bin18@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019071015321609-2237267 ;
-          Wed, 10 Jul 2019 15:32:16 +0800 
-From:   Yang Bin <yang.bin18@zte.com.cn>
-To:     lduncan@suse.com
-Cc:     cleech@redhat.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, wang.liang82@zte.com.cn,
-        " Yang Bin " <yang.bin18@zte.com.cn>
-Subject: [PATCH] Check sk before sendpage
-Date:   Wed, 10 Jul 2019 15:30:09 +0800
-Message-Id: <1562743809-31133-1-git-send-email-yang.bin18@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-10 15:32:16,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-10 15:31:59,
-        Serialize complete at 2019-07-10 15:31:59
-X-MAIL: mse-fl2.zte.com.cn x6A7Vu2q076458
+        id S1726272AbfGJHbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 03:31:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44192344;
+        Wed, 10 Jul 2019 00:31:30 -0700 (PDT)
+Received: from [10.1.196.120] (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCE8E3F246;
+        Wed, 10 Jul 2019 00:33:25 -0700 (PDT)
+Subject: Re: [RFC V3 00/18] objtool: Add support for arm64
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com
+References: <20190624095548.8578-1-raphael.gault@arm.com>
+From:   Raphael Gault <raphael.gault@arm.com>
+Message-ID: <e4ce2867-1d9c-54f4-73a5-668057e423a7@arm.com>
+Date:   Wed, 10 Jul 2019 08:31:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: " Yang Bin "<yang.bin18@zte.com.cn>
+Hi all,
 
-Before xmit,iscsi may disconnect just now.
-So must check connection sock NULL or not,or kernel will crash for
-accessing NULL pointer.
+Just a gentle ping to see if anyone has comments to make about this 
+version :)
 
-Signed-off-by: Yang Bin <yang.bin18@zte.com.cn>
----
- drivers/scsi/iscsi_tcp.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 6/24/19 10:55 AM, Raphael Gault wrote:
+> As of now, objtool only supports the x86_64 architecture but the
+> groundwork has already been done in order to add support for other
+> architectures without too much effort.
+> 
+> This series of patches adds support for the arm64 architecture
+> based on the Armv8.5 Architecture Reference Manual.
+> 
+> Objtool will be a valuable tool to progress and provide more guarentees
+> on live patching which is a work in progress for arm64.
+> 
+> Once we have the base of objtool working the next steps will be to
+> port Peter Z's uaccess validation for arm64.
+> 
+> Changes since previous version:
+> * Rebased on tip/master: Note that I had to re-expose the
+> `struct alternative` using check.h because it is now used outside of
+> check.c.
+> * Reorder commits for a more coherent progression
+> * Introduce GCC plugin to help detect switch-tables for arm64
+> This plugins could be improve: It plugs in after the RTL control flow
+> graph passes but only extract information about the switch tables. I
+> originally intended for it to introduce new code_label/note within the
+> RTL representation in order to reference them and thus get the address
+> of the branch instruction. However I did not manage to do it properly
+> using gen_rtx_CODE_LABEL/emit_label_before/after. If anyone has some
+> experience with RTL plugins I am all ears for advices.
+> 
+> Raphael Gault (18):
+>    objtool: Add abstraction for computation of symbols offsets
+>    objtool: orc: Refactor ORC API for other architectures to implement.
+>    objtool: Move registers and control flow to arch-dependent code
+>    objtool: arm64: Add required implementation for supporting the aarch64
+>      architecture in objtool.
+>    objtool: special: Adapt special section handling
+>    objtool: arm64: Adapt the stack frame checks for arm architecture
+>    objtool: Introduce INSN_UNKNOWN type
+>    objtool: Refactor switch-tables code to support other architectures
+>    gcc-plugins: objtool: Add plugin to detect switch table on arm64
+>    objtool: arm64: Implement functions to add switch tables alternatives
+>    arm64: alternative: Mark .altinstr_replacement as containing
+>      executable instructions
+>    arm64: assembler: Add macro to annotate asm function having non
+>      standard stack-frame.
+>    arm64: sleep: Prevent stack frame warnings from objtool
+>    arm64: kvm: Annotate non-standard stack frame functions
+>    arm64: kernel: Add exception on kuser32 to prevent stack analysis
+>    arm64: crypto: Add exceptions for crypto object to prevent stack
+>      analysis
+>    arm64: kernel: Annotate non-standard stack frame functions
+>    objtool: arm64: Enable stack validation for arm64
+> 
+>   arch/arm64/Kconfig                            |    1 +
+>   arch/arm64/crypto/Makefile                    |    3 +
+>   arch/arm64/include/asm/alternative.h          |    2 +-
+>   arch/arm64/include/asm/assembler.h            |   13 +
+>   arch/arm64/kernel/Makefile                    |    3 +
+>   arch/arm64/kernel/hyp-stub.S                  |    2 +
+>   arch/arm64/kernel/sleep.S                     |    4 +
+>   arch/arm64/kvm/hyp-init.S                     |    2 +
+>   arch/arm64/kvm/hyp/entry.S                    |    2 +
+>   scripts/Makefile.gcc-plugins                  |    2 +
+>   scripts/gcc-plugins/Kconfig                   |    9 +
+>   .../arm64_switch_table_detection_plugin.c     |   58 +
+>   tools/objtool/Build                           |    2 -
+>   tools/objtool/arch.h                          |   21 +-
+>   tools/objtool/arch/arm64/Build                |    8 +
+>   tools/objtool/arch/arm64/arch_special.c       |  173 +
+>   tools/objtool/arch/arm64/bit_operations.c     |   67 +
+>   tools/objtool/arch/arm64/decode.c             | 2809 +++++++++++++++++
+>   .../objtool/arch/arm64/include/arch_special.h |   52 +
+>   .../arch/arm64/include/asm/orc_types.h        |   96 +
+>   .../arch/arm64/include/bit_operations.h       |   24 +
+>   tools/objtool/arch/arm64/include/cfi.h        |   74 +
+>   .../objtool/arch/arm64/include/insn_decode.h  |  210 ++
+>   tools/objtool/arch/arm64/orc_dump.c           |   26 +
+>   tools/objtool/arch/arm64/orc_gen.c            |   40 +
+>   tools/objtool/arch/x86/Build                  |    3 +
+>   tools/objtool/arch/x86/arch_special.c         |  101 +
+>   tools/objtool/arch/x86/decode.c               |   16 +
+>   tools/objtool/arch/x86/include/arch_special.h |   45 +
+>   tools/objtool/{ => arch/x86/include}/cfi.h    |    0
+>   tools/objtool/{ => arch/x86}/orc_dump.c       |    4 +-
+>   tools/objtool/{ => arch/x86}/orc_gen.c        |  104 +-
+>   tools/objtool/check.c                         |  309 +-
+>   tools/objtool/check.h                         |   10 +
+>   tools/objtool/elf.c                           |    3 +-
+>   tools/objtool/orc.h                           |    4 +-
+>   tools/objtool/special.c                       |   28 +-
+>   tools/objtool/special.h                       |   13 +-
+>   38 files changed, 4119 insertions(+), 224 deletions(-)
+>   create mode 100644 scripts/gcc-plugins/arm64_switch_table_detection_plugin.c
+>   create mode 100644 tools/objtool/arch/arm64/Build
+>   create mode 100644 tools/objtool/arch/arm64/arch_special.c
+>   create mode 100644 tools/objtool/arch/arm64/bit_operations.c
+>   create mode 100644 tools/objtool/arch/arm64/decode.c
+>   create mode 100644 tools/objtool/arch/arm64/include/arch_special.h
+>   create mode 100644 tools/objtool/arch/arm64/include/asm/orc_types.h
+>   create mode 100644 tools/objtool/arch/arm64/include/bit_operations.h
+>   create mode 100644 tools/objtool/arch/arm64/include/cfi.h
+>   create mode 100644 tools/objtool/arch/arm64/include/insn_decode.h
+>   create mode 100644 tools/objtool/arch/arm64/orc_dump.c
+>   create mode 100644 tools/objtool/arch/arm64/orc_gen.c
+>   create mode 100644 tools/objtool/arch/x86/arch_special.c
+>   create mode 100644 tools/objtool/arch/x86/include/arch_special.h
+>   rename tools/objtool/{ => arch/x86/include}/cfi.h (100%)
+>   rename tools/objtool/{ => arch/x86}/orc_dump.c (98%)
+>   rename tools/objtool/{ => arch/x86}/orc_gen.c (66%)
+> 
 
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index 7bedbe8..a59c49f 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -264,6 +264,9 @@ static int iscsi_sw_tcp_xmit_segment(struct iscsi_tcp_conn *tcp_conn,
- 	unsigned int copied = 0;
- 	int r = 0;
- 
-+	if (!sk)
-+		return -ENOTCONN;
-+
- 	while (!iscsi_tcp_segment_done(tcp_conn, segment, 0, r)) {
- 		struct scatterlist *sg;
- 		unsigned int offset, copy;
+Cheers,
+
 -- 
-1.8.3.1
-
+Raphael Gault
