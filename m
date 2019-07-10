@@ -2,56 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA00364A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0A364A9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 18:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbfGJQRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 12:17:05 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:34463 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727520AbfGJQRF (ORCPT
+        id S1728409AbfGJQSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 12:18:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48159 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbfGJQSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 12:17:05 -0400
-Received: from xps13 ([83.160.161.190])
-        by smtp-cloud7.xs4all.net with ESMTPSA
-        id lFH7hw0M80SBqlFHAh8qoA; Wed, 10 Jul 2019 18:17:03 +0200
-Message-ID: <93b8a186f4c8b4dae63845a20bd49ae965893143.camel@tiscali.nl>
-Subject: Re: screen freeze with 5.2-rc6 Dell XPS-13 skylake  i915
-From:   Paul Bolle <pebolle@tiscali.nl>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        intel-gfx@lists.freedesktop.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Jul 2019 18:16:57 +0200
-In-Reply-To: <1562770874.3213.14.camel@HansenPartnership.com>
-References: <1561834612.3071.6.camel@HansenPartnership.com>
-         <1562770874.3213.14.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+        Wed, 10 Jul 2019 12:18:07 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hlFIB-0006g7-J8; Wed, 10 Jul 2019 18:18:03 +0200
+Date:   Wed, 10 Jul 2019 18:18:03 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v5.0.21-rt16
+Message-ID: <20190710161803.zawkhyhvbc34skw6@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLRIrnplNSIvUDH75sB5Ar/hqvTbGNDk2rvWbMiShmuIxyfdGCKqgqODhMwtXO6X65G1na/sP5swcZxIAvR+GPmc8amgh5MmNkFFvc1zw5GFDtmiRL1w
- ndxdR4vrhsm72dR+YZTyW9TKURvHVyThnQhIFZsUbjT8q/ucnxtoWy3avtrtl8Ta0N1Z+h6AMXSJKgr40HWhfKbWZq8yIwIAGGV1xSNqNqRCJ8Zm5HtyfzgH
- ZPzX2bHzuaNsu7ROx2dgnY0MvSykoiqgNxWwF+Cshus=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Dear RT folks!
 
-James Bottomley schreef op wo 10-07-2019 om 08:01 [-0700]:
-> I've confirmed that 5.1 doesn't have the regression and I'm now trying
-> to bisect the 5.2 merge window, but since the problem takes quite a
-> while to manifest this will take some time.  Any hints about specific
-> patches that might be the problem would be welcome.
+I'm pleased to announce the v5.0.21-rt16 patch set. 
 
-(Perhaps my message of yesterday never reached you.)
+Changes since v5.0.21-rt15:
 
-It seems I hit this problem quite easily. Bisecting v5.1..v5.2 could be a real
-chore, so perhaps we could coordinate efforts (off-list)?
+  - Do not invoke softirq if ksoftirqd has been scheduled. This change
+    aligns softirq handling closer with mainline. A busy network driver
+    will now handover further processing to ksoftirqd. This wasn't the
+    case since the recent softirq rework.
 
-Thanks,
+Known issues
+     - rcutorture is currently broken on -RT. Reported by Juri Lelli.
 
+The delta patch against v5.0.21-rt15 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/incr/patch-5.0.21-rt15-rt16.patch.xz
 
-Paul Bolle
+You can get this release via the git tree at:
 
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v5.0.21-rt16
+
+The RT patch against v5.0.21 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/older/patch-5.0.21-rt16.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.0/older/patches-5.0.21-rt16.tar.xz
+
+Sebastian
+
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index c4fae96f23c54..dc31f1b4ee217 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -78,7 +78,6 @@ static void wakeup_softirqd(void)
+ 		wake_up_process(tsk);
+ }
+ 
+-#ifndef CONFIG_PREEMPT_RT_FULL
+ /*
+  * If ksoftirqd is scheduled, we do not want to process pending softirqs
+  * right now. Let ksoftirqd handle this at its own rate, to get fairness,
+@@ -93,7 +92,6 @@ static bool ksoftirqd_running(unsigned long pending)
+ 		return false;
+ 	return tsk && (tsk->state == TASK_RUNNING);
+ }
+-#endif
+ 
+ /*
+  * preempt_count and SOFTIRQ_OFFSET usage:
+@@ -173,7 +171,7 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+ 
+ 	if (unlikely(count == 1)) {
+ 		pending = local_softirq_pending();
+-		if (pending) {
++		if (pending && !ksoftirqd_running(pending)) {
+ 			if (!in_atomic())
+ 				__do_softirq();
+ 			else
+diff --git a/localversion-rt b/localversion-rt
+index 18777ec0c27d4..1199ebade17b4 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt15
++-rt16
