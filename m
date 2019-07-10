@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F09E6430A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71336430F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfGJHsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:48:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51374 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfGJHsY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:48:24 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 207so1159384wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 00:48:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5pKvfGeJDZMFrUJE5dsk55XrwkeCdIBhXPGCJpJX3yQ=;
-        b=ihE3IlGVddfVt6YhZtvSFELhHnlLK2tEjva6bhKYdx91p0wjixJ0V1JwpzIzfnGwEn
-         Zwnc7Mddo5AZdmdLwYBKrs2pKhL9t28nzbvfpLEBOTIPOEqFqFf8knNCcjZoYqbbOHOM
-         YwtAI34KXn4LmNeQN8jgIbALWyVJ+cySPFpQjG2++CtXe61miuDizrXtuvJwOCeVTQmc
-         jXWIS1Q1hleBtiSuxslehs8sww3YSeNwQW6KhSVXVszt1a1bs39ImnP2+0S0oaGMwC3A
-         eoLbzDnXocAtCNOgenFAh/pW0s11AfgMLuIzszG6nw8xd7VZcW13AvzGBZDw4hKtscm7
-         Jd9w==
-X-Gm-Message-State: APjAAAUHtQvXclPEj+JNlQb/DORur49pw+Ac4mZm0MOwmGxft925Yr0z
-        3loA2ql42g9Am+Je1peb3gCuwV8kzeA=
-X-Google-Smtp-Source: APXvYqxBo7fXc7J0sh27HZaG+Ucnx/OPQLgxeNCFIGDoYdEKJeVURij5Mh83Y1Lvo9M9i95o4ynonQ==
-X-Received: by 2002:a05:600c:c6:: with SMTP id u6mr3766726wmm.153.1562744902060;
-        Wed, 10 Jul 2019 00:48:22 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:19db:ad53:90ea:9423? ([2001:b07:6468:f312:19db:ad53:90ea:9423])
-        by smtp.gmail.com with ESMTPSA id b8sm1168256wmh.46.2019.07.10.00.48.20
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 00:48:21 -0700 (PDT)
-Subject: Re: [PATCH 2/5] KVM: cpuid: extract do_cpuid_7_mask and support
- multiple subleafs
-To:     Jing Liu <jing2.liu@linux.intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20190704140715.31181-1-pbonzini@redhat.com>
- <20190704140715.31181-3-pbonzini@redhat.com>
- <5af77de6-3a18-a3b9-b492-c280ac4310a1@linux.intel.com>
- <d3454d11-97fb-42f2-0a0c-add0456b076c@redhat.com>
- <752c2473-04d9-8420-a78f-fa677f806aca@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <841ba614-7657-8342-2814-ec6560e726af@redhat.com>
-Date:   Wed, 10 Jul 2019 09:48:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727304AbfGJHtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:49:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfGJHtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 03:49:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 625F620651;
+        Wed, 10 Jul 2019 07:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562744951;
+        bh=2GY6xGP91VrrOubCUmyVWiPbFCKO1puaMd0qoZCzk8I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SOKpY0iW78B8erFiX6R1l7W+5WsvjehW5ZybD/ZRmBIbFWDjQhH8eotsGjh/mgBzx
+         6ZX1BcF1MRnURTcYdsw7wrU8ZJLaioukoVjCkvollYh/o6GoSI0a/my0qyFknrVnmE
+         /ZQR/7kJ3cjP7YkzxgGsFGO3MyewxPX+vmbxWzp8=
+Date:   Wed, 10 Jul 2019 09:49:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
+Message-ID: <20190710074909.GB5186@kroah.com>
+References: <20190708150526.234572443@linuxfoundation.org>
+ <20190708192956.GB4652@luke-XPS-13>
 MIME-Version: 1.0
-In-Reply-To: <752c2473-04d9-8420-a78f-fa677f806aca@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708192956.GB4652@luke-XPS-13>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/07/19 09:32, Jing Liu wrote:
+On Mon, Jul 08, 2019 at 12:29:56PM -0700, Luke Nowakowski-Krijger wrote:
+> On Mon, Jul 08, 2019 at 05:12:32PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.1.17 release.
+> > There are 96 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.17-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> Hi Greg, 
 > 
-> 
-> On 7/10/2019 2:30 PM, Paolo Bonzini wrote:
->> On 08/07/19 09:07, Jing Liu wrote:
->>>>
->>> And when adding subleaf 1, plan to add codes,
->>>
->>> case 1:
->>>      entry->eax |= kvm_cpuid_7_1_eax_x86_features;
->>>      entry->ebx = entry->ecx = entry->edx =0;
->>>      break;
->>>
->>> What do you think?
->>
->> This should be "&=", not "|=".  Otherwise yes, that's the idea.
->>
-> 
-> Yes! So let me send out the BFloat16 patch based on your patch set now
-> or you have merge plan soon?
+> Compiled and Booted on my x86_64 system. 
 
-Just send it . :)
+Thanks for testing 2 of these.
 
-Paolo
-
+greg k-h
