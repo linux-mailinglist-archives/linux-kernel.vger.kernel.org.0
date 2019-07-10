@@ -2,77 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 329E26436C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5460C6437A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfGJIQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:16:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62928 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbfGJIQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:16:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:16:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,473,1557212400"; 
-   d="scan'208";a="173797444"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jul 2019 01:16:14 -0700
-Message-ID: <5D25A019.6080708@intel.com>
-Date:   Wed, 10 Jul 2019 16:21:45 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727358AbfGJIXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:23:45 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:44106 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfGJIXp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KHsCceUwFj0VCBCJ1Vn7vA7gOHS6l0320ELVzrYcy0s=; b=ItYNfLB/DBiyNIjWV16Va8Z1f
+        Fs9GQxDleXj1+NXT7leCxwbEop+GSMzry4rYr2+vRFeDNGvbaANfdKR7cOiHACIpGi7caj50WqLBl
+        K3/YuUwW3hWGeBzzSDwevFMfkuJef4r2awS5mR0Ze8tCsYJF2UURZQF99paE8Hp8ssBgJQRNJId+k
+        JlQenguNGzCYWSIrER9udcRetVnztBSUWq5oDr+6ChDphkOaJkEev4rlRhrJAA3VjeKvLsrQ7U3O2
+        ZipWkDIUtDJLqQmwvikvie6Y8nenzzue5nCGMMRE+HW8uRp65CBNhZKYRaQFfS7+wyAYurC+XLUKN
+        6kcufbp8w==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:59328)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hl7t3-0005Zi-VT; Wed, 10 Jul 2019 09:23:38 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hl7t1-0003km-Hp; Wed, 10 Jul 2019 09:23:35 +0100
+Date:   Wed, 10 Jul 2019 09:23:35 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Subject: Re: Question about ARM FASTFPE
+Message-ID: <20190710082335.uzusesefimzpjd3f@shell.armlinux.org.uk>
+References: <CAK7LNASSCvLSXVikR7GenXyb8KywpWKVc1Z=5v3c93rxJ+G73w@mail.gmail.com>
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com, jmattson@google.com
-Subject: Re: [PATCH v7 08/12] KVM/x86/vPMU: Add APIs to support host save/restore
- the guest lbr stack
-References: <1562548999-37095-1-git-send-email-wei.w.wang@intel.com> <1562548999-37095-9-git-send-email-wei.w.wang@intel.com> <20190709114554.GW3402@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190709114554.GW3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASSCvLSXVikR7GenXyb8KywpWKVc1Z=5v3c93rxJ+G73w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2019 07:45 PM, Peter Zijlstra wrote:
->
->> +	 * config:        Actually this field won't be used by the perf core
->> +	 *                as this event doesn't have a perf counter.
->> +	 * sample_period: Same as above.
-> If it's unused; why do we need to set it at all?
+On Wed, Jul 10, 2019 at 01:30:24PM +0900, Masahiro Yamada wrote:
+> Hi.
+> 
+> I have a question about the following code
+> in arch/arm/Makefile:
+> 
+> 
+> # Do we have FASTFPE?
+> FASTFPE :=arch/arm/fastfpe
+> ifeq ($(FASTFPE),$(wildcard $(FASTFPE)))
+> FASTFPE_OBJ :=$(FASTFPE)/
+> endif
+> 
+> 
+> Since arch/arm/fastfpe does not exist in the upstream tree,
+> I guess this is a hook to compile downstream source code.
+> 
+> If a user puts arch/arm/fastfpe/ into their local source tree,
+> Kbuild is supposed to compile the files in it.
+> 
+> Is this correct?
+> 
+> 
+> If so, I am afraid this would not work for O= building.
+> 
+> $(wildcard ...) checks if this directory exists in the *objtree*,
+> while scripts/Makefile.build needs to include
+> arch/arm/fastfpe/Makefile from *srctree*.
+> 
+> I think the correct code should be like follows:
+> 
+> # Do we have FASTFPE?
+> FASTFPE :=arch/arm/fastfpe
+> ifneq ($(wildcard $(srctree)/$(FASTFPE)),)
+> FASTFPE_OBJ :=$(FASTFPE)/
+> endif
+> 
+> 
+> Having said that, I am not sure this code is worth fixing.
+> 
+> This code was added around v2.5.1.9,
 
-OK, we'll remove the unused fields.
+... as a _result_ of a discussion and deciding not to upstream it,
+but to still allow its use.  Fastfpe is faster than nwfpe (so has
+a definite advantage for FP intensive applications) but we decided
+we didn't want two FP emulation codes in the kernel.  However, if
+someone wants to use it, it has to be built into the kernel, it
+can't be modular.
 
->
->> +	 * sample_type:   tells the perf core that it is an lbr event.
->> +	 * branch_sample_type: tells the perf core that the lbr event works in
->> +	 *                the user callstack mode so that the lbr stack will be
->> +	 *                saved/restored on vCPU switching.
-> Again; doesn't make sense. What does the user part have to do with
-> save/restore? What happens when this vcpu thread drops to userspace for
-> an assist?
+> and the actual source code for arch/arm/fastfpe/
+> was never upstreamed.
+> 
+> 
+> In general, we do not care much about the downstream code support.
+> 
+> What should we do about this?
+> Fix and keep maintaining? Delete?
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
+> 
 
-This is a fake event which doesn't run the lbr on the host.
-Returning to userspace doesn't need save/restore lbr, because userspace
-wouldn't change those lbr msrs.
-
-The event is created to save/restore lbr msrs on vcpu switching.
-Host perf only do this save/restore for "user callstack mode" lbr event, 
-so we
-construct the event to be "user callstack mode" to reuse the host lbr 
-save/restore.
-
-An alternative method is to have KVM vcpu sched_in/out callback
-save/restore those msrs, which don't need to create this fake event.
-
-Please let me know if you prefer the second method.
-
-Best,
-Wei
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
