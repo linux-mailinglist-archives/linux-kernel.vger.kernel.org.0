@@ -2,65 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E20D663F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 03:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 612F363F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 04:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbfGJBvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 21:51:21 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60012 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbfGJBvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 21:51:21 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 42780A4204CD8B2F87CC;
-        Wed, 10 Jul 2019 09:51:18 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 10 Jul 2019 09:51:10 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        <airlied@linux.ie>, <daniel@ffwll.ch>, <Feifei.Xu@amd.com>,
-        <Likun.Gao@amd.com>, <James.Zhu@amd.com>, <shirish.s@amd.com>,
-        <evan.quan@amd.com>, <ray.huang@amd.com>, <Rex.Zhu@amd.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/amdgpu: remove duplicated include from gfx_v9_0.c
-Date:   Wed, 10 Jul 2019 01:57:20 +0000
-Message-ID: <20190710015720.107326-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1726436AbfGJCAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 22:00:12 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:41947 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbfGJCAL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 22:00:11 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2C3BE22493;
+        Tue,  9 Jul 2019 22:00:10 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 09 Jul 2019 22:00:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=lzL/P/6XyszwFm6GR1tak3ZTNCxTfU8
+        xFHl3trMlzBo=; b=cjGnS0LQ/zRspsmBRBkhxGxS171JISRFA57HNB5zx6DtsWZ
+        1gbg+wBMvXfB/nYBRarwW09O0P3miQBh71wFet2rjgdbUrdwlQ5iHQGr6EQ03B/I
+        6bEHtsp8sEkzjhGWmtdXlVvTb2pmJY9IhaosjABz4hUI47C264v3uVwK/SqSCm83
+        iVclJXGh768M18FK5vjVDf3OXt3TCHsHG039IsX5R7KYezfEMcx2rTDgDCYN1uIZ
+        hjybXhn5DvhoJ0iNgwgkJfkR7/KiSYxB1mhWzGH5kiQGjkvC1x0D3Ng9tU0hhrIg
+        uw57Uyvutnk3Aeh4pF8/RoamEfpYtPzwxc6KZEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=lzL/P/
+        6XyszwFm6GR1tak3ZTNCxTfU8xFHl3trMlzBo=; b=l8wM/ukDu2ovfJId8tYGOL
+        4rfZH+YbNLTR94C9XeJYypnkPSF1jEwRaf+ZZ3F+nyYx8HUcKZQDkEJX6qdRL1qe
+        WW3GVmmMxvyqzVr4Cu11z805KzDjEFl/ms5MJBE804Y7bRMhK3cevhXEMxftYJuC
+        DWn4/aZpZ6c5oCy4Lmg/w5GqJeQVZaozUav7to8N7N/a+cU4WZGRBd1DvDsMRVme
+        1hpYSBItxRGMC03yYgIGJ4RwHz9wPPKUvFFkwuOYUTZCX6jqALNE9pB5+s7p9N4B
+        zWYYdhiZA4+oj87XYcSxx+sgTVFSWdPf+9+h02tmBh7SUsIg7Zt9wN+mPsYa2x1g
+        ==
+X-ME-Sender: <xms:qEYlXd1lMHkppkzm8FQurPkOYfEKQC7WnYE9xF4Bh7baDoKnQpaWyQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrgeeggdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:qEYlXSvhixOSJI878hkt76xxXtqqHcU-otcrEBLoXfHkwvE816z23Q>
+    <xmx:qEYlXdgQOiEwFeu2THopzBZOCC-eBGTDUi8Vj3O8xvuSwonmmmiJsw>
+    <xmx:qEYlXRCdhKj-5_bFThl0r4KwWf18GbiE07xIQORcF7PvUAJ63Yewrg>
+    <xmx:qkYlXd1hRoVOSyjICp5kBBVXf_E_2Zll_0ZULRUhQ1Rm5-OZJf9nkA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id D3530E0193; Tue,  9 Jul 2019 22:00:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-731-g19d3b16-fmstable-20190627v1
+Mime-Version: 1.0
+Message-Id: <90c0c965-00ae-4f7a-a6f5-258572398bb0@www.fastmail.com>
+In-Reply-To: <CAL_Jsq+0z4OZ7qbaiUva1v5xCKXpsaPBZ9tj_M4HbEihsU_MfA@mail.gmail.com>
+References: <1562184069-22332-1-git-send-email-hongweiz@ami.com>
+ <CAL_Jsq+0z4OZ7qbaiUva1v5xCKXpsaPBZ9tj_M4HbEihsU_MfA@mail.gmail.com>
+Date:   Wed, 10 Jul 2019 11:30:14 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Rob Herring" <robh+dt@kernel.org>,
+        "Hongwei Zhang" <hongweiz@ami.com>
+Cc:     devicetree@vger.kernel.org, "Joel Stanley" <joel@jms.id.au>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        linux-aspeed@lists.ozlabs.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [linux,dev-5.1 v1] dt-bindings: gpio: aspeed: Add SGPIO support
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 5ba332376710..822f45161240 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -39,7 +39,6 @@
- #include "vega10_enum.h"
- #include "hdp/hdp_4_0_offset.h"
- 
--#include "soc15.h"
- #include "soc15_common.h"
- #include "clearstate_gfx9.h"
- #include "v9_structs.h"
 
 
+On Wed, 10 Jul 2019, at 04:23, Rob Herring wrote:
+> On Wed, Jul 3, 2019 at 2:01 PM Hongwei Zhang <hongweiz@ami.com> wrote:
+> >
+> > Add bindings to support SGPIO on AST2400 or AST2500.
+> >
+> > Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+> > ---
+> >  .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 36 ++++++++++++++++++++++
+> 
+> Is this SGPIO as in the blinky lights for HDDs in servers? If so, that
+> has nothing to do with Linux GPIO subsystem.
+> 
 
+No, this is just literal serialised GPIO, which can be used with e.g. nexperia
+74LV595 / 74LV165 parts.
 
+There is a separate chunk of IP in the SoC that acts as an SFF-8485 (blinky
+lights) slave monitor.
 
+Andrew
