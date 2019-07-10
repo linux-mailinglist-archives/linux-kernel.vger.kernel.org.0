@@ -2,141 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB3963FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D45C63FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbfGJEMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 00:12:15 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37317 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfGJEMP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 00:12:15 -0400
-Received: by mail-io1-f66.google.com with SMTP id q22so1775379iog.4;
-        Tue, 09 Jul 2019 21:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Mtj1V+09V4lY2C/WpTtWjJWOvRdHsrfxKP5HUgF3Mw=;
-        b=Er83EjvRJBQgeZLZLNGHJ/CIJ3vFfD2b44UXb9NJhum0QdBtKCUFxG0HoR3ONVkgQr
-         o0xtIwaDaN0tSl+1OGHaci0d6tKYunpmoPln67v2glTbuS5CSUdXTa8xze14By08wGhJ
-         bnFbwyg1k2PhbXe0djOJmsDtY3LdvNtwjKTrbPiHCZrB+/GEsN5F2cseK/B+iQPFWgp4
-         8aC8paqLYpkbbfpBuPq3IgyZDy0jlhnYJrWVc/4I9/jUAFt8B/TF67q3NMTifsw9cR0k
-         edGv+eaK5sywQoqE1FsB2w1F+jWKQPgaYi8IzrYgBQF21mb60gjkzmvG2hcoMO1gVhLq
-         T2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Mtj1V+09V4lY2C/WpTtWjJWOvRdHsrfxKP5HUgF3Mw=;
-        b=YfZWWWiYHYSfH6GCkZYIxl2X72F5nYqi8y9IQuPCBTwbru/NczvY5S0uu9LFdPdgDe
-         Up36MFa/JTE4f9R6vAyS0ytyJab60ahv1a24NeJaQoROuI5pSi3DxUUC4ihng3Jpfatd
-         WGNZTPU07NMA2KPQxdMbC9la7M2meTMubcWRpcwJVG7lRLxrT6qIYplbuLpq2edxqeZK
-         4i7/B3XSGDAlK6TWCQmAYiBcn1lIij85W+zByLvZjFfpW/dTdyiXjqOSPXRA0TyBB9Rn
-         R8NmlWN0Grjq3W01+OGGX8NWfhbGna8D6Lperv3KW7OWJdEcoOnQVy/HyKTW1ouUMLXb
-         1JLw==
-X-Gm-Message-State: APjAAAW+RHvRi+sE68ksciB+SzShV4PXXTbDIhKm7EtlLd+3CnUb/D/0
-        hk8F5HYdrI6FHvLe69L5dAJuMJNPqu15UAc+4kA=
-X-Google-Smtp-Source: APXvYqyrY3pgnVJVoKBZLLrB+4OJFeIjwcN5V+rh111wh3J7yNqwK0JY5nwgq4JIQX+Ci9Ss4o59aShURyDdZ3NjNHU=
-X-Received: by 2002:a5d:8c81:: with SMTP id g1mr30451959ion.239.1562731934157;
- Tue, 09 Jul 2019 21:12:14 -0700 (PDT)
+        id S1726163AbfGJENm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 00:13:42 -0400
+Received: from mail-eopbgr20055.outbound.protection.outlook.com ([40.107.2.55]:47114
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725856AbfGJENl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 00:13:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aA2knaqHcsWhG3WxuMgsw9SlhANhWDuoivatKmcXKuM=;
+ b=AWPejwbSaq4IQMioMVOJdx1EfNs2nSLONVXX7ovOM9tCHJfj7ODJsQ3LVNgzJUR5tfleiWQjuznwXFh3DHr9OLsQydTPj65vEFI71XZFKO/DvZij73Ox3AGA+bKob5SuzPwdaBbe2rd/+Wjg+KsKj+s2XFuQvvRDMgvhezafeY0=
+Received: from AM6PR04MB4936.eurprd04.prod.outlook.com (20.177.33.203) by
+ AM6PR04MB6695.eurprd04.prod.outlook.com (20.179.247.208) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.20; Wed, 10 Jul 2019 04:13:37 +0000
+Received: from AM6PR04MB4936.eurprd04.prod.outlook.com
+ ([fe80::cd8e:f990:731d:a5b2]) by AM6PR04MB4936.eurprd04.prod.outlook.com
+ ([fe80::cd8e:f990:731d:a5b2%7]) with mapi id 15.20.2052.020; Wed, 10 Jul 2019
+ 04:13:37 +0000
+From:   Fancy Fang <chen.fang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
+Thread-Topic: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
+Thread-Index: AQHVNtXYsppc9iHvSUKCRoa1/AmVEQ==
+Date:   Wed, 10 Jul 2019 04:13:37 +0000
+Message-ID: <20190710041546.23422-1-chen.fang@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: HK0PR03CA0111.apcprd03.prod.outlook.com
+ (2603:1096:203:b0::27) To AM6PR04MB4936.eurprd04.prod.outlook.com
+ (2603:10a6:20b:7::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=chen.fang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0e2709b6-3b75-40c8-a001-08d704ecfb21
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB6695;
+x-ms-traffictypediagnostic: AM6PR04MB6695:
+x-microsoft-antispam-prvs: <AM6PR04MB669598E080BC8DAB55AF0821F3F00@AM6PR04MB6695.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0094E3478A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(366004)(346002)(376002)(199004)(189003)(386003)(7736002)(478600001)(50226002)(4326008)(5660300002)(99286004)(6436002)(66066001)(7416002)(2906002)(52116002)(2501003)(186003)(26005)(54906003)(110136005)(8936002)(6506007)(256004)(316002)(102836004)(6486002)(305945005)(1076003)(81156014)(81166006)(25786009)(486006)(6116002)(86362001)(68736007)(3846002)(8676002)(53936002)(6512007)(2201001)(476003)(36756003)(2616005)(66446008)(66476007)(66556008)(64756008)(14454004)(66946007)(71200400001)(71190400001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6695;H:AM6PR04MB4936.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: aY4rFDJlLh7mlmGumTAqLUlnSyYEr+aJZswKZ3EXPGZF2AfkLArLwwiMHy4+qZm3dxxj6bE6fk+rjptQyKWaPDO9uxW20hM2nBGhh4d7vzXzYUXbFvzmK4+DqoJW+HXm8trFMhpx5W47XGaFY/4kGZO6n+D+PxTRSPHlJZUx6CIgArV3rq5Q8Z479ZTv34CnpMV+8uvQudnaT0v3xzM6bOjP36ilo7GaXRKEPUosFTz6VHFxez1UFXOyV3e4kRJWn9lG1VfQY26Gzoow+FO1rNzE6hO4yL+ujYARwKIPtc5sEhtUzB7VlV80zXqmUxh4a1edJZ5B7ZjZxsECXs6doJGWLXUIV3UgSdhwPr/yyM5zuFv1xZfsyL0UfN6k90m96+Cf1xDB7a9jK6Da6AxsP0D5YeH5cLDvbson4ZfjT8A=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190613005109.1867-1-jassisinghbrar@gmail.com>
- <20190613005237.1996-1-jassisinghbrar@gmail.com> <20190709143437.GA30850@bogus>
-In-Reply-To: <20190709143437.GA30850@bogus>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Tue, 9 Jul 2019 23:12:03 -0500
-Message-ID: <CABb+yY3OsAh3xgX8_vvA7A7mU+FkEj__BQs9CxMvf=eYxRYXyw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: milbeaut-m10v-hdmac: Add Socionext
- Milbeaut HDMAC bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     dmaengine@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        vkoul@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        orito.takao@socionext.com,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        kasai.kazuhiro@socionext.com,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e2709b6-3b75-40c8-a001-08d704ecfb21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2019 04:13:37.0900
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: chen.fang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6695
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 9:34 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Jun 12, 2019 at 07:52:37PM -0500, jassisinghbrar@gmail.com wrote:
-> > From: Jassi Brar <jaswinder.singh@linaro.org>
-> >
-> > Document the devicetree bindings for Socionext Milbeaut HDMAC
-> > controller. Controller has upto 8 floating channels, that need
-> > a predefined slave-id to work from a set of slaves.
-> >
-> > Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
-> > ---
-> >  .../bindings/dma/milbeaut-m10v-hdmac.txt           | 54 +++++++++++++++++++
-> >  1 file changed, 54 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
-> > new file mode 100644
-> > index 000000000000..a104fcb9e73d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
-> > @@ -0,0 +1,51 @@
-> > +* Milbeaut AHB DMA Controller
-> > +
-> > +Milbeaut AHB DMA controller has transfer capability bellow.
-> > + - memory to memory transfer
-> > + - device to memory transfer
-> > + - memory to device transfer
-> > +
-> > +Required property:
-> > +- compatible:       Should be  "socionext,milbeaut-m10v-hdmac"
-> > +- reg:              Should contain DMA registers location and length.
-> > +- interrupts:       Should contain all of the per-channel DMA interrupts.
->
-> How many?
->
-Each channel has an IRQ line. And the number of channels is
-configurable. So instead of having some explicit property like
-'dma-channels', we infer that from the number of irqs registered.
+Rename 'lcdif' pixel clock related names to 'disp' names, since:
 
-> > +- #dma-cells:       Should be 1. Specify the ID of the slave.
-> > +- clocks:           Phandle to the clock used by the HDMAC module.
-> > +
-> > +
-> > +Example:
-> > +
-> > +     hdmac1: hdmac@1e110000 {
->
-> dma-controller@...
->
-OK
+First, the lcdif pixel clock is not supplied to LCDIF controller
+directly, but to some LPCG clock in display mix. So rename it to
+'disp' pixel clock is more accurate.
 
-> > +             compatible = "socionext,milbeaut-m10v-hdmac";
-> > +             reg = <0x1e110000 0x10000>;
-> > +             interrupts = <0 132 4>,
-> > +                          <0 133 4>,
-> > +                          <0 134 4>,
-> > +                          <0 135 4>,
-> > +                          <0 136 4>,
-> > +                          <0 137 4>,
-> > +                          <0 138 4>,
-> > +                          <0 139 4>;
-> > +             #dma-cells = <1>;
-> > +             clocks = <&dummy_clk>;
-> > +     };
-> > +
-> > +* DMA client
-> > +
-> > +Clients have to specify the DMA requests with phandles in a list.
->
-> Nothing specific to this binding here and the client side is already
-> documented, so drop this section.
->
-OK.
+Second, in the imx8mn CCM specification which is designed after
+imx8mm, this same pixel root clock name has been modified from
+'LCDIF_PIXEL_CLK_ROOT' to 'DISPLAY_PIXEL_CLK_ROOT'.
 
-Thanks
+Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c             | 4 ++--
+ include/dt-bindings/clock/imx8mm-clock.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 6b8e75df994d..42f1227a4952 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -210,7 +210,7 @@ static const char *imx8mm_pcie1_aux_sels[] =3D {"osc_24=
+m", "sys_pll2_200m", "sys_p
+ static const char *imx8mm_dc_pixel_sels[] =3D {"osc_24m", "video_pll1_out"=
+, "audio_pll2_out", "audio_pll1_out",
+ 					     "sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", }=
+;
+=20
+-static const char *imx8mm_lcdif_pixel_sels[] =3D {"osc_24m", "video_pll1_o=
+ut", "audio_pll2_out", "audio_pll1_out",
++static const char *imx8mm_disp_pixel_sels[] =3D {"osc_24m", "video_pll1_ou=
+t", "audio_pll2_out", "audio_pll1_out",
+ 						"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
+=20
+ static const char *imx8mm_sai1_sels[] =3D {"osc_24m", "audio_pll1_out", "a=
+udio_pll2_out", "video_pll1_out",
+@@ -535,7 +535,7 @@ static int __init imx8mm_clocks_init(struct device_node=
+ *ccm_node)
+ 	clks[IMX8MM_CLK_PCIE1_PHY] =3D imx8m_clk_composite("pcie1_phy", imx8mm_pc=
+ie1_phy_sels, base + 0xa380);
+ 	clks[IMX8MM_CLK_PCIE1_AUX] =3D imx8m_clk_composite("pcie1_aux", imx8mm_pc=
+ie1_aux_sels, base + 0xa400);
+ 	clks[IMX8MM_CLK_DC_PIXEL] =3D imx8m_clk_composite("dc_pixel", imx8mm_dc_p=
+ixel_sels, base + 0xa480);
+-	clks[IMX8MM_CLK_LCDIF_PIXEL] =3D imx8m_clk_composite("lcdif_pixel", imx8m=
+m_lcdif_pixel_sels, base + 0xa500);
++	clks[IMX8MM_CLK_DISP_PIXEL] =3D imx8m_clk_composite("disp_pixel", imx8mm_=
+disp_pixel_sels, base + 0xa500);
+ 	clks[IMX8MM_CLK_SAI1] =3D imx8m_clk_composite("sai1", imx8mm_sai1_sels, b=
+ase + 0xa580);
+ 	clks[IMX8MM_CLK_SAI2] =3D imx8m_clk_composite("sai2", imx8mm_sai2_sels, b=
+ase + 0xa600);
+ 	clks[IMX8MM_CLK_SAI3] =3D imx8m_clk_composite("sai3", imx8mm_sai3_sels, b=
+ase + 0xa680);
+diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings=
+/clock/imx8mm-clock.h
+index 07e6c686f3ef..91ef77efebd9 100644
+--- a/include/dt-bindings/clock/imx8mm-clock.h
++++ b/include/dt-bindings/clock/imx8mm-clock.h
+@@ -119,7 +119,7 @@
+ #define IMX8MM_CLK_PCIE1_PHY			104
+ #define IMX8MM_CLK_PCIE1_AUX			105
+ #define IMX8MM_CLK_DC_PIXEL			106
+-#define IMX8MM_CLK_LCDIF_PIXEL			107
++#define IMX8MM_CLK_DISP_PIXEL			107
+ #define IMX8MM_CLK_SAI1				108
+ #define IMX8MM_CLK_SAI2				109
+ #define IMX8MM_CLK_SAI3				110
+--=20
+2.17.1
+
