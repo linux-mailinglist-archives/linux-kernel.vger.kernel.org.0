@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFE7643F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A52A64400
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfGJI7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:59:47 -0400
+        id S1727947AbfGJJAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:00:32 -0400
 Received: from mga12.intel.com ([192.55.52.136]:35469 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727763AbfGJI7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:59:39 -0400
+        id S1727771AbfGJI7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:59:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:39 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 01:59:41 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,474,1557212400"; 
-   d="scan'208";a="186102544"
+   d="scan'208";a="186102549"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:37 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2019 01:59:39 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/21] perf scripts python: export-to-postgresql.py: Export comm details
-Date:   Wed, 10 Jul 2019 11:57:59 +0300
-Message-Id: <20190710085810.1650-11-adrian.hunter@intel.com>
+Subject: [PATCH 11/21] perf db-export: Factor out db_export__comm()
+Date:   Wed, 10 Jul 2019 11:58:00 +0300
+Message-Id: <20190710085810.1650-12-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190710085810.1650-1-adrian.hunter@intel.com>
 References: <20190710085810.1650-1-adrian.hunter@intel.com>
@@ -35,62 +35,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add table columns for thread id, comm start time and exec flag.
+In preparation for exporting the current comm for a thread, factor out
+db_export__comm().
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/export-to-postgresql.py | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ tools/perf/util/db-export.c | 30 +++++++++++++++++++++++-------
+ tools/perf/util/db-export.h |  2 ++
+ 2 files changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
-index 92713d93e956..01f37877f5bb 100644
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -353,7 +353,10 @@ do_query(query, 'CREATE TABLE threads ('
- 		'tid		integer)')
- do_query(query, 'CREATE TABLE comms ('
- 		'id		bigint		NOT NULL,'
--		'comm		varchar(16))')
-+		'comm		varchar(16),'
-+		'c_thread_id	bigint,'
-+		'c_time		bigint,'
-+		'exec_flag	boolean)')
- do_query(query, 'CREATE TABLE comm_threads ('
- 		'id		bigint		NOT NULL,'
- 		'comm_id	bigint,'
-@@ -763,7 +766,7 @@ def trace_begin():
- 	evsel_table(0, "unknown")
- 	machine_table(0, 0, "unknown")
- 	thread_table(0, 0, 0, -1, -1)
--	comm_table(0, "unknown")
-+	comm_table(0, "unknown", 0, 0, 0)
- 	dso_table(0, 0, "unknown", "unknown", "")
- 	symbol_table(0, 0, 0, 0, 0, "unknown")
- 	sample_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-@@ -851,6 +854,8 @@ def trace_end():
- 	do_query(query, 'ALTER TABLE threads '
- 					'ADD CONSTRAINT machinefk  FOREIGN KEY (machine_id)   REFERENCES machines   (id),'
- 					'ADD CONSTRAINT processfk  FOREIGN KEY (process_id)   REFERENCES threads    (id)')
-+	do_query(query, 'ALTER TABLE comms '
-+					'ADD CONSTRAINT threadfk   FOREIGN KEY (c_thread_id)  REFERENCES threads    (id)')
- 	do_query(query, 'ALTER TABLE comm_threads '
- 					'ADD CONSTRAINT commfk     FOREIGN KEY (comm_id)      REFERENCES comms      (id),'
- 					'ADD CONSTRAINT threadfk   FOREIGN KEY (thread_id)    REFERENCES threads    (id)')
-@@ -935,11 +940,11 @@ def thread_table(thread_id, machine_id, process_id, pid, tid, *x):
- 	value = struct.pack("!hiqiqiqiiii", 5, 8, thread_id, 8, machine_id, 8, process_id, 4, pid, 4, tid)
- 	thread_file.write(value)
+diff --git a/tools/perf/util/db-export.c b/tools/perf/util/db-export.c
+index 7d181f2f1e75..305adead3a1d 100644
+--- a/tools/perf/util/db-export.c
++++ b/tools/perf/util/db-export.c
+@@ -77,6 +77,26 @@ int db_export__thread(struct db_export *dbe, struct thread *thread,
+ 	return 0;
+ }
  
--def comm_table(comm_id, comm_str, *x):
-+def comm_table(comm_id, comm_str, thread_id, time, exec_flag, *x):
- 	comm_str = toserverstr(comm_str)
- 	n = len(comm_str)
--	fmt = "!hiqi" + str(n) + "s"
--	value = struct.pack(fmt, 2, 8, comm_id, n, comm_str)
-+	fmt = "!hiqi" + str(n) + "s" + "iqiqiB"
-+	value = struct.pack(fmt, 5, 8, comm_id, n, comm_str, 8, thread_id, 8, time, 1, exec_flag)
- 	comm_file.write(value)
++static int __db_export__comm(struct db_export *dbe, struct comm *comm,
++			     struct thread *thread)
++{
++	comm->db_id = ++dbe->comm_last_db_id;
++
++	if (dbe->export_comm)
++		return dbe->export_comm(dbe, comm, thread);
++
++	return 0;
++}
++
++int db_export__comm(struct db_export *dbe, struct comm *comm,
++		    struct thread *thread)
++{
++	if (comm->db_id)
++		return 0;
++
++	return __db_export__comm(dbe, comm, thread);
++}
++
+ /*
+  * Export the "exec" comm. The "exec" comm is the program / application command
+  * name at the time it first executes. It is used to group threads for the same
+@@ -91,13 +111,9 @@ int db_export__exec_comm(struct db_export *dbe, struct comm *comm,
+ 	if (comm->db_id)
+ 		return 0;
  
- def comm_thread_table(comm_thread_id, comm_id, thread_id, *x):
+-	comm->db_id = ++dbe->comm_last_db_id;
+-
+-	if (dbe->export_comm) {
+-		err = dbe->export_comm(dbe, comm, main_thread);
+-		if (err)
+-			return err;
+-	}
++	err = __db_export__comm(dbe, comm, main_thread);
++	if (err)
++		return err;
+ 
+ 	/*
+ 	 * Record the main thread for this comm. Note that the main thread can
+diff --git a/tools/perf/util/db-export.h b/tools/perf/util/db-export.h
+index 29f7c3b035a7..f5f0865f07e1 100644
+--- a/tools/perf/util/db-export.h
++++ b/tools/perf/util/db-export.h
+@@ -77,6 +77,8 @@ int db_export__evsel(struct db_export *dbe, struct perf_evsel *evsel);
+ int db_export__machine(struct db_export *dbe, struct machine *machine);
+ int db_export__thread(struct db_export *dbe, struct thread *thread,
+ 		      struct machine *machine, struct thread *main_thread);
++int db_export__comm(struct db_export *dbe, struct comm *comm,
++		    struct thread *thread);
+ int db_export__exec_comm(struct db_export *dbe, struct comm *comm,
+ 			 struct thread *main_thread);
+ int db_export__comm_thread(struct db_export *dbe, struct comm *comm,
 -- 
 2.17.1
 
