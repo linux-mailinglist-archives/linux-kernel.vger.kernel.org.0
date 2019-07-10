@@ -2,111 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A364364BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3225864BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbfGJSIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:08:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38814 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbfGJSIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:08:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 11:08:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,475,1557212400"; 
-   d="scan'208";a="365013629"
-Received: from bxing-mobl.amr.corp.intel.com (HELO [10.255.93.70]) ([10.255.93.70])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jul 2019 11:08:37 -0700
-Subject: Re: [RFC PATCH v2 0/3] An alternative __vdso_sgx_enter_enclave() to
- allow enclave/host parameter passing using untrusted stack
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        kai.svahn@intel.com, kai.huang@intel.com
-References: <cover.1555965327.git.cedric.xing@intel.com>
- <20190424062623.4345-1-cedric.xing@intel.com>
- <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <686e47d2-f45c-6828-39d1-48374925de6c@intel.com>
-Date:   Wed, 10 Jul 2019 11:08:37 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728160AbfGJSLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:11:41 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10961 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbfGJSLl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 14:11:41 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d262a610001>; Wed, 10 Jul 2019 11:11:45 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 10 Jul 2019 11:11:40 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 10 Jul 2019 11:11:40 -0700
+Received: from [10.24.71.30] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 10 Jul
+ 2019 18:11:37 +0000
+Subject: Re: [PATCH v3] mdev: Send uevents around parent device registration
+To:     Alex Williamson <alex.williamson@redhat.com>, <cohuck@redhat.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <156278027422.16516.5157992389394627876.stgit@gimli.home>
+X-Nvconfidentiality: public
+From:   Kirti Wankhede <kwankhede@nvidia.com>
+Message-ID: <4f32e5e2-2bac-81f2-9fb6-3d0023ed009b@nvidia.com>
+Date:   Wed, 10 Jul 2019 23:41:21 +0530
 MIME-Version: 1.0
-In-Reply-To: <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <156278027422.16516.5157992389394627876.stgit@gimli.home>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1562782305; bh=Jm+B0NDGcf5E+KZa28wTh/6TcnljOB+d/mUr++GB+Ss=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Kpp1R694nKbrkkjAfYZt7UHmvADP1mGL54vOLzZpd9OmLia/W6dQojqtAXS0VYjb/
+         /QrYwBf4Vt++M9MhCSYhkDoK+OANyYj4D+U6XzDx6+zzVespP/019ey6D84QdX2Mc3
+         NeNy8SqsAC9KHtR8nn+4/6rR0qi7WhGsRJp4q+UzatUVB+95OVPqiSclKRfC/k/RSI
+         BnCHuXfvl0K9r2bc84QX68bJqWheAnV8c2/HHytVb+u313eAHvq1pPAwJSQ980p3rB
+         B/zQpfBLs9R863ojAWYsJAmJbblqg7Cvcdb/9n6I7tCsp3LSanQyCRom62RWflhXHQ
+         s0uL8Gcgjnf2A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/2019 4:17 AM, Jarkko Sakkinen wrote:
-> On Tue, Apr 23, 2019 at 11:26:20PM -0700, Cedric Xing wrote:
->> The current proposed __vdso_sgx_enter_enclave() requires enclaves to preserve
->> %rsp, which prohibits enclaves from allocating space on the untrusted stack.
->> However, there are existing enclaves (e.g. those built with current Intel SGX
->> SDK libraries) relying on the untrusted stack for passing parameters to
->> untrusted functions (aka. o-calls), which requires allocating space on the
->> untrusted stack by enclaves. And given its simplicity and convenience, it could
->> be desired by future SGX applications as well.
->>
->> This patchset introduces a new ABI for __vdso_sgx_enter_enclave() to anchor its
->> stack frame on %rbp (instead of %rsp), so as to allow enclaves to "push" onto
->> the untrusted stack by decrementing the untrusted %rsp. Additionally, this new
->> __vdso_sgx_enter_enclave() will take one more parameter - a callback function,
->> to be invoked upon all enclave exits (both AEX and normal exits). The callback
->> function will be given the value of %rsp left off by the enclave, so that data
->> "pushed" by the enclave (if any) could be addressed/accessed.  Please note that
->> the callback function is optional, and if not supplied (i.e. null),
->> __vdso_sgx_enter_enclave() will just return (i.e. behave the same as the
->> current implementation) after the enclave exits (or AEX due to exceptions).
->>
->> The SGX selftest is augmented by two new tests. One exercises the new callback
->> interface, and serves as a simple example to showcase how to use it; while the
->> other validates the hand-crafted CFI directives in __vdso_sgx_enter_enclave()
->> by single-stepping through it and unwinding call stack at every instruction.
+
+
+On 7/10/2019 11:11 PM, Alex Williamson wrote:
+> This allows udev to trigger rules when a parent device is registered
+> or unregistered from mdev.
 > 
-> Why does the SDK anyway use real enclaves when step debugging? I don't
-> think kernel needs to scale to that. For me it looks more like a bad
-> architectural choice in the SDK implementation than anything else.
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> ---
+> 
+> v3: Add Connie's R-b
+>     Add comment clarifying expected device requirements for unreg
+> 
 
-Intel's SGX SDK *does* support simulation mode for debugging enclaves 
-outside of SGX mode, or even on non-SGX platforms. But nothing can 
-replace the real SGX environment, hence SGX ISA supports debugging real 
-enclaves.
+Reviewed-by: Kirti Wankhede <kwankhede@nvidia.com>
 
-> You should design SDK in a way that it doesn't run the code inside real
-> enclave at first. It is just the sanest development model to use. The
-> current SDK has an unacceptable requirement that the workstation used to
-> develop code destined to run inside enclave must possess an appropriate
-> hardware. I don't think that is acceptable no matter what kind of API
-> kernel provides to invoke enclaves.
+Thanks,
+Kirti
 
-SDK supports simulation on non-SGX platforms.
-
-> I think "real" debug enclaves are only good for production testing when
-> you have more or less ready to release/deploy something but still want
-> to be able to get a memory dump of the enclave on occassion.
-
-That's true.
-
-> With these conclusions I think the current vDSO API is sufficient for
-> Linux.
-
-The new vDSO API is to support data exchange on stack. It has nothing to 
-do with debugging. BTW, the community has closed on this.
-
-The CFI directives are for stack unwinding. They don't affect what the 
-code does so you can just treat them as NOPs if you don't understand 
-what they do. However, they are useful to not only debuggers but also 
-exception handling code. libunwind also has a setjmp()/longjmp() 
-implementation based on CFI directives.
-
-> /Jarkko
+>  drivers/vfio/mdev/mdev_core.c |    9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+> index ae23151442cb..23976db6c6c7 100644
+> --- a/drivers/vfio/mdev/mdev_core.c
+> +++ b/drivers/vfio/mdev/mdev_core.c
+> @@ -146,6 +146,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+>  {
+>  	int ret;
+>  	struct mdev_parent *parent;
+> +	char *env_string = "MDEV_STATE=registered";
+> +	char *envp[] = { env_string, NULL };
+>  
+>  	/* check for mandatory ops */
+>  	if (!ops || !ops->create || !ops->remove || !ops->supported_type_groups)
+> @@ -197,6 +199,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+>  	mutex_unlock(&parent_list_lock);
+>  
+>  	dev_info(dev, "MDEV: Registered\n");
+> +	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
+> +
+>  	return 0;
+>  
+>  add_dev_err:
+> @@ -220,6 +224,8 @@ EXPORT_SYMBOL(mdev_register_device);
+>  void mdev_unregister_device(struct device *dev)
+>  {
+>  	struct mdev_parent *parent;
+> +	char *env_string = "MDEV_STATE=unregistered";
+> +	char *envp[] = { env_string, NULL };
+>  
+>  	mutex_lock(&parent_list_lock);
+>  	parent = __find_parent_device(dev);
+> @@ -243,6 +249,9 @@ void mdev_unregister_device(struct device *dev)
+>  	up_write(&parent->unreg_sem);
+>  
+>  	mdev_put_parent(parent);
+> +
+> +	/* We still have the caller's reference to use for the uevent */
+> +	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
+>  }
+>  EXPORT_SYMBOL(mdev_unregister_device);
+>  
 > 
