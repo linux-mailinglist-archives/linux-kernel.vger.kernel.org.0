@@ -2,133 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCBD764BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35AAA64C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfGJSSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 14:18:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44612 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728195AbfGJSSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:18:51 -0400
-Received: by mail-io1-f68.google.com with SMTP id s7so6731242iob.11;
-        Wed, 10 Jul 2019 11:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=USfTc8VlQ7lMuVnExRUFHsZN24BSBPa8IsBimhGr2ZM=;
-        b=Z6Jda9RG/tdgKYTzGiVVDcvZZp/F/qWlDeFrShf1uIgoQAOTS6/tHF9dNrtwEbPrJb
-         sZhYepRIwoOnimBaSacn14WAkROBMgygCwxFAoZYYrXBc+moL2zkrx5am4CthzBBd1ZI
-         V5lVO6dcLeLZqqSPPk590dUve+CDcU/BTFXUK1YRVhRNFzMkq5/V29aqadJBE7kP8Ix+
-         FlUVs1aIS9DrtE5W2Dhi5Y8WG96TewiIeUvMgb4rB5i+f6UpUwVHOv4V2/2K4pK4rvVv
-         8b2RcO84KahTGkSQuBk/1pHtRlD2F81PSCc469f5haqlq0BEQoGTJSjz2RE+tTENPBO2
-         iB7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=USfTc8VlQ7lMuVnExRUFHsZN24BSBPa8IsBimhGr2ZM=;
-        b=r8EdsNNg0N8Mj4bAVDRU8VqSwfpyKXet+4W6NEZakwUj1bodEA/+JUlb3X5lBYlvOJ
-         HEZs2oVLrqkgbhsw4IXbvYmZlvbNDZ2eLL7aREzdnpH4i/CWlaG0eJN+OupDS2LfTKam
-         LlQV0Vkf9rcEu2XhiZSr2o4m2fhp+v/e6ALQJXNXPvIFThsp55KonsLsS0O+huO56Fkg
-         UhpXtU+bXOH9rFiuXMa5i5pS6oHIuiAYAEwo1yXnWOG6lszxPqj6y7fPts0XCB/UwhkE
-         5qONXp6MXfugLqsdSXyFDTQ6jBUie/cJ3C2YDWOINsD8rLdqIHPfwQsMExSNrTK8NsCn
-         CEhQ==
-X-Gm-Message-State: APjAAAURUxCHXTIlOTx6WKbuafdxIOirTa/PCW2dXw2PzWVGSAk0E7kL
-        9XWtDJT/QQHqmQBx9b2s1lQxxcKIvqCEANwuBRo=
-X-Google-Smtp-Source: APXvYqxj7JlnKBYI7dCZsX/jyEqcbrHHfBdmKsYQ9CH5x37q2PgZ48bEowscqlsHMFkfkNZ0/9J1Ry569i6GN9+SYsI=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr11139904iok.282.1562782731034;
- Wed, 10 Jul 2019 11:18:51 -0700 (PDT)
+        id S1728050AbfGJSYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:24:44 -0400
+Received: from relay.sw.ru ([185.231.240.75]:47462 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727460AbfGJSYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 14:24:44 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hlHGV-0006Kk-L9; Wed, 10 Jul 2019 21:24:27 +0300
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+To:     Walter Wu <walter-zh.wu@mediatek.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+ <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+ <1560447999.15814.15.camel@mtksdccf07> <1560479520.15814.34.camel@mtksdccf07>
+ <1560744017.15814.49.camel@mtksdccf07>
+ <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
+ <1560774735.15814.54.camel@mtksdccf07> <1561974995.18866.1.camel@mtksdccf07>
+ <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
+ <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+ <1562640832.9077.32.camel@mtksdccf07>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <d9fd1d5b-9516-b9b9-0670-a1885e79f278@virtuozzo.com>
+Date:   Wed, 10 Jul 2019 21:24:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190709165459.11b353d8@canb.auug.org.au> <20190710100138.0aa36d47@canb.auug.org.au>
-In-Reply-To: <20190710100138.0aa36d47@canb.auug.org.au>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 10 Jul 2019 20:21:33 +0200
-Message-ID: <CAOi1vP8wsFDzmdwHw8HwvuycPnOChAjzAOLgajLHqxMadoWojQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Sage Weil <sage@newdream.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1562640832.9077.32.camel@mtksdccf07>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 2:01 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> On Tue, 9 Jul 2019 16:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > failed like this:
-> >
-> > drivers/block/rbd.c: In function 'wake_lock_waiters':
-> > drivers/block/rbd.c:3933:2: error: implicit declaration of function 'lockdep_assert_held_exclusive'; did you mean 'lockdep_assert_held_write'? [-Werror=implicit-function-declaration]
-> >   lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-> >   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   lockdep_assert_held_write
-> >
-> > Caused by commit
-> >
-> >   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() -> lockdep_assert_held_write()")
-> >
-> > interacting with commits
-> >
-> >   637cd060537d ("rbd: new exclusive lock wait/wake code")
-> >   a2b1da09793d ("rbd: lock should be quiesced on reacquire")
-> >
-> > from the ceph tree.
-> >
-> > I have added the following merge fix patch for today.
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Tue, 9 Jul 2019 16:46:12 +1000
-> > Subject: [PATCH] rbd: fix up for lockdep_assert_held_exclusive rename
-> >
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/block/rbd.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> > index 723c3ef4bd59..02216fbdb854 100644
-> > --- a/drivers/block/rbd.c
-> > +++ b/drivers/block/rbd.c
-> > @@ -3930,7 +3930,7 @@ static void wake_lock_waiters(struct rbd_device *rbd_dev, int result)
-> >       struct rbd_img_request *img_req;
-> >
-> >       dout("%s rbd_dev %p result %d\n", __func__, rbd_dev, result);
-> > -     lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-> > +     lockdep_assert_held_write(&rbd_dev->lock_rwsem);
-> >
-> >       cancel_delayed_work(&rbd_dev->lock_dwork);
-> >       if (!completion_done(&rbd_dev->acquire_wait)) {
-> > @@ -4209,7 +4209,7 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
-> >       bool need_wait;
-> >
-> >       dout("%s rbd_dev %p\n", __func__, rbd_dev);
-> > -     lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-> > +     lockdep_assert_held_write(&rbd_dev->lock_rwsem);
-> >
-> >       if (rbd_dev->lock_state != RBD_LOCK_STATE_LOCKED)
-> >               return false;
->
-> This fix now needs to be applied to the merge of the ceph tree.
 
-Hi Stephen,
 
-Yes, that is what I figured would happen.  I assume you would keep
-carrying this fixup until the ceph tree is merged.
+On 7/9/19 5:53 AM, Walter Wu wrote:
+> On Mon, 2019-07-08 at 19:33 +0300, Andrey Ryabinin wrote:
+>>
+>> On 7/5/19 4:34 PM, Dmitry Vyukov wrote:
+>>> On Mon, Jul 1, 2019 at 11:56 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
 
-Thanks,
+>>>
+>>> Sorry for delays. I am overwhelm by some urgent work. I afraid to
+>>> promise any dates because the next week I am on a conference, then
+>>> again a backlog and an intern starting...
+>>>
+>>> Andrey, do you still have concerns re this patch? This change allows
+>>> to print the free stack.
+>>
+>> I 'm not sure that quarantine is a best way to do that. Quarantine is made to delay freeing, but we don't that here.
+>> If we want to remember more free stacks wouldn't be easier simply to remember more stacks in object itself?
+>> Same for previously used tags for better use-after-free identification.
+>>
+> 
+> Hi Andrey,
+> 
+> We ever tried to use object itself to determine use-after-free
+> identification, but tag-based KASAN immediately released the pointer
+> after call kfree(), the original object will be used by another
+> pointer, if we use object itself to determine use-after-free issue, then
+> it has many false negative cases. so we create a lite quarantine(ring
+> buffers) to record recent free stacks in order to avoid those false
+> negative situations.
 
-                Ilya
+I'm telling that *more* than one free stack and also tags per object can be stored.
+If object reused we would still have information about n-last usages of the object.
+It seems like much easier and more efficient solution than patch you proposing.
+
+As for other concern about this particular patch
+ - It wasn't tested. There is deadlock (sleep in atomic) on the report path which would have been noticed it tested.
+   Also GFP_NOWAIT allocation which fails very noisy and very often, especially in memory constraint enviromnent where tag-based KASAN supposed to be used.
+
+ - Inefficient usage of memory:
+	48 bytes (sizeof (qlist_object) + sizeof(kasan_alloc_meta)) per kfree() call seems like a lot. It could be less.
+
+	The same 'struct kasan_track' stored twice in two different places (in object and in quarantine).
+	Basically, at least some part of the quarantine always duplicates information that we already know about
+	recently freed object. 
+
+	Since now we call kmalloc() from kfree() path, every unique kfree() stacktrace now generates additional unique stacktrace that
+	takes space in stackdepot.
+
