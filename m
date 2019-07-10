@@ -2,90 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0FF8642D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4692E642C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfGJH3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:29:25 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:27358 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727110AbfGJH3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:29:25 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 13E8D909B48BCA3D07B5;
-        Wed, 10 Jul 2019 15:29:24 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x6A7RXF3070833;
-        Wed, 10 Jul 2019 15:27:33 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019071015275325-2237134 ;
-          Wed, 10 Jul 2019 15:27:53 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     lgirdwood@gmail.com
-Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 4/4] ASoC: audio-graph-card: fix an use-after-free in graph_get_dai_id()
-Date:   Wed, 10 Jul 2019 15:25:09 +0800
-Message-Id: <1562743509-30496-5-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1562743509-30496-1-git-send-email-wen.yang99@zte.com.cn>
-References: <1562743509-30496-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-10 15:27:53,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-10 15:27:37,
-        Serialize complete at 2019-07-10 15:27:37
-X-MAIL: mse-fl2.zte.com.cn x6A7RXF3070833
+        id S1727163AbfGJH0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:26:18 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41989 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfGJH0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 03:26:18 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so657125pff.9;
+        Wed, 10 Jul 2019 00:26:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cdSf9Bk39d2jsEwtirbUFvZR6WuTUDxY23e5Q3Gyu54=;
+        b=KBYkAkycZiz8DZ1DdXQ09DtirV6eaCKk3fmVFyIBKxbjrT7BHk2fATKnvMqjuFKqtL
+         2VVWpAxLUOf2sFvSR1Ki+Vto7jYVcUKMF6E0/b9zXN1h6LCaQx5xuVlomf8/omMtm2et
+         J61gvJfNmZcJkmMt3N3ZhKRPU0TPtsG97ISH+wksw7N8TBZF4MOFBRuJ4ONbmbjlBl9S
+         IWZfsW+wyHljkFz3b4S9mOX+bA0Z5/byG4Ds6TrkkqZ2FZiJ6MkQHhyZLyZN4Q4riLMN
+         3XRZrOR5pnbAlhfcgRX7/z1bIYZR8JEbt7v3quprl6EpQwiiRneIx6UXRrL7tZSYOhwO
+         oWQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=cdSf9Bk39d2jsEwtirbUFvZR6WuTUDxY23e5Q3Gyu54=;
+        b=HhVGBsKUrHWhGdLJgz736QeIEdkx3HJC64L45FnOtJQI13VUhy86Qxeb+YdkPC1jkZ
+         WSjJdIT7qMUSl0+Kzl3cPoucBU+vT/UoVebyFlLgI2hexr1aHD7wegm13cFzqFIH/n+v
+         pt4urQogTviJrS+OlYaOyzP0iVg8qumJgQK+KX4Cnx3/KFILruHmtW0PIvQbEh3c4ChI
+         vj+4fF073ZmEw+6oI/o5nxcK0z0yrHi/w61LOrMioGP7XW5Gp7XQdZuFYuNY9Rr9qHUg
+         yoN6VxkXBoCeR0M+V7dCKs2mJa0HIjoMjG5R6PbMIcBEsOWWiRqmXYnpmdq0b5fZs6GB
+         tzhg==
+X-Gm-Message-State: APjAAAVIX32zucHmmR+7zZgeizk+DSc2lADambnQzx50qCj12/JknSrh
+        MHh1va+2QGs9SJl0/SkfEJMPnhvv
+X-Google-Smtp-Source: APXvYqyA6lkiug68fbXg2b3s/HCFJWhdOBMdkW5CUmBV9eiZBbo2xrJFzH3CGhvgc5LdiqbxL0WpEw==
+X-Received: by 2002:a63:da52:: with SMTP id l18mr35850153pgj.131.1562743577006;
+        Wed, 10 Jul 2019 00:26:17 -0700 (PDT)
+Received: from voyager.ozlabs.ibm.com ([36.255.48.244])
+        by smtp.gmail.com with ESMTPSA id o130sm2802358pfg.171.2019.07.10.00.26.13
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 00:26:15 -0700 (PDT)
+From:   Joel Stanley <joel@jms.id.au>
+To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc:     Eddie James <eajames@linux.ibm.com>,
+        Alexander Amelkin <a.amelkin@yadro.com>,
+        Lei YU <mine260309@gmail.com>,
+        Alexander Soldatov <a.soldatov@yadro.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon (occ): Add temp sensor value check
+Date:   Wed, 10 Jul 2019 16:56:06 +0930
+Message-Id: <20190710072606.4849-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After calling of_node_put() on the node variable, it is still being
-used, which may result in use-after-free.
-Fix this issue by calling of_node_put() after the last usage.
+From: Alexander Soldatov <a.soldatov@yadro.com>
 
-Fixes: a0c426fe1433 ("ASoC: simple-card-utils: check "reg" property on asoc_simple_card_get_dai_id()")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linux-kernel@vger.kernel.org
+The occ driver supports two formats for the temp sensor value.
+
+The OCC firmware for P8 supports only the first format, for which
+no range checking or error processing is performed in the driver.
+Inspecting the OCC sources for P8 reveals that OCC may send
+a special value 0xFFFF to indicate that a sensor read timeout
+has occurred, see
+
+https://github.com/open-power/occ/blob/master_p8/src/occ/cmdh/cmdh_fsp_cmds.c#L395
+
+That situation wasn't handled in the driver. This patch adds invalid
+temp value check for the sensor data format 1 and handles it the same
+way as it is done for the format 2, where EREMOTEIO is reported for
+this case.
+
+Fixes: 54076cb3b5ff ("hwmon (occ): Add sensor attributes and register hwmon device")
+Signed-off-by: Alexander Soldatov <a.soldatov@yadro.com>
+Signed-off-by: Alexander Amelkin <a.amelkin@yadro.com>
+Reviewed-by: Alexander Amelkin <a.amelkin@yadro.com>
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- sound/soc/generic/audio-graph-card.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hwmon/occ/common.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 31fc83d..c8abb86 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -63,6 +63,7 @@ static int graph_get_dai_id(struct device_node *ep)
- 	struct device_node *endpoint;
- 	struct of_endpoint info;
- 	int i, id;
-+	u32 *reg;
- 	int ret;
- 
- 	/* use driver specified DAI ID if exist */
-@@ -83,8 +84,9 @@ static int graph_get_dai_id(struct device_node *ep)
- 			return info.id;
- 
- 		node = of_get_parent(ep);
-+		reg = of_get_property(node, "reg", NULL);
- 		of_node_put(node);
--		if (of_get_property(node, "reg", NULL))
-+		if (reg)
- 			return info.port;
- 	}
- 	node = of_graph_get_port_parent(ep);
+diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+index cccf91742c1a..a7d2b16dd702 100644
+--- a/drivers/hwmon/occ/common.c
++++ b/drivers/hwmon/occ/common.c
+@@ -241,6 +241,12 @@ static ssize_t occ_show_temp_1(struct device *dev,
+ 		val = get_unaligned_be16(&temp->sensor_id);
+ 		break;
+ 	case 1:
++		/*
++		 * If a sensor reading has expired and couldn't be refreshed,
++		 * OCC returns 0xFFFF for that sensor.
++		 */
++		if (temp->value == 0xFFFF)
++			return -EREMOTEIO;
+ 		val = get_unaligned_be16(&temp->value) * 1000;
+ 		break;
+ 	default:
 -- 
-2.9.5
+2.20.1
 
