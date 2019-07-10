@@ -2,90 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BC03642FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD41F64301
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 09:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfGJHlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 03:41:11 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:38445 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfGJHlK (ORCPT
+        id S1726692AbfGJHoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 03:44:39 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52246 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfGJHoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:41:10 -0400
-Received: by mail-yb1-f194.google.com with SMTP id j199so455176ybg.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 00:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=808GklTtpiY6j+zB0h+7B3wldlJYTeWMuoR0jKZbHt0=;
-        b=nujn18/BaruPgkKUp6uj43iC3HVJ3t62DE0duxDpZlIJ9yL/pJwrODY7mn3GDIVUVH
-         syW0VeOfys4+pnnOXKA3kgUzBOfD0c/wsqoa8vZjKq+47k2znMe3KV5sJkgeUldAGrM5
-         /9zJlgw7Unv/ty/DXlijizfhSVxc0bA04Xx0JW5uAcJHo9bAh1qOEG1ouJgP70VKkf4P
-         xEhLaD+QZMl3gbXEJ9nIZYTNOFlKUdzcR/WuVtnjuLo9/jarvrhUBJnxpJyJBFQ1aFMJ
-         w+oXXa4ywbbsTUeQ7HKRRWoc8+Mog384REmTJ1FSpeij0dUwAymH+iv4wtCfIMHzB8jD
-         WWLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=808GklTtpiY6j+zB0h+7B3wldlJYTeWMuoR0jKZbHt0=;
-        b=Gr70653m4JU+Qse8OIOnsy5PJvleYrZJZVLThwJbh48/gbUzcZeowf+NY11uZdYUmp
-         BYQ55U4KlUXfyVu4exRxuYCLlKa+gyddMOWQ5Yyw0qZkgo8Si4PdNTfPxziJvD2W0aaY
-         m11lAzyPRa4LvMBmeJSywnjK8MxVTUvqdImkMFKhMrkuLyP+is6111cr9HzVYoh4EVJr
-         jn0a7DUBMRVj9C84ORnSCo9AeiONUis37t2GHoTMY87gPhf9Y7wx8JgAWQOf1X8sySV9
-         9Mb9uPdAKkq1Oh9tIa+pveqeFTuBRfsRNJrPl5ykF7q/Y6z7j9qMKKOcXI8StNZOsyD5
-         uZpQ==
-X-Gm-Message-State: APjAAAUEhhJRJUgY6U3X3z94iqGicRVWS26EYPmGey2V+WyicpygUee3
-        0QZwBDahmFM6gxKqVgWfoW+A156KMk7bACADqG0=
-X-Google-Smtp-Source: APXvYqxrDD2Xg9ixBUvNw2srozM2TRzr4TY+b0jbTQ+W1ym7W86RtcjGpLPQd7ijAWE2Gj/IzoZOuu7pE+XmgvnNEss=
-X-Received: by 2002:a25:8250:: with SMTP id d16mr14834644ybn.366.1562744469920;
- Wed, 10 Jul 2019 00:41:09 -0700 (PDT)
+        Wed, 10 Jul 2019 03:44:39 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6A7iY4C038946;
+        Wed, 10 Jul 2019 02:44:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562744674;
+        bh=KqOX5GKrtxsX6vmTiOa6nM4rOWB6IU6WDwN21PLg08w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FYbMRpLE64yppi2sX24VhkY/mDTKMiuG/k7EYDomU9rPd3JejLVyXpf9x1D9yb8gB
+         u2RbmTiLmuBte0VLHE6isiVd09vShS6U7Ocobvc4T3BljX8FGNUEGhdtF/6MXUqDG0
+         tQDNYu+vrJcEt1BxN+sm9FlKdUDByK82Slsz1izk=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6A7iY6a005936
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 10 Jul 2019 02:44:34 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 10
+ Jul 2019 02:44:33 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 10 Jul 2019 02:44:34 -0500
+Received: from [10.250.97.31] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6A7iWj1122857;
+        Wed, 10 Jul 2019 02:44:32 -0500
+Subject: Re: [PATCH v2 1/2] leds: tlc591xx: simplify driver by using the
+ managed led API
+To:     Dan Murphy <dmurphy@ti.com>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tomi.valkeinen@ti.com>
+References: <20190708100620.22388-1-jjhiblot@ti.com>
+ <20190708100620.22388-2-jjhiblot@ti.com>
+ <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <6242726a-ddb9-ab87-a28e-a1fa0ecbf87e@ti.com>
+Date:   Wed, 10 Jul 2019 09:44:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Received: by 2002:a25:c07:0:0:0:0:0 with HTTP; Wed, 10 Jul 2019 00:41:09 -0700 (PDT)
-Reply-To: angelagilbertelmustafa@gmail.com
-From:   "Mrs. Aangela Gilbert" <kendellakoffi01@gmail.com>
-Date:   Wed, 10 Jul 2019 08:41:09 +0100
-Message-ID: <CAPYMUOSU-Pah3VgoNbUeT1o9ThJ-a8PCK3TcE1ep-U63KjJ68w@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings
+Hi Dan,
 
-With warm hearts I offer my friendship and my greetings and I hope
-this letter meets you in good time. It will be surprising to you to
-receive this proposal from me since you do not know me personally.
-However, I am sincerely seeking your confidence in this matter which I
-propose with my free mind and as a woman of integrity. My name is Mrs.
-Aangela Gilbert. I am terminally ill and have decided to donate the
-inheritance I got from my late husband to you. I have been diagnosed
-of acute cancer for about 2 years now. From all indication my
-condition is really deteriorating and my doctors have courageously
-advised me that I may not live all that long; this is because the
-cancer has reached a critical stage.
+On 08/07/2019 20:08, Dan Murphy wrote:
+> JJ
+>
+> On 7/8/19 5:06 AM, Jean-Jacques Hiblot wrote:
+>> Use the managed API of the LED class (devm_led_classdev_register()
+>> instead of led_classdev_register()).
+>> This allows us to remove the code used to track-and-destroy the LED 
+>> devices
+>
+> What changed from v1?
 
-In my present condition life is without meaning to me and hope has
-since eluded me. Each day I give my entire existence a thought, I feel
-over powered by gloom and despair, also saw nothing but death lurking
-around. All these are my reasons for deciding to donate my inheritance
-for charity in which you have been favored as the beneficiary. I must
-tell you that I was truly touched by my inner mind to take this
-decision and I will advise you don=E2=80=99t see your windfall as avenue fo=
-r
-pleasure spree but should see it as an opportunity to help others
-especially the Orphans, the widows and less privileged people. Always
-put me in your prayers and ask God to forgive my sins and trespasses.
+What changed is a bug fix in the loop: replaced led = &priv->leds[idx] 
+with led = &priv->leds[reg];
 
-I shall be undergoing major operations in less than two weeks from
-now. If you are sure that you will use the donated fund as I have
-advised here, get back to me for more details.
 
-Thanks and kind regards.
+>
+> I don't see any changes especially the bounds on the reg property.
 
-Mrs. Aangela Gilbert
+It is not quite apparent in the diff, but there is such a check. Here is 
+what we have in the probe():
+
+     for_each_child_of_node(np, child) {
+         struct tlc591xx_led *led;
+
+         err = of_property_read_u32(child, "reg", &reg);
+         if (err) {
+             of_node_put(child);
+             return err;
+         }
+         if (reg < 0 || reg >= tlc591xx->max_leds ||
+             priv->leds[reg].active) {
+             of_node_put(child);
+             return -EINVAL;
+         }
+         led = &priv->leds[reg];
+
+[...]
+         }
+     }
+
+>
+> Dan
+>
+>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> ---
+>>   drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
+>>   1 file changed, 20 insertions(+), 59 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+>> index 59ff088c7d75..3d5a4b92f016 100644
+>> --- a/drivers/leds/leds-tlc591xx.c
+>> +++ b/drivers/leds/leds-tlc591xx.c
+>> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev 
+>> *led_cdev,
+>>       return err;
+>>   }
+>>   -static void
+>> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
+>> -{
+>> -    int i = j;
+>> -
+>> -    while (--i >= 0) {
+>> -        if (priv->leds[i].active)
+>> - led_classdev_unregister(&priv->leds[i].ldev);
+>> -    }
+>> -}
+>> -
+>> -static int
+>> -tlc591xx_configure(struct device *dev,
+>> -           struct tlc591xx_priv *priv,
+>> -           const struct tlc591xx *tlc591xx)
+>> -{
+>> -    unsigned int i;
+>> -    int err = 0;
+>> -
+>> -    tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+>> -    for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
+>> -        struct tlc591xx_led *led = &priv->leds[i];
+>> -
+>> -        if (!led->active)
+>> -            continue;
+>> -
+>> -        led->priv = priv;
+>> -        led->led_no = i;
+>> -        led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+>> -        led->ldev.max_brightness = LED_FULL;
+>> -        err = led_classdev_register(dev, &led->ldev);
+>> -        if (err < 0) {
+>> -            dev_err(dev, "couldn't register LED %s\n",
+>> -                led->ldev.name);
+>> -            goto exit;
+>> -        }
+>> -    }
+>> -
+>> -    return 0;
+>> -
+>> -exit:
+>> -    tlc591xx_destroy_devices(priv, i);
+>> -    return err;
+>> -}
+>> -
+>>   static const struct regmap_config tlc591xx_regmap = {
+>>       .reg_bits = 8,
+>>       .val_bits = 8,
+>> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
+>>         i2c_set_clientdata(client, priv);
+>>   +    tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+>> +
+>>       for_each_child_of_node(np, child) {
+>> +        struct tlc591xx_led *led;
+>> +
+>>           err = of_property_read_u32(child, "reg", &reg);
+>>           if (err) {
+>>               of_node_put(child);
+>> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
+>>               of_node_put(child);
+>>               return -EINVAL;
+>>           }
+>> -        priv->leds[reg].active = true;
+>> -        priv->leds[reg].ldev.name =
+>> +        led = &priv->leds[reg];
+>> +
+>> +        led->active = true;
+>> +        led->ldev.name =
+>>               of_get_property(child, "label", NULL) ? : child->name;
+>> -        priv->leds[reg].ldev.default_trigger =
+>> +        led->ldev.default_trigger =
+>>               of_get_property(child, "linux,default-trigger", NULL);
+>> -    }
+>> -    return tlc591xx_configure(dev, priv, tlc591xx);
+>> -}
+>> -
+>> -static int
+>> -tlc591xx_remove(struct i2c_client *client)
+>> -{
+>> -    struct tlc591xx_priv *priv = i2c_get_clientdata(client);
+>> -
+>> -    tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
+>>   +        led->priv = priv;
+>> +        led->led_no = reg;
+>> +        led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+>> +        led->ldev.max_brightness = LED_FULL;
+>> +        err = devm_led_classdev_register(dev, &led->ldev);
+>> +        if (err < 0) {
+>> +            dev_err(dev, "couldn't register LED %s\n",
+>> +                led->ldev.name);
+>> +            return err;
+>> +        }
+>> +    }
+>>       return 0;
+>>   }
+>>   @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
+>>           .of_match_table = of_match_ptr(of_tlc591xx_leds_match),
+>>       },
+>>       .probe = tlc591xx_probe,
+>> -    .remove = tlc591xx_remove,
+>>       .id_table = tlc591xx_id,
+>>   };
