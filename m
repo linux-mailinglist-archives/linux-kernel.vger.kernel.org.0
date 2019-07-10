@@ -2,126 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1246664413
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3EB6441F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 11:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfGJJDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 05:03:07 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34768 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbfGJJDH (ORCPT
+        id S1727698AbfGJJHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 05:07:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52323 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfGJJHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 05:03:07 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p10so936572pgn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 02:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6NZ04dqkp5PZfb0iXau7OgJEqRReEfjejYdtenD28ag=;
-        b=t23I+rpKmwsx6L9Q4vUWFIrJBxJxq3TYfSJJPSu/DjOD1DCo6AlHTwiZJlR7EcNGLO
-         GcQlUTbk8YYTWXMsTz7Ef3BZFWCqFrJHdwQJnu1FY5awvwwGJ0c2XwZ8QwIsysig7Ih3
-         tY04e41XUxPfvyCqSBO3x1irGqEIENikMgzQBi4MZ4IdKu0Zx0koI4Yp/RMuYBu0enit
-         0Lsxto60XXj2SyuYhy6rrP8meO/YIeFPeGY5iNej4rSHjrjV86VWSjpA/QCxHNdTt5I6
-         qHBx7HRK6cDVRQ7y+2ZpeyJApVKKrYbHzVzKOl0ckKy1KNxZuK/6Z3vXfmAAzmEvpGUs
-         uLSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6NZ04dqkp5PZfb0iXau7OgJEqRReEfjejYdtenD28ag=;
-        b=gufGFjciiwBUp7cfQw0oQPRdAui6v6nieG32DJTHEIE1qHnliKRoQu1Ewak+fALR5E
-         EZ31+xv/X2ZZ5sjDwYiAtjNhdLrBYbqBJzDV625/8K9srmTBOGWNjNrPk7lH/DTIzABg
-         N3+BssR4F5nSK5xCDx2poYUGLhIE5hP+PgRmHJFptmIfvnFzyn/lMfMLF3VI+J5qOSAB
-         Fa3+VWHO4xGm9iZaxD3hGh5RRhaf/Og2wP5nfrOPIFcbCGEpCbegRyqJHFcBnrng22rR
-         s8cbJhdY0oOgquhIN/v4mr4GjRhMMWCf89RFHJfk0UR9wMMg1ejz1GMrkyaOvoo40GiD
-         Y8lQ==
-X-Gm-Message-State: APjAAAUkRijGA6GET5v+ha3xUL2M8jfiXqKHAJnY7kNcZxFRNTGsYw5x
-        45Ap9s3o5vjitrs4wNpJg8ZMhA==
-X-Google-Smtp-Source: APXvYqxK+S0LBckyQx94QVniKkTJ+/+6VuQvBLPkooC8SUohB+Wy0vvz/pDDQjQLOEljUV6HT7fR5w==
-X-Received: by 2002:a63:ad07:: with SMTP id g7mr33649130pgf.405.1562749386689;
-        Wed, 10 Jul 2019 02:03:06 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id x65sm1633917pfd.139.2019.07.10.02.03.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 02:03:06 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 14:33:03 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] arm64: dts: qcom: qcs404: Add CPR and populate OPP
- table
-Message-ID: <20190710090303.tb5ue3wq6r7ofyev@vireshk-i7>
-References: <20190705095726.21433-1-niklas.cassel@linaro.org>
- <20190705095726.21433-12-niklas.cassel@linaro.org>
+        Wed, 10 Jul 2019 05:07:37 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6A97DsD2346267
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 10 Jul 2019 02:07:13 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6A97DsD2346267
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562749634;
+        bh=k2XgUqem8wugl0/LusrCJ5O8ZS54avaoFu7nzRJ3o5E=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=eqmag5RsaKIJ14cY62b3WLhOZdkOaje6maBBSAtge8Z9aRgdzsMLvuXJMMjEnaoO4
+         V4+VnFMCO2dhtQDScTWiifH+gR2r7c7lrVheaxCzwFHNTKVgPU4IhXvGlfQ/3xSy7S
+         Qu5qjlnfIZKrFj9dyZ0GrXQ1A9IY7FLm5ughPmAKZWTRmlrp3rsrion3eKdWOpqlTf
+         ee1Zhmn+Vi7ukRu0h+q7TWQe+s+jdX/wKtEDSExO1SvFX5lEPsvnK/mExwFsOclwFT
+         WB2Ax1kOcGSBCVK2Z34jb/rThFUkLqyA/kzYvopKXzIh4Dyf6j866kQ85SG9J5zQ3t
+         rWwWHXYMlFRQg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6A97Dft2346264;
+        Wed, 10 Jul 2019 02:07:13 -0700
+Date:   Wed, 10 Jul 2019 02:07:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Joe Perches <tipbot@zytor.com>
+Message-ID: <tip-20faba848752901de23a4d45a1174d64d2069dde@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        marc.zyngier@arm.com, mingo@kernel.org, joe@perches.com
+Reply-To: marc.zyngier@arm.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, joe@perches.com, mingo@kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <ab5deb4fc3cd604cb620054770b7d00016d736bc.1562734889.git.joe@perches.com>
+References: <ab5deb4fc3cd604cb620054770b7d00016d736bc.1562734889.git.joe@perches.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/urgent] irqchip/gic-v3-its: Fix misuse of GENMASK macro
+Git-Commit-ID: 20faba848752901de23a4d45a1174d64d2069dde
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190705095726.21433-12-niklas.cassel@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-07-19, 11:57, Niklas Cassel wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
->  	cpu_opp_table: cpu-opp-table {
-> -		compatible = "operating-points-v2";
-> +		compatible = "operating-points-v2-kryo-cpu";
->  		opp-shared;
->  
->  		opp-1094400000 {
->  			opp-hz = /bits/ 64 <1094400000>;
-> -			opp-microvolt = <1224000 1224000 1224000>;
-> +			required-opps = <&cpr_opp1>;
->  		};
->  		opp-1248000000 {
->  			opp-hz = /bits/ 64 <1248000000>;
-> -			opp-microvolt = <1288000 1288000 1288000>;
-> +			required-opps = <&cpr_opp2>;
->  		};
->  		opp-1401600000 {
->  			opp-hz = /bits/ 64 <1401600000>;
-> -			opp-microvolt = <1384000 1384000 1384000>;
-> +			required-opps = <&cpr_opp3>;
-> +		};
-> +	};
-> +
-> +	cpr_opp_table: cpr-opp-table {
-> +		compatible = "operating-points-v2-qcom-level";
-> +
-> +		cpr_opp1: opp1 {
-> +			opp-level = <1>;
-> +			qcom,opp-fuse-level = <1>;
-> +			opp-hz = /bits/ 64 <1094400000>;
-> +		};
-> +		cpr_opp2: opp2 {
-> +			opp-level = <2>;
-> +			qcom,opp-fuse-level = <2>;
-> +			opp-hz = /bits/ 64 <1248000000>;
-> +		};
-> +		cpr_opp3: opp3 {
-> +			opp-level = <3>;
-> +			qcom,opp-fuse-level = <3>;
-> +			opp-hz = /bits/ 64 <1401600000>;
->  		};
->  	};
+Commit-ID:  20faba848752901de23a4d45a1174d64d2069dde
+Gitweb:     https://git.kernel.org/tip/20faba848752901de23a4d45a1174d64d2069dde
+Author:     Joe Perches <joe@perches.com>
+AuthorDate: Tue, 9 Jul 2019 22:04:18 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 10 Jul 2019 11:04:17 +0200
 
-- Do we ever have cases more complex than this for this version of CPR ?
+irqchip/gic-v3-its: Fix misuse of GENMASK macro
 
-- What about multiple devices with same CPR table, not big LITTLE
-  CPUs, but other devices like two different type of IO devices ? What
-  will we do with opp-hz in those cases ?
+Arguments are supposed to be ordered high then low.
 
-- If there are no such cases, can we live without opp-hz being used
-  here and reverse-engineer the highest frequency by looking directly
-  at CPUs OPP table ? i.e. by looking at required-opps field.
+Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/ab5deb4fc3cd604cb620054770b7d00016d736bc.1562734889.git.joe@perches.com
 
--- 
-viresh
+---
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 35500801dc2b..730fbe0e2a9d 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -185,7 +185,7 @@ static struct its_collection *dev_event_to_col(struct its_device *its_dev,
+ 
+ static struct its_collection *valid_col(struct its_collection *col)
+ {
+-	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(0, 15)))
++	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(15, 0)))
+ 		return NULL;
+ 
+ 	return col;
