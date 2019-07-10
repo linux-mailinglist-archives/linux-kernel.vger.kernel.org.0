@@ -2,146 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9472464D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 22:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF47652DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfGJU0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 16:26:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbfGJU0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 16:26:23 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51BC220693;
-        Wed, 10 Jul 2019 20:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562790382;
-        bh=O+bYbOvsbL9YAnSQuHo2cXKmXnxaBOokw0ed+mLJ3NE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VKxi7q3CLoy8r0jCaC4eKWHARHlR0tUFs2k8yPmwlYZIYS3GMACjl0lB4XwH24I9/
-         vZaeMDVNbwbHmg6HNaHT1X9OpH/S/TFlW46Q5PO/EWczDUCcSZjluvqdlCql1ZEfD4
-         9D+TZzaH2nZsTizxQ2MQuvp1YIQ6GjFEKJLs6gxI=
-Received: by mail-qt1-f180.google.com with SMTP id 44so3896922qtg.11;
-        Wed, 10 Jul 2019 13:26:22 -0700 (PDT)
-X-Gm-Message-State: APjAAAULeJWFIbQr4GU68M5C1poqwNBK3uWUP+XW2nGM6fLijx6A0gGT
-        WWFKYR4XRppLfKmDCta0Y2n0GmW1AnO77/9WDA==
-X-Google-Smtp-Source: APXvYqwAjtEbE890QCGvV9/7B8+mjJlAA0PYJ02JaBqDlEwjZYfOylwFmKHq2pgemN8AMFjunT6LrW3kD4fW+BMKyZc=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr25872845qtc.143.1562790381567;
- Wed, 10 Jul 2019 13:26:21 -0700 (PDT)
+        id S1728258AbfGKIKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 04:10:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38512 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727929AbfGKIKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 04:10:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F3036AD4D;
+        Thu, 11 Jul 2019 08:10:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B5BB21E43B7; Wed, 10 Jul 2019 22:26:47 +0200 (CEST)
+Date:   Wed, 10 Jul 2019 22:26:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190710202647.GA7269@quack2.suse.cz>
+References: <20190703195302.GJ1729@bombadil.infradead.org>
+ <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+ <20190704032728.GK1729@bombadil.infradead.org>
+ <20190704165450.GH31037@quack2.suse.cz>
+ <20190704191407.GM1729@bombadil.infradead.org>
+ <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org>
+ <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+ <20190710190204.GB14701@quack2.suse.cz>
+ <20190710201539.GN32320@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <20190710110424.4254-1-biwen.li@nxp.com> <20190710110424.4254-2-biwen.li@nxp.com>
- <CADRPPNQ8nZQYq1ZXZ368LLeKnyrXpjB_X8XaHVhW890bw-tU6A@mail.gmail.com>
-In-Reply-To: <CADRPPNQ8nZQYq1ZXZ368LLeKnyrXpjB_X8XaHVhW890bw-tU6A@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 10 Jul 2019 14:26:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLr53neiaiOEpAcmAhDMnqCuxgPLC9qnFB2rZ4zRFxFLg@mail.gmail.com>
-Message-ID: <CAL_JsqLr53neiaiOEpAcmAhDMnqCuxgPLC9qnFB2rZ4zRFxFLg@mail.gmail.com>
-Subject: Re: [v2,2/2] Documentation: dt: binding: rtc: add binding for ftm
- alarm driver
-To:     Li Yang <leoyang.li@nxp.com>
-Cc:     Biwen Li <biwen.li@nxp.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>, Ran Wang <ran.wang_1@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710201539.GN32320@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 1:46 PM Li Yang <leoyang.li@nxp.com> wrote:
->
-> On Wed, Jul 10, 2019 at 6:35 AM Biwen Li <biwen.li@nxp.com> wrote:
-> >
-> > The patch adds binding for ftm alarm driver
-> >
-> > Signed-off-by: Biwen Li <biwen.li@nxp.com>
->
-> Looks like I commented the older version just now.  Adding Rob to this
-> version too.
+On Wed 10-07-19 13:15:39, Matthew Wilcox wrote:
+> On Wed, Jul 10, 2019 at 09:02:04PM +0200, Jan Kara wrote:
+> > +#define DAX_ENTRY_CONFLICT dax_make_entry(pfn_to_pfn_t(1), DAX_EMPTY)
+> 
+> I was hoping to get rid of DAX_EMPTY ... it's almost unused now.  Once
+> we switch to having a single DAX_LOCK value instead of a single bit,
+> I think it can go away, freeing up two bits.
+> 
+> If you really want a special DAX_ENTRY_CONFLICT, I think we can make
+> one in the 2..4094 range.
+> 
+> That aside, this looks pretty similar to the previous patch I sent, so
+> if you're now happy with this, let's add
+> 
+> #define XA_DAX_CONFLICT_ENTRY xa_mk_internal(258)
+> 
+> to xarray.h and do it that way?
 
-More importantly, re-send the patch to the DT list so patchwork tracks it.
+Yeah, that would work for me as well. The chosen value for DAX_ENTRY_CONFLICT
+was pretty arbitrary. Or we could possibly use:
 
->
-> > ---
-> > Change in v2:
-> >     - replace ls1043a with ls1088a as example
-> >     - add rcpm node and fsl,rcpm-wakeup property
-> >
-> >  .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 40 ++++++++++++++++++++++
-> >  1 file changed, 40 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> > new file mode 100644
-> > index 0000000..010984a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> > @@ -0,0 +1,40 @@
-> > +Freescale FlexTimer Module (FTM) Alarm
-> > +
-> > +Note: The driver need work with RCPM driver to wake up system in sleep.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible : Should be "fsl,ftm-alarm" or "fsl,<chip>-ftm-alarm", the
+#define DAX_ENTRY_CONFLICT XA_ZERO_ENTRY
 
-fsl,ftm-alarm should be a fallback, not on its own.
+so that we don't leak DAX-specific internal definition into xarray.h?
 
-> > +              supported chips include
-> > +              "fsl,ls1012a-ftm-alarm"
-> > +              "fsl,ls1021a-ftm-alarm"
-> > +              "fsl,ls1028a-ftm-alarm"
-> > +              "fsl,ls1043a-ftm-alarm"
-> > +              "fsl,ls1046a-ftm-alarm"
-> > +              "fsl,ls1088a-ftm-alarm"
-> > +              "fsl,ls208xa-ftm-alarm"
-> > +- reg : Specifies base physical address and size of the register sets for the
-> > +  FlexTimer Module and base physical address of IP Powerdown Exception Control
-> > +  Register.
-> > +- reg-names: names of the mapped memory regions listed in regs property.
-> > +  should include the following entries:
-> > +  "ftm":    Address of the register sets for FlexTimer Module
-
-Says required, but not in the example. I'd just remove this as -names
-is pointless when there is only 1 entry.
-
-> > +- interrupts : Should be the FlexTimer Module interrupt.
-> > +- fsl,rcpm-wakeup property and rcpm node : Please refer
-> > +       Documentation/devicetree/bindings/soc/fsl/rcpm.txt
->
-> Looks better.
->
-> > +- big-endian: If the host controller is big-endian mode, specify this property.
-> > +  The default endian mode is little-endian.
->
-> Same comment about optional property.
->
-> > +
-> > +Example:
-> > +rcpm: rcpm@1e34050 {
-> > +       compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-> > +       reg = <0x0 0x1e34050 0x0 0x4>;
-> > +       fsl,#rcpm-wakeup-cells = <1>;
-
-1 cell here...
-
-> > +}
-> > +
-> > +ftm_alarm0: timer@2800000 {
-> > +       compatible = "fsl,ftm-alarm";
-> > +       reg = <0x0 0x2800000 0x0 0x10000>;
-> > +       fsl,rcpm-wakeup = <&rcpm 0x0 0x4000>;
-
-...and 2 cells here.
-
-> > +       interrupts = <0 44 4>;
-> > +}
-> > --
-> > 2.7.4
-> >
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
