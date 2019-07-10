@@ -2,103 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB7D64EA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 00:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4393664EAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 00:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfGJWSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 18:18:52 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48078 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726245AbfGJWSv (ORCPT
+        id S1727567AbfGJWVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 18:21:19 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45076 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfGJWVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 18:18:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EC0808EE24C;
-        Wed, 10 Jul 2019 15:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562797130;
-        bh=7ArvZgcTx/R/r9b1pLkOInASVYMrLtlPUzHDaDO1z30=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Y0u3FVWtv6UU0TpgTjKp5FnhPW/dfUEvAsn4hAVq0wtN+CwzzncN0Wkff3yEHCelA
-         LWjI/nx6ncCA8tdv7Zx6fUNdGnBtEruHdAgDfzF82gKmKCzL0rmo46eiZeb2b1QsqW
-         p2l5TXW7F7SbFxMwOt0CiYR0H5W9o8OKG6PtqqtU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id o6FAVD-9GHuB; Wed, 10 Jul 2019 15:18:50 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 6835A8EE147;
-        Wed, 10 Jul 2019 15:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562797130;
-        bh=7ArvZgcTx/R/r9b1pLkOInASVYMrLtlPUzHDaDO1z30=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Y0u3FVWtv6UU0TpgTjKp5FnhPW/dfUEvAsn4hAVq0wtN+CwzzncN0Wkff3yEHCelA
-         LWjI/nx6ncCA8tdv7Zx6fUNdGnBtEruHdAgDfzF82gKmKCzL0rmo46eiZeb2b1QsqW
-         p2l5TXW7F7SbFxMwOt0CiYR0H5W9o8OKG6PtqqtU=
-Message-ID: <1562797129.3213.111.camel@HansenPartnership.com>
-Subject: Re: screen freeze with 5.2-rc6 Dell XPS-13 skylake  i915
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Paul Bolle <pebolle@tiscali.nl>, intel-gfx@lists.freedesktop.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Jul 2019 15:18:49 -0700
-In-Reply-To: <a23e93d918f8be5aea4af0b87efbf9c3d143d2fb.camel@tiscali.nl>
-References: <1561834612.3071.6.camel@HansenPartnership.com>
-         <1562770874.3213.14.camel@HansenPartnership.com>
-         <93b8a186f4c8b4dae63845a20bd49ae965893143.camel@tiscali.nl>
-         <1562776339.3213.50.camel@HansenPartnership.com>
-         <5245d2b3d82f11d2f988a3154814eb42dcb835c5.camel@tiscali.nl>
-         <1562780135.3213.58.camel@HansenPartnership.com>
-         <a23e93d918f8be5aea4af0b87efbf9c3d143d2fb.camel@tiscali.nl>
+        Wed, 10 Jul 2019 18:21:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m23so3645700lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 15:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=PUdltBUBj0ZU65Goc5exL8ejdMojIVlcheUHnmYwgXM=;
+        b=mTJyPkkFkgivqfgB4NPtAXO0SrFF+0ruiy+npAgx+/9lfAf2mrezXK5vyZ/cR+K434
+         uUcVbJ/UUC2Psm1aQPyve4+mBhYUM9zWep9xWh+m4TVEl6OqL9RrMkJZyJfTELTsV0Qj
+         Ls176YrHzar9B4G1MjOptYcLdZhrJW+jHl/ynyHCeWLVpqfb8M/6A3UgNyLaRAZwGvps
+         JXrPRjEw7ydSaa2jupPEjc3W8LcEJBWNmefIMMA84mBFII7lXF0W51vYy2gvCVyeeXAi
+         QtWeddu1lrw2XBJGwVNU8BXj38hH2gLLvdVlvifJ8N9MxTYZlDlDCnDkjqbvdts0Hoeh
+         YpDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=PUdltBUBj0ZU65Goc5exL8ejdMojIVlcheUHnmYwgXM=;
+        b=sqx58xtX5R5GyrRBuRTdB4G/7VDyFnkAgoOFEVOwa9/lxkc1qw1EAcZJQdlhun+h9o
+         DsOGD5gZKzp6P4a7wsNMj+Ujqe0xMDkZv9eX8h8Wj1ShogEpn4DX5Dt0aOMqwFatc5GS
+         Chq41ep6Pr27dqK2kV7Rwlh6MSsGEf9BBEBZCm02gfrklKXTcL6pxlLQwdrqu3PgCEIN
+         027Ax87qd1b0KqsC8ZJeO1j69Gw2CT+yU0OBLDkWQF6gSBJmkoFGsFSEVaPpfBdoWxBi
+         zWCIXbdzLYevh42/sXdcpW1hGd+2htip5GuJg3K+9B0cXdNhfnqf3TPfS+pgG/c+9uLn
+         GYxA==
+X-Gm-Message-State: APjAAAU9ETYYs6B37CsimoRz84iYmAAPX2VICYyC5zBvY6lNzzgfmIY/
+        BT4jRiR/M+9JffJwhg18hIiJwU3F9lnf8mNsGog=
+X-Google-Smtp-Source: APXvYqwkmY0LTQvO5sXaFsNVUNn+42ZEz0Tak563Ri4mX45K2IXN/Bi5Z2I8nF5aWsrvcYDpvP1vlK9NbkYOn3opzh4=
+X-Received: by 2002:a2e:a311:: with SMTP id l17mr306117lje.214.1562797277430;
+ Wed, 10 Jul 2019 15:21:17 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:6549:0:0:0:0:0 with HTTP; Wed, 10 Jul 2019 15:21:16
+ -0700 (PDT)
+Reply-To: cattanobryan@gmail.com
+From:   Bryan Cattano <ezebubeafoma24@gmail.com>
+Date:   Wed, 10 Jul 2019 15:21:16 -0700
+Message-ID: <CAOFAnGDPh3mw2eXLs0NefmAVVRPVJMSd9hsm8XspBBapwJQFzw@mail.gmail.com>
+Subject: are you still alive?
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-10 at 23:59 +0200, Paul Bolle wrote:
-> James Bottomley schreef op wo 10-07-2019 om 10:35 [-0700]:
-> > I can get back to it this afternoon, when I'm done with the meeting
-> > requirements and doing other dev stuff.
-> 
-> I've started bisecting using your suggestion of that drm merge:
->     $ git bisect log
->     git bisect start
->     # good: [89c3b37af87ec183b666d83428cb28cc421671a6] Merge
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide
->     git bisect good 89c3b37af87ec183b666d83428cb28cc421671a6
->     # bad: [a2d635decbfa9c1e4ae15cb05b68b2559f7f827c] Merge tag 'drm-
-> next-2019-05-09' of git://anongit.freedesktop.org/drm/drm
->     git bisect bad a2d635decbfa9c1e4ae15cb05b68b2559f7f827c
->     # bad: [ad2c467aa92e283e9e8009bb9eb29a5c6a2d1217] drm/i915:
-> Update DRIVER_DATE to 20190417
->     git bisect bad ad2c467aa92e283e9e8009bb9eb29a5c6a2d1217
-> 
-> Git told me I have nine steps after this. So at two hours per step I
-> might
-> pinpoint the offending commit by Friday the 12th. If I'm lucky.
-> (There are
-> other things to do than bisecting this issue.)
-> 
-> If you find that commit before I do, I'll be all ears.
-
-Sure ... I'm doing the holistic thing and looking at the tree in that
-branch.  It seems to consist of 7 i915 updates
-
-c09d39166d8a3f3788680b32dbb0a40a70de32e2 DRIVER_DATE to 20190207
-47ed55a9bb9e284d46d6f2489e32a53b59152809 DRIVER_DATE to 20190220
-f4ecb8ae70de86710e85138ce49af5c689951953 DRIVER_DATE to 20190311
-1284ec985572232ace4817476baeb2d82b60be7a DRIVER_DATE to 20190320
-a01b2c6f47d86c7d1a9fa822b3b91ec233b61784 DRIVER_DATE to 20190328
-28d618e9ab86f26a31af0b235ced55beb3e343c8 DRIVER_DATE to 20190404
-ad2c467aa92e283e9e8009bb9eb29a5c6a2d1217 DRIVER_DATE to 20190417
-
-So I figured I'd see if I can locate the problem by bisection of those
-plus inspection.
-
-James
-
+-- 
+Dear Good friend,
+I bid you greetings. I have a business that could be brought your way
+but the details shall be given when you confirm the receipt of this
+email.
+Thanks
