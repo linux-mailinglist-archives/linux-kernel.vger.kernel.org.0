@@ -2,174 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0838664D48
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 22:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D7164D3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 22:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfGJUNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 16:13:46 -0400
-Received: from mail-eopbgr820080.outbound.protection.outlook.com ([40.107.82.80]:23808
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728469AbfGJUNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 16:13:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yrkk7KFTBJRgwdvaQu/OkLRXXjn5FxlViVTBydYMhts=;
- b=QdZlkQWshXU3IpAxEZddc8NucE4LxJgagyZW6hvLdIscijZRRp7+4S6AXTmC8jxMt2FAS3S3Fl//AMVQW4c3s/Fs/9xja/hdA+L4kX9FImuFFOLm0vHHSVvTLDaSYfePxzapeW3/rSyNDPRtQGhVFISiDcAYWYlwAJx4PbCJ1xQ=
-Received: from DM6PR12MB2682.namprd12.prod.outlook.com (20.176.116.31) by
- DM6PR12MB2988.namprd12.prod.outlook.com (20.178.29.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Wed, 10 Jul 2019 20:13:11 +0000
-Received: from DM6PR12MB2682.namprd12.prod.outlook.com
- ([fe80::bc1a:a30d:9da2:1cdd]) by DM6PR12MB2682.namprd12.prod.outlook.com
- ([fe80::bc1a:a30d:9da2:1cdd%6]) with mapi id 15.20.2073.008; Wed, 10 Jul 2019
- 20:13:11 +0000
-From:   "Singh, Brijesh" <brijesh.singh@amd.com>
-To:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC:     "Singh, Brijesh" <brijesh.singh@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 10/11] mm: x86: Invoke hypercall when page encryption
- status is changed
-Thread-Topic: [PATCH v3 10/11] mm: x86: Invoke hypercall when page encryption
- status is changed
-Thread-Index: AQHVN1vlvYtNVeXn2US0n5tv1Wageg==
-Date:   Wed, 10 Jul 2019 20:13:11 +0000
-Message-ID: <20190710201244.25195-11-brijesh.singh@amd.com>
-References: <20190710201244.25195-1-brijesh.singh@amd.com>
-In-Reply-To: <20190710201244.25195-1-brijesh.singh@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0014.namprd05.prod.outlook.com
- (2603:10b6:803:40::27) To DM6PR12MB2682.namprd12.prod.outlook.com
- (2603:10b6:5:4a::31)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ca092446-9961-4f75-3720-08d70573084b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB2988;
-x-ms-traffictypediagnostic: DM6PR12MB2988:
-x-microsoft-antispam-prvs: <DM6PR12MB298892AD5C3410FFFF2C46C7E5F00@DM6PR12MB2988.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 0094E3478A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(39860400002)(396003)(346002)(199004)(189003)(1730700003)(81156014)(81166006)(7416002)(478600001)(8676002)(486006)(446003)(7736002)(6116002)(476003)(2616005)(305945005)(71190400001)(71200400001)(3846002)(26005)(11346002)(64756008)(66946007)(66556008)(66476007)(66446008)(66066001)(186003)(76176011)(102836004)(14454004)(386003)(6506007)(36756003)(5660300002)(2501003)(52116002)(6916009)(1076003)(66574012)(99286004)(86362001)(68736007)(6436002)(2906002)(25786009)(6486002)(50226002)(4326008)(5640700003)(316002)(256004)(54906003)(6512007)(14444005)(53936002)(8936002)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2988;H:DM6PR12MB2682.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: i4Xfz/wv81RexZPeMNcRTRuhuYbHoPkILVIfEi4vqsObdXS/7/Y29/cblobn5Tf71b/I1JQGfES9ddcgZkRimbGRzZ0KXAONgWnLRl84EWMUOUPhRtIMRBWIFCuXh3nOgqq/avXAcQq0y3/v8aWNIXbO0XTqhqfZfIIuVLvquLsQ+G1VVwD3nPqDFIPelg/hsgKj2APw2AjcpiXYy+RhRHt1mlaUV0pvaQGYbBtYMUwa7JUjd7YG6xvi6vRJqfGBRQbsnZXFDlyrWKlCounFNjjSmf6WAs9j9zMeoNeKB+ZzbwzWfRQsUZHfyQrNC5hLxOAWJ24BGxp3eR632Z1PsLEgNKuZgr0gAhCgvlN4mSKeDsYdz8XNdBbKCgWJnXaLoiCNQzDhwLjXbXx4t52O2HVpPi+Z9Zj7DfwmGFrhHt0=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4B62A30A6BACE6408C90BDE55ADEE8E6@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728418AbfGJUNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 16:13:17 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49227 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728384AbfGJUNP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 16:13:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D3203805EE; Wed, 10 Jul 2019 22:13:00 +0200 (CEST)
+Date:   Wed, 10 Jul 2019 22:13:11 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au,
+        Andrew Morton <akpm@osdl.org>
+Subject: next-20190708: kernel BUG at lib/lockref.c:189, softlockups in
+ shrink_dcache...?
+Message-ID: <20190710201311.GA8519@amd>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca092446-9961-4f75-3720-08d70573084b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2019 20:13:11.6408
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sbrijesh@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2988
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SW52b2tlIGEgaHlwZXJjYWxsIHdoZW4gYSBtZW1vcnkgcmVnaW9uIGlzIGNoYW5nZWQgZnJvbSBl
-bmNyeXB0ZWQgLT4NCmRlY3J5cHRlZCBhbmQgdmljZSB2ZXJzYS4gSHlwZXJ2aXNvciBuZWVkIHRv
-IGtub3cgdGhlIHBhZ2UgZW5jcnlwdGlvbg0Kc3RhdHVzIGR1cmluZyB0aGUgZ3Vlc3QgbWlncmF0
-aW9uLg0KDQpDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+DQpDYzogSW5n
-byBNb2xuYXIgPG1pbmdvQHJlZGhhdC5jb20+DQpDYzogIkguIFBldGVyIEFudmluIiA8aHBhQHp5
-dG9yLmNvbT4NCkNjOiBQYW9sbyBCb256aW5pIDxwYm9uemluaUByZWRoYXQuY29tPg0KQ2M6ICJS
-YWRpbSBLcsSNbcOhxZkiIDxya3JjbWFyQHJlZGhhdC5jb20+DQpDYzogSm9lcmcgUm9lZGVsIDxq
-b3JvQDhieXRlcy5vcmc+DQpDYzogQm9yaXNsYXYgUGV0a292IDxicEBzdXNlLmRlPg0KQ2M6IFRv
-bSBMZW5kYWNreSA8dGhvbWFzLmxlbmRhY2t5QGFtZC5jb20+DQpDYzogeDg2QGtlcm5lbC5vcmcN
-CkNjOiBrdm1Admdlci5rZXJuZWwub3JnDQpDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-Zw0KU2lnbmVkLW9mZi1ieTogQnJpamVzaCBTaW5naCA8YnJpamVzaC5zaW5naEBhbWQuY29tPg0K
-LS0tDQogYXJjaC94ODYvaW5jbHVkZS9hc20vbWVtX2VuY3J5cHQuaCB8ICAzICsrDQogYXJjaC94
-ODYvbW0vbWVtX2VuY3J5cHQuYyAgICAgICAgICB8IDQ1ICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrLQ0KIGFyY2gveDg2L21tL3BhZ2VhdHRyLmMgICAgICAgICAgICAgfCAxNSArKysrKysr
-KysrDQogMyBmaWxlcyBjaGFuZ2VkLCA2MiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQoN
-CmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tZW1fZW5jcnlwdC5oIGIvYXJjaC94
-ODYvaW5jbHVkZS9hc20vbWVtX2VuY3J5cHQuaA0KaW5kZXggMGMxOTZjNDdkNjIxLi42ZTY1NGFi
-NWE4ZTQgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tZW1fZW5jcnlwdC5oDQor
-KysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tZW1fZW5jcnlwdC5oDQpAQCAtOTQsNCArOTQsNyBA
-QCBleHRlcm4gY2hhciBfX3N0YXJ0X2Jzc19kZWNyeXB0ZWRbXSwgX19lbmRfYnNzX2RlY3J5cHRl
-ZFtdLCBfX3N0YXJ0X2Jzc19kZWNyeXB0ZQ0KIA0KICNlbmRpZgkvKiBfX0FTU0VNQkxZX18gKi8N
-CiANCitleHRlcm4gdm9pZCBzZXRfbWVtb3J5X2VuY19kZWNfaHlwZXJjYWxsKHVuc2lnbmVkIGxv
-bmcgdmFkZHIsDQorCQkJCQkgdW5zaWduZWQgbG9uZyBzaXplLCBib29sIGVuYyk7DQorDQogI2Vu
-ZGlmCS8qIF9fWDg2X01FTV9FTkNSWVBUX0hfXyAqLw0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L21t
-L21lbV9lbmNyeXB0LmMgYi9hcmNoL3g4Ni9tbS9tZW1fZW5jcnlwdC5jDQppbmRleCBlMGRmOTZm
-ZGZlNDYuLmYzZmRhMWRlMjg2OSAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L21tL21lbV9lbmNyeXB0
-LmMNCisrKyBiL2FyY2gveDg2L21tL21lbV9lbmNyeXB0LmMNCkBAIC0xNSw2ICsxNSw3IEBADQog
-I2luY2x1ZGUgPGxpbnV4L2RtYS1kaXJlY3QuaD4NCiAjaW5jbHVkZSA8bGludXgvc3dpb3RsYi5o
-Pg0KICNpbmNsdWRlIDxsaW51eC9tZW1fZW5jcnlwdC5oPg0KKyNpbmNsdWRlIDxsaW51eC9rdm1f
-cGFyYS5oPg0KIA0KICNpbmNsdWRlIDxhc20vdGxiZmx1c2guaD4NCiAjaW5jbHVkZSA8YXNtL2Zp
-eG1hcC5oPg0KQEAgLTI1LDYgKzI2LDcgQEANCiAjaW5jbHVkZSA8YXNtL3Byb2Nlc3Nvci1mbGFn
-cy5oPg0KICNpbmNsdWRlIDxhc20vbXNyLmg+DQogI2luY2x1ZGUgPGFzbS9jbWRsaW5lLmg+DQor
-I2luY2x1ZGUgPGFzbS9rdm1fcGFyYS5oPg0KIA0KICNpbmNsdWRlICJtbV9pbnRlcm5hbC5oIg0K
-IA0KQEAgLTE5Miw2ICsxOTQsNDUgQEAgdm9pZCBfX2luaXQgc21lX2Vhcmx5X2luaXQodm9pZCkN
-CiAJCXN3aW90bGJfZm9yY2UgPSBTV0lPVExCX0ZPUkNFOw0KIH0NCiANCit2b2lkIHNldF9tZW1v
-cnlfZW5jX2RlY19oeXBlcmNhbGwodW5zaWduZWQgbG9uZyB2YWRkciwgdW5zaWduZWQgbG9uZyBz
-eiwgYm9vbCBlbmMpDQorew0KKwl1bnNpZ25lZCBsb25nIHZhZGRyX2VuZCwgdmFkZHJfbmV4dDsN
-CisNCisJdmFkZHJfZW5kID0gdmFkZHIgKyBzejsNCisNCisJZm9yICg7IHZhZGRyIDwgdmFkZHJf
-ZW5kOyB2YWRkciA9IHZhZGRyX25leHQpIHsNCisJCWludCBwc2l6ZSwgcG1hc2ssIGxldmVsOw0K
-KwkJdW5zaWduZWQgbG9uZyBwZm47DQorCQlwdGVfdCAqa3B0ZTsNCisNCisJCWtwdGUgPSBsb29r
-dXBfYWRkcmVzcyh2YWRkciwgJmxldmVsKTsNCisJCWlmICgha3B0ZSB8fCBwdGVfbm9uZSgqa3B0
-ZSkpDQorCQkJcmV0dXJuOw0KKw0KKwkJc3dpdGNoIChsZXZlbCkgew0KKwkJY2FzZSBQR19MRVZF
-TF80SzoNCisJCQlwZm4gPSBwdGVfcGZuKCprcHRlKTsNCisJCQlicmVhazsNCisJCWNhc2UgUEdf
-TEVWRUxfMk06DQorCQkJcGZuID0gcG1kX3BmbigqKHBtZF90ICopa3B0ZSk7DQorCQkJYnJlYWs7
-DQorCQljYXNlIFBHX0xFVkVMXzFHOg0KKwkJCXBmbiA9IHB1ZF9wZm4oKihwdWRfdCAqKWtwdGUp
-Ow0KKwkJCWJyZWFrOw0KKwkJZGVmYXVsdDoNCisJCQlyZXR1cm47DQorCQl9DQorDQorCQlwc2l6
-ZSA9IHBhZ2VfbGV2ZWxfc2l6ZShsZXZlbCk7DQorCQlwbWFzayA9IHBhZ2VfbGV2ZWxfbWFzayhs
-ZXZlbCk7DQorDQorCQlrdm1fc2V2X2h5cGVyY2FsbDMoS1ZNX0hDX1BBR0VfRU5DX1NUQVRVUywN
-CisJCQkJICAgcGZuIDw8IFBBR0VfU0hJRlQsIHBzaXplID4+IFBBR0VfU0hJRlQsIGVuYyk7DQor
-DQorCQl2YWRkcl9uZXh0ID0gKHZhZGRyICYgcG1hc2spICsgcHNpemU7DQorCX0NCit9DQorDQog
-c3RhdGljIHZvaWQgX19pbml0IF9fc2V0X2Nscl9wdGVfZW5jKHB0ZV90ICprcHRlLCBpbnQgbGV2
-ZWwsIGJvb2wgZW5jKQ0KIHsNCiAJcGdwcm90X3Qgb2xkX3Byb3QsIG5ld19wcm90Ow0KQEAgLTI0
-OSwxMiArMjkwLDEzIEBAIHN0YXRpYyB2b2lkIF9faW5pdCBfX3NldF9jbHJfcHRlX2VuYyhwdGVf
-dCAqa3B0ZSwgaW50IGxldmVsLCBib29sIGVuYykNCiBzdGF0aWMgaW50IF9faW5pdCBlYXJseV9z
-ZXRfbWVtb3J5X2VuY19kZWModW5zaWduZWQgbG9uZyB2YWRkciwNCiAJCQkJCSAgIHVuc2lnbmVk
-IGxvbmcgc2l6ZSwgYm9vbCBlbmMpDQogew0KLQl1bnNpZ25lZCBsb25nIHZhZGRyX2VuZCwgdmFk
-ZHJfbmV4dDsNCisJdW5zaWduZWQgbG9uZyB2YWRkcl9lbmQsIHZhZGRyX25leHQsIHN0YXJ0Ow0K
-IAl1bnNpZ25lZCBsb25nIHBzaXplLCBwbWFzazsNCiAJaW50IHNwbGl0X3BhZ2Vfc2l6ZV9tYXNr
-Ow0KIAlpbnQgbGV2ZWwsIHJldDsNCiAJcHRlX3QgKmtwdGU7DQogDQorCXN0YXJ0ID0gdmFkZHI7
-DQogCXZhZGRyX25leHQgPSB2YWRkcjsNCiAJdmFkZHJfZW5kID0gdmFkZHIgKyBzaXplOw0KIA0K
-QEAgLTMwOSw2ICszNTEsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBlYXJseV9zZXRfbWVtb3J5X2Vu
-Y19kZWModW5zaWduZWQgbG9uZyB2YWRkciwNCiANCiAJcmV0ID0gMDsNCiANCisJc2V0X21lbW9y
-eV9lbmNfZGVjX2h5cGVyY2FsbChzdGFydCwgc2l6ZSwgZW5jKTsNCiBvdXQ6DQogCV9fZmx1c2hf
-dGxiX2FsbCgpOw0KIAlyZXR1cm4gcmV0Ow0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L21tL3BhZ2Vh
-dHRyLmMgYi9hcmNoL3g4Ni9tbS9wYWdlYXR0ci5jDQppbmRleCA2YTlhNzdhNDAzYzkuLjk3MWY3
-MGY1OGY0OSAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L21tL3BhZ2VhdHRyLmMNCisrKyBiL2FyY2gv
-eDg2L21tL3BhZ2VhdHRyLmMNCkBAIC0yNiw2ICsyNiw3IEBADQogI2luY2x1ZGUgPGFzbS9wcm90
-by5oPg0KICNpbmNsdWRlIDxhc20vcGF0Lmg+DQogI2luY2x1ZGUgPGFzbS9zZXRfbWVtb3J5Lmg+
-DQorI2luY2x1ZGUgPGFzbS9tZW1fZW5jcnlwdC5oPg0KIA0KICNpbmNsdWRlICJtbV9pbnRlcm5h
-bC5oIg0KIA0KQEAgLTIwMjAsNiArMjAyMSwxMiBAQCBpbnQgc2V0X21lbW9yeV9nbG9iYWwodW5z
-aWduZWQgbG9uZyBhZGRyLCBpbnQgbnVtcGFnZXMpDQogCQkJCSAgICBfX3BncHJvdChfUEFHRV9H
-TE9CQUwpLCAwKTsNCiB9DQogDQordm9pZCBfX2F0dHJpYnV0ZV9fKCh3ZWFrKSkgc2V0X21lbW9y
-eV9lbmNfZGVjX2h5cGVyY2FsbCh1bnNpZ25lZCBsb25nIGFkZHIsDQorCQkJCQkJCXVuc2lnbmVk
-IGxvbmcgc2l6ZSwNCisJCQkJCQkJYm9vbCBlbmMpDQorew0KK30NCisNCiBzdGF0aWMgaW50IF9f
-c2V0X21lbW9yeV9lbmNfZGVjKHVuc2lnbmVkIGxvbmcgYWRkciwgaW50IG51bXBhZ2VzLCBib29s
-IGVuYykNCiB7DQogCXN0cnVjdCBjcGFfZGF0YSBjcGE7DQpAQCAtMjA2MCw2ICsyMDY3LDE0IEBA
-IHN0YXRpYyBpbnQgX19zZXRfbWVtb3J5X2VuY19kZWModW5zaWduZWQgbG9uZyBhZGRyLCBpbnQg
-bnVtcGFnZXMsIGJvb2wgZW5jKQ0KIAkgKi8NCiAJY3BhX2ZsdXNoKCZjcGEsIDApOw0KIA0KKwkv
-Kg0KKwkgKiBXaGVuIFNFViBpcyBhY3RpdmUsIG5vdGlmeSBoeXBlcnZpc29yIHRoYXQgYSBnaXZl
-biBtZW1vcnkgcmFuZ2UgaXMgbWFwcGVkDQorCSAqIGVuY3J5cHRlZCBvciBkZWNyeXB0ZWQuIEh5
-cGVydmlzb3Igd2lsbCB1c2UgdGhpcyBpbmZvcm1hdGlvbiBkdXJpbmcNCisJICogdGhlIFZNIG1p
-Z3JhdGlvbi4NCisJICovDQorCWlmIChzZXZfYWN0aXZlKCkpDQorCQlzZXRfbWVtb3J5X2VuY19k
-ZWNfaHlwZXJjYWxsKGFkZHIsIG51bXBhZ2VzIDw8IFBBR0VfU0hJRlQsIGVuYyk7DQorDQogCXJl
-dHVybiByZXQ7DQogfQ0KIA0KLS0gDQoyLjE3LjENCg0K
+
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+I'm getting some nastyness from lockref / memory management.
+
+Any ideas? Any ideas who to talk to?
+
+									Pavel
+
+
+
+[    0.000000] Linux version 5.2.0-next-20190708+ (pavel@pollux.denx.de) (g=
+cc version 9.1.1 20190503 (Red Hat 9.1.1-1) (GCC)) #55 SMP Wed Jul 10 09:30=
+:51 CEST 2019
+[    0.000000] Disabled fast string operations
+[    0.000000] x86/fpu: x87 FPU will use FXSAVE
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009efff] usable
+=2E..
+[ 5347.093378] wlan0: authenticate with 5c:f4:ab:10:d2:bb
+[ 5347.093511] wlan0: send auth to 5c:f4:ab:10:d2:bb (try 1/3)
+[ 5347.096461] wlan0: authenticated
+[ 5347.100328] wlan0: associate with 5c:f4:ab:10:d2:bb (try 1/3)
+[ 5347.103232] wlan0: RX AssocResp from 5c:f4:ab:10:d2:bb (capab=3D0x411 st=
+atus=3D0 aid=3D2)
+[ 5347.105009] wlan0: associated
+[ 6552.596393] ------------[ cut here ]------------
+[ 6552.596412] kernel BUG at lib/lockref.c:189!
+[ 6552.596433] invalid opcode: 0000 [#1] SMP PTI
+[ 6552.596442] CPU: 0 PID: 8494 Comm: Chrome_ProcessL Not tainted 5.2.0-nex=
+t-20190708+ #55
+[ 6552.596447] Hardware name: LENOVO 17097HU/17097HU, BIOS 7BETD8WW (2.19 )=
+ 03/31/2011
+[ 6552.596463] EIP: lockref_mark_dead+0x10/0x20
+[ 6552.596471] Code: c0 01 be 01 00 00 00 89 43 20 89 d8 e8 f9 5d 93 00 89 =
+f0 5b 5e 5d c3 8d 76 00 8b 10 85 d2 74 0a c7 40 20 80 ff ff ff c3 66 90 <0f=
+> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 89 c2 83 e0 0f c0
+[ 6552.596478] EAX: ef4b7830 EBX: ef4b77d8 ECX: 00000001 EDX: 00000000
+[ 6552.596484] ESI: e647a3f0 EDI: ef4b7830 EBP: d9bfde0c ESP: d9bfddfc
+[ 6552.596491] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010246
+[ 6552.596497] CR0: 80050033 CR2: 071e03d0 CR3: 203e2000 CR4: 000006b0
+[ 6552.596502] Call Trace:
+[ 6552.596515]  ? __dentry_kill+0x1f/0x160
+[ 6552.596524]  shrink_dcache_parent+0xb0/0x110
+[ 6552.596532]  d_invalidate+0x48/0xc0
+[ 6552.596541]  proc_flush_task+0x78/0x150
+[ 6552.596552]  release_task+0x4f/0x450
+[ 6552.596560]  wait_consider_task+0x7c9/0x850
+[ 6552.596568]  do_wait+0x11b/0x230
+[ 6552.596575]  kernel_wait4+0x8b/0x130
+[ 6552.596583]  ? task_stopped_code+0x40/0x40
+[ 6552.596590]  sys_waitpid+0x13/0x15
+[ 6552.596597]  do_int80_syscall_32+0x4b/0xf0
+[ 6552.596608]  entry_INT80_32+0x110/0x110
+[ 6552.596614] EIP: 0xb7f8cc42
+[ 6552.596621] Code: 65 8b 15 04 00 00 00 8b 0e 8b 0c ca 83 f9 ff 75 0c 89 =
+04 24 89 f0 e8 b3 fe ff ff eb 05 8b 46 04 01 c8 83 c4 14 5b 5e c3 cd 80 <c3=
+> 8d b6 00 00 00 00 8d bc 27 00 00 00 00 8b 1c 24 c3 8d b6 00 00
+[ 6552.596628] EAX: ffffffda EBX: 0000212d ECX: 00000000 EDX: 00000000
+[ 6552.596635] ESI: 8aec3b40 EDI: 09004d20 EBP: 8aec3158 ESP: 8aec3110
+[ 6552.596641] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000293
+[ 6552.596647] Modules linked in:
+[ 6552.596658] ---[ end trace 8058c26986d91112 ]---
+[ 6552.596667] EIP: lockref_mark_dead+0x10/0x20
+[ 6552.596674] Code: c0 01 be 01 00 00 00 89 43 20 89 d8 e8 f9 5d 93 00 89 =
+f0 5b 5e 5d c3 8d 76 00 8b 10 85 d2 74 0a c7 40 20 80 ff ff ff c3 66 90 <0f=
+> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 89 c2 83 e0 0f c0
+[ 6552.596681] EAX: ef4b7830 EBX: ef4b77d8 ECX: 00000001 EDX: 00000000
+[ 6552.596687] ESI: e647a3f0 EDI: ef4b7830 EBP: d9bfde0c ESP: d9bfddfc
+[ 6552.596693] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010246
+[ 6552.596700] CR0: 80050033 CR2: 071e03d0 CR3: 203e2000 CR4: 000006b0
+[ 6580.173598] watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [WorkerPoo=
+l/7703:7703]
+[ 6580.173608] Modules linked in:
+[ 6580.173620] CPU: 1 PID: 7703 Comm: WorkerPool/7703 Tainted: G      D    =
+       5.2.0-next-20190708+ #55
+[ 6580.173626] Hardware name: LENOVO 17097HU/17097HU, BIOS 7BETD8WW (2.19 )=
+ 03/31/2011
+[ 6580.173642] EIP: queued_spin_lock_slowpath+0x40/0x1d0
+[ 6580.173651] Code: f0 0f ba 29 08 0f 92 c2 8b 01 0f b6 d2 c1 e2 08 30 e4 =
+09 d0 a9 00 01 ff ff 75 27 85 c0 74 13 8b 01 84 c0 74 0d 8d 74 26 00 90 <f3=
+> 90 8b 01 84 c0 75 f8 b8 01 00 00 00 66 89 01 c3 8d b4 26 00 00
+[ 6580.173658] EAX: 00000101 EBX: e647a448 ECX: e647a448 EDX: 00000000
+[ 6580.173664] ESI: ddd18358 EDI: e647a448 EBP: eefe1b44 ESP: eefe1b3c
+[ 6580.173671] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00000202
+[ 6580.173678] CR0: 80050033 CR2: 0a0e4748 CR3: 203e2000 CR4: 000006b0
+[ 6580.173684] Call Trace:
+[ 6580.173694]  ? do_raw_spin_lock+0xb9/0xc0
+[ 6580.173705]  _raw_spin_lock+0x22/0x30
+[ 6580.173715]  ? shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6580.173723]  shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6580.173731]  shrink_dentry_list+0x27/0x100
+[ 6580.173739]  prune_dcache_sb+0x42/0x60
+[ 6580.173747]  ? d_lru_shrink_move+0x50/0x50
+[ 6580.173755]  super_cache_scan+0xc9/0x160
+[ 6580.173763]  shrink_slab.constprop.0+0x1ae/0x390
+[ 6580.173772]  shrink_node+0x7b1/0x9d0
+[ 6580.173781]  do_try_to_free_pages+0xa1/0x250
+[ 6580.173788]  ? do_try_to_free_pages+0xa1/0x250
+[ 6580.173795]  try_to_free_pages+0x15e/0x430
+[ 6580.173805]  __alloc_pages_nodemask+0x44d/0xd00
+[ 6580.173816]  wp_page_copy+0x67/0x680
+[ 6580.173825]  do_wp_page+0x75/0x450
+[ 6580.173833]  ? _raw_spin_lock+0x22/0x30
+[ 6580.173840]  handle_mm_fault+0x598/0xbd3
+[ 6580.173848]  ? __lock_acquire.isra.0+0x2b8/0x4f0
+[ 6580.173858]  __do_page_fault+0x15e/0x410
+[ 6580.173865]  ? vmalloc_sync_all+0x220/0x220
+[ 6580.173872]  do_page_fault+0x24/0x137
+[ 6580.173879]  ? vmalloc_sync_all+0x220/0x220
+[ 6580.173886]  common_exception+0x166/0x16e
+[ 6580.173892] EIP: 0x8cad20
+[ 6580.173899] Code: a8 73 5b fe 89 4c 24 04 c7 44 24 08 76 00 00 00 c7 04 =
+24 01 00 00 00 89 44 24 4c e8 4a 98 ff ff 8b 44 24 4c 8b 4c 24 48 89 31 <89=
+> 7e 04 e9 84 02 00 00 89 7c 24 08 89 44 24 04 89 34 24 e8 a8 ea
+[ 6580.173907] EAX: 0f6c1230 EBX: 08d83524 ECX: 08fbc8c0 EDX: fffffb9b
+[ 6580.173913] ESI: 0f85a000 EDI: fffffb9b EBP: b2af35d8 ESP: b2af30b0
+[ 6580.173920] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00010246
+[ 6608.173599] watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [WorkerPoo=
+l/7703:7703]
+[ 6608.173607] Modules linked in:
+[ 6608.173619] CPU: 1 PID: 7703 Comm: WorkerPool/7703 Tainted: G      D    =
+  L    5.2.0-next-20190708+ #55
+[ 6608.173624] Hardware name: LENOVO 17097HU/17097HU, BIOS 7BETD8WW (2.19 )=
+ 03/31/2011
+[ 6608.173640] EIP: queued_spin_lock_slowpath+0x44/0x1d0
+[ 6608.173648] Code: 08 0f 92 c2 8b 01 0f b6 d2 c1 e2 08 30 e4 09 d0 a9 00 =
+01 ff ff 75 27 85 c0 74 13 8b 01 84 c0 74 0d 8d 74 26 00 90 f3 90 8b 01 <84=
+> c0 75 f8 b8 01 00 00 00 66 89 01 c3 8d b4 26 00 00 00 00 f6 c4
+[ 6608.173655] EAX: 00000101 EBX: e647a448 ECX: e647a448 EDX: 00000000
+[ 6608.173661] ESI: ddd18358 EDI: e647a448 EBP: eefe1b44 ESP: eefe1b3c
+[ 6608.173668] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00000202
+[ 6608.173675] CR0: 80050033 CR2: 0a0e4748 CR3: 203e2000 CR4: 000006b0
+[ 6608.173680] Call Trace:
+[ 6608.173690]  ? do_raw_spin_lock+0xb9/0xc0
+[ 6608.173701]  _raw_spin_lock+0x22/0x30
+[ 6608.173712]  ? shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6608.173719]  shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6608.173727]  shrink_dentry_list+0x27/0x100
+[ 6608.173735]  prune_dcache_sb+0x42/0x60
+[ 6608.173743]  ? d_lru_shrink_move+0x50/0x50
+[ 6608.173751]  super_cache_scan+0xc9/0x160
+[ 6608.173760]  shrink_slab.constprop.0+0x1ae/0x390
+[ 6608.173768]  shrink_node+0x7b1/0x9d0
+[ 6608.173777]  do_try_to_free_pages+0xa1/0x250
+[ 6608.173784]  ? do_try_to_free_pages+0xa1/0x250
+[ 6608.173791]  try_to_free_pages+0x15e/0x430
+[ 6608.173801]  __alloc_pages_nodemask+0x44d/0xd00
+[ 6608.173813]  wp_page_copy+0x67/0x680
+[ 6608.173822]  do_wp_page+0x75/0x450
+[ 6608.173829]  ? _raw_spin_lock+0x22/0x30
+[ 6608.173836]  handle_mm_fault+0x598/0xbd3
+[ 6608.173844]  ? __lock_acquire.isra.0+0x2b8/0x4f0
+[ 6608.173854]  __do_page_fault+0x15e/0x410
+[ 6608.173862]  ? vmalloc_sync_all+0x220/0x220
+[ 6608.173869]  do_page_fault+0x24/0x137
+[ 6608.173876]  ? vmalloc_sync_all+0x220/0x220
+[ 6608.173883]  common_exception+0x166/0x16e
+[ 6608.173889] EIP: 0x8cad20
+[ 6608.173896] Code: a8 73 5b fe 89 4c 24 04 c7 44 24 08 76 00 00 00 c7 04 =
+24 01 00 00 00 89 44 24 4c e8 4a 98 ff ff 8b 44 24 4c 8b 4c 24 48 89 31 <89=
+> 7e 04 e9 84 02 00 00 89 7c 24 08 89 44 24 04 89 34 24 e8 a8 ea
+[ 6608.173903] EAX: 0f6c1230 EBX: 08d83524 ECX: 08fbc8c0 EDX: fffffb9b
+[ 6608.173909] ESI: 0f85a000 EDI: fffffb9b EBP: b2af35d8 ESP: b2af30b0
+[ 6608.173916] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00010246
+[ 6612.628114] rcu: INFO: rcu_sched self-detected stall on CPU
+[ 6612.628114] rcu: 	1-....: (14999 ticks this GP) idle=3D07a/1/0x40000002 =
+softirq=3D778997/778997 fqs=3D7465=20
+[ 6612.628114] 	(t=3D15000 jiffies g=3D940129 q=3D41142)
+[ 6612.628146] NMI backtrace for cpu 1
+[ 6612.628146] CPU: 1 PID: 7703 Comm: WorkerPool/7703 Tainted: G      D    =
+  L    5.2.0-next-20190708+ #55
+[ 6612.628146] Hardware name: LENOVO 17097HU/17097HU, BIOS 7BETD8WW (2.19 )=
+ 03/31/2011
+[ 6612.628165] Call Trace:
+[ 6612.628165]  dump_stack+0x47/0x5e
+[ 6612.628165]  nmi_cpu_backtrace.cold+0x10/0x48
+[ 6612.628165]  ? lapic_can_unplug_cpu.cold+0x3d/0x3d
+[ 6612.628165]  nmi_trigger_cpumask_backtrace+0x8f/0x91
+[ 6612.628165]  arch_trigger_cpumask_backtrace+0x10/0x20
+[ 6612.628165]  rcu_dump_cpu_stacks+0x6a/0x90
+[ 6612.628165]  rcu_sched_clock_irq.cold+0x18f/0x352
+[ 6612.628165]  update_process_times+0x23/0x60
+[ 6612.628165]  tick_sched_handle.isra.0+0x2e/0x60
+[ 6612.628165]  tick_sched_timer+0x3c/0x90
+[ 6612.628165]  ? tick_sched_handle.isra.0+0x60/0x60
+[ 6612.628165]  __hrtimer_run_queues+0x105/0x2e0
+[ 6612.628165]  ? tick_sched_handle.isra.0+0x60/0x60
+[ 6612.628165]  hrtimer_interrupt+0x10e/0x260
+[ 6612.628165]  smp_apic_timer_interrupt+0x68/0x160
+[ 6612.628165]  apic_timer_interrupt+0x11b/0x120
+[ 6612.628165] EIP: queued_spin_lock_slowpath+0x42/0x1d0
+[ 6612.628165] Code: ba 29 08 0f 92 c2 8b 01 0f b6 d2 c1 e2 08 30 e4 09 d0 =
+a9 00 01 ff ff 75 27 85 c0 74 13 8b 01 84 c0 74 0d 8d 74 26 00 90 f3 90 <8b=
+> 01 84 c0 75 f8 b8 01 00 00 00 66 89 01 c3 8d b4 26 00 00 00 00
+[ 6612.628165] EAX: 00000101 EBX: e647a448 ECX: e647a448 EDX: 00000000
+[ 6612.628165] ESI: ddd18358 EDI: e647a448 EBP: eefe1b44 ESP: eefe1b3c
+[ 6612.628165] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00000202
+[ 6612.628165]  ? queued_spin_lock_slowpath+0x42/0x1d0
+[ 6612.628165]  ? do_raw_spin_lock+0xb9/0xc0
+[ 6612.628165]  _raw_spin_lock+0x22/0x30
+[ 6612.628165]  ? shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6612.628165]  shrink_lock_dentry.part.0+0x9f/0xf0
+[ 6612.628165]  shrink_dentry_list+0x27/0x100
+[ 6612.628165]  prune_dcache_sb+0x42/0x60
+[ 6612.628165]  ? d_lru_shrink_move+0x50/0x50
+[ 6612.628165]  super_cache_scan+0xc9/0x160
+[ 6612.628165]  shrink_slab.constprop.0+0x1ae/0x390
+[ 6612.628165]  shrink_node+0x7b1/0x9d0
+[ 6612.628165]  do_try_to_free_pages+0xa1/0x250
+[ 6612.628165]  ? do_try_to_free_pages+0xa1/0x250
+[ 6612.628165]  try_to_free_pages+0x15e/0x430
+[ 6612.628165]  __alloc_pages_nodemask+0x44d/0xd00
+[ 6612.628165]  wp_page_copy+0x67/0x680
+[ 6612.628165]  do_wp_page+0x75/0x450
+[ 6612.628165]  ? _raw_spin_lock+0x22/0x30
+[ 6612.628165]  handle_mm_fault+0x598/0xbd3
+[ 6612.628165]  ? __lock_acquire.isra.0+0x2b8/0x4f0
+[ 6612.628165]  __do_page_fault+0x15e/0x410
+[ 6612.628165]  ? vmalloc_sync_all+0x220/0x220
+[ 6612.628165]  do_page_fault+0x24/0x137
+[ 6612.628165]  ? vmalloc_sync_all+0x220/0x220
+[ 6612.628165]  common_exception+0x166/0x16e
+[ 6612.628165] EIP: 0x8cad20
+[ 6612.628165] Code: a8 73 5b fe 89 4c 24 04 c7 44 24 08 76 00 00 00 c7 04 =
+24 01 00 00 00 89 44 24 4c e8 4a 98 ff ff 8b 44 24 4c 8b 4c 24 48 89 31 <89=
+> 7e 04 e9 84 02 00 00 89 7c 24 08 89 44 24 04 89 34 24 e8 a8 ea
+[ 6612.628165] EAX: 0f6c1230 EBX: 08d83524 ECX: 08fbc8c0 EDX: fffffb9b
+[ 6612.628165] ESI: 0f85a000 EDI: fffffb9b EBP: b2af35d8 ESP: b2af30b0
+[ 6612.628165] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00010246
+
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0mRtcACgkQMOfwapXb+vKeegCgl0FATEDnjbLvn8/vaQxNadcj
+2KYAnRAZzh/D06fLj5m6EGTz0jo6egZv
+=U67j
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
