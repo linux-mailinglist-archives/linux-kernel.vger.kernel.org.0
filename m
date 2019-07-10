@@ -2,178 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA78649A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 415E3649B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:34:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbfGJPbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:31:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40469 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbfGJPbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:31:34 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so1271841pfp.7;
-        Wed, 10 Jul 2019 08:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pm+PJklPDL7RXAYEnFIQUHQOZIeIWdE5Djef4qB8TxU=;
-        b=TxwfYVCumbWfzYlPAawF+xfNKfJq391aS7rxGNYsxY8qDeKDep/0JIhBv2TFfgiWvx
-         vBZOK3ZOt62Bv5yzzUtKbH2xUyq/5NCF4yfBIh+UjMZuyN4hEYTSPiim1IKK6aUFca0G
-         Q1FPB+hCYKuJkZCWZHno5U+KgNJ8bgSDPkWnA0EJoAzU6G7BUMrnVI1haZJd0yGyNkAt
-         +6dL6YXRzl0MApe948zf1Qv3KjAlP8c4pr+edE7mj2JPA01HxNzqJZPNSm+8Sz5DIHnC
-         ziA/axYEAtF+xtkMz4vAIcRfaAAPbxi2tHMYdYuf7vVRADx7IkR052QI7tAkk20zZgQ9
-         kJqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pm+PJklPDL7RXAYEnFIQUHQOZIeIWdE5Djef4qB8TxU=;
-        b=bXRusyFPWm28v/SqrKYqqPCCp+bg+W++2sNTa0weOdhBikiL8KBguZ1US29CImv7J1
-         uvnPUcr1WYt9mt5/VY8Nj2YOViRV+dYjMc4NfcnjYZkMp7yjRwEfJB2TycV9f38WSFn7
-         OKkjggxpKnsLwWFxM+0qDgkv47XFcL4I7bqNd82UC7VroFxtAAkTmGFz6qcb4nWrKlb8
-         Q+naULCny2nYbk59BXji68zzk/zJKTDUdktVeOTgasoaXIWdmeSEKx7VPMCRh15zxQyV
-         6jyxFtbKQN3cYtT4Ihrw9JnkSn/K4Jd6CR5ZIfVDr+iOHs4SsAoILp5Ixnzdp7NrIZB4
-         jmVQ==
-X-Gm-Message-State: APjAAAVXYJ03/6cbLrMej5vTG7jGrCigSw/lpTtH6VICVjFCLVqh11jS
-        WVNwZvG7BndVxRXMagfwMt4=
-X-Google-Smtp-Source: APXvYqxVoXAdDOWm/o5rlTb6G5DyCVNDnc9gPfrj14oyqx3axmaPC1ijC03nP5WbU9+AMR0pLQe52g==
-X-Received: by 2002:a63:5c1c:: with SMTP id q28mr37077097pgb.288.1562772693385;
-        Wed, 10 Jul 2019 08:31:33 -0700 (PDT)
-Received: from localhost.localdomain (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
-        by smtp.gmail.com with ESMTPSA id q1sm2794918pfg.84.2019.07.10.08.31.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 10 Jul 2019 08:31:32 -0700 (PDT)
-From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
-To:     Jonathan Corbet <corbet@lwn.net>, skhan@linuxfoundation.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shobhit Kukreti <shobhitkukreti@gmail.com>
-Subject: [PATCH v3] Documentation: filesystems: Convert ufs.txt to reStructuredText format
-Date:   Wed, 10 Jul 2019 08:31:23 -0700
-Message-Id: <1562772683-32422-1-git-send-email-shobhitkukreti@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20190710092605.73ddee8b@coco.lan>
-References: <20190710092605.73ddee8b@coco.lan>
+        id S1727290AbfGJPeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:34:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727063AbfGJPeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 11:34:11 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C752620844;
+        Wed, 10 Jul 2019 15:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562772850;
+        bh=u3p6fk/eNzvNwJBVFwrcRvH5vQ9TKbqI7pjV0FMUxXE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xB9CdbEClpPfPI0vPARiZ0gwN6+7iFKMa/Q6vtKPEn+BTk071lxLLim3DRSs5rhGS
+         YEMhJDQPf6WlV+/PbkAiF+Emt36Savs17iN3blCrw90XwIX8/5HALkRQchW0YUyLlX
+         EhuZwYyyY8wVp/MmFhbfhELslk2Fn6Hd4ryQxDhQ=
+Date:   Wed, 10 Jul 2019 17:34:07 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        syzbot+370a6b0f11867bf13515@syzkaller.appspotmail.com,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/2] perf/hw_breakpoint: Fix breakpoint overcommit issue
+Message-ID: <20190710153406.GA18838@lenoir>
+References: <20190709134821.8027-1-frederic@kernel.org>
+ <20190710140421.GP3402@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710140421.GP3402@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the plain text documentation of ufs.txt to
-reStructuredText format. Added to documentation build process
-and verified with make htmldocs
+On Wed, Jul 10, 2019 at 04:04:21PM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 09, 2019 at 03:48:19PM +0200, Frederic Weisbecker wrote:
+> > 
+> > Syzbot has found a breakpoint overcommit issue:
+> > 
+> > https://lore.kernel.org/lkml/000000000000639f6a0584d11b82@google.com/
+> > 
+> > It took me a long time to find out what the actual root problem was. Also
+> > its reproducer only worked on a few month old kernel but it didn't feel like
+> > the issue was actually solved.
+> > 
+> > I eventually cooked a reproducer that works with latest upstream, see in
+> > the end of this message.
+> > 
+> > The fix is just a few liner but implies to shut down the context swapping
+> > optimization for contexts containing breakpoints.
+> > 
+> > Also I feel like uprobes may be concerned as well as it seems to make use
+> > of event.hw->target after pmu::init().
+> 
+> Can't we simply swizzle event.hw->target along too?
 
-Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
----
-Changes in v3:
-        1. Reverted to minimally changed ufs.rst
-	2. Fix Minor Space Issues
-        3. Used -M1 in git format-patch to show files as renamed
-Changes in v2:
-        1. Removed flat-table
-        2. Moved ufs.rst to admin-guide
+You mean remove it? But it's still needed by breakpoint code during all the event
+lifecycle (init, destroy and anytime in-between).
 
- Documentation/admin-guide/index.rst                |  1 +
- .../{filesystems/ufs.txt => admin-guide/ufs.rst}   | 36 +++++++++++++---------
- 2 files changed, 23 insertions(+), 14 deletions(-)
- rename Documentation/{filesystems/ufs.txt => admin-guide/ufs.rst} (69%)
-
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 2871b79..9bfb076 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -71,6 +71,7 @@ configure specific aspects of kernel behavior to your liking.
-    bcache
-    ext4
-    jfs
-+   ufs
-    pm/index
-    thunderbolt
-    LSM/index
-diff --git a/Documentation/filesystems/ufs.txt b/Documentation/admin-guide/ufs.rst
-similarity index 69%
-rename from Documentation/filesystems/ufs.txt
-rename to Documentation/admin-guide/ufs.rst
-index 7a602ad..55d1529 100644
---- a/Documentation/filesystems/ufs.txt
-+++ b/Documentation/admin-guide/ufs.rst
-@@ -1,37 +1,45 @@
--USING UFS
-+=========
-+Using UFS
- =========
- 
- mount -t ufs -o ufstype=type_of_ufs device dir
- 
- 
--UFS OPTIONS
-+UFS Options
- ===========
- 
- ufstype=type_of_ufs
- 	UFS is a file system widely used in different operating systems.
- 	The problem are differences among implementations. Features of
- 	some implementations are undocumented, so its hard to recognize
--	type of ufs automatically. That's why user must specify type of 
-+	type of ufs automatically. That's why user must specify type of
- 	ufs manually by mount option ufstype. Possible values are:
- 
--	old	old format of ufs
-+	old
-+                old format of ufs
- 		default value, supported as read-only
- 
--	44bsd	used in FreeBSD, NetBSD, OpenBSD
-+	44bsd
-+                used in FreeBSD, NetBSD, OpenBSD
- 		supported as read-write
- 
--	ufs2    used in FreeBSD 5.x
-+	ufs2
-+                used in FreeBSD 5.x
- 		supported as read-write
- 
--	5xbsd	synonym for ufs2
-+	5xbsd
-+                synonym for ufs2
- 
--	sun	used in SunOS (Solaris)
-+	sun
-+                used in SunOS (Solaris)
- 		supported as read-write
- 
--	sunx86	used in SunOS for Intel (Solarisx86)
-+	sunx86
-+                used in SunOS for Intel (Solarisx86)
- 		supported as read-write
- 
--	hp	used in HP-UX
-+	hp
-+                used in HP-UX
- 		supported as read-only
- 
- 	nextstep
-@@ -47,14 +55,14 @@ ufstype=type_of_ufs
- 		supported as read-only
- 
- 
--POSSIBLE PROBLEMS
--=================
-+Possible Problems
-+-----------------
- 
- See next section, if you have any.
- 
- 
--BUG REPORTS
--===========
-+Bug Reports
-+-----------
- 
- Any ufs bug report you can send to daniel.pirkl@email.cz or
- to dushistov@mail.ru (do not send partition tables bug reports).
--- 
-2.7.4
-
+I wish we could use event->ctx->task instead but on pmu::init() there is no ctx yet (we could pass
+the task in parameter though) and on event->destroy() it's TASK_TOMBSTONE and retrieving the task
+at that time would be non trivial.
