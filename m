@@ -2,85 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2BC6405F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42C7640A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 07:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbfGJFHo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 10 Jul 2019 01:07:44 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:37513 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfGJFHo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 01:07:44 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x6A57QYq030900, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x6A57QYq030900
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 10 Jul 2019 13:07:27 +0800
-Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
- RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
- 14.03.0439.000; Wed, 10 Jul 2019 13:07:26 +0800
-From:   Tony Chuang <yhchuang@realtek.com>
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Huang <tehuang@realtek.com>
-Subject: RE: [PATCH 09/12] rtw88: Fix misuse of GENMASK macro
-Thread-Topic: [PATCH 09/12] rtw88: Fix misuse of GENMASK macro
-Thread-Index: AQHVNt0EKBOEadT3XU2T7xXrxoiWeabDTLwA
-Date:   Wed, 10 Jul 2019 05:07:26 +0000
-Message-ID: <F7CD281DE3E379468C6D07993EA72F84D18644DC@RTITMBSVM04.realtek.com.tw>
-References: <cover.1562734889.git.joe@perches.com>
- <0de52d891d7925b02f4f0fe2c750d076e55434d9.1562734889.git.joe@perches.com>
-In-Reply-To: <0de52d891d7925b02f4f0fe2c750d076e55434d9.1562734889.git.joe@perches.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.68.183]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726986AbfGJFYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 01:24:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:11139 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725932AbfGJFYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 01:24:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 22:24:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,473,1557212400"; 
+   d="scan'208";a="364363437"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Jul 2019 22:24:33 -0700
+Date:   Wed, 10 Jul 2019 13:07:46 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     gregkh@linuxfoundation.org, mdf@kernel.org,
+        linux-fpga@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org
+Subject: Re: [PATCH v2 00/11] FPGA DFL updates
+Message-ID: <20190710050746.GA28620@hao-dev>
+References: <1562286238-11413-1-git-send-email-hao.wu@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562286238-11413-1-git-send-email-hao.wu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: [PATCH 09/12] rtw88: Fix misuse of GENMASK macro
+On Fri, Jul 05, 2019 at 08:23:47AM +0800, Wu Hao wrote:
+> Hi Greg / Moritz
 > 
-> Arguments are supposed to be ordered high then low.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/net/wireless/realtek/rtw88/rtw8822b.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-> b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-> index 1172f6c0605b..d61d534396c7 100644
-> --- a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-> +++ b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-> @@ -997,7 +997,7 @@ static void rtw8822b_do_iqk(struct rtw_dev *rtwdev)
->  	rtw_write_rf(rtwdev, RF_PATH_A, RF_DTXLOK, RFREG_MASK, 0x0);
-> 
->  	reload = !!rtw_read32_mask(rtwdev, REG_IQKFAILMSK, BIT(16));
-> -	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK,
-> GENMASK(0, 7));
-> +	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK,
-> GENMASK(7, 0));
->  	rtw_dbg(rtwdev, RTW_DBG_PHY,
->  		"iqk counter=%d reload=%d do_iqk_cnt=%d
-> n_iqk_fail(mask)=0x%02x\n",
->  		counter, reload, ++do_iqk_cnt, iqk_fail_mask);
-> --
+> This is v2 patchset which adds more features to FPGA DFL. This patchset
+> is made on top of patch[1] and char-misc-next tree. Documentation patch
+> for DFL is dropped from this patchset, and will resubmit it later to
+> avoid conflict.
 
-That's correct. Thanks.
+Hi Greg,
 
-Acked-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Did you get a chance to take a look at this new version to see if these
+patches are good to take?
 
-Yan-Hsuan
+Hope we can catch up with the merge window.
+
+Thanks
+Hao
+
+> 
+> Main changes from v1:
+>   - remove DRV/MODULE_VERSION modifications. (patch #1, #3, #4, #6)
+>   - remove argsz from new ioctls. (patch #2)
+>   - replace sysfs_create/remove_* with device_add/remove_* for sysfs entries.
+>     (patch #5, #8, #11)
+> 
+> [1] [PATCH] fpga: dfl: use driver core functions, not sysfs ones.
+>     https://lkml.org/lkml/2019/7/4/36
+> 
+> Wu Hao (11):
+>   fpga: dfl: fme: support 512bit data width PR
+>   fpga: dfl: fme: add DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
+>   fpga: dfl: pci: enable SRIOV support.
+>   fpga: dfl: afu: add AFU state related sysfs interfaces
+>   fpga: dfl: afu: add userclock sysfs interfaces.
+>   fpga: dfl: add id_table for dfl private feature driver
+>   fpga: dfl: afu: export __port_enable/disable function.
+>   fpga: dfl: afu: add error reporting support.
+>   fpga: dfl: afu: add STP (SignalTap) support
+>   fpga: dfl: fme: add capability sysfs interfaces
+>   fpga: dfl: fme: add global error reporting support
+> 
+>  Documentation/ABI/testing/sysfs-platform-dfl-fme  |  98 ++++++
+>  Documentation/ABI/testing/sysfs-platform-dfl-port | 104 ++++++
+>  drivers/fpga/Makefile                             |   3 +-
+>  drivers/fpga/dfl-afu-error.c                      | 225 +++++++++++++
+>  drivers/fpga/dfl-afu-main.c                       | 328 +++++++++++++++++-
+>  drivers/fpga/dfl-afu.h                            |   7 +
+>  drivers/fpga/dfl-fme-error.c                      | 385 ++++++++++++++++++++++
+>  drivers/fpga/dfl-fme-main.c                       |  93 +++++-
+>  drivers/fpga/dfl-fme-mgr.c                        | 110 ++++++-
+>  drivers/fpga/dfl-fme-pr.c                         |  50 ++-
+>  drivers/fpga/dfl-fme.h                            |   7 +-
+>  drivers/fpga/dfl-pci.c                            |  39 +++
+>  drivers/fpga/dfl.c                                | 166 +++++++++-
+>  drivers/fpga/dfl.h                                |  54 ++-
+>  include/uapi/linux/fpga-dfl.h                     |  19 ++
+>  15 files changed, 1617 insertions(+), 71 deletions(-)
+>  create mode 100644 drivers/fpga/dfl-afu-error.c
+>  create mode 100644 drivers/fpga/dfl-fme-error.c
+> 
+> -- 
+> 1.8.3.1
