@@ -2,169 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBC5649F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97250649FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 17:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfGJPpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 11:45:53 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34412 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfGJPpw (ORCPT
+        id S1728308AbfGJPqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 11:46:12 -0400
+Received: from smtprelay0051.hostedemail.com ([216.40.44.51]:58243 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725832AbfGJPqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 11:45:52 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b29so1956618lfq.1;
-        Wed, 10 Jul 2019 08:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4ijWEMieickbwE2heNBe0wh4Edj/aRy5NBiPlW7DdE8=;
-        b=N9sodbYNbD/pvLup9mnY2ExXB7r7hPtkClYGLHD+V9hAYmqDLqJw1lGCCKcNaCuONk
-         HJO7g5/4ZPdqE7PO6kT1lU+lD72ZT+3bft4FvWk0+cMFxGr3PU8rzxHUoc/XJLK17IQJ
-         C0rx27dyrezih/YKUACfr7Cx1vT1BvoP7athrUSCNUw27PmXICNgD3qFTk5y8dvAHq4N
-         1AVGlly2xO00yUMYQNT6UZUVJRD/CY6srlA+x6ddGZmyJ3VpO8Oc+QrPdBzDAK8r7dhz
-         oZl1nBYbgHZsnm7VsuAp5sqdIQqhE5tfNwMSBaMZbKECDTfAt4l7boAme0Xss3+Z6pOk
-         o+xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ijWEMieickbwE2heNBe0wh4Edj/aRy5NBiPlW7DdE8=;
-        b=tjIE45HPPiOICtQ+7O8Mnjef3Huz7xpQzEOc8e9a2NV+8u4V0o3EpzLKpYNGqARrKQ
-         Kl5LJyBEYcHEd3Nq/fXP6La96VEpWp45eCiQnwiJxxXf5dagajvezkcwl9bzlUL3Chq6
-         oKfTI+AGtVYSRDRHi4+rzhio8mqZ/GvGbIJGyBrDg1k/Q60jqOqJf+uCJK17D4MqitzB
-         vNsZHmV0+5H9fSXlEhgoUTwlc9BWKSueB47j3WMe3+pYz/INvLKFUgtxlkFDyIcmvIZV
-         UX1zOA0MKEG2aBrkpcSfR9YwQBcejFSGFq7dSr60e6rcJedtbOsKPhIA36CekDiDra/i
-         T/4w==
-X-Gm-Message-State: APjAAAWu0hIDD9tMo8sIt4Gk92bIRuhNnGfw99frxChBdtupJdk2WS+l
-        CpPY+w6UenA6PvSaKp22E9PYMXBu
-X-Google-Smtp-Source: APXvYqzmm512H5Ed2bqoqtMYLfKJknyJmwMBxi/u6B4GjvWTshAYn5DfkI0715CESbvDggccNSVnZA==
-X-Received: by 2002:a19:c503:: with SMTP id w3mr13722696lfe.139.1562773549675;
-        Wed, 10 Jul 2019 08:45:49 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id b25sm407956lfq.11.2019.07.10.08.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 08:45:48 -0700 (PDT)
-Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190709145151.23086-1-digetx@gmail.com>
- <20190710101229.54ufuhmh22dfxclr@flea>
- <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
- <20190710125552.qvmnh6qs63ikiu2k@flea>
- <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
- <20190710130615.gvi2jwgr2cds66xr@flea>
- <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
- <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
- <20190710140504.t5lsk36gnn5cdn6b@flea>
- <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
-Message-ID: <2b17baa6-0d16-acac-f626-51799f0d3293@gmail.com>
-Date:   Wed, 10 Jul 2019 18:45:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 10 Jul 2019 11:46:11 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id C502F1802912E;
+        Wed, 10 Jul 2019 15:46:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2692:2731:2828:2917:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4250:4321:5007:6691:6742:7875:7904:10004:10400:10848:11026:11232:11473:11658:11914:12296:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:21080:21220:21326:21451:21627:30012:30034:30054:30056:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: range96_50d7d845d712e
+X-Filterd-Recvd-Size: 3121
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 10 Jul 2019 15:45:54 +0000 (UTC)
+Message-ID: <b9c3b83c9be50286062ae8cefd5d38e2baa0fb22.camel@perches.com>
+Subject: Re: [PATCH 00/12] treewide: Fix GENMASK misuses
+From:   Joe Perches <joe@perches.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Johannes Berg <johannes@sipsolutions.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Andrew Jeffery <andrew@aj.id.au>, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, netdev@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-wireless@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        alsa-devel@alsa-project.org, linux-mmc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Date:   Wed, 10 Jul 2019 08:45:53 -0700
+In-Reply-To: <20190710094337.wf2lftxzfjq2etro@shell.armlinux.org.uk>
+References: <cover.1562734889.git.joe@perches.com>
+         <5fa1fa6998332642c49e2d5209193ffe2713f333.camel@sipsolutions.net>
+         <20190710094337.wf2lftxzfjq2etro@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-10.07.2019 18:05, Dmitry Osipenko пишет:
-> 10.07.2019 17:05, Maxime Ripard пишет:
->> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
->>> This works:
->>>
->>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
->>> index 56d36779d213..e5a2f9c8f404 100644
->>> --- a/drivers/gpu/drm/drm_client_modeset.c
->>> +++ b/drivers/gpu/drm/drm_client_modeset.c
->>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
->>>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
->>>         if (mode)
->>>                 list_add(&mode->head, &connector->modes);
->>> +       else
->>> +               cmdline_mode->specified = false;
->>
->> Hmmm, it's not clear to me why that wouldn't be the case.
->>
->> If we come back to the beginning of that function, we retrieve the
->> cmdline_mode buffer from the connector pointer, that will probably
->> have been parsed a first time using drm_mode_create_from_cmdline_mode
->> in drm_helper_probe_add_cmdline_mode.
->>
->> Now, I'm guessing that the issue is that in
->> drm_mode_parse_command_line_for_connector, if we have a named mode, we
->> just copy the mode over and set mode->specified.
->>
->> And we then move over to do other checks, and that's probably what
->> fails and returns, but our drm_cmdline_mode will have been modified.
->>
->> I'm not entirely sure how to deal with that though.
->>
->> I guess we could allocate a drm_cmdline_mode structure on the stack,
->> fill that, and if successful copy over its content to the one in
->> drm_connector. That would allow us to only change the content on
->> success, which is what I would expect from such a function?
->>
->> How does that sound?
+On Wed, 2019-07-10 at 10:43 +0100, Russell King - ARM Linux admin wrote:
+> On Wed, Jul 10, 2019 at 11:17:31AM +0200, Johannes Berg wrote:
+> > On Tue, 2019-07-09 at 22:04 -0700, Joe Perches wrote:
+> > > These GENMASK uses are inverted argument order and the
+> > > actual masks produced are incorrect.  Fix them.
+> > > 
+> > > Add checkpatch tests to help avoid more misuses too.
+> > > 
+> > > Joe Perches (12):
+> > >   checkpatch: Add GENMASK tests
+> > 
+> > IMHO this doesn't make a lot of sense as a checkpatch test - just throw
+> > in a BUILD_BUG_ON()?
+
+I tried that.
+
+It'd can't be done as it's used in declarations
+and included in asm files and it uses the UL()
+macro.
+
+I also tried just making it do the right thing
+whatever the argument order.
+
+Oh well.
+
+> My personal take on this is that GENMASK() is really not useful, it's
+> just pure obfuscation and leads to exactly these kinds of mistakes.
 > 
-> I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
-> for the "cmdline" mode and drm_client_rotation() is the only place in
-> DRM code that cares about whether mode is from cmdline, hence looks like
-> it will be more correct to do the following:
+> Yes, I fully understand the argument that you can just specify the
+> start and end bits, and it _in theory_ makes the code more readable.
 > 
-> diff --git a/drivers/gpu/drm/drm_client_modeset.c
-> b/drivers/gpu/drm/drm_client_modeset.c
-> index 56d36779d213..e5b3be9ed689 100644
-> --- a/drivers/gpu/drm/drm_client_modeset.c
-> +++ b/drivers/gpu/drm/drm_client_modeset.c
-> @@ -825,6 +825,7 @@ bool drm_client_rotation(struct drm_mode_set
-> *modeset, unsigned int *rotation)
->  {
->         struct drm_connector *connector = modeset->connectors[0];
->         struct drm_plane *plane = modeset->crtc->primary;
-> +       struct drm_display_mode *mode = modeset->mode;
->         struct drm_cmdline_mode *cmdline;
->         u64 valid_mask = 0;
->         unsigned int i;
-> @@ -859,7 +860,7 @@ bool drm_client_rotation(struct drm_mode_set
-> *modeset, unsigned int *rotation)
->          * simple XOR between the two handle the addition nicely.
->          */
->         cmdline = &connector->cmdline_mode;
-> -       if (cmdline->specified) {
-> +       if (mode->flags & DRM_MODE_TYPE_USERDEF) {
->                 unsigned int cmdline_rest, panel_rest;
->                 unsigned int cmdline_rot, panel_rot;
->                 unsigned int sum_rot, sum_rest;
-> 
+> However, the problem is when writing code.  GENMASK(a, b).  Is a the
+> starting bit or ending bit?  Is b the number of bits?  It's confusing
+> and causes mistakes resulting in incorrect code.  A BUILD_BUG_ON()
+> can catch some of the cases, but not all of them.
 
-Although, then rotation won't be applied to the named mode in that case.
+It's a horrid little macro and I agree with Russell.
 
-Seems the fix could be even simpler:
+I also think if it existed at all it should have been
+GENMASK(low, high) not GENMASK(high, low).
 
-@@ -859,7 +859,7 @@ bool drm_client_rotation(struct drm_mode_set
-*modeset, unsigned int *rotation)
-         * simple XOR between the two handle the addition nicely.
-         */
-        cmdline = &connector->cmdline_mode;
--       if (cmdline->specified) {
-+       if (cmdline->specified && cmdline->rotation_reflection) {
-                unsigned int cmdline_rest, panel_rest;
-                unsigned int cmdline_rot, panel_rot;
-                unsigned int sum_rot, sum_rest;
+I
 
-And looks like there is another problem here.. the cmdline's rotation
-overrides *all* modes while the doc/fb/modedb.rst claims that rotation
-is applied only to the *initial* mode.
