@@ -2,126 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA5E63FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C631A63FD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 06:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbfGJEDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 00:03:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37882 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfGJEDK (ORCPT
+        id S1726145AbfGJEMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 00:12:18 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:40734 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfGJEMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 00:03:10 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so941959wrr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 21:03:08 -0700 (PDT)
+        Wed, 10 Jul 2019 00:12:17 -0400
+Received: by mail-vs1-f66.google.com with SMTP id a186so609314vsd.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2019 21:12:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=E/+8WA5YVt9o68tf7IxaP2AKZIs3izvlH0APT6Mt07Q=;
-        b=K1qh7HcwzDZLVDAhRFo1UMOBKQLz3oQjDqRwz2jFT38WMwz/Hl+vBRVpz6PZ8eyy3Y
-         dTAmu29NVGAwAZMWL0pe9v9Be598VLNvCEXNI4Hmi9hk8iVCmDpiCn3DzAX+ya48+l5E
-         agWdvXAgbkGVdffOYWAEPWEA5Tt1dpEYgqARMkGUm9CBA9Z7CDJCzkt8K2r4smVHL7vu
-         IxMt0gyE+LkrWBBgHX7+Dm2eM7WrA3nvP7LdaYR5P8bZpqvhbzthPdfj/epTNYwzA56p
-         AOfetMta9CkyUC4Q9MJQDe4yMoicmVktguXRf/xx872evRk4ahBKSIB/SR+PNbG029Rw
-         4ZUg==
+        bh=jsT84thXZgrjljKWPHUjY7JeFgImc9+U4hEoxyiTJcc=;
+        b=bWsVGu9ZtrSBJl4JbELamsoGGvbUEuoJyLkzEdD/lBLkOe2SuDywqNJvjhLcdkFQIV
+         uQzhsHZfClHSSErFS8YngoK5icUK/zOzfk2MyJE77f/EpBtLGiDl5OLXwZaYMg1H4xvi
+         8bZw2KyzNEgXQhxeZxd3j43hSpSd9KAK3Vxwk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E/+8WA5YVt9o68tf7IxaP2AKZIs3izvlH0APT6Mt07Q=;
-        b=ArQdiPu06NxnxBmCSr2YQ9QmCZ4nIaz/wRepvO9GyKXE/4E7M44MPKiAxNDYTEkwqm
-         3ZmYfNH6MoVG0+ocfQ8tdJNEZMWWSpGnG8SJguVupvD5qZepTcjRdZXdkiQNxKzMiLbJ
-         MwV8205Y+rDYLXxBwc6/OfKtBphDTu7H+01Wo11+qwYbtHzl0mzwqVziesx38yJl+GG8
-         B7vVMwyHKpvbEDql0ay6exa2v1dai15Y10AN6B2T9Nnr0KsZnMbco5Quxd2fb2c3vMye
-         Vwmq89dhYPf7AskuAt0WIU6Oz9Wyc0JY23pI1dNxEF8sk9mnAIbP36IIJ/vnoaFPpPZL
-         wy4w==
-X-Gm-Message-State: APjAAAWKyD+mlG1MFTE3jkZWjLJ4TBpelpU+puegB44I6NVRw/391PIm
-        /As4Z2l0o/SvtOcQeHJQ/445c5aU0odIBYE96Z7oIQ==
-X-Google-Smtp-Source: APXvYqzPOdmo7LUjjtBVy+Eam/jLKZXcN/T+ttk0oWQFmX0MgxeRc22swD1KsBEGZUN6nDxG/pwDPT36kLteJxt49zQ=
-X-Received: by 2002:a05:6000:145:: with SMTP id r5mr9063316wrx.208.1562731387533;
- Tue, 09 Jul 2019 21:03:07 -0700 (PDT)
+        bh=jsT84thXZgrjljKWPHUjY7JeFgImc9+U4hEoxyiTJcc=;
+        b=aeR7bQK3FEjN2e6Fq+hDYG6OmhNs1mdddQHylXjwB2uXZXdRFIZDmcD5gpq4zS1IXe
+         eHumGXfHxDXMtqttSFWuxUmq764MJbi0C1LeekwuSkk9mm5p+XVKOHIph8gXdPyOn0G/
+         KIvUwTuOi1AC8akXKVgf65OtDFZjxkIEA/1wLg4qgfPzsn2PW3DATao5Hx9XUQYUSe9D
+         w13Q0vGE+50J194wC7wn6QYQFxBD0s6vyeAnb4bckoBqhcBj+WSDtNxDkbcAbwvah8du
+         z2vPy/cNztiHd0LTgR3L2YCWVFOcsndQM8fvT0XF2snbwNfo2ZPCvlIVfhk8LaYN8a0/
+         l1zQ==
+X-Gm-Message-State: APjAAAXlxSDAJVK+dgg3Bz0vK3uaCfDVfd9rRz8LprXz7iYDk1Gep/eh
+        qcYMhJsdLXHcmeNWLdT1ixDHA6JmsGwSEzEOIoznPA==
+X-Google-Smtp-Source: APXvYqwRDoiekjMfVg1dAkd95CbZGZ3jhAzyHEQ1N/LeXKKIJksHQNLAm0BnKpQtXYeH+ZnDwbVN+JmCCFjQkCNhqMc=
+X-Received: by 2002:a67:f7cd:: with SMTP id a13mr14190782vsp.163.1562731935844;
+ Tue, 09 Jul 2019 21:12:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com> <20190621095252.32307-11-vincenzo.frascino@arm.com>
-In-Reply-To: <20190621095252.32307-11-vincenzo.frascino@arm.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 9 Jul 2019 21:02:54 -0700
-Message-ID: <CALAqxLXxE5B+vVLj7NcW8S05nhDQ+XSKVn=_MNDci667JDFEhA@mail.gmail.com>
-Subject: Re: [PATCH v7 10/25] arm64: compat: Add vDSO
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arch@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Huw Davies <huw@codeweavers.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Peter Collingbourne <pcc@google.com>
+References: <20190603043251.226549-1-cychiang@chromium.org>
+ <20190603043251.226549-6-cychiang@chromium.org> <20190709200121.GA19118@bogus>
+In-Reply-To: <20190709200121.GA19118@bogus>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Wed, 10 Jul 2019 12:11:48 +0800
+Message-ID: <CAFv8NwLiKu055S7apzj+gTYh0neQ5rLmPYEYkEj6Zf3hikWWpA@mail.gmail.com>
+Subject: Re: [PATCH 5/7] ASoC: rockchip: rockchip-max98090: Add node for HDMI
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        linux-media@vger.kernel.org,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 3:18 AM Vincenzo Frascino
-<vincenzo.frascino@arm.com> wrote:
+On Wed, Jul 10, 2019 at 4:01 AM Rob Herring <robh@kernel.org> wrote:
 >
-> Provide the arm64 compat (AArch32) vDSO in kernel/vdso32 in a similar
-> way to what happens in kernel/vdso.
+> On Mon, Jun 03, 2019 at 12:32:49PM +0800, Cheng-Yi Chiang wrote:
+> > Let user specify HDMI node so machine driver can use it to let codec
+> > driver register callback on correct hdmi-notifier.
+> >
+> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> > ---
+> >  Documentation/devicetree/bindings/sound/rockchip-max98090.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/sound/rockchip-max98090.txt b/Documentation/devicetree/bindings/sound/rockchip-max98090.txt
+> > index a805aa99ad75..dae57c14864e 100644
+> > --- a/Documentation/devicetree/bindings/sound/rockchip-max98090.txt
+> > +++ b/Documentation/devicetree/bindings/sound/rockchip-max98090.txt
+> > @@ -7,6 +7,7 @@ Required properties:
+> >    connected to the CODEC
+> >  - rockchip,audio-codec: The phandle of the MAX98090 audio codec
+> >  - rockchip,headset-codec: The phandle of Ext chip for jack detection
+> > +- rockchip,hdmi: The phandle of HDMI node for HDMI jack detection
+> >
+> >  Example:
+> >
+> > @@ -16,4 +17,5 @@ sound {
+> >       rockchip,i2s-controller = <&i2s>;
+> >       rockchip,audio-codec = <&max98090>;
+> >       rockchip,headset-codec = <&headsetcodec>;
+> > +     rockchip,hdmi= <&hdmi>;
 >
-> The compat vDSO leverages on an adaptation of the arm architecture code
-> with few changes:
->  - Use of lib/vdso for gettimeofday
->  - Implementation of syscall based fallback
->  - Introduction of clock_getres for the compat library
->  - Implementation of trampolines
->  - Implementation of elf note
+> space                ^
 >
-> To build the compat vDSO a 32 bit compiler is required and needs to be
-> specified via CONFIG_CROSS_COMPILE_COMPAT_VDSO.
+> With that,
 >
-
-Hey Vincenzo!
-  Congrats on getting this work merged, I know its been a long effort
-over a number of years!
-
-Though unfortunately, it seems the arm64 vdso code that just landed is
-breaking AOSP for me.
-
-I see a lot of the following errors:
-01-01 01:22:14.097   755   755 F libc    : Fatal signal 11 (SIGSEGV),
-code 1 (SEGV_MAPERR), fault addr 0x3cf2c96c in tid 755 (cameraserver),
-pid 755 (cameraserver)
-01-01 01:22:14.112   759   759 F libc    : Fatal signal 11 (SIGSEGV),
-code 1 (SEGV_MAPERR), fault addr 0x3cf2c96c in tid 759
-(android.hardwar), pid 759 (android.hardwar)
-01-01 01:22:14.120   756   756 F libc    : Fatal signal 11 (SIGSEGV),
-code 1 (SEGV_MAPERR), fault addr 0x3cf2c96c in tid 756 (drmserver),
-pid 756 (drmserver)
-
-Which go away if I revert the vdso merge that went in via tip/timers.
-
-I tried to bisect things down a bit, but as some later fixes are
-required (at one point, date was returning the start epoch and never
-increasing), this hasn't worked too well. But I'm guessing since I
-see: "CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will
-not be built", and the system is half working, I'm guessing this is an
-issue with just the 32bit code failing.  While I can try to sort out
-the proper CROSS_COMPILE_COMPAT in my build environment, I assume
-userland shouldn't be crashing if that value isn't set.
-
-Any chance this issue has already been raised?
-
-thanks
--john
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+Hi Rob,
+Thank you for the review.
+But I have changed the approach in v2 so there is no need for machine
+driver to expose this property.
+Thanks!
+> >  };
+> > --
+> > 2.22.0.rc1.257.g3120a18244-goog
+> >
