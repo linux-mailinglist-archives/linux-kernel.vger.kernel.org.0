@@ -2,140 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C856435F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 806916436A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 10:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfGJIJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 04:09:33 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:49885 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726097AbfGJIJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:09:32 -0400
-Received: from [IPv6:2001:983:e9a7:1:10f:829c:8d05:60ea] ([IPv6:2001:983:e9a7:1:10f:829c:8d05:60ea])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id l7fMhsLbn0SBql7fOh6R3G; Wed, 10 Jul 2019 10:09:30 +0200
-Subject: Re: [PATCHv4 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        id S1727351AbfGJIPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 04:15:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbfGJIPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:15:23 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01B7620693;
+        Wed, 10 Jul 2019 08:15:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562746522;
+        bh=0hVSMMzYKhoDy/P2YBDNHPfBe2NC0mq8TrsMJzmaHwg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TmJZmlKlnaFfL5jmZfXyc1SwABp4fxxLEIH0I4NI0PTc9Jckm0hy/G292/9EH0ULM
+         dyGiwnSKwxIjKWP40NPCTClD6HbFwyFD9KvJRovS6HODiUAZn0LmbCiq/Lu+ToImqD
+         7du/8H2Z1tKHqbrjS7OhtuInc3rJLBFGwSQ66WGE=
+Date:   Wed, 10 Jul 2019 09:15:16 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Laura Abbott <labbott@redhat.com>, yamada.masahiro@socionext.com
+Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Pawel Osciak <posciak@chromium.org>
-References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
- <20190603112835.19661-2-hverkuil-cisco@xs4all.nl>
- <CAAFQd5Aa-PQEakeg3sC_EDYdKy15hHx09Qmk6Jik4COeBe3xVA@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <02da6340-3174-c03b-ffad-cc9a0a58afab@xs4all.nl>
-Date:   Wed, 10 Jul 2019 10:09:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Julien Grall <julien.grall@arm.com>,
+        Alan Hayward <alan.hayward@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64/sve: fix genksyms generation
+Message-ID: <20190710081515.ffghx4kouqpsh4m3@willie-the-truck>
+References: <20190617104237.2082388-1-arnd@arndb.de>
+ <20190617112652.GB30800@fuggles.cambridge.arm.com>
+ <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
+ <20190617161330.GD30800@fuggles.cambridge.arm.com>
+ <CAKv+Gu9Fh3anh6-TeDWZ+pL7rs7EBWZqvLXASRNjicGu7k+WKw@mail.gmail.com>
+ <20190617164553.GI30800@fuggles.cambridge.arm.com>
+ <20190618120259.GA31041@fuggles.cambridge.arm.com>
+ <CAK8P3a2NQSm3sPcJq=6=Espa5da_L+2RNtyS=jkkzD3tx-4ehA@mail.gmail.com>
+ <95d721d1-2ccc-321c-f688-15e5bb53c30b@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Aa-PQEakeg3sC_EDYdKy15hHx09Qmk6Jik4COeBe3xVA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfB8/NX8OMxDhoB5rNNb4Nrxp+O02fe8pwgh4uz7RNaRO/12CMe5NnBdik+t2PDdSBV9zwCfQtcO5GOvH/vCMdvuO4LREs1q/VcPyupkoSXNH/7GpTpy7
- /ds4jkR99tFUr+xaJ4FVxvt/mnjXlBEOUHF3cHktbSvNZmeoKH53nX6zQFIQEB4EblOgFmjzjJf8Iuo869qJsUVfty7EZJKO6P1S9NwmTXVQ2Wl7RFuLd6o9
- lch5JvNcALsRkSt75o0siIszLNfPOttuEwVy4yhW3D+0kmAnasTTTEx9KpWNJSUHHCdiQzB5ueOP/r1ScpriO8ftobRu1mfiZy1Ir00vLn9CToxs5SG7SaZW
- ugDgAYGV01aiMA7OX/Z+F4RWKTmlhe635iE0UhVoS4ET9obEWA4fNNHT8JoHU+QkFsAtL16dyt37uY/DHjKGF0UxrBZE2Q3gKqGlRAFxTZ4hkhP4H/yTt27c
- XurABG4XNozGVHjUMHWiXm+87KUAkfs4TFtdYkGzTCTixylt2PG9+UhO/+i92nhQvfJbrIZT9NfK5KcPsEL++82N3BLcfGGfSpHJCQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95d721d1-2ccc-321c-f688-15e5bb53c30b@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/3/19 6:58 AM, Tomasz Figa wrote:
-> Hi Hans,
-> 
-> On Mon, Jun 3, 2019 at 8:28 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>
->> From: Tomasz Figa <tfiga@chromium.org>
->>
->> Due to complexity of the video decoding process, the V4L2 drivers of
->> stateful decoder hardware require specific sequences of V4L2 API calls
->> to be followed. These include capability enumeration, initialization,
->> decoding, seek, pause, dynamic resolution change, drain and end of
->> stream.
->>
->> Specifics of the above have been discussed during Media Workshops at
->> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
->> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
->> originated at those events was later implemented by the drivers we already
->> have merged in mainline, such as s5p-mfc or coda.
->>
->> The only thing missing was the real specification included as a part of
->> Linux Media documentation. Fix it now and document the decoder part of
->> the Codec API.
->>
->> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
->> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->> ---
->>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1084 +++++++++++++++++
->>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    8 +-
->>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
->>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
->>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   41 +-
->>  5 files changed, 1132 insertions(+), 16 deletions(-)
->>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
->>
-> 
-> Thanks a lot for helping with remaining changes.
-> 
-> Just one thing inline our team member found recently.
-> 
-> [snip]
->> +Capture setup
->> +=============
->> +
-> [snip]
->> +4.  **Optional.** Set the ``CAPTURE`` format via :c:func:`VIDIOC_S_FMT` on the
->> +    ``CAPTURE`` queue. The client may choose a different format than
->> +    selected/suggested by the decoder in :c:func:`VIDIOC_G_FMT`.
->> +
->> +    * **Required fields:**
->> +
->> +      ``type``
->> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``.
->> +
->> +      ``pixelformat``
->> +          a raw pixel format.
-> 
-> The client should be able to set the width and height as well. It's a
-> quite frequent case, especially in DMA-buf import mode, that the
-> buffers are actually bigger (e.g. more alignment) than what we could
-> get from the decoder by default. For sane hardware platforms it's
-> reasonable to expect that such bigger buffers could be handled as
-> well, as long as we update the width and height here.
+Hi Laura, [+Masahiro]
 
-I've added this:
-
-     ``width``, ``height``
-         frame buffer resolution of the decoded stream; typically unchanged from
-         what was returned with :c:func:`VIDIOC_G_FMT`, but it may be different
-         if the hardware supports composition and/or scaling.
-
-Is that what you were looking for?
-
+On Tue, Jul 09, 2019 at 03:06:49PM -0400, Laura Abbott wrote:
+> On 6/18/19 10:15 AM, Arnd Bergmann wrote:
+> > On Tue, Jun 18, 2019 at 2:03 PM Will Deacon <will.deacon@arm.com> wrote:
+> > >  From 6e004b8824d4eb6a4e61cd794fbc3a761b50135b Mon Sep 17 00:00:00 2001
+> > > From: Will Deacon <will.deacon@arm.com>
+> > > Date: Tue, 18 Jun 2019 12:56:49 +0100
+> > > Subject: [PATCH] genksyms: Teach parse about __uint128_t built-in type
+> > > 
+> > > __uint128_t crops up in a few files that export symbols to modules, so
+> > > teach genksyms about it so that we don't end up skipping the CRC
+> > > generation for some symbols due to the parser failing to spot them:
+> > > 
+> > >    | WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version
+> > >    |          generation failed, symbol will not be versioned.
+> > >    | ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against
+> > >    |     `__crc_kernel_neon_begin' can not be used when making a shared
+> > >    |     object
+> > >    | ld: arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation:
+> > >    |     unsupported relocation
+> > > 
+> > > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > Reported-by: Arnd Bergmann <arnd@arndb.de>
+> > > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > Looks good to me,
+> > 
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > I've added this to my randconfig build setup, replacing my earlier
+> > patch, and will let you know if any problems with it remain.
+> > 
 > 
-> It's more like a clarification anyway, so if you think it would be
-> better to just merge the current revision, I could send a follow up
-> patch.
-> 
-> Regardless of that and FWIW:
-> 
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> I just hit this on 5ad18b2e60b75c7297a998dea702451d33a052ed on Linus'
+> branch. The fix works for me (feel free to add Tested-by). Is this
+> already queued up for Linus?
 
-Thanks!
+I think there's a fix queued via the kbuild tree:
 
-	Hans
+https://lkml.kernel.org/r/CAK7LNAQRMnovWQA0F8A6mEqDjPxXOGM-1AHoyh1gQa367f+FqQ@mail.gmail.com
 
-> 
-> Best regards,
-> Tomasz
-> 
-
+Will
