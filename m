@@ -2,76 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9504864B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B575064B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 19:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfGJRTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 13:19:24 -0400
-Received: from smtprelay0183.hostedemail.com ([216.40.44.183]:33112 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726617AbfGJRTX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:19:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 39B65181D3419;
-        Wed, 10 Jul 2019 17:19:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6120:7901:7903:8957:9038:10004:10128:10234:10400:10848:11026:11232:11658:11914:12043:12048:12297:12438:12740:12760:12895:13019:13069:13141:13160:13229:13230:13255:13311:13357:13439:14096:14097:14181:14659:14721:21080:21212:21627:21660:30029:30054:30070:30091,0,RBL:172.56.44.31:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: need92_16e176f97c651
-X-Filterd-Recvd-Size: 2181
-Received: from XPS-9350 (unknown [172.56.44.31])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 10 Jul 2019 17:19:16 +0000 (UTC)
-Message-ID: <6ce2ce60b2435940bc8dfa07fa2553c4524d2db5.camel@perches.com>
-Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
- hook for fs notifications
-From:   Joe Perches <joe@perches.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 10 Jul 2019 10:18:46 -0700
-In-Reply-To: <cb754dda-fbce-8169-4cd7-eef66e8d809e@infradead.org>
-References: <20190710133403.855-1-acgoide@tycho.nsa.gov>
-         <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
-         <cb754dda-fbce-8169-4cd7-eef66e8d809e@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1727893AbfGJRTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 13:19:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbfGJRTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 13:19:04 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 077BD6698C;
+        Wed, 10 Jul 2019 17:19:04 +0000 (UTC)
+Received: from treble (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B5CF0860E4;
+        Wed, 10 Jul 2019 17:19:02 +0000 (UTC)
+Date:   Wed, 10 Jul 2019 12:19:00 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Matt Helsley <mhelsley@vmware.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 00/13] Cleanup recordmcount and begin objtool
+ conversion
+Message-ID: <20190710171900.gzzitftdinkdx6ra@treble>
+References: <cover.1560285597.git.mhelsley@vmware.com>
+ <20190710130924.16aee549@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190710130924.16aee549@gandalf.local.home>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 10 Jul 2019 17:19:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-10 at 09:49 -0700, Randy Dunlap wrote:
-> On 7/10/19 9:38 AM, Casey Schaufler wrote:
-> > On 7/10/2019 6:34 AM, Aaron Goidel wrote:
-> > > @@ -3261,6 +3262,26 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
-> > >  	return -EACCES;
-> > >  }
-> > >  
-> > > +static int selinux_inode_notify(struct inode *inode, u64 mask)
-> > > +{
-> > > +	u32 perm = FILE__WATCH; // basic permission, can a watch be set?
-> > 
-> > We don't use // comments in the Linux kernel.
-> > 
+On Wed, Jul 10, 2019 at 01:09:24PM -0400, Steven Rostedt wrote:
 > 
-> I thought that we had recently moved into the 21st century on that issue,
-> but I don't see it mentioned in coding-style.rst.  Maybe we need a Doc update.
+> Josh,
 > 
-> checkpatch allows C99 comments by default.
-> Joe, do you recall about this?
+> Can you have a look at these? I can apply them if you think they are OK.
 
-My recollection is it was something I thought was
-just simple and useful so I added it to checkpatch
-without going through the negative of the nominal
-approvals required by modifying CodingStyle.
+Sorry for the delay.  I didn't forget about it, it's just been a hectic
+month.  I plan to give it a proper review soon (in the next week or so).
 
-
-
+-- 
+Josh
