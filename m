@@ -2,57 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1B664602
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42AF564608
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 14:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfGJMIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 08:08:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34870 "EHLO mx1.suse.de"
+        id S1727210AbfGJMKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 08:10:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35644 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725911AbfGJMIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 08:08:19 -0400
+        id S1725911AbfGJMKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 08:10:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 296DBAC98;
-        Wed, 10 Jul 2019 12:08:18 +0000 (UTC)
-Subject: Re: [PATCH RESEND] Revert "x86/paravirt: Set up the
- virt_spin_lock_key after static keys get initialized"
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-References: <1561539429-29436-1-git-send-email-zhenzhong.duan@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <b7f9215d-f58a-3a97-06fe-95c1e6a9ac43@suse.com>
-Date:   Wed, 10 Jul 2019 14:08:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mx1.suse.de (Postfix) with ESMTP id BCD7AAC1E;
+        Wed, 10 Jul 2019 12:10:49 +0000 (UTC)
+Date:   Wed, 10 Jul 2019 14:10:49 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printk: Do not lose last line in kmsg dump
+Message-ID: <20190710121049.rwhk7fknfzn3cfkz@pathway.suse.cz>
+References: <20190709081042.31551-1-vincent.whitchurch@axis.com>
+ <20190709101230.GA16909@jagdpanzerIV>
+ <20190709142939.luqhbd6x6bzdkydr@pathway.suse.cz>
+ <20190710080402.ab3f4qfnvez6dhtc@axis.com>
+ <20190710081922.GA7020@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <1561539429-29436-1-git-send-email-zhenzhong.duan@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710081922.GA7020@jagdpanzerIV>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.06.19 10:57, Zhenzhong Duan wrote:
-> This reverts commit ca5d376e17072c1b60c3fee66f3be58ef018952d.
+On Wed 2019-07-10 17:19:22, Sergey Senozhatsky wrote:
+> On (07/10/19 10:04), Vincent Whitchurch wrote:
+> > > > [..]
+> > > > 
+> > > > > @@ -1318,7 +1318,7 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog,
+> > > > >  		}
+> > > > >  
+> > > > >  		if (buf) {
+> > > > > -			if (prefix_len + text_len + 1 >= size - len)
+> > > > > +			if (prefix_len + text_len + 1 > size - len)
+> > > > >  				break;
+> > > > 
+> > > > So with this patch the last byte of the buffer is 0xA. It's a bit
+> > > > uncomfortable that `len', which we return from msg_print_text(),
+> > > > now points one byte beyond the buffer:
+> > > > 
+> > > > 	buf[len++] = '\n';
+> > > > 	return len;
+> > > > 
+> > > > This is not very common. Not sure what usually happens to kmsg_dump
+> > > > buffers, but anyone who'd do a rather innocent
+> > > > 
+> > > > 	kmsg_dump(buf, &len);
+> > > > 	buf[len] = 0x00;
+> > > > 
+> > > > will write to something which is not a kmsg buffer (in some cases).
 > 
-> Commit 8990cac6e5ea ("x86/jump_label: Initialize static branching
-> early") adds jump_label_init() call in setup_arch() to make static
-> keys initialized early, so we could use the original simpler code
-> again.
+> [..]
 > 
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> > arch/powerpc/xmon/xmon.c
+> > 2836:	while (kmsg_dump_get_line_nolock(&dumper, false, buf, sizeof(buf), &len)) {
+> > 2837-		buf[len] = '\0';
+> > 
+> > arch/um/kernel/kmsg_dump.c
+> > 29:	while (kmsg_dump_get_line(dumper, true, line, sizeof(line), &len)) {
+> > 30-		line[len] = '\0';
+> > 
+> > I guess we should fix these first and leave this patch as is?
+> 
+> We certainly need to fix something here, and I'd say that we
+> better handle it on the msg_print_text() side. There might be
+> more kmsg_dump_get_line() users doing `buf[len] = '\0'' in the
+> future.
 
-Applied to xen/tip.git for-linus-5.3
+I though more about it and I agree with Sergey. One unused byte does
+not look worth the risk. Especially when we are talking about strings
+where many people expect the trailing '\0'.
 
+I would even modify msg_print_text() to always add the trailing '\0'.
+All bytes will be used and it will be more error-proof API. I guess
+that this is what Sergey meant by better handling it on the
+msg_print_text() side.
 
-Juergen
+Best Regards,
+Petr
