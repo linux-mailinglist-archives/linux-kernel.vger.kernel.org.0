@@ -2,73 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447EE63EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 03:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C8163F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 03:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfGJBf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 9 Jul 2019 21:35:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbfGJBf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Jul 2019 21:35:56 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65CD120693;
-        Wed, 10 Jul 2019 01:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562722555;
-        bh=G8l0qfV1rZedrGf3CKStAk7W/ybMot/6ylczZwVxTbA=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=GGdkVqlp13SW1vC82uEbUUFXMVHfk8oghJOxj7T5R1cgPGfQ5gD5yqxpwOENPjFjp
-         MVAjmiyFJ85/CNwguHy21F2lkDSp7Go2jOVlaaAaEnd1/imphKo98ngsUNJmiteHZC
-         MPU1UkMMRTVcd/yChGW5UWTNFLeU1oo95AjW4bGU=
-Date:   Tue, 9 Jul 2019 18:35:53 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
- an ACL
-Message-ID: <20190710013553.GC7973@sol.localdomain>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
- <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
- <20190710011559.GA7973@sol.localdomain>
+        id S1725993AbfGJBv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 9 Jul 2019 21:51:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45100 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725807AbfGJBv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Jul 2019 21:51:27 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 48FCA33D463FEB7EBE02;
+        Wed, 10 Jul 2019 09:51:24 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 10 Jul 2019
+ 09:51:18 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <bmt@zurich.ibm.com>, <dledford@redhat.com>, <jgg@ziepe.ca>
+CC:     <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] RDMA/siw: Print error code while kthread_create failed
+Date:   Wed, 10 Jul 2019 09:50:09 +0800
+Message-ID: <20190710015009.57120-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710011559.GA7973@sol.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
-> On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
-> > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
-> > the SETATTR and SEARCH permissions to be split.  This will also allow a
-> > greater range of subjects to represented.
-> > 
-> 
-> This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
-> 
-> $ keyctl new_session
-> keyctl_session_to_parent: Permission denied
-> 
-> Output of 'keyctl show' is
-> 
-> $ keyctl show
-> Session Keyring
->  605894913 --alswrv      0     0  keyring: _ses
->  189223103 ----s-rv      0     0   \_ user: invocation_id
-> 
-> - Eric
+In iw_create_tx_threads(), if we failed to create kthread,
+we should print the 'rv', this fix gcc warning:
 
-... and this also broke loading in-kernel X.509 certificates.  See the other
-thread: https://lore.kernel.org/lkml/27671.1562384658@turing-police/T/#u
+drivers/infiniband/sw/siw/siw_main.c: In function 'siw_create_tx_threads':
+drivers/infiniband/sw/siw/siw_main.c:91:11: warning:
+ variable 'rv' set but not used [-Wunused-but-set-variable]
 
-- Eric
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/sw/siw/siw_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index fd2552a..2a70830d 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -101,7 +101,8 @@ static int siw_create_tx_threads(void)
+ 		if (IS_ERR(siw_tx_thread[cpu])) {
+ 			rv = PTR_ERR(siw_tx_thread[cpu]);
+ 			siw_tx_thread[cpu] = NULL;
+-			pr_info("Creating TX thread for CPU %d failed", cpu);
++			pr_info("Creating TX thread for CPU%d failed %d\n",
++				cpu, rv);
+ 			continue;
+ 		}
+ 		kthread_bind(siw_tx_thread[cpu], cpu);
+-- 
+2.7.4
+
+
