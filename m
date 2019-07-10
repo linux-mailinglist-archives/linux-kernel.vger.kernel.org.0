@@ -2,85 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F10C64837
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 16:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D6E64C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2019 20:24:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfGJOXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 10:23:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726458AbfGJOXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 10:23:00 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8EF20651;
-        Wed, 10 Jul 2019 14:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562768580;
-        bh=zm9gaKNfM1jd2enG3JtUv2YXrFn3mAp2+8Rx9nYS4iw=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Cw086sGLJLrxkNuX+uKPF1rI1tx+svUUnHmCE09VyMcCyQ1LE1RaIq6QIab2ENzII
-         UEaW/UVEWgpCxwPNfQrfVXnFu9rvhAkR6SL+Ikb+8nbNSIikF7HLwQF2S8CVkbLdro
-         tuYKX2HKMTbsJK+rmHz/XeFZL4BbrFPq9pWczRS8=
-Date:   Wed, 10 Jul 2019 16:22:51 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Xi Ruoyao <xry111@mengyan1223.wang>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [GIT PULL] x86/topology changes for v5.3
-In-Reply-To: <20190710134433.GN3402@hirez.programming.kicks-ass.net>
-Message-ID: <nycvar.YFH.7.76.1907101621050.5899@cbobk.fhfr.pm>
-References: <CAHk-=wh7NChJP+WkaDd3qCz847Fq4NdQ6z6m-VFpbr3py_EknQ@mail.gmail.com> <alpine.DEB.2.21.1907100023020.1758@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907100039540.1758@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907100115220.1758@nanos.tec.linutronix.de>
- <201907091727.91CC6C72D8@keescook> <1ad2de95e694a29909801d022fe2d556df9a4bd5.camel@mengyan1223.wang> <cb6d381ed7cd0bf732ae9d8f30c806b849b0f94b.camel@mengyan1223.wang> <alpine.DEB.2.21.1907101404570.1758@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1907101425290.5899@cbobk.fhfr.pm>
- <768463eb26a2feb0fcc374fd7f9cc28b96976917.camel@mengyan1223.wang> <20190710134433.GN3402@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727939AbfGJSYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 14:24:06 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38324 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfGJSYF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 14:24:05 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n11so3500994qtl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 11:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zAcgUolazA7luBwp8paMkjhRVKLXRJL6TdvFMDHQKzA=;
+        b=Kt1bVy3oXSYkybEb7FUQPCdO097Dt4isI9Ses2ujAL1YsDGwte6PKN8oQ6YNdAwuSN
+         ZWA8xM1IqoPVmtmjACl8m7STmZpn9rSDaorGYvusAi4iUZQycD4VR3E26NVAQ/DXlaNr
+         4T49PxWMzreb34xbe+bgLiSrQHJ9hBVn5h1sDRvClBmYRNwC3yCYGLD/D5IKqIR6yW26
+         g4rnvI96pinGTapFoziC5ozDI++h/b34Drw4qdW9uraNL5a5BnELNTL8FhzRombuLIt6
+         dTPBJw4syTd15RmDgETe7pRIcm9NloYcxbkNxbuPLNK1D7DciqH0CnZhkCGSXqc8I5k+
+         iDaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zAcgUolazA7luBwp8paMkjhRVKLXRJL6TdvFMDHQKzA=;
+        b=BIt5wdm5gHKEY8E03o95+Sd4md1KmXjB2UYV5m04Eiyp54Ycc6WfzEG/jLdTu+PVQi
+         i7ko6BxiWv493uhKI07BDDS6iAbHvJ/XrOZahQOTgxUhlr5zcDhXahooXvRVk1qyKO9Q
+         sldHyxyY9wOEBCBgMy4H/xTCD0bgyx4kBXzR2dZJGykrV6+DbLBHFogsB50zB8WkRTFr
+         vq+fvVhReXXTpg9pSSY5XhkjSrk5IEVVcKsnJM60Ag7SZfKJ1Z4iSg1n7pKO4TjvYICp
+         jwe8IjnP/R/EHIqqxVS96cAawYVwuhiR4Z1xv53GSiE3Ga4CfXl7jwqgzCHUH4iSsSg4
+         986g==
+X-Gm-Message-State: APjAAAWiILA/tOoPVWLCQ/ewgsBblJWKDv/1aBw+RsmOQNz/elG9/dKt
+        bP3D2L5SNJJJ3IXu4C04UA==
+X-Google-Smtp-Source: APXvYqx9x9Hv8Yb01z7kNT2uDT6YWO3K7fCYZ/dkH2TwctUQ9egiiR8ut6bSAfySZQU4uXvTVDUyAw==
+X-Received: by 2002:ac8:374b:: with SMTP id p11mr24711189qtb.316.1562783044890;
+        Wed, 10 Jul 2019 11:24:04 -0700 (PDT)
+Received: from keyur-pc (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.gmail.com with ESMTPSA id f25sm1608616qta.81.2019.07.10.11.24.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 11:24:03 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 10:24:06 -0400
+From:   Keyur Patel <iamkeyur96@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>,
+        Johan Hovold <johan@kernel.org>, David Lin <dtwlin@gmail.com>,
+        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: add logging statement when kfifo_alloc
+ fails
+Message-ID: <20190710142406.GA6669@keyur-pc>
+References: <20190710122018.2250-1-iamkeyur96@gmail.com>
+ <20190710163538.GA30902@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710163538.GA30902@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Jul 2019, Peter Zijlstra wrote:
-
-> If we mark the key as RO after init, and then try and modify the key to
-> link module usage sites, things might go bang as described.
+On Wed, Jul 10, 2019 at 06:35:38PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jul 10, 2019 at 08:20:17AM -0400, Keyur Patel wrote:
+> > Added missing logging statement when kfifo_alloc fails, to improve
+> > debugging.
+> > 
+> > Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
+> > ---
+> >  drivers/staging/greybus/uart.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
+> > index b3bffe91ae99..86a395ae177d 100644
+> > --- a/drivers/staging/greybus/uart.c
+> > +++ b/drivers/staging/greybus/uart.c
+> > @@ -856,8 +856,10 @@ static int gb_uart_probe(struct gbphy_device *gbphy_dev,
+> >  
+> >  	retval = kfifo_alloc(&gb_tty->write_fifo, GB_UART_WRITE_FIFO_SIZE,
+> >  			     GFP_KERNEL);
+> > -	if (retval)
+> > +	if (retval) {
+> > +		pr_err("kfifo_alloc failed\n");
+> >  		goto exit_buf_free;
+> > +	}
 > 
-> Thanks!
+> You should have already gotten an error message from the log if this
+> fails, from the kmalloc_array() call failing, right?
 > 
+> So why is this needed?  We have been trying to remove these types of
+> messages and keep them in the "root" place where the failure happens.
 > 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 27d7864e7252..5bf7a8354da2 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -366,7 +366,7 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
->  	cr4_clear_bits(X86_CR4_UMIP);
->  }
->  
-> -DEFINE_STATIC_KEY_FALSE_RO(cr_pinning);
-> +DEFINE_STATIC_KEY_FALSE(cr_pinning);
+> thanks,
+> 
+> greg k-h
 
-Good catch, I guess that is going to fix it.
+Didn't notice that. I agree that this will result only into redundancy. 
+Quick look over files reveal that there are multiple places
+where people are using print statements after memory allocation fails. 
+Should I go ahead and send patches to remove those
+redundant print statements?
 
-At the same time though, it sort of destroys the original intent of Kees' 
-patch, right? The exploits will just have to call static_key_disable() 
-prior to calling native_write_cr4() again, and the protection is gone.
+Sorry, if you're receiving this message again.
 
--- 
-Jiri Kosina
-SUSE Labs
-
+Thnaks.
+Keyur Patel
