@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC7266C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8842666C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfGLMGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:06:48 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47398 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbfGLMGq (ORCPT
+        id S1726896AbfGLMEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:04:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59388 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbfGLMEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:06:46 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC48vM008727;
-        Fri, 12 Jul 2019 12:06:09 GMT
+        Fri, 12 Jul 2019 08:04:54 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC408T193538;
+        Fri, 12 Jul 2019 12:04:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=E14zOpdJ0upmAZGDNVryByKPU7mvCSiYeFkhZvpvH9w=;
- b=FIbqhn+OIc/U3TbGekk1kglxd3dkGTWFGJdCpcL1g3oBGHoGYJkXA6rDjY54xgo2y/dK
- X9luy9yF/lq/XVDZr37+fSwS08ukeu9t6SsM5o4LJvUFFEnnmJwIVQoy2Q7DkvGHrqlm
- eVWLCWmWuZI49RlSLSayIuTHVxPJC9wNhwpchfwkASiKHJsetWs98UWyTh/WgaYux566
- 0kijlVfG+Wn0ts7S7dS1rPHXF37Un3NWB/Wh34D/uiJgFQKFBPByDk9gPWu/+PFEaJpy
- dIiwK7TJeQa9YaUYJsTPEBakRqkDTPmGpqTWtGKNiophhx6p/JKfiPNGnegJ/jTyXpbd JA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2tjm9r57kt-1
+ bh=cmT+Q26he6loqTunuFKBeKHkRTXIORCg1WJGoyTRd0U=;
+ b=dT0B4osZgrJIBjgIG/p8aeYQD6xxSoEnCYjXXaYuYzsGKOv4LR1wp93zJyKSTmygCSTp
+ ph73BeOol2YBxWwyvpj38coMoLYOI+cVJZrxfQcWnXol4g5Vhre3eD85sxsxSsoGSu8A
+ GJlrREG2eNQDebVAVAHPGheUGv+XBUlucOwWsZCOAbN+RHXjk9TmN9CvX2cWeQPUQsEn
+ RJgYIgohkM4CapajncSQK6g2hxYctkZhY4fKZr9JCIM1Tpk168u7sPAV+RrMBo8f9pEO
+ 9GNJkT2qcB28xgvOK9MKeZmQ5vuPv4YMYiGZiobxNe+0h25W7NyK7Zdryc7tcYbX1m7L VA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2tjk2u5af6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:06:08 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3RS1175143;
-        Fri, 12 Jul 2019 12:04:08 GMT
+        Fri, 12 Jul 2019 12:04:10 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3Qgd095638;
+        Fri, 12 Jul 2019 12:04:09 GMT
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2tmwgyr39m-1
+        by aserp3020.oracle.com with ESMTP id 2tpefd290c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:04:08 +0000
+        Fri, 12 Jul 2019 12:04:09 +0000
 Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6CC46oQ020742;
-        Fri, 12 Jul 2019 12:04:06 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6CC4849020751;
+        Fri, 12 Jul 2019 12:04:08 GMT
 Received: from z2.cn.oracle.com (/10.182.69.87)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Jul 2019 04:58:37 -0700
+        with ESMTP ; Fri, 12 Jul 2019 04:58:39 -0700
 From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
         jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de,
         Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v7 3/5] xen: Map "xen_nopv" parameter to "nopv" and mark it obsolete
-Date:   Thu, 11 Jul 2019 20:02:10 +0800
-Message-Id: <1562846532-32152-4-git-send-email-zhenzhong.duan@oracle.com>
+Subject: [PATCH v7 4/5] x86/paravirt: Remove const mark from x86_hyper_xen_hvm variable
+Date:   Thu, 11 Jul 2019 20:02:11 +0800
+Message-Id: <1562846532-32152-5-git-send-email-zhenzhong.duan@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1562846532-32152-1-git-send-email-zhenzhong.duan@oracle.com>
 References: <1562846532-32152-1-git-send-email-zhenzhong.duan@oracle.com>
@@ -68,70 +68,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up unnecessory code after that operation.
+.. as "nopv" support needs it to be changeable at boot up stage.
+
+Checkpatch report warning, so move variable declarations from
+hypervisor.c to hypervisor.h
 
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: Stefano Stabellini <sstabellini@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  2 ++
- arch/x86/xen/enlighten_hvm.c                    | 12 ++++++------
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/hypervisor.h | 8 ++++++++
+ arch/x86/kernel/cpu/hypervisor.c  | 8 --------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dbfe9c2..c3f3e01 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5257,6 +5257,8 @@
- 	xen_nopv	[X86]
- 			Disables the PV optimizations forcing the HVM guest to
- 			run as generic HVM guest with no PV drivers.
-+			This option is obsoleted by the "nopv" option, which
-+			has equivalent effect for XEN platform.
+diff --git a/arch/x86/include/asm/hypervisor.h b/arch/x86/include/asm/hypervisor.h
+index f7b4c53..e41cbf2 100644
+--- a/arch/x86/include/asm/hypervisor.h
++++ b/arch/x86/include/asm/hypervisor.h
+@@ -58,6 +58,14 @@ struct hypervisor_x86 {
+ 	bool ignore_nopv;
+ };
  
- 	xen_scrub_pages=	[XEN]
- 			Boolean option to control scrubbing pages before giving them back
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index ac4943c..1756cf7 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -210,18 +210,18 @@ static void __init xen_hvm_guest_init(void)
- #endif
- }
- 
--static bool xen_nopv;
- static __init int xen_parse_nopv(char *arg)
- {
--       xen_nopv = true;
--       return 0;
-+	pr_notice("\"xen_nopv\" is deprecated, please use \"nopv\" instead\n");
++extern const struct hypervisor_x86 x86_hyper_vmware;
++extern const struct hypervisor_x86 x86_hyper_ms_hyperv;
++extern const struct hypervisor_x86 x86_hyper_xen_pv;
++extern const struct hypervisor_x86 x86_hyper_kvm;
++extern const struct hypervisor_x86 x86_hyper_jailhouse;
++extern const struct hypervisor_x86 x86_hyper_acrn;
++extern struct hypervisor_x86 x86_hyper_xen_hvm;
 +
-+	if (xen_cpuid_base())
-+		nopv = true;
-+	return 0;
- }
- early_param("xen_nopv", xen_parse_nopv);
+ extern bool nopv;
+ extern enum x86_hypervisor_type x86_hyper_type;
+ extern void init_hypervisor_platform(void);
+diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hypervisor.c
+index 7eaad41..553bfbf 100644
+--- a/arch/x86/kernel/cpu/hypervisor.c
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -26,14 +26,6 @@
+ #include <asm/processor.h>
+ #include <asm/hypervisor.h>
  
- bool __init xen_hvm_need_lapic(void)
+-extern const struct hypervisor_x86 x86_hyper_vmware;
+-extern const struct hypervisor_x86 x86_hyper_ms_hyperv;
+-extern const struct hypervisor_x86 x86_hyper_xen_pv;
+-extern const struct hypervisor_x86 x86_hyper_xen_hvm;
+-extern const struct hypervisor_x86 x86_hyper_kvm;
+-extern const struct hypervisor_x86 x86_hyper_jailhouse;
+-extern const struct hypervisor_x86 x86_hyper_acrn;
+-
+ static const __initconst struct hypervisor_x86 * const hypervisors[] =
  {
--	if (xen_nopv)
--		return false;
- 	if (xen_pv_domain())
- 		return false;
- 	if (!xen_hvm_domain())
-@@ -233,7 +233,7 @@ bool __init xen_hvm_need_lapic(void)
- 
- static uint32_t __init xen_platform_hvm(void)
- {
--	if (xen_pv_domain() || xen_nopv)
-+	if (xen_pv_domain())
- 		return 0;
- 
- 	return xen_cpuid_base();
+ #ifdef CONFIG_XEN_PV
 -- 
 1.8.3.1
 
