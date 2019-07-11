@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CDAC6517F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EB865189
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfGKFkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 01:40:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727898AbfGKFkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:40:08 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8093220838;
-        Thu, 11 Jul 2019 05:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562823607;
-        bh=zvuDGhOQ3cg7jcGK8yft/tWYQtU9QCFMuievf8sS0Lo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tTgtdkClydOYcqmy3q/DgbDsZr7eimMgrWjMOm+CFxe7TnzsWd99fP1aPHuXMBqgs
-         p8KGViDX4Ecr0jo1dNXOZupa4/Wsi8b0UbCW1zm60b+4ebLDSmW1tVha3oWMXn7v9t
-         28Yuxykh+iK5jn36PX7XT19Eo5baZq/71UIYg9C4=
-Date:   Thu, 11 Jul 2019 08:40:03 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20190711054003.GA23598@mtr-leonro.mtl.com>
-References: <20190709135636.4d36e19f@canb.auug.org.au>
- <20190709064346.GF7034@mtr-leonro.mtl.com>
- <20190710175212.GM2887@mellanox.com>
- <20190711115054.7d7f468c@canb.auug.org.au>
- <20190711015854.GC22409@mellanox.com>
- <20190711131344.452fc064@canb.auug.org.au>
- <20190711131603.6b11b831@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711131603.6b11b831@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1728196AbfGKFqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 01:46:15 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:59981 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728147AbfGKFqL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 01:46:11 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x6B5ip8K031345;
+        Thu, 11 Jul 2019 14:44:52 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x6B5ip8K031345
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562823892;
+        bh=dURe8OXsJ3VqMwo+bDGqg5UHB/JeoagK5A52yE/eJIQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=o8B7IsVTM7O8ebdGZ8tXaasbQBj5NmkLDOc3iIhjP9359znVcnQTuUdOK6UC6mmXE
+         45Zgwg/FsLQbgWRTlt/cU4aJJN8/PTsL9ZG999cPSmXIOI7U3JpBnqRIntmkQU7Qcy
+         ndcdt66nJrGMd6XGsEI3b7RUskh67AzBy420AzW8vMIpKeodw3IM5blZI2k7ftRXMZ
+         kj/VXexLQ8POkXfh58JLCoFBvE4fR4AzvMNOB/oxL5n78EgsV11LNlNYsIUoV7O+9a
+         40u4AMEut6WnHxXuzOoxbEO/QqBnE1/vLBWaqQaHOa6mgs8heu+mi8jCXRawzjhtj9
+         6IUAcLtXUswvA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>, Nicolas Pitre <nico@fluxnic.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: [PATCH v2 00/11] kbuild: create *.mod with directory path and remove MODVERDIR
+Date:   Thu, 11 Jul 2019 14:44:23 +0900
+Message-Id: <20190711054434.1177-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 01:16:03PM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> On Thu, 11 Jul 2019 13:13:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 11 Jul 2019 02:26:27 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
-> > >
-> > > On Thu, Jul 11, 2019 at 11:50:54AM +1000, Stephen Rothwell wrote:
-> > >
-> > > > So today this failed to build after I merged the rdma tree (previously
-> > > > it didn;t until after the net-next tree was merged (I assume a
-> > > > dependency changed).  It failed because in_dev_for_each_ifa_rcu (and
-> > > > in_dev_for_each_ifa_rtnl) is only defined in a commit in the net-next
-> > > > tree :-(
-> > >
-> > > ? I'm confused..
-> > >
-> > > rdma.git builds fine stand alone (I hope!)
-> >
-> > I have "Fixup to build SIW issue" from Leon (which switches to using
-> > in_dev_for_each_ifa_rcu) included in the rmda tree merge commit because
-> > without that the rdma tree would not build for me.  Are you saying that
-> > I don't need that at all, now?
->
-> Actually , I get it now, "Fixup to build SIW issue" is really just a
-> fixup for the net-next and rdma trees merge ... OK, I will fix that up
-> tomorrow.  Sorry for my confusion.
 
-Yes, it was for build only.
+This series kills the long standing MODVERDIR.
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+Since MODVERDIR has a flat structure, it cannot avoid a race
+condition when somebody introduces a module name conflict.
 
+Kbuild now reads modules.order to get the list of all modules.
+
+The post-processing/installation stages will be more robust
+and simpler.
+
+
+Masahiro Yamada (11):
+  kbuild: do not create empty modules.order in the prepare stage
+  kbuild: get rid of kernel/ prefix from in-tree modules.{order,builtin}
+  kbuild: remove duplication from modules.order in sub-directories
+  scsi: remove pointless $(MODVERDIR)/$(obj)/53c700.ver
+  kbuild: modinst: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: modsign: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: create *.mod with full directory path and remove MODVERDIR
+  kbuild: remove the first line of *.mod files
+  kbuild: remove 'prepare1' target
+  kbuild: split out *.mod out of {single,multi}-used-m rules
+
+ .gitignore                  |  1 +
+ Documentation/dontdiff      |  1 +
+ Makefile                    | 36 ++++++++++--------------------------
+ drivers/scsi/Makefile       |  2 +-
+ scripts/Makefile.build      | 33 +++++++++++++++------------------
+ scripts/Makefile.modbuiltin |  2 +-
+ scripts/Makefile.modinst    |  5 +----
+ scripts/Makefile.modpost    | 17 +++++++++--------
+ scripts/Makefile.modsign    |  3 +--
+ scripts/adjust_autoksyms.sh | 11 ++++-------
+ scripts/mod/sumversion.c    | 23 ++++-------------------
+ scripts/modules-check.sh    |  2 +-
+ scripts/package/mkspec      |  2 +-
+ 13 files changed, 50 insertions(+), 88 deletions(-)
+
+-- 
+2.17.1
 
