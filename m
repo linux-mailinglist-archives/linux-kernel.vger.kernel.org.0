@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32C065E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 19:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65EE965E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 19:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfGKREt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 13:04:49 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42184 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728753AbfGKREt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 13:04:49 -0400
-Received: by mail-ed1-f65.google.com with SMTP id v15so6511832eds.9
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 10:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HKtFz5m3SJUoyJfannzFhRIi22aRe40IcnDLShyAIms=;
-        b=Xq/mB+cljDpLj6RZErA+YWYh1tWZ0TFRNucp2cHzuiS2f1eND6fu+H2y045styTbIQ
-         fEoozXGqxKJKa5WX2kcEOXu2M3EP4FduHJAFh1I93u6CxwVCJEAi12pZVflzW6KTLwRj
-         Qs8x8zvsQxqW0il6sR9EBgUvAlY1JJhQbbs2nvH/PWwbFTRfrVR1iJklMeQFGu467CMm
-         /mDjhB25cexBd5RbE23MesURCjRRpLf/czUryrZqZB7b4ndKDkRu4vgvvWsb9mCANWRJ
-         usWAwGxjpqz3fzvuckYa/HDH/8A4RLcgCS4Mk1ZjSHFtw/GyicdVAs9HklwJOM6O/5RK
-         jIdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HKtFz5m3SJUoyJfannzFhRIi22aRe40IcnDLShyAIms=;
-        b=Hrkui+TdUX9hpuzBNzUAfRUHjh7/GVsbCcW9bNEo3HMWcXFB1M4w73BXaq6SwG1y99
-         5GAB4mtya7cCaK9YDZENX5pHOURFk8l2Twq+SoS0bcN9dk5cpIb0vdz/Hxad1hAAAYpa
-         I2g2zdE+HTprreaNIWcABJ19ldXty56pWP6/8ap46QGxg3dU1O4nSegZuySkoTJ88YN6
-         kP69ESx/rS3dvfp17JzGMNTGQQlcJyBfeWifvBcpm0eOPkkQJ58QMV62ztGku3tSlFHf
-         OLhAwH5+YCBb10MdAGUu+j2PqHGXVJmeyTWvPFfR9TvlxdEBQWLakR9fdujxkProeaMw
-         zjRA==
-X-Gm-Message-State: APjAAAVGOizxlQPbwM66AG+g3uXvIEaGxtdJiAuv5+wRFW6Mp0TOUEvG
-        hhXq/ejWcmUjh5ltLJhK6hsjV8Gq5TsNNqkzofPv1A==
-X-Google-Smtp-Source: APXvYqxYzE6AJdtimx3a2ee2fT+IYR4+blay3RGcsdDJWNPR7KKVyMnhBzG7emI231/T9nrCuC3b9cIey5cO58MJDd4=
-X-Received: by 2002:a50:a511:: with SMTP id y17mr4619439edb.259.1562864687272;
- Thu, 11 Jul 2019 10:04:47 -0700 (PDT)
+        id S1728738AbfGKREl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 13:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfGKREl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 13:04:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A67932084B;
+        Thu, 11 Jul 2019 17:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562864680;
+        bh=ZtQbjTKSuG5miBFoKtVBUh9w0F5SVtSPWCsiPg1i9Fo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GeFU5ITLxBKdmriot8FGzOsfEBIvdDqkmvEqLn63s1pW2FnpQGlQ0qEnhSPcurbc7
+         cFUwxVR8BFQ+AQBjr3ZTITnWKw3bNnoWsZ2xJUxOsmg//p7SOder5U6hq7WC2D6zlU
+         IIPMtd5MzVGC+UPI+46EJrH/6armNOEcFbsj84v0=
+Date:   Thu, 11 Jul 2019 19:04:37 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Douglas Anderson <dianders@chromium.org>, stable@vger.kernel.org,
+        groeck@chromium.org, sukhomlinov@google.com,
+        jarkko.sakkinen@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM
+ operations
+Message-ID: <20190711170437.GA7544@kroah.com>
+References: <20190711162919.23813-1-dianders@chromium.org>
+ <20190711163915.GD25807@ziepe.ca>
 MIME-Version: 1.0
-References: <CAOyeoRUUK+T_71J=+zcToyL93LkpARpsuWSfZS7jbJq=wd1rQg@mail.gmail.com>
- <21fd772c-2267-2122-c878-f80185d8ca86@redhat.com>
-In-Reply-To: <21fd772c-2267-2122-c878-f80185d8ca86@redhat.com>
-From:   Eric Hankland <ehankland@google.com>
-Date:   Thu, 11 Jul 2019 10:04:36 -0700
-Message-ID: <CAOyeoRVrXjdywi-00ZafkVtEb_x6f5ZEmdMqq6v67XMedv_LKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: x86: PMU Event Filter
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Wei Wang <wei.w.wang@intel.com>, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Stephane Eranian <eranian@google.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711163915.GD25807@ziepe.ca>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your help. The "type"->"action" change and constant
-renaming sound good to me.
+On Thu, Jul 11, 2019 at 01:39:15PM -0300, Jason Gunthorpe wrote:
+> On Thu, Jul 11, 2019 at 09:29:19AM -0700, Douglas Anderson wrote:
+> > From: Vadim Sukhomlinov <sukhomlinov@google.com>
+> > 
+> > commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream.
+> > 
+> > TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
+> > future TPM operations. TPM 1.2 behavior was different, future TPM
+> > operations weren't disabled, causing rare issues. This patch ensures
+> > that future TPM operations are disabled.
+> > 
+> > Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
+> > [dianders: resolved merge conflicts with mainline]
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > This is the backport of the patch referenced above to 4.19 as was done
+> > in Chrome OS.  See <https://crrev.com/c/1495114> for details.  It
+> > presumably applies to some older kernels.  NOTE that the problem
+> > itself has existed for a long time, but continuing to backport this
+> > exact solution to super old kernels is out of scope for me.  For those
+> > truly interested feel free to reference the past discussion [1].
+> > 
+> > Reason for backport: mainline has commit a3fbfae82b4c ("tpm: take TPM
+> > chip power gating out of tpm_transmit()") and commit 719b7d81f204
+> > ("tpm: introduce tpm_chip_start() and tpm_chip_stop()") and it didn't
+> > seem like a good idea to backport 17 patches to avoid the conflict.
+> 
+> Careful with this, you can't backport this to any kernels that don't
+> have the sysfs ops locking changes or they will crash in sysfs code.
 
-On Thu, Jul 11, 2019 at 4:58 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 11/07/19 03:25, Eric Hankland wrote:
-> > - Add a VM ioctl that can control which events the guest can monitor.
->
-> ... and finally:
->
-> - the patch whitespace is damaged
->
-> - the filter is leaked when the VM is destroyed
->
-> - kmalloc(GFP_KERNEL_ACCOUNT) is preferrable to vmalloc because it
-> accounts memory to the VM correctly.
->
-> Since this is your first submission, I have fixed up everything.
->
-> Paolo
+And what commit added that?
+
+thanks,
+
+greg k-h
