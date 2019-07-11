@@ -2,109 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A89665C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 06:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C473D665DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 06:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbfGLEeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 00:34:09 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60344 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfGLEeI (ORCPT
+        id S1729623AbfGLEou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 00:44:50 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59630 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfGLEou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 00:34:08 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlnFe-0003Rz-Ja; Fri, 12 Jul 2019 04:33:42 +0000
-Date:   Fri, 12 Jul 2019 05:33:42 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
-Message-ID: <20190712043341.GI17978@ZenIV.linux.org.uk>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-6-cyphar@cyphar.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190706145737.5299-6-cyphar@cyphar.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Fri, 12 Jul 2019 00:44:50 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C4dH4j056602;
+        Fri, 12 Jul 2019 04:43:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=uw9ARe8x7QtRm6OOT1c/IbRl5bsJpRHqHU8DP7hvV60=;
+ b=pQPEW7Dx4el+JBLPt8X5lkuRVGTKaPyBnwXZoCQOAJekYwf8Y7K3H1fIMkpvvELMZmuA
+ Li1Ucgf0pXYPFe92BXDYi+6ztpdw5dbxpOnFCTIKkXiqP/bQpTzS3sbx+/7+S2yWfPBO
+ o/o3yFhFXl8262oWh/I04NkRq4MluTsLOIQyXkKiHaBCso8scqH52BBz4hgipWQ4Xd4+
+ RkDrSj2dPUEoMfzb53xFUmHuyGmc8CGhBZu68mYfr2r1cMxbjYpsa/8U0M0r+dogTrxZ
+ lYQzmPH/+YWoWRqkz+tYCgoub1bWlFFFnoWQPgztequYVPW4o1tAWaCRRqh1v3Md+ykQ zQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2tjm9r3d9k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 04:43:35 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C4gWQZ162744;
+        Fri, 12 Jul 2019 04:43:34 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2tpefcvn8u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 04:43:34 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6C4hUXJ012299;
+        Fri, 12 Jul 2019 04:43:32 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 11 Jul 2019 21:43:30 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, x86@kernel.org,
+        srinivas.eeda@oracle.com,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] xen/pv: Fix a boot up hang triggered by int3 self test
+Date:   Thu, 11 Jul 2019 12:47:18 +0800
+Message-Id: <1562820438-30328-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907120047
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907120046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 07, 2019 at 12:57:32AM +1000, Aleksa Sarai wrote:
+Commit 7457c0da024b ("x86/alternatives: Add int3_emulate_call()
+selftest") reveals a bug in XEN PV int3 assemble code. There is
+a double pop of register R11 and RCX currupting the exception
+frame, one in xen_int3 and the other in xen_xenint3.
 
-> @@ -1442,8 +1464,11 @@ static int follow_dotdot_rcu(struct nameidata *nd)
->  	struct inode *inode = nd->inode;
->  
->  	while (1) {
-> -		if (path_equal(&nd->path, &nd->root))
-> +		if (path_equal(&nd->path, &nd->root)) {
-> +			if (unlikely(nd->flags & LOOKUP_BENEATH))
-> +				return -EXDEV;
+We see below hang at bootup:
 
-> @@ -1468,6 +1493,8 @@ static int follow_dotdot_rcu(struct nameidata *nd)
->  				return -ECHILD;
->  			if (&mparent->mnt == nd->path.mnt)
->  				break;
-> +			if (unlikely(nd->flags & LOOKUP_XDEV))
-> +				return -EXDEV;
->  			/* we know that mountpoint was pinned */
->  			nd->path.dentry = mountpoint;
->  			nd->path.mnt = &mparent->mnt;
-> @@ -1482,6 +1509,8 @@ static int follow_dotdot_rcu(struct nameidata *nd)
->  			return -ECHILD;
->  		if (!mounted)
->  			break;
-> +		if (unlikely(nd->flags & LOOKUP_XDEV))
-> +			return -EXDEV;
+general protection fault: 0000 [#1] SMP NOPTI
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0+ #6
+RIP: e030:int3_magic+0x0/0x7
+Call Trace:
+ alternative_instructions+0x3d/0x12e
+ check_bugs+0x7c9/0x887
+ ?__get_locked_pte+0x178/0x1f0
+ start_kernel+0x4ff/0x535
+ ?set_init_arg+0x55/0x55
+ xen_start_kernel+0x571/0x57a
 
-Are you sure these failure exits in follow_dotdot_rcu() won't give
-suprious hard errors?
+Fix it by removing xen_xenint3.
 
-> +	if (unlikely(nd->flags & LOOKUP_BENEATH)) {
-> +		error = dirfd_path_init(nd);
-> +		if (unlikely(error))
-> +			return ERR_PTR(error);
-> +		nd->root = nd->path;
-> +		if (!(nd->flags & LOOKUP_RCU))
-> +			path_get(&nd->root);
-> +	}
->  	if (*s == '/') {
->  		if (likely(!nd->root.mnt))
->  			set_root(nd);
-> @@ -2350,9 +2400,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->  			s = ERR_PTR(error);
->  		return s;
->  	}
-> -	error = dirfd_path_init(nd);
-> -	if (unlikely(error))
-> -		return ERR_PTR(error);
-> +	if (likely(!nd->path.mnt)) {
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+---
+ arch/x86/include/asm/traps.h | 2 +-
+ arch/x86/xen/enlighten_pv.c  | 2 +-
+ arch/x86/xen/xen-asm_64.S    | 1 -
+ 3 files changed, 2 insertions(+), 3 deletions(-)
 
-Is that a weird way of saying "if we hadn't already called dirfd_path_init()"?
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 7d6f3f3..f2bd284 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -40,7 +40,7 @@
+ asmlinkage void xen_divide_error(void);
+ asmlinkage void xen_xennmi(void);
+ asmlinkage void xen_xendebug(void);
+-asmlinkage void xen_xenint3(void);
++asmlinkage void xen_int3(void);
+ asmlinkage void xen_overflow(void);
+ asmlinkage void xen_bounds(void);
+ asmlinkage void xen_invalid_op(void);
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 4722ba2..2138d69 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -596,7 +596,7 @@ struct trap_array_entry {
+ 
+ static struct trap_array_entry trap_array[] = {
+ 	{ debug,                       xen_xendebug,                    true },
+-	{ int3,                        xen_xenint3,                     true },
++	{ int3,                        xen_int3,                        true },
+ 	{ double_fault,                xen_double_fault,                true },
+ #ifdef CONFIG_X86_MCE
+ 	{ machine_check,               xen_machine_check,               true },
+diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+index 1e9ef0b..ebf610b 100644
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -32,7 +32,6 @@ xen_pv_trap divide_error
+ xen_pv_trap debug
+ xen_pv_trap xendebug
+ xen_pv_trap int3
+-xen_pv_trap xenint3
+ xen_pv_trap xennmi
+ xen_pv_trap overflow
+ xen_pv_trap bounds
+-- 
+1.8.3.1
+
