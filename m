@@ -2,120 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 848EC65B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B498465B9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfGKQ32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 12:29:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34035 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbfGKQ32 (ORCPT
+        id S1728775AbfGKQfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 12:35:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40031 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfGKQfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 12:29:28 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b13so3010965pfo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 09:29:27 -0700 (PDT)
+        Thu, 11 Jul 2019 12:35:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so3197371pgj.7;
+        Thu, 11 Jul 2019 09:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/cvu3lP4uYGQ0nzTJkCmI3lypOqpPvgnq8xhQZDKGwQ=;
-        b=QRHANFv3oWTVZzIwwbHZJ+G2G4uGVCd81kkae1vUvDdfh0Z59tW9LCC3oPbUm1+6w1
-         s9yt+T2pO64KQYCgFLYrPuq5XcUyc3eh22Ks0tkceEyUTmLY0kzDkSHqpvOSQAKW5VVB
-         5paq3pRo21kz7QIpEDCeY0LyRoV/sxazA/tko=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MmkG53WQLXsnChwuW4VZaCFghSpsaEReR7YJG6XS3wY=;
+        b=BcgcIoO8JWuECr/LI3atzQ4qxt5OBmIaOr0AK+el9EA3EwjCtUKJeEJJMz56x6JCEc
+         9RwB/rq61Hn0aUG50lVV0QnO1bj+XHfUbDFoFhwT1uFEjMaZCyq15Z7lRwifB1sJX2QJ
+         kTOLQL38vSoh8eB+AE4q+dzITIvB10BnRneK7HpRWENFWI4PGgSoDANFf8Uzbw43MGsC
+         SkuNFR1DrFzdJHgQvOL684DxIMJl+EviFz/JnLXYEqDWxQpGzl7pF0OSX5H4GGnDYvqZ
+         J9YGhdo8mrVV1uZWvnM/vf4nwBpnIwXx+Ttk4b8eT7nTUcRpVCvgk+HZQXzl536USxba
+         ukYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/cvu3lP4uYGQ0nzTJkCmI3lypOqpPvgnq8xhQZDKGwQ=;
-        b=kyjH1gd8PtGWAHDsFxfHGT9GrJLwDZsRCKSPDItl03t2nugtyU73Mw+788seXmaGAs
-         XaVjrBezH2L6K1Ah8oZxNcm2rYTW1UOepNCLoaWaeH3LhJficmZA7KWY+oYCSb9REBsR
-         ykiBJrWPAF+RYEwy++RKOVLU9Y3Wgqw4dODLIVQ6no/mT0ki2K9FacIyO++Oc6mkHc3x
-         6lzCeh7hZJ5C1B3SMF4Ilr349Wp+Tl8X7wRGElPZGHZBWcKE2FHaLCDaRnZ7sHIOCIs8
-         q+Zto97zxOoFSpYm5hpn4smjGtHg0PqnBPUITKizibEWKr+LiaaC+fdybeNvztOw7D/f
-         H7AQ==
-X-Gm-Message-State: APjAAAWiAiCH60Qj61Y4ylvRDwZvAem4GKxqn+dCAnEQYB77NfEqcgJY
-        dvHbly0jwSOrUguYtMu36usxig==
-X-Google-Smtp-Source: APXvYqxas7q8ZzI8Hp7bOoO1Sdw4IufzVXuoHWliNFro0YM4+XyheGLisLQYJ2sSMb//6VjjushIpw==
-X-Received: by 2002:a17:90b:8e:: with SMTP id bb14mr5861467pjb.19.1562862567357;
-        Thu, 11 Jul 2019 09:29:27 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id b6sm5854073pgq.26.2019.07.11.09.29.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 09:29:26 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     stable@vger.kernel.org
-Cc:     groeck@chromium.org, gregkh@linuxfoundation.org,
-        sukhomlinov@google.com, jarkko.sakkinen@linux.intel.com,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Peter Huewe <peterhuewe@gmx.de>,
-        linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-Date:   Thu, 11 Jul 2019 09:29:19 -0700
-Message-Id: <20190711162919.23813-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MmkG53WQLXsnChwuW4VZaCFghSpsaEReR7YJG6XS3wY=;
+        b=tWhuc9wY7alzfH1iSUZ8BeLHuOthliFXRWhV0MSVwAwSyJn1t/XYfZzxtdZhrnSF41
+         7rkfAAIL8VzOd8y/xpknYkdkBU7uAXxjQpiap+9hl8b5/bAWY4V/PwylObeTblYg/pdT
+         X9qBBK9M80cwG9rBJLVWJzpM0hAeGPri4baDTd+95pv04Aet2oeNWRx12xeNisOuh5UN
+         CbEhLo3PwZFq3xCE6z9gigZ4pA4JgbRHpoYzHl7VOriLOPizO7BNvF7gBrSLntlp9OBD
+         Hr1L7c+X89aCM9wDElSHjvSlpNsBvknSeH8xctcZqQzWUj2XtDB4H90RbDJM1859vG3g
+         hlNg==
+X-Gm-Message-State: APjAAAW5Naf+dZhcc+3HGHAf8h7mOvtmHAy0eSGFB3h0rj/45gZYUdYS
+        5NdkDxCxLjT9eIMFUA6sDg0=
+X-Google-Smtp-Source: APXvYqyvGaG6S4s96AFzUFqGjV97xe/yb4IsOBocn5ACV+MMJMiG3jRLvG0CUcuacfGGqhXQuabsEg==
+X-Received: by 2002:a63:c106:: with SMTP id w6mr5390973pgf.422.1562862949567;
+        Thu, 11 Jul 2019 09:35:49 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w187sm6560127pfb.4.2019.07.11.09.35.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 09:35:49 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 09:35:48 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Lei YU <mine260309@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon (occ): Fix division by zero issue
+Message-ID: <20190711163548.GA19747@roeck-us.net>
+References: <1562813088-23708-1-git-send-email-mine260309@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562813088-23708-1-git-send-email-mine260309@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Sukhomlinov <sukhomlinov@google.com>
+On Thu, Jul 11, 2019 at 10:44:48AM +0800, Lei YU wrote:
+> The code in occ_get_powr_avg() invokes div64_u64() without checking the
+> divisor. In case the divisor is zero, kernel gets an "Division by zero
+> in kernel" error.
+> 
+> Check the divisor and make it return 0 if the divisor is 0.
+> 
+> Signed-off-by: Lei YU <mine260309@gmail.com>
+> Reviewed-by: Eddie James <eajames@linux.ibm.com>
 
-commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream.
+Applied.
 
-TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-future TPM operations. TPM 1.2 behavior was different, future TPM
-operations weren't disabled, causing rare issues. This patch ensures
-that future TPM operations are disabled.
+Thanks,
+Guenter
 
-Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-[dianders: resolved merge conflicts with mainline]
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-This is the backport of the patch referenced above to 4.19 as was done
-in Chrome OS.  See <https://crrev.com/c/1495114> for details.  It
-presumably applies to some older kernels.  NOTE that the problem
-itself has existed for a long time, but continuing to backport this
-exact solution to super old kernels is out of scope for me.  For those
-truly interested feel free to reference the past discussion [1].
-
-Reason for backport: mainline has commit a3fbfae82b4c ("tpm: take TPM
-chip power gating out of tpm_transmit()") and commit 719b7d81f204
-("tpm: introduce tpm_chip_start() and tpm_chip_stop()") and it didn't
-seem like a good idea to backport 17 patches to avoid the conflict.
-
-[1] https://lkml.kernel.org/r/CAD=FV=UoSV9LKOTMuXKRfgFir+7_qPkuhSLN6XJEKPiRPuJJwg@mail.gmail.com
-
- drivers/char/tpm/tpm-chip.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 46caadca916a..f784b6fd93b4 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -187,12 +187,11 @@ static int tpm_class_shutdown(struct device *dev)
- {
- 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		down_write(&chip->ops_sem);
-+	down_write(&chip->ops_sem);
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		tpm2_shutdown(chip, TPM2_SU_CLEAR);
--		chip->ops = NULL;
--		up_write(&chip->ops_sem);
--	}
-+	chip->ops = NULL;
-+	up_write(&chip->ops_sem);
- 
- 	return 0;
- }
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+> ---
+>  drivers/hwmon/occ/common.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+> index 13a6290..f02aa40 100644
+> --- a/drivers/hwmon/occ/common.c
+> +++ b/drivers/hwmon/occ/common.c
+> @@ -402,8 +402,10 @@ static ssize_t occ_show_power_1(struct device *dev,
+>  
+>  static u64 occ_get_powr_avg(u64 *accum, u32 *samples)
+>  {
+> -	return div64_u64(get_unaligned_be64(accum) * 1000000ULL,
+> -			 get_unaligned_be32(samples));
+> +	u64 divisor = get_unaligned_be32(samples);
+> +
+> +	return (divisor == 0) ? 0 :
+> +		div64_u64(get_unaligned_be64(accum) * 1000000ULL, divisor);
+>  }
+>  
+>  static ssize_t occ_show_power_2(struct device *dev,
