@@ -2,50 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BFB865F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 20:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0986565F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 20:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfGKSfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 14:35:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44298 "EHLO mail.kernel.org"
+        id S1729161AbfGKSfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 14:35:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729062AbfGKSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729071AbfGKSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Jul 2019 14:35:09 -0400
-Subject: Re: [GIT] Networking
+Subject: Re: [GIT PULL] ACPI fix for v5.3-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1562870108;
-        bh=03dy95pU7hXFx0fAu7RHVL86NqSjTwLfiuVRhxYHBV4=;
+        bh=uLI8XsUrsMivjpRt4GLRCsqFss+e5wuvCE81sVyzSXQ=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=2HevMoJvXN8gUJNvzN0GsMmI2bxrdw9IDYPSZox3AOfskPSpsLG+j/3Mj9vEwTHLw
-         wKXyFbgT672KO2uey5jJqV7BiCxNUBOLjHjzepvvlZwEMHhFHxDiTX39floIh+byTR
-         vqFHSmdMadY2YZXhDmXUwvMaruvT9Pm+9SyNKhxE=
+        b=pjWk15XfEhaAZYrI0Le8Nv+09mX0zlWVsLN/FsmHAIBfxYmFkI5PPJ9VDvgjYor7C
+         d6+Gq+q0dCh9rtU8NrRx80tKrFT/cMBoUxIh0InrrKLiuh4jh/ePFkW6k1xjLLrVze
+         01sNQqPWhjy2VIpjP3iiJHwjFnMtRt/rBGliXWDw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190709.223834.2182721912834033108.davem@davemloft.net>
-References: <20190709.223834.2182721912834033108.davem@davemloft.net>
+In-Reply-To: <CAJZ5v0jTMK6rMomux6JfmRX_nRxZ+JqA_V8WKt-UJTGus6TfOQ@mail.gmail.com>
+References: <CAJZ5v0jTMK6rMomux6JfmRX_nRxZ+JqA_V8WKt-UJTGus6TfOQ@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190709.223834.2182721912834033108.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
- refs/heads/master
-X-PR-Tracked-Commit-Id: 1ff2f0fa450ea4e4f87793d9ed513098ec6e12be
+X-PR-Tracked-Message-Id: <CAJZ5v0jTMK6rMomux6JfmRX_nRxZ+JqA_V8WKt-UJTGus6TfOQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+ acpi-5.3-rc1-2
+X-PR-Tracked-Commit-Id: 6cf7fb5a95dec9743f4bfd96f9ece580a355cdd1
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 237f83dfbe668443b5e31c3c7576125871cca674
-Message-Id: <156287010833.13847.17387879259053198434.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: a131c2bf165684315f606fdd88cf80be22ba32f3
+Message-Id: <156287010892.13847.8485955181846012272.pr-tracker-bot@kernel.org>
 Date:   Thu, 11 Jul 2019 18:35:08 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 09 Jul 2019 22:38:34 -0700 (PDT):
+The pull request you sent on Thu, 11 Jul 2019 14:40:40 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git refs/heads/master
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-5.3-rc1-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/237f83dfbe668443b5e31c3c7576125871cca674
+https://git.kernel.org/torvalds/c/a131c2bf165684315f606fdd88cf80be22ba32f3
 
 Thank you!
 
