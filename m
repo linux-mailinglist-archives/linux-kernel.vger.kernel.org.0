@@ -2,83 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B8466170
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DAF66173
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfGKWAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 18:00:35 -0400
-Received: from smtprelay0233.hostedemail.com ([216.40.44.233]:59254 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726181AbfGKWAf (ORCPT
+        id S1728803AbfGKWD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 18:03:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33559 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfGKWD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 18:00:35 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 87C83909A;
-        Thu, 11 Jul 2019 22:00:33 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3150:3352:3622:3865:3867:3868:4321:5007:6737:7514:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12295:12297:12438:12555:12740:12760:12895:13069:13095:13255:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21451:21627:30054:30070:30091,0,RBL:172.58.35.165:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: bean07_3ea908f224563
-X-Filterd-Recvd-Size: 2260
-Received: from XPS-9350 (unknown [172.58.35.165])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 11 Jul 2019 22:00:30 +0000 (UTC)
-Message-ID: <eeeb09518c8967ffd48606c3d1222553752e895d.camel@perches.com>
-Subject: Re: [PATCH] sound: soc: codecs: wcd9335: fix "conversion to bool
- not needed here"
-From:   Joe Perches <joe@perches.com>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Gen Zhang <blackgod016574@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Date:   Thu, 11 Jul 2019 15:00:00 -0700
-In-Reply-To: <20190711174906.GA10867@hari-Inspiron-1545>
-References: <20190711174906.GA10867@hari-Inspiron-1545>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Thu, 11 Jul 2019 18:03:26 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so3382998pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 15:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=q8RZCLFdcTRhPC9HdHVx8tpyTmGbfsxe7u6TfcnHY6Q=;
+        b=VH/9uOk0fZ8tODBZyyOskKTIUklQdEW5OYBC9oYfzFrsJTx3D0DNt27s57rBPAPi8S
+         /hOfMakDXyl3MKvRO/VUlg7IdjKoZpvFhHuYOK7/G5ISxjOJnUHfQUWgksBrDoP/tXh9
+         +Y9QBeEyDrY1J6JP0j/ITtX0eygfD1/U4GS0N93BSHb/oh2WQYiBI2yOhVcegP8X3peq
+         aNVgh3fpWGKsR9Gop6vaL9tquFl3FdlxhjSs7X2WZw5cx6xj6xosjqoGPspAD0KZ4mcF
+         /i6fZ62O0gXQxN1UZQJkQ8da76TtbI/xOaYoh81B1BFmwwt/7m6plFC/FDG00f5z/KfS
+         PLgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=q8RZCLFdcTRhPC9HdHVx8tpyTmGbfsxe7u6TfcnHY6Q=;
+        b=X3tTvG67PH7mX8t3l/hjlDZrCsf0fatewwe6x5TtP2KsRhpWG7ml0KDGhLI8aWt/ZN
+         HUXZLTllo6emXDViQvP1HHHyQyKvvqJkIfbt6zTn2j4mtEevguYTjjxY2GQgCBmr0PQY
+         stjNnRAweLCyjm5ZwlVqcu+yAfCqKnAVwHSytNtVlj61Rnvh7RwVz1CaYu8I7KpU9te/
+         8Fi222yQuTtK82FQwGLr4OY6+HTPxyk+OjjebfrDW1MKkYfavoJMLpKBadWlCiHjn3o+
+         3YvC215+/g3krOGJ8qX3G5keQGHrNfPNLXibBYlyg+Qv4skL/eDUjBA6tydnwMiO8ESC
+         SAHw==
+X-Gm-Message-State: APjAAAUIzEYWUCpznjyBW9Vck62pk8KRYTjpgWBWvoKESsPwKJclNv6c
+        Eaqr8fel2fpB5kxQR9012t/moue/Qt0=
+X-Google-Smtp-Source: APXvYqwmO2wRtqZNIfjEe4Vpym1QieQkvocKU859foeTq6yi/NSz56Kd/1PTaDh1F9AclkrrnPVQTQ==
+X-Received: by 2002:a63:5212:: with SMTP id g18mr2387440pgb.387.1562882605792;
+        Thu, 11 Jul 2019 15:03:25 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id o14sm6161760pjp.29.2019.07.11.15.03.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 15:03:24 -0700 (PDT)
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+References: <20190712073511.53bd6665@canb.auug.org.au>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a04e21e3-3bf7-276d-ccfd-d617e88c80b6@kernel.dk>
+Date:   Thu, 11 Jul 2019 16:03:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190712073511.53bd6665@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-11 at 23:19 +0530, Hariprasad Kelam wrote:
-> Fix below issue reported by coccicheck
-> sound/soc/codecs/wcd9335.c:3991:25-30: WARNING: conversion to bool not
-> needed here
+On 7/11/19 3:35 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> ---
->  sound/soc/codecs/wcd9335.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+> In commit
 > 
-> diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-> index 1bbbe42..85a8d10 100644
-> --- a/sound/soc/codecs/wcd9335.c
-> +++ b/sound/soc/codecs/wcd9335.c
-> @@ -3988,12 +3988,7 @@ static irqreturn_t wcd9335_slimbus_irq(int irq, void *data)
->  		regmap_read(wcd->if_regmap,
->  				WCD9335_SLIM_PGD_PORT_INT_RX_SOURCE0 + j, &val);
->  		if (val) {
-> -			if (!tx)
-> -				reg = WCD9335_SLIM_PGD_PORT_INT_EN0 +
-> -					(port_id / 8);
-> -			else
-> -				reg = WCD9335_SLIM_PGD_PORT_INT_TX_EN0 +
-> -					(port_id / 8);
-> +			reg = WCD9335_SLIM_PGD_PORT_INT_TX_EN0 + (port_id / 8);
->  			regmap_read(
->  				wcd->if_regmap, reg, &int_val);
->  			/*
+>    8f3858763d33 ("nvme: fix NULL deref for fabrics options")
+> 
+> Fixes tag
+> 
+>    Fixes: 958f2a0f8 ("nvme-tcp: set the STABLE_WRITES flag when data digests
+> 
+> has these problem(s):
+> 
+>    - SHA1 should be at least 12 digits long
+>      Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>      or later) just making sure it is not set (or set to "auto").
+>    - Subject has leading but no trailing parentheses
+>    - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than one line.  Also do not
+> include blank lines among the tags.
 
-This change makes no sense and doesn't match the commit message.
+I should have caught that. Since it's top-of-tree and recent, I'll
+amend it.
 
+-- 
+Jens Axboe
 
