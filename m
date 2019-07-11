@@ -2,131 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019AF6592E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A635F65962
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfGKOmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:42:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51056 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfGKOmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:42:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+HlbWEQmRduQNmwZFRzhfjm5S2Nl7jUTbuTLfBpBQqk=; b=Wou5o/MPpOc6TgukRzTBE/GH+
-        RjTTLTQbUoZs3rqtFDNYiTTqcywlE97WS1aQvfu0aZSweV6wT+FTGnPpwgRC7hPVC1T1yktQXgFF0
-        y4n54l2AWJtFqwvW014NATDZc/TT5iZI6BS4La50RlA2uClTaigHVREvsuAgme/SIif/I=;
-Received: from [217.140.106.52] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hlaGm-0002Ug-9P; Thu, 11 Jul 2019 14:42:00 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 7990FD02DA8; Thu, 11 Jul 2019 15:41:59 +0100 (BST)
-Date:   Thu, 11 Jul 2019 15:41:59 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] regmap: Add DSI bus support
-Message-ID: <20190711144159.GH14859@sirena.co.uk>
-References: <20190703214326.41269-1-jeffrey.l.hugo@gmail.com>
- <20190703214512.41319-1-jeffrey.l.hugo@gmail.com>
- <20190706010604.GG20625@sirena.org.uk>
- <CAOCk7No77CDRE=bnBVGzYw9ixWKO4PMBBWksm4JEeh3ydfOk+g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aF3LVLvitz/VQU3c"
-Content-Disposition: inline
-In-Reply-To: <CAOCk7No77CDRE=bnBVGzYw9ixWKO4PMBBWksm4JEeh3ydfOk+g@mail.gmail.com>
-X-Cookie: Visit beautiful Vergas, Minnesota.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728910AbfGKOwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:52:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:50930 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfGKOwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:52:44 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 15AA3200949;
+        Thu, 11 Jul 2019 16:52:42 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CDA812001EC;
+        Thu, 11 Jul 2019 16:52:35 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 04CDD402C1;
+        Thu, 11 Jul 2019 22:52:27 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        leoyang.li@nxp.com, robh+dt@kernel.org
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: [v3 2/2] Documentation: dt: binding: rtc: add binding for ftm alarm driver
+Date:   Thu, 11 Jul 2019 22:43:25 +0800
+Message-Id: <20190711144325.10963-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch adds binding for ftm alarm driver
 
---aF3LVLvitz/VQU3c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v3:
+	- remove reg-names property
+	- correct cells number
 
-On Wed, Jul 10, 2019 at 12:08:34PM -0600, Jeffrey Hugo wrote:
-> On Fri, Jul 5, 2019 at 7:06 PM Mark Brown <broonie@kernel.org> wrote:
+Change in v2:
+	- replace ls1043a with ls1088a as example
+	- add rcpm node and fsl,rcpm-wakeup property
 
-> The addresses for these spec defined messages are 8-bit wide, so 256
-> valid "destinations".  However, the payload is variable.  Most of the
-> defined operations take an 8-bit payload, but there are a few that I
-> see with 16-bit payloads.
+ .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
 
-Oh, good, variable register sizes, what a market leading idea :(
-That basically doesn't work with regmap, you need to either
-define one regmap per register size and attach them to the device
-or use reg_read() and reg_write() and hide the complexity in
-there.
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+new file mode 100644
+index 0000000..e4eea18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+@@ -0,0 +1,38 @@
++Freescale FlexTimer Module (FTM) Alarm
++
++Note: The driver need work with RCPM driver to wake up system in sleep.
++
++Required properties:
++- compatible : Should be "fsl,<chip>-ftm-alarm", the
++	       supported chips include
++	       "fsl,ls1012a-ftm-alarm"
++	       "fsl,ls1021a-ftm-alarm"
++	       "fsl,ls1028a-ftm-alarm"
++	       "fsl,ls1043a-ftm-alarm"
++	       "fsl,ls1046a-ftm-alarm"
++	       "fsl,ls1088a-ftm-alarm"
++	       "fsl,ls208xa-ftm-alarm"
++- reg : Specifies base physical address and size of the register sets for the
++  FlexTimer Module and base physical address of IP Powerdown Exception Control
++  Register.
++- interrupts : Should be the FlexTimer Module interrupt.
++- fsl,rcpm-wakeup property and rcpm node : Please refer
++	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++
++Optional properties:
++- big-endian: If the host controller is big-endian mode, specify this property.
++  The default endian mode is little-endian.
++
++Example:
++rcpm: rcpm@1e34040 {
++	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
++	reg = <0x0 0x1e34040 0x0 0x18>;
++	fsl,#rcpm-wakeup-cells = <6>;
++}
++
++ftm_alarm0: timer@2800000 {
++	compatible = "fsl,ls1088a-ftm-alarm";
++	reg = <0x0 0x2800000 0x0 0x10000>;
++	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
++	interrupts = <0 44 4>;
++}
+-- 
+2.7.4
 
-> As the contents of the generic read/write messages are implementation
-> defined, the answer to your question seems to be no - the spec does
-> not define that the registers are 8-bit addressable, and 8-bit wide.
-
-The code definitely ought to at least be more flexible then.
-Right now it's very hard coded.
-
-> I think perhaps the discussion needs to step back a bit, and decide
-> how flexible do we want this regmap over DSI to be?  I think its
-> usefulness comes from when a device can be configured via multiple
-> interfaces, so I don't expect it to be useful for every DSI interface.
-> It seems like the DSI panels use DSI directly to craft their
-> configuration.  As a result, we are probably looking at just devices
-> which use the generic read/write commands, but sadly the format for
-> those is not universal per the spec.  From the implementations I've
-> seen, I suspect 8-bit addressing of 8-bit wide registers to be the
-> most common, but apparently there is an exception to that already in
-> the one device that I care about.
-
-It's relatively easy to add a bunch of special cases in - look at
-how the I2C code handles it, keying off a combination of the
-register configuration and the capabilities of the host
-controller.  I guess for this it'd mainly be the register
-configuration.  You might find the reg_read()/reg_write()
-interface better than the raw buffer one for some of the formats,
-it does let=20
-
-> Do we want to go forward with this regmap support just for the one TI
-> device, and see what other usecases come out of it, and attempt to
-> solve those as we go?
-
-I have no strong opinions here, it looks fine from a framework
-point of view though it's unclear to me if viewing it as a
-register map meshes well with how the hardware is designed or not
-- it seems plausible though.
-
---aF3LVLvitz/VQU3c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0nSrQACgkQJNaLcl1U
-h9Dqygf/XOpd88JPRHZWBN+yYZ3UHJfhBe6xy8/HfJBBT8sXXA2L3k7rHpRMmhKk
-RC58a6kuy8mDm+tQhIgEwHUlFotAHGk8kn0yNQuVK0XNL4zvAqdcQHV+gsn//x6G
-R3PQrLboonlT69lWDNW4dI1zc78mY6FzKQRtFa7kmIYZ5hr/WwtR9TfpReeUxLCr
-P5FYi4QzBp3uloWecgLExYmFZj3IHznUWpp8Hm11JDXyrpVShOMJCiA99q/W9N6A
-ALxrijQlTenDH7gMw7YEaDhnl+osCa392CguDJiSNbDW7usZ+5WGOF7TGOLu8F+u
-udGDeMVl9eOc7g2CHoRTEg6/WtQv/A==
-=1lgs
------END PGP SIGNATURE-----
-
---aF3LVLvitz/VQU3c--
