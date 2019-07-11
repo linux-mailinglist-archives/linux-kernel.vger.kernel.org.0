@@ -2,101 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A635F65962
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FAE65936
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:43:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfGKOwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:52:44 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:50930 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726213AbfGKOwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:52:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 15AA3200949;
-        Thu, 11 Jul 2019 16:52:42 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CDA812001EC;
-        Thu, 11 Jul 2019 16:52:35 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 04CDD402C1;
-        Thu, 11 Jul 2019 22:52:27 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        leoyang.li@nxp.com, robh+dt@kernel.org
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [v3 2/2] Documentation: dt: binding: rtc: add binding for ftm alarm driver
-Date:   Thu, 11 Jul 2019 22:43:25 +0800
-Message-Id: <20190711144325.10963-1-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728729AbfGKOnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:43:15 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45557 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728619AbfGKOnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:43:15 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r1so2849688pfq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bVnXpkhdRXKYktl+iS83oNTlUAhPFObnKhn5LwokMJw=;
+        b=PZ5eH3m7RNSLXRKexjamxhZJZMNP9oQiQvVuxRDtw+D/ARroDOjKRysZHlb3hjgV7H
+         +OHnQYpdLV/spoUrGR/xtUx3I42+R02Ro/1dS5X7wPoWi23Yfi0V6MqtVZPC4xMheGaL
+         pwUxFBL8lcHM4TvvDyfanulX+9K44w0WOpODtrdkRXKU+fO+XNgquQYjDohnPTKhHFyn
+         8qyQF4IrY8XCVyxdrUuqcZGRJ4/aWbGCHKue63IF9WPU68/9IxfE3tfCeJi9t1UMeV5Q
+         ukde9mAMmG8sz4B9tBM4TMd3G74FeEtSRQcNTlFiRHq/tKBkPuvEMCuWLtlvq8Vb5rkp
+         /6YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bVnXpkhdRXKYktl+iS83oNTlUAhPFObnKhn5LwokMJw=;
+        b=RiyhvtrvNjJxUbcoApdN6OEtWDGJbeRBajx2K2/DMhYnqqFOpw8CaSBps9L/hZ0gU/
+         qs4exJs/KHKYqNtaacsn45AbR+ZqH8XITTki37ussDV6Cqz7oFLFclvVCHgW25N49ekt
+         gsQ573Zuqoy5xt92hb4QGRld+XGHAB3tnYj3n7vC+dgijle4aLM6LF3TOaaJrkHkvjpW
+         HgpQnlsnuFgL7jRHlXELgncx/qllM6CIoOP2zWJHpooF36BsT+oMCb7RoMGV+1Fn0O0/
+         kDnCA0FGXQfyaNyb8ajBR0wvmraA9ZTn1AgrmnOAAZTurd7p/Uk/TVgmLPfx9WBaHpJz
+         HuNQ==
+X-Gm-Message-State: APjAAAW/vlZ/C44ikhY6nutyXri2d3cnhO8zS+sQE90iwKKfDruPL4oZ
+        jUKHnPgTVvvXyixspMgCogGfiQ==
+X-Google-Smtp-Source: APXvYqxu5aCDxjj3fkcv7rULRhrqZhb+7XDdmM9S1aURNZVTU+dFXJ+uf4wJfqTHgfPQXF/t8LDwGA==
+X-Received: by 2002:a17:90a:bf02:: with SMTP id c2mr5310288pjs.73.1562856194457;
+        Thu, 11 Jul 2019 07:43:14 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id g14sm6276112pgn.8.2019.07.11.07.43.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 07:43:13 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 07:44:24 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+Subject: Re: [PATCH v3 02/14] mbox: qcom: add APCS child device for QCS404
+Message-ID: <20190711144424.GD7234@tuxbook-pro>
+References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
+ <20190625164733.11091-3-jorge.ramirez-ortiz@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625164733.11091-3-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds binding for ftm alarm driver
+On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v3:
-	- remove reg-names property
-	- correct cells number
+> There is clock controller functionality in the APCS hardware block of
+> qcs404 devices similar to msm8916.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> index 705e17a5479c..a05dc3aabac7 100644
+> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> @@ -89,16 +89,18 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+> -		apcs->clk = platform_device_register_data(&pdev->dev,
+> -							  "qcom-apcs-msm8916-clk",
+> -							  -1, NULL, 0);
+> -		if (IS_ERR(apcs->clk))
+> -			dev_err(&pdev->dev, "failed to register APCS clk\n");
+> -	}
+> -
+>  	platform_set_drvdata(pdev, apcs);
+>  
+> +	if (!of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") &&
+> +	    !of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
 
-Change in v2:
-	- replace ls1043a with ls1088a as example
-	- add rcpm node and fsl,rcpm-wakeup property
+If the remainder of the function was a long snippet I think this would
+motivate the somewhat unusual early return. But I think it would be
+cleaner to just add to the existing conditional.
 
- .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+Regards,
+Bjorn
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-new file mode 100644
-index 0000000..e4eea18
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-@@ -0,0 +1,38 @@
-+Freescale FlexTimer Module (FTM) Alarm
-+
-+Note: The driver need work with RCPM driver to wake up system in sleep.
-+
-+Required properties:
-+- compatible : Should be "fsl,<chip>-ftm-alarm", the
-+	       supported chips include
-+	       "fsl,ls1012a-ftm-alarm"
-+	       "fsl,ls1021a-ftm-alarm"
-+	       "fsl,ls1028a-ftm-alarm"
-+	       "fsl,ls1043a-ftm-alarm"
-+	       "fsl,ls1046a-ftm-alarm"
-+	       "fsl,ls1088a-ftm-alarm"
-+	       "fsl,ls208xa-ftm-alarm"
-+- reg : Specifies base physical address and size of the register sets for the
-+  FlexTimer Module and base physical address of IP Powerdown Exception Control
-+  Register.
-+- interrupts : Should be the FlexTimer Module interrupt.
-+- fsl,rcpm-wakeup property and rcpm node : Please refer
-+	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+
-+Optional properties:
-+- big-endian: If the host controller is big-endian mode, specify this property.
-+  The default endian mode is little-endian.
-+
-+Example:
-+rcpm: rcpm@1e34040 {
-+	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+	reg = <0x0 0x1e34040 0x0 0x18>;
-+	fsl,#rcpm-wakeup-cells = <6>;
-+}
-+
-+ftm_alarm0: timer@2800000 {
-+	compatible = "fsl,ls1088a-ftm-alarm";
-+	reg = <0x0 0x2800000 0x0 0x10000>;
-+	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-+	interrupts = <0 44 4>;
-+}
--- 
-2.7.4
-
+> +		return 0;
+> +
+> +	apcs->clk = platform_device_register_data(&pdev->dev,
+> +						  "qcom-apcs-msm8916-clk",
+> +						  -1, NULL, 0);
+> +	if (IS_ERR(apcs->clk))
+> +		dev_err(&pdev->dev, "failed to register APCS clk\n");
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.21.0
+> 
