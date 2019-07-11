@@ -2,103 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532A2658BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EEA765906
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfGKO1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:27:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55754 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbfGKO1o (ORCPT
+        id S1728858AbfGKOaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:30:20 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:37999 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728930AbfGKOaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:27:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kgSCqCMgkzHP3NI7bApdCQ2mgMy1VndTbhMfuP51VMY=; b=vYqpYvpe4pu04ng6B0A06A2Ebt
-        IEotIWqUDGlLiIeJXs3STCRzutaBfRE8kMERKV9c7ZRD5PB+jVgbutrHwHhFQdoFSNubb17mq05ay
-        pILpcnf6sG5BKWFktgHStubOK9UqnnoPCyptfIMcsrCDcCoV/zaZdI6rh/UVSFFCapTpb0LStSgYV
-        XEAUQnYOyieF5R42wT7u2kL17EUSlkCjtyvlmXvQQsct3CXPyDLrc3Cixv/gAoOluBL6Y/OSSpg9A
-        iqvrC7IKzdy209HkI4yhcxi7UtnvQ5PpTa86x0CyyEahVMeohTVHZCpUSg97S19SCOjj4iR+cjY8o
-        1+fQ8g6g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hla2n-0003zh-2O; Thu, 11 Jul 2019 14:27:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D714220213042; Thu, 11 Jul 2019 16:27:28 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 16:27:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-Subject: Re: [PATCH 4/4] numa: introduce numa cling feature
-Message-ID: <20190711142728.GF3402@hirez.programming.kicks-ass.net>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
+        Thu, 11 Jul 2019 10:30:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id BCF151852E;
+        Thu, 11 Jul 2019 16:30:14 +0200 (CEST)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 7h4xgNww2LwS; Thu, 11 Jul 2019 16:30:13 +0200 (CEST)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id F071D18524;
+        Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDC781A0D0;
+        Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D25771A06F;
+        Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by seth.se.axis.com (Postfix) with ESMTP id C6B15E46;
+        Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id B94FF802EC; Thu, 11 Jul 2019 16:30:12 +0200 (CEST)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH v2] printk: Do not lose last line in kmsg buffer dump
+Date:   Thu, 11 Jul 2019 16:29:37 +0200
+Message-Id: <20190711142937.4083-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 11:34:16AM +0800, 王贇 wrote:
-> Although we paid so many effort to settle down task on a particular
-> node, there are still chances for a task to leave it's preferred
-> node, that is by wakeup, numa swap migrations or load balance.
-> 
-> When we are using cpu cgroup in share way, since all the workloads
-> see all the cpus, it could be really bad especially when there
-> are too many fast wakeup, although now we can numa group the tasks,
-> they won't really stay on the same node, for example we have numa
-> group ng_A, ng_B, ng_C, ng_D, it's very likely result as:
-> 
-> 	CPU Usage:
-> 		Node 0		Node 1
-> 		ng_A(600%)	ng_A(400%)
-> 		ng_B(400%)	ng_B(600%)
-> 		ng_C(400%)	ng_C(600%)
-> 		ng_D(600%)	ng_D(400%)
-> 
-> 	Memory Ratio:
-> 		Node 0		Node 1
-> 		ng_A(60%)	ng_A(40%)
-> 		ng_B(40%)	ng_B(60%)
-> 		ng_C(40%)	ng_C(60%)
-> 		ng_D(60%)	ng_D(40%)
-> 
-> Locality won't be too bad but far from the best situation, we want
-> a numa group to settle down thoroughly on a particular node, with
-> every thing balanced.
-> 
-> Thus we introduce the numa cling, which try to prevent tasks leaving
-> the preferred node on wakeup fast path.
+kmsg_dump_get_buffer() is supposed to select all the youngest log
+messages which fit into the provided buffer.  It determines the correct
+start index by using msg_print_text() with a NULL buffer to calculate
+the size of each entry.  However, when performing the actual writes,
+msg_print_text() only writes the entry to the buffer if the written len
+is lesser than the size of the buffer.  So if the lengths of the
+selected youngest log messages happen to precisely fill up the provided
+buffer, the last log message is not included.
 
+We don't want to modify msg_print_text() to fill up the buffer and start
+returning a length which is equal to the size of the buffer, since
+callers of its other users, such as kmsg_dump_get_line(), depend upon
+the current behaviour.
 
-> @@ -6195,6 +6447,13 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->  	if ((unsigned)i < nr_cpumask_bits)
->  		return i;
-> 
-> +	/*
-> +	 * Failed to find an idle cpu, wake affine may want to pull but
-> +	 * try stay on prev-cpu when the task cling to it.
-> +	 */
-> +	if (task_numa_cling(p, cpu_to_node(prev), cpu_to_node(target)))
-> +		return prev;
-> +
->  	return target;
->  }
+Instead, fix kmsg_dump_get_buffer() to compensate for this.
 
-Select idle sibling should never cross node boundaries and is thus the
-entirely wrong place to fix anything.
+For example, with the following two final prints:
+
+[    6.427502] AAAAAAAAAAAAA
+[    6.427769] BBBBBBBB12345
+
+A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
+patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
+ 00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
+ 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+ 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+After this patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 35 36 36 37 38  <0>[    6.456678
+ 00000010: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
+ 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+ 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+v2: Move fix to kmsg_dump_get_buffer()
+
+ kernel/printk/printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1888f6a3b694..424abf802f02 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3274,7 +3274,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+ 	/* move first record forward until length fits into the buffer */
+ 	seq = dumper->cur_seq;
+ 	idx = dumper->cur_idx;
+-	while (l > size && seq < dumper->next_seq) {
++	while (l >= size && seq < dumper->next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+ 		l -= msg_print_text(msg, true, time, NULL, 0);
+-- 
+2.20.0
+
