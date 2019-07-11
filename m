@@ -2,139 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9363A651A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3398565181
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:44:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbfGKFt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 01:49:29 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34380 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbfGKFt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:49:29 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6B5nG0L121742;
-        Thu, 11 Jul 2019 00:49:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562824156;
-        bh=BBGGbLWTwFoPWcPlWIHYpDkMBxZC1FoaO38iXBCy9C0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=X1v19PGnZoZNTdlDmoTyHdKy029lSWSoEZk20BxWOlqgS5cUf65faSD2w2zgjo8T2
-         wRkrOrnnLlDUrvPygmrjIgo/LPuXs51UvZTdQS+z3ZrgvE9DgRkUe4ubPVCWboH2Ow
-         G4akjknRT7L9UqWnAuCdBTrh1Cs3ieFgtOslzNsQ=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6B5nGFC122559
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 11 Jul 2019 00:49:16 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 11
- Jul 2019 00:49:15 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 11 Jul 2019 00:49:15 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6B5nC9k040369;
-        Thu, 11 Jul 2019 00:49:13 -0500
-Subject: Re: [PATCH v2] arm64: Kconfig.platforms: Enable GPIO_DAVINCI for
- ARCH_K3
-To:     Nishanth Menon <nm@ti.com>
-CC:     <t-kristo@ti.com>, <will.deacon@arm.com>,
-        <catalin.marinas@arm.com>, <shawnguo@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <lokeshvutla@ti.com>
-References: <20190627110920.15099-1-j-keerthy@ti.com>
- <20190627143208.eeca4xyygml7s4n3@kahuna>
- <39f5e726-8542-b650-3bdb-7542e8fab8ac@ti.com>
- <20190628203752.rdb6vvc42qd5ofgd@kahuna>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <ff0b4d00-046f-1ba6-b31e-e49197ba1050@ti.com>
-Date:   Thu, 11 Jul 2019 11:19:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190628203752.rdb6vvc42qd5ofgd@kahuna>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1727890AbfGKFo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 01:44:27 -0400
+Received: from mga17.intel.com ([192.55.52.151]:64295 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbfGKFo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 01:44:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 22:44:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,476,1557212400"; 
+   d="scan'208";a="167929709"
+Received: from liujing-dell.bj.intel.com ([10.238.145.70])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2019 22:44:25 -0700
+From:   Jing Liu <jing2.liu@linux.intel.com>
+To:     kvm@vger.kernel.org
+Cc:     pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+        Jing Liu <jing2.liu@linux.intel.com>
+Subject: [PATCH v1] KVM: x86: expose AVX512_BF16 feature to guest
+Date:   Thu, 11 Jul 2019 13:49:57 +0800
+Message-Id: <1562824197-13658-1-git-send-email-jing2.liu@linux.intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+AVX512 BFLOAT16 instructions support 16-bit BFLOAT16 floating-point
+format (BF16) for deep learning optimization.
 
+Intel adds AVX512 BFLOAT16 feature in CooperLake, which is CPUID.7.1.EAX[5].
 
-On 29/06/19 2:07 AM, Nishanth Menon wrote:
-> On 09:08-20190628, Keerthy wrote:
-> [..]
->>>> +	select GPIO_SYSFS
->>>> +	select GPIO_DAVINCI
->>>
->>>
->>> Could you help explain the logic of doing this? commit message is
->>> basically the diff in English. To me, this does NOT make sense.
->>>
->>> I understand GPIO_DAVINCI is the driver compatible, but we cant do this for
->>> every single SoC driver that is NOT absolutely mandatory for basic
->>> functionality.
->>
->> In case of ARM64 could you help me find the right place to enable
->> such SoC specific configs?
-> 
-> Is'nt that what defconfig is supposed to be all about?
-> 
-> arch/arm64/configs/defconfig
-> 
->>
->>>
->>> Also keep in mind the impact to arm64/configs/defconfig -> every single
->>> SoC in the arm64 world will be now rebuild with GPIO_SYSFS.. why force
->>> that?
->>
->> This was the practice in arm32 soc specific configs like
->> omap2plus_defconfig. GPIO_SYSFS was he only way to validate. Now i totally
->> understand your concern about every single SoC rebuilding but now where do
->> we need to enable the bare minimal GPIO_DAVINCI config?
-> 
-> Well, SYSFS, I cannot agree testing as the rationale in
-> Kconfig.platform. And, looking at [1], I see majority being mandatory
-> components for the SoC bootup. However, most of the "optional" drivers
-> go into arm64 as defconfig (preferably as a module?) and if you find a
-> rationale for recommending DEBUG_GPIO, you could propose that to the
-> community as well.
-> 
-> Now, Thinking about this, I'd even challenge the current list of configs as
-> being "select". I'd rather do an "imply"[2] - yes, you need this for the
-> default dtb to boot, however a carefully carved dtb could boot with
-> lesser driver set to get a smaller (and less functional) kernel.
-> 
->>
->> v1 i received feedback from Tero to enable in Kconfig.platforms. Hence i
->> shifted to this approach.
-> 
-> I noticed that you were posting a v2, for future reference, please use
-> diffstat section to point to lore/patchworks link to point at v1 (I
-> did notice you mentioned you had an update, thanks - link will help
-> catch up on older discussions). This helps a later revision reviewer
-> like me to get context.
-> 
-> Tero, would you be able to help with a better rationale as to where the
-> boundaries are to be in your mind, rather than risk every single
-> peripheral driver getting into ARCH_K3?
+Detailed information of the CPUID bit can be found here,
+https://software.intel.com/sites/default/files/managed/c5/15/\
+architecture-instruction-set-extensions-programming-reference.pdf.
 
-Tero,
+Signed-off-by: Jing Liu <jing2.liu@linux.intel.com>
+---
 
-Could you point me to a better place for enabling?
+This patch depends on kernel patch https://lkml.org/lkml/2019/6/19/912
+and Paolo's patch set https://lkml.org/lkml/2019/7/4/468.
 
-- Keerthy
+ arch/x86/kvm/cpuid.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-> 
-> As of right now, I'd rather we do not explode the current list out of
-> bounds. NAK unless we can find a better rationale.
-> 
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/Kconfig.platforms
-> [2] https://www.kernel.org/doc/Documentation/kbuild/kconfig-language.txt
-> 
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 8fc6039..0c125dd 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -358,9 +358,13 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+ 		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+ 		F(MD_CLEAR);
+ 
++	/* cpuid 7.1.eax */
++	const u32 kvm_cpuid_7_1_eax_x86_features =
++		F(AVX512_BF16);
++
+ 	switch (index) {
+ 	case 0:
+-		entry->eax = 0;
++		entry->eax = min(entry->eax, 1);
+ 		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
+ 		/* TSC_ADJUST is emulated */
+@@ -384,6 +388,12 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+ 		 */
+ 		entry->edx |= F(ARCH_CAPABILITIES);
+ 		break;
++	case 1:
++		entry->eax &= kvm_cpuid_7_1_eax_x86_features;
++		entry->ebx = 0;
++		entry->ecx = 0;
++		entry->edx = 0;
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		entry->eax = 0;
+-- 
+1.8.3.1
+
