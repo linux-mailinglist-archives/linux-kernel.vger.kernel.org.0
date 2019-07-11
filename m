@@ -2,112 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF2F660B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34823660A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbfGKUcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:32:04 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36521 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730242AbfGKUcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:32:04 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k8so3625490plt.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 13:32:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XkYq7uT/CNUdv8Wag/pmsaqwtieqxy569t5n4hsEP2k=;
-        b=QNSUIi6/JywXvRsdcCggLLKKWxpsTFA7kv56Cen4r7ynWMCGwz2B/Pz5kms6GM+fBl
-         RfeMHSyFtMjCO1TbSWoqrXZcE9VcfVzxypHZu8ARhyLEq8Fh8NE+UbsJiDsyGKkmA+aR
-         JxLU7XINELxFSiUazt3yK0PZwgfe7MvstUqvK46xheV6QPS72UadCPivC5+W0Ofch2f5
-         sMtBQbkQTpO6x/khyX0tsnUTSH5EBvMICHSj+2bSL86eRNsqF16ui2ieJAoMJQ8Z+7o4
-         NaYn5ZpX1JD7KOeNKj32TxJ1Rhhj8CsHp8atPVcPgSjLYJUah3neBUMStpO7bfz8LB13
-         DkWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XkYq7uT/CNUdv8Wag/pmsaqwtieqxy569t5n4hsEP2k=;
-        b=nSZ2D39GjjLp5zisyr4c8Qc2NM89HcYq6r2hZADuuJN967DsqWFVbYS69XPjJkaMX4
-         5TU6ANZuun7KDJ1XPaJURJJQA6GhxxcJ7Csj9x1nOaJJCJ/7NnirQ/fg4srHbJjSvZH8
-         43ofOxC5Iq5y+z1/uKiJtfRH8yoc4JHx9hgBULhcUKYnHiRusJgJ215ly8X/9kbelAfw
-         hijSCXGvmQf5GblSUV3+mhxc4xtfWruWiLKC1ZzS4fNnYvC2QansX/4WnYsV8URy3O4J
-         Glk9mfSBCA9F+nVwWvrgQbiGSxXKprSF0rzh7pdeADZEp6nZaKGylZj3QW1zFe3OJNVP
-         /LoQ==
-X-Gm-Message-State: APjAAAVhPniIdffJzgDY0Bv9cB//b9P929C0PtMqbDOSkGFkLDq26DD5
-        uUVIfhGFZLgl5lX2tewc4fiAYF+l1MnkJg==
-X-Google-Smtp-Source: APXvYqxuiqD/QeFdfWOG0tlJem3oeWCYlhK+OsGUOgkfx68FOnXwufxYAiSVysaUMbTd+tVTuRakEw==
-X-Received: by 2002:a17:902:9041:: with SMTP id w1mr6945324plz.132.1562877122722;
-        Thu, 11 Jul 2019 13:32:02 -0700 (PDT)
-Received: from localhost ([49.248.58.252])
-        by smtp.gmail.com with ESMTPSA id u7sm6104032pgr.94.2019.07.11.13.32.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Jul 2019 13:32:01 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        joe@perches.com, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org
-Subject: [PATCH v2] thermal: Add some error messages
-Date:   Fri, 12 Jul 2019 02:01:58 +0530
-Message-Id: <31a29628894a14e716fff113fd9ce945fe649c05.1562876950.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1562876950.git.amit.kucheria@linaro.org>
-References: <cover.1562876950.git.amit.kucheria@linaro.org>
+        id S1731018AbfGKUao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:30:44 -0400
+Received: from mga03.intel.com ([134.134.136.65]:56638 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728855AbfGKUao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 16:30:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 13:30:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,479,1557212400"; 
+   d="scan'208";a="189625228"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Jul 2019 13:30:42 -0700
+From:   thor.thayer@linux.intel.com
+To:     mdf@kernel.org, richard.gong@intel.com, agust@denx.de
+Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH 0/3] fpga: altera-cvp: Add Stratix10 Support
+Date:   Thu, 11 Jul 2019 15:32:47 -0500
+Message-Id: <1562877170-23931-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When registering a thermal zone device, we currently return -EINVAL in
-four cases. This makes it a little hard to debug the real cause of the
-failure.
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Print some error messages to make it easier for developer to figure out
-what happened.
+Newer versions (V2) of Altera/Intel FPGAs CvP have different PCI
+Vendor Specific Capability offsets than the older (V1) Altera/FPGAs.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/thermal/thermal_core.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+Most of the CvP registers and their bitfields remain the same
+between both the older parts and the newer parts.
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 46cfb7de4eb2..e1c2c2638219 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1238,17 +1238,26 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	int count;
- 	struct thermal_governor *governor;
- 
--	if (!type || strlen(type) == 0)
-+	if (!type || strlen(type) == 0) {
-+		pr_err("Error: No thermal zone type defined\n");
- 		return ERR_PTR(-EINVAL);
-+	}
- 
--	if (type && strlen(type) >= THERMAL_NAME_LENGTH)
-+	if (type && strlen(type) >= THERMAL_NAME_LENGTH) {
-+		pr_err("Error: Thermal zone name (%s) too long, should be under %d chars\n",
-+		       type, THERMAL_NAME_LENGTH);
- 		return ERR_PTR(-EINVAL);
-+	}
- 
--	if (trips > THERMAL_MAX_TRIPS || trips < 0 || mask >> trips)
-+	if (trips > THERMAL_MAX_TRIPS || trips < 0 || mask >> trips) {
-+		pr_err("Error: Incorrect number of thermal trips\n");
- 		return ERR_PTR(-EINVAL);
-+	}
- 
--	if (!ops)
-+	if (!ops) {
-+		pr_err("Error: Thermal zone device ops not defined\n");
- 		return ERR_PTR(-EINVAL);
-+	}
- 
- 	if (trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
- 		return ERR_PTR(-EINVAL);
+This patchset implements changes to discover the Vendor Specific
+Capability offset and then add Stratix10 CvP support.
+
+Thor Thayer (3):
+  fpga: altera-cvp: Discover Vendor Specific offset
+  fpga: altera-cvp: Preparation for V2 parts.
+  fpga: altera-cvp: Add Stratix10 (V2) Support
+
+ drivers/fpga/altera-cvp.c | 322 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 253 insertions(+), 69 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
