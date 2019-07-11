@@ -2,138 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76863660D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EA2660C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfGKUpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:45:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36693 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728628AbfGKUpE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:45:04 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r7so3299673pfl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 13:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MLdzftGH/gFul7iiOHMklLGxy/NCS/NGh67QDWN64SU=;
-        b=MhB4/1cUL+NhY0J5GWsbsrd3eTLDSU+tbUVIlifszTmidPxecNapqdD0z5bq8OPmcV
-         BD68gn+Iz22nEW6WBNmOGATWc/CmyRFYE6uwNsJd4YRbbIoj+oXWV9pGjQI8zCvdS4eS
-         GRdqJ9Y1/ZJi4k0YQnQV7MG0weCWBo9tc0g6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MLdzftGH/gFul7iiOHMklLGxy/NCS/NGh67QDWN64SU=;
-        b=balrMMCVhawdhzFgjhdizQpJJJbH56fljtUV7sUFw/rxvh3q1U9xMYyjHIrw3HYn0S
-         KReqTrHeHdfnWrKQFIssmgExxy6Qsw7qi+/km3+5Kvpl3KCanNrBQkiikZAB0B/zxtJ2
-         iPi/ryBqvIfcPpdTWRXmMIznQrwQWdmzfDDHuOfGltAPauy3hINAVcfu/TVcKkyt9HTn
-         GazlSkqXDgDhXkPOkbtLDhBrfuiSDJhdZHk7g+5aPQVmOfbt7KxNroaXV1kELwvY/aNz
-         I1rOd36Ow5kHavb8wbUtcsvzzPFhqqAdj+MqVNLPqcAs9plr3RrVIjNP3MJEFbyEYZk2
-         ORPA==
-X-Gm-Message-State: APjAAAV5dymM8ckwhv3Fr8iyenjZ+F9Qno/kV3N1HqmrvEIoOTuK/ItS
-        zQrTa6aRzJXIfdhWmFzo/EV9vQ==
-X-Google-Smtp-Source: APXvYqwroM5R2J8TNfLYHSWaQlIk+XkN1UktVue3p11E50fR61dSB3pcJ91/MyRyFDfLxvoJmMQjww==
-X-Received: by 2002:a63:c20e:: with SMTP id b14mr6295215pgd.96.1562877903778;
-        Thu, 11 Jul 2019 13:45:03 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id f17sm5320110pgv.16.2019.07.11.13.45.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 13:45:03 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sean Paul <seanpaul@chromium.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-rockchip@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        mka@chromium.org, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v6 3/3] drm/panel: simple: Use display_timing for AUO b101ean01
-Date:   Thu, 11 Jul 2019 13:34:55 -0700
-Message-Id: <20190711203455.125667-4-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190711203455.125667-1-dianders@chromium.org>
-References: <20190711203455.125667-1-dianders@chromium.org>
+        id S1728853AbfGKUk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:40:26 -0400
+Received: from vern.gendns.com ([98.142.107.122]:36922 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728355AbfGKUkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 16:40:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=xvThRjH3X1TUzxAtTyWv1hFEkruW/blvpY6bT/bSK9Q=; b=ooWeI1qO4BAdXV3DI7FZd6Y60X
+        5OT2yCa5stfUIYc8lfWRFqw3RbGl+nu/96D7q2kOUKvVTE3jtQzohMVzSYrbU1uOmuctOCiquEJym
+        hvStBGW/uQBo3oCYoXA87WVp3mnU5ROITWqGMhnZxBLa3aI0tgfoKbIuncs+hZ8UhIfVVQPU9FKmb
+        ZnRXszBoAwOsxS+d1BioxjB1/IdGczkE20RRxtpZ6zaH3gqeiG3VzuPpUlEX/6QTshmyncOlshWKq
+        7HcxlXZBwlngRvM7lpqJQFqyW4AIUEpFfUayjmKzjY8VI/GXIxB1njiwKs6C5Y3iN7IX9PEz1wa+m
+        LMVboQNA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60730 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <david@lechnology.com>)
+        id 1hlfra-004iz1-AV; Thu, 11 Jul 2019 16:40:22 -0400
+Subject: Re: [PATCH 5/6] irqchip/irq-pruss-intc: Add API to trigger a PRU
+ sysevent
+To:     Suman Anna <s-anna@ti.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     Tony Lindgren <tony@atomide.com>, "Andrew F. Davis" <afd@ti.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190708035243.12170-1-s-anna@ti.com>
+ <20190708035243.12170-6-s-anna@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <49628f74-1081-894a-14a2-adc58b2051e8@lechnology.com>
+Date:   Thu, 11 Jul 2019 15:40:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190708035243.12170-6-s-anna@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the AUO b101ean01 from using a fixed mode to specifying a
-display timing with min/typ/max values.
+On 7/7/19 10:52 PM, Suman Anna wrote:
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> The PRUSS INTC can generate an interrupt to various processor
+> subsystems on the SoC through a set of 64 possible PRU system
+> events. These system events can be used by PRU client drivers
+> or applications for event notifications/signalling between PRUs
+> and MPU or other processors. A new API, pruss_intc_trigger() is
+> provided to MPU-side PRU client drivers/applications to be able
+> to trigger an event/interrupt using IRQ numbers provided by the
+> PRUSS-INTC irqdomain chip.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>   drivers/irqchip/irq-pruss-intc.c | 31 +++++++++++++++++++++++++++++++
+>   include/linux/pruss_intc.h       | 26 ++++++++++++++++++++++++++
+>   2 files changed, 57 insertions(+)
+>   create mode 100644 include/linux/pruss_intc.h
+> 
+> diff --git a/drivers/irqchip/irq-pruss-intc.c b/drivers/irqchip/irq-pruss-intc.c
+> index 8118c2a2ac43..a0ad50b95cd5 100644
+> --- a/drivers/irqchip/irq-pruss-intc.c
+> +++ b/drivers/irqchip/irq-pruss-intc.c
+> @@ -421,6 +421,37 @@ static void pruss_intc_irq_relres(struct irq_data *data)
+>   	module_put(THIS_MODULE);
+>   }
+>   
+> +/**
+> + * pruss_intc_trigger() - trigger a PRU system event
+> + * @irq: linux IRQ number associated with a PRU system event
+> + *
+> + * Trigger an interrupt by signaling a specific PRU system event.
+> + * This can be used by PRUSS client users to raise/send an event to
+> + * a PRU or any other core that is listening on the host interrupt
+> + * mapped to that specific PRU system event. The @irq variable is the
+> + * Linux IRQ number associated with a specific PRU system event that
+> + * a client user/application uses. The interrupt mappings for this is
+> + * provided by the PRUSS INTC irqchip instance.
+> + *
+> + * Returns 0 on success, or an error value upon failure.
+> + */
+> +int pruss_intc_trigger(unsigned int irq)
+> +{
+> +	struct irq_desc *desc;
+> +
+> +	if (irq <= 0)
+> +		return -EINVAL;
+> +
+> +	desc = irq_to_desc(irq);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	pruss_intc_irq_retrigger(&desc->irq_data);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pruss_intc_trigger);
 
-The AUO b101ean01's datasheet says:
-* Vertical blanking min is 12
-* Horizontal blanking min is 60
-* Pixel clock is between 65.3 MHz and 75 MHz
+Although it is not quite as obvious, we can do the same thing with:
 
-The goal here is to be able to specify the proper timing in device
-tree to use on rk3288-veyron-minnie to match what the downstream
-kernel is using so that it can used the fixed PLL.
+irq_set_irqchip_state(irq, IRQCHIP_STATE_PENDING, true);
 
-Changes in v4:
- - display_timing for AUO b101ean01 new for v4.
-Changes in v6:
- - Rebased to drm-misc next
- - Added tags
+So I don't think a new API is needed. We just need to implement the
+irq_set_irqchip_state callback as in the following patch.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
 ---
+ From c5991a11a19858d74e2a184b76c3ef5823f09ef6 Mon Sep 17 00:00:00 2001
+From: David Lechner <david@lechnology.com>
+Date: Thu, 11 Jul 2019 15:33:29 -0500
+Subject: [PATCH] irqchip/irq-pruss-intc: implement irq_{get,set}_irqchip_state
 
- drivers/gpu/drm/panel/panel-simple.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+This implements the irq_get_irqchip_state and irq_set_irqchip_state
+callbacks for the TI PRUSS INTC driver. The set callback can be used
+by drivers to "kick" a PRU by enabling a PRU system event.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 602809f6da6a..226f068fb679 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -595,22 +595,21 @@ static const struct panel_desc auo_b101aw03 = {
- 	},
- };
- 
--static const struct drm_display_mode auo_b101ean01_mode = {
--	.clock = 72500,
--	.hdisplay = 1280,
--	.hsync_start = 1280 + 119,
--	.hsync_end = 1280 + 119 + 32,
--	.htotal = 1280 + 119 + 32 + 21,
--	.vdisplay = 800,
--	.vsync_start = 800 + 4,
--	.vsync_end = 800 + 4 + 20,
--	.vtotal = 800 + 4 + 20 + 8,
--	.vrefresh = 60,
-+static const struct display_timing auo_b101ean01_timing = {
-+	.pixelclock = { 65300000, 72500000, 75000000 },
-+	.hactive = { 1280, 1280, 1280 },
-+	.hfront_porch = { 18, 119, 119 },
-+	.hback_porch = { 21, 21, 21 },
-+	.hsync_len = { 32, 32, 32 },
-+	.vactive = { 800, 800, 800 },
-+	.vfront_porch = { 4, 4, 4 },
-+	.vback_porch = { 8, 8, 8 },
-+	.vsync_len = { 18, 20, 20 },
- };
- 
- static const struct panel_desc auo_b101ean01 = {
--	.modes = &auo_b101ean01_mode,
--	.num_modes = 1,
-+	.timings = &auo_b101ean01_timing,
-+	.num_timings = 1,
- 	.bpc = 6,
- 	.size = {
- 		.width = 217,
+Example:
+
+     irq_set_irqchip_state(irq, IRQCHIP_STATE_PENDING, true);
+
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+  drivers/irqchip/irq-pruss-intc.c | 41 ++++++++++++++++++++++++++++++--
+  1 file changed, 39 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-pruss-intc.c b/drivers/irqchip/irq-pruss-intc.c
+index dd14addfd0b4..129dfd52248b 100644
+--- a/drivers/irqchip/irq-pruss-intc.c
++++ b/drivers/irqchip/irq-pruss-intc.c
+@@ -7,6 +7,7 @@
+   *	Suman Anna <s-anna@ti.com>
+   */
+  
++#include <linux/interrupt.h>
+  #include <linux/irq.h>
+  #include <linux/irqchip/chained_irq.h>
+  #include <linux/irqdomain.h>
+@@ -46,8 +47,7 @@
+  #define PRU_INTC_HIEISR		0x0034
+  #define PRU_INTC_HIDISR		0x0038
+  #define PRU_INTC_GPIR		0x0080
+-#define PRU_INTC_SRSR0		0x0200
+-#define PRU_INTC_SRSR1		0x0204
++#define PRU_INTC_SRSR(x)	(0x0200 + (x) * 4)
+  #define PRU_INTC_SECR0		0x0280
+  #define PRU_INTC_SECR1		0x0284
+  #define PRU_INTC_ESR0		0x0300
+@@ -386,6 +386,41 @@ static void pruss_intc_irq_relres(struct irq_data *data)
+  	module_put(THIS_MODULE);
+  }
+  
++static int pruss_intc_irq_get_irqchip_state(struct irq_data *data,
++					    enum irqchip_irq_state which,
++					    bool *state)
++{
++	struct pruss_intc *intc = irq_data_get_irq_chip_data(data);
++	u32 reg, mask, srsr;
++
++	if (which != IRQCHIP_STATE_PENDING)
++		return -EINVAL;
++
++	reg = PRU_INTC_SRSR(data->hwirq / 32);
++	mask = BIT(data->hwirq % 32);
++
++	srsr = pruss_intc_read_reg(intc, reg);
++
++	*state = !!(srsr & mask);
++
++	return 0;
++}
++
++static int pruss_intc_irq_set_irqchip_state(struct irq_data *data,
++					    enum irqchip_irq_state which,
++					    bool state)
++{
++	struct pruss_intc *intc = irq_data_get_irq_chip_data(data);
++
++	if (which != IRQCHIP_STATE_PENDING)
++		return -EINVAL;
++	
++	if (state)
++		return pruss_intc_check_write(intc, PRU_INTC_SISR, data->hwirq);
++
++	return pruss_intc_check_write(intc, PRU_INTC_SICR, data->hwirq);
++}
++
+  static int
+  pruss_intc_irq_domain_xlate(struct irq_domain *d, struct device_node *node,
+  			    const u32 *intspec, unsigned int intsize,
+@@ -583,6 +618,8 @@ static int pruss_intc_probe(struct platform_device *pdev)
+  	irqchip->irq_retrigger = pruss_intc_irq_retrigger;
+  	irqchip->irq_request_resources = pruss_intc_irq_reqres;
+  	irqchip->irq_release_resources = pruss_intc_irq_relres;
++	irqchip->irq_get_irqchip_state = pruss_intc_irq_get_irqchip_state;
++	irqchip->irq_set_irqchip_state = pruss_intc_irq_set_irqchip_state;
+  	irqchip->parent_device = dev;
+  	irqchip->name = dev_name(dev);
+  	intc->irqchip = irqchip;
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.17.1
 
