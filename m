@@ -2,87 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 322AA656BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 14:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E0A6551E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbfGKMXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 08:23:10 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:50895 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfGKMXK (ORCPT
+        id S1728320AbfGKLXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 07:23:01 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33034 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727785AbfGKLXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 08:23:10 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 9FD24C0004;
-        Thu, 11 Jul 2019 12:23:07 +0000 (UTC)
-Date:   Thu, 11 Jul 2019 13:20:39 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Zeng Tao <prime.zeng@hisilicon.com>
-Cc:     kishon@ti.com, Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] phy: Change the configuration interface param to void*
- to make it more general
-Message-ID: <20190711112039.leuvelpm7opeoaxq@flea>
-References: <1562868255-31467-1-git-send-email-prime.zeng@hisilicon.com>
+        Thu, 11 Jul 2019 07:23:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n9so5917024wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 04:22:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0xkQj6rXd6jhqOpnOodbdLnJbizN7yitMYfeVThGNA4=;
+        b=GspZzNvT47KtNY/8rlHjhi0PVNi+xZr3uTTTGZtCMaDMVdBYVdfwlacYOfz2aFAuVh
+         0PW8bBUoXb9BIVsZqilTDLeEHYIlXTsuEh6rGWZliUaccDlUaPhYFM+Ic5EY+9Wz75J0
+         uoO50wql4TEhoGPnfed+cFl306TWE3c+ajs+4Ac6sVU9cO7jydSB21IOpaTW7nZ7CS8W
+         btFKVSO2ZjZ7bf7nG+YZWcyqaMxk0P8hMIJQ2QB1rN7OGKffrccLZm9/eotTVd1foDoA
+         ayMfg3k4uYfnp5HZ0Yglzoo/naaL9ZCc62ocdzH2qmNz515oDCxNZWAWEVIdVShM6wTh
+         VqlQ==
+X-Gm-Message-State: APjAAAW9PZRhmLnNZEpqoPoZxNQgoH7+6C1DqmrVUbCESmqIfGJC45kD
+        ZAwGEmoOhvWIn4q7fpRZ8THAbQ==
+X-Google-Smtp-Source: APXvYqzYt0fhDogZwESZ0arD5eENr8od2gwLRRRfIBfJIOSu6WS+kRxhX99b+wAH8Ri/NQOohNvXXw==
+X-Received: by 2002:adf:e8c8:: with SMTP id k8mr4641153wrn.285.1562844179011;
+        Thu, 11 Jul 2019 04:22:59 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:d066:6881:ec69:75ab? ([2001:b07:6468:f312:d066:6881:ec69:75ab])
+        by smtp.gmail.com with ESMTPSA id y2sm3690485wrl.4.2019.07.11.04.22.58
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 04:22:58 -0700 (PDT)
+Subject: Re: [PATCH v2] KVM: x86: PMU Event Filter
+To:     Eric Hankland <ehankland@google.com>,
+        Wei Wang <wei.w.wang@intel.com>, rkrcmar@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>, kvm@vger.kernel.org
+References: <CAOyeoRUUK+T_71J=+zcToyL93LkpARpsuWSfZS7jbJq=wd1rQg@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <30b7a0a1-1dc7-7ab0-938a-e34e61152ec8@redhat.com>
+Date:   Thu, 11 Jul 2019 13:22:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c2tecu4d2tdhze26"
-Content-Disposition: inline
-In-Reply-To: <1562868255-31467-1-git-send-email-prime.zeng@hisilicon.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAOyeoRUUK+T_71J=+zcToyL93LkpARpsuWSfZS7jbJq=wd1rQg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/07/19 03:25, Eric Hankland wrote:
+> 
+> +/* for KVM_CAP_PMU_EVENT_FILTER */
+> +struct kvm_pmu_event_filter {
+> +       __u32 type;
+> +       __u32 nevents;
+> +       __u64 events[0];
+> +};
+> +
+> +#define KVM_PMU_EVENT_WHITELIST 0
+> +#define KVM_PMU_EVENT_BLACKLIST 1
+> +
 
---c2tecu4d2tdhze26
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+"type" is a bit vague, so I am thinking of replacing it with "action"
+and rename the constants to KVM_PMU_EVENT_ACCEPT/REJECT.  What do you think?
 
-On Fri, Jul 12, 2019 at 02:04:08AM +0800, Zeng Tao wrote:
-> The phy framework now allows runtime configurations, but only limited
-> to mipi now, and it's not reasonable to introduce user specified
-> configurations into the union phy_configure_opts structure. An simple
-> way is to replace with a void *.
-
-I'm not sure why it's unreasonable?
-
-> We have already got some phy drivers which introduce private phy API
-> for runtime configurations, and with this patch, they can switch to
-> the phy_configure as a replace.
-
-If you have a custom mode of operation, then you'll need a custom
-phy_mode as well, and surely you can have a custom set of parameters.
-
-Since those functions are meant to provide a two-way negotiation of
-the various parameters, you'll have to have that structure shared
-between the two either way, so the only thing required in addition to
-what you would have passing a void is one line to add that structure
-in the union.
-
-That's barely unreasonable.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---c2tecu4d2tdhze26
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXScbegAKCRDj7w1vZxhR
-xR7EAP44QxBQgbt8VyM5okXONW5XGgzi5lMv3iAHBL15ZA3WXwEAnVGOHiv5Ouz3
-Bw95hMz8t5Qmcma+5/zZiPcoNIPCdwA=
-=sALA
------END PGP SIGNATURE-----
-
---c2tecu4d2tdhze26--
+Paolo
