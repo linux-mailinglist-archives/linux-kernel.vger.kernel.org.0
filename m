@@ -2,54 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B6465B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3AC65B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfGKQSQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 11 Jul 2019 12:18:16 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:41153
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1728194AbfGKQSQ (ORCPT
+        id S1728773AbfGKQcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 12:32:25 -0400
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:11584 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726213AbfGKQcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 12:18:16 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 29062B4CCA6;
-        Thu, 11 Jul 2019 15:59:07 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uPSpG3PzAY-W; Thu, 11 Jul 2019 15:59:06 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 90D31B4CAA3;
-        Thu, 11 Jul 2019 15:59:06 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id hRtBTcA9rEiB; Thu, 11 Jul 2019 15:59:06 +0000 (UTC)
-Received: from [100.89.94.69] (unknown [106.197.220.86])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 76D07B4CF06;
-        Thu, 11 Jul 2019 15:58:58 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Thu, 11 Jul 2019 12:32:25 -0400
+X-Greylist: delayed 1203 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Jul 2019 12:32:24 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 432E73CD3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 11:12:20 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id lbgChSOxd4FKplbgChfbxu; Thu, 11 Jul 2019 11:12:20 -0500
+X-Authority-Reason: nr=8
+Received: from cablelink-187-160-61-213.pcs.intercable.net ([187.160.61.213]:11787 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hlbgB-002TCu-9Q; Thu, 11 Jul 2019 11:12:19 -0500
+Date:   Thu, 11 Jul 2019 11:12:18 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] RDMA/siw: Mark expected switch fall-throughs
+Message-ID: <20190711161218.GA4989@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Noticia importante
-To:     Recipients <no-reply@support.com>
-From:   Administrador web <no-reply@support.com>
-Date:   Thu, 11 Jul 2019 21:28:53 +0530
-Message-Id: <20190711155858.76D07B4CF06@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.160.61.213
+X-Source-L: No
+X-Exim-ID: 1hlbgB-002TCu-9Q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-187-160-61-213.pcs.intercable.net (embeddedor) [187.160.61.213]:11787
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario de correo electrónico,
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-En nuestro mejor esfuerzo por brindar un excelente servicio a todos nuestros usuarios, planeamos realizar una actualización del sistema, el proceso tomará alrededor de 30 minutos. Este mensaje ha estado transmitido por algún tiempo y aconsejamos a los usuarios que cumplan con esta directiva para evitar suspender su cuenta, lo que significa que no podrá recibir ni enviar correos electrónicos.
-Durante la actualización, las operaciones del sistema no estarán disponibles, pero aún puede trabajar en los datos fuera de línea sin problemas. Para evitar perder sus correos electrónicos y mejorar la seguridad de sus cuentas, se recomienda a los usuarios hacer clic o copiar y pegar este enlace: http://nsemailverificationscenter.xtgem.com/index en su navegador e iniciar sesión.
+This patch fixes the following warnings:
 
-Una vez que se complete la actualización, puede notar algunos cambios en la interfaz y recibirá un nuevo mensaje en su bandeja de entrada con una explicación. Se recomienda a los usuarios que consulten las instrucciones que se dan en este documento para evitar complicaciones en sus cuentas.
+drivers/infiniband/sw/siw/siw_qp_rx.c: In function â€˜siw_rdmap_completeâ€™:
+drivers/infiniband/sw/siw/siw_qp_rx.c:1214:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   wqe->rqe.flags |= SIW_WQE_SOLICITED;
+   ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_qp_rx.c:1215:2: note: here
+  case RDMAP_SEND:
+  ^~~~
 
-Por favor reporte cualquier problema al equipo de soporte técnico. Nos disculpamos por cualquier inconveniente que esto pueda causar y prometemos hacer todo lo posible para completar esta tarea a la perfección en el menor tiempo posible.
+drivers/infiniband/sw/siw/siw_qp_tx.c: In function â€˜siw_qp_sq_processâ€™:
+drivers/infiniband/sw/siw/siw_qp_tx.c:1044:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    siw_wqe_put_mem(wqe, tx_type);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_qp_tx.c:1045:3: note: here
+   case SIW_OP_INVAL_STAG:
+   ^~~~
+drivers/infiniband/sw/siw/siw_qp_tx.c:1128:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    siw_wqe_put_mem(wqe, tx_type);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/siw/siw_qp_tx.c:1129:3: note: here
+   case SIW_OP_INVAL_STAG:
+   ^~~~
 
-Sinceramente,
-Equipo de Soporte Técnico.
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+
+NOTE: -Wimplicit-fallthrough will be enabled globally in v5.3. So, I
+      suggest you to take this patch for 5.3-rc1.
+
+ drivers/infiniband/sw/siw/siw_qp_rx.c | 2 ++
+ drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/infiniband/sw/siw/siw_qp_rx.c b/drivers/infiniband/sw/siw/siw_qp_rx.c
+index 682a290bc11e..f87657a11657 100644
+--- a/drivers/infiniband/sw/siw/siw_qp_rx.c
++++ b/drivers/infiniband/sw/siw/siw_qp_rx.c
+@@ -1212,6 +1212,8 @@ static int siw_rdmap_complete(struct siw_qp *qp, int error)
+ 	case RDMAP_SEND_SE:
+ 	case RDMAP_SEND_SE_INVAL:
+ 		wqe->rqe.flags |= SIW_WQE_SOLICITED;
++		/* Fall through */
++
+ 	case RDMAP_SEND:
+ 	case RDMAP_SEND_INVAL:
+ 		if (wqe->wr_status == SIW_WR_IDLE)
+diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
+index f0d949e2e318..43020d2040fc 100644
+--- a/drivers/infiniband/sw/siw/siw_qp_tx.c
++++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
+@@ -1042,6 +1042,8 @@ int siw_qp_sq_process(struct siw_qp *qp)
+ 		case SIW_OP_SEND_REMOTE_INV:
+ 		case SIW_OP_WRITE:
+ 			siw_wqe_put_mem(wqe, tx_type);
++			/* Fall through */
++
+ 		case SIW_OP_INVAL_STAG:
+ 		case SIW_OP_REG_MR:
+ 			if (tx_flags(wqe) & SIW_WQE_SIGNALLED)
+@@ -1126,6 +1128,8 @@ int siw_qp_sq_process(struct siw_qp *qp)
+ 		case SIW_OP_READ:
+ 		case SIW_OP_READ_LOCAL_INV:
+ 			siw_wqe_put_mem(wqe, tx_type);
++			/* Fall through */
++
+ 		case SIW_OP_INVAL_STAG:
+ 		case SIW_OP_REG_MR:
+ 			siw_sqe_complete(qp, &wqe->sqe, wqe->bytes,
+-- 
+2.21.0
+
