@@ -2,105 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26DBA65A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB0C659F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbfGKPMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 11:12:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48770 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728691AbfGKPMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 11:12:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B00F1AD36;
-        Thu, 11 Jul 2019 15:12:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 560501E43CB; Thu, 11 Jul 2019 17:04:36 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 17:04:36 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     " Steven J. Magnani " <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.com>,
-        "Steven J . Magnani" <steve@digidescorp.com>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] udf: support 2048-byte spacing of VRS descriptors
- on 4K media
-Message-ID: <20190711150436.GA2449@quack2.suse.cz>
-References: <20190711133852.16887-1-steve@digidescorp.com>
- <20190711133852.16887-2-steve@digidescorp.com>
+        id S1728842AbfGKPGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 11:06:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44994 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728677AbfGKPGO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 11:06:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i18so3072393pgl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 08:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4c2dc7FdeZlI40XoYW7oVDGG9akgiuTr8uhcWS8yCeY=;
+        b=CWE8YcZB0HKcuadLXbtPYj6kQ5wYic026seg1ZVQ3b+ApPmyoYWwNSd0mnKX9ohNXA
+         jpxMK9+dbpVEbUI8ATFDIvQDf0YLM4pcNS0tuYQfjyYMQ9NfKSEQb0kpeWX2PcE0azhP
+         egtlCiDuPqnWZQfcZmZw8J8u1YU62gkqkX+RoS1F5r5stTmEDfwxaEJUrA2j+shkdq7J
+         r1Zl9gWRixLrdySBL2nCQPmP0Yn4vXIIDqBK1U6Wt2gTvksAnTxve2JEFWdcui5vuI+t
+         56OIfwXw9RWrVLjsLcOJcFZOxIuRgyrOIDLi4Enun9yZVkuRjv1UVNzCypwA0pYfGrzv
+         s/HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4c2dc7FdeZlI40XoYW7oVDGG9akgiuTr8uhcWS8yCeY=;
+        b=XlRSQsovDQSjbeV3glyXhfpQwRYtGf0aPFtV/fn6W2TAnjuq+i3qMOP3Ix9rzSWqlt
+         Fj+xEaXp2+Kl3tQxboPy+Pz86vAODCTyq8UPJTv/7skjoPdFP7MTTDn3/md/JiYcur2p
+         M8+4CUZ1rF2zjYdWAjt8aeIeGzi/joQWuLHKxzHB3Qnmb/G6n0HEaPWt8gS0yNzayMGY
+         bSYxZpOBRDjXmExC2JoQ05D6K3cZHOSivyAe8cLPg1pcMxnIaQlwILg6AYVnb1LKrxE0
+         wlPvNItYH1CelxjXv2Gfm80wygAXoHemPojUTmjkdrcE0H6vb2OwACSYnqcvz7Pq65oL
+         2nJQ==
+X-Gm-Message-State: APjAAAVttgFSoRgXTknZ3VJVr9Buw3Y4KkQwvWsyUVK3e6nf3UAbTg3W
+        8o0aUxFfOSnu7CA6QQ9Jb+V3pQ==
+X-Google-Smtp-Source: APXvYqyTRN38u90ThnFEWr3vJtVT6c/7HeHr0dQPeDSpuUgsAlIZ8GEDPOCwlDn7VSwfNYWXYmf7JA==
+X-Received: by 2002:a17:90a:2008:: with SMTP id n8mr5346113pjc.4.1562857573492;
+        Thu, 11 Jul 2019 08:06:13 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s6sm9401870pfs.122.2019.07.11.08.06.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 08:06:12 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 08:07:23 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+Subject: Re: [PATCH v3 06/14] clk: qcom: hfpll: get parent clock names from DT
+Message-ID: <20190711150723.GG7234@tuxbook-pro>
+References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
+ <20190625164733.11091-7-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190711133852.16887-2-steve@digidescorp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190625164733.11091-7-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 11-07-19 08:38:52,  Steven J. Magnani  wrote:
-> Some UDF creators (specifically Microsoft, but perhaps others) mishandle
-> the ECMA-167 corner case that requires descriptors within a Volume
-> Recognition Sequence to be placed at 4096-byte intervals on media where
-> the block size is 4K. Instead, the descriptors are placed at the 2048-
-> byte interval mandated for media with smaller blocks. This nonconformity
-> currently prevents Linux from recognizing the filesystem as UDF.
+On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
+
+> Allow accessing the parent clock name required for the driver
+> operation using the device tree node.
 > 
-> Modify the driver to tolerate a misformatted VRS on 4K media.
+> This permits extending the driver to other platforms without having to
+> modify its source code.
 > 
-> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-
-Thanks for the patches! I've added them to my tree and somewhat simplified
-the logic since we don't really care about nsr 2 vs 3 or whether we
-actually saw BEA or not. Everything seems to work fine for me but I'd
-appreciate if you could doublecheck - the result is pushed out to
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_next
-
-Thanks!
-
-								Honza
+> For backwards compatibility leave the previous value as default.
 > 
-> --- a/fs/udf/super.c	2019-07-10 20:55:33.334359446 -0500
-> +++ b/fs/udf/super.c	2019-07-10 21:20:58.138382326 -0500
-> @@ -741,6 +741,7 @@ static int udf_check_vsd(struct super_bl
->  	int sectorsize;
->  	struct buffer_head *bh = NULL;
->  	int nsr = 0;
-> +	int quirk_nsr = 0;
->  	struct udf_sb_info *sbi;
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+
+The driver should be updated to use parent_data instead, but I consider
+that's an independent change.
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  drivers/clk/qcom/hfpll.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+> index a6de7101430c..87b7f46d27e0 100644
+> --- a/drivers/clk/qcom/hfpll.c
+> +++ b/drivers/clk/qcom/hfpll.c
+> @@ -52,6 +52,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>  	void __iomem *base;
+>  	struct regmap *regmap;
+>  	struct clk_hfpll *h;
+> +	struct clk *pclk;
+>  	struct clk_init_data init = {
+>  		.parent_names = (const char *[]){ "xo" },
+>  		.num_parents = 1,
+> @@ -75,6 +76,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>  					  0, &init.name))
+>  		return -ENODEV;
 >  
->  	sbi = UDF_SB(sb);
-> @@ -780,11 +781,27 @@ static int udf_check_vsd(struct super_bl
->  		if (vsd_id > nsr)
->  			nsr = vsd_id;
->  
-> +		/* Special handling for improperly formatted VRS (e.g., Win10)
-> +		 * where components are separated by 2048 bytes
-> +		 * even though sectors are 4K
-> +		 */
-> +		if ((sb->s_blocksize == 4096) && (quirk_nsr < 2)) {
-> +			vsd_id = identify_vsd(vsd + 1);
-> +			if ((nsr == 1) || (quirk_nsr == 1)) {
-> +				/* BEA01 has been seen, allow quirk NSR */
-> +				if (vsd_id > quirk_nsr)
-> +					quirk_nsr = vsd_id;
-> +			} else if (vsd_id > 3)
-> +				quirk_nsr = vsd_id;  /* 0 -> 255 */
-> +		}
+> +	/* get parent clock from device tree (optional) */
+> +	pclk = devm_clk_get(dev, "xo");
+> +	if (!IS_ERR(pclk))
+> +		init.parent_names = (const char *[]){ __clk_get_name(pclk) };
+> +	else if (PTR_ERR(pclk) == -EPROBE_DEFER)
+> +		return -EPROBE_DEFER;
 > +
->  		brelse(bh);
->  	}
->  
->  	if ((nsr >= 2) && (nsr <= 3))
->  		return nsr;
-> +	else if ((quirk_nsr >= 2) && (quirk_nsr <= 3))
-> +		return quirk_nsr;
->  	else if (!bh && sector - (sbi->s_session << sb->s_blocksize_bits) ==
->  			VSD_FIRST_SECTOR_OFFSET)
->  		return -1;
+>  	h->d = &hdata;
+>  	h->clkr.hw.init = &init;
+>  	spin_lock_init(&h->lock);
+> -- 
+> 2.21.0
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
