@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB06661E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7ED661E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfGKWpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 18:45:14 -0400
+        id S1729481AbfGKWpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 18:45:12 -0400
 Received: from mail.kernel.org ([198.145.29.99]:39730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729470AbfGKWpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 18:45:12 -0400
-Subject: Re: [GIT PULL] HID for 5.3
+        id S1729461AbfGKWpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 18:45:11 -0400
+Subject: Re: [GIT PULL] livepatching for 5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1562885111;
-        bh=FrbJsCuogLEA/dq87ZyuHsFqaKsQSel9wVJkTgt/USQ=;
+        bh=T9hjZeVkNdRpWOVn06WZ3sowWNuRtNjxDP3EB1+CnzA=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=aqyoeqcLReC+h3t+1fY6WjaXQ3DYBJxYTvQAgK0/knZUtUDgyYhw3dHvNQpWpgPkv
-         d11O3iPwIp+Nj6okgzqoYbSjUZDRGx9EDPMAIabFp8dkdUg7dalNKuIzbMCbbYQK3X
-         FYXbw0o5lRN4da0sX6WujSJu9RxpzP6t/TIz6oig=
+        b=vQhxGoZf193c6u5OMq5FZR9sDHwECS9p0k7twWQ/1Z3Gko+qGp2mxZsvROJF7Dzqb
+         4+QfOV05y9aPEDPkxmOnTyC446dW3oiOKrGvoidHqv3tfOK4Y2u9CtSjVbDAIGGRRd
+         LBuUvEzN4e3MlvScgob79wtM5sm8DJnap8HdAMV8=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <nycvar.YFH.7.76.1907100143190.5899@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1907100143190.5899@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1907100127250.5899@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1907100127250.5899@cbobk.fhfr.pm>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.1907100143190.5899@cbobk.fhfr.pm>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-X-PR-Tracked-Commit-Id: 86766756ac2b10ad23849becdc245ea903466616
+X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.1907100127250.5899@cbobk.fhfr.pm>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git
+ for-linus
+X-PR-Tracked-Commit-Id: 38195dd5e916f3e55aec585703f2432562c2db02
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4832a4dada1a2baefac76b70e4f3a78e71a7c35c
-Message-Id: <156288511179.25905.6502635712874027345.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: db0457338ece7482378d88e50ad298191c3e6947
+Message-Id: <156288511109.25905.4136973094169718102.pr-tracker-bot@kernel.org>
 Date:   Thu, 11 Jul 2019 22:45:11 +0000
 To:     Jiri Kosina <jikos@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 10 Jul 2019 01:47:48 +0200 (CEST):
+The pull request you sent on Wed, 10 Jul 2019 01:34:19 +0200 (CEST):
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4832a4dada1a2baefac76b70e4f3a78e71a7c35c
+https://git.kernel.org/torvalds/c/db0457338ece7482378d88e50ad298191c3e6947
 
 Thank you!
 
