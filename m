@@ -2,111 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9344C66BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 13:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5AA66C03
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:05:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfGLL6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 07:58:12 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42016 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbfGLL6M (ORCPT
+        id S1727020AbfGLME6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:04:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59394 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbfGLMEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 07:58:12 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 201so6128618qkm.9
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 04:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RqRy3ex0kg0EzOgSloUclGJOSPqC0vewvlzV5LfMXp8=;
-        b=LT998PEi/w78gh0eEzS778lX5zHjWCRa0vQcxBycPEyrXroL82Qeul9Zo1h/bn6T73
-         hnca7bAEC6HQpuoOzvZ2mEtzr749H+mQQEsNZgk4C//ANI7ztx2Adh3SWWhw/roqx69g
-         Gn3uzaBAJT0dNZl5o03WLFhhtTeKfWVbbiq9L47wwJtrLVEGB5D54y5xzy6VsfQrLAM/
-         JD7AUS2a1/+2Oeq8DR/Vf9+kS7W7to+a4CmVsORW55nVe4bM1A5GpVRLZ2QP299Nh2ha
-         KkYBthqX6OhYfO8Ai9BFRTh3Tj2hy/MNybmt8oUpL7hybGfXsKEqDUcPkPeAKi09x8MQ
-         YhjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RqRy3ex0kg0EzOgSloUclGJOSPqC0vewvlzV5LfMXp8=;
-        b=MkmZc/PD3ZK9/Evucx4qp5Pi+ZdQTRNmM3QmT+uhTc+H7W04p8eLNsdZkyMwXmGRf+
-         gBrwPZzYOGcUgoIYwyXwnx7LC39/YOMc2/9Vi573qHWA6xaz8CI+MqmLkGFF4NFXLzea
-         zCUucSU74h4knaOPCzYfEu2lzhU99j8XPKy+B6VtSwRtTzwEFfL14HpbHZG6uMK0KIz1
-         VwYs0fZxARqX5Bmh4aLIhrE6YX3/iYT3T/IvFHs3udCGkiNz3Dxp1eHmi+inq+xZwfMx
-         U+xbZfgDfY3F675Fia2w+RXAUhYqJBHFeZJ5Z2/4qU+sKuNahuDtrzXs7/HcMgZj8x4t
-         TreA==
-X-Gm-Message-State: APjAAAX/z1P1MC7SaZVC7g1ZjKFZGN6Zigoyu3s9qFYfnuhL2rKf8zhO
-        3SbghV3+0Ruqa57j2Gg+GogBYw==
-X-Google-Smtp-Source: APXvYqyKvqjfx8L7GmIfUnw6VhpzkL8Lz6tyD5fb9RnPX6kifoSR8YnzphO/uLMPMJVvXtow4lEJcw==
-X-Received: by 2002:a37:63c1:: with SMTP id x184mr5941081qkb.6.1562932691410;
-        Fri, 12 Jul 2019 04:58:11 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id j19sm3065179qtq.94.2019.07.12.04.58.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Jul 2019 04:58:10 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hluBm-0007Av-Bc; Fri, 12 Jul 2019 08:58:10 -0300
-Date:   Fri, 12 Jul 2019 08:58:10 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Douglas Anderson <dianders@chromium.org>, stable@vger.kernel.org,
-        groeck@chromium.org, gregkh@linuxfoundation.org,
-        sukhomlinov@google.com, Arnd Bergmann <arnd@arndb.de>,
-        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM
- operations
-Message-ID: <20190712115810.GA27512@ziepe.ca>
-References: <20190711162919.23813-1-dianders@chromium.org>
- <20190711163915.GD25807@ziepe.ca>
- <20190711183533.lypj2gwffwheq3qu@linux.intel.com>
- <20190711194313.3w6gkbayq7yifvgg@linux.intel.com>
- <20190711194626.GI25807@ziepe.ca>
- <20190712033138.tonhpqy4yfdlkvs4@linux.intel.com>
- <20190712033556.4pze65z7cxga5tdu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712033556.4pze65z7cxga5tdu@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 12 Jul 2019 08:04:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3wmH193517;
+        Fri, 12 Jul 2019 12:04:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=J9lJrCjR1CDld97lcMgVwVTIYNKOCq4NNPlK+e/GGis=;
+ b=1tOoXXngBgKpnmWItLtPyg9qdomO8RmLdaOI+SPKuWqrbtLpEhL+cWDRv1bltCXmBjZi
+ AbleJF2yLVo5HMf9lHPjOtX0JWAL5Ipe0swA9wRH/B74lZKDdO+96GjjMV2nYdRd+ZlS
+ AOCBlSuNbQSNGNKleM4hDh3QJNgdb1mc2/gYQmGMEYWeHIB7afd7wEX1muFlPlZqUyRs
+ 7NlOkPgQzeh34f3rDG0uDVh5zgh5v7S49auuf2dUH/iKCnrcMxC/aJwzfEnrZXYcRpay
+ 0vuJhoptNbgX5FKHBkuOahVzFT0VXy7liVebIOS9W0bxNjphPQSdTEew3If8ix6Yt3BI TQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2tjk2u5aer-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 12:04:05 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3Squ118169;
+        Fri, 12 Jul 2019 12:04:05 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tnc8u3wv7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 12:04:05 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6CC43aV006181;
+        Fri, 12 Jul 2019 12:04:03 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 12 Jul 2019 04:58:29 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v7 0/5] misc fixes to PV extensions code
+Date:   Thu, 11 Jul 2019 20:02:07 +0800
+Message-Id: <1562846532-32152-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907120132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907120132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 06:35:56AM +0300, Jarkko Sakkinen wrote:
-> On Fri, Jul 12, 2019 at 06:31:38AM +0300, Jarkko Sakkinen wrote:
-> > On Thu, Jul 11, 2019 at 04:46:26PM -0300, Jason Gunthorpe wrote:
-> > > On Thu, Jul 11, 2019 at 10:43:13PM +0300, Jarkko Sakkinen wrote:
-> > > > On Thu, Jul 11, 2019 at 09:35:33PM +0300, Jarkko Sakkinen wrote:
-> > > > > > Careful with this, you can't backport this to any kernels that don't
-> > > > > > have the sysfs ops locking changes or they will crash in sysfs code.
-> > > > > 
-> > > > > Oops, I was way too fast! Thanks Jason.
-> > > > 
-> > > > Hmm... hold on a second.
-> > > > 
-> > > > How would the crash realize? I mean this is at the point when user space
-> > > > should not be active. 
-> > > 
-> > > Not strictly, AFAIK
-> > > 
-> > > > Secondly, why the crash would not realize with
-> > > > TPM2? The only thing the fix is doing is to do the same thing with TPM1
-> > > > essentially.
-> > > 
-> > > TPM2 doesn't use the unlocked sysfs path
-> > 
-> > Gah, sorry :-) I should have known that.
-> > 
-> > I can go through the patches needed when I come back from my leave after
-> > two weeks.
-> 
-> It might require a number of patches but maybe it makes also overally sense
-> to fix the racy sysfs code in stable kernels.
+Hi,
 
-The sysfs isn't racy, it justs used a different locking scheme
+In virtualization environment, PV extensions (drivers, interrupts,
+timers, etc) are enabled in the majority of use cases which is the
+best option.
 
-Jason
+However, in some cases (kexec not fully working, benchmarking, etc)
+we want to disable PV extensions. We have xen_nopv for that purpose
+but only for XEN. For a consistent admin experience a common command
+line parameter set across all PV guest implementations is a better
+choice.
+
+To achieve this introduce a new 'nopv' parameter which is usable by
+most of PV guest implementation. Due to the limitation of some PV
+guests(XEN PV, XEN PVH and jailhouse), 'nopv' is ignored for XEN PV
+, jailhouse and XEN PVH if booting via Xen-PVH boot entry. If booting
+via normal boot entry(like grub2), PVH guest has to panic itself
+currently.
+
+While analyzing the PV guest code one bug were found and fixed.
+(Patches 1). It can be applied independent of the functional
+changes, but is kept in the series as the functional changes
+depend on them.
+
+For compatibility reason, "xen_nopv" is keeped and mapped to "nopv",
+this way also avoids an issue with xen_nopv when booting PVH guest.
+
+Build test passes with CONFIG_HYPERVISOR_GUEST enable and disabled.
+I didn't get env to test with jailhouse and Hyperv, the others work
+as expected.
+
+v7:
+PATCH4 a new added patch prerequite for PATCH5(previously PATCH4)
+PATCH5 rewrite the code based on Boris's suggestion. I compare the one
+to update interface function one-by-one and the one to modify all
+x86_hyper_xen_hvm's ops to immediately return if nopv is set, both
+have same effect and the first looks smarter, so choose the 1st one.
+
+v6:
+PATCH3 add Reviewed-by
+PATCH4 remove unnecessory xen_hvm_nopv_guest_late_init() per Boris
+
+v5:
+PATCH2:
+update patch description per Boris
+add declaration of nopv variable in arch/x86/include/asm/hypervisor.h
+which will be used in PATCH3 and PATCH4
+
+PATCH3 update xen_parse_nopv() per Boris
+PATCH4 add nopv=false per Boris
+Combine PATCH5 into PATCH3
+
+
+v4:
+PATCH5 a new patch to add 'xen_nopv' back per Boris
+
+v3:
+Remove some unrelated patches from patchset as suggested by Tglx
+
+PATCH1 unchanged
+PATCH2 add Reviewed-by
+PATCH3 add Reviewed-by
+PATCH4 rewrite the patch as Jgross found an issue in old patch,
+description is also updated.
+
+v2:
+PATCH3 use 'ignore_nopv' for PVH/PV guest as suggested by Jgross.
+PATCH5 new added one, specifically for HVM guest
+
+Thanks
+Zhenzhong
+
