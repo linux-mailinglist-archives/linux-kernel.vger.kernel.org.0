@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B706C65245
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 09:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52FDD6524E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 09:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfGKHMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 03:12:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50246 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728118AbfGKHMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 03:12:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B1E01AD12;
-        Thu, 11 Jul 2019 07:12:46 +0000 (UTC)
-Date:   Thu, 11 Jul 2019 09:12:45 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [Question] Should direct reclaim time be bounded?
-Message-ID: <20190711071245.GB29483@dhcp22.suse.cz>
-References: <d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com>
- <80036eed-993d-1d24-7ab6-e495f01b1caa@oracle.com>
- <885afb7b-f5be-590a-00c8-a24d2bc65f37@oracle.com>
- <20190710194403.GR29695@dhcp22.suse.cz>
- <9d6c8b74-3cf6-4b9e-d3cb-a7ef49f838c7@oracle.com>
+        id S1728204AbfGKHQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 03:16:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49141 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbfGKHQm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 03:16:42 -0400
+Received: from [5.158.153.55] (helo=nanos.guests.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hlTJh-00006C-Pb; Thu, 11 Jul 2019 09:16:33 +0200
+Date:   Thu, 11 Jul 2019 09:16:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nadav Amit <namit@vmware.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Xi Ruoyao <xry111@mengyan1223.wang>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Bob Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [GIT PULL] x86/topology changes for v5.3
+In-Reply-To: <89EBC357-BEAC-4252-915F-E183C2D350C4@vmware.com>
+Message-ID: <alpine.DEB.2.21.1907110915570.1889@nanos.tec.linutronix.de>
+References: <CAHk-=wh7NChJP+WkaDd3qCz847Fq4NdQ6z6m-VFpbr3py_EknQ@mail.gmail.com> <alpine.DEB.2.21.1907100023020.1758@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907100039540.1758@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907100115220.1758@nanos.tec.linutronix.de>
+ <201907091727.91CC6C72D8@keescook> <1ad2de95e694a29909801d022fe2d556df9a4bd5.camel@mengyan1223.wang> <cb6d381ed7cd0bf732ae9d8f30c806b849b0f94b.camel@mengyan1223.wang> <alpine.DEB.2.21.1907101404570.1758@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1907101425290.5899@cbobk.fhfr.pm>
+ <768463eb26a2feb0fcc374fd7f9cc28b96976917.camel@mengyan1223.wang> <20190710134433.GN3402@hirez.programming.kicks-ass.net> <nycvar.YFH.7.76.1907101621050.5899@cbobk.fhfr.pm> <89EBC357-BEAC-4252-915F-E183C2D350C4@vmware.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d6c8b74-3cf6-4b9e-d3cb-a7ef49f838c7@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-07-19 16:36:58, Mike Kravetz wrote:
-> On 7/10/19 12:44 PM, Michal Hocko wrote:
-> > On Wed 10-07-19 11:42:40, Mike Kravetz wrote:
-> > [...]
-> >> As Michal suggested, I'm going to do some testing to see what impact
-> >> dropping the __GFP_RETRY_MAYFAIL flag for these huge page allocations
-> >> will have on the number of pages allocated.
+On Thu, 11 Jul 2019, Nadav Amit wrote:
+> > On Jul 10, 2019, at 7:22 AM, Jiri Kosina <jikos@kernel.org> wrote:
 > > 
-> > Just to clarify. I didn't mean to drop __GFP_RETRY_MAYFAIL from the
-> > allocation request. I meant to drop the special casing of the flag in
-> > should_continue_reclaim. I really have hard time to argue for this
-> > special casing TBH. The flag is meant to retry harder but that shouldn't
-> > be reduced to a single reclaim attempt because that alone doesn't really
-> > help much with the high order allocation. It is more about compaction to
-> > be retried harder.
+> > On Wed, 10 Jul 2019, Peter Zijlstra wrote:
+> > 
+> >> If we mark the key as RO after init, and then try and modify the key to
+> >> link module usage sites, things might go bang as described.
+> >> 
+> >> Thanks!
+> >> 
+> >> 
+> >> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> >> index 27d7864e7252..5bf7a8354da2 100644
+> >> --- a/arch/x86/kernel/cpu/common.c
+> >> +++ b/arch/x86/kernel/cpu/common.c
+> >> @@ -366,7 +366,7 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
+> >> 	cr4_clear_bits(X86_CR4_UMIP);
+> >> }
+> >> 
+> >> -DEFINE_STATIC_KEY_FALSE_RO(cr_pinning);
+> >> +DEFINE_STATIC_KEY_FALSE(cr_pinning);
+> > 
+> > Good catch, I guess that is going to fix it.
+> > 
+> > At the same time though, it sort of destroys the original intent of Kees' 
+> > patch, right? The exploits will just have to call static_key_disable() 
+> > prior to calling native_write_cr4() again, and the protection is gone.
 > 
-> Thanks Michal.  That is indeed what you suggested earlier.  I remembered
-> incorrectly.  Sorry.
-> 
-> Removing the special casing for __GFP_RETRY_MAYFAIL in should_continue_reclaim
-> implies that it will return false if nothing was reclaimed (nr_reclaimed == 0)
-> in the previous pass.
-> 
-> When I make such a modification and test, I see long stalls as a result
-> of should_compact_retry returning true too often.  On a system I am currently
-> testing, should_compact_retry has returned true 36000000 times.  My guess
-> is that this may stall forever.  Vlastmil previously asked about this behavior,
-> so I am capturing the reason.  Like before [1], should_compact_retry is
-> returning true mostly because compaction_withdrawn() returns COMPACT_DEFERRED.
+> Even with DEFINE_STATIC_KEY_FALSE_RO(), I presume you can just call
+> set_memory_rw(), make the page that holds the key writable, and then call
+> static_key_disable(), followed by a call to native_write_cr4().
 
-This smells like a problem to me. But somebody more familiar with
-compaction should comment.
+That's true, but it's not worth the trouble.
 
-> 
-> Total 36000000
->       35437500	COMPACT_DEFERRED
->         562500  COMPACT_PARTIAL_SKIPPED
-> 
-> 
-> [1] https://lkml.org/lkml/2019/6/5/643
-> -- 
-> Mike Kravetz
+Thanks,
 
--- 
-Michal Hocko
-SUSE Labs
+	tglx
