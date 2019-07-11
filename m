@@ -2,102 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CC6658A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E062E658B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbfGKOS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:18:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfGKOS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:18:26 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1F7321537;
-        Thu, 11 Jul 2019 14:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562854705;
-        bh=zxkWNgWAcdgDEs1e0ke3VX57cNWOkZWU0UUe/G7zWoU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aBUUZFgsgg5wBsaDq5QRISmheVCa1Jl2f77SUULojLCZuYrYYoexyBVnGYtKo0D7O
-         WQwldng+7Ilw7o2enbcVZUz+LvsvppoBCQecvYxWonrb0tVdTRbB9B1PoJtFiMdv1D
-         R2L6mqtUtnEST5hxxcA8UvqM/m0Zpgb2zPRxIBv8=
-Date:   Thu, 11 Jul 2019 07:18:25 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] vfs: standardize parameter checking for
- SETFLAGS/FSSETXATTR ioctls
-Message-ID: <20190711141825.GV1404256@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728595AbfGKOVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:21:32 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38172 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728496AbfGKOVb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:21:31 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y15so2841854pfn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Awpujz9r/neB3EOz35gTs3qfspG2l2LEyx+qOFwQWtc=;
+        b=itMw7Ebpfg3uMHx+Cp6KsA/Jzruj3ROpTQpU9KFExu0AV2HoMbkQ4B5z08DRqTZ4LZ
+         kd2MMKFWuwP4QkUSsyb7fRuNAYfFPwlgP9KidEUMzEO8/HNsW+pUHEiZnagno2r1/1uW
+         Bjo8poHGBtyy3cYaA0ViTzf9RPiXyGmVyMOfuwdibIqkoHOjOdcL4c1LYOAKWFYuSXjH
+         GdkkY22AYUXcV9hRqzXd4wVDoHHdaYxxndjmYX1x1OiSq+BN/rZYViGkXGyLq6XwRR4O
+         HsgqkdvgeflDjPyOPM07rlJTP8EkWvCrhlJfx3i8B2kKgtrQK4muI0eWSOdKkCHnawZj
+         a5Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Awpujz9r/neB3EOz35gTs3qfspG2l2LEyx+qOFwQWtc=;
+        b=X7MaXiKK1jtYM96q+OO89arN7Man2YLyCyhHh+C1NmbJ8bNs9QQtuO7CxGMtGzwpK4
+         OeDd1ZeyNIgRXRmO1ZfbKdnQVJoBxT9EFC0iVyQx3XjSFOJSs7TvOTJ1Ope4SMXJ9v5i
+         pqhHz5zN14v5O7mNE9tP1Gc3d44Kj1iH4Vn9X5RqsZO7EVUvtg95MY50/MFo45S/xYwk
+         HaTm8wsI2XOB7s6CH5QwqI0+/ego6YHzsGbeXslv8FlSuDJ0uj17LgFypnR0D4hy+UW5
+         //PnkEVim4hsU1OjZZn3TQk9dcAW/HkXdQhCXyH/x35N4SU/7qgeia3M0qdeAiXvS7os
+         iYxw==
+X-Gm-Message-State: APjAAAVQF3SNPlbkf8wyPXOIhxihzFbVCfjtACQL2WUlTwkp07Xc/S4p
+        QRGciIJmleuRwihYbRnfv8QGq9W7LJ90yQ==
+X-Google-Smtp-Source: APXvYqwXCzJ0oJtitLVGfwHJo2XK58B5/l/357wPbMNsJfi7bE/SM5jnO449QeEKT1JYb29a4ctIEA==
+X-Received: by 2002:a63:5d54:: with SMTP id o20mr4769342pgm.413.1562854889992;
+        Thu, 11 Jul 2019 07:21:29 -0700 (PDT)
+Received: from localhost ([49.248.58.252])
+        by smtp.gmail.com with ESMTPSA id q4sm5408674pjq.27.2019.07.11.07.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Jul 2019 07:21:29 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     linux-pm@vger.kernel.org
+Subject: [PATCH v2] PM: QoS: Get rid of unused flags
+Date:   Thu, 11 Jul 2019 19:51:25 +0530
+Message-Id: <e9e7bc3be3b51e68ae1a0f934c3724bd86f5f9af.1562854650.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1562854650.git.amit.kucheria@linaro.org>
+References: <cover.1562854650.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The network_latency and network_throughput flags for PM-QoS have not
+found much use in drivers or in userspace since they were introduced.
 
-Here's a patch series that sets up common parameter checking functions
-for the FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctl implementations.
-The goal here is to reduce the amount of behaviorial variance between
-the filesystems where those ioctls originated (ext2 and XFS,
-respectively) and everybody else.
+Commit 4a733ef1bea7 ("mac80211: remove PM-QoS listener") removed the
+only user PM_QOS_NETWORK_LATENCY in the kernel a while ago and there
+don't seem to be any userspace tools using the character device files
+either.
 
-The branch merges cleanly against this morning's HEAD and survived an
-overnight run of xfstests.  The merge was completely straightforward, so
-please let me know if you run into anything weird.
+PM_QOS_MEMORY_BANDWIDTH was never even added to the trace events.
 
---D
+Remove all the flags except cpu_dma_latency.
 
-The following changes since commit d1fdb6d8f6a4109a4263176c84b899076a5f8008:
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+Changes from v1:
+- Rebased on linux-next to deal with .rst conversion of docs
 
-  Linux 5.2-rc4 (2019-06-08 20:24:46 -0700)
+I've looked around for use of /dev/network_throughput and
+/dev/network_bandwidth) and not found any userspace programs that seem to
+use this currently. So this shouldn't be breaking our ABI contract with
+userspace.
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-fix-ioctl-checking-3
+ Documentation/power/pm_qos_interface.rst |  5 +--
+ include/linux/pm_qos.h                   |  6 ---
+ include/trace/events/power.h             |  8 +---
+ kernel/power/qos.c                       | 48 ------------------------
+ 4 files changed, 4 insertions(+), 63 deletions(-)
 
-for you to fetch changes up to dbc77f31e58b2902a5e7643761c04bf69f57a32a:
+diff --git a/Documentation/power/pm_qos_interface.rst b/Documentation/power/pm_qos_interface.rst
+index 945fc6d760c9..a00d607107ec 100644
+--- a/Documentation/power/pm_qos_interface.rst
++++ b/Documentation/power/pm_qos_interface.rst
+@@ -7,8 +7,7 @@ performance expectations by drivers, subsystems and user space applications on
+ one of the parameters.
+ 
+ Two different PM QoS frameworks are available:
+-1. PM QoS classes for cpu_dma_latency, network_latency, network_throughput,
+-memory_bandwidth.
++1. PM QoS classes for cpu_dma_latency
+ 2. the per-device PM QoS framework provides the API to manage the per-device latency
+ constraints and PM QoS flags.
+ 
+@@ -79,7 +78,7 @@ cleanup of a process, the interface requires the process to register its
+ parameter requests in the following way:
+ 
+ To register the default pm_qos target for the specific parameter, the process
+-must open one of /dev/[cpu_dma_latency, network_latency, network_throughput]
++must open /dev/cpu_dma_latency
+ 
+ As long as the device node is held open that process has a registered
+ request on the parameter.
+diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+index 6ea1ae373d77..2a3c237b1910 100644
+--- a/include/linux/pm_qos.h
++++ b/include/linux/pm_qos.h
+@@ -13,9 +13,6 @@
+ enum {
+ 	PM_QOS_RESERVED = 0,
+ 	PM_QOS_CPU_DMA_LATENCY,
+-	PM_QOS_NETWORK_LATENCY,
+-	PM_QOS_NETWORK_THROUGHPUT,
+-	PM_QOS_MEMORY_BANDWIDTH,
+ 
+ 	/* insert new class ID */
+ 	PM_QOS_NUM_CLASSES,
+@@ -33,9 +30,6 @@ enum pm_qos_flags_status {
+ #define PM_QOS_LATENCY_ANY_NS	((s64)PM_QOS_LATENCY_ANY * NSEC_PER_USEC)
+ 
+ #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
+-#define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
+-#define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
+-#define PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE	0
+ #define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE	PM_QOS_LATENCY_ANY
+ #define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT	PM_QOS_LATENCY_ANY
+ #define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS	PM_QOS_LATENCY_ANY_NS
+diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+index f7aece721aed..7457e238e1b7 100644
+--- a/include/trace/events/power.h
++++ b/include/trace/events/power.h
+@@ -379,9 +379,7 @@ DECLARE_EVENT_CLASS(pm_qos_request,
+ 
+ 	TP_printk("pm_qos_class=%s value=%d",
+ 		  __print_symbolic(__entry->pm_qos_class,
+-			{ PM_QOS_CPU_DMA_LATENCY,	"CPU_DMA_LATENCY" },
+-			{ PM_QOS_NETWORK_LATENCY,	"NETWORK_LATENCY" },
+-			{ PM_QOS_NETWORK_THROUGHPUT,	"NETWORK_THROUGHPUT" }),
++			{ PM_QOS_CPU_DMA_LATENCY,	"CPU_DMA_LATENCY" }),
+ 		  __entry->value)
+ );
+ 
+@@ -426,9 +424,7 @@ TRACE_EVENT(pm_qos_update_request_timeout,
+ 
+ 	TP_printk("pm_qos_class=%s value=%d, timeout_us=%ld",
+ 		  __print_symbolic(__entry->pm_qos_class,
+-			{ PM_QOS_CPU_DMA_LATENCY,	"CPU_DMA_LATENCY" },
+-			{ PM_QOS_NETWORK_LATENCY,	"NETWORK_LATENCY" },
+-			{ PM_QOS_NETWORK_THROUGHPUT,	"NETWORK_THROUGHPUT" }),
++			{ PM_QOS_CPU_DMA_LATENCY,	"CPU_DMA_LATENCY" }),
+ 		  __entry->value, __entry->timeout_us)
+ );
+ 
+diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+index 33e3febaba53..9568a2fe7c11 100644
+--- a/kernel/power/qos.c
++++ b/kernel/power/qos.c
+@@ -78,57 +78,9 @@ static struct pm_qos_object cpu_dma_pm_qos = {
+ 	.name = "cpu_dma_latency",
+ };
+ 
+-static BLOCKING_NOTIFIER_HEAD(network_lat_notifier);
+-static struct pm_qos_constraints network_lat_constraints = {
+-	.list = PLIST_HEAD_INIT(network_lat_constraints.list),
+-	.target_value = PM_QOS_NETWORK_LAT_DEFAULT_VALUE,
+-	.default_value = PM_QOS_NETWORK_LAT_DEFAULT_VALUE,
+-	.no_constraint_value = PM_QOS_NETWORK_LAT_DEFAULT_VALUE,
+-	.type = PM_QOS_MIN,
+-	.notifiers = &network_lat_notifier,
+-};
+-static struct pm_qos_object network_lat_pm_qos = {
+-	.constraints = &network_lat_constraints,
+-	.name = "network_latency",
+-};
+-
+-
+-static BLOCKING_NOTIFIER_HEAD(network_throughput_notifier);
+-static struct pm_qos_constraints network_tput_constraints = {
+-	.list = PLIST_HEAD_INIT(network_tput_constraints.list),
+-	.target_value = PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE,
+-	.default_value = PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE,
+-	.no_constraint_value = PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE,
+-	.type = PM_QOS_MAX,
+-	.notifiers = &network_throughput_notifier,
+-};
+-static struct pm_qos_object network_throughput_pm_qos = {
+-	.constraints = &network_tput_constraints,
+-	.name = "network_throughput",
+-};
+-
+-
+-static BLOCKING_NOTIFIER_HEAD(memory_bandwidth_notifier);
+-static struct pm_qos_constraints memory_bw_constraints = {
+-	.list = PLIST_HEAD_INIT(memory_bw_constraints.list),
+-	.target_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
+-	.default_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
+-	.no_constraint_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
+-	.type = PM_QOS_SUM,
+-	.notifiers = &memory_bandwidth_notifier,
+-};
+-static struct pm_qos_object memory_bandwidth_pm_qos = {
+-	.constraints = &memory_bw_constraints,
+-	.name = "memory_bandwidth",
+-};
+-
+-
+ static struct pm_qos_object *pm_qos_array[] = {
+ 	&null_pm_qos,
+ 	&cpu_dma_pm_qos,
+-	&network_lat_pm_qos,
+-	&network_throughput_pm_qos,
+-	&memory_bandwidth_pm_qos,
+ };
+ 
+ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+-- 
+2.17.1
 
-  vfs: only allow FSSETXATTR to set DAX flag on files and dirs (2019-07-01 08:25:36 -0700)
-
-----------------------------------------------------------------
-New for 5.3:
-- Standardize parameter checking for the SETFLAGS and FSSETXATTR ioctls
-  (which were the file attribute setters for ext4 and xfs and have now
-  been hoisted to the vfs)
-- Only allow the DAX flag to be set on files and directories.
-
-----------------------------------------------------------------
-Darrick J. Wong (5):
-      vfs: create a generic checking and prep function for FS_IOC_SETFLAGS
-      vfs: create a generic checking function for FS_IOC_FSSETXATTR
-      vfs: teach vfs_ioc_fssetxattr_check to check project id info
-      vfs: teach vfs_ioc_fssetxattr_check to check extent size hints
-      vfs: only allow FSSETXATTR to set DAX flag on files and dirs
-
- fs/btrfs/ioctl.c    |  30 ++++------
- fs/efivarfs/file.c  |  26 ++++++---
- fs/ext2/ioctl.c     |  16 ++----
- fs/ext4/ioctl.c     |  51 +++++------------
- fs/gfs2/file.c      |  42 +++++++++-----
- fs/hfsplus/ioctl.c  |  21 ++++---
- fs/inode.c          |  86 +++++++++++++++++++++++++++++
- fs/jfs/ioctl.c      |  22 +++-----
- fs/nilfs2/ioctl.c   |   9 +--
- fs/ocfs2/ioctl.c    |  13 +----
- fs/orangefs/file.c  |  37 ++++++++++---
- fs/reiserfs/ioctl.c |  10 ++--
- fs/ubifs/ioctl.c    |  13 +----
- fs/xfs/xfs_ioctl.c  | 154 +++++++++++++++++++++++-----------------------------
- include/linux/fs.h  |  12 ++++
- 15 files changed, 300 insertions(+), 242 deletions(-)
