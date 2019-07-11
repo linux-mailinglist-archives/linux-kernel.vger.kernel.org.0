@@ -2,119 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B259365427
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F63F65436
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfGKJvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:51:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54278 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727960AbfGKJvT (ORCPT
+        id S1728366AbfGKJz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:55:59 -0400
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:35645 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728295AbfGKJz7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:51:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FJ+go1rWo5bup7lu7g/QrNgXQ3Vwzmjj/rkN/hAyR6E=; b=yIDvRQUUo6BD24ceByuSwi6A2
-        Rww/Ym6ehYSo7ILp67PD0kmgu5Up17yvsyzeRmT9bEzCeOsfMkkDnSea8zZQUckUSrk1879m8lser
-        uumLJudSXDSwA/2el/6kuoo28u0z7SpYZ0RaqG1E8wVOHeK+M9CTBgekZalc6hEHDRTeko/8soLPl
-        Mrqzp6+7xwvG++u9/5uChEwbPki+iVEWFwnOiyb8okckM1Od0DOpbBObJHVhBBb3amC+PQ2vFpMC/
-        JduHZ1uIG+mK7vQnZBBrUp2eyh+ohf0UMsRPPjGiXDWSTwyUpOACXX4y/wc4g3Y/AVjjT4QbAEpit
-        b1TE/EmJw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlVjF-0002rq-8I; Thu, 11 Jul 2019 09:51:05 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5443C20B2B4C4; Thu, 11 Jul 2019 11:51:02 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 11:51:02 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     bsegall@google.com
-Cc:     Dave Chiluk <chiluk+linux@indeed.com>,
-        Pqhil Auld <pauld@redhat.com>, Peter Oskolkov <posk@posk.io>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
-        Kyle Anderson <kwa@yelp.com>,
-        Gabriel Munos <gmunoz@netflix.com>,
-        John Hammond <jhammond@indeed.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Paul Turner <pjt@google.com>
-Subject: Re: [PATCH v5 1/1] sched/fair: Fix low cpu usage with high
- throttling by removing expiration of cpu-local slices
-Message-ID: <20190711095102.GX3402@hirez.programming.kicks-ass.net>
-References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
- <1561664970-1555-1-git-send-email-chiluk+linux@indeed.com>
- <1561664970-1555-2-git-send-email-chiluk+linux@indeed.com>
- <xm26lfxhwlxr.fsf@bsegall-linux.svl.corp.google.com>
+        Thu, 11 Jul 2019 05:55:59 -0400
+Received: by mail-pg1-f171.google.com with SMTP id s27so2697446pgl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 02:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=q4aTVXnmJvx0+ZI6UEfBVpgkZHcZDIxsB4G/ZiMf9pM=;
+        b=SIh85Idmmnmu84Er31UhNLbVafgqi0UkV82OpvVm7rtrxdNqU0AhgtRNEDYXqq1Rnd
+         ugoF2aZF4eWlgQOGXYnlVOibsauiHFEV10Ne5Io7r7KiKdqT4/Zbq/e97dKABlp2y/JK
+         rim13rddkbLQIxqq6Ue2WPkqomeZg+m1Umlth521X+2g4GgLgREy/079n7cdVwiRR8kE
+         CP+XnaBtURhybFsdjMQjhtImN2cnppq3JBkuHelKJSc0HRvYBnYEg6DBuEMzbtug3iS0
+         SCZ8IVEyQcU3kuZdSkRE9cPSfELrqMZY3JoiNNYaRHuJ0Sil5qisb5/bBUcP7Bwi6jBD
+         FNWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=q4aTVXnmJvx0+ZI6UEfBVpgkZHcZDIxsB4G/ZiMf9pM=;
+        b=GdrMxCERQK8dg/9pC5EaE8EA5fwTMXnZQQGkpOVw9T8yxu8DYViTV53EgkemWGMHTV
+         x1dHu6yO1kc9Q9dPSm9iJohun7l5PZiX2P0CNx/mxRAEe7hx+7HB/irJCgYsOBl6H6QR
+         1MAivXmZ8/K4edHrvsf9usnOWA3HIqOgQiJENPjb19dwIe/xHbgpVJihp6aET0X5MFqw
+         3BpEAQrI/mefs4rDGcrFFPDmeqt53LG5o3N+deCIoM62ChYA4sU9DbvJWzLH+wwkKsqQ
+         TmHVJgy8X8cx+kZ9HJcyo48MDGrrqBIZwofl16VrPA8XFg2sgzNDkQnLpCjYydsHGmJ6
+         bYEg==
+X-Gm-Message-State: APjAAAVLrT89uSIpuMeQImf4x6K3bOKnUN84KBm2638NZA4k63xHSZE6
+        eUGosbqTPs5iV9nxltGaMZ4Ud3/j
+X-Google-Smtp-Source: APXvYqwvy8CZPo/ZKAxkPcg+J1VB346XgSM3stuTnmFgdJfcOxtjIO4tApyo1mgLo+tzQKgwBPC0UA==
+X-Received: by 2002:a63:181:: with SMTP id 123mr3550274pgb.63.1562838958158;
+        Thu, 11 Jul 2019 02:55:58 -0700 (PDT)
+Received: from localhost (193-116-118-149.tpgi.com.au. [193.116.118.149])
+        by smtp.gmail.com with ESMTPSA id f3sm6828140pfg.165.2019.07.11.02.55.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 02:55:57 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 19:52:59 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [v5 5/6] powerpc/mce: Handle UE event for memcpy_mcsafe
+To:     linux-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Santosh Sivaraj <santosh@fossix.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20190709121524.18762-1-santosh@fossix.org>
+        <20190709121524.18762-6-santosh@fossix.org>
+In-Reply-To: <20190709121524.18762-6-santosh@fossix.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xm26lfxhwlxr.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1562838616.xzrha67fy6.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Santosh Sivaraj's on July 9, 2019 10:15 pm:
+> If we take a UE on one of the instructions with a fixup entry, set nip
+> to continue execution at the fixup entry. Stop processing the event
+> further or print it.
 
-FWIW, good to see progress, still waiting for you guys to agree :-)
+So... what happens if we take a machine check while we happen to be
+executing some other kernel operation with a fixup entry?
 
-On Mon, Jul 01, 2019 at 01:15:44PM -0700, bsegall@google.com wrote:
+Or the other way around, what happens if memcpy_mcsafe takes a page
+fault for some reason (e.g., kernel bug it tries to access unmapped
+memory).
 
-> - Taking up-to-every rq->lock is bad and expensive and 5ms may be too
->   short a delay for this. I haven't tried microbenchmarks on the cost of
->   this vs min_cfs_rq_runtime = 0 vs baseline.
+Thanks,
+Nick
 
-Yes, that's tricky, SGI/HPE have definite ideas about that.
-
-> @@ -4781,12 +4790,41 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->   */
->  static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
->  {
-> -	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-> +	u64 runtime = 0;
->  	unsigned long flags;
->  	u64 expires;
-> +	struct cfs_rq *cfs_rq, *temp;
-> +	LIST_HEAD(temp_head);
-> +
-> +	local_irq_save(flags);
-> +
-> +	raw_spin_lock(&cfs_b->lock);
-> +	cfs_b->slack_started = false;
-> +	list_splice_init(&cfs_b->slack_cfs_rq, &temp_head);
-> +	raw_spin_unlock(&cfs_b->lock);
-> +
-> +
-> +	/* Gather all left over runtime from all rqs */
-> +	list_for_each_entry_safe(cfs_rq, temp, &temp_head, slack_list) {
-> +		struct rq *rq = rq_of(cfs_rq);
-> +		struct rq_flags rf;
-> +
-> +		rq_lock(rq, &rf);
-> +
-> +		raw_spin_lock(&cfs_b->lock);
-> +		list_del_init(&cfs_rq->slack_list);
-> +		if (!cfs_rq->nr_running && cfs_rq->runtime_remaining > 0 &&
-> +		    cfs_rq->runtime_expires == cfs_b->runtime_expires) {
-> +			cfs_b->runtime += cfs_rq->runtime_remaining;
-> +			cfs_rq->runtime_remaining = 0;
-> +		}
-> +		raw_spin_unlock(&cfs_b->lock);
-> +
-> +		rq_unlock(rq, &rf);
-> +	}
-
-But worse still, you take possibly every rq->lock without ever
-re-enabling IRQs.
-
->  
->  	/* confirm we're still not at a refresh boundary */
-> -	raw_spin_lock_irqsave(&cfs_b->lock, flags);
-> +	raw_spin_lock(&cfs_b->lock);
->  	cfs_b->slack_started = false;
->  	if (cfs_b->distribute_running) {
->  		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+=
