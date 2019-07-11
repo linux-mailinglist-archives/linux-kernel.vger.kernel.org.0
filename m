@@ -2,161 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC90652F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E31D6530D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:23:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfGKIRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 04:17:48 -0400
-Received: from mail-eopbgr40082.outbound.protection.outlook.com ([40.107.4.82]:48150
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727929AbfGKIRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 04:17:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4BcQ8ST1TCyJRhGaB26DYgyyMidy+dNZNN8FpCr9uDk=;
- b=lv+SyOtLvrnm9lz00pmKGJH5KgKHhOdJDKJDvhIwTAJWD8BTdcnEVoePTsd7cWnmMb3SLpMYSs9wkTeJZZCryEg5wUw99lioO3Uj668mpdiftOX6IdJjfyKOlpsefEulUy5IB/SFHzP0eQWJaVoCOUKOpWvP4cZS18cjYnBMr7M=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4626.eurprd04.prod.outlook.com (52.135.151.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.19; Thu, 11 Jul 2019 08:17:44 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367%7]) with mapi id 15.20.2052.022; Thu, 11 Jul 2019
- 08:17:44 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Fancy Fang <chen.fang@nxp.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
-Thread-Topic: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
-Thread-Index: AQHVNtXYsppc9iHvSUKCRoa1/AmVEabFFI6A
-Date:   Thu, 11 Jul 2019 08:17:43 +0000
-Message-ID: <20190711081743.r73g5zqtrgdw5xlp@fsr-ub1664-175>
-References: <20190710041546.23422-1-chen.fang@nxp.com>
-In-Reply-To: <20190710041546.23422-1-chen.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c4681e66-2fdc-45e5-2399-08d705d84001
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4626;
-x-ms-traffictypediagnostic: AM0PR04MB4626:
-x-microsoft-antispam-prvs: <AM0PR04MB46265BDE847E9164CFF2B4DBF6F30@AM0PR04MB4626.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0095BCF226
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(136003)(376002)(39860400002)(366004)(396003)(346002)(189003)(199004)(186003)(256004)(26005)(6246003)(478600001)(7736002)(305945005)(1076003)(71190400001)(86362001)(68736007)(71200400001)(5660300002)(66066001)(91956017)(66946007)(76116006)(64756008)(66476007)(66556008)(66446008)(102836004)(6506007)(53546011)(11346002)(476003)(44832011)(446003)(33716001)(6862004)(2906002)(54906003)(25786009)(316002)(6486002)(4326008)(76176011)(6116002)(3846002)(8936002)(14454004)(9686003)(6512007)(229853002)(81156014)(99286004)(8676002)(81166006)(53936002)(6436002)(486006)(7416002)(6636002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4626;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XcdkKHSCVaZKZl2+v+Ss6YQ1arLDVJdMEHgrSpreNLXXCQSLjvBibpYfqB6c1YlFtKE+r+eofJQhkJA1JK2kpE5fHEoiVOQiNFonoDDXWiLb1rE6cyqQ3JgQ/SthqHF7mwezZOJ/jMypsJnIoQU6wZRZgT3Wyo2kUG+4V3NzDS7FzkxdyaZs0YWMmaxUccSJXFAe1AdcDdOJ8LDL0KyQCv3ufDdVM5jKsQ3l0lHr1ZeUZQK73Jo5mBu6vdW17wCr5dGTlTI2tNsYkI6Xo78nzuTVWJuWbMKFhU72wF2HKaK8ywJnpuvf33+ZNN3UyRbXNVCRfM8HGiO1rq3/cifo9XIzy7lfnaIeiEd3hGbm0b/3MEfmCxs0IwZ0M3tjOmbCTyguwwLuR64R9Q42DPU77IkQu0oGEDcQdvKOB+LMDQ8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0031DD8A96E813439B342C5DCC30EFC0@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728249AbfGKIXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 04:23:07 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58865 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727991AbfGKIXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 04:23:07 -0400
+X-Originating-IP: 86.250.200.211
+Received: from aptenodytes (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8A20D20005;
+        Thu, 11 Jul 2019 08:18:08 +0000 (UTC)
+Date:   Thu, 11 Jul 2019 10:18:08 +0200
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        vivek.kasireddy@intel.com, sakari.ailus@linux.intel.com,
+        s.nawrocki@samsung.com, niklas.soderlund+renesas@ragnatech.se,
+        ezequiel@collabora.com, boris.brezillon@collabora.com,
+        robert.chiras@nxp.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH] media: v4l: Add packed YUV444 24bpp pixel format
+Message-ID: <20190711081808.GA15389@aptenodytes>
+References: <1562166911-27454-1-git-send-email-mirela.rabulea@nxp.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4681e66-2fdc-45e5-2399-08d705d84001
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2019 08:17:43.9886
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4626
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1562166911-27454-1-git-send-email-mirela.rabulea@nxp.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-10 04:13:37, Fancy Fang wrote:
-> Rename 'lcdif' pixel clock related names to 'disp' names, since:
->=20
-> First, the lcdif pixel clock is not supplied to LCDIF controller
-> directly, but to some LPCG clock in display mix. So rename it to
-> 'disp' pixel clock is more accurate.
->=20
-> Second, in the imx8mn CCM specification which is designed after
-> imx8mm, this same pixel root clock name has been modified from
-> 'LCDIF_PIXEL_CLK_ROOT' to 'DISPLAY_PIXEL_CLK_ROOT'.
->=20
-> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+Hi,
 
-For the entire series.
+On Wed 03 Jul 19, 18:15, Mirela Rabulea wrote:
+> The added format is V4L2_PIX_FMT_YUV24, this is a packed
+> YUV 4:4:4 format, with 8 bits for each component, 24 bits
+> per sample.
+> 
+> This format is used by the i.MX 8QuadMax and i.MX 8DualXPlus/8QuadXPlus
+> JPEG encoder/decoder.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+So this format is not aligned to 32-bit words at all and we can expect
+to see cases where a single 32-bit word contains data for two pixels?
 
+Nothing wrong with that, just checking whether I understood this right :)
+
+Cheers,
+
+Paul
+
+> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
 > ---
->  drivers/clk/imx/clk-imx8mm.c             | 4 ++--
->  include/dt-bindings/clock/imx8mm-clock.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 6b8e75df994d..42f1227a4952 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -210,7 +210,7 @@ static const char *imx8mm_pcie1_aux_sels[] =3D {"osc_=
-24m", "sys_pll2_200m", "sys_p
->  static const char *imx8mm_dc_pixel_sels[] =3D {"osc_24m", "video_pll1_ou=
-t", "audio_pll2_out", "audio_pll1_out",
->  					     "sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4",=
- };
-> =20
-> -static const char *imx8mm_lcdif_pixel_sels[] =3D {"osc_24m", "video_pll1=
-_out", "audio_pll2_out", "audio_pll1_out",
-> +static const char *imx8mm_disp_pixel_sels[] =3D {"osc_24m", "video_pll1_=
-out", "audio_pll2_out", "audio_pll1_out",
->  						"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
-> =20
->  static const char *imx8mm_sai1_sels[] =3D {"osc_24m", "audio_pll1_out", =
-"audio_pll2_out", "video_pll1_out",
-> @@ -535,7 +535,7 @@ static int __init imx8mm_clocks_init(struct device_no=
-de *ccm_node)
->  	clks[IMX8MM_CLK_PCIE1_PHY] =3D imx8m_clk_composite("pcie1_phy", imx8mm_=
-pcie1_phy_sels, base + 0xa380);
->  	clks[IMX8MM_CLK_PCIE1_AUX] =3D imx8m_clk_composite("pcie1_aux", imx8mm_=
-pcie1_aux_sels, base + 0xa400);
->  	clks[IMX8MM_CLK_DC_PIXEL] =3D imx8m_clk_composite("dc_pixel", imx8mm_dc=
-_pixel_sels, base + 0xa480);
-> -	clks[IMX8MM_CLK_LCDIF_PIXEL] =3D imx8m_clk_composite("lcdif_pixel", imx=
-8mm_lcdif_pixel_sels, base + 0xa500);
-> +	clks[IMX8MM_CLK_DISP_PIXEL] =3D imx8m_clk_composite("disp_pixel", imx8m=
-m_disp_pixel_sels, base + 0xa500);
->  	clks[IMX8MM_CLK_SAI1] =3D imx8m_clk_composite("sai1", imx8mm_sai1_sels,=
- base + 0xa580);
->  	clks[IMX8MM_CLK_SAI2] =3D imx8m_clk_composite("sai2", imx8mm_sai2_sels,=
- base + 0xa600);
->  	clks[IMX8MM_CLK_SAI3] =3D imx8m_clk_composite("sai3", imx8mm_sai3_sels,=
- base + 0xa680);
-> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindin=
-gs/clock/imx8mm-clock.h
-> index 07e6c686f3ef..91ef77efebd9 100644
-> --- a/include/dt-bindings/clock/imx8mm-clock.h
-> +++ b/include/dt-bindings/clock/imx8mm-clock.h
-> @@ -119,7 +119,7 @@
->  #define IMX8MM_CLK_PCIE1_PHY			104
->  #define IMX8MM_CLK_PCIE1_AUX			105
->  #define IMX8MM_CLK_DC_PIXEL			106
-> -#define IMX8MM_CLK_LCDIF_PIXEL			107
-> +#define IMX8MM_CLK_DISP_PIXEL			107
->  #define IMX8MM_CLK_SAI1				108
->  #define IMX8MM_CLK_SAI2				109
->  #define IMX8MM_CLK_SAI3				110
-> --=20
-> 2.17.1
-> =
+>  Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst | 37 +++++++++++++++++++++-
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+>  include/uapi/linux/videodev2.h                     |  1 +
+>  3 files changed, 38 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst b/Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst
+> index 41b60fa..5750ff6 100644
+> --- a/Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst
+> +++ b/Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst
+> @@ -17,7 +17,8 @@ Description
+>  ===========
+>  
+>  Similar to the packed RGB formats these formats store the Y, Cb and Cr
+> -component of each pixel in one 16 or 32 bit word.
+> +component of each pixel next to each other in memory. They occupy 16, 24 or 32
+> +bits per pixel.
+>  
+>  
+>  .. raw:: latex
+> @@ -157,6 +158,40 @@ component of each pixel in one 16 or 32 bit word.
+>  
+>        -  :cspan:`15`
+>  
+> +    * .. _V4L2-PIX-FMT-YUV24:
+> +
+> +      - ``V4L2_PIX_FMT_YUV24``
+> +      - 'YUV3'
+> +
+> +      - Y'\ :sub:`7`
+> +      - Y'\ :sub:`6`
+> +      - Y'\ :sub:`5`
+> +      - Y'\ :sub:`4`
+> +      - Y'\ :sub:`3`
+> +      - Y'\ :sub:`2`
+> +      - Y'\ :sub:`1`
+> +      - Y'\ :sub:`0`
+> +
+> +      - Cb\ :sub:`7`
+> +      - Cb\ :sub:`6`
+> +      - Cb\ :sub:`5`
+> +      - Cb\ :sub:`4`
+> +      - Cb\ :sub:`3`
+> +      - Cb\ :sub:`2`
+> +      - Cb\ :sub:`1`
+> +      - Cb\ :sub:`0`
+> +
+> +      - Cr\ :sub:`7`
+> +      - Cr\ :sub:`6`
+> +      - Cr\ :sub:`5`
+> +      - Cr\ :sub:`4`
+> +      - Cr\ :sub:`3`
+> +      - Cr\ :sub:`2`
+> +      - Cr\ :sub:`1`
+> +      - Cr\ :sub:`0`
+> +
+> +      -  :cspan:`7`
+> +
+>      * .. _V4L2-PIX-FMT-YUV32:
+>  
+>        - ``V4L2_PIX_FMT_YUV32``
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index b1f4b99..9bb6579 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1215,6 +1215,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_PIX_FMT_YUV444:	descr = "16-bit A/XYUV 4-4-4-4"; break;
+>  	case V4L2_PIX_FMT_YUV555:	descr = "16-bit A/XYUV 1-5-5-5"; break;
+>  	case V4L2_PIX_FMT_YUV565:	descr = "16-bit YUV 5-6-5"; break;
+> +	case V4L2_PIX_FMT_YUV24:	descr = "24-bit YUV 4:4:4 8-8-8"; break;
+>  	case V4L2_PIX_FMT_YUV32:	descr = "32-bit A/XYUV 8-8-8-8"; break;
+>  	case V4L2_PIX_FMT_AYUV32:	descr = "32-bit AYUV 8-8-8-8"; break;
+>  	case V4L2_PIX_FMT_XYUV32:	descr = "32-bit XYUV 8-8-8-8"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 9d9705c..752dd33 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -577,6 +577,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_YUV444  v4l2_fourcc('Y', '4', '4', '4') /* 16  xxxxyyyy uuuuvvvv */
+>  #define V4L2_PIX_FMT_YUV555  v4l2_fourcc('Y', 'U', 'V', 'O') /* 16  YUV-5-5-5     */
+>  #define V4L2_PIX_FMT_YUV565  v4l2_fourcc('Y', 'U', 'V', 'P') /* 16  YUV-5-6-5     */
+> +#define V4L2_PIX_FMT_YUV24   v4l2_fourcc('Y', 'U', 'V', '3') /* 24  YUV-8-8-8     */
+>  #define V4L2_PIX_FMT_YUV32   v4l2_fourcc('Y', 'U', 'V', '4') /* 32  YUV-8-8-8-8   */
+>  #define V4L2_PIX_FMT_AYUV32  v4l2_fourcc('A', 'Y', 'U', 'V') /* 32  AYUV-8-8-8-8  */
+>  #define V4L2_PIX_FMT_XYUV32  v4l2_fourcc('X', 'Y', 'U', 'V') /* 32  XYUV-8-8-8-8  */
+> -- 
+> 2.7.4
+> 
+
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
