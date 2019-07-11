@@ -2,100 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4215C651E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 08:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2175F65224
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 09:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfGKGjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 02:39:25 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:4177 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfGKGjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 02:39:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1562827163; x=1594363163;
-  h=from:to:subject:date:message-id:mime-version;
-  bh=3yDMhteaqF5Imx/WRe77nSJqYH+HoX6HUtBihhrqZRc=;
-  b=qEeq3U7YRj8ufXlxSwYlp9pRdmrOok8Wpid6Buwuv4y3q4r6xOw0vusn
-   m0tQr6dTQpVzACHTMQkrBAaSOp0ZjcTYY9l/AUmircJV9FzMRVx+7hMZr
-   oDZIwBzKeRZXa7GAkE7pvhOZ60EoQzZwWN/vuAq0Dk0ugSWoKy6gdSSUj
-   A=;
-X-IronPort-AV: E=Sophos;i="5.62,476,1554768000"; 
-   d="scan'208";a="741294779"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 11 Jul 2019 06:39:20 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id BC8D7A2277;
-        Thu, 11 Jul 2019 06:39:19 +0000 (UTC)
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Jul 2019 06:39:19 +0000
-Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.160.211) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Jul 2019 06:39:11 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <robh+dt@kernel.org>, <marc.zyngier@arm.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <mark.rutland@arm.com>,
-        <nicolas.ferre@microchip.com>, <mchehab+samsung@kernel.org>,
-        <shawn.lin@rock-chips.com>, <gregkh@linuxfoundation.org>,
-        <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <talel@amazon.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 1/1] dt-bindings: interrupt-controller: al-fic: remove redundant binding
-Date:   Thu, 11 Jul 2019 09:38:59 +0300
-Message-ID: <1562827139-1666-1-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728136AbfGKHAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 03:00:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2252 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725963AbfGKHAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 03:00:36 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 84EE695F83B628D151AE;
+        Thu, 11 Jul 2019 15:00:31 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 11 Jul 2019
+ 15:00:21 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <baruch@tkos.co.il>, <wsa+renesas@sang-engineering.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] watchdog: digicolor_wdt: remove unused variable 'ret'
+Date:   Thu, 11 Jul 2019 14:40:19 +0800
+Message-ID: <20190711064019.60916-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.43.160.211]
-X-ClientProxiedBy: EX13D29UWA004.ant.amazon.com (10.43.160.33) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove dt binding description for standard binding.
+commit cdad26977e3f ("watchdog: digicolor_wdt: drop
+warning after registering device") left this unused
+variable, it can be removed.
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- .../bindings/interrupt-controller/amazon,al-fic.txt      | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/watchdog/digicolor_wdt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/amazon,al-fic.txt b/Documentation/devicetree/bindings/interrupt-controller/amazon,al-fic.txt
-index 4e82fd5..c676b03 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/amazon,al-fic.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/amazon,al-fic.txt
-@@ -5,21 +5,19 @@ Required properties:
- - compatible: should be "amazon,al-fic"
- - reg: physical base address and size of the registers
- - interrupt-controller: identifies the node as an interrupt controller
--- #interrupt-cells: must be 2.
--  First cell defines the index of the interrupt within the controller.
--  Second cell is used to specify the trigger type and must be one of the
--  following:
--    - bits[3:0] trigger type and level flags
--	1 = low-to-high edge triggered
--	4 = active high level-sensitive
--- interrupt-parent: specifies the parent interrupt controller.
-+- #interrupt-cells : must be 2. Specifies the number of cells needed to encode
-+  an interrupt source. Supported trigger types are low-to-high edge
-+  triggered and active high level-sensitive.
- - interrupts: describes which input line in the interrupt parent, this
-   fic's output is connected to. This field property depends on the parent's
-   binding
+diff --git a/drivers/watchdog/digicolor_wdt.c b/drivers/watchdog/digicolor_wdt.c
+index 33cda95..073d378 100644
+--- a/drivers/watchdog/digicolor_wdt.c
++++ b/drivers/watchdog/digicolor_wdt.c
+@@ -118,7 +118,6 @@ static int dc_wdt_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct dc_wdt *wdt;
+-	int ret;
  
-+Please refer to interrupts.txt in this directory for details of the common
-+Interrupt Controllers bindings used by client devices.
-+
- Example:
- 
--amazon_fic: interrupt-controller@0xfd8a8500 {
-+amazon_fic: interrupt-controller@fd8a8500 {
- 	compatible = "amazon,al-fic";
- 	interrupt-controller;
- 	#interrupt-cells = <2>;
+ 	wdt = devm_kzalloc(dev, sizeof(struct dc_wdt), GFP_KERNEL);
+ 	if (!wdt)
 -- 
 2.7.4
+
 
