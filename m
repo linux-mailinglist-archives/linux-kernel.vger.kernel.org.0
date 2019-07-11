@@ -2,86 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 200D9656BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 14:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1152656CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 14:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfGKMVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 08:21:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39296 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfGKMVx (ORCPT
+        id S1728698AbfGKM03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 08:26:29 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38987 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfGKM02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 08:21:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id u17so2865564pgi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 05:21:52 -0700 (PDT)
+        Thu, 11 Jul 2019 08:26:28 -0400
+Received: by mail-ed1-f67.google.com with SMTP id m10so5620890edv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 05:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wKzIIBt+fcwYgb1WijLtPF2IxcS5FD6tOy9+Xwn7eRw=;
-        b=L+vpPUbDCRBwU4yazk9+F8bwJqmJigvHwVXp4eq3fOgsh9/qfyxNpBEqYZAa1ZGHw+
-         xPsbICepNF8tts7VNy9XEl411b8wrDJ4xP4ylGtHMjl51cfexb4NVqDVoq4ZDd9oVBdO
-         FWKtvQiH7KZ0cyqPId695lzZsnHo1DmocnbCdp57KCEBTh79/HuVVyl1yy9fkshmEsL8
-         kWOUUr+LabStYDubFOzEUDnqTvRvMsxenK0lo7Zjvgu1cBcO5y/6WrTZdijqyXEz3jrl
-         5fFidPqProEzoXu+IYxfAJGuawolucezD0gz3OaBr8howW7E7q0i3Ilfp/l7DPl6UmcP
-         Yizw==
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XJ6ZMdK4LYRloh1U7sELBo1v2NVDRc/ffgJQQZCOGw8=;
+        b=EW7GpK1ypNgGxWDSTMOusRhBsnHaJj84KVn4gcs69/N7Uk7dXNGESNYBPBlBX4nMAC
+         +zIFWunPSKy5J7VY1Y9C0q3D/5Dc/CU40NZ4BIFDBVGzcO2Ds0YruG2wTfBlz86+Nbjo
+         z+i9dBBMWPgRi02j4HcZulKmeTzn1qyNlNrKDeYqkQ/ltfDkNb4rn8zVHh1pCmvJrX6c
+         ZV4n9inovdSAot9aoSc/HNDfD4WlpxSQvSXv1y/wmJ+2gNyBk3qPttWksU014jdoWi7C
+         kbHMTVoNVgEEuKb67O+BqKD0Gq08mOkhEgxIMU74FLyP8mwgdNa2L1L3Yavzsw8zemZj
+         T+Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wKzIIBt+fcwYgb1WijLtPF2IxcS5FD6tOy9+Xwn7eRw=;
-        b=EGdf5Zf2Ze33c4eLFXh7rLfKSAFI3mah2FLZ0B2M1d12HCtoMcFivUaAjiXwmjUP5y
-         Fkdtbcn63XxyU3M0bGPFrGJKYVSYd70qGaARFrab9vBrvQEBaMInmyInM1Ic4tDcW1p3
-         Oik3uMHQdao9j/eki1kW21fLX2rFwjMtVMhEekYzeqFrCsPhgau3JijDYCGv/nojfO+S
-         HAAhA/s4rmGTMeIcI8SFfpiDP5h2CTuvWHky1qCDLSkYwT09pl2juPnpHiYaeHXEkMV8
-         qd2kFFaMtONXeg/2E1bdOsMKJxecWEFZ2Yu0I3YrxtYuu79Zh8AI/EwlPazccIQYNRB5
-         XW8Q==
-X-Gm-Message-State: APjAAAWUB/umQAn/0yBGW4QhByXArvk8BRzu/tZhBRtWPYSb+KKRFlNw
-        08udppOxoZpP8ESoyJ6oZ5A=
-X-Google-Smtp-Source: APXvYqxO5be22E/+NEO0kWVy0NthtjTtcUlIEV+ywC+Gd1B7Kzo1wwJW00IsEVZV2kMl/CRvK46uLg==
-X-Received: by 2002:a17:90a:ab01:: with SMTP id m1mr4366676pjq.69.1562847712344;
-        Thu, 11 Jul 2019 05:21:52 -0700 (PDT)
-Received: from localhost.localdomain (36-239-228-246.dynamic-ip.hinet.net. [36.239.228.246])
-        by smtp.gmail.com with ESMTPSA id q1sm11284536pfn.178.2019.07.11.05.21.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 05:21:51 -0700 (PDT)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: rk808: Return REGULATOR_MODE_INVALID for invalid mode
-Date:   Thu, 11 Jul 2019 20:21:38 +0800
-Message-Id: <20190711122138.5221-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XJ6ZMdK4LYRloh1U7sELBo1v2NVDRc/ffgJQQZCOGw8=;
+        b=NzBO0SRZcWTYX1D63DKAPOZ+kI9+B13z9H1fQvAj1NPjpFlm91hbNb0tifT6OZEiaj
+         eK9MYBT0OKW8sqeB3yEpYy6LtF9DsDArvoKL5F7DQ0eC2xZEXOjQZoMMpiOu1VQpFB1Y
+         FyiBWqa/5ZcksCGHgXlp4CuaJXob1HiskPHFgaoawIDrMDqbFPf9z7CdIj/zVMCjSeeg
+         2WPpL+SNbwQlmYnnF9u9xEKwhZcLhDgCBilHZRRIMHpmRSj4ccoa3FnLHFUCnUw0roNA
+         jVziJiPb4J3bmobUke2c7Cs++hsaYdM73udd4BEngGOPNaEAy+/k242vT8dBZS28qqFV
+         xwsQ==
+X-Gm-Message-State: APjAAAWyOAqYyTPHO6UP4V2JEp3p0y8bZZYa9dsG/v9Lc8nKv/VdtHkw
+        Q/wOv7mT7SrM5EzDywqOMeJ7HprFn6qsZlgGEUY=
+X-Google-Smtp-Source: APXvYqzugM5LpeBLacryDPFYq2IwvdgIhi4YgehBu0EhyKrAkLdubbVLjwgW6a31qe/LF/V0ieTCIyUKrLyCQynpEqU=
+X-Received: by 2002:a05:6402:14c4:: with SMTP id f4mr3155357edx.170.1562847986892;
+ Thu, 11 Jul 2019 05:26:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190708211528.12392-1-pasha.tatashin@soleen.com>
+ <CACi5LpNGWhTnXyM8gB0Tn=682+08s-ppfDpX2SawfxMvue1GTQ@mail.gmail.com>
+ <CA+CK2bBrwBHhD-PFO_gVnDYoFi0Su6t456WNdtBWpOe4qM+oww@mail.gmail.com>
+ <2d60f302-5161-638a-76cd-d7d79e5631fe@arm.com> <CA+CK2bA40wQvX=KieE5Qg2Ny5ZyiDAAjAb9W7Phu2Ou_9r6bOA@mail.gmail.com>
+ <f9bea5bd-370a-47b5-8ad1-a30bd43d6cca@arm.com> <CA+CK2bBWis8TgyOmDhVgLYrOU95Za-UhSGSB3ufsjiNDt-Zd_w@mail.gmail.com>
+ <93f99d54-9fe4-a191-4877-080ad78322bb@arm.com>
+In-Reply-To: <93f99d54-9fe4-a191-4877-080ad78322bb@arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 11 Jul 2019 08:26:16 -0400
+Message-ID: <CA+CK2bCOeV=4+MZcZfScvTDZ8Not6qxEn1DKZKSwtJOvq-hotQ@mail.gmail.com>
+Subject: Re: [v1 0/5] allow to reserve memory for normal kexec kernel
+To:     Vladimir Murzin <vladimir.murzin@arm.com>
+Cc:     James Morse <james.morse@arm.com>, Sasha Levin <sashal@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Eric Biederman <ebiederm@xmission.com>, will@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--EINVAL is not a valid return value for .of_map_mode, return
-REGULATOR_MODE_INVALID instead.
+On Thu, Jul 11, 2019 at 4:12 AM Vladimir Murzin <vladimir.murzin@arm.com> wrote:
+>
+> Hi,
+>
+> On 7/10/19 4:56 PM, Pavel Tatashin wrote:
+> > On Wed, Jul 10, 2019 at 11:19 AM James Morse <james.morse@arm.com> wrote:
+> >>
+> >> Hi Pasha,
+> >>
+> >> On 09/07/2019 14:07, Pavel Tatashin wrote:
+> >>>>> Enabling MMU and D-Cache for relocation  would essentially require the
+> >>>>> same changes in kernel. Could you please share exactly why these were
+> >>>>> not accepted upstream into kexec-tools?
+> >>>>
+> >>>> Because '--no-checks' is a much simpler alternative.
+> >>>>
+> >>>> More of the discussion:
+> >>>> https://lore.kernel.org/linux-arm-kernel/5599813d-f83c-d154-287a-c131c48292ca@arm.com/
+> >>>>
+> >>>> While you can make purgatory a fully-fledged operating system, it doesn't really need to
+> >>>> do anything on arm64. Errata-workarounds alone are a reason not do start down this path.
+> >>>
+> >>> Thank you James. I will summaries the information gathered from the
+> >>> yesterday's/today's discussion and add it to the cover letter together
+> >>> with ARM64 tag. I think, the patch series makes sense for ARM64 only,
+> >>> unless there are other platforms that disable caching/MMU during
+> >>> relocation.
+> >>
+> >> I'd prefer not to reserve additional memory for regular kexec just to avoid the relocation.
+> >> If the kernel's relocation work is so painful we can investigate doing it while the MMU is
+> >> enabled. If you can compare regular-kexec with kexec_file_load() you eliminate the
+> >> purgatory part of the work.
+> >
+> > Relocation time is exactly the same for regular-kexec and
+> > kexec_file_load(). So, the relocation is indeed painful for our case.
+> > I am working on adding MMU enabled kernel relocation.
+>
+> Out of curiosity, does enabling only I-cache make a difference? IIRC, it doesn't
+> require setting MMU, in contrast to D-cache.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/rk808-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Resend:
 
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index e7af0c53d449..61bd5ef0806c 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -606,7 +606,7 @@ static unsigned int rk8xx_regulator_of_map_mode(unsigned int mode)
- 	case 2:
- 		return REGULATOR_MODE_NORMAL;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
--- 
-2.20.1
+Thank you for suggestion. I have actually experimented with enabling
+caches without MMU. Did not see a difference.
 
+Thank you,
+Pasha
+
+>
+> Cheers
+> Vladimir
+>
+> >
+> > Pasha
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
+>
