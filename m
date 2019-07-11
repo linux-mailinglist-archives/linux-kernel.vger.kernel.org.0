@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 355AF65056
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 05:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CC365061
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 05:08:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfGKDCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 23:02:40 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55901 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfGKDCk (ORCPT
+        id S1727898AbfGKDIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 23:08:25 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:48355 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfGKDIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 23:02:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a15so4118316wmj.5;
-        Wed, 10 Jul 2019 20:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QmmkRcrRHhvKDL3E6Ed88MV7KQW+R+f2hke0bRgH+sM=;
-        b=HeCsIwr79uKlTQ4IXQ2ZXeHGgfBduGZUp6NhDFkb7iSyJyT2kYg4d22BhIvU83sXFK
-         DrTL3ufbkBtaWFyhD4dQusuNLER1rle54jeMzwJytaQGyDkGkNuTwDktVDdeTVtG/INO
-         ojkygY+Sdcvd6UdFPVf5zmeF3CB68IzVZtXtS0Yl8dColS4YwXtHGC2rlNnbi2hxvEIe
-         UHzxXWg3gGkJaVVFa2ip1yfkb+Et7Q1pLQNIS3PuMSy/KHDAbAWvgsWzPByGLVrZKh0E
-         AEYuiT+ZLz8nVUfT1Ma/2QY2ZnlhZhUubvC0zutDMAJbXn3xxVPLEtvS66VCIlKYO4Uu
-         ZlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QmmkRcrRHhvKDL3E6Ed88MV7KQW+R+f2hke0bRgH+sM=;
-        b=d3uXc2msP6CgbQzRFvmj8N5LoX2iAwAOmdEY4mhvoqlqkAqNPQ+FNYqUJ8lekWLj6J
-         lLhMzbLs+G0vxwB1x7Be9dkA/svX0KvyFTtFIR16BkMarJTTu4HwpqfAgRDS0xIxyOq8
-         sw7N2Dm4mqIqFnh+7phGiJuk2dJAqz6JnZEkSuQhFgpNNH4G/tIRj9pqK394L8Zglrqz
-         YV2narz/Z5FWAQ3VIf3fkOC8dTT4NvbD1oYRyiGdN9YkKnVXvCAUJaJiGaBGjRgsZfjN
-         X6ZO5CorNI58sdAgiREXbt8S/r1fv1kmYW1aRZtaykqCo2EDEUcC4Q+WZ10SRTZpA0e8
-         hIxg==
-X-Gm-Message-State: APjAAAUo+Bx1G7sWkChHyVlUVsplmFmy+85D1I1+QmIFKBABrP25+TSX
-        hIeYZELq4XG3msNHdUeL4kc=
-X-Google-Smtp-Source: APXvYqzoQoA1pDhCxOLwzbyiQ0J/ctBrxUXsA6CqoPWinuJIkt5Upu2sIpM+D7TuvrM+iFferPT7Sw==
-X-Received: by 2002:a1c:96c7:: with SMTP id y190mr868171wmd.87.1562814158394;
-        Wed, 10 Jul 2019 20:02:38 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id r11sm5213340wre.14.2019.07.10.20.02.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 20:02:37 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 20:02:35 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
-Message-ID: <20190711030235.GA12012@archlinux-threadripper>
-References: <20190710174800.34451-1-natechancellor@gmail.com>
- <20190710182624.GG4051@ziepe.ca>
- <CAKwvOd=yJQgzjQBKW7=en_YnF6OCAg0MXy5c6c9tBLSjGgorPA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=yJQgzjQBKW7=en_YnF6OCAg0MXy5c6c9tBLSjGgorPA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Wed, 10 Jul 2019 23:08:25 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x6B37G9W027198;
+        Thu, 11 Jul 2019 12:07:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x6B37G9W027198
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562814437;
+        bh=wDYz/yHhx6nItjKqfKQXfYFVLdaXf3nRB8CNeDF+UBU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eD7rAs8EKGC5P51XykS2mWVAA94CATwbNmy2EGX9wxCsfnZ2N+nX82uNV1oXLNDRJ
+         hmE5opz4u7WIYBodpMeAswa/Tbt5fDbu1a1ohzDOay944iuA6+8yap8X90hT59kXZc
+         Fh2HLRrFOOjtR/N5WRWq/i/YKNJ2av8OqB1bA/riW2PhZjb+VbZdwhDbQgCnIFHJmQ
+         va6W9Uoebfkr/qqXPb9dDqk9/PPUupQhM035ktw9Bb1RJxhO8zSDYd4+/XBArLmrar
+         9zlpsgXZKC3NoMiOz3oKNCT/pQEX37SA1g+4IPZdJQcF6ykrijwfaDw415a1DZD4AA
+         yzRDl1ctAij2A==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: fix O= building with CONFIG_FPE_FASTFPE
+Date:   Thu, 11 Jul 2019 12:07:12 +0900
+Message-Id: <20190711030713.4447-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:53:50PM -0700, Nick Desaulniers wrote:
-> On Wed, Jul 10, 2019 at 11:26 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Wed, Jul 10, 2019 at 10:48:00AM -0700, Nathan Chancellor wrote:
-> > > clang warns several times:
-> > >
-> > > drivers/infiniband/sw/siw/siw_cq.c:31:4: warning: implicit conversion
-> > > from enumeration type 'enum siw_wc_status' to different enumeration type
-> > > 'enum siw_opcode' [-Wenum-conversion]
-> > Weird that gcc doesn't warn on this by default..
-> 
-> Based on the sheer number of -Wenum-conversion that Nathan has fixed,
-> I don't think gcc has -Wenum-conversion (or it's somehow disabled just
-> for gcc).
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+To use Fastfpe, a user is supposed to enable CONFIG_FPE_FASTFPE
+and put downstream source files into arch/arm/fastfpe/.
 
-Yes, as far as I am aware, GCC does not warn on implicit enum
-conversions (which I think defeats the purpose of enumerated types
-*shrugs*).
+It is not working for O= build because $(wildcard arch/arm/fastfpe)
+checks if it exists in $(objtree), not in $(srctree).
 
-Cheers,
-Nathan
+Add the $(srctree)/ prefix to fix it.
+
+While I was here, I slightly refactored the code.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+KernelVersion: 5.2
+
+ arch/arm/Makefile | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index f863c6935d0e..792f7fa16a24 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -271,14 +271,9 @@ endif
+ 
+ export	TEXT_OFFSET GZFLAGS MMUEXT
+ 
+-# Do we have FASTFPE?
+-FASTFPE		:=arch/arm/fastfpe
+-ifeq ($(FASTFPE),$(wildcard $(FASTFPE)))
+-FASTFPE_OBJ	:=$(FASTFPE)/
+-endif
+-
+ core-$(CONFIG_FPE_NWFPE)	+= arch/arm/nwfpe/
+-core-$(CONFIG_FPE_FASTFPE)	+= $(FASTFPE_OBJ)
++# Put arch/arm/fastfpe/ to use this.
++core-$(CONFIG_FPE_FASTFPE)	+= $(patsubst $(srctree)/%,%,$(wildcard $(srctree)/arch/arm/fastfpe/))
+ core-$(CONFIG_VFP)		+= arch/arm/vfp/
+ core-$(CONFIG_XEN)		+= arch/arm/xen/
+ core-$(CONFIG_KVM_ARM_HOST) 	+= arch/arm/kvm/
+-- 
+2.17.1
+
