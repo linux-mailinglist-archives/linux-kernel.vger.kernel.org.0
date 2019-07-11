@@ -2,92 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E978A66035
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BEF66052
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbfGKTtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 15:49:07 -0400
-Received: from mga11.intel.com ([192.55.52.93]:39776 "EHLO mga11.intel.com"
+        id S1729019AbfGKT7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 15:59:35 -0400
+Received: from ajax.cs.uga.edu ([128.192.4.6]:55458 "EHLO ajax.cs.uga.edu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfGKTtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 15:49:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 12:49:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,479,1557212400"; 
-   d="scan'208";a="168730721"
-Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jul 2019 12:49:06 -0700
-Subject: Re: [RFC PATCH v2 0/3] An alternative __vdso_sgx_enter_enclave() to
- allow enclave/host parameter passing using untrusted stack
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        kai.svahn@intel.com, kai.huang@intel.com
-References: <cover.1555965327.git.cedric.xing@intel.com>
- <20190424062623.4345-1-cedric.xing@intel.com>
- <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
- <686e47d2-f45c-6828-39d1-48374925de6c@intel.com>
- <20190710224628.epjxwlpqqxdurmzo@linux.intel.com>
- <a2d2ba5c-c7b3-a76b-594f-df2e14234b1d@intel.com>
- <20190711093621.4wstj7bc7w6wxxj2@linux.intel.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <f24c8440-2397-0015-745b-c338d9496a53@intel.com>
-Date:   Thu, 11 Jul 2019 12:49:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726505AbfGKT7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 15:59:34 -0400
+X-Greylist: delayed 2416 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Jul 2019 15:59:33 EDT
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+        (authenticated bits=0)
+        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x6BJJFVn054162
+        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=OK);
+        Thu, 11 Jul 2019 15:19:17 -0400
+Received: by mail-lf1-f50.google.com with SMTP id h28so4811584lfj.5;
+        Thu, 11 Jul 2019 12:19:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAWxheXejtPBkf3TaMAvpn/+tA0N+iGsz0xgfiAGKc7Mri0Xr5JA
+        R7Zu/l2iW5sxEp5lgEyrt7/Hg+Elaq5qCPaS1oc=
+X-Google-Smtp-Source: APXvYqwunc/O9uRDAgMduACqLWOqC09W6hXRDVHDdvBA5YcONGMc9t6fPqw9wsUN4kmB4dulWuL+7iJOiMAcA27WMv4=
+X-Received: by 2002:ac2:418f:: with SMTP id z15mr2543647lfh.177.1562872755598;
+ Thu, 11 Jul 2019 12:19:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190711093621.4wstj7bc7w6wxxj2@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1562830033-24239-1-git-send-email-wang6495@umn.edu> <CACVXFVO-gwVhZRajRx41_sYJKDTX2qZUnZVRXCB0NcegVVTGVw@mail.gmail.com>
+In-Reply-To: <CACVXFVO-gwVhZRajRx41_sYJKDTX2qZUnZVRXCB0NcegVVTGVw@mail.gmail.com>
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+Date:   Thu, 11 Jul 2019 14:18:42 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7fUF1NSDa-dr7VqCZ4wBm1vChe9BRpgx9A_S8wM_OoNAg@mail.gmail.com>
+Message-ID: <CAAa=b7fUF1NSDa-dr7VqCZ4wBm1vChe9BRpgx9A_S8wM_OoNAg@mail.gmail.com>
+Subject: Re: [PATCH] block/bio-integrity: fix a memory leak bug
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wenwen@cs.uga.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/11/2019 2:36 AM, Jarkko Sakkinen wrote:
-> On Wed, Jul 10, 2019 at 03:54:20PM -0700, Xing, Cedric wrote:
->> On 7/10/2019 3:46 PM, Jarkko Sakkinen wrote:
->>> On Wed, Jul 10, 2019 at 11:08:37AM -0700, Xing, Cedric wrote:
->>>>> With these conclusions I think the current vDSO API is sufficient for
->>>>> Linux.
->>>>
->>>> The new vDSO API is to support data exchange on stack. It has nothing to do
->>>> with debugging. BTW, the community has closed on this.
->>>
->>> And how that is useful?
->>
->> There is a lengthy discussion on its usefulness so I don't want to repeat.
->> In short, it allows using untrusted stack as a convenient method to exchange
->> data with the enclave. It is currently being used by Intel's SGX SDK for
->> e/o-calls parameters.
->>
->>>> The CFI directives are for stack unwinding. They don't affect what the code
->>>> does so you can just treat them as NOPs if you don't understand what they
->>>> do. However, they are useful to not only debuggers but also exception
->>>> handling code. libunwind also has a setjmp()/longjmp() implementation based
->>>> on CFI directives.
->>>
->>> Of course I won't merge code of which usefulness I don't understand.
->>
->> Sure.
->>
->> Any other questions I can help with?
-> 
-> I dissected my concerns in other email. We can merge this feature after
-> v21 if it makes sense.
+On Thu, Jul 11, 2019 at 4:22 AM Ming Lei <tom.leiming@gmail.com> wrote:
+>
+> On Thu, Jul 11, 2019 at 3:36 PM Wenwen Wang <wang6495@umn.edu> wrote:
+> >
+> > From: Wenwen Wang <wenwen@cs.uga.edu>
+> >
+> > In bio_integrity_prep(), a kernel buffer is allocated through kmalloc() to
+> > hold integrity metadata. Later on, the buffer will be attached to the bio
+> > structure through bio_integrity_add_page(), which returns the number of
+> > bytes of integrity metadata attached. Due to unexpected situations,
+> > bio_integrity_add_page() may return 0. As a result, bio_integrity_prep()
+> > needs to be terminated with 'false' returned to indicate this error.
+> > However, the allocated kernel buffer is not freed on this execution path,
+> > leading to a memory leak.
+> >
+> > To fix this issue, free the allocated buffer before returning from
+> > bio_integrity_prep().
+> >
+> > Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+> > ---
+> >  block/bio-integrity.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+> > index 4db6208..bfae10c 100644
+> > --- a/block/bio-integrity.c
+> > +++ b/block/bio-integrity.c
+> > @@ -276,8 +276,10 @@ bool bio_integrity_prep(struct bio *bio)
+> >                 ret = bio_integrity_add_page(bio, virt_to_page(buf),
+> >                                              bytes, offset);
+> >
+> > -               if (ret == 0)
+> > +               if (ret == 0) {
+> > +                       kfree(buf);
+> >                         return false;
+> > +               }
+>
+> This way may not be enough, and the bio payload needs to be freed.
+>
+> And you may refer to the error handling for 'IS_ERR(bip)', and bio->bi_status
+> needs to be set, and bio_endio() needs to be called too.
 
-Sent out v3 of vDSO changes last night. I hope your concerns have been 
-properly addressed.
+Thanks for your comments! I will rework the patch.
 
-The new vDSO API is a community consensus. I can help on whatever 
-technical problems you may have but I don't see a reason you should 
-reject it.
-
-> /Jarkko
-> 
+Wenwen
