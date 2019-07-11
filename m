@@ -2,90 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 296406594E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AC465953
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbfGKOr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:47:28 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44287 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbfGKOr2 (ORCPT
+        id S1728868AbfGKOrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:47:49 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34976 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbfGKOrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:47:28 -0400
-Received: by mail-vs1-f68.google.com with SMTP id v129so4331854vsb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:47:27 -0700 (PDT)
+        Thu, 11 Jul 2019 10:47:49 -0400
+Received: by mail-vs1-f67.google.com with SMTP id u124so4367991vsu.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=0QB4G2/xBHjcBNeOJeGkcEW1zTEpr0Wwngojk7AMV6U=;
-        b=FOLvRp6568/WXK18c2fpfwhDlQV/cnX2CQ7cu4gYCiS+gDi5zeiVZ8UTdLz6iayDWX
-         7fHU3RA10QJyx/ivL5kO48KNdOJvIeVfmGC9riV3vvnSCY/GbtIBXEFfj5IRN16MyM21
-         da/Pu3ShQOzLWcXE9u4rOo27/itdbbH3GzQ4WGnSyhA9LC23zfRwPaCz5mkpoDgfaecK
-         SKAY7f8Sdn6nSTjz9aKuUUWVAFawKRVnFlzFmmA+Kbarj1kkA2cZBWVG00RweXswCxIf
-         WQYX3M+mcXOkunzBiyBJTTC6yLdDlxG7vGm8xY4yv/0gzfFfYbNhMKcCWcecTkFg3lXy
-         /ZVw==
+        bh=rUmlGY6yas6VrdYZGOaSdQwWGQVgRyYlGBxMRjwXy+U=;
+        b=KvUJNONAi7UUgCR2G0iyP9dC+TEMlGB52UsU1vpEIE5VUni18sfejiXR6iDDWn9v+L
+         DRT+7FMtOVb1Q5RVg/FNfJrxVYnjZ8hPBBJS3BgXxC8s+n22dFw04/QfQE/PzafV70Ux
+         yuO1IbahQooVuS+EAWoBqL1hRsJC012tPEX+7IwdPyb6Sc5P57LB6iGNOhObv3pivyMG
+         qit8V+zMIOigBTnd9LMt57Oty1F4rJVj6Pf6gsrZPQ7bDgZ+ma+hixUViT2TEmzDyLL8
+         q+MKCCA14cL/H81tWsOac2m2U5Ot90z2OirelMMAk6qnpIFHP4rxO/tfP0F2dHPgqOza
+         CtnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0QB4G2/xBHjcBNeOJeGkcEW1zTEpr0Wwngojk7AMV6U=;
-        b=unKgR1P/5D80pc2O6vwoFljHQinP5Tcm3eDN7jwrlM+WZbMf5PixNPT5a8e9bZHmmi
-         3mvcoWuAACDKhEgqf4OfH/yTZ7AQLal1NYqYSOK6HkQl7awgnQgk5WnrFWOqSvxrpWG/
-         yUZAnKAh8sWcNDvS350QFT3NnkqefGku2ID6zAgvYO4o6g1XxtfoG/ZOOCP9TrY5sWvl
-         Yzf0jSlYYXRG6O19C4Hqcr3l9HtLj82Eo27wwYxKuWIeF779UMXEgQk5LI8epyOUvvWo
-         jOdXY71PeAz41Ts7eiutbYh1OPgt/Qfi6ecvS2QerbpaRS3/u9X8Ko09j+BQgTZw5byG
-         dUtA==
-X-Gm-Message-State: APjAAAXGNC+3+I0y3834wIoBRt2O7Qfr9fFIIYMAw00+KscOwUCp2Xo1
-        mj3hXgOAip2KJqcl0nkApDdHng==
-X-Google-Smtp-Source: APXvYqzWMjwLvEzUNthWoul7YQeleHCiUHqqGdCJBrTbLUhep0lALHQe3k1n0bUT17K33/yU3PvY2w==
-X-Received: by 2002:a67:ea49:: with SMTP id r9mr4828851vso.223.1562856447047;
-        Thu, 11 Jul 2019 07:47:27 -0700 (PDT)
+        bh=rUmlGY6yas6VrdYZGOaSdQwWGQVgRyYlGBxMRjwXy+U=;
+        b=mvw1Riy60eeA9T8tLZwvk15fegDtT4zRHIheTvKDG2MEopFFH+mu8AzXXS5/xJH0eF
+         Rrc0Yubis7Tb6n9gw+oo1SDt+JfeRXVoynbvQOewHLgYRL4FyunzG5123jOAqOjtukAr
+         X5xkAhLXdbTMGc2V65tI30R/tDQeP83hsF34lnUmnHOYm2eOWhBHOuhUvyAPP23t5ZQU
+         m0Cs7ZmaX/dMJ8eOi393f36CJEAB9cYZF/u5/HPgx2imli9EC3DF3oW4jVLvzzvz94jI
+         nW4dfx/8BmXF9ZbffHwcbZGPTjW27/xXBswRnwML8Izl50/NRor7A2HPXqgBW5aVON4d
+         gK2A==
+X-Gm-Message-State: APjAAAUWs8szNCJm1Ys0Cf8KaJ22B0fmzKpBNmemQsIWoDaQbS5LR3yJ
+        qhkj+eoRQHRvhCon9FnJ5HaAcQ==
+X-Google-Smtp-Source: APXvYqweUoGqYduacnXihqjruL1/rYGti5hbwSoZmr/KlGD77Gaa/f8FIBkxNmOTelMEisrTtqxYMg==
+X-Received: by 2002:a67:2586:: with SMTP id l128mr4867052vsl.52.1562856467869;
+        Thu, 11 Jul 2019 07:47:47 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id v71sm1794480vke.11.2019.07.11.07.47.26
+        by smtp.gmail.com with ESMTPSA id z10sm1661564vsn.23.2019.07.11.07.47.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Jul 2019 07:47:26 -0700 (PDT)
+        Thu, 11 Jul 2019 07:47:47 -0700 (PDT)
 Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
         (envelope-from <jgg@ziepe.ca>)
-        id 1hlaM1-0003T2-QC; Thu, 11 Jul 2019 11:47:25 -0300
-Date:   Thu, 11 Jul 2019 11:47:25 -0300
+        id 1hlaMM-0003UA-NL; Thu, 11 Jul 2019 11:47:46 -0300
+Date:   Thu, 11 Jul 2019 11:47:46 -0300
 From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: [PATCH -next] rdma/siw: Add missing dependencies on LIBCRC32C
- and DMA_VIRT_OPS
-Message-ID: <20190711144725.GA13197@ziepe.ca>
-References: <20190710133930.26591-1-geert@linux-m68k.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     bmt@zurich.ibm.com, dledford@redhat.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH -next] rdma/siw: remove set but not used variable 's'
+Message-ID: <20190711144746.GA13376@ziepe.ca>
+References: <20190711071213.57880-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190710133930.26591-1-geert@linux-m68k.org>
+In-Reply-To: <20190711071213.57880-1-yuehaibing@huawei.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 03:39:30PM +0200, Geert Uytterhoeven wrote:
-> If LIBCRC32C and DMA_VIRT_OPS are not enabled:
+On Thu, Jul 11, 2019 at 03:12:13PM +0800, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
->     drivers/infiniband/sw/siw/siw_main.o: In function `siw_newlink':
->     siw_main.c:(.text+0x35c): undefined reference to `dma_virt_ops'
->     drivers/infiniband/sw/siw/siw_qp_rx.o: In function `siw_csum_update':
->     siw_qp_rx.c:(.text+0x16): undefined reference to `crc32c'
+> drivers/infiniband/sw/siw/siw_cm.c: In function siw_cm_llp_state_change:
+> drivers/infiniband/sw/siw/siw_cm.c:1278:17: warning: variable s set but not used [-Wunused-but-set-variable]
 > 
-> Fix the first issue by adding a select of DMA_VIRT_OPS.
-> Fix the second issue by replacing the unneeded dependency on
-> CRYPTO_CRC32 by a dependency on LIBCRC32C.
-> 
-> Reported-by: noreply@ellerman.id.au (first issue)
-> Fixes: c0cf5bdde46c664d ("rdma/siw: addition to kernel build environment")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/infiniband/sw/siw/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/infiniband/sw/siw/siw_cm.c | 3 ---
+>  1 file changed, 3 deletions(-)
 
 Applied to for-next, thanks
 
