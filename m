@@ -2,174 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E753965FEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 651B565FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfGKTRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 15:17:03 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36923 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfGKTRC (ORCPT
+        id S1728937AbfGKTWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 15:22:36 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:50156 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfGKTWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 15:17:02 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s20so6991326otp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 12:17:01 -0700 (PDT)
+        Thu, 11 Jul 2019 15:22:35 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 5A478C55
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 19:22:34 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RqDjoynalEP0 for <linux-kernel@vger.kernel.org>;
+        Thu, 11 Jul 2019 14:22:34 -0500 (CDT)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 2A5DCC7F
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 14:22:34 -0500 (CDT)
+Received: by mail-io1-f70.google.com with SMTP id s9so7836845iob.11
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 12:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eUSi3tY9WQJoS1EY1aQXpWympsTqMdn0wVqqZqVdQVk=;
-        b=camATY/NzLRiATqzHBSW98RoE1F6AG2h2nePD+8Gk0Wz6ld60tDwdfxnWllAlmsPC7
-         gJvgepZ+57xnsETY8vt58D4GWCUEFDBocuGs4tVA5m/lyEVEiVpjJJ5HTFryb0qLF467
-         hp15q3BDSM1b8agHxbKLbt1CgRB79eLzxHwwQ=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=04r+xkfi3OIxIAnYMbyBVwPuxdAwHrdKDxo/QJz9TXo=;
+        b=kRCDtdkKWDupkwiDvuAHjTjjn6YF6vYe+M23iFm7rjC9nCrglDHxUtsu9IqVnPNCUw
+         f1efLF/yBqTHqxnNCsqMC4iZCGCu2FiBJBRDofzVGoOeNd1aEjcIB3EQ1AecMz19ls4Q
+         dkJKau+qfJRQnsQC5BgI9cI259ChqPd/LRs1T8/1UjSsrNMWjzAvNTrTYhhfhByM8ai/
+         Fuy1f00937LWrXRFuBCiNieNncfblHnTD2if+0J8Vk9a5qUW1mqEmI0EFKblfyvyuy65
+         VQbiEGyFf9+GcFtQ2laOCumU/cr+x85rQKzlqHBKqeUsuf8jfQG6ciLpHJnq70t0Mhpk
+         WJzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eUSi3tY9WQJoS1EY1aQXpWympsTqMdn0wVqqZqVdQVk=;
-        b=B/uJOGW+Qg2NEzdCcBklxz2YuYERfyJww5VyZubQc6RpG1UG6VCk3HG5QZEueYUUB9
-         kYAPNIbwS0XEBJnhqJfs+bP10HDNuqvOiwuArHfnljw5a8oQrwQvfYmRyM22w2mO0lr3
-         25w4BcV+rRpgMOCMuCpn2FolgIvAdulMkVU/TIggYLnVj2GW5zURR13ETcnpObukXDAJ
-         +LZA/9sniDOfXDzaVA77xKIzybakLcNScvk2xwZc/JttCpgEqnLjWY1hkgplcTa/4Iwq
-         95d7Js3Or9QvhCxRUWD5BdRskJF6NE/srl9HnuzVo9SXYGVDSNEjRLBz5/x1/S5YDrY6
-         +eyw==
-X-Gm-Message-State: APjAAAVikeLusS47cPPBYkykuFlMWeAAU0RBzpj7CKKiAxnW5XzMtglW
-        uxW7q4Q1kDS30QMX9RcrQBBmVuga1vqmfAW00mTJPQ==
-X-Google-Smtp-Source: APXvYqyT3azAYT1KYEzwCu0KzckgoxzeydeLtzUfvllYHq5t/nPXgLIPQhVx2K9uef+PQK+83q8EDA+oX8va/BDSf+w=
-X-Received: by 2002:a9d:27c3:: with SMTP id c61mr4626820otb.291.1562872621393;
- Thu, 11 Jul 2019 12:17:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190401171724.215780-1-dianders@chromium.org>
- <20190401171724.215780-3-dianders@chromium.org> <20190630202246.GB15102@ravnborg.org>
- <20190630205514.GA17046@ravnborg.org> <CAD=FV=WH4kmhQA0kbKcAUx=oOeqTZiQOFCXYpVWwq+mG7Y7ofA@mail.gmail.com>
- <20190708175606.GB3511@ravnborg.org> <CAD=FV=VdkPLwyGhSnrHCcduQAPwby35Mqhk_r=O595bMoMT=6w@mail.gmail.com>
-In-Reply-To: <CAD=FV=VdkPLwyGhSnrHCcduQAPwby35Mqhk_r=O595bMoMT=6w@mail.gmail.com>
-From:   Sean Paul <seanpaul@chromium.org>
-Date:   Thu, 11 Jul 2019 15:16:50 -0400
-Message-ID: <CAEqLBR=jmc1zs75vfVP2b4d4dpLJjNpUX=5W5AYyCtCoLvK59A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/7] drm/panel: simple: Add ability to override typical timing
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, devicetree@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        =?UTF-8?Q?Enric_Balletb=C3=B2?= <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=04r+xkfi3OIxIAnYMbyBVwPuxdAwHrdKDxo/QJz9TXo=;
+        b=W80I306JBpnTp98ifPntpP16303xFEYluBP9ESrQVd6ZnNnk3Pu0vTgletfWCTu/GA
+         YL8bL59Ug4FBoNvXXrDj4SjhgAPdeOcKC72YcjRfQ03R5iI2z+PXBMarwUrZ4fc71Fu0
+         zALb2nV+1AEVOObnKKmkaWctBW337lEAEjbZV8nTTIiEpl1QoUpvP0/B4d90prOxuj6u
+         mGik3oNG2J37TSe/3OAC30nEsTv247MJa3TmKyzINhI2Xid2i3cCRr8o2frGWFS1A0JP
+         t3eS7Vhnv86JGXKyHWLNPzR3HCqLm47GMkK/08C3gKqgGnvoUH7Qce10S7eMGfCuWHfB
+         COBg==
+X-Gm-Message-State: APjAAAVbfz5y7/URxf5lB5CUnKtw/iCvdqORU2BZVtQATs/4GDT/IVS9
+        3uLUTabXDEeGom7NcLbpS49CjRsXu32qQi0J0iTWbzI0B8TDjeInHPkGT0yI4PXT2704ZNA9c0C
+        nXBldk1RK9SYLmcj9wiwq8ABfrxO2
+X-Received: by 2002:a6b:f711:: with SMTP id k17mr5891513iog.273.1562872953858;
+        Thu, 11 Jul 2019 12:22:33 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqx/oBuIk60mhI4isOWmFv2H/1EonKWKX/fEvEckRCa0a+lY1XboOURnqhKOt66OGfCLdBxd3A==
+X-Received: by 2002:a6b:f711:: with SMTP id k17mr5891495iog.273.1562872953548;
+        Thu, 11 Jul 2019 12:22:33 -0700 (PDT)
+Received: from cs-u-cslp16.dtc.umn.edu (cs-u-cslp16.cs.umn.edu. [128.101.106.40])
+        by smtp.gmail.com with ESMTPSA id 8sm5505611ion.26.2019.07.11.12.22.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 11 Jul 2019 12:22:32 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org (open list:BLOCK LAYER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] block/bio-integrity: fix a memory leak bug
+Date:   Thu, 11 Jul 2019 14:22:02 -0500
+Message-Id: <1562872923-2463-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 6:56 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Mon, Jul 8, 2019 at 10:56 AM Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > On Mon, Jul 01, 2019 at 09:39:06AM -0700, Doug Anderson wrote:
-> > > Hi,
-> > >
-> > > On Sun, Jun 30, 2019 at 1:55 PM Sam Ravnborg <sam@ravnborg.org> wrote:
-> > > >
-> > > > Hi Douglas.
-> > > >
-> > > > > > +
-> > > > > > +   /* Only add timings if override was not there or failed to validate */
-> > > > > > +   if (num == 0 && panel->desc->num_timings)
-> > > > > > +           num = panel_simple_get_timings_modes(panel);
-> > > > > > +
-> > > > > > +   /*
-> > > > > > +    * Only add fixed modes if timings/override added no mode.
-> > > > >
-> > > > > This part I fail to understand.
-> > > > > If we have a panel where we in panel-simple have specified the timings,
-> > > > > and done so using display_timing so with proper {min, typ, max} then it
-> > > > > should be perfectly legal to specify a more precise variant in the DT
-> > > > > file.
-> > > > > Or what did I miss here?
-> > > >
-> > > > Got it now.
-> > > > If display_mode is used for timings this is what you call "fixed mode".
-> > > > Hmm, if I got confused someone else may also be confused by this naming.
-> > >
-> > > The name "fixed mode" comes from the old code, though I guess in the
-> > > old code it used to refer to a mode that came from either the
-> > > display_timing or the display_mode.
-> > >
-> > > How about if I call it "panel_simple_get_from_fixed_display_mode"?
-> > > ...or if you have another suggestion feel free to chime in.
-> > What we really want to distingush here is the use of display_mode
-> > and display_timings (if I got the names right).
-> > That display_mode specify a fixed timing and display_timing specify
-> > a valid range is something in the semantics of the two types.
-> > So naming that refer to display_mode versus display_timing will make the
-> > code simpler to understand. and then a nice comment that when
-> > display_mode
-> > is used one looses the possibility to use override_mode.
-> > That would be fine to have in the struct in the driver.
->
-> OK, I can change the names here and try to find a good place to add a comment.
->
->
-> > > NOTE: Since this feedback is minor and this patch has been outstanding
-> > > for a while (and is blocking other work), I am assuming that the best
-> > > path forward is for Heiko to land this patch with Thierry's Ack and
-> > > I'll send a follow-up.  Please yell if you disagree.
-> > Let's give the patches a spin more as we have passed the possibility for
-> > the current merge window.
->
-> Any way I can convince you to change your mind here?  There are no
-> functional changes requested so far in your feedback and no bugs--it's
-> just a few variable names and comments.  By landing the existing
-> patches as-is:
->
-> 1. We stop spamming all the people CCed on this whole series (which
-> includes device tree patches) that might be interested in the series
-> as a whole but aren't interested in details.
->
-> 2. We can debate the bikeshed-type issues on their own merit and I
-> don't have to debate removing existing Acks / Reviewed-by / Tested-by
-> tags as I make changes.
->
-> 3. Even if it's not a good time to land the patches right now we know
-> that these patches will be ready to land as soon as the window opens.
-> As I mentioned earlier these patches are blocking other work [1] and
-> landing that patch is actually preventing Matthias from submitting
-> another series of patches to add support for rk3288-veyron-tiger and
-> rk3288-veyron-fievel.  Certainly I know that upstream doesn't make a
-> policy of landing things just to suit the timelines of a downstream
-> project, but in this case there seems very little downsides to landing
-> the existing patches and taking a later cleanup patch.
->
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[sending from my @chromium.org address so any appearance of bias is
-explicit :) ]
+In bio_integrity_prep(), a kernel buffer is allocated through kmalloc() to
+hold integrity metadata. Later on, the buffer will be attached to the bio
+structure through bio_integrity_add_page(), which returns the number of
+bytes of integrity metadata attached. Due to unexpected situations,
+bio_integrity_add_page() may return 0. As a result, bio_integrity_prep()
+needs to be terminated with 'false' returned to indicate this error.
+However, the allocated kernel buffer is not freed on this execution path,
+leading to a memory leak.
 
-Agree with Doug here, the naming and casting discussion is pretty
-subjective and non-functional. We've got an Ack from Thierry and a
-Review from Boris (both seasoned drm_panel'ers), this patch has been
-sitting in review for a while. Let's not let the perfect be the enemy
-of the good.
+To fix this issue, free the allocated buffer before returning from
+bio_integrity_prep().
 
-Sean
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ block/bio-integrity.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
->
-> > I am on vacation at the moment and thus slow in responses, but will be back
-> > at the home office next week and will be more responsive again.
-> >
-> >         Sam - who is enjoying the alps in Austria
->
-> Hope you have had a great vacation!
->
-> [1] https://lkml.kernel.org/r/20190625222629.154619-1-mka@chromium.org
->
-> -Doug
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index 4db6208..fb95dbb 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -276,8 +276,12 @@ bool bio_integrity_prep(struct bio *bio)
+ 		ret = bio_integrity_add_page(bio, virt_to_page(buf),
+ 					     bytes, offset);
+ 
+-		if (ret == 0)
+-			return false;
++		if (ret == 0) {
++			printk(KERN_ERR "could not attach integrity payload\n");
++			kfree(buf);
++			status = BLK_STS_RESOURCE;
++			goto err_end_io;
++		}
+ 
+ 		if (ret < bytes)
+ 			break;
+-- 
+2.7.4
+
