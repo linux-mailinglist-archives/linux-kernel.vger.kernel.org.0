@@ -2,57 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8533E65DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD8965DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfGKQyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 12:54:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35218 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbfGKQyR (ORCPT
+        id S1728721AbfGKQzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 12:55:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44580 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbfGKQzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 12:54:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y4so7092363wrm.2;
-        Thu, 11 Jul 2019 09:54:14 -0700 (PDT)
+        Thu, 11 Jul 2019 12:55:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so7046531wrf.11;
+        Thu, 11 Jul 2019 09:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NesWXuGbkASvqkB3OfHXJkarfZRKXQiML61VfYbpfEw=;
-        b=VE858to2y7ZF+Yho6XDdzelgR7kQDjL4jiugFGdBeGx66hyP15ePL8ltL11wvW7IMw
-         rjuLr3ip9sXleNjnR0pKFBQTRbGImm6L7qCJy0z81Jn6sHSFCJjgzGrP67Ul5n3CPtwD
-         CzIHOI3K61AHNyNoUAOZ0pzNxQmgTDbJW+FBiNPlxPOb7DiqxgrReUbfigk5dPI8cPp/
-         irSBolZvC3tkywfQncRHDp2IenZ1VnlIHTNqvGN8hfLzWISdPsF9E6oGjTYQ7203Cai2
-         YbIlgvUDy9/2zLTYRKwKV5789L/Qx+uEu7ItJmpUNCen4ZX464uMO0qbRzOKdAja2I2A
-         fWtQ==
+        bh=cW9evuaNHUhu3xKoRblEDbGLej8PzYak53HB5pCVWjU=;
+        b=oFX9gEXDAQ3+H/vT4H26l4Ol50OZG1qDmtkSHrTXHzx+qOSDK2mcRQyEeqpEms1luc
+         x2NseAhAxqROgC5+GS1WF3rEVZsiNMXy08Dli2EK8K27ulNcLYG2riP7T5Jzd+vde0hP
+         zIN7Lrge3OAkn/fwJmsI623UMVTf2l7xhGSijG+Jwofa1MH7yz/tvXF/m9mfhPUNhwd/
+         +DIFuDo3ryRGyAmP26G4/B+x+VANns65dIwMXh6eXc1zojM8dY5rskKyYm7Ap/gOHyD4
+         VIILEo9QuerSBwvNtsSaGEUsL+JEIpj31DYOiNVe/9JDVKZLqTL4F7UqQcOriKmJL2dk
+         jqHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=NesWXuGbkASvqkB3OfHXJkarfZRKXQiML61VfYbpfEw=;
-        b=n4ksfA/Aq6UtGxPWsIwV/O8yYL5LhDv4sjzFhs03iMF9t5RB+Xt60wWKTqoUzVpemT
-         nxTuo/8gW0rOeZdGL/L2MyQotc/lZzAtLpmD7ZSoh6sSsPPltBQS+vEsLufBW25sOTRc
-         vO4q0W7ipTz77fz2YKbDsCB4dBx6NXsOp717k8GU/VWq63v+TcnMFqnQme4mVhIvt8Ig
-         jkn74Lf5A29gZmpQBfBpkzlP9CN+8Ppp/4e1ZavlNQK8ZbCLs8woxj0XKtblljaSlX4S
-         ZDmE+9edpCMDUGBABOcTdbnSD5HjPwsjnogeZVTqdKu3dox66IQNCk32whdypV7zh31S
-         WCKA==
-X-Gm-Message-State: APjAAAV9yOPuUnXGFxLhiavrvYOxENCZWEIPEIc7OqgVGBLgDaA5jXEm
-        V/HcwD5+BMNLvC4kSxl+E2Y=
-X-Google-Smtp-Source: APXvYqxvQMOsPbq3fIdc8FXV42JE16f8lykhebXezEpi2QhaD/xtj/HV+Ano6Jw7WoDgSdzUkOiTFw==
-X-Received: by 2002:adf:e941:: with SMTP id m1mr6267917wrn.279.1562864054220;
-        Thu, 11 Jul 2019 09:54:14 -0700 (PDT)
+        bh=cW9evuaNHUhu3xKoRblEDbGLej8PzYak53HB5pCVWjU=;
+        b=TiEbeA3EmIgkBOVa3DKtx0LKWKG1tLfJVYc4fgUaj1rMXXtfqy3OIuhFRlJ/hYGOdz
+         Fa/UM95izQRcxR6YKl9O8b3nT8G/jTM63egEcYnJHXurH1VQID+dJgWsLxvdqFzrfLQJ
+         Uwc3NJJVx2lP5rdvkX5Gg6aTBRTVyQT9IXVYG/Pmrl4bXnX7jtLtuYiLNQbZF2jv99Wy
+         BnHRZi2RRhjF4j53uahPx2U8OfkMOGAG0XcnbaMF4vFT0THkMGj46wHbiqjCpmq2/KGa
+         qswIi11NtAzV6cNqoRUzIZnAcHBtS+T1kfJWqiINPGLdoFZgQDPdwdOIWGnfsQ8Lds12
+         bNfA==
+X-Gm-Message-State: APjAAAVRSyJKqJZqDRx9Qk0der+MOW5yeBZdMmJMkZ5GmidnVeGWDRz0
+        xHMpujG3hFJNTriXPH1Wf/M=
+X-Google-Smtp-Source: APXvYqyncqqeYoQxQNe4SwOZib3N1XzDI9ZUbBKHw4G85RoUNi5/s+EyoU18m/cNEEfjGlW4PRNmIg==
+X-Received: by 2002:a5d:4a46:: with SMTP id v6mr6165469wrs.105.1562864114874;
+        Thu, 11 Jul 2019 09:55:14 -0700 (PDT)
 Received: from [10.67.49.31] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d16sm4577249wrv.55.2019.07.11.09.54.01
+        by smtp.googlemail.com with ESMTPSA id n5sm5189493wmi.21.2019.07.11.09.54.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 09:54:13 -0700 (PDT)
-Subject: Re: [PATCH v6 2/6] ARM: Disable instrumentation for some code
-To:     Linus Walleij <linus.walleij@linaro.org>
+        Thu, 11 Jul 2019 09:55:14 -0700 (PDT)
+Subject: Re: [PATCH v6 1/6] ARM: Add TTBR operator for kasan_init
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
 Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Abbott Liu <liuwenliang@huawei.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -84,8 +85,8 @@ Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         kvmarm@lists.cs.columbia.edu,
         Andrey Ryabinin <ryabinin.a.a@gmail.com>
 References: <20190617221134.9930-1-f.fainelli@gmail.com>
- <20190617221134.9930-3-f.fainelli@gmail.com>
- <CACRpkdb3P6oQTK9FGUkMj4kax8us3rKH6c36pX=HD1_wMqcoJQ@mail.gmail.com>
+ <20190617221134.9930-2-f.fainelli@gmail.com>
+ <CACRpkdZGqiiax2m5L1y3=Enw0Q5cLc-idAQNae34uenf-drHDw@mail.gmail.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -142,12 +143,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
  6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9Za0Dx0yyp44iD1OvHtkEI
  M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <aa45795c-7fa1-ebb8-5d26-cce4c8a60e1a@gmail.com>
-Date:   Thu, 11 Jul 2019 09:53:51 -0700
+Message-ID: <0ad02a64-9470-936c-1db9-0079c0926cfb@gmail.com>
+Date:   Thu, 11 Jul 2019 09:54:50 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdb3P6oQTK9FGUkMj4kax8us3rKH6c36pX=HD1_wMqcoJQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZGqiiax2m5L1y3=Enw0Q5cLc-idAQNae34uenf-drHDw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -156,31 +157,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/19 2:56 PM, Linus Walleij wrote:
+On 7/2/19 2:03 PM, Linus Walleij wrote:
+> Hi Florian!
+> 
+> thanks for your patch!
+> 
 > On Tue, Jun 18, 2019 at 12:11 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
 > 
->> @@ -236,7 +236,8 @@ static int unwind_pop_register(struct unwind_ctrl_block *ctrl,
->>                 if (*vsp >= (unsigned long *)ctrl->sp_high)
->>                         return -URC_FAILURE;
+>> From: Abbott Liu <liuwenliang@huawei.com>
 >>
->> -       ctrl->vrs[reg] = *(*vsp)++;
->> +       ctrl->vrs[reg] = READ_ONCE_NOCHECK(*(*vsp));
->> +       (*vsp)++;
+>> The purpose of this patch is to provide set_ttbr0/get_ttbr0 to
+>> kasan_init function. The definitions of cp15 registers should be in
+>> arch/arm/include/asm/cp15.h rather than arch/arm/include/asm/kvm_hyp.h,
+>> so move them.
+>>
+>> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
+>> Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > 
-> I would probably even put in a comment here so it is clear why we
-> do this. Passers-by may not know that READ_ONCE_NOCHECK() is
-> even related to KASan.
+>> +#include <linux/stringify.h>
+> 
+> What is this for? I think it can be dropped.
 
-Makes sense, I will add that, thanks!
+Indeed, that can be dropped came from an earlier version of the patch.
 
 > 
-> Other than that,
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> This stuff adding a whole bunch of accessors:
 > 
-> Yours,
-> Linus Walleij
+>> +static inline void set_par(u64 val)
+>> +{
+>> +       if (IS_ENABLED(CONFIG_ARM_LPAE))
+>> +               write_sysreg(val, PAR_64);
+>> +       else
+>> +               write_sysreg(val, PAR_32);
+>> +}
 > 
+> Can we put that in a separate patch since it is not
+> adding any users, so this is a pure refactoring patch for
+> the current code?
 
-
+Sure, that makes sense, first move all definitions, then add helper
+functions, finally make use of them.
 -- 
 Florian
