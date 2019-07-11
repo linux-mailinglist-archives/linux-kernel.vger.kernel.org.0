@@ -2,159 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 966E865173
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F0C65178
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfGKFbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 01:31:04 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39390 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbfGKFbD (ORCPT
+        id S1727917AbfGKFdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 01:33:53 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58882 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725963AbfGKFdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:31:03 -0400
-Received: by mail-io1-f66.google.com with SMTP id f4so9866496ioh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 22:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pAQB/Y8xs+j93HMSHAN7MXn/ps2uNzO6vXJO40MXdLo=;
-        b=tlujGk14eGvspjpjzlMJmJGPW02ZKCrBcsclMROZe/a6wEB1zT6ARD+16mYnoln3Bd
-         C5cEIdwuz381gl7n0x/q4a0FTllb+DHxC/hdNoztgjK+LfHuKMvyJDxEIpk3c70Yt9gz
-         mJ0vwYH0yywTxG/5e+xw1ynpfgGLVwDzUfeTOAgFoFNWQx+JwCJoHo8zl4KHxwjMcTOR
-         /SIYSJWrDPkxsOeUfDnEo2EPW6NSmdvNpvBGvPRu7n6d81/r/U4NVmYRY2HbNgPr9wn2
-         WlqZeqQSLGUrw5O02HXV+ulvt9JbfIEGQKjQQneSyVVgMYBEkgIxvUHJD3saCpcGOCa2
-         basQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pAQB/Y8xs+j93HMSHAN7MXn/ps2uNzO6vXJO40MXdLo=;
-        b=WBGo0fDzy3pgkqt+E4cgHiyApVbvgOX0/5fi82CRHhPLOXYJPbnLWYzkMfdY0WLneW
-         XvFFL4Y5tNIOa93HOYnRIFi6dbgwWqJgUG2S2Ee8vtl/g1SBjjLr0I4iTIm4a1uXDKnb
-         sn7I/D+P1YYpCZnwn5aHgOFJRjQXvdjDUIGpWy4uGTuO0iQlHzi0c3uK6+1GgbPSxCw1
-         CT4Ts2Dm8dztVsmuDZKnBxb9eugR0FdD2AHws4nlnOeIxUlkRTe71s818AZQTLeoGBRI
-         rFGo+3z0pgA8TBMZj3oUMJdlQbHdEmtU0nAAEIbs102PWi7o+cIV5gvvrjZ4fa8UZjjm
-         6wZQ==
-X-Gm-Message-State: APjAAAWaX3EFQA65t4+y81NbVRr8Els2vGhOzmECSas4vfSFvVU3r/mx
-        a4F/nFGTje2xduEOVzbJ4HoJ0R8IrEtByRwqfnVi3w==
-X-Google-Smtp-Source: APXvYqzeXQAxMqqaOK5d+BWM+pZVriw+5T4jAe3tCL/W3XE/0CCY1rQEeU4zeQZbRtSaxxq/VzYEwl+DFPtWBgwCXUw=
-X-Received: by 2002:a5e:9e42:: with SMTP id j2mr2374159ioq.133.1562823062694;
- Wed, 10 Jul 2019 22:31:02 -0700 (PDT)
+        Thu, 11 Jul 2019 01:33:52 -0400
+X-UUID: 327af44e836944e1adb3d59daca23acd-20190711
+X-UUID: 327af44e836944e1adb3d59daca23acd-20190711
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1269385009; Thu, 11 Jul 2019 13:33:46 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 11 Jul 2019 13:33:44 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 11 Jul 2019 13:33:44 +0800
+From:   <miles.chen@mediatek.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH] kernel/dma: export dma_alloc_from_contiguous to modules
+Date:   Thu, 11 Jul 2019 13:33:43 +0800
+Message-ID: <20190711053343.28873-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <CAPpJ_edDcaBq+0DocPmS-yYM10B4MkWvBn=f6wwbYdqzSGmp_g@mail.gmail.com>
- <20190711052427.5582-1-jian-hong@endlessm.com> <20190711052427.5582-2-jian-hong@endlessm.com>
-In-Reply-To: <20190711052427.5582-2-jian-hong@endlessm.com>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Thu, 11 Jul 2019 13:30:25 +0800
-Message-ID: <CAPpJ_eeD67KHXEVG6y95EprKvM6MQNH30AyDcXQicjpTObwoSA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] rtw88: pci: Use DMA sync instead of remapping in
- RX ISR
-To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-wireless@vger.kernel.org,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jian-Hong Pan <jian-hong@endlessm.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=8811=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:25=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Since each skb in RX ring is reused instead of new allocation, we can
-> treat the DMA in a more efficient way by DMA synchronization.
->
-> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-> Cc: <stable@vger.kernel.org>
-> ---
+From: Miles Chen <miles.chen@mediatek.com>
 
-Sorry, also forget to place the version difference here
+This change exports dma_alloc_from_contiguous and
+dma_release_from_contiguous to modules.
 
-v2:
- - New patch by following [PATCH v3 1/2] rtw88: pci: Rearrange the
-   memory usage for skb in RX ISR.
+Currently, we can add a reserve a memory node in dts files, make
+it a CMA memory by setting compatible = "shared-dma-pool",
+and setup the dev->cma_area by using of_reserved_mem_device_init_by_idx().
 
-v3:
- - Remove rtw_pci_sync_rx_desc_cpu and call dma_sync_single_for_cpu in
-   rtw_pci_rx_isr directly.
- - Remove the return value of rtw_pci_sync_rx_desc_device.
- - Use DMA_FROM_DEVICE instead of PCI_DMA_FROMDEVICE.
+Export dma_alloc_from_contiguous and dma_release_from_contiguous, so we
+can allocate/free from/to dev->cma_area in kernel modules.
 
-v4:
- - Same as v3.
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+---
+ kernel/dma/contiguous.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->  drivers/net/wireless/realtek/rtw88/pci.c | 24 +++++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wirel=
-ess/realtek/rtw88/pci.c
-> index c415f5e94fed..68fae52151dd 100644
-> --- a/drivers/net/wireless/realtek/rtw88/pci.c
-> +++ b/drivers/net/wireless/realtek/rtw88/pci.c
-> @@ -206,6 +206,23 @@ static int rtw_pci_reset_rx_desc(struct rtw_dev *rtw=
-dev, struct sk_buff *skb,
->         return 0;
->  }
->
-> +static void rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr=
-_t dma,
-> +                                       struct rtw_pci_rx_ring *rx_ring,
-> +                                       u32 idx, u32 desc_sz)
-> +{
-> +       struct device *dev =3D rtwdev->dev;
-> +       struct rtw_pci_rx_buffer_desc *buf_desc;
-> +       int buf_sz =3D RTK_PCI_RX_BUF_SIZE;
-> +
-> +       dma_sync_single_for_device(dev, dma, buf_sz, DMA_FROM_DEVICE);
-> +
-> +       buf_desc =3D (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
-> +                                                    idx * desc_sz);
-> +       memset(buf_desc, 0, sizeof(*buf_desc));
-> +       buf_desc->buf_size =3D cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
-> +       buf_desc->dma =3D cpu_to_le32(dma);
-> +}
-> +
->  static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
->                                 struct rtw_pci_rx_ring *rx_ring,
->                                 u8 desc_size, u32 len)
-> @@ -782,8 +799,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, st=
-ruct rtw_pci *rtwpci,
->                 rtw_pci_dma_check(rtwdev, ring, cur_rp);
->                 skb =3D ring->buf[cur_rp];
->                 dma =3D *((dma_addr_t *)skb->cb);
-> -               pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
-> -                                PCI_DMA_FROMDEVICE);
-> +               dma_sync_single_for_cpu(rtwdev->dev, dma, RTK_PCI_RX_BUF_=
-SIZE,
-> +                                       DMA_FROM_DEVICE);
->                 rx_desc =3D skb->data;
->                 chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_=
-status);
->
-> @@ -818,7 +835,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, st=
-ruct rtw_pci *rtwpci,
->
->  next_rp:
->                 /* new skb delivered to mac80211, re-enable original skb =
-DMA */
-> -               rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc=
-_sz);
-> +               rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
-> +                                           buf_desc_sz);
->
->                 /* host read next element in ring */
->                 if (++cur_rp >=3D ring->r.len)
-> --
-> 2.22.0
->
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index b2a87905846d..d5920bdedc77 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -197,6 +197,7 @@ struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
+ 
+ 	return cma_alloc(dev_get_cma_area(dev), count, align, no_warn);
+ }
++EXPORT_SYMBOL_GPL(dma_alloc_from_contiguous);
+ 
+ /**
+  * dma_release_from_contiguous() - release allocated pages
+@@ -213,6 +214,7 @@ bool dma_release_from_contiguous(struct device *dev, struct page *pages,
+ {
+ 	return cma_release(dev_get_cma_area(dev), pages, count);
+ }
++EXPORT_SYMBOL_GPL(dma_release_from_contiguous);
+ 
+ /*
+  * Support for reserved memory regions defined in device tree
+-- 
+2.18.0
+
