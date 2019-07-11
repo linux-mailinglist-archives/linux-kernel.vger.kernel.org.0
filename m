@@ -2,58 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7293C6506A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 05:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C42EA6506E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 05:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfGKDKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 23:10:31 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38701 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfGKDKb (ORCPT
+        id S1728014AbfGKDKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 23:10:42 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43110 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfGKDKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 23:10:31 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z75so2185458pgz.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 20:10:31 -0700 (PDT)
+        Wed, 10 Jul 2019 23:10:39 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i189so2024324pfg.10;
+        Wed, 10 Jul 2019 20:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=rIHV6cPDPKhX9jkZyhvnHZiEyAQlrV5sCTvAq/yF72U=;
-        b=gEJ2OiHD3xfsyfhhrIHY7acOsv6Qmhq6okCyaEE6s5QGewpmPiMaVqagAoR5/gZE6R
-         gGoOxfOGyeeT0QzUltFU3Z4VTps64FBwoPj7DswM5ZiwD9XcG5qcPLhM1URwPJLSibWp
-         Xx5mt9DSFkUnFcfXbXS//GfIi46AfHy/Bg5kHjHL2Wr+CDUpgpeFbGYKGLiP4Kt8xvLg
-         06zNoJiw+kAAm50bmLvuALPrWB0YCutV3YMeywHvZyQqaaXLlpdMVL897OxRjBoNJqEx
-         Rb9UriVejde7CpAhZ/6hPnRFchFtkO2c3j56UTY0GP6NAPi1I+dMR6JkIMLXMiQN7s4C
-         +z1A==
+        bh=zpbomds83eKGH676yLKqCCW5MqIqLtjKcYpM/+tbDr0=;
+        b=IJnWvONwVnZGohDdhtjmhBKs9vfW197GtuREVR7T+OLN0Qp6yJht+eJ5QIC2ynArly
+         4rbUKfUx1QqzxUxsk6PNS+SLoMIMJggtxcktut1Nm39FiAIWWHwhxAeO1QegLEIxs88i
+         bU5W1lasXrtkfyfvHX0wjIriVm6/4MtFGNZ3GogUhrvmN0NRBUeosbTFAJSev6oMmdls
+         0X3tTh5WaPJbRk9qRxcRl7cOq5Ez3m270vpobef+QsMchsZAiaSK/tfty/H2kYz7evZ6
+         5+4Uz4hE1OrPmAZjqlNbUCncwXbhSK5p981Rt1TUrlcPuREr+btHXswEpEqWgnxN0kH6
+         6qPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rIHV6cPDPKhX9jkZyhvnHZiEyAQlrV5sCTvAq/yF72U=;
-        b=kf+v7qoWB8qbnvj8eHxoVo6GJpbzzMslQecAN7zfbh3Bj/75jX5KdGMm4vBTeIgms2
-         Q31NIhVIuDWUNS2Cj19JUbq00OLuUcxqTSO8dttjrcQJ1awCCN1B/7xAbHm7wPFJcJEN
-         zcSRKtceROeoKl7sLPwzBBj1e9mBvclEe4zlpo0a0iovvMjchh9T0NBAmiKjtVLIlEHH
-         y4+D+IP+DqxgJ4qixcznGhFBTCnwcLvhffIFwFehJ9fdxqeH0m6cHUB0kdcZW0uofXSu
-         t+TacnmwgNoltA6TAWZOjeyXU7rZjpLEsSEULYaJAtmRgeFbfKz1w6lOFOJPGrozn0Sv
-         FZUA==
-X-Gm-Message-State: APjAAAXH+lGQzzVVRWi0V+Wb9uJNVwdCDESbSHDwAkPr5igaz9J1Fyt+
-        1J8vfXVFSMKPMMP2813OzyRhFeQr84s=
-X-Google-Smtp-Source: APXvYqxvo8BxIF61S1ZT84fFK4re4Ii9aN+zdDpPdZpPAiFOokGPgqqw0oTyzCS7WT7S/oCgl7+G2A==
-X-Received: by 2002:a17:90a:23a4:: with SMTP id g33mr2077739pje.115.1562814630577;
-        Wed, 10 Jul 2019 20:10:30 -0700 (PDT)
+        bh=zpbomds83eKGH676yLKqCCW5MqIqLtjKcYpM/+tbDr0=;
+        b=Womn7hT+yA18ZnblRjV5uwKrv6GbwZe+/wgwn834H91zm+9gWck9UlLvz+5iV/NjZF
+         k/BXz50yvhhODTSYiXZEsoOqUH9egv9ktI9CXPJC87IUR6nGI1Glv/hy3bCTjEeIHVjh
+         GIMpbB8gm/vlxW5LZNdjcbHMQA52QJJ3qUQkX2VxxnAL0KwPkXYA85FwgzWx/6dewJ2A
+         0QiS8Z6MGbIy0L8euL+ccUgn4zJgfCQL6CsDa7lb6G/Bmw9iG2Ub9EfhJqwpa5t613Xg
+         hA9QijhHRcXegJsJduWRKjSzqRK+Mku7VVrlrtdZeniOqWUtab66ftM8nF1G72uktb+w
+         BMEw==
+X-Gm-Message-State: APjAAAXpkfE5tLnU4iUs1jLA6LP3Sv3S1Tg6eJgpx9Ajt+uRsjmT8xQG
+        4PjuDCTDCAxYHAvk8mSIqmOaFTQKotc=
+X-Google-Smtp-Source: APXvYqxJMOOX5pzW2SkgB5Jw0yk7MWvd1qsQJTyPiyIkjGwvQIKyRH12UMBGRnVXyYu7FXXirtNRRw==
+X-Received: by 2002:a17:90a:2343:: with SMTP id f61mr2084162pje.130.1562814638642;
+        Wed, 10 Jul 2019 20:10:38 -0700 (PDT)
 Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id 65sm4043082pff.148.2019.07.10.20.10.27
+        by smtp.googlemail.com with ESMTPSA id l124sm3710309pgl.54.2019.07.10.20.10.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 20:10:29 -0700 (PDT)
+        Wed, 10 Jul 2019 20:10:38 -0700 (PDT)
 From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH 1/2] drm/ttm: use the same attributes when freeing d_page->vaddr
-Date:   Thu, 11 Jul 2019 11:10:21 +0800
-Message-Id: <20190711031021.23512-1-huangfq.daxian@gmail.com>
+Subject: [PATCH 2/2] dmaengine: pl330: use the same attriobutes when freeing pl330->mcode_cpu
+Date:   Thu, 11 Jul 2019 11:10:31 +0800
+Message-Id: <20190711031031.23558-1-huangfq.daxian@gmail.com>
 X-Mailer: git-send-email 2.11.0
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,35 +57,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function __ttm_dma_alloc_page(), d_page->addr is allocated
-by dma_alloc_attrs() but freed with use dma_free_coherent() in
-__ttm_dma_free_page().
-Use the correct dma_free_attrs() to free d_page->vaddr.
+In function dmac_alloc_recources(), pl330->mcode_cpu is allocated using
+dma_alloc_attrs() but freed with dma_free_coherent().
+Use the correct dma_free_attrs() function to free pl330->mcode_cpu.
 
 Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/dma/pl330.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index d594f7520b7b..7d78e6deac89 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -285,9 +285,13 @@ static int ttm_set_pages_caching(struct dma_pool *pool,
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 56f9fabc99c4..d9c6ae0732c6 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -1918,9 +1918,10 @@ static int dmac_alloc_resources(struct pl330_dmac *pl330)
+ 	if (ret) {
+ 		dev_err(pl330->ddma.dev, "%s:%d Can't to create channels for DMAC!\n",
+ 			__func__, __LINE__);
+-		dma_free_coherent(pl330->ddma.dev,
++		dma_free_attrs(pl330->ddma.dev,
+ 				chans * pl330->mcbufsz,
+-				pl330->mcode_cpu, pl330->mcode_bus);
++				pl330->mcode_cpu, pl330->mcode_bus,
++				DMA_ATTR_PRIVILEGED);
+ 		return ret;
+ 	}
  
- static void __ttm_dma_free_page(struct dma_pool *pool, struct dma_page *d_page)
- {
-+	unsigned long attrs = 0;
- 	dma_addr_t dma = d_page->dma;
- 	d_page->vaddr &= ~VADDR_FLAG_HUGE_POOL;
--	dma_free_coherent(pool->dev, pool->size, (void *)d_page->vaddr, dma);
-+	if (pool->type & IS_HUGE)
-+		attrs = DMA_ATTR_NO_WARN;
-+
-+	dma_free_attrs(pool->dev, pool->size, (void *)d_page->vaddr, dma, attrs);
+@@ -1999,9 +2000,9 @@ static void pl330_del(struct pl330_dmac *pl330)
+ 	/* Free DMAC resources */
+ 	dmac_free_threads(pl330);
  
- 	kfree(d_page);
- 	d_page = NULL;
+-	dma_free_coherent(pl330->ddma.dev,
++	dma_free_attrs(pl330->ddma.dev,
+ 		pl330->pcfg.num_chan * pl330->mcbufsz, pl330->mcode_cpu,
+-		pl330->mcode_bus);
++		pl330->mcode_bus, DMA_ATTR_PRIVILEGED);
+ }
+ 
+ /* forward declaration */
 -- 
 2.11.0
 
