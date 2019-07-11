@@ -2,90 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29CB6629C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 01:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046E666292
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 01:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfGKX7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 19:59:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728574AbfGKX7g (ORCPT
+        id S1729531AbfGKXwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 19:52:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33749 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728985AbfGKXwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 19:59:36 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6BNursr100269
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 19:59:35 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tpbfb7a5a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 19:59:34 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Fri, 12 Jul 2019 00:53:45 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 12 Jul 2019 00:53:39 +0100
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6BNrZRc55443758
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 23:53:35 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B72E32805A;
-        Thu, 11 Jul 2019 23:53:35 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D8532805C;
-        Thu, 11 Jul 2019 23:53:35 +0000 (GMT)
-Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.176.217])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Jul 2019 23:53:34 +0000 (GMT)
-Subject: Re: [PATCH] scsi: aha1740: Use !x in place of NULL comparisons
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Keyur Patel <iamkeyur96@gmail.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 11 Jul 2019 16:52:04 -0700
-In-Reply-To: <20190711234833.27475-1-iamkeyur96@gmail.com>
-References: <20190711234833.27475-1-iamkeyur96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071123-0052-0000-0000-000003DDC9BA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011411; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01230848; UDB=6.00648346; IPR=6.01012123;
- MB=3.00027683; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-11 23:53:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071123-0053-0000-0000-000061A7C64A
-Message-Id: <1562889124.2915.5.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=829 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907110262
+        Thu, 11 Jul 2019 19:52:43 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so3481311pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 16:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vzPJBuv0k8P0t8Fk03qEA7CPumyNmMWBbrpcTz+B5LE=;
+        b=CxBe3d8Zwlq5eL/iHH4cKObNrwN70wlF8xtsD1I9rfzWGpI08HFrr4wIWB2T69jow5
+         b2lv6BT26WXPLNNrt1kHYxqidntzBEQOohmGQyo0s/zVMREIMGcPNNnH2ajWazjZ27tN
+         P6OQ0nVIq6uS31nbqOg1g6gOYFDBjP6C+Y7qQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vzPJBuv0k8P0t8Fk03qEA7CPumyNmMWBbrpcTz+B5LE=;
+        b=tqaP0YW5H9smfCbG4xA6nAEwOJfRHvfaMA8VPfNSubRp/bo1wiYCtq3FfBkKWDFC9a
+         rin1qxr0GK7t9eDmRuvHmOF8dnILbrOeSmv9V+cfV4O3NprfLxxBjV6ogFtsV61anHKU
+         fWLoKzQn6V/50AXCZwIDaLy8uZXZy3V0F2HveJSjAILklOqv72tqDfU/5pAcqBbHBPeY
+         33JhimpSo+4YrqHk6YaWubJ8zxHJQ2FWyVrOo3t1tUyeFbZELO5Fhwd1AuTWcefzlHKu
+         WsWo9mT+0V3BsYxCnOHpHIgQF0Jlili6F+AfyBY1NXnrofG3NLTGaSCiCypHUVt895FF
+         QNnQ==
+X-Gm-Message-State: APjAAAUBOrbGv2TLsP4NEWmu+9xAt9uHtemfq46b8vZfMUlMxMUMYfLb
+        71INTgNhWfnVaNqwp4APu9Ha7Kl+
+X-Google-Smtp-Source: APXvYqwIJ+xh/ZMSwOrZyW9D85A/Q5tV1WJbBUxRCaU5JBaWiRNgZb7BBjzCKyyOKdbk76jwZnPfNQ==
+X-Received: by 2002:a63:d950:: with SMTP id e16mr7508053pgj.271.1562889161442;
+        Thu, 11 Jul 2019 16:52:41 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id q69sm8518053pjb.0.2019.07.11.16.52.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 16:52:40 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 19:52:39 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>, peterz@infradead.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH v1 0/6] Harden list_for_each_entry_rcu() and family
+Message-ID: <20190711235239.GA221389@google.com>
+References: <20190711234401.220336-1-joel@joelfernandes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711234401.220336-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-11 at 19:48 -0400, Keyur Patel wrote:
-> Change (x == NULL) to !x and (x != NULL) to x, to fix
-> following checkpatch.pl warnings:
-> CHECK: Comparison to NULL could be written "!x".
+On Thu, Jul 11, 2019 at 07:43:55PM -0400, Joel Fernandes (Google) wrote:
+> Hi,
+> This series aims to provide lockdep checking to RCU list macros.
+> 
+> RCU has a number of primitives for "consumption" of an RCU protected pointer.
+> Most of the time, these consumers make sure that such accesses are under a RCU
+> reader-section (such as rcu_dereference{,sched,bh} or under a lock, such as
+> with rcu_dereference_protected()).
+> 
+> However, there are other ways to consume RCU pointers, such as by
+> list_for_each_entry_rcu or hlist_for_each_enry_rcu. Unlike the rcu_dereference
+> family, these consumers do no lockdep checking at all. And with the growing
+> number of RCU list uses (1000+), it is possible for bugs to creep in and go
+> unnoticed which lockdep checks can catch.
 
-This is one of our significantly older drivers.  We try not to touch it
-unless we really have to, so I'd rather not have patches like this
-applied to it.
+I forgot to add in my cover letter, I have kept this option default-disabled
+under a new config: CONFIG_PROVE_RCU_LIST. This is so that until all users
+are converted to pass the optional argument, we should keep the check
+disabled. There are about a 1000 or so users and it is not possible to pass
+in the optional lockdep expression in a single series since it is done on a
+case-by-case basis. I did convert a few users in this series itself.
 
-I also don't really think the replacement adds anything to readability,
-so it should probably be removed from the checkpatch warnings.
-
-Thanks,
-
-James
+Also, I plans to update the RCU documentation as well which I will do, but do
+review this series and thank you!
 
