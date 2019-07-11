@@ -2,217 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A540654D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 12:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B88654BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 12:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfGKK7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 06:59:08 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38286 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfGKK7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 06:59:06 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9F8811A0EC4;
-        Thu, 11 Jul 2019 12:59:04 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B4121A010B;
-        Thu, 11 Jul 2019 12:58:58 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 57F2340302;
-        Thu, 11 Jul 2019 18:58:51 +0800 (SGT)
-From:   shengjiu.wang@nxp.com
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, broonie@kernel.org, alsa-devel@alsa-project.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V4 2/2] ASoC: fsl_esai: recover the channel swap after xrun
-Date:   Thu, 11 Jul 2019 18:49:46 +0800
-Message-Id: <326035cb99975361699d9ed748054b08bc06a341.1562842206.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <cover.1562842206.git.shengjiu.wang@nxp.com>
-References: <cover.1562842206.git.shengjiu.wang@nxp.com>
-In-Reply-To: <cover.1562842206.git.shengjiu.wang@nxp.com>
-References: <cover.1562842206.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728107AbfGKKxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 06:53:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60976 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfGKKxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 06:53:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7ksrQx65WxbxMfcbR6gLJTkEG23r7XFCNssMAB6Ttfs=; b=OWG1gaowie5/2O3RkM97Kc9h0
+        qevtaYLzWzsdtXNOWK/IT7VTapLydfPZ0wl21n1GHwR5Q3ZT/JU8cIU5elAQPFlB2ELs2zFQJEjcE
+        gszRbqOUStZF8Hui7J5vUcDly60nntLCTTrddLajLH4keZmvTO6CoYly/06qHxWtxLRhVE8tgXb2g
+        /CklqnCpk4J6nOMha7fuzDHOuabnPQ5qV5IE7veeXp654JNVcsuYl6lCqxonyQyQM8PlvpqQJPCIk
+        7XSIx2EAfIHNX4MktDxNJnDC4dNonmZYUsBJCn14m8GjFjROvMuyrEDPmUp4YctevUuQpDRjYmqvk
+        xaZ4bYsHQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlWhH-0002PS-1i; Thu, 11 Jul 2019 10:53:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7583820B2B4C4; Thu, 11 Jul 2019 12:53:05 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 12:53:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        syzbot+370a6b0f11867bf13515@syzkaller.appspotmail.com,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/2] perf/hw_breakpoint: Fix breakpoint overcommit issue
+Message-ID: <20190711105305.GY3402@hirez.programming.kicks-ass.net>
+References: <20190709134821.8027-1-frederic@kernel.org>
+ <20190710140421.GP3402@hirez.programming.kicks-ass.net>
+ <20190710153406.GA18838@lenoir>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710153406.GA18838@lenoir>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Wed, Jul 10, 2019 at 05:34:07PM +0200, Frederic Weisbecker wrote:
+> On Wed, Jul 10, 2019 at 04:04:21PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jul 09, 2019 at 03:48:19PM +0200, Frederic Weisbecker wrote:
+> > > 
+> > > Syzbot has found a breakpoint overcommit issue:
+> > > 
+> > > https://lore.kernel.org/lkml/000000000000639f6a0584d11b82@google.com/
+> > > 
+> > > It took me a long time to find out what the actual root problem was. Also
+> > > its reproducer only worked on a few month old kernel but it didn't feel like
+> > > the issue was actually solved.
+> > > 
+> > > I eventually cooked a reproducer that works with latest upstream, see in
+> > > the end of this message.
+> > > 
+> > > The fix is just a few liner but implies to shut down the context swapping
+> > > optimization for contexts containing breakpoints.
+> > > 
+> > > Also I feel like uprobes may be concerned as well as it seems to make use
+> > > of event.hw->target after pmu::init().
+> > 
+> > Can't we simply swizzle event.hw->target along too?
+> 
+> You mean remove it? But it's still needed by breakpoint code during all the event
+> lifecycle (init, destroy and anytime in-between).
 
-There is chip errata ERR008000, the reference doc is
-(https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf),
+No, I meant flip hw->target when we flip the context. It would mean
+iterating the events, which I suppose would suck.
 
-The issue is "While using ESAI transmit or receive and
-an underrun/overrun happens, channel swap may occur.
-The only recovery mechanism is to reset the ESAI."
+> I wish we could use event->ctx->task instead but on pmu::init() there
+> is no ctx yet (we could pass the task in parameter though) 
 
-This issue exist in imx3/imx5/imx6(partial) series.
+Right, that should be fairly easy.
 
-In this commit add a tasklet to handle reset of ESAI
-after xrun happens to recover the channel swap.
+> and on event->destroy() it's TASK_TOMBSTONE and retrieving the task at
+> that time would be non trivial.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_esai.c | 74 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
-
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index ab460d6d7432..4ce8ac769244 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -32,6 +32,7 @@
-  * @extalclk: esai clock source to derive HCK, SCK and FS
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-+ * @task: tasklet to handle the reset operation
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -42,6 +43,7 @@
-  * @sck_div: if using PSR/PM dividers for SCKx clock
-  * @slave_mode: if fully using DAI slave mode
-  * @synchronous: if using tx/rx synchronous mode
-+ * @reset_at_xrun: flags for enable reset operaton
-  * @name: driver name
-  */
- struct fsl_esai {
-@@ -53,6 +55,7 @@ struct fsl_esai {
- 	struct clk *extalclk;
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
-+	struct tasklet_struct task;
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -65,6 +68,7 @@ struct fsl_esai {
- 	bool sck_div[2];
- 	bool slave_mode;
- 	bool synchronous;
-+	bool reset_at_xrun;
- 	char name[32];
- };
- 
-@@ -73,8 +77,16 @@ static irqreturn_t esai_isr(int irq, void *devid)
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)devid;
- 	struct platform_device *pdev = esai_priv->pdev;
- 	u32 esr;
-+	u32 saisr;
- 
- 	regmap_read(esai_priv->regmap, REG_ESAI_ESR, &esr);
-+	regmap_read(esai_priv->regmap, REG_ESAI_SAISR, &saisr);
-+
-+	if ((saisr & (ESAI_SAISR_TUE | ESAI_SAISR_ROE)) &&
-+	    esai_priv->reset_at_xrun) {
-+		dev_dbg(&pdev->dev, "reset module for xrun\n");
-+		tasklet_schedule(&esai_priv->task);
-+	}
- 
- 	if (esr & ESAI_ESR_TINIT_MASK)
- 		dev_dbg(&pdev->dev, "isr: Transmission Initialized\n");
-@@ -635,10 +647,17 @@ static void fsl_esai_trigger_start(struct fsl_esai *esai_priv, bool tx)
- 			   ESAI_xSMB_xS_MASK, ESAI_xSMB_xS(mask));
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xSMA(tx),
- 			   ESAI_xSMA_xS_MASK, ESAI_xSMA_xS(mask));
-+
-+	/* Enable Exception interrupt */
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
-+			   ESAI_xCR_xEIE_MASK, ESAI_xCR_xEIE);
- }
- 
- static void fsl_esai_trigger_stop(struct fsl_esai *esai_priv, bool tx)
- {
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
-+			   ESAI_xCR_xEIE_MASK, 0);
-+
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xCR(tx),
- 			   tx ? ESAI_xCR_TE_MASK : ESAI_xCR_RE_MASK, 0);
- 	regmap_update_bits(esai_priv->regmap, REG_ESAI_xSMA(tx),
-@@ -653,6 +672,51 @@ static void fsl_esai_trigger_stop(struct fsl_esai *esai_priv, bool tx)
- 			   ESAI_xFCR_xFR, 0);
- }
- 
-+static void fsl_esai_hw_reset(unsigned long arg)
-+{
-+	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
-+	bool tx = true, rx = false, enabled[2];
-+	u32 tfcr, rfcr;
-+
-+	/* Save the registers */
-+	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
-+	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-+	enabled[tx] = tfcr & ESAI_xFCR_xFEN;
-+	enabled[rx] = rfcr & ESAI_xFCR_xFEN;
-+
-+	/* Stop the tx & rx */
-+	fsl_esai_trigger_stop(esai_priv, tx);
-+	fsl_esai_trigger_stop(esai_priv, rx);
-+
-+	/* Reset the esai, and ignore return value */
-+	fsl_esai_hw_init(esai_priv);
-+
-+	/* Enforce ESAI personal resets for both TX and RX */
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_TCR,
-+			   ESAI_xCR_xPR_MASK, ESAI_xCR_xPR);
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_RCR,
-+			   ESAI_xCR_xPR_MASK, ESAI_xCR_xPR);
-+
-+	/* Restore registers by regcache_sync, and ignore return value */
-+	fsl_esai_register_restore(esai_priv);
-+
-+	/* Remove ESAI personal resets by configuring PCRC and PRRC also */
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_TCR,
-+			   ESAI_xCR_xPR_MASK, 0);
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_RCR,
-+			   ESAI_xCR_xPR_MASK, 0);
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_PRRC,
-+			   ESAI_PRRC_PDC_MASK, ESAI_PRRC_PDC(ESAI_GPIO));
-+	regmap_update_bits(esai_priv->regmap, REG_ESAI_PCRC,
-+			   ESAI_PCRC_PC_MASK, ESAI_PCRC_PC(ESAI_GPIO));
-+
-+	/* Restart tx / rx, if they already enabled */
-+	if (enabled[tx])
-+		fsl_esai_trigger_start(esai_priv, tx);
-+	if (enabled[rx])
-+		fsl_esai_trigger_start(esai_priv, rx);
-+}
-+
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 			    struct snd_soc_dai *dai)
- {
-@@ -857,6 +921,10 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 	esai_priv->pdev = pdev;
- 	snprintf(esai_priv->name, sizeof(esai_priv->name), "%pOFn", np);
- 
-+	if (of_device_is_compatible(np, "fsl,vf610-esai") ||
-+	    of_device_is_compatible(np, "fsl,imx35-esai"))
-+		esai_priv->reset_at_xrun = true;
-+
- 	/* Get the addresses and IRQ */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(&pdev->dev, res);
-@@ -956,6 +1024,9 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	tasklet_init(&esai_priv->task, fsl_esai_hw_reset,
-+		     (unsigned long)esai_priv);
-+
- 	pm_runtime_enable(&pdev->dev);
- 
- 	regcache_cache_only(esai_priv->regmap, true);
-@@ -969,7 +1040,10 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- static int fsl_esai_remove(struct platform_device *pdev)
- {
-+	struct fsl_esai *esai_priv = platform_get_drvdata(pdev);
-+
- 	pm_runtime_disable(&pdev->dev);
-+	tasklet_kill(&esai_priv->task);
- 
- 	return 0;
- }
--- 
-2.21.0
-
+Well, right, we can maybe make TOMBSTONE be the LSB instead of the whole
+word, then we can recover the task pointer... *yuck* though.
