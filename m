@@ -2,27 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22FE6605E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801566605B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbfGKUFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:05:25 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50858 "EHLO
+        id S1729067AbfGKUFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:05:16 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50853 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729019AbfGKUFR (ORCPT
+        with ESMTP id S1726505AbfGKUFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:05:17 -0400
+        Thu, 11 Jul 2019 16:05:16 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hlfJb-0005Ri-9e; Thu, 11 Jul 2019 22:05:15 +0200
+        id 1hlfJa-0005RY-II; Thu, 11 Jul 2019 22:05:14 +0200
 Date:   Thu, 11 Jul 2019 20:02:36 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/urgent for 5.3-rc1
-References: <156287535656.8320.16630272660351040656.tglx@nanos.tec.linutronix.de>
-Message-ID: <156287535656.8320.9605793923078784342.tglx@nanos.tec.linutronix.de>
+Subject: [GIT pull] core/urgent for 5.3-rc1
+Message-ID: <156287535656.8320.16630272660351040656.tglx@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -30,65 +29,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers-urgent-for-linus git tree from:
+please pull the latest core-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
 
-up to:  0df1c9868c3a: timekeeping/vsyscall: Use __iter_div_u64_rem()
+up to:  7e8e6816c649: stacktrace: Use PF_KTHREAD to check for kernel threads
 
-Two small fixes from the timer departement:
-
- - Prevent the compiler from converting the nanoseconds adjustment loop in
-   the VDSO update function to a division (__udivdi3) by using the
-   __iter_div_u64_rem() inline function which exists to prevent exactly
-   that problem.
-
- - Fix the wrong argument order of the GENMASK macro in the NPCM timer driver
+Fix yet another instance of kernel thread check which ignores that kernel
+threads can call use_mm().
 
 Thanks,
 
 	tglx
 
 ------------------>
-Arnd Bergmann (1):
-      timekeeping/vsyscall: Use __iter_div_u64_rem()
-
-Joe Perches (1):
-      clocksource/drivers/npcm: Fix misuse of GENMASK macro
+Thomas Gleixner (1):
+      stacktrace: Use PF_KTHREAD to check for kernel threads
 
 
- drivers/clocksource/timer-npcm7xx.c | 2 +-
- kernel/time/vsyscall.c              | 6 +-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ kernel/stacktrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
-index 7a9bb5532d99..8a30da7f083b 100644
---- a/drivers/clocksource/timer-npcm7xx.c
-+++ b/drivers/clocksource/timer-npcm7xx.c
-@@ -32,7 +32,7 @@
- #define NPCM7XX_Tx_INTEN		BIT(29)
- #define NPCM7XX_Tx_COUNTEN		BIT(30)
- #define NPCM7XX_Tx_ONESHOT		0x0
--#define NPCM7XX_Tx_OPER			GENMASK(3, 27)
-+#define NPCM7XX_Tx_OPER			GENMASK(27, 3)
- #define NPCM7XX_Tx_MIN_PRESCALE		0x1
- #define NPCM7XX_Tx_TDR_MASK_BITS	24
- #define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
-diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
-index a80893180826..8cf3596a4ce6 100644
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -104,11 +104,7 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
- 	nsec		= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
- 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
--	while (nsec >= NSEC_PER_SEC) {
--		nsec = nsec - NSEC_PER_SEC;
--		vdso_ts->sec++;
--	}
--	vdso_ts->nsec	= nsec;
-+	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index 36139de0a3c4..c8d0f05721a1 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -228,7 +228,7 @@ unsigned int stack_trace_save_user(unsigned long *store, unsigned int size)
+ 	};
  
- 	if (__arch_use_vsyscall(vdata))
- 		update_vdso_data(vdata, tk);
+ 	/* Trace user stack if not a kernel thread */
+-	if (!current->mm)
++	if (current->flags & PF_KTHREAD)
+ 		return 0;
+ 
+ 	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
 
