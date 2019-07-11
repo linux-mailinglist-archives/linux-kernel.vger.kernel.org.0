@@ -2,161 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2B36530A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E77C65312
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfGKIVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 04:21:12 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34955 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfGKIVK (ORCPT
+        id S1728308AbfGKIXR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 11 Jul 2019 04:23:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36074 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727991AbfGKIXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 04:21:10 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so4879904edd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 01:21:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8WLxEYKvp+G8KVX29UoMgnN82gOfXefm67IW7Lz3ELM=;
-        b=JHCJ6NkfSauIaS7Bo2XYssW3dhuhO/NV0eotPKteo5zLIaB9b7e3IA+Y/QeAgV4Pei
-         GQdbYgkUoo7ykifVmSN1xww1gmuVSU84cqx+KY7d0p0mgMCDFWknSKzmvbbT9r1xCle/
-         dRKacixn3HqsZyDeWUFzylwCk5+vpFeZtmAEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=8WLxEYKvp+G8KVX29UoMgnN82gOfXefm67IW7Lz3ELM=;
-        b=n540rpmC8Ja5COc2xW5KvF/ULdk4UMPpcZbZyaGhUQWns29WFNGXu6X3cx0SHXfr5g
-         Dj8zm0d2X/lIz5mvY7JgaUfm9jc5RTo8dixqTQVfLQSsWaWGGdiOwMn1hAlU87vm+9nF
-         FS6Pzth8PEPJITMVMZmLIzXwtZjVyE3zZdGNqPEiF1oOKYFQ4QavsB9joTsAOiVqG/Xp
-         Lwooe5Dq4ZTLpNhOYvHN6hfnS+q/JTAujFMWOml6tcv0kPQt7WnO1KzzxPwgzclNieBF
-         vrCSiZgNxTjeKYgZ5t0QZKBc4ElB4Ot6yKC0DhSl0Ir0+NkwQctDAoHYvPVErRz/RCvQ
-         hT6w==
-X-Gm-Message-State: APjAAAVxSLrKS3+CHcoyiqueqXbVLAe9rka90D/lC+qyuTX5UETcWorZ
-        W+n7q2xJnrJcJyRfqJUEkmI=
-X-Google-Smtp-Source: APXvYqxTHd8KSqi16wrHTqcM+LyLoZpCL/IQ+COZ9g2UG8zZBuEvORHbRxJBqYrz5yHutJ6G8Pb26Q==
-X-Received: by 2002:a17:906:4d88:: with SMTP id s8mr1946987eju.225.1562833268556;
-        Thu, 11 Jul 2019 01:21:08 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id c48sm1499881edb.10.2019.07.11.01.21.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 01:21:07 -0700 (PDT)
-Date:   Thu, 11 Jul 2019 10:21:05 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc:     Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Simon Ser <contact@emersion.fr>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 4/5] drm/vkms: Compute CRC without change input data
-Message-ID: <20190711082105.GI15868@phenom.ffwll.local>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Simon Ser <contact@emersion.fr>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1561491964.git.rodrigosiqueiramelo@gmail.com>
- <ea7e3a0daa4ee502d8ec67a010120d53f88fa06b.1561491964.git.rodrigosiqueiramelo@gmail.com>
+        Thu, 11 Jul 2019 04:23:14 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6B8NE2r138497
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 04:23:14 -0400
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.113])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tp17d943q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 04:23:12 -0400
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <BMT@zurich.ibm.com>;
+        Thu, 11 Jul 2019 08:22:16 -0000
+Received: from us1b3-smtp06.a3dr.sjc01.isc4sb.com (10.122.203.184)
+        by smtp.notes.na.collabserv.com (10.122.47.56) with smtp.notes.na.collabserv.com ESMTP;
+        Thu, 11 Jul 2019 08:22:11 -0000
+Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
+          by us1b3-smtp06.a3dr.sjc01.isc4sb.com
+          with ESMTP id 2019071108221042-166196 ;
+          Thu, 11 Jul 2019 08:22:10 +0000 
+In-Reply-To: <20190711071213.57880-1-yuehaibing@huawei.com>
+From:   "Bernard Metzler" <BMT@zurich.ibm.com>
+To:     "YueHaibing" <yuehaibing@huawei.com>
+Cc:     <dledford@redhat.com>, <jgg@ziepe.ca>,
+        <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
+Date:   Thu, 11 Jul 2019 08:22:10 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea7e3a0daa4ee502d8ec67a010120d53f88fa06b.1561491964.git.rodrigosiqueiramelo@gmail.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Sensitivity: 
+Importance: Normal
+X-Priority: 3 (Normal)
+References: <20190711071213.57880-1-yuehaibing@huawei.com>
+X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
+ SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
+X-KeepSent: 7C58670D:824A65B3-00258434:002DF9B8;
+ type=4; name=$KeepSent
+X-LLNOutbound: False
+X-Disclaimed: 33595
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+x-cbid: 19071108-1529-0000-0000-000006734F2D
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.026953
+X-IBM-SpamModules-Versions: BY=3.00011408; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01230538; UDB=6.00648159; IPR=6.01011814;
+ BA=6.00006354; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027677; XFM=3.00000015;
+ UTC=2019-07-11 08:22:14
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-07-11 03:28:48 - 6.00010150
+x-cbparentid: 19071108-1530-0000-0000-0000737676C2
+Message-Id: <OF7C58670D.824A65B3-ON00258434.002DF9B8-00258434.002DF9C1@notes.na.collabserv.com>
+Subject: Re:  [PATCH -next] rdma/siw: remove set but not used variable 's'
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 10:38:31PM -0300, Rodrigo Siqueira wrote:
-> The compute_crc() function is responsible for calculating the
-> framebuffer CRC value; due to the XRGB format, this function has to
-> ignore the alpha channel during the CRC computation. Therefore,
-> compute_crc() set zero to the alpha channel directly in the input
-> framebuffer, which is not a problem since this function receives a copy
-> of the original buffer. However, if we want to use this function in a
-> context without a buffer copy, it will change the initial value. This
-> patch makes compute_crc() calculate the CRC value without modifying the
-> input framebuffer.
+-----"YueHaibing" <yuehaibing@huawei.com> wrote: -----
 
-Uh why? For writeback we're writing the output too, so we can write
-whatever we want to into the alpha channel. For writeback we should never
-accept a pixel format where alpha actually matters, that doesn't make
-sense. You can't see through a real screen either, they are all opaque :-)
--Daniel
-
+>To: <bmt@zurich.ibm.com>, <dledford@redhat.com>, <jgg@ziepe.ca>
+>From: "YueHaibing" <yuehaibing@huawei.com>
+>Date: 07/11/2019 09:13AM
+>Cc: <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+>"YueHaibing" <yuehaibing@huawei.com>
+>Subject: [EXTERNAL] [PATCH -next] rdma/siw: remove set but not used
+>variable 's'
+>
+>Fixes gcc '-Wunused-but-set-variable' warning:
+>
+>drivers/infiniband/sw/siw/siw_cm.c: In function
+>siw_cm_llp_state_change:
+>drivers/infiniband/sw/siw/siw_cm.c:1278:17: warning: variable s set
+>but not used [-Wunused-but-set-variable]
+>
+>Reported-by: Hulk Robot <hulkci@huawei.com>
+>Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>---
+> drivers/infiniband/sw/siw/siw_cm.c | 3 ---
+> 1 file changed, 3 deletions(-)
+>
+>diff --git a/drivers/infiniband/sw/siw/siw_cm.c
+>b/drivers/infiniband/sw/siw/siw_cm.c
+>index c883bf5..7d87a78 100644
+>--- a/drivers/infiniband/sw/siw/siw_cm.c
+>+++ b/drivers/infiniband/sw/siw/siw_cm.c
+>@@ -1275,7 +1275,6 @@ static void siw_cm_llp_error_report(struct sock
+>*sk)
+> static void siw_cm_llp_state_change(struct sock *sk)
+> {
+> 	struct siw_cep *cep;
+>-	struct socket *s;
+> 	void (*orig_state_change)(struct sock *s);
 > 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_composer.c | 31 +++++++++++++++++-----------
->  1 file changed, 19 insertions(+), 12 deletions(-)
+> 	read_lock(&sk->sk_callback_lock);
+>@@ -1288,8 +1287,6 @@ static void siw_cm_llp_state_change(struct sock
+>*sk)
+> 	}
+> 	orig_state_change = cep->sk_state_change;
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> index 51a270514219..8126aa0f968f 100644
-> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> @@ -6,33 +6,40 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_gem_framebuffer_helper.h>
->  
-> +static u32 get_pixel_from_buffer(int x, int y, const u8 *buffer,
-> +				 const struct vkms_composer *composer)
-> +{
-> +	int src_offset = composer->offset + (y * composer->pitch)
-> +					  + (x * composer->cpp);
-> +
-> +	return *(u32 *)&buffer[src_offset];
-> +}
-> +
->  /**
->   * compute_crc - Compute CRC value on output frame
->   *
-> - * @vaddr_out: address to final framebuffer
-> + * @vaddr: address to final framebuffer
->   * @composer: framebuffer's metadata
->   *
->   * returns CRC value computed using crc32 on the visible portion of
->   * the final framebuffer at vaddr_out
->   */
-> -static uint32_t compute_crc(void *vaddr_out, struct vkms_composer *composer)
-> +static uint32_t compute_crc(const u8 *vaddr,
-> +			    const struct vkms_composer *composer)
->  {
-> -	int i, j, src_offset;
-> +	int x, y;
->  	int x_src = composer->src.x1 >> 16;
->  	int y_src = composer->src.y1 >> 16;
->  	int h_src = drm_rect_height(&composer->src) >> 16;
->  	int w_src = drm_rect_width(&composer->src) >> 16;
-> -	u32 crc = 0;
-> +	u32 crc = 0, pixel = 0;
->  
-> -	for (i = y_src; i < y_src + h_src; ++i) {
-> -		for (j = x_src; j < x_src + w_src; ++j) {
-> -			src_offset = composer->offset
-> -				     + (i * composer->pitch)
-> -				     + (j * composer->cpp);
-> +	for (y = y_src; y < y_src + h_src; ++y) {
-> +		for (x = x_src; x < x_src + w_src; ++x) {
->  			/* XRGB format ignores Alpha channel */
-> -			memset(vaddr_out + src_offset + 24, 0,  8);
-> -			crc = crc32_le(crc, vaddr_out + src_offset,
-> -				       sizeof(u32));
-> +			pixel = get_pixel_from_buffer(x, y, vaddr, composer);
-> +			bitmap_clear((void *)&pixel, 0, 8);
-> +			crc = crc32_le(crc, (void *)&pixel, sizeof(u32));
->  		}
->  	}
->  
-> -- 
-> 2.21.0
+>-	s = sk->sk_socket;
+>-
+> 	siw_dbg_cep(cep, "state: %d\n", cep->state);
+> 
+> 	switch (sk->sk_state) {
+>-- 
+>2.7.4
+>
+>
+>
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Another bad leftover from excessive debugging times...
+
+Thanks alot Yue!
+Bernard.
+
