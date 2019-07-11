@@ -2,91 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4DA653FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25ACA6540D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbfGKJku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:40:50 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35258 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728354AbfGKJkn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:40:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y4so5540980wrm.2;
-        Thu, 11 Jul 2019 02:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XCX9jE72PgkcoZQV6rWjyFaKhpvGYfcrX9M8ab1CPrw=;
-        b=tTnECAgQENTRAvFolzVMqQNAdRuuxyLIyO6WnwNCZtbl+6ZtEcBnIX9+BmrieYKt0K
-         ruIexHnyZNoen+DLPZDU1/k8ZbGwLWSiw5AYk/hFDoEYbUhlKti0+fnOwa5lTtRI+UH7
-         7xOqP5rO9g+eeYOIRxNGsgobWuaJDCBZw75r5HKaYFW4sijjGQZC1u/MMis9O0HjR1N6
-         BX8gYw/BsczC2hruBtbVBrsJ8bhLHDskAAqQ4S5QZuPwZnfrtyVj4MvBugcysLV0cO7S
-         WpE5dLEal/9OjBdOcFi1RLySx29lVIORPeTBWspYjza4r1V8gkhdWgGuc9Z9LJtgZB9G
-         zF3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XCX9jE72PgkcoZQV6rWjyFaKhpvGYfcrX9M8ab1CPrw=;
-        b=HGcx844vXWb0QHbOZWjaXmENPPaDmPMpUB+lkL2nmOhr1uCKPaHwWmZ/1z6cmtLVL8
-         kuTEmlK0ql5irVjSm+pvjadxLWWa55sl3CZyRHyUYJTJQYPQO2KSHa5eZDYSyhQN5qjX
-         eDjVBMBnPBsbxRpyk3T616skzo206E6jPvDWhYhQvgA3xy2l34HIo5lindYJ18QvCUuk
-         57CkRriVQ+3TvqDYF/WEAVy2F+2Qlz3LxtcvwsBqVMlIavkO7OGBn0KneT0qPb3vQuZA
-         oMHjR9+iQAdpdO+gQM5qvrw/Nkv+VFiKpj7+E76/MnSPMm2sAMahLQmhC0Tp6eWX3Se5
-         NdsA==
-X-Gm-Message-State: APjAAAU274vc9KhrOfdiDiS1G9VcegQyiYcQmSmLwaRJ83yYxxQUEdRG
-        a1CIk+HdG0dnHeV99B0O0QY=
-X-Google-Smtp-Source: APXvYqxf5RE+8jpE6XU2p2NQvJdttw5dquomhM5T/35Dwg7JJMJHsZKUgzddC7X0DKbJsdQmhngvlA==
-X-Received: by 2002:adf:e841:: with SMTP id d1mr4073489wrn.204.1562838041120;
-        Thu, 11 Jul 2019 02:40:41 -0700 (PDT)
-Received: from gmail.com (net-5-95-187-49.cust.vodafonedsl.it. [5.95.187.49])
-        by smtp.gmail.com with ESMTPSA id r5sm5075433wmh.35.2019.07.11.02.40.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 02:40:40 -0700 (PDT)
-From:   Paolo Pisati <p.pisati@gmail.com>
-To:     --to=Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiong Wang <jiong.wang@netronome.com>
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] bpf, selftest: fix checksum value for test #13
-Date:   Thu, 11 Jul 2019 11:40:37 +0200
-Message-Id: <1562838037-1884-3-git-send-email-p.pisati@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562838037-1884-1-git-send-email-p.pisati@gmail.com>
-References: <20190710231439.GD32439@tassilo.jf.intel.com>
- <1562838037-1884-1-git-send-email-p.pisati@gmail.com>
+        id S1728295AbfGKJov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:44:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbfGKJou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 05:44:50 -0400
+Received: from earth.universe (dyndsl-031-150-081-114.ewe-ip-backbone.de [31.150.81.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03D4B20872;
+        Thu, 11 Jul 2019 09:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562838289;
+        bh=OU0r6pDDPf0bfwJa5IbUsOd0jpftMBSu3AIyCunAmaA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=toW6Y+6trrhb59gdQZIgM6+Cf/7TISSyfPifjfMC8gDKzcL7ahmDmIzG6cUfNGtHP
+         46Qx5Bsv/qEYXgAZtKosbv/4XgZ+dlzWByh6N1dgKYFCEZv6sFCtxQNT4X0PhniIUx
+         ygR20+fE441RUQH+lgq5QhGxOR1XT/uiupViMGWU=
+Received: by earth.universe (Postfix, from userid 1000)
+        id C0C783C08DC; Thu, 11 Jul 2019 11:44:46 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 11:44:46 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: linux-next: manual merge of the battery tree with the pci tree
+Message-ID: <20190711094446.mdmjlcsnorluzy5h@earth.universe>
+References: <20190628135511.34853c19@canb.auug.org.au>
+ <20190709101424.3876cbba@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="x4dhcvjv35gg7k5q"
+Content-Disposition: inline
+In-Reply-To: <20190709101424.3876cbba@canb.auug.org.au>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Pisati <paolo.pisati@canonical.com>
 
-Signed-off-by: Paolo Pisati <paolo.pisati@canonical.com>
----
- tools/testing/selftests/bpf/verifier/array_access.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--x4dhcvjv35gg7k5q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/bpf/verifier/array_access.c b/tools/testing/selftests/bpf/verifier/array_access.c
-index bcb83196e459..4698f560d756 100644
---- a/tools/testing/selftests/bpf/verifier/array_access.c
-+++ b/tools/testing/selftests/bpf/verifier/array_access.c
-@@ -255,7 +255,7 @@
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
- 	.fixup_map_array_ro = { 3 },
- 	.result = ACCEPT,
--	.retval = -29,
-+	.retval = 28,
- },
- {
- 	"invalid write map access into a read-only array 1",
--- 
-2.17.1
+Hi,
 
+On Tue, Jul 09, 2019 at 10:14:24AM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Fri, 28 Jun 2019 13:55:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >=20
+> > Today's linux-next merge of the battery tree got a conflict in:
+> >=20
+> >   Documentation/power/power_supply_class.txt
+> >=20
+> > between commit:
+> >=20
+> >   151f4e2bdc7a ("docs: power: convert docs to ReST and rename to *.rst")
+> >=20
+> > from the pci tree and commit:
+> >=20
+> >   49c9cd95bb6d ("power: supply: add input power and voltage limit prope=
+rties")
+> >=20
+> > from the battery tree.
+> >=20
+> > I fixed it up (I deleted the file and adde the following merge fix patc=
+h)
+> > and can carry the fix as necessary. This is now fixed as far as linux-n=
+ext
+> > is concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+> >=20
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Fri, 28 Jun 2019 13:52:44 +1000
+> > Subject: [PATCH] power: supply: update for conversion to .rst
+> >=20
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  Documentation/power/power_supply_class.rst | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/Documentation/power/power_supply_class.rst b/Documentation=
+/power/power_supply_class.rst
+> > index 3f2c3fe38a61..883b2ef63119 100644
+> > --- a/Documentation/power/power_supply_class.rst
+> > +++ b/Documentation/power/power_supply_class.rst
+> > @@ -166,6 +166,14 @@ INPUT_CURRENT_LIMIT
+> >    input current limit programmed by charger. Indicates
+> >    the current drawn from a charging source.
+> > =20
+> > +INPUT_VOLTAGE_LIMIT
+> > +  input voltage limit programmed by charger. Indicates
+> > +  the voltage limit from a charging source.
+> > +
+> > +INPUT_POWER_LIMIT
+> > +  input power limit programmed by charger. Indicates
+> > +  the power limit from a charging source.
+> > +
+> >  CHARGE_CONTROL_LIMIT
+> >    current charge control limit setting
+> >  CHARGE_CONTROL_LIMIT_MAX
+> > --=20
+> > 2.20.1
+>=20
+> I am still getting this conflict (the commit ids may have changed).
+> Just a reminder in case you think Linus may need to know.
+
+Yes - your solution is correct and I will forward the information to
+Linus, thanks.
+
+(Sorry for the delayed reply, lot's of work these days)
+
+-- Sebastian
+
+--x4dhcvjv35gg7k5q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0nBQgACgkQ2O7X88g7
++prXFBAAgsLyABGUEPD4Z+Tmgyqvw3XXLW/TcALqK7JGWdVDd6nD41fQ1hHvI57V
+i8BQrge6B3dF1VUCEQAIEoOm5ACaKwG/m8kEB8KVSe60v/k1P6C+VMbE7bkzUDLm
+GtnuXGAMJNa5/FpEuYzyY0ezhk0KrPL+86BMJ1cKVHaxU2IuAI/R7oFQT1zvCHdF
+/1cO1IV2rwPjp4M/cN0CVBkBq1FhJwfoDxRp1BtvClUiZsuoJ/T0gT1U2/xZJU42
+L2/N1l1sIQ0pp9tvAhwJ95w8IcRpiBiK2ohDqvrzB9BTA2Gz75cAhUwpOVSBbnh0
+dpdZhcNjEl2qAqnX7lhJXWkzNPy87DWpz3z6PDmh9CR/zV9S0far9RIS1sQsXBwQ
+ClHp3odWFet0tbs8ImfYU3qwhMZxkUbOz432ijGsVGC2QO9+eAcphHQ8Al+j/gWw
+KP0/HXghB5TwF9TTP/lDtr/OfRO7+wbPj/AH3TMSkslPuVli/Oo6q2yXoWbjQBWp
+NXgMR375hfji4Qe7Hg80Fufm++z/Gs4qXTpkc4LYCZIznBS6+v7bihx50VyHUqtp
+EKF0WaPAnP/OSJ9g0DtCSA6FF/n3hgRlzt0RMDOaxB3vKxxBJQbA+UHZ+Op7iqDW
+FfC3jwuA8jWH9913ipl0vxYULH+NU9P37o3HyWH2n8f2cjCxtU0=
+=csO5
+-----END PGP SIGNATURE-----
+
+--x4dhcvjv35gg7k5q--
