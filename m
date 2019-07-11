@@ -2,249 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49A265A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 007DA65A64
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfGKPZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 11:25:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37028 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728271AbfGKPZx (ORCPT
+        id S1728973AbfGKP0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 11:26:00 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33868 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728933AbfGKPZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 11:25:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NV2y6EH+RsLYmHPSuYVTzIP51jt8A75FqEqQE1pxFgA=; b=QGg8QYDUOxVbI5xAGPVbkWISm
-        k0GlBMXn3vuZ5Z1LGOET02jcIQ+f+/dIzBC+AT8UAKg+x1px5+ak/ukAZLSd7R1U8qdQuBNt9vYX5
-        3+P/EZ4SfMY1iR44b37lb++YRhkVq3zbUpxqVO66oT8pJ7xS5YCZWH1oVw72LnYDRqnZtXIe/NODU
-        xq4aGn/ToUhqc1Mr2lMa2L8vjfcPRyGIXAQQAKqZ2NoqHrPNWGkbB1AmNWwyGIfpnmUgyLhUoI827
-        Z6Ju/POHpN5ufhFflpajagclaf/HVxlEc20fjRJ5ccg2l4obbQg2bAd4PM6R3P/iPmZ0JzJO4b5iM
-        R4AO5BMKw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlaxC-0006jL-RR; Thu, 11 Jul 2019 15:25:50 +0000
-Date:   Thu, 11 Jul 2019 08:25:50 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190711152550.GT32320@bombadil.infradead.org>
-References: <20190704032728.GK1729@bombadil.infradead.org>
- <20190704165450.GH31037@quack2.suse.cz>
- <20190704191407.GM1729@bombadil.infradead.org>
- <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
- <20190705191004.GC32320@bombadil.infradead.org>
- <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
- <20190710190204.GB14701@quack2.suse.cz>
- <20190710201539.GN32320@bombadil.infradead.org>
- <20190710202647.GA7269@quack2.suse.cz>
- <20190711141350.GS32320@bombadil.infradead.org>
+        Thu, 11 Jul 2019 11:25:58 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p10so3116790pgn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 08:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3ahhQ+9CCV1RUDKRM5TFZcgtNPOj1dansSCnwk/nmOg=;
+        b=d2lENQ3wKspL1afPpwiMIMJTEtBu+3KRlviHBIV4/B5UC37H51zReuZ416QRoXpIe2
+         o2wmkTIr2ailmX4MJoktDc/x2fNGBESK7lpnPf7caIWBEthnI9JViE9zFBOEMjvhf43m
+         itDC80oThCy9XFYKTuVKPJxhfVAl1WIfVRYNc/DGVIIlIyfcbvY8GHGrD4lY885E/trN
+         mb5C9EWN/v+uf6P74qonMeev0oC/D5Ql51Bi7zMZrRAMf3hOVm2RTc65AQrbrM2+uR3G
+         FVzAh9j0UcKXid1HRp7x21ZT/XBEHmZbifIcBunTXtfAdXxqZgU0OdEi7CbGXIa3/UQr
+         YdsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3ahhQ+9CCV1RUDKRM5TFZcgtNPOj1dansSCnwk/nmOg=;
+        b=N3U0FQaxuU3SCF8zF9xN90FVtBZAvRWuB11YAk8LdeSeiLDkIIOm5eyd+DIYfxQJlY
+         ZSGtvf1d19dEz45rHofLXtxuGusUsSlT8yAXyi55Kuv42J+CaIiKMjw6gRKGGlg90ZAb
+         UPzojjqxN7mVKSB49xS5mL3nZEA05TbbqS2bpqheSMV8wb8XKAzq6IhmFDAEKBDw/bg4
+         ZFL17Wx+2D0TnDiFcVmGODuGD5ekm125mBDUgNqLrb76tnfdg9Xyz22+jwzROd6wkyHC
+         /6zQbIcQ/fpOLBVCCp6xzFPVqlUuP31F3vcZzjVYJlf0AnFFPv3gEUHPZ9T+ThUDCw/j
+         aL0w==
+X-Gm-Message-State: APjAAAXTFlxL3FbES9cd5aQ5ohx/3XbLTZ5NO0HVp9c9mnzI0sgnIW3Y
+        99rHso5gAG3xMJsKEcZWJZU=
+X-Google-Smtp-Source: APXvYqzrq8ZKmOBHrm3NMUilV5X7y9HrlK8XVGKpg1nNByoohX3AvOSOI4JtUKlplVLiWjaFRr+p9Q==
+X-Received: by 2002:a17:90a:d3d4:: with SMTP id d20mr5665939pjw.28.1562858757966;
+        Thu, 11 Jul 2019 08:25:57 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:6fa9])
+        by smtp.gmail.com with ESMTPSA id h129sm5716609pfb.110.2019.07.11.08.25.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 08:25:57 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 11:25:55 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
+        hdanton@sina.com, lizeb@google.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v4 1/4] mm: introduce MADV_COLD
+Message-ID: <20190711152555.GB20341@cmpxchg.org>
+References: <20190711012528.176050-1-minchan@kernel.org>
+ <20190711012528.176050-2-minchan@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190711141350.GS32320@bombadil.infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190711012528.176050-2-minchan@kernel.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 07:13:50AM -0700, Matthew Wilcox wrote:
-> However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
-> appear in an XArray (it may appear if you're looking at a deleted node,
-> but since we're holding the lock, we can't see deleted nodes).
+On Thu, Jul 11, 2019 at 10:25:25AM +0900, Minchan Kim wrote:
+> When a process expects no accesses to a certain memory range, it could
+> give a hint to kernel that the pages can be reclaimed when memory pressure
+> happens but data should be preserved for future use.  This could reduce
+> workingset eviction so it ends up increasing performance.
+> 
+> This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> MADV_COLD can be used by a process to mark a memory range as not expected
+> to be used in the near future. The hint can help kernel in deciding which
+> pages to evict early during memory pressure.
+> 
+> It works for every LRU pages like MADV_[DONTNEED|FREE]. IOW, It moves
+> 
+> 	active file page -> inactive file LRU
+> 	active anon page -> inacdtive anon LRU
+> 
+> Unlike MADV_FREE, it doesn't move active anonymous pages to inactive
+> file LRU's head because MADV_COLD is a little bit different symantic.
+> MADV_FREE means it's okay to discard when the memory pressure because
+> the content of the page is *garbage* so freeing such pages is almost zero
+> overhead since we don't need to swap out and access afterward causes just
+> minor fault. Thus, it would make sense to put those freeable pages in
+> inactive file LRU to compete other used-once pages. It makes sense for
+> implmentaion point of view, too because it's not swapbacked memory any
+> longer until it would be re-dirtied. Even, it could give a bonus to make
+> them be reclaimed on swapless system. However, MADV_COLD doesn't mean
+> garbage so reclaiming them requires swap-out/in in the end so it's bigger
+> cost. Since we have designed VM LRU aging based on cost-model, anonymous
+> cold pages would be better to position inactive anon's LRU list, not file
+> LRU. Furthermore, it would help to avoid unnecessary scanning if system
+> doesn't have a swap device. Let's start simpler way without adding
+> complexity at this moment. However, keep in mind, too that it's a caveat
+> that workloads with a lot of pages cache are likely to ignore MADV_COLD
+> on anonymous memory because we rarely age anonymous LRU lists.
+> 
+> * man-page material
+> 
+> MADV_COLD (since Linux x.x)
+> 
+> Pages in the specified regions will be treated as less-recently-accessed
+> compared to pages in the system with similar access frequencies.
+> In contrast to MADV_FREE, the contents of the region are preserved
+> regardless of subsequent writes to pages.
+> 
+> MADV_COLD cannot be applied to locked pages, Huge TLB pages, or VM_PFNMAP
+> pages.
+> 
+> * v2
+>  * add up the warn with lots of page cache workload - mhocko
+>  * add man page stuff - dave
+> 
+> * v1
+>  * remove page_mapcount filter - hannes, mhocko
+>  * remove idle page handling - joelaf
+> 
+> * RFCv2
+>  * add more description - mhocko
+> 
+> * RFCv1
+>  * renaming from MADV_COOL to MADV_COLD - hannes
+> 
+> * internal review
+>  * use clear_page_youn in deactivate_page - joelaf
+>  * Revise the description - surenb
+>  * Renaming from MADV_WARM to MADV_COOL - surenb
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
 
-Updated patch (also slight updates to changelog and comments)
-
---- 8< ---
-
-From af8402dacb3998d8ef23677ac35fdb72b236320c Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Wed, 3 Jul 2019 23:21:25 -0400
-Subject: [PATCH] dax: Fix missed wakeup with PMD faults
-
-RocksDB can hang indefinitely when using a DAX file.  This is due to
-a bug in the XArray conversion when handling a PMD fault and finding a
-PTE entry.  We use the wrong index in the hash and end up waiting on
-the wrong waitqueue.
-
-There's actually no need to wait; if we find a PTE entry while looking
-for a PMD entry, we can return immediately as we know we should fall
-back to a PTE fault (which may not conflict with the lock held).
-
-We reuse the XA_RETRY_ENTRY to signal a conflicting entry was found.
-This value can never be found in an XArray while holding its lock, so
-it does not create an ambiguity.
-
-Cc: stable@vger.kernel.org
-Fixes: b15cd800682f ("dax: Convert page fault handlers to XArray")
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/dax.c | 53 +++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 33 insertions(+), 20 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index 2e48c7ebb973..7a75031da644 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -123,6 +123,15 @@ static int dax_is_empty_entry(void *entry)
- 	return xa_to_value(entry) & DAX_EMPTY;
- }
- 
-+/*
-+ * true if the entry that was found is of a smaller order than the entry
-+ * we were looking for
-+ */
-+static bool dax_is_conflict(void *entry)
-+{
-+	return entry == XA_RETRY_ENTRY;
-+}
-+
- /*
-  * DAX page cache entry locking
-  */
-@@ -195,11 +204,13 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
-  * Look up entry in page cache, wait for it to become unlocked if it
-  * is a DAX entry and return it.  The caller must subsequently call
-  * put_unlocked_entry() if it did not lock the entry or dax_unlock_entry()
-- * if it did.
-+ * if it did.  The entry returned may have a larger order than @order.
-+ * If @order is larger than the order of the entry found in i_pages, this
-+ * function returns a dax_is_conflict entry.
-  *
-  * Must be called with the i_pages lock held.
-  */
--static void *get_unlocked_entry(struct xa_state *xas)
-+static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
- {
- 	void *entry;
- 	struct wait_exceptional_entry_queue ewait;
-@@ -210,6 +221,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
- 
- 	for (;;) {
- 		entry = xas_find_conflict(xas);
-+		if (dax_entry_order(entry) < order)
-+			return XA_RETRY_ENTRY;
- 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
- 				!dax_is_locked(entry))
- 			return entry;
-@@ -254,7 +267,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
- static void put_unlocked_entry(struct xa_state *xas, void *entry)
- {
- 	/* If we were the only waiter woken, wake the next one */
--	if (entry)
-+	if (entry && dax_is_conflict(entry))
- 		dax_wake_entry(xas, entry, false);
- }
- 
-@@ -461,7 +474,7 @@ void dax_unlock_page(struct page *page, dax_entry_t cookie)
-  * overlap with xarray value entries.
-  */
- static void *grab_mapping_entry(struct xa_state *xas,
--		struct address_space *mapping, unsigned long size_flag)
-+		struct address_space *mapping, unsigned int order)
- {
- 	unsigned long index = xas->xa_index;
- 	bool pmd_downgrade = false; /* splitting PMD entry into PTE entries? */
-@@ -469,20 +482,17 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 
- retry:
- 	xas_lock_irq(xas);
--	entry = get_unlocked_entry(xas);
-+	entry = get_unlocked_entry(xas, order);
- 
- 	if (entry) {
-+		if (dax_is_conflict(entry))
-+			goto fallback;
- 		if (!xa_is_value(entry)) {
- 			xas_set_err(xas, EIO);
- 			goto out_unlock;
- 		}
- 
--		if (size_flag & DAX_PMD) {
--			if (dax_is_pte_entry(entry)) {
--				put_unlocked_entry(xas, entry);
--				goto fallback;
--			}
--		} else { /* trying to grab a PTE entry */
-+		if (order == 0) {
- 			if (dax_is_pmd_entry(entry) &&
- 			    (dax_is_zero_entry(entry) ||
- 			     dax_is_empty_entry(entry))) {
-@@ -523,7 +533,11 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 	if (entry) {
- 		dax_lock_entry(xas, entry);
- 	} else {
--		entry = dax_make_entry(pfn_to_pfn_t(0), size_flag | DAX_EMPTY);
-+		unsigned long flags = DAX_EMPTY;
-+
-+		if (order > 0)
-+			flags |= DAX_PMD;
-+		entry = dax_make_entry(pfn_to_pfn_t(0), flags);
- 		dax_lock_entry(xas, entry);
- 		if (xas_error(xas))
- 			goto out_unlock;
-@@ -594,7 +608,7 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
- 		if (WARN_ON_ONCE(!xa_is_value(entry)))
- 			continue;
- 		if (unlikely(dax_is_locked(entry)))
--			entry = get_unlocked_entry(&xas);
-+			entry = get_unlocked_entry(&xas, 0);
- 		if (entry)
- 			page = dax_busy_page(entry);
- 		put_unlocked_entry(&xas, entry);
-@@ -621,7 +635,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	void *entry;
- 
- 	xas_lock_irq(&xas);
--	entry = get_unlocked_entry(&xas);
-+	entry = get_unlocked_entry(&xas, 0);
- 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
- 		goto out;
- 	if (!trunc &&
-@@ -849,7 +863,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
- 	if (unlikely(dax_is_locked(entry))) {
- 		void *old_entry = entry;
- 
--		entry = get_unlocked_entry(xas);
-+		entry = get_unlocked_entry(xas, 0);
- 
- 		/* Entry got punched out / reallocated? */
- 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
-@@ -1510,7 +1524,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	 * entry is already in the array, for instance), it will return
- 	 * VM_FAULT_FALLBACK.
- 	 */
--	entry = grab_mapping_entry(&xas, mapping, DAX_PMD);
-+	entry = grab_mapping_entry(&xas, mapping, PMD_ORDER);
- 	if (xa_is_internal(entry)) {
- 		result = xa_to_internal(entry);
- 		goto fallback;
-@@ -1659,11 +1673,10 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
- 	vm_fault_t ret;
- 
- 	xas_lock_irq(&xas);
--	entry = get_unlocked_entry(&xas);
-+	entry = get_unlocked_entry(&xas, order);
- 	/* Did we race with someone splitting entry or so? */
--	if (!entry ||
--	    (order == 0 && !dax_is_pte_entry(entry)) ||
--	    (order == PMD_ORDER && !dax_is_pmd_entry(entry))) {
-+	if (!entry || dax_is_conflict(entry) ||
-+	    (order == 0 && !dax_is_pte_entry(entry))) {
- 		put_unlocked_entry(&xas, entry);
- 		xas_unlock_irq(&xas);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
--- 
-2.20.1
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
