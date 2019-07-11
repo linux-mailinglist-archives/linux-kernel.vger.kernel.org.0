@@ -2,154 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FE165868
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B61B6586B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfGKOD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:03:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40765 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbfGKOD5 (ORCPT
+        id S1728495AbfGKOE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:04:59 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41530 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbfGKOE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:03:57 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v19so5826245wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:03:56 -0700 (PDT)
+        Thu, 11 Jul 2019 10:04:58 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so5954438ota.8
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=gPYCYcvufHlLQbT/p3SzUsLXy/FZNqO6xh4oAZ6J/oU=;
+        b=MO9KKrpeatfp28CpCMHnHbEA0Nie+xAqWGqz1ig3rIf2ffcJ3kmg89kN721gv5WPXI
+         sjIKkx+xyfbNSTU0EgBKY6RQATSWdLD/ej63Nj7WTX6dj50XWUvFOSLcWKCiCWAKqAIe
+         cBWk9y+XrdEzP31vpNI6mT0tHkf9HvWvmlNM13YaVrJ5EgPDysmGaTy9G3iJLb7D181a
+         pfJ5j4VCAYkSk/UfKA7xp2lEbPQNL23Ex5l0e7iLgsOzt51SfYwQ7G/mAavLOgRjKYFG
+         2mtJQZGTHXMQSq6ei9H2CTKIauJVYS8soUoOTVrhWH6HpMlkoCNp9oO4cQVNhiVWYolo
+         DNow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6QbsSGvqJ1CROTsT5zLLVFOwwglNu1pmlg45SGVssb4=;
-        b=DYsY9OqK4OLIZEhPxuBx5l/5QNhmF+aHXjh0sCNnf93EMvsO+nqpSlBx++xQmWvou4
-         K+pPvcT8ceyoe8idSv/SR8Pmg+HwETrq2fBkid/nkzUlYSBSIaxy/PkxxQXcB4B/TLSK
-         tU6vpPIhlQrCjZfIW+kENajBU35U0MBEKVAOKElI3qY/8YFmEZ/y1453yPaUV4+nTD0a
-         NVbGgOH1/6NAl3aIvof1K5Ckg15QFEytQ/xRH6cTxLEuKJ3Rm/3yOkIqFT0jVB1DO+Qb
-         sIxpm3aOjjbir3B8KqJA46pcEBi32OTF4hj1IHb8jc7cz9+JApUkz6PYTv6rP8cDB7St
-         60vg==
-X-Gm-Message-State: APjAAAXa2cZT/x68K5Z3gMXSUAoxkZPP5u/6k8++bgfGOdr4Io4Q2Hzb
-        lKn/JOxKfwWAiphTeo3S1sT92g==
-X-Google-Smtp-Source: APXvYqzh6zwnHmawBqkGTbmYDoU5rPq3y00zlzSXhV26u1DNGPq/ZMb66ZRXshWEHTLxCjHvf+LxIg==
-X-Received: by 2002:a1c:f61a:: with SMTP id w26mr4738999wmc.75.1562853835240;
-        Thu, 11 Jul 2019 07:03:55 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d066:6881:ec69:75ab? ([2001:b07:6468:f312:d066:6881:ec69:75ab])
-        by smtp.gmail.com with ESMTPSA id m16sm5509406wrv.89.2019.07.11.07.03.54
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 07:03:54 -0700 (PDT)
-Subject: Re: [PATCH v7 0/2] KVM: LAPIC: Implement Exitless Timer
-To:     Wanpeng Li <wanpeng.li@hotmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-References: <1562376411-3533-1-git-send-email-wanpengli@tencent.com>
- <TY2PR02MB41600B4C6B9FF4A9F8CD957880F30@TY2PR02MB4160.apcprd02.prod.outlook.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <0e05bac0-af49-996a-c5fd-f6c61782ae4f@redhat.com>
-Date:   Thu, 11 Jul 2019 16:03:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=gPYCYcvufHlLQbT/p3SzUsLXy/FZNqO6xh4oAZ6J/oU=;
+        b=bgDMPjinw4rG+w0MTAALXKwUaSBuRj8dazVoiOd00oZoRN4Q+vtrGRg7bThuJz1UdL
+         32S8DFADZDwo4tsbYBfkcxDa8eFmPsvlmXVdTVdKYjPX9n4cmv9NsOiUsqVBJ+HXaep7
+         Q0XaLh7nZ7hFua/LWUkPBQFPVldQd3DbnjMYbLBMcTWdjwr+a04R8MF3zQB3Te9rJu3d
+         YIloIyuq8mbTWosi6LtpLHOCQAcSjr4g7IvdzUoByfpOEdGv0hD20azQamIOa/GYC+1X
+         EKhgmf+iW5JJWxSU/EDgGFF8fP74NozfxMhLXfS0JkFPRmfeMuZAJ1pvJPqxL7UuR1Cu
+         No9g==
+X-Gm-Message-State: APjAAAUVcbKwwqZ/J+vh3a3Cd0Ik2SsknGfg4e/wsmHT5xu7YZehIXsi
+        5UXX/cmAW5LwhpsYShf/ptUf26306RDyAkfYD3g=
+X-Google-Smtp-Source: APXvYqxWIY0OknYpn4UphftiOpaYSe7bPVTkusCwa3jJCMphUMbYx5vBlPu5bBOz9LQdB+vZEKm49FoGRe68tQm0maM=
+X-Received: by 2002:a05:6830:11d4:: with SMTP id v20mr3341547otq.121.1562853897687;
+ Thu, 11 Jul 2019 07:04:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <TY2PR02MB41600B4C6B9FF4A9F8CD957880F30@TY2PR02MB4160.apcprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a4a:874d:0:0:0:0:0 with HTTP; Thu, 11 Jul 2019 07:04:57
+ -0700 (PDT)
+From:   Mrs Monica <monicagabriele64@gmail.com>
+Date:   Thu, 11 Jul 2019 07:04:57 -0700
+X-Google-Sender-Auth: 6KGlMxClhBA8genr_LXIlzIOLMg
+Message-ID: <CALyWxHegZG8_PM6TsjiwypaFd_wjUZ_7kyZboT+044yHdAH_UQ@mail.gmail.com>
+Subject: Please Let My Situation Touch Your Heart
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/19 15:50, Wanpeng Li wrote:
-> kindly ping，
+-- 
+Hello My Dear
 
-Sorry, I need more time to review this.  It's basically the only
-remaining item for the 5.3 merge window, even though it won't be part of
-the first pull request to Linus.
+Calvary Greetings in the name of the ALMIGHTY
 
-Paolo
+I am Mrs Monica Gabriele from Switzerland I am married to Late
+Mr.Gabriele Joseph  who is a wealthy business man here in Burkina Faso
+we were married for many years without a child before he died after a
+brief illness.
 
->> Dedicated instances are currently disturbed by unnecessary jitter due 
->> to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
->> There is no hardware virtual timer on Intel for guest like ARM. Both 
->> programming timer in guest and the emulated timer fires incur vmexits.
->> This patchset tries to avoid vmexit which is incurred by the emulated 
->> timer fires in dedicated instance scenario. 
->>
->> When nohz_full is enabled in dedicated instances scenario, the unpinned 
->> timer will be moved to the nearest busy housekeepers after commit
->> 9642d18eee2cd (nohz: Affine unpinned timers to housekeepers) and commit 
->> 444969223c8 ("sched/nohz: Fix affine unpinned timers mess"). However, 
->> KVM always makes lapic timer pinned to the pCPU which vCPU residents, the 
->> reason is explained by commit 61abdbe0 (kvm: x86: make lapic hrtimer 
->> pinned). Actually, these emulated timers can be offload to the housekeeping 
->> cpus since APICv is really common in recent years. The guest timer interrupt 
->> is injected by posted-interrupt which is delivered by housekeeping cpu 
->> once the emulated timer fires. 
->>
->> The host admin should fine tuned, e.g. dedicated instances scenario w/ 
->> nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus 
->> for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root  
->> mode, ~3% redis performance benefit can be observed on Skylake server.
->>
->> w/o patchset:
->>
->>            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Avg time
->>
->> EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.71us ( +-   1.09% )
->>
->> w/ patchset:
->>
->>            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time         Avg time
->>
->> EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.72us ( +-   4.02% )
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: Marcelo Tosatti <mtosatti@redhat.com>
->>
->> v6 -> v7:
->> * remove bool argument
->>
->> v5 -> v6:
->> * don't overwrites whatever the user specified
->> * introduce kvm_can_post_timer_interrupt and kvm_use_posted_timer_interrupt
->> * remove kvm_hlt_in_guest() condition
->> * squash all of 2/3/4 together
->>
->> v4 -> v5:
->> * update patch description in patch 1/4
->> * feed latest apic->lapic_timer.expired_tscdeadline to kvm_wait_lapic_expire()
->> * squash advance timer handling to patch 2/4
->>
->> v3 -> v4:
->> * drop the HRTIMER_MODE_ABS_PINNED, add kick after set pending timer
->> * don't posted inject already-expired timer
->>
->> v2 -> v3:
->> * disarming the vmx preemption timer when posted_interrupt_inject_timer_enabled()
->> * check kvm_hlt_in_guest instead
->>
->> v1 -> v2:
->> * check vcpu_halt_in_guest
->> * move module parameter from kvm-intel to kvm
->> * add housekeeping_enabled
->> * rename apic_timer_expired_pi to kvm_apic_inject_pending_timer_irqs
->>
->>
->> Wanpeng Li (2):
->>  KVM: LAPIC: Make lapic timer unpinned
->>  KVM: LAPIC: Inject timer interrupt via posted interrupt
->>
->> arch/x86/kvm/lapic.c            | 109 ++++++++++++++++++++++++++--------------
->> arch/x86/kvm/lapic.h            |   1 +
->> arch/x86/kvm/vmx/vmx.c          |   3 +-
->> arch/x86/kvm/x86.c              |  12 +++--
->> arch/x86/kvm/x86.h              |   2 +
->> include/linux/sched/isolation.h |   2 +
->> kernel/sched/isolation.c        |   6 +++
->> 7 files changed, 90 insertions(+), 45 deletions(-)
->>
->> -- 
->> 1.8.3.1
->>
+Before his sudden death we where devoted christian When my late
+husband was alive he deposited the sum of  Six Million Two Hundred
+United State Dollars ($6.200.000.00) in one of the prime bank here in
+Burkina Faso Presently this money is still with the Bank,
 
+I am very sick from Kidney cancer that i may not last till the next
+two months according to my doctor so now i decided to donate this
+money to a honest individual who will use it to work for Almighty,
+orphans, widow and maintenance of church to fulfill the vow i and my
+late husband made to Almighty, and i have chosen you after praying.
+
+I want this money to be use as i have said since i do not have any
+child to inherit it and our relatives are all unbelievers and i don't
+want our hard earn money to be used in ungodly way so you will take
+40% of the fund for your effort and use the remaining as i stated, as
+soon as i read from you i will give you more details on how to achieve
+it, I need your urgent reply as i don't know what tomorrow will
+result,  i wish you the best in life. Please Always remember me in
+your prayers.
+
+Yours Sister,
+Mrs Monica Gabriele.
+Please Let My Situation Touch Your Heart.
