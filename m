@@ -2,139 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F7D65A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C783765A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfGKP3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 11:29:05 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38075 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728655AbfGKP3F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 11:29:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y15so2929181pfn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 08:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PcMRy6X0HHSU2uwIcDv40X8gHtVe1fCLvC/RPbbBFw4=;
-        b=VogL/o35kuGo3WvcW/9vQ/CmCcSo9r2owGFVwrFu27xYKAGlDQM88VY38U9w9AmJgW
-         boamIRHIiQBG4PAGALOc7K0FtqCU6KXpqWIz5/1lWvFPzEwNc1dBocfNLQDezt80rcX+
-         MvmAf8ekPVs3LZ9Xjk7hNP8oCmKd5RLpPng6wA/LDapUxGTXvc/Y4mRWQtX/XfRSu8++
-         +kOWZhY+F/SPRPnHjaFeqWkVXDajd8OVccJUa+tk9zJN48IIUVIDt60ZxcCV2UXMlo3S
-         cSW/pXxClE7zM0CdthbPUlJPlX57aUZLdnGWY2532RkdiYBRuXOwcKe0SxY6nsJREwIV
-         T/bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PcMRy6X0HHSU2uwIcDv40X8gHtVe1fCLvC/RPbbBFw4=;
-        b=YUcLd+841C7+WXNpTX+wQPhcDMr2gsSEik3YiMUpQWFNurDorA7QeO3vzihLiXj9Qf
-         VmSihogWYkfrWs1UQbbI/Y9AbTh/lDeXPlFgpMNaW2e7OVZMNhoCcVCMIqZthPzm137r
-         lkrPSFYfBPa1ELN6gH6ANjzZ5jDrYRaEzsg0I2qG/79UIdDx4G9rhOqWrW2lt7N6Ta36
-         cpGfqStIZtga2aCyBBBuGUTxjr/VUO5af//5qV/zRQXgaA0H5AIs8LntsZJNgWkVZoXi
-         fWKEs5o6q/4hwOxg5M5r8gaTVLtC8lrmpGlWo2vur9E2zaSrqDwGMhTZkjbAdFxoWN2X
-         d7yw==
-X-Gm-Message-State: APjAAAUfhrIXmnikyH8iHMkaQLJlREdSaS/Nzca3FnwsdUCA/OGtJBlf
-        kLPkaUDzczF6RcRbXqcIOPwjjg==
-X-Google-Smtp-Source: APXvYqye77G4dqCcEDk9TrwQUc54J1XQtP5On/iH7qLF9Xse0wzIzE59xj0a6xO3SOJ4Hb76Q4idjA==
-X-Received: by 2002:a65:62c4:: with SMTP id m4mr4876927pgv.243.1562858944051;
-        Thu, 11 Jul 2019 08:29:04 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s43sm8776852pjb.10.2019.07.11.08.29.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 08:29:03 -0700 (PDT)
-Date:   Thu, 11 Jul 2019 08:30:13 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
-        heiko@sntech.de, sibis@codeaurora.org,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: Re: [PATCH v3 01/14] clk: qcom: gcc: limit GPLL0_AO_OUT operating
- frequency
-Message-ID: <20190711153013.GP7234@tuxbook-pro>
-References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
- <20190625164733.11091-2-jorge.ramirez-ortiz@linaro.org>
+        id S1728922AbfGKPdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 11:33:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:47566 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728377AbfGKPdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 11:33:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B429A2B;
+        Thu, 11 Jul 2019 08:33:07 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CB913F71F;
+        Thu, 11 Jul 2019 08:33:04 -0700 (PDT)
+Subject: Re: [RFC PATCH 3/6] sched/dl: Try better placement even for deadline
+ tasks that do not block
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     luca abeni <luca.abeni@santannapisa.it>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-4-luca.abeni@santannapisa.it>
+ <20190708135536.GK3402@hirez.programming.kicks-ass.net>
+ <20190709152436.51825f98@luca64>
+ <20190709134200.GD3402@hirez.programming.kicks-ass.net>
+ <dac4462d-7384-cf8a-6619-2781c16caa89@arm.com>
+ <20190711120041.GA3402@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <aef12a88-a7c8-3cf6-1253-eca06d2d6555@arm.com>
+Date:   Thu, 11 Jul 2019 17:33:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625164733.11091-2-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190711120041.GA3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
-
-> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
-> specifications.
+On 7/11/19 2:00 PM, Peter Zijlstra wrote:
+> On Thu, Jul 11, 2019 at 01:17:17PM +0200, Dietmar Eggemann wrote:
+>> On 7/9/19 3:42 PM, Peter Zijlstra wrote:
 > 
-> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 8 ++++++++
->  drivers/clk/qcom/clk-alpha-pll.h | 1 +
->  drivers/clk/qcom/gcc-qcs404.c    | 2 +-
->  3 files changed, 10 insertions(+), 1 deletion(-)
+>>>>> That is, we only do those callbacks from:
+>>>>>
+>>>>>   schedule_tail()
+>>>>>   __schedule()
+>>>>>   rt_mutex_setprio()
+>>>>>   __sched_setscheduler()
+>>>>>
+>>>>> and the above looks like it can happen outside of those.
 > 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 0ced4a5a9a17..ef51f302bdf0 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -730,6 +730,14 @@ static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
->  	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
->  }
->  
-> +const struct clk_ops clk_alpha_pll_fixed_ops = {
-> +	.enable = clk_alpha_pll_enable,
-> +	.disable = clk_alpha_pll_disable,
-> +	.is_enabled = clk_alpha_pll_is_enabled,
-> +	.recalc_rate = clk_alpha_pll_recalc_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_ops);
-> +
->  const struct clk_ops clk_alpha_pll_ops = {
->  	.enable = clk_alpha_pll_enable,
->  	.disable = clk_alpha_pll_disable,
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index 66755f0f84fc..6b4eb74706b4 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -104,6 +104,7 @@ struct alpha_pll_config {
->  };
->  
->  extern const struct clk_ops clk_alpha_pll_ops;
-> +extern const struct clk_ops clk_alpha_pll_fixed_ops;
->  extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
->  extern const struct clk_ops clk_alpha_pll_postdiv_ops;
->  extern const struct clk_ops clk_alpha_pll_huayra_ops;
-> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index 29cf464dd2c8..18c6563889f3 100644
-> --- a/drivers/clk/qcom/gcc-qcs404.c
-> +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -330,7 +330,7 @@ static struct clk_alpha_pll gpll0_ao_out_main = {
->  			.parent_names = (const char *[]){ "cxo" },
->  			.num_parents = 1,
->  			.flags = CLK_IS_CRITICAL,
-> -			.ops = &clk_alpha_pll_ops,
-> +			.ops = &clk_alpha_pll_fixed_ops,
->  		},
->  	},
->  };
-> -- 
-> 2.21.0
+>> Is this what you are concerned about?
+>>
+>> (2 Cpus (CPU1, CPU2), 4 deadline task (thread0-X)) with 
+>>
+>> @@ -1137,6 +1137,13 @@ static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+>>         rf->cookie = lockdep_pin_lock(&rq->lock);
+>>  
+>>  #ifdef CONFIG_SCHED_DEBUG
+>> +#ifdef CONFIG_SMP
+>> +       /*
+>> +        * There should not be pending callbacks at the start of rq_lock();
+>> +        * all sites that handle them flush them at the end.
+>> +        */
+>> +       WARN_ON_ONCE(rq->balance_callback);
+>> +#endif
+>>
+>>
+>> [   87.251237] *** <--- queue_balance_callback(migrate_dl_task) p=[thread0-3 3627] on CPU2
+>> [   87.251261] WARNING: CPU: 2 PID: 3627 at kernel/sched/sched.h:1145 __schedule+0x56c/0x690
+>> [   87.615882] WARNING: CPU: 2 PID: 3616 at kernel/sched/sched.h:1145 task_rq_lock+0xe8/0xf0
+>> [   88.176844] WARNING: CPU: 2 PID: 3616 at kernel/sched/sched.h:1145 load_balance+0x4d0/0xbc0
+>> [   88.381905] WARNING: CPU: 2 PID: 3616 at kernel/sched/sched.h:1145 load_balance+0x7d8/0xbc0
 > 
+> I'm not sure how we get 4 warns, I was thinking that as soon as we exit
+> __schedule() we'd procress the callback so further warns would be
+> avoided.
+
+Reducing the warning to only fire on CPU1 I got another test-run:
+
+[ 6688.373607] *** <--- queue_balance_callback(migrate_dl_task) p=[thread0-3 4343] on CPU1
+[ 6688.381557] WARNING: CPU: 1 PID: 4343 at kernel/sched/sched.h:1146 try_to_wake_up+0x614/0x788
+...
+[ 6688.505000]  try_to_wake_up+0x614/0x788
+[ 6688.508794]  default_wake_function+0x34/0x48
+[ 6688.513017]  autoremove_wake_function+0x3c/0x68
+[ 6688.517497]  __wake_up_common+0x90/0x158
+[ 6688.521374]  __wake_up_common_lock+0x88/0xd0
+[ 6688.525595]  __wake_up+0x40/0x50
+[ 6688.528787]  wake_up_klogd_work_func+0x4c/0x88
+[ 6688.533184]  irq_work_run_list+0x8c/0xd8
+[ 6688.537063]  irq_work_tick+0x48/0x60
+[ 6688.540598]  update_process_times+0x44/0x60
+[ 6688.544735]  tick_sched_handle.isra.5+0x44/0x68
+[ 6688.549215]  tick_sched_timer+0x50/0xa0
+[ 6688.553007]  __hrtimer_run_queues+0x11c/0x3d0
+[ 6688.557316]  hrtimer_interrupt+0xd8/0x248
+[ 6688.561282]  arch_timer_handler_phys+0x38/0x58
+[ 6688.565678]  handle_percpu_devid_irq+0x90/0x2b8
+[ 6688.570160]  generic_handle_irq+0x34/0x50
+[ 6688.574124]  __handle_domain_irq+0x68/0xc0
+[ 6688.578175]  gic_handle_irq+0x60/0xb0
+...
+[ 6688.589909] WARNING: CPU: 1 PID: 4343 at kernel/sched/sched.h:1146 scheduler_tick+0xe8/0x128
+...
+[ 6688.714463]  scheduler_tick+0xe8/0x128
+[ 6688.718170]  update_process_times+0x48/0x60
+[ 6688.722306]  tick_sched_handle.isra.5+0x44/0x68
+[ 6688.726786]  tick_sched_timer+0x50/0xa0
+[ 6688.730579]  __hrtimer_run_queues+0x11c/0x3d0
+[ 6688.734887]  hrtimer_interrupt+0xd8/0x248
+[ 6688.738852]  arch_timer_handler_phys+0x38/0x58
+[ 6688.743246]  handle_percpu_devid_irq+0x90/0x2b8
+[ 6688.747727]  generic_handle_irq+0x34/0x50
+[ 6688.751692]  __handle_domain_irq+0x68/0xc0
+[ 6688.755741]  gic_handle_irq+0x60/0xb0
+...
+[ 6688.767476] WARNING: CPU: 1 PID: 4343 at kernel/sched/sched.h:1146 task_rq_lock+0xc0/0x100
+...
+[ 6688.891511]  task_rq_lock+0xc0/0x100
+[ 6688.895046]  dl_task_timer+0x48/0x2c8
+[ 6688.898666]  __hrtimer_run_queues+0x11c/0x3d0
+[ 6688.902975]  hrtimer_interrupt+0xd8/0x248
+[ 6688.906939]  arch_timer_handler_phys+0x38/0x58
+[ 6688.911334]  handle_percpu_devid_irq+0x90/0x2b8
+[ 6688.915815]  generic_handle_irq+0x34/0x50
+[ 6688.919779]  __handle_domain_irq+0x68/0xc0
+[ 6688.923828]  gic_handle_irq+0x60/0xb0
+...
+[ 6688.944618] WARNING: CPU: 1 PID: 4343 at kernel/sched/sched.h:1146 update_blocked_averages+0x84c/0x9a0
+...
+[ 6689.071664]  update_blocked_averages+0x84c/0x9a0
+[ 6689.076231]  run_rebalance_domains+0x74/0xb0
+[ 6689.080452]  __do_softirq+0x154/0x3f0
+[ 6689.084074]  irq_exit+0xf0/0xf8
+[ 6689.087178]  __handle_domain_irq+0x6c/0xc0
+[ 6689.091228]  gic_handle_irq+0x60/0xb0
+...
+[ 6689.303143] WARNING: CPU: 1 PID: 4343 at kernel/sched/sched.h:1146 __schedule+0x478/0x698
+...
+[ 6689.440861]  __schedule+0x478/0x698
+[ 6689.444310]  schedule+0x38/0xc0
+[ 6689.447416]  do_notify_resume+0x88/0x380
+[ 6689.451294]  work_pending+0x8/0x14
+...
+[ 6689.459256] *** ---> migrate_dl_task() p=[thread0-3 4343] to CPU-1
+
+> 
+>> [   88.586991] *** ---> migrate_dl_task() p=[thread0-3 3627] to CPU1
+> 
+> But yes, something like this. Basucally I want to avoid calling
+> queue_balance_callback() from a context where we'll not follow up with
+> balance_callback().
+
+Understood.
