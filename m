@@ -2,92 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A61D664FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 03:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40F764FE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 03:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfGKBaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 21:30:52 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36216 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfGKBaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 21:30:52 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r6so4190014oti.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 18:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=v8YmqnZy7cNZZkqdHaAzFqZ/4ClvKDuEWjE1NKxrAzQ=;
-        b=B9889ylASj/fgIUKGlw1WfG0OyOzUIg4mnKWIcP8cGINZEZvpk6VN0TBBwGKj0IR88
-         tBvvD65fuZejDdLa8dA6D38c5zp6W0XXLRINhQeuS7+zz567ldD48B7P2B4N3GnVFQ+t
-         7Ha+5pYB6Na8RcAt1bIY3sHAsTqDG/0MD/XIAd1SBDJ41iumgpJpe4rZ7SeJPo0XyX5o
-         2OY2Svc6iqjQXSTTioc7SvP/ROjuoqAYYFXVN27FY+5rKrihtQF6vVSFox+z4UXgh6DG
-         DGRFF5H1ZUNMZ+qCT+XYc2BsWNs8kX70u13EiBlAY0fKOURGAaTzFRIdgZxVHJFKnMBa
-         kG9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=v8YmqnZy7cNZZkqdHaAzFqZ/4ClvKDuEWjE1NKxrAzQ=;
-        b=enbIRWzAmffW8NAakUgj5lIkVekIf8psq94PtX2piuxN/9qVjpT44MyH6tsJs+el3Z
-         VpGOYkLcXJimksn8OQL3w9cLQDdxPIl0xjZ5qT+gxxR1ACbtkhKM9BHNmsbHWS0mn1IU
-         UczHSRwkXU0aOeHyagL4N656CW+VmXn630Biqt0ly3mtr2TnDMcrVNs+No0lvc3gIZII
-         bijawIFosT2h9Yh4ut+cK9TdK3Oh3xIFbTWJcxiCQtQo6yspPqD1BObxN3BgpfRwhoi6
-         6pzMfmajK+ld/wT7JZYcuncLPboULxZC98Af/vogHc6poNP6Isq6eymeUwW6rIWBu5z6
-         +RBw==
-X-Gm-Message-State: APjAAAUXqM7jZOdkNVU3VO2k3rq1CI7ij72lh88JJP2K2NXmmXeajeEi
-        y3zIK47NJbJUuqFbLpX3kfG6gDFOQ/iD+3nI9g==
-X-Google-Smtp-Source: APXvYqxLQc/f39JP65yiQPxdTF5cnWq36G/mgpi/IpVkq2RkkIShvp+leMnXynKHYsjRkY2oQjepRsMf/dFGPJjKw88=
-X-Received: by 2002:a05:6830:1698:: with SMTP id k24mr1159488otr.323.1562808651467;
- Wed, 10 Jul 2019 18:30:51 -0700 (PDT)
+        id S1727922AbfGKBcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 21:32:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33465 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726627AbfGKBcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 21:32:07 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kdnw1qSVz9sNH;
+        Thu, 11 Jul 2019 11:32:03 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562808724;
+        bh=oXURTSiso/pbVdpPreT7AFrzmlXmw+vBMmU79HOlTME=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qSzfKBCTGwmP991UTGYRzZTQYDWLmTcPIgR3+9wMEwweCw98cc8PUp7mSxqxK9Y1M
+         5hNhb9SXsvDRtE0Z3r0yVg54szWyA7DaNZpGzlhjSxsKuU4mj1fHSOdz6LGAy46pZD
+         v54vj8OGH69vfNH0Z59Bxgf3jtX5pKXyMAvPVjjFTSulHmMQcRy2KzYhZKe3irHxA+
+         JrlPlMcBNw5fzUz+hAyajkDEYNzKecQNpT7k/ewf2tS/NASYoaF/rdVIPvT7E+eZJS
+         I3OHb02hplukt/kF1AgINz/Dkqql6edX1Q29Tb/FYaDdZpvyuwr3JHua5rhCOTuHN6
+         Sxxrdl9ecst7Q==
+Date:   Thu, 11 Jul 2019 11:31:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>
+Subject: linux-next: build warning after merge of the pm tree
+Message-ID: <20190711113138.22d6f93e@canb.auug.org.au>
 MIME-Version: 1.0
-Received: by 2002:a4a:80c9:0:0:0:0:0 with HTTP; Wed, 10 Jul 2019 18:30:50
- -0700 (PDT)
-From:   "Mrs.Ivvone Balakiwal" <ivvone.balakiwal01@gmail.com>
-Date:   Wed, 10 Jul 2019 18:30:50 -0700
-X-Google-Sender-Auth: 0gdF6WuvdQbYuWa6WXQ515yKXVE
-Message-ID: <CAKZn0EhE=oMptWPVQbFhMUzjj91km3W13L7i4hO6hu2jiZumaw@mail.gmail.com>
-Subject: I WANT YOU TO USE THIS DONATION TO HELP THE POOR URGENT.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3vRJGYp3R3UPDj_5cp+7Fv8"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Sincere Greetings ,
+--Sig_/3vRJGYp3R3UPDj_5cp+7Fv8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I am  Mrs  Ivvone Davida Balakiwal, I decided to donate what I have to
-you for investment towards the good work of charity organization, and
-also to help the motherless and the less privileged ones and to carry
-out a charitable works in your Country and around the World on my
-Behalf.
+Hi all,
 
-I am diagnosing of throat Cancer, hospitalize for good 2 years and
-some months now and quite obvious that I have few days to live, and I
-am a Widow no child; I decided to will/donate the sum of $ 9.5 million
-to you for the good work of God, and also to help the motherless and
-less privilege and also forth assistance of the widows. At the moment
-I can not take any telephone calls right now due to the fact that my
-relatives (that have squandered the funds for this purpose before) are
-around me and my health status also. I have adjusted my will and my
-lawyer is aware.
+After merging the pm tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-I have willed those properties to you by quoting my Personal File
-Routing and Account Information. And I have also notified the bank
-that I am willing that properties to you for a good, effective and
-prudent work.
+drivers/cpufreq/pasemi-cpufreq.c: In function 'pas_cpufreq_cpu_init':
+drivers/cpufreq/pasemi-cpufreq.c:199:1: warning: label 'out_unmap_sdcpwr' d=
+efined but not used [-Wunused-label]
+ out_unmap_sdcpwr:
+ ^~~~~~~~~~~~~~~~
 
-It is right to say that I have been directed to do this by God.
+Introduced by commit
 
-I will be going in for a surgery soon and I want to make sure that I
-make this donation before undergoing this surgery. I will need your
-support to make this dream come through, could you let me know your
-interest to enable me give you further information.And I hereby advice
-to contact me by this email address  (
-mrslvvonebalakiwal02@citromail.hu )
+  f43e075f7252 ("cpufreq/pasemi: fix an use-after-free in pas_cpufreq_cpu_i=
+nit()")
 
-Looking forward to hearing from you  soon,
+--=20
+Cheers,
+Stephen Rothwell
 
-Yours sincerely,
-Mrs Ivvone Davida Balakiwal
+--Sig_/3vRJGYp3R3UPDj_5cp+7Fv8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mkXoACgkQAVBC80lX
+0GzTgQgAhXBqd+IIy62deac3C7XwkUnWtyLPBbWLFUvlAW8qU/1DbVMDDbzDND6s
+hLWcFA9BQ/5gHNQAOlbIX/RU3bmtsPYl9Z5Y7rk7LkJV6Bk85JHje2DLxeMy9mo+
+CGKKtHOjRgGyU3piVIbCNeXfgNR30cKBlQ1Yb5afJ/++JWC1zc1usnu9QbRMfCK/
+q9dnmOU1HF1B/LIuziRyva/RAZhJ5XiaQh/wYIAeSS8jRIhIHkBrgDiTCzt6U+Ww
+I8BeI4BRG3uMv/7nVarUoNYZhPhrPYc3pqFZFrUfCpxsyq7liKZgJe/FhSgBCVLT
+B2/PLhKOJtAaIXSvFuDHsfsxKvObRQ==
+=z8J0
+-----END PGP SIGNATURE-----
+
+--Sig_/3vRJGYp3R3UPDj_5cp+7Fv8--
