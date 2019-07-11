@@ -2,217 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8853466190
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C342E661AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfGKWYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 18:24:17 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:51051 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbfGKWYN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 18:24:13 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45l9Zf61F5z1rGSB;
-        Fri, 12 Jul 2019 00:24:10 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45l9Zf5mS8z1qqkC;
-        Fri, 12 Jul 2019 00:24:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Qn7ffnkYmm1F; Fri, 12 Jul 2019 00:24:09 +0200 (CEST)
-X-Auth-Info: uf+vXaAjZNMEvBgcK/vglH6UHJmHersBNWwew3z5VDI=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 12 Jul 2019 00:24:09 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-input@vger.kernel.org, Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v2 3/3] input: touchscreen mc13xxx: Add mc34708 support
-Date:   Fri, 12 Jul 2019 00:23:46 +0200
-Message-Id: <20190711222346.5245-4-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190711222346.5245-1-lukma@denx.de>
-References: <20190711222346.5245-1-lukma@denx.de>
+        id S1729151AbfGKW0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 18:26:53 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42749 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728897AbfGKW0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 18:26:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 15:26:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,480,1557212400"; 
+   d="scan'208";a="317815388"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2019 15:26:52 -0700
+Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.206]) by
+ FMSMSX108.amr.corp.intel.com ([169.254.9.235]) with mapi id 14.03.0439.000;
+ Thu, 11 Jul 2019 15:26:52 -0700
+From:   "Souza, Jose" <jose.souza@intel.com>
+To:     "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Intel-gfx] screen freeze with 5.2-rc6 Dell XPS-13 skylake i915
+Thread-Topic: [Intel-gfx] screen freeze with 5.2-rc6 Dell XPS-13 skylake i915
+Thread-Index: AQHVN8s6u18XhfEo0kuWcj/kjNqW06bGT1sAgAAD6QCAAADBAIAAGPCAgAAIRAA=
+Date:   Thu, 11 Jul 2019 22:26:50 +0000
+Message-ID: <dad073fb4b06cf0abb7ab702a9474b9c443186eb.camel@intel.com>
+References: <1561834612.3071.6.camel@HansenPartnership.com>
+         <156283735757.12757.8954391372130933707@skylake-alporthouse-com>
+         <1562875878.2840.0.camel@HansenPartnership.com>
+         <27a5b2ca8cfc79bf617387a363ea7192acc4e1f0.camel@intel.com>
+         <1562876880.2840.12.camel@HansenPartnership.com>
+         <1562882235.13723.1.camel@HansenPartnership.com>
+In-Reply-To: <1562882235.13723.1.camel@HansenPartnership.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.24.9.133]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <19D31CD4DB5B1444B4B3CA7D1E2267A9@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
-
-The mc34708 has a different bit to enable pen detection. This
-adds the driver data and devtype necessary to probe the device
-and to distinguish between the mc13783 and the mc34708.
-
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-
----
-Changes for v2:
-- Change nested if statements to a single one (with cr0 > ...)
-- Replace hardcoded max resistance value (4080) with a generic driver data
-  value.
-- Introduce new include/linux/mfd/mc34708.h header file for mc34708 specific
-  defines
-- Define as driver data mask and value for accessing mc13xxx registers
-
-Changes from the original patch:
-- Simplify the mcXXXXX_set_pen_detection functions
-- Fix checkpatch warnings
----
- drivers/input/touchscreen/mc13783_ts.c | 59 +++++++++++++++++++++++++++++++---
- 1 file changed, 55 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/touchscreen/mc13783_ts.c b/drivers/input/touchscreen/mc13783_ts.c
-index edd49e44e0c9..8fd3d0e47f57 100644
---- a/drivers/input/touchscreen/mc13783_ts.c
-+++ b/drivers/input/touchscreen/mc13783_ts.c
-@@ -10,6 +10,7 @@
-  */
- #include <linux/platform_device.h>
- #include <linux/mfd/mc13783.h>
-+#include <linux/mfd/mc34708.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/input.h>
-@@ -30,6 +31,8 @@ MODULE_PARM_DESC(sample_tolerance,
- 		"is supposed to be wrong and is discarded.  Set to 0 to "
- 		"disable this check.");
- 
-+struct mc13xxx_driver_data;
-+
- struct mc13783_ts_priv {
- 	struct input_dev *idev;
- 	struct mc13xxx *mc13xxx;
-@@ -37,6 +40,33 @@ struct mc13783_ts_priv {
- 	unsigned int sample[4];
- 	u8 ato;
- 	bool atox;
-+	struct mc13xxx_driver_data *drvdata;
-+};
-+
-+enum mc13xxx_type {
-+	MC13XXX_TYPE_MC13783,
-+	MC13XXX_TYPE_MC34708,
-+};
-+
-+struct mc13xxx_driver_data {
-+	enum mc13xxx_type type;
-+	int max_resistance;
-+	u32 reg_mask;
-+	u32 reg_value;
-+};
-+
-+static struct mc13xxx_driver_data mc13783_driver_data = {
-+	.type = MC13XXX_TYPE_MC13783,
-+	.max_resistance = 4096,
-+	.reg_mask = MC13XXX_ADC0_TSMOD_MASK,
-+	.reg_value = MC13XXX_ADC0_TSMOD0,
-+};
-+
-+static struct mc13xxx_driver_data mc34708_driver_data = {
-+	.type = MC13XXX_TYPE_MC34708,
-+	.max_resistance = 4080,
-+	.reg_mask = MC34708_ADC0_TSMASK,
-+	.reg_value = MC34708_ADC0_TSPENDETEN,
- };
- 
- static irqreturn_t mc13783_ts_handler(int irq, void *data)
-@@ -93,6 +123,10 @@ static void mc13783_ts_report_sample(struct mc13783_ts_priv *priv)
- 
- 	cr0 = (cr0 + cr1) / 2;
- 
-+	if (priv->drvdata->type == MC13XXX_TYPE_MC34708 &&
-+	    cr0 > priv->drvdata->max_resistance)
-+		cr0 = 0;
-+
- 	if (!cr0 || !sample_tolerance ||
- 			(x2 - x0 < sample_tolerance &&
- 			 y2 - y0 < sample_tolerance)) {
-@@ -102,14 +136,14 @@ static void mc13783_ts_report_sample(struct mc13783_ts_priv *priv)
- 			input_report_abs(idev, ABS_Y, y1);
- 
- 			dev_dbg(&idev->dev, "report (%d, %d, %d)\n",
--					x1, y1, 0x1000 - cr0);
-+				x1, y1, priv->drvdata->max_resistance - cr0);
- 			schedule_delayed_work(&priv->work, HZ / 50);
- 		} else {
- 			dev_dbg(&idev->dev, "report release\n");
- 		}
- 
- 		input_report_abs(idev, ABS_PRESSURE,
--				cr0 ? 0x1000 - cr0 : cr0);
-+				 cr0 ? priv->drvdata->max_resistance - cr0 : 0);
- 		input_report_key(idev, BTN_TOUCH, cr0);
- 		input_sync(idev);
- 	} else {
-@@ -146,7 +180,8 @@ static int mc13783_ts_open(struct input_dev *dev)
- 		goto out;
- 
- 	ret = mc13xxx_reg_rmw(priv->mc13xxx, MC13XXX_ADC0,
--			MC13XXX_ADC0_TSMOD_MASK, MC13XXX_ADC0_TSMOD0);
-+			      priv->drvdata->reg_mask,
-+			      priv->drvdata->reg_value);
- 	if (ret)
- 		mc13xxx_irq_free(priv->mc13xxx, MC13XXX_IRQ_TS, priv);
- out:
-@@ -160,7 +195,7 @@ static void mc13783_ts_close(struct input_dev *dev)
- 
- 	mc13xxx_lock(priv->mc13xxx);
- 	mc13xxx_reg_rmw(priv->mc13xxx, MC13XXX_ADC0,
--			MC13XXX_ADC0_TSMOD_MASK, 0);
-+			priv->drvdata->reg_mask, 0);
- 	mc13xxx_irq_free(priv->mc13xxx, MC13XXX_IRQ_TS, priv);
- 	mc13xxx_unlock(priv->mc13xxx);
- 
-@@ -172,6 +207,7 @@ static int __init mc13783_ts_probe(struct platform_device *pdev)
- 	struct mc13783_ts_priv *priv;
- 	struct mc13xxx_ts_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct input_dev *idev;
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
- 	int ret = -ENOMEM;
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-@@ -182,6 +218,7 @@ static int __init mc13783_ts_probe(struct platform_device *pdev)
- 	INIT_DELAYED_WORK(&priv->work, mc13783_ts_work);
- 	priv->mc13xxx = dev_get_drvdata(pdev->dev.parent);
- 	priv->idev = idev;
-+	priv->drvdata = (void *)id->driver_data;
- 
- 	if (pdata) {
- 		priv->atox = pdata->atox;
-@@ -228,7 +265,21 @@ static int mc13783_ts_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct platform_device_id mc13xxx_ts_idtable[] = {
-+	{
-+		.name = "mc13783-ts",
-+		.driver_data = (kernel_ulong_t)&mc13783_driver_data,
-+	}, {
-+		.name = "mc34708-ts",
-+		.driver_data = (kernel_ulong_t)&mc34708_driver_data,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(platform, mc13xxx_ts_idtable);
-+
- static struct platform_driver mc13783_ts_driver = {
-+	.id_table	= mc13xxx_ts_idtable,
- 	.remove		= mc13783_ts_remove,
- 	.driver		= {
- 		.name	= MC13783_TS_NAME,
--- 
-2.11.0
-
+T24gVGh1LCAyMDE5LTA3LTExIGF0IDE0OjU3IC0wNzAwLCBKYW1lcyBCb3R0b21sZXkgd3JvdGU6
+DQo+IE9uIFRodSwgMjAxOS0wNy0xMSBhdCAxMzoyOCAtMDcwMCwgSmFtZXMgQm90dG9tbGV5IHdy
+b3RlOg0KPiA+IEkndmUgYWxzbyB1cGRhdGVkIHRvIHRoZSByZWxlYXNlZCA1LjIga2VybmVsIGFu
+ZCBhbSBydW5uaW5nIHdpdGgNCj4gPiB0aGUNCj4gPiBkZWJ1ZyBwYXJhbWV0ZXJzIHlvdSByZXF1
+ZXN0ZWQgLi4uIGJ1dCBzbyBmYXIgbm8gcmVwcm9kdWN0aW9uLg0KPiANCj4gT0ssIGl0J3MgaGFw
+cGVuZWQuICBJJ3ZlIGF0dGFjaGVkIHRoZSBkbWVzZyAoaXQncyA0TUIgdW5jb21wcmVzc2VkKS4g
+DQo+IElzIHRoZXJlIGFueSBvdGhlciBvdXRwdXQgeW91J2QgbGlrZSBmcm9tIHRoZSBtYWNoaW5l
+PyAgSSd2ZSBnb3QgYW4NCj4gc3NoDQo+IHNlc3Npb24gaW50byBpdCBzbyBJIGNhbiB0cnkgYW55
+dGhpbmcuDQoNClRoYW5rcywgY291bGQgeW91IGFsc28gc2hhcmUgdGhlIG91dHB1dCBvZiB0aGlz
+IGFmdGVyIHRoZSBzY3JlZW4NCmZyZWV6ZT8NCg0KL3N5cy9rZXJuZWwvZGVidWcvZHJpLzAvaTkx
+NV9lZHBfcHNyX3N0YXR1cw0KL3N5cy9rZXJuZWwvZGVidWcvZHJpLzAvaTkxNV9kaXNwbGF5X2lu
+Zm8NCi9zeXMva2VybmVsL2RlYnVnL2RyaS8wL2k5MTVfZG1jX2luZm8NCi9zeXMva2VybmVsL2Rl
+YnVnL3BtY19jb3JlL3BhY2thZ2VfY3N0YXRlX3Nob3cNCg0KSXQgZXZlbnR1YWxseSBjb21lcyBi
+YWNrIGZyb20gc2NyZWVuIGZyZWV6ZT8gTGlrZSBtb3ZpbmcgdGhlIG1vdXNlIG9yDQp0eXBpbmcg
+YnJpbmdzIGl0IGJhY2s/DQoNCj4gDQo+IEphbWVzDQo=
