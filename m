@@ -2,127 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A48E2659E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26DBA65A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfGKPEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 11:04:08 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:34798 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbfGKPEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 11:04:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 6BEB8FB03;
-        Thu, 11 Jul 2019 17:04:05 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vble_Z4Bb27E; Thu, 11 Jul 2019 17:04:04 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id D10E042CB4; Thu, 11 Jul 2019 17:04:03 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 17:04:03 +0200
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Robert Chiras <robert.chiras@nxp.com>
-Cc:     Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/10] Improvements and fixes for mxsfb DRM driver
-Message-ID: <20190711150403.GB23195@bogon.m.sigxcpu.org>
-References: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
+        id S1728978AbfGKPMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 11:12:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48770 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728691AbfGKPMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 11:12:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B00F1AD36;
+        Thu, 11 Jul 2019 15:12:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 560501E43CB; Thu, 11 Jul 2019 17:04:36 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 17:04:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     " Steven J. Magnani " <steve.magnani@digidescorp.com>
+Cc:     Jan Kara <jack@suse.com>,
+        "Steven J . Magnani" <steve@digidescorp.com>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] udf: support 2048-byte spacing of VRS descriptors
+ on 4K media
+Message-ID: <20190711150436.GA2449@quack2.suse.cz>
+References: <20190711133852.16887-1-steve@digidescorp.com>
+ <20190711133852.16887-2-steve@digidescorp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
+In-Reply-To: <20190711133852.16887-2-steve@digidescorp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
-On Wed, Jun 26, 2019 at 04:32:08PM +0300, Robert Chiras wrote:
-> This patch-set improves the use of eLCDIF block on iMX 8 SoCs (like 8MQ, 8MM
-> and 8QXP). Following, are the new features added and fixes from this
-> patch-set:
+On Thu 11-07-19 08:38:52,  Steven J. Magnani  wrote:
+> Some UDF creators (specifically Microsoft, but perhaps others) mishandle
+> the ECMA-167 corner case that requires descriptors within a Volume
+> Recognition Sequence to be placed at 4096-byte intervals on media where
+> the block size is 4K. Instead, the descriptors are placed at the 2048-
+> byte interval mandated for media with smaller blocks. This nonconformity
+> currently prevents Linux from recognizing the filesystem as UDF.
 > 
-> 1. Add support for drm_bridge
-> On 8MQ and 8MM, the LCDIF block is not directly connected to a parallel
-> display connector, where an LCD panel can be attached, but instead it is
-> connected to DSI controller. Since this DSI stands between the display
-> controller (eLCDIF) and the physical connector, the DSI can be implemented
-> as a DRM bridge. So, in order to be able to connect the mxsfb driver to
-> the DSI driver, the support for a drm_bridge was needed in mxsfb DRM
-> driver (the actual driver for the eLCDIF block).
+> Modify the driver to tolerate a misformatted VRS on 4K media.
+> 
+> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 
-So I wanted to test this but with both my somewhat cleaned up nwl
-driver¹ and the nwl driver forward ported from the nxp vendor tree I'm
-looking at a black screen with current mainline - while my dcss forward
-port gives me nice output on mipi dsi. Do you have a tree that uses mipi
-dsi on imx8mq where I could look at to check for differences?
+Thanks for the patches! I've added them to my tree and somewhat simplified
+the logic since we don't really care about nsr 2 vs 3 or whether we
+actually saw BEA or not. Everything seems to work fine for me but I'd
+appreciate if you could doublecheck - the result is pushed out to
 
-Cheers,
- -- Guido
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_next
 
-> 
-> 2. Add support for additional pixel formats
-> Some of the pixel formats needed by Android were not implemented in this
-> driver, but they were actually supported. So, add support for them.
-> 
-> 3. Add support for horizontal stride
-> Having support for horizontal stride allows the use of eLCDIF with a GPU
-> (for example) that can only output resolution sizes multiple of a power of
-> 8. For example, 1080 is not a power of 16, so in order to support 1920x1080
-> output from GPUs that can produce linear buffers only in sizes multiple to 16,
-> this feature is needed.
-> 
-> 3. Few minor features and bug-fixing
-> The addition of max-res DT property was actually needed in order to limit
-> the bandwidth usage of the eLCDIF block. This is need on systems where
-> multiple display controllers are presend and the memory bandwidth is not
-> enough to handle all of them at maximum capacity (like it is the case on
-> 8MQ, where there are two display controllers: DCSS and eLCDIF).
-> The rest of the patches are bug-fixes.
-> 
-> Mirela Rabulea (1):
->   drm/mxsfb: Signal mode changed when bpp changed
-> 
-> Robert Chiras (9):
->   drm/mxsfb: Update mxsfb to support a bridge
->   drm/mxsfb: Update mxsfb with additional pixel formats
->   drm/mxsfb: Fix the vblank events
->   dt-bindings: display: Add max-res property for mxsfb
->   drm/mxsfb: Add max-res property for MXSFB
->   drm/mxsfb: Update mxsfb to support LCD reset
->   drm/mxsfb: Improve the axi clock usage
->   drm/mxsfb: Clear OUTSTANDING_REQS bits
->   drm/mxsfb: Add support for horizontal stride
-> 
->  .../devicetree/bindings/display/mxsfb.txt          |   6 +
->  drivers/gpu/drm/mxsfb/mxsfb_crtc.c                 | 290 ++++++++++++++++++---
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c                  | 189 +++++++++++---
->  drivers/gpu/drm/mxsfb/mxsfb_drv.h                  |  10 +-
->  drivers/gpu/drm/mxsfb/mxsfb_out.c                  |  26 +-
->  drivers/gpu/drm/mxsfb/mxsfb_regs.h                 | 128 ++++++---
->  6 files changed, 531 insertions(+), 118 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Thanks!
 
-¹ https://lists.freedesktop.org/archives/dri-devel/2019-March/209685.html
+								Honza
+> 
+> --- a/fs/udf/super.c	2019-07-10 20:55:33.334359446 -0500
+> +++ b/fs/udf/super.c	2019-07-10 21:20:58.138382326 -0500
+> @@ -741,6 +741,7 @@ static int udf_check_vsd(struct super_bl
+>  	int sectorsize;
+>  	struct buffer_head *bh = NULL;
+>  	int nsr = 0;
+> +	int quirk_nsr = 0;
+>  	struct udf_sb_info *sbi;
+>  
+>  	sbi = UDF_SB(sb);
+> @@ -780,11 +781,27 @@ static int udf_check_vsd(struct super_bl
+>  		if (vsd_id > nsr)
+>  			nsr = vsd_id;
+>  
+> +		/* Special handling for improperly formatted VRS (e.g., Win10)
+> +		 * where components are separated by 2048 bytes
+> +		 * even though sectors are 4K
+> +		 */
+> +		if ((sb->s_blocksize == 4096) && (quirk_nsr < 2)) {
+> +			vsd_id = identify_vsd(vsd + 1);
+> +			if ((nsr == 1) || (quirk_nsr == 1)) {
+> +				/* BEA01 has been seen, allow quirk NSR */
+> +				if (vsd_id > quirk_nsr)
+> +					quirk_nsr = vsd_id;
+> +			} else if (vsd_id > 3)
+> +				quirk_nsr = vsd_id;  /* 0 -> 255 */
+> +		}
+> +
+>  		brelse(bh);
+>  	}
+>  
+>  	if ((nsr >= 2) && (nsr <= 3))
+>  		return nsr;
+> +	else if ((quirk_nsr >= 2) && (quirk_nsr <= 3))
+> +		return quirk_nsr;
+>  	else if (!bh && sector - (sbi->s_session << sb->s_blocksize_bits) ==
+>  			VSD_FIRST_SECTOR_OFFSET)
+>  		return -1;
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
