@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E50665F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 20:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BFB865F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 20:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfGKSfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 14:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44258 "EHLO mail.kernel.org"
+        id S1728825AbfGKSfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 14:35:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729042AbfGKSfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 14:35:07 -0400
-Subject: Re: [GIT PULL] clone3 for v5.3
+        id S1729062AbfGKSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 14:35:09 -0400
+Subject: Re: [GIT] Networking
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562870107;
-        bh=F2k0I3YJr1cB+GClQEeL2TgwA20r6xaiCbx0tiNOvwY=;
+        s=default; t=1562870108;
+        bh=03dy95pU7hXFx0fAu7RHVL86NqSjTwLfiuVRhxYHBV4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JLJh5lqdxz70+igfz7K4pZ8d+rgY8IaPdN3cKVDmJtdYA0nWgj/jVOiaYXEimG/mi
-         kCLNwAC/T797KXM1jmz19/uyAP9v14r5adKxG/iBDheot5bb+u0ERkU/y0grhIr16s
-         QolIZ2VPQzqTc8SjWoQyL1CyswJcDcaSfSi0iiKk=
+        b=2HevMoJvXN8gUJNvzN0GsMmI2bxrdw9IDYPSZox3AOfskPSpsLG+j/3Mj9vEwTHLw
+         wKXyFbgT672KO2uey5jJqV7BiCxNUBOLjHjzepvvlZwEMHhFHxDiTX39floIh+byTR
+         vqFHSmdMadY2YZXhDmXUwvMaruvT9Pm+9SyNKhxE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190708150042.11590-1-christian@brauner.io>
-References: <20190708150042.11590-1-christian@brauner.io>
+In-Reply-To: <20190709.223834.2182721912834033108.davem@davemloft.net>
+References: <20190709.223834.2182721912834033108.davem@davemloft.net>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190708150042.11590-1-christian@brauner.io>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux
- tags/clone3-v5.3
-X-PR-Tracked-Commit-Id: d68dbb0c9ac8b1ff52eb09aa58ce6358400fa939
+X-PR-Tracked-Message-Id: <20190709.223834.2182721912834033108.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 1ff2f0fa450ea4e4f87793d9ed513098ec6e12be
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8f6ccf6159aed1f04c6d179f61f6fb2691261e84
-Message-Id: <156287010730.13847.13561875228958547242.pr-tracker-bot@kernel.org>
-Date:   Thu, 11 Jul 2019 18:35:07 +0000
-To:     Christian Brauner <christian@brauner.io>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: 237f83dfbe668443b5e31c3c7576125871cca674
+Message-Id: <156287010833.13847.17387879259053198434.pr-tracker-bot@kernel.org>
+Date:   Thu, 11 Jul 2019 18:35:08 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon,  8 Jul 2019 17:00:42 +0200:
+The pull request you sent on Tue, 09 Jul 2019 22:38:34 -0700 (PDT):
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/clone3-v5.3
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git refs/heads/master
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8f6ccf6159aed1f04c6d179f61f6fb2691261e84
+https://git.kernel.org/torvalds/c/237f83dfbe668443b5e31c3c7576125871cca674
 
 Thank you!
 
