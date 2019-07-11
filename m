@@ -2,206 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBBD365310
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C65016531B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfGKIXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 04:23:14 -0400
-Received: from mail2.protonmail.ch ([185.70.40.22]:14050 "EHLO
-        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbfGKIXN (ORCPT
+        id S1728179AbfGKI0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 04:26:50 -0400
+Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:40729 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725963AbfGKI0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 04:23:13 -0400
-Date:   Thu, 11 Jul 2019 08:23:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-        s=protonmail; t=1562833387;
-        bh=OgHruR/8hfMeDLBEYOwTfEFvnoOfeQ+NrS6TSnWjCWk=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=SlDVAnVKjXvtCtdhhuGUULsRsWC7yAqQBVTnYK7yRVQc2vMteYxJVBeWVGzSS16l2
-         +p9wz52SNGKHSNlFHO8AZezeqp7jHI1IHE5w0V4mvby2GFqz/j1b8UG4ZqUsbOjNy6
-         a80rBN+Hy//KJ1kRcs1jPm45NC5xqkUhcJuQoaLM=
-To:     Daniel Vetter <daniel@ffwll.ch>
-From:   Simon Ser <contact@emersion.fr>
-Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Reply-To: Simon Ser <contact@emersion.fr>
-Subject: Re: [PATCH V3 3/5] drm/vkms: Decouple crc operations from composer
-Message-ID: <3btolF-iC_bUcyzo-zi59zM7NaH48sTEQkbB-TAKZJOsm8DkUq4LhpApi6Mep0npPQ-slnIzxQfoatEXDVQi-H6Ypv-zwcctRvimXF0TZAo=@emersion.fr>
-In-Reply-To: <20190711081913.GH15868@phenom.ffwll.local>
-References: <cover.1561491964.git.rodrigosiqueiramelo@gmail.com>
- <6e8a03dc7c666ee998ee36172a96cff39f8dd46d.1561491964.git.rodrigosiqueiramelo@gmail.com>
- <20190711081913.GH15868@phenom.ffwll.local>
-Feedback-ID: FsVprHBOgyvh0T8bxcZ0CmvJCosWkwVUg658e_lOUQMnA9qynD8O1lGeniuBDfPSkDAUuhiKfOIXUZBfarMyvA==:Ext:ProtonMail
+        Thu, 11 Jul 2019 04:26:49 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9D6DB100E86C8;
+        Thu, 11 Jul 2019 08:26:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3867:3868:3870:4321:5007:7875:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: suit25_5871eab84d660
+X-Filterd-Recvd-Size: 1586
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 11 Jul 2019 08:26:47 +0000 (UTC)
+Message-ID: <acf9141ed9e4c33585a9784d14a6b95ec58558c8.camel@perches.com>
+Subject: Re: [PATCH v2] gnss: core: added logging statement when kfifo_alloc
+ fails
+From:   Joe Perches <joe@perches.com>
+To:     Keyur Patel <iamkeyur96@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Thu, 11 Jul 2019 01:26:46 -0700
+In-Reply-To: <20190709235957.2481-1-iamkeyur96@gmail.com>
+References: <61c2ba4e229a6971e90627433bedae2dd28ea6a1.camel@perches.com>
+         <20190709235957.2481-1-iamkeyur96@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, July 11, 2019 11:19 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> Aside: This all kinda doesn't go in the right direction for
-> high-performance composing, so I guess I need to get started with typing
-> up what that should look like.
+On Tue, 2019-07-09 at 19:59 -0400, Keyur Patel wrote:
+> Added missing logging statement when kfifo_alloc fails, to improve
+> debugging.
+[]
+> Changes in v2:
+> - fixed braces
+[]
+> diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+[]
+> @@ -255,8 +255,10 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+>  	init_waitqueue_head(&gdev->read_queue);
+>  
+>  	ret = kfifo_alloc(&gdev->read_fifo, GNSS_READ_FIFO_SIZE, GFP_KERNEL);
+> -	if (ret)
+> +	if (ret) {
+> +		pr_err("kfifo_alloc failed\n");
+>  		goto err_put_device;
+> +	}
 
-Some related logs from IRC:
+This isn't really necessary as kfifo_alloc just
+calls kmalloc_array and without the __GFP_NOWARN
+flag, already does a dump_stack()
 
-2019-07-10 19:42:49     danvet  ickle, is there an idiot guide to reasonabl=
-e fast blending/composing with the cpu?
-2019-07-10 19:43:13     danvet  for vkms, so maitainability is high on the =
-wishlist, but it needs to be somewhat fast to be able to keep up
-2019-07-10 19:44:02     ickle   pixman for rectangles
-2019-07-10 19:45:00     ickle   if you want reasonably fast, you want simd
-2019-07-10 19:45:16     ickle   so better to use some prebaked library
-2019-07-10 19:45:38     ickle   but within vkms?
-2019-07-10 19:45:48     ickle   or just for igt/vkms?
-2019-07-10 19:46:40     ickle   within vkms for writeback blending I guess
-2019-07-10 19:51:38     ickle   http://paste.debian.net/1091097/
-2019-07-10 19:53:08     ickle   http://paste.debian.net/1091098/
-2019-07-10 19:54:36     emersion        danvet: what are your plans for the=
- compositor refactoring?
-2019-07-10 19:55:21     emersion        are we still really using macros in=
-stead of functions
-2019-07-10 19:56:22     <--     nvishwa1 (~nvishwa1@192.55.54.44) has quit =
-(Remote host closed the connection)
-2019-07-10 19:56:44     emersion        is this coming from pixman, ickle?
-2019-07-10 19:56:50     -->     karolherbst (~kherbst@2a02:8308:b0be:6900:d=
-9e8:6dcd:2f6a:6cb5) has joined #intel-gfx
-2019-07-10 19:57:23     ickle   yes, take it as a reference on how to do ab=
-gr32 premultiplied alpha blending
-2019-07-10 19:57:33     <--     amathes (ajmathes@nat/intel/x-ywywuftprrqnd=
-baj) has quit (Ping timeout: 245 seconds)
-2019-07-10 19:57:48     emersion        yeah, that's a good idea
-2019-07-10 19:57:49     ickle   or argb32 actually
-2019-07-10 19:58:01     emersion        (asking for the source because lice=
-nse)
-2019-07-10 19:58:04     ickle   MIT
-2019-07-10 19:58:07     emersion        nice
-2019-07-10 20:00:12     <--     sandeep (sandeep@nat/intel/x-buwbzkgopszvwb=
-cr) has quit (Remote host closed the connection)
-2019-07-10 20:01:34     danvet  ickle, yeah vkms in the kernel
-2019-07-10 20:02:41     danvet  also might need more than 8 bits ...
-2019-07-10 20:02:57     danvet  and kinda hoped I could just tell gcc to si=
-mdify it for me
-2019-07-10 20:03:23     danvet  emersion, compositor refactoring
-2019-07-10 20:03:46     danvet  ickle, higher level I figured something lik=
-e a fetch fifo in a standard format
-2019-07-10 20:04:02     danvet  with some drm_format->standard format conve=
-rsion tools
-2019-07-10 20:04:08     danvet  and then one blender
-2019-07-10 20:04:39     danvet  and then either add that to the crc and tos=
-s it (again maybe scanline-by-scanline, or whatever fits reasonable into l1=
-$ all together)
-2019-07-10 20:04:44     danvet  or dump it into writeback
-2019-07-10 20:08:25     danvet  https://gcc.gnu.org/onlinedocs/gcc/Vector-E=
-xtensions.html <- this stuff essentially, using generics
-2019-07-10 20:08:38     danvet  *generic intrinsics
-2019-07-10 20:08:49     danvet  or is that going to be real awful?
-2019-07-10 20:09:35     ickle   shouldn't be required for _basic_ blending
-2019-07-10 20:09:52     danvet  yeah I think all we want is premultiplied a=
-lpha
-2019-07-10 20:09:53     ickle   if all you need is an over operator, then g=
-cc should be pretty good
-2019-07-10 20:09:57     <--     sdutt (sdutt@nat/intel/x-zhquyrigdztslyqh) =
-has quit (Ping timeout: 268 seconds)
-2019-07-10 20:09:59     danvet  maybe some yuv->rgb
-2019-07-10 20:10:19     danvet  expanding from whatever silly format we hav=
-e to the right vector
-2019-07-10 20:10:33     emersion        what would be your universal format=
-?
-2019-07-10 20:10:46     danvet  a16r16b16g16
-2019-07-10 20:10:50     danvet  except if gcc barfs on that
-2019-07-10 20:11:02     danvet  or maybe go all in on 4x float :-)
-2019-07-10 20:11:10     emersion        eh
-2019-07-10 20:11:29     emersion        fp16 would work, but would also mea=
-n rounding errors, probably?
-2019-07-10 20:11:35     danvet  uint16 is not going to be awesome for hdr, =
-but good enough for everything else
-2019-07-10 20:11:42     danvet  no cpu has fp16
-2019-07-10 20:11:52     emersion        ah, fp32
-2019-07-10 20:11:57     krh     wait for avx1024
-2019-07-10 20:12:01     emersion        seems kind of overkill
-2019-07-10 20:12:01     danvet  fg32 is probably fastest option we can get =
-on common hw
-2019-07-10 20:12:12     danvet  krh, very much aiming for good enough here
-2019-07-10 20:12:26     ickle   one plan is to sneak ksim into the kernel a=
-s generic gpu-on-x86
-2019-07-10 20:12:52     krh     can the kernel use avx2?
-2019-07-10 20:13:05     danvet  well, all stuff I'd need to figure out
-2019-07-10 20:13:07     danvet  I hope so
-2019-07-10 20:13:12     ickle   it can
-2019-07-10 20:13:19     ickle   easier than mmx
-2019-07-10 20:13:49     emersion        when you say gcc barfs on a16r16b16=
-g16: why?
-2019-07-10 20:13:57     danvet  kernel_fpu_begin/end + telling gcc to optim=
-ize the crap out of the file with the blending functions
-2019-07-10 20:14:11     emersion        uint64 too hard for gcc to optimize=
-?
-2019-07-10 20:14:14     danvet  emersion, I haven't checked, but if it gene=
-rates silly code then might be better to go with fp32
-2019-07-10 20:14:28     vsyrjala        the compiler always generates silly=
- code
-2019-07-10 20:14:30     danvet  ideally it should all boil down to sse/avx
-2019-07-10 20:14:32     emersion        ahah
-2019-07-10 20:14:51     danvet  and ideally all with generic intrinsics so =
-the arm folks don't freak out
-2019-07-10 20:15:07     -->     sandeep (~sandeep@134.134.139.76) has joine=
-d #intel-gfx
-2019-07-10 20:15:23     emersion        +1 for generic intrinsics
-2019-07-10 20:15:42     danvet  the conversion from uint to fp32 might be h=
-ilarious
-2019-07-10 20:15:50     emersion        yeah, probably
-2019-07-10 20:15:52     danvet  perhaps the one place where we want to use =
-an sse or avx intrinsic
-2019-07-10 20:16:19     danvet  especially if we convert to simd16 instead =
-of something like 4x4
-2019-07-10 20:16:22     emersion        we should probably do some little e=
-xperiments before doing anything
-2019-07-10 20:16:24     danvet  simd4x4
-2019-07-10 20:16:31     danvet  yeah
-2019-07-10 20:16:41     danvet  that's why I'm asking here, since I have ro=
-ughly 0 clue about this
-2019-07-10 20:17:48     danvet  I don't think we ever need a dot or anythin=
-g like that, so plain simd is propably best
-2019-07-10 20:18:07     danvet  except the input is usually 4x or 3x vector=
-s
-2019-07-10 20:18:07     emersion        a dot?
-2019-07-10 20:18:12     danvet  dot product
-2019-07-10 20:18:14     emersion        ah
-2019-07-10 20:18:15     danvet  for vertex shaders
-2019-07-10 20:18:20     emersion        yeah, probably not
-2019-07-10 20:18:21     bwidawsk        danvet=E2=80=BA btw, I think "gener=
-ic intrinsic" is an ARM thing
-2019-07-10 20:18:29     bwidawsk        I think everywhere else, they just =
-say intrinsic
-2019-07-10 20:18:41     bwidawsk        at least, I've never heard the gene=
-ric prefix other than ARM compiler
-2019-07-10 20:19:19     vsyrjala        just make the max supported resolut=
-ion 8x8 or something and speed shouldn't be a huge issue
-2019-07-10 20:19:30     emersion        i think he meant generic intrinsic =
-vs. sse/avx/whatever
-2019-07-10 20:19:49     bwidawsk        emersion=E2=80=BA yes, I figured ou=
-t what he meant, I just mentioned it because it was a source of confusion
-2019-07-10 20:19:52     emersion        vsyrjala, helpful as always :)
-2019-07-10 20:20:32     danvet  oh gcc has all the casting implementing in =
-the intrinsics too
-2019-07-10 20:20:50     danvet  bwidawsk, gcc manpage also calls them gener=
-ic intrinsics
-2019-07-10 20:21:25     bwidawsk        danvet=E2=80=BA not my gcc manpage
-2019-07-10 20:21:40     danvet  well "generic vector operations"
-2019-07-10 20:21:46     danvet  ^^ that what you meant?
-2019-07-10 20:22:03     danvet  vs "machine-specific vector intrinsics"
-2019-07-10 20:22:38     bwidawsk        I thought the generic intrinsic ter=
-m came from ARM's proprietary compiler
-2019-07-10 20:22:40     bwidawsk        but I might be wrong
 
