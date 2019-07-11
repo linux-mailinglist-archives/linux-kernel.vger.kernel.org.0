@@ -2,118 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D5A66187
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B645A66195
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 00:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbfGKWVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 18:21:46 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:49187 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfGKWVq (ORCPT
+        id S1728735AbfGKW0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 18:26:12 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39663 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbfGKW0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 18:21:46 -0400
+        Thu, 11 Jul 2019 18:26:11 -0400
+Received: by mail-io1-f66.google.com with SMTP id f4so16157019ioh.6;
+        Thu, 11 Jul 2019 15:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1562883705; x=1594419705;
-  h=from:to:cc:subject:date:message-id;
-  bh=3gnH5RFwGHOCrCZhZO/bJsPHw0TAU3IEAqyti5ky+0M=;
-  b=jFh0b+rrOlEV53NkaPH2Zz2Dxoo1rzVS0A1vSaP93NahysuwWnsMPkh9
-   G+ztqHCKmK9PXxjCn1KSKMBUHKyWd21Y/NgJFl9+Yy6m7hdzFYq2itCW2
-   qSp6FCAmmfqlu/oCtbGlNR8YTmfjjau6mtrRkYesWXEUqco6eH9Ucb1N2
-   4=;
-X-IronPort-AV: E=Sophos;i="5.62,480,1554768000"; 
-   d="scan'208";a="741422169"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-715bee71.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 11 Jul 2019 22:21:43 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1a-715bee71.us-east-1.amazon.com (Postfix) with ESMTPS id 976E5A17B3;
-        Thu, 11 Jul 2019 22:21:38 +0000 (UTC)
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x6BMLYLt019252;
-        Fri, 12 Jul 2019 00:21:34 +0200
-Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x6BMLWVb019247;
-        Fri, 12 Jul 2019 00:21:32 +0200
-From:   KarimAllah Ahmed <karahmed@amazon.de>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH] arm: Extend the check for RAM in /dev/mem
-Date:   Fri, 12 Jul 2019 00:21:21 +0200
-Message-Id: <1562883681-18659-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=//GbfNQFeqgDcbJ1hHRw+XupgUCwVwlP6Am4Bl3mG/I=;
+        b=pEMY1jdNGbOqbUrcul/V8M56+8qKmbj4aihnPtjDq+H/i0Rvp3BuAy2Hgr5Py6ljBT
+         4UzfCGKSfyOz4f/tY6kSAZLFZfKQUHFjbV47k03ODkyb3TYOiCNSSV0RZ1K3zbGcauES
+         ICx8/BoHPEL4MEyCyPC2Acgg1UlQHmmTbziOXPAl4CCPejJiJlZG8kCcXa+rSpZ/6jQl
+         Ko/d4EyWuuQlRNeDZrIosJZ3E2cFbxpEz5RRhIJ9J05ri/HIC+SmYJVuT7z0Zi+YcIK6
+         LoJsFcO8Ye5EcbGVitdjhu63/LHCzQ2JVJ61coab3i7BON55/b9qp+zxhRtzgfCluhsT
+         XzsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=//GbfNQFeqgDcbJ1hHRw+XupgUCwVwlP6Am4Bl3mG/I=;
+        b=JCXFhtINyW12j4aZxR94oqXIPc/4nHhC5Clpkv2Cnsmr03NZPjIuSnSnB1qxPkC3bW
+         sk0asKbd2C0r6n5ghCj2kpnDYwBmqytkvcjOe2rhs3ikm6BGnB1t8i5sssA06R5PTbsP
+         doq4mdssrKDp3MIZTTn1h8rBevF+JkCIORZ1+CeEJfivepmPPAKwBM6t3wP2CClHEpfT
+         De3lYRP/YmlFu910NUoeqY3AxmwFjAqS95bXSlSVOtzDE8ae9afNUR2nY3umOSuY/wj5
+         0FKFoWBTyojlFyljAplRnNN2waEnkVihUEGWoFdUxLo65SGNinD8WlbcRmCziZ2j8nc+
+         +zPw==
+X-Gm-Message-State: APjAAAVR4cTd2TbTfqAJYAR2FSYE5lRGrog6ebes+JIMi9eogR1fv36o
+        mUaqQ4cKA/q7P0HbJEFHmuq1hrqKuqpjlg==
+X-Google-Smtp-Source: APXvYqye7LRVHFTjuTXpJZfnWcFFmsqukrcko1gp8ao88MyyjMJtaQwADKkDvosJCAJ1xNX3+MWKLA==
+X-Received: by 2002:a5e:c302:: with SMTP id a2mr3204268iok.62.1562883970755;
+        Thu, 11 Jul 2019 15:26:10 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id s2sm4478982ioj.8.2019.07.11.15.26.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 15:26:10 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org
+Cc:     skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skunberg.kelsey@gmail.com
+Subject: [PATCH 00/11] PCI: Move symbols to drivers/pci/pci.h
+Date:   Thu, 11 Jul 2019 16:23:30 -0600
+Message-Id: <20190711222341.111556-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some valid RAM can live outside kernel control (e.g. using mem= kernel
-command-line). For these regions, pfn_valid would return "false" causing
-system RAM to be mapped as uncached. Use memblock instead to identify RAM.
+Move symbols defined in include/linux/pci.h that are only used in
+drivers/pci/ to drivers/pci/pci.h.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Anders Roxell <anders.roxell@linaro.org>
-Cc: Enrico Weigelt <info@metux.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Jun Yao <yaojun8558363@gmail.com>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
----
- arch/arm/mm/mmu.c   | 2 +-
- arch/arm64/mm/mmu.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Symbols only used in drivers/pci/ do not need to be visible to the rest of
+the kernel.
 
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index 1aa2586..492774b 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -705,7 +705,7 @@ static void __init build_mem_type_table(void)
- pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 			      unsigned long size, pgprot_t vma_prot)
- {
--	if (!pfn_valid(pfn))
-+	if (!memblock_is_memory(__pfn_to_phys(pfn)))
- 		return pgprot_noncached(vma_prot);
- 	else if (file->f_flags & O_SYNC)
- 		return pgprot_writecombine(vma_prot);
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 3645f29..cdc3e8e 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -78,7 +78,7 @@ void set_swapper_pgd(pgd_t *pgdp, pgd_t pgd)
- pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 			      unsigned long size, pgprot_t vma_prot)
- {
--	if (!pfn_valid(pfn))
-+	if (!memblock_is_memory(__pfn_to_phys(pfn)))
- 		return pgprot_noncached(vma_prot);
- 	else if (file->f_flags & O_SYNC)
- 		return pgprot_writecombine(vma_prot);
+Kelsey Skunberg (11):
+  PCI: Move #define PCI_PM_* lines to drivers/pci/pci.h
+  PCI: Move PME declarations to drivers/pci/pci.h
+  PCI: Move *_host_bridge_device() declarations to drivers/pci.pci.h
+  PCI: Move PCI Virtual Channel declarations to drivers/pci/pci.h
+  PCI: Move pci_hotplug_*_size declarations to drivers/pci/pci.h
+  PCI: Move pci_bus_* declarations to drivers/pci/pci.h
+  PCI: Move pcie_update_link_speed() to drivers/pci/pci.h
+  PCI: Move pci_ats_init() to drivers/pci/pci.h
+  PCI: Move ECRC declarations to drivers/pci/pci.h
+  PCI: Move PTM declaration to drivers/pci/pci.h
+  PCI: Move pci_*_node() declarations to drivers/pci/pci.h
+
+ drivers/pci/pci.h   | 48 ++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/pci.h | 47 --------------------------------------------
+ 2 files changed, 45 insertions(+), 50 deletions(-)
+
 -- 
-2.7.4
+2.20.1
 
