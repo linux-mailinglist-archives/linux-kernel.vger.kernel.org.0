@@ -2,232 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DDC465404
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5779653F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfGKJl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:41:26 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46288 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728024AbfGKJl0 (ORCPT
+        id S1728317AbfGKJkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:40:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55176 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbfGKJkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:41:26 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c2so2714810plz.13
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 02:41:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=1YMFnSIgg1DHJY24b0rxS4qqzRa8py30TgHfkWCjNTg=;
-        b=OhOFswUdud1A4rTKoy+cbrht+DidJ4xxRCjN/InY0dg6JLBuEHug2PMDxsBxo1ZPxn
-         Ur+TafII3DL6Du+rfpKt9FjKbldXRneYtD/mBGwCJSBJyuZTALR9b+GtpK/uto69VpU7
-         bR1jb+72oHUErJRA0kCfGEbYMcSO2XAuOpMDfSev4dI76hyBB1mpmysw+Pgom5cwCtb/
-         QgZalYf4eEO0SHliya0A0jKinVicMeD17LgQqRMz5UjrPnY8ngS29mB0tzdKQljtYMVE
-         eFi1Mj7S9MEsD0FXMQzVrkfTXYFtLrEsT6YVku7H9LnnZl3bg7szhFDo6ocmjjAwLkQ1
-         tLsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=1YMFnSIgg1DHJY24b0rxS4qqzRa8py30TgHfkWCjNTg=;
-        b=eKgr4YkyynmhpOaKfbHAV1uHYmu8tW+TPmGs95BO4cz7oX0sxGEhl5cNN9iBfiPMqh
-         5oxWG+i0pXzso7OdkfK9EEdEbOhNZ/rnU8l9zBu5BD+j32pzWak04E3vChMCvoHuR0hT
-         d527Gnl/uihd/uUEPEEX9lWX3njeZhpKp6zEbuGUFWOpYJS3lD/1uj/J9wtPqIGQJvnU
-         K0qlACK8icL4lRESz+FoJ5bm2htSH72GLvU/eSECt2TO2TMvMn7t0w7GValksSB/phFw
-         C7hDCf71k4A7AY7XT1m6+RaEhA6OS6jwER95DdR2ooe2sWvo1cpFFQkerHDzC2sL3WIT
-         WrXQ==
-X-Gm-Message-State: APjAAAWBTzSHtZmpjuB9gIDusWs3v2iRSbVE+rz6JvlJOgxNJ9Xr3FjP
-        cNa2e+MyIpaeN5Yr5gUj959tlrH2
-X-Google-Smtp-Source: APXvYqzyb9kNk+e1ZzU1m7c0KyDFA05/2k6XpI8wznSPfdXjqPL3bx29pLtsCsvUL56tFQ7zXRByPA==
-X-Received: by 2002:a17:902:5ac4:: with SMTP id g4mr3686841plm.80.1562838085053;
-        Thu, 11 Jul 2019 02:41:25 -0700 (PDT)
-Received: from localhost (193-116-118-149.tpgi.com.au. [193.116.118.149])
-        by smtp.gmail.com with ESMTPSA id r13sm5751370pfr.25.2019.07.11.02.41.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 02:41:24 -0700 (PDT)
-Date:   Thu, 11 Jul 2019 19:38:26 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [v5 2/6] powerpc/mce: Fix MCE handling for huge pages
-To:     linux-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Santosh Sivaraj <santosh@fossix.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <20190709121524.18762-1-santosh@fossix.org>
-        <20190709121524.18762-3-santosh@fossix.org>
-In-Reply-To: <20190709121524.18762-3-santosh@fossix.org>
+        Thu, 11 Jul 2019 05:40:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ACBC960159; Thu, 11 Jul 2019 09:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562838004;
+        bh=0ssG2GNR8L/+/10jXcM2XYnH8GTmRCIhHCfYEyrmC/k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EIiddrbXCHEs/KMWWFvs3Rn7jxtmZW0YCwgZ1sNths5dqmNLuEM2UgniiotNdE6qJ
+         OSthxSlePOoiEjm9i2Gd9NlpIvr2EQVhTf/HMW8UZaC9MgSiP9CF01JmIrEJCaQX2+
+         eIuNTlGnCAcQatuYRUPy3kdfWAew8D9r7raUiBxU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.43.141] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5AA8060159;
+        Thu, 11 Jul 2019 09:39:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562838003;
+        bh=0ssG2GNR8L/+/10jXcM2XYnH8GTmRCIhHCfYEyrmC/k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Zu0TjO2NTVBlKFtxKpxwS3EHPfiDH1CyM/Z/AQ/N8KJoe6XxRg6o3y3E+bTYaXOcL
+         MKHEiEXpIGm3xyECqSUcpxgEk9WT1xdSHpG0Ku9u055z2ylCI4YVCvjS3BMSVfms4b
+         ryChf+200QeX18UmQRIRcj3qMReo3JqYG4wArnIQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AA8060159
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH] opp: Return genpd virtual devices from
+ dev_pm_opp_attach_genpd()
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <027985ce35873cd218298302a1408da06d48458b.1562565567.git.viresh.kumar@linaro.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <2ed7993d-523b-270a-2be9-83ad2426e946@codeaurora.org>
+Date:   Thu, 11 Jul 2019 15:09:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1562837451.yixjktlyjo.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <027985ce35873cd218298302a1408da06d48458b.1562565567.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Santosh Sivaraj's on July 9, 2019 10:15 pm:
-> From: Balbir Singh <bsingharora@gmail.com>
->=20
-> The current code would fail on huge pages addresses, since the shift
-> would be incorrect. Use the correct page shift value returned by
-> __find_linux_pte() to get the correct pfn. The code is more generic
-> and can handle both regular and compound pages.
->=20
-> Fixes: ba41e1e1ccb9 ("powerpc/mce: Hookup derror (load/store) UE errors")
->=20
-> Signed-off-by: Balbir Singh <bsingharora@gmail.com>
-> [arbab@linux.ibm.com: Fixup pseries_do_memory_failure()]
-> Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
-> Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
+
+On 7/8/2019 11:30 AM, Viresh Kumar wrote:
+> The cpufreq drivers don't need to do runtime PM operations on the
+> virtual devices returned by dev_pm_domain_attach_by_name() and so the
+> virtual devices weren't shared with the callers of
+> dev_pm_opp_attach_genpd() earlier.
+> 
+> But the IO device drivers would want to do that. This patch updates the
+> prototype of dev_pm_opp_attach_genpd() to accept another argument to
+> return the pointer to the array of genpd virtual devices.
+> 
+> Reported-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  arch/powerpc/include/asm/mce.h       |  3 ++-
->  arch/powerpc/kernel/mce_power.c      | 26 ++++++++++++++++----------
->  arch/powerpc/platforms/pseries/ras.c |  6 ++++--
->  3 files changed, 22 insertions(+), 13 deletions(-)
->=20
-> diff --git a/arch/powerpc/include/asm/mce.h b/arch/powerpc/include/asm/mc=
-e.h
-> index a4c6a74ad2fb..94888a7025b3 100644
-> --- a/arch/powerpc/include/asm/mce.h
-> +++ b/arch/powerpc/include/asm/mce.h
-> @@ -209,7 +209,8 @@ extern void release_mce_event(void);
->  extern void machine_check_queue_event(void);
->  extern void machine_check_print_event_info(struct machine_check_event *e=
-vt,
->  					   bool user_mode, bool in_guest);
-> -unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr);
-> +unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr,
-> +			  unsigned int *shift);
->  #ifdef CONFIG_PPC_BOOK3S_64
->  void flush_and_reload_slb(void);
->  #endif /* CONFIG_PPC_BOOK3S_64 */
-> diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_po=
-wer.c
-> index e39536aad30d..04666c0b40a8 100644
-> --- a/arch/powerpc/kernel/mce_power.c
-> +++ b/arch/powerpc/kernel/mce_power.c
-> @@ -23,7 +23,8 @@
->   * Convert an address related to an mm to a PFN. NOTE: we are in real
->   * mode, we could potentially race with page table updates.
->   */
-> -unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
-> +unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr,
-> +			  unsigned int *shift)
->  {
->  	pte_t *ptep;
->  	unsigned long flags;
-> @@ -36,13 +37,15 @@ unsigned long addr_to_pfn(struct pt_regs *regs, unsig=
-ned long addr)
-> =20
->  	local_irq_save(flags);
->  	if (mm =3D=3D current->mm)
-> -		ptep =3D find_current_mm_pte(mm->pgd, addr, NULL, NULL);
-> +		ptep =3D find_current_mm_pte(mm->pgd, addr, NULL, shift);
->  	else
-> -		ptep =3D find_init_mm_pte(addr, NULL);
-> +		ptep =3D find_init_mm_pte(addr, shift);
->  	local_irq_restore(flags);
->  	if (!ptep || pte_special(*ptep))
->  		return ULONG_MAX;
-> -	return pte_pfn(*ptep);
-> +	if (!*shift)
-> +		*shift =3D PAGE_SHIFT;
-> +	return (pte_val(*ptep) & PTE_RPN_MASK) >> *shift;
->  }
-> =20
->  /* flush SLBs and reload */
+> @Rajendra: Can you please test this one ? I have only compile tested it.
 
-Ah, the comment I made earlier to this patch I think missed some detail.
+Sorry for the delay, I seem to have completely missed this patch.
+I just gave this a try and here are some observations,
 
-But what we should do here is return the pfn (which is always units
-of PAGE_SIZE). So you have to adjust by the lower part of the address
-here, rather than returning shift which is unnecessary.
+I have a case where I have one device with 2 power domains, one of them
+is scale-able (supports perf state) and the other one supports only being
+turned on and off.
 
-Possibly even better is to just return the real address, which is
-what all callers seem to want anyway.
+1. In the driver I now need to use dev_pm_domain_attach_by_name/id to attach the
+power domain which supports only on/off and then use dev_pm_opp_attach_genpd()
+for the one which supports perf states.
 
-> @@ -358,15 +361,16 @@ static int mce_find_instr_ea_and_pfn(struct pt_regs=
- *regs, uint64_t *addr,
->  	unsigned long pfn, instr_addr;
->  	struct instruction_op op;
->  	struct pt_regs tmp =3D *regs;
-> +	unsigned int shift;
-> =20
-> -	pfn =3D addr_to_pfn(regs, regs->nip);
-> +	pfn =3D addr_to_pfn(regs, regs->nip, &shift);
->  	if (pfn !=3D ULONG_MAX) {
-> -		instr_addr =3D (pfn << PAGE_SHIFT) + (regs->nip & ~PAGE_MASK);
-> +		instr_addr =3D (pfn << shift) + (regs->nip & ((1 << shift) - 1));
+2. My OPP table has only 1 required_opps, so the required_opp_count for the OPP table is 1.
+Now if my device tree has my scale-able powerdomain at index 1 (it works if its at index 0)
+then I end up with this error
 
-This wants the exact real address.
+[    2.858628] ufshcd-qcom 1d84000.ufshc: Index can't be greater than required-opp-count - 1, rpmh_pd (1 : 1)
 
->  		instr =3D *(unsigned int *)(instr_addr);
->  		if (!analyse_instr(&op, &tmp, instr)) {
-> -			pfn =3D addr_to_pfn(regs, op.ea);
-> +			pfn =3D addr_to_pfn(regs, op.ea, &shift);
->  			*addr =3D op.ea;
-> -			*phys_addr =3D (pfn << PAGE_SHIFT);
-> +			*phys_addr =3D (pfn << shift);
->  			return 0;
->  		}
+so it looks like a lot of the OPP core today just assumes that if a device has multiple power domains,
+all of them are scale-able which isn't necessarily true.
 
-I'm not sure this is really what we want. You do really want the
-PAGE_SIZE pfn here. Say you have a failure in the nth small page
-of a large page mapping, this gives the physical address of the
-start of the large page, so memory failure will fail out the 0th
-small page won't it?
+> 
+>   drivers/opp/core.c     | 5 ++++-
+>   include/linux/pm_opp.h | 4 ++--
+>   2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 2958cc7bbb58..07b6f1187b3b 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1775,6 +1775,7 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
+>    * dev_pm_opp_attach_genpd - Attach genpd(s) for the device and save virtual device pointer
+>    * @dev: Consumer device for which the genpd is getting attached.
+>    * @names: Null terminated array of pointers containing names of genpd to attach.
+> + * @virt_devs: Pointer to return the array of virtual devices.
+>    *
+>    * Multiple generic power domains for a device are supported with the help of
+>    * virtual genpd devices, which are created for each consumer device - genpd
+> @@ -1789,7 +1790,8 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
+>    * This helper needs to be called once with a list of all genpd to attach.
+>    * Otherwise the original device structure will be used instead by the OPP core.
+>    */
+> -struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
+> +struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
+> +		const char **names, struct device ***virt_devs)
+>   {
+>   	struct opp_table *opp_table;
+>   	struct device *virt_dev;
+> @@ -1850,6 +1852,7 @@ struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names
+>   		name++;
+>   	}
+>   
+> +	*virt_devs = opp_table->genpd_virt_devs;
+>   	mutex_unlock(&opp_table->genpd_virt_dev_lock);
+>   
+>   	return opp_table;
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index be570761b77a..7c2fe2952f40 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -131,7 +131,7 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
+>   void dev_pm_opp_put_clkname(struct opp_table *opp_table);
+>   struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
+>   void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+> -struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names);
+> +struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names, struct device ***virt_devs);
+>   void dev_pm_opp_detach_genpd(struct opp_table *opp_table);
+>   int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
+>   int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+> @@ -295,7 +295,7 @@ static inline struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const
+>   
+>   static inline void dev_pm_opp_put_clkname(struct opp_table *opp_table) {}
+>   
+> -static inline struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
+> +static inline struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names, struct device ***virt_devs)
+>   {
+>   	return ERR_PTR(-ENOTSUPP);
+>   }
+> 
 
->  		/*
-> @@ -442,12 +446,14 @@ static int mce_handle_ierror(struct pt_regs *regs,
->  			if (mce_err->sync_error &&
->  				table[i].error_type =3D=3D MCE_ERROR_TYPE_UE) {
->  				unsigned long pfn;
-> +				unsigned int shift;
-> =20
->  				if (get_paca()->in_mce < MAX_MCE_DEPTH) {
-> -					pfn =3D addr_to_pfn(regs, regs->nip);
-> +					pfn =3D addr_to_pfn(regs, regs->nip,
-> +							  &shift);
->  					if (pfn !=3D ULONG_MAX) {
->  						*phys_addr =3D
-> -							(pfn << PAGE_SHIFT);
-> +							(pfn << shift);
->  					}
->  				}
->  			}
-> diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platform=
-s/pseries/ras.c
-> index f16fdd0f71f7..5e43283d3300 100644
-> --- a/arch/powerpc/platforms/pseries/ras.c
-> +++ b/arch/powerpc/platforms/pseries/ras.c
-> @@ -740,12 +740,14 @@ static void pseries_do_memory_failure(struct pt_reg=
-s *regs,
->  		paddr =3D be64_to_cpu(mce_log->logical_address);
->  	} else if (mce_log->sub_err_type & UE_EFFECTIVE_ADDR_PROVIDED) {
->  		unsigned long pfn;
-> +		unsigned int shift;
-> =20
->  		pfn =3D addr_to_pfn(regs,
-> -				  be64_to_cpu(mce_log->effective_address));
-> +				  be64_to_cpu(mce_log->effective_address),
-> +				  &shift);
->  		if (pfn =3D=3D ULONG_MAX)
->  			return;
-> -		paddr =3D pfn << PAGE_SHIFT;
-> +		paddr =3D pfn << shift;
->  	} else {
->  		return;
->  	}
-
-Same for all these.
-
-Thanks,
-Nick
-
-=
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
