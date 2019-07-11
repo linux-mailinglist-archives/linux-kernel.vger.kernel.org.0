@@ -2,26 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 801566605B
+	by mail.lfdr.de (Postfix) with ESMTP id E8C406605C
 	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfGKUFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:05:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50853 "EHLO
+        id S1729103AbfGKUFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:05:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50855 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbfGKUFQ (ORCPT
+        with ESMTP id S1729015AbfGKUFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:05:16 -0400
+        Thu, 11 Jul 2019 16:05:17 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hlfJa-0005RY-II; Thu, 11 Jul 2019 22:05:14 +0200
+        id 1hlfJa-0005Rb-Tf; Thu, 11 Jul 2019 22:05:15 +0200
 Date:   Thu, 11 Jul 2019 20:02:36 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] core/urgent for 5.3-rc1
-Message-ID: <156287535656.8320.16630272660351040656.tglx@nanos.tec.linutronix.de>
+Subject: [GIT pull] irq/urgent for 5.3-rc1
+References: <156287535656.8320.16630272660351040656.tglx@nanos.tec.linutronix.de>
+Message-ID: <156287535656.8320.2782582303624911598.tglx@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,38 +30,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest core-urgent-for-linus git tree from:
+please pull the latest irq-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
 
-up to:  7e8e6816c649: stacktrace: Use PF_KTHREAD to check for kernel threads
+up to:  20faba848752: irqchip/gic-v3-its: Fix misuse of GENMASK macro
 
-Fix yet another instance of kernel thread check which ignores that kernel
-threads can call use_mm().
+Two small fixes for interrupt chip drivers:
+
+    - Prevent UAF in the new RZA1 chip driver
+
+    - Fix the wrong argument order of the GENMASK macro in the GIC code
 
 Thanks,
 
 	tglx
 
 ------------------>
-Thomas Gleixner (1):
-      stacktrace: Use PF_KTHREAD to check for kernel threads
+Joe Perches (1):
+      irqchip/gic-v3-its: Fix misuse of GENMASK macro
+
+Wen Yang (1):
+      irqchip/renesas-rza1: Prevent use-after-free in rza1_irqc_probe()
 
 
- kernel/stacktrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c   |  2 +-
+ drivers/irqchip/irq-renesas-rza1.c | 15 ++++++++-------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index 36139de0a3c4..c8d0f05721a1 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -228,7 +228,7 @@ unsigned int stack_trace_save_user(unsigned long *store, unsigned int size)
- 	};
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 35500801dc2b..730fbe0e2a9d 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -185,7 +185,7 @@ static struct its_collection *dev_event_to_col(struct its_device *its_dev,
  
- 	/* Trace user stack if not a kernel thread */
--	if (!current->mm)
-+	if (current->flags & PF_KTHREAD)
- 		return 0;
+ static struct its_collection *valid_col(struct its_collection *col)
+ {
+-	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(0, 15)))
++	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(15, 0)))
+ 		return NULL;
  
- 	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
+ 	return col;
+diff --git a/drivers/irqchip/irq-renesas-rza1.c b/drivers/irqchip/irq-renesas-rza1.c
+index b1f19b210190..b0d46ac42b89 100644
+--- a/drivers/irqchip/irq-renesas-rza1.c
++++ b/drivers/irqchip/irq-renesas-rza1.c
+@@ -208,20 +208,19 @@ static int rza1_irqc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->base);
+ 
+ 	gic_node = of_irq_find_parent(np);
+-	if (gic_node) {
++	if (gic_node)
+ 		parent = irq_find_host(gic_node);
+-		of_node_put(gic_node);
+-	}
+ 
+ 	if (!parent) {
+ 		dev_err(dev, "cannot find parent domain\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_put_node;
+ 	}
+ 
+ 	ret = rza1_irqc_parse_map(priv, gic_node);
+ 	if (ret) {
+ 		dev_err(dev, "cannot parse %s: %d\n", "interrupt-map", ret);
+-		return ret;
++		goto out_put_node;
+ 	}
+ 
+ 	priv->chip.name = "rza1-irqc",
+@@ -237,10 +236,12 @@ static int rza1_irqc_probe(struct platform_device *pdev)
+ 						    priv);
+ 	if (!priv->irq_domain) {
+ 		dev_err(dev, "cannot initialize irq domain\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
+ 	}
+ 
+-	return 0;
++out_put_node:
++	of_node_put(gic_node);
++	return ret;
+ }
+ 
+ static int rza1_irqc_remove(struct platform_device *pdev)
 
