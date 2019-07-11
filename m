@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12670658A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE52B658AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbfGKOP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:15:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2206 "EHLO huawei.com"
+        id S1728629AbfGKOS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:18:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2207 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728438AbfGKOP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:15:56 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 33F913F460D8909F38C3;
-        Thu, 11 Jul 2019 22:15:51 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 11 Jul 2019
- 22:15:44 +0800
+        id S1728045AbfGKOS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:18:58 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 50C1B3222C970C39F9BC;
+        Thu, 11 Jul 2019 22:18:52 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Thu, 11 Jul 2019
+ 22:18:45 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-        <jthumshirn@suse.de>, <dan.carpenter@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <mpe@ellerman.id.au>, <aik@ozlabs.ru>,
+        <david@gibson.dropbear.id.au>
+CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: aic94xx: Remove unnecessary null check
-Date:   Thu, 11 Jul 2019 22:15:39 +0800
-Message-ID: <20190711141539.13892-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] powerpc/powernv/ioda: using kfree_rcu() to simplify the code
+Date:   Thu, 11 Jul 2019 22:18:18 +0800
+Message-ID: <20190711141818.18044-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -35,43 +36,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmem_cache_destroy() can handle NULL pointer correctly, so there is
-no need to check NULL pointer before calling kmem_cache_destroy().
+The callback function of call_rcu() just calls a kfree(), so we
+can use kfree_rcu() instead of call_rcu() + callback function.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/aic94xx/aic94xx_init.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/powerpc/platforms/powernv/pci-ioda-tce.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
-index 261d8e4..f5781e3 100644
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -565,8 +565,7 @@ static void asd_destroy_ha_caches(struct asd_ha_struct *asd_ha)
- 	if (asd_ha->hw_prof.scb_ext)
- 		asd_free_coherent(asd_ha, asd_ha->hw_prof.scb_ext);
- 
--	if (asd_ha->hw_prof.ddb_bitmap)
--		kfree(asd_ha->hw_prof.ddb_bitmap);
-+	kfree(asd_ha->hw_prof.ddb_bitmap);
- 	asd_ha->hw_prof.ddb_bitmap = NULL;
- 
- 	for (i = 0; i < ASD_MAX_PHYS; i++) {
-@@ -641,12 +640,10 @@ static int asd_create_global_caches(void)
- 
- static void asd_destroy_global_caches(void)
- {
--	if (asd_dma_token_cache)
--		kmem_cache_destroy(asd_dma_token_cache);
-+	kmem_cache_destroy(asd_dma_token_cache);
- 	asd_dma_token_cache = NULL;
- 
--	if (asd_ascb_cache)
--		kmem_cache_destroy(asd_ascb_cache);
-+	kmem_cache_destroy(asd_ascb_cache);
- 	asd_ascb_cache = NULL;
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+index e28f03e..05f80b1 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+@@ -332,14 +332,6 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
+ 	return -ENOMEM;
  }
  
+-static void pnv_iommu_table_group_link_free(struct rcu_head *head)
+-{
+-	struct iommu_table_group_link *tgl = container_of(head,
+-			struct iommu_table_group_link, rcu);
+-
+-	kfree(tgl);
+-}
+-
+ void pnv_pci_unlink_table_and_group(struct iommu_table *tbl,
+ 		struct iommu_table_group *table_group)
+ {
+@@ -355,7 +347,7 @@ void pnv_pci_unlink_table_and_group(struct iommu_table *tbl,
+ 	list_for_each_entry_rcu(tgl, &tbl->it_group_list, next) {
+ 		if (tgl->table_group == table_group) {
+ 			list_del_rcu(&tgl->next);
+-			call_rcu(&tgl->rcu, pnv_iommu_table_group_link_free);
++			kfree_rcu(tgl, rcu);
+ 			found = true;
+ 			break;
+ 		}
 -- 
 2.7.4
 
