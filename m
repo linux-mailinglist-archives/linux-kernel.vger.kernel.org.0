@@ -2,157 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3B965984
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FFAB65991
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbfGKO5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:57:39 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:13004 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728594AbfGKO5g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:57:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1562857056; x=1594393056;
-  h=from:to:cc:message-id:in-reply-to:references:
-   mime-version:subject:resent-from:resent-cc:date:
-   content-transfer-encoding;
-  bh=SYZgMArpkzpBbvlUdyauitCtfev5fx4+hkch/ia3KZc=;
-  b=wFwDX3QbGZs+vfhHXqyJymIMg4Jo5QSbNVYMcf2WTZ5gtINGWSZlp8Qr
-   IlE5cGfrHtbT3GD6BWqsx2XcN2EX0P++MKIMWPGhPgN5bBrWijHKLNWoP
-   2u08CzBHk42P3xHg+ic2NCozOB4qhEU3jNqsAvrfQHAZxBFxcjI2buIoN
-   s=;
-X-IronPort-AV: E=Sophos;i="5.62,478,1554768000"; 
-   d="scan'208";a="810659079"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 11 Jul 2019 14:57:35 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 2D526A2214;
-        Thu, 11 Jul 2019 14:57:33 +0000 (UTC)
-Received: from EX13D14UWC002.ant.amazon.com (10.43.162.214) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Jul 2019 14:57:33 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
- EX13D14UWC002.ant.amazon.com (10.43.162.214) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Jul 2019 14:57:33 +0000
-Received: from u9ff250417f405e.ant.amazon.com (10.107.0.52) by
- mail-relay.amazon.com (10.43.162.232) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 11 Jul 2019 14:57:31 +0000
-Received: from EX13D13UWA002.ant.amazon.com (10.43.160.172) by
- EX13D13UWA001.ant.amazon.com (10.43.160.136) with Microsoft SMTP Server
- (TLS) id 15.0.1367.3 via Mailbox Transport; Wed, 10 Jul 2019 16:45:51 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
- EX13D13UWA002.ant.amazon.com (10.43.160.172) with Microsoft SMTP Server
- (TLS) id 15.0.1367.3; Wed, 10 Jul 2019 16:45:51 +0000
-Received: from email-inbound-relay-1e-a70de69e.us-east-1.amazon.com
- (10.124.125.2) by mail-relay.amazon.com (10.43.60.129) with Microsoft SMTP
- Server id 15.0.1367.3 via Frontend Transport; Wed, 10 Jul 2019 16:45:50
- +0000
-Received: by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix)
-        id 96A7EA22C5; Wed, 10 Jul 2019 16:45:50 +0000 (UTC)
-Received: from u9ff250417f405e.ant.amazon.com
- (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210]) by
- email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS
- id AAF00A1C3B; Wed, 10 Jul 2019 16:45:49 +0000 (UTC)
-Received: from u9ff250417f405e.ant.amazon.com (localhost [127.0.0.1]) by
- u9ff250417f405e.ant.amazon.com (8.15.2/8.15.2/Debian-10) with ESMTP id
- x6AGjjbZ021998; Wed, 10 Jul 2019 19:45:45 +0300
-Received: (from jonnyc@localhost)
-        by u9ff250417f405e.ant.amazon.com (8.15.2/8.15.2/Submit) id x6AGjhfP021960;
-        Wed, 10 Jul 2019 19:45:43 +0300
-From:   Jonathan Chocron <jonnyc@amazon.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <alisaidi@amazon.com>, <ronenk@amazon.com>, <barakw@amazon.com>,
-        <talel@amazon.com>, <hanochu@amazon.com>, <hhhawa@amazon.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <jonnyc@amazon.com>
-Message-ID: <20190710164519.17883-8-jonnyc@amazon.com>
-In-Reply-To: <20190710164519.17883-1-jonnyc@amazon.com>
-References: <20190710164519.17883-1-jonnyc@amazon.com>
-Content-Type: text/plain
+        id S1729089AbfGKO6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:58:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2209 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728594AbfGKO6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:58:23 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2155F3980DF446C8B868;
+        Thu, 11 Jul 2019 22:58:18 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Jul
+ 2019 22:58:10 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 00/24] erofs: promote erofs from staging
+Date:   Thu, 11 Jul 2019 22:57:31 +0800
+Message-ID: <20190711145755.33908-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Subject: [PATCH 7/8] PCI: dw: Add validation that PCIe core is set to
- correct mode
-Date:   Thu, 11 Jul 2019 17:57:30 +0300
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some PCIe controllers can be set to either Host or EP according to some
-early boot FW. To make sure there is no discrepancy (e.g. FW configured
-the port to EP mode while the DT specifies it as a host bridge or vice
-versa), a check has been added for each mode.
+Changelog from v1:
+ o resend the whole filesystem into a patchset suggested by Greg;
+ o code is more cleaner, especially for decompression frontend.
 
-Signed-off-by: Jonathan Chocron <jonnyc@amazon.com>
----
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 8 ++++++++
- drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
- 2 files changed, 16 insertions(+)
+--8<----------
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/=
-controller/dwc/pcie-designware-ep.c
-index 2bf5a35c0570..00e59a134b93 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -531,6 +531,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 	int ret;
- 	u32 reg;
- 	void *addr;
-+	u8 hdr_type;
- 	unsigned int nbars;
- 	unsigned int offset;
- 	struct pci_epc *epc;
-@@ -543,6 +544,13 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 		return -EINVAL;
- 	}
-=20
-+	hdr_type =3D dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE);
-+	if (hdr_type !=3D PCI_HEADER_TYPE_NORMAL) {
-+		dev_err(pci->dev, "PCIe controller is not set to EP mode (hdr_type:0x%x)=
-!\n",
-+			hdr_type);
-+		return -EIO;
-+	}
-+
- 	ret =3D of_property_read_u32(np, "num-ib-windows", &ep->num_ib_windows);
- 	if (ret < 0) {
- 		dev_err(dev, "Unable to read *num-ib-windows* property\n");
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pc=
-i/controller/dwc/pcie-designware-host.c
-index f93252d0da5b..d2ca748e4c85 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -323,6 +323,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	struct pci_bus *child;
- 	struct pci_host_bridge *bridge;
- 	struct resource *cfg_res;
-+	u8 hdr_type;
- 	int ret;
-=20
- 	raw_spin_lock_init(&pci->pp.lock);
-@@ -396,6 +397,13 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		}
- 	}
-=20
-+	hdr_type =3D dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE);
-+	if (hdr_type !=3D PCI_HEADER_TYPE_BRIDGE) {
-+		dev_err(pci->dev, "PCIe controller is not set to bridge type (hdr_type: =
-0x%x)!\n",
-+			hdr_type);
-+		return -EIO;
-+	}
-+
- 	pp->mem_base =3D pp->mem->start;
-=20
- 	if (!pp->va_cfg0_base) {
---=20
+Hi,
+
+EROFS file system has been in Linux-staging for about a year.
+It has been proved to be stable enough to move out of staging
+by 10+ millions of HUAWEI Android mobile phones on the market
+from EMUI 9.0.1, and it was promoted as one of the key features
+of EMUI 9.1 [1], including P30(pro).
+
+EROFS is a read-only file system designed to save extra storage
+space with guaranteed end-to-end performance by applying
+fixed-size output compression, inplace I/O and decompression
+inplace technologies [2] to Linux filesystem.
+
+In our observation, EROFS is one of the fastest Linux compression
+filesystem using buffered I/O in the world. It will support
+direct I/O in the future if needed. EROFS even has better read
+performance in a large CR range compared with generic uncompressed
+file systems with proper CPU-storage combination, which is
+a reason why EROFS can be landed to speed up mobile phone
+performance, and which can be probably used for other use cases
+such as LiveCD and Docker image as well.
+
+Currently EROFS supports 4k LZ4 fixed-size output compression
+since LZ4 is the fastest widely-used decompression solution in
+the world and 4k leads to unnoticable read amplification for
+the worst case. More compression algorithms and cluster sizes
+could be added later, which depends on the real requirement.
+
+More informations about EROFS itself are available at:
+ Documentation/filesystems/erofs.txt
+ https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
+
+erofs-utils (mainly mkfs.erofs now) is available at
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
+
+Preliminary iomap support has been pending in EROFS mailing
+list by Chao Yu. The key issue is that current iomap doesn't
+support tail-end packing inline data yet, it should be
+resolved later.
+
+Thanks to many contributors in the last year, the code is more
+clean and improved. We hope EROFS can be used in wider use cases
+so let's promote erofs out of staging and enhance it more actively.
+
+Share comments about EROFS! We think EROFS is useful to
+community as a part of Linux upstream.
+
+Thank you very much,
+Gao Xiang
+
+[1] http://web.archive.org/web/20190627021241/https://consumer.huawei.com/en/emui/
+[2] https://lore.kernel.org/lkml/20190624072258.28362-1-hsiangkao@aol.com/
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Miao Xie <miaoxie@huawei.com>
+Cc: Li Guifu <bluce.liguifu@huawei.com>
+Cc: Fang Wei <fangwei1@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+
+
+Gao Xiang (24):
+  erofs: add on-disk layout
+  erofs: add erofs in-memory stuffs
+  erofs: add super block operations
+  erofs: add raw address_space operations
+  erofs: add inode operations
+  erofs: support special inode
+  erofs: add directory operations
+  erofs: add namei functions
+  erofs: support tracepoint
+  erofs: update Kconfig and Makefile
+  erofs: introduce xattr & posixacl support
+  erofs: introduce tagged pointer
+  erofs: add compression indexes support
+  erofs: introduce superblock registration
+  erofs: introduce erofs shrinker
+  erofs: introduce workstation for decompression
+  erofs: introduce per-CPU buffers implementation
+  erofs: introduce pagevec for decompression subsystem
+  erofs: add erofs_allocpage()
+  erofs: introduce generic decompression backend
+  erofs: introduce LZ4 decompression inplace
+  erofs: introduce the decompression frontend
+  erofs: introduce cached decompression
+  erofs: add document
+
+ Documentation/filesystems/erofs.txt |  211 ++++
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/erofs/Kconfig                    |  154 +++
+ fs/erofs/Makefile                   |   11 +
+ fs/erofs/compress.h                 |   89 ++
+ fs/erofs/data.c                     |  390 ++++++++
+ fs/erofs/decompressor.c             |  329 ++++++
+ fs/erofs/dir.c                      |  147 +++
+ fs/erofs/erofs_fs.h                 |  317 ++++++
+ fs/erofs/inode.c                    |  326 ++++++
+ fs/erofs/internal.h                 |  566 +++++++++++
+ fs/erofs/namei.c                    |  250 +++++
+ fs/erofs/super.c                    |  616 ++++++++++++
+ fs/erofs/tagptr.h                   |  110 ++
+ fs/erofs/utils.c                    |  416 ++++++++
+ fs/erofs/xattr.c                    |  700 +++++++++++++
+ fs/erofs/xattr.h                    |   93 ++
+ fs/erofs/zdata.c                    | 1439 +++++++++++++++++++++++++++
+ fs/erofs/zdata.h                    |  201 ++++
+ fs/erofs/zmap.c                     |  462 +++++++++
+ fs/erofs/zpvec.h                    |  159 +++
+ include/trace/events/erofs.h        |  256 +++++
+ 23 files changed, 7244 insertions(+)
+ create mode 100644 Documentation/filesystems/erofs.txt
+ create mode 100644 fs/erofs/Kconfig
+ create mode 100644 fs/erofs/Makefile
+ create mode 100644 fs/erofs/compress.h
+ create mode 100644 fs/erofs/data.c
+ create mode 100644 fs/erofs/decompressor.c
+ create mode 100644 fs/erofs/dir.c
+ create mode 100644 fs/erofs/erofs_fs.h
+ create mode 100644 fs/erofs/inode.c
+ create mode 100644 fs/erofs/internal.h
+ create mode 100644 fs/erofs/namei.c
+ create mode 100644 fs/erofs/super.c
+ create mode 100644 fs/erofs/tagptr.h
+ create mode 100644 fs/erofs/utils.c
+ create mode 100644 fs/erofs/xattr.c
+ create mode 100644 fs/erofs/xattr.h
+ create mode 100644 fs/erofs/zdata.c
+ create mode 100644 fs/erofs/zdata.h
+ create mode 100644 fs/erofs/zmap.c
+ create mode 100644 fs/erofs/zpvec.h
+ create mode 100644 include/trace/events/erofs.h
+
+-- 
 2.17.1
-
 
