@@ -2,101 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DDEE653A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A40D965365
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfGKJSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:18:22 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34972 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbfGKJSV (ORCPT
+        id S1728172AbfGKJAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:00:17 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60700 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726088AbfGKJAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:18:21 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l2so4949509wmg.0;
-        Thu, 11 Jul 2019 02:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3fOgz1HmCtagvlUL/uPREEe2zIZr6sKtMCeCzceJUyw=;
-        b=PwBMIS9hm+yEYCvBflAbbJcinxzbpqVbzcZ5Q24LtfSmLm1mbaf/pN9oIgcCL4yvuc
-         hdlyoTfLfi9kzgFCH8gntOGEZi8zpPHmMhmTgYhin8sdCblY8+F5kv87728lP8zFiV0s
-         hafGrAtLAmkIdGxeFnTKr5dXFvTZ5rDAEGV2056ILBfC8ijYzQPTbXtxetRIian3zoN1
-         AbG2a6/lZBXHS4zYNUJs9eJa2yQwe8sLksce06FBRsfUDz70hTIbKPM/oywlistKCe3T
-         ivkWSDP2dHw/uyZAe5DU/M1KDFUCL0ZAXnpIULeB/iGw/Z9NHLsunlc5+tQoFeXtEA7M
-         T7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3fOgz1HmCtagvlUL/uPREEe2zIZr6sKtMCeCzceJUyw=;
-        b=idTJjdksuTpyA4ZSUkwiI1JVgpNZAluh9xhH1377Zn3CUZ9T3+AajMc3WgGzIKAwnY
-         rtTXB7uv8xSVdXZ+LSIlrlbJRFGoU62IywfGFdUV2feDnp5TEu4xPT7sgd3+mRgd2wcR
-         o4P9PNpZOfBg7EvKe+KATJmaPcnebIpl0yVFntf7xk+SYGzUhCVpDKKzVGyGCWxnKiZI
-         XIBjKxy3ybLNnoP0h7tZpqlHDo3GvFS5qGqXvtF7aLvmlg7ICJJqbAgYwHTmMCDQZiGw
-         ePRC0MqOwkVAE5PvI6Wrm2dVRvWSQN+UwWbZGcFjkpyd+WjNTQIYl9JdEBLb/42HXCa+
-         s13Q==
-X-Gm-Message-State: APjAAAWozHW8uCxb9U9+PpBPAOxPD9bIZkdbLub7PC4nlA3MlKAw/mB3
-        L2zeEfYL0tZk+ZMPEaqQbpU=
-X-Google-Smtp-Source: APXvYqxPFuR4M5BCR8Sb+ubGATW/uN4m71lAA+qeXPQ1bZfFhMczU5S7jaBPszXh+H2hg8yJaV1Wyw==
-X-Received: by 2002:a1c:3:: with SMTP id 3mr3153271wma.6.1562836699392;
-        Thu, 11 Jul 2019 02:18:19 -0700 (PDT)
-Received: from localhost ([193.47.161.132])
-        by smtp.gmail.com with ESMTPSA id n14sm7481561wra.75.2019.07.11.02.18.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Jul 2019 02:18:18 -0700 (PDT)
-Date:   Thu, 11 Jul 2019 10:57:25 +0200
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCHv2] clk: add imx8 clk defines
-Message-ID: <20190711085725.GA1385@optiplex>
-References: <20190619074000.30852-1-oliver.graute@gmail.com>
- <20190711082039.zze4t22rvlgdxzow@fsr-ub1664-175>
+        Thu, 11 Jul 2019 05:00:17 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TWcBEPJ_1562835610;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWcBEPJ_1562835610)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 11 Jul 2019 17:00:11 +0800
+Subject: Re: [PATCH 0/4] per cgroup numa suite
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+Message-ID: <6a050974-30f3-66b6-4c99-c7e376fb84d8@linux.alibaba.com>
+Date:   Thu, 11 Jul 2019 17:00:10 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711082039.zze4t22rvlgdxzow@fsr-ub1664-175>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/19, Abel Vesa wrote:
-> On 19-06-19 09:39:52, Oliver Graute wrote:
-> > From: Oliver Graute <oliver.graute@kococonnector.com>
-> > 
-> > added header defines for imx8qm clock
-> > 
-> > Signed-off-by: Oliver Graute <oliver.graute@kococonnector.com>
+Hi folks,
+
+How do you think about these patches?
+
+During most of our tests the results show stable improvements, thus
+we consider this as a generic problem and proposed this solution,
+hope to help address the issue.
+
+Comments are sincerely welcome :-)
+
+Regards,
+Michael Wang
+
+On 2019/7/3 上午11:26, 王贇 wrote:
+> During our torturing on numa stuff, we found problems like:
 > 
-> Again, this seems to be taken from some vendor tree, so please keep the
-> original author.
-
-yes the header defines is from NXP vendor tree. One of orginal authors is
-
-Author: Anson Huang <Anson.Huang@nxp.com>
-Date:   Thu Jan 19 03:53:31 2017 +0800
-    MLK-13911-3 ARM64: dts: imx8qm: add dtsi
-    Add i.MX8QM dtsi support.
-    https://github.com/ADVANTECH-Corp/linux-imx6.git
-
-Whats is the right way to attribute him?
-
-Best regards,
-Oliver
+>   * missing per-cgroup information about the per-node execution status
+>   * missing per-cgroup information about the numa locality
+> 
+> That is when we have a cpu cgroup running with bunch of tasks, no good
+> way to tell how it's tasks are dealing with numa.
+> 
+> The first two patches are trying to complete the missing pieces, but
+> more problems appeared after monitoring these status:
+> 
+>   * tasks not always running on the preferred numa node
+>   * tasks from same cgroup running on different nodes
+> 
+> The task numa group handler will always check if tasks are sharing pages
+> and try to pack them into a single numa group, so they will have chance to
+> settle down on the same node, but this failed in some cases:
+> 
+>   * workloads share page caches rather than share mappings
+>   * workloads got too many wakeup across nodes
+> 
+> Since page caches are not traced by numa balancing, there are no way to
+> realize such kind of relationship, and when there are too many wakeup,
+> task will be drag from the preferred node and then migrate back by numa
+> balancing, repeatedly.
+> 
+> Here the third patch try to address the first issue, we could now give hint
+> to kernel about the relationship of tasks, and pack them into single numa
+> group.
+> 
+> And the forth patch introduced numa cling, which try to address the wakup
+> issue, now we try to make task stay on the preferred node on wakeup in fast
+> path, in order to address the unbalancing risk, we monitoring the numa
+> migration failure ratio, and pause numa cling when it reach the specified
+> degree.
+> 
+> Michael Wang (4):
+>   numa: introduce per-cgroup numa balancing locality statistic
+>   numa: append per-node execution info in memory.numa_stat
+>   numa: introduce numa group per task group
+>   numa: introduce numa cling feature
+> 
+>  include/linux/memcontrol.h   |  37 ++++
+>  include/linux/sched.h        |   8 +-
+>  include/linux/sched/sysctl.h |   3 +
+>  kernel/sched/core.c          |  37 ++++
+>  kernel/sched/debug.c         |   7 +
+>  kernel/sched/fair.c          | 455 ++++++++++++++++++++++++++++++++++++++++++-
+>  kernel/sched/sched.h         |  14 ++
+>  kernel/sysctl.c              |   9 +
+>  mm/memcontrol.c              |  66 +++++++
+>  9 files changed, 628 insertions(+), 8 deletions(-)
+> 
