@@ -2,63 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E719065FF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C601965FF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfGKTW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 15:22:27 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9170 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbfGKTW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 15:22:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 12:22:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,479,1557212400"; 
-   d="scan'208";a="156917272"
-Received: from mmoerth-mobl6.ger.corp.intel.com (HELO localhost) ([10.249.35.82])
-  by orsmga007.jf.intel.com with ESMTP; 11 Jul 2019 12:22:16 -0700
-Date:   Thu, 11 Jul 2019 22:22:15 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jejb@linux.ibm.com, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
-Subject: Re: [RFC/RFT] KEYS: trusted: Add generic trusted keys framework
-Message-ID: <20190711192215.5w3fzdjwsebgoesh@linux.intel.com>
-References: <1562337154-26376-1-git-send-email-sumit.garg@linaro.org>
+        id S1728721AbfGKT0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 15:26:32 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41189 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbfGKT0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 15:26:31 -0400
+Received: by mail-lj1-f193.google.com with SMTP id d24so6939798ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 12:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1Gj/TpYGciG5OCmfbf2dVn6FNmz3afk+DosbRV4MzoY=;
+        b=SEuD7woYh9OiLSQ1qqz/ru6e3z42i2sBTpzp8MOwXfr7/I//sRjs+uMPX7Uo/WUtIs
+         +AwJVNrx3GqT2kwzv3pSL+VHr0NLxNPaFkjII1VDIRgs99twXT0eBytNhdx/yFwvy2lN
+         hqE6hLa4AwQSyZ5Uq5JGDUvkqjBS3OnLM/mNEAo7yqYb/bJSDeDx1HqZ1OWLN/QIHvJC
+         oZc12rA0Jp/ZDSkfpQDwufjD9Zu66J8QqnnlIo5Rk+H3P9eR8IQ0xYVMoO97sTQW4Xbe
+         3Ui0eh2fGCWuhxiRNtCiD29GEt8YFc4IsNdQiPVoehP3xpWACHJpaHEn9OCeYUOOlCKE
+         mTnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=1Gj/TpYGciG5OCmfbf2dVn6FNmz3afk+DosbRV4MzoY=;
+        b=OSMMl52gK1t/aD024bEkww1T3q93L9xu6czML1e/Z8Cczds5zH7NdAcYqQTdvwW9iO
+         V2qS0P24ZGll0CoSzVErNlZj4azITbB4sSSSYHCKIW0ODeQvLj1o3h1GDwXQS6SALWB4
+         pB1T2ULXaTSmcwkleHMfHYxh+Ndh4s6ZWIQu8KFftMF7tGeQzmN8CqTwTbOsDz0ag3nV
+         w1p9zidvA9qipH84N/a4ZyygqgYjRvfiZxM9AHTDvPgF0VRLyJYz0RfH/j8AaqY7uwVZ
+         ErMmuiQRiTjbpykieqEJcDYoemo+jpDjWIxsLBU38qTumf4/hVCu25ZSz8zR9ftzYTN8
+         /ahg==
+X-Gm-Message-State: APjAAAWuX+Kq+8vVKLUjEARf9opar830+2M08Sf2QXh/wGDGF4MIFoIb
+        GIZxFZVD8NQzEEmcaPw2WXrJQQ==
+X-Google-Smtp-Source: APXvYqw0NR2+TFc5SfbPRhU4TviTWXjU5RRXRUxYbST9Ry9aqWtbT5Ta93nbQMGF/Y7Ssa+Uh36+Fg==
+X-Received: by 2002:a2e:9b84:: with SMTP id z4mr3542327lji.75.1562873189537;
+        Thu, 11 Jul 2019 12:26:29 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:6a9:2c74:93e5:edca:9c98:290d])
+        by smtp.gmail.com with ESMTPSA id j14sm1122764ljc.67.2019.07.11.12.26.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 12:26:28 -0700 (PDT)
+Subject: Re: [PATCH v8 3/5] mtd: Add support for HyperBus memory devices
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        devicetree@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Tokunori Ikegami <ikegami.t@gmail.com>
+References: <20190625075746.10439-1-vigneshr@ti.com>
+ <20190625075746.10439-4-vigneshr@ti.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <e5a7866d-bc34-887d-31d3-de4f745c8d65@cogentembedded.com>
+Date:   Thu, 11 Jul 2019 22:26:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562337154-26376-1-git-send-email-sumit.garg@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190625075746.10439-4-vigneshr@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 08:02:34PM +0530, Sumit Garg wrote:
-> Current trusted keys framework is tightly coupled to use TPM device as
-> an underlying implementation which makes it difficult for implementations
-> like Trusted Execution Environment (TEE) etc. to provide trusked keys
-> support in case platform doesn't posses a TPM device.
-> 
-> So this patch tries to add generic trusted keys framework where underlying
-> implemtations like TPM, TEE etc. could be easily plugged-in.
-> 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Hello!
 
-1. Needs to be somehow dissected into digestable/reviewable pieces.
-2. As a precursory step probably would make sense to move all
-   existing trusted keys code into one subsystem first.
+On 06/25/2019 10:57 AM, Vignesh Raghavendra wrote:
 
-/Jarkko
+> Cypress' HyperBus is Low Signal Count, High Performance Double Data Rate
+> Bus interface between a host system master and one or more slave
+> interfaces. HyperBus is used to connect microprocessor, microcontroller,
+> or ASIC devices with random access NOR flash memory (called HyperFlash)
+> or self refresh DRAM (called HyperRAM).
+> 
+> Its a 8-bit data bus (DQ[7:0]) with  Read-Write Data Strobe (RWDS)
+> signal and either Single-ended clock(3.0V parts) or Differential clock
+> (1.8V parts). It uses ChipSelect lines to select b/w multiple slaves.
+> At bus level, it follows a separate protocol described in HyperBus
+> specification[1].
+> 
+> HyperFlash follows CFI AMD/Fujitsu Extended Command Set (0x0002) similar
+> to that of existing parallel NORs. Since HyperBus is x8 DDR bus,
+> its equivalent to x16 parallel NOR flash with respect to bits per clock
+> cycle. But HyperBus operates at >166MHz frequencies.
+> HyperRAM provides direct random read/write access to flash memory
+> array.
+> 
+> But, HyperBus memory controllers seem to abstract implementation details
+> and expose a simple MMIO interface to access connected flash.
+> 
+> Add support for registering HyperFlash devices with MTD framework. MTD
+> maps framework along with CFI chip support framework are used to support
+> communicating with flash.
+> 
+> Framework is modelled along the lines of spi-nor framework. HyperBus
+> memory controller (HBMC) drivers calls hyperbus_register_device() to
+> register a single HyperFlash device. HyperFlash core parses MMIO access
+> information from DT, sets up the map_info struct, probes CFI flash and
+> registers it with MTD framework.
+> 
+> Some HBMC masters need calibration/training sequence[3] to be carried
+> out, in order for DLL inside the controller to lock, by reading a known
+> string/pattern. This is done by repeatedly reading CFI Query
+> Identification String. Calibration needs to be done before trying to detect
+> flash as part of CFI flash probe.
+> 
+> HyperRAM is not supported at the moment.
+> 
+> HyperBus specification can be found at[1]
+> HyperFlash datasheet can be found at[2]
+> 
+> [1] https://www.cypress.com/file/213356/download
+> [2] https://www.cypress.com/file/213346/download
+> [3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
+>     Table 12-5741. HyperFlash Access Sequence
+> 
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+[...]
+
+> diff --git a/drivers/mtd/hyperbus/hyperbus-core.c b/drivers/mtd/hyperbus/hyperbus-core.c
+> new file mode 100644
+> index 000000000000..63a9e64895bc
+> --- /dev/null
+> +++ b/drivers/mtd/hyperbus/hyperbus-core.c
+> @@ -0,0 +1,154 @@
+[...]
+> +int hyperbus_register_device(struct hyperbus_device *hbdev)
+> +{
+[...]
+> +	map->name = dev_name(dev);
+> +	map->bankwidth = 2;
+
+   I think this should really be 1, judging on the comment to that field (and on
+Cogent's own RPC-IF HF driver).
+
+> +	map->device_node = np;
+
+[...]
+
+MBR, Sergei
