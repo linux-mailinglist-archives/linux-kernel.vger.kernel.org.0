@@ -2,140 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B1965625
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D069655EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfGKLwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 07:52:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58406 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728268AbfGKLwX (ORCPT
+        id S1728289AbfGKLrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 07:47:39 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40980 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728024AbfGKLri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 07:52:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GAWMid08qmglw4UjNwmXK3AmZT7rymJlUMwMLPUqkt0=; b=RtucCuBbe0e3AemSAB+T9RmAUo
-        2SGZzWT1lCpdDSWBPyVgkgnWEBxwL91Y8gs5kukXWFkcMfl6xV1fwuDwWC6z+0Zj7U2cBi1tqJtb3
-        pOlj77iUtY7txUw9kJbgN/T2ORrFoK80NoR7vJ3QfcAHEkgXF+QRAh5D5jJjV/C8LkRETUt0izk6U
-        vWpvQjgN4uKxG2p8YEvWPmbBO2GAwFTONAAkVOHMVwNcsHs7nRBtuWeF1NKIDS3S4LgOhCzmAMAEj
-        IVY/073DoC4WrJ/OLFnX066v1hbFcJUrTIIIQmo95Dx3yfrpFLXhqdv8gDdyNbwwpzucg4JawHes8
-        w5ijtCVw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlXc5-00070H-0E; Thu, 11 Jul 2019 11:51:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 04EF320B53B65; Thu, 11 Jul 2019 13:51:45 +0200 (CEST)
-Message-Id: <20190711114336.174080643@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 11 Jul 2019 13:41:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
-        rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
-Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
-        joel@joelfernandes.org, devel@etsukata.com, peterz@infradead.org
-Subject: [PATCH v3 6/6] x86/entry/64: Remove TRACE_IRQS_*_DEBUG
-References: <20190711114054.406765395@infradead.org>
+        Thu, 11 Jul 2019 07:47:38 -0400
+Received: by mail-pl1-f195.google.com with SMTP id m9so2886187pls.8
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 04:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zoGUhMmcCaD8E7sO+8jLVe3f8XfkjaOQT+IWO1zQyLE=;
+        b=Pwqtg0XDJ1iCbp4keDQ3o0QNyHW0ysMYobYlDf1UQldeGDgZqXdRtrX5rM647Kd5U7
+         nsQVuo1vJhrEGpS76I3lFPJ4m97AggCzFrtm2cAVWnbG5CzyDEuKxjNWB+154QoomPvt
+         wOqX0FFWQMFjYOXLNGdvxwwBAk2mIYJ9Onz27UVmTILte+8FMOV8wjbR8aKewtw822Th
+         PbVk7OJjxAdLKEG83mTDFNB5btQ5q8oSk9zXgaw9/Cv+CnV+pmvbXxiNApJt8SS2f/XG
+         Zbd9LAEwg8JlqFIrH+cyA1KyvaIRHAVGBScX/y6OMliZ2yd4Ja60jx/wGAxsRyVggAJF
+         clig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zoGUhMmcCaD8E7sO+8jLVe3f8XfkjaOQT+IWO1zQyLE=;
+        b=n9dFI341ibPGwgkB3CkgBW7khGvCx8DV6ZupWJABs6girCAukEk0w5KyzyTo/UKpD2
+         ZBUsL83drsOAJOTd8Jr18FG/es179y380Cuu6f8nNoPtmYY/gQjdbbzRlkMRebCIYTZK
+         lLjVZGE8q1HWNePffLF0kmrqXlxLnVz94P3kRKMhTwJwq88ETJVqH5gRPt26agfM3Qdo
+         E6PLxwIFf3vFbBieU9aPC8lM9mwIzftj70WsFTqWJpsc2K3IL4cP+1p0XTR953igJfDI
+         aMY9B8Y2B1ljiIdjkfbYpJaFVvQ1DAx+xCARsY7Ka9VpQrbTjthz2GhzcmLI/Y5rSH8k
+         PAAg==
+X-Gm-Message-State: APjAAAV5QJu9DuGv5ABGlVBP4HVlRkmjSR9HOsqrO54iTrVn1djZmiXh
+        3pY1gmIGO4xDKC27JJEAbio=
+X-Google-Smtp-Source: APXvYqz3ZLf6Dku3839fxAKXH0pKAvffKFRLkjtb66cKUKAwQ0ZTitlm4hkIlmkldW14OD2hHW3Vow==
+X-Received: by 2002:a17:902:9307:: with SMTP id bc7mr4070979plb.183.1562845657758;
+        Thu, 11 Jul 2019 04:47:37 -0700 (PDT)
+Received: from localhost.localdomain (36-239-228-246.dynamic-ip.hinet.net. [36.239.228.246])
+        by smtp.gmail.com with ESMTPSA id a15sm4116868pgw.3.2019.07.11.04.47.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 04:47:37 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Steve Twiss <stwiss.opensource@diasemi.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: da9062: Simplify the code iterating all regulators
+Date:   Thu, 11 Jul 2019 19:47:12 +0800
+Message-Id: <20190711114712.31313-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since INT3/#BP no longer runs on an IST, this workaround is no longer
-required.
+It's more straightforward to use for statement here.
 
-Tested by running lockdep+ftrace as described in the initial commit:
-
-  5963e317b1e9 ("ftrace/x86: Do not change stacks in DEBUG when calling lockdep")
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- arch/x86/entry/entry_64.S |   46 ++--------------------------------------------
- 1 file changed, 2 insertions(+), 44 deletions(-)
+ drivers/regulator/da9062-regulator.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -67,44 +67,6 @@ END(native_usergs_sysret64)
- .endm
+diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
+index 2ffc64622451..5ea8d58d28c5 100644
+--- a/drivers/regulator/da9062-regulator.c
++++ b/drivers/regulator/da9062-regulator.c
+@@ -966,8 +966,7 @@ static int da9062_regulator_probe(struct platform_device *pdev)
+ 	regulators->n_regulators = max_regulators;
+ 	platform_set_drvdata(pdev, regulators);
  
- /*
-- * When dynamic function tracer is enabled it will add a breakpoint
-- * to all locations that it is about to modify, sync CPUs, update
-- * all the code, sync CPUs, then remove the breakpoints. In this time
-- * if lockdep is enabled, it might jump back into the debug handler
-- * outside the updating of the IST protection. (TRACE_IRQS_ON/OFF).
-- *
-- * We need to change the IDT table before calling TRACE_IRQS_ON/OFF to
-- * make sure the stack pointer does not get reset back to the top
-- * of the debug stack, and instead just reuses the current stack.
-- */
--#if defined(CONFIG_DYNAMIC_FTRACE) && defined(CONFIG_TRACE_IRQFLAGS)
+-	n = 0;
+-	while (n < regulators->n_regulators) {
++	for (n = 0; n < regulators->n_regulators; n++) {
+ 		/* Initialise regulator structure */
+ 		regl = &regulators->regulator[n];
+ 		regl->hw = chip;
+@@ -1026,8 +1025,6 @@ static int da9062_regulator_probe(struct platform_device *pdev)
+ 				regl->desc.name);
+ 			return PTR_ERR(regl->rdev);
+ 		}
 -
--.macro TRACE_IRQS_OFF_DEBUG
--	call	debug_stack_set_zero
--	TRACE_IRQS_OFF
--	call	debug_stack_reset
--.endm
--
--.macro TRACE_IRQS_ON_DEBUG
--	call	debug_stack_set_zero
--	TRACE_IRQS_ON
--	call	debug_stack_reset
--.endm
--
--.macro TRACE_IRQS_IRETQ_DEBUG
--	btl	$9, EFLAGS(%rsp)		/* interrupts off? */
--	jnc	1f
--	TRACE_IRQS_ON_DEBUG
--1:
--.endm
--
--#else
--# define TRACE_IRQS_OFF_DEBUG			TRACE_IRQS_OFF
--# define TRACE_IRQS_ON_DEBUG			TRACE_IRQS_ON
--# define TRACE_IRQS_IRETQ_DEBUG			TRACE_IRQS_IRETQ
--#endif
--
--/*
-  * 64-bit SYSCALL instruction entry. Up to 6 arguments in registers.
-  *
-  * This is the only entry point used for 64-bit system calls.  The
-@@ -878,11 +840,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
- 	GET_CR2_INTO(%rdx);			/* can clobber %rax */
- 	.endif
+-		n++;
+ 	}
  
--	.if \shift_ist != -1
--	TRACE_IRQS_OFF_DEBUG			/* reload IDT in case of recursion */
--	.else
- 	TRACE_IRQS_OFF
--	.endif
- 
- 	.if \paranoid == 0
- 	testb	$3, CS(%rsp)
-@@ -1248,7 +1206,7 @@ END(paranoid_entry)
- ENTRY(paranoid_exit)
- 	UNWIND_HINT_REGS
- 	DISABLE_INTERRUPTS(CLBR_ANY)
--	TRACE_IRQS_OFF_DEBUG
-+	TRACE_IRQS_OFF
- 	testl	%ebx, %ebx			/* swapgs needed? */
- 	jnz	.Lparanoid_exit_no_swapgs
- 	TRACE_IRQS_IRETQ
-@@ -1257,7 +1215,7 @@ ENTRY(paranoid_exit)
- 	SWAPGS_UNSAFE_STACK
- 	jmp	.Lparanoid_exit_restore
- .Lparanoid_exit_no_swapgs:
--	TRACE_IRQS_IRETQ_DEBUG
-+	TRACE_IRQS_IRETQ
- 	/* Always restore stashed CR3 value (see paranoid_entry) */
- 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- .Lparanoid_exit_restore:
-
+ 	/* LDOs overcurrent event support */
+-- 
+2.20.1
 
