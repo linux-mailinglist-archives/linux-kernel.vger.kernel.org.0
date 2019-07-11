@@ -2,146 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9410C65036
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC01E65043
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfGKCkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 22:40:08 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46267 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfGKCkI (ORCPT
+        id S1727743AbfGKCpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 22:45:18 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42501 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfGKCpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 22:40:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i8so2130740pgm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 19:40:08 -0700 (PDT)
+        Wed, 10 Jul 2019 22:45:17 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l15so4311782otn.9;
+        Wed, 10 Jul 2019 19:45:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=C8E8H/QOJPMLUX+Dl+OKCeAuU0VWHZNPc5/1qNNCS3A=;
-        b=LFssXHlc4NksAYAhzFzgi8xTRTyRMliELywQFv9VUJVWjf2PiU9RiGZ3zV9OaXaJfz
-         91HAomEa81By0LAwwOEB9poOe8UtZyfG9My4IBU8GlmxOBGbsRXNWGH0/bts96LbnjnA
-         NGQkIli+cQ/8qTzQXXfwnhF7U17UASCTKYqTMo/zn/0sP6m9Z0jHm9AixzwV084y/nqx
-         8y2vGNX0GfKDQ+2gYrulCSBkZ9ssbkmBgG1bxloiWpKTGlMfoHhs298oR6oIMlTW4bk4
-         B98fphK+vEl3DSmUmjhZgVDft0yE5G+Vh5F41jeQl5ag1xxzkRi75cZkX6ek98V4UOHK
-         PCMA==
+        h=from:to:subject:date:message-id;
+        bh=Qbv2ajCJoybKSCHk6U34S4w3N5YXbwdABLrNyMIOFjU=;
+        b=OmKI/1OYqrb+UnpZfqjLqOfdc/u9TGckIXOgROvKJxlQGt2A1Kx6qHJtEphheqRMfY
+         76AEcQ9Q/eeMFGaVSM2n4B6b7pOrtVAZEZekEPdYWpVrsHilu9raJQMROtOniHxmcpVK
+         VolYLvRFmskpXHA5KGsOILvPBTWQvSTK7f5zzpjHW+IoKkGDhNIjkEUhO/R64Zpx0T07
+         kX41HG/EPmTpT6KTVeegZB1crm1C3TFq+TFprVuzsqB0buNcWVEFwIb0ugcWSnVQxcvQ
+         v1VohMm9Nkh4av+aWhd/Cjr4cAtIFgOdH+5S7FDZ7JQ0HAmOy2HK6OQsscNBo4GzR6zy
+         +Tpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=C8E8H/QOJPMLUX+Dl+OKCeAuU0VWHZNPc5/1qNNCS3A=;
-        b=pXJPm7YlXzEbB4J/m8hP5hNLpXYLjitwdsFsWOlsMSA+yLbS9Lkav4aoByo8EWt5zF
-         i7I1cQ6sMWJnG5t2jJRWerdwxs8fVrMz3IVK9CBrkv/K5ETY2x7kKuzOYP3KOL+8GZzr
-         i82r5TZpKOE8lOqgvFtwXkKtw3uVXJKOxMGBcKJZL7ER7L84s+mXmBqPxsJIjhvjET6l
-         pwr8iiju5s3g/J/3SPQSqg21QlzZBPCbaSpPW2C5s3RcocMGMAl8WCSXN66TAfUdf+3I
-         HV8F97RfNagiKy2mrtfhZvzLaLIXh6t0NSGQ4fMjbiVT4lCpDrgf1sHmhXAR3NtbThce
-         q+kg==
-X-Gm-Message-State: APjAAAU/KTNfRw7hJIDVdmMSOxOYZUfLT98muIS01JYUQTCVhAXM03N2
-        5f5dJkxLqXRCYAI9VAalFJ8=
-X-Google-Smtp-Source: APXvYqxPMPQEVTxxbc9UReUqfnmxUCvYxChCFWNedtCSJGKTOwJRfV39HBtupRw4ZTPjT4QYQz/DMQ==
-X-Received: by 2002:a63:7b4d:: with SMTP id k13mr1686080pgn.182.1562812807406;
-        Wed, 10 Jul 2019 19:40:07 -0700 (PDT)
-Received: from olv0.mtv.corp.google.com ([2620:15c:202:201:9649:82d6:f889:b307])
-        by smtp.gmail.com with ESMTPSA id bo20sm2877077pjb.23.2019.07.10.19.40.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 19:40:06 -0700 (PDT)
-From:   Chia-I Wu <olvaffe@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org,
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=Qbv2ajCJoybKSCHk6U34S4w3N5YXbwdABLrNyMIOFjU=;
+        b=ik5cycMTRjT/kgb9XGlS5bL6jdF3RN6VYr5+mxrDuZcCNgqIE5ppjb69C0ZJ2YEiC/
+         Fo8KAN5ZYhAY2ZoVtpdz/3DZ4hsK2d4spLSqkmXCBVTDCy/5bYATvLi7eCu/HY1cQztF
+         EERnjvpMHYilHL+e+COzP6nUjFSoIKWdZC0EkAp9TCHaA7bTnNprSsBHfZv8jEMgO8GR
+         QaIKI3nHnrtyZdeK5qedrVK3yP5nIo0yaxaEEBWmO8bC5XQrkMUDzVNakjFJVwhkT1l9
+         D2TG+sIOkac3c0nyMFkmzhsHtYH+oHM4sYwvs1+ftha2NYq7/P2+c8Gq2pLmr00gU0oM
+         +zJQ==
+X-Gm-Message-State: APjAAAX5LOi99a6+pOC+3wDAwgiqyxKK/hLNMtEqwXKUAZDSRFZIzGdD
+        0VgGuvfXl9PN4PeTVwMRewI=
+X-Google-Smtp-Source: APXvYqwBpsX4X+cHsa9au4otSEaxauUfBFpVKnqpbq1k4/l6JomJbGSzjRjBR49Xc+4I1qYSteNcag==
+X-Received: by 2002:a9d:6659:: with SMTP id q25mr1354219otm.272.1562813116651;
+        Wed, 10 Jul 2019 19:45:16 -0700 (PDT)
+Received: from localhost ([76.224.107.173])
+        by smtp.gmail.com with ESMTPSA id j5sm1426216oih.52.2019.07.10.19.45.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 19:45:15 -0700 (PDT)
+From:   Lei YU <mine260309@gmail.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Eddie James <eajames@linux.ibm.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Lei YU <mine260309@gmail.com>, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/virtio: kick vq outside of the vq lock
-Date:   Wed, 10 Jul 2019 19:39:59 -0700
-Message-Id: <20190711023959.170158-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190711022937.166015-1-olvaffe@gmail.com>
-References: <20190711022937.166015-1-olvaffe@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] hwmon (occ): Fix division by zero issue
+Date:   Thu, 11 Jul 2019 10:44:48 +0800
+Message-Id: <1562813088-23708-1-git-send-email-mine260309@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace virtqueue_kick by virtqueue_kick_prepare, which requires
-serialization, and virtqueue_notify, which does not.  Repurpose the
-return values to indicate whether the vq should be notified.
+The code in occ_get_powr_avg() invokes div64_u64() without checking the
+divisor. In case the divisor is zero, kernel gets an "Division by zero
+in kernel" error.
 
-This fixes a bad spinlock contention when the host is qemu.  When
-the guest calls virtqueue_notify, the qemu vcpu thread exits the
-guest and waits for the qemu iothread to perform the MMIO.  If the
-qemu iothread is still processing the prior buffer, and if the prior
-buffer is cheap to GPU, the iothread will go ahead and generate an
-IRQ.  A worker thread in the guest might start running
-virtio_gpu_dequeue_ctrl_func.  If virtqueue_notify was called with
-the vq lock held, the worker thread would have to busy wait inside
-virtio_gpu_dequeue_ctrl_func.
+Check the divisor and make it return 0 if the divisor is 0.
 
-v2: fix scrambled commit message
-
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+Signed-off-by: Lei YU <mine260309@gmail.com>
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/hwmon/occ/common.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 6c1a90717535..e96f88fe5c83 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -291,11 +291,9 @@ static int virtio_gpu_queue_ctrl_buffer_locked(struct virtio_gpu_device *vgdev,
- 		trace_virtio_gpu_cmd_queue(vq,
- 			(struct virtio_gpu_ctrl_hdr *)vbuf->buf);
+diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+index 13a6290..f02aa40 100644
+--- a/drivers/hwmon/occ/common.c
++++ b/drivers/hwmon/occ/common.c
+@@ -402,8 +402,10 @@ static ssize_t occ_show_power_1(struct device *dev,
  
--		virtqueue_kick(vq);
-+		ret = virtqueue_kick_prepare(vq);
- 	}
- 
--	if (!ret)
--		ret = vq->num_free;
- 	return ret;
+ static u64 occ_get_powr_avg(u64 *accum, u32 *samples)
+ {
+-	return div64_u64(get_unaligned_be64(accum) * 1000000ULL,
+-			 get_unaligned_be32(samples));
++	u64 divisor = get_unaligned_be32(samples);
++
++	return (divisor == 0) ? 0 :
++		div64_u64(get_unaligned_be64(accum) * 1000000ULL, divisor);
  }
  
-@@ -307,6 +305,10 @@ static int virtio_gpu_queue_ctrl_buffer(struct virtio_gpu_device *vgdev,
- 	spin_lock(&vgdev->ctrlq.qlock);
- 	rc = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf);
- 	spin_unlock(&vgdev->ctrlq.qlock);
-+
-+	if (rc > 0)
-+		virtqueue_notify(vgdev->ctrlq.vq);
-+
- 	return rc;
- }
- 
-@@ -339,6 +341,10 @@ static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
- 		virtio_gpu_fence_emit(vgdev, hdr, fence);
- 	rc = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf);
- 	spin_unlock(&vgdev->ctrlq.qlock);
-+
-+	if (rc > 0)
-+		virtqueue_notify(vgdev->ctrlq.vq);
-+
- 	return rc;
- }
- 
-@@ -369,13 +375,14 @@ static int virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
- 		trace_virtio_gpu_cmd_queue(vq,
- 			(struct virtio_gpu_ctrl_hdr *)vbuf->buf);
- 
--		virtqueue_kick(vq);
-+		ret = virtqueue_kick_prepare(vq);
- 	}
- 
- 	spin_unlock(&vgdev->cursorq.qlock);
- 
--	if (!ret)
--		ret = vq->num_free;
-+	if (ret > 0)
-+		virtqueue_notify(vq);
-+
- 	return ret;
- }
- 
+ static ssize_t occ_show_power_2(struct device *dev,
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.7.4
 
