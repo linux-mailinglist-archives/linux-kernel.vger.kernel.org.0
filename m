@@ -2,89 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23BEF66052
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F35966039
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 21:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfGKT7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 15:59:35 -0400
-Received: from ajax.cs.uga.edu ([128.192.4.6]:55458 "EHLO ajax.cs.uga.edu"
+        id S1728948AbfGKTuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 15:50:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbfGKT7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 15:59:34 -0400
-X-Greylist: delayed 2416 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Jul 2019 15:59:33 EDT
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-        (authenticated bits=0)
-        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x6BJJFVn054162
-        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=OK);
-        Thu, 11 Jul 2019 15:19:17 -0400
-Received: by mail-lf1-f50.google.com with SMTP id h28so4811584lfj.5;
-        Thu, 11 Jul 2019 12:19:17 -0700 (PDT)
-X-Gm-Message-State: APjAAAWxheXejtPBkf3TaMAvpn/+tA0N+iGsz0xgfiAGKc7Mri0Xr5JA
-        R7Zu/l2iW5sxEp5lgEyrt7/Hg+Elaq5qCPaS1oc=
-X-Google-Smtp-Source: APXvYqwunc/O9uRDAgMduACqLWOqC09W6hXRDVHDdvBA5YcONGMc9t6fPqw9wsUN4kmB4dulWuL+7iJOiMAcA27WMv4=
-X-Received: by 2002:ac2:418f:: with SMTP id z15mr2543647lfh.177.1562872755598;
- Thu, 11 Jul 2019 12:19:15 -0700 (PDT)
+        id S1726116AbfGKTuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 15:50:15 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC69E20863;
+        Thu, 11 Jul 2019 19:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562874615;
+        bh=WKhmzgXE5kwmcXjQBaLm3rFi2FyIoZXY62Z3Ci032ZI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IEcchKGGyyr3uWEeROhGqkl/RSFmq3N4UEC+zPdjRyE7yX3WR/5buAZQcvCh/TIHa
+         2ys5Qj+Xtwd2CPBpffEWeqKuSLR9YR42QUNnBe0QNV7IemTo0O1TBLo/6d6vA1tnGi
+         ogxtEwlAch/i+RyIPAEF1qyR/010j5pidPwGGlrs=
+Date:   Thu, 11 Jul 2019 12:50:13 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.vnet.ibm.com
+Subject: Re: possible deadlock in process_measurement
+Message-ID: <20190711195011.GA48706@gmail.com>
+Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
+        syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.vnet.ibm.com
+References: <00000000000054e5d1058a6df2eb@google.com>
+ <1562854476.4014.47.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <1562830033-24239-1-git-send-email-wang6495@umn.edu> <CACVXFVO-gwVhZRajRx41_sYJKDTX2qZUnZVRXCB0NcegVVTGVw@mail.gmail.com>
-In-Reply-To: <CACVXFVO-gwVhZRajRx41_sYJKDTX2qZUnZVRXCB0NcegVVTGVw@mail.gmail.com>
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-Date:   Thu, 11 Jul 2019 14:18:42 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7fUF1NSDa-dr7VqCZ4wBm1vChe9BRpgx9A_S8wM_OoNAg@mail.gmail.com>
-Message-ID: <CAAa=b7fUF1NSDa-dr7VqCZ4wBm1vChe9BRpgx9A_S8wM_OoNAg@mail.gmail.com>
-Subject: Re: [PATCH] block/bio-integrity: fix a memory leak bug
-To:     Ming Lei <tom.leiming@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wenwen@cs.uga.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1562854476.4014.47.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 4:22 AM Ming Lei <tom.leiming@gmail.com> wrote:
->
-> On Thu, Jul 11, 2019 at 3:36 PM Wenwen Wang <wang6495@umn.edu> wrote:
-> >
-> > From: Wenwen Wang <wenwen@cs.uga.edu>
-> >
-> > In bio_integrity_prep(), a kernel buffer is allocated through kmalloc() to
-> > hold integrity metadata. Later on, the buffer will be attached to the bio
-> > structure through bio_integrity_add_page(), which returns the number of
-> > bytes of integrity metadata attached. Due to unexpected situations,
-> > bio_integrity_add_page() may return 0. As a result, bio_integrity_prep()
-> > needs to be terminated with 'false' returned to indicate this error.
-> > However, the allocated kernel buffer is not freed on this execution path,
-> > leading to a memory leak.
-> >
-> > To fix this issue, free the allocated buffer before returning from
-> > bio_integrity_prep().
-> >
-> > Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-> > ---
-> >  block/bio-integrity.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-> > index 4db6208..bfae10c 100644
-> > --- a/block/bio-integrity.c
-> > +++ b/block/bio-integrity.c
-> > @@ -276,8 +276,10 @@ bool bio_integrity_prep(struct bio *bio)
-> >                 ret = bio_integrity_add_page(bio, virt_to_page(buf),
-> >                                              bytes, offset);
-> >
-> > -               if (ret == 0)
-> > +               if (ret == 0) {
-> > +                       kfree(buf);
-> >                         return false;
-> > +               }
->
-> This way may not be enough, and the bio payload needs to be freed.
->
-> And you may refer to the error handling for 'IS_ERR(bip)', and bio->bi_status
-> needs to be set, and bio_endio() needs to be called too.
+Hi Mimi,
 
-Thanks for your comments! I will rework the patch.
+On Thu, Jul 11, 2019 at 10:14:36AM -0400, Mimi Zohar wrote:
+> Hi Eric,
+> 
+> On Mon, 2019-06-03 at 09:35 -0700, syzbot wrote:
+> > syzbot has found a reproducer for the following crash on:
+> > 
+> > HEAD commit:    3c09c195 Add linux-next specific files for 20190531
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=10f61a0ea00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=5ab61747675a87ea359d
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177c3d16a00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec01baa00000
+> > 
+> 
+> This reproducer seems like it is similar, but the cause is different
+> than the original report.  One has to do with overlayfs, while the
+> other has to do with ext4, mprotect/mmap.  I assume in both cases an
+> IMA policy was required to trigger the locking bug.  What type of IMA
+> policy are you using?
+> 
+> Do we need to differentiate the two reports?  Is the "last occurred"
+> notification for the overlay, for mprotect, or both?  Please Cc the
+> overlay mailing list on the overlay aspect.
 
-Wenwen
+AFAICS, syzbot boots all kernels with "ima_policy=tcb" on the command line.
+And I don't think anything in userspace changes the IMA policy.
+
+It's not unusual for multiple underlying bugs to get mixed into the same syzbot
+bug.  syzbot doesn't know that one "possible deadlock in process_measurement" is
+different from another.  "Last occurred" is for any crash that appeared as such.
+
+This just needs to be handled the best we can.  Sometimes all the bugs can be
+fixed; sometimes they've already been fixed; or sometimes it's easiest to fix
+just one and then mark the syzbot bug as fixed, and syzbot will report it again
+it's still occurring for some other reason.
+
+- Eric
