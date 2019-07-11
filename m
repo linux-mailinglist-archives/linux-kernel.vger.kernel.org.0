@@ -2,110 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7342B669A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F20669BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfGLJIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 05:08:55 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:39345 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfGLJIz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:08:55 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MplTn-1iG0uE1AyL-00qEvZ; Fri, 12 Jul 2019 11:08:19 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Bill Metzenthen <billm@melbpc.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH] x86: math-emu: hide clang warnings for 16-bit overflow
-Date:   Fri, 12 Jul 2019 11:08:05 +0200
-Message-Id: <20190712090816.350668-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1726700AbfGLJN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 05:13:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54274 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726138AbfGLJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:13:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 93769AC63;
+        Fri, 12 Jul 2019 09:13:55 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3D21A1E43CB; Thu, 11 Jul 2019 17:41:11 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 17:41:11 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190711154111.GA29284@quack2.suse.cz>
+References: <20190704165450.GH31037@quack2.suse.cz>
+ <20190704191407.GM1729@bombadil.infradead.org>
+ <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org>
+ <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+ <20190710190204.GB14701@quack2.suse.cz>
+ <20190710201539.GN32320@bombadil.infradead.org>
+ <20190710202647.GA7269@quack2.suse.cz>
+ <20190711141350.GS32320@bombadil.infradead.org>
+ <20190711152550.GT32320@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uhLktPXipGj6UjosCrqPbx7X8MXcIoq8JHYIteyEjX5+chvN09m
- nduPEVAS3tXz5QEMuMJoSbjgSPxubfKqoNq9gelCGmZ4qUcJyCjVAX9IlCU44FSmVGd0kOY
- tJC59GiELBqUb7DBFtQomOTdVxux6lsCsNW2atgevOUK1GdUy3EXPCSuoI8GapZZHRoahDN
- 1qkYo7cqbXOMbc9IYCY+A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:o6PG+rhksf0=:NUqwYYsc9m85a6HXmY8xe4
- 7zgquXhqavLN5KLe0gnzkonSgYCYfpwXzsxMl0eFOuLzOu+AmbiF1os3kde3o9QMlRDdYumbJ
- U3zYPXsHexYZK87gPKiAYu0UlXwb9dmWNtnQeHaDDejnbTwK0SkHWPW+6ZSbCXQxgOoJr0+Eb
- tCt8/zLTRmC+aLS7az9vebwvzcp+/1AN45cOLO4lCW3DZwI0fwZRFMAsaVk2xO8cGoVQlHP1F
- izhaIeYKUPmyg/MCGRB80t+z2RpHp35cRsx6wBSKplzaVKxYKqz3qA9mJqfhMDnhFezfnwosc
- +n3gHYuXWeK0/CWg1WFf64huWV9nX7MrLNzf4gCDAFNK1T0SuavAc/tNRqSr18PEjOEHGtBDi
- Gp20XDw0xEfJ7BX7twyKru3tqq26WA8Gn2SoGqSZwskmYbHZSbQWRIZscitRClxy4xC5fCazT
- /Me3/1RnoFTttx6qvNalRXsIkOO/XI/pFY54+VNbI0zeQxPOxSRCXuyNMYqfFZb3KxTCn5zsD
- GX+bLZ/LV0w78NeLYXeNZgERNjsdsspk3kZd0NZKed+Ux6zxMT1zFBDtCztzauJPyPMN8ODdq
- wQ4FfXIXq7L5kU53y0I7PEnVoZ1dHnAkQrVAu44rrqgzd0sscFCNTf/3oP9EW+TejYK0+jEMJ
- peMJ5gky6ORCtVi8E2v8TNS9GMB00r8VJUivNYTaWwRe6iH/PakRraYWVOOsnXgOyyOaANonm
- XmYI7hDW5Jc6WDJkl6UUgJPbeK5jFBGXwwLhZQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711152550.GT32320@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang warns about a few parts of the math-emu implementation
-where a 16-bit integer becomes negative during assignment:
+On Thu 11-07-19 08:25:50, Matthew Wilcox wrote:
+> On Thu, Jul 11, 2019 at 07:13:50AM -0700, Matthew Wilcox wrote:
+> > However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
+> > appear in an XArray (it may appear if you're looking at a deleted node,
+> > but since we're holding the lock, we can't see deleted nodes).
+> 
+...
 
-arch/x86/math-emu/poly_tan.c:88:35: error: implicit conversion from 'int' to 'short' changes value from 49216 to -16320 [-Werror,-Wconstant-conversion]
-                                      (0x41 + EXTENDED_Ebias) | SIGN_Negative);
-                                      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-arch/x86/math-emu/fpu_emu.h:180:58: note: expanded from macro 'setexponent16'
- #define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (y); }
-                                                      ~  ^
-arch/x86/math-emu/reg_constant.c:37:32: error: implicit conversion from 'int' to 'short' changes value from 49085 to -16451 [-Werror,-Wconstant-conversion]
-FPU_REG const CONST_PI2extra = MAKE_REG(NEG, -66,
-                               ^~~~~~~~~~~~~~~~~~
-arch/x86/math-emu/reg_constant.c:21:25: note: expanded from macro 'MAKE_REG'
-                ((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
-                 ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/x86/math-emu/reg_constant.c:48:28: error: implicit conversion from 'int' to 'short' changes value from 65535 to -1 [-Werror,-Wconstant-conversion]
-FPU_REG const CONST_QNaN = MAKE_REG(NEG, EXP_OVER, 0x00000000, 0xC0000000);
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/x86/math-emu/reg_constant.c:21:25: note: expanded from macro 'MAKE_REG'
-                ((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
-                 ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+> @@ -254,7 +267,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+>  static void put_unlocked_entry(struct xa_state *xas, void *entry)
+>  {
+>  	/* If we were the only waiter woken, wake the next one */
+> -	if (entry)
+> +	if (entry && dax_is_conflict(entry))
 
-The code seems correct to me, so add a typecast to shut up the warnings.
+This should be !dax_is_conflict(entry)...
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/math-emu/fpu_emu.h      | 2 +-
- arch/x86/math-emu/reg_constant.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+>  		dax_wake_entry(xas, entry, false);
+>  }
 
-diff --git a/arch/x86/math-emu/fpu_emu.h b/arch/x86/math-emu/fpu_emu.h
-index a5a41ec58072..0c122226ca56 100644
---- a/arch/x86/math-emu/fpu_emu.h
-+++ b/arch/x86/math-emu/fpu_emu.h
-@@ -177,7 +177,7 @@ static inline void reg_copy(FPU_REG const *x, FPU_REG *y)
- #define setexponentpos(x,y) { (*(short *)&((x)->exp)) = \
-   ((y) + EXTENDED_Ebias) & 0x7fff; }
- #define exponent16(x)         (*(short *)&((x)->exp))
--#define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (y); }
-+#define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (u16)(y); }
- #define addexponent(x,y)    { (*(short *)&((x)->exp)) += (y); }
- #define stdexp(x)           { (*(short *)&((x)->exp)) += EXTENDED_Ebias; }
- 
-diff --git a/arch/x86/math-emu/reg_constant.c b/arch/x86/math-emu/reg_constant.c
-index 8dc9095bab22..742619e94bdf 100644
---- a/arch/x86/math-emu/reg_constant.c
-+++ b/arch/x86/math-emu/reg_constant.c
-@@ -18,7 +18,7 @@
- #include "control_w.h"
- 
- #define MAKE_REG(s, e, l, h) { l, h, \
--		((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
-+		(u16)((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
- 
- FPU_REG const CONST_1 = MAKE_REG(POS, 0, 0x00000000, 0x80000000);
- #if 0
+Otherwise the patch looks good to me so feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+once you fix this.
+
+								Honza
 -- 
-2.20.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
