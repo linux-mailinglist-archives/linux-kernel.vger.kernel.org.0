@@ -2,85 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B4965357
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 10:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DDEE653A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfGKIvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 04:51:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:43448 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725963AbfGKIvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 04:51:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3EDE2B;
-        Thu, 11 Jul 2019 01:51:00 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12F223F59C;
-        Thu, 11 Jul 2019 01:50:59 -0700 (PDT)
-Subject: Re: [PATCH] kernel/dma: export dma_alloc_from_contiguous to modules
-To:     miles.chen@mediatek.com, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        wsd_upstream@mediatek.com, linux-mediatek@lists.infradead.org
-References: <20190711053343.28873-1-miles.chen@mediatek.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <7d14b94f-454f-d512-bc8f-589f71bc07ea@arm.com>
-Date:   Thu, 11 Jul 2019 09:50:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728170AbfGKJSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:18:22 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34972 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbfGKJSV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 05:18:21 -0400
+Received: by mail-wm1-f66.google.com with SMTP id l2so4949509wmg.0;
+        Thu, 11 Jul 2019 02:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3fOgz1HmCtagvlUL/uPREEe2zIZr6sKtMCeCzceJUyw=;
+        b=PwBMIS9hm+yEYCvBflAbbJcinxzbpqVbzcZ5Q24LtfSmLm1mbaf/pN9oIgcCL4yvuc
+         hdlyoTfLfi9kzgFCH8gntOGEZi8zpPHmMhmTgYhin8sdCblY8+F5kv87728lP8zFiV0s
+         hafGrAtLAmkIdGxeFnTKr5dXFvTZ5rDAEGV2056ILBfC8ijYzQPTbXtxetRIian3zoN1
+         AbG2a6/lZBXHS4zYNUJs9eJa2yQwe8sLksce06FBRsfUDz70hTIbKPM/oywlistKCe3T
+         ivkWSDP2dHw/uyZAe5DU/M1KDFUCL0ZAXnpIULeB/iGw/Z9NHLsunlc5+tQoFeXtEA7M
+         T7pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3fOgz1HmCtagvlUL/uPREEe2zIZr6sKtMCeCzceJUyw=;
+        b=idTJjdksuTpyA4ZSUkwiI1JVgpNZAluh9xhH1377Zn3CUZ9T3+AajMc3WgGzIKAwnY
+         rtTXB7uv8xSVdXZ+LSIlrlbJRFGoU62IywfGFdUV2feDnp5TEu4xPT7sgd3+mRgd2wcR
+         o4P9PNpZOfBg7EvKe+KATJmaPcnebIpl0yVFntf7xk+SYGzUhCVpDKKzVGyGCWxnKiZI
+         XIBjKxy3ybLNnoP0h7tZpqlHDo3GvFS5qGqXvtF7aLvmlg7ICJJqbAgYwHTmMCDQZiGw
+         ePRC0MqOwkVAE5PvI6Wrm2dVRvWSQN+UwWbZGcFjkpyd+WjNTQIYl9JdEBLb/42HXCa+
+         s13Q==
+X-Gm-Message-State: APjAAAWozHW8uCxb9U9+PpBPAOxPD9bIZkdbLub7PC4nlA3MlKAw/mB3
+        L2zeEfYL0tZk+ZMPEaqQbpU=
+X-Google-Smtp-Source: APXvYqxPFuR4M5BCR8Sb+ubGATW/uN4m71lAA+qeXPQ1bZfFhMczU5S7jaBPszXh+H2hg8yJaV1Wyw==
+X-Received: by 2002:a1c:3:: with SMTP id 3mr3153271wma.6.1562836699392;
+        Thu, 11 Jul 2019 02:18:19 -0700 (PDT)
+Received: from localhost ([193.47.161.132])
+        by smtp.gmail.com with ESMTPSA id n14sm7481561wra.75.2019.07.11.02.18.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Jul 2019 02:18:18 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 10:57:25 +0200
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCHv2] clk: add imx8 clk defines
+Message-ID: <20190711085725.GA1385@optiplex>
+References: <20190619074000.30852-1-oliver.graute@gmail.com>
+ <20190711082039.zze4t22rvlgdxzow@fsr-ub1664-175>
 MIME-Version: 1.0
-In-Reply-To: <20190711053343.28873-1-miles.chen@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711082039.zze4t22rvlgdxzow@fsr-ub1664-175>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/2019 06:33, miles.chen@mediatek.com wrote:
-> From: Miles Chen <miles.chen@mediatek.com>
+On 11/07/19, Abel Vesa wrote:
+> On 19-06-19 09:39:52, Oliver Graute wrote:
+> > From: Oliver Graute <oliver.graute@kococonnector.com>
+> > 
+> > added header defines for imx8qm clock
+> > 
+> > Signed-off-by: Oliver Graute <oliver.graute@kococonnector.com>
 > 
-> This change exports dma_alloc_from_contiguous and
-> dma_release_from_contiguous to modules.
-> 
-> Currently, we can add a reserve a memory node in dts files, make
-> it a CMA memory by setting compatible = "shared-dma-pool",
-> and setup the dev->cma_area by using of_reserved_mem_device_init_by_idx().
-> 
-> Export dma_alloc_from_contiguous and dma_release_from_contiguous, so we
-> can allocate/free from/to dev->cma_area in kernel modules.
+> Again, this seems to be taken from some vendor tree, so please keep the
+> original author.
 
-As far as I understand, this was never intended for drivers to call 
-directly. If a device has its own private CMA area, then regular 
-dma_alloc_attrs() should allocate from that automatically; if that's not 
-happening already, then there's a bug somewhere.
+yes the header defines is from NXP vendor tree. One of orginal authors is
 
-Robin.
+Author: Anson Huang <Anson.Huang@nxp.com>
+Date:   Thu Jan 19 03:53:31 2017 +0800
+    MLK-13911-3 ARM64: dts: imx8qm: add dtsi
+    Add i.MX8QM dtsi support.
+    https://github.com/ADVANTECH-Corp/linux-imx6.git
 
-> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> ---
->   kernel/dma/contiguous.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index b2a87905846d..d5920bdedc77 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -197,6 +197,7 @@ struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
->   
->   	return cma_alloc(dev_get_cma_area(dev), count, align, no_warn);
->   }
-> +EXPORT_SYMBOL_GPL(dma_alloc_from_contiguous);
->   
->   /**
->    * dma_release_from_contiguous() - release allocated pages
-> @@ -213,6 +214,7 @@ bool dma_release_from_contiguous(struct device *dev, struct page *pages,
->   {
->   	return cma_release(dev_get_cma_area(dev), pages, count);
->   }
-> +EXPORT_SYMBOL_GPL(dma_release_from_contiguous);
->   
->   /*
->    * Support for reserved memory regions defined in device tree
-> 
+Whats is the right way to attribute him?
+
+Best regards,
+Oliver
