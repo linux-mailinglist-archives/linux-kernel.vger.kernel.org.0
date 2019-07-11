@@ -2,80 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC61D6515F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B452B65165
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfGKFYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 01:24:46 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45305 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbfGKFYq (ORCPT
+        id S1728015AbfGKFZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 01:25:15 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42364 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727967AbfGKFZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:24:46 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m23so4367019lje.12
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 22:24:44 -0700 (PDT)
+        Thu, 11 Jul 2019 01:25:13 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ay6so2387195plb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 22:25:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w2QefrsAjIehGtDojO7YZaq80yDR8F0qCpFLc2+qa/0=;
-        b=H7VoW1U4KMDnSQnEks1lB1DXI/XutCdpSAI2x/EgYxR2MJk992T56S9+CXihWWwWVi
-         TgbEhtMy9NDRdx9/joyGodU/U8RbuWkLZ3SyK50GAgnauL2nI982f3JWYcBd+HTapx5s
-         monewQA3W2G1+RiPyY4Ljlmffi+ZPlRdhn68s=
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YnDj7HeMgqllbVcG4VtSZ86mS/XHDBUJrdAevBr6spA=;
+        b=B9qYrQ9m+H4aMMhUv91/t0G9wD/DK3Li0yqRGwJJ+UpboBpDdEb/OMjnIq8d1cDGQw
+         eC9gbnCRyABGHd0Nyj4WgZQSB+NAQEjqJS1HmVt7DNcLC73PKAwqDydhdjc2waT8rUnR
+         CzWyxbnrGZLHtsyGntaxLTY36rX9uuL2C3WhPIQ7xygdqmgyUXt5AxzIzQSAy1YDnKw+
+         DCc/DFqLMS8lKtjuq/aWaXdlc+C3JugnUptgm9v4gfVdtrE1HqIiSiXyKpeyegW6MMGC
+         0REKQEO0uD0w3qoIARZZE4eDmPWQba0yTOZIc6ZHCw0mwNFXCETTw/Trs2xd0VUuqx1u
+         bxyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w2QefrsAjIehGtDojO7YZaq80yDR8F0qCpFLc2+qa/0=;
-        b=R98WBi1NjCKuS86o5fJFVaof7OayfDS+7khQZI5fwLW/OrCaUjLfI7+chAfsRFry4V
-         zumBkblqEvKtz6DEb28y+RrJQHtZvKg5L3xr72fGZH4knfUdTq9sNAyrrotfSt8rxigX
-         /FpHIT+wNI8YPfqD3p0wZR7VtzCDq0hISe2Uak2CMCLAuX7kkgkj8Vql0Nza5WKzGuov
-         A9SQ1Ohyz5K5Y9tnGUj1QvU5gyziPqJfjXf8vNoL6yF/zTfi22mfHhZTaBq3kb1TDspR
-         r2AF7F/Z0qDQifNnjrUONP9lpcUk34q33RC27RwXwdGT7SfBCAnvKxBC81w3JswukXB5
-         DBbg==
-X-Gm-Message-State: APjAAAV+iwHoSGYJKaN9Los12LcpsfDwvogHzC7wC5HmnGSlyWMxmx8/
-        NJisY2/Z9uzv8bilTfoM0bh3bFtdGOk=
-X-Google-Smtp-Source: APXvYqyiIYdACr4N2vVo9FuQEFlu/c/Sg0kyUY54s0qb6OSD8GhLMu9G8H/b3pYKF0NCbdO0JSarGA==
-X-Received: by 2002:a2e:89c8:: with SMTP id c8mr1187922ljk.70.1562822683731;
-        Wed, 10 Jul 2019 22:24:43 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id m17sm672220lfb.9.2019.07.10.22.24.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 22:24:42 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id s19so3129266lfb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 22:24:42 -0700 (PDT)
-X-Received: by 2002:ac2:44c5:: with SMTP id d5mr749470lfm.134.1562822681814;
- Wed, 10 Jul 2019 22:24:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YnDj7HeMgqllbVcG4VtSZ86mS/XHDBUJrdAevBr6spA=;
+        b=pCiwzlPAEztDVCD6a/qrX2OoNLYN80geVypLKTGzAVTYf+DyBNIShFv87dtAzrYRm5
+         ONZN5WfuInLEqy7lz9dXnJ9MGaNHvtz9OrZ9D858CJKzfOvLenHbYpHXj7GmQeZ3UTDu
+         D9DycremN4xOqmMX6f6zdsnC2wInWCOy0fTJhXB1L7LZk/OtQ9Piu7giaf1ICEScQurp
+         jE3bkQZcgjq4C4cwqBNKxX6tV7uII66Gocqxjng7YodhapnWcs5dYrCyXzqVDaPQRski
+         97/iKstePN28bYrkvZc4rnMx4kiNT4W7HpX7bl9NYS7mqdcj0GNlpYc/75Hu91BZSTbz
+         0FEg==
+X-Gm-Message-State: APjAAAU88WgCoBUtkIO3VCxKV9mtuyGi7lg1l1xtzpuQsjlySCTP6mD1
+        2LQGnMHtv8SBaD2eawvRRX96aw==
+X-Google-Smtp-Source: APXvYqzKeDK8OkxK6szumbrprfqFg7I8okB/dx+QucnEs398OraeKe4q3ipZIzcp/fCFEx7KY8LVEQ==
+X-Received: by 2002:a17:902:6847:: with SMTP id f7mr2397704pln.311.1562822712599;
+        Wed, 10 Jul 2019 22:25:12 -0700 (PDT)
+Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id 201sm5471345pfz.24.2019.07.10.22.25.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 22:25:12 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, stable@vger.kernel.org
+Subject: [PATCH v4 2/2] rtw88: pci: Use DMA sync instead of remapping in RX ISR
+Date:   Thu, 11 Jul 2019 13:24:27 +0800
+Message-Id: <20190711052427.5582-2-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190711052427.5582-1-jian-hong@endlessm.com>
+References: <CAPpJ_edDcaBq+0DocPmS-yYM10B4MkWvBn=f6wwbYdqzSGmp_g@mail.gmail.com>
+ <20190711052427.5582-1-jian-hong@endlessm.com>
 MIME-Version: 1.0
-References: <20190708150042.11590-1-christian@brauner.io>
-In-Reply-To: <20190708150042.11590-1-christian@brauner.io>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 10 Jul 2019 22:24:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg0jcyTO+iXgP-CpNwvJ4mTCcg3ts8dLj3R5nbbonkpyQ@mail.gmail.com>
-Message-ID: <CAHk-=wg0jcyTO+iXgP-CpNwvJ4mTCcg3ts8dLj3R5nbbonkpyQ@mail.gmail.com>
-Subject: Re: [GIT PULL] clone3 for v5.3
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 8, 2019 at 8:05 AM Christian Brauner <christian@brauner.io> wrote:
->
-> /* Syscall number 435 */
-> clone3() uses syscall number 435 and is coordinated with pidfd_open() which
-> uses syscall number 434. I'm not aware of any other syscall targeted for
-> 5.3 that has chosen the same number.
+Since each skb in RX ring is reused instead of new allocation, we can
+treat the DMA in a more efficient way by DMA synchronization.
 
-You say that, and 434/435 would make sense, but that's not what the
-code I see in the pull request actually does.
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/net/wireless/realtek/rtw88/pci.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-It seems to use syscall 436.
+diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
+index c415f5e94fed..68fae52151dd 100644
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -206,6 +206,23 @@ static int rtw_pci_reset_rx_desc(struct rtw_dev *rtwdev, struct sk_buff *skb,
+ 	return 0;
+ }
+ 
++static void rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr_t dma,
++					struct rtw_pci_rx_ring *rx_ring,
++					u32 idx, u32 desc_sz)
++{
++	struct device *dev = rtwdev->dev;
++	struct rtw_pci_rx_buffer_desc *buf_desc;
++	int buf_sz = RTK_PCI_RX_BUF_SIZE;
++
++	dma_sync_single_for_device(dev, dma, buf_sz, DMA_FROM_DEVICE);
++
++	buf_desc = (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
++						     idx * desc_sz);
++	memset(buf_desc, 0, sizeof(*buf_desc));
++	buf_desc->buf_size = cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
++	buf_desc->dma = cpu_to_le32(dma);
++}
++
+ static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
+ 				struct rtw_pci_rx_ring *rx_ring,
+ 				u8 desc_size, u32 len)
+@@ -782,8 +799,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
+ 		rtw_pci_dma_check(rtwdev, ring, cur_rp);
+ 		skb = ring->buf[cur_rp];
+ 		dma = *((dma_addr_t *)skb->cb);
+-		pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
+-				 PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_cpu(rtwdev->dev, dma, RTK_PCI_RX_BUF_SIZE,
++					DMA_FROM_DEVICE);
+ 		rx_desc = skb->data;
+ 		chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_status);
+ 
+@@ -818,7 +835,8 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
+ 
+ next_rp:
+ 		/* new skb delivered to mac80211, re-enable original skb DMA */
+-		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
++		rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
++					    buf_desc_sz);
+ 
+ 		/* host read next element in ring */
+ 		if (++cur_rp >= ring->r.len)
+-- 
+2.22.0
 
-I think it's because openat2() is looking to use 435, but I'm a bit
-nervous about the conflict between the code and your commentary..
-
-              Linus
