@@ -2,87 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3398565181
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 07:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AE4E651AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 08:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfGKFo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 01:44:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64295 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfGKFo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:44:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 22:44:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,476,1557212400"; 
-   d="scan'208";a="167929709"
-Received: from liujing-dell.bj.intel.com ([10.238.145.70])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2019 22:44:25 -0700
-From:   Jing Liu <jing2.liu@linux.intel.com>
-To:     kvm@vger.kernel.org
-Cc:     pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        Jing Liu <jing2.liu@linux.intel.com>
-Subject: [PATCH v1] KVM: x86: expose AVX512_BF16 feature to guest
-Date:   Thu, 11 Jul 2019 13:49:57 +0800
-Message-Id: <1562824197-13658-1-git-send-email-jing2.liu@linux.intel.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727960AbfGKGCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 02:02:14 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43004 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbfGKGCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 02:02:13 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t28so4467912lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 23:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5wfpCOZ83nI7HCRBNZYdSqgK08vpf3gVcSTnau6UYac=;
+        b=BcNT1qKADluKUbaLesg1b4t+d4/iFYu5N8uvYFQrG2v7R4F/dqtkef3BhfnifY1XED
+         uXCUzTzxiPb8fHnKmsGuGRQSGqeTp3WhYhS0adjv8D/cAjxgmZqFEd8Za/ZVPdpDzwAz
+         Pko4W66+AGPjlyfXom/A7dW0sv9+sMcG+UTLB8cYN4Fz6E4e40Uf758G3DOP7j1kVNms
+         a39z8cLDtR3qDXhyIsdfPJ2CWxz7Y42b4yEo+vifNNaraJ/Wx8T/bh3xYto7nl3I8waI
+         BM7pf6kV+6OcUTwokyPlJQPiarEVIiVFwMn9Q341AoonwERkgPQA5aL7NyG3h+5U8ZaM
+         O1og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5wfpCOZ83nI7HCRBNZYdSqgK08vpf3gVcSTnau6UYac=;
+        b=iQY+XVQL7ES248Q7oY4qnEhwrjuq/JbxPDdwhenwD1itHZJLahfc5V6AnnY6ofKAwC
+         +2w8tJYC2V3NCgk+/6Fe03vLTR+IUWoZyeT9Ivw5JY/Ju8TfzNBgjFBC/+Gwkr71Q8gP
+         cm4yIWX+V+4lIIYfqBPznEtRrIYbKKiXaGc4yduHSWLvdWgKFBul4+f7pF9niwyPXneJ
+         5E4aWm/E3UoKGYjhhA1tYpAV1mWphszwfU2z5lEMfEV/C5trh3ulUSiShFvTZoNPTkQD
+         /fgE6eZdU5XrxKYXjHvvChhErvoTx8ZdztAD1YjyDiQ2ynOCh5jPHpd3+W3s9AAKQOE6
+         xWbQ==
+X-Gm-Message-State: APjAAAU04juCoyoHJz3AXAOioZEyA2z6IY2npFRwklOP/OBK0Ngcor4A
+        v8aZXY6SCzZqq/bbmWpZzyuaXPgitRMu7Q9IpGY=
+X-Google-Smtp-Source: APXvYqw/SKkWcDJJYhzh9Foxv18y0Hev4hCuXDzlEy58M1Sxo6DuPPrWfqWCtEi7kWCI77FTG7mPXUosCqvzTtc9cBI=
+X-Received: by 2002:a2e:3604:: with SMTP id d4mr1227030lja.85.1562824931191;
+ Wed, 10 Jul 2019 23:02:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190710190502.104010-1-natechancellor@gmail.com>
+In-Reply-To: <20190710190502.104010-1-natechancellor@gmail.com>
+From:   Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Date:   Wed, 10 Jul 2019 23:02:00 -0700
+Message-ID: <CALzJLG9Aw=sVPDiewHr+4Jiuaod_1q=10vzMzCUVg-rCCXD6cQ@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5e: Move priv variable into case statement in mlx5e_setup_tc
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX512 BFLOAT16 instructions support 16-bit BFLOAT16 floating-point
-format (BF16) for deep learning optimization.
+On Wed, Jul 10, 2019 at 12:05 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> There is an unused variable warning on arm64 defconfig when
+> CONFIG_MLX5_ESWITCH is unset:
+>
+> drivers/net/ethernet/mellanox/mlx5/core/en_main.c:3467:21: warning:
+> unused variable 'priv' [-Wunused-variable]
+>         struct mlx5e_priv *priv = netdev_priv(dev);
+>                            ^
+> 1 warning generated.
+>
+> Move it down into the case statement where it is used.
+>
+> Fixes: 4e95bc268b91 ("net: flow_offload: add flow_block_cb_setup_simple()")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/597
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> index 6d0ae87c8ded..651eb714eb5b 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@ -3464,15 +3464,16 @@ static LIST_HEAD(mlx5e_block_cb_list);
+>  static int mlx5e_setup_tc(struct net_device *dev, enum tc_setup_type type,
+>                           void *type_data)
+>  {
+> -       struct mlx5e_priv *priv = netdev_priv(dev);
+> -
+>         switch (type) {
+>  #ifdef CONFIG_MLX5_ESWITCH
+> -       case TC_SETUP_BLOCK:
+> +       case TC_SETUP_BLOCK: {
+> +               struct mlx5e_priv *priv = netdev_priv(dev);
+> +
+>                 return flow_block_cb_setup_simple(type_data,
+>                                                   &mlx5e_block_cb_list,
+>                                                   mlx5e_setup_tc_block_cb,
+>                                                   priv, priv, true);
+> +       }
 
-Intel adds AVX512 BFLOAT16 feature in CooperLake, which is CPUID.7.1.EAX[5].
+Hi Nathan,
 
-Detailed information of the CPUID bit can be found here,
-https://software.intel.com/sites/default/files/managed/c5/15/\
-architecture-instruction-set-extensions-programming-reference.pdf.
+We have another patch internally that fixes this, and it is already
+queued up in my queue.
+it works differently as we want to pass priv instead of netdev to
+mlx5e_setup_tc_mqprio below,
+which will also solve warning ..
 
-Signed-off-by: Jing Liu <jing2.liu@linux.intel.com>
----
+So i would like to submit that patch if it is ok with you ?
 
-This patch depends on kernel patch https://lkml.org/lkml/2019/6/19/912
-and Paolo's patch set https://lkml.org/lkml/2019/7/4/468.
-
- arch/x86/kvm/cpuid.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 8fc6039..0c125dd 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -358,9 +358,13 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
- 		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
- 		F(MD_CLEAR);
- 
-+	/* cpuid 7.1.eax */
-+	const u32 kvm_cpuid_7_1_eax_x86_features =
-+		F(AVX512_BF16);
-+
- 	switch (index) {
- 	case 0:
--		entry->eax = 0;
-+		entry->eax = min(entry->eax, 1);
- 		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
- 		cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
- 		/* TSC_ADJUST is emulated */
-@@ -384,6 +388,12 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
- 		 */
- 		entry->edx |= F(ARCH_CAPABILITIES);
- 		break;
-+	case 1:
-+		entry->eax &= kvm_cpuid_7_1_eax_x86_features;
-+		entry->ebx = 0;
-+		entry->ecx = 0;
-+		entry->edx = 0;
-+		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		entry->eax = 0;
--- 
-1.8.3.1
-
+>  #endif
+>         case TC_SETUP_QDISC_MQPRIO:
+>                 return mlx5e_setup_tc_mqprio(dev, type_data);
+> --
+> 2.22.0
+>
