@@ -2,163 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87AC36595E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C878365965
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbfGKOwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:52:15 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34822 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfGKOwO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:52:14 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w20so6085058edd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 07:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iBM2CRhYytsGloLRqM5hkuc/1rlVJSnBaoDzWBF93tI=;
-        b=dUqUT+b6n18svFrfnk9ACdcu+Ltwwq58zrLlmylv6wg3hMpJGlcQJMUxqXd9Sywr81
-         xPLASbkCgnj2K91BtxoE6r30BnrF2eVUs5+xGhn7Q8nDkuMfpd/yAfA8CSJbDPP6henu
-         phvYYa2C314lwTqCCf70eO9dcvWZN9gjlNby0CTlj1LFHD9HTZ++TvM2eV+RYpeEfAXe
-         lgIjJYmVJqKPM1gLBDnkRo9dIHfgiW85DVUzd6C4E1t4w+LNfEtH9FvHYPnGRSEwPsPl
-         VrMXrddc0Z7xRm+cFTyuzU4fbdlxl/Rgt8vn1QcuQce8MNYtIV3GjK4JQ4ykkHBkjcx8
-         S82A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=iBM2CRhYytsGloLRqM5hkuc/1rlVJSnBaoDzWBF93tI=;
-        b=HpPDLAspSqxKL54W+h9NGnRbIz7WvnfIm2wbQLhw/OGVB+ig6HzjbsnYLEzhggSGkc
-         /3f92+1tV9Ik/PXQ0QwtJmt2zxOrSDXSEVh7q+plduJnumPzzmOwUmR2NsUegnTbf75K
-         pU09UBqmlbqYiEe4zrtByYoylRkmjPTh55pj4W0nKyVqtNOtkAHkw3wMNFS7a9VOgWwc
-         1P93cDtPsYPazC6uQ7pks5XlwfaKrn+OBYC1CnxBaUWbUgLp5Ho/DqR+p0yYsn3M32SR
-         Wti0Z6tKeCf/F5B3tng0lMKx9nPCATzRt2zdYKZuaQGa44gR/vWQDGJOVBNQxNBrogbs
-         6fAQ==
-X-Gm-Message-State: APjAAAV2kiXbpznO32g58s6MREntRnQrceVu6atfLu7xMrOTTzF1X07d
-        HQDaSJh+7xK5z/GP1aS/tp4=
-X-Google-Smtp-Source: APXvYqylADulNKzQk8is8vFNIqrIHPrRZPH/1W9eGfWEch53ivBs860LaxqWlLQ9jb7iEp9Togypfw==
-X-Received: by 2002:a50:91ef:: with SMTP id h44mr3991753eda.276.1562856731827;
-        Thu, 11 Jul 2019 07:52:11 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.141.54])
-        by smtp.gmail.com with ESMTPSA id m31sm1682163edd.42.2019.07.11.07.52.10
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 07:52:11 -0700 (PDT)
-Subject: Re: [PATCH] arm64/kexec: Use consistent convention of initializing
- 'kxec_buf.mem' with KEXEC_BUF_MEM_UNKNOWN
-To:     Bhupesh Sharma <bhsharma@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        takahiro.akashi@linaro.org, james.morse@arm.com,
-        bhupesh.linux@gmail.com
-References: <1562846252-7441-1-git-send-email-bhsharma@redhat.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
+        id S1728926AbfGKOxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 10:53:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34812 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728487AbfGKOxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:53:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7DF5DAE0C;
+        Thu, 11 Jul 2019 14:53:07 +0000 (UTC)
+Subject: Re: [PATCH 2/5] Btrfs: delete the entire async bio submission
+ framework
+To:     Tejun Heo <tj@kernel.org>, clm@fb.com,
+        David Sterba <dsterba@suse.com>, josef@toxicpanda.com
+Cc:     kernel-team@fb.com, axboe@kernel.dk, jack@suse.cz,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190710192818.1069475-1-tj@kernel.org>
+ <20190710192818.1069475-3-tj@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
- fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
- OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
- gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
- 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
- EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
- fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
- ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
- HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
- 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABtClNYXR0aGlhcyBC
- cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPokCUgQTAQIAPAIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
- VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
- ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
- YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
- c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
- DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
- 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
- 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
- aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
- jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
- wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyybkCDQRT9c4FARAAqdGWpdzcSM8q
- 6I2oTPS5J4KXXIJS8O2jbUcxoNuaSBnUkhwp2eML/i30oLbEC+akmagcOLD0kOY46yRFeSEC
- SPM9SWLxKvKUTQYGLX2sphPVZ3hEdFYKen3+cbvo6GyYTnm8ropHM9uqmXPZFFfLJDL76Nau
- kFsRfPMQUuwMe3hFVLmF7ntvdX3Z3jKImoMWrgA/SnsT6K40n/GCl1HNz2T8PSnqAUQjvSoI
- FAenxb23NtW6kg50xIxlb7DKbncnQGGTwoYn8u9Lgxkh8gJ03IMiSDHZ9o+wl21U8B3OXr1K
- L08vXmdR70d6MJSmt6pKs7yTjxraF0ZS6gz+F2BTy080jxceZwEWIIbK7zU3tm1hnr7QIbj/
- H6W2Pv9p5CXzQCIw17FXFXjpGPa9knzd4WMzJv2Rgx/m8/ZG91aKq+4Cbz9TLQ7OyRdXqhPJ
- CopfKgZ2l/Fc5+AGhogJLxOopBoELIdHgB50Durx4YJLmQ1z/oimD0O/mUb5fJu0FUQ5Boc1
- kHHJ8J8bZTuFrGAomfvnsek+dyenegqBpZCDniCSfdgeAx9oWNoXG4cgo8OVG7J/1YIWBHRa
- Wnk+WyXGBfbY/8247Gy8oaXtQs1OnehbMKBHRIY0tgoyUlag3wXuUzeK+0PKtWC7ZYelKNC0
- Fn+zL9XpnK3HLE5ckhBLgK8AEQEAAYkCHwQYAQIACQUCU/XOBQIbDAAKCRDZFAuyVhMC8Yyu
- D/9g6+JZZ+oEy7HoGZ0Bawnlxu/xQrzaK/ltQhA2vtiMaxCN46gOvEF/x+IvFscAucm3q4Dy
- bJJkW2qY30ISK9MDELnudPmHRqCxTj8koabvcI1cP8Z0Fw1reMNZVgWgVZJkwHuPYnkhY15u
- 3vHDzcWnfnvmguKgYoJxkqqdp/acb0x/qpQgufrWGeYv2yb1YNidXBHTJSuelFcGp/oBXeJz
- rQ2IP1JBbQmQfPSePZzWdSLlrR+3jcBJEP/A/73lSObOQpiYJomXPcla6dH+iyV0IiiZdYgU
- Htwru4Stv/cFVFsUJk1fIOP1qjSa+L6Y0dWX6JMniqUXHhaXo6OPf7ArpVbBygMuzvy99LtS
- FSkMcYXn359sXOYsRy4V+Yr7Bs0lzdnHnKdpVqHiDvNgrrLoPNrKTiYwTmzTVbb9u/BjUGhC
- YUS705vcjBgXhdXS44kgO22kaB5c6Obg7WP7cucFomITovtZs5Rm1iaZZc31lzobfFPUwDSc
- YXOj6ckS9bF9lDG26z3C/muyiifZeiQvvG1ygexrHtnKYTNxqisOGjjcXzDzpS8egIOtIEI/
- arzlqK5RprMLVOl6n/npxEWmInjBetsBsaX/9kJNZFM4Yais5scOnP+tuTnFTW2K9xKySyuD
- q/iLORJYRYMloJPaDAftiYfjFa8zuw1XnQyG17kCDQRT9gX3ARAAsL2UwyvSLQuMxOW2GRLv
- CiZuxtIEoUuhaBWdC/Yq3c6rWpTu692lhLd4bRpKJkE4nE3saaTVxIHFF3tt3IHSa3Qf831S
- lW39EkcFxr7DbO17kRThOyU1k7KDhUQqhRaUoT1NznrykvpTlNszhYNjA0CMYWH249MJXgck
- iKOezSHbQ2bZWtFG3uTloWSKloFsjsmRsb7Vn2FlyeP+00PVC6j7CRqczxpkyYoHuqIS0w1z
- Aq8HP5DDSH7+arijtPuJhVv9uaiD6YFLgSIQy4ZCZuMcdzKJz2j6KCw2kUXLehk4BU326O0G
- r9+AojZT8J3qvZYBpvCmIhGliKhZ7pYDKZWVseRw7rJS5UFnst5OBukBIjOaSVdp6JMpe99o
- caLjyow2By6DCEYgLCrquzuUxMQ8plEMfPD1yXBo00bLPatkuxIibM0G4IstKL5hSAKiaFCc
- 2f73ppp7eby3ZceyF4uCIxN3ABjW9ZCEAcEwC40S3rnh2wZhscBFZ+7sO7+Fgsd0w67zjpt+
- YHFNv/chRJiPnDGGRt0jPWryaasDnQtAAf59LY3qd4GVHu8RA1G0Rz4hVw27yssHGycc4+/Z
- ZX7sPpgNKlpsToMaB5NWgc389HdqOG80Ia+sGkNj9ylp74MPbd0t3fzQnKXzBSHOCNuS67sc
- lUAw7HB+wa3BqgsAEQEAAYkEPgQYAQIACQUCU/YF9wIbAgIpCRDZFAuyVhMC8cFdIAQZAQIA
- BgUCU/YF9wAKCRC0OWJbLPHTQ14xD/9crEKZOwhIWX32UXvB/nWbhEx6+PQG2uWsnah7oc5D
- 7V+aY7M1jy5af8yhlhVdaxL5xUoepfOP08lkCEuSdrYbS5wBcQj4NE1QUoeAjJKbq4JwxUkX
- Baq2Lu91UZpdKxEVFfSkEzmeMaVvClGjGOtNCUKl8lwLuthU7dGTW74mJaW5jjlXldgzfzFd
- BkS3fsXfcmeDhHh5TpA4e3MYVBIJrq6Repv151g/zxdA02gjJgGvJlXTb6OgEZGNFr8LGJDh
- LP7MSksBw6IxCAJSicMESu5kXsJfcODlm4zFaV8QDBevI/s/TgOQ9KQ/EJQsG+XBAuh0dqpu
- ImmCdhlHx+YaGmwKO1/yhfWvg1h1xbVn98izeotmq1+0J1jt9tgM17MGvgHjmvqlaY+oUXfj
- OkHkcCGOvao5uAsddQhZcSLmLhrSot8WJI0z3NIM30yiNx/r6OMu47lzTobdYCU8/8m7Rhsq
- fyW68D+XR098NIlU2oYy1zUetw59WJLf2j5u6D6a9p10doY5lYUEeTjy9Ejs/cL+tQbGwgWh
- WwKVal1lAtZVaru0GMbSQQ2BycZsZ+H+sbVwpDNEOxQaQPMmEzwgv2Sk2hvR3dTnhUoUaVoR
- hQE3/+fVRbWHEEroh/+vXV6n4Ps5bDd+75NCQ/lfPZNzGxgxqbd/rd2wStVZpQXkhofMD/4k
- Z8IivHZYaTA+udUk3iRm0l0qnuX2M5eUbyHW0sZVPnL7Oa4OKXoOir1EWwzzq0GNZjHCh6Cz
- vLOb1+pllnMkBky0G/+txtgvj5T/366ErUF+lQfgNtENKY6In8tw06hPJbu1sUTQIs50Jg9h
- RNkDSIQ544ack0fzOusSPM+vo6OkvIHt8tV0fTO1muclwCX/5jb7zQIDgGiUIgS8y0M4hIkP
- KvdmgurPywi74nEoQQrKF6LpPYYHsDteWR/k2m2BOj0ciZDIIxVR09Y9moQIjBLJKN0J21XJ
- eAgam4uLV2p1kRDdw/ST5uMCqD4Qi5zrZyWilCci6jF1TR2VEt906E2+AZ3BEheRyn8yb2KO
- +cJD3kB4RzOyBC/Cq/CGAujfDkRiy1ypFF3TkZdya0NnMgka9LXwBV29sAw9vvrxHxGa+tO+
- RpgKRywr4Al7QGiw7tRPbxkcatkxg67OcRyntfT0lbKlSTEQUxM06qvwFN7nobc9YiJJTeLu
- gfa4fCqhQCyquWVVoVP+MnLqkzu1F6lSB6dGIpiW0s3LwyE/WbCAVBraPoENlt69jI0WTXvH
- 4v71zEffYaGWqtrSize20x9xZf5c/Aukpx0UmsqheKeoSprKyRD/Wj/LgsuTE2Uod85U36Xk
- eFYetwQY1h3lok2Zb/3uFhWr0NqmT14EL7kCDQRT9gkSARAApxtQ4zUMC512kZ+gCiySFcIF
- /mAf7+l45689Tn7LI1xmPQrAYJDoqQVXcyh3utgtvBvDLmpQ+1BfEONDWc8KRP6Abo35YqBx
- 3udAkLZgr/RmEg3+Tiof+e1PJ2zRh5zmdei5MT8biE2zVd9DYSJHZ8ltEWIALC9lAsv9oa+2
- L6naC+KFF3i0m5mxklgFoSthswUnonqvclsjYaiVPoSldDrreCPzmRCUd8znf//Z4BxtlTw3
- SulF8weKLJ+Hlpw8lwb3sUl6yPS6pL6UV45gyWMe677bVUtxLYOu+kiv2B/+nrNRDs7B35y/
- J4t8dtK0S3M/7xtinPiYRmsnJdk+sdAe8TgGkEaooF57k1aczcJlUTBQvlYAEg2NJnqaKg3S
- CJ4fEuT8rLjzuZmLkoHNumhH/mEbyKca82HvANu5C9clyQusJdU+MNRQLRmOAd/wxGLJ0xmA
- ye7Ozja86AIzbEmuNhNH9xNjwbwSJNZefV2SoZUv0+V9EfEVxTzraBNUZifqv6hernMQXGxs
- +lBjnyl624U8nnQWnA8PwJ2hI3DeQou1HypLFPeY9DfWv4xYdkyeOtGpueeBlqhtMoZ0kDw2
- C3vzj77nWwBgpgn1Vpf4hG/sW/CRR6tuIQWWTvUM3ACa1pgEsBvIEBiVvPxyAtL+L+Lh1Sni
- 7w3HBk1EJvUAEQEAAYkCHwQYAQIACQUCU/YJEgIbDAAKCRDZFAuyVhMC8QndEACuN16mvivn
- WwLDdypvco5PF8w9yrfZDKW4ggf9TFVB9skzMNCuQc+tc+QM+ni2c4kKIdz2jmcg6QytgqVu
- m6V1OsNmpjADaQkVp5jL0tmg6/KA9Tvr07Kuv+Uo4tSrS/4djDjJnXHEp/tB+Fw7CArNtUtL
- lc8SuADCmMD+kBOVWktZyzkBkDfBXlTWl46T/8291lEspDWe5YW1ZAH/HdCR1rQNZWjNCpB2
- Cic58CYMD1rSonCnbfUeyZYNNhNHZosl4dl7f+am87Q2x3pK0DLSoJRxWb7vZB0uo9CzCSm3
- I++aYozF25xQoT+7zCx2cQi33jwvnJAK1o4VlNx36RfrxzBqc1uZGzJBCQu48UjmUSsTwWC3
- HpE/D9sM+xACs803lFUIZC5H62G059cCPAXKgsFpNMKmBAWweBkVJAisoQeX50OP+/11ArV0
- cv+fOTfJj0/KwFXJaaYh3LUQNILLBNxkSrhCLl8dUg53IbHx4NfIAgqxLWGfXM8DY1aFdU79
- pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
- AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <17b63547-0f03-baaf-775c-2da75aa40ee3@gmail.com>
-Date:   Thu, 11 Jul 2019 16:52:10 +0200
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c8876469-7da9-0ef0-d042-1ee1d74c588c@suse.com>
+Date:   Thu, 11 Jul 2019 17:53:05 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <1562846252-7441-1-git-send-email-bhsharma@redhat.com>
+In-Reply-To: <20190710192818.1069475-3-tj@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -166,62 +83,337 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 11/07/2019 13:57, Bhupesh Sharma wrote:
-> With commit b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()"),
-> we introduced the KEXEC_BUF_MEM_UNKNOWN macro. If kexec_buf.mem is set
-> to this value, kexec_locate_mem_hole() will try to allocate free memory.
+On 10.07.19 г. 22:28 ч., Tejun Heo wrote:
+> From: Chris Mason <clm@fb.com>
 > 
-> While other arch(s) like s390 and x86_64 already use this macro to
-> initialize kexec_buf.mem with, arm64 uses an equivalent value of 0.
-> Replace it with KEXEC_BUF_MEM_UNKNOWN, to keep the convention of
-> initializing 'kxec_buf.mem' consistent across various archs.
+> Now that we're not using btrfs_schedule_bio() anymore, delete all the
+> code that supported it.
 > 
-> Cc: takahiro.akashi@linaro.org
-> Cc: james.morse@arm.com
-> Cc: will.deacon@arm.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> Signed-off-by: Chris Mason <clm@fb.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 > ---
-
-Reviewed-by: Matthias Brugger <mbrugger@suse.com>
-
->  arch/arm64/kernel/kexec_image.c        | 2 +-
->  arch/arm64/kernel/machine_kexec_file.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  fs/btrfs/ctree.h   |   1 -
+>  fs/btrfs/disk-io.c |  13 +--
+>  fs/btrfs/super.c   |   1 -
+>  fs/btrfs/volumes.c | 209 ---------------------------------------------
+>  fs/btrfs/volumes.h |   8 --
+>  5 files changed, 1 insertion(+), 231 deletions(-)
 > 
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> index 2514fd6f12cb..29a9428486a5 100644
-> --- a/arch/arm64/kernel/kexec_image.c
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -84,7 +84,7 @@ static void *image_load(struct kimage *image,
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 0a61dff27f57..21618b5b18a4 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -989,7 +989,6 @@ struct btrfs_fs_info {
+>  	struct btrfs_workqueue *endio_meta_write_workers;
+>  	struct btrfs_workqueue *endio_write_workers;
+>  	struct btrfs_workqueue *endio_freespace_worker;
+> -	struct btrfs_workqueue *submit_workers;
+>  	struct btrfs_workqueue *caching_workers;
+>  	struct btrfs_workqueue *readahead_workers;
 >  
->  	kbuf.buffer = kernel;
->  	kbuf.bufsz = kernel_len;
-> -	kbuf.mem = 0;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	kbuf.memsz = le64_to_cpu(h->image_size);
->  	text_offset = le64_to_cpu(h->text_offset);
->  	kbuf.buf_align = MIN_KIMG_ALIGN;
-> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-> index 58871333737a..ba78ee7ca990 100644
-> --- a/arch/arm64/kernel/machine_kexec_file.c
-> +++ b/arch/arm64/kernel/machine_kexec_file.c
-> @@ -177,7 +177,7 @@ int load_other_segments(struct kimage *image,
->  	if (initrd) {
->  		kbuf.buffer = initrd;
->  		kbuf.bufsz = initrd_len;
-> -		kbuf.mem = 0;
-> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  		kbuf.memsz = initrd_len;
->  		kbuf.buf_align = 0;
->  		/* within 1GB-aligned window of up to 32GB in size */
-> @@ -204,7 +204,7 @@ int load_other_segments(struct kimage *image,
->  	dtb_len = fdt_totalsize(dtb);
->  	kbuf.buffer = dtb;
->  	kbuf.bufsz = dtb_len;
-> -	kbuf.mem = 0;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	kbuf.memsz = dtb_len;
->  	/* not across 2MB boundary */
->  	kbuf.buf_align = SZ_2M;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 6b1ecc27913b..323cab06f2a9 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -2028,7 +2028,6 @@ static void btrfs_stop_all_workers(struct btrfs_fs_info *fs_info)
+>  	btrfs_destroy_workqueue(fs_info->rmw_workers);
+>  	btrfs_destroy_workqueue(fs_info->endio_write_workers);
+>  	btrfs_destroy_workqueue(fs_info->endio_freespace_worker);
+> -	btrfs_destroy_workqueue(fs_info->submit_workers);
+>  	btrfs_destroy_workqueue(fs_info->delayed_workers);
+>  	btrfs_destroy_workqueue(fs_info->caching_workers);
+>  	btrfs_destroy_workqueue(fs_info->readahead_workers);
+> @@ -2194,16 +2193,6 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info,
+>  	fs_info->caching_workers =
+>  		btrfs_alloc_workqueue(fs_info, "cache", flags, max_active, 0);
+>  
+> -	/*
+> -	 * a higher idle thresh on the submit workers makes it much more
+> -	 * likely that bios will be send down in a sane order to the
+> -	 * devices
+> -	 */
+> -	fs_info->submit_workers =
+> -		btrfs_alloc_workqueue(fs_info, "submit", flags,
+> -				      min_t(u64, fs_devices->num_devices,
+> -					    max_active), 64);
+> -
+>  	fs_info->fixup_workers =
+>  		btrfs_alloc_workqueue(fs_info, "fixup", flags, 1, 0);
+>  
+> @@ -2246,7 +2235,7 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info,
+>  					    max_active), 8);
+>  
+>  	if (!(fs_info->workers && fs_info->delalloc_workers &&
+> -	      fs_info->submit_workers && fs_info->flush_workers &&
+> +	      fs_info->flush_workers &&
+>  	      fs_info->endio_workers && fs_info->endio_meta_workers &&
+>  	      fs_info->endio_meta_write_workers &&
+>  	      fs_info->endio_repair_workers &&
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 0645ec428b4f..b130dc43b5f1 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -1668,7 +1668,6 @@ static void btrfs_resize_thread_pool(struct btrfs_fs_info *fs_info,
+>  
+>  	btrfs_workqueue_set_max(fs_info->workers, new_pool_size);
+>  	btrfs_workqueue_set_max(fs_info->delalloc_workers, new_pool_size);
+> -	btrfs_workqueue_set_max(fs_info->submit_workers, new_pool_size);
+>  	btrfs_workqueue_set_max(fs_info->caching_workers, new_pool_size);
+>  	btrfs_workqueue_set_max(fs_info->endio_workers, new_pool_size);
+>  	btrfs_workqueue_set_max(fs_info->endio_meta_workers, new_pool_size);
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 72326cc23985..fc3a16d87869 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -509,212 +509,6 @@ btrfs_get_bdev_and_sb(const char *device_path, fmode_t flags, void *holder,
+>  	return ret;
+>  }
+>  
+> -static void requeue_list(struct btrfs_pending_bios *pending_bios,
+> -			struct bio *head, struct bio *tail)
+> -{
+> -
+> -	struct bio *old_head;
+> -
+> -	old_head = pending_bios->head;
+> -	pending_bios->head = head;
+> -	if (pending_bios->tail)
+> -		tail->bi_next = old_head;
+> -	else
+> -		pending_bios->tail = tail;
+> -}
+> -
+> -/*
+> - * we try to collect pending bios for a device so we don't get a large
+> - * number of procs sending bios down to the same device.  This greatly
+> - * improves the schedulers ability to collect and merge the bios.
+> - *
+> - * But, it also turns into a long list of bios to process and that is sure
+> - * to eventually make the worker thread block.  The solution here is to
+> - * make some progress and then put this work struct back at the end of
+> - * the list if the block device is congested.  This way, multiple devices
+> - * can make progress from a single worker thread.
+> - */
+> -static noinline void run_scheduled_bios(struct btrfs_device *device)
+> -{
+> -	struct btrfs_fs_info *fs_info = device->fs_info;
+> -	struct bio *pending;
+> -	struct backing_dev_info *bdi;
+> -	struct btrfs_pending_bios *pending_bios;
+> -	struct bio *tail;
+> -	struct bio *cur;
+> -	int again = 0;
+> -	unsigned long num_run;
+> -	unsigned long batch_run = 0;
+> -	unsigned long last_waited = 0;
+> -	int force_reg = 0;
+> -	int sync_pending = 0;
+> -	struct blk_plug plug;
+> -
+> -	/*
+> -	 * this function runs all the bios we've collected for
+> -	 * a particular device.  We don't want to wander off to
+> -	 * another device without first sending all of these down.
+> -	 * So, setup a plug here and finish it off before we return
+> -	 */
+> -	blk_start_plug(&plug);
+> -
+> -	bdi = device->bdev->bd_bdi;
+> -
+> -loop:
+> -	spin_lock(&device->io_lock);
+> -
+> -loop_lock:
+> -	num_run = 0;
+> -
+> -	/* take all the bios off the list at once and process them
+> -	 * later on (without the lock held).  But, remember the
+> -	 * tail and other pointers so the bios can be properly reinserted
+> -	 * into the list if we hit congestion
+> -	 */
+> -	if (!force_reg && device->pending_sync_bios.head) {
+> -		pending_bios = &device->pending_sync_bios;
+> -		force_reg = 1;
+> -	} else {
+> -		pending_bios = &device->pending_bios;
+> -		force_reg = 0;
+> -	}
+> -
+> -	pending = pending_bios->head;
+> -	tail = pending_bios->tail;
+> -	WARN_ON(pending && !tail);
+> -
+> -	/*
+> -	 * if pending was null this time around, no bios need processing
+> -	 * at all and we can stop.  Otherwise it'll loop back up again
+> -	 * and do an additional check so no bios are missed.
+> -	 *
+> -	 * device->running_pending is used to synchronize with the
+> -	 * schedule_bio code.
+> -	 */
+> -	if (device->pending_sync_bios.head == NULL &&
+> -	    device->pending_bios.head == NULL) {
+> -		again = 0;
+> -		device->running_pending = 0;
+> -	} else {
+> -		again = 1;
+> -		device->running_pending = 1;
+> -	}
+> -
+> -	pending_bios->head = NULL;
+> -	pending_bios->tail = NULL;
+> -
+> -	spin_unlock(&device->io_lock);
+> -
+> -	while (pending) {
+> -
+> -		rmb();
+> -		/* we want to work on both lists, but do more bios on the
+> -		 * sync list than the regular list
+> -		 */
+> -		if ((num_run > 32 &&
+> -		    pending_bios != &device->pending_sync_bios &&
+> -		    device->pending_sync_bios.head) ||
+> -		   (num_run > 64 && pending_bios == &device->pending_sync_bios &&
+> -		    device->pending_bios.head)) {
+> -			spin_lock(&device->io_lock);
+> -			requeue_list(pending_bios, pending, tail);
+> -			goto loop_lock;
+> -		}
+> -
+> -		cur = pending;
+> -		pending = pending->bi_next;
+> -		cur->bi_next = NULL;
+> -
+> -		BUG_ON(atomic_read(&cur->__bi_cnt) == 0);
+> -
+> -		/*
+> -		 * if we're doing the sync list, record that our
+> -		 * plug has some sync requests on it
+> -		 *
+> -		 * If we're doing the regular list and there are
+> -		 * sync requests sitting around, unplug before
+> -		 * we add more
+> -		 */
+> -		if (pending_bios == &device->pending_sync_bios) {
+> -			sync_pending = 1;
+> -		} else if (sync_pending) {
+> -			blk_finish_plug(&plug);
+> -			blk_start_plug(&plug);
+> -			sync_pending = 0;
+> -		}
+> -
+> -		btrfsic_submit_bio(cur);
+> -		num_run++;
+> -		batch_run++;
+> -
+> -		cond_resched();
+> -
+> -		/*
+> -		 * we made progress, there is more work to do and the bdi
+> -		 * is now congested.  Back off and let other work structs
+> -		 * run instead
+> -		 */
+> -		if (pending && bdi_write_congested(bdi) && batch_run > 8 &&
+> -		    fs_info->fs_devices->open_devices > 1) {
+> -			struct io_context *ioc;
+> -
+> -			ioc = current->io_context;
+> -
+> -			/*
+> -			 * the main goal here is that we don't want to
+> -			 * block if we're going to be able to submit
+> -			 * more requests without blocking.
+> -			 *
+> -			 * This code does two great things, it pokes into
+> -			 * the elevator code from a filesystem _and_
+> -			 * it makes assumptions about how batching works.
+> -			 */
+> -			if (ioc && ioc->nr_batch_requests > 0 &&
+> -			    time_before(jiffies, ioc->last_waited + HZ/50UL) &&
+> -			    (last_waited == 0 ||
+> -			     ioc->last_waited == last_waited)) {
+> -				/*
+> -				 * we want to go through our batch of
+> -				 * requests and stop.  So, we copy out
+> -				 * the ioc->last_waited time and test
+> -				 * against it before looping
+> -				 */
+> -				last_waited = ioc->last_waited;
+> -				cond_resched();
+> -				continue;
+> -			}
+> -			spin_lock(&device->io_lock);
+> -			requeue_list(pending_bios, pending, tail);
+> -			device->running_pending = 1;
+> -
+> -			spin_unlock(&device->io_lock);
+> -			btrfs_queue_work(fs_info->submit_workers,
+> -					 &device->work);
+> -			goto done;
+> -		}
+> -	}
+> -
+> -	cond_resched();
+> -	if (again)
+> -		goto loop;
+> -
+> -	spin_lock(&device->io_lock);
+> -	if (device->pending_bios.head || device->pending_sync_bios.head)
+> -		goto loop_lock;
+> -	spin_unlock(&device->io_lock);
+> -
+> -done:
+> -	blk_finish_plug(&plug);
+> -}
+> -
+> -static void pending_bios_fn(struct btrfs_work *work)
+> -{
+> -	struct btrfs_device *device;
+> -
+> -	device = container_of(work, struct btrfs_device, work);
+> -	run_scheduled_bios(device);
+> -}
+> -
+>  static bool device_path_matched(const char *path, struct btrfs_device *device)
+>  {
+>  	int found;
+> @@ -6599,9 +6393,6 @@ struct btrfs_device *btrfs_alloc_device(struct btrfs_fs_info *fs_info,
+>  	else
+>  		generate_random_uuid(dev->uuid);
+>  
+> -	btrfs_init_work(&dev->work, btrfs_submit_helper,
+> -			pending_bios_fn, NULL, NULL);
+> -
+>  	return dev;
+>  }
+>  
+> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+> index e532d095c6a4..819047621176 100644
+> --- a/fs/btrfs/volumes.h
+> +++ b/fs/btrfs/volumes.h
+> @@ -18,10 +18,6 @@ extern struct mutex uuid_mutex;
+>  #define BTRFS_STRIPE_LEN	SZ_64K
+>  
+>  struct buffer_head;
+> -struct btrfs_pending_bios {
+> -	struct bio *head;
+> -	struct bio *tail;
+> -};
+>  
+>  /*
+>   * Use sequence counter to get consistent device stat data on
+> @@ -55,10 +51,6 @@ struct btrfs_device {
+>  
+>  	spinlock_t io_lock ____cacheline_aligned;
+>  	int running_pending;
+> -	/* regular prio bios */
+> -	struct btrfs_pending_bios pending_bios;
+> -	/* sync bios */
+> -	struct btrfs_pending_bios pending_sync_bios;
+>  
+>  	struct block_device *bdev;
+>  
 > 
