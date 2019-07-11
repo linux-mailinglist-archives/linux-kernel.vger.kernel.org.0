@@ -2,165 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A29A65881
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 16:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9272D6580F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbfGKOIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 10:08:44 -0400
-Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:52836 "EHLO
-        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726116AbfGKOIn (ORCPT
+        id S1728486AbfGKNp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 09:45:58 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46049 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfGKNp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:08:43 -0400
-Received: from pps.filterd (m0102629.ppops.net [127.0.0.1])
-        by mx08-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6BDiL5l013216
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 14:45:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=from : to : cc :
- subject : date : message-id; s=pp;
- bh=HAfyE5vq9jpBhAxZyoPTsOZYx8qRQEzm7LzCZOVxA98=;
- b=v+McrwDzvUBlxfhM4JXCv751WY6xwI82KPoF4l4JQXxcyP0XiO8nxnkW45TCU1xUEwDo
- PYaL/LwxjrpcVxCGv2OVgPGGgOaFLEFE2kwMuPtfUh9iSrPkDoS87DDFVWROcnN19S8R
- SXXFd6Rqq2HXNZzF4etWTE0mmzV75Zv53QCirw93yWb5cxY1DlCyY/js4EC8ClhO3mws
- UFWm6cahYUvS/24aRadFklsHu+Hw+1/LUSaiEmUjx5Lk8jm55fjnBA2l4jLJqGtJZMkO
- UV/fblJkvbb+gjuEJXnSJKy+W3p7Kmvs6rUOlXCPJ8LD/0vKIrfliA1gRsfcEUpTUcAm pw== 
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        by mx08-00252a01.pphosted.com with ESMTP id 2tmd5x1cky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 14:45:41 +0100
-Received: by mail-wr1-f71.google.com with SMTP id x2so2617897wru.22
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 06:45:41 -0700 (PDT)
+        Thu, 11 Jul 2019 09:45:57 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e2so5841076edi.12
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 06:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=HAfyE5vq9jpBhAxZyoPTsOZYx8qRQEzm7LzCZOVxA98=;
-        b=WTWXNyOkcpQK+c9/4XM99fDdN6Xw6N4Pf4s3OftsAduPOlc7F4gWSMlWvzRk527WP7
-         NSzT5Ww/VHnysyjVyRMBJT9VqXCV0ziwFbz2xLEVPlYNJBaAj8jLfxD1blF2EQPRgCeV
-         yW8kpQ/RE5tDpERwMj4w7dXEC9j8k+Aut4G4WMnbuEqgEw0ihaSviX1lgmb0+4HY/3o6
-         OexeSwByhl4XKeetzY62qnHMl+qjk1ActnOV3Tj4SDd8EEYHGeGckPJYLLMZyEcxLr7u
-         c9SyN9EyDxUhAUl6w21l8g57pn/AnBlgbDO+JZk8Neus2fA7Wk567DHBmFs0/pb8EbQu
-         Z5hg==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Osxf+bNmRWplx05FCFX6Jw4X940F4YMRAtN+KD1L80M=;
+        b=BWUkxdYrwRk4QO6cw+CCGQLCmmrE9aF/PFrdYGs+8f6nNv6ByI7LCLurp8+DALuUUR
+         Z1ofWLt7DoC/hBA8wv3C0C/NgW+ci0hF3r5TLzfwBL3Y817KJ4oZgKdKUMCTOIDLihAP
+         TcLMIlJKhXcLtSwZAEtsiYHsnLi1LMj/o5VdCUPT9cjROEfYTJSjnbcurljYVIuzFkmh
+         BmCzjej4+rbPeeeaxK5+0+g2IrJSSaQdgKMnggKNWWTxVriZs7zE/es67goGvnNw0FRx
+         Ixonk4rG14acwMVibgqqmOaW2iHbtFW6WIsOVdFfoxOM5IKjEDueISVppPuBgvtLgXFo
+         Xhag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HAfyE5vq9jpBhAxZyoPTsOZYx8qRQEzm7LzCZOVxA98=;
-        b=XX/4VGFzn0hyCZVPCncAQXcrBWregviylVfv9OavCAK1EkJxeqBquoFSZfD5lxgyRW
-         SZm8egRTfQGNkaaghIBRENDYIFxs/+M4pa4y+F3XVsal477PbTPcWHArJuupZRsEreA9
-         F3VqippaXgpkkYBlVfF1wwqxeMkp1PFCfAqyKKQ/JH4eO0HC+PnL00z9wCM9UXfOaKBP
-         0MN43o4XL8KJAtgHGJ0IOQw8qhS+118KilCXSyKT3NExLWg+pPej49SuQ+xi1t9eq6zV
-         DWAwHY6QxGydGPPW1z3Y6f9JdwYfmzgP4shxhGidKCM7xSBzHW2ZMhcnG8+BrEkU5k5N
-         DC9A==
-X-Gm-Message-State: APjAAAWgaL9JXp7mRfWXlLTpdhoWoMVlWP/EnVmOfDcGLXUDZF0bAQZw
-        3/5KY3K6UjH1UVFZk9hYZ3HqpWgU4bN88xw17ow7AnAitnsdX30sYR9TJLmOKmICJPKVcZr+cMx
-        phfFWuiNjjSbsmLUYZ7YRdtXc
-X-Received: by 2002:adf:fe09:: with SMTP id n9mr5641586wrr.41.1562852740558;
-        Thu, 11 Jul 2019 06:45:40 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqypIrsedHEAbDW3NOuK+HEUYtQnaDEhNZw5HmIZ2Hrqn0o0Rd63sxvab+STDyw06/PvdsoJ7g==
-X-Received: by 2002:adf:fe09:: with SMTP id n9mr5641568wrr.41.1562852740312;
-        Thu, 11 Jul 2019 06:45:40 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:1098:3142:14:4d96:5e54:efaf:af7d])
-        by smtp.gmail.com with ESMTPSA id z1sm6431022wrp.51.2019.07.11.06.45.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 11 Jul 2019 06:45:39 -0700 (PDT)
-From:   Phil Elwell <phil@raspberrypi.org>
-To:     Russell King <linux@arm.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH] tty: amba-pl011: Make TX optimisation conditional
-Date:   Thu, 11 Jul 2019 14:45:32 +0100
-Message-Id: <1562852732-123411-1-git-send-email-phil@raspberrypi.org>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-07-11_02:2019-07-11,2019-07-11 signatures=0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Osxf+bNmRWplx05FCFX6Jw4X940F4YMRAtN+KD1L80M=;
+        b=ZyPUpK54SxO7HC0nx5thoaPXVSX38UBZkSAgkbGBbmqBp4JjXB/C3MwqdXTSaJxBwL
+         CCOwvNjT12L7kNwthtePgd0NKYSrkJo2G/EcbuWmvGyZK6Gt529env7x6POwH3TXEBT8
+         xNktKxH5rBThbDTSZed6iZiR9tZXc1c5J29YbmZO+vjJywz/trpW52fA6rt4CD0iSGjA
+         T2HxNDCWkbvioWfTeEYxxT2KrqGhfe7iU/BDZeehKzuWzMkqALVAkK/qL7KW9zgCOVzf
+         wXkHfCbSqL4O0SyOOl6MFShApYoGFJLDOfi/gweXPsM/12f9zI5Yble4BqMi1JBwhd1S
+         IC9w==
+X-Gm-Message-State: APjAAAX0okQXycnCBoKhEuSXvNkNcYmY/tcq3CuxKCpdihS7C0O2rZ5o
+        oRVvAjJcwN0XyRqjcv3Rj/XHuYFcrgw=
+X-Google-Smtp-Source: APXvYqwd8Wy9UejCMZQY0P+7uYfmadKSV5vOhnywGcMFhKltfK819yupNBjvQoCQ1b/6nGfDct0ujQ==
+X-Received: by 2002:a50:941c:: with SMTP id p28mr3744158eda.103.1562852755782;
+        Thu, 11 Jul 2019 06:45:55 -0700 (PDT)
+Received: from brauner.io ([185.66.195.251])
+        by smtp.gmail.com with ESMTPSA id x21sm1678096edb.0.2019.07.11.06.45.54
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 06:45:55 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 15:45:53 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] clone3 for v5.3
+Message-ID: <20190711134552.jvahfwhvaxykbgfl@brauner.io>
+References: <20190708150042.11590-1-christian@brauner.io>
+ <CAHk-=wg0jcyTO+iXgP-CpNwvJ4mTCcg3ts8dLj3R5nbbonkpyQ@mail.gmail.com>
+ <20190711053428.ofapcx7nn5xkyru4@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190711053428.ofapcx7nn5xkyru4@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pl011_tx_chars takes a "from_irq" parameter to reduce the number of
-register accesses. When from_irq is true the function assumes that the
-FIFO is half empty and writes up to half a FIFO's worth of bytes
-without polling the FIFO status register, the reasoning being that
-the function is being called as a result of the TX interrupt being
-raised. This logic would work were it not for the fact that
-pl011_rx_chars, called from pl011_int before pl011_tx_chars, releases
-the spinlock before calling tty_flip_buffer_push.
+On Thu, Jul 11, 2019 at 07:34:28AM +0200, Christian Brauner wrote:
+> On Wed, Jul 10, 2019 at 10:24:26PM -0700, Linus Torvalds wrote:
+> > On Mon, Jul 8, 2019 at 8:05 AM Christian Brauner <christian@brauner.io> wrote:
+> > >
+> > > /* Syscall number 435 */
+> > > clone3() uses syscall number 435 and is coordinated with pidfd_open() which
+> > > uses syscall number 434. I'm not aware of any other syscall targeted for
+> > > 5.3 that has chosen the same number.
+> > 
+> > You say that, and 434/435 would make sense, but that's not what the
+> > code I see in the pull request actually does.
+> > 
+> > It seems to use syscall 436.
+> > 
+> > I think it's because openat2() is looking to use 435, but I'm a bit
+> > nervous about the conflict between the code and your commentary..
+> 
+> Sorry, that was just me being dumb and forgetting that there was
+> close_range() which had a chance of going through Al's tree. So I left a
+> hole for it.
+> 
+> I don't terribly mind if it's 435 or 436. People pointed out you might
+> even renumber yourself if something makes more sense to you.
 
-A user thread writing to the UART claims the spinlock and ultimately
-calls pl011_tx_chars with from_irq set to false. This reverts to the
-older logic that polls the FIFO status register before sending every
-byte. If this happen on an SMP system during the section of the IRQ
-handler where the spinlock has been released, then by the time the TX
-interrupt handler is called, the FIFO may already be full, and any
-further writes are likely to be lost.
+Just in case you prefer pulling from a __rebased__ tree. I prepared one.
+It does use syscall number 435 as advertised here and has the merge
+conflict I pointed out in the PR resolved:
 
-The fix involves adding a per-port flag that is true iff running from
-within the interrupt handler and the spinlock has not yet been released.
-This flag is then used as the value for the from_irq parameter of
-pl011_tx_chars, causing polling to be used in the unsafe case.
+The following changes since commit 5450e8a316a64cddcbc15f90733ebc78aa736545:
 
-Fixes: 1e84d22322ce ("serial/amba-pl011: Refactor and simplify TX FIFO handling")
+  Merge tag 'pidfd-updates-v5.3' of git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux (2019-07-10 22:17:21 -0700)
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
----
- drivers/tty/serial/amba-pl011.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 5921a33..70c1dc9 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -270,6 +270,7 @@ struct uart_amba_port {
- 	unsigned int		old_cr;		/* state during shutdown */
- 	unsigned int		fixed_baud;	/* vendor-set fixed baud rate */
- 	char			type[12];
-+	bool			irq_locked;	/* in irq, unreleased lock */
- #ifdef CONFIG_DMA_ENGINE
- 	/* DMA stuff */
- 	bool			using_tx_dma;
-@@ -814,6 +815,7 @@ __acquires(&uap->port.lock)
- 		return;
- 
- 	/* Avoid deadlock with the DMA engine callback */
-+	uap->irq_locked = 0;
- 	spin_unlock(&uap->port.lock);
- 	dmaengine_terminate_all(uap->dmatx.chan);
- 	spin_lock(&uap->port.lock);
-@@ -941,6 +943,7 @@ static void pl011_dma_rx_chars(struct uart_amba_port *uap,
- 		fifotaken = pl011_fifo_to_tty(uap);
- 	}
- 
-+	uap->irq_locked = 0;
- 	spin_unlock(&uap->port.lock);
- 	dev_vdbg(uap->port.dev,
- 		 "Took %d chars from DMA buffer and %d chars from the FIFO\n",
-@@ -1349,6 +1352,7 @@ __acquires(&uap->port.lock)
- {
- 	pl011_fifo_to_tty(uap);
- 
-+	uap->irq_locked = 0;
- 	spin_unlock(&uap->port.lock);
- 	tty_flip_buffer_push(&uap->port.state->port);
- 	/*
-@@ -1483,6 +1487,7 @@ static irqreturn_t pl011_int(int irq, void *dev_id)
- 	int handled = 0;
- 
- 	spin_lock_irqsave(&uap->port.lock, flags);
-+	uap->irq_locked = 1;
- 	status = pl011_read(uap, REG_RIS) & uap->im;
- 	if (status) {
- 		do {
-@@ -1502,7 +1507,7 @@ static irqreturn_t pl011_int(int irq, void *dev_id)
- 				      UART011_CTSMIS|UART011_RIMIS))
- 				pl011_modem_status(uap);
- 			if (status & UART011_TXIS)
--				pl011_tx_chars(uap, true);
-+				pl011_tx_chars(uap, uap->irq_locked);
- 
- 			if (pass_counter-- == 0)
- 				break;
--- 
-2.7.4
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/clone3-rebased-v5.3
 
+for you to fetch changes up to 611e04b559151c441deedc79f1e57471c953bda7:
+
+  arch: handle arches who do not yet define clone3 (2019-07-11 14:59:15 +0200)
+
+Christian
