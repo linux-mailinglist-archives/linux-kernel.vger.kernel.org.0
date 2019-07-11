@@ -2,152 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8456654C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 12:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8483654D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:00:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfGKKza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 06:55:30 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51861 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfGKKza (ORCPT
+        id S1728355AbfGKLAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 07:00:39 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:53594 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727865AbfGKLAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 06:55:30 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190711105527euoutp015d4aef53a322549537f782be1f4aed3c~wVP_pzW0-2190921909euoutp01y
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 10:55:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190711105527euoutp015d4aef53a322549537f782be1f4aed3c~wVP_pzW0-2190921909euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1562842527;
-        bh=IAVycDmPIRNWjC1+QKPqn0lYsTXCDWV/uL4QaMcrbYM=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=GXeYvAWYMYeMGrQwx5WdAZ1SURHw3WtMXXed7hK2xDZiuILXYGgB2nwYxRSfcZ1RS
-         Tf4tb+pG5ESKmzOZiNeJ9XJJRRdOeC+r3vWcmGnSFDh/oG0g5R6wqrLyNIs2bLvTc4
-         WJep5eMwHBBBK73So/wba6kcy+sqmaWC5krdRA8E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190711105526eucas1p2ae6f12ae0aa1b4df554f58fe535fabfc~wVP9vr88W0464104641eucas1p2J;
-        Thu, 11 Jul 2019 10:55:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 02.B4.04298.E95172D5; Thu, 11
-        Jul 2019 11:55:26 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190711105525eucas1p1b4f0f8bf4bd05483c785e54e109275ae~wVP8x7JsI0887508875eucas1p1l;
-        Thu, 11 Jul 2019 10:55:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190711105525eusmtrp2d4d86087364c0ce4d6a6917727d8625a~wVP8fxBEo0727707277eusmtrp2G;
-        Thu, 11 Jul 2019 10:55:25 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-12-5d27159e4ca9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FB.54.04140.D95172D5; Thu, 11
-        Jul 2019 11:55:25 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190711105524eusmtip1d97857399d677a73081a79a74f985f59~wVP77Z0QF1471014710eusmtip1M;
-        Thu, 11 Jul 2019 10:55:24 +0000 (GMT)
-Subject: Re: [PATCH] drm/bridge: sii902x: add audio graph card support
-To:     Philippe CORNU <philippe.cornu@st.com>,
-        Olivier MOYSAN <olivier.moysan@st.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "jonas@kwiboo.se" <jonas@kwiboo.se>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Thu, 11 Jul 2019 07:00:39 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 56AECC1222;
+        Thu, 11 Jul 2019 11:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1562842838; bh=9VXeoZFAFdkzjTLb8OQbkD3NulzNVI84TdmACMjG7wI=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=NiBZ4vRS0j9o8lESy+4JL17wZ414V3n0ndXA1l6f23N+n24x792nNmxIMKPUA606z
+         eJnsL6hJMJrIBvCT8hH9X2SIZTy5+PdE1agDQHI8ukh2CiLC+iKTe4YdbMy5URh0lC
+         SEPMPph2yvjtkqkHtxg9YD/Mz3goFs8lfgo53S/VFeBJRjO9whjkJBRaTz/+VZhBuv
+         39MRjjgwtfhcfvuVXqDYPS/AckRJpSwFc2+4Lk7VuXTc3m/oCHsHyBsK0qbx+2YmM5
+         4tUl8lJ4cOnVzZuu5X8YwwG+TzYpm1svUJ5a8zx8rE6QPz00XcXvyYf/OZK/0gsiR/
+         1Fspo1oAH4hpA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 94271A009B;
+        Thu, 11 Jul 2019 11:00:35 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 11 Jul 2019 04:00:29 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 11 Jul 2019 04:00:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TtzfoRFKy2OTkEitm2SUYyQTnF0EAsIQRxFUZcUQLqI=;
+ b=RnnfghpkA8pdIanE+ULdFmv3JIllW0IKT0rQEq1UBrEHSVbonPre1eH++jBu6487pqpPREKkA5bN+1VvLsanUOVQpVsazT9AbDjn5CTfkJtySos0vDMkPjdxoUOh3p70KWo2oyLwwylaPGVha/zsnDJ0h30vfPUTrrKe/DY/uFs=
+Received: from SN6PR12MB2655.namprd12.prod.outlook.com (52.135.103.20) by
+ SN6PR12MB2733.namprd12.prod.outlook.com (52.135.107.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Thu, 11 Jul 2019 11:00:28 +0000
+Received: from SN6PR12MB2655.namprd12.prod.outlook.com
+ ([fe80::1dbd:69dc:e782:92b6]) by SN6PR12MB2655.namprd12.prod.outlook.com
+ ([fe80::1dbd:69dc:e782:92b6%6]) with mapi id 15.20.2052.022; Thu, 11 Jul 2019
+ 11:00:27 +0000
+From:   Vitor Soares <Vitor.Soares@synopsys.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>
+CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "jsarha@ti.com" <jsarha@ti.com>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <a8c6cde6-09d5-2175-234b-02cb3aacaa95@samsung.com>
-Date:   Thu, 11 Jul 2019 12:55:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.0
-MIME-Version: 1.0
-In-Reply-To: <e29c1671-99fb-581d-bfb7-61ca2cfa8622@st.com>
-Content-Transfer-Encoding: 8bit
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "bbrezillon@knernel.org" <bbrezillon@knernel.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>
+Subject: RE: [PATCH v3 3/3] iio: imu: st_lsm6dsx: add i3c basic support for
+ LSM6DSO and LSM6DSR
+Thread-Topic: [PATCH v3 3/3] iio: imu: st_lsm6dsx: add i3c basic support for
+ LSM6DSO and LSM6DSR
+Thread-Index: AQHVNy/EafU1/RkKpEi9l4c7Sgkq0qbEQUqAgADyYXCAAAvq8A==
+Date:   Thu, 11 Jul 2019 11:00:27 +0000
+Message-ID: <SN6PR12MB2655939CB14D0EF848B4F4A8AEF30@SN6PR12MB2655.namprd12.prod.outlook.com>
+References: <cover.1562767521.git.vitor.soares@synopsys.com>
+ <73955529ae0c31f428221abb88031ab3b4165659.1562767521.git.vitor.soares@synopsys.com>
+ <20190710194405.GA10520@lore-desk-wlan.lan>
+ <SN6PR12MB2655AC6DF4A959A1705FC8A4AEF30@SN6PR12MB2655.namprd12.prod.outlook.com>
+In-Reply-To: <SN6PR12MB2655AC6DF4A959A1705FC8A4AEF30@SN6PR12MB2655.namprd12.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRj2O5ftbDk5Lm1v2gUXJQWZQj9OJVJUduhXGi1SpFaeVHJTd1LL
-        EC01vDAtJawZaWVkQd7nrZRa1DJRuzjbKlLSLouWkk0Num2eSf573ud93vd9no+PwuV2MoBK
-        0h7ndFp1slIkJdoe/xxcf8U/OC60/3oAox/oxZim8T7ElFaPk8yQc0LEWGbsONP71UIwJUWF
-        JFN0vlbMNI8Nk8zLrssipnjYpTOVxjIV96pEzGj+Z3KrDzthLRCzVYWXSPbJuRcY2z49SrIj
-        JWaMbanNYe/rKwj2QU8Y+2G2G2fN1naMnWpesWdRjDQ8nktOyuB0GyIOSRPHun9hqeXUiY8F
-        BVgu6hQVIwkF9EZonhhyYSklp+sQDNeZMaH4gcDcelUsFFMIrtTaxPMjExWvcKFxE8F0Xjcp
-        FA4E5YMf51SL6UiwXLQT7oYfXSoCfZd7sYQS0Wvhd4tt7rqMjoDab1bkxgS9GorfGkg39qdV
-        8LOmyKPxhd5L465FFCWhN8PMbKabxumVkGeswgWsgNfj1XO+gT5NwWfHXUKwugOuVVpwAS+G
-        L+ZWT4Rl8LezGhNwDozU5ePCcCECY2OnZ2ALPDQ/J92HcZfphq4NAr0NbupvYW4aaB+wOnwF
-        Dz5Q3laJC7QMCs/KBXUQjPQbPQsVcOOZ0/PuLJS160XnUJBhQUjDgmSGBckM/z3UIOI2UnDp
-        vCaB48O0XGYIr9bw6dqEkCMpmmbk+oB9f8zfO5DzxWEToimk9JZRjtVxclKdwZ/UmBBQuNJP
-        1rNrVZxcFq8+mcXpUg7q0pM53oQCKUKpkJ3yGo2V0wnq49wxjkvldPNdjJIE5CKFmbxmjPa6
-        nnEhvac+tiwqLa+shbeFr7FLGqZnxlRL3xREHHAqw5cbV9xJy/ZZu5+rEfPyjkDmz15nve2o
-        piPYhpriN71XiNfHN355ynbttlyYPJG4LxOfjFIlxbwOC4o27lyy/a88KzgUpWQftX6K9Vbt
-        +x3qqMp+pDoz8C5SSfCJ6rB1uI5X/wOslNJAfAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xu7pzRdVjDXadE7foPXeSyWLjk9OM
-        Fn3zn7BaXPn6ns3i6veXzBYn31xlseju7GC16Jy4hN1i0+NrrBaXd81hs+i6BlR3qC/aYvKe
-        2WwWD1pesDrweby/0cruMbtjJqvHiQmXmDy2f3vA6nG/+ziTx+Yl9R4HeiezeBzcZ+jx9Mde
-        Zo/jN7YzeXzeJBfAHaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Ka
-        k1mWWqRvl6CX8XjvH6aCSRwVz1pbmRoYd7J1MXJySAiYSLyffJ25i5GLQ0hgKaPEs0n7oRLi
-        Ervnv2WGsIUl/lzrAosLCbxmlHg+wQrEFhZwk7g64yULSLOIwCQ2iQWL7jJBTFrOJPHozzIW
-        kCo2AU2Jv5tvgnXzCthJLHl3gxHEZhFQlei6M4u1i5GDQ1QgTOLoiTyIEkGJkzOfsICEOQWs
-        JL7/KAcJMwuoS/yZd4kZwpaXaN46G8oWl7j1ZD7TBEbBWUi6ZyFpmYWkZRaSlgWMLKsYRVJL
-        i3PTc4uN9IoTc4tL89L1kvNzNzEC43rbsZ9bdjB2vQs+xCjAwajEwxvwUDVWiDWxrLgy9xCj
-        BAezkgjvPnflWCHelMTKqtSi/Pii0pzU4kOMpkCvTWSWEk3OB6acvJJ4Q1NDcwtLQ3Njc2Mz
-        CyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjCzO56O/fs3mUWU/pR242GN59nLzikLTXwYZ
-        c4sT3Z48cqjWnvU0NOHjs+PyO34Zhy4xmacntpNXTirp7FzXBLMko1eL+v22edmz39o9OW6m
-        6M7KvKySX+/mz3u47EJ/6YI8tmumU4uf3dvMmhxU9OL1J9MnExmEhUz89cPvz3eduHB515xt
-        v5RYijMSDbWYi4oTARJ9rYoBAwAA
-X-CMS-MailID: 20190711105525eucas1p1b4f0f8bf4bd05483c785e54e109275ae
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190711092756epcas1p44e6b9d76d69652eaac039fafde75723e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190711092756epcas1p44e6b9d76d69652eaac039fafde75723e
-References: <1562141052-26221-1-git-send-email-olivier.moysan@st.com>
-        <7c17b3f2-afee-7548-7620-b67d11d09b24@st.com>
-        <20190710152720.GR15868@phenom.ffwll.local>
-        <CGME20190711092756epcas1p44e6b9d76d69652eaac039fafde75723e@epcas1p4.samsung.com>
-        <e29c1671-99fb-581d-bfb7-61ca2cfa8622@st.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcc29hcmVzXGFw?=
+ =?us-ascii?Q?cGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEy?=
+ =?us-ascii?Q?OWUzNWJcbXNnc1xtc2ctMTUwZGNmMzQtYTNjYi0xMWU5LTgyNGEtYjgwOGNm?=
+ =?us-ascii?Q?NTlkN2ZjXGFtZS10ZXN0XDE1MGRjZjM2LWEzY2ItMTFlOS04MjRhLWI4MDhj?=
+ =?us-ascii?Q?ZjU5ZDdmY2JvZHkudHh0IiBzej0iMjAxNCIgdD0iMTMyMDczMTY0MjQ4NTgy?=
+ =?us-ascii?Q?MTY0IiBoPSJhN1dhQWZkSDhwWThxSURLZ0E3c1krTHFSNms9IiBpZD0iIiBi?=
+ =?us-ascii?Q?bD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFCUUpBQUFV?=
+ =?us-ascii?Q?Q0diWDF6ZlZBVTBjanpYZXVicHBUUnlQTmQ2NXVta09BQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBSEFBQUFDa0NBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?RUFBUUFCQUFBQVZ6ZGhHZ0FBQUFBQUFBQUFBQUFBQUo0QUFBQm1BR2tBYmdC?=
+ =?us-ascii?Q?aEFHNEFZd0JsQUY4QWNBQnNBR0VBYmdCdUFHa0FiZ0JuQUY4QWR3QmhBSFFB?=
+ =?us-ascii?Q?WlFCeUFHMEFZUUJ5QUdzQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFF?=
+ =?us-ascii?Q?QUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFIa0FYd0J3?=
+ =?us-ascii?Q?QUdFQWNnQjBBRzRBWlFCeUFITUFYd0JuQUdZQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNBQUFB?=
+ =?us-ascii?Q?QUFDZUFBQUFaZ0J2QUhVQWJnQmtBSElBZVFCZkFIQUFZUUJ5QUhRQWJnQmxB?=
+ =?us-ascii?Q?SElBY3dCZkFITUFZUUJ0QUhNQWRRQnVBR2NBWHdCakFHOEFiZ0JtQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFCbUFHOEFk?=
+ =?us-ascii?Q?UUJ1QUdRQWNnQjVBRjhBY0FCaEFISUFkQUJ1QUdVQWNnQnpBRjhBY3dCaEFH?=
+ =?us-ascii?Q?MEFjd0IxQUc0QVp3QmZBSElBWlFCekFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhrQVh3?=
+ =?us-ascii?Q?QndBR0VBY2dCMEFHNEFaUUJ5QUhNQVh3QnpBRzBBYVFCakFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVpnQnZBSFVBYmdCa0FISUFlUUJmQUhBQVlRQnlBSFFBYmdC?=
+ =?us-ascii?Q?bEFISUFjd0JmQUhNQWRBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJtQUc4?=
+ =?us-ascii?Q?QWRRQnVBR1FBY2dCNUFGOEFjQUJoQUhJQWRBQnVBR1VBY2dCekFGOEFkQUJ6?=
+ =?us-ascii?Q?QUcwQVl3QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtB?=
+ =?us-ascii?Q?WHdCd0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCMUFHMEFZd0FBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFD?=
+ =?us-ascii?Q?QUFBQUFBQ2VBQUFBWndCMEFITUFYd0J3QUhJQWJ3QmtBSFVBWXdCMEFGOEFk?=
+ =?us-ascii?Q?QUJ5QUdFQWFRQnVBR2tBYmdCbkFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQnpB?=
+ =?us-ascii?Q?R0VBYkFCbEFITUFYd0JoQUdNQVl3QnZBSFVBYmdCMEFGOEFjQUJzQUdFQWJn?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUhNQVlRQnNBR1VBY3dCZkFI?=
+ =?us-ascii?Q?RUFkUUJ2QUhRQVpRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFB?=
+ =?us-ascii?Q?QUNBQUFBQUFDZUFBQUFjd0J1QUhBQWN3QmZBR3dBYVFCakFHVUFiZ0J6QUdV?=
+ =?us-ascii?Q?QVh3QjBBR1VBY2dCdEFGOEFNUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFC?=
+ =?us-ascii?Q?ekFHNEFjQUJ6QUY4QWJBQnBBR01BWlFCdUFITUFaUUJmQUhRQVpRQnlBRzBB?=
+ =?us-ascii?Q?WHdCekFIUUFkUUJrQUdVQWJnQjBBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBSFlBWndCZkFHc0FaUUI1?=
+ =?us-ascii?Q?QUhjQWJ3QnlBR1FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFB?=
+ =?us-ascii?Q?QUFBQ0FBQUFBQUE9Ii8+PC9tZXRhPg=3D=3D?=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=soares@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 217b56e8-ee16-4a22-a58c-08d705eefbbb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:SN6PR12MB2733;
+x-ms-traffictypediagnostic: SN6PR12MB2733:
+x-microsoft-antispam-prvs: <SN6PR12MB273364EFDF7B121E7F8C1560AEF30@SN6PR12MB2733.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0095BCF226
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(396003)(376002)(366004)(136003)(189003)(199004)(76176011)(33656002)(102836004)(25786009)(6506007)(66066001)(99286004)(3846002)(6116002)(7696005)(508600001)(6636002)(2940100002)(110136005)(316002)(54906003)(14454004)(68736007)(4326008)(2906002)(229853002)(6436002)(446003)(53936002)(71200400001)(71190400001)(74316002)(305945005)(107886003)(7736002)(6246003)(26005)(76116006)(256004)(14444005)(64756008)(66446008)(66556008)(66946007)(8936002)(66476007)(86362001)(476003)(486006)(5660300002)(11346002)(186003)(52536014)(81156014)(9686003)(8676002)(55016002)(81166006)(42413003)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR12MB2733;H:SN6PR12MB2655.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: L61Xsjriazzu7fnhyIkL0xBIjyFz9+oKcs/kjkrhfejh/+r0o5ZxFpp5gfrU6Q/CcQW2s3HWiR0Lca1aDeUOf7C1YuXz/OwIYYizjkajZVrXQ0Y2DJox4vx5f0Swabp2abi2k4do1AhkgsmzI2UdOWikBrzl/fN1ruvhQNfz/glAPWKDykhcpX+SjJUmhLHI3Qidm4pMYZVYh8MguOZQtNrBYuUfNfslx/wVugCyZ1M/O+XVDIz6PiIU40P3VV6xXqW8K8XO7+l8pvHrw8/PzG6YOF1KxOyZ8zl4QsKrYgKGPkzEdTafIWSbijccYDUR+BYyjedeGTgTMJHS7Ja2dq0z70z/FWcafBLb9f79i7PTUOHxZZkMCoc4MSXWeY/nBMlYEIluc05jHq0ZvNdBvwSAwaeeD/u20kQAxPyYgOc=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 217b56e8-ee16-4a22-a58c-08d705eefbbb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2019 11:00:27.8789
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: soares@synopsys.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2733
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.07.2019 11:27, Philippe CORNU wrote:
-> Hi Daniel,
->
->
-> On 7/10/19 5:27 PM, Daniel Vetter wrote:
->> On Fri, Jul 05, 2019 at 12:41:03PM +0000, Philippe CORNU wrote:
->>> Hi Olivier,
->>> and many thanks for your patch.
->>> Good to have the audio graph card support, looks ok.
->>> Reviewed-by: Philippe Cornu <philippe.cornu@st.com>
->> Since you have drm-misc commit rights I'm assuming you're going to push
->> this too. Correct?
->> -Daniel
-> Regarding this patch in particular, there is still missing an acked-by 
-> from a "bridge" maintainer. Also it could be nice to wait for the 
-> reviewed-by from Jiry as it knows well this sii driver and sent recently 
-> good patches on it (already merged).
->
-> With that, Benjamin or I (or a bridge maintainer) can push this patch + 
-> the serie named "drm/bridge: sii902x: fix audio mclk management" as I 
-> think it is better to push this serie *before* this patch.
->
-> Thanks,
-> Philippe :-)
+From: Vitor Soares <soares@synopsys.com>
+Date: Thu, Jul 11, 2019 at 11:12:34
 
+> Hi Lorenzo,
+>=20
+> From: Lorenzo Bianconi <lorenzo@kernel.org>
+> Date: Wed, Jul 10, 2019 at 20:44:05
+>=20
+> > > For today the st_lsm6dsx driver support LSM6DSO and LSM6DSR sensor on=
+ly in
+> > > spi and i2c mode.
+> > >=20
+> > > The LSM6DSO and LSM6DSR are also i3c capable so lets give i3c support=
+ to
+> > > them.
+> >=20
+> > Hi Vitor,
+> >=20
+> > just few comments inline.
+> >=20
+> > Regards,
+> > Lorenzo
+> >=20
+> > >=20
+> > > Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> > > Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > > ---
+> > > Changes in v3:
+> > >   Remove unnecessary st_lsm6dsx_i3c_data table used to hold device na=
+me
+> > >   Use st_lsm6dsx_probe new form
+> > >=20
+> > > Changes in v2:
+> > >   Add support for LSM6DSR
+> > >   Set pm_ops to st_lsm6dsx_pm_ops
+> > >=20
+> > >  drivers/iio/imu/st_lsm6dsx/Kconfig          |  8 +++-
+> > >  drivers/iio/imu/st_lsm6dsx/Makefile         |  1 +
+> > >  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c | 61 +++++++++++++++++++=
+++++++++++
+> > >  3 files changed, 69 insertions(+), 1 deletion(-)
+> > >  create mode 100644 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
+> > >=20
+> >=20
+> > [...]
+> > > +static int st_lsm6dsx_i3c_probe(struct i3c_device *i3cdev)
+> > > +{
+> > > +	const struct i3c_device_id *id =3D i3c_device_match_id(i3cdev,
+> > > +							    st_lsm6dsx_i3c_ids);
+> >=20
+> > i3c_device_match_id can theoretically fail so is it better to check
+> > return value here? (maybe I am too paranoid :))
 
-Acked-by: Andrzej Hajda <a.hajda@samsung.com>
+I was preparing the patch and if the i3c_device_match_id() fail it return=20
+NULL so the st_lsm6dsx_probe() will fail automatically.
+Checking the spi_get_device_id(), the drivers don't test the return value=20
+too.
 
- --
-Regards
-Andrzej
+Do you think it is really necessary to test it before the=20
+st_lsm6dsx_probe() function?
 
+Best regards,
+Vitor Soares
