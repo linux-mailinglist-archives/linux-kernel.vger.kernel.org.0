@@ -2,74 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A812657D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0793657DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfGKNV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 09:21:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50030 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725934AbfGKNV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:21:29 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 195C15D88BFEB4F3D97C;
-        Thu, 11 Jul 2019 21:21:26 +0800 (CST)
-Received: from [127.0.0.1] (10.133.217.137) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 11 Jul 2019
- 21:21:20 +0800
-Subject: Re: [PATCH] hpet: Fix division by zero in hpet_time_div()
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Clemens Ladisch <clemens@ladisch.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190711112619.57256-1-wangkefeng.wang@huawei.com>
- <CAK8P3a3M3cNZm4meO+_vPkJcjtq7Fu5SrnJ11FAkOtGW3WBvNw@mail.gmail.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-Message-ID: <54205e31-30e3-ec2f-015d-7ba65d0d4927@huawei.com>
-Date:   Thu, 11 Jul 2019 21:21:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728536AbfGKNZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 09:25:17 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37110 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728182AbfGKNZQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 09:25:16 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so6313383wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 06:25:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NiPzgCya2hoSH4eKrxi8qdW5Qk89gH2cnlBBWoaa/xg=;
+        b=osrgwGnO4szyykoqbn4E2A6cpNgH45EIW+eW78tBF5fTMm9lU8jdY3Y0p/XiJ3iROM
+         rvl8HT88hWGAWH0UlAL0szQuFyrtsHBs51JrBoiYquc65DFMWcbpVsByninNLG/GaeXi
+         Iz3r5LY4fHJe56Tp5fzoYL6jP3UA3yaykpRMfeDQubJ+jEVeRbKYH2zC0HNkWOqcFIHD
+         nLV8NBGSJxRnJBkGEC6xrj7AzLAMR+2EJ9QCzU0iEhQ32YdAQNd252GS7jidT77F0zrt
+         JAxw9DrPJTzRjjK9O/+eOe1Xr26+WiB6qyqphyjsUjox0YLkVxp6Xk+QCcmz3K3UdIut
+         P7Bw==
+X-Gm-Message-State: APjAAAUyzLZiC+SnrfzJeWw7YpQs/XwWe0Rv9eqc/1dcMeKz1YZTSzPm
+        FWTMYrNP3GWkoeOuTe/DTFqbiQ==
+X-Google-Smtp-Source: APXvYqxwk8GF3EpHoEhDlHvKnuLbWejXVJYdh2lNTENdeBRa32LLelWUbAycMad3uNrwe2Sr84lu1Q==
+X-Received: by 2002:adf:b1cb:: with SMTP id r11mr5074310wra.328.1562851514545;
+        Thu, 11 Jul 2019 06:25:14 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:d066:6881:ec69:75ab? ([2001:b07:6468:f312:d066:6881:ec69:75ab])
+        by smtp.gmail.com with ESMTPSA id t1sm7823335wra.74.2019.07.11.06.25.13
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 06:25:13 -0700 (PDT)
+Subject: Re: [PATCH v6 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+To:     Tao Xu <tao3.xu@intel.com>, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
+        jingqi.liu@intel.com
+References: <20190621055747.17060-1-tao3.xu@intel.com>
+ <20190621055747.17060-3-tao3.xu@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <43814a5e-12bf-ceb5-e4fb-12bbb32cd4cb@redhat.com>
+Date:   Thu, 11 Jul 2019 15:25:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3M3cNZm4meO+_vPkJcjtq7Fu5SrnJ11FAkOtGW3WBvNw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190621055747.17060-3-tao3.xu@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.133.217.137]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21/06/19 07:57, Tao Xu wrote:
+> +	if (guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +		atomic_switch_umwait_control_msr(vmx);
+> +
 
+guest_cpuid_has is slow.  Please replace it with a test on
+secondary_exec_controls_get(vmx).
 
-On 2019/7/11 20:32, Arnd Bergmann wrote:
-> On Thu, Jul 11, 2019 at 1:20 PM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
->> The base value in do_div() called by hpet_time_div() is truncated from
->> unsigned long to uint32_t, resulting in a divide-by-zero exception.
-> 
-> Good catch!
-> 
->> --- a/drivers/char/hpet.c
->> +++ b/drivers/char/hpet.c
->> @@ -567,7 +567,7 @@ static inline unsigned long hpet_time_div(struct hpets *hpets,
->>         unsigned long long m;
->>
->>         m = hpets->hp_tick_freq + (dis >> 1);
->> -       do_div(m, dis);
->> +       div64_ul(m, dis);
->>         return (unsigned long)m;
->>  }
-> 
-> This still looks wrong to me: div64_ul() unlike do_div() does not
-> modify its argument, so you have to assign the output like
-> 
->        return div64_ul(m, dis);
+Are you going to look into nested virtualization support?  This should
+include only 1) allowing setting the enable bit in secondary execution
+controls, and passing it through in prepare_vmcs02_early; 2) reflecting
+the vmexit in nested_vmx_exit_reflected.
 
-right, should check div64_ul more carefully， will resend v2, thanks
+Thanks,
 
-> 
->        Arnd
-> 
-> 
-
+Paolo
