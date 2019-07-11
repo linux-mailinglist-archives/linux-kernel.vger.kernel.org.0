@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB9B65623
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65D2365626
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 13:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbfGKLwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 07:52:04 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54776 "EHLO
+        id S1728679AbfGKLwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 07:52:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54796 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbfGKLwD (ORCPT
+        with ESMTP id S1728654AbfGKLwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 07:52:03 -0400
+        Thu, 11 Jul 2019 07:52:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=x/vGwDcUvq5XOKlVFW/Vxp48Js2QfW22vkKigRIutgY=; b=GrnVCzPQ7hidgY3kKcg1CF7QWa
-        mvonGcnYzTy++1P1MRHA3l1w6zYUkk+ZsllnYPmJiisSBmY0vU0TAopq9dE8u5xDt8ht1D+NS/2bq
-        XO9uN22m/oH4inSb4eBS0Zm/fbHwKHDJfu8KiIMOrnsC7Os6nvSZQEf2hKCS5G/c4EJyYqK3fXmrG
-        FMGuKIvJuPgDQMRSiCaIZVQQU1oRX0/hu0Uwm58uh61xGjKMM16VxCkB0VragIQqZi0DZuHvUgu71
-        HKMO6QWqjg9JHCNofo8DW9JU97+xAn3nK4o1VVRX2AozXLZcJi07Frgj0uLXk0Fp0+CCGGUurny+U
-        jiZoUGvw==;
+        bh=x60GWs4sK6p0XR7SzYSe69WcN7OXzbqKI26dyMms13s=; b=ruAoBF9jPrLRrjqLp7Aci8Garf
+        AHZRrBVDVjQ7cyjXtMMHg0XY6OiYLdyQM+r1TVdyKX1n1ehOoAGVEc8z+O9NoY0ZmAg+LQ/1u+DIt
+        EqhPFJ+pFbcmlGL1cBoFMcsIClXVnhEfK65GR5oX81vF9nZ8ZYhEIya9TXo3e9w8E1tgeYY39NjJg
+        3msDyZCf0jVONPbutxloso5PzAfMWoG63CNiU7EL1xIfNZesd21HBzX5vob7XEZ6b7XQxGhBax3UZ
+        6k6PvqbSFAZ93Qbru0fzxhFi3C8ZZyjobPAgT05Ag0P3XzeQfQWDKxyov9MULAue2j2SVSnk87cyw
+        WAwEx/+Q==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlXc3-0003MB-Rr; Thu, 11 Jul 2019 11:51:48 +0000
+        id 1hlXc3-0003MC-Rs; Thu, 11 Jul 2019 11:51:48 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id EC91220B53B62; Thu, 11 Jul 2019 13:51:44 +0200 (CEST)
-Message-Id: <20190711114336.002429503@infradead.org>
+        id F0A1320B53B63; Thu, 11 Jul 2019 13:51:44 +0200 (CEST)
+Message-Id: <20190711114336.059780563@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 11 Jul 2019 13:40:57 +0200
+Date:   Thu, 11 Jul 2019 13:40:58 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
         rostedt@goodmis.org, luto@kernel.org, torvalds@linux-foundation.org
 Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
         linux-kernel@vger.kernel.org, zhe.he@windriver.com,
         joel@joelfernandes.org, devel@etsukata.com, peterz@infradead.org
-Subject: [PATCH v3 3/6] x86/entry/64: Simplify idtentry a little
+Subject: [PATCH v3 4/6] x86/entry/64: Update comments and sanity tests for create_gap
 References: <20190711114054.406765395@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,144 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a bunch of duplication in idtentry, namely the
-.Lfrom_usermode_switch_stack is a paranoid=0 copy of the normal flow.
-
-Make this explicit by creating a idtentry_part helper macro.
+Commit 2700fefdb2d9 ("x86_64: Add gap to int3 to allow for call
+emulation") forgot to update the comment, do so now.
 
 Acked-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/entry/entry_64.S |  102 +++++++++++++++++++++-------------------------
- 1 file changed, 48 insertions(+), 54 deletions(-)
+ arch/x86/entry/entry_64.S |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -864,6 +864,52 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
-  */
- #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + (x) * 8)
- 
-+.macro idtentry_part do_sym, has_error_code:req, paranoid:req, shift_ist=-1, ist_offset=0
-+
-+	.if \paranoid
-+	call	paranoid_entry
-+	/* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
-+	.else
-+	call	error_entry
-+	.endif
-+	UNWIND_HINT_REGS
-+
-+	.if \paranoid
-+	.if \shift_ist != -1
-+	TRACE_IRQS_OFF_DEBUG			/* reload IDT in case of recursion */
-+	.else
-+	TRACE_IRQS_OFF
-+	.endif
-+	.endif
-+
-+	movq	%rsp, %rdi			/* pt_regs pointer */
-+
-+	.if \has_error_code
-+	movq	ORIG_RAX(%rsp), %rsi		/* get error code */
-+	movq	$-1, ORIG_RAX(%rsp)		/* no syscall to restart */
-+	.else
-+	xorl	%esi, %esi			/* no error code */
-+	.endif
-+
-+	.if \shift_ist != -1
-+	subq	$\ist_offset, CPU_TSS_IST(\shift_ist)
-+	.endif
-+
-+	call	\do_sym
-+
-+	.if \shift_ist != -1
-+	addq	$\ist_offset, CPU_TSS_IST(\shift_ist)
-+	.endif
-+
-+	.if \paranoid
-+	/* this procedure expect "no swapgs" flag in ebx */
-+	jmp	paranoid_exit
-+	.else
-+	jmp	error_exit
-+	.endif
-+
-+.endm
-+
+@@ -913,15 +913,16 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
  /**
   * idtentry - Generate an IDT entry stub
   * @sym:		Name of the generated entry point
-@@ -934,47 +980,7 @@ ENTRY(\sym)
- .Lfrom_usermode_no_gap_\@:
+- * @do_sym: 		C function to be called
+- * @has_error_code: 	True if this IDT vector has an error code on the stack
+- * @paranoid: 		non-zero means that this vector may be invoked from
++ * @do_sym:		C function to be called
++ * @has_error_code:	True if this IDT vector has an error code on the stack
++ * @paranoid:		non-zero means that this vector may be invoked from
+  *			kernel mode with user GSBASE and/or user CR3.
+  *			2 is special -- see below.
+  * @shift_ist:		Set to an IST index if entries from kernel mode should
+- *             		decrement the IST stack so that nested entries get a
++ *			decrement the IST stack so that nested entries get a
+  *			fresh stack.  (This is for #DB, which has a nasty habit
+- *             		of recursing.)
++ *			of recursing.)
++ * @create_gap:		create a 6-word stack gap when coming from kernel mode.
+  *
+  * idtentry generates an IDT stub that sets up a usable kernel context,
+  * creates struct pt_regs, and calls @do_sym.  The stub has the following
+@@ -951,10 +952,14 @@ ENTRY(\sym)
+ 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
+ 
+ 	/* Sanity check */
+-	.if \shift_ist != -1 && \paranoid == 0
++	.if \shift_ist != -1 && \paranoid != 1
+ 	.error "using shift_ist requires paranoid=1"
  	.endif
  
--	.if \paranoid
--	call	paranoid_entry
--	.else
--	call	error_entry
--	.endif
--	UNWIND_HINT_REGS
--	/* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
--
--	.if \paranoid
--	.if \shift_ist != -1
--	TRACE_IRQS_OFF_DEBUG			/* reload IDT in case of recursion */
--	.else
--	TRACE_IRQS_OFF
--	.endif
--	.endif
--
--	movq	%rsp, %rdi			/* pt_regs pointer */
--
--	.if \has_error_code
--	movq	ORIG_RAX(%rsp), %rsi		/* get error code */
--	movq	$-1, ORIG_RAX(%rsp)		/* no syscall to restart */
--	.else
--	xorl	%esi, %esi			/* no error code */
--	.endif
--
--	.if \shift_ist != -1
--	subq	$\ist_offset, CPU_TSS_IST(\shift_ist)
--	.endif
--
--	call	\do_sym
--
--	.if \shift_ist != -1
--	addq	$\ist_offset, CPU_TSS_IST(\shift_ist)
--	.endif
--
--	/* these procedures expect "no swapgs" flag in ebx */
--	.if \paranoid
--	jmp	paranoid_exit
--	.else
--	jmp	error_exit
--	.endif
-+	idtentry_part \do_sym, \has_error_code, \paranoid, \shift_ist, \ist_offset
++	.if \create_gap && \paranoid
++	.error "using create_gap requires paranoid=0"
++	.endif
++
+ 	ASM_CLAC
  
- 	.if \paranoid == 1
- 	/*
-@@ -983,21 +989,9 @@ ENTRY(\sym)
- 	 * run in real process context if user_mode(regs).
- 	 */
- .Lfrom_usermode_switch_stack_\@:
--	call	error_entry
--
--	movq	%rsp, %rdi			/* pt_regs pointer */
--
--	.if \has_error_code
--	movq	ORIG_RAX(%rsp), %rsi		/* get error code */
--	movq	$-1, ORIG_RAX(%rsp)		/* no syscall to restart */
--	.else
--	xorl	%esi, %esi			/* no error code */
-+	idtentry_part \do_sym, \has_error_code, paranoid=0
- 	.endif
- 
--	call	\do_sym
--
--	jmp	error_exit
--	.endif
- _ASM_NOKPROBE(\sym)
- END(\sym)
- .endm
+ 	.if \has_error_code == 0
 
 
