@@ -2,174 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E1E965834
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 895486583F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfGKN5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 09:57:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56678 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728569AbfGKN5C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:57:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0TdTTvv9gzZPCqHVN09rsHZfcgoPwm7Gi1QT/oQm0qY=; b=qtcfa93Pmpg0IzzyXiBu0TpI7g
-        FlOPh39+Gsq5ONektm3WTqhDZYvBvRZat5iuAfWVWapUnx+gChRjB/4LL9cyKLBd4epmlFjmwzJEN
-        su1bngdlgE9OINFndq1VKV/dHzZg5DBhqRaclSI4UXci8KQQ+dB1U8stEkDCuSnJvxB+BVoeY8v+F
-        Wq/G5MnIWO/ZLLF90OzoOnzovyg0aqBX6zKxWHvP+xRJrrHtQArW3E5XIZYJjs+QswqPH41Gr4H3S
-        1uZlSt25IhO+u8VtMrXnG87GY6LjnPKT5sWNzMDx8BGOXRw5W8WkopRoRWhNbFmvxqDR1XUsLXYO+
-        6Qqs9yuQ==;
-Received: from [38.98.37.141] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlZZD-0004uL-J9; Thu, 11 Jul 2019 13:57:00 +0000
-Date:   Thu, 11 Jul 2019 15:56:54 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dma-mapping updates for 5.3
-Message-ID: <20190711135654.GA15312@infradead.org>
+        id S1728715AbfGKN5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 09:57:52 -0400
+Received: from relay.sw.ru ([185.231.240.75]:55748 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728274AbfGKN5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 09:57:51 -0400
+Received: from [172.16.24.21]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <vvs@virtuozzo.com>)
+        id 1hlZZp-0001WC-QI; Thu, 11 Jul 2019 16:57:37 +0300
+Subject: Re: [PATCH v3 0/3] kernel/notifier.c: avoid duplicate registration
+To:     Nixiaoming <nixiaoming@huawei.com>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "Nadia.Derbey@bull.net" <Nadia.Derbey@bull.net>,
+        "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
+        "semen.protsenko@linaro.org" <semen.protsenko@linaro.org>,
+        "stable@kernel.org" <stable@kernel.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+Cc:     "Huangjianhui (Alex)" <alex.huangjianhui@huawei.com>,
+        Dailei <dylix.dailei@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <1562728147-30251-1-git-send-email-nixiaoming@huawei.com>
+ <f628ff03-eb47-62f3-465b-fe4ed046b30c@virtuozzo.com>
+ <E490CD805F7529488761C40FD9D26EF12AC9D068@dggemm507-mbx.china.huawei.com>
+From:   Vasily Averin <vvs@virtuozzo.com>
+Message-ID: <d70ba831-85c7-d5a3-670a-144fa4d139cc@virtuozzo.com>
+Date:   Thu, 11 Jul 2019 16:57:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <E490CD805F7529488761C40FD9D26EF12AC9D068@dggemm507-mbx.china.huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 7/11/19 4:55 AM, Nixiaoming wrote:
+> On Wed, July 10, 2019 1:49 PM Vasily Averin wrote:
+>> On 7/10/19 6:09 AM, Xiaoming Ni wrote:
+>>> Registering the same notifier to a hook repeatedly can cause the hook
+>>> list to form a ring or lose other members of the list.
+>>
+>> I think is not enough to _prevent_ 2nd register attempt,
+>> it's enough to detect just attempt and generate warning to mark host in bad state.
+>>
+> 
+> Duplicate registration is prevented in my patch, not just "mark host in bad state"
+> 
+> Duplicate registration is checked and exited in notifier_chain_cond_register()
+> 
+> Duplicate registration was checked in notifier_chain_register() but only 
+> the alarm was triggered without exiting. added by commit 831246570d34692e 
+> ("kernel/notifier.c: double register detection")
+> 
+> My patch is like a combination of 831246570d34692e and notifier_chain_cond_register(),
+>  which triggers an alarm and exits when a duplicate registration is detected.
+> 
+>> Unexpected 2nd register of the same hook most likely will lead to 2nd unregister,
+>> and it can lead to host crash in any time: 
+>> you can unregister notifier on first attempt it can be too early, it can be still in use.
+>> on the other hand you can never call 2nd unregister at all.
+> 
+> Since the member was not added to the linked list at the time of the second registration, 
+> no linked list ring was formed. 
+> The member is released on the first unregistration and -ENOENT on the second unregistration.
+> After patching, the fault has been alleviated
 
-please pull the dma-mapping update below.  Note that the tree is based
-on an branch from Joergs iommu tree that you have pulled earlier this
-week.
+You are wrong here.
+2nd notifier's registration is a pure bug, this should never happen.
+If you know the way to reproduce this situation -- you need to fix it. 
 
-There are a few of the usual Kconfig conflicts where different trees
-touch the same area, but not the same symbols, just take the changes
-from both tree in that case (none of them is in your tree yet as of
-this time).
+2nd registration can happen in 2 cases:
+1) missed rollback, when someone forget to call unregister after successfull registration, 
+and then tried to call register again. It can lead to crash for example when according module will be unloaded.
+2) some subsystem is registered twice, for example from  different namespaces.
+in this case unregister called during sybsystem cleanup in first namespace will incorrectly remove notifier used 
+in second namespace, it also can lead to unexpacted behaviour.
 
-In addition there is a conflict in genalloc.h against mainline where
-late patches in the 5.2 cycle added a new gen_pool_free_owner function
-and made gen_pool_free a wrapper around it.  This tree adds new
-helpers right next to it, the fix is again to take both changes
-manually.  Bonous points for keeping all the alloc functions above
-the free ones to keep the file ordering, unlike the default git
-presentation.
+> It may be more helpful to return an error code when someone tries to register the same
+> notification program a second time.
 
+You are wrong again here, it is senseless.
+If you have detected 2nd register -- your node is already in bad state.
 
-The following changes since commit 1b961423158caaae49d3900b7c9c37477bbfa9b3:
-
-  iommu/dma: Fix condition check in iommu_dma_unmap_sg (2019-06-03 12:14:51 +0200)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.3
-
-for you to fetch changes up to 15ffe5e1acf5fe1512e98b20702e46ce9f25e2f7:
-
-  dma-mapping: mark dma_alloc_need_uncached as __always_inline (2019-07-08 14:19:33 -0700)
-
-----------------------------------------------------------------
-dma-mapping updates for Linux 5.3
-
- - move the USB special case that bounced DMA through a device
-   bar into the USB code instead of handling it in the common
-   DMA code (Laurentiu Tudor and Fredrik Noring)
- - don't dip into the global CMA pool for single page allocations
-   (Nicolin Chen)
- - fix a crash when allocating memory for the atomic pool failed
-   during boot (Florian Fainelli)
- - move support for MIPS-style uncached segments to the common
-   code and use that for MIPS and nios2 (me)
- - make support for DMA_ATTR_NON_CONSISTENT and
-   DMA_ATTR_NO_KERNEL_MAPPING generic (me)
- - convert nds32 to the generic remapping allocator (me)
-
-----------------------------------------------------------------
-Christoph Hellwig (17):
-      MIPS: remove the _dma_cache_wback_inv export
-      au1100fb: fix DMA API abuse
-      dma-direct: provide generic support for uncached kernel segments
-      MIPS: use the generic uncached segment support in dma-direct
-      dma-mapping: truncate dma masks to what dma_addr_t can hold
-      ARM: dma-mapping: allow larger DMA mask than supported
-      arm-nommu: remove the partial DMA_ATTR_NON_CONSISTENT support
-      arc: remove the partial DMA_ATTR_NON_CONSISTENT support
-      openrisc: remove the partial DMA_ATTR_NON_CONSISTENT support
-      dma-mapping: add a dma_alloc_need_uncached helper
-      dma-direct: handle DMA_ATTR_NON_CONSISTENT in common code
-      dma-direct: handle DMA_ATTR_NO_KERNEL_MAPPING in common code
-      arc: use the generic remapping allocator for coherent DMA allocations
-      nds32: use the generic remapping allocator for coherent DMA allocations
-      nios2: use the generic uncached segment support in dma-direct
-      MIPS: only select ARCH_HAS_UNCACHED_SEGMENT for non-coherent platforms
-      dma-mapping: mark dma_alloc_need_uncached as __always_inline
-
-Florian Fainelli (1):
-      dma-remap: Avoid de-referencing NULL atomic_pool
-
-Fredrik Noring (3):
-      lib/genalloc: add gen_pool_dma_zalloc() for zeroed DMA allocations
-      lib/genalloc.c: Add algorithm, align and zeroed family of DMA allocators
-      usb: host: Fix excessive alignment restriction for local memory allocations
-
-Laurentiu Tudor (4):
-      USB: use genalloc for USB HCs with local memory
-      usb: host: ohci-sm501: init genalloc for local memory
-      usb: host: ohci-tmio: init genalloc for local memory
-      USB: drop HCD_LOCAL_MEM flag
-
-Nicolin Chen (4):
-      dma-contiguous: add dma_{alloc,free}_contiguous() helpers
-      dma-contiguous: use fallback alloc_pages for single pages
-      dma-contiguous: fix !CONFIG_DMA_CMA version of dma_{alloc, free}_contiguous()
-      iommu/dma: Apply dma_{alloc,free}_contiguous functions
-
- arch/Kconfig                    |   8 +
- arch/arc/Kconfig                |   2 +
- arch/arc/mm/dma.c               |  71 ++-------
- arch/arm/mm/dma-mapping-nommu.c |  24 +--
- arch/arm/mm/dma-mapping.c       |  20 +--
- arch/mips/Kconfig               |   1 +
- arch/mips/include/asm/page.h    |   3 -
- arch/mips/jazz/jazzdma.c        |   6 -
- arch/mips/mm/cache.c            |   2 -
- arch/mips/mm/dma-noncoherent.c  |  26 ++--
- arch/nds32/Kconfig              |   2 +
- arch/nds32/kernel/dma.c         | 325 ++--------------------------------------
- arch/nios2/Kconfig              |   1 +
- arch/nios2/include/asm/page.h   |   6 -
- arch/nios2/mm/dma-mapping.c     |  34 ++---
- arch/openrisc/kernel/dma.c      |  22 ++-
- arch/parisc/kernel/pci-dma.c    |  48 ++----
- arch/xtensa/kernel/pci-dma.c    |   8 +-
- drivers/iommu/dma-iommu.c       |  14 +-
- drivers/usb/Kconfig             |   1 +
- drivers/usb/core/buffer.c       |  17 ++-
- drivers/usb/core/hcd.c          |  51 +++++--
- drivers/usb/host/ehci-hcd.c     |   2 +-
- drivers/usb/host/fotg210-hcd.c  |   2 +-
- drivers/usb/host/ohci-hcd.c     |  25 +++-
- drivers/usb/host/ohci-mem.c     |  37 ++++-
- drivers/usb/host/ohci-sm501.c   |  50 +++----
- drivers/usb/host/ohci-tmio.c    |  15 +-
- drivers/usb/host/ohci.h         |   2 +
- drivers/usb/host/uhci-hcd.c     |   2 +-
- drivers/video/fbdev/au1100fb.c  |  24 +--
- drivers/video/fbdev/au1100fb.h  |   1 +
- include/linux/dma-contiguous.h  |  19 +++
- include/linux/dma-noncoherent.h |  19 +++
- include/linux/genalloc.h        |   9 ++
- include/linux/usb/hcd.h         |   6 +-
- kernel/dma/contiguous.c         |  56 +++++++
- kernel/dma/direct.c             |  55 ++++---
- kernel/dma/mapping.c            |  12 ++
- kernel/dma/remap.c              |  16 +-
- lib/genalloc.c                  | 125 +++++++++++++++-
- 41 files changed, 515 insertions(+), 654 deletions(-)
+> But I noticed that notifier_chain_cond_register() returns 0 when duplicate registration 
+> is detected. At the same time, in all the existing export function comments of notify,
+> "Currently always returns zero"
+> 
+> I am a bit confused: which is better?
+> 
+>>
+>> Unfortunately I do not see any ways to handle such cases properly,
+>> and it seems for me your patches does not resolve this problem.
+>>
+>> Am I missed something probably?
+>>
+>>> case1: An infinite loop in notifier_chain_register() can cause soft lockup
+>>>         atomic_notifier_chain_register(&test_notifier_list, &test1);
+>>>         atomic_notifier_chain_register(&test_notifier_list, &test1);
+>>>         atomic_notifier_chain_register(&test_notifier_list, &test2);
+> 
+> Thanks
+> 
+> Xiaoming Ni
+> 
