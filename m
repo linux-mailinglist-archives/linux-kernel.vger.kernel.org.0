@@ -2,70 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A50B6609C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD139660AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbfGKU2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:28:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:13610 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728405AbfGKU2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:28:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 13:28:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,479,1557212400"; 
-   d="scan'208";a="317789876"
-Received: from mmoerth-mobl6.ger.corp.intel.com (HELO localhost) ([10.249.35.82])
-  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2019 13:28:25 -0700
-Date:   Thu, 11 Jul 2019 23:28:24 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Suchanek <msuchanek@suse.de>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH v3] tpm: tpm_ibm_vtpm: Fix unallocated banks
-Message-ID: <20190711202824.dfhzxcqtk5ouud5n@linux.intel.com>
-References: <1562861615-11391-1-git-send-email-nayna@linux.ibm.com>
+        id S1731233AbfGKUbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:31:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38958 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731079AbfGKUbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 16:31:06 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b7so3616230pls.6
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 13:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TV2jSvn5SJbiANqesUZ+all03sCywDkc0brqJHcrz/s=;
+        b=AQ3DbKxl1VudFwp2u0IRGvRKW0ik5qJpVbipJChEW6DyoxnPSNQmHAV/H5i6kL76WF
+         ZTj5PmgZHQ+Us8ylLM97QgZFpqYL8ZlRtYjJjZrJPE83dV2zmTv7ldWIQRJfPx2cgdrJ
+         91yMy5y+Fc5ZL2nQr7uABfRScoBToPqUQC+5zQJKQ5qzpUqV9gqWM9shlCUZca4vqGva
+         CIa7yvmdP/CyV25Y1szokHevNdrtgRmsVXAvYxv32I/79hY2/Z0SfgOaO9CBUQyLTWn4
+         NjQayNG+PwaHvmB7loPSmM7/mnn4YO5zAcV7znJTLoRU79XWs+p/0gZCIL9Dkd9IbTUB
+         eXEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TV2jSvn5SJbiANqesUZ+all03sCywDkc0brqJHcrz/s=;
+        b=Qlfi8JPKROpUE4HuOohfhVsltebjNDuXpIw+fyBEIWj6d94I8rIoiNzd4vjnprNcvH
+         sDLdwVa8+9CVRu8492HMBn4RRTqrs19/kpgLB+cD9+L9NdHoKBstGAhHOPD6BB1Ii+dw
+         gfsXcBOah878X4V/U7g/RsOSb+jAza31w/IcjlWcBa62tcj1r5zmq//GAEHMvKmalVoI
+         Aox6rtnAzA9YzqytAczNyylsesxxL3iIgC7vwfYJ4W2qxAQntoyR1MEzXtlNkBgSQBCO
+         mVwH+MIa5r10wHFc28g6ddur2TqxzDqyld7gEfO2oBwoiepRouG4TQX354deO+XtCd3l
+         eDPg==
+X-Gm-Message-State: APjAAAXKxSiBZbSfxMOc5dguF2Fdy0UnbexTuy2CvPbBd0twFSKIRPWk
+        W0u0qD2bICd8vdx1NIUimQ0=
+X-Google-Smtp-Source: APXvYqz1HiiGkIF3jM4roVcn1A3U9HeG/I2Oi5xsnkmPIbL4o2zcAH8p7IgPBemIwtw1cVptETOBMg==
+X-Received: by 2002:a17:902:3283:: with SMTP id z3mr6758105plb.176.1562877065317;
+        Thu, 11 Jul 2019 13:31:05 -0700 (PDT)
+Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
+        by smtp.gmail.com with ESMTPSA id s66sm7073008pfs.8.2019.07.11.13.30.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 13:30:59 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 13:30:59 -0700
+From:   Stanislav Fomichev <sdf@fomichev.me>
+To:     Krzesimir Nowak <krzesimir@kinvolk.io>
+Cc:     linux-kernel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        Iago =?iso-8859-1?Q?L=F3pez?= Galeiras <iago@kinvolk.io>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Stanislav Fomichev <sdf@google.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, xdp-newbies@vger.kernel.org
+Subject: Re: [bpf-next v3 10/12] bpf: Implement bpf_prog_test_run for perf
+ event programs
+Message-ID: <20190711203059.GB16709@mini-arch>
+References: <20190708163121.18477-1-krzesimir@kinvolk.io>
+ <20190708163121.18477-11-krzesimir@kinvolk.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1562861615-11391-1-git-send-email-nayna@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190708163121.18477-11-krzesimir@kinvolk.io>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 12:13:35PM -0400, Nayna Jain wrote:
-> The nr_allocated_banks and allocated banks are initialized as part of
-> tpm_chip_register. Currently, this is done as part of auto startup
-> function. However, some drivers, like the ibm vtpm driver, do not run
-> auto startup during initialization. This results in uninitialized memory
-> issue and causes a kernel panic during boot.
+On 07/08, Krzesimir Nowak wrote:
+> As an input, test run for perf event program takes struct
+> bpf_perf_event_data as ctx_in and struct bpf_perf_event_value as
+> data_in. For an output, it basically ignores ctx_out and data_out.
 > 
-> This patch moves the pcr allocation outside the auto startup function
-> into tpm_chip_register. This ensures that allocated banks are initialized
-> in any case.
+> The implementation sets an instance of struct bpf_perf_event_data_kern
+> in such a way that the BPF program reading data from context will
+> receive what we passed to the bpf prog test run in ctx_in. Also BPF
+> program can call bpf_perf_prog_read_value to receive what was passed
+> in data_in.
 > 
-> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with
-> PCR read")
-> Reported-by: Michal Suchanek <msuchanek@suse.de>
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-> Tested-by: Michal Suchánek <msuchanek@suse.de>
+> Changes since v2:
+> - drop the changes in perf event verifier test - they are not needed
+>   anymore after reworked ctx size handling
+> 
+> Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+> ---
+>  kernel/trace/bpf_trace.c | 60 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+> 
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index ca1255d14576..b870fc2314d0 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -19,6 +19,8 @@
+>  #include "trace_probe.h"
+>  #include "trace.h"
+>  
+> +#include <trace/events/bpf_test_run.h>
+> +
+>  #define bpf_event_rcu_dereference(p)					\
+>  	rcu_dereference_protected(p, lockdep_is_held(&bpf_event_mutex))
+>  
+> @@ -1160,7 +1162,65 @@ const struct bpf_verifier_ops perf_event_verifier_ops = {
+>  	.convert_ctx_access	= pe_prog_convert_ctx_access,
+>  };
+>  
+> +static int pe_prog_test_run(struct bpf_prog *prog,
+> +			    const union bpf_attr *kattr,
+> +			    union bpf_attr __user *uattr)
+> +{
+> +	struct bpf_perf_event_data_kern real_ctx = {0, };
+> +	struct perf_sample_data sample_data = {0, };
+> +	struct bpf_perf_event_data *fake_ctx;
+> +	struct bpf_perf_event_value *value;
+> +	struct perf_event event = {0, };
+> +	u32 retval = 0, duration = 0;
+> +	int err;
+> +
+> +	if (kattr->test.data_size_out || kattr->test.data_out)
+> +		return -EINVAL;
+> +	if (kattr->test.ctx_size_out || kattr->test.ctx_out)
+> +		return -EINVAL;
+> +
+> +	fake_ctx = bpf_receive_ctx(kattr, sizeof(struct bpf_perf_event_data));
+> +	if (IS_ERR(fake_ctx))
+> +		return PTR_ERR(fake_ctx);
+> +
+> +	value = bpf_receive_data(kattr, sizeof(struct bpf_perf_event_value));
+> +	if (IS_ERR(value)) {
+> +		kfree(fake_ctx);
+> +		return PTR_ERR(value);
+> +	}
+nit: maybe use bpf_test_ prefix for receive_ctx/data:
+* bpf_test_receive_ctx
+* bpf_test_receive_data
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+? To signify that they are used for tests only.
 
-/Jarkko
+> +
+> +	real_ctx.regs = &fake_ctx->regs;
+> +	real_ctx.data = &sample_data;
+> +	real_ctx.event = &event;
+> +	perf_sample_data_init(&sample_data, fake_ctx->addr,
+> +			      fake_ctx->sample_period);
+> +	event.cpu = smp_processor_id();
+> +	event.oncpu = -1;
+> +	event.state = PERF_EVENT_STATE_OFF;
+> +	local64_set(&event.count, value->counter);
+> +	event.total_time_enabled = value->enabled;
+> +	event.total_time_running = value->running;
+> +	/* make self as a leader - it is used only for checking the
+> +	 * state field
+> +	 */
+> +	event.group_leader = &event;
+> +	err = bpf_test_run(prog, &real_ctx, kattr->test.repeat,
+> +			   BPF_TEST_RUN_PLAIN, &retval, &duration);
+> +	if (err) {
+> +		kfree(value);
+> +		kfree(fake_ctx);
+> +		return err;
+> +	}
+> +
+> +	err = bpf_test_finish(uattr, retval, duration);
+> +	trace_bpf_test_finish(&err);
+Can probably do:
+
+	err = bpf_test_run(...)
+	if (!err) {
+		err = bpf_test_finish(uattr, retval, duration);
+		trace_bpf_test_finish(&err);
+	}
+	kfree(..);
+	kfree(..);
+	return err;
+
+So you don't have to copy-paste the error handling.
+
+> +	kfree(value);
+> +	kfree(fake_ctx);
+> +	return err;
+> +}
+> +
+>  const struct bpf_prog_ops perf_event_prog_ops = {
+> +	.test_run	= pe_prog_test_run,
+>  };
+>  
+>  static DEFINE_MUTEX(bpf_event_mutex);
+> -- 
+> 2.20.1
+> 
