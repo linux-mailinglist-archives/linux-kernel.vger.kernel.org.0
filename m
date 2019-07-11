@@ -2,97 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC5665E59
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 19:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7444865E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 19:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfGKRSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 13:18:10 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40415 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbfGKRSJ (ORCPT
+        id S1728855AbfGKRVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 13:21:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46717 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfGKRVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 13:18:09 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a15so5082989qtn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 10:18:09 -0700 (PDT)
+        Thu, 11 Jul 2019 13:21:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i8so3239700pgm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 10:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UTxsWXTECGBMOG0GnFyPFPTi0lGjRsY0+YyFpMLhFhg=;
-        b=aHkrW0+ndgyKfgFDGXlpBhpn1+sV9FtQ/iMrxyBxCrjC01IoBpEqLL2eM7XRxus4Pj
-         5bOoD3jNgSBg3uLAke200qmPrEzjwaACw0IK5j/rOLyibFdsrkMqb1DRb+669yFiiw4+
-         3A5e123BmNr/XIGc9C3denUABqv9A1p5Yy1rc9sIAOfPcO6/dfdTjusBQDM+TziliOmI
-         JnVGUC1XyozrN0sc+ED/NbFiwglM26cCw/LnGTVfnz1+6BzyxITIc9p3xrGTHZjRqvG6
-         VB8nfDPboYdK6mQmvn8nGLDLpDluCTDp0ldJZnWhvrkb6vu4gH+vl6OzLWSNKkPPqG8E
-         k9mg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=gqIivKQ4VDY/9EJ1sbwK6dLkOFlogSrMQDe9qqiMbzY=;
+        b=Lh8bol5uLGKKTqXXXFbj8SySQvu9msm/TdCvjInq2ukTZqn6RGBCUjha/KUKBRGYls
+         i6SPZzkfh3QlXjGM0stTHbhpmRbzZER0lgqUd2/c16m4cGpkJDH8aZls4CblfcQNcXzG
+         LoAiNF1DZghDcr/hRzM1aXcAOXsDbHLwJ0H2MlDszfsXcsSXuBtuiGmjo+ACIZWElKGK
+         uskBrAlSsozclJqt6ZBMxoTN6wj6b5i0KlZdmNhijH4wNwZ2f4M4AgYvXPm04CpnFx4n
+         N65rrYxLXmfYOuHKxqWNXdOZDLT7sirf+iqxG8GfYZPC5lnvawYThxUaZxagNvqFOAjb
+         ya0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UTxsWXTECGBMOG0GnFyPFPTi0lGjRsY0+YyFpMLhFhg=;
-        b=h8xc6i6heCN6lr36Fc2jvUfRDbHb2tXyTK+dgEASMB3P6DDjxp5jsI9lFRxdtIt9Tt
-         gsy5EsjVpHVDQzquV0VcdhR/cRLEcyxHH51eQdwofmqHq3h4rHX8Xh5g9IoMYil3zHVL
-         q5Q/eyHCGYtqiHI9mox9aMvxcXn/2jysgWl2/EriJtofF47F9bMVl0xVYt5XaAVgEX2T
-         0//r9EWzT0RXhbxdk3GCsLeFOtD4KcGVuW0+6a+BZYlsvFl+e9cISzJuaV5eneafh9uF
-         3NxiqWHFr2saHw2OaKOYBxZ/Jix0WMgVvmHg2THJSNhx60w6kFcZ0PSDVlDkGQbsLVVX
-         fPLQ==
-X-Gm-Message-State: APjAAAVtyXmGDAH+w1I+bN/BwVAv1UrOy4Cy0r+Tro2xTxBAE631AlbO
-        1K/Ho/EqiQm5eFuHaFDAv46O4w==
-X-Google-Smtp-Source: APXvYqxHKUD0V0Z3mECjZTXp2KOCMRJVQO1szSv2M6Gj1Gew096GN/XAN83pJ+5jpKYP9pb/eYa4gA==
-X-Received: by 2002:ac8:2194:: with SMTP id 20mr2673385qty.203.1562865488951;
-        Thu, 11 Jul 2019 10:18:08 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id p13sm1976377qkj.4.2019.07.11.10.18.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Jul 2019 10:18:08 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hlchs-00086y-0u; Thu, 11 Jul 2019 14:18:08 -0300
-Date:   Thu, 11 Jul 2019 14:18:08 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Bernard Metzler <BMT@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
-Message-ID: <20190711171808.GF25807@ziepe.ca>
-References: <20190710174800.34451-1-natechancellor@gmail.com>
- <OFE93E0F86.E35CE856-ON00258434.002A83CE-00258434.002A83DF@notes.na.collabserv.com>
- <20190711081434.GA86557@archlinux-threadripper>
- <20190711133915.GA25807@ziepe.ca>
- <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=gqIivKQ4VDY/9EJ1sbwK6dLkOFlogSrMQDe9qqiMbzY=;
+        b=AefZPj6cl2Wj2Xjv4xU+/Hnc2sVO3zzD4DflHfsxQiKVD9TgMsqUHYwkQox8MOhhb/
+         tNaO8Z7knb+tXkjCyOTiH8BFjkw1jEBDC+EL6gxuVzFpF3J+u1PaP+9Rx5+1ZeDxeW3y
+         I7SxrSkhIGEhrGD/kQCQfj7h2XDZmwg1nMRvMkcSHW5PeeBX1EYCR2Z7xsa8F5QL/1jO
+         cOMJUEh2by7Ju9IqjlEIepcppZlYVw3G2njPGYIHX04pIZwN3+NW2i/57WVHvUTYGsYB
+         A5olu2bUQSIbA9MbwsePP0QjXxc6VRj5KfVzwiLwvB4V0KDrj3bWW8q8wcQ5fDKnU7dJ
+         InxQ==
+X-Gm-Message-State: APjAAAUBubvTKHrueYkFHPNj6UAFF6u6Yvo3OsC5rNhH9H7cT3I6NJPw
+        VCyqk5xKeClRCtIg7Zp8KIA=
+X-Google-Smtp-Source: APXvYqzPcdiAOvWKSNm+hzapTSSmXf8/fGwVdxN3iKtzUnxAXQ7T2pQR9v94JJeawAjbMGky8hIJ4A==
+X-Received: by 2002:a17:90a:db08:: with SMTP id g8mr5893223pjv.39.1562865673539;
+        Thu, 11 Jul 2019 10:21:13 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.86.126])
+        by smtp.gmail.com with ESMTPSA id t7sm5111414pjq.15.2019.07.11.10.21.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2019 10:21:13 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 22:51:07 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] sound: pci: rme9652: Unneeded variable: "result".
+Message-ID: <20190711172107.GA5008@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 10:16:44AM -0700, Nick Desaulniers wrote:
-> On Thu, Jul 11, 2019 at 6:39 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Thu, Jul 11, 2019 at 01:14:34AM -0700, Nathan Chancellor wrote:
-> > > Maybe time to start plumbing Clang into your test flow until it can get
-> > > intergrated with more CI setups? :) It can catch some pretty dodgy
-> > > behavior that GCC doesn't:
-> >
-> > I keep asking how to use clang to build the kernel and last I was told
-> > it still wasn't ready..
-> >
-> > Is it ready now? Is there some flow that will compile with clang
-> > warning free, on any arch? (at least the portion of the kernel I check)
-> 
-> $ make CC=clang ...
-> 
-> Let us know if you find something we haven't already.
-> https://clangbuiltlinux.github.io/
-> https://github.com/ClangBuiltLinux/linux/issues
+This patch fixes below issue reported by coccicheck
 
-What clang version?
+sound/pci/rme9652/rme9652.c:2161:5-11: Unneeded variable: "result".
+Return "0" on line 2167
 
-Jason
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ sound/pci/rme9652/rme9652.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/pci/rme9652/rme9652.c b/sound/pci/rme9652/rme9652.c
+index cb9818a..4c851f8 100644
+--- a/sound/pci/rme9652/rme9652.c
++++ b/sound/pci/rme9652/rme9652.c
+@@ -2158,13 +2158,12 @@ static int snd_rme9652_prepare(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_rme9652 *rme9652 = snd_pcm_substream_chip(substream);
+ 	unsigned long flags;
+-	int result = 0;
+ 
+ 	spin_lock_irqsave(&rme9652->lock, flags);
+ 	if (!rme9652->running)
+ 		rme9652_reset_hw_pointer(rme9652);
+ 	spin_unlock_irqrestore(&rme9652->lock, flags);
+-	return result;
++	return 0;
+ }
+ 
+ static const struct snd_pcm_hardware snd_rme9652_playback_subinfo =
+-- 
+2.7.4
+
