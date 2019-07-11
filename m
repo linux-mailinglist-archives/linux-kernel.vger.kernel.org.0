@@ -2,141 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3AC65B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1884A65B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 18:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfGKQcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 12:32:25 -0400
-Received: from gateway30.websitewelcome.com ([192.185.147.85]:11584 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726213AbfGKQcZ (ORCPT
+        id S1728488AbfGKQOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 12:14:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727612AbfGKQOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 12:32:25 -0400
-X-Greylist: delayed 1203 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Jul 2019 12:32:24 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 432E73CD3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 11:12:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id lbgChSOxd4FKplbgChfbxu; Thu, 11 Jul 2019 11:12:20 -0500
-X-Authority-Reason: nr=8
-Received: from cablelink-187-160-61-213.pcs.intercable.net ([187.160.61.213]:11787 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hlbgB-002TCu-9Q; Thu, 11 Jul 2019 11:12:19 -0500
-Date:   Thu, 11 Jul 2019 11:12:18 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] RDMA/siw: Mark expected switch fall-throughs
-Message-ID: <20190711161218.GA4989@embeddedor>
+        Thu, 11 Jul 2019 12:14:12 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6BGDdf9112748
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 12:14:11 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tp5y5fnrj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 12:14:10 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Thu, 11 Jul 2019 17:13:50 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 11 Jul 2019 17:13:46 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6BGDWXS31523146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Jul 2019 16:13:32 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85D3F11C05C;
+        Thu, 11 Jul 2019 16:13:44 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5BA7711C04A;
+        Thu, 11 Jul 2019 16:13:42 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.41.99.131])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 11 Jul 2019 16:13:42 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Suchanek <msuchanek@suse.de>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v3] tpm: tpm_ibm_vtpm: Fix unallocated banks
+Date:   Thu, 11 Jul 2019 12:13:35 -0400
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.160.61.213
-X-Source-L: No
-X-Exim-ID: 1hlbgB-002TCu-9Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-187-160-61-213.pcs.intercable.net (embeddedor) [187.160.61.213]:11787
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-TM-AS-GCONF: 00
+x-cbid: 19071116-0020-0000-0000-00000352D9C8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071116-0021-0000-0000-000021A694B3
+Message-Id: <1562861615-11391-1-git-send-email-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907110183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+The nr_allocated_banks and allocated banks are initialized as part of
+tpm_chip_register. Currently, this is done as part of auto startup
+function. However, some drivers, like the ibm vtpm driver, do not run
+auto startup during initialization. This results in uninitialized memory
+issue and causes a kernel panic during boot.
 
-This patch fixes the following warnings:
+This patch moves the pcr allocation outside the auto startup function
+into tpm_chip_register. This ensures that allocated banks are initialized
+in any case.
 
-drivers/infiniband/sw/siw/siw_qp_rx.c: In function ‘siw_rdmap_complete’:
-drivers/infiniband/sw/siw/siw_qp_rx.c:1214:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   wqe->rqe.flags |= SIW_WQE_SOLICITED;
-   ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/sw/siw/siw_qp_rx.c:1215:2: note: here
-  case RDMAP_SEND:
-  ^~~~
-
-drivers/infiniband/sw/siw/siw_qp_tx.c: In function ‘siw_qp_sq_process’:
-drivers/infiniband/sw/siw/siw_qp_tx.c:1044:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    siw_wqe_put_mem(wqe, tx_type);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/sw/siw/siw_qp_tx.c:1045:3: note: here
-   case SIW_OP_INVAL_STAG:
-   ^~~~
-drivers/infiniband/sw/siw/siw_qp_tx.c:1128:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    siw_wqe_put_mem(wqe, tx_type);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/sw/siw/siw_qp_tx.c:1129:3: note: here
-   case SIW_OP_INVAL_STAG:
-   ^~~~
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with
+PCR read")
+Reported-by: Michal Suchanek <msuchanek@suse.de>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Tested-by: Michal Suchánek <msuchanek@suse.de>
 ---
+Changelog:
+v3:
+* Includes Stefan's feedback correctly:
+  * Fixed handling of rc > 0 error
+* Includes Jarkko's feedback related to comment and the function.
 
-NOTE: -Wimplicit-fallthrough will be enabled globally in v5.3. So, I
-      suggest you to take this patch for 5.3-rc1.
+v2:
+* Includes Jarkko's feedbacks
+  * fixes the function name to tpm_get_pcr_allocation()
+  * adds new function tpm1_get_pcr_allocation()
+  * updates patch summary line
+  * fixes alignment
+  * adds Reported-by: Michal Suchanek <msuchanek@suse.de>
+* Includes Stefan's feedbacks
+  * Fixes overwriting of return code
+  * Fixes misplacing of tpm_chip_stop()
+* Adds Reviewed-by, Tested-by
 
- drivers/infiniband/sw/siw/siw_qp_rx.c | 2 ++
- drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ drivers/char/tpm/tpm-chip.c | 20 ++++++++++++++++++++
+ drivers/char/tpm/tpm.h      |  2 ++
+ drivers/char/tpm/tpm1-cmd.c | 36 ++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm2-cmd.c |  6 +-----
+ 4 files changed, 47 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/infiniband/sw/siw/siw_qp_rx.c b/drivers/infiniband/sw/siw/siw_qp_rx.c
-index 682a290bc11e..f87657a11657 100644
---- a/drivers/infiniband/sw/siw/siw_qp_rx.c
-+++ b/drivers/infiniband/sw/siw/siw_qp_rx.c
-@@ -1212,6 +1212,8 @@ static int siw_rdmap_complete(struct siw_qp *qp, int error)
- 	case RDMAP_SEND_SE:
- 	case RDMAP_SEND_SE_INVAL:
- 		wqe->rqe.flags |= SIW_WQE_SOLICITED;
-+		/* Fall through */
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 8804c9e916fd..5a0396d6560d 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -550,6 +550,20 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
+ 	return hwrng_register(&chip->hwrng);
+ }
+ 
++static int tpm_get_pcr_allocation(struct tpm_chip *chip)
++{
++	int rc;
 +
- 	case RDMAP_SEND:
- 	case RDMAP_SEND_INVAL:
- 		if (wqe->wr_status == SIW_WR_IDLE)
-diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
-index f0d949e2e318..43020d2040fc 100644
---- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-+++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-@@ -1042,6 +1042,8 @@ int siw_qp_sq_process(struct siw_qp *qp)
- 		case SIW_OP_SEND_REMOTE_INV:
- 		case SIW_OP_WRITE:
- 			siw_wqe_put_mem(wqe, tx_type);
-+			/* Fall through */
++	rc = (chip->flags & TPM_CHIP_FLAG_TPM2) ?
++	     tpm2_get_pcr_allocation(chip) :
++	     tpm1_get_pcr_allocation(chip);
 +
- 		case SIW_OP_INVAL_STAG:
- 		case SIW_OP_REG_MR:
- 			if (tx_flags(wqe) & SIW_WQE_SIGNALLED)
-@@ -1126,6 +1128,8 @@ int siw_qp_sq_process(struct siw_qp *qp)
- 		case SIW_OP_READ:
- 		case SIW_OP_READ_LOCAL_INV:
- 			siw_wqe_put_mem(wqe, tx_type);
-+			/* Fall through */
++	if (rc > 0)
++		return -ENODEV;
 +
- 		case SIW_OP_INVAL_STAG:
- 		case SIW_OP_REG_MR:
- 			siw_sqe_complete(qp, &wqe->sqe, wqe->bytes,
++	return rc;
++}
++
+ /*
+  * tpm_chip_register() - create a character device for the TPM chip
+  * @chip: TPM chip to use.
+@@ -569,6 +583,12 @@ int tpm_chip_register(struct tpm_chip *chip)
+ 	if (rc)
+ 		return rc;
+ 	rc = tpm_auto_startup(chip);
++	if (rc) {
++		tpm_chip_stop(chip);
++		return rc;
++	}
++
++	rc = tpm_get_pcr_allocation(chip);
+ 	tpm_chip_stop(chip);
+ 	if (rc)
+ 		return rc;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2cce072f25b5..d571df3694c3 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -399,6 +399,7 @@ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
+ int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
++int tpm1_get_pcr_allocation(struct tpm_chip *chip);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+@@ -454,6 +455,7 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+ 			u32 *value, const char *desc);
+ 
++ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+ int tpm2_auto_startup(struct tpm_chip *chip);
+ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 85dcf2654d11..260a3917f0fe 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -696,18 +696,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 	}
+ 
+-	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+-					GFP_KERNEL);
+-	if (!chip->allocated_banks) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
+-
+-	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
+-	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+-	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
+-	chip->nr_allocated_banks = 1;
+-
+ 	return rc;
+ out:
+ 	if (rc > 0)
+@@ -776,3 +764,27 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+ 	return rc;
+ }
+ 
++/**
++ * tpm1_get_pcr_allocation() - initialize the allocated bank
++ * @chip: TPM chip to use.
++ *
++ * The function initializes the SHA1 allocated bank to extend PCR
++ *
++ * Return:
++ * * 0 on success,
++ * * < 0 on error.
++ */
++int tpm1_get_pcr_allocation(struct tpm_chip *chip)
++{
++	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
++					GFP_KERNEL);
++	if (!chip->allocated_banks)
++		return -ENOMEM;
++
++	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
++	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
++	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
++	chip->nr_allocated_banks = 1;
++
++	return 0;
++}
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index e74c5b7b64bf..b4384d0e3741 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -841,7 +841,7 @@ struct tpm2_pcr_selection {
+ 	u8  pcr_select[3];
+ } __packed;
+ 
+-static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
++ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ {
+ 	struct tpm2_pcr_selection pcr_selection;
+ 	struct tpm_buf buf;
+@@ -1041,10 +1041,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 			goto out;
+ 	}
+ 
+-	rc = tpm2_get_pcr_allocation(chip);
+-	if (rc)
+-		goto out;
+-
+ 	rc = tpm2_get_cc_attrs_tbl(chip);
+ 
+ out:
 -- 
-2.21.0
+2.20.1
 
