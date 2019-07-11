@@ -2,79 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5854E65047
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04CA6503B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:40:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbfGKCqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 22:46:32 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44264 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727174AbfGKCqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 22:46:31 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C11321A08BB;
-        Thu, 11 Jul 2019 04:46:29 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 011881A08F3;
-        Thu, 11 Jul 2019 04:46:24 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A4C5440302;
-        Thu, 11 Jul 2019 10:46:16 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] nvmem: imx-ocotp: Add i.MX8MN support
-Date:   Thu, 11 Jul 2019 10:37:14 +0800
-Message-Id: <20190711023714.16000-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190711023714.16000-1-Anson.Huang@nxp.com>
-References: <20190711023714.16000-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727890AbfGKCkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 22:40:24 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35373 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727783AbfGKCkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 22:40:23 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09366905|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0744421-0.00954207-0.916016;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03267;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.Evp2QQa_1562812820;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.Evp2QQa_1562812820)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Thu, 11 Jul 2019 10:40:20 +0800
+From:   Mao Han <han_mao@c-sky.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org,
+        Mao Han <han_mao@c-sky.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Subject: [PATCH 1/1] riscv: Fix perf record without libelf support
+Date:   Thu, 11 Jul 2019 10:38:40 +0800
+Message-Id: <96b979a523210628de8a8a3d6e48492f6f1ff02d.1562812381.git.han_mao@c-sky.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+This patch fix following perf record error by linking vdso.so with
+build id.
 
-i.MX8MN is a new SoC of i.MX8M series, it is similar to i.MX8MM
-in terms of addressing and clock setup, add support for its fuse
-read/write.
+perf.data      perf.data.old
+[ perf record: Woken up 1 times to write data ]
+free(): double free detected in tcache 2
+Aborted
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+perf record use filename__read_build_id(util/symbol-minimal.c) to get
+build id when libelf is not supported. When vdso.so is linked without
+build id, the section size of PT_NOTE will be zero, buf size will
+realloc to zero and cause memory corruption.
+
+Signed-off-by: Mao Han <han_mao@c-sky.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
 ---
- drivers/nvmem/imx-ocotp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/riscv/kernel/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index 42d4451..dff2f3c 100644
---- a/drivers/nvmem/imx-ocotp.c
-+++ b/drivers/nvmem/imx-ocotp.c
-@@ -479,6 +479,12 @@ static const struct ocotp_params imx8mm_params = {
- 	.set_timing = imx_ocotp_set_imx6_timing,
- };
+diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+index f1d6ffe..49a5852 100644
+--- a/arch/riscv/kernel/vdso/Makefile
++++ b/arch/riscv/kernel/vdso/Makefile
+@@ -37,7 +37,7 @@ $(obj)/vdso.so.dbg: $(src)/vdso.lds $(obj-vdso) FORCE
+ # these symbols in the kernel code rather than hand-coded addresses.
  
-+static const struct ocotp_params imx8mn_params = {
-+	.nregs = 256,
-+	.bank_address_words = 0,
-+	.set_timing = imx_ocotp_set_imx6_timing,
-+};
-+
- static const struct of_device_id imx_ocotp_dt_ids[] = {
- 	{ .compatible = "fsl,imx6q-ocotp",  .data = &imx6q_params },
- 	{ .compatible = "fsl,imx6sl-ocotp", .data = &imx6sl_params },
-@@ -490,6 +496,7 @@ static const struct of_device_id imx_ocotp_dt_ids[] = {
- 	{ .compatible = "fsl,imx7ulp-ocotp", .data = &imx7ulp_params },
- 	{ .compatible = "fsl,imx8mq-ocotp", .data = &imx8mq_params },
- 	{ .compatible = "fsl,imx8mm-ocotp", .data = &imx8mm_params },
-+	{ .compatible = "fsl,imx8mn-ocotp", .data = &imx8mn_params },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, imx_ocotp_dt_ids);
+ SYSCFLAGS_vdso.so.dbg = -shared -s -Wl,-soname=linux-vdso.so.1 \
+-	-Wl,--hash-style=both
++	-Wl,--build-id -Wl,--hash-style=both
+ $(obj)/vdso-dummy.o: $(src)/vdso.lds $(obj)/rt_sigreturn.o FORCE
+ 	$(call if_changed,vdsold)
+ 
 -- 
 2.7.4
 
