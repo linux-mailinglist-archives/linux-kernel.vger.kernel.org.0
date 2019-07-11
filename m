@@ -2,89 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07265653F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DDC465404
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbfGKJiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:38:13 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49129 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727595AbfGKJiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:38:12 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 02:38:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,478,1557212400"; 
-   d="scan'208";a="167976225"
-Received: from spoledic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.84])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Jul 2019 02:38:08 -0700
-Date:   Thu, 11 Jul 2019 12:38:09 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        kai.svahn@intel.com, kai.huang@intel.com
-Subject: Re: [RFC PATCH v2 0/3] An alternative __vdso_sgx_enter_enclave() to
- allow enclave/host parameter passing using untrusted stack
-Message-ID: <20190711093809.4ogxe25laeoyp4ve@linux.intel.com>
-References: <cover.1555965327.git.cedric.xing@intel.com>
- <20190424062623.4345-1-cedric.xing@intel.com>
- <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
- <686e47d2-f45c-6828-39d1-48374925de6c@intel.com>
- <20190710224628.epjxwlpqqxdurmzo@linux.intel.com>
- <20190710231538.dkc7tyeyvns53737@linux.intel.com>
- <27cf0fc7-71c6-7dc1-f031-86bf887f1fe1@intel.com>
+        id S1728412AbfGKJl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:41:26 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46288 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728024AbfGKJl0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 05:41:26 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c2so2714810plz.13
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 02:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=1YMFnSIgg1DHJY24b0rxS4qqzRa8py30TgHfkWCjNTg=;
+        b=OhOFswUdud1A4rTKoy+cbrht+DidJ4xxRCjN/InY0dg6JLBuEHug2PMDxsBxo1ZPxn
+         Ur+TafII3DL6Du+rfpKt9FjKbldXRneYtD/mBGwCJSBJyuZTALR9b+GtpK/uto69VpU7
+         bR1jb+72oHUErJRA0kCfGEbYMcSO2XAuOpMDfSev4dI76hyBB1mpmysw+Pgom5cwCtb/
+         QgZalYf4eEO0SHliya0A0jKinVicMeD17LgQqRMz5UjrPnY8ngS29mB0tzdKQljtYMVE
+         eFi1Mj7S9MEsD0FXMQzVrkfTXYFtLrEsT6YVku7H9LnnZl3bg7szhFDo6ocmjjAwLkQ1
+         tLsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=1YMFnSIgg1DHJY24b0rxS4qqzRa8py30TgHfkWCjNTg=;
+        b=eKgr4YkyynmhpOaKfbHAV1uHYmu8tW+TPmGs95BO4cz7oX0sxGEhl5cNN9iBfiPMqh
+         5oxWG+i0pXzso7OdkfK9EEdEbOhNZ/rnU8l9zBu5BD+j32pzWak04E3vChMCvoHuR0hT
+         d527Gnl/uihd/uUEPEEX9lWX3njeZhpKp6zEbuGUFWOpYJS3lD/1uj/J9wtPqIGQJvnU
+         K0qlACK8icL4lRESz+FoJ5bm2htSH72GLvU/eSECt2TO2TMvMn7t0w7GValksSB/phFw
+         C7hDCf71k4A7AY7XT1m6+RaEhA6OS6jwER95DdR2ooe2sWvo1cpFFQkerHDzC2sL3WIT
+         WrXQ==
+X-Gm-Message-State: APjAAAWBTzSHtZmpjuB9gIDusWs3v2iRSbVE+rz6JvlJOgxNJ9Xr3FjP
+        cNa2e+MyIpaeN5Yr5gUj959tlrH2
+X-Google-Smtp-Source: APXvYqzyb9kNk+e1ZzU1m7c0KyDFA05/2k6XpI8wznSPfdXjqPL3bx29pLtsCsvUL56tFQ7zXRByPA==
+X-Received: by 2002:a17:902:5ac4:: with SMTP id g4mr3686841plm.80.1562838085053;
+        Thu, 11 Jul 2019 02:41:25 -0700 (PDT)
+Received: from localhost (193-116-118-149.tpgi.com.au. [193.116.118.149])
+        by smtp.gmail.com with ESMTPSA id r13sm5751370pfr.25.2019.07.11.02.41.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 02:41:24 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 19:38:26 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [v5 2/6] powerpc/mce: Fix MCE handling for huge pages
+To:     linux-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Santosh Sivaraj <santosh@fossix.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20190709121524.18762-1-santosh@fossix.org>
+        <20190709121524.18762-3-santosh@fossix.org>
+In-Reply-To: <20190709121524.18762-3-santosh@fossix.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27cf0fc7-71c6-7dc1-f031-86bf887f1fe1@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1562837451.yixjktlyjo.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:37:41PM -0700, Xing, Cedric wrote:
-> On 7/10/2019 4:15 PM, Jarkko Sakkinen wrote:
-> > On Thu, Jul 11, 2019 at 01:46:28AM +0300, Jarkko Sakkinen wrote:
-> > > On Wed, Jul 10, 2019 at 11:08:37AM -0700, Xing, Cedric wrote:
-> > > > > With these conclusions I think the current vDSO API is sufficient for
-> > > > > Linux.
-> > > > 
-> > > > The new vDSO API is to support data exchange on stack. It has nothing to do
-> > > > with debugging. BTW, the community has closed on this.
-> > > 
-> > > And how that is useful?
-> > > 
-> > > > The CFI directives are for stack unwinding. They don't affect what the code
-> > > > does so you can just treat them as NOPs if you don't understand what they
-> > > > do. However, they are useful to not only debuggers but also exception
-> > > > handling code. libunwind also has a setjmp()/longjmp() implementation based
-> > > > on CFI directives.
-> > > 
-> > > Of course I won't merge code of which usefulness I don't understand.
-> > 
-> > I re-read the cover letter [1] because it usually is the place
-> > to "pitch" a feature.
-> > 
-> > It fails to address two things:
-> > 
-> > 1. How and in what circumstances is an untrusted stack is a better
-> >     vessel for handling exceptions than the register based approach
-> >     that we already have?
-> 
-> We are not judging which vessel is better (or the best) among all possible
-> vessels. We are trying to enable more vessels. Every vessel has its pros and
-> cons so there's *no* single best vessel.
+Santosh Sivaraj's on July 9, 2019 10:15 pm:
+> From: Balbir Singh <bsingharora@gmail.com>
+>=20
+> The current code would fail on huge pages addresses, since the shift
+> would be incorrect. Use the correct page shift value returned by
+> __find_linux_pte() to get the correct pfn. The code is more generic
+> and can handle both regular and compound pages.
+>=20
+> Fixes: ba41e1e1ccb9 ("powerpc/mce: Hookup derror (load/store) UE errors")
+>=20
+> Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+> [arbab@linux.ibm.com: Fixup pseries_do_memory_failure()]
+> Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
+> Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
+> ---
+>  arch/powerpc/include/asm/mce.h       |  3 ++-
+>  arch/powerpc/kernel/mce_power.c      | 26 ++++++++++++++++----------
+>  arch/powerpc/platforms/pseries/ras.c |  6 ++++--
+>  3 files changed, 22 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/arch/powerpc/include/asm/mce.h b/arch/powerpc/include/asm/mc=
+e.h
+> index a4c6a74ad2fb..94888a7025b3 100644
+> --- a/arch/powerpc/include/asm/mce.h
+> +++ b/arch/powerpc/include/asm/mce.h
+> @@ -209,7 +209,8 @@ extern void release_mce_event(void);
+>  extern void machine_check_queue_event(void);
+>  extern void machine_check_print_event_info(struct machine_check_event *e=
+vt,
+>  					   bool user_mode, bool in_guest);
+> -unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr);
+> +unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr,
+> +			  unsigned int *shift);
+>  #ifdef CONFIG_PPC_BOOK3S_64
+>  void flush_and_reload_slb(void);
+>  #endif /* CONFIG_PPC_BOOK3S_64 */
+> diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_po=
+wer.c
+> index e39536aad30d..04666c0b40a8 100644
+> --- a/arch/powerpc/kernel/mce_power.c
+> +++ b/arch/powerpc/kernel/mce_power.c
+> @@ -23,7 +23,8 @@
+>   * Convert an address related to an mm to a PFN. NOTE: we are in real
+>   * mode, we could potentially race with page table updates.
+>   */
+> -unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
+> +unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr,
+> +			  unsigned int *shift)
+>  {
+>  	pte_t *ptep;
+>  	unsigned long flags;
+> @@ -36,13 +37,15 @@ unsigned long addr_to_pfn(struct pt_regs *regs, unsig=
+ned long addr)
+> =20
+>  	local_irq_save(flags);
+>  	if (mm =3D=3D current->mm)
+> -		ptep =3D find_current_mm_pte(mm->pgd, addr, NULL, NULL);
+> +		ptep =3D find_current_mm_pte(mm->pgd, addr, NULL, shift);
+>  	else
+> -		ptep =3D find_init_mm_pte(addr, NULL);
+> +		ptep =3D find_init_mm_pte(addr, shift);
+>  	local_irq_restore(flags);
+>  	if (!ptep || pte_special(*ptep))
+>  		return ULONG_MAX;
+> -	return pte_pfn(*ptep);
+> +	if (!*shift)
+> +		*shift =3D PAGE_SHIFT;
+> +	return (pte_val(*ptep) & PTE_RPN_MASK) >> *shift;
+>  }
+> =20
+>  /* flush SLBs and reload */
 
-I think reasonable metric is actually the coverage of the Intel SDK
-based enclaves. How widely are they in the wild? If the user base is
-large, it should be reasonable to support this just based on that.
+Ah, the comment I made earlier to this patch I think missed some detail.
 
-/Jarkko
+But what we should do here is return the pfn (which is always units
+of PAGE_SIZE). So you have to adjust by the lower part of the address
+here, rather than returning shift which is unnecessary.
+
+Possibly even better is to just return the real address, which is
+what all callers seem to want anyway.
+
+> @@ -358,15 +361,16 @@ static int mce_find_instr_ea_and_pfn(struct pt_regs=
+ *regs, uint64_t *addr,
+>  	unsigned long pfn, instr_addr;
+>  	struct instruction_op op;
+>  	struct pt_regs tmp =3D *regs;
+> +	unsigned int shift;
+> =20
+> -	pfn =3D addr_to_pfn(regs, regs->nip);
+> +	pfn =3D addr_to_pfn(regs, regs->nip, &shift);
+>  	if (pfn !=3D ULONG_MAX) {
+> -		instr_addr =3D (pfn << PAGE_SHIFT) + (regs->nip & ~PAGE_MASK);
+> +		instr_addr =3D (pfn << shift) + (regs->nip & ((1 << shift) - 1));
+
+This wants the exact real address.
+
+>  		instr =3D *(unsigned int *)(instr_addr);
+>  		if (!analyse_instr(&op, &tmp, instr)) {
+> -			pfn =3D addr_to_pfn(regs, op.ea);
+> +			pfn =3D addr_to_pfn(regs, op.ea, &shift);
+>  			*addr =3D op.ea;
+> -			*phys_addr =3D (pfn << PAGE_SHIFT);
+> +			*phys_addr =3D (pfn << shift);
+>  			return 0;
+>  		}
+
+I'm not sure this is really what we want. You do really want the
+PAGE_SIZE pfn here. Say you have a failure in the nth small page
+of a large page mapping, this gives the physical address of the
+start of the large page, so memory failure will fail out the 0th
+small page won't it?
+
+>  		/*
+> @@ -442,12 +446,14 @@ static int mce_handle_ierror(struct pt_regs *regs,
+>  			if (mce_err->sync_error &&
+>  				table[i].error_type =3D=3D MCE_ERROR_TYPE_UE) {
+>  				unsigned long pfn;
+> +				unsigned int shift;
+> =20
+>  				if (get_paca()->in_mce < MAX_MCE_DEPTH) {
+> -					pfn =3D addr_to_pfn(regs, regs->nip);
+> +					pfn =3D addr_to_pfn(regs, regs->nip,
+> +							  &shift);
+>  					if (pfn !=3D ULONG_MAX) {
+>  						*phys_addr =3D
+> -							(pfn << PAGE_SHIFT);
+> +							(pfn << shift);
+>  					}
+>  				}
+>  			}
+> diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platform=
+s/pseries/ras.c
+> index f16fdd0f71f7..5e43283d3300 100644
+> --- a/arch/powerpc/platforms/pseries/ras.c
+> +++ b/arch/powerpc/platforms/pseries/ras.c
+> @@ -740,12 +740,14 @@ static void pseries_do_memory_failure(struct pt_reg=
+s *regs,
+>  		paddr =3D be64_to_cpu(mce_log->logical_address);
+>  	} else if (mce_log->sub_err_type & UE_EFFECTIVE_ADDR_PROVIDED) {
+>  		unsigned long pfn;
+> +		unsigned int shift;
+> =20
+>  		pfn =3D addr_to_pfn(regs,
+> -				  be64_to_cpu(mce_log->effective_address));
+> +				  be64_to_cpu(mce_log->effective_address),
+> +				  &shift);
+>  		if (pfn =3D=3D ULONG_MAX)
+>  			return;
+> -		paddr =3D pfn << PAGE_SHIFT;
+> +		paddr =3D pfn << shift;
+>  	} else {
+>  		return;
+>  	}
+
+Same for all these.
+
+Thanks,
+Nick
+
+=
