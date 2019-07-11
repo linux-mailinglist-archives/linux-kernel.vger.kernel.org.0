@@ -2,81 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 096C965AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3426865AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 17:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfGKPqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 11:46:11 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46382 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbfGKPqL (ORCPT
+        id S1729059AbfGKPr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 11:47:59 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:11122 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728904AbfGKPrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 11:46:11 -0400
-Received: by mail-qk1-f196.google.com with SMTP id r4so3846571qkm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 08:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v4KYgyH/4ljAz+4kIqJ5UbIlgT4PyHXwUqWAr65W0AE=;
-        b=LtzST0TSfHaTSN8EKfA5rzLP9CMF+CSchyU1aVHqzbdFceyuVLFjRIjR9/gC2DqPsL
-         Z0jTon0n9ufm2c7Mw23ZziZ+u3JqJm4mQUvtuWtnm4J7XWIpezFEzkzYxhaII3N7D8av
-         zeWF1jgpUJVFx/dk9qdO7JRN+LlXQ/q7kXjqyZi1h6CcgggpgQ+H+6xeYkaV2Q+ewoHL
-         +Xzbg1ut9pkNSafeNh1qbwUClHWyoWsyo/ipCNL6rEHLBhD/251IMjrIGjbDSV4JKjD7
-         /5PmZZTRgvtP+U55AhOAT8U6bMfr+j5GyKK2b+JUjBPmqlrjqA82EE52AFLE5yydkg+8
-         u2dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v4KYgyH/4ljAz+4kIqJ5UbIlgT4PyHXwUqWAr65W0AE=;
-        b=IPuPA4yzbFe138gEpOhNbTyY/+iW4gepN6QBNZWr2rhLhYJZNtAncL6GnB7LtgMsTA
-         0sTirVIuOpQ6ssu2przEyc280wHM8eHdsj1OxogI+11o60GoIQEsoGR8dJRqs352jKY+
-         erGl1bDMuthew3b7ucDiyKAQ8RpkAEKZ4VpF+DIG0s8oKWyMvWFUn3gFPjkN5b3zcKg+
-         rCAIVbXWAlWE269XSg/Bg8EzZGOqn6QckMR5aZIkY/pReVWlSUcUCzInSZeISh5vzf1O
-         4jLzvwBkHu+ha5O0i65v6ZzW3GcNedj6Fu1Pc9cI/FULNBmWNWrC0EdetY6N26M6NeMX
-         4Zjw==
-X-Gm-Message-State: APjAAAVlMPCUq0wusyI4/gvEMOjpe0Zp5kYaVA76d0j6rvWfD+NXPEbz
-        KzsEnfMOCnx3A0sKaysgVgI=
-X-Google-Smtp-Source: APXvYqzwafVSw8ta8GT29K6dDZIOsYn06CbRIZ4tI1D2Hbl00y5oD+zEJauZLJQNsOmixADprP8jLA==
-X-Received: by 2002:ac8:4996:: with SMTP id f22mr2347077qtq.142.1562859970381;
-        Thu, 11 Jul 2019 08:46:10 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id c40sm2806047qtd.14.2019.07.11.08.46.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 08:46:09 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id F20CD40340; Thu, 11 Jul 2019 12:46:06 -0300 (-03)
-Date:   Thu, 11 Jul 2019 12:46:06 -0300
-To:     Yuehaibing <yuehaibing@huawei.com>
-Cc:     mathieu.poirier@linaro.org, suzuki.poulose@arm.com,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, arnaldo.melo@gmail.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/2] minor fixes for perf cs-etm
-Message-ID: <20190711154606.GA10090@kernel.org>
-References: <20190321023122.21332-1-yuehaibing@huawei.com>
- <b5d842f9-3475-2560-2933-9a1984c1641a@huawei.com>
- <d178fc8c-7e6c-0272-4ead-9b4ee15d1e7d@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d178fc8c-7e6c-0272-4ead-9b4ee15d1e7d@huawei.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Thu, 11 Jul 2019 11:47:53 -0400
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 11 Jul 2019 21:11:33 +0530
+X-IronPort-AV: E=McAfee;i="6000,8403,9314"; a="10317406"
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 11 Jul 2019 21:11:10 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id D6EA932C4; Thu, 11 Jul 2019 21:11:08 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: [PATCH 00/12] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date:   Thu, 11 Jul 2019 21:10:56 +0530
+Message-Id: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jul 11, 2019 at 10:33:09PM +0800, Yuehaibing escreveu:
-> 
-> Arnaldo, can you pick this?
- 
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-Thanks, and sorry for the delay, fell thru the cracks.
+Gokul Sriram Palanisamy (12):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  dt-bindings: mailbox: qom: Add ipq8074 APPS compatible
+  mailbox: qcom: Add support for IPQ8074 APCS
+  dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+  arm64: dts: Add support for scm on IPQ8074 SoCs
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
 
-- Arnaldo
+ .../devicetree/bindings/firmware/qcom,scm.txt      |   1 +
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   1 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 131 +++++++++++++++++
+ drivers/clk/qcom/gcc-ipq8074.c                     |   1 +
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 158 +++++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   1 +
+ 7 files changed, 264 insertions(+), 30 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
