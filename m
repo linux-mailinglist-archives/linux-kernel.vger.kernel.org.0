@@ -2,111 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 786EF65032
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BE765046
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 04:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbfGKCfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 10 Jul 2019 22:35:54 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:32836 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727622AbfGKCfx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Jul 2019 22:35:53 -0400
-Received: by mail-io1-f66.google.com with SMTP id z3so9293106iog.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2019 19:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C1FC0kkhG8SE4KxZI9/vd1vvZYlqKizf2ehICOMyQFw=;
-        b=gZuX85ZCmj/43wOQW8QDrAr8gsP1kGWGDwQXP7ruMAHyiaKt3g7NjtaA+MEVdHmPOT
-         wKDPWmEBpa83TiEvIwO+ugF++ClLRUvAzQLBP51kB4e6VSC6Snkjk3d4n8a6/wkm9/Ra
-         D7155hJwNevtJn/VruKCuIazOesSrERBBV8vHwGFFkNSHxznLmqbfHO6yEdsHe98bC30
-         T7PKRJ7+sCT5Xa2XQQwi9kRh5LcipaXeyRjPVyu6OVHm/E8NeQJY6UH3Mv4YtROKhPbf
-         uYVC+T7pV39I8wXcfcxdqZB0y5IdoQR5bzuyil6Rc7DsmYrELvsBAixhWonuRgUpjKBt
-         FjYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C1FC0kkhG8SE4KxZI9/vd1vvZYlqKizf2ehICOMyQFw=;
-        b=j0B6FEsYI36XbLw44pMNqXHcvb1lxIHlpPZEpeGXugSOebT6wAEwOyJwJN7BfNruNp
-         WWHHbaby6fDLSpDctL2w+2mzfdDF5h9JsQCyA5RkOoXZHwi2au9cODgQy75YKHXgaD7k
-         dRHwdTRiRxGsKsbGMwLUamT/FFokKlvDDIqfqV2uZiL7muu+9RbA+c0X+F+lDabzkn4d
-         s1eWehx4hZJMlI+88t+Y8nw3Y0r9/Y9+peaAV36OXmpSYF29MojpUCCw/5FJTL/+A5Od
-         UTZJwv5mDIFruTFKGqL0NitU1b4DoHrmSmE6M3CUut1ZDM56e7ZMgZ1m6BhikTmqk7Kx
-         nKYg==
-X-Gm-Message-State: APjAAAWskIrnFeBRbSwzJvFA7y5/7USX0IqyeGvHADxxK68f5mttg1wr
-        3p6lKjRQHP6aFdQ1UMsJyur06+6xtGIGLlFQiDk=
-X-Google-Smtp-Source: APXvYqySOQ0NQmFWxVA1kPgmyB8lKtJqH6UcCGrrUDZnNcuPCHHrmvDjUvwMLLqlPMPNkYUmdbrvZzQlXxg4BT1y+pw=
-X-Received: by 2002:a5d:8e08:: with SMTP id e8mr1665361iod.139.1562812552660;
- Wed, 10 Jul 2019 19:35:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190702141903.1131-1-kraxel@redhat.com> <20190702141903.1131-9-kraxel@redhat.com>
- <CAPaKu7QP=A2kV_kqcT20Pmc831HviaBJN1RpOFoa=V1g6SmE_g@mail.gmail.com>
- <20190704112534.v7icsuverf7wrbjq@sirius.home.kraxel.org> <CAPaKu7SQS5USJf0Y+K41tuRA=4qZJf5CnTu9EqAPZvz+GJCP2w@mail.gmail.com>
-In-Reply-To: <CAPaKu7SQS5USJf0Y+K41tuRA=4qZJf5CnTu9EqAPZvz+GJCP2w@mail.gmail.com>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Wed, 10 Jul 2019 19:35:41 -0700
-Message-ID: <CAPaKu7RQo8T81iGtPbtgmv7WtV-uDO9+BsT3vMd=iggZ0Q_Yew@mail.gmail.com>
-Subject: Re: [PATCH v6 08/18] drm/virtio: rework virtio_gpu_execbuffer_ioctl fencing
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727853AbfGKCqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 10 Jul 2019 22:46:30 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38880 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfGKCqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Jul 2019 22:46:30 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93A93200E89;
+        Thu, 11 Jul 2019 04:46:28 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C9697200E7E;
+        Thu, 11 Jul 2019 04:46:22 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 78632402DB;
+        Thu, 11 Jul 2019 10:46:15 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] dt-bindings: imx-ocotp: Add i.MX8MN compatible
+Date:   Thu, 11 Jul 2019 10:37:13 +0800
+Message-Id: <20190711023714.16000-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 4, 2019 at 11:46 AM Chia-I Wu <olvaffe@gmail.com> wrote:
->
-> On Thu, Jul 4, 2019 at 4:25 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >
-> >   Hi,
-> >
-> > > >         if (fence)
-> > > >                 virtio_gpu_fence_emit(vgdev, hdr, fence);
-> > > > +       if (vbuf->objs) {
-> > > > +               virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-> > > > +               virtio_gpu_array_unlock_resv(vbuf->objs);
-> > > > +       }
-> > > This is with the spinlock held.  Maybe we should move the
-> > > virtio_gpu_array_unlock_resv call out of the critical section.
-> >
-> > That would bring back the race ...
-> Right...
-> >
-> > > I am actually more concerned about virtio_gpu_array_add_fence, but it
-> > > is also harder to move.  Should we add a kref to the object array?
-> >
-> > Yep, refcounting would be the other way to fix the race.
-> >
-> > > This bothers me because I recently ran into a CPU-bound game with very
-> > > bad lock contention here.
-> >
-> > Hmm.  Any clue where this comes from?  Multiple threads competing for
-> > virtio buffers I guess?  Maybe we should have larger virtqueues?
-> The game was single-threaded.  I guess it was the game and Xorg
-> competing for virtio buffers.  That was also on an older kernel
-> without explicit fences.  The userspace had to create dummy resources
-> frequently to do VIRTIO_IOCTL_RESOURCE_WAIT.
->
-> I think this is fine for now as far as I am concerned.  I can look
-> into this more closely after this series lands.
-It was virtio_gpu_dequeue_ctrl_func who wanted to grab the lock to
-handle the responses.  I sent a patch for it
+From: Anson Huang <Anson.Huang@nxp.com>
 
-  https://patchwork.freedesktop.org/series/63529/
+Add compatible for i.MX8MN and add i.MX8MM/i.MX8MN to the description.
 
->
->
-> >
-> > cheers,
-> >   Gerd
-> >
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+index 96ffd06..904dadf 100644
+--- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
++++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+@@ -2,7 +2,7 @@ Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
+ 
+ This binding represents the on-chip eFuse OTP controller found on
+ i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6ULL/ULZ, i.MX6SLL,
+-i.MX7D/S, i.MX7ULP and i.MX8MQ SoCs.
++i.MX7D/S, i.MX7ULP, i.MX8MQ, i.MX8MM and i.MX8MN SoCs.
+ 
+ Required properties:
+ - compatible: should be one of
+@@ -16,6 +16,7 @@ Required properties:
+ 	"fsl,imx7ulp-ocotp" (i.MX7ULP),
+ 	"fsl,imx8mq-ocotp" (i.MX8MQ),
+ 	"fsl,imx8mm-ocotp" (i.MX8MM),
++	"fsl,imx8mn-ocotp" (i.MX8MN),
+ 	followed by "syscon".
+ - #address-cells : Should be 1
+ - #size-cells : Should be 1
+-- 
+2.7.4
+
