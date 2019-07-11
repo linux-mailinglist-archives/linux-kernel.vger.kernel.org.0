@@ -2,114 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6751660C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8661660DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 22:45:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfGKUnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 16:43:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41774 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbfGKUnq (ORCPT
+        id S1728863AbfGKUpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 16:45:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45225 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728836AbfGKUpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 16:43:46 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6BKcTBi021280;
-        Thu, 11 Jul 2019 20:42:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=tSjzKrUHQ1knMz+gwb7wzYG6sENMAxSGm0UkDSdi7as=;
- b=rFWTCChF0oyIYzpmE5gque0fCM7T3jAST9DCJqUh+t3gKYfiFuveoO4uVhdNJh06LnTd
- DKd8tWqs4dflR8Ey8detui0SFtEDZzR/WM6dPbb6hO37tOHhCEi0732WX+HW0Fo60voZ
- Ezy1Hkp+Iuf5ZFtxRFZk4luBgxE+6viMmigJOwH+6Vmw1NBmmoyGKJ4K0b42CDgdVQTJ
- ymmQku8IXTD35TjXu/FxCCu5vs6kFW+NiIDzvIbzZhB9P8PxXHol/uCuvV5pYgYQy9f9
- aC1eSLXjTydoTYPA7XSnTPJ7LSiXNZzdy+b7f+W3XYYN8zAbC44UBjKC88OYPqYeF1AK bA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2tjkkq28mt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 20:42:15 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6BKbdeo158183;
-        Thu, 11 Jul 2019 20:42:14 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2tnc8tpsaq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 20:42:14 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6BKg4ou031753;
-        Thu, 11 Jul 2019 20:42:10 GMT
-Received: from [10.166.106.34] (/10.166.106.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 11 Jul 2019 13:42:04 -0700
-Subject: Re: [RFC v2 02/26] mm/asi: Abort isolation on interrupt, exception
- and context switch
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Andi Kleen <andi@firstfloor.org>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        kvm@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, konrad.wilk@oracle.com,
-        jan.setjeeilers@oracle.com, liran.alon@oracle.com,
-        jwadams@google.com, graf@amazon.de, rppt@linux.vnet.ibm.com
-References: <1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com>
- <1562855138-19507-3-git-send-email-alexandre.chartre@oracle.com>
- <874l3sz5z4.fsf@firstfloor.org> <20190711201706.GB20140@rapoport-lnx>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <09fee00d-37a6-0895-7964-0e8a2d5b17d6@oracle.com>
-Date:   Thu, 11 Jul 2019 22:41:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 11 Jul 2019 16:45:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so3476634pgp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 13:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FAgMNOYOPvzfrhNLldHVb19fW7VpQgXrnLMhcZOOzzs=;
+        b=BwhngOtO8Nu7zYAeNU/xva2uz2AnFZ9jfpv+3OHWnK+riarbVIlSWPdfB25P++KWpM
+         QVxLEPUIHjMA+QqfkfkhctquS0azuY/r/ojtxpUWtUfoWtmq6qMLYBDzqHmuxtUJ30oy
+         MTd0LwPXNYB62gu7TJfWJlr+m4tzWAaTOQACU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FAgMNOYOPvzfrhNLldHVb19fW7VpQgXrnLMhcZOOzzs=;
+        b=QDzY6s2jgtUzios0FBOfdyNggHZcR9WuBSZvmQDlhgpugGe0QV64jS7Vt7NKh5pj/h
+         wiwvIugDXIqzDBLlUKLJIwNN5wGJqkI/vi6pNIY84oZHcZ6HME1kbaux0KNhBUG7zwW9
+         2piREg2DRL0pemnsuGMFx3OBOiksD+T8sSF7kC/51qFkrJl0EezPO051KsNSqgGlhmHL
+         sOb6dQfBMTlt2th1YJXNRhZdhCCl7vGjr2vgcFVEzK0XXio9su0Mn/nw5j0n4rCQpkDZ
+         TZPME2bE8609PqUEtlWjrhEaKB7DBQzBR254i80vvBMUAo0PVnUD+HSPZJctaVSOIAR8
+         R5kg==
+X-Gm-Message-State: APjAAAUtCLdi4vYnhPdRWZF1ZESCq4zdojhyQu2TlC1tmr9IJeHYC6CC
+        UykST3s1wUGBfAdu/6SvHvtpLFvX
+X-Google-Smtp-Source: APXvYqzwqFWG5FAS708qmjT7OvxwSnxErqOKN+3y3GLJgx3B9ybHEpj1LDsHWYbII1JJoa1at0PEqA==
+X-Received: by 2002:a63:4d50:: with SMTP id n16mr6518323pgl.146.1562877951310;
+        Thu, 11 Jul 2019 13:45:51 -0700 (PDT)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id f19sm9047502pfk.180.2019.07.11.13.45.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 13:45:50 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, kvm-ppc@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: [PATCH] treewide: Rename  rcu_dereference_raw_notrace to _check
+Date:   Thu, 11 Jul 2019 16:45:41 -0400
+Message-Id: <20190711204541.28940-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-In-Reply-To: <20190711201706.GB20140@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907110228
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907110228
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The rcu_dereference_raw_notrace() API name is confusing.
+It is equivalent to rcu_dereference_raw() except that it also does
+sparse pointer checking.
 
+There are only a few users of rcu_dereference_raw_notrace(). This
+patches renames all of them to be rcu_dereference_raw_check with the
+"check" indicating sparse checking.
 
-On 7/11/19 10:17 PM, Mike Rapoport wrote:
-> On Thu, Jul 11, 2019 at 01:11:43PM -0700, Andi Kleen wrote:
->> Alexandre Chartre <alexandre.chartre@oracle.com> writes:
->>>   	jmp	paranoid_exit
->>> @@ -1182,6 +1196,16 @@ ENTRY(paranoid_entry)
->>>   	xorl	%ebx, %ebx
->>>   
->>>   1:
->>> +#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
->>> +	/*
->>> +	 * If address space isolation is active then abort it and return
->>> +	 * the original kernel CR3 in %r14.
->>> +	 */
->>> +	ASI_START_ABORT_ELSE_JUMP 2f
->>> +	movq	%rdi, %r14
->>> +	ret
->>> +2:
->>> +#endif
->>
->> Unless I missed it you don't map the exception stacks into ASI, so it
->> has likely already triple faulted at this point.
-> 
-> The exception stacks are in the CPU entry area, aren't they?
->   
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-That's my understanding, stacks come from tss in the CPU entry area and
-the CPU entry area is part for the core ASI mappings (see patch 15/26).
+---
+Previous discussion is here:
+https://lore.kernel.org/linuxppc-dev/20190528200014.GV28207@linux.ibm.com/T/
 
-alex.
+ Documentation/RCU/Design/Requirements/Requirements.html | 2 +-
+ arch/powerpc/include/asm/kvm_book3s_64.h                | 2 +-
+ include/linux/rculist.h                                 | 4 ++--
+ include/linux/rcupdate.h                                | 2 +-
+ kernel/trace/ftrace_internal.h                          | 8 ++++----
+ kernel/trace/trace.c                                    | 4 ++--
+ 6 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
+index f04c467e55c5..467251f7fef6 100644
+--- a/Documentation/RCU/Design/Requirements/Requirements.html
++++ b/Documentation/RCU/Design/Requirements/Requirements.html
+@@ -2514,7 +2514,7 @@ disabled across the entire RCU read-side critical section.
+ <p>
+ It is possible to use tracing on RCU code, but tracing itself
+ uses RCU.
+-For this reason, <tt>rcu_dereference_raw_notrace()</tt>
++For this reason, <tt>rcu_dereference_raw_check()</tt>
+ is provided for use by tracing, which avoids the destructive
+ recursion that could otherwise ensue.
+ This API is also used by virtualization in some architectures,
+diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
+index 21b1ed5df888..53388a311967 100644
+--- a/arch/powerpc/include/asm/kvm_book3s_64.h
++++ b/arch/powerpc/include/asm/kvm_book3s_64.h
+@@ -546,7 +546,7 @@ static inline void note_hpte_modification(struct kvm *kvm,
+  */
+ static inline struct kvm_memslots *kvm_memslots_raw(struct kvm *kvm)
+ {
+-	return rcu_dereference_raw_notrace(kvm->memslots[0]);
++	return rcu_dereference_raw_check(kvm->memslots[0]);
+ }
+ 
+ extern void kvmppc_mmu_debugfs_init(struct kvm *kvm);
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index e91ec9ddcd30..10aab1d2d471 100644
+--- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -642,10 +642,10 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+  * not do any RCU debugging or tracing.
+  */
+ #define hlist_for_each_entry_rcu_notrace(pos, head, member)			\
+-	for (pos = hlist_entry_safe (rcu_dereference_raw_notrace(hlist_first_rcu(head)),\
++	for (pos = hlist_entry_safe (rcu_dereference_raw_check(hlist_first_rcu(head)),\
+ 			typeof(*(pos)), member);			\
+ 		pos;							\
+-		pos = hlist_entry_safe(rcu_dereference_raw_notrace(hlist_next_rcu(\
++		pos = hlist_entry_safe(rcu_dereference_raw_check(hlist_next_rcu(\
+ 			&(pos)->member)), typeof(*(pos)), member))
+ 
+ /**
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 0c9b92799abc..e5161e377ad4 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -478,7 +478,7 @@ do {									      \
+  * The no-tracing version of rcu_dereference_raw() must not call
+  * rcu_read_lock_held().
+  */
+-#define rcu_dereference_raw_notrace(p) __rcu_dereference_check((p), 1, __rcu)
++#define rcu_dereference_raw_check(p) __rcu_dereference_check((p), 1, __rcu)
+ 
+ /**
+  * rcu_dereference_protected() - fetch RCU pointer when updates prevented
+diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
+index 0515a2096f90..0456e0a3dab1 100644
+--- a/kernel/trace/ftrace_internal.h
++++ b/kernel/trace/ftrace_internal.h
+@@ -6,22 +6,22 @@
+ 
+ /*
+  * Traverse the ftrace_global_list, invoking all entries.  The reason that we
+- * can use rcu_dereference_raw_notrace() is that elements removed from this list
++ * can use rcu_dereference_raw_check() is that elements removed from this list
+  * are simply leaked, so there is no need to interact with a grace-period
+- * mechanism.  The rcu_dereference_raw_notrace() calls are needed to handle
++ * mechanism.  The rcu_dereference_raw_check() calls are needed to handle
+  * concurrent insertions into the ftrace_global_list.
+  *
+  * Silly Alpha and silly pointer-speculation compiler optimizations!
+  */
+ #define do_for_each_ftrace_op(op, list)			\
+-	op = rcu_dereference_raw_notrace(list);			\
++	op = rcu_dereference_raw_check(list);			\
+ 	do
+ 
+ /*
+  * Optimized for just a single item in the list (as that is the normal case).
+  */
+ #define while_for_each_ftrace_op(op)				\
+-	while (likely(op = rcu_dereference_raw_notrace((op)->next)) &&	\
++	while (likely(op = rcu_dereference_raw_check((op)->next)) &&	\
+ 	       unlikely((op) != &ftrace_list_end))
+ 
+ extern struct ftrace_ops __rcu *ftrace_ops_list;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2c92b3d9ea30..1d69110d9e5b 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2642,10 +2642,10 @@ static void ftrace_exports(struct ring_buffer_event *event)
+ 
+ 	preempt_disable_notrace();
+ 
+-	export = rcu_dereference_raw_notrace(ftrace_exports_list);
++	export = rcu_dereference_raw_check(ftrace_exports_list);
+ 	while (export) {
+ 		trace_process_export(export, event);
+-		export = rcu_dereference_raw_notrace(export->next);
++		export = rcu_dereference_raw_check(export->next);
+ 	}
+ 
+ 	preempt_enable_notrace();
+-- 
+2.22.0.410.gd8fdbe21b5-goog
