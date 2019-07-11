@@ -2,97 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3965653B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95EF3653B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 11:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfGKJWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 05:22:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34633 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbfGKJWp (ORCPT
+        id S1728257AbfGKJYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 05:24:50 -0400
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:34123 "EHLO
+        anchovy1.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbfGKJYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:22:45 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 31so5480827wrm.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 02:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=fRFOinAO4N9dX5DotLS7iFbJrG8nFqN9gCj1vzfuoVs=;
-        b=VJLzsL/t5dlN7TeCj8zlYurkeg/Xvn2t9kHd07d8W1wwR9GG8dbNTmntlRCTXtSeHn
-         npeB6pxb7xDesJAKIZngQD6K1wYJ+u3U91a93+VVXS6JWK/e4Bw+L0z4iqHMCM+UGv98
-         /u7ySi+UJ4AOMf9gMPkOFc2bDeqXj1GxxOAX18Jwt8Zw2C2Qh1oeASQFQN0mQhjcQzq0
-         tYgAwkn8rQvl3LE9l/4nUGdTFuStCFbtC8Y+ygg9v9SKyA5OVVfW9NQCaG1gtlT2jFa+
-         PLkSofsptnxv4a0Hv4ZiLZqftkQufNJh80Otpehr0dKrqqeXrnoVRPACJ1v4UW1NHdw8
-         HQSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=fRFOinAO4N9dX5DotLS7iFbJrG8nFqN9gCj1vzfuoVs=;
-        b=KUcTjEtXterrUuxasS6MaR+t3bFZvgEwEZaXZTC3bXblwsmgYCQe+njvhHprga0FG/
-         AUSTaecYVF8+EKVDcLBMfG1fhZSpWdvjO76/cdkA365btAyrWxYQ+9IbPSBKWAs0RvMV
-         GSIR0O3BH5wFlcEX0bezzmyXu4dAPOovndBG/czFwwxr+8LTVucdOCWKfXObGd9+3Gnt
-         g8wUCsENHG3zq/LeV2cjj69tGFG5vYNHoKJx0+SyygNxbNdKylfvOcZTItFCRuLu5p6r
-         geGcM8F9yLiJtg7BxidwFWSO112Dhm1wvLAruFijDPpztxPoJ6WY8QO+yi8qnRlfz5wS
-         Aigw==
-X-Gm-Message-State: APjAAAXdLeTbJCwpYQtmX2nQqgD3tq5mHDcBp8DaUJpTOXDhyE6pvgQj
-        KlYqNxwdhpCXVN2OmzIa8ocZBQmdUIrGBrADvZc=
-X-Google-Smtp-Source: APXvYqxZQ0bnTllin+EIogc4UqDYdM/Zt1VIt1JfL2vJN8EDGDT+ObuwNuYuV5LJ9XA6b0XlpSbyUEeZEdEsuTKis0g=
-X-Received: by 2002:a5d:4b0b:: with SMTP id v11mr4042294wrq.202.1562836963526;
- Thu, 11 Jul 2019 02:22:43 -0700 (PDT)
+        Thu, 11 Jul 2019 05:24:50 -0400
+Received: (qmail 30049 invoked by uid 5089); 11 Jul 2019 09:24:48 -0000
+Received: by simscan 1.2.0 ppid: 29900, pid: 29902, t: 0.0630s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.128?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy1.45ru.net.au with ESMTPA; 11 Jul 2019 09:24:47 -0000
+Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alexander Graf <agraf@suse.de>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190705160536.12047-1-geert+renesas@glider.be>
+ <8500a069-9e29-d6ad-e5e4-22d5a3eead59@electromag.com.au>
+ <CAMuHMdWLcr0pf-ZM3+iWQGwDLB2xoHAZaeCKAjtEVEaiNed63Q@mail.gmail.com>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <1fc3a5ad-6eb6-3356-5fd4-93ce0482bb7e@electromag.com.au>
+Date:   Thu, 11 Jul 2019 17:24:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Received: by 2002:a1c:9c43:0:0:0:0:0 with HTTP; Thu, 11 Jul 2019 02:22:42
- -0700 (PDT)
-Reply-To: kone.compaore20@gmail.com
-From:   Kone Compaore <abbttnb002@gmail.com>
-Date:   Thu, 11 Jul 2019 02:22:42 -0700
-Message-ID: <CAOGKEMhhhHBXoVJrrTsUTdSfiGxRVeaKffHBPuz1EF714sXR4w@mail.gmail.com>
-Subject: Greetings from Kone
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdWLcr0pf-ZM3+iWQGwDLB2xoHAZaeCKAjtEVEaiNed63Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings to you and your family.
+On 10/07/2019 18:21, Geert Uytterhoeven wrote:
+> Hi Phil,
+> 
+> On Wed, Jul 10, 2019 at 4:00 AM Phil Reid <preid@electromag.com.au> wrote:
+>> On 6/07/2019 00:05, Geert Uytterhoeven wrote:
+>>> GPIO controllers are exported to userspace using /dev/gpiochip*
+>>> character devices.  Access control to these devices is provided by
+>>> standard UNIX file system permissions, on an all-or-nothing basis:
+>>> either a GPIO controller is accessible for a user, or it is not.
+>>> Currently no mechanism exists to control access to individual GPIOs.
+>>>
+>>> Hence add a virtual GPIO driver to aggregate existing GPIOs (up to 32),
+>>> and expose them as a new gpiochip.  This is useful for implementing
+>>> access control, and assigning a set of GPIOs to a specific user.
+>>> Furthermore, it would simplify and harden exporting GPIOs to a virtual
+>>> machine, as the VM can just grab the full virtual GPIO controller, and
+>>> no longer needs to care about which GPIOs to grab and which not,
+>>> reducing the attack surface.
+>>>
+>>> Virtual GPIO controllers are instantiated by writing to the "new_device"
+>>> attribute file in sysfs:
+>>>
+>>>       $ echo "<gpiochipA> <gpioA1> [<gpioA2> ...]"
+>>>              "[, <gpiochipB> <gpioB1> [<gpioB2> ...]] ...]"
+>>>               > /sys/bus/platform/drivers/gpio-virt-agg/new_device
+>>>
+>>> Likewise, virtual GPIO controllers can be destroyed after use:
+>>>
+>>>       $ echo gpio-virt-agg.<N> \
+>>>               > /sys/bus/platform/drivers/gpio-virt-agg/delete_device
+>>>
+>>
+>> Nice.
+>> This provides similar functionality to the "gpio inverter" driver currently on the list.
+>> Other than being just a buffer.
+> 
+> Indeed, both drivers forward GPIO calls, but the gpio inverter modifies
+> some parameters passed.
+> 
+> The way the drivers obtain references to GPIOs is different, though: the
+> inverter driver obtains a fixed description from DT, while the virtual
+> aggregator receives the description at runtime, from sysfs.
+> 
+> But perhaps both drivers could share some code?
+Other than probing they're almost the same, except the inversion.
+This one's more complete for set / get multiple etc.
 
-My name is Mr. Kone Compaore, the director general with the bank,
-Africa Develop bank (ADB) Ouagadougou, Burkina Faso, in West Africa. I
-am contacting you to seek our honesty and sincere cooperation in
-confidential manner to transfer the sum of 10.5 (Ten million five
-hundred thousand Dollars) to your existing or new bank account.
+> 
+>> Would it be possible to do the lookup via line names?
+> 
+> Doesn't the fact that a GPIO has a line name means that it is in use, and
+> thus cannot be aggregated and exported to another user?
+> 
 
-This money belongs to one of our bank client, a Libyan oil exporter
-who was working with the former Libyan government; I learn t that he
-was killed by the revolutionary forces since October 2011. Our bank is
-planning to transfer this entire fund into the government public
-treasury as unclaimed fund if nobody comes to claim the money from our
-bank after four years without account activities .
+They can be given line names via the dt property gpio-line-names.
+Which can be used by user space to find a gpio. Not sure if there's an equivalent api inkerenl.
+But it looks like we can find the info via struct gpiochip_info / gpioline_info linfo and work
+out the chip name and line offsets. So probably not required.
 
-We did not know each other before, but due to the fact that the
-deceased is a foreigner, the bank will welcome any claim from a
-foreigner without any suspect, that is why I decided to look for
-someone whim I can trust to come and claim the fund from our bank.
+Find the right gpio always seems tricky.
+We have systems with multiple i2c gpio behind muxes that may or may not be present.
+So i2c bus numbers are never consistent. And then different board revisions move the
+same gpio line to a different pin (or cahnge the gpio chip type completely) to make routing easier etc.
 
-I will endorse your name in the deceased client file here in my office
-which will indicate to that the deceased is your legal joint account
-business partner or family member next of kin to the deceased and
-officially the bank will transfer the fund to your bank account within
-seven working days in accordance to our banking inheritance rules and
-fund claim regulation.
 
-I will share 40% for you and 60% for me after the fund is transferred
-to your bank account, we need to act fast to complete this transaction
-within seven days. I will come to your country to collect my share
-after the fund is transferred to your bank account in your country. I
-hope that you will not disappoint me after the fund is transferred to
-your bank account in your country.
 
-Please I want you to send me your private phone number so that I can
-call you to discuss more details on how we can proceed on this project
 
-Waiting for your urgent response today
-Yours sincerely
-
-Kone Compaore
+-- 
+Regards
+Phil Reid
