@@ -2,158 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7919965859
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B8A65833
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfGKN7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 09:59:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbfGKN7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:59:20 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AEF75C057F2E;
-        Thu, 11 Jul 2019 13:59:19 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-46.ams2.redhat.com [10.36.116.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D71560A97;
-        Thu, 11 Jul 2019 13:59:09 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        peter.maydell@linaro.org, vincent.stehle@arm.com,
-        zhangfei.gao@gmail.com, tina.zhang@intel.com
-Subject: [PATCH v9 11/11] vfio: Document nested stage control
-Date:   Thu, 11 Jul 2019 15:56:25 +0200
-Message-Id: <20190711135625.20684-12-eric.auger@redhat.com>
-In-Reply-To: <20190711135625.20684-1-eric.auger@redhat.com>
-References: <20190711135625.20684-1-eric.auger@redhat.com>
+        id S1728633AbfGKN5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 09:57:03 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33967 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728178AbfGKN5C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 09:57:02 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so5923560edb.1;
+        Thu, 11 Jul 2019 06:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rOuNeNHVv9/VVG4l5Hr645r7uYLWPBnGXVkIWcZHk1k=;
+        b=axG7bOARPIoTxYMvOcDOF/i1jLKA7ugbJM5J2diOYTfJSi1G02UMeCwP0qKtKZ0x/b
+         XK+cwxGV7LGh3jue4qzcMwws9DmDl9mTsEBdza+3KVA3Db6NQuIjTKfAvOg3/CVJax2t
+         awEUyzFocfnhMkakkOvkn3qSWuLQtjSpUS8iRtOlJq74YbViyepwXTM4waUWH62+eGBp
+         dvASbyXaGReT3F55G9qNyr5sPN1zClC/3b6IBx8bLuihYRO/0qg1+awW6N94K50pwD9H
+         MbJNBC6xtCS4tJwiFQJA1lZOH0MrGUj1hfXdAGPSxWbMZtywtF1go93s2eE0m1EcT+ja
+         0aiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rOuNeNHVv9/VVG4l5Hr645r7uYLWPBnGXVkIWcZHk1k=;
+        b=kciljKD57CK0P9TG731+CMuh+Khj41YDYRsoff9avL+tBtshDWYqDyVP0dnaV+yTnb
+         xY9Vxr0aQtZRgdZ0JNbu0h/GD3qF0PId6MDibKFu5CUdypEKTVDihnwuAawNL3rtTSkc
+         iWduNtW+jMyAlpqP1bsPPBTAMtrZyTrGXRk9/wIvoioE26G0Xipm9jTaGliqQrvMK0Hy
+         i2NYdiH7NeULpWsFyBT3UFL8NXLybS9kgJqMd3r7cDfO1T0CIYGAWhjyDzxzn/Y/WRdT
+         +rfUpJ6Q7LjmqhjSBz010FJaOmXuNBWUjFfKJCX+/R2GuXDeX9hI4axOCLZNMBhCNwaj
+         Lljg==
+X-Gm-Message-State: APjAAAWAqsOWL2SkRDrV4xEcXImqQhTTdbwr9toJKOt5FxT3+m3eQMpE
+        EQQ+23m3JH2Q4th6dgtTM8HJu76NkjkblZjJAO8=
+X-Google-Smtp-Source: APXvYqzCXNLAVWTByGsPoZc2vVxWqyN7oxSE4kQB+14zl0pHNyO0KNu+RzsrXlqWTab7INRkE7CRqcAP/9FQebzVmI0=
+X-Received: by 2002:a50:8bfd:: with SMTP id n58mr3631650edn.272.1562853420690;
+ Thu, 11 Jul 2019 06:57:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 11 Jul 2019 13:59:19 +0000 (UTC)
+References: <20190703214326.41269-1-jeffrey.l.hugo@gmail.com>
+ <20190703214512.41319-1-jeffrey.l.hugo@gmail.com> <CGME20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7@epcas2p3.samsung.com>
+ <20190706010604.GG20625@sirena.org.uk> <64ca3a74-374f-d4f3-bee6-a607cc5c0fc5@samsung.com>
+In-Reply-To: <64ca3a74-374f-d4f3-bee6-a607cc5c0fc5@samsung.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 11 Jul 2019 06:56:47 -0700
+Message-ID: <CAF6AEGtGjKRA3A8v6pgaXLgpeiLZuz6HuDSFRjKrNp4iQNVZtA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] regmap: Add DSI bus support
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VFIO API was enhanced to support nested stage control: a bunch of
-new iotcls, one DMA FAULT region and an associated specific IRQ.
+On Thu, Jul 11, 2019 at 6:11 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> On 06.07.2019 03:06, Mark Brown wrote:
+> > On Wed, Jul 03, 2019 at 02:45:12PM -0700, Jeffrey Hugo wrote:
+> >> Add basic support with a simple implementation that utilizes the generic
+> >> read/write commands to allow device registers to be configured.
+> > This looks good to me but I really don't know anything about DSI,
+> > I'd appreciate some review from other people who do.  I take it
+> > there's some spec thing in DSI that says registers and bytes must
+> > both be 8 bit?
+>
+>
+> I am little bit confused about regmap usage here. On the one hand it
+> nicely fits to this specific driver, probably because it already uses
+> regmap_i2c.
+>
+> On the other it will be unusable for almost all current DSI drivers and
+> probably for most new drivers. Why?
+>
+> 1. DSI protocol defines actually more than 30 types of transactions[1],
+> but this patchset implements only few of them (dsi generic write/read
+> family). Is it possible to implement multiple types of transactions in
+> regmap?
+>
+> 2. There is already some set of helpers which uses dsi bus, rewriting it
+> on regmap is possible or driver could use of regmap and direct access
+> together, the question is if it is really necessary.
+>
+> 3. DSI devices are no MFDs so regmap abstraction has no big value added
+> (correct me, if there are other significant benefits).
+>
 
-Let's document the process to follow to set up nested mode.
+I assume it is not *just* this one bridge that can be programmed over
+either i2c or dsi, depending on how things are wired up on the board.
+It certainly would be nice for regmap to support this case, so we
+don't have to write two different bridge drivers for the same bridge.
+I wouldn't expect a panel that is only programmed via dsi to use this.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+BR,
+-R
 
----
-
-v8 -> v9:
-- new names for SET_MSI_BINDING and SET_PASID_TABLE
-- new layout for the DMA FAULT memory region and specific IRQ
-
-v2 -> v3:
-- document the new fault API
-
-v1 -> v2:
-- use the new ioctl names
-- add doc related to fault handling
----
- Documentation/vfio.txt | 77 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
-
-diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
-index f1a4d3c3ba0b..563ebcec9224 100644
---- a/Documentation/vfio.txt
-+++ b/Documentation/vfio.txt
-@@ -239,6 +239,83 @@ group and can access them as follows::
- 	/* Gratuitous device reset and go... */
- 	ioctl(device, VFIO_DEVICE_RESET);
- 
-+IOMMU Dual Stage Control
-+------------------------
-+
-+Some IOMMUs support 2 stages/levels of translation. "Stage" corresponds to
-+the ARM terminology while "level" corresponds to Intel's VTD terminology. In
-+the following text we use either without distinction.
-+
-+This is useful when the guest is exposed with a virtual IOMMU and some
-+devices are assigned to the guest through VFIO. Then the guest OS can use
-+stage 1 (IOVA -> GPA), while the hypervisor uses stage 2 for VM isolation
-+(GPA -> HPA).
-+
-+The guest gets ownership of the stage 1 page tables and also owns stage 1
-+configuration structures. The hypervisor owns the root configuration structure
-+(for security reason), including stage 2 configuration. This works as long
-+configuration structures and page table format are compatible between the
-+virtual IOMMU and the physical IOMMU.
-+
-+Assuming the HW supports it, this nested mode is selected by choosing the
-+VFIO_TYPE1_NESTING_IOMMU type through:
-+
-+ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1_NESTING_IOMMU);
-+
-+This forces the hypervisor to use the stage 2, leaving stage 1 available for
-+guest usage.
-+
-+Once groups are attached to the container, the guest stage 1 translation
-+configuration data can be passed to VFIO by using
-+
-+ioctl(container, VFIO_IOMMU_SET_PASID_TABLE, &pasid_table_info);
-+
-+This allows to combine the guest stage 1 configuration structure along with
-+the hypervisor stage 2 configuration structure. Stage 1 configuration
-+structures are dependent on the IOMMU type.
-+
-+As the stage 1 translation is fully delegated to the HW, translation faults
-+encountered during the translation process need to be propagated up to
-+the virtualizer and re-injected into the guest.
-+
-+The userspace must be prepared to receive faults. The VFIO-PCI device
-+exposes one dedicated DMA FAULT region: it contains a ring buffer and
-+its header that allows to manage the head/tail indices. The region is
-+identified by the following index/subindex:
-+- VFIO_REGION_TYPE_NESTED/VFIO_REGION_SUBTYPE_NESTED_DMA_FAULT
-+
-+The DMA FAULT region exposes a VFIO_REGION_INFO_CAP_PRODUCER_FAULT
-+region capability that allows the userspace to retrieve the ABI version
-+of the fault records filled by the host.
-+
-+On top of that region, the userspace can be notified whenever a fault
-+occurs at the physical level. It can use the VFIO_IRQ_TYPE_NESTED/
-+VFIO_IRQ_SUBTYPE_DMA_FAULT specific IRQ to attach the eventfd to be
-+signalled.
-+
-+The ring buffer containing the fault records can be mmapped. When
-+the userspace consumes a fault in the queue, it should increment
-+the consumer index to allow new fault records to replace the used ones.
-+
-+The queue size and the entry size can be retrieved in the header.
-+The tail index should never overshoot the producer index as in any
-+other circular buffer scheme. Also it must be less than the queue size
-+otherwise the change fails.
-+
-+When the guest invalidates stage 1 related caches, invalidations must be
-+forwarded to the host through
-+ioctl(container, VFIO_IOMMU_CACHE_INVALIDATE, &inv_data);
-+Those invalidations can happen at various granularity levels, page, context, ...
-+
-+The ARM SMMU specification introduces another challenge: MSIs are translated by
-+both the virtual SMMU and the physical SMMU. To build a nested mapping for the
-+IOVA programmed into the assigned device, the guest needs to pass its IOVA/MSI
-+doorbell GPA binding to the host. Then the hypervisor can build a nested stage 2
-+binding eventually translating into the physical MSI doorbell.
-+
-+This is achieved by calling
-+ioctl(container, VFIO_IOMMU_SET_MSI_BINDING, &guest_binding);
-+
- VFIO User API
- -------------------------------------------------------------------------------
- 
--- 
-2.20.1
-
+>
+> [1]:
+> https://elixir.bootlin.com/linux/latest/source/include/video/mipi_display.h#L15
+>
+>
+> Regards
+>
+> Andrzej
+>
+>
+> >
+> > A couple of minor comments, no need to resend just for these:
+> >
+> >> +       payload[0] = (char)reg;
+> >> +       payload[1] = (char)val;
+> > Do you need the casts?
+> >
+> >> +    ret = mipi_dsi_generic_write(dsi, payload, 2);
+> >> +    return ret < 0 ? ret : 0;
+> > Please just write an if statement, it helps with legibility.
+> >
+> >> +struct regmap *__regmap_init_dsi(struct mipi_dsi_device *dsi,
+> >> +                             const struct regmap_config *config,
+> >> +                             struct lock_class_key *lock_key,
+> >> +                             const char *lock_name)
+> >> +{
+> >> +    return __regmap_init(&dsi->dev, &dsi_bus, &dsi->dev, config,
+> >> +                         lock_key, lock_name);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(__regmap_init_dsi);
+> > Perhaps validate that the config is OK (mainly the register/value
+> > sizes)?  Though I'm not sure it's worth it so perhaps not - up to
+> > you.
+>
+>
