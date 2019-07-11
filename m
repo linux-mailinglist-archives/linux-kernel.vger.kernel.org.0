@@ -2,76 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0793657DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E15657D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2019 15:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfGKNZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 09:25:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37110 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbfGKNZQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:25:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so6313383wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 06:25:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NiPzgCya2hoSH4eKrxi8qdW5Qk89gH2cnlBBWoaa/xg=;
-        b=osrgwGnO4szyykoqbn4E2A6cpNgH45EIW+eW78tBF5fTMm9lU8jdY3Y0p/XiJ3iROM
-         rvl8HT88hWGAWH0UlAL0szQuFyrtsHBs51JrBoiYquc65DFMWcbpVsByninNLG/GaeXi
-         Iz3r5LY4fHJe56Tp5fzoYL6jP3UA3yaykpRMfeDQubJ+jEVeRbKYH2zC0HNkWOqcFIHD
-         nLV8NBGSJxRnJBkGEC6xrj7AzLAMR+2EJ9QCzU0iEhQ32YdAQNd252GS7jidT77F0zrt
-         JAxw9DrPJTzRjjK9O/+eOe1Xr26+WiB6qyqphyjsUjox0YLkVxp6Xk+QCcmz3K3UdIut
-         P7Bw==
-X-Gm-Message-State: APjAAAUyzLZiC+SnrfzJeWw7YpQs/XwWe0Rv9eqc/1dcMeKz1YZTSzPm
-        FWTMYrNP3GWkoeOuTe/DTFqbiQ==
-X-Google-Smtp-Source: APXvYqxwk8GF3EpHoEhDlHvKnuLbWejXVJYdh2lNTENdeBRa32LLelWUbAycMad3uNrwe2Sr84lu1Q==
-X-Received: by 2002:adf:b1cb:: with SMTP id r11mr5074310wra.328.1562851514545;
-        Thu, 11 Jul 2019 06:25:14 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d066:6881:ec69:75ab? ([2001:b07:6468:f312:d066:6881:ec69:75ab])
-        by smtp.gmail.com with ESMTPSA id t1sm7823335wra.74.2019.07.11.06.25.13
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 06:25:13 -0700 (PDT)
-Subject: Re: [PATCH v6 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
-To:     Tao Xu <tao3.xu@intel.com>, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
-        jingqi.liu@intel.com
-References: <20190621055747.17060-1-tao3.xu@intel.com>
- <20190621055747.17060-3-tao3.xu@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <43814a5e-12bf-ceb5-e4fb-12bbb32cd4cb@redhat.com>
-Date:   Thu, 11 Jul 2019 15:25:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728748AbfGKNWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 09:22:14 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2254 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725934AbfGKNWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 09:22:14 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 44E52D625B961C3DFA59;
+        Thu, 11 Jul 2019 21:22:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 11 Jul 2019 21:22:01 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <wangkefeng.wang@huawei.com>
+Subject: [PATCH v2] hpet: Fix division by zero in hpet_time_div()
+Date:   Thu, 11 Jul 2019 21:27:57 +0800
+Message-ID: <20190711132757.130092-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190621055747.17060-3-tao3.xu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/06/19 07:57, Tao Xu wrote:
-> +	if (guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
-> +		atomic_switch_umwait_control_msr(vmx);
-> +
+The base value in do_div() called by hpet_time_div() is truncated from
+unsigned long to uint32_t, resulting in a divide-by-zero exception.
 
-guest_cpuid_has is slow.  Please replace it with a test on
-secondary_exec_controls_get(vmx).
+UBSAN: Undefined behaviour in ../drivers/char/hpet.c:572:2
+division by zero
+CPU: 1 PID: 23682 Comm: syz-executor.3 Not tainted 4.4.184.x86_64+ #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+ 0000000000000000 b573382df1853d00 ffff8800a3287b98 ffffffff81ad7561
+ ffff8800a3287c00 ffffffff838b35b0 ffffffff838b3860 ffff8800a3287c20
+ 0000000000000000 ffff8800a3287bb0 ffffffff81b8f25e ffffffff838b35a0
+Call Trace:
+ [<ffffffff81ad7561>] __dump_stack lib/dump_stack.c:15 [inline]
+ [<ffffffff81ad7561>] dump_stack+0xc1/0x120 lib/dump_stack.c:51
+ [<ffffffff81b8f25e>] ubsan_epilogue+0x12/0x8d lib/ubsan.c:166
+ [<ffffffff81b900cb>] __ubsan_handle_divrem_overflow+0x282/0x2c8 lib/ubsan.c:262
+ [<ffffffff823560dd>] hpet_time_div drivers/char/hpet.c:572 [inline]
+ [<ffffffff823560dd>] hpet_ioctl_common drivers/char/hpet.c:663 [inline]
+ [<ffffffff823560dd>] hpet_ioctl_common.cold+0xa8/0xad drivers/char/hpet.c:577
+ [<ffffffff81e63d56>] hpet_ioctl+0xc6/0x180 drivers/char/hpet.c:676
+ [<ffffffff81711590>] vfs_ioctl fs/ioctl.c:43 [inline]
+ [<ffffffff81711590>] file_ioctl fs/ioctl.c:470 [inline]
+ [<ffffffff81711590>] do_vfs_ioctl+0x6e0/0xf70 fs/ioctl.c:605
+ [<ffffffff81711eb4>] SYSC_ioctl fs/ioctl.c:622 [inline]
+ [<ffffffff81711eb4>] SyS_ioctl+0x94/0xc0 fs/ioctl.c:613
+ [<ffffffff82846003>] tracesys_phase2+0x90/0x95
 
-Are you going to look into nested virtualization support?  This should
-include only 1) allowing setting the enable bit in secondary execution
-controls, and passing it through in prepare_vmcs02_early; 2) reflecting
-the vmexit in nested_vmx_exit_reflected.
+The main C reproducer autogenerated by syzkaller,
 
-Thanks,
+  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+  memcpy((void*)0x20000100, "/dev/hpet\000", 10);
+  syscall(__NR_openat, 0xffffffffffffff9c, 0x20000100, 0, 0);
+  syscall(__NR_ioctl, r[0], 0x40086806, 0x40000000000000);
 
-Paolo
+Fix it by using div64_ul().
+
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Zhang HongJun <zhanghongjun2@huawei.com>
+---
+ drivers/char/hpet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index 5c39f20378b8..9ac6671bb514 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -567,8 +567,7 @@ static inline unsigned long hpet_time_div(struct hpets *hpets,
+ 	unsigned long long m;
+ 
+ 	m = hpets->hp_tick_freq + (dis >> 1);
+-	do_div(m, dis);
+-	return (unsigned long)m;
++	return div64_ul(m, dis);
+ }
+ 
+ static int
+-- 
+2.20.1
+
