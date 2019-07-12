@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C56E66D55
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E14C866CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbfGLM2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:28:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
+        id S1727923AbfGLMXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:23:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727897AbfGLM2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:28:49 -0400
+        id S1727897AbfGLMXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:23:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9387821707;
-        Fri, 12 Jul 2019 12:28:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74309208E4;
+        Fri, 12 Jul 2019 12:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934528;
-        bh=uZ6LwPsp/KCDy/oucGPOKyVCGfUM2ptFOLsDxSTVslQ=;
+        s=default; t=1562934199;
+        bh=huhpbBs/xeFWfzUR5O0DDw0YNhXWuonRBe8GbPfnjes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wq0WcIpc0RwVaWIzl+JtReiab80LR990sfy36jTclBMtEkk9ra80hzWmYuYkDI3B9
-         gSevVjKfnWAGAwiUMq+9COHOhmU+sz2unRCXRTlsc8RVXmFbtRzk0ECmVrdI8589oy
-         sRb0FHn3cQPQkU676Q40uM7ur6m1iutgu42bCmnM=
+        b=tNjSk5xFsth7wHNY/SSNWIImH8nKuUsoc2gaU2UdqUsUK0NOBH12fjUll36REE41w
+         C/3vBQ84nBY9wxQTe+cH/Wo75Q/Wd1PC7eu7qsK6c1f/JwsKGOnJ9pcfVhv8UrZnS4
+         mlT8ixwimr8coBtpluh1w0P9I5I2pW9s4WwZcUpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 086/138] KVM: arm/arm64: Fix emulated ptimer irq injection
-Date:   Fri, 12 Jul 2019 14:19:10 +0200
-Message-Id: <20190712121632.043617479@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 68/91] mwifiex: Dont abort on small, spec-compliant vendor IEs
+Date:   Fri, 12 Jul 2019 14:19:11 +0200
+Message-Id: <20190712121625.492440171@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e4e5a865e9a9e8e47ac1959b629e9f3ae3b062f2 ]
+From: Brian Norris <briannorris@chromium.org>
 
-The emulated ptimer needs to track the level changes, otherwise the
-the interrupt will never get deasserted, resulting in the guest getting
-stuck in an interrupt storm if it enables ptimer interrupts. This was
-found with kvm-unit-tests; the ptimer tests hung as soon as interrupts
-were enabled. Typical Linux guests don't have a problem as they prefer
-using the virtual timer.
+commit 63d7ef36103d26f20325a921ecc96a3288560146 upstream.
 
-Fixes: bee038a674875 ("KVM: arm/arm64: Rework the timer code to use a timer_map")
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-[Simplified the patch to res we only care about emulated timers here]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Per the 802.11 specification, vendor IEs are (at minimum) only required
+to contain an OUI. A type field is also included in ieee80211.h (struct
+ieee80211_vendor_ie) but doesn't appear in the specification. The
+remaining fields (subtype, version) are a convention used in WMM
+headers.
+
+Thus, we should not reject vendor-specific IEs that have only the
+minimum length (3 bytes) -- we should skip over them (since we only want
+to match longer IEs, that match either WMM or WPA formats). We can
+reject elements that don't have the minimum-required 3 byte OUI.
+
+While we're at it, move the non-standard subtype and version fields into
+the WMM structs, to avoid this confusion in the future about generic
+"vendor header" attributes.
+
+Fixes: 685c9b7750bf ("mwifiex: Abort at too short BSS descriptor element")
+Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- virt/kvm/arm/arch_timer.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/fw.h        |   12 +++++++++---
+ drivers/net/wireless/marvell/mwifiex/scan.c      |   18 +++++++++++-------
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c |    4 ++--
+ drivers/net/wireless/marvell/mwifiex/wmm.c       |    2 +-
+ 4 files changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
-index 7fc272ecae16..1b1c449ceaf4 100644
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -321,14 +321,15 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu, bool new_level,
- 	}
- }
+--- a/drivers/net/wireless/marvell/mwifiex/fw.h
++++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+@@ -1759,9 +1759,10 @@ struct mwifiex_ie_types_wmm_queue_status
+ struct ieee_types_vendor_header {
+ 	u8 element_id;
+ 	u8 len;
+-	u8 oui[4];	/* 0~2: oui, 3: oui_type */
+-	u8 oui_subtype;
+-	u8 version;
++	struct {
++		u8 oui[3];
++		u8 oui_type;
++	} __packed oui;
+ } __packed;
  
-+/* Only called for a fully emulated timer */
- static void timer_emulate(struct arch_timer_context *ctx)
- {
- 	bool should_fire = kvm_timer_should_fire(ctx);
+ struct ieee_types_wmm_parameter {
+@@ -1775,6 +1776,9 @@ struct ieee_types_wmm_parameter {
+ 	 *   Version     [1]
+ 	 */
+ 	struct ieee_types_vendor_header vend_hdr;
++	u8 oui_subtype;
++	u8 version;
++
+ 	u8 qos_info_bitmap;
+ 	u8 reserved;
+ 	struct ieee_types_wmm_ac_parameters ac_params[IEEE80211_NUM_ACS];
+@@ -1792,6 +1796,8 @@ struct ieee_types_wmm_info {
+ 	 *   Version     [1]
+ 	 */
+ 	struct ieee_types_vendor_header vend_hdr;
++	u8 oui_subtype;
++	u8 version;
  
- 	trace_kvm_timer_emulate(ctx, should_fire);
+ 	u8 qos_info_bitmap;
+ } __packed;
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -1361,21 +1361,25 @@ int mwifiex_update_bss_desc_with_ie(stru
+ 			break;
  
--	if (should_fire) {
--		kvm_timer_update_irq(ctx->vcpu, true, ctx);
-+	if (should_fire != ctx->irq.level) {
-+		kvm_timer_update_irq(ctx->vcpu, should_fire, ctx);
- 		return;
- 	}
+ 		case WLAN_EID_VENDOR_SPECIFIC:
+-			if (element_len + 2 < sizeof(vendor_ie->vend_hdr))
+-				return -EINVAL;
+-
+ 			vendor_ie = (struct ieee_types_vendor_specific *)
+ 					current_ptr;
  
--- 
-2.20.1
-
+-			if (!memcmp
+-			    (vendor_ie->vend_hdr.oui, wpa_oui,
+-			     sizeof(wpa_oui))) {
++			/* 802.11 requires at least 3-byte OUI. */
++			if (element_len < sizeof(vendor_ie->vend_hdr.oui.oui))
++				return -EINVAL;
++
++			/* Not long enough for a match? Skip it. */
++			if (element_len < sizeof(wpa_oui))
++				break;
++
++			if (!memcmp(&vendor_ie->vend_hdr.oui, wpa_oui,
++				    sizeof(wpa_oui))) {
+ 				bss_entry->bcn_wpa_ie =
+ 					(struct ieee_types_vendor_specific *)
+ 					current_ptr;
+ 				bss_entry->wpa_offset = (u16)
+ 					(current_ptr - bss_entry->beacon_buf);
+-			} else if (!memcmp(vendor_ie->vend_hdr.oui, wmm_oui,
++			} else if (!memcmp(&vendor_ie->vend_hdr.oui, wmm_oui,
+ 				    sizeof(wmm_oui))) {
+ 				if (total_ie_len ==
+ 				    sizeof(struct ieee_types_wmm_parameter) ||
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -1348,7 +1348,7 @@ mwifiex_set_gen_ie_helper(struct mwifiex
+ 			/* Test to see if it is a WPA IE, if not, then
+ 			 * it is a gen IE
+ 			 */
+-			if (!memcmp(pvendor_ie->oui, wpa_oui,
++			if (!memcmp(&pvendor_ie->oui, wpa_oui,
+ 				    sizeof(wpa_oui))) {
+ 				/* IE is a WPA/WPA2 IE so call set_wpa function
+ 				 */
+@@ -1358,7 +1358,7 @@ mwifiex_set_gen_ie_helper(struct mwifiex
+ 				goto next_ie;
+ 			}
+ 
+-			if (!memcmp(pvendor_ie->oui, wps_oui,
++			if (!memcmp(&pvendor_ie->oui, wps_oui,
+ 				    sizeof(wps_oui))) {
+ 				/* Test to see if it is a WPS IE,
+ 				 * if so, enable wps session flag
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -240,7 +240,7 @@ mwifiex_wmm_setup_queue_priorities(struc
+ 	mwifiex_dbg(priv->adapter, INFO,
+ 		    "info: WMM Parameter IE: version=%d,\t"
+ 		    "qos_info Parameter Set Count=%d, Reserved=%#x\n",
+-		    wmm_ie->vend_hdr.version, wmm_ie->qos_info_bitmap &
++		    wmm_ie->version, wmm_ie->qos_info_bitmap &
+ 		    IEEE80211_WMM_IE_AP_QOSINFO_PARAM_SET_CNT_MASK,
+ 		    wmm_ie->reserved);
+ 
 
 
