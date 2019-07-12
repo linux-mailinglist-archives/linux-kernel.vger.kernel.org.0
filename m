@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB9366CB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEA766CB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfGLMWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:22:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
+        id S1727770AbfGLMWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:22:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727740AbfGLMWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:22:37 -0400
+        id S1727147AbfGLMWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:22:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C648208E4;
-        Fri, 12 Jul 2019 12:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D16E9216B7;
+        Fri, 12 Jul 2019 12:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934157;
-        bh=X9WQ/ktOz+HBaUxvZSp95khvRqJtVx22HGawG6wBIB0=;
+        s=default; t=1562934160;
+        bh=NcZZzhaLzdat+yqaF8MIGu8GX/hbheQFPNJEoYo0n4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YfTd4zOYDo3bEdb6wHv0HYXku/u28J4+aSbC7Orxplob9LkkcI99JoPyEVS9tM1cM
-         YFtFvVRqqQNkh7NJZGDlel6q647oSAJs+M5JcYl05zGSggv90mdGmTztGJGK/PVb1A
-         dnby0Oy10VQZuzm2frWj4A84lNQjGKbRoFDkFaZI=
+        b=T1qFYneiGAoNJUdQmZyPTmhjwuS9UjKo8lHEBlLa/2GMaxGjddCsMIYfd0opmzZ51
+         9Si81clvDITol/ncgcgjrR2Aerd2pNkv9tQIxDHhJOO81JyEF9UnMimOrT3QdCFPyV
+         VP7dimeiPrGYbWWlg6wsJ11oIgogmt3/LaxGe4Ic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lin Yi <teroincn@163.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 55/91] net :sunrpc :clnt :Fix xps refcount imbalance on the error path
-Date:   Fri, 12 Jul 2019 14:18:58 +0200
-Message-Id: <20190712121624.649755174@linuxfoundation.org>
+        stable@vger.kernel.org, Hongjie Fang <hongjiefang@asrmicro.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.19 56/91] fscrypt: dont set policy for a dead directory
+Date:   Fri, 12 Jul 2019 14:18:59 +0200
+Message-Id: <20190712121624.716511060@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -44,32 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b96226148491505318228ac52624956bd98f9e0c ]
+From: Hongjie Fang <hongjiefang@asrmicro.com>
 
-rpc_clnt_add_xprt take a reference to struct rpc_xprt_switch, but forget
-to release it before return, may lead to a memory leak.
+commit 5858bdad4d0d0fc18bf29f34c3ac836e0b59441f upstream.
 
-Signed-off-by: Lin Yi <teroincn@163.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The directory may have been removed when entering
+fscrypt_ioctl_set_policy().  If so, the empty_dir() check will return
+error for ext4 file system.
+
+ext4_rmdir() sets i_size = 0, then ext4_empty_dir() reports an error
+because 'inode->i_size < EXT4_DIR_REC_LEN(1) + EXT4_DIR_REC_LEN(2)'.  If
+the fs is mounted with errors=panic, it will trigger a panic issue.
+
+Add the check IS_DEADDIR() to fix this problem.
+
+Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
+Cc: <stable@vger.kernel.org> # v4.1+
+Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sunrpc/clnt.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/crypto/policy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-index 7e4553dbc3c7..0d7d149b1b1b 100644
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -2713,6 +2713,7 @@ int rpc_clnt_add_xprt(struct rpc_clnt *clnt,
- 	xprt = xprt_iter_xprt(&clnt->cl_xpi);
- 	if (xps == NULL || xprt == NULL) {
- 		rcu_read_unlock();
-+		xprt_switch_put(xps);
- 		return -EAGAIN;
- 	}
- 	resvport = xprt->resvport;
--- 
-2.20.1
-
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -81,6 +81,8 @@ int fscrypt_ioctl_set_policy(struct file
+ 	if (ret == -ENODATA) {
+ 		if (!S_ISDIR(inode->i_mode))
+ 			ret = -ENOTDIR;
++		else if (IS_DEADDIR(inode))
++			ret = -ENOENT;
+ 		else if (!inode->i_sb->s_cop->empty_dir(inode))
+ 			ret = -ENOTEMPTY;
+ 		else
 
 
