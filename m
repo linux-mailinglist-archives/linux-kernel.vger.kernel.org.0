@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2AB466CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25B766CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfGLMYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60596 "EHLO mail.kernel.org"
+        id S1728157AbfGLMYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:24:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728039AbfGLMYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:09 -0400
+        id S1728144AbfGLMYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:24:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A632B2084B;
-        Fri, 12 Jul 2019 12:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 590122084B;
+        Fri, 12 Jul 2019 12:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934249;
-        bh=RYgNIcgVq4MvcSezTMgFH6yH/BO/iiWP7tZ6Y9Kxu5E=;
+        s=default; t=1562934273;
+        bh=jJIdsp0EhhdWqql7R9UjK47yBHa1g72/qTxDgzXP6Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u9RwUGNSBHgYu7MG6pZZ2FoUiP9bqd8zS94OFamcj8lh3D0bzPTeVbiAVpMq/tbcL
-         i9qi5pz87BbFsOeWFP58AowlwdqrlDNuOiupUybBvalm/z3JEoDE8W+4mBQ2j1/6d0
-         OYwbJVqnMAkQMwU4BvhQ2VR3V9dk64yEn/EztOnM=
+        b=Ynkro9EYy9LTk+cnDNAKKuNUwUE9iqbxg5s9P4O5Jrtr7clhX57RGDm8W36S8nxhG
+         pRjPGukFhx/TxMdK3KdjWwOXmX01i5rM5aoYL8JmDdr800X6bJgvB7sOdtFGy/TGtc
+         gWhlMCNcEgquZ/Mv09q4g2laD1dXr70N2PqhIpTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 48/91] drm: return -EFAULT if copy_to_user() fails
-Date:   Fri, 12 Jul 2019 14:18:51 +0200
-Message-Id: <20190712121624.199415799@linuxfoundation.org>
+Subject: [PATCH 4.19 49/91] ip6_tunnel: allow not to count pkts on tstats by passing dev as NULL
+Date:   Fri, 12 Jul 2019 14:18:52 +0200
+Message-Id: <20190712121624.257889987@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -44,53 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 74b67efa8d7b4f90137f0ab9a80dd319da050350 ]
+[ Upstream commit 6f6a8622057c92408930c31698394fae1557b188 ]
 
-The copy_from_user() function returns the number of bytes remaining
-to be copied but we want to return a negative error code.  Otherwise
-the callers treat it as a successful copy.
+A similar fix to Patch "ip_tunnel: allow not to count pkts on tstats by
+setting skb's dev to NULL" is also needed by ip6_tunnel.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190618131843.GA29463@mwanda
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_bufs.c  | 5 ++++-
- drivers/gpu/drm/drm_ioc32.c | 5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ include/net/ip6_tunnel.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index e2f775d1c112..21bec4548092 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -1321,7 +1321,10 @@ static int copy_one_buf(void *data, int count, struct drm_buf_entry *from)
- 				 .size = from->buf_size,
- 				 .low_mark = from->low_mark,
- 				 .high_mark = from->high_mark};
--	return copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags));
+diff --git a/include/net/ip6_tunnel.h b/include/net/ip6_tunnel.h
+index 236e40ba06bf..f594eb71c274 100644
+--- a/include/net/ip6_tunnel.h
++++ b/include/net/ip6_tunnel.h
+@@ -156,9 +156,12 @@ static inline void ip6tunnel_xmit(struct sock *sk, struct sk_buff *skb,
+ 	memset(skb->cb, 0, sizeof(struct inet6_skb_parm));
+ 	pkt_len = skb->len - skb_inner_network_offset(skb);
+ 	err = ip6_local_out(dev_net(skb_dst(skb)->dev), sk, skb);
+-	if (unlikely(net_xmit_eval(err)))
+-		pkt_len = -1;
+-	iptunnel_xmit_stats(dev, pkt_len);
 +
-+	if (copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags)))
-+		return -EFAULT;
-+	return 0;
++	if (dev) {
++		if (unlikely(net_xmit_eval(err)))
++			pkt_len = -1;
++		iptunnel_xmit_stats(dev, pkt_len);
++	}
  }
- 
- int drm_legacy_infobufs(struct drm_device *dev, void *data,
-diff --git a/drivers/gpu/drm/drm_ioc32.c b/drivers/gpu/drm/drm_ioc32.c
-index 67b1fca39aa6..138680b37c70 100644
---- a/drivers/gpu/drm/drm_ioc32.c
-+++ b/drivers/gpu/drm/drm_ioc32.c
-@@ -372,7 +372,10 @@ static int copy_one_buf32(void *data, int count, struct drm_buf_entry *from)
- 			      .size = from->buf_size,
- 			      .low_mark = from->low_mark,
- 			      .high_mark = from->high_mark};
--	return copy_to_user(to + count, &v, offsetof(drm_buf_desc32_t, flags));
-+
-+	if (copy_to_user(to + count, &v, offsetof(drm_buf_desc32_t, flags)))
-+		return -EFAULT;
-+	return 0;
- }
- 
- static int drm_legacy_infobufs32(struct drm_device *dev, void *data,
+ #endif
+ #endif
 -- 
 2.20.1
 
