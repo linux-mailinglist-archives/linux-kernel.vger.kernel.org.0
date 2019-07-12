@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0499D66C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C63166D19
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfGLMU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:20:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
+        id S1728462AbfGLM0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:26:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727019AbfGLMUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:24 -0400
+        id S1728101AbfGLM0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:26:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 562FD21670;
-        Fri, 12 Jul 2019 12:20:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 079272084B;
+        Fri, 12 Jul 2019 12:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934023;
-        bh=lUM4YCGKvNWFCOk/arLaupJ/88bRs1Q8JoFExYmsvu8=;
+        s=default; t=1562934391;
+        bh=KJYZFDg9CNu1QgccJ4oaxtcIncPVDGaGLq0uQFb/BLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BKs+Krvox0Rz9tHvYllgBXVwF+zE3K8GV28/Hv37+m6SxFFvokbvoNgNx3iWC7rgw
-         gtGH/TkswOHmIlhnIP/FWbci8/OKx9gZp94bzyhYrxLChj6TCl8H6tGgrA1LxHcj+D
-         Ds+iemXdGarnCPNgGeMuhWHJdPdYXpzH3TB/BotI=
+        b=2mLAFJUP5toTrD/KHlRBCtNqgdV4QHLkb31c6GDI8wX7COCAq2K9ItRkaPz12tBRR
+         KNs8jTs7hFNlkc/h9/uNTU1FNEGy2Df1hhlhskpush+uqxK6sEaYxhQ/iOTXTo1ted
+         Az5eL2UnUNTL/kCt3UQu6zucfbwe24aV5dchCsU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/91] can: af_can: Fix error path of can_init()
-Date:   Fri, 12 Jul 2019 14:18:24 +0200
-Message-Id: <20190712121622.536668372@linuxfoundation.org>
+Subject: [PATCH 5.1 041/138] ibmvnic: Refresh device multicast list after reset
+Date:   Fri, 12 Jul 2019 14:18:25 +0200
+Message-Id: <20190712121630.250241581@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,68 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c5a3aed1cd3152429348ee1fe5cdcca65fe901ce ]
+[ Upstream commit be32a24372cf162e825332da1a7ccef058d4f20b ]
 
-This patch add error path for can_init() to avoid possible crash if some
-error occurs.
+It was observed that multicast packets were no longer received after
+a device reset.  The fix is to resend the current multicast list to
+the backing device after recovery.
 
-Fixes: 0d66548a10cb ("[CAN]: Add PF_CAN core module")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/can/af_can.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/can/af_can.c b/net/can/af_can.c
-index e386d654116d..04132b0b5d36 100644
---- a/net/can/af_can.c
-+++ b/net/can/af_can.c
-@@ -959,6 +959,8 @@ static struct pernet_operations can_pernet_ops __read_mostly = {
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 71bf895409a1..664e52fa7919 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1851,6 +1851,9 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+ 		return 0;
+ 	}
  
- static __init int can_init(void)
- {
-+	int err;
++	/* refresh device's multicast list */
++	ibmvnic_set_multi(netdev);
 +
- 	/* check for correct padding to be able to use the structs similarly */
- 	BUILD_BUG_ON(offsetof(struct can_frame, can_dlc) !=
- 		     offsetof(struct canfd_frame, len) ||
-@@ -972,15 +974,31 @@ static __init int can_init(void)
- 	if (!rcv_cache)
- 		return -ENOMEM;
- 
--	register_pernet_subsys(&can_pernet_ops);
-+	err = register_pernet_subsys(&can_pernet_ops);
-+	if (err)
-+		goto out_pernet;
- 
- 	/* protocol register */
--	sock_register(&can_family_ops);
--	register_netdevice_notifier(&can_netdev_notifier);
-+	err = sock_register(&can_family_ops);
-+	if (err)
-+		goto out_sock;
-+	err = register_netdevice_notifier(&can_netdev_notifier);
-+	if (err)
-+		goto out_notifier;
-+
- 	dev_add_pack(&can_packet);
- 	dev_add_pack(&canfd_packet);
- 
- 	return 0;
-+
-+out_notifier:
-+	sock_unregister(PF_CAN);
-+out_sock:
-+	unregister_pernet_subsys(&can_pernet_ops);
-+out_pernet:
-+	kmem_cache_destroy(rcv_cache);
-+
-+	return err;
- }
- 
- static __exit void can_exit(void)
+ 	/* kick napi */
+ 	for (i = 0; i < adapter->req_rx_queues; i++)
+ 		napi_schedule(&adapter->napi[i]);
 -- 
 2.20.1
 
