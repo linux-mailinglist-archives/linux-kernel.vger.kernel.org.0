@@ -2,152 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C76671BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A54B671BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfGLOzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 10:55:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41842 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfGLOzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 10:55:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jyTpDF2cJguc7T2D7cN+higCLbj4x3NEYIIGAv7Vb1k=; b=d5q+mx+54zYN9fEzyPrr6e6Vn
-        P+OWHB81xK0z3+qq7SCsblGLnd3AIuBWLZO+8ZK/C8M7+LXeBC4T/0yyPKLV3LgbYMZD8LP42dMaR
-        2IIM9M5Zqu+Xu0JxZE+MzZIeriI/CapP7cTjO3VdiTwIN94g44p8vVr9UhhFoOr4jZEuZcaBkvFl4
-        18GFjroBpeu30gq9eVebugXvsVX+v7tn30COaNknA7ZlDAN8et9NsDu6ORa85NEDw4yG0fyHaHUq+
-        mVtrXsEfzksrItP+jJcDlg+J5+GKIJhEsoH+ZoUqPRrYhqsg2Lez4SgIkNoFqDkcQpCSPaoVO4vjK
-        r2N1yvaWA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlwxA-0008UU-2R; Fri, 12 Jul 2019 14:55:16 +0000
-Subject: Re: [PATCH v3] tpm: Document UEFI event log quirks
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tweek@google.com, matthewgarrett@google.com,
-        jorhand@linux.microsoft.com, Jonathan Corbet <corbet@lwn.net>,
-        Sasha Levin <sashal@kernel.org>
-References: <20190712124912.23630-1-jarkko.sakkinen@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6c974f53-6dca-33fd-5aca-056ab8b274ed@infradead.org>
-Date:   Fri, 12 Jul 2019 07:55:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190712124912.23630-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727227AbfGLO4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 10:56:03 -0400
+Received: from mail-eopbgr00131.outbound.protection.outlook.com ([40.107.0.131]:39750
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726724AbfGLO4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 10:56:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zTJ4tx4re0CD+61B+eAB9qljlN6sxw1DTjp4EyOJfXE=;
+ b=DnMIeFKacNMegcAGTZizagANDKGx/5WlTe/VMtGSBx1F3aQMbk02GstSkYhA0DER3CwIeyOm6sxSVHW1o4bmV31Qh02XJ5xFol+nwj9ye3OX8mnuubpa0ScIdzWGR8pShs3QBFLrKQ1FrLVs5376disH00DId4o5qKsRvsKeuJA=
+Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.16) by
+ AM6PR05MB5508.eurprd05.prod.outlook.com (20.177.119.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.20; Fri, 12 Jul 2019 14:55:59 +0000
+Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
+ ([fe80::c860:b386:22a:8ec9]) by AM6PR05MB6535.eurprd05.prod.outlook.com
+ ([fe80::c860:b386:22a:8ec9%6]) with mapi id 15.20.2073.008; Fri, 12 Jul 2019
+ 14:55:59 +0000
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH v3 0/6] VAG power control improvement for sgtl5000 codec
+Thread-Topic: [PATCH v3 0/6] VAG power control improvement for sgtl5000 codec
+Thread-Index: AQHVOMHqURHnTs/AN0OjdnZhj0q7OQ==
+Date:   Fri, 12 Jul 2019 14:55:58 +0000
+Message-ID: <20190712145550.27500-1-oleksandr.suvorov@toradex.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM4PR08CA0072.eurprd08.prod.outlook.com
+ (2603:10a6:205:2::43) To AM6PR05MB6535.eurprd05.prod.outlook.com
+ (2603:10a6:20b:71::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [194.105.145.90]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bc635a77-aa64-4002-958a-08d706d90cbd
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR05MB5508;
+x-ms-traffictypediagnostic: AM6PR05MB5508:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM6PR05MB550851E1DD04BE4BD50783ECF9F20@AM6PR05MB5508.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:236;
+x-forefront-prvs: 00963989E5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39850400004)(376002)(346002)(396003)(136003)(199004)(189003)(102836004)(186003)(66476007)(52116002)(305945005)(26005)(66946007)(64756008)(66446008)(6506007)(5660300002)(6436002)(86362001)(478600001)(1411001)(66556008)(53936002)(8676002)(386003)(7736002)(316002)(66066001)(1076003)(6916009)(54906003)(99286004)(50226002)(14454004)(36756003)(71200400001)(71190400001)(68736007)(6116002)(3846002)(486006)(6512007)(2616005)(6486002)(6306002)(2906002)(966005)(44832011)(8936002)(81166006)(81156014)(4326008)(476003)(256004)(14444005)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB5508;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: GFRzV/FWBAUwDvHIWPT8YIqfvVDhqj1jKs68oJR0Yi0wJ04LfYg7p1P/Vw3Il/C69rBW7luNQSnhuicJJdARcJWmb7NMeR4MsOe8XY+09lOzxv0IuOifeI2u+npxvo0I6749z16dg9oEkm7KjAKu3q9AFfeyohTm1BSz1LHXuK08sar7NIcI7FjzmpU2PxIohsOalGzEBOm8UnugQy8ZTeiwvV4dbz+pR0Ye0jYdGH0NnkDf+OgRhxNSixwFJxD5n8GCU/wVoRg9xZZJXe8X6bEIhQAmdCv26sj04OxdCJcLMVw5GAqa5Pn9CeWylmjp3YoLWrHPutB5QSmyuCme0f4a5iYQJW3L55mvRUK3aGH6e0htAQE7wafytVmpTQzVBmA8wG3EBg5xje/s0k4XOiwqSxjhjCsRGQgk/1B5n4o=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc635a77-aa64-4002-958a-08d706d90cbd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2019 14:55:58.9344
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oleksandr.suvorov@toradex.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5508
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/19 5:49 AM, Jarkko Sakkinen wrote:
-> There are some weird quirks when it comes to UEFI event log. Provide a
-> brief introduction to TPM event log mechanism and describe the quirks
-> and how they can be sorted out.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> v3: Add a section and use bullet list for references. Remove (invalid)
->     author info.
-> v2: Fixed one type, adjusted the last paragraph and added the file
 
-is that         typo  or type?
+VAG power control is improved to fit the manual [1]. This patchset fixes as
+minimum one bug: if customer muxes Headphone to Line-In right after boot,
+the VAG power remains off that leads to poor sound quality from line-in.
 
-(one more below)
+I.e. after boot:
+- Connect sound source to Line-In jack;
+- Connect headphone to HP jack;
+- Run following commands:
+$ amixer set 'Headphone' 80%
+$ amixer set 'Headphone Mux' LINE_IN
 
->     to index.rst
->  Documentation/security/tpm/index.rst         |  1 +
->  Documentation/security/tpm/tpm_event_log.rst | 55 ++++++++++++++++++++
->  2 files changed, 56 insertions(+)
->  create mode 100644 Documentation/security/tpm/tpm_event_log.rst
-> 
-> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-> index 15783668644f..9e0815cb1e7f 100644
-> --- a/Documentation/security/tpm/index.rst
-> +++ b/Documentation/security/tpm/index.rst
-> @@ -4,5 +4,6 @@ Trusted Platform Module documentation
->  
->  .. toctree::
->  
-> +   tpm_event_log
->     tpm_ftpm_tee
->     tpm_vtpm_proxy
-> diff --git a/Documentation/security/tpm/tpm_event_log.rst b/Documentation/security/tpm/tpm_event_log.rst
-> new file mode 100644
-> index 000000000000..068eeb659bb9
-> --- /dev/null
-> +++ b/Documentation/security/tpm/tpm_event_log.rst
-> @@ -0,0 +1,55 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=============
-> +TPM Event Log
-> +=============
-> +
-> +This document briefly describes what TPM log is and how it is handed
-> +over from the preboot firmware to the operating system.
-> +
-> +Introduction
-> +============
-> +
-> +The preboot firmware maintains an event log that gets new entries every
-> +time something gets hashed by it to any of the PCR registers. The events
-> +are segregated by their type and contain the value of the hashed PCR
-> +register. Typically, the preboot firmware will hash the components to
-> +who execution is to be handed over or actions relevant to the boot
-> +process.
-> +
-> +The main application for this is remote attestation and the reason why
-> +it is useful is nicely put in the very first section of [1]:
-> +
-> +"Attestation is used to provide information about the platform’s state
-> +to a challenger. However, PCR contents are difficult to interpret;
-> +therefore, attestation is typically more useful when the PCR contents
-> +are accompanied by a measurement log. While not trusted on their own,
-> +the measurement log contains a richer set of information than do the PCR
-> +contents. The PCR contents are used to provide the validation of the
-> +measurement log."
-> +
-> +UEFI event log
-> +==============
-> +
-> +UEFI provided event log has a few somewhat weird quirks.
-> +
-> +Before calling ExitBootServices() Linux EFI stub copies the event log to
-> +a custom configuration table defined by the stub itself. Unfortanely,
+Also this series includes fixes of non-important bugs in sgtl5000 codec
+driver.
 
-[again:]                                                    Unfortunately,
+[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
 
-> +the events generated by ExitBootServices() don't end up in the table.
-> +
-> +The firmware provides so called final events configuration table to sort
-> +out this issue. Events gets mirrored to this table after the first time
-> +EFI_TCG2_PROTOCOL.GetEventLog() gets called.
-> +
-> +This introduces another problem: nothing guarantees that it is not called
-> +before the Linux EFI stub gets to run. Thus, it needs to calculate and save the
-> +final events table size while the stub is still running to the custom
-> +configuration table so that the TPM driver can later on skip these events when
-> +concatenating two halves of the event log from the custom configuration table
-> +and the final events table.
-> +
-> +References
-> +==========
-> +
-> +- [1] https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
-> +- [2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
-> 
+Changes in v3:
+- Add the reference to NXP SGTL5000 data sheet to commit message
+- Fix multi-line comment format
+- Add the reference to NXP SGTL5000 data sheet to commit message
 
+Changes in v2:
+- Fix patch formatting
+- Fix patch formatting
+- Fix patch formatting
+- Fix patch formatting
+- Fix patch formatting
+- Fix patch formatting
 
--- 
-~Randy
+Oleksandr Suvorov (6):
+  ASoC: sgtl5000: Fix definition of VAG Ramp Control
+  ASoC: sgtl5000: add ADC mute control
+  ASoC: sgtl5000: Fix of unmute outputs on probe
+  ASoC: sgtl5000: Fix charge pump source assignment
+  ASoC: Define a set of DAPM pre/post-up events
+  ASoC: sgtl5000: Improve VAG power and mute control
+
+ include/sound/soc-dapm.h    |   2 +
+ sound/soc/codecs/sgtl5000.c | 251 ++++++++++++++++++++++++++++++------
+ sound/soc/codecs/sgtl5000.h |   2 +-
+ 3 files changed, 213 insertions(+), 42 deletions(-)
+
+--=20
+2.20.1
+
