@@ -2,100 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A92C2671C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C76671BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfGLO4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 10:56:23 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:42039 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbfGLO4R (ORCPT
+        id S1727304AbfGLOzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 10:55:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfGLOzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 10:56:17 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x6CEtk35021108
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 23:55:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6CEtk35021108
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562943347;
-        bh=6FhfPi35nywJuz76CvGaaD2GY6Th8cqwAFaZPK60WPg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OtEP9WddgHX8iLcY6+MtcE1Q7uNpmugN2+PC2T0RWqFd/ywXmy+L++42o2SMQIBWA
-         /1GcADf1FLaFVV1Xf/cHVW+BGkHcI8VyE5AQqyzHOowbv0e5EpqJnKFoGV1V8YJnRX
-         60Fwd30GrO1SHO6DZfIiUW5exAduKP8PTl3P469C3Yy9Bndh040EPgSVw/GSV4o6xw
-         zkx/KWmrdwVeGhKCmvMfL0F/NtNUXQ7ONhPbTYF1wvaTwc1ttwYQneER9LSvK49Qp7
-         Ih6aa4xkOdzY5xD2p0h0mkNkQd+QFCMnBEvFoc6Bp2R1O/0bj5ymmNL50sFjK9pExz
-         jkgr7JRmWh0Qg==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id v129so6844588vsb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 07:55:47 -0700 (PDT)
-X-Gm-Message-State: APjAAAXO8jGZp4jPLb3zDQBJGd27VvPiCJXtS/YxMkyYCnWChYs9Qfoq
-        D/RI1syLwYezJxazaaCxj45Vb2/P7xeC/rcK9wg=
-X-Google-Smtp-Source: APXvYqzQS0/29Qt4updS1sUcWeQlS15A6ishYNIxSYU+nuoKb9gD8iaF+UiiHqYuAcBI2W/oy3RUEwl/CswoBIzMSSE=
-X-Received: by 2002:a67:d46:: with SMTP id 67mr9042919vsn.181.1562943346190;
- Fri, 12 Jul 2019 07:55:46 -0700 (PDT)
+        Fri, 12 Jul 2019 10:55:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jyTpDF2cJguc7T2D7cN+higCLbj4x3NEYIIGAv7Vb1k=; b=d5q+mx+54zYN9fEzyPrr6e6Vn
+        P+OWHB81xK0z3+qq7SCsblGLnd3AIuBWLZO+8ZK/C8M7+LXeBC4T/0yyPKLV3LgbYMZD8LP42dMaR
+        2IIM9M5Zqu+Xu0JxZE+MzZIeriI/CapP7cTjO3VdiTwIN94g44p8vVr9UhhFoOr4jZEuZcaBkvFl4
+        18GFjroBpeu30gq9eVebugXvsVX+v7tn30COaNknA7ZlDAN8et9NsDu6ORa85NEDw4yG0fyHaHUq+
+        mVtrXsEfzksrItP+jJcDlg+J5+GKIJhEsoH+ZoUqPRrYhqsg2Lez4SgIkNoFqDkcQpCSPaoVO4vjK
+        r2N1yvaWA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlwxA-0008UU-2R; Fri, 12 Jul 2019 14:55:16 +0000
+Subject: Re: [PATCH v3] tpm: Document UEFI event log quirks
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     tweek@google.com, matthewgarrett@google.com,
+        jorhand@linux.microsoft.com, Jonathan Corbet <corbet@lwn.net>,
+        Sasha Levin <sashal@kernel.org>
+References: <20190712124912.23630-1-jarkko.sakkinen@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6c974f53-6dca-33fd-5aca-056ab8b274ed@infradead.org>
+Date:   Fri, 12 Jul 2019 07:55:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190712101556.17833-1-naohiro.aota@wdc.com> <20190712101556.17833-2-naohiro.aota@wdc.com>
-In-Reply-To: <20190712101556.17833-2-naohiro.aota@wdc.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 12 Jul 2019 23:55:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARj+ZAdQVBOEJfq3h22g20d8DH6h83=4giBOD-NqQoNjg@mail.gmail.com>
-Message-ID: <CAK7LNARj+ZAdQVBOEJfq3h22g20d8DH6h83=4giBOD-NqQoNjg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64/vdso: fix flip/flop vdso build bug
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Collingbourne <pcc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190712124912.23630-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 7:16 PM Naohiro Aota <naohiro.aota@wdc.com> wrote:
->
-> Running "make" on an already compiled kernel tree will rebuild the kernel
-> even without any modifications:
->
-> $ make ARCH=arm64 CROSS_COMPILE=/usr/bin/aarch64-unknown-linux-gnu-
-> arch/arm64/Makefile:58: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
->   CALL    scripts/checksyscalls.sh
->   CALL    scripts/atomic/check-atomics.sh
->   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
->   VDSOSYM include/generated/vdso-offsets.h
->   CHK     include/generated/compile.h
->   CC      arch/arm64/kernel/signal.o
->   CC      arch/arm64/kernel/vdso.o
->   CC      arch/arm64/kernel/signal32.o
->   LD      arch/arm64/kernel/vdso/vdso.so.dbg
->   OBJCOPY arch/arm64/kernel/vdso/vdso.so
->   AS      arch/arm64/kernel/vdso/vdso.o
->   AR      arch/arm64/kernel/vdso/built-in.a
->   AR      arch/arm64/kernel/built-in.a
->   GEN     .version
->   CHK     include/generated/compile.h
->   UPD     include/generated/compile.h
->   CC      init/version.o
->   AR      init/built-in.a
->   LD      vmlinux.o
->
-> This is the same bug fixed in commit 92a4728608a8 ("x86/boot: Fix
-> if_changed build flip/flop bug"). We cannot use two "if_changed" in one
-> target. Fix this build bug by merging two commands into one function.
->
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Fixes: 28b1a824a4f4 ("arm64: vdso: Substitute gettimeofday() with C implementation")
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+On 7/12/19 5:49 AM, Jarkko Sakkinen wrote:
+> There are some weird quirks when it comes to UEFI event log. Provide a
+> brief introduction to TPM event log mechanism and describe the quirks
+> and how they can be sorted out.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
+> v3: Add a section and use bullet list for references. Remove (invalid)
+>     author info.
+> v2: Fixed one type, adjusted the last paragraph and added the file
 
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+is that         typo  or type?
+
+(one more below)
+
+>     to index.rst
+>  Documentation/security/tpm/index.rst         |  1 +
+>  Documentation/security/tpm/tpm_event_log.rst | 55 ++++++++++++++++++++
+>  2 files changed, 56 insertions(+)
+>  create mode 100644 Documentation/security/tpm/tpm_event_log.rst
+> 
+> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
+> index 15783668644f..9e0815cb1e7f 100644
+> --- a/Documentation/security/tpm/index.rst
+> +++ b/Documentation/security/tpm/index.rst
+> @@ -4,5 +4,6 @@ Trusted Platform Module documentation
+>  
+>  .. toctree::
+>  
+> +   tpm_event_log
+>     tpm_ftpm_tee
+>     tpm_vtpm_proxy
+> diff --git a/Documentation/security/tpm/tpm_event_log.rst b/Documentation/security/tpm/tpm_event_log.rst
+> new file mode 100644
+> index 000000000000..068eeb659bb9
+> --- /dev/null
+> +++ b/Documentation/security/tpm/tpm_event_log.rst
+> @@ -0,0 +1,55 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=============
+> +TPM Event Log
+> +=============
+> +
+> +This document briefly describes what TPM log is and how it is handed
+> +over from the preboot firmware to the operating system.
+> +
+> +Introduction
+> +============
+> +
+> +The preboot firmware maintains an event log that gets new entries every
+> +time something gets hashed by it to any of the PCR registers. The events
+> +are segregated by their type and contain the value of the hashed PCR
+> +register. Typically, the preboot firmware will hash the components to
+> +who execution is to be handed over or actions relevant to the boot
+> +process.
+> +
+> +The main application for this is remote attestation and the reason why
+> +it is useful is nicely put in the very first section of [1]:
+> +
+> +"Attestation is used to provide information about the platform’s state
+> +to a challenger. However, PCR contents are difficult to interpret;
+> +therefore, attestation is typically more useful when the PCR contents
+> +are accompanied by a measurement log. While not trusted on their own,
+> +the measurement log contains a richer set of information than do the PCR
+> +contents. The PCR contents are used to provide the validation of the
+> +measurement log."
+> +
+> +UEFI event log
+> +==============
+> +
+> +UEFI provided event log has a few somewhat weird quirks.
+> +
+> +Before calling ExitBootServices() Linux EFI stub copies the event log to
+> +a custom configuration table defined by the stub itself. Unfortanely,
+
+[again:]                                                    Unfortunately,
+
+> +the events generated by ExitBootServices() don't end up in the table.
+> +
+> +The firmware provides so called final events configuration table to sort
+> +out this issue. Events gets mirrored to this table after the first time
+> +EFI_TCG2_PROTOCOL.GetEventLog() gets called.
+> +
+> +This introduces another problem: nothing guarantees that it is not called
+> +before the Linux EFI stub gets to run. Thus, it needs to calculate and save the
+> +final events table size while the stub is still running to the custom
+> +configuration table so that the TPM driver can later on skip these events when
+> +concatenating two halves of the event log from the custom configuration table
+> +and the final events table.
+> +
+> +References
+> +==========
+> +
+> +- [1] https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
+> +- [2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
+> 
 
 
 -- 
-Best Regards
-Masahiro Yamada
+~Randy
