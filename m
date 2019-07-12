@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA7B66CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3796366CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfGLMYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60152 "EHLO mail.kernel.org"
+        id S1727015AbfGLMYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:24:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfGLMX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:23:57 -0400
+        id S1728030AbfGLMYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:24:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E2862166E;
-        Fri, 12 Jul 2019 12:23:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7152216C8;
+        Fri, 12 Jul 2019 12:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934236;
-        bh=S8OJE4dmMOXk0Hedyoghw3G15wcBYwwVaW9O18Idrg0=;
+        s=default; t=1562934246;
+        bh=yoCpDKEXgc/jPOEZGenf4VgfdDgWReN7+VHm3FbOkeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rj90+PlYO68Te+W4/2rO0Uf6yTw9Evyq+T3yj0xz54fNpuwx2mR2pakLCOvtaSFI2
-         pzqjBZsnfShsqv1rPGmzC3hGQ6CC0RSfeEoFHQ7eVs7LXGyOOIt17TgBYD2gyz/iFG
-         dc3doFfiOmfCZ9TIMvxpBt3MXvlEq9YTivK4QK7E=
+        b=wuldkr+kidNEYC5lYHND0scGBghE21GGa49phyxA9njuZBMZ6JXSpzUKj4ka4deYq
+         Ayx6te3dig+CsGjALmnLI6G9J0JDIN1EXrTfjBsIfUj1Nr7mK/Cy3IzGgerpnodx1u
+         HfH5AIkVEkvHVr21V7q47MzOSm2CIQDLMT5lWrcU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Parschauer <s.parschauer@gmx.de>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 80/91] HID: Add another Primax PIXART OEM mouse quirk
-Date:   Fri, 12 Jul 2019 14:19:23 +0200
-Message-Id: <20190712121626.083727374@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 83/91] carl9170: fix misuse of device driver API
+Date:   Fri, 12 Jul 2019 14:19:26 +0200
+Message-Id: <20190712121626.215988016@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -43,46 +44,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Parschauer <s.parschauer@gmx.de>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-commit 4c12954965fdf33d8ae3883c1931fc29ca023cfb upstream.
+commit feb09b2933275a70917a869989ea2823e7356be8 upstream.
 
-The PixArt OEM mice are known for disconnecting every minute in
-runlevel 1 or 3 if they are not always polled. So add quirk
-ALWAYS_POLL for this Alienware branded Primax mouse as well.
+This patch follows Alan Stern's recent patch:
+"p54: Fix race between disconnect and firmware loading"
 
-Daniel Schepler (@dschepler) reported and tested the quirk.
-Reference: https://github.com/sriemer/fix-linux-mouse/issues/15
+that overhauled carl9170 buggy firmware loading and driver
+unbinding procedures.
 
-Signed-off-by: Sebastian Parschauer <s.parschauer@gmx.de>
-CC: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Since the carl9170 code was adapted from p54 it uses the
+same functions and is likely to have the same problem, but
+it's just that the syzbot hasn't reproduce them (yet).
+
+a summary from the changes (copied from the p54 patch):
+ * Call usb_driver_release_interface() rather than
+   device_release_driver().
+
+ * Lock udev (the interface's parent) before unbinding the
+   driver instead of locking udev->parent.
+
+ * During the firmware loading process, take a reference
+   to the USB interface instead of the USB device.
+
+ * Don't take an unnecessary reference to the device during
+   probe (and then don't drop it during disconnect).
+
+and
+
+ * Make sure to prevent use-after-free bugs by explicitly
+   setting the driver context to NULL after signaling the
+   completion.
+
+Cc: <stable@vger.kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-ids.h    |    1 +
- drivers/hid/hid-quirks.c |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/wireless/ath/carl9170/usb.c |   39 +++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1212,6 +1212,7 @@
- #define USB_DEVICE_ID_PRIMAX_KEYBOARD	0x4e05
- #define USB_DEVICE_ID_PRIMAX_REZEL	0x4e72
- #define USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4D0F	0x4d0f
-+#define USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4D65	0x4d65
- #define USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4E22	0x4e22
+--- a/drivers/net/wireless/ath/carl9170/usb.c
++++ b/drivers/net/wireless/ath/carl9170/usb.c
+@@ -128,6 +128,8 @@ static const struct usb_device_id carl91
+ };
+ MODULE_DEVICE_TABLE(usb, carl9170_usb_ids);
  
++static struct usb_driver carl9170_driver;
++
+ static void carl9170_usb_submit_data_urb(struct ar9170 *ar)
+ {
+ 	struct urb *urb;
+@@ -966,32 +968,28 @@ err_out:
  
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -131,6 +131,7 @@ static const struct hid_device_id hid_qu
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PIXART, USB_DEVICE_ID_PIXART_USB_OPTICAL_MOUSE), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_MOUSE_4D22), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4D0F), HID_QUIRK_ALWAYS_POLL },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4D65), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_PIXART_MOUSE_4E22), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PRODIGE, USB_DEVICE_ID_PRODIGE_CORDLESS), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_QUANTA, USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3001), HID_QUIRK_NOGET },
+ static void carl9170_usb_firmware_failed(struct ar9170 *ar)
+ {
+-	struct device *parent = ar->udev->dev.parent;
+-	struct usb_device *udev;
+-
+-	/*
+-	 * Store a copy of the usb_device pointer locally.
+-	 * This is because device_release_driver initiates
+-	 * carl9170_usb_disconnect, which in turn frees our
+-	 * driver context (ar).
++	/* Store a copies of the usb_interface and usb_device pointer locally.
++	 * This is because release_driver initiates carl9170_usb_disconnect,
++	 * which in turn frees our driver context (ar).
+ 	 */
+-	udev = ar->udev;
++	struct usb_interface *intf = ar->intf;
++	struct usb_device *udev = ar->udev;
+ 
+ 	complete(&ar->fw_load_wait);
++	/* at this point 'ar' could be already freed. Don't use it anymore */
++	ar = NULL;
+ 
+ 	/* unbind anything failed */
+-	if (parent)
+-		device_lock(parent);
+-
+-	device_release_driver(&udev->dev);
+-	if (parent)
+-		device_unlock(parent);
++	usb_lock_device(udev);
++	usb_driver_release_interface(&carl9170_driver, intf);
++	usb_unlock_device(udev);
+ 
+-	usb_put_dev(udev);
++	usb_put_intf(intf);
+ }
+ 
+ static void carl9170_usb_firmware_finish(struct ar9170 *ar)
+ {
++	struct usb_interface *intf = ar->intf;
+ 	int err;
+ 
+ 	err = carl9170_parse_firmware(ar);
+@@ -1009,7 +1007,7 @@ static void carl9170_usb_firmware_finish
+ 		goto err_unrx;
+ 
+ 	complete(&ar->fw_load_wait);
+-	usb_put_dev(ar->udev);
++	usb_put_intf(intf);
+ 	return;
+ 
+ err_unrx:
+@@ -1052,7 +1050,6 @@ static int carl9170_usb_probe(struct usb
+ 		return PTR_ERR(ar);
+ 
+ 	udev = interface_to_usbdev(intf);
+-	usb_get_dev(udev);
+ 	ar->udev = udev;
+ 	ar->intf = intf;
+ 	ar->features = id->driver_info;
+@@ -1094,15 +1091,14 @@ static int carl9170_usb_probe(struct usb
+ 	atomic_set(&ar->rx_anch_urbs, 0);
+ 	atomic_set(&ar->rx_pool_urbs, 0);
+ 
+-	usb_get_dev(ar->udev);
++	usb_get_intf(intf);
+ 
+ 	carl9170_set_state(ar, CARL9170_STOPPED);
+ 
+ 	err = request_firmware_nowait(THIS_MODULE, 1, CARL9170FW_NAME,
+ 		&ar->udev->dev, GFP_KERNEL, ar, carl9170_usb_firmware_step2);
+ 	if (err) {
+-		usb_put_dev(udev);
+-		usb_put_dev(udev);
++		usb_put_intf(intf);
+ 		carl9170_free(ar);
+ 	}
+ 	return err;
+@@ -1131,7 +1127,6 @@ static void carl9170_usb_disconnect(stru
+ 
+ 	carl9170_release_firmware(ar);
+ 	carl9170_free(ar);
+-	usb_put_dev(udev);
+ }
+ 
+ #ifdef CONFIG_PM
 
 
