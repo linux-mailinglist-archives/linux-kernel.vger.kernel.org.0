@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE30266E5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A9C66DBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbfGLM3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:29:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43682 "EHLO mail.kernel.org"
+        id S1728954AbfGLMdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:33:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728930AbfGLM3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:29:04 -0400
+        id S1729577AbfGLMdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:33:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10CD6216B7;
-        Fri, 12 Jul 2019 12:29:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD4EB2166E;
+        Fri, 12 Jul 2019 12:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934543;
-        bh=rpOhO19P5RxT3c4tT3PD9onp8/BeCGDabR7yxt779pI=;
+        s=default; t=1562934786;
+        bh=w2Mla/p4PjybQS54QgZANvsxxpQKNbj0heX9OK1ESHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o14FGZYNhuU6VuRT+RVqO8E8nKpxkFsmuq8fH+CKk80jmymHUZ2qxR5v0zYOsIqTW
-         RSHKUiDKRPEiz2GiMAKkL9xllE1BFxxH7LdATZn+34o0lPBmhBu3ama+kGpSSpAyXL
-         m5PvGkfpDSE+ldfKakTBAOWUkppT7NX0l5MHKT/M=
+        b=TYimfjnh2V9k3UJQegLwJ4frvue3cKKAfSnkLdQVJ0qWn6bacrkNOmo+taB3/zf9R
+         m5S50QscL7OszjzYSFQuOXMeUT74LWJLXTYUbmWlWEwVvt1G6jyfhvPj4F3LmHT4nW
+         0lQ4tjhDuK7yGA1+MJTINsIEh/Qqsed/0z1lUx5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Sauer <ensonic@hora-obscura.de>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 091/138] ALSA: usb-audio: Fix parse of UAC2 Extension Units
-Date:   Fri, 12 Jul 2019 14:19:15 +0200
-Message-Id: <20190712121632.252081640@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.2 03/61] crypto: talitos - rename alternative AEAD algos.
+Date:   Fri, 12 Jul 2019 14:19:16 +0200
+Message-Id: <20190712121620.802125011@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
+References: <20190712121620.632595223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,133 +43,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit ca95c7bf3d29716916baccdc77c3c2284b703069 upstream.
+commit a1a42f84011fae6ff08441a91aefeb7febc984fc upstream.
 
-Extension Unit (XU) is used to have a compatible layout with
-Processing Unit (PU) on UAC1, and the usb-audio driver code assumed it
-for parsing the descriptors.  Meanwhile, on UAC2, XU became slightly
-incompatible with PU; namely, XU has a one-byte bmControls bitmap
-while PU has two bytes bmControls bitmap.  This incompatibility
-results in the read of a wrong address for the last iExtension field,
-which ended up with an incorrect string for the mixer element name, as
-recently reported for Focusrite Scarlett 18i20 device.
+The talitos driver has two ways to perform AEAD depending on the
+HW capability. Some HW support both. It is needed to give them
+different names to distingish which one it is for instance when
+a test fails.
 
-This patch corrects this misalignment by introducing a couple of new
-macros and calling them depending on the descriptor type.
-
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Reported-by: Stefan Sauer <ensonic@hora-obscura.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 7405c8d7ff97 ("crypto: talitos - templates for AEAD using HMAC_SNOOP_NO_AFEU")
+Cc: stable@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/usb/audio.h |   37 +++++++++++++++++++++++++++++++++++++
- sound/usb/mixer.c              |   16 ++++++++++------
- 2 files changed, 47 insertions(+), 6 deletions(-)
+ drivers/crypto/talitos.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/include/uapi/linux/usb/audio.h
-+++ b/include/uapi/linux/usb/audio.h
-@@ -450,6 +450,43 @@ static inline __u8 *uac_processing_unit_
- 	}
- }
- 
-+/*
-+ * Extension Unit (XU) has almost compatible layout with Processing Unit, but
-+ * on UAC2, it has a different bmControls size (bControlSize); it's 1 byte for
-+ * XU while 2 bytes for PU.  The last iExtension field is a one-byte index as
-+ * well as iProcessing field of PU.
-+ */
-+static inline __u8 uac_extension_unit_bControlSize(struct uac_processing_unit_descriptor *desc,
-+						   int protocol)
-+{
-+	switch (protocol) {
-+	case UAC_VERSION_1:
-+		return desc->baSourceID[desc->bNrInPins + 4];
-+	case UAC_VERSION_2:
-+		return 1; /* in UAC2, this value is constant */
-+	case UAC_VERSION_3:
-+		return 4; /* in UAC3, this value is constant */
-+	default:
-+		return 1;
-+	}
-+}
-+
-+static inline __u8 uac_extension_unit_iExtension(struct uac_processing_unit_descriptor *desc,
-+						 int protocol)
-+{
-+	__u8 control_size = uac_extension_unit_bControlSize(desc, protocol);
-+
-+	switch (protocol) {
-+	case UAC_VERSION_1:
-+	case UAC_VERSION_2:
-+	default:
-+		return *(uac_processing_unit_bmControls(desc, protocol)
-+			 + control_size);
-+	case UAC_VERSION_3:
-+		return 0; /* UAC3 does not have this field */
-+	}
-+}
-+
- /* 4.5.2 Class-Specific AS Interface Descriptor */
- struct uac1_as_header_descriptor {
- 	__u8  bLength;			/* in bytes: 7 */
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2318,7 +2318,7 @@ static struct procunit_info extunits[] =
-  */
- static int build_audio_procunit(struct mixer_build *state, int unitid,
- 				void *raw_desc, struct procunit_info *list,
--				char *name)
-+				bool extension_unit)
- {
- 	struct uac_processing_unit_descriptor *desc = raw_desc;
- 	int num_ins;
-@@ -2335,6 +2335,8 @@ static int build_audio_procunit(struct m
- 	static struct procunit_info default_info = {
- 		0, NULL, default_value_info
- 	};
-+	const char *name = extension_unit ?
-+		"Extension Unit" : "Processing Unit";
- 
- 	if (desc->bLength < 13) {
- 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
-@@ -2448,7 +2450,10 @@ static int build_audio_procunit(struct m
- 		} else if (info->name) {
- 			strlcpy(kctl->id.name, info->name, sizeof(kctl->id.name));
- 		} else {
--			nameid = uac_processing_unit_iProcessing(desc, state->mixer->protocol);
-+			if (extension_unit)
-+				nameid = uac_extension_unit_iExtension(desc, state->mixer->protocol);
-+			else
-+				nameid = uac_processing_unit_iProcessing(desc, state->mixer->protocol);
- 			len = 0;
- 			if (nameid)
- 				len = snd_usb_copy_string_desc(state->chip,
-@@ -2481,10 +2486,10 @@ static int parse_audio_processing_unit(s
- 	case UAC_VERSION_2:
- 	default:
- 		return build_audio_procunit(state, unitid, raw_desc,
--				procunits, "Processing Unit");
-+					    procunits, false);
- 	case UAC_VERSION_3:
- 		return build_audio_procunit(state, unitid, raw_desc,
--				uac3_procunits, "Processing Unit");
-+					    uac3_procunits, false);
- 	}
- }
- 
-@@ -2495,8 +2500,7 @@ static int parse_audio_extension_unit(st
- 	 * Note that we parse extension units with processing unit descriptors.
- 	 * That's ok as the layout is the same.
- 	 */
--	return build_audio_procunit(state, unitid, raw_desc,
--				    extunits, "Extension Unit");
-+	return build_audio_procunit(state, unitid, raw_desc, extunits, true);
- }
- 
- /*
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -2352,7 +2352,7 @@ static struct talitos_alg_template drive
+ 			.base = {
+ 				.cra_name = "authenc(hmac(sha1),cbc(aes))",
+ 				.cra_driver_name = "authenc-hmac-sha1-"
+-						   "cbc-aes-talitos",
++						   "cbc-aes-talitos-hsna",
+ 				.cra_blocksize = AES_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2397,7 +2397,7 @@ static struct talitos_alg_template drive
+ 				.cra_name = "authenc(hmac(sha1),"
+ 					    "cbc(des3_ede))",
+ 				.cra_driver_name = "authenc-hmac-sha1-"
+-						   "cbc-3des-talitos",
++						   "cbc-3des-talitos-hsna",
+ 				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2440,7 +2440,7 @@ static struct talitos_alg_template drive
+ 			.base = {
+ 				.cra_name = "authenc(hmac(sha224),cbc(aes))",
+ 				.cra_driver_name = "authenc-hmac-sha224-"
+-						   "cbc-aes-talitos",
++						   "cbc-aes-talitos-hsna",
+ 				.cra_blocksize = AES_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2485,7 +2485,7 @@ static struct talitos_alg_template drive
+ 				.cra_name = "authenc(hmac(sha224),"
+ 					    "cbc(des3_ede))",
+ 				.cra_driver_name = "authenc-hmac-sha224-"
+-						   "cbc-3des-talitos",
++						   "cbc-3des-talitos-hsna",
+ 				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2528,7 +2528,7 @@ static struct talitos_alg_template drive
+ 			.base = {
+ 				.cra_name = "authenc(hmac(sha256),cbc(aes))",
+ 				.cra_driver_name = "authenc-hmac-sha256-"
+-						   "cbc-aes-talitos",
++						   "cbc-aes-talitos-hsna",
+ 				.cra_blocksize = AES_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2573,7 +2573,7 @@ static struct talitos_alg_template drive
+ 				.cra_name = "authenc(hmac(sha256),"
+ 					    "cbc(des3_ede))",
+ 				.cra_driver_name = "authenc-hmac-sha256-"
+-						   "cbc-3des-talitos",
++						   "cbc-3des-talitos-hsna",
+ 				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2702,7 +2702,7 @@ static struct talitos_alg_template drive
+ 			.base = {
+ 				.cra_name = "authenc(hmac(md5),cbc(aes))",
+ 				.cra_driver_name = "authenc-hmac-md5-"
+-						   "cbc-aes-talitos",
++						   "cbc-aes-talitos-hsna",
+ 				.cra_blocksize = AES_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
+@@ -2745,7 +2745,7 @@ static struct talitos_alg_template drive
+ 			.base = {
+ 				.cra_name = "authenc(hmac(md5),cbc(des3_ede))",
+ 				.cra_driver_name = "authenc-hmac-md5-"
+-						   "cbc-3des-talitos",
++						   "cbc-3des-talitos-hsna",
+ 				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
+ 				.cra_flags = CRYPTO_ALG_ASYNC,
+ 			},
 
 
