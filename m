@@ -2,87 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E0666FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D13366FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfGLNJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 09:09:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36732 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbfGLNJZ (ORCPT
+        id S1727756AbfGLNKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 09:10:37 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38300 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbfGLNKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 09:09:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RoZ9NwrBVujcpsAvtIUW8qVulCLJLVw22pbbzzk1gqI=; b=qtSyw2tgioP0MTUAKB5BWB0bt
-        HZPhunYUqGQQ9wiLBRzPovUQQ/niRKOLhDBBcSKReSIE1w6VCx6OqDxBE/z3UMiHoNt2aLsb9L2aS
-        jmgQPE/TMEvmYmPDTzWQP/1osZ/srt9yeZ3y9OOsC0iKx9YW5nY3wXiI6UR7+2Nkld74EwAHFhYMn
-        EYftcLFpid0YlUG7gwKti7QE6USxah1Qe6GlepNAVH7oNGskDH3o12IEaXVgYAn8Sji8M4DTCCLD1
-        LIuCdR8VbRYlDDmBoQSVWD0MTVtWQ6f3HXB1TY/8tIoRcxsLohVivLT+DX6GeG/Y3zef1X/jefIBT
-        WVeTxAYLg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlvIc-00078I-FO; Fri, 12 Jul 2019 13:09:18 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DBACE2097730C; Fri, 12 Jul 2019 15:09:16 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 15:09:16 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, srinivas.eeda@oracle.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
+        Fri, 12 Jul 2019 09:10:36 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlvJN-0007n9-6P; Fri, 12 Jul 2019 13:10:05 +0000
+Date:   Fri, 12 Jul 2019 14:10:05 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v2] xen/pv: Fix a boot up hang revealed by int3 self test
-Message-ID: <20190712130916.GR3419@hirez.programming.kicks-ass.net>
-References: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
- <20190712120626.GW3402@hirez.programming.kicks-ass.net>
- <a5f5ea4c-f30d-122e-0161-be7b1cb4877c@oracle.com>
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
+Message-ID: <20190712131005.GM17978@ZenIV.linux.org.uk>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-2-cyphar@cyphar.com>
+ <20190712041454.GG17978@ZenIV.linux.org.uk>
+ <20190712122017.xkowq2cjreylpotm@yavin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5f5ea4c-f30d-122e-0161-be7b1cb4877c@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190712122017.xkowq2cjreylpotm@yavin>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 09:04:22PM +0800, Zhenzhong Duan wrote:
+On Fri, Jul 12, 2019 at 10:20:17PM +1000, Aleksa Sarai wrote:
+> On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
+> > > @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+> > >  	p->stack = p->internal;
+> > >  	p->dfd = dfd;
+> > >  	p->name = name;
+> > > -	p->total_link_count = old ? old->total_link_count : 0;
+> > > +	p->total_link_count = 0;
+> > > +	p->acc_mode = 0;
+> > > +	p->opath_mask = FMODE_PATH_READ | FMODE_PATH_WRITE;
+> > > +	if (old) {
+> > > +		p->total_link_count = old->total_link_count;
+> > > +		p->acc_mode = old->acc_mode;
+> > > +		p->opath_mask = old->opath_mask;
+> > > +	}
+> > 
+> > Huh?  Could somebody explain why traversals of NFS4 referrals should inherit
+> > ->acc_mode and ->opath_mask?
 > 
-> On 2019/7/12 20:06, Peter Zijlstra wrote:
-> > On Thu, Jul 11, 2019 at 04:15:21PM +0800, Zhenzhong Duan wrote:
-> > > diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> > > index 4722ba2..2138d69 100644
-> > > --- a/arch/x86/xen/enlighten_pv.c
-> > > +++ b/arch/x86/xen/enlighten_pv.c
-> > > @@ -596,7 +596,7 @@ struct trap_array_entry {
-> > >   static struct trap_array_entry trap_array[] = {
-> > >   	{ debug,                       xen_xendebug,                    true },
-> > > -	{ int3,                        xen_xenint3,                     true },
-> > > +	{ int3,                        xen_int3,                        true },
-> > >   	{ double_fault,                xen_double_fault,                true },
-> > >   #ifdef CONFIG_X86_MCE
-> > >   	{ machine_check,               xen_machine_check,               true },
-> > I'm confused on the purpose of trap_array[], could you elucidate me?
-> 
-> Used to replace trap handler addresses by Xen specific ones and sanity check
-> 
-> if there's an unexpected IST-using fault handler.
+> I'll be honest -- I don't understand what set_nameidata() did so I just
+> did what I thought would be an obvious change (to just copy the
+> contents). I thought it was related to some aspect of the symlink stack
+> handling.
 
-git grep xen_int3, failed me. Where does that symbol come from?
+No.  It's handling of (very rare) nested pathwalk.  The only case I can think
+of is handling of NFS4 referrals - they are triggered by ->d_automount()
+and include NFS4 mount.  Which does internal pathwalk of its own, to get
+to the root of subtree being automounted.
 
-> > The sole user seems to be get_trap_addr() and that talks about ISTs, but
-> > #BP isn't an IST anymore, so why does it have ist_okay=true?
-> 
-> Oh, yes, I missed that boolean, thanks. I'll try ist_okey=false for int3 and
-> test it tomorrow.
+NFS has its own recursion protection on that path (no deeper nesting than
+one level of referral traversals), but there some nesting is inevitable;
+we do get another nameidata instance on stack.  And for nd_jump_link() we
+need to keep track of the innermost one.
 
-Thanks!
+For symlinks nothing of that sort happens - they are dealt with on the same
+struct nameidata.  ->total_link_count copying is there for one reason only -
+we want the total amount of symlinks traversed during the pathwalk (including
+the referral processing, etc.) to count towards MAXSYMLINKS check.  It could've
+been moved from nameidata to task_struct, but it's cheaper to handle it that
+way.
+
+Again, nesting is *rare*.
+
+> In that case, should they both be set to 0 on set_nameidata()? This will
+> mean that fd re-opening (or magic-link opening) through a
+> set_nameidata() would always fail.
+
+Huh?  set_nameidata() is done for *all* instances - it's pretty much the
+constructor of that object (and restore_nameidata() - a destructor).
+Everything goes through it.
+
+And again, I'm not sure we want these fields in nameidata - IMO they belong
+in open_flags.  Things like e.g. stat() don't need them at all.
+
+Incidentally, O_PATH opening of symlinks combined with subsequent procfs
+symlink traversals is worth testing - that's where the things get subtle
+and that's where it's easy to get in trouble on modifications.
