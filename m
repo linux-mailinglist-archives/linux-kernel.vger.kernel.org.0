@@ -2,58 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B274671FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 119D367211
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfGLPLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 11:11:33 -0400
-Received: from verein.lst.de ([213.95.11.211]:38899 "EHLO verein.lst.de"
+        id S1727127AbfGLPNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 11:13:01 -0400
+Received: from mga04.intel.com ([192.55.52.120]:26427 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbfGLPLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 11:11:32 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 7887F227A81; Fri, 12 Jul 2019 17:11:29 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 17:11:29 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86
- arch code
-Message-ID: <20190712151129.GA30636@lst.de>
-References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-4-bauerman@linux.ibm.com> <20190712150912.3097215e.pasic@linux.ibm.com> <20190712140812.GA29628@lst.de> <20190712165153.78d49095.pasic@linux.ibm.com>
+        id S1726318AbfGLPNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 11:13:01 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 08:13:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,483,1557212400"; 
+   d="scan'208";a="171580427"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by orsmga006.jf.intel.com with ESMTP; 12 Jul 2019 08:13:00 -0700
+Date:   Fri, 12 Jul 2019 08:13:00 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Tao Xu <tao3.xu@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
+        jingqi.liu@intel.com
+Subject: Re: [PATCH v7 1/3] KVM: x86: add support for user wait instructions
+Message-ID: <20190712151300.GB29659@linux.intel.com>
+References: <20190712082907.29137-1-tao3.xu@intel.com>
+ <20190712082907.29137-2-tao3.xu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190712165153.78d49095.pasic@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190712082907.29137-2-tao3.xu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 04:51:53PM +0200, Halil Pasic wrote:
-> Thank you very much! I will have another look, but it seems to me,
-> without further measures taken, this would break protected virtualization
-> support on s390. The effect of the che for s390 is that
-> force_dma_unencrypted() will always return false instead calling into
-> the platform code like it did before the patch, right?
-> 
-> Should I send a  Fixes: e67a5ed1f86f "dma-direct: Force unencrypted DMA
-> under SME for certain DMA masks" (Tom Lendacky, 2019-07-10) patch that
-> rectifies things for s390 or how do we want handle this?
+On Fri, Jul 12, 2019 at 04:29:05PM +0800, Tao Xu wrote:
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 46af3a5e9209..a4d5da34b306 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -2048,6 +2048,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+>  				  SECONDARY_EXEC_ENABLE_INVPCID |
+>  				  SECONDARY_EXEC_RDTSCP |
+>  				  SECONDARY_EXEC_XSAVES |
+> +				  SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
+>  				  SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY |
+>  				  SECONDARY_EXEC_APIC_REGISTER_VIRT |
+>  				  SECONDARY_EXEC_ENABLE_VMFUNC);
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index d98eac371c0a..f411c9ae5589 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2247,6 +2247,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
+>  			SECONDARY_EXEC_RDRAND_EXITING |
+>  			SECONDARY_EXEC_ENABLE_PML |
+>  			SECONDARY_EXEC_TSC_SCALING |
+> +			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
+>  			SECONDARY_EXEC_PT_USE_GPA |
+>  			SECONDARY_EXEC_PT_CONCEAL_VMX |
+>  			SECONDARY_EXEC_ENABLE_VMFUNC |
+> @@ -3984,6 +3985,25 @@ static void vmx_compute_secondary_exec_control(struct vcpu_vmx *vmx)
+>  		}
+>  	}
+>  
+> +	if (vmcs_config.cpu_based_2nd_exec_ctrl &
+> +		SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE) {
 
-Yes, please do.  I hadn't noticed the s390 support had landed in
-mainline already.
+This should be aligned with the beginning of the conditional.
+Alternatively, add a vmx_waitpkg_supported() helper, which is fairly
+ubiquitous even when there is only a single call site.
+
+> +		/* Exposing WAITPKG only when WAITPKG is exposed */
+No need for this comment.  It's also oddly worded, e.g. the second
+"exposed" should probably be "enabled"?
+
+> +		bool waitpkg_enabled =
+> +			guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG);
+> +
+> +		if (!waitpkg_enabled)
+> +			exec_control &= ~SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE;
+> +
+> +		if (nested) {
+> +			if (waitpkg_enabled)
+> +				vmx->nested.msrs.secondary_ctls_high |=
+> +					SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE;
+> +			else
+> +				vmx->nested.msrs.secondary_ctls_high &=
+> +					~SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE;
+> +		}
+> +	}
+> +
+>  	vmx->secondary_exec_control = exec_control;
+>  }
+>  
+> -- 
+> 2.20.1
+> 
