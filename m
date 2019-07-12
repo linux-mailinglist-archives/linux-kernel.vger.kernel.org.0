@@ -2,107 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF1C66368
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 03:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FABA6637F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 03:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfGLBnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 21:43:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:60694 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728497AbfGLBnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 21:43:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 18:43:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,480,1557212400"; 
-   d="scan'208";a="171416921"
-Received: from intel10-debian.sh.intel.com ([10.239.53.1])
-  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2019 18:43:37 -0700
-From:   Zhengjun Xing <zhengjun.xing@linux.intel.com>
-To:     rostedt@goodmis.org, mingo@redhat.com, tom.zanussi@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, zhengjun.xing@linux.intel.com,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH v3] trace:Add "gfp_t" support in synthetic_events
-Date:   Fri, 12 Jul 2019 09:53:08 +0800
-Message-Id: <20190712015308.9908-1-zhengjun.xing@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
+        id S1729340AbfGLByL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 21:54:11 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:58997 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729313AbfGLByK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 21:54:10 -0400
+X-UUID: 4d6d757b1aab4299bc5ad7308f3dc51c-20190712
+X-UUID: 4d6d757b1aab4299bc5ad7308f3dc51c-20190712
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1804235620; Fri, 12 Jul 2019 09:54:00 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 12 Jul
+ 2019 09:53:55 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 12 Jul 2019 09:53:54 +0800
+Message-ID: <1562896434.32589.26.camel@mhfsdcap03>
+Subject: Re: [PATCH 3/5] dt-bindings: usb: mtk-xhci: add an optional xhci_ck
+ clock
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Mathias Nyman" <mathias.nyman@intel.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jumin Li <jumin.li@mediatek.com>
+Date:   Fri, 12 Jul 2019 09:53:54 +0800
+In-Reply-To: <20190709142235.GA11951@bogus>
+References: <5e06482a0be15476c7b5825f155accf98275afa8.1560246390.git.chunfeng.yun@mediatek.com>
+         <9b6ad8dee142d73b56d653ecb7475c4ed28e5eb8.1560246390.git.chunfeng.yun@mediatek.com>
+         <20190709142235.GA11951@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: AD446FD5990E933C4FDE78939AF1A0F49FEC44906C060D90748162CC59974F922000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "gfp_t" support in synthetic_events, then the "gfp_t" type
-parameter in some functions can be traced.
+On Tue, 2019-07-09 at 08:22 -0600, Rob Herring wrote:
+> On Wed, Jun 12, 2019 at 01:55:19PM +0800, Chunfeng Yun wrote:
+> > Add a new optional clock xhci_ck
+> > 
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+> > index 266c2d917a28..91c0704b586b 100644
+> > --- a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+> > +++ b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+> > @@ -29,6 +29,7 @@ Required properties:
+> >  	"sys_ck": controller clock used by normal mode,
+> >  	the following ones are optional:
+> >  	"ref_ck": reference clock used by low power mode etc,
+> > +	"xhci_ck": controller clock,
+> >  	"mcu_ck": mcu_bus clock for register access,
+> >  	"dma_ck": dma_bus clock for data transfer by DMA
+> 
+> A new clock should go at the end to stay backwards compatible.
+Ok, will fix it, thanks
+> 
+> >  
+> > @@ -100,7 +101,7 @@ Required properties:
+> >   - clocks : a list of phandle + clock-specifier pairs, one for each
+> >  	entry in clock-names
+> >   - clock-names : must contain "sys_ck", and the following ones are optional:
+> > -	"ref_ck", "mcu_ck" and "dma_ck"
+> > +	"ref_ck", "xhci_ck", "mcu_ck" and "dma_ck"
+> >  
+> >  Optional properties:
+> >   - vbus-supply : reference to the VBUS regulator;
+> > -- 
+> > 2.21.0
+> > 
 
-Prints the gfp flags as hex in addition to the human-readable flag
-string.  Example output:
-
-  whoopsie-630 [000] ...1 78.969452: testevent: bar=b20 (GFP_ATOMIC|__GFP_ZERO)
-    rcuc/0-11  [000] ...1 81.097555: testevent: bar=a20 (GFP_ATOMIC)
-    rcuc/0-11  [000] ...1 81.583123: testevent: bar=a20 (GFP_ATOMIC)
-
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
----
- kernel/trace/trace_events_hist.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ca6b0dff60c5..30f0f32aca62 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -13,6 +13,10 @@
- #include <linux/rculist.h>
- #include <linux/tracefs.h>
- 
-+/* for gfp flag names */
-+#include <linux/trace_events.h>
-+#include <trace/events/mmflags.h>
-+
- #include "tracing_map.h"
- #include "trace.h"
- #include "trace_dynevent.h"
-@@ -752,6 +756,8 @@ static int synth_field_size(char *type)
- 		size = sizeof(unsigned long);
- 	else if (strcmp(type, "pid_t") == 0)
- 		size = sizeof(pid_t);
-+	else if (strcmp(type, "gfp_t") == 0)
-+		size = sizeof(gfp_t);
- 	else if (synth_field_is_string(type))
- 		size = synth_field_string_size(type);
- 
-@@ -792,6 +798,8 @@ static const char *synth_field_fmt(char *type)
- 		fmt = "%lu";
- 	else if (strcmp(type, "pid_t") == 0)
- 		fmt = "%d";
-+	else if (strcmp(type, "gfp_t") == 0)
-+		fmt = "%x";
- 	else if (synth_field_is_string(type))
- 		fmt = "%s";
- 
-@@ -834,9 +842,20 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 					 i == se->n_fields - 1 ? "" : " ");
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
-+			struct trace_print_flags __flags[] = {
-+			    __def_gfpflag_names, {-1, NULL} };
-+
- 			trace_seq_printf(s, print_fmt, se->fields[i]->name,
- 					 entry->fields[n_u64],
- 					 i == se->n_fields - 1 ? "" : " ");
-+
-+			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
-+				trace_seq_puts(s, " (");
-+				trace_print_flags_seq(s, "|",
-+						      entry->fields[n_u64],
-+						      __flags);
-+				trace_seq_putc(s, ')');
-+			}
- 			n_u64++;
- 		}
- 	}
--- 
-2.14.1
 
