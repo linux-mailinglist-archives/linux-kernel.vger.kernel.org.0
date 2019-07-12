@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B2466EF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 739E466EE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfGLMmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:42:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54274 "EHLO mail.kernel.org"
+        id S1727495AbfGLMU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbfGLMUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:46 -0400
+        id S1727482AbfGLMU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:20:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F05F5208E4;
-        Fri, 12 Jul 2019 12:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8D31208E4;
+        Fri, 12 Jul 2019 12:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934045;
-        bh=8/Qz2aX3souvgmyffd9xNLg5D2ae/5yYYya+OBpprt0=;
+        s=default; t=1562934055;
+        bh=AyMrDlvK9JOOsXx47vtxuqCDRX8Yg+Jq+LLv0NVejhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fl8w3hEZonKQR3SM1q7tyyLu6MYw6WcKEoXqs6Hejmqi9ACMLzKu4fZQr3Phfulto
-         PMRRxhNYqcm1QZHcDzxs13QD2R3kpBkMf/sBZB+BIa7QjlFMEE9WUpWww/7TIgR3Qi
-         4iccRz8htoRi3YmZLVJXwAbASwazTgI/7NYxxOOM=
+        b=2n+iyTbdl3wElYHCXQAuyDVu22w1mpU+gE9IM9XvY/5dQ7D0ZdNhFNWdKjiKJhZ9H
+         q97Sh9Xo9oX7ZTTd3eaMSJo1C8dJKycHM0ZAt+HUTSGkCu/txcqTvXHpQClqReoyye
+         Gfr6LN9xvPTsG+DP2sFk1w2EBB9GoAOGA+O8KS9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>,
+        stable@vger.kernel.org, Nick Hu <nickhu@andestech.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/91] drm/vmwgfx: Honor the sg list segment size limitation
-Date:   Fri, 12 Jul 2019 14:18:31 +0200
-Message-Id: <20190712121622.896948621@linuxfoundation.org>
+Subject: [PATCH 4.19 30/91] riscv: Fix udelay in RV32.
+Date:   Fri, 12 Jul 2019 14:18:33 +0200
+Message-Id: <20190712121622.986765867@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -44,38 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bde15555ba61c7f664f40fd3c6fdbdb63f784c9b ]
+[ Upstream commit d0e1f2110a5eeb6e410b2dd37d98bc5b30da7bc7 ]
 
-When building sg tables, honor the device sg list segment size limitation.
+In RV32, udelay would delay the wrong cycle. When it shifts right
+"UDELAY_SHIFT" bits, it either delays 0 cycle or 1 cycle. It only works
+correctly in RV64. Because the 'ucycles' always needs to be 64 bits
+variable.
 
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Nick Hu <nickhu@andestech.com>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+[paul.walmsley@sifive.com: fixed minor spelling error]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/riscv/lib/delay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-index 31786b200afc..f388ad51e72b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-@@ -448,11 +448,11 @@ static int vmw_ttm_map_dma(struct vmw_ttm_tt *vmw_tt)
- 		if (unlikely(ret != 0))
- 			return ret;
+diff --git a/arch/riscv/lib/delay.c b/arch/riscv/lib/delay.c
+index dce8ae24c6d3..ee6853c1e341 100644
+--- a/arch/riscv/lib/delay.c
++++ b/arch/riscv/lib/delay.c
+@@ -88,7 +88,7 @@ EXPORT_SYMBOL(__delay);
  
--		ret = sg_alloc_table_from_pages(&vmw_tt->sgt, vsgt->pages,
--						vsgt->num_pages, 0,
--						(unsigned long)
--						vsgt->num_pages << PAGE_SHIFT,
--						GFP_KERNEL);
-+		ret = __sg_alloc_table_from_pages
-+			(&vmw_tt->sgt, vsgt->pages, vsgt->num_pages, 0,
-+			 (unsigned long) vsgt->num_pages << PAGE_SHIFT,
-+			 dma_get_max_seg_size(dev_priv->dev->dev),
-+			 GFP_KERNEL);
- 		if (unlikely(ret != 0))
- 			goto out_sg_alloc_fail;
+ void udelay(unsigned long usecs)
+ {
+-	unsigned long ucycles = usecs * lpj_fine * UDELAY_MULT;
++	u64 ucycles = (u64)usecs * lpj_fine * UDELAY_MULT;
  
+ 	if (unlikely(usecs > MAX_UDELAY_US)) {
+ 		__delay((u64)usecs * riscv_timebase / 1000000ULL);
 -- 
 2.20.1
 
