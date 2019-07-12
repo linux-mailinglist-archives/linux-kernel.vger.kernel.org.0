@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED7B66C81
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8727766D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfGLMUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54082 "EHLO mail.kernel.org"
+        id S1728505AbfGLM0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727380AbfGLMUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:40 -0400
+        id S1727433AbfGLM0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:26:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD181208E4;
-        Fri, 12 Jul 2019 12:20:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5756E21019;
+        Fri, 12 Jul 2019 12:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934039;
-        bh=KY1pTVSVOlB8zydh/WnqEu8LohWlLxvY35Ylhs8yDY4=;
+        s=default; t=1562934403;
+        bh=JhCA7JRtuLF4B7Hrnny5B5vSLOV7fKNrcJG3yIhamGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xuf6JsflccgjY9FeXizuWI4QZqJHpb4DFhe9KxUi2AQPlYQUgLo+JxAELHT/Xdupl
-         0ZJtaAQaqtg2CIL6bohAZu7MTRim9tk/J+C5eY9PmB2js5RhvKON5G3nC6bqTMc/76
-         p/0WVPBNFpQpchdWdlrlTZz+64/xqOcjKlXs6E5w=
+        b=jIU2nVU6sUw1nNC1Z3u2Ljr6jq6kvrs3pWGlSz5KaZN1LwFzBZfXHxVtrlfFW2Az1
+         fw0xSnzc7PqrTLK+G6sMtIVw+/OXajpEG8NnfhBdt2Vs9Rkt8VMXyRTMm8RLCRNuKZ
+         CWDhPv1FBLdaEB6EHc78hm0pchEqKyBD+fRQlDNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Teresa Remmet <t.remmet@phytec.de>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 26/91] ARM: dts: am335x phytec boards: Fix cd-gpios active level
+Subject: [PATCH 5.1 045/138] RISC-V: defconfig: enable clocks, serial console
 Date:   Fri, 12 Jul 2019 14:18:29 +0200
-Message-Id: <20190712121622.803758252@linuxfoundation.org>
+Message-Id: <20190712121630.399201831@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8a0098c05a272c9a68f6885e09755755b612459c ]
+[ Upstream commit 3b025f2bc98973f181d926192b0ceb6ced0f86d2 ]
 
-Active level of the mmc1 cd gpio needs to be low instead of high.
-Fix PCM-953 and phyBOARD-WEGA.
+Enable PRCI clock driver and serial console by default, so the default
+upstream defconfig is bootable to a serial console.
 
-Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-pcm-953.dtsi | 2 +-
- arch/arm/boot/dts/am335x-wega.dtsi    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/riscv/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/am335x-pcm-953.dtsi b/arch/arm/boot/dts/am335x-pcm-953.dtsi
-index 1ec8e0d80191..572fbd254690 100644
---- a/arch/arm/boot/dts/am335x-pcm-953.dtsi
-+++ b/arch/arm/boot/dts/am335x-pcm-953.dtsi
-@@ -197,7 +197,7 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/am335x-wega.dtsi b/arch/arm/boot/dts/am335x-wega.dtsi
-index 8ce541739b24..83e4fe595e37 100644
---- a/arch/arm/boot/dts/am335x-wega.dtsi
-+++ b/arch/arm/boot/dts/am335x-wega.dtsi
-@@ -157,7 +157,7 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
- 
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 2fd3461e50ab..4f02967e55de 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -49,6 +49,8 @@ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
++CONFIG_SERIAL_SIFIVE=y
++CONFIG_SERIAL_SIFIVE_CONSOLE=y
+ CONFIG_HVC_RISCV_SBI=y
+ # CONFIG_PTP_1588_CLOCK is not set
+ CONFIG_DRM=y
+@@ -64,6 +66,8 @@ CONFIG_USB_OHCI_HCD_PLATFORM=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_UAS=y
+ CONFIG_VIRTIO_MMIO=y
++CONFIG_CLK_SIFIVE=y
++CONFIG_CLK_SIFIVE_FU540_PRCI=y
+ CONFIG_SIFIVE_PLIC=y
+ CONFIG_EXT4_FS=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
 -- 
 2.20.1
 
