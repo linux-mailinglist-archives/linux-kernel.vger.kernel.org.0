@@ -2,128 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2066696C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B7666972
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfGLI4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:56:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2267 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726136AbfGLI4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:56:11 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 252D2A13B4022EAF004E;
-        Fri, 12 Jul 2019 16:56:09 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 12 Jul 2019 16:56:00 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: fix panic of IO alignment feature
-Date:   Fri, 12 Jul 2019 16:55:42 +0800
-Message-ID: <20190712085542.4068-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190712085542.4068-1-yuchao0@huawei.com>
-References: <20190712085542.4068-1-yuchao0@huawei.com>
+        id S1726266AbfGLI4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:56:31 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:43047 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfGLI4a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:56:30 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MCsDe-1hd5uB1CKW-008uVX; Fri, 12 Jul 2019 10:56:07 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Wen Yang <wen.yang99@zte.com.cn>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: audio-graph-card: fix type mismatch warning
+Date:   Fri, 12 Jul 2019 10:55:53 +0200
+Message-Id: <20190712085605.4062896-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Hsib/dpx4KDn7gfpU/f1Eq1bfZtFdE4qTB4i+zaN8zo+qEctdR3
+ RKhbz0fWRM/pmG+ONdUgpTK6N83UxgmjuGxUxS7I+VEOkD9WOzCJOk4ZXdWmO7duzQNCSei
+ A5NbDsnu3Sc6uMaOzDDc1fb0aJb5+RDDmrBVPEgI2QA6jlwg3/3937dYE5w8TcKd4KK1pOZ
+ deGBhKhCt9y0/q8rpEaKQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H9OQC5DGb9s=:T6H67ZX8mqNhVjA447wWxh
+ 0xlDBQb6lbn9z8MwFJsVML6VitaX0n5WZCMegYpH2Jy0StVWv8lATqy/cHcn1tV+fKPAmiRhZ
+ oHt/SGJfCX5s0+doh3Nf+k7pjQ9PH4qbuyia0jUmUCgqbQDSy9gl8EFegYzMvdeIffdUZlg+s
+ 6Sp7mKoJ1Ib3ka35DJzEpUrBWTPTN0n/SsrjYVsfHUXSeZSv7PF0hVM1/TH1bfXHA8xus7U2b
+ isWiB7dFfUrW2bmfT/wRvgUKzPh/LkI/pcx00uSfTZc8yXEZbf6VY6fIz1xZ3Y7A5kSHvBBsi
+ RuNMBXRhXQ1tf9uQUbTFGKJZmqXfCAkJzridws1PtHvOf8guQ0mhwkPADX/CjxraTT6Fx/cxk
+ AswHICK7T/BCJii8NKWbmbGkUoiHDEYx3kTNC7Rb9+dD3jC2N82iRhxp2upDjBuBuf02MooPu
+ QhIyEwkywdDOj6PxT7gTQxEO4MPvXcuw8yp45I8IiTtFFqt+SV5YNbn9Z3DTdS32BFr3T2UXC
+ +1xGHKziI8ziqs+LGMsO/tozcLt2dza/qDnNx4j8MkzgxFB15O2oZA3IZWgZ+poZrEdmoYLY4
+ sHvztlc6Q8LopIyPGAGE1X2vxh+wginAcrEuHK3wh+q7fsGJmPew8aodII75QTI6Rfp5o0FYW
+ 69ehGjuQkxZS5E1Ordsxhvy4mIfmW0dw6ebuxgojymabC/wA87Rc8aAPZiC8pccQuKHK35sx6
+ DDbKua9LRG55+5mjhlfjSZ7drvWb4qT2eFa8tA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since 07173c3ec276 ("block: enable multipage bvecs"), one bio vector
-can store multi pages, so that we can not calculate max IO size of
-bio as PAGE_SIZE * bio->bi_max_vecs. However IO alignment feature of
-f2fs always has that assumption, so finally, it may cause panic during
-IO submission as below stack.
+The new temporary variable is lacks a 'const' annotation:
 
- kernel BUG at fs/f2fs/data.c:317!
- RIP: 0010:__submit_merged_bio+0x8b0/0x8c0
- Call Trace:
-  f2fs_submit_page_write+0x3cd/0xdd0
-  do_write_page+0x15d/0x360
-  f2fs_outplace_write_data+0xd7/0x210
-  f2fs_do_write_data_page+0x43b/0xf30
-  __write_data_page+0xcf6/0x1140
-  f2fs_write_cache_pages+0x3ba/0xb40
-  f2fs_write_data_pages+0x3dd/0x8b0
-  do_writepages+0xbb/0x1e0
-  __writeback_single_inode+0xb6/0x800
-  writeback_sb_inodes+0x441/0x910
-  wb_writeback+0x261/0x650
-  wb_workfn+0x1f9/0x7a0
-  process_one_work+0x503/0x970
-  worker_thread+0x7d/0x820
-  kthread+0x1ad/0x210
-  ret_from_fork+0x35/0x40
+sound/soc/generic/audio-graph-card.c:87:7: error: assigning to 'u32 *' (aka 'unsigned int *') from 'const void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
 
-This patch adds one extra condition to check left space in bio while
-trying merging page to bio, to avoid panic.
-
-This bug was reported in bugzilla:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=204043
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Fixes: c152f8491a8d ("ASoC: audio-graph-card: fix an use-after-free in graph_get_dai_id()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-v2: add IO type check.
- fs/f2fs/data.c          | 10 ++++++++++
- fs/f2fs/super.c         |  2 +-
- include/linux/f2fs_fs.h |  1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ sound/soc/generic/audio-graph-card.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f1e401f9fc13..1971e59cdedb 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -504,6 +504,16 @@ static bool io_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
- 					block_t last_blkaddr,
- 					block_t cur_blkaddr)
- {
-+	if (F2FS_IO_ALIGNED(sbi) && (fio->type == DATA || fio->type == NODE)) {
-+		unsigned int filled_blocks =
-+				F2FS_BYTES_TO_BLK(bio->bi_iter.bi_size);
-+		unsigned int io_size = F2FS_IO_SIZE(sbi);
-+		unsigned int left_vecs = bio->bi_max_vecs - bio->bi_vcnt;
-+
-+		/* IOs in bio is aligned and left space of vectors is not enough */
-+		if (!(filled_blocks % io_size) && left_vecs < io_size)
-+			return false;
-+	}
- 	if (!page_is_mergeable(sbi, bio, last_blkaddr, cur_blkaddr))
- 		return false;
- 	return io_type_is_mergeable(io, fio);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d95a681ef7c9..a98e3b93395d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3204,7 +3204,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (err)
- 		goto free_bio_info;
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index c8abb86afefa..288df245b2f0 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -63,7 +63,7 @@ static int graph_get_dai_id(struct device_node *ep)
+ 	struct device_node *endpoint;
+ 	struct of_endpoint info;
+ 	int i, id;
+-	u32 *reg;
++	const u32 *reg;
+ 	int ret;
  
--	if (F2FS_IO_SIZE(sbi) > 1) {
-+	if (F2FS_IO_ALIGNED(sbi)) {
- 		sbi->write_io_dummy =
- 			mempool_create_page_pool(2 * (F2FS_IO_SIZE(sbi) - 1), 0);
- 		if (!sbi->write_io_dummy) {
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 65559900d4d7..52af9ac164b4 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -41,6 +41,7 @@
- #define F2FS_IO_SIZE_BYTES(sbi)	(1 << (F2FS_OPTION(sbi).write_io_size_bits + 12)) /* B */
- #define F2FS_IO_SIZE_BITS(sbi)	(F2FS_OPTION(sbi).write_io_size_bits) /* power of 2 */
- #define F2FS_IO_SIZE_MASK(sbi)	(F2FS_IO_SIZE(sbi) - 1)
-+#define F2FS_IO_ALIGNED(sbi)	(F2FS_IO_SIZE(sbi) > 1)
- 
- /* This flag is used by node and meta inodes, and by recovery */
- #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
+ 	/* use driver specified DAI ID if exist */
 -- 
-2.18.0.rc1
+2.20.0
 
