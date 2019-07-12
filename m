@@ -2,97 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA43066AFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E01966B03
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbfGLKn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 06:43:59 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:53773
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726050AbfGLKn7 (ORCPT
+        id S1726823AbfGLKof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 06:44:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43267 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfGLKoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 06:43:59 -0400
-X-IronPort-AV: E=Sophos;i="5.63,482,1557180000"; 
-   d="scan'208";a="313309971"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 12:43:55 +0200
-Date:   Fri, 12 Jul 2019 12:43:52 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Hannes Reinecke <hare@suse.de>
-cc:     Colin King <colin.king@canonical.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: libfc: fix null pointer dereference on a null
- lport
-In-Reply-To: <14c9e345-dd98-63e7-5ba2-679f10760fe6@suse.de>
-Message-ID: <alpine.DEB.2.20.1907121243220.3900@hadrien>
-References: <20190702091835.13629-1-colin.king@canonical.com> <14c9e345-dd98-63e7-5ba2-679f10760fe6@suse.de>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 12 Jul 2019 06:44:34 -0400
+Received: from [5.158.153.55] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hlt2D-0004oK-MD; Fri, 12 Jul 2019 12:44:13 +0200
+Date:   Fri, 12 Jul 2019 12:44:02 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
+        pbonzini@redhat.com, rkrcmar@redhat.com, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, kvm@vger.kernel.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
+        liran.alon@oracle.com, jwadams@google.com, graf@amazon.de,
+        rppt@linux.vnet.ibm.com
+Subject: Re: [RFC v2 00/27] Kernel Address Space Isolation
+In-Reply-To: <5cab2a0e-1034-8748-fcbe-a17cf4fa2cd4@intel.com>
+Message-ID: <alpine.DEB.2.21.1907120911160.11639@nanos.tec.linutronix.de>
+References: <1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com> <5cab2a0e-1034-8748-fcbe-a17cf4fa2cd4@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-1695843507-1562928232=:3900"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---8323329-1695843507-1562928232=:3900
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+On Thu, 11 Jul 2019, Dave Hansen wrote:
 
+> On 7/11/19 7:25 AM, Alexandre Chartre wrote:
+> > - Kernel code mapped to the ASI page-table has been reduced to:
+> >   . the entire kernel (I still need to test with only the kernel text)
+> >   . the cpu entry area (because we need the GDT to be mapped)
+> >   . the cpu ASI session (for managing ASI)
+> >   . the current stack
+> > 
+> > - Optionally, an ASI can request the following kernel mapping to be added:
+> >   . the stack canary
+> >   . the cpu offsets (this_cpu_off)
+> >   . the current task
+> >   . RCU data (rcu_data)
+> >   . CPU HW events (cpu_hw_events).
+> 
+> I don't see the per-cpu areas in here.  But, the ASI macros in
+> entry_64.S (and asi_start_abort()) use per-cpu data.
+> 
+> Also, this stuff seems to do naughty stuff (calling C code, touching
+> per-cpu data) before the PTI CR3 writes have been done.  But, I don't
+> see anything excluding PTI and this code from coexisting.
 
+That ASI thing is just PTI on steroids.
 
-On Fri, 12 Jul 2019, Hannes Reinecke wrote:
+So why do we need two versions of the same thing? That's absolutely bonkers
+and will just introduce subtle bugs and conflicting decisions all over the
+place.
 
-> On 7/2/19 11:18 AM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently if lport is null then the null lport pointer is dereference
-> > when printing out debug via the FC_LPORT_DB macro. Fix this by using
-> > the more generic FC_LIBFC_DBG debug macro instead that does not use
-> > lport.
-> >
-> > Addresses-Coverity: ("Dereference after null check")
-> > Fixes: 7414705ea4ae ("libfc: Add runtime debugging with debug_logging module parameter")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/scsi/libfc/fc_exch.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
-> > index 025cd2ff9f65..c477fadbf504 100644
-> > --- a/drivers/scsi/libfc/fc_exch.c
-> > +++ b/drivers/scsi/libfc/fc_exch.c
-> > @@ -2591,8 +2591,8 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
-> >
-> >  	/* lport lock ? */
-> >  	if (!lport || lport->state == LPORT_ST_DISABLED) {
-> > -		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
-> > -			     "has not been initialized correctly\n");
-> > +		FC_LIBFC_DBG("Receiving frames for an lport that "
-> > +			     "has not been initialized correctly\n");
+The need for ASI is very tightly coupled to the need for PTI and there is
+absolutely no point in keeping them separate.
 
-If the code is being changed, perhaps the string could be put onto one
-line as well.
+The only difference vs. interrupts and exceptions is that the PTI logic
+cares whether they enter from user or from kernel space while ASI only
+cares about the kernel entry.
 
-julia
+But most exceptions/interrupts transitions do not require to be handled at
+the entry code level because on VMEXIT the exit reason clearly tells
+whether a switch to the kernel CR3 is necessary or not. So this has to be
+handled at the VMM level already in a very clean and simple way.
 
-> >  		fc_frame_free(fp);
-> >  		return;
-> >  	}
-> >
-> Reviewed-by: Hannes Reinecke <hare@suse.com>
->
-> Cheers,
->
-> Hannes
-> --
-> Dr. Hannes Reinecke		   Teamlead Storage & Networking
-> hare@suse.de			               +49 911 74053 688
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> HRB 21284 (AG Nürnberg)
->
---8323329-1695843507-1562928232=:3900--
+I'm not a virt wizard, but according to code inspection and instrumentation
+even the NMI on the host is actually reinjected manually into the host via
+'int $2' after the VMEXIT and for MCE it looks like manual handling as
+well. So why do we need to sprinkle that muck all over the entry code?
+
+From a semantical perspective VMENTER/VMEXIT are very similar to the return
+to user / enter to user mechanics. Just that the transition happens in the
+VMM code and not at the regular user/kernel transition points.
+
+So why do you want ot treat that differently? There is absolutely zero
+reason to do so. And there is no reason to create a pointlessly different
+version of PTI which introduces yet another variant of a restricted page
+table instead of just reusing and extending what's there already.
+
+Thanks,
+
+	tglx
