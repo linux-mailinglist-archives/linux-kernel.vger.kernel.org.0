@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E018066D2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2C566D40
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbfGLM1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39712 "EHLO mail.kernel.org"
+        id S1728053AbfGLM14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbfGLM1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:27:21 -0400
+        id S1728720AbfGLM1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:27:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99876208E4;
-        Fri, 12 Jul 2019 12:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18CD821019;
+        Fri, 12 Jul 2019 12:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934441;
-        bh=RX8cF7VBzex5Kn9MPBH8m1pu80iOwfgVJoULW21VESE=;
+        s=default; t=1562934475;
+        bh=29XoS77K21tgMNHk4T910ZD4vgXDxrf+LXa6VRmNcJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OBC9Qb1aQpn31ydgVmUUNweyNxOZy/ym3OlYB+cypFxZBF+u0xmphNzgehEcCuReh
-         NdsVE/kfaPJOOSpsMlYWOU5+otys9IeQ747J8xO9dV7coP56cKbso3dSEqY5IO34mK
-         linNWAdNrAhMojEMIp9iXFZhsyFgdQuvsIkOEVng=
+        b=Bf58cF4C+isX2SguepMfmLrM8M7J7SAWA25J2ZzDkISH8+PvkaO3CmGt0QA+7M3DU
+         oqSYnrzXnLzBGUdUAIRhH0IBAc+x5BaxWJaXOytiryDXVIueekNJlzhbyYY/rk1oEw
+         sbNV6WIH5biS3QYz/8LeGaXiAXnEARKGqgzv/MGY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Krzesimir Nowak <krzesimir@kinvolk.io>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 029/138] netfilter: ipv6: nf_defrag: fix leakage of unqueued fragments
-Date:   Fri, 12 Jul 2019 14:18:13 +0200
-Message-Id: <20190712121629.817098776@linuxfoundation.org>
+Subject: [PATCH 5.1 030/138] tools: bpftool: Fix JSON output when lookup fails
+Date:   Fri, 12 Jul 2019 14:18:14 +0200
+Message-Id: <20190712121629.852592026@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -44,61 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a0d56cb911ca301de81735f1d73c2aab424654ba ]
+[ Upstream commit 1884c066579a7a274dd981a4d9639ca63db66a23 ]
 
-With commit 997dd9647164 ("net: IP6 defrag: use rbtrees in
-nf_conntrack_reasm.c"), nf_ct_frag6_reasm() is now called from
-nf_ct_frag6_queue(). With this change, nf_ct_frag6_queue() can fail
-after the skb has been added to the fragment queue and
-nf_ct_frag6_gather() was adapted to handle this case.
+In commit 9a5ab8bf1d6d ("tools: bpftool: turn err() and info() macros
+into functions") one case of error reporting was special cased, so it
+could report a lookup error for a specific key when dumping the map
+element. What the code forgot to do is to wrap the key and value keys
+into a JSON object, so an example output of pretty JSON dump of a
+sockhash map (which does not support looking up its values) is:
 
-But nf_ct_frag6_queue() can still fail before the fragment has been
-queued. nf_ct_frag6_gather() can't handle this case anymore, because it
-has no way to know if nf_ct_frag6_queue() queued the fragment before
-failing. If it didn't, the skb is lost as the error code is overwritten
-with -EINPROGRESS.
+[
+    "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x00"
+    ],
+    "value": {
+        "error": "Operation not supported"
+    },
+    "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x01"
+    ],
+    "value": {
+        "error": "Operation not supported"
+    }
+]
 
-Fix this by setting -EINPROGRESS directly in nf_ct_frag6_queue(), so
-that nf_ct_frag6_gather() can propagate the error as is.
+Note the key-value pairs inside the toplevel array. They should be
+wrapped inside a JSON object, otherwise it is an invalid JSON. This
+commit fixes this, so the output now is:
 
-Fixes: 997dd9647164 ("net: IP6 defrag: use rbtrees in nf_conntrack_reasm.c")
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[{
+        "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x00"
+        ],
+        "value": {
+            "error": "Operation not supported"
+        }
+    },{
+        "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x01"
+        ],
+        "value": {
+            "error": "Operation not supported"
+        }
+    }
+]
+
+Fixes: 9a5ab8bf1d6d ("tools: bpftool: turn err() and info() macros into functions")
+Cc: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ tools/bpf/bpftool/map.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index 3de0e9b0a482..5b3f65e29b6f 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -293,7 +293,11 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
- 		skb->_skb_refdst = 0UL;
- 		err = nf_ct_frag6_reasm(fq, skb, prev, dev);
- 		skb->_skb_refdst = orefdst;
--		return err;
-+
-+		/* After queue has assumed skb ownership, only 0 or
-+		 * -EINPROGRESS must be returned.
-+		 */
-+		return err ? -EINPROGRESS : 0;
- 	}
+diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+index 994a7e0d16fb..14f581b562bd 100644
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@ -713,12 +713,14 @@ static int dump_map_elem(int fd, void *key, void *value,
+ 		return 0;
  
- 	skb_dst_drop(skb);
-@@ -480,12 +484,6 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- 		ret = 0;
- 	}
- 
--	/* after queue has assumed skb ownership, only 0 or -EINPROGRESS
--	 * must be returned.
--	 */
--	if (ret)
--		ret = -EINPROGRESS;
--
- 	spin_unlock_bh(&fq->q.lock);
- 	inet_frag_put(&fq->q);
- 	return ret;
+ 	if (json_output) {
++		jsonw_start_object(json_wtr);
+ 		jsonw_name(json_wtr, "key");
+ 		print_hex_data_json(key, map_info->key_size);
+ 		jsonw_name(json_wtr, "value");
+ 		jsonw_start_object(json_wtr);
+ 		jsonw_string_field(json_wtr, "error", strerror(lookup_errno));
+ 		jsonw_end_object(json_wtr);
++		jsonw_end_object(json_wtr);
+ 	} else {
+ 		if (errno == ENOENT)
+ 			print_entry_plain(map_info, key, NULL);
 -- 
 2.20.1
 
