@@ -2,85 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B752267641
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 23:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C88566764A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 23:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbfGLViK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 17:38:10 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:34508 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728037AbfGLViK (ORCPT
+        id S1728112AbfGLVnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 17:43:51 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39187 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728046AbfGLVnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 17:38:10 -0400
-Received: by mail-lj1-f180.google.com with SMTP id p17so10704214ljg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:38:09 -0700 (PDT)
+        Fri, 12 Jul 2019 17:43:49 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v85so7369582lfa.6
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:43:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Iges54z9f906v3uf56WrVXdsTxZk1k/p5wstrSlWhSY=;
-        b=HStbbQgKwJ8PIs2uRSFT6FkcEsY2ELzgFwmB768U+IJZZIFRRG1kKdnBHfLT6+Z8OH
-         pymcd7+1yH6IPng+WI5ltxwoX/fgziXsRTRa+yCzqVYrrGIZQh2D0MUXgqTwhIuI2r8/
-         OJRqvn3weItgeO9YFFvdX9jsIcpP4D+ZARYcM=
+        bh=rA/D9rY58/fs5DfTPa47BWI/CnDv7aS+U9/i6ol6Kl0=;
+        b=Cphumg8FZZER15DDsn3kaYIQANgwhplUMjNh/pqNRj6gToXQ/GVl8MR68I3meplHQg
+         TqJs+nOhGg+gMhTBuoUH66mslKADOJ7oyz0mWM/A5Lp8zf6S0KbxV11cca+M493uK4iu
+         eLJ3tqhswkydmJIMNrR1hPmG1n5Bf5Y2DVIiU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Iges54z9f906v3uf56WrVXdsTxZk1k/p5wstrSlWhSY=;
-        b=YEPC/8wTKxOcQBC30T9ITCnui4dQKiL0vJC3ICmfVxJkjqqPgFdHHGftTKuyicJI5R
-         VWSbMCEyMPI4rT7tLhHUhIz6ApqiyUv0nIDjTDYYSMJT+qafhI0PwdIbvTcCeNCRuRyF
-         sFJtzELpBPap7iY5dvq7BAlT2b81fEc8T9kUu7rZV4Oy7VAqbG8KTVfHicSBxJ0wZ3th
-         e4sHNkne1erejwNhS7XAoz4c/8x3Mcdz+RFfpuvHtxqs19tPDcp2Xwc7AisKTZvpl1RL
-         leAx4+UdhbHsvnnFkKoYGWzhh0qF678aRI7CfrwfcruETdjB3E1S7D2hjLoX/xldJTzE
-         y65Q==
-X-Gm-Message-State: APjAAAXizNh8F2lvGFjc7K7Fj0rvCum+JOV35c8ebNrCHC5FpF12YQ4E
-        Tn3J/i2Ths3buI7hJnLECTyco8XDnrU=
-X-Google-Smtp-Source: APXvYqxkLX0E4RtRFdSxR07AIQg+aRj6zPswNuwoZTo9ph1/W71yIl8NwnvS5jS5vZGEJ2/mC4CcEQ==
-X-Received: by 2002:a2e:8945:: with SMTP id b5mr7013202ljk.93.1562967487683;
-        Fri, 12 Jul 2019 14:38:07 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id i62sm1620985lji.14.2019.07.12.14.38.06
+        bh=rA/D9rY58/fs5DfTPa47BWI/CnDv7aS+U9/i6ol6Kl0=;
+        b=ER+6W5coAjLuml2vkW3ESWFWQ4y9QD/VAdwJ6cayhu/KeJmRy6x5+THjm2g0FXnzQw
+         oMwNq34VXq8UI8p8YcBctBaotTFr2EdmXQcIJSY/y7dlVlL/7Jbxw0VF6dSC0OWOSiCN
+         fqxMYw4an5afRGhH9IPz30AvV0TjIjEdHiwu5fq7/Yx7SU92IsTYjVKVmpfgZFfWBmux
+         gaKgzrIuqzKo4tIOc+ZXL0supKDX1KCvbl40JKE6aY7J4lNddqiCF/Y37jBZwfug/6q5
+         ze3Bgs0JCsZ7WViyTn5hQjY3s0Z4FWHZVc5uFECo2OVgJYxZLDR7xfhcAkHHWuUbAIto
+         o5eQ==
+X-Gm-Message-State: APjAAAXm5+CYJoc04r/w51neCtCPCj/BK/kP72SdveVGr3ylQAuhL94C
+        siNokkmwv4Hnx+xLoPC9SLGVrK+pjwI=
+X-Google-Smtp-Source: APXvYqwB2qIC/urb0lExM+17/78vuIkR9QDdDO/p+7KF8AX8sGIOz8nP6eF2YEyMbhw0UE+pN6Pe4w==
+X-Received: by 2002:a19:c7ca:: with SMTP id x193mr5650098lff.151.1562967827022;
+        Fri, 12 Jul 2019 14:43:47 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id v202sm1263373lfa.28.2019.07.12.14.43.46
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Jul 2019 14:38:06 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 62so2496185lfa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:38:06 -0700 (PDT)
-X-Received: by 2002:ac2:44c5:: with SMTP id d5mr5948568lfm.134.1562967486231;
- Fri, 12 Jul 2019 14:38:06 -0700 (PDT)
+        Fri, 12 Jul 2019 14:43:46 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id m8so10672974lji.7
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:43:46 -0700 (PDT)
+X-Received: by 2002:a2e:b003:: with SMTP id y3mr7251964ljk.72.1562967358233;
+ Fri, 12 Jul 2019 14:35:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190712073623.GA16253@kroah.com> <20190712074023.GD16253@kroah.com>
- <20190712210922.GA102096@archlinux-threadripper>
-In-Reply-To: <20190712210922.GA102096@archlinux-threadripper>
+References: <20190712035802.eeH5anzpz%akpm@linux-foundation.org>
+ <1562935747.8510.26.camel@lca.pw> <20190712141058.d8fd55c910dbdf6044fab2c4@linux-foundation.org>
+In-Reply-To: <20190712141058.d8fd55c910dbdf6044fab2c4@linux-foundation.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 12 Jul 2019 14:37:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh0XHkcLYh+pMPJrf8WmD6zOgXfq7HuLi7gmzb8aPEOvQ@mail.gmail.com>
-Message-ID: <CAHk-=wh0XHkcLYh+pMPJrf8WmD6zOgXfq7HuLi7gmzb8aPEOvQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Driver core patches for 5.3-rc1
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Date:   Fri, 12 Jul 2019 14:35:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whd4=Dj8MY=z1DExJuJMF3zWswLwNyOQhSEzqPiFhPj-A@mail.gmail.com>
+Message-ID: <CAHk-=whd4=Dj8MY=z1DExJuJMF3zWswLwNyOQhSEzqPiFhPj-A@mail.gmail.com>
+Subject: Re: [patch 105/147] arm64: switch to generic version of pte allocation
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Qian Cai <cai@lca.pw>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+        anshuman.khandual@arm.com,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        aou@eecs.berkeley.edu, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>, deanbo422@gmail.com,
+        deller@gmx.de, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>, Guo Ren <guoren@kernel.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Ley Foon Tan <lftan@altera.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, mm-commits@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Burton <paul.burton@mips.com>, ralf@linux-mips.org,
+        Guo Ren <ren_guo@c-sky.com>,
+        Richard Weinberger <richard@nod.at>,
+        Richard Kuo <rkuo@codeaurora.org>, rppt@linux.ibm.com,
+        sammy@sammy.net, Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 2:09 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Fri, Jul 12, 2019 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
 >
-> Doesn't look like this made it into the merge, as I currently see that
-> same error with arm64 allyesconfig.
+> On Fri, 12 Jul 2019 08:49:07 -0400 Qian Cai <cai@lca.pw> wrote:
+> >
+> > https://lore.kernel.org/linux-mm/20190617151252.GF16810@rapoport-lnx/
+>
+> That's already merged - it went in via the arm64 tree I think.
 
-Duh.
+No. Only the arch/arm64/include/asm/pgtable.h part got in through the
+arm64 tree (commit 615c48ad8f42: "arm64/mm: don't initialize pgd_cache
+twice").
 
-Because I had fixed up the actual definition of that function during
-the merge, I thought I had handled it all correctly.
+The arch/arm64/mm/pgd.c part was missing.
 
-... and entirely missed that the patch was for the declaration in the
-header file.
+I think I fixed it all up correctly.
 
-My bad. Will apply the fix properly.
-
-            Linus
+                Linus
