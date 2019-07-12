@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25B766CF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50A6066D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbfGLMYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
+        id S1728748AbfGLM2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbfGLMYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:34 -0400
+        id S1727525AbfGLM2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:28:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 590122084B;
-        Fri, 12 Jul 2019 12:24:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEDA7208E4;
+        Fri, 12 Jul 2019 12:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934273;
-        bh=jJIdsp0EhhdWqql7R9UjK47yBHa1g72/qTxDgzXP6Lc=;
+        s=default; t=1562934484;
+        bh=JEl2xMhTXjcFazKlCKNupjlOtV5Zgb3boqeMf0NtShA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ynkro9EYy9LTk+cnDNAKKuNUwUE9iqbxg5s9P4O5Jrtr7clhX57RGDm8W36S8nxhG
-         pRjPGukFhx/TxMdK3KdjWwOXmX01i5rM5aoYL8JmDdr800X6bJgvB7sOdtFGy/TGtc
-         gWhlMCNcEgquZ/Mv09q4g2laD1dXr70N2PqhIpTs=
+        b=EXTx6P30vDDe+X7azURliTPa+DnoUgIEMLSE3WX687x2NraSuqGY7c+zeg34XpbGp
+         gH/EC3H7HB3xlLUgt87qUjsbPOq17QhfzAln4IM4urJHp+MAQTUjmBP4jCnLHqKVb4
+         jiVgmgXbY6BUPf7NP8CreC8jvHNjmWyr2F3BWfvg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Reinhard Speyerer <rspmn@arcor.de>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 49/91] ip6_tunnel: allow not to count pkts on tstats by passing dev as NULL
+Subject: [PATCH 5.1 068/138] qmi_wwan: add support for QMAP padding in the RX path
 Date:   Fri, 12 Jul 2019 14:18:52 +0200
-Message-Id: <20190712121624.257889987@linuxfoundation.org>
+Message-Id: <20190712121631.279494742@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6f6a8622057c92408930c31698394fae1557b188 ]
+[ Upstream commit 61356088ace1866a847a727d4d40da7bf00b67fc ]
 
-A similar fix to Patch "ip_tunnel: allow not to count pkts on tstats by
-setting skb's dev to NULL" is also needed by ip6_tunnel.
+The QMAP code in the qmi_wwan driver is based on the CodeAurora GobiNet
+driver which does not process QMAP padding in the RX path correctly.
+Add support for QMAP padding to qmimux_rx_fixup() according to the
+description of the rmnet driver.
 
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Fixes: c6adf77953bc ("net: usb: qmi_wwan: add qmap mux protocol support")
+Cc: Daniele Palmas <dnlplm@gmail.com>
+Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/ip6_tunnel.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/usb/qmi_wwan.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/ip6_tunnel.h b/include/net/ip6_tunnel.h
-index 236e40ba06bf..f594eb71c274 100644
---- a/include/net/ip6_tunnel.h
-+++ b/include/net/ip6_tunnel.h
-@@ -156,9 +156,12 @@ static inline void ip6tunnel_xmit(struct sock *sk, struct sk_buff *skb,
- 	memset(skb->cb, 0, sizeof(struct inet6_skb_parm));
- 	pkt_len = skb->len - skb_inner_network_offset(skb);
- 	err = ip6_local_out(dev_net(skb_dst(skb)->dev), sk, skb);
--	if (unlikely(net_xmit_eval(err)))
--		pkt_len = -1;
--	iptunnel_xmit_stats(dev, pkt_len);
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index e657d8947125..090227118d3d 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -153,7 +153,7 @@ static bool qmimux_has_slaves(struct usbnet *dev)
+ 
+ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+ {
+-	unsigned int len, offset = 0;
++	unsigned int len, offset = 0, pad_len, pkt_len;
+ 	struct qmimux_hdr *hdr;
+ 	struct net_device *net;
+ 	struct sk_buff *skbn;
+@@ -171,10 +171,16 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+ 		if (hdr->pad & 0x80)
+ 			goto skip;
+ 
++		/* extract padding length and check for valid length info */
++		pad_len = hdr->pad & 0x3f;
++		if (len == 0 || pad_len >= len)
++			goto skip;
++		pkt_len = len - pad_len;
 +
-+	if (dev) {
-+		if (unlikely(net_xmit_eval(err)))
-+			pkt_len = -1;
-+		iptunnel_xmit_stats(dev, pkt_len);
-+	}
- }
- #endif
- #endif
+ 		net = qmimux_find_dev(dev, hdr->mux_id);
+ 		if (!net)
+ 			goto skip;
+-		skbn = netdev_alloc_skb(net, len);
++		skbn = netdev_alloc_skb(net, pkt_len);
+ 		if (!skbn)
+ 			return 0;
+ 		skbn->dev = net;
+@@ -191,7 +197,7 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+ 			goto skip;
+ 		}
+ 
+-		skb_put_data(skbn, skb->data + offset + qmimux_hdr_sz, len);
++		skb_put_data(skbn, skb->data + offset + qmimux_hdr_sz, pkt_len);
+ 		if (netif_rx(skbn) != NET_RX_SUCCESS)
+ 			return 0;
+ 
 -- 
 2.20.1
 
