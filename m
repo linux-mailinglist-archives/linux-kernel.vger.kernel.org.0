@@ -2,153 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C49B66916
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A5966691D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfGLI0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:26:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45211 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfGLIZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:25:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so3971080pfq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 01:25:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/RTxoumVNtB1PBld0antS4Z7J0pCK7ZhiGq0s+u+T8Q=;
-        b=BAFql+HaVxohUfVl9mYP/S5YzuA9cwdMGK2nCDIC66akftcSMq/vzOqHPsPfc6/6QO
-         3jbIxFLWL9RGB511maoma3UoAL51vux8VnJePTL/VCgMZPr6RxN5Bw1+YMc/2Gt+m8we
-         3O5VAqNXBto7Ij4ZOE6HDlreMkSzh4Wj+AQqk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/RTxoumVNtB1PBld0antS4Z7J0pCK7ZhiGq0s+u+T8Q=;
-        b=J/qIqkykcc4PpXOHoLz2C5HxOvAmC+RRnCl392a2LbOKFmFqN3MD21DDmFV9WdDx2j
-         SIDZwOYLmklqQwyyp5TqQgRHHf4wItJbeCSudx/MfwJSU1R1aAM/a1gOrl2Qhf1uLRsd
-         evbXXZlBGBI/Yijy0OHfzoI4v0YuXOWmmS/h2H1tDyUPM7WSwWCcZKOGF7YLEEL+D+9r
-         AD5BhglrwgnXRrsbnRAODJk0IJVCPwUe/6eThQSj0bG1mIDrPEZrBZ+XY6zkeY/Eazuu
-         dBBqcmf7UNPFZvDPbpLSbsOMtXL169TVbGedgluJrAnfbUH8Nfc5vTmTHNFdYsE09eYk
-         CYeQ==
-X-Gm-Message-State: APjAAAV7O7eGuBEY8NUZherfzf07CHnxj9/pYiSF+FYUfuIemgUnJjt7
-        8o5tf9EiJrwdsnSomtlAs7oTKLjdk50kVChong1yIA==
-X-Google-Smtp-Source: APXvYqwAnknqjQvGUnrEC5ubqLeQGMCESFeladMIiOfwXF9UrCGRG+5+L2hqDm0nBHA51jOduboUlYnwqXtHNbzKgbU=
-X-Received: by 2002:a17:90a:ac14:: with SMTP id o20mr10306970pjq.114.1562919958370;
- Fri, 12 Jul 2019 01:25:58 -0700 (PDT)
+        id S1726282AbfGLI1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:27:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44392 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726057AbfGLI1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:27:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DAC5BAC4C;
+        Fri, 12 Jul 2019 08:27:12 +0000 (UTC)
+Date:   Fri, 12 Jul 2019 09:27:10 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     huang ying <huang.ying.caritas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, jhladky@redhat.com,
+        lvenanci@redhat.com, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH -mm] autonuma: Fix scan period updating
+Message-ID: <20190712082710.GH13484@suse.de>
+References: <20190624025604.30896-1-ying.huang@intel.com>
+ <20190624140950.GF2947@suse.de>
+ <CAC=cRTNYUxGUcSUvXa-g9hia49TgrjkzE-b06JbBtwSn2zWYsw@mail.gmail.com>
+ <20190703091747.GA13484@suse.de>
+ <87ef3663nd.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-References: <CGME20190621063708epcms2p309f4173afabe5de28942ba15d13987f7@epcms2p3>
- <20190621063708epcms2p309f4173afabe5de28942ba15d13987f7@epcms2p3>
-In-Reply-To: <20190621063708epcms2p309f4173afabe5de28942ba15d13987f7@epcms2p3>
-From:   Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Date:   Fri, 12 Jul 2019 13:55:47 +0530
-Message-ID: <CAK=zhgr_T8vA=BCdFCT37RxGCgS3xr8Wp9MEMK_9nZ=oYHy=7Q@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH] mpt3sas: support target smid for [abort|query] task
-To:     minwoo.im@samsung.com
-Cc:     "sathya.prakash@broadcom.com" <sathya.prakash@broadcom.com>,
-        "suganath-prabu.subramani@broadcom.com" 
-        <suganath-prabu.subramani@broadcom.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Euihyeok Kwon <eh81.kwon@samsung.com>,
-        Sarah Cho <sohyeon.jo@samsung.com>,
-        Sanggwan Lee <sanggwan.lee@samsung.com>,
-        Gyeongmin Nam <gm.nam@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <87ef3663nd.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 12:07 PM Minwoo Im <minwoo.im@samsung.com> wrote:
->
-> We can request task management IOCTL command(MPI2_FUNCTION_SCSI_TASK_MGMT)
-> to /dev/mpt3ctl.  If the given task_type is either abort task or query
-> task, it may need a field named "Initiator Port Transfer Tag to Manage"
-> in the IU.
->
-> Current code does not support to check target IPTT tag from the
-> tm_request.  This patch introduces to check TaskMID given from the
-> userspace as a target tag.  We have a rule of relationship between
-> (struct request *req->tag) and smid in mpt3sas_base.c:
->
-> 3318 u16
-> 3319 mpt3sas_base_get_smid_scsiio(struct MPT3SAS_ADAPTER *ioc, u8 cb_idx,
-> 3320         struct scsi_cmnd *scmd)
-> 3321 {
-> 3322         struct scsiio_tracker *request = scsi_cmd_priv(scmd);
-> 3323         unsigned int tag = scmd->request->tag;
-> 3324         u16 smid;
-> 3325
-> 3326         smid = tag + 1;
->
-> So if we want to abort a request tagged #X, then we can pass (X + 1) to
-> this IOCTL handler.
->
-> Cc: Sathya Prakash <sathya.prakash@broadcom.com>
-> Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-> Cc: James E.J. Bottomley <jejb@linux.ibm.com>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: MPT-FusionLinux.pdl@broadcom.com
-> Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
-> ---
->  drivers/scsi/mpt3sas/mpt3sas_ctl.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-> index b2bb47c14d35..5c7539dae713 100644
-> --- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-> +++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-> @@ -596,15 +596,17 @@ _ctl_set_task_mid(struct MPT3SAS_ADAPTER *ioc, struct mpt3_ioctl_command *karg,
->                 if (priv_data->sas_target->handle != handle)
->                         continue;
->                 st = scsi_cmd_priv(scmd);
-> -               tm_request->TaskMID = cpu_to_le16(st->smid);
-> -               found = 1;
-> +               if (tm_request->TaskMID == st->smid) {
+On Thu, Jul 04, 2019 at 08:32:06AM +0800, Huang, Ying wrote:
+> Mel Gorman <mgorman@suse.de> writes:
+> 
+> > On Tue, Jun 25, 2019 at 09:23:22PM +0800, huang ying wrote:
+> >> On Mon, Jun 24, 2019 at 10:25 PM Mel Gorman <mgorman@suse.de> wrote:
+> >> >
+> >> > On Mon, Jun 24, 2019 at 10:56:04AM +0800, Huang Ying wrote:
+> >> > > The autonuma scan period should be increased (scanning is slowed down)
+> >> > > if the majority of the page accesses are shared with other processes.
+> >> > > But in current code, the scan period will be decreased (scanning is
+> >> > > speeded up) in that situation.
+> >> > >
+> >> > > This patch fixes the code.  And this has been tested via tracing the
+> >> > > scan period changing and /proc/vmstat numa_pte_updates counter when
+> >> > > running a multi-threaded memory accessing program (most memory
+> >> > > areas are accessed by multiple threads).
+> >> > >
+> >> >
+> >> > The patch somewhat flips the logic on whether shared or private is
+> >> > considered and it's not immediately obvious why that was required. That
+> >> > aside, other than the impact on numa_pte_updates, what actual
+> >> > performance difference was measured and on on what workloads?
+> >> 
+> >> The original scanning period updating logic doesn't match the original
+> >> patch description and comments.  I think the original patch
+> >> description and comments make more sense.  So I fix the code logic to
+> >> make it match the original patch description and comments.
+> >> 
+> >> If my understanding to the original code logic and the original patch
+> >> description and comments were correct, do you think the original patch
+> >> description and comments are wrong so we need to fix the comments
+> >> instead?  Or you think we should prove whether the original patch
+> >> description and comments are correct?
+> >> 
+> >
+> > I'm about to get knocked offline so cannot answer properly. The code may
+> > indeed be wrong and I have observed higher than expected NUMA scanning
+> > behaviour than expected although not enough to cause problems. A comment
+> > fix is fine but if you're changing the scanning behaviour, it should be
+> > backed up with data justifying that the change both reduces the observed
+> > scanning and that it has no adverse performance implications.
+> 
+> Got it!  Thanks for comments!  As for performance testing, do you have
+> some candidate workloads?
+> 
 
-I think it will difficult for the user to find the smid that he want
-to abort. For this user has to enable the scsi logging level and get
-the tag and pass the ioctl with tag +1 value in TaskMID field. And
-hence currently driver will loop over all the smid's and if it fines
-any outstanding smid then it will issue task abort or task query TM
-for this outstanding smid to the HBA firmware.
+Ordinarily I would hope that the patch was motivated by observed
+behaviour so you have a metric for goodness. However, for NUMA balancing
+I would typically run basic workloads first -- dbench, tbench, netperf,
+hackbench and pipetest. The objective would be to measure the degree
+automatic NUMA balancing is interfering with a basic workload to see if
+they patch reduces the number of minor faults incurred even though there
+is no NUMA balancing to be worried about. This measures the general
+overhead of a patch. If your reasoning is correct, you'd expect lower
+overhead.
 
-May be we can do like below,
-* First check whether user provided "TaskMID" is non zero or not. if
-user provided TaskMID is non-zero and if this TaskMID is outstanding
-then driver will issue TaskAbort/QueryTask TM with this TaskMID value
-else driver will loop over all the smid's and if finds any smid is
-outstanding then it will issue TaskAbort/QueryTask TM with TaskMID
-value set to outstanding smid.
+For balancing itself, I usually look at Andrea's original autonuma
+benchmark, NAS Parallel Benchmark (D class usually although C class for
+much older or smaller machines) and spec JBB 2005 and 2015. Of the JBB
+benchmarks, 2005 is usually more reasonable for evaluating NUMA balancing
+than 2015 is (which can be unstable for a variety of reasons). In this
+case, I would be looking at whether the overhead is reduced, whether the
+ratio of local hits is the same or improved and the primary metric of
+each (time to completion for Andrea's and NAS, throughput for JBB).
 
-With the above logic still legacy application will be supported
-without breaking anything where they provide TaskMID filed as zero.
-And it also allows the user to abort the IO which he wants.
+Even if there is no change to locality and the primary metric but there
+is less scanning and overhead overall, it would still be an improvement.
 
-Thanks,
-Sreekanth
+If you have trouble doing such an evaluation, I'll queue tests if they
+are based on a patch that addresses the specific point of concern (scan
+period not updated) as it's still not obvious why flipping the logic of
+whether shared or private is considered was necessary.
 
-> +                       tm_request->TaskMID = cpu_to_le16(st->smid);
-> +                       found = 1;
-> +               }
->         }
->
->         if (!found) {
->                 dctlprintk(ioc,
-> -                          ioc_info(ioc, "%s: handle(0x%04x), lun(%d), no active mid!!\n",
-> +                          ioc_info(ioc, "%s: handle(0x%04x), lun(%d), no matched mid(%d)!!\n",
->                                     desc, le16_to_cpu(tm_request->DevHandle),
-> -                                   lun));
-> +                                   lun, tm_request->TaskMID));
->                 tm_reply = ioc->ctl_cmds.reply;
->                 tm_reply->DevHandle = tm_request->DevHandle;
->                 tm_reply->Function = MPI2_FUNCTION_SCSI_TASK_MGMT;
-> --
-> 2.16.1
+-- 
+Mel Gorman
+SUSE Labs
