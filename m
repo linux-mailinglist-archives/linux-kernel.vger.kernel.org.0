@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4527466D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF4866DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfGLM37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:29:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45200 "EHLO mail.kernel.org"
+        id S1729481AbfGLMca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:32:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728737AbfGLM34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:29:56 -0400
+        id S1729474AbfGLMc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:32:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43C3E21019;
-        Fri, 12 Jul 2019 12:29:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C71821019;
+        Fri, 12 Jul 2019 12:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934595;
-        bh=RVgPEGVOeNx+ij6xhozVkER82F9/IjUOHeJY0SL9jbQ=;
+        s=default; t=1562934745;
+        bh=FShXrtKdc4YHViZDililVx7/5jefip73CbYnbQAZJxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YhXOtz2fkhWIcdW9b3FUibUV9kmVVpad9QNrXhtGodD1j6K47fXHMUPsgkvxFyLCh
-         qRDlX5CmHGVkPa3GtnxmMxdwvACs3ZNlHvyRGL9yuAaSOTedOOkdBezc+3SQfg3t/T
-         W2F+LVu/CoN26Ee4MHbIoew9qICvpnbXcF4nCNRU=
+        b=CUR8qLXawgAl5dYx6TCWYi+Wg9gD6PbwVEAbloF7b4wchJ8UN5bV9gt9xY+wMUwUE
+         nncnBm1LFruhuxq6SLgCCEsH+mZzxEYJGq9DCHPg1KPQfVQh04V2i3CGKdLr+J+yHb
+         TQTmiA4u6FQfcyXtzftvBE2NdbfJ3CkUVbTZyab4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.1 106/138] mwifiex: Abort at too short BSS descriptor element
-Date:   Fri, 12 Jul 2019 14:19:30 +0200
-Message-Id: <20190712121632.831241159@linuxfoundation.org>
+        stable@vger.kernel.org, David Carrillo Cisneros <davidca@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, kernel-team@fb.com
+Subject: [PATCH 5.2 18/61] perf header: Assign proper ff->ph in perf_event__synthesize_features()
+Date:   Fri, 12 Jul 2019 14:19:31 +0200
+Message-Id: <20190712121621.620616765@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
+References: <20190712121620.632595223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,87 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Song Liu <songliubraving@fb.com>
 
-commit 685c9b7750bfacd6fc1db50d86579980593b7869 upstream.
+commit c952b35f4b15dd1b83e952718dec3307256383ef upstream.
 
-Currently mwifiex_update_bss_desc_with_ie() implicitly assumes that
-the source descriptor entries contain the enough size for each type
-and performs copying without checking the source size.  This may lead
-to read over boundary.
+bpf/btf write_* functions need ff->ph->env.
 
-Fix this by putting the source size check in appropriate places.
+With this missing, pipe-mode (perf record -o -)  would crash like:
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Program terminated with signal SIGSEGV, Segmentation fault.
+
+This patch assign proper ph value to ff.
+
+Committer testing:
+
+  (gdb) run record -o -
+  Starting program: /root/bin/perf record -o -
+  PERFILE2
+  <SNIP start of perf.data headers>
+  Thread 1 "perf" received signal SIGSEGV, Segmentation fault.
+  __do_write_buf (size=4, buf=0x160, ff=0x7fffffff8f80) at util/header.c:126
+  126		memcpy(ff->buf + ff->offset, buf, size);
+  (gdb) bt
+  #0  __do_write_buf (size=4, buf=0x160, ff=0x7fffffff8f80) at util/header.c:126
+  #1  do_write (ff=ff@entry=0x7fffffff8f80, buf=buf@entry=0x160, size=4) at util/header.c:137
+  #2  0x00000000004eddba in write_bpf_prog_info (ff=0x7fffffff8f80, evlist=<optimized out>) at util/header.c:912
+  #3  0x00000000004f69d7 in perf_event__synthesize_features (tool=tool@entry=0x97cc00 <record>, session=session@entry=0x7fffe9c6d010,
+      evlist=0x7fffe9cae010, process=process@entry=0x4435d0 <process_synthesized_event>) at util/header.c:3695
+  #4  0x0000000000443c79 in record__synthesize (tail=tail@entry=false, rec=0x97cc00 <record>) at builtin-record.c:1214
+  #5  0x0000000000444ec9 in __cmd_record (rec=0x97cc00 <record>, argv=<optimized out>, argc=0) at builtin-record.c:1435
+  #6  cmd_record (argc=0, argv=<optimized out>) at builtin-record.c:2450
+  #7  0x00000000004ae3e9 in run_builtin (p=p@entry=0x98e058 <commands+216>, argc=argc@entry=3, argv=0x7fffffffd670) at perf.c:304
+  #8  0x000000000042eded in handle_internal_command (argv=<optimized out>, argc=<optimized out>) at perf.c:356
+  #9  run_argv (argcp=<optimized out>, argv=<optimized out>) at perf.c:400
+  #10 main (argc=3, argv=<optimized out>) at perf.c:522
+  (gdb)
+
+After the patch the SEGSEGV is gone.
+
+Reported-by: David Carrillo Cisneros <davidca@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-team@fb.com
+Cc: stable@vger.kernel.org # v5.1+
+Fixes: 606f972b1361 ("perf bpf: Save bpf_prog_info information as headers to perf.data")
+Link: http://lkml.kernel.org/r/20190620010453.4118689-1-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/scan.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ tools/perf/util/header.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/marvell/mwifiex/scan.c
-+++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-@@ -1269,6 +1269,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3602,6 +3602,7 @@ int perf_event__synthesize_features(stru
+ 		return -ENOMEM;
  
- 		case WLAN_EID_FH_PARAMS:
-+			if (element_len + 2 < sizeof(*fh_param_set))
-+				return -EINVAL;
- 			fh_param_set =
- 				(struct ieee_types_fh_param_set *) current_ptr;
- 			memcpy(&bss_entry->phy_param_set.fh_param_set,
-@@ -1277,6 +1279,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
+ 	ff.size = sz - sz_hdr;
++	ff.ph = &session->header;
  
- 		case WLAN_EID_DS_PARAMS:
-+			if (element_len + 2 < sizeof(*ds_param_set))
-+				return -EINVAL;
- 			ds_param_set =
- 				(struct ieee_types_ds_param_set *) current_ptr;
- 
-@@ -1288,6 +1292,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_CF_PARAMS:
-+			if (element_len + 2 < sizeof(*cf_param_set))
-+				return -EINVAL;
- 			cf_param_set =
- 				(struct ieee_types_cf_param_set *) current_ptr;
- 			memcpy(&bss_entry->ss_param_set.cf_param_set,
-@@ -1296,6 +1302,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_IBSS_PARAMS:
-+			if (element_len + 2 < sizeof(*ibss_param_set))
-+				return -EINVAL;
- 			ibss_param_set =
- 				(struct ieee_types_ibss_param_set *)
- 				current_ptr;
-@@ -1305,10 +1313,14 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_ERP_INFO:
-+			if (!element_len)
-+				return -EINVAL;
- 			bss_entry->erp_flags = *(current_ptr + 2);
- 			break;
- 
- 		case WLAN_EID_PWR_CONSTRAINT:
-+			if (!element_len)
-+				return -EINVAL;
- 			bss_entry->local_constraint = *(current_ptr + 2);
- 			bss_entry->sensed_11h = true;
- 			break;
-@@ -1349,6 +1361,9 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_VENDOR_SPECIFIC:
-+			if (element_len + 2 < sizeof(vendor_ie->vend_hdr))
-+				return -EINVAL;
-+
- 			vendor_ie = (struct ieee_types_vendor_specific *)
- 					current_ptr;
- 
+ 	for_each_set_bit(feat, header->adds_features, HEADER_FEAT_BITS) {
+ 		if (!feat_ops[feat].synthesize) {
 
 
