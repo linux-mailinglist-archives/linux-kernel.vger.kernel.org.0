@@ -2,105 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8A86637A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 03:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF1C66368
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 03:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbfGLBuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 21:50:02 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:64039 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbfGLBuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 21:50:02 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x6C1ntc4011030;
-        Fri, 12 Jul 2019 10:49:55 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x6C1ntc4011030
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1562896196;
-        bh=UqIjBkSfDb7t0Pa41cTBLGihL/zO0QROm2fafaKHDNU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DDRFsUzW/FiD24HPs+jHu5Bi/EKdDsgZRtxiPrWYXTA/3mPJR02kR6Hy4rfZEHuk4
-         qvxNPWehXgIcjTVRXoXezGnP8oMNzcUtrK1R+L+NUle34E3/6PuAbQb0o8Sk+DfTtF
-         Ql7Zz0K3NyI31hFTXnQjNhBqcgpC0ygMQmMSgwyAw8Wu9QEF9W2D7YNuCjT8EXMWZY
-         /y2W/oMVyEeUnJJLoc6pB74gDeXr3xiuHnWJO/y7RUtsXyp6Ny6i3l8/5N5xwdqON0
-         rSjdfFQ0PpEuUrUwDHdYthh6CtNVnSZGqLxg29YwNSiuY2uYkpLvpNKNlG1SnusZSg
-         aALQBRtpaACTw==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id j8so3375398uan.6;
-        Thu, 11 Jul 2019 18:49:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAUAH8hkNLa9lFkiOx+JMLdZ8oX0oyTxbMLS3p0HWhfhxNiCjnXs
-        LK5obM/dn5Dh2KMTU9P34mDF+Q4sX8yh08RH/uk=
-X-Google-Smtp-Source: APXvYqzlydwB3gvvdA2lFPvhYp8V78j/y+++pFKcTD76YsRnM+JZbqCkUMFDsfvqSxGFW/eSSrak/E0XHSk37MO7KZk=
-X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr7296356uag.40.1562896194749;
- Thu, 11 Jul 2019 18:49:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190712010556.248319-1-briannorris@chromium.org>
- <CAK7LNARGNVfxexE616cQDs1fK7SzToKwHxO_T69+RShL6QVTCQ@mail.gmail.com> <CA+ASDXNGqYkBjMsjcRKAit+0cd0n7dwxKhezyYCXSh_HjucvQw@mail.gmail.com>
-In-Reply-To: <CA+ASDXNGqYkBjMsjcRKAit+0cd0n7dwxKhezyYCXSh_HjucvQw@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 12 Jul 2019 10:49:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARJ=aAf-iG7RVDp=bs7DTScJ1GBpEpkqtKDFDJYHEekUA@mail.gmail.com>
-Message-ID: <CAK7LNARJ=aAf-iG7RVDp=bs7DTScJ1GBpEpkqtKDFDJYHEekUA@mail.gmail.com>
-Subject: Re: [RFC PATCH] bug: always show source-tree-relative paths in WARN()/BUG()
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728855AbfGLBnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 21:43:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60694 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728497AbfGLBnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 21:43:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 18:43:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,480,1557212400"; 
+   d="scan'208";a="171416921"
+Received: from intel10-debian.sh.intel.com ([10.239.53.1])
+  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2019 18:43:37 -0700
+From:   Zhengjun Xing <zhengjun.xing@linux.intel.com>
+To:     rostedt@goodmis.org, mingo@redhat.com, tom.zanussi@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org, zhengjun.xing@linux.intel.com,
+        Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH v3] trace:Add "gfp_t" support in synthetic_events
+Date:   Fri, 12 Jul 2019 09:53:08 +0800
+Message-Id: <20190712015308.9908-1-zhengjun.xing@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 10:23 AM Brian Norris <briannorris@chromium.org> wrote:
->
-> On Thu, Jul 11, 2019 at 6:14 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > BTW, did you see this?
-> >
-> > commit a73619a845d5625079cc1b3b820f44c899618388
-> > Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Date:   Fri Mar 30 13:15:26 2018 +0900
-> >
-> >     kbuild: use -fmacro-prefix-map to make __FILE__ a relative path
->
-> Oh, wow, no I did not. If my reading is correct, that's GCC only? I've
-> been using various combinations of newer (5.2) and older (4.14.y --
-> didn't have that patch) kernels, older GCC (doesn't have that feature
-> AFAICT), and newer Clang (doesn't appear to have that feature). So I'm
-> not totally sure if I ever actually tried a combo that *could* make
-> use of that. But I may give it another shot.
->
-> In the event that this is GCC-specific...I don't suppose I could
-> convince anybody to expend any effort (e.g., taking a patch like mine)
-> to solve it for the non-GCC world?
->
-> Thanks for the tip,
-> Brian
+Add "gfp_t" support in synthetic_events, then the "gfp_t" type
+parameter in some functions can be traced.
 
+Prints the gfp flags as hex in addition to the human-readable flag
+string.  Example output:
 
-GCC 8 added this flag.
-So, it will be eventually all solved in the GCC world.
+  whoopsie-630 [000] ...1 78.969452: testevent: bar=b20 (GFP_ATOMIC|__GFP_ZERO)
+    rcuc/0-11  [000] ...1 81.097555: testevent: bar=a20 (GFP_ATOMIC)
+    rcuc/0-11  [000] ...1 81.583123: testevent: bar=a20 (GFP_ATOMIC)
 
-Clang has not supported it yet...
+Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+---
+ kernel/trace/trace_events_hist.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-
-Trimming absolute path at run-time
-is no help for reducing the kernel image.
-
-Turning __FILE__ into a relative path at compile-time is better.
-
-
-I hope Clang people will consider to support it.
-I guess implementing this feature should not be so hard.
-
-
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index ca6b0dff60c5..30f0f32aca62 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -13,6 +13,10 @@
+ #include <linux/rculist.h>
+ #include <linux/tracefs.h>
+ 
++/* for gfp flag names */
++#include <linux/trace_events.h>
++#include <trace/events/mmflags.h>
++
+ #include "tracing_map.h"
+ #include "trace.h"
+ #include "trace_dynevent.h"
+@@ -752,6 +756,8 @@ static int synth_field_size(char *type)
+ 		size = sizeof(unsigned long);
+ 	else if (strcmp(type, "pid_t") == 0)
+ 		size = sizeof(pid_t);
++	else if (strcmp(type, "gfp_t") == 0)
++		size = sizeof(gfp_t);
+ 	else if (synth_field_is_string(type))
+ 		size = synth_field_string_size(type);
+ 
+@@ -792,6 +798,8 @@ static const char *synth_field_fmt(char *type)
+ 		fmt = "%lu";
+ 	else if (strcmp(type, "pid_t") == 0)
+ 		fmt = "%d";
++	else if (strcmp(type, "gfp_t") == 0)
++		fmt = "%x";
+ 	else if (synth_field_is_string(type))
+ 		fmt = "%s";
+ 
+@@ -834,9 +842,20 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
+ 					 i == se->n_fields - 1 ? "" : " ");
+ 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
+ 		} else {
++			struct trace_print_flags __flags[] = {
++			    __def_gfpflag_names, {-1, NULL} };
++
+ 			trace_seq_printf(s, print_fmt, se->fields[i]->name,
+ 					 entry->fields[n_u64],
+ 					 i == se->n_fields - 1 ? "" : " ");
++
++			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
++				trace_seq_puts(s, " (");
++				trace_print_flags_seq(s, "|",
++						      entry->fields[n_u64],
++						      __flags);
++				trace_seq_putc(s, ')');
++			}
+ 			n_u64++;
+ 		}
+ 	}
 -- 
-Best Regards
-Masahiro Yamada
+2.14.1
+
