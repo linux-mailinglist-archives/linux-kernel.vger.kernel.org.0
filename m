@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA8566D9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E0F66E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbfGLMb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49146 "EHLO mail.kernel.org"
+        id S1729275AbfGLMbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:31:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728873AbfGLMb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:31:56 -0400
+        id S1729254AbfGLMa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:30:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B6EC21670;
-        Fri, 12 Jul 2019 12:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AAEE216B7;
+        Fri, 12 Jul 2019 12:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934715;
-        bh=t5280lZFvII97lEhHEy/0FVCtgfXs0UW8Pa4O96y/hI=;
+        s=default; t=1562934658;
+        bh=BVaPzCcCRxog7PRN36yt9WFA3YWErUvntYn/2BoLlTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0CV5m7w3sRpG0hP3YvXa2HPpIhPmzrgxJ38nQKVS5o3YRMK0eG2eZDz2JZI8fJpG
-         2sFZ+9sUMfQ29xesV/S+0G1qFkftiKgpfsyeWbApOl6AzcINKhiNp5aeZkjWJ7+nk8
-         ZwlB1N7YQtELjNJWUvAminbBS3JeOTYA+qzStoaI=
+        b=grK3Np1HVn2KVm2SxF4T9YxiAgabd3ZZZ0LhfttirmVOiiGx+rIl7O5oaPQ6GNQMs
+         MncJ6Z//sqiBWWFsskmEV+wq9GujGZIPCsva9NDTVehAj73HihaOt7LiJCOY9sTKBE
+         MfOArHVaQujNXpaokN8sxM86sZFmsUGOwqWssJJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 5.1 119/138] staging: comedi: dt282x: fix a null pointer deref on interrupt
-Date:   Fri, 12 Jul 2019 14:19:43 +0200
-Message-Id: <20190712121633.311126361@linuxfoundation.org>
+        stable@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>
+Subject: [PATCH 5.1 120/138] staging: wilc1000: fix error path cleanup in wilc_wlan_initialize()
+Date:   Fri, 12 Jul 2019 14:19:44 +0200
+Message-Id: <20190712121633.348340719@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -42,50 +42,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Ajay Singh <ajay.kathat@microchip.com>
 
-commit b8336be66dec06bef518030a0df9847122053ec5 upstream.
+commit 6419f818ababebc1116fb2d0e220bd4fe835d0e3 upstream.
 
-The interrupt handler `dt282x_interrupt()` causes a null pointer
-dereference for those supported boards that have no analog output
-support.  For these boards, `dev->write_subdev` will be `NULL` and
-therefore the `s_ao` subdevice pointer variable will be `NULL`.  In that
-case, the following call near the end of the interrupt handler results
-in a null pointer dereference:
+For the error path in wilc_wlan_initialize(), the resources are not
+cleanup in the correct order. Reverted the previous changes and use the
+correct order to free during error condition.
 
-	comedi_handle_events(dev, s_ao);
-
-Fix it by only calling the above function if `s_ao` is valid.
-
-(There are other uses of `s_ao` by the interrupt handler that may or may
-not be reached depending on values of hardware registers.  Trust that
-they are reliable for now.)
-
-Note:
-commit 4f6f009b204f ("staging: comedi: dt282x: use comedi_handle_events()")
-propagates an earlier error from
-commit f21c74fa4cfe ("staging: comedi: dt282x: use cfc_handle_events()").
-
-Fixes: 4f6f009b204f ("staging: comedi: dt282x: use comedi_handle_events()")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Fixes: b46d68825c2d ("staging: wilc1000: remove COMPLEMENT_BOOT")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ajay Singh <ajay.kathat@microchip.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/dt282x.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/wilc1000/wilc_netdev.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/comedi/drivers/dt282x.c
-+++ b/drivers/staging/comedi/drivers/dt282x.c
-@@ -557,7 +557,8 @@ static irqreturn_t dt282x_interrupt(int
- 	}
- #endif
- 	comedi_handle_events(dev, s);
--	comedi_handle_events(dev, s_ao);
-+	if (s_ao)
-+		comedi_handle_events(dev, s_ao);
+--- a/drivers/staging/wilc1000/wilc_netdev.c
++++ b/drivers/staging/wilc1000/wilc_netdev.c
+@@ -530,17 +530,17 @@ static int wilc_wlan_initialize(struct n
+ 			goto fail_locks;
+ 		}
  
- 	return IRQ_RETVAL(handled);
- }
+-		if (wl->gpio_irq && init_irq(dev)) {
+-			ret = -EIO;
+-			goto fail_locks;
+-		}
+-
+ 		ret = wlan_initialize_threads(dev);
+ 		if (ret < 0) {
+ 			ret = -EIO;
+ 			goto fail_wilc_wlan;
+ 		}
+ 
++		if (wl->gpio_irq && init_irq(dev)) {
++			ret = -EIO;
++			goto fail_threads;
++		}
++
+ 		if (!wl->dev_irq_num &&
+ 		    wl->hif_func->enable_interrupt &&
+ 		    wl->hif_func->enable_interrupt(wl)) {
+@@ -596,7 +596,7 @@ fail_irq_enable:
+ fail_irq_init:
+ 		if (wl->dev_irq_num)
+ 			deinit_irq(dev);
+-
++fail_threads:
+ 		wlan_deinitialize_threads(dev);
+ fail_wilc_wlan:
+ 		wilc_wlan_cleanup(dev);
 
 
