@@ -2,87 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A9166C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6952766BF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfGLMGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:06:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47776 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfGLMGi (ORCPT
+        id S1726907AbfGLMCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:02:34 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:47009 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbfGLMCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:06:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3vVq093722;
-        Fri, 12 Jul 2019 12:05:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=2/cY3ZWthVr4zF3BaBmwsNFGaTKeoOtuNhP6QeMTAA4=;
- b=xyC1Qshs4IHx5WGHrLRX7cxrBMMFxGYxcQ3ts00xuizD+H2N77utRDZ8V13HlWAe8VeR
- OjUKxmzKPrO9rasrb5+x1ZywsH+/3Y9w+ONk67rxTheNr+emRuR7wvD2NfUUYQSDf5d0
- qLlehspat5zeQhLUU0hMrk+r1et2R+smHTonjgq26cruMtnSR2SLwemTra9yZG9YigbI
- u/Wv2eeVJ2N7J5TdCuR8d/dGnlMWwVgzxurtZjBWsivtUVMKP7p+Sb2YYYtSzc3DUj2x
- MH/+Jgp5rj9FeQjbljF9Aqeq5asYu3oz4xpcjagLBNlgaIi2+VWAwN5rbK7kkwtS39B7 Xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2tjkkq57ax-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:05:56 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3RVf095667;
-        Fri, 12 Jul 2019 12:03:56 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2tpefd28vm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:03:56 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6CC3r2t020605;
-        Fri, 12 Jul 2019 12:03:53 GMT
-Received: from tomti.i.net-space.pl (/10.175.167.233)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Jul 2019 04:58:14 -0700
-Date:   Fri, 12 Jul 2019 13:58:09 +0200
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     bp@alien8.de, corbet@lwn.net, dpsmith@apertussolutions.com,
-        eric.snowberg@oracle.com, hpa@zytor.com, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, mingo@redhat.com,
-        ross.philipson@oracle.com, tglx@linutronix.de
-Subject: Re: [PATCH v2 0/3] x86/boot: Introduce the kernel_info et consortes
-Message-ID: <20190712115809.slonryrqvpbgs6xh@tomti.i.net-space.pl>
-References: <20190704163612.14311-1-daniel.kiper@oracle.com>
+        Fri, 12 Jul 2019 08:02:34 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c73so4212289pfb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 05:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=38IvB5KypHDAuaY3YawsJEBcvuco56ouTYCrEb+HEU0=;
+        b=mZ6PnB60as+zd8jQQHihMl6Lq71efQ8gvN2pJtswPVRzB6N/hPqe6FewYIYcF/Tx54
+         w3JV1LABmcpp/rKonz9KdKdLcVK/rG5Krf9Jt5ttzc1nQ3ljvY7PDTPlei0Bgi33WA11
+         Aa7nCUZQTwoJEhqgXjWw2kDIJVJThfZveZw836caUJMdNr9YV0WVg4j1y1RSyUfFslqS
+         qPc286RqXst+zYYpOLQQYE4vBzfeELhFv5O+twhKjyouGtlc3pJexk2o6BXD1itXeGw1
+         9tWIRGS5A6A6UtO2ZxTXX4YuzCvw86x9n52+47vXBUJKham10y5GFtrjCzq257QjiP1Z
+         cJvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=38IvB5KypHDAuaY3YawsJEBcvuco56ouTYCrEb+HEU0=;
+        b=H5wlOVxaMy/tacPLZ9C2ZdxExiw1CYP1sUBSgAZPddbWE3NbHw9fe1CokD/h6ydunV
+         FShTfTbhPSCu+vKZOSZvt40tR8C5mpfKpm/p1y8h7nAqb0X/Kht7TkG6G6a/LeM1Mmv8
+         9z3QUjHrlFgPJdcKhK5qv6CFRZfioZAk/EK89mB2gdV17vxaXWu3TkHzzrkgUGc7kbbo
+         IdSOCyCO0idJikm3GX/06QRPR1jD7LdRhfuyxR3XKx1qBqaobD69kkgGQt6nV4BeZdue
+         6+BV3BoSqkw2C1grO/S8CqC9LQOqteg0tUokrEt1G1MTsG382bI5OMT0EZ3lMFyKWoPe
+         CfXA==
+X-Gm-Message-State: APjAAAWe9IwECfSBpT2oyAXD5h8zdqYDiZfgJsmM3tkd1+QDEYepUOcG
+        NZdYYgnXB9RxjEFPuUV3aac=
+X-Google-Smtp-Source: APXvYqyoi0Y6qlEL1iMKqyin6FJjShBWPRtQHr7DHceYStTR3VArKTv7hCnMQqSJv7vqsXDyyqTB9g==
+X-Received: by 2002:a17:90a:b394:: with SMTP id e20mr11269156pjr.76.1562932953693;
+        Fri, 12 Jul 2019 05:02:33 -0700 (PDT)
+Received: from localhost.localdomain.localdomain ([2408:823c:c11:478:b8c3:8577:bf2f:2])
+        by smtp.gmail.com with ESMTPSA id a128sm4605496pfb.185.2019.07.12.05.02.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 12 Jul 2019 05:02:33 -0700 (PDT)
+From:   Pengfei Li <lpf.vector@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     urezki@gmail.com, rpenyaev@suse.de, peterz@infradead.org,
+        guro@fb.com, rick.p.edgecombe@intel.com, rppt@linux.ibm.com,
+        aryabinin@virtuozzo.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
+Subject: [PATCH v4 0/2] mm/vmalloc.c: improve readability and rewrite vmap_area
+Date:   Fri, 12 Jul 2019 20:02:11 +0800
+Message-Id: <20190712120213.2825-1-lpf.vector@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704163612.14311-1-daniel.kiper@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=647
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907120132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=703 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907120132
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 06:36:09PM +0200, Daniel Kiper wrote:
-> Hi,
->
-> Due to very limited space in the setup_header this patch series introduces new
-> kernel_info struct which will be used to convey information from the kernel to
-> the bootloader. This way the boot protocol can be extended regardless of the
-> setup_header limitations. Additionally, the patch series introduces some
-> convenience features like the setup_indirect struct and the
-> kernel_info.setup_type_max field.
+v3 -> v4:
+* Base on next-20190711
+* patch 1: From: Uladzislau Rezki (Sony) <urezki@gmail.com> (author)
+  - https://lkml.org/lkml/2019/7/3/661
+* patch 2: Modify the layout of struct vmap_area for readability
 
-Ping?
+v2 -> v3:
+* patch 1-4: Abandoned
+* patch 5:
+  - Eliminate "flags" (suggested by Uladzislau Rezki)
+  - Base on https://lkml.org/lkml/2019/6/6/455
+    and https://lkml.org/lkml/2019/7/3/661
 
-Daniel
+v1 -> v2:
+* patch 3: Rename __find_vmap_area to __search_va_in_busy_tree
+           instead of __search_va_from_busy_tree.
+* patch 5: Add motivation and necessary test data to the commit
+           message.
+* patch 5: Let va->flags use only some low bits of va_start
+           instead of completely overwriting va_start.
+
+The current implementation of struct vmap_area wasted space.
+
+After applying this commit, sizeof(struct vmap_area) has been
+reduced from 11 words to 8 words.
+
+Pengfei Li (1):
+  mm/vmalloc.c: Modify struct vmap_area to reduce its size
+
+Uladzislau Rezki (Sony) (1):
+  mm/vmalloc: do not keep unpurged areas in the busy tree
+
+ include/linux/vmalloc.h | 40 ++++++++++++++++-----
+ mm/vmalloc.c            | 79 ++++++++++++++++++++++++++++-------------
+ 2 files changed, 86 insertions(+), 33 deletions(-)
+
+-- 
+2.21.0
+
