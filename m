@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DB766FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5EA66FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfGLNMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 09:12:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45888 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726449AbfGLNMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 09:12:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B877AD5D;
-        Fri, 12 Jul 2019 13:11:59 +0000 (UTC)
-Date:   Fri, 12 Jul 2019 15:11:58 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Vincent Whitchurch <rabinv@axis.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printk: Do not lose last line in kmsg buffer dump
-Message-ID: <20190712131158.5wgy5wxjtqn6uqly@pathway.suse.cz>
-References: <20190711142937.4083-1-vincent.whitchurch@axis.com>
- <20190712091251.or4bitunknzhrigf@pathway.suse.cz>
- <20190712092253.GA7922@jagdpanzerIV>
+        id S1727467AbfGLNOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 09:14:14 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34427 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbfGLNON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 09:14:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 31so9977653wrm.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 06:14:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VfT/FB70SYUZvSibHy6qxOxJHNCuzEaHFG9lYiqHVks=;
+        b=XDyCqClsFCX4P8N7DdrfueTc+QEck0hDVCBh4e82K8zR5CrgsgXhTCNQws235NPrN7
+         gh1tBwudsOFfBgRhUiKs2n4YBDARRkW0iwRlUd1Z9yU55oHPqtU04fH9KmZvJJ3FdDLX
+         ABl8yPZGgz3W5AdReW4HCIFTuWcr4SeXIaTQG8hscjkK5KFvIL5eU9//MktrCjadnMdv
+         l+iasLAr0HQtKq2E2JNIZnbBXUEa35CPPirIbwgSKTvPxzIgbns+7xZ3XnKq5Tw7smta
+         PVJLqZyERmk3wwUEruQwrSf/lZuRNXw5u7ThTzXoPT+of3NMbyW3pVdH6mIZaBv9gA5X
+         qzMQ==
+X-Gm-Message-State: APjAAAXN4lRtNZlUbcYQIhS+QLuc/suOcu/FEGNrTbaQxpZDpKemM9j9
+        Z9Qh7JrIYrQsiA4uITfaEwFubQ==
+X-Google-Smtp-Source: APXvYqxnCJN8ifBfaBldPbdVFdYWJmrV4AScCeUD8wYtYP4cKMb0VPikXLVesfil1bA6/91dAetwrw==
+X-Received: by 2002:a5d:564e:: with SMTP id j14mr11365756wrw.1.1562937251761;
+        Fri, 12 Jul 2019 06:14:11 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:d066:6881:ec69:75ab? ([2001:b07:6468:f312:d066:6881:ec69:75ab])
+        by smtp.gmail.com with ESMTPSA id b2sm10615526wrp.72.2019.07.12.06.14.10
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2019 06:14:11 -0700 (PDT)
+Subject: Re: [PATCH 1/2] x86: kvm: avoid -Wsometimes-uninitized warning
+To:     Arnd Bergmann <arnd@arndb.de>, Roman Kagan <rkagan@virtuozzo.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "clang-built-linux@googlegroups.com" 
+        <clang-built-linux@googlegroups.com>
+References: <20190712091239.716978-1-arnd@arndb.de>
+ <20190712120249.GA27820@rkaganb.sw.ru>
+ <CAK8P3a3+QSRQkitXiDFLYvyYvOS+Q4sXb=xA_XPeX2O2zQ5kgw@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <b7da5e91-f23c-9f5d-2c61-07e7fc7af9b1@redhat.com>
+Date:   Fri, 12 Jul 2019 15:14:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712092253.GA7922@jagdpanzerIV>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <CAK8P3a3+QSRQkitXiDFLYvyYvOS+Q4sXb=xA_XPeX2O2zQ5kgw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-07-12 18:22:53, Sergey Senozhatsky wrote:
-> On (07/12/19 11:12), Petr Mladek wrote:
-> > > For example, with the following two final prints:
-> > > 
-> > > [    6.427502] AAAAAAAAAAAAA
-> > > [    6.427769] BBBBBBBB12345
-> > > 
-> > > A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
-> > > patch:
-> > > 
-> > >  00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
-> > >  00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
-> > >  00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > >  00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > > 
-> > > After this patch:
-> > > 
-> > >  00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 35 36 36 37 38  <0>[    6.456678
-> > >  00000010: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
-> > >  00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > >  00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > > 
-> > > Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-> > 
-> > I think that I need vacation. I have got lost in all the checks
-> > and got it wrongly in the morning.
-> > 
-> > This patch fixes the calculation of messages that might fit
-> > into the buffer. It makes sure that the function that writes
-> > the messages will really allow to write them.
-> > 
-> > It seems to be the correct fix.
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+On 12/07/19 15:02, Arnd Bergmann wrote:
+> I think what happens here is that clang does not treat the return
+> code of track the return code of is_64_bit_mode() as a constant
+> expression, and therefore assumes that the if() condition
+> may or may not be true, for the purpose of determining whether
+> the variable is used without an inialization. This would hold even
+> if it later eliminates the code leading up to the if() in an optimization
+> stage. IS_ENABLED(CONFIG_X86_64) however is a constant
+> expression, so with the patch, it understands this.
 > 
-> Looks correct to me as well.
+> In contrast, gcc seems to perform all the inlining first, and
+> then see if some variable is used uninitialized in the final code.
+> This gives additional information to the compiler, but makes the
+> outcome less predictable since it depends on optimization flags
+> and architecture specific behavior.
 > 
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Both approaches have their own sets of false positive and false
+> negative warnings.
 
-The patch has been committed into printk.git, branch for-5.3-fixes.
+True, on the other hand constant returns are not really rocket science. :)
 
-I am still a bit undecided whether to send pull request the following
-week or wait for 5.4. On one hand, it is very old bug (since 3.5).
-On the other hand, I think that it was not reported/fixed earlier
-only because it was hard to notice. And loosing the very last message
-is quite pity.
+Maybe change is_long_mode to a macro if !CONFIG_X86_64?  That would be
+better if clang likes it.
 
-Anyway, I added stable tag.
-
-Best Regards,
-Petr
+Paolo
