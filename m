@@ -2,95 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F2666A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E047E66A9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:04:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfGLKC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 06:02:29 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52132 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfGLKC2 (ORCPT
+        id S1726664AbfGLKE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 06:04:57 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43067 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfGLKE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 06:02:28 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 207so8348453wma.1;
-        Fri, 12 Jul 2019 03:02:27 -0700 (PDT)
+        Fri, 12 Jul 2019 06:04:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i189so4093448pfg.10
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 03:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=PVznxIgOJnlqE5rODHHWrAxuxQ+5+E+kFPlhzOL7qDQ=;
-        b=R5+1/qjJl+3YpWHEZkTpsk6puFGtmsVkY5J/NsogQ9vzS73dYa5eMD1VPNun0oQVxB
-         DMQdhzY+mxoY5oUQEf1795qpNPPNrcmNJjtqBM9zhDfBx5g5lbHkastxQUmnrJHEtB+Z
-         Epalw+tOcRhh4Wx3blUcayWABvfKFmyXJi+8HThkOiCIEF5nSQI1NJQNpjCXtok4Bbc/
-         5eQ4F2viDXDKsciFyVWNrHJ8GtGdVzYN4wnp3Q3pnEsxirfMhSuzV/kHlT/dzV1OX7DY
-         ezPW2OvCzNCZmdvMGPiIjEf6loEEs1LkZdSCna6xvTZ63rSWAoxgWBmMdNR+1EEBSWcn
-         ToSw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9+TShMWhLwN8SmBiAr6bXkiOWeqpu2JFdqFTK8VDDlU=;
+        b=h5gkWOale1JKC7q3JJ5JGsYnwMF4rXg9ycUc8TyqSYhtPfDqhRXMww1hVtAmCVuclM
+         LrU9dKHZvAhoV+SbdlPevRw4Qlz2t+djP0eaF314TPHOrJvU4wceLVI+L6oX3xV1R5CI
+         ZLa7NiOko2q8t5XjCYGa2NgeIkOrLKeiErpTU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=PVznxIgOJnlqE5rODHHWrAxuxQ+5+E+kFPlhzOL7qDQ=;
-        b=ftxuXImbxRhv869ishbDFz2fLr9OgEA4kBSupIuzw3zQrta5OAIiYWXaDpD3c/Y8TS
-         dNqTqAhLpVK+3YdNAlnyxMbXhI8Yzw+4q3q/delHmU+NeFstuczijms5OSPvYAyE4Mnj
-         aCc7nslN37Obg+5F+xEEv22Y9EFs6k3XAiyYQi+oJKWoKZouZylAxCfp315Cx8SmhnTQ
-         rt2ouBfcZPHRT3aOHPm0pgO1FVRL0jtnwVhKSUPTO4llkreHYhrGI4u4kJAfmjGMh1qH
-         UPLJBECkBS0ICb70QaPVUpB2WDvVBImSKTAFYpGZs/fzR9B9QENHBXkbOVJYbn+267UA
-         lg0g==
-X-Gm-Message-State: APjAAAXD52jen4YI5eflc4/BzkwNQZfzc5ZTuWN83cDsScEWNzra37AX
-        Nod1Ul6coQFXo+njNhx6k48=
-X-Google-Smtp-Source: APXvYqwVkDbIqxSOP3zyc1XG88KVHvtUgjV3NOM+MrukPDAWPxbvgfn0l1J6GpoxNmOM+sWy/8SFMQ==
-X-Received: by 2002:a05:600c:20ca:: with SMTP id y10mr8792513wmm.72.1562925746299;
-        Fri, 12 Jul 2019 03:02:26 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id i13sm8047696wrr.73.2019.07.12.03.02.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Jul 2019 03:02:25 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 12:02:24 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Jan Kara <jack@suse.com>,
-        "Steven J. Magnani" <steve.magnani@digidescorp.com>,
-        Roald Strauss <mr_lou@dewfall.dk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: UDF filesystem image with Write-Once UDF Access Type
-Message-ID: <20190712100224.s2chparxszlbnill@pali>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9+TShMWhLwN8SmBiAr6bXkiOWeqpu2JFdqFTK8VDDlU=;
+        b=N1f6nNp/wQjIrIXwaRXJSBCGX2ulYdCdr+Evq0tEkrakpJO6b42/F3/v5z+Grst8zA
+         uOrrDz4MFiqvS7ftNzT3kt9SyGv1r0KK6QbN/OJXSwYtA6vCdUzrEO0sK0FFSttY7jP4
+         0dbIU5NT8BHeCQ6FyQ061G6X2OAfu20sp4S2zB8QqUYPMdUaT280/AB+wK09hZdnoBbL
+         DSGwmGbD6tl1/UAjhljNKHLPo40kq0SKpZHHrluehz46m81yhN1WVOo83weJ+1Bghsys
+         YAEPCX/QpT1JYBKhQViu5uaYc+FtIQbiHfSOo5sLnwAJzNNkgpu5ZYvkTauRWYAd3V6d
+         +9JA==
+X-Gm-Message-State: APjAAAXEzwnMh//jlqlTKAE8LM0mDX6ZGcu9eW70SPLD+ye9bA9KDIdQ
+        9DtqNwJjBbIzd/AlGu6vLPvlqRgKzUk=
+X-Google-Smtp-Source: APXvYqwATmqfXzDCdurIM9yTmyaXPTBgWhe7CgwnZbiAoCvMtazQjnDbkVjRZW0J7jvst+vKxiVZOQ==
+X-Received: by 2002:a63:e807:: with SMTP id s7mr9495461pgh.194.1562925895786;
+        Fri, 12 Jul 2019 03:04:55 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
+        by smtp.gmail.com with ESMTPSA id v3sm7501412pfm.188.2019.07.12.03.04.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2019 03:04:54 -0700 (PDT)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Subject: [PATCH v3 0/5] Add HDMI jack support on RK3288
+Date:   Fri, 12 Jul 2019 18:04:38 +0800
+Message-Id: <20190712100443.221322-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This patch series supports HDMI jack reporting on RK3288, which uses
+DRM dw-hdmi driver and hdmi-codec codec driver.
 
-I had discussion with Roald and based on his tests, Linux kernel udf.ko
-driver mounts UDF filesystem image with Write-Once UDF Access Type as
-normal read/write filesystem.
+The previous discussion about reporting jack status using hdmi-notifier
+and drm_audio_component is at
 
-I think this is a bug as Write-Once Access Type is defined that existing
-blocks on filesystem cannot be rewritten. Only new blocks can be
-appended after end of device. Basically it means special HW support from
-underlying media, e.g. for optical medias packet-writing technique (or
-ability to burn new session) and CDROM_LAST_WRITTEN ioctl to locate
-"current" end of device.
+https://lore.kernel.org/patchwork/patch/1083027/
 
-In my opinion without support for additional layer, kernel should treat
-UDF Write-Once Access Type as read-only mount for userspace. And not
-classic read/write mount.
+The new approach is to use a callback mechanism that is
+specific to hdmi-codec.
 
-If you want to play with Write-Once Access Type, use recent version of
-mkudffs and choose --media-type=cdr option, which generates UDF
-filesystem suitable for CD-R (Write-Once Access Type with VAT and other
-UDF options according to UDF specification).
+Changes from v2 to v3:
+- dw-hdmi-i2s-audio.c: Use fixed ID instead of auto ID.
+- rk3288_hdmi_analog.c: Use the fixed name hdmi-audio-codec for codec device.
+- rockchip_max98090: Use the fixed name hdmi-audio-codec for codec device.
+- rockchip_max98090: Fix the dependency of hdmi-codec in Kconfig.
 
-Also in git master of udftools has mkduffs now new option --read-only
-which creates UDF image with Read-Only Access Type.
+Cheng-Yi Chiang (5):
+  ASoC: hdmi-codec: Add an op to set callback function for plug event
+  drm: bridge: dw-hdmi: Report connector status using callback
+  drm: dw-hdmi-i2s: Use fixed id for codec device
+  ASoC: rockchip_max98090: Add dai_link for HDMI
+  FROMLIST: ASoC: rockchip_max98090: Add HDMI jack support
 
-It seems that udf.ko does not support updating VAT table, so probably it
-should treat also filesystem with VAT as read-only too.
+ .../gpu/drm/bridge/synopsys/dw-hdmi-audio.h   |   3 +
+ .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   |  12 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  55 ++++++++-
+ include/sound/hdmi-codec.h                    |  16 +++
+ sound/soc/codecs/hdmi-codec.c                 |  45 +++++++
+ sound/soc/rockchip/Kconfig                    |   3 +-
+ sound/soc/rockchip/rk3288_hdmi_analog.c       |   3 +-
+ sound/soc/rockchip/rockchip_max98090.c        | 116 ++++++++++++++----
+ 8 files changed, 226 insertions(+), 27 deletions(-)
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.22.0.510.g264f2c817a-goog
+
