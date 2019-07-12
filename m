@@ -2,70 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C94DD15C834
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F18D15C891
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:49:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbgBMQ1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:27:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbgBMQ1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:27:23 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEF15217F4;
-        Thu, 13 Feb 2020 16:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581611242;
-        bh=pLlFbwgpXzZyUY0PLcmwiWVBzwZX/BtaXYVlyDM6gsk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZmX16Ia7+5e3L+ZUm9mPSymTnV7oOXSuaN1yWcAtFXaEtcJWvw8sU/kzmHj1dlMP1
-         TLwjDC9pDFDJvQvrgAVp5/QE26IWna9gLEPhm28MhfGkXEZJz+wnKcyLieqm9LghKD
-         7F3UvPHPPJVDaLDx0A/5p9hCEDUV/ECTY6kEw/iA=
-Date:   Thu, 13 Feb 2020 08:27:21 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Will Deacon <will@kernel.org>, Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH 5.4 85/96] selinux: revert "stop passing MAY_NOT_BLOCK to
- the AVC upon follow_link"
-Message-ID: <20200213162721.GA3636914@kroah.com>
-References: <20200213151839.156309910@linuxfoundation.org>
- <20200213151911.147099125@linuxfoundation.org>
- <b481f512-d4dd-1c04-f39f-0ba271193d0a@tycho.nsa.gov>
+        id S1727983AbgBMQta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:49:30 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35114 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbgBMQta (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 11:49:30 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: bbrezillon)
+        with ESMTPSA id 1F89A284D59
+Date:   Fri, 12 Jul 2019 18:27:39 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Nicolas.Ferre@microchip.com,
+        Joshua Henderson <joshua.henderson@microchip.com>,
+        bbrezillon@kernel.org, airlied@linux.ie,
+        alexandre.belloni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/atmel-hlcdc: set layer REP bit to enable
+ replication logic
+Message-ID: <20190712182739.4bab0366@linux.home>
+In-Reply-To: <20190712162117.GB18990@ravnborg.org>
+References: <1562686509-8747-1-git-send-email-joshua.henderson@microchip.com>
+        <13aa50e4-a726-3f82-b186-79b452199a02@microchip.com>
+        <20190712162117.GB18990@ravnborg.org>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b481f512-d4dd-1c04-f39f-0ba271193d0a@tycho.nsa.gov>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:01:41AM -0500, Stephen Smalley wrote:
-> On 2/13/20 10:21 AM, Greg Kroah-Hartman wrote:
-> > From: Stephen Smalley <sds@tycho.nsa.gov>
-> > 
-> > commit 1a37079c236d55fb31ebbf4b59945dab8ec8764c upstream.
-> > 
-> > This reverts commit e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK
-> > to the AVC upon follow_link"). The correct fix is to instead fall
-> > back to ref-walk if audit is required irrespective of the specific
-> > audit data type.  This is done in the next commit.
-> > 
-> > Fixes: e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link")
-> > Reported-by: Will Deacon <will@kernel.org>
-> > Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Fri, 12 Jul 2019 18:21:17 +0200
+Sam Ravnborg <sam@ravnborg.org> wrote:
+
+> Hi Joshua.
 > 
-> This patch should be accompanied by commit
-> 0188d5c025ca8fe756ba3193bd7d150139af5a88 ("selinux: fall back to ref-walk if
-> audit is required").  The former is reverting an incorrect fix for
-> bda0be7ad994 ("security: make inode_follow_link RCU-walk aware"), the latter
-> is providing the correct fix for it.
+> On Tue, Jul 09, 2019 at 04:24:49PM +0000, Nicolas.Ferre@microchip.com wrote:
+> > On 09/07/2019 at 17:35, Joshua Henderson wrote:  
+> > > This bit enables replication logic to expand an RGB color less than 24
+> > > bits, to 24 bits, which is used internally for all formats.  Otherwise,
+> > > the least significant bits are always set to zero and the color may not
+> > > be what is expected.
+> > > 
+> > > Signed-off-by: Joshua Henderson <joshua.henderson@microchip.com>  
+> > 
+> > Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > 
+> > Here is patchwork entry:
+> > https://patchwork.kernel.org/patch/11037167/
+> > 
+> > Thanks, best regards,
+> >    Nicolas
+> >   
+> > > ---
+> > >   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > > index eb7c4cf..6f6cf61 100644
+> > > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > > @@ -389,7 +389,7 @@ atmel_hlcdc_plane_update_general_settings(struct atmel_hlcdc_plane *plane,
+> > >   	atmel_hlcdc_layer_write_cfg(&plane->layer, ATMEL_HLCDC_LAYER_DMA_CFG,
+> > >   				    cfg);
+> > >   
+> > > -	cfg = ATMEL_HLCDC_LAYER_DMA;
+> > > +	cfg = ATMEL_HLCDC_LAYER_DMA | ATMEL_HLCDC_LAYER_REP;
+> > >   
+> > >   	if (plane->base.type != DRM_PLANE_TYPE_PRIMARY) {
+> > >   		cfg |= ATMEL_HLCDC_LAYER_OVR | ATMEL_HLCDC_LAYER_ITER2BL |  
+> 
+> Thanks - this gave me an opportunity to read a bit more in the datasheet
+> of the controller.
+> Applied to drm-misc-next with Ack from Nicolas.
 
-Thanks for letting me know, now queued up for both trees.
+I was about to add my R-b and ask you to apply the patch :-). I'm glad
+you didn't wait for my feedback to apply the fix, that means I'll be
+able to remove my name from the Atmel HLCDC entry soon ;-).
 
-greg k-h
+> 
+> 	Sam
+
