@@ -2,132 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 673C4672B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32983672A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfGLPp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 11:45:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:16716 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbfGLPp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 11:45:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 08:45:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,483,1557212400"; 
-   d="scan'208";a="318031854"
-Received: from yanbeibe-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.32.118])
-  by orsmga004.jf.intel.com with ESMTP; 12 Jul 2019 08:45:20 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tweek@google.com, matthewgarrett@google.com,
-        jorhand@linux.microsoft.com, rdunlap@infradead.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v4] tpm: Document UEFI event log quirks
-Date:   Fri, 12 Jul 2019 18:44:32 +0300
-Message-Id: <20190712154439.10642-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727104AbfGLPoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 11:44:54 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44387 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfGLPoy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 11:44:54 -0400
+Received: by mail-io1-f67.google.com with SMTP id s7so21206245iob.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 08:44:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Flz2lLRzUd8jYEWKtYpt6MQ7g5ki02yJxXMItOlTOZg=;
+        b=pbPlFejq7MTKPuDW0ogOnbBzGH2jXDG5LC6kb260dojCS+6rZGCVtGA2IH1kL6RznB
+         SJhzvuQG7loYFZAVmTdkdk1rejdBTozWt2pts8ngpES6w5L98c+Y/VQQQR1uvpzaGUYL
+         84j5tR/zzIFinJNYKrNFtBQoTLKU2r2KSXnzPDJcwEscR+qEtSta4Cw7XzMHiWpyHd3Z
+         MygntlFCZiZDeQmGvz9hirLEZ0q6RAbnv1McHly0lCVDjLsWlQWqi3q45RowsBDAjuwP
+         47Kvmg0xLi2Y7troXaiWupgkLT+Q45VB2Yp1A5D+NtQVaeZnAiZaVMr+WJHp/2NtBFdT
+         cyGg==
+X-Gm-Message-State: APjAAAWMuaJrWnxSURD3XvqAZeiFIYfl7FBK8lMj+tLBeQtOn4Hrsdwe
+        UScJOTl8N4tZWMsjEC7qiZmfkLDD5oi2fP58ojE=
+X-Google-Smtp-Source: APXvYqxN8RQNuZM9vdEm/CAl+zuh4AN5lTPTDyHWochsrNu0wOHqh5l7I2dOMKuVQTeQcmrFPVSCkwj2CtRyhmmnvW8=
+X-Received: by 2002:a6b:e60b:: with SMTP id g11mr11691332ioh.9.1562946293139;
+ Fri, 12 Jul 2019 08:44:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+References: <59042b09-7651-be1d-347f-0dc4aa02a91b@gmx.co.uk>
+In-Reply-To: <59042b09-7651-be1d-347f-0dc4aa02a91b@gmx.co.uk>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Fri, 12 Jul 2019 17:44:40 +0200
+Message-ID: <CANBLGcyO5wAHgSVjYFB+hcp+SzaKY9d0QJm-hxqnSYbZ4Yv97g@mail.gmail.com>
+Subject: Re: Asus C101P Chromeboot fails to boot with Linux 5.2
+To:     Alex Dewar <alex.dewar@gmx.co.uk>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some weird quirks when it comes to UEFI event log. Provide a
-brief introduction to TPM event log mechanism and describe the quirks
-and how they can be sorted out.
+Hi Alex,
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v4: - Unfortanely -> Unfortunately
-v3: - Add a section for refs and use a bullet list to enumerate them.
-    - Remove an invalid author info.
-v2: - Fix one typo.
-    - Refine the last paragraph to better explain how the two halves
-      of the event log are concatenated.
- Documentation/security/tpm/index.rst         |  1 +
- Documentation/security/tpm/tpm_event_log.rst | 55 ++++++++++++++++++++
- 2 files changed, 56 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_event_log.rst
+On Fri, 12 Jul 2019 at 17:02, Alex Dewar <alex.dewar@gmx.co.uk> wrote:
+> When I try to boot the screen just gets flooded with messages like this:
+> http://users.sussex.ac.uk/~ad374/boot_fail.jpg
 
-diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-index af77a7bbb070..db566350bcd5 100644
---- a/Documentation/security/tpm/index.rst
-+++ b/Documentation/security/tpm/index.rst
-@@ -4,4 +4,5 @@ Trusted Platform Module documentation
- 
- .. toctree::
- 
-+   tpm_event_log
-    tpm_vtpm_proxy
-diff --git a/Documentation/security/tpm/tpm_event_log.rst b/Documentation/security/tpm/tpm_event_log.rst
-new file mode 100644
-index 000000000000..f00f7a1d5e92
---- /dev/null
-+++ b/Documentation/security/tpm/tpm_event_log.rst
-@@ -0,0 +1,55 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=============
-+TPM Event Log
-+=============
-+
-+This document briefly describes what TPM log is and how it is handed
-+over from the preboot firmware to the operating system.
-+
-+Introduction
-+============
-+
-+The preboot firmware maintains an event log that gets new entries every
-+time something gets hashed by it to any of the PCR registers. The events
-+are segregated by their type and contain the value of the hashed PCR
-+register. Typically, the preboot firmware will hash the components to
-+who execution is to be handed over or actions relevant to the boot
-+process.
-+
-+The main application for this is remote attestation and the reason why
-+it is useful is nicely put in the very first section of [1]:
-+
-+"Attestation is used to provide information about the platform’s state
-+to a challenger. However, PCR contents are difficult to interpret;
-+therefore, attestation is typically more useful when the PCR contents
-+are accompanied by a measurement log. While not trusted on their own,
-+the measurement log contains a richer set of information than do the PCR
-+contents. The PCR contents are used to provide the validation of the
-+measurement log."
-+
-+UEFI event log
-+==============
-+
-+UEFI provided event log has a few somewhat weird quirks.
-+
-+Before calling ExitBootServices() Linux EFI stub copies the event log to
-+a custom configuration table defined by the stub itself. Unfortunately,
-+the events generated by ExitBootServices() don't end up in the table.
-+
-+The firmware provides so called final events configuration table to sort
-+out this issue. Events gets mirrored to this table after the first time
-+EFI_TCG2_PROTOCOL.GetEventLog() gets called.
-+
-+This introduces another problem: nothing guarantees that it is not called
-+before the Linux EFI stub gets to run. Thus, it needs to calculate and save the
-+final events table size while the stub is still running to the custom
-+configuration table so that the TPM driver can later on skip these events when
-+concatenating two halves of the event log from the custom configuration table
-+and the final events table.
-+
-+References
-+==========
-+
-+- [1] https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
-+- [2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
--- 
-2.20.1
+Those seem to be only audit messages. You can try booting with audit=0
+on the kernel command line to get rid of those messages, so you have a
+better chance of catching the real issue. (Or conclude that audit is
+what is broken.)
 
+/Emil
