@@ -2,176 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFCD966FC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB0B66FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfGLNK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 09:10:58 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:34769 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbfGLNK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 09:10:58 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 7B19720004;
-        Fri, 12 Jul 2019 13:10:28 +0000 (UTC)
-Date:   Fri, 12 Jul 2019 15:10:28 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
-        adrian.hunter@intel.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        ryanchen.aspeed@gmail.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: Document Aspeed SD controller
-Message-ID: <20190712131028.ba4d4jetg4btsx4u@flea>
-References: <20190712033214.24713-1-andrew@aj.id.au>
- <20190712033214.24713-2-andrew@aj.id.au>
+        id S1727705AbfGLNMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 09:12:14 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54852 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbfGLNMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 09:12:13 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CAD78CE0BF21130718B8;
+        Fri, 12 Jul 2019 21:12:06 +0800 (CST)
+Received: from [127.0.0.1] (10.57.88.168) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 12 Jul 2019
+ 21:11:57 +0800
+Subject: Re: [PATCH v3 0/3] kernel/notifier.c: avoid duplicate registration
+To:     Vasily Averin <vvs@virtuozzo.com>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "Nadia.Derbey@bull.net" <Nadia.Derbey@bull.net>,
+        "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
+        "semen.protsenko@linaro.org" <semen.protsenko@linaro.org>,
+        "stable@kernel.org" <stable@kernel.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+CC:     "Huangjianhui (Alex)" <alex.huangjianhui@huawei.com>,
+        Dailei <dylix.dailei@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <1562728147-30251-1-git-send-email-nixiaoming@huawei.com>
+ <f628ff03-eb47-62f3-465b-fe4ed046b30c@virtuozzo.com>
+ <E490CD805F7529488761C40FD9D26EF12AC9D068@dggemm507-mbx.china.huawei.com>
+ <d70ba831-85c7-d5a3-670a-144fa4d139cc@virtuozzo.com>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <8ee6f763-ccce-ab58-3d96-21f5e1622916@huawei.com>
+Date:   Fri, 12 Jul 2019 21:11:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xetdl6arw4bwno7q"
-Content-Disposition: inline
-In-Reply-To: <20190712033214.24713-2-andrew@aj.id.au>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <d70ba831-85c7-d5a3-670a-144fa4d139cc@virtuozzo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.88.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/7/11 21:57, Vasily Averin wrote:
+> On 7/11/19 4:55 AM, Nixiaoming wrote:
+>> On Wed, July 10, 2019 1:49 PM Vasily Averin wrote:
+>>> On 7/10/19 6:09 AM, Xiaoming Ni wrote:
+>>>> Registering the same notifier to a hook repeatedly can cause the hook
+>>>> list to form a ring or lose other members of the list.
+>>>
+>>> I think is not enough to _prevent_ 2nd register attempt,
+>>> it's enough to detect just attempt and generate warning to mark host in bad state.
+>>>
+>>
+>> Duplicate registration is prevented in my patch, not just "mark host in bad state"
+>>
+>> Duplicate registration is checked and exited in notifier_chain_cond_register()
+>>
+>> Duplicate registration was checked in notifier_chain_register() but only 
+>> the alarm was triggered without exiting. added by commit 831246570d34692e 
+>> ("kernel/notifier.c: double register detection")
+>>
+>> My patch is like a combination of 831246570d34692e and notifier_chain_cond_register(),
+>>  which triggers an alarm and exits when a duplicate registration is detected.
+>>
+>>> Unexpected 2nd register of the same hook most likely will lead to 2nd unregister,
+>>> and it can lead to host crash in any time: 
+>>> you can unregister notifier on first attempt it can be too early, it can be still in use.
+>>> on the other hand you can never call 2nd unregister at all.
+>>
+>> Since the member was not added to the linked list at the time of the second registration, 
+>> no linked list ring was formed. 
+>> The member is released on the first unregistration and -ENOENT on the second unregistration.
+>> After patching, the fault has been alleviated
+> 
+> You are wrong here.
+> 2nd notifier's registration is a pure bug, this should never happen.
+> If you know the way to reproduce this situation -- you need to fix it. 
+> 
+> 2nd registration can happen in 2 cases:
+> 1) missed rollback, when someone forget to call unregister after successfull registration, 
+> and then tried to call register again. It can lead to crash for example when according module will be unloaded.
+> 2) some subsystem is registered twice, for example from  different namespaces.
+> in this case unregister called during sybsystem cleanup in first namespace will incorrectly remove notifier used 
+> in second namespace, it also can lead to unexpacted behaviour.
+> 
+So in these two cases, is it more reasonable to trigger BUG() directly when checking for duplicate registration ?
+But why does current notifier_chain_register() just trigger WARN() without exiting ?
+notifier_chain_cond_register() direct exit without triggering WARN() ?
 
---xetdl6arw4bwno7q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks
 
-Hi,
+Xiaoming Ni
 
-On Fri, Jul 12, 2019 at 01:02:13PM +0930, Andrew Jeffery wrote:
-> The ASPEED SD/SDIO/eMMC controller exposes two slots implementing the
-> SDIO Host Specification v2.00, with 1 or 4 bit data buses, or an 8 bit
-> data bus if only a single slot is enabled.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> ---
-> In v2:
->
-> * Rename to aspeed,sdhci.yaml
-> * Rename sd-controller compatible
-> * Add `maxItems: 1` for reg properties
-> * Move sdhci subnode description to patternProperties
-> * Drop sdhci compatible requirement
-> * #address-cells and #size-cells are required
-> * Prevent additional properties
-> * Implement explicit ranges in example
-> * Remove slot property
->
->  .../devicetree/bindings/mmc/aspeed,sdhci.yaml | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
->
-> diff --git a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> new file mode 100644
-> index 000000000000..67a691c3348c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ASPEED SD/SDIO/eMMC Controller
-> +
-> +maintainers:
-> +  - Andrew Jeffery <andrew@aj.id.au>
-> +  - Ryan Chen <ryanchen.aspeed@gmail.com>
-> +
-> +description: |+
-> +  The ASPEED SD/SDIO/eMMC controller exposes two slots implementing the SDIO
-> +  Host Specification v2.00, with 1 or 4 bit data buses, or an 8 bit data bus if
-> +  only a single slot is enabled.
-> +
-> +  The two slots are supported by a common configuration area. As the SDHCIs for
-> +  the slots are dependent on the common configuration area, they are described
-> +  as child nodes.
-> +
-> +properties:
-> +  compatible:
-> +    enum: [ aspeed,ast2400-sd-controller, aspeed,ast2500-sd-controller ]
-> +  reg:
-> +    maxItems: 1
-> +    description: Common configuration registers
-> +  ranges: true
-> +  clocks:
-> +    maxItems: 1
-> +    description: The SD/SDIO controller clock gate
+>> It may be more helpful to return an error code when someone tries to register the same
+>> notification program a second time.
+> 
+> You are wrong again here, it is senseless.
+> If you have detected 2nd register -- your node is already in bad state.
+> 
+>> But I noticed that notifier_chain_cond_register() returns 0 when duplicate registration 
+>> is detected. At the same time, in all the existing export function comments of notify,
+>> "Currently always returns zero"
+>>
+>> I am a bit confused: which is better?
+>>
+>>>
+>>> Unfortunately I do not see any ways to handle such cases properly,
+>>> and it seems for me your patches does not resolve this problem.
+>>>
+>>> Am I missed something probably?
+>>>
+>>>> case1: An infinite loop in notifier_chain_register() can cause soft lockup
+>>>>         atomic_notifier_chain_register(&test_notifier_list, &test1);
+>>>>         atomic_notifier_chain_register(&test_notifier_list, &test1);
+>>>>         atomic_notifier_chain_register(&test_notifier_list, &test2);
+>>
+>> Thanks
+>>
+>> Xiaoming Ni
+>>
+> 
+> .
+> 
 
-#address-cells and #size-cells have not been described here.
-
-> +patternProperties:
-> +  "^sdhci@[0-9a-f]+$":
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        enum: [ aspeed,ast2400-sdhci, aspeed,ast2500-sdhci ]
-> +      reg:
-> +        maxItems: 1
-> +        description: The SDHCI registers
-> +      clocks:
-> +        maxItems: 1
-> +        description: The SD bus clock
-> +      interrupts:
-> +        maxItems: 1
-> +        description: The SD interrupt shared between both slots
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - clocks
-> +      - interrupts
-> +
-> +additionalProperties: false
-
-But that means that it will generate a warning in your DT if you ever
-use them.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-> +  - clocks
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/aspeed-clock.h>
-> +    sdc@1e740000 {
-> +            compatible = "aspeed,ast2500-sd-controller";
-> +            reg = <0x1e740000 0x100>;
-> +            #address-cells = <1>;
-> +            #size-cells = <1>;
-
-Starting with your example.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---xetdl6arw4bwno7q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXSiGxAAKCRDj7w1vZxhR
-xYJkAP9CaDPo8tTwjEFQXKOSYF7mEF3hSHXS+zEA3JKnm1lUkQD/QH5s8Xmp4PhP
-j8rUjn+aBCifFCOWkGDfhtf/XHiT1w4=
-=J++y
------END PGP SIGNATURE-----
-
---xetdl6arw4bwno7q--
