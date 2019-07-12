@@ -2,73 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C755166C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA6366C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfGLMGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:06:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33508 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfGLMGl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:06:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ntU8oMPY07ayUBkHvLSDuYCv3bfOAchf1eGcoqpdijs=; b=2QOMxlXA+8126DIzk43azdjz/
-        HTxF5vVgRNoK7eXeV7hS7V1jAf9WCS4q5WVvukltI89jL/68fcRWkkChom0D0Qs+ySTAPkDKhAcMW
-        KIkwVCJddWmGDBwJEK/alumUxLK56Wp69kd2oqoMRl6rDT5yLxTGmVWGBe3tzhytayu293pbe063L
-        XvB/wtMNFB/+jRyFzmVKAw4Evgb2W+hew33DVW73HwjR5X4oDsI19z5ZJYTqT51PkP3owlZFnQG7m
-        Df0O4cQXW6b1je3YygrtUIK9fFrflY8grdrrsB/d5uUX2BncLqs+0dqdGgY/UJB0FZP4ZUUQnTGWh
-        ZwFO7rzKQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hluJn-0004ys-JF; Fri, 12 Jul 2019 12:06:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2C84620A4087D; Fri, 12 Jul 2019 14:06:26 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 14:06:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, srinivas.eeda@oracle.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
+        id S1727122AbfGLMIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:08:10 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:27932 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726466AbfGLMII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:08:08 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 9E9DDA1FD8;
+        Fri, 12 Jul 2019 14:08:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id vunrqErDeJEg; Fri, 12 Jul 2019 14:07:58 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 22:07:43 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v2] xen/pv: Fix a boot up hang revealed by int3 self test
-Message-ID: <20190712120626.GW3402@hirez.programming.kicks-ass.net>
-References: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 04/10] namei: split out nd->dfd handling to
+ dirfd_path_init
+Message-ID: <20190712120743.mka3vl5t4zndc5wj@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-5-cyphar@cyphar.com>
+ <20190712042050.GH17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d4v7lkh6hn3fnrr5"
 Content-Disposition: inline
-In-Reply-To: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190712042050.GH17978@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 04:15:21PM +0800, Zhenzhong Duan wrote:
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index 4722ba2..2138d69 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -596,7 +596,7 @@ struct trap_array_entry {
->  
->  static struct trap_array_entry trap_array[] = {
->  	{ debug,                       xen_xendebug,                    true },
-> -	{ int3,                        xen_xenint3,                     true },
-> +	{ int3,                        xen_int3,                        true },
->  	{ double_fault,                xen_double_fault,                true },
->  #ifdef CONFIG_X86_MCE
->  	{ machine_check,               xen_machine_check,               true },
 
-I'm confused on the purpose of trap_array[], could you elucidate me?
+--d4v7lkh6hn3fnrr5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The sole user seems to be get_trap_addr() and that talks about ISTs, but
-#BP isn't an IST anymore, so why does it have ist_okay=true?
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:31AM +1000, Aleksa Sarai wrote:
+> > Previously, path_init's handling of *at(dfd, ...) was only done once,
+> > but with LOOKUP_BENEATH (and LOOKUP_IN_ROOT) we have to parse the
+> > initial nd->path at different times (before or after absolute path
+> > handling) depending on whether we have been asked to scope resolution
+> > within a root.
+>=20
+> >  	if (*s =3D=3D '/') {
+> > -		set_root(nd);
+> > -		if (likely(!nd_jump_root(nd)))
+> > -			return s;
+> > -		return ERR_PTR(-ECHILD);
+>=20
+> > +		if (likely(!nd->root.mnt))
+> > +			set_root(nd);
+>=20
+> How can we get there with non-NULL nd->root.mnt, when LOOKUP_ROOT case
+> has been already handled by that point?
+
+Yup, you're completely right. I will remove the
+  if (!nd->root.mnt)
+in the next version.
+
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--d4v7lkh6hn3fnrr5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh4CgAKCRCdlLljIbnQ
+EmXbAP9tX+q7bWxunLL4KxbGY/ld+vFqPXrdHyJAsnYXD1QLXwEAosmgLN7YU35t
+LUn9+NWS+cu0VbO4qtSioBcFwh5cpwA=
+=zvz5
+-----END PGP SIGNATURE-----
+
+--d4v7lkh6hn3fnrr5--
