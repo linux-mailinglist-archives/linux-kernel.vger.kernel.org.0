@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61ECD66D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CC666DD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:34:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfGLM3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:29:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44272 "EHLO mail.kernel.org"
+        id S1729707AbfGLMeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:34:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbfGLM30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:29:26 -0400
+        id S1728132AbfGLMeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:34:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A8362084B;
-        Fri, 12 Jul 2019 12:29:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83F9F216C4;
+        Fri, 12 Jul 2019 12:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934565;
-        bh=AZv/LQrXr3RW25gjxyCOzDhCvmEvZEzY/2T/JakO7UU=;
+        s=default; t=1562934845;
+        bh=KDB7BkkpHiBg9CX+rLZM9phDdX5FbUHbfnLEUuAj8Zc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I8LqdU4ypbp4439+ZE8LeM+iifADzmouoMjTOvBJdft2vMbdrw8Sjoo8qWtnYPjNy
-         4gwum3J7liR5w71CJ54smDy4PI9m6Gx8H45j+j71opJGdkSGypZi8LjwA19gPqRdV0
-         x/0pjd6ysSQ3vxkP3U4X7yA3SFkPkdSI7wXZ6ZrU=
+        b=Asx7jd17k9Zue098gWiwKiGJEn8uKO81jXiAR2OQse9eY/4KR8sA6oboiLuLivdah
+         p3/Dle9eb/uxa0cca9OPciEzNZRN25tYzkKkz7yXKfsfQLX2g/h+xQH7J0KSgY0u+z
+         gATGh9IdY9RKdZBvzaSsuWFdQBQdo2pbWhAsqq9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: [PATCH 5.1 097/138] perf auxtrace: Fix itrace defaults for perf script
-Date:   Fri, 12 Jul 2019 14:19:21 +0200
-Message-Id: <20190712121632.487972616@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Baker <baker1tex@gmail.com>,
+        Craig Robson <craig@zhatt.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bartosz Szczepanek <bsz@semihalf.com>
+Subject: [PATCH 5.2 09/61] tpm: Actually fail on TPM errors during "get random"
+Date:   Fri, 12 Jul 2019 14:19:22 +0200
+Message-Id: <20190712121621.125477736@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
+References: <20190712121620.632595223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +48,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 355200e0f6a9ce14771625014aa469f5ecbd8977 upstream.
+commit 782779b60faa2fc7ff609ac8ef938260fd792c0f upstream.
 
-Commit 4eb068157121 ("perf script: Make itrace script default to all
-calls") does not work for the case when '--itrace' only is used, because
-default_no_sample is not being passed.
+A "get random" may fail with a TPM error, but those codes were returned
+as-is to the caller, which assumed the result was the number of bytes
+that had been written to the target buffer, which could lead to a kernel
+heap memory exposure and over-read.
 
-Example:
+This fixes tpm1_get_random() to mask positive TPM errors into -EIO, as
+before.
 
- Before:
+[   18.092103] tpm tpm0: A TPM error (379) occurred attempting get random
+[   18.092106] usercopy: Kernel memory exposure attempt detected from SLUB object 'kmalloc-64' (offset 0, size 379)!
 
-  $ perf record -e intel_pt/cyc/u ls
-  $ perf script --itrace > cmp1.txt
-  $ perf script --itrace=cepwx > cmp2.txt
-  $ diff -sq cmp1.txt cmp2.txt
-  Files cmp1.txt and cmp2.txt differ
-
- After:
-
-  $ perf script --itrace > cmp1.txt
-  $ perf script --itrace=cepwx > cmp2.txt
-  $ diff -sq cmp1.txt cmp2.txt
-  Files cmp1.txt and cmp2.txt are identical
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1650989
+Reported-by: Phil Baker <baker1tex@gmail.com>
+Reported-by: Craig Robson <craig@zhatt.com>
+Fixes: 7aee9c52d7ac ("tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure")
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc: stable@vger.kernel.org
-Fixes: 4eb068157121 ("perf script: Make itrace script default to all calls")
-Link: http://lkml.kernel.org/r/20190520113728.14389-3-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Bartosz Szczepanek <bsz@semihalf.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/auxtrace.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm1-cmd.c |    7 +++++--
+ drivers/char/tpm/tpm2-cmd.c |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1010,7 +1010,8 @@ int itrace_parse_synth_opts(const struct
- 	}
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -510,7 +510,7 @@ struct tpm1_get_random_out {
+  *
+  * Return:
+  * *  number of bytes read
+- * * -errno or a TPM return code otherwise
++ * * -errno (positive TPM return codes are masked to -EIO)
+  */
+ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+@@ -531,8 +531,11 @@ int tpm1_get_random(struct tpm_chip *chi
  
- 	if (!str) {
--		itrace_synth_opts__set_default(synth_opts, false);
-+		itrace_synth_opts__set_default(synth_opts,
-+					       synth_opts->default_no_sample);
- 		return 0;
- 	}
+ 		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
+ 				      "attempting get random");
+-		if (rc)
++		if (rc) {
++			if (rc > 0)
++				rc = -EIO;
+ 			goto out;
++		}
  
+ 		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
+ 
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -297,7 +297,7 @@ struct tpm2_get_random_out {
+  *
+  * Return:
+  *   size of the buffer on success,
+- *   -errno otherwise
++ *   -errno otherwise (positive TPM return codes are masked to -EIO)
+  */
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+@@ -324,8 +324,11 @@ int tpm2_get_random(struct tpm_chip *chi
+ 				       offsetof(struct tpm2_get_random_out,
+ 						buffer),
+ 				       "attempting get random");
+-		if (err)
++		if (err) {
++			if (err > 0)
++				err = -EIO;
+ 			goto out;
++		}
+ 
+ 		out = (struct tpm2_get_random_out *)
+ 			&buf.data[TPM_HEADER_SIZE];
 
 
