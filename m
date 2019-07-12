@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6223C66C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:21:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476BD66D36
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfGLMV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:21:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
+        id S1728345AbfGLM1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:27:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727574AbfGLMVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:21:23 -0400
+        id S1728644AbfGLM1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:27:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 456BD21019;
-        Fri, 12 Jul 2019 12:21:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B65321670;
+        Fri, 12 Jul 2019 12:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934082;
-        bh=MtxjDmJkgosiEDlBS85alGVGA9k3LeekgI7UBvXb4os=;
+        s=default; t=1562934453;
+        bh=9MWdcpkxAacvmKVTodvhTNoixEDyeUkjLGEYDcsjwRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3sMJtyJKZ90LUFIiyUqbYKzW3U2TfZpmhOota6rtzr8W72dWsUCPMGbyG3yMYUPP
-         o6ZZZ3aMagT2sjq+XXnmpFeFOXrzu2IBwhMF+D+iqCXQNUBHW9MJdnGJZcXU4nGL41
-         pa0cQ9KGJix+b8tjK+r1zbli/xM6ikXY0RZlXcVE=
+        b=LyyhgG1ugqzwwpE9VNaW7QXqRyl7pFvPb8w5EscBTJrUcA9Gh2hLxsBZRSDvsjWoO
+         NupT9z8vWzTmma59n7mr5LB5PAg5cUhUeY9XAcYAqAy+VjY38KECBCFDjdjXm0k5/P
+         g47YD8m3NjuiV5YVSlyOaXixGcsy2cPbte3eulrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Toshiaki Makita <toshiaki.makita1@gmail.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 39/91] bpf, devmap: Add missing bulk queue free
-Date:   Fri, 12 Jul 2019 14:18:42 +0200
-Message-Id: <20190712121623.535046534@linuxfoundation.org>
+Subject: [PATCH 5.1 059/138] gpu: ipu-v3: image-convert: Fix image downsize coefficients
+Date:   Fri, 12 Jul 2019 14:18:43 +0200
+Message-Id: <20190712121630.943854642@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,30 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit edabf4d9dd905acd60048ea1579943801e3a4876 ]
+[ Upstream commit 912bbf7e9ca422099935dd69d3ff0fd62db24882 ]
 
-dev_map_free() forgot to free bulk queue when freeing its entries.
+The output of the IC downsizer unit in both dimensions must be <= 1024
+before being passed to the IC resizer unit. This was causing corrupted
+images when:
 
-Fixes: 5d053f9da431 ("bpf: devmap prepare xdp frames for bulking")
-Signed-off-by: Toshiaki Makita <toshiaki.makita1@gmail.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+input_dim > 1024, and
+input_dim / 2 < output_dim < input_dim
+
+Some broken examples were 1920x1080 -> 1024x768 and 1920x1080 ->
+1280x1080.
+
+Fixes: 70b9b6b3bcb21 ("gpu: ipu-v3: image-convert: calculate per-tile
+resize coefficients")
+
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/devmap.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/ipu-v3/ipu-image-convert.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 99353ac28cd4..357d456d57b9 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -186,6 +186,7 @@ static void dev_map_free(struct bpf_map *map)
- 		if (!dev)
- 			continue;
+diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
+index 19d3b85e0e98..e9803e2151f9 100644
+--- a/drivers/gpu/ipu-v3/ipu-image-convert.c
++++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
+@@ -409,12 +409,14 @@ static int calc_image_resize_coefficients(struct ipu_image_convert_ctx *ctx,
+ 	if (WARN_ON(resized_width == 0 || resized_height == 0))
+ 		return -EINVAL;
  
-+		free_percpu(dev->bulkq);
- 		dev_put(dev->dev);
- 		kfree(dev);
+-	while (downsized_width >= resized_width * 2) {
++	while (downsized_width > 1024 ||
++	       downsized_width >= resized_width * 2) {
+ 		downsized_width >>= 1;
+ 		downsize_coeff_h++;
+ 	}
+ 
+-	while (downsized_height >= resized_height * 2) {
++	while (downsized_height > 1024 ||
++	       downsized_height >= resized_height * 2) {
+ 		downsized_height >>= 1;
+ 		downsize_coeff_v++;
  	}
 -- 
 2.20.1
