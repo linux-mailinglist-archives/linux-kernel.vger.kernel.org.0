@@ -2,74 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA12662DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 02:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B04B662E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 02:33:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbfGLAcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 20:32:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36413 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728582AbfGLAcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 20:32:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45lDP34S5Kz9sBt;
-        Fri, 12 Jul 2019 10:31:03 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562891512;
-        bh=tAyTsSMqJI7TR8669ycCC1PyQtmKW7Zr5Lc2ObC0jcw=;
-        h=Date:From:To:Subject:From;
-        b=bLD4vkk+FX278l4wZ1lznOZI6U1hLeJIrNmylr8wRsCrZxwcrS6e8FwiwJSZ410Zn
-         RBcWX/Q2ltEng8UVRTXNCfL5nnOFSYFueUDchnPC8VE04lgSE/kbQEVXYdZuO1QtyE
-         6TSIC9yxH31sTseaBwSh19p+u8c6f+6m79J58BdZYqHXX6eZgJC84f65HlA1PbTUH7
-         jYwkBU9csiBUM0C29PVLyxezNVfP5XKpNGdkFw40Am0M1v4DcS7uTVUfNFcF9JHp98
-         C+Ir9Nyu2cylnaHjwUpwlnb1d6JK00gXVwNm4zHeJT/jGJNN4mmw6PtYmGFMDJVQn8
-         o2fikL2thDGVg==
-Date:   Fri, 12 Jul 2019 10:30:45 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: we are in the merge window
-Message-ID: <20190712102601.6d23c330@canb.auug.org.au>
+        id S1730619AbfGLAd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 20:33:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46920 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbfGLAd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 20:33:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0TI9Y176520;
+        Fri, 12 Jul 2019 00:32:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=CR4OYKqc+GwvLMLKdlXjil5mKkyZnLad/bNsIqBvDGQ=;
+ b=1MTmR1kc6xeljryNij/zrF+P2P/YhulhS8bIW3yR1W+CEG3k8tnt8ljF30eZlFQOj0xA
+ 43Vz0DG8JcW2nheAPr+LQpvxv1FSJ9gtDTv5mvWf0tRHd0UcG2srR8i8hf7Vn7bx8WGk
+ V8Kp/38TOgnxtCn2U984EEHlQjHZhddVhlyiZo4Qv6k6fz6YYFRqZoVmppHHropPdkby
+ kgRkOUlnWvmgX/YFkQciY2e9WYU7reUYEiY9KR4d/vQYGBuX9WrwhLzu2vsGWOWDoDLy
+ XIgBtOytXDJlbQ7F8jhspxxawuAu0ryxe5wIYAEuxOJC6v57wPXIBI/THemuUv9fg1++ Ig== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2tjkkq2ueu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 00:32:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0RWmw190436;
+        Fri, 12 Jul 2019 00:32:24 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2tn1j1uctm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 00:32:23 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6C0WMVU017028;
+        Fri, 12 Jul 2019 00:32:22 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 11 Jul 2019 17:32:22 -0700
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
+        <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <megaraidlinux.pdl@broadcom.com>
+Subject: Re: [PATCH -next] scsi: megaraid_sas: Make some symbols static
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190702130114.29356-1-yuehaibing@huawei.com>
+Date:   Thu, 11 Jul 2019 20:32:18 -0400
+In-Reply-To: <20190702130114.29356-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Tue, 2 Jul 2019 21:01:14 +0800")
+Message-ID: <yq1k1co854d.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/J=0z2gxGWvbPHCe95IAmoOA"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=851
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907120004
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=907 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907120004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/J=0z2gxGWvbPHCe95IAmoOA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+YueHaibing,
 
-[This has been Bcc'd to all the contacts I have for tree in linux-next]
+> Fix sparse warnings:
+>
+> drivers/scsi/megaraid/megaraid_sas_base.c:271:1: warning: symbol 'megasas_issue_dcmd' was not declared. Should it be static?
+> drivers/scsi/megaraid/megaraid_sas_base.c:2227:6: warning: symbol 'megasas_do_ocr' was not declared. Should it be static?
+> drivers/scsi/megaraid/megaraid_sas_base.c:3194:25: warning: symbol 'megaraid_host_attrs' was not declared. Should it be static?
 
-Please do not add v5.4 material to your linux-next included branches
-until after v5.3-rc1 has been released.
+Applied to 5.3/scsi-fixes, thanks!
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/J=0z2gxGWvbPHCe95IAmoOA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0n1LUACgkQAVBC80lX
-0GyLiggAhMqBKs8tiEWFZ3gkpZcCYh/SFFNWL6TZ9Q8Q8dk9It4OjdZqLendVOqI
-niObkrawbEmuAi7ST5HmPyl3Apt3MxILNzqe9UrpV+aO0byOz25ase5n9Zehf3Dd
-I/D5HSo5tkpjmMc/EgX0N9kzZr8hN5stv8MDj/iYBaUYeNI0gbZ9vBqEjIj5nv06
-Xkdcj+EfTGi+uVnFf6LO0hXH5JOgwImNqcqAzRzmkSGwli3xvk7eVbodkyWsCX/T
-8wwBm1VQ4b2to3QerJ+COKOBMO0rhKybKkji1m4hAR5VlaIzcwL8+BvmmzrZvLta
-/mO4Os/KoXRP+gPIm/cCLxILFw/kiA==
-=tjPW
------END PGP SIGNATURE-----
-
---Sig_/J=0z2gxGWvbPHCe95IAmoOA--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
