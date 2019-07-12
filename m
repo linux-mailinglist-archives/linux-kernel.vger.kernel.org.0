@@ -2,92 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2175E67327
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A976730F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:10:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfGLQSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 12:18:30 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:30264 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726449AbfGLQS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:18:29 -0400
-X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 12:18:28 EDT
-Received: from falasarna.intra.ispras.ru (falasarna.intra.ispras.ru [10.10.3.49])
-        by smtp.ispras.ru (Postfix) with ESMTP id D61F9201D0;
-        Fri, 12 Jul 2019 19:13:23 +0300 (MSK)
-From:   Alexey Izbyshev <izbyshev@ispras.ru>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        security@kernel.org, Alexey Izbyshev <izbyshev@ispras.ru>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH] proc: Fix uninitialized byte read in get_mm_cmdline()
-Date:   Fri, 12 Jul 2019 19:09:13 +0300
-Message-Id: <20190712160913.17727-1-izbyshev@ispras.ru>
-X-Mailer: git-send-email 2.21.0
+        id S1727277AbfGLQKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 12:10:37 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16721 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726907AbfGLQKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 12:10:36 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d28b1010000>; Fri, 12 Jul 2019 09:10:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 12 Jul 2019 09:10:35 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 12 Jul 2019 09:10:35 -0700
+Received: from [10.26.11.231] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 12 Jul
+ 2019 16:10:32 +0000
+Subject: Re: [PATCH 5.2 00/61] 5.2.1-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190712121620.632595223@linuxfoundation.org>
+ <a1ae16a7-e8f7-b6fc-df4e-46079bebf9b3@nvidia.com>
+ <20190712153108.GD13940@kroah.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a0d871e7-a68c-5c77-1389-5b9a86f93ac9@nvidia.com>
+Date:   Fri, 12 Jul 2019 17:10:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190712153108.GD13940@kroah.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1562947841; bh=bYr87e5kr2ZaII8bFB9CgHx1dtUYpJJfkgUrOuzXxa8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=AG1KSqHlPEW4mGoNA/PwDzdmkxHDB+DqPJZsj311xHcTDmYy+fQMCfyQwUCMYDF6z
+         /z17+yquZIlG2k457vQbAo1/9To19BKHEuvIL+A53SS6O6fajJ9HEaa5MIvMGgb3aD
+         aSLfKVXmpETBbmuTVzfxN89Tal6JEY7Jg+gxbajLughoB45K9GDpWS/+BgFnFKya2J
+         02i/uza2EACqvBA0nr0wPj3XJZtXrpIO6AMJf6+WstJcWqyOAH7FnE0T29OvxMVpUr
+         WrHmd3lkL2Ygl3pt4x12iQULtAPlrGGR/wRGer6mE5+qP/wmksilP6hC8TLaAswZYd
+         rWAmufaPSEexg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_mm_cmdline() leaks an uninitialized byte located at
-user-controlled offset in a newly-allocated kernel page in
-the following scenario.
 
-- When reading the last chunk of cmdline, access_remote_vm()
-  fails to copy the requested number of bytes, but still copies
-  enough bytes so that we get into the body of
-  "if (pos + got >= arg_end)" statement. This can be arranged by user,
-  for example, by applying mprotect(PROT_NONE) to the env block.
+On 12/07/2019 16:31, Greg Kroah-Hartman wrote:
+> On Fri, Jul 12, 2019 at 02:36:29PM +0100, Jon Hunter wrote:
+>>
+>> On 12/07/2019 13:19, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 5.2.1 release.
+>>> There are 61 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.1-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> All tests are passing for Tegra ...
+>>
+>> Test results for stable-v5.2:
+>>     12 builds:	12 pass, 0 fail
+>>     22 boots:	22 pass, 0 fail
+>>     38 tests:	38 pass, 0 fail
+>>
+>> Linux version:	5.2.1-rc1-g61731e8fe278
+>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                 tegra194-p2972-0000, tegra20-ventana,
+>>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
+> That was fast, thanks for testing all of these.
 
-- strnlen() doesn't find a NUL byte. This too can be arranged
-  by user via suitable modifications of argument and env blocks.
+Friday afternoon for me and so I am even more motivated :-)
 
-- The above causes the following condition to be true despite
-  that no NUL byte was found:
+BTW, has anyone ever requested pushing out a deadline failing on the
+weekend to the following Monday? There is a chance I could miss this if
+I happen to leave early on a Friday.
 
-	/* Include the NUL if it existed */
-	if (got < size)
-		got++;
+Cheers!
+Jon
 
-The resulting increment causes the subsequent copy_to_user()
-to copy an extra byte from "page" to userspace. That byte might
-come from previous uses of memory referred by "page" before
-it was allocated by get_mm_cmdline(), potentially leaking
-data belonging to other processes or kernel.
-
-Fix this by ensuring that "size + offset" doesn't exceed the number
-of bytes copied by access_remote_vm().
-
-Fixes: f5b65348fd77 ("proc: fix missing final NUL in get_mm_cmdline() rewrite")
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Alexey Izbyshev <izbyshev@ispras.ru>
----
-
-This patch was initially sent to <security@kernel.org> accompanied
-with a little program that exploits the bug to dump the kernel page
-used in get_mm_cmdline().
-
-Thanks to Oleg Nesterov and Laura Abbott for their feedback!
-
- fs/proc/base.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 255f6754c70d..6e30dd791761 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -275,6 +275,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
- 		if (got <= offset)
- 			break;
- 		got -= offset;
-+		if (got < size)
-+			size = got;
- 
- 		/* Don't walk past a NUL character once you hit arg_end */
- 		if (pos + got >= arg_end) {
 -- 
-2.21.0
-
+nvpublic
