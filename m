@@ -2,202 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC5C66C12
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2726466BFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfGLMG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:06:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:32962 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfGLMG6 (ORCPT
+        id S1727089AbfGLMD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:03:29 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44902 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfGLMD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:06:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3rCI193467;
-        Fri, 12 Jul 2019 12:06:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=GnDNkS4LsM8yVEL9aAyB/fPBX18ezyafmslh/QcfNf0=;
- b=Eu7o9s7kk21lH33SUye2XpeJt4sEtbKJ/fXDLGZvLgaRbZge6oJ3bEgOOEt0fc0KwLCa
- Bz9JL9t4fRXlU2IbRT0p4c4oSLzLN+5fFXoz61lT8Qx/hrgnA7q9LOEL2jQwUf3K7lMJ
- 9Cuu968ASOjqygPbg9W/wuAkngR+mguvoG+JcRkrdhoFKCU+1cC04YlIh5uFIgarmOFI
- lqcvWxfkP/WlDg7W1QvhQzvjD6JFwUi7gLXqE4KznuK5W46jDcznExOuabN0qWeLhZ05
- 2AWK5Z59w/P6XVlSwlwyhGvO5upRKuHlMVAvUHvhkNnSL78p+WD7/rTFTu1s8mTGNZRS dg== 
+        Fri, 12 Jul 2019 08:03:28 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CBwsI5088850;
+        Fri, 12 Jul 2019 12:01:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=UvA9Jh+08UHDvAGbwH3rBrV64pox2kQExiFizxg0YeE=;
+ b=5ejc6Na9HF23eUHz+BoYzKJNXXd5vAuVzCPuho38k/IyFL2csYS3SnWEb0UPapmo3HIU
+ FOyNU6a1xSXya3VSdARvmmJgK1gVPPhnhBeYTTY1XqSVE5wPiZz7Vxi3BILLWQfRD/uk
+ pLnasU/FZ9+nUE9wrA2dDC9QvY/wHPA0f16WZM4KL+KUBsfjC8k4Tj0708t/dquhPxOj
+ okn7O5zqJaxn2XSMGdjKjtmnVvSosskbXQlfvyI1JTpXGnfmZrmDSca/+jGntCvFNtOg
+ D/fz27Rhl3WQqSev+OZcy4Ux7WTKtZkORZlyxZRANEuwnmxRdbZEpYG7GlnbyHSFAURi Hg== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2tjk2u5ase-1
+        by aserp2120.oracle.com with ESMTP id 2tjkkq56p0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:06:14 +0000
+        Fri, 12 Jul 2019 12:01:54 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CC3SwE048154;
-        Fri, 12 Jul 2019 12:04:14 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2tn1j23ypk-1
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CBvj2w033926;
+        Fri, 12 Jul 2019 12:01:54 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2tn1j23x9m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:04:14 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6CC4DoP015905;
-        Fri, 12 Jul 2019 12:04:13 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
+        Fri, 12 Jul 2019 12:01:53 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6CC1mo3030245;
+        Fri, 12 Jul 2019 12:01:48 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Jul 2019 04:58:42 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v7 5/5] x86/xen: Add "nopv" support for HVM guest
-Date:   Thu, 11 Jul 2019 20:02:12 +0800
-Message-Id: <1562846532-32152-6-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1562846532-32152-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1562846532-32152-1-git-send-email-zhenzhong.duan@oracle.com>
+        with ESMTP ; Fri, 12 Jul 2019 04:56:48 -0700
+Subject: Re: [RFC v2 00/27] Kernel Address Space Isolation
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, kvm@vger.kernel.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
+        liran.alon@oracle.com, jwadams@google.com, graf@amazon.de,
+        rppt@linux.vnet.ibm.com
+References: <1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com>
+ <5cab2a0e-1034-8748-fcbe-a17cf4fa2cd4@intel.com>
+ <alpine.DEB.2.21.1907120911160.11639@nanos.tec.linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <61d5851e-a8bf-e25c-e673-b71c8b83042c@oracle.com>
+Date:   Fri, 12 Jul 2019 13:56:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1907120911160.11639@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907120132
+ engine=8.0.1-1810050000 definitions=main-1907120131
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907120132
+ definitions=main-1907120131
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PVH guest needs PV extentions to work, so "nopv" parameter should be
-ignored for PVH but not for HVM guest.
 
-If PVH guest boots up via the Xen-PVH boot entry, xen_pvh is set early,
-we know it's PVH guest and ignore "nopv" parameter directly.
+On 7/12/19 12:44 PM, Thomas Gleixner wrote:
+> On Thu, 11 Jul 2019, Dave Hansen wrote:
+> 
+>> On 7/11/19 7:25 AM, Alexandre Chartre wrote:
+>>> - Kernel code mapped to the ASI page-table has been reduced to:
+>>>    . the entire kernel (I still need to test with only the kernel text)
+>>>    . the cpu entry area (because we need the GDT to be mapped)
+>>>    . the cpu ASI session (for managing ASI)
+>>>    . the current stack
+>>>
+>>> - Optionally, an ASI can request the following kernel mapping to be added:
+>>>    . the stack canary
+>>>    . the cpu offsets (this_cpu_off)
+>>>    . the current task
+>>>    . RCU data (rcu_data)
+>>>    . CPU HW events (cpu_hw_events).
+>>
+>> I don't see the per-cpu areas in here.  But, the ASI macros in
+>> entry_64.S (and asi_start_abort()) use per-cpu data.
+>>
+>> Also, this stuff seems to do naughty stuff (calling C code, touching
+>> per-cpu data) before the PTI CR3 writes have been done.  But, I don't
+>> see anything excluding PTI and this code from coexisting.
+> 
+> That ASI thing is just PTI on steroids.
+> 
+> So why do we need two versions of the same thing? That's absolutely bonkers
+> and will just introduce subtle bugs and conflicting decisions all over the
+> place.
+> 
+> The need for ASI is very tightly coupled to the need for PTI and there is
+> absolutely no point in keeping them separate.
+>
+> The only difference vs. interrupts and exceptions is that the PTI logic
+> cares whether they enter from user or from kernel space while ASI only
+> cares about the kernel entry.
 
-If PVH guest boots up via the normal boot entry same as HVM guest, it's
-hard to distinguish PVH and HVM guest at that time. In this case, we
-have to panic early if PVH is detected and nopv is enabled to avoid a
-worse situation later.
+I think that's precisely what makes ASI and PTI different and independent.
+PTI is just about switching between userland and kernel page-tables, while
+ASI is about switching page-table inside the kernel. You can have ASI without
+having PTI. You can also use ASI for kernel threads so for code that won't
+be triggered from userland and so which won't involve PTI.
 
-Move xen_platform_hvm() after xen_hvm_guest_late_init() to avoid compile
-error.
+> But most exceptions/interrupts transitions do not require to be handled at
+> the entry code level because on VMEXIT the exit reason clearly tells
+> whether a switch to the kernel CR3 is necessary or not. So this has to be
+> handled at the VMM level already in a very clean and simple way.
+> 
+> I'm not a virt wizard, but according to code inspection and instrumentation
+> even the NMI on the host is actually reinjected manually into the host via
+> 'int $2' after the VMEXIT and for MCE it looks like manual handling as
+> well. So why do we need to sprinkle that muck all over the entry code?
+> 
+>  From a semantical perspective VMENTER/VMEXIT are very similar to the return
+> to user / enter to user mechanics. Just that the transition happens in the
+> VMM code and not at the regular user/kernel transition points.
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
----
- arch/x86/include/asm/x86_init.h |  2 ++
- arch/x86/kernel/x86_init.c      |  4 ++--
- arch/x86/xen/enlighten_hvm.c    | 45 ++++++++++++++++++++++++++++++++---------
- 3 files changed, 40 insertions(+), 11 deletions(-)
+VMExit returns to the kernel, and ASI is used to run the VMExit handler with
+a limited kernel address space instead of using the full kernel address space.
+Change in entry code is required to handle any interrupt/exception which
+can happen while running code with ASI (like KVM VMExit handler).
 
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index b85a7c5..ac09341 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -301,6 +301,8 @@ struct x86_apic_ops {
- extern void x86_early_init_platform_quirks(void);
- extern void x86_init_noop(void);
- extern void x86_init_uint_noop(unsigned int unused);
-+extern bool bool_x86_init_noop(void);
-+extern void x86_op_int_noop(int cpu);
- extern bool x86_pnpbios_disabled(void);
- 
- #endif
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 50a2b49..1bef687 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -29,8 +29,8 @@ void x86_init_noop(void) { }
- void __init x86_init_uint_noop(unsigned int unused) { }
- static int __init iommu_init_noop(void) { return 0; }
- static void iommu_shutdown_noop(void) { }
--static bool __init bool_x86_init_noop(void) { return false; }
--static void x86_op_int_noop(int cpu) { }
-+bool __init bool_x86_init_noop(void) { return false; }
-+void x86_op_int_noop(int cpu) { }
- 
- /*
-  * The platform setup functions are preset with the default functions
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 1756cf7..e138f7d 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -231,14 +231,6 @@ bool __init xen_hvm_need_lapic(void)
- 	return true;
- }
- 
--static uint32_t __init xen_platform_hvm(void)
--{
--	if (xen_pv_domain())
--		return 0;
--
--	return xen_cpuid_base();
--}
--
- static __init void xen_hvm_guest_late_init(void)
- {
- #ifdef CONFIG_XEN_PVH
-@@ -250,6 +242,9 @@ static __init void xen_hvm_guest_late_init(void)
- 	/* PVH detected. */
- 	xen_pvh = true;
- 
-+	if (nopv)
-+		panic("\"nopv\" and \"xen_nopv\" parameters are unsupported in PVH guest.");
-+
- 	/* Make sure we don't fall back to (default) ACPI_IRQ_MODEL_PIC. */
- 	if (!nr_ioapics && acpi_irq_model == ACPI_IRQ_MODEL_PIC)
- 		acpi_irq_model = ACPI_IRQ_MODEL_PLATFORM;
-@@ -259,7 +254,38 @@ static __init void xen_hvm_guest_late_init(void)
- #endif
- }
- 
--const __initconst struct hypervisor_x86 x86_hyper_xen_hvm = {
-+static uint32_t __init xen_platform_hvm(void)
-+{
-+	uint32_t xen_domain = xen_cpuid_base();
-+	struct x86_hyper_init *h = &x86_hyper_xen_hvm.init;
-+
-+	if (xen_pv_domain())
-+		return 0;
-+
-+	if (xen_pvh_domain() && nopv) {
-+		/* Guest booting via the Xen-PVH boot entry goes here */
-+		pr_info("\"nopv\" parameter is ignored in PVH guest\n");
-+		nopv = false;
-+	} else if (nopv && xen_domain) {
-+		/*
-+		 * Guest booting via normal boot entry (like via grub2) goes
-+		 * here.
-+		 *
-+		 * Use interface functions for bare hardware if nopv,
-+		 * xen_hvm_guest_late_init is an exception as we need to
-+		 * detect PVH and panic there.
-+		 */
-+		h->init_platform = x86_init_noop;
-+		h->x2apic_available = bool_x86_init_noop;
-+		h->init_mem_mapping = x86_init_noop;
-+		h->init_after_bootmem = x86_init_noop;
-+		h->guest_late_init = xen_hvm_guest_late_init;
-+		x86_hyper_xen_hvm.runtime.pin_vcpu = x86_op_int_noop;
-+	}
-+	return xen_domain;
-+}
-+
-+struct hypervisor_x86 x86_hyper_xen_hvm __initdata = {
- 	.name                   = "Xen HVM",
- 	.detect                 = xen_platform_hvm,
- 	.type			= X86_HYPER_XEN_HVM,
-@@ -268,4 +294,5 @@ static __init void xen_hvm_guest_late_init(void)
- 	.init.init_mem_mapping	= xen_hvm_init_mem_mapping,
- 	.init.guest_late_init	= xen_hvm_guest_late_init,
- 	.runtime.pin_vcpu       = xen_pin_vcpu,
-+	.ignore_nopv            = true,
- };
--- 
-1.8.3.1
+Note that KVM is an example of an ASI consumer, but ASI is generic and can be
+used to run (mostly) any kernel code if you want to run code with a reduced
+kernel address space.
 
+> So why do you want ot treat that differently? There is absolutely zero
+> reason to do so. And there is no reason to create a pointlessly different
+> version of PTI which introduces yet another variant of a restricted page
+> table instead of just reusing and extending what's there already.
+> 
+
+As I've tried to explain, to me PTI and ASI are different and independent.
+PTI manages switching between userland and kernel page-table, and ASI manages
+switching between kernel and a reduced-kernel page-table.
+
+
+Thanks,
+
+alex.
