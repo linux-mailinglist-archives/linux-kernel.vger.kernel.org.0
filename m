@@ -2,157 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBC76691C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 228A266914
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfGLI0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:26:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55555 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfGLI0e (ORCPT
+        id S1726231AbfGLIZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:25:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46204 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfGLIZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:26:34 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a15so8035748wmj.5;
-        Fri, 12 Jul 2019 01:26:32 -0700 (PDT)
+        Fri, 12 Jul 2019 04:25:19 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c73so3974274pfb.13;
+        Fri, 12 Jul 2019 01:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bwx+cMEft2PFGPMJbRtKXHY4DXSVCtrKSWASe73jxoo=;
-        b=nVJUzQ++TuIzNhHp2sLYUw+zqkM3/biyEDtZX9BKVXF0l4Ffui6czFlx1A9+iplc6v
-         bJqPgT+HN8a8iQd45BcMBOc/w4x6fI3jFtJU08ju5klNtT5/fx6RzYVJcKObOQROt2CY
-         4rXV8WotMfMRl/lpDVaE25rUZpMAd7e84foZioSpJa31el9luJi8wa2eIFq3/sythWVo
-         GJS49jhEQ0HNUgEFijbsJlHIi5HEzj0ujXlP6NZqo3YFaAA7n0n0fcYRjePAo7keVdcz
-         ER9gOS00DhYXHSPxx2xK1GLlULt8lj2FZiW8pjaimykyLb5KY5UM/jtEet0V8wsO1+TH
-         7/bQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HNJi6hiuYdfL3u8IXlFr2ptQbwtW7ZdNyo5Hq+iVFb0=;
+        b=Fyl9TSOdi1j2XjtjDLhiWaqB0DR7tBZfgMMw50+vW0/xhDGFPXEnBIm5n0r/NH1kCW
+         2ZHdnbb+zwOvkoRgSuOcLVwFZOtTo5Z0qripJEWoYTVf0C/gY/3lgjFmDA2ICnAxPa33
+         QufU1HLF9B4rOLYz5QeL/SoM504liKmkClv5IHra9ZntnJ592tRlOEU6gMGLG9paHjhr
+         mgdLkRN1hKYdFsoqPN9QodWAvWbjK35mKeygwo39PmDNDBmWOLS44OuQhm4lJn9TyYOa
+         1rco+h38lsbWpXwQXI6nb0noKdxK+3dWK9DndsOA+Ng+6A5K5ySQlHMy43LMI/Iug9w3
+         ssWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bwx+cMEft2PFGPMJbRtKXHY4DXSVCtrKSWASe73jxoo=;
-        b=aOv8IH2DpVe+FVJ9ekHSUPBxq/4o7rSrWyBYlEWjqbVaYh9C+hDf9MdaOsJZZ8OlHh
-         mTfzg96OFCN1pcsdlOhifSFcuJr7F2vwwDx7u+TG205kLWOQOosyp6hRNFwBBwlE1seo
-         l1pXdeqDSlUkctLcsEGV8mBlD0WVORenZbuQKxr7b+QX8wQrBzzUiE/DDQcqGdrKPWUp
-         LNqiD0OgGZcnbhXisKJZJPuUiN+xMVmQd1rlJWi+YYZUxJnS1GO95SXCXSbisUAHuEud
-         a3CJyR4/TxM1dnIH/wZywpGntVJ9qFYR2S1nXOurRdz/cj5HSY6HP0OMVldKk99M8Qx2
-         n9lA==
-X-Gm-Message-State: APjAAAW/M/WDvbowxSf3w21ENmv6MpKvfn3GmipxcpZ5F9wlBsaxjGO/
-        OgeMYN8dbWIrIWS+JxwYfrIRGxc7
-X-Google-Smtp-Source: APXvYqxNNdMGqOcPkE4ucROjcMN7gUWGanh74tXauE+2XgwZlZ1GZECA30YxeDpH3LaO+lBgrvVrJA==
-X-Received: by 2002:a7b:c748:: with SMTP id w8mr8078395wmk.36.1562919991584;
-        Fri, 12 Jul 2019 01:26:31 -0700 (PDT)
-Received: from alan-laptop.carrier.duckdns.org (host-89-243-246-11.as13285.net. [89.243.246.11])
-        by smtp.gmail.com with ESMTPSA id o11sm7305548wmh.37.2019.07.12.01.26.29
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HNJi6hiuYdfL3u8IXlFr2ptQbwtW7ZdNyo5Hq+iVFb0=;
+        b=VN4UDX1w7pNMD95UfvZALG7s6eDx6uss+9aMxHJOMNNoUpLvclDMnXkMp3QVb1oAp9
+         //9Zx7xb6510dRdzty3WoP39mh4qH1GMTmb4acpjMeQ22fy910Pw3a/MZ0i+s4KhienR
+         RcAzWRDWXCHiEtTFC+lNaSt63Dj4TwSNFpEz9sxhdXMyziUcMGx+u9LHqYSIXRm5HZEk
+         4oMsIPDIaMYm8V3HT9z75uWFk1BfeOqWhWOWnKF0q/NydSKvndPIjGkEIjq1GRRkOghx
+         irIEZzsZ9q6xTqdKY81zcwoKKNQ000MW1pySt6qljQWHRiAAqpmO4/87qprDC5bdm26i
+         sleQ==
+X-Gm-Message-State: APjAAAUONp3grNvWB2IUm+gONnLFqE8gtp0bkG1vczn1alXq20J1NRYG
+        RslZa/d0cv7Np8ZT9T6QP9F8G8p8X1XM5Q==
+X-Google-Smtp-Source: APXvYqyZqz2vlQC4nbOA8cCJaC3xgKjcnepceJpYKLsSmt+PKJ7es87hhkONCLHvij6MF5XeRwPE0Q==
+X-Received: by 2002:a65:6448:: with SMTP id s8mr9376254pgv.223.1562919918915;
+        Fri, 12 Jul 2019 01:25:18 -0700 (PDT)
+Received: from maya190711 ([52.250.118.122])
+        by smtp.gmail.com with ESMTPSA id m13sm6175192pgv.89.2019.07.12.01.25.18
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 12 Jul 2019 01:26:30 -0700 (PDT)
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-To:     linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Cc:     Doug Smythies <dsmythies@telus.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Subject: [PATCH] Documentation: proc.txt: emphasize that iowait cannot be relied on
-Date:   Fri, 12 Jul 2019 09:22:09 +0100
-Message-Id: <20190712082209.16073-1-alan.christopher.jenkins@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Fri, 12 Jul 2019 01:25:18 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 08:25:18 +0000
+From:   Maya Nakamura <m.maya.nakamura@gmail.com>
+To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org
+Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/5] hv: vmbus: Replace page definition with Hyper-V
+ specific one
+Message-ID: <0d9e80ecabcc950dc279fdd2e39bea4060123ba4.1562916939.git.m.maya.nakamura@gmail.com>
+References: <cover.1562916939.git.m.maya.nakamura@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1562916939.git.m.maya.nakamura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU "iowait" time in /proc/stat does not work on my laptop.
+Replace PAGE_SIZE with HV_HYP_PAGE_SIZE because the guest page size may
+not be 4096 on all architectures and Hyper-V always runs with a page
+size of 4096.
 
-I saw the documentation mention several problems with "iowait".  However
-each problem appeared to be qualified.  It gave me the impression I could
-probably account for each problem.  My impression was wrong.
-
-There are a couple of writeups explaining the specific problem I had.[1][2]
-
-[1] "[RFC PATCH 0/8] rework iowait accounting", 2014-06-26:
-    https://lore.kernel.org/lkml/53ABE28F.6010402@jp.fujitsu.com/
-
-[2] A recent writeup by myself:
-    https://unix.stackexchange.com/questions/517757/my-basic-assumption-about-system-iowait-does-not-hold/527836#527836
-
-This might just be me.  Partly, my small knowledge about the scheduler
-allowed for false assumptions.  But I think we can emphasize more strongly
-how broken iowait is on SMP.  Overall, I aim to make it sound much scarier
-to analyze iowait.  I add some precise details, and also some
-anxiety-inducing vagueness :-).
-
-[Detailed reasons for the specific points I included:]
-
-1. Let us say that "iowait _can_ be massively under-accounted".  It is
-likely to remain true in future.  At least since v4.16, the
-under-accounting problem seems very exposed on non-virtual, multi-CPU
-systems.  In theory the wheel might turn again; this exposure might be
-reduced in future.  But even on v4.15, I can reproduce the problem using
-CPU affinity.
-
-2. Point to NO_HZ_IDLE, as a good hint towards i) the nature of the problem
-and ii) and how widespread it is.  To give a more comprehensive picture,
-also point to NO_HZ_FULL and VIRT_CPU_ACCOUNTING_NATIVE.
-
-Setting down my exact scenario would require a lot of specifics.  That
-would be going beyond the point.  We could link to one of the writeups as
-well, but I don't think we need to.
-
-3. My own "use case" did not expose the problem when I ran it on a virtual
-machine.  Even using my CPU affinity method.[2]  I haven't tracked down
-why.  This is a significant qualification to point 1.  Explicitly
-acknowledge this.  It's a pain, but it makes the main point easier to
-verify, and hence more credible.
-
-(I suspect this is common at least to small test VMs.  It appears true
-for both a Fedora 30 VM (5.1.x) and a Debian 9 VM (4.9.x).  I also tried
-some different storage options, virtio-blk v.s. virtio-scsi v.s. isilogic.)
-
-[:end of details]
-
-Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- Documentation/filesystems/proc.txt | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/hv/hyperv_vmbus.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 66cad5c86171..f1da71cd276e 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -1348,16 +1348,23 @@ second).  The meanings of the columns are as follows, from left to right:
- - nice: niced processes executing in user mode
- - system: processes executing in kernel mode
- - idle: twiddling thumbs
--- iowait: In a word, iowait stands for waiting for I/O to complete. But there
--  are several problems:
--  1. Cpu will not wait for I/O to complete, iowait is the time that a task is
--     waiting for I/O to complete. When cpu goes into idle state for
--     outstanding task io, another task will be scheduled on this CPU.
--  2. In a multi-core CPU, the task waiting for I/O to complete is not running
--     on any CPU, so the iowait of each CPU is difficult to calculate.
--  3. The value of iowait field in /proc/stat will decrease in certain
-+- iowait: In a word, iowait stands for waiting for I/O to complete.  This
-+  number is not reliable.  The problems include:
-+  1. A CPU does not wait for I/O to complete; iowait is the time that a task
-+     is waiting for I/O to complete.  When a CPU goes into idle state for
-+     outstanding task I/O, another task will be scheduled on this CPU.
-+  2. iowait was extended to support systems with multiple CPUs. But the
-+     extended version is misleading.  Consider a two-CPU system, where you see
-+     50% iowait.  This could represent two tasks that could use 100% of both
-+     CPUs, if they were not waiting for I/O.
-+  3. iowait can be massively under-accounted on modern kernels.  The iowait
-+     code does not account for the behaviour of NO_HZ_IDLE, NO_HZ_FULL, or
-+     VIRT_CPU_ACCOUNTING_NATIVE on multi-CPU systems.  The amount of
-+     under-accounting varies depending on the exact system configuration and
-+     kernel version.  The effects might be less obvious when running in a
-+     virtual machine.
-+  4. The value of iowait field in /proc/stat will decrease in certain
-      conditions.
--  So, the iowait is not reliable by reading from /proc/stat.
- - irq: servicing interrupts
- - softirq: servicing softirqs
- - steal: involuntary wait
+diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+index 362e70e9d145..019469c3cbca 100644
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -192,11 +192,11 @@ int hv_ringbuffer_read(struct vmbus_channel *channel,
+ 		       u64 *requestid, bool raw);
+ 
+ /*
+- * Maximum channels is determined by the size of the interrupt page
+- * which is PAGE_SIZE. 1/2 of PAGE_SIZE is for send endpoint interrupt
+- * and the other is receive endpoint interrupt
++ * Maximum channels, 16348, is determined by the size of the interrupt page,
++ * which is HV_HYP_PAGE_SIZE. 1/2 of HV_HYP_PAGE_SIZE is to send endpoint
++ * interrupt, and the other is to receive endpoint interrupt.
+  */
+-#define MAX_NUM_CHANNELS	((PAGE_SIZE >> 1) << 3)	/* 16348 channels */
++#define MAX_NUM_CHANNELS	((HV_HYP_PAGE_SIZE >> 1) << 3)
+ 
+ /* The value here must be in multiple of 32 */
+ /* TODO: Need to make this configurable */
 -- 
-2.21.0
+2.17.1
 
