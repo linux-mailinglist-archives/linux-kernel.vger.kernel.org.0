@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC94966DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C38C166E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfGLMcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49358 "EHLO mail.kernel.org"
+        id S1728909AbfGLMiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729406AbfGLMcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:02 -0400
+        id S1728648AbfGLM3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:29:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8443208E4;
-        Fri, 12 Jul 2019 12:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31140208E4;
+        Fri, 12 Jul 2019 12:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934721;
-        bh=35RjaOTv9XUZx+sNu8hFuf1ozgVxkFK9PYlWbl647MI=;
+        s=default; t=1562934574;
+        bh=5ZHpPRWBDX9u12GlOa2BjDgEunLgvqdm/xR4MRxZYWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NTPFM7yff/F7XCalrB7i9sjmi6HzIjlXEveaM9/WncPfEjgoa9LGTaDHE2cW2Ibtb
-         LqvAVY+6i9Z+CTqOIH67bgReVyTlTr0i8H3seG76ZwWNr+MANxKikI1My3HB3qqe3T
-         DzozYZ9U2ZWKW7lOCwzCLOcMUmNn5Psx7QftYLtE=
+        b=UfPMOOCNZgtfy5/JIxHgpNUcwAMYzxfGSpqbCvyyZXgIRTzQV94jNIGed6Xppm/VS
+         z2gMlOxFaoEDjXZl8wrygsUI0h7YjvfZPC+bRUjTvqc+WNsFYwkkQfO3mWVRG3Jpln
+         3ifOHcyHqP3NkW/fIN69bGVXNCHY2r38lF5fHcOY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Sukhomlinov <sukhomlinov@google.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 5.2 10/61] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-Date:   Fri, 12 Jul 2019 14:19:23 +0200
-Message-Id: <20190712121621.178900529@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: [PATCH 5.1 100/138] perf thread-stack: Fix thread stack return from kernel for kernel-only case
+Date:   Fri, 12 Jul 2019 14:19:24 +0200
+Message-Id: <20190712121632.603212841@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Sukhomlinov <sukhomlinov@google.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream.
+commit 97860b483c5597663a174ff7405be957b4838391 upstream.
 
-TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-future TPM operations. TPM 1.2 behavior was different, future TPM
-operations weren't disabled, causing rare issues. This patch ensures
-that future TPM operations are disabled.
+Commit f08046cb3082 ("perf thread-stack: Represent jmps to the start of a
+different symbol") had the side-effect of introducing more stack entries
+before return from kernel space.
 
-Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
+When user space is also traced, those entries are popped before entry to
+user space, but when user space is not traced, they get stuck at the
+bottom of the stack, making the stack grow progressively larger.
+
+Fix by detecting a return-from-kernel branch type, and popping kernel
+addresses from the stack then.
+
+Note, the problem and fix affect the exported Call Graph / Tree but not
+the callindent option used by "perf script --call-trace".
+
+Example:
+
+  perf-with-kcore record example -e intel_pt//k -- ls
+  perf-with-kcore script example --itrace=bep -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py example.db branches calls
+  ~/libexec/perf-core/scripts/python/exported-sql-viewer.py example.db
+
+  Menu option: Reports -> Context-Sensitive Call Graph
+
+  Before: (showing Call Path column only)
+
+    Call Path
+    ▶ perf
+    ▼ ls
+      ▼ 12111:12111
+        ▶ setup_new_exec
+        ▶ __task_pid_nr_ns
+        ▶ perf_event_pid_type
+        ▶ perf_event_comm_output
+        ▶ perf_iterate_ctx
+        ▶ perf_iterate_sb
+        ▶ perf_event_comm
+        ▶ __set_task_comm
+        ▶ load_elf_binary
+        ▶ search_binary_handler
+        ▶ __do_execve_file.isra.41
+        ▶ __x64_sys_execve
+        ▶ do_syscall_64
+        ▼ entry_SYSCALL_64_after_hwframe
+          ▼ swapgs_restore_regs_and_return_to_usermode
+            ▼ native_iret
+              ▶ error_entry
+              ▶ do_page_fault
+              ▼ error_exit
+                ▼ retint_user
+                  ▶ prepare_exit_to_usermode
+                  ▼ native_iret
+                    ▶ error_entry
+                    ▶ do_page_fault
+                    ▼ error_exit
+                      ▼ retint_user
+                        ▶ prepare_exit_to_usermode
+                        ▼ native_iret
+                          ▶ error_entry
+                          ▶ do_page_fault
+                          ▼ error_exit
+                            ▼ retint_user
+                              ▶ prepare_exit_to_usermode
+                              ▶ native_iret
+
+  After: (showing Call Path column only)
+
+    Call Path
+    ▶ perf
+    ▼ ls
+      ▼ 12111:12111
+        ▶ setup_new_exec
+        ▶ __task_pid_nr_ns
+        ▶ perf_event_pid_type
+        ▶ perf_event_comm_output
+        ▶ perf_iterate_ctx
+        ▶ perf_iterate_sb
+        ▶ perf_event_comm
+        ▶ __set_task_comm
+        ▶ load_elf_binary
+        ▶ search_binary_handler
+        ▶ __do_execve_file.isra.41
+        ▶ __x64_sys_execve
+        ▶ do_syscall_64
+        ▶ entry_SYSCALL_64_after_hwframe
+        ▶ page_fault
+        ▼ entry_SYSCALL_64
+          ▼ do_syscall_64
+            ▶ __x64_sys_brk
+            ▶ __x64_sys_access
+            ▶ __x64_sys_openat
+            ▶ __x64_sys_newfstat
+            ▶ __x64_sys_mmap
+            ▶ __x64_sys_close
+            ▶ __x64_sys_read
+            ▶ __x64_sys_mprotect
+            ▶ __x64_sys_arch_prctl
+            ▶ __x64_sys_munmap
+            ▶ exit_to_usermode_loop
+            ▶ __x64_sys_set_tid_address
+            ▶ __x64_sys_set_robust_list
+            ▶ __x64_sys_rt_sigaction
+            ▶ __x64_sys_rt_sigprocmask
+            ▶ __x64_sys_prlimit64
+            ▶ __x64_sys_statfs
+            ▶ __x64_sys_ioctl
+            ▶ __x64_sys_getdents64
+            ▶ __x64_sys_write
+            ▶ __x64_sys_exit_group
+
+Committer notes:
+
+The first arg to the perf-with-kcore needs to be the same for the
+'record' and 'script' lines, otherwise we'll record the perf.data file
+and kcore_dir/ files in one directory ('example') to then try to use it
+from the 'bep' directory, fix the instructions above it so that both use
+'example'.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-[dianders: resolved merge conflicts with mainline]
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: f08046cb3082 ("perf thread-stack: Represent jmps to the start of a different symbol")
+Link: http://lkml.kernel.org/r/20190619064429.14940-2-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-chip.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/thread-stack.c |   30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -289,15 +289,15 @@ static int tpm_class_shutdown(struct dev
- {
- 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
- 
-+	down_write(&chip->ops_sem);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		down_write(&chip->ops_sem);
- 		if (!tpm_chip_start(chip)) {
- 			tpm2_shutdown(chip, TPM2_SU_CLEAR);
- 			tpm_chip_stop(chip);
- 		}
--		chip->ops = NULL;
--		up_write(&chip->ops_sem);
- 	}
-+	chip->ops = NULL;
-+	up_write(&chip->ops_sem);
- 
- 	return 0;
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -625,6 +625,23 @@ static int thread_stack__bottom(struct t
+ 				     true, false);
  }
+ 
++static int thread_stack__pop_ks(struct thread *thread, struct thread_stack *ts,
++				struct perf_sample *sample, u64 ref)
++{
++	u64 tm = sample->time;
++	int err;
++
++	/* Return to userspace, so pop all kernel addresses */
++	while (thread_stack__in_kernel(ts)) {
++		err = thread_stack__call_return(thread, ts, --ts->cnt,
++						tm, ref, true);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int thread_stack__no_call_return(struct thread *thread,
+ 					struct thread_stack *ts,
+ 					struct perf_sample *sample,
+@@ -905,7 +922,18 @@ int thread_stack__process(struct thread
+ 			ts->rstate = X86_RETPOLINE_DETECTED;
+ 
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
+-		if (!sample->ip || !sample->addr)
++		if (!sample->addr) {
++			u32 return_from_kernel = PERF_IP_FLAG_SYSCALLRET |
++						 PERF_IP_FLAG_INTERRUPT;
++
++			if (!(sample->flags & return_from_kernel))
++				return 0;
++
++			/* Pop kernel stack */
++			return thread_stack__pop_ks(thread, ts, sample, ref);
++		}
++
++		if (!sample->ip)
+ 			return 0;
+ 
+ 		/* x86 retpoline 'return' doesn't match the stack */
 
 
