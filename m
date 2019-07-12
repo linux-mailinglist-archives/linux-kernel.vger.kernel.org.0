@@ -2,137 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DC9166934
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:32:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 143D666924
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfGLIcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:32:07 -0400
-Received: from mga01.intel.com ([192.55.52.88]:9319 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbfGLIcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:32:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 01:32:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,481,1557212400"; 
-   d="scan'208";a="317928831"
-Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
-  by orsmga004.jf.intel.com with ESMTP; 12 Jul 2019 01:32:01 -0700
-From:   Tao Xu <tao3.xu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
-        jingqi.liu@intel.com, tao3.xu@intel.com
-Subject: [PATCH v7 3/3] KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
-Date:   Fri, 12 Jul 2019 16:29:07 +0800
-Message-Id: <20190712082907.29137-4-tao3.xu@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190712082907.29137-1-tao3.xu@intel.com>
-References: <20190712082907.29137-1-tao3.xu@intel.com>
+        id S1726298AbfGLIaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:30:06 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33535 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfGLIaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:30:06 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h10so8519146ljg.0;
+        Fri, 12 Jul 2019 01:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=F10no2HO30FOZ+nye/7YyMgOcOyHDq4Smw1AGcr+NuE=;
+        b=FUFhlv2fuv2V88WkQK0agSQNWYZOCsSrQ8Q8vhkMtDBewdtdwWu8UWg0seEGVfXgox
+         cLYoreLpSloGGBaTJa842HVIvlnvrnvmxxNnv+wte05OVULZS7zNF8kKY5qFcs+IxI/1
+         K5Jsx8kRAOaAy2RdC6gvFHXCqQSC3PJZ+SMDZUl9u2PEsJuc1grSqLvjfD4V10TACqvl
+         6xrdQ5BsSB86Y1IdogOHa+2B2Q1gX3v/qynMz9skjDIT5ocYGTD4e2GfuMW3HOZT84zH
+         k8pZ/YKrdmGxqnYQ0N7PLm/1UC/SG1VA6w5HEzb0JWztQUiUC3pVCWhN2bsd04a4bFc8
+         0Acw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=F10no2HO30FOZ+nye/7YyMgOcOyHDq4Smw1AGcr+NuE=;
+        b=KqWZywsA/9iNhlrXJF1ekEdAjT+GRHIlMMPicViw8NC+xT3UlH2VPzMIzMesIW/nEe
+         yYoigGtgJqmGBpiL54gZlbXoAqgKKFP8oMzMXibDu6Dh65uTLvsX9J6m/W0zWCOqSj4k
+         CRt7QYbLOQf0rdh570V8vw12l5quqGBv7zyPgFAYX6IP6YVVVGA3fnKZhohgX76TIMMB
+         EvFkFsE0qJpoLQMngZDNM5aq+0qHM/gZNN8RXPmTvjTgd2bG9grLNHXDii0ljUFCi2WB
+         +zhlHumf4pnLGX5LQoT3r4JywXVtcmjclmMIDBN+roEaBDrr5DPEIGNfhrG0HN8yWmLD
+         iUJQ==
+X-Gm-Message-State: APjAAAWYgAgOMBZ6V/+43JENUGpAHIj6QtwaiOYrlY85aMrxmM3oWr9N
+        Gxp6/7EF2qC3RdZTY0AsAmPce7Nh
+X-Google-Smtp-Source: APXvYqyTvMHU3DVGX9m5tM1UF/mI2SFuTMllRS1g+dw37MyuFprMMPHVM+CFp2fLB6+vC/OinBEyag==
+X-Received: by 2002:a2e:898b:: with SMTP id c11mr5338649lji.241.1562920202772;
+        Fri, 12 Jul 2019 01:30:02 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id w1sm1540417ljm.81.2019.07.12.01.30.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2019 01:30:02 -0700 (PDT)
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
+ <20190710140504.t5lsk36gnn5cdn6b@flea>
+ <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
+ <20190711090327.keuxt2ztfqecdbef@flea>
+ <de21fe78-87a6-741f-caf7-2771f6468739@gmail.com>
+ <20190712081027.arybdoxr6nzrmkxt@flea>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <686a20ce-e09a-037c-a5db-bd1309790c3e@gmail.com>
+Date:   Fri, 12 Jul 2019 11:30:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190712081027.arybdoxr6nzrmkxt@flea>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the latest Intel 64 and IA-32 Architectures Software Developer's
-Manual, UMWAIT and TPAUSE instructions cause a VM exit if the
-RDTSC exiting and enable user wait and pause VM-execution
-controls are both 1.
+12.07.2019 11:10, Maxime Ripard пишет:
+> On Thu, Jul 11, 2019 at 06:55:03PM +0300, Dmitry Osipenko wrote:
+>> 11.07.2019 12:03, Maxime Ripard пишет:
+>>> On Wed, Jul 10, 2019 at 06:05:18PM +0300, Dmitry Osipenko wrote:
+>>>> 10.07.2019 17:05, Maxime Ripard пишет:
+>>>>> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+>>>>>> This works:
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+>>>>>> index 56d36779d213..e5a2f9c8f404 100644
+>>>>>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>>>>>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>>>>>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
+>>>>>>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
+>>>>>>         if (mode)
+>>>>>>                 list_add(&mode->head, &connector->modes);
+>>>>>> +       else
+>>>>>> +               cmdline_mode->specified = false;
+>>>>>
+>>>>> Hmmm, it's not clear to me why that wouldn't be the case.
+>>>>>
+>>>>> If we come back to the beginning of that function, we retrieve the
+>>>>> cmdline_mode buffer from the connector pointer, that will probably
+>>>>> have been parsed a first time using drm_mode_create_from_cmdline_mode
+>>>>> in drm_helper_probe_add_cmdline_mode.
+>>>>>
+>>>>> Now, I'm guessing that the issue is that in
+>>>>> drm_mode_parse_command_line_for_connector, if we have a named mode, we
+>>>>> just copy the mode over and set mode->specified.
+>>>>>
+>>>>> And we then move over to do other checks, and that's probably what
+>>>>> fails and returns, but our drm_cmdline_mode will have been modified.
+>>>>>
+>>>>> I'm not entirely sure how to deal with that though.
+>>>>>
+>>>>> I guess we could allocate a drm_cmdline_mode structure on the stack,
+>>>>> fill that, and if successful copy over its content to the one in
+>>>>> drm_connector. That would allow us to only change the content on
+>>>>> success, which is what I would expect from such a function?
+>>>>>
+>>>>> How does that sound?
+>>>>
+>>>> I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
+>>>> for the "cmdline" mode and drm_client_rotation() is the only place in
+>>>> DRM code that cares about whether mode is from cmdline, hence looks like
+>>>> it will be more correct to do the following:
+>>>
+>>> I'm still under the impression that we're dealing with workarounds of
+>>> a more central issue, which is that we shouldn't return a partially
+>>> modified drm_cmdline_mode.
+>>>
+>>> You said it yourself, the breakage is in the commit changing the
+>>> command line parsing logic, while you're fixing here some code that
+>>> was introduced later on.
+>>
+>> The problem stems from assumption that *any* named mode is valid. It
+>> looks to me that the ultimate solution would be to move the mode's name
+>> comparison into the [1], if that's possible.
+>>
+>> [1] drm_mode_parse_command_line_for_connector()
+> 
+> Well, one could argue that video=tegrafb is invalid and should be
+> rejected as well, but we haven't cleared that up.
 
-This patch is to handle the vm-exit for UMWAIT and TPAUSE as this
-should never happen.
+The video=tegrafb is invalid mode, there is nothing to argue here. And
+the problem is that invalid modes and not rejected for the very beginning.
 
-Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Tao Xu <tao3.xu@intel.com>
----
+>>> Can you try the followintg patch?
+>>> http://code.bulix.org/8cwk4c-794565?raw
+>>
+>> This doesn't help because the problem with the rotation_reflection is
+>> that it's 0 if "rotation" not present in the cmdline and then ilog2(0)
+>> returns -1. So the patch "drm/modes: Don't apply cmdline's rotation if
+>> it wasn't specified" should be correct in any case.
+> 
+> So we would have the same issue with rotate=0 then?
 
-Changes in v7:
-    - Add nested exit reason for UMWAIT and TPAUSE (Paolo)
----
- arch/x86/include/uapi/asm/vmx.h |  6 +++++-
- arch/x86/kvm/vmx/nested.c       |  3 +++
- arch/x86/kvm/vmx/vmx.c          | 16 ++++++++++++++++
- 3 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index d213ec5c3766..d88d7a68849b 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,8 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_UMWAIT              67
-+#define EXIT_REASON_TPAUSE              68
- 
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -142,7 +144,9 @@
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
--	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
-+	{ EXIT_REASON_XRSTORS,               "XRSTORS" }, \
-+	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
-+	{ EXIT_REASON_TPAUSE,                "TPAUSE" }
- 
- #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
- #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index a4d5da34b306..9f91f834ec43 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5213,6 +5213,9 @@ bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason)
- 	case EXIT_REASON_ENCLS:
- 		/* SGX is never exposed to L1 */
- 		return false;
-+	case EXIT_REASON_UMWAIT: case EXIT_REASON_TPAUSE:
-+		return nested_cpu_has2(vmcs12,
-+			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE);
- 	default:
- 		return true;
- 	}
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 0787f140d155..e026b1313dc3 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5349,6 +5349,20 @@ static int handle_monitor(struct kvm_vcpu *vcpu)
- 	return handle_nop(vcpu);
- }
- 
-+static int handle_umwait(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
-+static int handle_tpause(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
- static int handle_invpcid(struct kvm_vcpu *vcpu)
- {
- 	u32 vmx_instruction_info;
-@@ -5559,6 +5573,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_VMFUNC]		      = handle_vmx_instruction,
- 	[EXIT_REASON_PREEMPTION_TIMER]	      = handle_preemption_timer,
- 	[EXIT_REASON_ENCLS]		      = handle_encls,
-+	[EXIT_REASON_UMWAIT]                  = handle_umwait,
-+	[EXIT_REASON_TPAUSE]                  = handle_tpause,
- };
- 
- static const int kvm_vmx_max_exit_handlers =
--- 
-2.20.1
-
+No, we won't. Rotation mode is parsed into the DRM_MODE bitmask and
+rotate=0 corresponds to DRM_MODE_ROTATE_0, which is BIT(0) as you may
+notice. Hence rotation_reflection=0 is always an invalid value, meaning
+that "rotate" option does not present in the cmdline. Please consult the
+code, in particular see drm_mode_parse_cmdline_options() which was
+written by yourself ;)
