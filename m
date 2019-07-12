@@ -2,75 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE53F66407
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0CE6645B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbfGLCVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 22:21:38 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:57848 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729216AbfGLCUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 22:20:40 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TWfV401_1562898035;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TWfV401_1562898035)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 12 Jul 2019 10:20:35 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-To:     linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-sh@vger.kernel.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH 12/12] Documentation/xtensa: repointer docs to Documentation/arch/
-Date:   Fri, 12 Jul 2019 10:20:18 +0800
-Message-Id: <20190712022018.27989-12-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.856.g8858448bb
-In-Reply-To: <20190712022018.27989-1-alex.shi@linux.alibaba.com>
-References: <20190712022018.27989-1-alex.shi@linux.alibaba.com>
+        id S1729015AbfGLCXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 22:23:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35646 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728485AbfGLCXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 22:23:07 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B564030897464F660B2C;
+        Fri, 12 Jul 2019 10:23:02 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 12 Jul 2019 10:22:54 +0800
+From:   SunKe <sunke32@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sunke32@huawei.com>
+Subject: [PATCH] fs/sync.c: Fix UBSAN Undefined behaviour in sync_file_range
+Date:   Fri, 12 Jul 2019 10:28:37 +0800
+Message-ID: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we move Documentation/xtensa docs to Documentation/arch/xtensa
-dir, redirect the doc pointer to them.
+There is a UBSAN report:
+UBSAN: Undefined behaviour in ../fs/sync.c:298:10
+signed integer overflow:
+-8 + -9223372036854775807 cannot be represented in type 'long long int'
+CPU: 0 PID: 15876 Comm: syz-executor.3 Not tainted
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+Call trace:
+[<ffffff90080ac450>] dump_backtrace+0x0/0x698 arch/arm64/kernel/traps.c:96
+[<ffffff90080acb20>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
+[<ffffff9008ca4500>] __dump_stack lib/dump_stack.c:15 [inline]
+[<ffffff9008ca4500>] dump_stack+0x1a8/0x230 lib/dump_stack.c:51
+[<ffffff9008d7e078>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:164
+[<ffffff9008d7ebb4>] handle_overflow+0x228/0x280 lib/ubsan.c:195
+[<ffffff9008d7ed28>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:203
+[<ffffff900874c2b8>] SYSC_sync_file_range fs/sync.c:298 [inline]
+[<ffffff900874c2b8>] SyS_sync_file_range+0x350/0x3e8 fs/sync.c:285
+[<ffffff9008094480>] el0_svc_naked+0x30/0x34
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-xtensa@linux-xtensa.org
-Cc: linux-kernel@vger.kernel.org
+When calculate the endbyte, there maybe an overflow, even if no effect
+the kernel, but I also want to avoid overflowing and avoid UBSAN reporting.
+The original compare is to ensure the offset >= 0 && nbytes >= 0 && no
+overflow happened.
+
+I do the calculate after compare. ensure the offset >= 0 && nbytes >= 0 &&
+no overflow may happen first.
+
+Signed-off-by: SunKe <sunke32@huawei.com>
 ---
- arch/xtensa/include/asm/initialize_mmu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/sync.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/xtensa/include/asm/initialize_mmu.h b/arch/xtensa/include/asm/initialize_mmu.h
-index 323d05789159..499fe4847490 100644
---- a/arch/xtensa/include/asm/initialize_mmu.h
-+++ b/arch/xtensa/include/asm/initialize_mmu.h
-@@ -42,7 +42,7 @@
- #if XCHAL_HAVE_S32C1I && (XCHAL_HW_MIN_VERSION >= XTENSA_HWVERSION_RC_2009_0)
- /*
-  * We Have Atomic Operation Control (ATOMCTL) Register; Initialize it.
-- * For details see Documentation/xtensa/atomctl.txt
-+ * For details see Documentation/arch/xtensa/atomctl.txt
-  */
- #if XCHAL_DCACHE_IS_COHERENT
- 	movi	a3, 0x25	/* For SMP/MX -- internal for writeback,
+diff --git a/fs/sync.c b/fs/sync.c
+index 4d1ff01..5827471 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -246,15 +246,15 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
+ 	if (flags & ~VALID_FLAGS)
+ 		goto out;
+ 
+-	endbyte = offset + nbytes;
+-
+ 	if ((s64)offset < 0)
+ 		goto out;
+-	if ((s64)endbyte < 0)
++	if ((s64)nbytes < 0)
+ 		goto out;
+-	if (endbyte < offset)
++	if (S64_MAX - offset < nbytes)
+ 		goto out;
+ 
++	endbyte = offset + nbytes;
++
+ 	if (sizeof(pgoff_t) == 4) {
+ 		if (offset >= (0x100000000ULL << PAGE_SHIFT)) {
+ 			/*
 -- 
-2.19.1.856.g8858448bb
+2.7.4
 
