@@ -2,92 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF7D6695B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03D26695F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfGLIvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:51:46 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:46518 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfGLIvp (ORCPT
+        id S1726666AbfGLIxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:53:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56235 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbfGLIxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:51:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1562921504; x=1594457504;
-  h=from:to:cc:subject:date:message-id;
-  bh=gIX56E206Ygtmlz0jOLcOvzHgmUrVjC3hqqjQDtHYu4=;
-  b=UR3LEgR9qvTWGJK4w2V/1+WTqanObJxl+AXKqhv/UTFNBj9dwl2aEtUQ
-   mYmYFjEZYW6UlVa2xfR3uuFuviZy/w0dnTDJckC4JI5D/VU/5XBJmYCKC
-   ncXqewPnym8CtD9FIqFJDBQLgNqK6Gd4OCbvD7ZT4axMplzkBfkPjsahe
-   A=;
-X-IronPort-AV: E=Sophos;i="5.62,481,1554768000"; 
-   d="scan'208";a="685113937"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2b-859fe132.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 12 Jul 2019 08:51:43 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2b-859fe132.us-west-2.amazon.com (Postfix) with ESMTPS id 0FFBE222159;
-        Fri, 12 Jul 2019 08:51:41 +0000 (UTC)
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x6C8pb32024010;
-        Fri, 12 Jul 2019 10:51:38 +0200
-Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x6C8pZ4Q024001;
-        Fri, 12 Jul 2019 10:51:35 +0200
-From:   KarimAllah Ahmed <karahmed@amazon.de>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>, Qian Cai <cai@lca.pw>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: [PATCH] mm: sparse: Skip no-map regions in memblocks_present
-Date:   Fri, 12 Jul 2019 10:51:31 +0200
-Message-Id: <1562921491-23899-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        Fri, 12 Jul 2019 04:53:02 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mum6l-1idY2v3fPf-00rnml; Fri, 12 Jul 2019 10:52:54 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rdma/siw: select CONFIG_DMA_VIRT_OPS
+Date:   Fri, 12 Jul 2019 10:52:42 +0200
+Message-Id: <20190712085253.3965945-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:wCFOA0CycKu+Z05bKx8yWCyvQio4U3zT7P3w2jzGrCUExyhfL/q
+ ZZwvzLBFgFeMaWBTC4Smgm3iav3IDmC2cYfLlkBLyWZT+Z17TIBatUyBpMIIE0FvKAbNHkk
+ Mre/AYTQPfH8K6UFNW0sbeWjr6w4q9TLCThFVLa1ko2FR1X5HJWX4s4HXmCbKZ9NETnZpuF
+ kVGmcKkq6t6oTh+N1htlw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dj7UNo/Gs78=:tDSmwTVdiefhQAkppIKVey
+ Y0hGlG4B6wOXGZvb1Mct++bEe4+gIG3dauuatZeXfjcETzfymYRL+G6FloD2710HsGipE7T/R
+ lODoDj7T3MbFSayQysa1TVdDOSwLIP2hLy8SIIy1NB81rwEyF3S2a1Nff36Clm3AHwEsA+VFe
+ TGwwitSizNdYqbYvFLGzDhus9WQvwtH2diy5cJJ9T6FyJNOtAqzmUlznSoJXIGMSvlhU0AYkr
+ ciG9lZwmLslyxle6lwC0jpynMMLbDCuuBjc6S5dhwsvp6Z//NqX6gjhOBCI1ii6JZGzopdHwn
+ Ih9cJv1guFMguNIRAHP676m5OFdOU1xSNYAqCTdQ0SWi4Z6cJ3wH4qnkvCZCabJbOnQySV6hD
+ 8UlUSr3PfMExiU5fDYoUaRIHKybq3bfAkDRcmAn3uPqE899tNn+EIcw9ZfRbHudTVAHVrihis
+ LFgCi1gyIJXhAF/1FpYN47sfTKICp90R3ql/+/ZEFAvdo3FHI2IiZOvVjQ13W32SYDVn9r5Gx
+ Nb396/i7cnFhaDWAJN8/c8SrG4vIeDxyL5Q+kUtMBBTfEGVwlhLdeGZE2svnyIqaZtLalk9wk
+ 3LasVDoR7m+3yUiypAwRmdNAf8gyj3N+NTtIJHIhFMBCju4V5WbDkT8lqKmM9xsqzVH215Mn8
+ pfjZGUgwo0uRp5kJmnYTLYgqQ9NRWhRNhIWO6esaVyO9hEtRXm3+vFJNbjHqZ6OEwZVnwJijb
+ 85cKRc6NG299/nVcrbnGXpeqBBUzPcME9e5QuQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not mark regions that are marked with nomap to be present, otherwise
-these memblock cause unnecessarily allocation of metadata.
+Without this symbol we get a link failure:
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+ERROR: "dma_virt_ops" [drivers/infiniband/sw/siw/siw.ko] undefined!
+
+Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- mm/sparse.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/infiniband/sw/siw/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index fd13166..33810b6 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -256,6 +256,10 @@ void __init memblocks_present(void)
- 	struct memblock_region *reg;
- 
- 	for_each_memblock(memory, reg) {
-+
-+		if (memblock_is_nomap(reg))
-+			continue;
-+
- 		memory_present(memblock_get_region_node(reg),
- 			       memblock_region_memory_base_pfn(reg),
- 			       memblock_region_memory_end_pfn(reg));
+diff --git a/drivers/infiniband/sw/siw/Kconfig b/drivers/infiniband/sw/siw/Kconfig
+index 94f684174ce3..ea282789f466 100644
+--- a/drivers/infiniband/sw/siw/Kconfig
++++ b/drivers/infiniband/sw/siw/Kconfig
+@@ -1,6 +1,7 @@
+ config RDMA_SIW
+ 	tristate "Software RDMA over TCP/IP (iWARP) driver"
+ 	depends on INET && INFINIBAND && CRYPTO_CRC32
++	select DMA_VIRT_OPS
+ 	help
+ 	This driver implements the iWARP RDMA transport over
+ 	the Linux TCP/IP network stack. It enables a system with a
 -- 
-2.7.4
+2.20.0
 
