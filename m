@@ -2,76 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26B7666972
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D3F66971
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfGLI4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:56:31 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:43047 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfGLI4a (ORCPT
+        id S1726250AbfGLI4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:56:15 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:49344 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfGLI4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:56:30 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MCsDe-1hd5uB1CKW-008uVX; Fri, 12 Jul 2019 10:56:07 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Wen Yang <wen.yang99@zte.com.cn>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: audio-graph-card: fix type mismatch warning
-Date:   Fri, 12 Jul 2019 10:55:53 +0200
-Message-Id: <20190712085605.4062896-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Fri, 12 Jul 2019 04:56:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ye7QJTr/VL6E13dVCzENZu/bqsS/Cpo3ATNqw8M0Wbk=; b=pxG2ppYhl5upfZIplcnu4BB/J
+        C8O72GDBPB+mMJlIgQuFVo8voDRw0gWSSzD9M/au+DXaQXF2Qnqyo6KJ/2XbNhDrln110BxavS8HW
+        /jEHpLHkwOrPTZh0SL0E+EMRYGdWN3XuwJo9nnmA1W+QX0VJHJuYY+cABCL9CGPliDF8TpE5hO/3X
+        4Xm5DJi9NHh02iMQu78LT+p/u2yOFOWdUc9xl5+wTFasXX/+iVSUBshgElltYL/W41vFkrzSVj8Ua
+        V/I8xHMcaE1IoF3UGXj7GhlzNXLG2tb4H+le/43Bj4/aQzT2yigHtan9nv02+SN1uyXTJXwjcr1yS
+        93AjNjfKw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60362)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hlrLc-0000p6-7n; Fri, 12 Jul 2019 09:56:08 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hlrLX-0005XL-2W; Fri, 12 Jul 2019 09:56:03 +0100
+Date:   Fri, 12 Jul 2019 09:56:02 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     "Raslan, KarimAllah" <karahmed@amazon.de>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "yaojun8558363@gmail.com" <yaojun8558363@gmail.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "info@metux.net" <info@metux.net>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "anders.roxell@linaro.org" <anders.roxell@linaro.org>,
+        "will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH] arm: Extend the check for RAM in /dev/mem
+Message-ID: <20190712085602.v2tncu5tsngtvbww@shell.armlinux.org.uk>
+References: <1562883681-18659-1-git-send-email-karahmed@amazon.de>
+ <14f02e29-77b2-29d9-a9f4-7f89ad0194f6@arm.com>
+ <1562900298.1345.12.camel@amazon.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Hsib/dpx4KDn7gfpU/f1Eq1bfZtFdE4qTB4i+zaN8zo+qEctdR3
- RKhbz0fWRM/pmG+ONdUgpTK6N83UxgmjuGxUxS7I+VEOkD9WOzCJOk4ZXdWmO7duzQNCSei
- A5NbDsnu3Sc6uMaOzDDc1fb0aJb5+RDDmrBVPEgI2QA6jlwg3/3937dYE5w8TcKd4KK1pOZ
- deGBhKhCt9y0/q8rpEaKQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:H9OQC5DGb9s=:T6H67ZX8mqNhVjA447wWxh
- 0xlDBQb6lbn9z8MwFJsVML6VitaX0n5WZCMegYpH2Jy0StVWv8lATqy/cHcn1tV+fKPAmiRhZ
- oHt/SGJfCX5s0+doh3Nf+k7pjQ9PH4qbuyia0jUmUCgqbQDSy9gl8EFegYzMvdeIffdUZlg+s
- 6Sp7mKoJ1Ib3ka35DJzEpUrBWTPTN0n/SsrjYVsfHUXSeZSv7PF0hVM1/TH1bfXHA8xus7U2b
- isWiB7dFfUrW2bmfT/wRvgUKzPh/LkI/pcx00uSfTZc8yXEZbf6VY6fIz1xZ3Y7A5kSHvBBsi
- RuNMBXRhXQ1tf9uQUbTFGKJZmqXfCAkJzridws1PtHvOf8guQ0mhwkPADX/CjxraTT6Fx/cxk
- AswHICK7T/BCJii8NKWbmbGkUoiHDEYx3kTNC7Rb9+dD3jC2N82iRhxp2upDjBuBuf02MooPu
- QhIyEwkywdDOj6PxT7gTQxEO4MPvXcuw8yp45I8IiTtFFqt+SV5YNbn9Z3DTdS32BFr3T2UXC
- +1xGHKziI8ziqs+LGMsO/tozcLt2dza/qDnNx4j8MkzgxFB15O2oZA3IZWgZ+poZrEdmoYLY4
- sHvztlc6Q8LopIyPGAGE1X2vxh+wginAcrEuHK3wh+q7fsGJmPew8aodII75QTI6Rfp5o0FYW
- 69ehGjuQkxZS5E1Ordsxhvy4mIfmW0dw6ebuxgojymabC/wA87Rc8aAPZiC8pccQuKHK35sx6
- DDbKua9LRG55+5mjhlfjSZ7drvWb4qT2eFa8tA==
+In-Reply-To: <1562900298.1345.12.camel@amazon.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new temporary variable is lacks a 'const' annotation:
+On Fri, Jul 12, 2019 at 02:58:18AM +0000, Raslan, KarimAllah wrote:
+> On Fri, 2019-07-12 at 08:06 +0530, Anshuman Khandual wrote:
+> > 
+> > On 07/12/2019 03:51 AM, KarimAllah Ahmed wrote:
+> > > 
+> > > Some valid RAM can live outside kernel control (e.g. using mem= kernel
+> > > command-line). For these regions, pfn_valid would return "false" causing
+> > > system RAM to be mapped as uncached. Use memblock instead to identify RAM.
+> > 
+> > Once the remaining memory is outside of the kernel (as the admin would have
+> > intended with mem= command line) what is the particular concern regarding
+> > the way those get mapped (cached or not) ? It is not to be used any way.
+> 
+> They can be used by user-space which might lead to them being used by the 
+> kernel. One use-case would be using them as guest memory for KVM as I detailed 
+> here:
+> 
+> https://lwn.net/Articles/778240/
 
-sound/soc/generic/audio-graph-card.c:87:7: error: assigning to 'u32 *' (aka 'unsigned int *') from 'const void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+From the 32-bit ARM point of view...
 
-Fixes: c152f8491a8d ("ASoC: audio-graph-card: fix an use-after-free in graph_get_dai_id()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/generic/audio-graph-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What if someone's already doing something similar with a non-coherent
+DSP and is relying on the current behaviour?  This change is a user
+visible behavioural change that could end up breaking userspace.
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index c8abb86afefa..288df245b2f0 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -63,7 +63,7 @@ static int graph_get_dai_id(struct device_node *ep)
- 	struct device_node *endpoint;
- 	struct of_endpoint info;
- 	int i, id;
--	u32 *reg;
-+	const u32 *reg;
- 	int ret;
- 
- 	/* use driver specified DAI ID if exist */
+In other words, it isn't something we should rush into.
+
 -- 
-2.20.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
