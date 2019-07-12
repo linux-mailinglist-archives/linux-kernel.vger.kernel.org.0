@@ -2,114 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B782D66475
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40ADA66493
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfGLCgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 22:36:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:51828 "EHLO foss.arm.com"
+        id S1729190AbfGLCqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 22:46:53 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:39436 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbfGLCgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 22:36:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94C912B;
-        Thu, 11 Jul 2019 19:36:17 -0700 (PDT)
-Received: from [10.162.41.115] (p8cg001049571a15.blr.arm.com [10.162.41.115])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6334B3F71F;
-        Thu, 11 Jul 2019 19:36:12 -0700 (PDT)
-Subject: Re: [PATCH] arm: Extend the check for RAM in /dev/mem
-To:     KarimAllah Ahmed <karahmed@amazon.de>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <1562883681-18659-1-git-send-email-karahmed@amazon.de>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <14f02e29-77b2-29d9-a9f4-7f89ad0194f6@arm.com>
-Date:   Fri, 12 Jul 2019 08:06:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1562883681-18659-1-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729051AbfGLCqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 22:46:52 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 02851B7E4E108A4CE88C;
+        Fri, 12 Jul 2019 10:46:50 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x6C2kBEq014401;
+        Fri, 12 Jul 2019 10:46:11 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019071210464634-2302204 ;
+          Fri, 12 Jul 2019 10:46:46 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     rjw@rjwysocki.net
+Cc:     viresh.kumar@linaro.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v6] cpufreq/pasemi: fix an use-after-free in pas_cpufreq_cpu_init()
+Date:   Fri, 12 Jul 2019 10:44:21 +0800
+Message-Id: <1562899461-24045-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-12 10:46:46,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-12 10:46:17,
+        Serialize complete at 2019-07-12 10:46:17
+X-MAIL: mse-fl1.zte.com.cn x6C2kBEq014401
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The cpu variable is still being used in the of_get_property() call
+after the of_node_put() call, which may result in use-after-free.
 
+Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v6: keep the blank line and fix warning: label 'out_unmap_sdcpwr' defined but not used.
+v5: put together the code to get, use, and release cpu device_node.
+v4: restore the blank line.
+v3: fix a leaked reference.
+v2: clean up the code according to the advice of viresh.
 
-On 07/12/2019 03:51 AM, KarimAllah Ahmed wrote:
-> Some valid RAM can live outside kernel control (e.g. using mem= kernel
-> command-line). For these regions, pfn_valid would return "false" causing
-> system RAM to be mapped as uncached. Use memblock instead to identify RAM.
+ drivers/cpufreq/pasemi-cpufreq.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-Once the remaining memory is outside of the kernel (as the admin would have
-intended with mem= command line) what is the particular concern regarding
-the way those get mapped (cached or not) ? It is not to be used any way.
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index 6b1e4ab..7d557f9 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -131,10 +131,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	int err = -ENODEV;
+ 
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
++	if (!cpu)
++		goto out;
+ 
++	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
+ 	of_node_put(cpu);
+-	if (!cpu)
++	if (!max_freqp) {
++		err = -EINVAL;
+ 		goto out;
++	}
++
++	/* we need the freq in kHz */
++	max_freq = *max_freqp / 1000;
+ 
+ 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
+ 	if (!dn)
+@@ -171,16 +179,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	}
+ 
+ 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
+-
+-	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
+-	if (!max_freqp) {
+-		err = -EINVAL;
+-		goto out_unmap_sdcpwr;
+-	}
+-
+-	/* we need the freq in kHz */
+-	max_freq = *max_freqp / 1000;
+-
+ 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
+ 	pr_debug("initializing frequency table\n");
+ 
+@@ -196,7 +194,11 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	policy->cur = pas_freqs[cur_astate].frequency;
+ 	ppc_proc_freq = policy->cur * 1000ul;
+ 
+-	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
++	err = cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
++	if (err)
++		goto out_unmap_sdcpwr;
++
++	return 0;
+ 
+ out_unmap_sdcpwr:
+ 	iounmap(sdcpwr_mapbase);
+-- 
+2.9.5
 
-> 
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Enrico Weigelt <info@metux.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: KarimAllah Ahmed <karahmed@amazon.de>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Jun Yao <yaojun8558363@gmail.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> ---
->  arch/arm/mm/mmu.c   | 2 +-
->  arch/arm64/mm/mmu.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> index 1aa2586..492774b 100644
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -705,7 +705,7 @@ static void __init build_mem_type_table(void)
->  pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->  			      unsigned long size, pgprot_t vma_prot)
->  {
-> -	if (!pfn_valid(pfn))
-> +	if (!memblock_is_memory(__pfn_to_phys(pfn)))
->  		return pgprot_noncached(vma_prot);
->  	else if (file->f_flags & O_SYNC)
->  		return pgprot_writecombine(vma_prot);
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 3645f29..cdc3e8e 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -78,7 +78,7 @@ void set_swapper_pgd(pgd_t *pgdp, pgd_t pgd)
->  pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->  			      unsigned long size, pgprot_t vma_prot)
->  {
-> -	if (!pfn_valid(pfn))
-> +	if (!memblock_is_memory(__pfn_to_phys(pfn)))
-
-pfn_valid() on arm64 checks if the memblock region is mapped i.e does it have
-a linear mapping or not. If a segment of RAM is outside linear mapping due to
-mem= directive and lacks a linear mapping then why should it be mapped similarly
-like system RAM on this path ?
