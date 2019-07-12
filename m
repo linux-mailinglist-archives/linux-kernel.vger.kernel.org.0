@@ -2,77 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640926752D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 20:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1060067536
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 20:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfGLSnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 14:43:05 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:19157 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727053AbfGLSnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 14:43:05 -0400
-Received: from [10.10.3.112] (starling.intra.ispras.ru [10.10.3.112])
-        by smtp.ispras.ru (Postfix) with ESMTP id 284A8201D0;
-        Fri, 12 Jul 2019 21:43:03 +0300 (MSK)
-Subject: Re: [PATCH] proc: Fix uninitialized byte read in get_mm_cmdline()
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        security@kernel.org
-References: <20190712160913.17727-1-izbyshev@ispras.ru>
- <20190712163625.GF21989@redhat.com> <20190712174632.GA3175@avx2>
-From:   Alexey Izbyshev <izbyshev@ispras.ru>
-Message-ID: <3de2d71b-37be-6238-7fd8-0a40c9b94a98@ispras.ru>
-Date:   Fri, 12 Jul 2019 21:43:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727417AbfGLStS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 14:49:18 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43451 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbfGLStR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 14:49:17 -0400
+Received: by mail-pl1-f195.google.com with SMTP id cl9so5156491plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 11:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MRVC5IMZoa5o9Lk6/1pZnpghBb7QNpMZIqJdxQxjH40=;
+        b=PShQDYtfPEgQskYO6b88lcP+62BM211EGSGUonfZjCevTp6bMxwg8wiYIm73nchh4p
+         1NhRTLriTnIWs5iTgUQ/JCZZ3yElVWunsKFQwXqdfCbyzDhdyoPqtOINHwE9cMrnlBVR
+         vkrtq+g1VxQsdgQtI6/Ut/zOauwjdfhl1YOCQ270GqOWAjdnQdO+u4i0l4/Z6RNHWrKY
+         UaJaqAbKqijc8Y2jQ5lsrum4KA46TAxTqA0x+d2vrSRelEtEIeCusL4gU+rVHZukUNtQ
+         Qv7c/Mcy+lTG+97vgNxcGUzoPcHYfdPj3uSVzAilrB8ssmS+ylLiZAYzzMA8VMMBRMQV
+         r0Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MRVC5IMZoa5o9Lk6/1pZnpghBb7QNpMZIqJdxQxjH40=;
+        b=EVwyN7fnJT8tP1w5I6HYZ3dplZ5/lK4wavrOQVgp7g73kbDxETdUmRqgaTO4FTw3FF
+         4vwLj+GtDLyD1Rq5z4UGGHXWYtiH00rTXd15oJpsLEQBB1zUXOzoI1ymALAkh+uuGI7E
+         Ihdvoky2zuW91x6UhPepZ6u8c33DbCkQrowKtXuQd2341VruBPaeIt2TtlIffS7YmzBc
+         zcmsBz7W2teNq9k+i3K2xX14TCrgjTqjtbjvYvgQxQq/UL27BGDL/I24VCiGZc7oQdiM
+         mt5fW62zYD1/xdyYWZ9TPwmWiLH81q2iPKDYLRkQdlfD7cyxGKGNOgGPYyNHmyV+eJ/j
+         ffRw==
+X-Gm-Message-State: APjAAAWNQXKjpLCuLEntZiy2U19J59jboRyomb/kaIbOZHGnI8rle3RV
+        R0ADgS0q4l07u6YimA7JGTt/6x9ONzYSNzehBqxz/g==
+X-Google-Smtp-Source: APXvYqxBLbwppsbzxjlJ9R2+QpWY9Uc7vDpVh0ziWCRQc3SKPvW+WWR0k4LO6QLqnD1Ja2x1b0JF77dK64H4hN7TBAw=
+X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr13242312plq.223.1562957356404;
+ Fri, 12 Jul 2019 11:49:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190712174632.GA3175@avx2>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190712093720.1461418-1-arnd@arndb.de>
+In-Reply-To: <20190712093720.1461418-1-arnd@arndb.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 12 Jul 2019 11:49:05 -0700
+Message-ID: <CAKwvOd=Xdp_=G3UU9ubayeTvkKCJ9hak0a-7yK90-RPUBQKrpw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Support clang option for stack alignment
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Duke Du <Duke.Du@amd.com>, Charlene Liu <charlene.liu@amd.com>,
+        amd-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/19 8:46 PM, Alexey Dobriyan wrote:
-> On Fri, Jul 12, 2019 at 06:36:26PM +0200, Oleg Nesterov wrote:
->> On 07/12, Alexey Izbyshev wrote:
->>>
->>> --- a/fs/proc/base.c
->>> +++ b/fs/proc/base.c
->>> @@ -275,6 +275,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
->>>  		if (got <= offset)
->>>  			break;
->>>  		got -= offset;
->>> +		if (got < size)
->>> +			size = got;
->>
->> Acked-by: Oleg Nesterov <oleg@redhat.com>
-> 
-> The proper fix to all /proc/*/cmdline problems is to revert
-> 
-> 	f5b65348fd77839b50e79bc0a5e536832ea52d8d
-> 	proc: fix missing final NUL in get_mm_cmdline() rewrite
-> 
-> 	5ab8271899658042fabc5ae7e6a99066a210bc0e
-> 	fs/proc: simplify and clarify get_mm_cmdline() function
-> 
-Should this be interpreted as an actual suggestion to revert the patches,
-fix the conflicts, test and submit them, or is this more like thinking out
-loud? In the former case, will it be OK for long term branches?
+On Fri, Jul 12, 2019 at 2:37 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> As previously fixed for dml in commit 4769278e5c7f ("amdgpu/dc/dml:
+> Support clang option for stack alignment") and calcs in commit
+> cc32ad8f559c ("amdgpu/dc/calcs: Support clang option for stack
+> alignment"), dcn20 uses an option that is not available with clang:
+>
+> clang: error: unknown argument: '-mpreferred-stack-boundary=4'
+> scripts/Makefile.build:281: recipe for target 'drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_resource.o' failed
+>
+> Use the same trick that we have in the other two files.
 
-get_mm_cmdline() does seem easier to read for me before 5ab8271899658042.
-But it also has different semantics in corner cases, for example:
+Maybe time for a macro in Kbuild.include or some such, if we see this
+pattern being repeated?
 
-- If there is no NUL at arg_end-1, it reads only the first string in
-the combined arg/env block, and doesn't terminate it with NUL.
-
-- If there is any problem with access_remote_vm() or copy_to_user(),
-it returns -EFAULT even if some data were copied to userspace.
-
-On the other hand, 5ab8271899658042 was merged not too long ago (about a year),
-so it's possible that the current semantics isn't heavily relied upon.
-
-Alexey
+>
+> Fixes: 7ed4e6352c16 ("drm/amd/display: Add DCN2 HW Sequencer and Resource")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/amd/display/dc/dcn20/Makefile |  8 +++++++-
+>  drivers/gpu/drm/amd/display/dc/dsc/Makefile   | 16 ++++++++++++----
+>  2 files changed, 19 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/Makefile b/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
+> index 1b68de27ba74..e9721a906592 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
+> @@ -10,7 +10,13 @@ ifdef CONFIG_DRM_AMD_DC_DSC_SUPPORT
+>  DCN20 += dcn20_dsc.o
+>  endif
+>
+> -CFLAGS_dcn20_resource.o := -mhard-float -msse -mpreferred-stack-boundary=4
+> +ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
+> +       cc_stack_align := -mpreferred-stack-boundary=4
+> +else ifneq ($(call cc-option, -mstack-alignment=16),)
+> +       cc_stack_align := -mstack-alignment=16
+> +endif
+> +
+> +CFLAGS_dcn20_resource.o := -mhard-float -msse $(cc_stack_align)
+>
+>  AMD_DAL_DCN20 = $(addprefix $(AMDDALPATH)/dc/dcn20/,$(DCN20))
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dsc/Makefile b/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> index c5d5b94e2604..e019cd9447e8 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> @@ -1,10 +1,18 @@
+>  #
+>  # Makefile for the 'dsc' sub-component of DAL.
+>
+> -CFLAGS_rc_calc.o := -mhard-float -msse -mpreferred-stack-boundary=4
+> -CFLAGS_rc_calc_dpi.o := -mhard-float -msse -mpreferred-stack-boundary=4
+> -CFLAGS_codec_main_amd.o := -mhard-float -msse -mpreferred-stack-boundary=4
+> -CFLAGS_dc_dsc.o := -mhard-float -msse -mpreferred-stack-boundary=4
+> +ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
+> +       cc_stack_align := -mpreferred-stack-boundary=4
+> +else ifneq ($(call cc-option, -mstack-alignment=16),)
+> +       cc_stack_align := -mstack-alignment=16
+> +endif
+> +
+> +dsc_ccflags := -mhard-float -msse $(cc_stack_align)
+> +
+> +CFLAGS_rc_calc.o := $(dsc_ccflags)
+> +CFLAGS_rc_calc_dpi.o := $(dsc_ccflags)
+> +CFLAGS_codec_main_amd.o := $(dsc_ccflags)
+> +CFLAGS_dc_dsc.o := $(dsc_ccflags)
+-- 
+Thanks,
+~Nick Desaulniers
