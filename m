@@ -2,76 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9EB671B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A92C2671C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfGLOzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 10:55:01 -0400
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:60308 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726984AbfGLOzB (ORCPT
+        id S1727492AbfGLO4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 10:56:23 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:42039 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfGLO4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 10:55:01 -0400
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id D1EB02E12E4;
-        Fri, 12 Jul 2019 17:54:57 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id TrVwfLmUeH-sv4OMBfK;
-        Fri, 12 Jul 2019 17:54:57 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1562943297; bh=MDH/AtBHcwuVTMXn+O7Dj31MfSoJS8ZDQ7kV9R+jNeI=;
-        h=Message-ID:Date:To:From:Subject;
-        b=OexDzgjru4NF0iXvM9SU/N+Wkvc7rV0gYTBIm1WrSPupuTPENO9sMPMV8O95ysS5J
-         /Vmo29h2TEF95TdmbmvLwnnPlu3stj8+pmSzAypJ4eCxG1dbMTEse3mYY8l0thynyW
-         CG9Mt7cTEnWlNgnfcUOcLxHxNAmiR/pfpvXmvHkI=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:fce8:911:2fe8:4dfb])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id I4l5tGLLwY-sv9aD6nL;
-        Fri, 12 Jul 2019 17:54:57 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH] kernel/printk: prevent deadlock at calling kmsg_dump from
- NMI context
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Date:   Fri, 12 Jul 2019 17:54:56 +0300
-Message-ID: <156294329676.1745.2620297516210526183.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Fri, 12 Jul 2019 10:56:17 -0400
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x6CEtk35021108
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 23:55:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6CEtk35021108
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562943347;
+        bh=6FhfPi35nywJuz76CvGaaD2GY6Th8cqwAFaZPK60WPg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OtEP9WddgHX8iLcY6+MtcE1Q7uNpmugN2+PC2T0RWqFd/ywXmy+L++42o2SMQIBWA
+         /1GcADf1FLaFVV1Xf/cHVW+BGkHcI8VyE5AQqyzHOowbv0e5EpqJnKFoGV1V8YJnRX
+         60Fwd30GrO1SHO6DZfIiUW5exAduKP8PTl3P469C3Yy9Bndh040EPgSVw/GSV4o6xw
+         zkx/KWmrdwVeGhKCmvMfL0F/NtNUXQ7ONhPbTYF1wvaTwc1ttwYQneER9LSvK49Qp7
+         Ih6aa4xkOdzY5xD2p0h0mkNkQd+QFCMnBEvFoc6Bp2R1O/0bj5ymmNL50sFjK9pExz
+         jkgr7JRmWh0Qg==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id v129so6844588vsb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 07:55:47 -0700 (PDT)
+X-Gm-Message-State: APjAAAXO8jGZp4jPLb3zDQBJGd27VvPiCJXtS/YxMkyYCnWChYs9Qfoq
+        D/RI1syLwYezJxazaaCxj45Vb2/P7xeC/rcK9wg=
+X-Google-Smtp-Source: APXvYqzQS0/29Qt4updS1sUcWeQlS15A6ishYNIxSYU+nuoKb9gD8iaF+UiiHqYuAcBI2W/oy3RUEwl/CswoBIzMSSE=
+X-Received: by 2002:a67:d46:: with SMTP id 67mr9042919vsn.181.1562943346190;
+ Fri, 12 Jul 2019 07:55:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20190712101556.17833-1-naohiro.aota@wdc.com> <20190712101556.17833-2-naohiro.aota@wdc.com>
+In-Reply-To: <20190712101556.17833-2-naohiro.aota@wdc.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 12 Jul 2019 23:55:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARj+ZAdQVBOEJfq3h22g20d8DH6h83=4giBOD-NqQoNjg@mail.gmail.com>
+Message-ID: <CAK7LNARj+ZAdQVBOEJfq3h22g20d8DH6h83=4giBOD-NqQoNjg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64/vdso: fix flip/flop vdso build bug
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Collingbourne <pcc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function kmsg_dump could be invoked from NMI context intentionally or
-accidentally because it is called at various oops/panic paths.
-Kernel message dumpers are not ready to work in NMI context right now.
-They could deadlock on lockbuf_lock or break internal structures.
+On Fri, Jul 12, 2019 at 7:16 PM Naohiro Aota <naohiro.aota@wdc.com> wrote:
+>
+> Running "make" on an already compiled kernel tree will rebuild the kernel
+> even without any modifications:
+>
+> $ make ARCH=arm64 CROSS_COMPILE=/usr/bin/aarch64-unknown-linux-gnu-
+> arch/arm64/Makefile:58: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
+>   CALL    scripts/checksyscalls.sh
+>   CALL    scripts/atomic/check-atomics.sh
+>   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
+>   VDSOSYM include/generated/vdso-offsets.h
+>   CHK     include/generated/compile.h
+>   CC      arch/arm64/kernel/signal.o
+>   CC      arch/arm64/kernel/vdso.o
+>   CC      arch/arm64/kernel/signal32.o
+>   LD      arch/arm64/kernel/vdso/vdso.so.dbg
+>   OBJCOPY arch/arm64/kernel/vdso/vdso.so
+>   AS      arch/arm64/kernel/vdso/vdso.o
+>   AR      arch/arm64/kernel/vdso/built-in.a
+>   AR      arch/arm64/kernel/built-in.a
+>   GEN     .version
+>   CHK     include/generated/compile.h
+>   UPD     include/generated/compile.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   LD      vmlinux.o
+>
+> This is the same bug fixed in commit 92a4728608a8 ("x86/boot: Fix
+> if_changed build flip/flop bug"). We cannot use two "if_changed" in one
+> target. Fix this build bug by merging two commands into one function.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Fixes: 28b1a824a4f4 ("arm64: vdso: Substitute gettimeofday() with C implementation")
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
 
-Theoretically some dumpers could be fixed and marked as NMI-safe.
-Right now it's safer to print warning once and give up.
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- kernel/printk/printk.c |    3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1888f6a3b694..2b83820bdc57 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3104,6 +3104,9 @@ void kmsg_dump(enum kmsg_dump_reason reason)
- 	struct kmsg_dumper *dumper;
- 	unsigned long flags;
- 
-+	if (WARN_ON_ONCE(in_nmi()))
-+		return;
-+
- 	if ((reason > KMSG_DUMP_OOPS) && !always_kmsg_dump)
- 		return;
- 
-
+-- 
+Best Regards
+Masahiro Yamada
