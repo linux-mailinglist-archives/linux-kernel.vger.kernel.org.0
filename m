@@ -2,112 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCCF166C01
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2F266C0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfGLMDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:03:32 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46188 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfGLMDa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:03:30 -0400
-Received: by mail-qt1-f196.google.com with SMTP id h21so7713917qtn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 05:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ya3olqXbNYZ2YSMN5Vo2GEPYRI+CuBxMvSFn7d2uS84=;
-        b=aotkFJFqvusMX1OerhuocXFj7/j+XMydcgBWATpaSaQpjePlEHXuw1+eLA3XqgzVgo
-         3Uk1mq1uWIcjr/P13VqQNxLGQbZ9Le18lGea64pNkkEoS62ag3YJpvCUAZLxtXsOF2KI
-         wLVUSJX9QkQNLAYnKTThOtDh2/xxmx0ryuFqTeqTP3jTt6PVz5h9isko1yzVEv6CeJWf
-         PJ53HLvamfbEldE0osqQWh+20am5UjiuwTrt+NFhIr9CmjgssvNA72uAe9CbQs3OwFoa
-         ksfLHaCMpnjAnzf8bCmJRSNRE1X7pAtY8pNvZbMuhFYTs6kN6ijHpb3bOnz9ru+2gwkM
-         sB3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ya3olqXbNYZ2YSMN5Vo2GEPYRI+CuBxMvSFn7d2uS84=;
-        b=TbcSOs7ymfC+GEzJR2lNAqHzjjPBWylGeA4CFQA9e9vzw9lRdcaO1Q71+W3ceqr+D3
-         IAVk7WvZzhhmsE+dGD6Nq/ZAqNEWZ+sWSlr0eIaMu9VkvwJMoAhFsfEjIJGfsVDIdik/
-         Fa4MtU1p9q39ncnriZzgrRyO6owtwBdmSNpUHkRl3DcNe3+pon9DIFzG5heij13NFFIV
-         pmMb01Dh3pM/yaochfUtzAWv6b+C23ec+3BwotwHu+Cq9PoLbslTVMpc2a/ixZbBqjcn
-         Sr8MtbQTNs5YXyst6V6CBfStxTfMwMY7vw5PoyGK3sanN+TTudYyXV+9zOGyZLTqrGlD
-         wSug==
-X-Gm-Message-State: APjAAAXLrgfFu4G8Y10o9CrDAlmHHV8eSSObc71LTzPmEzH8kqFwe1PF
-        3bJpALKOgGS/E+6RSWRESG6rTA==
-X-Google-Smtp-Source: APXvYqxudGKXGX8PVBjgTwtRs3qNjn2Q+HrcLltih4h0otrVbHxru0sA/MmXmqlsVAjzxXP/MEWGrg==
-X-Received: by 2002:ac8:7349:: with SMTP id q9mr5963086qtp.151.1562933009442;
-        Fri, 12 Jul 2019 05:03:29 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id 2sm4189831qtz.73.2019.07.12.05.03.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Jul 2019 05:03:29 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hluGu-0007MM-MT; Fri, 12 Jul 2019 09:03:28 -0300
-Date:   Fri, 12 Jul 2019 09:03:28 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Bernard Metzler <BMT@zurich.ibm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Doug Ledford <dledford@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rdma/siw: avoid smp_store_mb() on a u64
-Message-ID: <20190712120328.GB27512@ziepe.ca>
-References: <20190712085212.3901785-1-arnd@arndb.de>
- <OF05C1A780.433E36D1-ON00258435.003381DA-00258435.003F847E@notes.na.collabserv.com>
+        id S1727088AbfGLMGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:06:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:56428 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726155AbfGLMGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:06:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B4DD28;
+        Fri, 12 Jul 2019 05:06:34 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DEBC3F71F;
+        Fri, 12 Jul 2019 05:06:31 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
+        linux@armlinux.org.uk, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, salyzyn@android.com, pcc@google.com,
+        0x7f454c46@gmail.com, linux@rasmusvillemoes.dk,
+        huw@codeweavers.com, sthotton@marvell.com, andre.przywara@arm.com,
+        luto@kernel.org, john.stultz@linaro.org, naohiro.aota@wdc.com,
+        yamada.masahiro@socionext.com, Will Deacon <will@kernel.org>
+Subject: [PATCH] arm64: compat: Fix flip/flop vdso building bug
+Date:   Fri, 12 Jul 2019 13:06:18 +0100
+Message-Id: <20190712120618.6207-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190712101556.17833-2-naohiro.aota@wdc.com>
+References: <20190712101556.17833-2-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OF05C1A780.433E36D1-ON00258435.003381DA-00258435.003F847E@notes.na.collabserv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 11:33:46AM +0000, Bernard Metzler wrote:
-> >diff --git a/drivers/infiniband/sw/siw/siw_verbs.c
-> >b/drivers/infiniband/sw/siw/siw_verbs.c
-> >index 32dc79d0e898..41c5ab293fe1 100644
-> >+++ b/drivers/infiniband/sw/siw/siw_verbs.c
-> >@@ -1142,10 +1142,11 @@ int siw_req_notify_cq(struct ib_cq *base_cq,
-> >enum ib_cq_notify_flags flags)
-> > 
-> > 	if ((flags & IB_CQ_SOLICITED_MASK) == IB_CQ_SOLICITED)
-> > 		/* CQ event for next solicited completion */
-> >-		smp_store_mb(*cq->notify, SIW_NOTIFY_SOLICITED);
-> >+		WRITE_ONCE(*cq->notify, SIW_NOTIFY_SOLICITED);
-> > 	else
-> > 		/* CQ event for any signalled completion */
-> >-		smp_store_mb(*cq->notify, SIW_NOTIFY_ALL);
-> >+		WRITE_ONCE(*cq->notify, SIW_NOTIFY_ALL);
-> >+	smp_wmb();
-> > 
-> > 	if (flags & IB_CQ_REPORT_MISSED_EVENTS)
-> > 		return cq->cq_put - cq->cq_get;
-> 
-> 
-> Hi Arnd,
-> Many thanks for pointing that out! Indeed, this CQ notification
-> mechanism does not take 32 bit architectures into account.
-> Since we have only three flags to hold here, it's probably better
-> to make it a 32bit value. That would remove the issue w/o
-> introducing extra smp_wmb(). 
+Running "make" on an already compiled kernel tree will rebuild the
+vdso32 library even if this has not been modified.
 
-I also prefer not to see smp_wmb() in drivers..
+$ make
+  GEN     Makefile
+  Using linux as source for kernel
+  CALL    linux/scripts/atomic/check-atomics.sh
+  CALL    linux/scripts/checksyscalls.sh
+  VDSOCHK arch/arm64/kernel/vdso32/vdso.so.raw
+  VDSOSYM include/generated/vdso32-offsets.h
+  CHK     include/generated/compile.h
+  CC      arch/arm64/kernel/signal.o
+  CC      arch/arm64/kernel/vdso.o
+  CC      arch/arm64/kernel/signal32.o
+  VDSOL   arch/arm64/kernel/vdso32/vdso.so.raw
+  MUNGE   arch/arm64/kernel/vdso32/vdso.so.dbg
+  OBJCOPY arch/arm64/kernel/vdso32/vdso.so
+  AS      arch/arm64/kernel/vdso32/vdso.o
+  AR      arch/arm64/kernel/vdso32/built-in.a
+  AR      arch/arm64/kernel/built-in.a
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  AR      init/built-in.a
+  LD      vmlinux.o
+  MODPOST vmlinux.o
 
-> I'd prefer smp_store_mb(), since on some architectures it shall be
-> more efficient.  That would also make it sufficient to use
-> READ_ONCE.
+The issue is generated by the fact that "if_changed" is called twice
+in a single target.
 
-The READ_ONCE is confusing to me too, if you need store_release
-semantics then the reader also needs to pair with load_acquite -
-otherwise it doesn't work.
+Fix the build bug merging the two commands into a single function.
 
-Still, we need to do something rapidly to fix the i386 build, please
-revise right away..
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Fixes: a7f71a2c8903 ("arm64: compat: Add vDSO")
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ arch/arm64/kernel/vdso32/Makefile | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Jason
+diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+index 288c14d30b45..fb572b6f1bf5 100644
+--- a/arch/arm64/kernel/vdso32/Makefile
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -144,8 +144,7 @@ $(obj)/vdso.so.dbg: $(obj)/vdso.so.raw $(obj)/$(munge) FORCE
+ 
+ # Link rule for the .so file, .lds has to be first
+ $(obj)/vdso.so.raw: $(src)/vdso.lds $(obj-vdso) FORCE
+-	$(call if_changed,vdsold)
+-	$(call if_changed,vdso_check)
++	$(call if_changed,vdsold_and_vdso_check)
+ 
+ # Compilation rules for the vDSO sources
+ $(c-obj-vdso): %.o: %.c FORCE
+@@ -156,6 +155,9 @@ $(asm-obj-vdso): %.o: %.S FORCE
+ 	$(call if_changed_dep,vdsoas)
+ 
+ # Actual build commands
++quiet_cmd_vdsold_and_vdso_check = LD   $@
++      cmd_vdsold_and_vdso_check = $(cmd_vdsold); $(cmd_vdso_check)
++
+ quiet_cmd_vdsold = VDSOL   $@
+       cmd_vdsold = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_LDFLAGS) \
+                    -Wl,-T $(filter %.lds,$^) $(filter %.o,$^) -o $@
+-- 
+2.22.0
+
