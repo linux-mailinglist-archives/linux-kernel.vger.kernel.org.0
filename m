@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79BDB66D63
+	by mail.lfdr.de (Postfix) with ESMTP id ED69066D64
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfGLM3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:29:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
+        id S1728980AbfGLM30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:29:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728389AbfGLM3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:29:16 -0400
+        id S1727442AbfGLM3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:29:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55CCA208E4;
-        Fri, 12 Jul 2019 12:29:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04BB9216B7;
+        Fri, 12 Jul 2019 12:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934555;
-        bh=eUozmw0umQg+2JTk3e8I7qyBYjnpkikBmyDnrg4C1Eo=;
+        s=default; t=1562934558;
+        bh=8p+HUDU4IayyF4sZp3D9bYRweU5I1ssvFal9s1OG5iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1yPGR9xuPtK0Vi75/Py10E4sPGgATZXrIxHnK7b/HRGorn9nvfdD4A9Fgy7sKO9qy
-         B1SCtpxmYO5IAPraO9hQgCs4Csb7ZxzRETe4OWhJcT1hyp7z003ZooklBxctq9T0vY
-         EhCx3BsTNMa+OwXP5s6FwtMmccO+Adwlqxw9u/xM=
+        b=JLCyzVo/CnGBZFRDZj0H8oNxBgDht6DuV3y4quiPYVSmcqhS6MeNS14MeUURLR3Yj
+         OKhH+OeN8jla4OvArgX1KyuYKIbxepvkRYRzOeWXn/EcCAbH8fWgcnZc5Dl3epJOAl
+         RUzf8+RjLhgv3ITN2N6mkqsJ/QWpMXAv8gX05kf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Sukhomlinov <sukhomlinov@google.com>,
+        stable@vger.kernel.org, Paolo Valente <paolo.valente@unimore.it>,
         Douglas Anderson <dianders@chromium.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 5.1 094/138] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-Date:   Fri, 12 Jul 2019 14:19:18 +0200
-Message-Id: <20190712121632.371007090@linuxfoundation.org>
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.1 095/138] block, bfq: NULL out the bic when its no longer valid
+Date:   Fri, 12 Jul 2019 14:19:19 +0200
+Message-Id: <20190712121632.409883135@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -44,48 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Sukhomlinov <sukhomlinov@google.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream.
+commit dbc3117d4ca9e17819ac73501e914b8422686750 upstream.
 
-TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-future TPM operations. TPM 1.2 behavior was different, future TPM
-operations weren't disabled, causing rare issues. This patch ensures
-that future TPM operations are disabled.
+In reboot tests on several devices we were seeing a "use after free"
+when slub_debug or KASAN was enabled.  The kernel complained about:
 
-Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
+  Unable to handle kernel paging request at virtual address 6b6b6c2b
+
+...which is a classic sign of use after free under slub_debug.  The
+stack crawl in kgdb looked like:
+
+ 0  test_bit (addr=<optimized out>, nr=<optimized out>)
+ 1  bfq_bfqq_busy (bfqq=<optimized out>)
+ 2  bfq_select_queue (bfqd=<optimized out>)
+ 3  __bfq_dispatch_request (hctx=<optimized out>)
+ 4  bfq_dispatch_request (hctx=<optimized out>)
+ 5  0xc056ef00 in blk_mq_do_dispatch_sched (hctx=0xed249440)
+ 6  0xc056f728 in blk_mq_sched_dispatch_requests (hctx=0xed249440)
+ 7  0xc0568d24 in __blk_mq_run_hw_queue (hctx=0xed249440)
+ 8  0xc0568d94 in blk_mq_run_work_fn (work=<optimized out>)
+ 9  0xc024c5c4 in process_one_work (worker=0xec6d4640, work=0xed249480)
+ 10 0xc024cff4 in worker_thread (__worker=0xec6d4640)
+
+Digging in kgdb, it could be found that, though bfqq looked fine,
+bfqq->bic had been freed.
+
+Through further digging, I postulated that perhaps it is illegal to
+access a "bic" (AKA an "icq") after bfq_exit_icq() had been called
+because the "bic" can be freed at some point in time after this call
+is made.  I confirmed that there certainly were cases where the exact
+crashing code path would access the "bic" after bfq_exit_icq() had
+been called.  Sspecifically I set the "bfqq->bic" to (void *)0x7 and
+saw that the bic was 0x7 at the time of the crash.
+
+To understand a bit more about why this crash was fairly uncommon (I
+saw it only once in a few hundred reboots), you can see that much of
+the time bfq_exit_icq_fbqq() fully frees the bfqq and thus it can't
+access the ->bic anymore.  The only case it doesn't is if
+bfq_put_queue() sees a reference still held.
+
+However, even in the case when bfqq isn't freed, the crash is still
+rare.  Why?  I tracked what happened to the "bic" after the exit
+routine.  It doesn't get freed right away.  Rather,
+put_io_context_active() eventually called put_io_context() which
+queued up freeing on a workqueue.  The freeing then actually happened
+later than that through call_rcu().  Despite all these delays, some
+extra debugging showed that all the hoops could be jumped through in
+time and the memory could be freed causing the original crash.  Phew!
+
+To make a long story short, assuming it truly is illegal to access an
+icq after the "exit_icq" callback is finished, this patch is needed.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-[dianders: resolved merge conflicts with mainline]
+Reviewed-by: Paolo Valente <paolo.valente@unimore.it>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-chip.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ block/bfq-iosched.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -294,15 +294,15 @@ static int tpm_class_shutdown(struct dev
- {
- 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -4265,6 +4265,7 @@ static void bfq_exit_icq_bfqq(struct bfq
+ 		unsigned long flags;
  
-+	down_write(&chip->ops_sem);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		down_write(&chip->ops_sem);
- 		if (!tpm_chip_start(chip)) {
- 			tpm2_shutdown(chip, TPM2_SU_CLEAR);
- 			tpm_chip_stop(chip);
- 		}
--		chip->ops = NULL;
--		up_write(&chip->ops_sem);
- 	}
-+	chip->ops = NULL;
-+	up_write(&chip->ops_sem);
- 
- 	return 0;
- }
+ 		spin_lock_irqsave(&bfqd->lock, flags);
++		bfqq->bic = NULL;
+ 		bfq_exit_bfqq(bfqd, bfqq);
+ 		bic_set_bfqq(bic, NULL, is_sync);
+ 		spin_unlock_irqrestore(&bfqd->lock, flags);
 
 
