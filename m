@@ -2,208 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E0666B47
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B868166B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 12:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfGLK7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 06:59:50 -0400
-Received: from elasmtp-galgo.atl.sa.earthlink.net ([209.86.89.61]:51860 "EHLO
-        elasmtp-galgo.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726096AbfGLK7r (ORCPT
+        id S1726525AbfGLKwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 06:52:17 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:49909 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGLKwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 06:59:47 -0400
-X-Greylist: delayed 40107 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 06:59:46 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
-        s=dk12062016; t=1562929186; bh=HH6F+Zz+kcpvThVfKqHMkBysqE82SPlhncYX
-        ZhiX8XU=; h=Received:From:Content-Type:Content-Transfer-Encoding:
-         Subject:Message-Id:Date:To:Mime-Version:X-Mailer:X-ELNK-Trace:
-         X-Originating-IP; b=khxVi1S29L13qOJpBTFyjE11W1Tcf7PnxENNINmuuc2mH4
-        /unkFIa+iPlkpluAmACKv200cnHEpBaKTUk4wKKfMMqUr6oysQhH0RW6sZAXsH4eQ0+
-        nR9gV+r1YGO1tg6hP5AyqodSk8I0rq3tmQtlb4zImPOsUYzniewvEg3PJeQQUt8bUJZ
-        1EczKumUlpscp8iaGpeGlaY9COr+hAfwXuV9YABSYnJuAb0G+KSGi7cc1Hz/3dCxjpa
-        Bi8SOPkyDZCaLlki4SJANL03ToH3T2AI8GNYvpH/9/WV3e0RA7C7ciubcAXhwqau2YA
-        KqCQWLvTaOJdB8+6YOvye+vKh5Xg==
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
-  s=dk12062016; d=earthlink.net;
-  b=rwqx+vyeKMurkH0OFvHbLfVaybiiM6r5v2L+hmvnBERJ+rDNnAn6JWiCshFpUh+cFUrZzaOPfjUx9XAYsPh8LsW0999WmaGrgszzODBoAwFLv2RvfUsSV2r2yJ8S3xAFOFpeqY6d183BneVh+csZV/GWjf688tFNavw4vIwi0Guwbx1orVgPhat1HEacH6c5SF9phrx3wGnwfViTkvffAiF/z7QuZGeeT+GoZfMOoBjjeCcV7za5Vt4/3druSLpjxhWCoWBNL8l8BgOUvZTg8Jf0jXw+pi6IFkxpdVDLkPd/3ngCZfH0ltwIKVGZ+nFa7QXjKMNowPcL/Adf/xTgNg==;
-  h=Received:From:Content-Type:Content-Transfer-Encoding:Subject:Message-Id:Date:To:Mime-Version:X-Mailer:X-ELNK-Trace:X-Originating-IP;
-Received: from [24.6.250.120] (helo=[10.0.0.50])
-        by elasmtp-galgo.atl.sa.earthlink.net with esmtpsa (TLSv1:ECDHE-RSA-AES256-SHA:256)
-        (Exim 4)
-        (envelope-from <erblichs@earthlink.net>)
-        id 1hliqM-0007dV-VB
-        for linux-kernel@vger.kernel.org; Thu, 11 Jul 2019 19:51:19 -0400
-From:   Mitchell Erblich <erblichs@earthlink.net>
+        Fri, 12 Jul 2019 06:52:17 -0400
+Received: from [192.168.1.110] ([77.9.38.202]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MIMOy-1hiZFD2G04-00EP0N; Fri, 12 Jul 2019 12:52:15 +0200
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Coccinelle <cocci@systeme.lip6.fr>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: NULL pointer constraints vs. compiler checks
+Organization: metux IT consult
+Message-ID: <732996cf-5813-22a3-ee69-d8dc353845f4@metux.net>
+Date:   Fri, 12 Jul 2019 12:52:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Propose New Linux Scheduling Policies
-Message-Id: <9989192B-F7F2-4B0E-BD96-21E0862BBD0F@earthlink.net>
-Date:   Thu, 11 Jul 2019 16:51:17 -0700
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-X-Mailer: Apple Mail (2.3124)
-X-ELNK-Trace: 074f60c55517ea841aa676d7e74259b7b3291a7d08dfec7965f5f19c0a0652b6d719b172dfc94dfe350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
-X-Originating-IP: 24.6.250.120
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:eDjw4wbraMlZJSs59JKpHBRDvOW73+W+qNBXn/MmPDlHhA1v+j9
+ tjILmbKLmWRiQdCzg80YeQlx+jxAFL1hkHjWMifC8LHnYpwMAf12pC2aGg3nzmkkZXo9nbz
+ zCsioxAngGrJJEGag1O6k1rDmb8I4c/qLgpYNI+sKOEoUrJ5OdlAMg8kju/KZ0m1oMvOUMG
+ hc8L3HHQudYfhwfn4DO2g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aqrP9gfRmsA=:Nd3eMdLucqxjCRYoQgNrb2
+ xAjWjEOlqklDugngomYkF7ph5GynXF7uMN6Y5kbBu61tYRmsvXTbKkjFiQiINTyBmgmTAnfZJ
+ w/U6bsOpe69INm0VLsmM5e/PumXTiXw23mDXcZYjUJLBvkm6+YsLRFFjvmGEYrmr5+j8wWZ8b
+ C+C7ewBnNk4DloMdGtcwZbqI0+RzcIIo3FguHeQFUXkTn0jtbhXzE6wsxFcaY1qtMthvybaCM
+ sQWN1J94MMG3Dpyb6uLYWQ9N8RE486VBJLlcD/AbittVT2PJIMtehQDgef+D3wutImtjvc9bz
+ GpxQvaKnrFi1la9EqhC1m/Rzj2HRHAJhVBFOaAxJgbxREEml5q6SH6io58cGOUZ8Ixdk847gk
+ xjuT8bXMIJ11T1pQ8AFiPxa9L5W9dyqJirDrA6tz3eAKB8HhWlY5xWwr6wbp//nzZKF25fMUW
+ E6u9LCXxqsBp0Ccsc5vNDChzylgUEEiOdycJ/UbndAwQ7eDql5cYZEjfecyQ0FIiZGF9TnIST
+ +HuwEdjYNSW8Hc/G6UQDv/MfSIx1+Q5qBNK2f3VoS1WIrVXdd+dazB2xwzEIE9TDIBa7Gfv5D
+ 6inpRgYWDzwXhzQm5zJXiRRDUaE5QwjNxSCd0KPAmVW6u+aWUOMNLm5ByfjtEw6j7fC98omUj
+ 1IbcF/O7i0Gu+B8sJeUTNMdKXOjjLbMpicldfI+xUAImkrYKCCyYVhW8ofTs04+jkfOD2p11e
+ CvS4YAj+De0cYFAm5NtJ1RE9MQm9KHYPnDI0QmdF/24VeyIoVBxeHFckz+Q=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello folks,
 
 
-Proposed new Linux Scheduling Policies                                   =
- July 2019
+we recently have lots of patches for either adding missing NULL checks,
+removing unneeded ones, etc. It seems that's an non-trivial terrain,
+so I'm thinking about potential compiler support.
 
-Version 0.9
-
-=20
-
-=20
-
-./uapi/linux/sched.h
-
-=20
-
-#define             SCHED_INTERACTIVE            7
-
-#define            SCHED_UNEQUAL                        8
-
-=20
-
-Each of these new scheduling policies have been implemented in one or =
-more other UNIX operating systems in the past and currently to support a =
-new scheduling behaviour. Isn=E2=80=99t ist about time that Linux =
-supports these in the mainline OS.
-
-=20
-
-SCHED_INTERACTIVE is meant to be used for tasks that are infrequently =
-runnable, but once runnable should run with an absolute minimum latency. =
-An example of this is the mouse icon. Currently this behaviour is =
-determined based on past running behaviour where a minimum percentage of =
-use of its runnable time has occurred and thus can loose its interactive =
-as its runs. Common sense says that this type of process should always =
-be interactive.
-
-=20
-
-SCHED_UNEQUAL is meant to support an unfair scheduling policy for tasks =
-that SHOULD run infrequently buy when runnable, SHOULD run to =
-completion. This is more of a scalable flag, where the number of =
-runnable tasks may increase, thus limiting its runnable time within a =
-specific time window and/or the objects that the task is dealing with =
-may increase that almost two times or more executing cycles are =
-necessary for the task to run to completion. An example of this is a =
-routing task that processes Link State Advertisements (LSAs) so a change =
-in the routing table can be accomplished within a minimum of time. =
-Without doing this network routing loops and black holes can exist for =
-short periods of time loosing and/or increasing unnecessary control and =
-data packet exchange.
-
-=20
-
-Manual pages: Any manual page such as SCHED_SETATTR(2)  SHOULD be =
-updated to acknowledge these new scheduling policies.
-
-=20
-
-Applications: Tasks that display output about tasks / scheduling =
-minimally need to be recompliled and be made aware of these new =
-scheduling policies.
-
-=20
-
-Inheritance: It is not believed that  these new policies SHOULD be =
-inherited at time of a clone(2) / fork().
-
-=20
-
-Weighting: Currently the suggested / proposed change is to implement a =
-simplified differential weighting policy when SCHED_UNEQUAL is =
-specified. A possible future change COULD support multiple UNEQUAL =
-scheduling policies by combining an existing metric. This is for a later =
-proposed change sometime after this proposed change is accepted.
-
-=20
-
-Security / Denial Of Service (DoS) issues:
-
-            SCHED_INTERACTIVE:  Code must be implemented to prevent =
-repeatedly  inserting SCHED_INTERACTIVE tasks onto cpu cores and to deny =
-other tasks from executing.
-
-=20
-
-            SCHED_UNEQUAL: Currently only when multiple tasks are =
-runnable and consume the entire window of cpu cycles, by running this =
-task two or three times in a row SHOULD on the worse case add less than =
-8% cpu cycles.
-
-=20
-
-            To mitigate any scheduling disturbances setting these flags =
-should be limited to an administrator aka root type user with specific =
-capabilities.
-
-=20
-
-TBDs: If Linux=E2=80=99s kernel.org sees that this feature is wanted in =
-the near and/or distant future, then =E2=80=9CUNKNOWNs / TBDs=E2=80=9D =
-or issues should be listed here.
-
-=20
-
-This notice is not a proposal for kernel.org code integration at this =
-time, but is intended for Copyright Notice and a general consensus =
-whether this feature is beneficial for its future inclusion into =
-Linux=E2=80=99s kernel.org.
-
-=20
-
-Copyright Notice:
-
-While this two page introduction on these new scheduling policies is =
-being proposed, it is actually a minimal awareness document that should =
-satisfy that a code change has been implemented within public domain =
-source in the past and a determination whether this feature is wanted by =
-kernel.org.
-
-=20
-
-While the actual implementation code that uses these flags is =
-proprietary, as most OS code is modified, it is coded / changed by =
-multiple engineers and without general acceptance that this change is =
-accepted, anything beyond an inception / concept proposal to specify new =
-scheduling policy flags kernel.org is unnecessary at this time.
-
-=20
-
-Warantee:
-
-Usage etc, and incorporation of minimally tested / unknown / untested =
-code is =E2=80=9CAS-IS=E2=80=9D with no warranties suggested or implied.
-
-=20
-
-Reference for a past scheduler:
-
-SunOS within the SVR4.x used SCHED_INTERACTIVE
-
-=20
-
-VMware and others: Support a weighted process scheduler to allow UNEQUAL =
-scheduling.
-
-=20
-
-=20
-
-Mitchell Erblich
-UNIX Kernel Engineer Developer
+Does anybody know whether gcc has some way for not-null constraints ?
 
 
-Mitchell Erblich
-erblichs@earthlink.net
+thx
+--mtx
 
-
-
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
