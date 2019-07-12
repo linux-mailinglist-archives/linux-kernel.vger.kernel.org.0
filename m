@@ -2,73 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEB7866C37
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9172E66C44
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfGLMMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:12:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34386 "EHLO mx1.redhat.com"
+        id S1727142AbfGLMNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:13:01 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:49784 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfGLMML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:12:11 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726601AbfGLMNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:13:00 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 54B4230C2534;
-        Fri, 12 Jul 2019 12:12:09 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9F9E3600CD;
-        Fri, 12 Jul 2019 12:12:01 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 12 Jul 2019 14:12:09 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 14:12:00 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        neilb@suse.com, netdev@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>, peterz@infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: Re: [PATCH v1 1/6] rcu: Add support for consolidated-RCU reader
- checking
-Message-ID: <20190712121200.GC21989@redhat.com>
-References: <20190711234401.220336-1-joel@joelfernandes.org>
- <20190711234401.220336-2-joel@joelfernandes.org>
+        by mx2.mailbox.org (Postfix) with ESMTPS id F1641A117C;
+        Fri, 12 Jul 2019 14:12:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id P6ek3O6D-xUo; Fri, 12 Jul 2019 14:12:48 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 22:12:01 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 04/10] namei: split out nd->dfd handling to
+ dirfd_path_init
+Message-ID: <20190712121201.ouhwqgeszfq44t33@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-5-cyphar@cyphar.com>
+ <20190712042050.GH17978@ZenIV.linux.org.uk>
+ <20190712120743.mka3vl5t4zndc5wj@yavin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="37fzaqczvbcmjfqh"
 Content-Disposition: inline
-In-Reply-To: <20190711234401.220336-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 12 Jul 2019 12:12:11 +0000 (UTC)
+In-Reply-To: <20190712120743.mka3vl5t4zndc5wj@yavin>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11, Joel Fernandes (Google) wrote:
->
-> +int rcu_read_lock_any_held(void)
 
-rcu_sync_is_idle() wants it. You have my ack in advance ;)
+--37fzaqczvbcmjfqh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oleg.
+On 2019-07-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Sun, Jul 07, 2019 at 12:57:31AM +1000, Aleksa Sarai wrote:
+> > > Previously, path_init's handling of *at(dfd, ...) was only done once,
+> > > but with LOOKUP_BENEATH (and LOOKUP_IN_ROOT) we have to parse the
+> > > initial nd->path at different times (before or after absolute path
+> > > handling) depending on whether we have been asked to scope resolution
+> > > within a root.
+> >=20
+> > >  	if (*s =3D=3D '/') {
+> > > -		set_root(nd);
+> > > -		if (likely(!nd_jump_root(nd)))
+> > > -			return s;
+> > > -		return ERR_PTR(-ECHILD);
+> >=20
+> > > +		if (likely(!nd->root.mnt))
+> > > +			set_root(nd);
+> >=20
+> > How can we get there with non-NULL nd->root.mnt, when LOOKUP_ROOT case
+> > has been already handled by that point?
+>=20
+> Yup, you're completely right. I will remove the
+>   if (!nd->root.mnt)
+> in the next version.
 
+Ah sorry, there is a reason for it -- later in the series the
+LOOKUP_BENEATH case means that you might end up with a non-NULL
+nd->root.mnt. If you want, I can move the addition of the conditional to
+later in the series (it was easier to split the patch by-hunk back when
+you originally asked me to split out dirfd_path_init()).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--37fzaqczvbcmjfqh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh5DgAKCRCdlLljIbnQ
+EktsAQC+xy1gwgzkK07JhvJgn8Q1pT79AOQ14p3p2Zp9thYafQD9FEgBMo7bE+TU
+IjLN9tnpuJF+ybsPFaA/VNK4FHH0igw=
+=ZC2p
+-----END PGP SIGNATURE-----
+
+--37fzaqczvbcmjfqh--
