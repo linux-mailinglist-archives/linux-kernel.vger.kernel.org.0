@@ -2,166 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E1806693F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B076692E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfGLIiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:38:24 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38837 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbfGLIiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:38:23 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id B749D2230E;
-        Fri, 12 Jul 2019 04:38:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 12 Jul 2019 04:38:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=/UVl1SfI1iLqkTsHe3vvfHE6leW
-        BQBCgm2DrQ+AZhuk=; b=FeDvb65jzKh9ghvM1HCsSOXtn9CnPAhANSHh0STjxKD
-        LbVqaYAd0KVoB5qZZdIwkrYK5cVDnAdF530XhX5ilO0wLC5pFmk52uYD+SvqMJKV
-        ZZH4nZvyDhCT1qjICj/a5Or0rQZ0C4a0IutgIgLZnYd5Bc7B3PwMskEmsXVLak22
-        7hO8ITIpH9OAhYveSIU90xbIya6AU7l7o0NvPKCghF7DCVhBILG19UL3n6mi9Zp5
-        UH4UE+I2m5YmckXxlpHiYGMq6uggaOCxik9XWvewRl65z8KPpkOHLS1vJ8H/QNfY
-        g8rSAjVBgWO9A5Ub6CYHJvZUA0l+6S5MEi5mV/8CPbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/UVl1S
-        fI1iLqkTsHe3vvfHE6leWBQBCgm2DrQ+AZhuk=; b=FqbO97DBs5/ZTmPDcD3Glf
-        PjagPJr1GioWza5EKp4nmjemeHczqP6PwpZl1nJHbgnrK4O58rCZf1LBB+6sB/Tt
-        O1wHgnLiMtn3ZoEdGQmbVFT7A9sFWb9sJETPzA88ISCsgVllmWma67BQPF7Iggc0
-        wNxVX1JVFefj5sMs7u8QHBI0GjuRDbp/jit8Th3kDcw+AlJJXKYkjDNBg+GzlctN
-        UpCPaBE6VIWA7iqW0tCAVSmmLl7d8SLYb0467AEAlJtjzjOXCVVH28lhHprteyHt
-        tY9S6cWAHmE+z5q/vfNLNgnkhyzxkHCLdX5gJPBPqC8ztL8/p2caPhWsH3bwf6rA
-        ==
-X-ME-Sender: <xms:_UYoXQOguVlUqK9-SN_uHhS74SotEOGASz3FDsfw2VH2IQl14bHgrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrhedtgddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:_UYoXf1E8-HxayeYP4JppO4Fch5OtgdS7fUCYwM2yUA2DQGZM6ay3Q>
-    <xmx:_UYoXWNeGIB9dO34uvdzCfjag_yrN0R1yq5MrikjNymKVtDZima6Aw>
-    <xmx:_UYoXSzWxYDvkc7nxMVp8KXBYR8xCHhZycLfpK4ZwUESSpVCuqUcVA>
-    <xmx:_kYoXUm_cxfpVqtNQEmLoQHqY7nywqV1nNhZHftTD3PZOgbSIPUVng>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F2E480061;
-        Fri, 12 Jul 2019 04:38:21 -0400 (EDT)
-Date:   Fri, 12 Jul 2019 09:59:20 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Message-ID: <20190712075920.GA18592@kroah.com>
-References: <20190708192345.53fce4cf@canb.auug.org.au>
- <20190712104430.739f1b61@canb.auug.org.au>
+        id S1726628AbfGLIb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:31:56 -0400
+Received: from mga01.intel.com ([192.55.52.88]:9319 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbfGLIb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:31:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 01:31:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,481,1557212400"; 
+   d="scan'208";a="317928791"
+Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
+  by orsmga004.jf.intel.com with ESMTP; 12 Jul 2019 01:31:52 -0700
+From:   Tao Xu <tao3.xu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
+        jingqi.liu@intel.com, tao3.xu@intel.com
+Subject: [PATCH v7 0/3] KVM: x86: Enable user wait instructions
+Date:   Fri, 12 Jul 2019 16:29:04 +0800
+Message-Id: <20190712082907.29137-1-tao3.xu@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712104430.739f1b61@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 10:44:30AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Mon, 8 Jul 2019 19:23:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > After merging the char-misc tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/misc/vmw_balloon.c: In function 'vmballoon_mount':
-> > drivers/misc/vmw_balloon.c:1736:14: error: 'simple_dname' undeclared (first use in this function); did you mean 'simple_rename'?
-> >    .d_dname = simple_dname,
-> >               ^~~~~~~~~~~~
-> >               simple_rename
-> > drivers/misc/vmw_balloon.c:1736:14: note: each undeclared identifier is reported only once for each function it appears in
-> > drivers/misc/vmw_balloon.c:1739:9: error: implicit declaration of function 'mount_pseudo'; did you mean 'mount_bdev'? [-Werror=implicit-function-declaration]
-> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> >          ^~~~~~~~~~~~
-> >          mount_bdev
-> > drivers/misc/vmw_balloon.c:1739:9: warning: returning 'int' from a function with return type 'struct dentry *' makes pointer from integer without a cast [-Wint-conversion]
-> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >         BALLOON_VMW_MAGIC);
-> >         ~~~~~~~~~~~~~~~~~~
-> > 
-> > Caused by commit
-> > 
-> >   83a8afa72e9c ("vmw_balloon: Compaction support")
-> > 
-> > interacting with commits
-> > 
-> >   7e5f7bb08b8c ("unexport simple_dname()")
-> >   8d9e46d80777 ("fold mount_pseudo_xattr() into pseudo_fs_get_tree()")
-> > 
-> > from the vfs tree.
-> > 
-> > I applied the following merge fix patch:
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 8 Jul 2019 19:17:56 +1000
-> > Subject: [PATCH] convert vmwballoon to use the new mount API
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/misc/vmw_balloon.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-> > index 91fa43051535..e8c0f7525f13 100644
-> > --- a/drivers/misc/vmw_balloon.c
-> > +++ b/drivers/misc/vmw_balloon.c
-> > @@ -29,6 +29,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/mount.h>
-> > +#include <linux/pseudo_fs.h>
-> >  #include <linux/balloon_compaction.h>
-> >  #include <linux/vmw_vmci_defs.h>
-> >  #include <linux/vmw_vmci_api.h>
-> > @@ -1728,21 +1729,14 @@ static inline void vmballoon_debugfs_exit(struct vmballoon *b)
-> >  
-> >  #ifdef CONFIG_BALLOON_COMPACTION
-> >  
-> > -static struct dentry *vmballoon_mount(struct file_system_type *fs_type,
-> > -				      int flags, const char *dev_name,
-> > -				      void *data)
-> > +static int vmballoon_init_fs_context(struct fs_context *fc)
-> >  {
-> > -	static const struct dentry_operations ops = {
-> > -		.d_dname = simple_dname,
-> > -	};
-> > -
-> > -	return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> > -			    BALLOON_VMW_MAGIC);
-> > +	return init_pseudo(fc, BALLOON_VMW_MAGIC) ? 0 : -ENOMEM;
-> >  }
-> >  
-> >  static struct file_system_type vmballoon_fs = {
-> >  	.name           = "balloon-vmware",
-> > -	.mount          = vmballoon_mount,
-> > +	.init_fs_context          = vmballoon_init_fs_context,
-> >  	.kill_sb        = kill_anon_super,
-> >  };
-> >  
-> 
-> This is now a conflict between the vfs tree and Linus' tree.
+UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
 
-Looks good to me, I'll watch out for this when Al's tree is merged.
+UMONITOR arms address monitoring hardware using an address. A store
+to an address within the specified address range triggers the
+monitoring hardware to wake up the processor waiting in umwait.
 
-thanks,
+UMWAIT instructs the processor to enter an implementation-dependent
+optimized state while monitoring a range of addresses. The optimized
+state may be either a light-weight power/performance optimized state
+(c0.1 state) or an improved power/performance optimized state
+(c0.2 state).
 
-greg k-h
+TPAUSE instructs the processor to enter an implementation-dependent
+optimized state c0.1 or c0.2 state and wake up when time-stamp counter
+reaches specified timeout.
+
+Availability of the user wait instructions is indicated by the presence
+of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
+
+The patches enable the umonitor, umwait and tpause features in KVM.
+Because umwait and tpause can put a (psysical) CPU into a power saving
+state, by default we dont't expose it to kvm and enable it only when
+guest CPUID has it. If the instruction causes a delay, the amount
+of time delayed is called here the physical delay. The physical delay is
+first computed by determining the virtual delay (the time to delay
+relative to the VM’s timestamp counter). 
+
+The release document ref below link:
+Intel 64 and IA-32 Architectures Software Developer's Manual,
+https://software.intel.com/sites/default/files/\
+managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+
+Changelog:
+v7:
+	Add nested support for user wait instructions (Paolo)
+	Use the test on vmx->secondary_exec_control to replace
+	guest_cpuid_has (Paolo)
+v6:
+	add check msr_info->host_initiated in get/set msr(Xiaoyao)
+	restore the atomic_switch_umwait_control_msr()(Xiaoyao)
+
+Tao Xu (3):
+  KVM: x86: add support for user wait instructions
+  KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+  KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
+
+ arch/x86/include/asm/vmx.h      |  1 +
+ arch/x86/include/uapi/asm/vmx.h |  6 ++-
+ arch/x86/kernel/cpu/umwait.c    |  3 +-
+ arch/x86/kvm/cpuid.c            |  2 +-
+ arch/x86/kvm/vmx/nested.c       |  4 ++
+ arch/x86/kvm/vmx/vmx.c          | 69 +++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h          |  9 +++++
+ arch/x86/kvm/x86.c              |  1 +
+ 8 files changed, 92 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
+
