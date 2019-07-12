@@ -2,104 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B33C967272
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 809E867267
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfGLPde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 11:33:34 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:10600 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726930AbfGLPdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 11:33:33 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id A1467511F2;
-        Fri, 12 Jul 2019 17:33:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id QDRC6RVdbb1k; Fri, 12 Jul 2019 17:33:19 +0200 (CEST)
-Date:   Sat, 13 Jul 2019 01:32:27 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 00/10] namei: openat2(2) path resolution restrictions
-Message-ID: <20190712153227.owkjmx47lzrggweo@yavin>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190712151118.GP17978@ZenIV.linux.org.uk>
+        id S1727059AbfGLPcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 11:32:45 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42204 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726930AbfGLPcp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 11:32:45 -0400
+Received: by mail-qt1-f196.google.com with SMTP id h18so8469284qtm.9
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 08:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6zUuNAxC0W8UA4PyJfN+NTLv2uHwtQW0uxPeJFySWhY=;
+        b=WhHL4nEaSeEd0vRZOuyDcURKZ0cIDxWXvxDZbS9TJi+X/uea1BzMCjEV3BPQDBS7kF
+         Dpkkz2XDk8Cq31X6ysMikLsVpO4/A6/XX+9SpUG+W1O09Ph1QgZt6F95E72Jvv5xOz7E
+         q7g3yVOFNmZDNJiyrLb7uSW1KGLl0Q1+OFgPCeLMQs4aOOlyJ3DLJmK3xFUpVrkpjcsB
+         QQY6IbgORFPsALQkh8diwYLGK2Iijn5DUi7LcqCzPyJj5Pixni0GPZh99oEQHA9a1HDc
+         QuLsPci3N/i5e6QkqSbRmroGlDOqP8DKDJE1pkprzCZ4CQ2YDpVXaUlmhimtsJwtsYcH
+         a6bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6zUuNAxC0W8UA4PyJfN+NTLv2uHwtQW0uxPeJFySWhY=;
+        b=UmXGdEGHfMixbIsJyZ+5BxQfTxvxvNY2V9Fc1QzEotKi+1Zj1QjW6M2DPinzyqjSfD
+         TaaDz9wL8rYcNpNYIv5Ao14rugQgiblkSTYJZeKKj/Euczo2OZ7sv8ZxdrzRHqftIqrj
+         5wvg6J28TRjrBNEZ7KlQ0ionCTYlRslgZ4hAUwrLTb99vxl2VWLvWuv8u2SIT90vyqYZ
+         4c8Lzpp3GtHWHecOWwURvYlXxt1WG/b8sxCkiToDHeIoxiUDy570boIZKi3hG3ccta9u
+         nWzg88hVhxZeJ9KFAFLNG+zIyo8pNXZCU8CyUmjpCDNf7c08ET1bSJGHnuxC1bWJUDMT
+         qyWA==
+X-Gm-Message-State: APjAAAUVN6Nj0yfZOlaR9GiqUlZ/qFJFM2EW2jkat5XiEnGcL0RN23BV
+        PeeH13Apl8V8BtBuYkjiTLRUtw==
+X-Google-Smtp-Source: APXvYqzEwIAjKS3Em026GIl/n6OaECDF5z0P7UjmcJEJgVEtwMvAC0d3LOiyLBn306FibVuHBvyEHQ==
+X-Received: by 2002:ac8:444c:: with SMTP id m12mr6913649qtn.306.1562945564475;
+        Fri, 12 Jul 2019 08:32:44 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id v75sm4201337qka.38.2019.07.12.08.32.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Jul 2019 08:32:44 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hlxXP-0002Tp-KZ; Fri, 12 Jul 2019 12:32:43 -0300
+Date:   Fri, 12 Jul 2019 12:32:43 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Bernard Metzler <BMT@zurich.ibm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Doug Ledford <dledford@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: Re: [PATCH] rdma/siw: avoid smp_store_mb() on a u64
+Message-ID: <20190712153243.GI27512@ziepe.ca>
+References: <20190712144257.GE27512@ziepe.ca>
+ <20190712135339.GC27512@ziepe.ca>
+ <20190712120328.GB27512@ziepe.ca>
+ <20190712085212.3901785-1-arnd@arndb.de>
+ <OF05C1A780.433E36D1-ON00258435.003381DA-00258435.003F847E@notes.na.collabserv.com>
+ <OF36428621.B839DE8B-ON00258435.00461748-00258435.0047E413@notes.na.collabserv.com>
+ <OF3D069E00.E0996A14-ON00258435.004DD8C8-00258435.00502F8C@notes.na.collabserv.com>
+ <OF9F46C3F6.DC3E03FF-ON00258435.00521546-00258435.00549C01@notes.na.collabserv.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="whm56wbfs3ehouyz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190712151118.GP17978@ZenIV.linux.org.uk>
+In-Reply-To: <OF9F46C3F6.DC3E03FF-ON00258435.00521546-00258435.00549C01@notes.na.collabserv.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 12, 2019 at 03:24:09PM +0000, Bernard Metzler wrote:
+> 
+> >To: "Bernard Metzler" <BMT@zurich.ibm.com>
+> >From: "Jason Gunthorpe" <jgg@ziepe.ca>
+> >Date: 07/12/2019 04:43PM
+> >Cc: "Arnd Bergmann" <arnd@arndb.de>, "Doug Ledford"
+> ><dledford@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+> >linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+> >Subject: [EXTERNAL] Re: Re: Re: [PATCH] rdma/siw: avoid
+> >smp_store_mb() on a u64
+> >
+> >On Fri, Jul 12, 2019 at 02:35:50PM +0000, Bernard Metzler wrote:
+> >
+> >> >This looks wrong to me.. a userspace notification re-arm cannot be
+> >> >lost, so have a split READ/TEST/WRITE sequence can't possibly
+> >work?
+> >> >
+> >> >I'd expect an atomic test and clear here?
+> >> 
+> >> We cannot avoid the case that the application re-arms the
+> >> CQ only after a CQE got placed. That is why folks are polling the
+> >> CQ once after re-arming it - to make sure they do not miss the
+> >> very last and single CQE which would have produced a CQ event.
+> >
+> >That is different, that is re-arm happing after a CQE placement and
+> >this can't be fixed.
+> >
+> >What I said is that a re-arm from userspace cannot be lost. So you
+> >can't blindly clear the arm flag with the WRITE_ONCE. It might be OK
+> >beacuse of the if, but...
+> >
+> >It is just goofy to write it without a 'test and clear' atomic. If
+> >the
+> >writer side consumes the notify it should always be done atomically.
+> >
+> Hmmm, I don't yet get why we should test and clear atomically, if we
+> clear anyway - is it because we want to avoid clearing a re-arm which
+> happens just after testing and before clearing?
 
---whm56wbfs3ehouyz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is just clearer as to the intent.. 
 
-On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Jul 07, 2019 at 12:57:27AM +1000, Aleksa Sarai wrote:
-> > Patch changelog:
-> >   v9:
-> >     * Replace resolveat(2) with openat2(2). [Linus]
-> >     * Output a warning to dmesg if may_open_magiclink() is violated.
-> >     * Add an openat2(O_CREAT) testcase.
->=20
-> One general note for the future, BTW: for such series it's generally
-> a good idea to put it into a public git tree somewhere and mention that
-> in the announcement...
+Are you trying to optimize away an atomic or something? That might
+work better as a dual counter scheme.
 
-Sure, I'll mention it next time. For the record the tree is
-  <https://github.com/cyphar/linux/tree/resolveat/master>
+> Another complication -- test_and_set_bit() operates on a single
+> bit, but we have to test two bits, and reset both, if one is
+> set.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Why are two bits needed to represent armed and !armed?
 
---whm56wbfs3ehouyz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSioAwAKCRCdlLljIbnQ
-EgzkAQChn28FqDC8mwoRBSpKSsYawQ4zVuMzbt7zKNknJNg7nQD/cmJDlKpmnt40
-Jbd8FP1RPFVHA8Y7yVeIE+cOpg3nbw4=
-=RciL
------END PGP SIGNATURE-----
-
---whm56wbfs3ehouyz--
+Jason
