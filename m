@@ -2,87 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B04B662E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 02:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D4F662E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 02:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbfGLAd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 20:33:27 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46920 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbfGLAd0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 20:33:26 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0TI9Y176520;
-        Fri, 12 Jul 2019 00:32:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=CR4OYKqc+GwvLMLKdlXjil5mKkyZnLad/bNsIqBvDGQ=;
- b=1MTmR1kc6xeljryNij/zrF+P2P/YhulhS8bIW3yR1W+CEG3k8tnt8ljF30eZlFQOj0xA
- 43Vz0DG8JcW2nheAPr+LQpvxv1FSJ9gtDTv5mvWf0tRHd0UcG2srR8i8hf7Vn7bx8WGk
- V8Kp/38TOgnxtCn2U984EEHlQjHZhddVhlyiZo4Qv6k6fz6YYFRqZoVmppHHropPdkby
- kgRkOUlnWvmgX/YFkQciY2e9WYU7reUYEiY9KR4d/vQYGBuX9WrwhLzu2vsGWOWDoDLy
- XIgBtOytXDJlbQ7F8jhspxxawuAu0ryxe5wIYAEuxOJC6v57wPXIBI/THemuUv9fg1++ Ig== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2tjkkq2ueu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 00:32:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0RWmw190436;
-        Fri, 12 Jul 2019 00:32:24 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2tn1j1uctm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 00:32:23 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6C0WMVU017028;
-        Fri, 12 Jul 2019 00:32:22 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 11 Jul 2019 17:32:22 -0700
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
-        <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <megaraidlinux.pdl@broadcom.com>
-Subject: Re: [PATCH -next] scsi: megaraid_sas: Make some symbols static
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190702130114.29356-1-yuehaibing@huawei.com>
-Date:   Thu, 11 Jul 2019 20:32:18 -0400
-In-Reply-To: <20190702130114.29356-1-yuehaibing@huawei.com>
-        (yuehaibing@huawei.com's message of "Tue, 2 Jul 2019 21:01:14 +0800")
-Message-ID: <yq1k1co854d.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1730610AbfGLAcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 20:32:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728582AbfGLAcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Jul 2019 20:32:35 -0400
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EC90216C4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 00:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562891554;
+        bh=mWM1msUOi3sWCWjf4g3ssBFe9C4HtXvJFdU4LXMJXnc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TNBTRT9qR6L8EFYhNz5ASz+ZSFBFK7Podkuohl7zBGCBx3dor5jxsyP6TgcBTP4vx
+         rRURMYTNBt/YTG1Vrh0NTFXQa2ENANmkzHM28Eg8BloZigmelWTTjfGQsAoJsDUFVi
+         Dc9aFjzSzlb3K5GcZjhEvMO5QIwy/352cHXlh5oA=
+Received: by mail-wr1-f54.google.com with SMTP id p13so8073881wru.10
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 17:32:33 -0700 (PDT)
+X-Gm-Message-State: APjAAAX0WkDiDCwMVW9BX3FYb2+6ODO0ZDvefGMZ3sBXGdHdDLXJ6+R0
+        087RUnrRc3QDOfweX9c4FL4+U9Bh40b02Upzbyo3ag==
+X-Google-Smtp-Source: APXvYqzYUbiQjsAFPvwO5qXqTxo0KY5ClCpaWxsq/N/U0gdy8IwG3JlKoh9B7aRbc28in82BCDpQ4MvKw3xy/GQuTjQ=
+X-Received: by 2002:adf:dd0f:: with SMTP id a15mr7002359wrm.265.1562891552611;
+ Thu, 11 Jul 2019 17:32:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=851
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907120004
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=907 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907120004
+References: <20190712014223.66326995@hikaru>
+In-Reply-To: <20190712014223.66326995@hikaru>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 11 Jul 2019 17:32:21 -0700
+X-Gmail-Original-Message-ID: <CALCETrWkmaB5K4AR0R6CYcdq8mJwKtbWbmYEq6oxeaoqdA3ZWA@mail.gmail.com>
+Message-ID: <CALCETrWkmaB5K4AR0R6CYcdq8mJwKtbWbmYEq6oxeaoqdA3ZWA@mail.gmail.com>
+Subject: Re: On
+To:     Carlo Wood <carlo@alinoe.com>
+Cc:     wangyun@linux.vnet.ibm.com, palewis@adobe.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, jbaron@redhat.com,
+        pholland@adobe.com, Davide Libenzi <davidel@xmailserver.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Neal Cardwell <ncardwell@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-YueHaibing,
-
-> Fix sparse warnings:
+On Thu, Jul 11, 2019 at 5:01 PM Carlo Wood <carlo@alinoe.com> wrote:
 >
-> drivers/scsi/megaraid/megaraid_sas_base.c:271:1: warning: symbol 'megasas_issue_dcmd' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_base.c:2227:6: warning: symbol 'megasas_do_ocr' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_base.c:3194:25: warning: symbol 'megaraid_host_attrs' was not declared. Should it be static?
+> I believe that the only safe solution is to let the Event Loop
+> Thread do the deleting. So, if all else fails I'll have to add
+> objects that a Worker Thread thinks need to be deleted to a
+> FIFO that is processed by the Event Loop Thread before entering
+> epoll_wait(). But that is a lot of extra code for something
+> that could be achieved with just a small change to epoll:
 
-Applied to 5.3/scsi-fixes, thanks!
+This doesn't seem so bad at all.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>
+>
+> I propose to add a new EPOLL event EPOLLCLOSED that will cause
+> epoll_wait to return (for that event) whenever a file descriptor is
+> closed.
+
+This totally falls apart if you ever want to add a feature to your
+library to detach the handler for a given fd without closing the fd.
+
+>
+> The Worker Thread then does not remove an object from the
+> interest list, but either adds (if it was removed before) or
+> modifies the event (using EPOLL_CTL_MOD) to watch that fd
+> for closing, and then closes it.
+>
+> Aka,
+>
+>   Working Thread:
+>
+>   epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
+>   close(fd);
+>
+> where event contains the new EPOLLCLOSED (compare EPOLLOUT, EPOLLIN
+> etc).
+>
+> This must then guarantee the event EPOLLCLOSED to be reported
+> by exactly one epoll_wait(), the caller thread of which can then
+> proceed with deleting the resources.
+>
+> Note that close(fd) must cause the removal from the interest list
+> of any epoll struct before causing the event - and that the
+> EPOLLCLOSED event may only be reported after all other events
+> for that fd have already been reported (although it would be
+> ok to report them at the same time: simply handle the other
+> events first).
+
+This is a bunch of subtle semantics in the kernel to support your
+particular use case.
+
+>
+> I am not sure how this will work when more than one thread
+> calls epoll_wait and more than one watch the same fd: in
+> that case it is less trivial because then it seems always
+> possible that the EPOLLCLOSED event will be reported before
+> another event in another thread.
+
+But this case is fairly straightforward with the user mode approach --
+for example, add it to the list for all threads calling epoll_wait.
+Or otherwise defer the deletion until all epoll_wait threads have
+woken.
