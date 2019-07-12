@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB8B466D48
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C88D66CF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfGLM2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:28:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41834 "EHLO mail.kernel.org"
+        id S1728177AbfGLMYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:24:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728775AbfGLM2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:28:15 -0400
+        id S1728163AbfGLMYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:24:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D1E22084B;
-        Fri, 12 Jul 2019 12:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2E7121019;
+        Fri, 12 Jul 2019 12:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934494;
-        bh=FD9t5F8PGi371TcVdek1ysKVoWqC0ABFqzPsaC7jCPE=;
+        s=default; t=1562934286;
+        bh=hOKXLOrtNFOb/GmQlkG2DFICOr/oDnmKtqy0JV8Jau8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I26YZ8U96Nno0Q2A2zcQjMe0vYMC19OxeYpPGlQ6qdp7RQR6ooTzBptgFbHAe0ES0
-         K2M7vtcRr4qYcIYo8CxU815qvZhWGcKDqZ3TcPtAPGlUpnxmKY7/dPrqEkWVrTr2uu
-         DUFGyhPAQEaMdiO36Te3QKiKRXUI+tsAvsQOxsWI=
+        b=lTkUaOQmhAchf8xbSl4n8nZxnKbOW+Pg2dDt0bOhAfb+y/d2gFqwfhfx0aJvhlzbu
+         PE0AxAoeg041rlXgC1+SonKgAu/ymBTaLq9PcrTSIQcJsB68UHgNnb2ikOdxkDbTRX
+         PnEXN3vcsDu+qj5DCf5GMiWu2JjtP1dFhBpC1ojY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 071/138] mmc: core: complete HS400 before checking status
-Date:   Fri, 12 Jul 2019 14:18:55 +0200
-Message-Id: <20190712121631.401754036@linuxfoundation.org>
+Subject: [PATCH 4.19 53/91] net: dsa: mv88e6xxx: fix shift of FID bits in mv88e6185_g1_vtu_loadpurge()
+Date:   Fri, 12 Jul 2019 14:18:56 +0200
+Message-Id: <20190712121624.511422728@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b0e370b95a3b231d0fb5d1958cce85ef57196fe6 ]
+[ Upstream commit 48620e341659f6e4b978ec229f6944dabe6df709 ]
 
-We don't have a reproducible error case, yet our BSP team suggested that
-the mmc_switch_status() command in mmc_select_hs400() should come after
-the callback into the driver completing HS400 setup. It makes sense to
-me because we want the status of a fully setup HS400, so it will
-increase the reliability of the mmc_switch_status() command.
+The comment is correct, but the code ends up moving the bits four
+places too far, into the VTUOp field.
 
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: ba6c7ac3a2f4 ("mmc: core: more fine-grained hooks for HS400 tuning")
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 11ea809f1a74 (net: dsa: mv88e6xxx: support 256 databases)
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/core/mmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/dsa/mv88e6xxx/global1_vtu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 3e786ba204c3..671bfcceea6a 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1212,13 +1212,13 @@ static int mmc_select_hs400(struct mmc_card *card)
- 	mmc_set_timing(host, MMC_TIMING_MMC_HS400);
- 	mmc_set_bus_speed(card);
+diff --git a/drivers/net/dsa/mv88e6xxx/global1_vtu.c b/drivers/net/dsa/mv88e6xxx/global1_vtu.c
+index 058326924f3e..7a6667e0b9f9 100644
+--- a/drivers/net/dsa/mv88e6xxx/global1_vtu.c
++++ b/drivers/net/dsa/mv88e6xxx/global1_vtu.c
+@@ -419,7 +419,7 @@ int mv88e6185_g1_vtu_loadpurge(struct mv88e6xxx_chip *chip,
+ 		 * VTU DBNum[7:4] are located in VTU Operation 11:8
+ 		 */
+ 		op |= entry->fid & 0x000f;
+-		op |= (entry->fid & 0x00f0) << 8;
++		op |= (entry->fid & 0x00f0) << 4;
+ 	}
  
-+	if (host->ops->hs400_complete)
-+		host->ops->hs400_complete(host);
-+
- 	err = mmc_switch_status(card);
- 	if (err)
- 		goto out_err;
- 
--	if (host->ops->hs400_complete)
--		host->ops->hs400_complete(host);
--
- 	return 0;
- 
- out_err:
+ 	return mv88e6xxx_g1_vtu_op(chip, op);
 -- 
 2.20.1
 
