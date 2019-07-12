@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA8B66EC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B3D66EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfGLMYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
+        id S1728274AbfGLMlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:41:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbfGLMYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:16 -0400
+        id S1728039AbfGLMYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:24:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3821208E4;
-        Fri, 12 Jul 2019 12:24:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F08242084B;
+        Fri, 12 Jul 2019 12:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934255;
-        bh=/Mz1oNXA8X6erDLO019vWFgA0YET6BevJNaheOkykF4=;
+        s=default; t=1562934261;
+        bh=pm8q++Y9dYFYoF/2eqrnoIc+x6cNiUOwX1h3tqzg3uY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xXUvIIsDTykc3FuhAgLvVqSgs3sm6Jb+KHpxLcHGxMhVuP4US87ScCAe94Fi7HALz
-         gnbZs+iaeGLk1HM8xbgNNAmMpm+lXOSSIbLg49psCytVANUaY3Wcn87PPnCBVqjGgd
-         frmYQXoeMq064Ly+giIfPX3LuOdCm4lUA072xwqg=
+        b=irMKK96X5Ak+MxIqwyrTWFyhKMK6yZ/4oARFXQTi+JHe0fslQqCaNfg2mHkEj9hgR
+         TZB/dZHgTfny74465mroSWdMl5X0TmmuJzquj5wBc1tKL0dZZa5he3Efn/Bp0ANJG3
+         ZZpI+BVgmwZnETc+cJx/ueGKJY92VEy7aodRvas4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Young <sean@mess.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4.19 85/91] MIPS: Remove superfluous check for __linux__
-Date:   Fri, 12 Jul 2019 14:19:28 +0200
-Message-Id: <20190712121626.299919825@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 87/91] staging: bcm2835-camera: Replace spinlock protecting context_map with mutex
+Date:   Fri, 12 Jul 2019 14:19:30 +0200
+Message-Id: <20190712121626.390070383@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -46,52 +46,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-commit 1287533d3d95d5ad8b02773733044500b1be06bc upstream.
+commit 8dedab2903f152aa3cee9ae3d57c828dea0d356e upstream.
 
-When building BPF code using "clang -target bpf -c", clang does not
-define __linux__.
+The commit "staging: bcm2835-camera: Replace open-coded idr with a struct idr."
+replaced an internal implementation of an idr with the standard functions
+and a spinlock. idr_alloc(GFP_KERNEL) can sleep whilst calling kmem_cache_alloc
+to allocate the new node, but this is not valid whilst in an atomic context
+due to the spinlock.
 
-To build BPF IR decoders the include linux/lirc.h is needed which
-includes linux/types.h. Currently this workaround is needed:
+There is no need for this to be a spinlock as a standard mutex is
+sufficient.
 
-https://git.linuxtv.org/v4l-utils.git/commit/?id=dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
-
-This check might otherwise be useful to stop users from using a non-linux
-compiler, but if you're doing that you are going to have a lot more
-trouble anyway.
-
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21149/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Fixes: 950fd867c635 ("staging: bcm2835-camera: Replace open-coded idr with a struct idr.")
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/uapi/asm/sgidefs.h |    8 --------
- 1 file changed, 8 deletions(-)
+ drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/arch/mips/include/uapi/asm/sgidefs.h
-+++ b/arch/mips/include/uapi/asm/sgidefs.h
-@@ -12,14 +12,6 @@
- #define __ASM_SGIDEFS_H
+--- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+@@ -162,7 +162,8 @@ struct vchiq_mmal_instance {
+ 	void *bulk_scratch;
  
- /*
-- * Using a Linux compiler for building Linux seems logic but not to
-- * everybody.
-- */
--#ifndef __linux__
--#error Use a Linux compiler or give up.
--#endif
--
--/*
-  * Definitions for the ISA levels
-  *
-  * With the introduction of MIPS32 / MIPS64 instruction sets definitions
+ 	struct idr context_map;
+-	spinlock_t context_map_lock;
++	/* protect accesses to context_map */
++	struct mutex context_map_lock;
+ 
+ 	/* component to use next */
+ 	int component_idx;
+@@ -185,10 +186,10 @@ get_msg_context(struct vchiq_mmal_instan
+ 	 * that when we service the VCHI reply, we can look up what
+ 	 * message is being replied to.
+ 	 */
+-	spin_lock(&instance->context_map_lock);
++	mutex_lock(&instance->context_map_lock);
+ 	handle = idr_alloc(&instance->context_map, msg_context,
+ 			   0, 0, GFP_KERNEL);
+-	spin_unlock(&instance->context_map_lock);
++	mutex_unlock(&instance->context_map_lock);
+ 
+ 	if (handle < 0) {
+ 		kfree(msg_context);
+@@ -212,9 +213,9 @@ release_msg_context(struct mmal_msg_cont
+ {
+ 	struct vchiq_mmal_instance *instance = msg_context->instance;
+ 
+-	spin_lock(&instance->context_map_lock);
++	mutex_lock(&instance->context_map_lock);
+ 	idr_remove(&instance->context_map, msg_context->handle);
+-	spin_unlock(&instance->context_map_lock);
++	mutex_unlock(&instance->context_map_lock);
+ 	kfree(msg_context);
+ }
+ 
+@@ -1854,7 +1855,7 @@ int vchiq_mmal_init(struct vchiq_mmal_in
+ 
+ 	instance->bulk_scratch = vmalloc(PAGE_SIZE);
+ 
+-	spin_lock_init(&instance->context_map_lock);
++	mutex_init(&instance->context_map_lock);
+ 	idr_init_base(&instance->context_map, 1);
+ 
+ 	params.callback_param = instance;
 
 
