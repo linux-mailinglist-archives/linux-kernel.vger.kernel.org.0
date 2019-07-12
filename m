@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90BA666DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F6466E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfGLMcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49972 "EHLO mail.kernel.org"
+        id S1728364AbfGLMiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727685AbfGLMcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:16 -0400
+        id S1727610AbfGLM3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:29:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1FE2216C8;
-        Fri, 12 Jul 2019 12:32:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93C57208E4;
+        Fri, 12 Jul 2019 12:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934736;
-        bh=lkindddp7am+EJxQW8maw9xn2dB1EDCqkcHxRx8pMvE=;
+        s=default; t=1562934593;
+        bh=xxRtUTDCKhzXdeTgs0S5YKCWNASaZOqK2PANmHf8px8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AdYZkVqjrbtzrQQXYYsBljGDeJZ0UbifAGCwNveVHKKjoWUKoxvwDbc5CX1J6leCt
-         EBWC2XIEmkzteh6H4A2RVQpRXDit/iqb1jAKO9AFYJ/To0KwOoVDJPVN48r94NfBWd
-         IJFXVPMOs4gwAurCr14zZU/kAKTXzsp9+PtgD5yY=
+        b=GSODTSO+wG8kk636QnZzDojug75nlV/NTVjRMMyRJbFNp6Vty4AVuAS/6dpIIpj9T
+         D0g1fhwYLrxBHw+2BKF0frlNgDOr5oc69THZGwLn1udyZsLeHIhgwb0d3H/E3FncHN
+         QW6KooajjVYmPTbkwE2UZYliqNM86pJOogpB++LM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.2 15/61] perf intel-pt: Fix itrace defaults for perf script intel-pt documentation
-Date:   Fri, 12 Jul 2019 14:19:28 +0200
-Message-Id: <20190712121621.455643067@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Borislav Petkov <bp@alien8.de>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 5.1 105/138] Documentation/admin: Remove the vsyscall=native documentation
+Date:   Fri, 12 Jul 2019 14:19:29 +0200
+Message-Id: <20190712121632.793176749@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit a2d8a1585e35444789c1c8cf7e2e51fb15589880 upstream.
+commit d974ffcfb7447db5f29a4b662a3eaf99a4e1109e upstream.
 
-Fix intel-pt documentation to reflect the change of itrace defaults for
-perf script.
+The vsyscall=native feature is gone -- remove the docs.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Fixes: 076ca272a14c ("x86/vsyscall/64: Drop "native" vsyscalls")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: Jann Horn <jannh@google.com>
 Cc: stable@vger.kernel.org
-Fixes: 4eb068157121 ("perf script: Make itrace script default to all calls")
-Link: http://lkml.kernel.org/r/20190520113728.14389-4-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/d77c7105eb4c57c1a95a95b6a5b8ba194a18e764.1561610354.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/Documentation/intel-pt.txt |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -88,16 +88,16 @@ smaller.
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5074,12 +5074,6 @@
+ 			emulate     [default] Vsyscalls turn into traps and are
+ 			            emulated reasonably safely.
  
- To represent software control flow, "branches" samples are produced.  By default
- a branch sample is synthesized for every single branch.  To get an idea what
--data is available you can use the 'perf script' tool with no parameters, which
--will list all the samples.
-+data is available you can use the 'perf script' tool with all itrace sampling
-+options, which will list all the samples.
- 
- 	perf record -e intel_pt//u ls
--	perf script
-+	perf script --itrace=ibxwpe
- 
- An interesting field that is not printed by default is 'flags' which can be
- displayed as follows:
- 
--	perf script -Fcomm,tid,pid,time,cpu,event,trace,ip,sym,dso,addr,symoff,flags
-+	perf script --itrace=ibxwpe -F+flags
- 
- The flags are "bcrosyiABEx" which stand for branch, call, return, conditional,
- system, asynchronous, interrupt, transaction abort, trace begin, trace end, and
-@@ -713,7 +713,7 @@ Having no option is the same as
- 
- which, in turn, is the same as
- 
--	--itrace=ibxwpe
-+	--itrace=cepwx
- 
- The letters are:
- 
+-			native      Vsyscalls are native syscall instructions.
+-			            This is a little bit faster than trapping
+-			            and makes a few dynamic recompilers work
+-			            better than they would in emulation mode.
+-			            It also makes exploits much easier to write.
+-
+ 			none        Vsyscalls don't work at all.  This makes
+ 			            them quite hard to use for exploits but
+ 			            might break your system.
 
 
