@@ -2,166 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B7166746
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 08:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C3C6673D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 08:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfGLGvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 02:51:52 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:43216 "EHLO inva021.nxp.com"
+        id S1726121AbfGLGur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 02:50:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:58985 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbfGLGvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 02:51:49 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D00F2000A1;
-        Fri, 12 Jul 2019 08:51:46 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E515E200099;
-        Fri, 12 Jul 2019 08:51:41 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4A39540293;
-        Fri, 12 Jul 2019 14:51:36 +0800 (SGT)
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH V2 2/2] usb: dwc3: Add cache type configuration support
-Date:   Fri, 12 Jul 2019 14:42:06 +0800
-Message-Id: <20190712064206.48249-2-ran.wang_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190712064206.48249-1-ran.wang_1@nxp.com>
-References: <20190712064206.48249-1-ran.wang_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725562AbfGLGuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 02:50:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45lNq748gfz9s00;
+        Fri, 12 Jul 2019 16:50:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562914243;
+        bh=wxQ5prL3eUEj/klD3imtcDLJYoqk1cOCEbmcHcS1czg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tPSL+soadodnvAE3IOXh7wQUAcnx/xh3PeuluuzW19dyEe++XkIde8V5rNbu81bOS
+         /wmGP04z7MmGREPNF5dPz3VLM5k8t5rkMXFUDcLiTOjaqM13xzDf4g2rNFp7bKL8En
+         gB9ZXJC9D6bHrbgekZF8or2cAofKqkMs6P+RyOlgI6buPmtKTT5J+cSwaxyS7GtOOP
+         NJYHFB3mv18PnLyDvNiwGg82PnIAN17DArklJIO0e7aaWr4Tjuan+28Pd/8VVNBhu3
+         RO3rZf2GuJB7jBraZx5XwXUFCz9Z7k8ClTW4cL9grrj1aCMuhIIR+JORkdOoe9sdve
+         MJ+X54glNTfJQ==
+Date:   Fri, 12 Jul 2019 16:50:42 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190712165042.01745c65@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CMnuRLcb53m8WTHo6yBCQx6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to configure cache type for 4 different transfer types: Data Read,
-Desc Read, Data Write and Desc write. For each treasfer type, controller has a
-4-bit register field to enable different cache type.
+--Sig_/CMnuRLcb53m8WTHo6yBCQx6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Some Layerscape platforms might need this to resolve USB detect problem
-when DWC3 node apply dma-coherent.
+Hi all,
 
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
----
-Change in v2:
-	- Change most program logic to meet new DTS property define.
-	- Rename related register address macros.
-	- Rename function  dwc3_enable_snooping() to dwc3_set_cache_type().
+In commit
 
- drivers/usb/dwc3/core.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/usb/dwc3/core.h | 12 ++++++++++
- 2 files changed, 76 insertions(+)
+  c93dfec10f1d ("net/mlx5e: Fix compilation error in TLS code")
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 4aff1d8..43bdd73 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -284,6 +284,69 @@ static const struct clk_bulk_data dwc3_core_clks[] = {
- };
- 
- /*
-+ * dwc3_set_cache_type - Configure cache type
-+ * @dwc3: Pointer to our controller context structure
-+ */
-+static void dwc3_set_cache_type(struct dwc3 *dwc)
-+{
-+	int ret;
-+	u32 tmp, reg, cache_type;
-+	struct fwnode_handle *fwnode;
-+
-+	reg = dwc3_readl(dwc->regs,  DWC3_GSBUSCFG0);
-+	tmp = reg;
-+
-+	fwnode = device_get_named_child_node(dwc->dev, "cache_type");
-+	if (!fwnode) {
-+		dev_info(dwc->dev, "Cache_type node no found, skip.\n");
-+		return;
-+	}
-+
-+	ret = fwnode_property_read_u32(fwnode,
-+				       "transfer_type_datard", &cache_type);
-+	if (ret) {
-+		dev_err(dwc->dev,
-+			"Can't find property transfer_type_datard.\n");
-+		return;
-+	}
-+	reg &= ~DWC3_GSBUSCFG0_DATARD(~0);
-+	reg |= DWC3_GSBUSCFG0_DATARD(cache_type);
-+
-+	ret = fwnode_property_read_u32(fwnode,
-+				       "transfer_type_descrd", &cache_type);
-+	if (ret) {
-+		dev_err(dwc->dev,
-+			"Can't find property transfer_type_descrd.\n");
-+		return;
-+	}
-+	reg &= ~DWC3_GSBUSCFG0_DESCRD(~0);
-+	reg |= DWC3_GSBUSCFG0_DESCRD(cache_type);
-+
-+	ret = fwnode_property_read_u32(fwnode,
-+				       "transfer_type_datawr", &cache_type);
-+	if (ret) {
-+		dev_err(dwc->dev,
-+			"Can't find property transfer_type_datawr.\n");
-+		return;
-+	}
-+	reg &= ~DWC3_GSBUSCFG0_DATAWR(~0);
-+	reg |= DWC3_GSBUSCFG0_DATAWR(cache_type);
-+
-+	ret = fwnode_property_read_u32(fwnode,
-+				       "transfer_type_descwr", &cache_type);
-+	if (ret) {
-+		dev_err(dwc->dev,
-+			"Can't find property transfer_type_descwr.\n");
-+		return;
-+	}
-+	reg &= ~DWC3_GSBUSCFG0_DESCWR(~0);
-+	reg |= DWC3_GSBUSCFG0_DESCWR(cache_type);
-+
-+	if (tmp != reg)
-+		dwc3_writel(dwc->regs, DWC3_GSBUSCFG0, reg);
-+}
-+
-+/*
-  * dwc3_frame_length_adjustment - Adjusts frame length if required
-  * @dwc3: Pointer to our controller context structure
-  */
-@@ -942,6 +1005,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
- 	dwc3_frame_length_adjustment(dwc);
- 
- 	dwc3_set_incr_burst_type(dwc);
-+	dwc3_set_cache_type(dwc);
- 
- 	usb_phy_set_suspend(dwc->usb2_phy, 0);
- 	usb_phy_set_suspend(dwc->usb3_phy, 0);
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index f19cbeb..24a613f 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -165,6 +165,18 @@
- /* Bit fields */
- 
- /* Global SoC Bus Configuration INCRx Register 0 */
-+#define DWC3_GSBUSCFG0_DATARD_SHIFT	28
-+#define DWC3_GSBUSCFG0_DATARD(n)	(((n) & 0xf)		\
-+			<< DWC3_GSBUSCFG0_DATARD_SHIFT)
-+#define DWC3_GSBUSCFG0_DESCRD_SHIFT	24
-+#define DWC3_GSBUSCFG0_DESCRD(n)	(((n) & 0xf)		\
-+			<< DWC3_GSBUSCFG0_DESCRD_SHIFT)
-+#define DWC3_GSBUSCFG0_DATAWR_SHIFT	20
-+#define DWC3_GSBUSCFG0_DATAWR(n)	(((n) & 0xf)		\
-+			<< DWC3_GSBUSCFG0_DATAWR_SHIFT)
-+#define DWC3_GSBUSCFG0_DESCWR_SHIFT	16
-+#define DWC3_GSBUSCFG0_DESCWR(n)	(((n) & 0xf)		\
-+			<< DWC3_GSBUSCFG0_DESCWR_SHIFT)
- #define DWC3_GSBUSCFG0_INCR256BRSTENA	(1 << 7) /* INCR256 burst */
- #define DWC3_GSBUSCFG0_INCR128BRSTENA	(1 << 6) /* INCR128 burst */
- #define DWC3_GSBUSCFG0_INCR64BRSTENA	(1 << 5) /* INCR64 burst */
--- 
-2.7.4
+Fixes tag
 
+  Fixes: 90687e1a9a50 ("net/mlx5: Kconfig, Better organize compilation flag=
+s")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: e2869fb2068b ("net/mlx5: Kconfig, Better organize compilation flags")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CMnuRLcb53m8WTHo6yBCQx6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0oLcIACgkQAVBC80lX
+0GxPbQf/QqvHEK6jW/cbL4u3PG+puaah4GhlDeOCSvE4PJkkF84TovrOoZgqV5vH
+PK+UcetrOKVha1q+A62Hwcno8ECZs2Y8evBr3xbjtnvVgZjZ7cA7vWueLA0iIwzN
+Vu7CEvGE71DvbXjLPZdfxfIrdvUt68zwEKxMeJLOmeCO3AL8XFoHWUL7G0Y16o6B
+Ihbgn3YMwN1ZDs5Ea6hg2ckS56Eludwn5QglJgIaYG8b2ewqRH62sAFfXIFd2YG6
+q46ujBeFnTmFuGrowu5z1UCmNC0hGRy0oI/HTSxA7lWQyPQuI7t5blq3nje83IMn
+yOnnHgbt2Ztr5vALEUh/ujQIeZ/Yvg==
+=iBel
+-----END PGP SIGNATURE-----
+
+--Sig_/CMnuRLcb53m8WTHo6yBCQx6--
