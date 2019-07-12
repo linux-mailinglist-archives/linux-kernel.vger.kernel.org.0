@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCB366C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BCEF66D1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfGLMUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:20:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53878 "EHLO mail.kernel.org"
+        id S1727019AbfGLM0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:26:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727357AbfGLMUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:33 -0400
+        id S1727334AbfGLM0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:26:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FEA22166E;
-        Fri, 12 Jul 2019 12:20:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A8BE2084B;
+        Fri, 12 Jul 2019 12:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934032;
-        bh=tcuzNV4CwkhlZAaLrml/xtkukk3tnDIOoYJlyeBbn6s=;
+        s=default; t=1562934401;
+        bh=ohvH335AArOEC79sETN6ABZrs+hK4BnqYdeYO6lCMj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S/OVQv8GrPk7mujrFgz1HeVag8SnCdje0Ot3Ce+fgqJJG5flGsLd9XUyjD89UysJW
-         HqywThk3Dch9em0Ypwd56mRMgE6MRJ38Nbip6QTktrtmwV2ArBSgIV11luIPQtQnm9
-         SOhv1ihBKoT3P3aKCkHHK6MHjNr/XFYMhNOCnZ/g=
+        b=n+20V3qHZ5sctwP8N44T7vLnuJNLKCQrryFinQ23ySSI7TJ3bDcaa5vY6PtWPtL4W
+         AktM6cei6bzg5j12/q8lGLSHPZU+BC2ayI1P2fmDsUkwbXD9OGwqBvRqnh0OMSLgiu
+         jrnu+GnPBP8fqx7b6oo7eFon/h1pYJ1I2zhEPhk0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 24/91] ibmvnic: Refresh device multicast list after reset
-Date:   Fri, 12 Jul 2019 14:18:27 +0200
-Message-Id: <20190712121622.707174959@linuxfoundation.org>
+Subject: [PATCH 5.1 044/138] s390/boot: disable address-of-packed-member warning
+Date:   Fri, 12 Jul 2019 14:18:28 +0200
+Message-Id: <20190712121630.363021045@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit be32a24372cf162e825332da1a7ccef058d4f20b ]
+[ Upstream commit f9364df30420987e77599c4789ec0065c609a507 ]
 
-It was observed that multicast packets were no longer received after
-a device reset.  The fix is to resend the current multicast list to
-the backing device after recovery.
+Get rid of gcc9 warnings like this:
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+arch/s390/boot/ipl_report.c: In function 'find_bootdata_space':
+arch/s390/boot/ipl_report.c:42:26: warning: taking address of packed member of 'struct ipl_rb_components' may result in an unaligned pointer value [-Waddress-of-packed-member]
+   42 |  for_each_rb_entry(comp, comps)
+      |                          ^~~~~
+
+This is effectively the s390 variant of commit 20c6c1890455
+("x86/boot: Disable the address-of-packed-member compiler warning").
+
+Reviewed-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index bf0a5fe0da17..b88af81499e8 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1854,6 +1854,9 @@ static int do_reset(struct ibmvnic_adapter *adapter,
- 		return 0;
- 	}
- 
-+	/* refresh device's multicast list */
-+	ibmvnic_set_multi(netdev);
-+
- 	/* kick napi */
- 	for (i = 0; i < adapter->req_rx_queues; i++)
- 		napi_schedule(&adapter->napi[i]);
+diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+index e21053e5e0da..bbd2dab6730e 100644
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -24,6 +24,7 @@ KBUILD_CFLAGS_DECOMPRESSOR += -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY
+ KBUILD_CFLAGS_DECOMPRESSOR += -fno-delete-null-pointer-checks -msoft-float
+ KBUILD_CFLAGS_DECOMPRESSOR += -fno-asynchronous-unwind-tables
+ KBUILD_CFLAGS_DECOMPRESSOR += $(call cc-option,-ffreestanding)
++KBUILD_CFLAGS_DECOMPRESSOR += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),-g)
+ KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO_DWARF4), $(call cc-option, -gdwarf-4,))
+ UTS_MACHINE	:= s390x
 -- 
 2.20.1
 
