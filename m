@@ -2,86 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA9666C5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1894A66C31
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:10:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfGLMSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:18:03 -0400
-Received: from gaia.bitwizard.nl ([149.210.166.240]:40760 "EHLO
-        gaia.bitwizard.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfGLMSD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:18:03 -0400
-X-Greylist: delayed 480 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 08:18:01 EDT
-Received: from abra2.bitwizard.nl (unknown [10.8.0.6])
-        by gaia.bitwizard.nl (Postfix) with ESMTP id 87FAA5A0065;
-        Fri, 12 Jul 2019 14:10:00 +0200 (CEST)
-Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
-        id 6CD7E13F753; Fri, 12 Jul 2019 14:10:00 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 14:10:00 +0200
-From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Phil Elwell <phil@raspberrypi.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tty: amba-pl011: Make TX optimisation conditional
-Message-ID: <20190712121000.GK11350@BitWizard.nl>
-References: <1562852732-123411-1-git-send-email-phil@raspberrypi.org>
- <20190712112105.GH2790@e103592.cambridge.arm.com>
+        id S1727031AbfGLMK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:10:27 -0400
+Received: from foss.arm.com ([217.140.110.172]:56552 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726449AbfGLMK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:10:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2440228;
+        Fri, 12 Jul 2019 05:10:26 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEC153F71F;
+        Fri, 12 Jul 2019 05:10:24 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] arm64/vdso: fix flip/flop vdso build bug
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Collingbourne <pcc@google.com>
+References: <20190712101556.17833-1-naohiro.aota@wdc.com>
+ <20190712101556.17833-2-naohiro.aota@wdc.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <b3d06dc3-f8be-9744-f45b-608e17a4f76f@arm.com>
+Date:   Fri, 12 Jul 2019 13:10:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712112105.GH2790@e103592.cambridge.arm.com>
-Organization: BitWizard B.V.
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190712101556.17833-2-naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 12:21:05PM +0100, Dave Martin wrote:
-> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-> index 89ade21..1902071 100644
-> --- a/drivers/tty/serial/amba-pl011.c
-> +++ b/drivers/tty/serial/amba-pl011.c
-> @@ -1307,6 +1307,13 @@ static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
->  /* Start TX with programmed I/O only (no DMA) */
->  static void pl011_start_tx_pio(struct uart_amba_port *uap)
->  {
-> +	/*
-> +	 * Avoid FIFO overfills if the TX IRQ is active:
-> +	 * pl011_int() will comsume chars waiting in the xmit queue anyway.
-> +	 */
-> +	if (uap->im & UART011_TXIM)
-> +		return;
+On 12/07/2019 11:15, Naohiro Aota wrote:
+> Running "make" on an already compiled kernel tree will rebuild the kernel
+> even without any modifications:
+> 
+> $ make ARCH=arm64 CROSS_COMPILE=/usr/bin/aarch64-unknown-linux-gnu-
+> arch/arm64/Makefile:58: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
+>   CALL    scripts/checksyscalls.sh
+>   CALL    scripts/atomic/check-atomics.sh
+>   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
+>   VDSOSYM include/generated/vdso-offsets.h
+>   CHK     include/generated/compile.h
+>   CC      arch/arm64/kernel/signal.o
+>   CC      arch/arm64/kernel/vdso.o
+>   CC      arch/arm64/kernel/signal32.o
+>   LD      arch/arm64/kernel/vdso/vdso.so.dbg
+>   OBJCOPY arch/arm64/kernel/vdso/vdso.so
+>   AS      arch/arm64/kernel/vdso/vdso.o
+>   AR      arch/arm64/kernel/vdso/built-in.a
+>   AR      arch/arm64/kernel/built-in.a
+>   GEN     .version
+>   CHK     include/generated/compile.h
+>   UPD     include/generated/compile.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   LD      vmlinux.o
+> 
+> This is the same bug fixed in commit 92a4728608a8 ("x86/boot: Fix
+> if_changed build flip/flop bug"). We cannot use two "if_changed" in one
+> target. Fix this build bug by merging two commands into one function.
+> 
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Fixes: 28b1a824a4f4 ("arm64: vdso: Substitute gettimeofday() with C implementation")
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+> ---
+>  arch/arm64/kernel/vdso/Makefile | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+> index 4ab863045188..068c614b1231 100644
+> --- a/arch/arm64/kernel/vdso/Makefile
+> +++ b/arch/arm64/kernel/vdso/Makefile
+> @@ -57,8 +57,7 @@ $(obj)/vdso.o : $(obj)/vdso.so
+>  
+>  # Link rule for the .so file, .lds has to be first
+>  $(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
+> -	$(call if_changed,ld)
+> -	$(call if_changed,vdso_check)
+> +	$(call if_changed,ld_and_vdso_check)
+>  
+>  # Strip rule for the .so file
+>  $(obj)/%.so: OBJCOPYFLAGS := -S
+> @@ -77,6 +76,9 @@ include/generated/vdso-offsets.h: $(obj)/vdso.so.dbg FORCE
+>  quiet_cmd_vdsocc = VDSOCC   $@
+>        cmd_vdsocc = $(CC) $(a_flags) $(c_flags) -c -o $@ $<
+>  
+> +quiet_cmd_ld_and_vdso_check = LD      $@
+> +      cmd_ld_and_vdso_check = $(cmd_ld); $(cmd_vdso_check)
 > +
-
-I'm no expert on PL011, have no knowledge of the current bug, but have
-programmed serial drivers in the past.
-
-This looks "dangerous" to me.
-
-The normal situation is that you push the first few characters into
-the FIFO with PIO and then the interrupt will trigger once the FIFO
-empties and then you can refil the FIFO until the buffer empties.
-
-The danger in THIS fix is that you might have a race that causes those
-first few PIO-ed characters not to be put in the hardware resulting in
-the interrupt never triggering.... If you can software-trigger the
-interrupt just before the "return" here that'd be a way to fix things.
-
-I'm ok with a reaction like "I've thought about this, it's not a
-problem, now shut up".
-
-	Roger. 
+>  # Install commands for the unstripped file
+>  quiet_cmd_vdso_install = INSTALL $@
+>        cmd_vdso_install = cp $(obj)/$@.dbg $(MODLIB)/vdso/$@
+> 
 
 -- 
-** R.E.Wolff@BitWizard.nl ** https://www.BitWizard.nl/ ** +31-15-2049110 **
-**    Delftechpark 11 2628 XJ  Delft, The Netherlands.  KVK: 27239233    **
-The plan was simple, like my brother-in-law Phil. But unlike
-Phil, this plan just might work.
+Regards,
+Vincenzo
