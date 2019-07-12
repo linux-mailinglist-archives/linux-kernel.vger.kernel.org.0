@@ -2,162 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FDE4669E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0088266A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbfGLJ14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 05:27:56 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34480 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfGLJ14 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:27:56 -0400
-Received: by mail-ot1-f65.google.com with SMTP id n5so8841755otk.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 02:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jYy0XP6ethrem4b19nt43P11ZiYCCwivtW53JRcikeE=;
-        b=X22GS1wk91UjPm6+zhjoIjTp6TANbMdrUt6PVMNOW9CW/5FPKoxIlUCGugAB+NRfRQ
-         monlxmvfGjdkXHE0ZXj5TSesu/oigagcXG+j6OYS3f9S8e/jIh/2BrFN70n632G8bJlr
-         ArRi2NabuE5PXCf2lJC1fyNzO3ZGV7RMpfSmQmT5SJv8S0yYl8b5duVEmdRMT9zOjLV6
-         MMlp4NQ2biV1cCjV+lAXpJShoHW000qTR2iSqk+SzD7uaPhNExUrMOch2dzqjkDkaiI0
-         Wi1yENBcScRkf2Hq1RIw7hwJWljm7CgJxis3HKB0cvCOtLD888T6G++Uniy7ZJtM3XzJ
-         hhIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jYy0XP6ethrem4b19nt43P11ZiYCCwivtW53JRcikeE=;
-        b=DUiEqgBsad3XI5KrroGaoDdykg6D0UMlJcyfMwIhUOzTrRKKgK7m2isQIgT+2p05y3
-         g25XVAiw28kyQYXMKecxXWG2nsrOpIhy29XHqS36OtHzspuFPF3aYd7J4gnTu0hAht6R
-         pdSQi9ZaC6+U2KQ134794+FhfU8GZU8bYKaLwPAA/Aqv97tt0utDh15e7rptnSgdT5G3
-         Bh5rgIJbzadfbyIO7eAeXegq1xOia9A2+0sxLC63sRrFLCOUzDkWFzvsSg7gBQBpBJaJ
-         E2i/Y5AsAl7LUQVKwAhVDXXtpMZre3SWr9kflNlioV3w64Cl23TNWvap+/65F/3F7Wh+
-         31/g==
-X-Gm-Message-State: APjAAAVBdHB8VHWAISMgUwyJh6O3Zrw50rXFxAUegIkjUbgwIgLzNXRf
-        YR5LFsHQ/xIj0+Zna7ze+zBiMCLvA8vCCYy0LYMXECxh
-X-Google-Smtp-Source: APXvYqxmQFQAuZwu//RzFgfnJxLEi/izHgwx7Kkeq/oXPVKBHwaEP5wdAyHZxZ54Z6rZrZsRLEQzcJL5gRduQ6uOogU=
-X-Received: by 2002:a9d:7352:: with SMTP id l18mr2470502otk.292.1562923674988;
- Fri, 12 Jul 2019 02:27:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190705160536.12047-1-geert+renesas@glider.be>
- <CAMpxmJXOrDLdw6ZPBHxzsDRYiLmhRNCb-s_Z=Gu=Ecg1XA5ONQ@mail.gmail.com>
- <CAMuHMdWdb0dcS8Nvk-Poz2dT7nuHjFhqpsRPZZnSKsc3VffcRA@mail.gmail.com>
- <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com> <CAMuHMdUkF32+wOLkfd2BL4h-=0nZjPDMtVOpOcyDYzBbhWXteQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUkF32+wOLkfd2BL4h-=0nZjPDMtVOpOcyDYzBbhWXteQ@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 12 Jul 2019 11:27:43 +0200
-Message-ID: <CAMpxmJXCYeGjCu_PhCPffZQZ+ST9YCp27-PTHfL2SJ0Bh8SJFQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1726717AbfGLJiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 05:38:16 -0400
+Received: from ozlabs.ru ([107.173.13.209]:58430 "EHLO ozlabs.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfGLJiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:38:16 -0400
+X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 05:38:15 EDT
+Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
+        by ozlabs.ru (Postfix) with ESMTP id 90D15AE80571;
+        Fri, 12 Jul 2019 05:29:58 -0400 (EDT)
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Oliver O'Halloran" <oohall@gmail.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Alistair Popple <alistair@popple.id.au>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Subject: [PATCH kernel v4 0/4] powerpc/ioda2: Yet another attempt to allow DMA masks between 32 and 59
+Date:   Fri, 12 Jul 2019 19:29:51 +1000
+Message-Id: <20190712092955.56218-1-aik@ozlabs.ru>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 9 lip 2019 o 17:59 Geert Uytterhoeven <geert@linux-m68k.org> napisa=C5=
-=82(a):
->
-> Hi Bartosz,
->
-> On Tue, Jul 9, 2019 at 4:59 PM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
-> > pon., 8 lip 2019 o 12:24 Geert Uytterhoeven <geert@linux-m68k.org> napi=
-sa=C5=82(a):
-> > > On Mon, Jul 8, 2019 at 11:45 AM Bartosz Golaszewski
-> > > <bgolaszewski@baylibre.com> wrote:
-> > > > pt., 5 lip 2019 o 18:05 Geert Uytterhoeven <geert+renesas@glider.be=
-> napisa=C5=82(a):
-> > > > > GPIO controllers are exported to userspace using /dev/gpiochip*
-> > > > > character devices.  Access control to these devices is provided b=
-y
-> > > > > standard UNIX file system permissions, on an all-or-nothing basis=
-:
-> > > > > either a GPIO controller is accessible for a user, or it is not.
-> > > > > Currently no mechanism exists to control access to individual GPI=
-Os.
-> > > > >
-> > > > > Hence add a virtual GPIO driver to aggregate existing GPIOs (up t=
-o 32),
-> > > > > and expose them as a new gpiochip.  This is useful for implementi=
-ng
-> > > > > access control, and assigning a set of GPIOs to a specific user.
-> > > > > Furthermore, it would simplify and harden exporting GPIOs to a vi=
-rtual
-> > > > > machine, as the VM can just grab the full virtual GPIO controller=
-, and
-> > > > > no longer needs to care about which GPIOs to grab and which not,
-> > > > > reducing the attack surface.
-> > > > >
-> > > > > Virtual GPIO controllers are instantiated by writing to the "new_=
-device"
-> > > > > attribute file in sysfs:
-> > > > >
-> > > > >     $ echo "<gpiochipA> <gpioA1> [<gpioA2> ...]"
-> > > > >            "[, <gpiochipB> <gpioB1> [<gpioB2> ...]] ...]"
-> > > > >             > /sys/bus/platform/drivers/gpio-virt-agg/new_device
-> > > > >
-> > > > > Likewise, virtual GPIO controllers can be destroyed after use:
-> > > > >
-> > > > >     $ echo gpio-virt-agg.<N> \
-> > > > >             > /sys/bus/platform/drivers/gpio-virt-agg/delete_devi=
-ce
->
-> > Am I doing it right? I'm trying to create a device and am only getting =
-this:
-> >
-> > # echo gpiochip2 23 > new_device
-> > [  707.507039] gpio-virt-agg gpio-virt-agg.0: Cannot find gpiochip gpio=
-chip2
-> >
-> > gpiochip2 *does* exist in the system.
->
-> Please try the name of the platform device instead.
-> I.e. for my koelsch (R-Car M2-W), it needs "e6052000.gpio" instead
-> of "gpiochip2".
->
-> Probably the driver should match on both.
->
-> > I see. I'll try to review it more thoroughly once I get to play with
-> > it. So far I'm stuck on creating the virtual chip.
->
-> Thanks, good luck!
->
+This is an attempt to allow DMA masks between 32..59 which are not large
+enough to use either a PHB3 bypass mode or a sketchy bypass. Depending
+on the max order, up to 40 is usually available.
 
-This is not a show-stopper but one thing that's bothering me in this
-is that lines used by the aggregator are considered 'used' in regard
-to the original chip. I'm wondering how much effort would it take to
-have them be 'muxed' into two (real and virtual) chips at once.
 
-Other than that - seems to works pretty nice other than the matching
-by chip name and by line names.
+This is based on sha1
+a2b6f26c264e Christophe Leroy "powerpc/module64: Use symbolic instructions names.".
 
-Bart
+Please comment. Thanks.
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+
+
+Alexey Kardashevskiy (4):
+  powerpc/powernv/ioda: Fix race in TCE level allocation
+  powerpc/iommu: Allow bypass-only for DMA
+  powerpc/powernv/ioda2: Allocate TCE table levels on demand for default
+    DMA window
+  powerpc/powernv/ioda2: Create bigger default window with 64k IOMMU
+    pages
+
+ arch/powerpc/include/asm/iommu.h              |  8 +-
+ arch/powerpc/platforms/powernv/pci.h          |  2 +-
+ arch/powerpc/kernel/dma-iommu.c               | 11 ++-
+ arch/powerpc/kernel/iommu.c                   | 74 +++++++++++++------
+ arch/powerpc/platforms/powernv/pci-ioda-tce.c | 38 ++++++----
+ arch/powerpc/platforms/powernv/pci-ioda.c     | 40 ++++++++--
+ 6 files changed, 121 insertions(+), 52 deletions(-)
+
+-- 
+2.17.1
+
