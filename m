@@ -2,100 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D3F66971
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D77DC66975
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbfGLI4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:56:15 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49344 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbfGLI4N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:56:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ye7QJTr/VL6E13dVCzENZu/bqsS/Cpo3ATNqw8M0Wbk=; b=pxG2ppYhl5upfZIplcnu4BB/J
-        C8O72GDBPB+mMJlIgQuFVo8voDRw0gWSSzD9M/au+DXaQXF2Qnqyo6KJ/2XbNhDrln110BxavS8HW
-        /jEHpLHkwOrPTZh0SL0E+EMRYGdWN3XuwJo9nnmA1W+QX0VJHJuYY+cABCL9CGPliDF8TpE5hO/3X
-        4Xm5DJi9NHh02iMQu78LT+p/u2yOFOWdUc9xl5+wTFasXX/+iVSUBshgElltYL/W41vFkrzSVj8Ua
-        V/I8xHMcaE1IoF3UGXj7GhlzNXLG2tb4H+le/43Bj4/aQzT2yigHtan9nv02+SN1uyXTJXwjcr1yS
-        93AjNjfKw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60362)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hlrLc-0000p6-7n; Fri, 12 Jul 2019 09:56:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hlrLX-0005XL-2W; Fri, 12 Jul 2019 09:56:03 +0100
-Date:   Fri, 12 Jul 2019 09:56:02 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     "Raslan, KarimAllah" <karahmed@amazon.de>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
-        "yaojun8558363@gmail.com" <yaojun8558363@gmail.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "info@metux.net" <info@metux.net>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        "anders.roxell@linaro.org" <anders.roxell@linaro.org>,
-        "will@kernel.org" <will@kernel.org>
-Subject: Re: [PATCH] arm: Extend the check for RAM in /dev/mem
-Message-ID: <20190712085602.v2tncu5tsngtvbww@shell.armlinux.org.uk>
-References: <1562883681-18659-1-git-send-email-karahmed@amazon.de>
- <14f02e29-77b2-29d9-a9f4-7f89ad0194f6@arm.com>
- <1562900298.1345.12.camel@amazon.de>
+        id S1726298AbfGLI5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:57:24 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40294 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725929AbfGLI5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:57:24 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 48D8F5B8F6391BDF6638;
+        Fri, 12 Jul 2019 16:57:15 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 12 Jul 2019 16:57:04 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: disallow switching io_bits option during remount
+Date:   Fri, 12 Jul 2019 16:57:00 +0800
+Message-ID: <20190712085700.4239-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1562900298.1345.12.camel@amazon.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 02:58:18AM +0000, Raslan, KarimAllah wrote:
-> On Fri, 2019-07-12 at 08:06 +0530, Anshuman Khandual wrote:
-> > 
-> > On 07/12/2019 03:51 AM, KarimAllah Ahmed wrote:
-> > > 
-> > > Some valid RAM can live outside kernel control (e.g. using mem= kernel
-> > > command-line). For these regions, pfn_valid would return "false" causing
-> > > system RAM to be mapped as uncached. Use memblock instead to identify RAM.
-> > 
-> > Once the remaining memory is outside of the kernel (as the admin would have
-> > intended with mem= command line) what is the particular concern regarding
-> > the way those get mapped (cached or not) ? It is not to be used any way.
-> 
-> They can be used by user-space which might lead to them being used by the 
-> kernel. One use-case would be using them as guest memory for KVM as I detailed 
-> here:
-> 
-> https://lwn.net/Articles/778240/
+If IO alignment feature is turned on after remount, we didn't
+initialize mempool of it, it turns out we will encounter panic
+during IO submission due to access NULL mempool pointer.
 
-From the 32-bit ARM point of view...
+This feature should be set only at mount time, so simply deny
+configuring during remount.
 
-What if someone's already doing something similar with a non-coherent
-DSP and is relying on the current behaviour?  This change is a user
-visible behavioural change that could end up breaking userspace.
+This fixes bug reported in bugzilla:
 
-In other words, it isn't something we should rush into.
+https://bugzilla.kernel.org/show_bug.cgi?id=204135
 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 84e5a9bf4571..602a0791246d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1567,6 +1567,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	bool need_stop_gc = false;
+ 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+ 	bool disable_checkpoint = test_opt(sbi, DISABLE_CHECKPOINT);
++	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
+ 	bool checkpoint_changed;
+ #ifdef CONFIG_QUOTA
+ 	int i, j;
+@@ -1646,6 +1647,12 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		goto restore_opts;
+ 	}
+ 
++	if (no_io_align == !!F2FS_IO_ALIGNED(sbi)) {
++		err = -EINVAL;
++		f2fs_warn(sbi, "switch io_bits option is not allowed");
++		goto restore_opts;
++	}
++
+ 	if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		err = -EINVAL;
+ 		f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.18.0.rc1
+
