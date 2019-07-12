@@ -2,110 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8212966F39
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F5E66F2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfGLMyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:54:03 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:33476 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfGLMyC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:54:02 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CCnDU5044556;
-        Fri, 12 Jul 2019 12:51:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=8vLEs/JBMWlFWXGIz+UNcNz5pVXTEU4KP1e0LBWVMWA=;
- b=NX3566Q5oHi6CcoRFVXeDCUAd2SUixaEFsGt/kWj+xlLRBG3Q0bb+0+ZcHXax9tbOrma
- jOavemz+RkRm9sLFEAI2a1//NAu+YVa9CqE9l4XddjHl4H+J2Iza83IToF7sZlPa5Jl1
- R5SmSPrUfve8+ZaabvSmPvKDvrGmKLnixX7lh0PGQqqrcZpGPBpouxXXYzBhAP3PsGZ9
- w0bsi8u3/mNn9/eHzLLYkLYgVSdw2Ina+tuTbPSQuew6n0ClflQVEIXepzBnHXtJjz1y
- 2qSJiTotkYAYun7ywTdz/2kTzUMnJAwmiWu1PYLPMJSQcv+5VEpzK0QyM/Ec5kxuqsrz WQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2tjm9r5e0f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:51:25 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6CClhL5192025;
-        Fri, 12 Jul 2019 12:51:24 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2tpefd2wwt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 12:51:24 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6CCpLW1010069;
-        Fri, 12 Jul 2019 12:51:21 GMT
-Received: from [10.166.106.34] (/10.166.106.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Jul 2019 05:47:27 -0700
-Subject: Re: [RFC v2 00/27] Kernel Address Space Isolation
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, kvm@vger.kernel.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
-        liran.alon@oracle.com, jwadams@google.com, graf@amazon.de,
-        rppt@linux.vnet.ibm.com, Paul Turner <pjt@google.com>
-References: <1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com>
- <20190712114458.GU3402@hirez.programming.kicks-ass.net>
- <1f97f1d9-d209-f2ab-406d-fac765006f91@oracle.com>
- <20190712123653.GO3419@hirez.programming.kicks-ass.net>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <b1b7f85f-dac3-80a3-c05c-160f58716ce8@oracle.com>
-Date:   Fri, 12 Jul 2019 14:47:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727227AbfGLMuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:50:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40692 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727027AbfGLMuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:50:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80A04AC3F;
+        Fri, 12 Jul 2019 12:50:50 +0000 (UTC)
+Date:   Fri, 12 Jul 2019 13:50:47 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     huang ying <huang.ying.caritas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, jhladky@redhat.com,
+        lvenanci@redhat.com, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH -mm] autonuma: Fix scan period updating
+Message-ID: <20190712125047.GL13484@suse.de>
+References: <20190624025604.30896-1-ying.huang@intel.com>
+ <20190624140950.GF2947@suse.de>
+ <CAC=cRTNYUxGUcSUvXa-g9hia49TgrjkzE-b06JbBtwSn2zWYsw@mail.gmail.com>
+ <20190703091747.GA13484@suse.de>
+ <87ef3663nd.fsf@yhuang-dev.intel.com>
+ <20190712082710.GH13484@suse.de>
+ <87d0ifwmu2.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190712123653.GO3419@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907120139
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907120140
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <87d0ifwmu2.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 7/12/19 2:36 PM, Peter Zijlstra wrote:
-> On Fri, Jul 12, 2019 at 02:17:20PM +0200, Alexandre Chartre wrote:
->> On 7/12/19 1:44 PM, Peter Zijlstra wrote:
+On Fri, Jul 12, 2019 at 06:48:05PM +0800, Huang, Ying wrote:
+> > Ordinarily I would hope that the patch was motivated by observed
+> > behaviour so you have a metric for goodness. However, for NUMA balancing
+> > I would typically run basic workloads first -- dbench, tbench, netperf,
+> > hackbench and pipetest. The objective would be to measure the degree
+> > automatic NUMA balancing is interfering with a basic workload to see if
+> > they patch reduces the number of minor faults incurred even though there
+> > is no NUMA balancing to be worried about. This measures the general
+> > overhead of a patch. If your reasoning is correct, you'd expect lower
+> > overhead.
+> >
+> > For balancing itself, I usually look at Andrea's original autonuma
+> > benchmark, NAS Parallel Benchmark (D class usually although C class for
+> > much older or smaller machines) and spec JBB 2005 and 2015. Of the JBB
+> > benchmarks, 2005 is usually more reasonable for evaluating NUMA balancing
+> > than 2015 is (which can be unstable for a variety of reasons). In this
+> > case, I would be looking at whether the overhead is reduced, whether the
+> > ratio of local hits is the same or improved and the primary metric of
+> > each (time to completion for Andrea's and NAS, throughput for JBB).
+> >
+> > Even if there is no change to locality and the primary metric but there
+> > is less scanning and overhead overall, it would still be an improvement.
 > 
->>> AFAIK3 this wants/needs to be combined with core-scheduling to be
->>> useful, but not a single mention of that is anywhere.
->>
->> No. This is actually an alternative to core-scheduling. Eventually, ASI
->> will kick all sibling hyperthreads when exiting isolation and it needs to
->> run with the full kernel page-table (note that's currently not in these
->> patches).
->>
->> So ASI can be seen as an optimization to disabling hyperthreading: instead
->> of just disabling hyperthreading you run with ASI, and when ASI can't preserve
->> isolation you will basically run with a single thread.
-> 
-> You can't do that without much of the scheduler changes present in the
-> core-scheduling patches.
+> Thanks a lot for your detailed guidance.
 > 
 
-We hope we can do that without the whole core-scheduling mechanism. The idea
-is to send an IPI to all sibling hyperthreads. This IPI will interrupt these
-sibling hyperthreads and have them wait for a condition that will allow them
-to resume execution (for example when re-entering isolation). We are
-investigating this in parallel to ASI.
+No problem.
 
-alex.
+> > If you have trouble doing such an evaluation, I'll queue tests if they
+> > are based on a patch that addresses the specific point of concern (scan
+> > period not updated) as it's still not obvious why flipping the logic of
+> > whether shared or private is considered was necessary.
+> 
+> I can do the evaluation, but it will take quite some time for me to
+> setup and run all these benchmarks.  So if these benchmarks have already
+> been setup in your environment, so that your extra effort is minimal, it
+> will be great if you can queue tests for the patch.  Feel free to reject
+> me for any inconvenience.
+> 
+
+They're not setup as such, but my testing infrastructure is heavily
+automated so it's easy to do and I think it's worth looking at. If you
+update your patch to target just the scan period aspects, I'll queue it
+up and get back to you. It usually takes a few days for the automation
+to finish whatever it's doing and pick up a patch for evaluation.
+
+-- 
+Mel Gorman
+SUSE Labs
