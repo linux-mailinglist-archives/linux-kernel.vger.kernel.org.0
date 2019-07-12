@@ -2,36 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3A066CC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3734766CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:23:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfGLMW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58012 "EHLO mail.kernel.org"
+        id S1727837AbfGLMXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:23:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbfGLMW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:22:56 -0400
+        id S1727816AbfGLMW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:22:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4FD216C8;
-        Fri, 12 Jul 2019 12:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 106472084B;
+        Fri, 12 Jul 2019 12:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934175;
-        bh=caejsQlaNCrlDBC0X1+3FAOTu6ZlHEoNFTP/ZxOvTP4=;
+        s=default; t=1562934178;
+        bh=+YH3dYAhwbEtcBYAH0X9EUm6oml7V9ajXNjfFfs9FWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RSSuDbmA7s6f1NKW7l07YfFbNdcrDi/1C1nE7LUMQ/wLLrOphPe53kBWynEvXIcwS
-         XCNO6y7IvXvKBEQRcsYRMnCdYB+ypBl1QUfSb1SKDpjfNzTVLn9K25IGavSfpcNlVE
-         wESyZcSdWXjUEQdyA6FvfHu07yd34o2NhDmMfCX8=
+        b=kzfnWAO85h+KaeozbWmsV3lefwX0potl7TmQK/Br5ZQqY9f/FK5O5PwCidMoke0aB
+         8h1qBQVv/IMmlhjswIdjMEdV6JZuWay6DfmucUSMdrn9k5xJrOauPkhNQ7DQmBlNvw
+         gA7eEhZRCf5g6WQxSStpo4x9LVttN2DWQYSkj7Aw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@unimore.it>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 61/91] block, bfq: NULL out the bic when its no longer valid
-Date:   Fri, 12 Jul 2019 14:19:04 +0200
-Message-Id: <20190712121625.112910691@linuxfoundation.org>
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 62/91] perf pmu: Fix uncore PMU alias list for ARM64
+Date:   Fri, 12 Jul 2019 14:19:05 +0200
+Message-Id: <20190712121625.161181001@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
 References: <20190712121621.422224300@linuxfoundation.org>
@@ -44,78 +56,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: John Garry <john.garry@huawei.com>
 
-commit dbc3117d4ca9e17819ac73501e914b8422686750 upstream.
+commit 599ee18f0740d7661b8711249096db94c09bc508 upstream.
 
-In reboot tests on several devices we were seeing a "use after free"
-when slub_debug or KASAN was enabled.  The kernel complained about:
+In commit 292c34c10249 ("perf pmu: Fix core PMU alias list for X86
+platform"), we fixed the issue of CPU events being aliased to uncore
+events.
 
-  Unable to handle kernel paging request at virtual address 6b6b6c2b
+Fix this same issue for ARM64, since the said commit left the (broken)
+behaviour untouched for ARM64.
 
-...which is a classic sign of use after free under slub_debug.  The
-stack crawl in kgdb looked like:
-
- 0  test_bit (addr=<optimized out>, nr=<optimized out>)
- 1  bfq_bfqq_busy (bfqq=<optimized out>)
- 2  bfq_select_queue (bfqd=<optimized out>)
- 3  __bfq_dispatch_request (hctx=<optimized out>)
- 4  bfq_dispatch_request (hctx=<optimized out>)
- 5  0xc056ef00 in blk_mq_do_dispatch_sched (hctx=0xed249440)
- 6  0xc056f728 in blk_mq_sched_dispatch_requests (hctx=0xed249440)
- 7  0xc0568d24 in __blk_mq_run_hw_queue (hctx=0xed249440)
- 8  0xc0568d94 in blk_mq_run_work_fn (work=<optimized out>)
- 9  0xc024c5c4 in process_one_work (worker=0xec6d4640, work=0xed249480)
- 10 0xc024cff4 in worker_thread (__worker=0xec6d4640)
-
-Digging in kgdb, it could be found that, though bfqq looked fine,
-bfqq->bic had been freed.
-
-Through further digging, I postulated that perhaps it is illegal to
-access a "bic" (AKA an "icq") after bfq_exit_icq() had been called
-because the "bic" can be freed at some point in time after this call
-is made.  I confirmed that there certainly were cases where the exact
-crashing code path would access the "bic" after bfq_exit_icq() had
-been called.  Sspecifically I set the "bfqq->bic" to (void *)0x7 and
-saw that the bic was 0x7 at the time of the crash.
-
-To understand a bit more about why this crash was fairly uncommon (I
-saw it only once in a few hundred reboots), you can see that much of
-the time bfq_exit_icq_fbqq() fully frees the bfqq and thus it can't
-access the ->bic anymore.  The only case it doesn't is if
-bfq_put_queue() sees a reference still held.
-
-However, even in the case when bfqq isn't freed, the crash is still
-rare.  Why?  I tracked what happened to the "bic" after the exit
-routine.  It doesn't get freed right away.  Rather,
-put_io_context_active() eventually called put_io_context() which
-queued up freeing on a workqueue.  The freeing then actually happened
-later than that through call_rcu().  Despite all these delays, some
-extra debugging showed that all the hoops could be jumped through in
-time and the memory could be freed causing the original crash.  Phew!
-
-To make a long story short, assuming it truly is illegal to access an
-icq after the "exit_icq" callback is finished, this patch is needed.
-
+Signed-off-by: John Garry <john.garry@huawei.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxarm@huawei.com
 Cc: stable@vger.kernel.org
-Reviewed-by: Paolo Valente <paolo.valente@unimore.it>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
+Link: http://lkml.kernel.org/r/1560521283-73314-2-git-send-email-john.garry@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bfq-iosched.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/pmu.c |   28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -4116,6 +4116,7 @@ static void bfq_exit_icq_bfqq(struct bfq
- 		unsigned long flags;
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -750,9 +750,7 @@ static void pmu_add_cpu_aliases(struct l
+ {
+ 	int i;
+ 	struct pmu_events_map *map;
+-	struct pmu_event *pe;
+ 	const char *name = pmu->name;
+-	const char *pname;
  
- 		spin_lock_irqsave(&bfqd->lock, flags);
-+		bfqq->bic = NULL;
- 		bfq_exit_bfqq(bfqd, bfqq);
- 		bic_set_bfqq(bic, NULL, is_sync);
- 		spin_unlock_irqrestore(&bfqd->lock, flags);
+ 	map = perf_pmu__find_map(pmu);
+ 	if (!map)
+@@ -763,28 +761,26 @@ static void pmu_add_cpu_aliases(struct l
+ 	 */
+ 	i = 0;
+ 	while (1) {
++		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
++		struct pmu_event *pe = &map->table[i++];
++		const char *pname = pe->pmu ? pe->pmu : cpu_name;
+ 
+-		pe = &map->table[i++];
+ 		if (!pe->name) {
+ 			if (pe->metric_group || pe->metric_name)
+ 				continue;
+ 			break;
+ 		}
+ 
+-		if (!is_arm_pmu_core(name)) {
+-			pname = pe->pmu ? pe->pmu : "cpu";
++		/*
++		 * uncore alias may be from different PMU
++		 * with common prefix
++		 */
++		if (pmu_is_uncore(name) &&
++		    !strncmp(pname, name, strlen(pname)))
++			goto new_alias;
+ 
+-			/*
+-			 * uncore alias may be from different PMU
+-			 * with common prefix
+-			 */
+-			if (pmu_is_uncore(name) &&
+-			    !strncmp(pname, name, strlen(pname)))
+-				goto new_alias;
+-
+-			if (strcmp(pname, name))
+-				continue;
+-		}
++		if (strcmp(pname, name))
++			continue;
+ 
+ new_alias:
+ 		/* need type casts to override 'const' */
 
 
