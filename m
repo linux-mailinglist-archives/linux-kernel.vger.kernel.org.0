@@ -2,49 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 353F067696
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 00:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C7F6769F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 00:42:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbfGLWhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 18:37:32 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34362 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfGLWhb (ORCPT
+        id S1728165AbfGLWmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 18:42:36 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:43716 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbfGLWmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 18:37:31 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EF21F14E01C15;
-        Fri, 12 Jul 2019 15:37:30 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 15:37:30 -0700 (PDT)
-Message-Id: <20190712.153730.2158185171235731158.davem@davemloft.net>
-To:     xiaojiangfeng@huawei.com
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sergei.shtylyov@cogentembedded.com, leeyou.li@huawei.com,
-        nixiaoming@huawei.com
-Subject: Re: [PATCH] net: hisilicon: Use devm_platform_ioremap_resource
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1562937384-121710-1-git-send-email-xiaojiangfeng@huawei.com>
-References: <1562937384-121710-1-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Fri, 12 Jul 2019 18:42:35 -0400
+Received: by mail-qt1-f201.google.com with SMTP id e14so8390151qtq.10
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 15:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=GPlldc1uUCaMqKOlqd707RfJFmN0vdU2ggLjnOu2mQQ=;
+        b=Uvull8JsmAlDemDoFeLo0l6LKR9FI9L6JGngRgKyRPvHsDs77REgPEHGJVhR7epI3+
+         vm1KXehBkmrPa2LG3Yd5SlHjnZ4bY1nXgoj1C07P8j2MJtPOKX+gfQnqO9tqwyN7n71/
+         vHrqzKjVZRVy9zhIGHYo1Hjo/l5xY1ws6FKUAJoZ8x3hxkwAINDVgUf/oYF8d86EDMwv
+         d71nKBNpdZRP5EDJ3CBPRaO5n4ygyG+0a3KX5hPap0QuZqFIfjA0EXIbQ7KCiC/Lh2R8
+         bpS4K29r+e4qow1a9R14IOzU+YZet83p4gP3NyVVL0Y1kWAzHWgZ0pVlg3DC+OKSS/Vb
+         z/nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=GPlldc1uUCaMqKOlqd707RfJFmN0vdU2ggLjnOu2mQQ=;
+        b=bIzzFkArVzBwLmuLRdBw9452wAA3HaXIdDqqgq33HcTk+yCmvP2iYtDetJZ5D3wmsK
+         lF1K0xauEJDZSb41WyDvYAnnhjOU6tcO1J2XCoDqFP3Uw9hYg/Qui9jFq0l0inLHWf6B
+         Rea312KkdvKQ7PsrH89+oHv7mNiwsFrS5eid1jp1qGpN29R1sC7/kN/buZTED0fgZ7LM
+         0oMuZIBQ5FgnSPvzQ1JX7VKYPDlkDGKENKgjtw4z/y2Uy8FqkWn5KC3Tqf6ZpjizaF6K
+         ih1Pes6Ql0mdvlFhmocoLBm6QIbdfdZifqaqXHp6t6lGMjDFCzMqTtc1FHj1QmKS2A35
+         YRUw==
+X-Gm-Message-State: APjAAAWEz1bh0TBloklu3WvQiv1p1fAQqMSalrhbJockr/KoaHieQmH7
+        NSjLBSgXzlYlQGiEzSLT4qXYQbVoAw==
+X-Google-Smtp-Source: APXvYqx29k+eyzx3OqMKqjQWf0f4JOSEoTZz20Pa8EdvWRvAEPlpyUcqBPDVKy3YURgXPlZlKgTsuLPZmg==
+X-Received: by 2002:ae9:f016:: with SMTP id l22mr8313268qkg.51.1562971354608;
+ Fri, 12 Jul 2019 15:42:34 -0700 (PDT)
+Date:   Sat, 13 Jul 2019 00:41:52 +0200
+Message-Id: <20190712224152.13129-1-jannh@google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 12 Jul 2019 15:37:31 -0700 (PDT)
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
+Subject: [PATCH] x86/process: Delete useless check for dead process with LDT
+From:   Jann Horn <jannh@google.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        jannh@google.com
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Date: Fri, 12 Jul 2019 21:16:24 +0800
+At release_thread(), ->mm is NULL; and it is fine for the former mm to
+still have an LDT. Delete this check in process_64.c, similar to
+commit 2684927c6b93 ("[PATCH] x86: Deprecate useless bug"), which did the
+same in process_32.c.
 
-> Use devm_platform_ioremap_resource instead of
-> devm_ioremap_resource. Make the code simpler.
-> 
-> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ arch/x86/kernel/process_64.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Applied.
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 250e4c4ac6d9..af64519b2695 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -143,17 +143,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+ 
+ void release_thread(struct task_struct *dead_task)
+ {
+-	if (dead_task->mm) {
+-#ifdef CONFIG_MODIFY_LDT_SYSCALL
+-		if (dead_task->mm->context.ldt) {
+-			pr_warn("WARNING: dead process %s still has LDT? <%p/%d>\n",
+-				dead_task->comm,
+-				dead_task->mm->context.ldt->entries,
+-				dead_task->mm->context.ldt->nr_entries);
+-			BUG();
+-		}
+-#endif
+-	}
++	WARN_ON(dead_task->mm);
+ }
+ 
+ enum which_selector {
+-- 
+2.22.0.510.g264f2c817a-goog
+
