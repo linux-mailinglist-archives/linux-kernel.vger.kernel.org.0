@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED6966D3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1859266CB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfGLM1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:27:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
+        id S1727734AbfGLMWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:22:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728677AbfGLM1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:27:50 -0400
+        id S1727305AbfGLMWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:22:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7481216C8;
-        Fri, 12 Jul 2019 12:27:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22ADD21019;
+        Fri, 12 Jul 2019 12:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934469;
-        bh=UgvX4NKm8hwhyfUD3407gBRNpyry022uPnp8FgjLEEA=;
+        s=default; t=1562934151;
+        bh=qp2QdYXM+NBo8M8cyO+n/PU1Mq/At1HHVJtHKxe6KoQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DV/8PEq6LvSpw8T66e6ZeXAcvuzzmd9TMbEDBezuZXkormBhIT1s8V2Gctq+hzGfp
-         B+pEh2ZDSEcgoZsfsUnN2vD6ul1suy+0tC2k3lnQydtuQrs58NcqE3pBZXatGYrOZA
-         GAdL0obzjGMB1KISzt0/cqGdGoXWcQZKGI+X2TsM=
+        b=1MEQdaJh7VFYiuJQl29nak/qNqAWcvqsI4kNSvvHUCJ3HdtoTJoxplaYbYak0xYzs
+         clb1u7ivYrC1juBqYxpMPTDEXhfzZxkaP70vTwIdRNJkWdrTESQHJhHEYciukJiXF1
+         B4eFHQPZHxxBrKObbmb2XnWOCHSlJZwoRK/+wvwA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Toshiaki Makita <toshiaki.makita1@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 064/138] bpf, devmap: Fix premature entry free on destroying map
+Subject: [PATCH 4.19 45/91] mmc: core: complete HS400 before checking status
 Date:   Fri, 12 Jul 2019 14:18:48 +0200
-Message-Id: <20190712121631.132305427@linuxfoundation.org>
+Message-Id: <20190712121623.964532029@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d4dd153d551634683fccf8881f606fa9f3dfa1ef ]
+[ Upstream commit b0e370b95a3b231d0fb5d1958cce85ef57196fe6 ]
 
-dev_map_free() waits for flush_needed bitmap to be empty in order to
-ensure all flush operations have completed before freeing its entries.
-However the corresponding clear_bit() was called before using the
-entries, so the entries could be used after free.
+We don't have a reproducible error case, yet our BSP team suggested that
+the mmc_switch_status() command in mmc_select_hs400() should come after
+the callback into the driver completing HS400 setup. It makes sense to
+me because we want the status of a fully setup HS400, so it will
+increase the reliability of the mmc_switch_status() command.
 
-All access to the entries needs to be done before clearing the bit.
-It seems commit a5e2da6e9787 ("bpf: netdev is never null in
-__dev_map_flush") accidentally changed the clear_bit() and memory access
-order.
-
-Note that the problem happens only in __dev_map_flush(), not in
-dev_map_flush_old(). dev_map_flush_old() is called only after nulling
-out the corresponding netdev_map entry, so dev_map_free() never frees
-the entry thus no such race happens there.
-
-Fixes: a5e2da6e9787 ("bpf: netdev is never null in __dev_map_flush")
-Signed-off-by: Toshiaki Makita <toshiaki.makita1@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: ba6c7ac3a2f4 ("mmc: core: more fine-grained hooks for HS400 tuning")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/devmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/core/mmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 1e525d70f833..e001fb1a96b1 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -291,10 +291,10 @@ void __dev_map_flush(struct bpf_map *map)
- 		if (unlikely(!dev))
- 			continue;
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 55997cf84b39..f1fe446eee66 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1209,13 +1209,13 @@ static int mmc_select_hs400(struct mmc_card *card)
+ 	mmc_set_timing(host, MMC_TIMING_MMC_HS400);
+ 	mmc_set_bus_speed(card);
  
--		__clear_bit(bit, bitmap);
--
- 		bq = this_cpu_ptr(dev->bulkq);
- 		bq_xmit_all(dev, bq, XDP_XMIT_FLUSH, true);
++	if (host->ops->hs400_complete)
++		host->ops->hs400_complete(host);
 +
-+		__clear_bit(bit, bitmap);
- 	}
- }
+ 	err = mmc_switch_status(card);
+ 	if (err)
+ 		goto out_err;
  
+-	if (host->ops->hs400_complete)
+-		host->ops->hs400_complete(host);
+-
+ 	return 0;
+ 
+ out_err:
 -- 
 2.20.1
 
