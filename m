@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FC566A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E13B66A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfGLJiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 05:38:17 -0400
-Received: from ozlabs.ru ([107.173.13.209]:58434 "EHLO ozlabs.ru"
+        id S1726816AbfGLJiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 05:38:18 -0400
+Received: from ozlabs.ru ([107.173.13.209]:58432 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbfGLJiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726613AbfGLJiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 12 Jul 2019 05:38:16 -0400
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 4873EAE80597;
-        Fri, 12 Jul 2019 05:30:00 -0400 (EDT)
+        by ozlabs.ru (Postfix) with ESMTP id 29E88AE807DE;
+        Fri, 12 Jul 2019 05:30:01 -0400 (EDT)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Oliver O'Halloran" <oohall@gmail.com>,
         David Gibson <david@gibson.dropbear.id.au>,
         Sam Bobroff <sbobroff@linux.ibm.com>,
         Alistair Popple <alistair@popple.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>, stable@vger.kernel.org
-Subject: [PATCH kernel v4 1/4] powerpc/powernv/ioda: Fix race in TCE level allocation
-Date:   Fri, 12 Jul 2019 19:29:52 +1000
-Message-Id: <20190712092955.56218-2-aik@ozlabs.ru>
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Subject: [PATCH kernel v4 2/4] powerpc/iommu: Allow bypass-only for DMA
+Date:   Fri, 12 Jul 2019 19:29:53 +1000
+Message-Id: <20190712092955.56218-3-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190712092955.56218-1-aik@ozlabs.ru>
 References: <20190712092955.56218-1-aik@ozlabs.ru>
@@ -32,79 +32,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pnv_tce() returns a pointer to a TCE entry and originally a TCE table
-would be pre-allocated. For the default case of 2GB window the table
-needs only a single level and that is fine. However if more levels are
-requested, it is possible to get a race when 2 threads want a pointer
-to a TCE entry from the same page of TCEs.
+POWER8 and newer support a bypass mode which maps all host memory to
+PCI buses so an IOMMU table is not always required. However if we fail to
+create such a table, the DMA setup fails and the kernel does not boot.
 
-This adds cmpxchg to handle the race. Note that once TCE is non-zero,
-it cannot become zero again.
+This skips the 32bit DMA setup check if the bypass is can be selected.
 
-CC: stable@vger.kernel.org # v4.19+
-Fixes: a68bd1267b72 ("powerpc/powernv/ioda: Allocate indirect TCE levels on demand")
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
 ---
 
-The race occurs about 30 times in the first 3 minutes of copying files
-via rsync and that's about it.
-
-This fixes EEH's from
-https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=110810
-
+This minor thing helped me debugging next 2 patches so it can help
+somebody else too.
 ---
-Changes:
-v2:
-* replaced spin_lock with cmpxchg+readonce
----
- arch/powerpc/platforms/powernv/pci-ioda-tce.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/dma-iommu.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-index e28f03e1eb5e..8d6569590161 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-@@ -48,6 +48,9 @@ static __be64 *pnv_alloc_tce_level(int nid, unsigned int shift)
- 	return addr;
- }
- 
-+static void pnv_pci_ioda2_table_do_free_pages(__be64 *addr,
-+		unsigned long size, unsigned int levels);
-+
- static __be64 *pnv_tce(struct iommu_table *tbl, bool user, long idx, bool alloc)
+diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
+index a0879674a9c8..c963d704fa31 100644
+--- a/arch/powerpc/kernel/dma-iommu.c
++++ b/arch/powerpc/kernel/dma-iommu.c
+@@ -122,18 +122,17 @@ int dma_iommu_dma_supported(struct device *dev, u64 mask)
  {
- 	__be64 *tmp = user ? tbl->it_userspace : (__be64 *) tbl->it_base;
-@@ -57,9 +60,9 @@ static __be64 *pnv_tce(struct iommu_table *tbl, bool user, long idx, bool alloc)
+ 	struct iommu_table *tbl = get_iommu_table_base(dev);
  
- 	while (level) {
- 		int n = (idx & mask) >> (level * shift);
--		unsigned long tce;
-+		unsigned long oldtce, tce = be64_to_cpu(READ_ONCE(tmp[n]));
+-	if (!tbl) {
+-		dev_info(dev, "Warning: IOMMU dma not supported: mask 0x%08llx"
+-			", table unavailable\n", mask);
+-		return 0;
+-	}
+-
+ 	if (dev_is_pci(dev) && dma_iommu_bypass_supported(dev, mask)) {
+ 		dev->archdata.iommu_bypass = true;
+ 		dev_dbg(dev, "iommu: 64-bit OK, using fixed ops\n");
+ 		return 1;
+ 	}
  
--		if (tmp[n] == 0) {
-+		if (!tce) {
- 			__be64 *tmp2;
- 
- 			if (!alloc)
-@@ -70,10 +73,15 @@ static __be64 *pnv_tce(struct iommu_table *tbl, bool user, long idx, bool alloc)
- 			if (!tmp2)
- 				return NULL;
- 
--			tmp[n] = cpu_to_be64(__pa(tmp2) |
--					TCE_PCI_READ | TCE_PCI_WRITE);
-+			tce = __pa(tmp2) | TCE_PCI_READ | TCE_PCI_WRITE;
-+			oldtce = be64_to_cpu(cmpxchg(&tmp[n], 0,
-+					cpu_to_be64(tce)));
-+			if (oldtce) {
-+				pnv_pci_ioda2_table_do_free_pages(tmp2,
-+					ilog2(tbl->it_level_size) + 3, 1);
-+				tce = oldtce;
-+			}
- 		}
--		tce = be64_to_cpu(tmp[n]);
- 
- 		tmp = __va(tce & ~(TCE_PCI_READ | TCE_PCI_WRITE));
- 		idx &= ~mask;
++	if (!tbl) {
++		dev_err(dev, "Warning: IOMMU dma not supported: mask 0x%08llx, table unavailable\n", mask);
++		return 0;
++	}
++
+ 	if (tbl->it_offset > (mask >> tbl->it_page_shift)) {
+ 		dev_info(dev, "Warning: IOMMU offset too big for device mask\n");
+ 		dev_info(dev, "mask: 0x%08llx, table offset: 0x%08lx\n",
 -- 
 2.17.1
 
