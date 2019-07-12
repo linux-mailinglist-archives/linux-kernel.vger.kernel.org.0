@@ -2,48 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B48166DAA
+	by mail.lfdr.de (Postfix) with ESMTP id EF73066DAB
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfGLMcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
+        id S1727028AbfGLMc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:32:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729212AbfGLMcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:19 -0400
+        id S1728486AbfGLMcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:32:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D42D21721;
-        Fri, 12 Jul 2019 12:32:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF56B216B7;
+        Fri, 12 Jul 2019 12:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934738;
-        bh=dqGDFDIi2rDPmFMdQfVLnotYxhySOqw8XaoV8MfvQW0=;
+        s=default; t=1562934743;
+        bh=GO2askRPykBuz2nK6WHZZivEhbrZ6p88iK9uv2cwLXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ioiq6VlD+LyXA18llH1tE1Gj8kIF4zwwWbMTKxxdNLs+ZNW5ccZMsvoskwjAn8oVN
-         yyeSwyQ3cIBOuOhBzFLmPMgbHTqYv+ZtZznQfe2mdyUFMePLGFx0oRKvRO4aGc34g3
-         M/qcabHlZB3DW1NyVj1TfiOkuSyBrImlX69cniyU=
+        b=Ll2aJklUJOiF9IxQI9ej7iiPCOvH/FlmaZhF1CLXnDtBZOYIhWSWs2/MGsSsO8n2g
+         t6/SBfpRl73lyTnL8ctgNMNhb5sNp+yIIXT442CBeZUgIwJw6Dx6S125gZzNOOUoOD
+         9xYzsbJI+vvl3rL6wV8bgDxRn8HFvCFNUsqvXa7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.2 16/61] perf pmu: Fix uncore PMU alias list for ARM64
-Date:   Fri, 12 Jul 2019 14:19:29 +0200
-Message-Id: <20190712121621.508627544@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: [PATCH 5.2 17/61] perf thread-stack: Fix thread stack return from kernel for kernel-only case
+Date:   Fri, 12 Jul 2019 14:19:30 +0200
+Message-Id: <20190712121621.561580405@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
 References: <20190712121620.632595223@linuxfoundation.org>
@@ -56,94 +44,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 599ee18f0740d7661b8711249096db94c09bc508 upstream.
+commit 97860b483c5597663a174ff7405be957b4838391 upstream.
 
-In commit 292c34c10249 ("perf pmu: Fix core PMU alias list for X86
-platform"), we fixed the issue of CPU events being aliased to uncore
-events.
+Commit f08046cb3082 ("perf thread-stack: Represent jmps to the start of a
+different symbol") had the side-effect of introducing more stack entries
+before return from kernel space.
 
-Fix this same issue for ARM64, since the said commit left the (broken)
-behaviour untouched for ARM64.
+When user space is also traced, those entries are popped before entry to
+user space, but when user space is not traced, they get stuck at the
+bottom of the stack, making the stack grow progressively larger.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Fix by detecting a return-from-kernel branch type, and popping kernel
+addresses from the stack then.
+
+Note, the problem and fix affect the exported Call Graph / Tree but not
+the callindent option used by "perf script --call-trace".
+
+Example:
+
+  perf-with-kcore record example -e intel_pt//k -- ls
+  perf-with-kcore script example --itrace=bep -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py example.db branches calls
+  ~/libexec/perf-core/scripts/python/exported-sql-viewer.py example.db
+
+  Menu option: Reports -> Context-Sensitive Call Graph
+
+  Before: (showing Call Path column only)
+
+    Call Path
+    ▶ perf
+    ▼ ls
+      ▼ 12111:12111
+        ▶ setup_new_exec
+        ▶ __task_pid_nr_ns
+        ▶ perf_event_pid_type
+        ▶ perf_event_comm_output
+        ▶ perf_iterate_ctx
+        ▶ perf_iterate_sb
+        ▶ perf_event_comm
+        ▶ __set_task_comm
+        ▶ load_elf_binary
+        ▶ search_binary_handler
+        ▶ __do_execve_file.isra.41
+        ▶ __x64_sys_execve
+        ▶ do_syscall_64
+        ▼ entry_SYSCALL_64_after_hwframe
+          ▼ swapgs_restore_regs_and_return_to_usermode
+            ▼ native_iret
+              ▶ error_entry
+              ▶ do_page_fault
+              ▼ error_exit
+                ▼ retint_user
+                  ▶ prepare_exit_to_usermode
+                  ▼ native_iret
+                    ▶ error_entry
+                    ▶ do_page_fault
+                    ▼ error_exit
+                      ▼ retint_user
+                        ▶ prepare_exit_to_usermode
+                        ▼ native_iret
+                          ▶ error_entry
+                          ▶ do_page_fault
+                          ▼ error_exit
+                            ▼ retint_user
+                              ▶ prepare_exit_to_usermode
+                              ▶ native_iret
+
+  After: (showing Call Path column only)
+
+    Call Path
+    ▶ perf
+    ▼ ls
+      ▼ 12111:12111
+        ▶ setup_new_exec
+        ▶ __task_pid_nr_ns
+        ▶ perf_event_pid_type
+        ▶ perf_event_comm_output
+        ▶ perf_iterate_ctx
+        ▶ perf_iterate_sb
+        ▶ perf_event_comm
+        ▶ __set_task_comm
+        ▶ load_elf_binary
+        ▶ search_binary_handler
+        ▶ __do_execve_file.isra.41
+        ▶ __x64_sys_execve
+        ▶ do_syscall_64
+        ▶ entry_SYSCALL_64_after_hwframe
+        ▶ page_fault
+        ▼ entry_SYSCALL_64
+          ▼ do_syscall_64
+            ▶ __x64_sys_brk
+            ▶ __x64_sys_access
+            ▶ __x64_sys_openat
+            ▶ __x64_sys_newfstat
+            ▶ __x64_sys_mmap
+            ▶ __x64_sys_close
+            ▶ __x64_sys_read
+            ▶ __x64_sys_mprotect
+            ▶ __x64_sys_arch_prctl
+            ▶ __x64_sys_munmap
+            ▶ exit_to_usermode_loop
+            ▶ __x64_sys_set_tid_address
+            ▶ __x64_sys_set_robust_list
+            ▶ __x64_sys_rt_sigaction
+            ▶ __x64_sys_rt_sigprocmask
+            ▶ __x64_sys_prlimit64
+            ▶ __x64_sys_statfs
+            ▶ __x64_sys_ioctl
+            ▶ __x64_sys_getdents64
+            ▶ __x64_sys_write
+            ▶ __x64_sys_exit_group
+
+Committer notes:
+
+The first arg to the perf-with-kcore needs to be the same for the
+'record' and 'script' lines, otherwise we'll record the perf.data file
+and kcore_dir/ files in one directory ('example') to then try to use it
+from the 'bep' directory, fix the instructions above it so that both use
+'example'.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
 Cc: stable@vger.kernel.org
-Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
-Link: http://lkml.kernel.org/r/1560521283-73314-2-git-send-email-john.garry@huawei.com
+Fixes: f08046cb3082 ("perf thread-stack: Represent jmps to the start of a different symbol")
+Link: http://lkml.kernel.org/r/20190619064429.14940-2-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/pmu.c |   28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ tools/perf/util/thread-stack.c |   30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -709,9 +709,7 @@ static void pmu_add_cpu_aliases(struct l
- {
- 	int i;
- 	struct pmu_events_map *map;
--	struct pmu_event *pe;
- 	const char *name = pmu->name;
--	const char *pname;
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -616,6 +616,23 @@ static int thread_stack__bottom(struct t
+ 				     true, false);
+ }
  
- 	map = perf_pmu__find_map(pmu);
- 	if (!map)
-@@ -722,28 +720,26 @@ static void pmu_add_cpu_aliases(struct l
- 	 */
- 	i = 0;
- 	while (1) {
-+		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
-+		struct pmu_event *pe = &map->table[i++];
-+		const char *pname = pe->pmu ? pe->pmu : cpu_name;
++static int thread_stack__pop_ks(struct thread *thread, struct thread_stack *ts,
++				struct perf_sample *sample, u64 ref)
++{
++	u64 tm = sample->time;
++	int err;
++
++	/* Return to userspace, so pop all kernel addresses */
++	while (thread_stack__in_kernel(ts)) {
++		err = thread_stack__call_return(thread, ts, --ts->cnt,
++						tm, ref, true);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int thread_stack__no_call_return(struct thread *thread,
+ 					struct thread_stack *ts,
+ 					struct perf_sample *sample,
+@@ -896,7 +913,18 @@ int thread_stack__process(struct thread
+ 			ts->rstate = X86_RETPOLINE_DETECTED;
  
--		pe = &map->table[i++];
- 		if (!pe->name) {
- 			if (pe->metric_group || pe->metric_name)
- 				continue;
- 			break;
- 		}
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
+-		if (!sample->ip || !sample->addr)
++		if (!sample->addr) {
++			u32 return_from_kernel = PERF_IP_FLAG_SYSCALLRET |
++						 PERF_IP_FLAG_INTERRUPT;
++
++			if (!(sample->flags & return_from_kernel))
++				return 0;
++
++			/* Pop kernel stack */
++			return thread_stack__pop_ks(thread, ts, sample, ref);
++		}
++
++		if (!sample->ip)
+ 			return 0;
  
--		if (!is_arm_pmu_core(name)) {
--			pname = pe->pmu ? pe->pmu : "cpu";
-+		/*
-+		 * uncore alias may be from different PMU
-+		 * with common prefix
-+		 */
-+		if (pmu_is_uncore(name) &&
-+		    !strncmp(pname, name, strlen(pname)))
-+			goto new_alias;
- 
--			/*
--			 * uncore alias may be from different PMU
--			 * with common prefix
--			 */
--			if (pmu_is_uncore(name) &&
--			    !strncmp(pname, name, strlen(pname)))
--				goto new_alias;
--
--			if (strcmp(pname, name))
--				continue;
--		}
-+		if (strcmp(pname, name))
-+			continue;
- 
- new_alias:
- 		/* need type casts to override 'const' */
+ 		/* x86 retpoline 'return' doesn't match the stack */
 
 
