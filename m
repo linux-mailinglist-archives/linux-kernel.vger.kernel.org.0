@@ -2,168 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC5866953
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 786996695D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfGLIsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:48:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35919 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725877AbfGLIsD (ORCPT
+        id S1726605AbfGLIwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:52:30 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:42291 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfGLIwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:48:03 -0400
-X-UUID: a6087602278f4ecba3588607e09d4a2c-20190712
-X-UUID: a6087602278f4ecba3588607e09d4a2c-20190712
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <lecopzer.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1209527918; Fri, 12 Jul 2019 16:47:48 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 12 Jul 2019 16:47:46 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 12 Jul 2019 16:47:47 +0800
-From:   Lecopzer Chen <lecopzer.chen@mediatek.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <labbott@redhat.com>, <sumit.semwal@linaro.org>,
-        <gregkh@linuxfoundation.org>, <riandrews@android.com>,
-        <arve@android.com>, <devel@driverdev.osuosl.org>,
-        <dri-devel@lists.freedesktop.org>,
-        Lecopzer Chen <lecopzer.chen@mediatek.com>,
-        YJ Chiang <yj.chiang@mediatek.com>
-Subject: [PATCH] staging: android: ion: Remove unused rbtree for ion_buffer
-Date:   Fri, 12 Jul 2019 16:47:17 +0800
-Message-ID: <20190712084717.12441-1-lecopzer.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Fri, 12 Jul 2019 04:52:30 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mk0BK-1iADl333mK-00kRFQ; Fri, 12 Jul 2019 10:52:17 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jason Gunthorpe <jgg@mellanox.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] rdma/siw: avoid smp_store_mb() on a u64
+Date:   Fri, 12 Jul 2019 10:51:23 +0200
+Message-Id: <20190712085212.3901785-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 92F56628C2D35BF0FDAA2809FBCCFE1AB61FCD8B124717D9CCEB10392A8CBEA92000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:KY1ZiQXnqfybV9Y5nyNgAL7twsfFgdD0kgCdlGwv9DpUokeeTuR
+ E/e0EqvPepg5mjIPlxUcNKBbSKzzXurSUjp5RwIzk6m3+nESDvY+SO0DFIuWdUpkZkyhOR4
+ zYgOmweqYWXXw5qJaVZVyhxs2riJNq+phMrLlVA9pM053QaEckPzWZuxg/a6Z/CXA5b5txx
+ 66nJ7yUuBk5b1SdoPUSmA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:h1kT/fyAOvw=:tBd5fulYxc9mnD3vsjm3BF
+ uDQp8eanGK1Kw53aQIU18FsWzcZ/VJj1ATzEZ6u2sRNIu0RYyrjMT4rbeVMAG3Yma3RDbpToT
+ m58cBGXSIkGvG/hrs/m3gl+Kkw36EyZSJQHA1c3SehZFWYwC4URr5uC2N04GcMEQ6K9yNcV8B
+ Av/Bj3QtGTbOOEedHDVnv42unstjH7Nb4yfUIQd6izdqMUiJmeuFLTlTLCABKU0Sc8xAu5ohP
+ BAHoZKq3w4BGIqvitfmkpjFocVfmgOQ2pNhfABsL8Ip7U1M0u5i3zjYYijh1epsRs905Ecnfm
+ b+e6tkgXKyk1MzNoDYDyp02usy0PMizppOLFgRmQOYQavCOvc38H3seKiTF9isYIWasf1qLzn
+ Vhh/0XPg0WDEtAVFswOd+hjKU1Td6JlqglUgdwfjeZlEVXIuPFSep4gSjdf4WYHWc4HXxEGpI
+ qzSkcygUnDEgPdZZ8dUkA/Wyruq4DgvftcKeyzUICxW6sU8BivZ605BYfe+9riVISVfgUZD96
+ 4TF4wwmQPZlb+CmBz1bJCq8m4+13S1wCcjQltv/aQNHOT5jPTclxTj0E9Ie4LDCfGSEOK/jjG
+ 2XFANoZ7tgdmj4OdZJhEWMC6JWrpRriqQz51UbQ/xsiuhsF6O569lgySuXkSDOlzYMDtGAC1x
+ xsjKcssb4OlwlnN6KD7a83Yrs4yqE/lTjoMNoiJmWV6dm4Ij8dbPEqeIIXSyUzBgnqLOg6myj
+ hgEDDhO/eGz03s/gK7Ol1rM9wYvIs8bozzt2UA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ion_buffer_add() insert ion_buffer into rbtree every time creating
-an ion_buffer but never use it after ION reworking.
-Also, buffer_lock protects only rbtree operation, remove it together.
+The new siw driver fails to build on i386 with
 
-Signed-off-by: Lecopzer Chen <lecopzer.chen@mediatek.com>
-Cc: YJ Chiang <yj.chiang@mediatek.com>
-Cc: Lecopzer Chen <lecopzer.chen@mediatek.com>
+drivers/infiniband/sw/siw/siw_qp.c:1025:3: error: invalid output size for constraint '+q'
+                smp_store_mb(*cq->notify, SIW_NOTIFY_NOT);
+                ^
+include/asm-generic/barrier.h:141:35: note: expanded from macro 'smp_store_mb'
+ #define smp_store_mb(var, value)  __smp_store_mb(var, value)
+                                  ^
+arch/x86/include/asm/barrier.h:65:47: note: expanded from macro '__smp_store_mb'
+ #define __smp_store_mb(var, value) do { (void)xchg(&var, value); } while (0)
+                                              ^
+include/asm-generic/atomic-instrumented.h:1648:2: note: expanded from macro 'xchg'
+        arch_xchg(__ai_ptr, __VA_ARGS__);                               \
+        ^
+arch/x86/include/asm/cmpxchg.h:78:27: note: expanded from macro 'arch_xchg'
+ #define arch_xchg(ptr, v)       __xchg_op((ptr), (v), xchg, "")
+                                ^
+arch/x86/include/asm/cmpxchg.h:48:19: note: expanded from macro '__xchg_op'
+                                      : "+q" (__ret), "+m" (*(ptr))     \
+                                              ^
+drivers/infiniband/sw/siw/siw_qp.o: In function `siw_sqe_complete':
+siw_qp.c:(.text+0x1450): undefined reference to `__xchg_wrong_size'
+drivers/infiniband/sw/siw/siw_qp.o: In function `siw_rqe_complete':
+siw_qp.c:(.text+0x15b0): undefined reference to `__xchg_wrong_size'
+drivers/infiniband/sw/siw/siw_verbs.o: In function `siw_req_notify_cq':
+siw_verbs.c:(.text+0x18ff): undefined reference to `__xchg_wrong_size'
+
+Since smp_store_mb() has to be an atomic store, but the architecture
+can only do this on 32-bit quantities or smaller, but 'cq->notify'
+is a 64-bit word.
+
+Apparently the smp_store_mb() is paired with a READ_ONCE() here, which
+seems like an odd choice because there is only a barrier on the writer
+side and not the reader, and READ_ONCE() is already not atomic on
+quantities larger than a CPU register.
+
+I suspect it is sufficient to use the (possibly nonatomic) WRITE_ONCE()
+and an SMP memory barrier here. If it does need to be atomic as well
+as 64-bit quantities, using an atomic64_set_release()/atomic64_read_acquire()
+may be a better choice.
+
+Fixes: 303ae1cdfdf7 ("rdma/siw: application interface")
+Fixes: f29dd55b0236 ("rdma/siw: queue pair methods")
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/staging/android/ion/ion.c | 36 -------------------------------
- drivers/staging/android/ion/ion.h | 10 +--------
- 2 files changed, 1 insertion(+), 45 deletions(-)
+ drivers/infiniband/sw/siw/siw_qp.c    | 4 +++-
+ drivers/infiniband/sw/siw/siw_verbs.c | 5 +++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 92c2914239e3..e6b1ca141b93 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -29,32 +29,6 @@
- static struct ion_device *internal_dev;
- static int heap_id;
+diff --git a/drivers/infiniband/sw/siw/siw_qp.c b/drivers/infiniband/sw/siw/siw_qp.c
+index 11383d9f95ef..a2c08f17f13d 100644
+--- a/drivers/infiniband/sw/siw/siw_qp.c
++++ b/drivers/infiniband/sw/siw/siw_qp.c
+@@ -1016,13 +1016,15 @@ static bool siw_cq_notify_now(struct siw_cq *cq, u32 flags)
+ 	if (!cq->base_cq.comp_handler)
+ 		return false;
  
--/* this function should only be called while dev->lock is held */
--static void ion_buffer_add(struct ion_device *dev,
--			   struct ion_buffer *buffer)
--{
--	struct rb_node **p = &dev->buffers.rb_node;
--	struct rb_node *parent = NULL;
--	struct ion_buffer *entry;
--
--	while (*p) {
--		parent = *p;
--		entry = rb_entry(parent, struct ion_buffer, node);
--
--		if (buffer < entry) {
--			p = &(*p)->rb_left;
--		} else if (buffer > entry) {
--			p = &(*p)->rb_right;
--		} else {
--			pr_err("%s: buffer already found.", __func__);
--			BUG();
--		}
--	}
--
--	rb_link_node(&buffer->node, parent, p);
--	rb_insert_color(&buffer->node, &dev->buffers);
--}
--
- /* this function should only be called while dev->lock is held */
- static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
- 					    struct ion_device *dev,
-@@ -100,9 +74,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
++	smp_rmb();
+ 	cq_notify = READ_ONCE(*cq->notify);
  
- 	INIT_LIST_HEAD(&buffer->attachments);
- 	mutex_init(&buffer->lock);
--	mutex_lock(&dev->buffer_lock);
--	ion_buffer_add(dev, buffer);
--	mutex_unlock(&dev->buffer_lock);
- 	return buffer;
+ 	if ((cq_notify & SIW_NOTIFY_NEXT_COMPLETION) ||
+ 	    ((cq_notify & SIW_NOTIFY_SOLICITED) &&
+ 	     (flags & SIW_WQE_SOLICITED))) {
+ 		/* dis-arm CQ */
+-		smp_store_mb(*cq->notify, SIW_NOTIFY_NOT);
++		WRITE_ONCE(*cq->notify, SIW_NOTIFY_NOT);
++		smp_wmb();
  
- err1:
-@@ -131,11 +102,6 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
- static void _ion_buffer_destroy(struct ion_buffer *buffer)
- {
- 	struct ion_heap *heap = buffer->heap;
--	struct ion_device *dev = buffer->dev;
--
--	mutex_lock(&dev->buffer_lock);
--	rb_erase(&buffer->node, &dev->buffers);
--	mutex_unlock(&dev->buffer_lock);
- 
- 	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE)
- 		ion_heap_freelist_add(heap, buffer);
-@@ -694,8 +660,6 @@ static int ion_device_create(void)
+ 		return true;
  	}
+diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
+index 32dc79d0e898..41c5ab293fe1 100644
+--- a/drivers/infiniband/sw/siw/siw_verbs.c
++++ b/drivers/infiniband/sw/siw/siw_verbs.c
+@@ -1142,10 +1142,11 @@ int siw_req_notify_cq(struct ib_cq *base_cq, enum ib_cq_notify_flags flags)
  
- 	idev->debug_root = debugfs_create_dir("ion", NULL);
--	idev->buffers = RB_ROOT;
--	mutex_init(&idev->buffer_lock);
- 	init_rwsem(&idev->lock);
- 	plist_head_init(&idev->heaps);
- 	internal_dev = idev;
-diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
-index e291299fd35f..74914a266e25 100644
---- a/drivers/staging/android/ion/ion.h
-+++ b/drivers/staging/android/ion/ion.h
-@@ -23,7 +23,6 @@
+ 	if ((flags & IB_CQ_SOLICITED_MASK) == IB_CQ_SOLICITED)
+ 		/* CQ event for next solicited completion */
+-		smp_store_mb(*cq->notify, SIW_NOTIFY_SOLICITED);
++		WRITE_ONCE(*cq->notify, SIW_NOTIFY_SOLICITED);
+ 	else
+ 		/* CQ event for any signalled completion */
+-		smp_store_mb(*cq->notify, SIW_NOTIFY_ALL);
++		WRITE_ONCE(*cq->notify, SIW_NOTIFY_ALL);
++	smp_wmb();
  
- /**
-  * struct ion_buffer - metadata for a particular buffer
-- * @node:		node in the ion_device buffers tree
-  * @list:		element in list of deferred freeable buffers
-  * @dev:		back pointer to the ion_device
-  * @heap:		back pointer to the heap the buffer came from
-@@ -39,10 +38,7 @@
-  * @attachments:	list of devices attached to this buffer
-  */
- struct ion_buffer {
--	union {
--		struct rb_node node;
--		struct list_head list;
--	};
-+	struct list_head list;
- 	struct ion_device *dev;
- 	struct ion_heap *heap;
- 	unsigned long flags;
-@@ -61,14 +57,10 @@ void ion_buffer_destroy(struct ion_buffer *buffer);
- /**
-  * struct ion_device - the metadata of the ion device node
-  * @dev:		the actual misc device
-- * @buffers:		an rb tree of all the existing buffers
-- * @buffer_lock:	lock protecting the tree of buffers
-  * @lock:		rwsem protecting the tree of heaps and clients
-  */
- struct ion_device {
- 	struct miscdevice dev;
--	struct rb_root buffers;
--	struct mutex buffer_lock;
- 	struct rw_semaphore lock;
- 	struct plist_head heaps;
- 	struct dentry *debug_root;
+ 	if (flags & IB_CQ_REPORT_MISSED_EVENTS)
+ 		return cq->cq_put - cq->cq_get;
 -- 
-2.17.1
+2.20.0
 
