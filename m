@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3810C66CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B0C366D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfGLMYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33448 "EHLO mail.kernel.org"
+        id S1728770AbfGLM2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:28:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728160AbfGLMYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:38 -0400
+        id S1728757AbfGLM2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:28:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA46B2084B;
-        Fri, 12 Jul 2019 12:24:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03D7C2084B;
+        Fri, 12 Jul 2019 12:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934277;
-        bh=GGVAeyUW5TCw69UXQh9EgpgOs9SzBn7k9zjPgxJ/r1U=;
+        s=default; t=1562934490;
+        bh=kD7Fglm7ijDxctsdE46ohXgEikesjUR13C+dfx4w0IA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xXDgXZZcRBrxg3n9FJLpeBBEKXT+P8FA/qrQ8WNpsOQzVjzj5YKRjrofk2YoSmY4d
-         zABLBNRPE/77h+RMnhQawPvn/b1TN7zizP9JA2YgCv1gIQm4cXCJRfrd2fJ36iSL1P
-         i54ycK8/R28frUbZ5p0bJstfBzOqrt9hVDFDIaBM=
+        b=1mHgpIxCHeeTKKugr16lqVvVRFVDgjLNAXFG1Zipi/mGnhwVGPyRV2pMhlqVKBwxt
+         65gK2npbrUMn90pm4mMwOJmA8CynhWw7I5SuRWdBGQX/O4UFCNB7QBAwaF8qCo+Dad
+         OcweatPTj+Z1cyTdRkdjB8Ugh2ujh09Eq+vPh8z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Reinhard Speyerer <rspmn@arcor.de>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 50/91] net: lio_core: fix potential sign-extension overflow on large shift
-Date:   Fri, 12 Jul 2019 14:18:53 +0200
-Message-Id: <20190712121624.331932688@linuxfoundation.org>
+Subject: [PATCH 5.1 070/138] qmi_wwan: extend permitted QMAP mux_id value range
+Date:   Fri, 12 Jul 2019 14:18:54 +0200
+Message-Id: <20190712121631.354103819@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9476274093a0e79b905f4cd6cf6d149f65e02c17 ]
+[ Upstream commit 36815b416fa48766ac5a98e4b2dc3ebc5887222e ]
 
-Left shifting the signed int value 1 by 31 bits has undefined behaviour
-and the shift amount oq_no can be as much as 63.  Fix this by using
-BIT_ULL(oq_no) instead.
+Permit mux_id values up to 254 to be used in qmimux_register_device()
+for compatibility with ip(8) and the rmnet driver.
 
-Addresses-Coverity: ("Bad shift operation")
-Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: c6adf77953bc ("net: usb: qmi_wwan: add qmap mux protocol support")
+Cc: Daniele Palmas <dnlplm@gmail.com>
+Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/liquidio/lio_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/ABI/testing/sysfs-class-net-qmi | 4 ++--
+ drivers/net/usb/qmi_wwan.c                    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
-index 8093c5eafea2..781814835a4f 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
-@@ -985,7 +985,7 @@ static void liquidio_schedule_droq_pkt_handlers(struct octeon_device *oct)
+diff --git a/Documentation/ABI/testing/sysfs-class-net-qmi b/Documentation/ABI/testing/sysfs-class-net-qmi
+index 7122d6264c49..c310db4ccbc2 100644
+--- a/Documentation/ABI/testing/sysfs-class-net-qmi
++++ b/Documentation/ABI/testing/sysfs-class-net-qmi
+@@ -29,7 +29,7 @@ Contact:	Bjørn Mork <bjorn@mork.no>
+ Description:
+ 		Unsigned integer.
  
- 			if (droq->ops.poll_mode) {
- 				droq->ops.napi_fn(droq);
--				oct_priv->napi_mask |= (1 << oq_no);
-+				oct_priv->napi_mask |= BIT_ULL(oq_no);
- 			} else {
- 				tasklet_schedule(&oct_priv->droq_tasklet);
- 			}
+-		Write a number ranging from 1 to 127 to add a qmap mux
++		Write a number ranging from 1 to 254 to add a qmap mux
+ 		based network device, supported by recent Qualcomm based
+ 		modems.
+ 
+@@ -46,5 +46,5 @@ Contact:	Bjørn Mork <bjorn@mork.no>
+ Description:
+ 		Unsigned integer.
+ 
+-		Write a number ranging from 1 to 127 to delete a previously
++		Write a number ranging from 1 to 254 to delete a previously
+ 		created qmap mux based network device.
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 44ada5c38756..128c8a327d8e 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -363,8 +363,8 @@ static ssize_t add_mux_store(struct device *d,  struct device_attribute *attr, c
+ 	if (kstrtou8(buf, 0, &mux_id))
+ 		return -EINVAL;
+ 
+-	/* mux_id [1 - 0x7f] range empirically found */
+-	if (mux_id < 1 || mux_id > 0x7f)
++	/* mux_id [1 - 254] for compatibility with ip(8) and the rmnet driver */
++	if (mux_id < 1 || mux_id > 254)
+ 		return -EINVAL;
+ 
+ 	if (!rtnl_trylock())
 -- 
 2.20.1
 
