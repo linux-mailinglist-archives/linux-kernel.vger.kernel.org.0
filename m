@@ -2,81 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E2766969
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 511586696F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfGLIzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:55:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60688 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfGLIzx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:55:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x8WbIHFyv0ABBFcrHAzlMJIMfoT3LVqQH9+jbFhqNOk=; b=pAshXTbk8185R9diOLyIbCIL9
-        JbNJ9pCeEAgagt55CojO1I8wE+7O9I6TanWMhj4EFNHc2jKM4eDy1W8LUxF4Dmiz4ddGYycbQPTPL
-        RK4c5ge932bvIH+gvxt3NKbodqAv12cCai89jnXSZunX5oilhHFcESRKq+U79IvM1ELtchT6jLiFj
-        mH3EAONPGzd4ePD5Fl378KNIdbb9aFAhofWHhaYk1f6BBt6CF/vKd5Uo1Em+JLCsWIe5g8xga3Som
-        qBkDPQacDtIhtiG11UrHgxrM/RLtrgUNMjcjUJ6VCEZnK+W3VX8UCRtwSNdNcepB/z8ISQm3tejnp
-        GDv6AIdqg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlrL9-0003mf-9v; Fri, 12 Jul 2019 08:55:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5CBD920120CB1; Fri, 12 Jul 2019 10:55:36 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 10:55:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        syzbot <syzbot+6f39a9deb697359fe520@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: MAX_STACK_TRACE_ENTRIES too low! (2)
-Message-ID: <20190712085536.GP3402@hirez.programming.kicks-ass.net>
-References: <20190710172123.GC801@sol.localdomain>
- <f498d8cc-ba82-d3dc-7557-142a1b35976a@acm.org>
- <20190710180242.GA193819@gmail.com>
- <a19779d0-0192-8dc0-d51b-e6938a455f31@acm.org>
- <47a9287d-1f02-95d5-a5cf-55f0c0d38378@gmail.com>
- <cdfeb3f8-8dc5-aa60-2782-7b3c5110edf5@acm.org>
- <ee3bac8d-d061-7d07-5990-59871e7e2a4b@gmail.com>
- <9219c421-0868-f97f-2d84-df48aed9f8a8@acm.org>
- <20190710220943.GM3419@hirez.programming.kicks-ass.net>
- <e10e95c7-b832-5560-e3ca-3ce584bc0ca3@acm.org>
+        id S1726180AbfGLI4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:56:11 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2266 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726118AbfGLI4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:56:11 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2A8D9F139BDF4E021E17;
+        Fri, 12 Jul 2019 16:56:09 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 12 Jul 2019 16:56:00 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: introduce {page,io}_is_mergeable() for readability
+Date:   Fri, 12 Jul 2019 16:55:41 +0800
+Message-ID: <20190712085542.4068-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e10e95c7-b832-5560-e3ca-3ce584bc0ca3@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 11:53:12AM -0700, Bart Van Assche wrote:
-> On 7/10/19 3:09 PM, Peter Zijlstra wrote:
-> > One thing I mentioned when Thomas did the unwinder API changes was
-> > trying to move lockdep over to something like stackdepot.
-> > 
-> > We can't directly use stackdepot as is, because it uses locks and memory
-> > allocation, but we could maybe add a lower level API to it and use that
-> > under the graph_lock() on static storage or something.
-> > 
-> > Otherwise we'll have to (re)implement something like it.
-> > 
-> > I've not looked at it in detail.
-> 
-> Hi Peter,
-> 
-> Is something like the untested patch below perhaps what you had in mind?
+Wrap merge condition into function for readability, no logic change.
 
-Most excellent, yes! Now I suppose the $64000 question is if it actually
-reduces the amount of storage we use for stack traces..
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: remove bio validation check in page_is_mergeable().
+ fs/f2fs/data.c | 40 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
 
-Seems to boot just fine.. :-)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6a8db4abdf5f..f1e401f9fc13 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -482,6 +482,33 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	return 0;
+ }
+ 
++static bool page_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
++				block_t last_blkaddr, block_t cur_blkaddr)
++{
++	if (last_blkaddr != cur_blkaddr)
++		return false;
++	return __same_bdev(sbi, cur_blkaddr, bio);
++}
++
++static bool io_type_is_mergeable(struct f2fs_bio_info *io,
++						struct f2fs_io_info *fio)
++{
++	if (io->fio.op != fio->op)
++		return false;
++	return io->fio.op_flags == fio->op_flags;
++}
++
++static bool io_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
++					struct f2fs_bio_info *io,
++					struct f2fs_io_info *fio,
++					block_t last_blkaddr,
++					block_t cur_blkaddr)
++{
++	if (!page_is_mergeable(sbi, bio, last_blkaddr, cur_blkaddr))
++		return false;
++	return io_type_is_mergeable(io, fio);
++}
++
+ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ {
+ 	struct bio *bio = *fio->bio;
+@@ -495,8 +522,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+ 
+-	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
+-			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
++	if (bio && !page_is_mergeable(fio->sbi, bio, *fio->last_block,
++						fio->new_blkaddr)) {
+ 		__submit_bio(fio->sbi, bio, fio->type);
+ 		bio = NULL;
+ 	}
+@@ -569,9 +596,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 
+ 	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+ 
+-	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+-	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
+-			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
++	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
++			io->last_block_in_bio, fio->new_blkaddr))
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+@@ -1643,8 +1669,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 	 * This page will go to BIO.  Do we need to send this
+ 	 * BIO off first?
+ 	 */
+-	if (bio && (*last_block_in_bio != block_nr - 1 ||
+-		!__same_bdev(F2FS_I_SB(inode), block_nr, bio))) {
++	if (bio && !page_is_mergeable(F2FS_I_SB(inode), bio,
++				*last_block_in_bio, block_nr - 1)) {
+ submit_and_realloc:
+ 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 		bio = NULL;
+-- 
+2.18.0.rc1
+
