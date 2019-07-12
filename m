@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476BD66D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA1766C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbfGLM1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:27:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40220 "EHLO mail.kernel.org"
+        id S1727180AbfGLMVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:21:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728644AbfGLM1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:27:34 -0400
+        id S1727574AbfGLMV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:21:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B65321670;
-        Fri, 12 Jul 2019 12:27:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64E91216E3;
+        Fri, 12 Jul 2019 12:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934453;
-        bh=9MWdcpkxAacvmKVTodvhTNoixEDyeUkjLGEYDcsjwRg=;
+        s=default; t=1562934088;
+        bh=RGqaMnUl8fu5VGTAT/EWM2D/EJZuaOJplXwUWrI4ww0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LyyhgG1ugqzwwpE9VNaW7QXqRyl7pFvPb8w5EscBTJrUcA9Gh2hLxsBZRSDvsjWoO
-         NupT9z8vWzTmma59n7mr5LB5PAg5cUhUeY9XAcYAqAy+VjY38KECBCFDjdjXm0k5/P
-         g47YD8m3NjuiV5YVSlyOaXixGcsy2cPbte3eulrQ=
+        b=Q4kxAfcammzUKPyjruQB+SosiMiJ6mdLTTiWrc3n9/EiuU0Y6R8HP+bARvhwrDd/1
+         QfNn7IZ4+V+HtIDKOX+cWSvTmW1gYOO5L4iJMOSTCRb/tYhKCNhJnI8Q4BveU42wpo
+         p4X8gyYgM/4kFvCv0H3r5TCrtE3MHdTDVfQqLM/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        Toshiaki Makita <toshiaki.makita1@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 059/138] gpu: ipu-v3: image-convert: Fix image downsize coefficients
+Subject: [PATCH 4.19 40/91] bpf, devmap: Add missing RCU read lock on flush
 Date:   Fri, 12 Jul 2019 14:18:43 +0200
-Message-Id: <20190712121630.943854642@linuxfoundation.org>
+Message-Id: <20190712121623.602025258@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 912bbf7e9ca422099935dd69d3ff0fd62db24882 ]
+[ Upstream commit 86723c8640633bee4b4588d3c7784ee7a0032f65 ]
 
-The output of the IC downsizer unit in both dimensions must be <= 1024
-before being passed to the IC resizer unit. This was causing corrupted
-images when:
+.ndo_xdp_xmit() assumes it is called under RCU. For example virtio_net
+uses RCU to detect it has setup the resources for tx. The assumption
+accidentally broke when introducing bulk queue in devmap.
 
-input_dim > 1024, and
-input_dim / 2 < output_dim < input_dim
-
-Some broken examples were 1920x1080 -> 1024x768 and 1920x1080 ->
-1280x1080.
-
-Fixes: 70b9b6b3bcb21 ("gpu: ipu-v3: image-convert: calculate per-tile
-resize coefficients")
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Fixes: 5d053f9da431 ("bpf: devmap prepare xdp frames for bulking")
+Reported-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Toshiaki Makita <toshiaki.makita1@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/ipu-v3/ipu-image-convert.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/bpf/devmap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index 19d3b85e0e98..e9803e2151f9 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -409,12 +409,14 @@ static int calc_image_resize_coefficients(struct ipu_image_convert_ctx *ctx,
- 	if (WARN_ON(resized_width == 0 || resized_height == 0))
- 		return -EINVAL;
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 357d456d57b9..fc500ca464d0 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -282,6 +282,7 @@ void __dev_map_flush(struct bpf_map *map)
+ 	unsigned long *bitmap = this_cpu_ptr(dtab->flush_needed);
+ 	u32 bit;
  
--	while (downsized_width >= resized_width * 2) {
-+	while (downsized_width > 1024 ||
-+	       downsized_width >= resized_width * 2) {
- 		downsized_width >>= 1;
- 		downsize_coeff_h++;
- 	}
++	rcu_read_lock();
+ 	for_each_set_bit(bit, bitmap, map->max_entries) {
+ 		struct bpf_dtab_netdev *dev = READ_ONCE(dtab->netdev_map[bit]);
+ 		struct xdp_bulk_queue *bq;
+@@ -297,6 +298,7 @@ void __dev_map_flush(struct bpf_map *map)
  
--	while (downsized_height >= resized_height * 2) {
-+	while (downsized_height > 1024 ||
-+	       downsized_height >= resized_height * 2) {
- 		downsized_height >>= 1;
- 		downsize_coeff_v++;
+ 		__clear_bit(bit, bitmap);
  	}
++	rcu_read_unlock();
+ }
+ 
+ /* rcu_read_lock (from syscall and BPF contexts) ensures that if a delete and/or
+@@ -389,6 +391,7 @@ static void dev_map_flush_old(struct bpf_dtab_netdev *dev)
+ 
+ 		int cpu;
+ 
++		rcu_read_lock();
+ 		for_each_online_cpu(cpu) {
+ 			bitmap = per_cpu_ptr(dev->dtab->flush_needed, cpu);
+ 			__clear_bit(dev->bit, bitmap);
+@@ -396,6 +399,7 @@ static void dev_map_flush_old(struct bpf_dtab_netdev *dev)
+ 			bq = per_cpu_ptr(dev->bulkq, cpu);
+ 			bq_xmit_all(dev, bq, XDP_XMIT_FLUSH, false);
+ 		}
++		rcu_read_unlock();
+ 	}
+ }
+ 
 -- 
 2.20.1
 
