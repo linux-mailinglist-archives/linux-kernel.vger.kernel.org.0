@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71A766DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C11ED66D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbfGLMcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
+        id S1728458AbfGLM3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:29:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbfGLMcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:05 -0400
+        id S1727141AbfGLM3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:29:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE2E22166E;
-        Fri, 12 Jul 2019 12:32:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2AB921019;
+        Fri, 12 Jul 2019 12:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934724;
-        bh=Ehpl1vJOgxVSnX4bYZNqCygosiLCPAzhduos+K0Cvcs=;
+        s=default; t=1562934577;
+        bh=qDtEx3JBcoiN7jc5fyaWwXQltue7M5cegdGziK7DBV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXrz1fTnt1KaEQMh+Q8Hn0NmD0OiJj+r/sOdGvV92qMZ1BMMj7G4zUuYvhtvnqr+3
-         kS8VqdwUiqJ2XmdhvCC2o2w3vc4rj1AvQntNLW/jCyKnHvToIHNf6e/9x+8tJvqFW4
-         6Td1m8OCjn2PT7kZgKXXKEFuaH38ZYF7ysjmE3Jg=
+        b=rSbSgNuFPs2L6pMu59YoFvWcqrjDNummywq1soA/cmm3SEzR77OeRZjI37i9C6y9g
+         Nr1sJ9L7z8VpvcO1H5NVlSiXXOZH0AAw8ShPNh3DUypjBMzm9yOY7eukqYZJ5FCS0p
+         D5UBekKy5yU2weFo5tKcieQCkPndjuSHzD0neQ7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 11/61] block: fix .bi_size overflow
-Date:   Fri, 12 Jul 2019 14:19:24 +0200
-Message-Id: <20190712121621.228131224@linuxfoundation.org>
+        stable@vger.kernel.org, David Carrillo Cisneros <davidca@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, kernel-team@fb.com
+Subject: [PATCH 5.1 101/138] perf header: Assign proper ff->ph in perf_event__synthesize_features()
+Date:   Fri, 12 Jul 2019 14:19:25 +0200
+Message-Id: <20190712121632.639643452@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,140 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Song Liu <songliubraving@fb.com>
 
-commit 79d08f89bb1b5c2c1ff90d9bb95497ab9e8aa7e0 upstream.
+commit c952b35f4b15dd1b83e952718dec3307256383ef upstream.
 
-'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
-bytes.
+bpf/btf write_* functions need ff->ph->env.
 
-Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
-include very limited pages, and usually at most 256, so the fs bio
-size won't be bigger than 1M bytes most of times.
+With this missing, pipe-mode (perf record -o -)  would crash like:
 
-Since we support multi-page bvec, in theory one fs bio really can
-be added > 1M pages, especially in case of hugepage, or big writeback
-with too many dirty pages. Then there is chance in which .bi_size
-is overflowed.
+Program terminated with signal SIGSEGV, Segmentation fault.
 
-Fixes this issue by using bio_full() to check if the added segment may
-overflow .bi_size.
+This patch assign proper ph value to ff.
 
-Cc: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-Cc: kernel test robot <rong.a.chen@intel.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: 07173c3ec276 ("block: enable multipage bvecs")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Committer testing:
+
+  (gdb) run record -o -
+  Starting program: /root/bin/perf record -o -
+  PERFILE2
+  <SNIP start of perf.data headers>
+  Thread 1 "perf" received signal SIGSEGV, Segmentation fault.
+  __do_write_buf (size=4, buf=0x160, ff=0x7fffffff8f80) at util/header.c:126
+  126		memcpy(ff->buf + ff->offset, buf, size);
+  (gdb) bt
+  #0  __do_write_buf (size=4, buf=0x160, ff=0x7fffffff8f80) at util/header.c:126
+  #1  do_write (ff=ff@entry=0x7fffffff8f80, buf=buf@entry=0x160, size=4) at util/header.c:137
+  #2  0x00000000004eddba in write_bpf_prog_info (ff=0x7fffffff8f80, evlist=<optimized out>) at util/header.c:912
+  #3  0x00000000004f69d7 in perf_event__synthesize_features (tool=tool@entry=0x97cc00 <record>, session=session@entry=0x7fffe9c6d010,
+      evlist=0x7fffe9cae010, process=process@entry=0x4435d0 <process_synthesized_event>) at util/header.c:3695
+  #4  0x0000000000443c79 in record__synthesize (tail=tail@entry=false, rec=0x97cc00 <record>) at builtin-record.c:1214
+  #5  0x0000000000444ec9 in __cmd_record (rec=0x97cc00 <record>, argv=<optimized out>, argc=0) at builtin-record.c:1435
+  #6  cmd_record (argc=0, argv=<optimized out>) at builtin-record.c:2450
+  #7  0x00000000004ae3e9 in run_builtin (p=p@entry=0x98e058 <commands+216>, argc=argc@entry=3, argv=0x7fffffffd670) at perf.c:304
+  #8  0x000000000042eded in handle_internal_command (argv=<optimized out>, argc=<optimized out>) at perf.c:356
+  #9  run_argv (argcp=<optimized out>, argv=<optimized out>) at perf.c:400
+  #10 main (argc=3, argv=<optimized out>) at perf.c:522
+  (gdb)
+
+After the patch the SEGSEGV is gone.
+
+Reported-by: David Carrillo Cisneros <davidca@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-team@fb.com
+Cc: stable@vger.kernel.org # v5.1+
+Fixes: 606f972b1361 ("perf bpf: Save bpf_prog_info information as headers to perf.data")
+Link: http://lkml.kernel.org/r/20190620010453.4118689-1-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bio.c         |   10 +++++-----
- fs/iomap.c          |    2 +-
- fs/xfs/xfs_aops.c   |    2 +-
- include/linux/bio.h |   18 ++++++++++++++++--
- 4 files changed, 23 insertions(+), 9 deletions(-)
+ tools/perf/util/header.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -731,7 +731,7 @@ static int __bio_add_pc_page(struct requ
- 		}
- 	}
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3549,6 +3549,7 @@ int perf_event__synthesize_features(stru
+ 		return -ENOMEM;
  
--	if (bio_full(bio))
-+	if (bio_full(bio, len))
- 		return 0;
+ 	ff.size = sz - sz_hdr;
++	ff.ph = &session->header;
  
- 	if (bio->bi_phys_segments >= queue_max_segments(q))
-@@ -807,7 +807,7 @@ void __bio_add_page(struct bio *bio, str
- 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
- 
- 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
--	WARN_ON_ONCE(bio_full(bio));
-+	WARN_ON_ONCE(bio_full(bio, len));
- 
- 	bv->bv_page = page;
- 	bv->bv_offset = off;
-@@ -834,7 +834,7 @@ int bio_add_page(struct bio *bio, struct
- 	bool same_page = false;
- 
- 	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
--		if (bio_full(bio))
-+		if (bio_full(bio, len))
- 			return 0;
- 		__bio_add_page(bio, page, len, offset);
- 	}
-@@ -922,7 +922,7 @@ static int __bio_iov_iter_get_pages(stru
- 			if (same_page)
- 				put_page(page);
- 		} else {
--			if (WARN_ON_ONCE(bio_full(bio)))
-+			if (WARN_ON_ONCE(bio_full(bio, len)))
-                                 return -EINVAL;
- 			__bio_add_page(bio, page, len, offset);
- 		}
-@@ -966,7 +966,7 @@ int bio_iov_iter_get_pages(struct bio *b
- 			ret = __bio_iov_bvec_add_pages(bio, iter);
- 		else
- 			ret = __bio_iov_iter_get_pages(bio, iter);
--	} while (!ret && iov_iter_count(iter) && !bio_full(bio));
-+	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
- 
- 	if (iov_iter_bvec_no_ref(iter))
- 		bio_set_flag(bio, BIO_NO_PAGE_REF);
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -333,7 +333,7 @@ iomap_readpage_actor(struct inode *inode
- 	if (iop)
- 		atomic_inc(&iop->read_count);
- 
--	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
-+	if (!ctx->bio || !is_contig || bio_full(ctx->bio, plen)) {
- 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
- 		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -782,7 +782,7 @@ xfs_add_to_ioend(
- 		atomic_inc(&iop->write_count);
- 
- 	if (!merged) {
--		if (bio_full(wpc->ioend->io_bio))
-+		if (bio_full(wpc->ioend->io_bio, len))
- 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
- 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
- 	}
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -102,9 +102,23 @@ static inline void *bio_data(struct bio
- 	return NULL;
- }
- 
--static inline bool bio_full(struct bio *bio)
-+/**
-+ * bio_full - check if the bio is full
-+ * @bio:	bio to check
-+ * @len:	length of one segment to be added
-+ *
-+ * Return true if @bio is full and one segment with @len bytes can't be
-+ * added to the bio, otherwise return false
-+ */
-+static inline bool bio_full(struct bio *bio, unsigned len)
- {
--	return bio->bi_vcnt >= bio->bi_max_vecs;
-+	if (bio->bi_vcnt >= bio->bi_max_vecs)
-+		return true;
-+
-+	if (bio->bi_iter.bi_size > UINT_MAX - len)
-+		return true;
-+
-+	return false;
- }
- 
- static inline bool bio_next_segment(const struct bio *bio,
+ 	for_each_set_bit(feat, header->adds_features, HEADER_FEAT_BITS) {
+ 		if (!feat_ops[feat].synthesize) {
 
 
