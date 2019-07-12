@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8310E66E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4E566D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbfGLMdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:33:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53040 "EHLO mail.kernel.org"
+        id S1728960AbfGLM3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:29:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729360AbfGLMdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:33:40 -0400
+        id S1728945AbfGLM3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:29:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81ACD216C4;
-        Fri, 12 Jul 2019 12:33:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4910208E4;
+        Fri, 12 Jul 2019 12:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934820;
-        bh=NcZZzhaLzdat+yqaF8MIGu8GX/hbheQFPNJEoYo0n4k=;
+        s=default; t=1562934552;
+        bh=A7j9TLWrHUaatr6N1wsFWMM8pMp46I6Ryah3bqxuhbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XY45cI0waQ4oQYokAt04odXToLGJHG0+kIs7e0rJk5qGIk2HB3mwTAjiJYMqtFFm8
-         TEf0ErmUEHjQwr6Z28KPpcDGLDa/aXWSImqoFOChaNbK7qYJ28Uk1z7Nm+WDsujQEX
-         jz18w4wm0FKvSDIr/kTKi+WPP6Q7CKS5ptsQqhpU=
+        b=BsxSPPPrn1C24nvk7YwofiVhJGkKqApzLVq8YKx1SPa6LCa6TDwIkdz2VV1Wp6yAP
+         wQAgovObheh/T9oPnDJogsnIq+aLgXM98Gaj73EIkjLuLrqhifqTo86KjTOoWXycDe
+         krpg8wrrvuIfhg52ga2ViM9GXDbKM+eXo4iYfw9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hongjie Fang <hongjiefang@asrmicro.com>,
-        Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 5.2 04/61] fscrypt: dont set policy for a dead directory
+        stable@vger.kernel.org, Phil Baker <baker1tex@gmail.com>,
+        Craig Robson <craig@zhatt.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bartosz Szczepanek <bsz@semihalf.com>
+Subject: [PATCH 5.1 093/138] tpm: Actually fail on TPM errors during "get random"
 Date:   Fri, 12 Jul 2019 14:19:17 +0200
-Message-Id: <20190712121620.843288952@linuxfoundation.org>
+Message-Id: <20190712121632.331674959@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +48,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hongjie Fang <hongjiefang@asrmicro.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 5858bdad4d0d0fc18bf29f34c3ac836e0b59441f upstream.
+commit 782779b60faa2fc7ff609ac8ef938260fd792c0f upstream.
 
-The directory may have been removed when entering
-fscrypt_ioctl_set_policy().  If so, the empty_dir() check will return
-error for ext4 file system.
+A "get random" may fail with a TPM error, but those codes were returned
+as-is to the caller, which assumed the result was the number of bytes
+that had been written to the target buffer, which could lead to a kernel
+heap memory exposure and over-read.
 
-ext4_rmdir() sets i_size = 0, then ext4_empty_dir() reports an error
-because 'inode->i_size < EXT4_DIR_REC_LEN(1) + EXT4_DIR_REC_LEN(2)'.  If
-the fs is mounted with errors=panic, it will trigger a panic issue.
+This fixes tpm1_get_random() to mask positive TPM errors into -EIO, as
+before.
 
-Add the check IS_DEADDIR() to fix this problem.
+[   18.092103] tpm tpm0: A TPM error (379) occurred attempting get random
+[   18.092106] usercopy: Kernel memory exposure attempt detected from SLUB object 'kmalloc-64' (offset 0, size 379)!
 
-Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
-Cc: <stable@vger.kernel.org> # v4.1+
-Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1650989
+Reported-by: Phil Baker <baker1tex@gmail.com>
+Reported-by: Craig Robson <craig@zhatt.com>
+Fixes: 7aee9c52d7ac ("tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure")
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Bartosz Szczepanek <bsz@semihalf.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/crypto/policy.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/char/tpm/tpm1-cmd.c |    7 +++++--
+ drivers/char/tpm/tpm2-cmd.c |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -81,6 +81,8 @@ int fscrypt_ioctl_set_policy(struct file
- 	if (ret == -ENODATA) {
- 		if (!S_ISDIR(inode->i_mode))
- 			ret = -ENOTDIR;
-+		else if (IS_DEADDIR(inode))
-+			ret = -ENOENT;
- 		else if (!inode->i_sb->s_cop->empty_dir(inode))
- 			ret = -ENOTEMPTY;
- 		else
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -510,7 +510,7 @@ struct tpm1_get_random_out {
+  *
+  * Return:
+  * *  number of bytes read
+- * * -errno or a TPM return code otherwise
++ * * -errno (positive TPM return codes are masked to -EIO)
+  */
+ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+@@ -531,8 +531,11 @@ int tpm1_get_random(struct tpm_chip *chi
+ 
+ 		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
+ 				      "attempting get random");
+-		if (rc)
++		if (rc) {
++			if (rc > 0)
++				rc = -EIO;
+ 			goto out;
++		}
+ 
+ 		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
+ 
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -301,7 +301,7 @@ struct tpm2_get_random_out {
+  *
+  * Return:
+  *   size of the buffer on success,
+- *   -errno otherwise
++ *   -errno otherwise (positive TPM return codes are masked to -EIO)
+  */
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+@@ -328,8 +328,11 @@ int tpm2_get_random(struct tpm_chip *chi
+ 				       offsetof(struct tpm2_get_random_out,
+ 						buffer),
+ 				       "attempting get random");
+-		if (err)
++		if (err) {
++			if (err > 0)
++				err = -EIO;
+ 			goto out;
++		}
+ 
+ 		out = (struct tpm2_get_random_out *)
+ 			&buf.data[TPM_HEADER_SIZE];
 
 
