@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC9066DC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF2066E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfGLMdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:33:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52268 "EHLO mail.kernel.org"
+        id S1729134AbfGLMdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:33:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729590AbfGLMdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:33:15 -0400
+        id S1728754AbfGLMdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:33:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6F732084B;
-        Fri, 12 Jul 2019 12:33:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33B48208E4;
+        Fri, 12 Jul 2019 12:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934795;
-        bh=LBmyqgbnBKkr9u56Jmv6B6Cb4CS4Txs8SH1cF9sv1D0=;
+        s=default; t=1562934798;
+        bh=IgWL7JR/zNeYKbzq/yT6N7TKzUk4cfGySnj9gWoIP/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VQxU4CqaM4lo/JV7fY2aHWtUnftCBZT358D7p5zhXAXMfgjH03Elu72AyD5DENYpW
-         uPZwWFf81forblds5bKbJ07OxVmJK5CEw2cS8uLF4y+0ftMtIXR6AktpEAU5PAvdb0
-         BC8XAkRZUBksBzmml+vhGxxspm1ooXzosZCGNIW8=
+        b=Gn9RegqyFefh2I8lkQeE1hGO/yrBt1N83rDk0DlvFLMNA37JRYVZC0QcetWf6aDku
+         eP/KhGWuBxYdJxc09UxfYYKVZ00FmcdvA/FNRnPDGwqMHpCzif+kmVw6lF0kybz7qQ
+         twEUo8On9e4m2AGaJb+ExBUBajc9zLk72eUWUeWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 5.2 32/61] drivers/usb/typec/tps6598x.c: fix portinfo width
-Date:   Fri, 12 Jul 2019 14:19:45 +0200
-Message-Id: <20190712121622.324355537@linuxfoundation.org>
+Subject: [PATCH 5.2 33/61] drivers/usb/typec/tps6598x.c: fix 4CC cmd write
+Date:   Fri, 12 Jul 2019 14:19:46 +0200
+Message-Id: <20190712121622.374762019@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
 References: <20190712121620.632595223@linuxfoundation.org>
@@ -46,10 +46,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 
-commit 05da75fc651138e51ff74ace97174349910463f5 upstream.
+commit 2681795b5e7a5bf336537661010072f4c22cea31 upstream.
 
-Portinfo bit field is 3 bits wide, not 2 bits. This led to
-a wrong driver configuration for some tps6598x configurations.
+Writing 4CC commands with tps6598x_write_4cc() already has
+a pointer arg, don't reference it when using as arg to
+tps6598x_block_write(). Correcting this enforces the constness
+of the pointer to propagate to tps6598x_block_write(), so add
+the const qualifier there to avoid the warning.
 
 Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
 Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
@@ -58,19 +61,28 @@ Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/tps6598x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/tps6598x.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/drivers/usb/typec/tps6598x.c
 +++ b/drivers/usb/typec/tps6598x.c
-@@ -41,7 +41,7 @@
- #define TPS_STATUS_VCONN(s)		(!!((s) & BIT(7)))
+@@ -127,7 +127,7 @@ tps6598x_block_read(struct tps6598x *tps
+ }
  
- /* TPS_REG_SYSTEM_CONF bits */
--#define TPS_SYSCONF_PORTINFO(c)		((c) & 3)
-+#define TPS_SYSCONF_PORTINFO(c)		((c) & 7)
+ static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
+-				void *val, size_t len)
++				const void *val, size_t len)
+ {
+ 	u8 data[TPS_MAX_LEN + 1];
  
- enum {
- 	TPS_PORTINFO_SINK,
+@@ -173,7 +173,7 @@ static inline int tps6598x_write64(struc
+ static inline int
+ tps6598x_write_4cc(struct tps6598x *tps, u8 reg, const char *val)
+ {
+-	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
++	return tps6598x_block_write(tps, reg, val, 4);
+ }
+ 
+ static int tps6598x_read_partner_identity(struct tps6598x *tps)
 
 
