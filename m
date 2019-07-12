@@ -2,142 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7848866EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA4F66EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfGLMmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:42:18 -0400
-Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:51060 "EHLO
-        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727426AbfGLMUr (ORCPT
+        id S1729162AbfGLMkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:40:01 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37880 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbfGLMj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:47 -0400
-Received: from pps.filterd (m0102629.ppops.net [127.0.0.1])
-        by mx08-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6CC8jQU026848
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 13:20:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
- cc : references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp;
- bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
- b=X0/EeCNVGCx2yyWuvvn3LkdGbOr9KPiTlxdyR3E0+v5B1nOSKzMq6LGMnVP2gjBsJWCj
- gX+o8gyEe9rEhuYqzX2A41ZObSk0XFX5jtziXchzJD5U4jNACl2yJZDu/cdpeMS+ZmhH
- fGZ6agpByAwjFGxcLfL2pWaV4A/P8bTJgJZ9Xa3G8e1faX3WACWw3UysqcKBiext+Jb2
- Cx0enGru3H6xH5o++YNKiOsgvfvybM9gF7wdJsrG+HxsicvK6xZL2gKojjkRwb8LkK68
- Tb6KASf9bOr+x8YHiaGxI31oP+w5ZnKSsWLSLzRDFK/uf9/nEr/aYtjO2qOheRfrCnnf TQ== 
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        by mx08-00252a01.pphosted.com with ESMTP id 2tmd5x1ugu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 13:20:44 +0100
-Received: by mail-wr1-f71.google.com with SMTP id p13so4209101wru.17
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 05:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
-        b=bG5Ya8kLRPKQnc0IcMH7KDpOAIKl/HryHVEWznwsV4N6m3Q4fAYqMGkytOPUtdpNnU
-         RDmUN3EDhwNu9GzR+0TkJCHbjNq0Ezf3ADfEQ5rXPLaH2O0dQ4VhQWkyr+/23rdcgfAR
-         fVOjisc6FWm7uAq6vaI5K9UQVVRUvbM6k90M18f09aniuIbkUMEJuq6q2c2CmN32dI15
-         QbOxkV5S1xzrp7Tj4FSG7vwaRBiEUwBY4hvX8D7KxbfSus/CsrIouN47G1ZT1/hc3qwp
-         BzW+O+OlHXY0uo/57Tv9ri4OU0v9y/ZZyddpZhkhGrO3jUBnWnBMRBgH7OS0RPcqSfqh
-         7rNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
-        b=LOVnBFuuHDrIbNEsBkh3Qg/5p4bDX9JY1ZcFiAg30iH9Qcu2WHcmypZLuWpuK2hkIc
-         dlPPmsTYk/b/H38s0osZMZaziedwlWIx/lO33mMkgnZl16uK8yTDdf//JgcStzR9tojU
-         a8JiMXMbY3Bh3wvJHT8BF1aCYbODzhem3WwiipeAoXxuw0rlZR+9981kbsvEQausxp9c
-         SeHg+cHNperiZhFMYHEH8fAJoPJO1x7/ksbpXUGvrmhjTxb20yy2tR53S0ENmMBMxCm1
-         TgIduFv6P48dctf94QU/xEP/VAyE7U+7JiSyJcQ8YfLn0pKPvSelB9QZPVebvJb9zLtz
-         U0oA==
-X-Gm-Message-State: APjAAAXt/BADsMbpmcB35QVeJisAQcPbDgtTBc1O6Zp4oePLo/gKpKID
-        V+p762QGhXqf7LDw8fKfCCeXkITlJCrbsZn7hesaRnreujijpx2e9RyWn2ihCwRXeQj5Mo1rjae
-        0mxXypx69t/Xyz5UYyjq3C1LZ
-X-Received: by 2002:a1c:c14b:: with SMTP id r72mr9642225wmf.166.1562934042981;
-        Fri, 12 Jul 2019 05:20:42 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy0QMAasKV533r2hf9StmKuUCmGS/yGnfCIYPi04R0ntO5GVjUL0ujM4e8C6vp2r9XeajybuQ==
-X-Received: by 2002:a1c:c14b:: with SMTP id r72mr9642203wmf.166.1562934042677;
-        Fri, 12 Jul 2019 05:20:42 -0700 (PDT)
-Received: from ?IPv6:2a00:1098:3142:14:3df0:c4c3:bb86:e0f3? ([2a00:1098:3142:14:3df0:c4c3:bb86:e0f3])
-        by smtp.gmail.com with ESMTPSA id k17sm5800070wrq.83.2019.07.12.05.20.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Jul 2019 05:20:41 -0700 (PDT)
-Subject: Re: [PATCH] tty: amba-pl011: Make TX optimisation conditional
-To:     Rogier Wolff <R.E.Wolff@BitWizard.nl>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc:     Russell King <linux@arm.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1562852732-123411-1-git-send-email-phil@raspberrypi.org>
- <20190712112105.GH2790@e103592.cambridge.arm.com>
- <20190712121000.GK11350@BitWizard.nl>
-From:   Phil Elwell <phil@raspberrypi.org>
-Message-ID: <5bf03345-6a36-1b87-ca0c-e918b6030a74@raspberrypi.org>
-Date:   Fri, 12 Jul 2019 13:20:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 12 Jul 2019 08:39:58 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlupg-0006xX-Tg; Fri, 12 Jul 2019 12:39:25 +0000
+Date:   Fri, 12 Jul 2019 13:39:24 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
+Message-ID: <20190712123924.GK17978@ZenIV.linux.org.uk>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-6-cyphar@cyphar.com>
+ <20190712043341.GI17978@ZenIV.linux.org.uk>
+ <20190712105745.nruaftgeat6irhzr@yavin>
 MIME-Version: 1.0
-In-Reply-To: <20190712121000.GK11350@BitWizard.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-07-12_04:2019-07-12,2019-07-12 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712105745.nruaftgeat6irhzr@yavin>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rogier,
+On Fri, Jul 12, 2019 at 08:57:45PM +1000, Aleksa Sarai wrote:
 
-On 12/07/2019 13:10, Rogier Wolff wrote:
-> On Fri, Jul 12, 2019 at 12:21:05PM +0100, Dave Martin wrote:
->> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
->> index 89ade21..1902071 100644
->> --- a/drivers/tty/serial/amba-pl011.c
->> +++ b/drivers/tty/serial/amba-pl011.c
->> @@ -1307,6 +1307,13 @@ static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
->>  /* Start TX with programmed I/O only (no DMA) */
->>  static void pl011_start_tx_pio(struct uart_amba_port *uap)
->>  {
->> +	/*
->> +	 * Avoid FIFO overfills if the TX IRQ is active:
->> +	 * pl011_int() will comsume chars waiting in the xmit queue anyway.
->> +	 */
->> +	if (uap->im & UART011_TXIM)
->> +		return;
->> +
+> > > @@ -2350,9 +2400,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+> > >  			s = ERR_PTR(error);
+> > >  		return s;
+> > >  	}
+> > > -	error = dirfd_path_init(nd);
+> > > -	if (unlikely(error))
+> > > -		return ERR_PTR(error);
+> > > +	if (likely(!nd->path.mnt)) {
+> > 
+> > Is that a weird way of saying "if we hadn't already called dirfd_path_init()"?
 > 
-> I'm no expert on PL011, have no knowledge of the current bug, but have
-> programmed serial drivers in the past.
-> 
-> This looks "dangerous" to me.
-> 
-> The normal situation is that you push the first few characters into
-> the FIFO with PIO and then the interrupt will trigger once the FIFO
-> empties and then you can refil the FIFO until the buffer empties.
-> 
-> The danger in THIS fix is that you might have a race that causes those
-> first few PIO-ed characters not to be put in the hardware resulting in
-> the interrupt never triggering.... If you can software-trigger the
-> interrupt just before the "return" here that'd be a way to fix things.
+> Yes. I did it to be more consistent with the other "have we got the
+> root" checks elsewhere. Is there another way you'd prefer I do it?
 
-I'm also not a serial driver expert, but I think this simplified patch is safe.
-The reason is that the UART011_TXIM flag is only set after the pio thread has failed
-to write some data into the FIFO because it is full, which would guarantee that
-an interrupt is generated once the fill level drops below the half-way mark.
+"Have we got the root" checks are inevitable evil; here you are making the
+control flow in a single function hard to follow.
 
-> I'm ok with a reaction like "I've thought about this, it's not a
-> problem, now shut up".
-
-I don't think that reaction would be justified - these things are difficult, and having
-many minds on the problem helps to avoid bugs like this.
-
-Phil
+I *think* what you are doing is
+	absolute pathname, no LOOKUP_BENEATH:
+		set_root
+		error = nd_jump_root(nd)
+	else
+		error = dirfd_path_init(nd)
+	return unlikely(error) ? ERR_PTR(error) : s;
+which should be a lot easier to follow (not to mention shorter), but I might
+be missing something in all of that.
