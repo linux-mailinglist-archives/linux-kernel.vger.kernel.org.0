@@ -2,133 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2858767628
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 23:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F017F6763C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 23:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfGLVUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 17:20:36 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36818 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727967AbfGLVUf (ORCPT
+        id S1728088AbfGLVgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 17:36:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34050 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfGLVgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 17:20:35 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r7so4838764pfl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:20:35 -0700 (PDT)
+        Fri, 12 Jul 2019 17:36:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b13so4855624pfo.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 14:36:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D3nQ6WqoKV1cJLu5kutjgFzb55g8DMnxDsBnzM+IJlk=;
-        b=SO1+NrHCsY/p+NPvc3Kvu0+XSrfRbRTLzv3DQJLqpiFFvqlLUD41ZoEkyf6m1oHe4Z
-         jPjUcQV+on58ZaeQw5aTtJ8kCYKORHDTh2WlfxPXov3Dc4CfdlQLXJImGmDxZH6tjgvr
-         Tws5g4mQ9PCoQ9DVbjsHk8SfTVehVb44KcsePAOf1bmonYeTpN3gthAddO14MhoderoH
-         6J3RLw1verLonYpdq5/f8xMwPEnmy7z+F4MS8Aj2pkiVXA98qdWKRL+foPi4qol44ogz
-         j1G5S+7Qz74srx1QdeYh8+UMNuuO+lonHyNVKHiSHGqcO67wRrUlERTwgtKnmG6/UQNb
-         Ojaw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f1OhDpjzDD7S0+COFpFd965N8mxlYpQZP4b4JR0VTV8=;
+        b=lZCvyn5n8owKQ3JyeYzt9+z6iXWkLSpYG3eAl8ccauBAjpAsmohxfuQbcSnqrAuKVo
+         EhJuv2vWWbTPd0eO0fNUhuM6JbViOUOUf/4BwXkUGXtZsJcQX4/U66ACGCFiWUk//WdV
+         Q8H3IUlKRvwTyqp0yyd7gnCEfVZU4qo6+E1Lc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D3nQ6WqoKV1cJLu5kutjgFzb55g8DMnxDsBnzM+IJlk=;
-        b=rLF92HSFlYFasDxVqBHKzhdWsYHxZuSbJRMvGampF6xYX48Rx/4kIvFqNM17/rA3S2
-         uOTq0agZXfkujNhkmppdJTkpc5zEQvw3hSZkfU4hNjR78XdwLs39Id8xjm8fbWXhvoz3
-         89yN9cCWPxEuWQ70dF7hQuRfhsmo+89v+jh7tYDGt1Ha1ewYS8fOi7NMc7yUGSBubDFH
-         uaSKGgVV3WCeiKOkQNHgp5vrw0G5qOpc11Fg5O/4WWiIOEehN+2GkVKSs7RG1auCho8g
-         YdeOtyJ+VtNrwDuDuAMy5ZH+4G29mzn0v8WGS+3mb8tcW+BzVVKu9yXzPmr/TjylSI5i
-         mpPA==
-X-Gm-Message-State: APjAAAWy1uz/GtttHm+iJvcm9dFWmc+sYWx/YVzkNk0WizosvLgh2/qU
-        lnEDoFFYMetYhwCljQclr91DA2oXw9Mnl0kuC8CiU2JuKZa2vg==
-X-Google-Smtp-Source: APXvYqzG4QkIxbPOQ7VlpW4ch9ojpA1msBPUiP9xzzSCgv5/7yPWMvJXkWidRQ3SRI5VVIh7WKj1DZ1Xl5aorYOAyQQ=
-X-Received: by 2002:a65:5687:: with SMTP id v7mr13607513pgs.263.1562966434285;
- Fri, 12 Jul 2019 14:20:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f1OhDpjzDD7S0+COFpFd965N8mxlYpQZP4b4JR0VTV8=;
+        b=JDDBeLKs0RXLNhHCvsM72v7xx5JIRtrhuu7C1MQ5LYq8J2mabxXih8NPbHGFhmxuHB
+         ZuZ2LiE8FsknEiRm5hAhONp2xYe1y0Yk8qgYxWbSHrTSK41rgzZpd9E7jtwWIwc6a+iz
+         IrOtfvWz7Tax/JihEb8l3wzQD1I0+LtAyGm1mi6CSiHNfZe4cVLmuKbNK7QscN1oSbEN
+         PZCLwD5pWZOBXDvtl4/w/dTGiBlCLNEocztCkdpP8YH3+8O4vAo0Ir11hYkvgTSjqPK5
+         PMfzR/uEZCNNeUXeyVBtoOPs1fnWBWihuO4CY4ULio0wFffb9LTn/5CdflFI9GABEr+e
+         matQ==
+X-Gm-Message-State: APjAAAUbUMW3BBbxX0ekjIQ6DpRBoNCsMLd1ICeD4c2pO2OjJQTxOisF
+        q/G82JGgB5kQcmX5P52FXOWO62dW
+X-Google-Smtp-Source: APXvYqx3LWL3QaQQ5ksHJJX+2CaAAhVLBJ5JupxNkJ3WyB6ER0uWKW+WGxkHpK2VFCITfOz69qvV7g==
+X-Received: by 2002:a63:fb4b:: with SMTP id w11mr13352876pgj.415.1562967362076;
+        Fri, 12 Jul 2019 14:36:02 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id o32sm9047532pje.9.2019.07.12.14.36.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 12 Jul 2019 14:36:01 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 17:35:59 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, kernel-team@android.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>, peterz@infradead.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH v2 3/9] rcu/sync: Remove custom check for reader-section
+Message-ID: <20190712213559.GA175138@google.com>
+References: <20190712170024.111093-1-joel@joelfernandes.org>
+ <20190712170024.111093-4-joel@joelfernandes.org>
 MIME-Version: 1.0
-References: <20190712090740.340186-1-arnd@arndb.de>
-In-Reply-To: <20190712090740.340186-1-arnd@arndb.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 12 Jul 2019 14:20:23 -0700
-Message-ID: <CAKwvOdk2piniLx8x0QyvYseyhfXEWFt4kYaSnzNH1d_=LBTzLw@mail.gmail.com>
-Subject: Re: [PATCH] lib/mpi: fix building with 32-bit x86
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Joel Stanley <joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712170024.111093-4-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 2:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The mpi library contains some rather old inline assembly statements
-> that produce a lot of warnings for 32-bit x86, such as:
->
-> lib/mpi/mpih-div.c:76:16: error: invalid use of a cast in a inline asm context requiring an l-value: remove the cast or build with -fheinous-gnu-extensions
+On Fri, Jul 12, 2019 at 01:00:18PM -0400, Joel Fernandes (Google) wrote:
+> The rcu/sync code was doing its own check whether we are in a reader
+> section. With RCU consolidating flavors and the generic helper added in
+> this series, this is no longer need. We can just use the generic helper
+> and it results in a nice cleanup.
+> 
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-I feel like I'm having flashbacks here:
-https://lore.kernel.org/linuxppc-dev/CAKwvOd=f9OOR=i10q_auQuQCVH657neQtjt51UA176p_PMOHVw@mail.gmail.com/
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-(Thanks for the patch!)
+Hi Oleg,
+Slightly unrelated to the patch,
+I tried hard to understand this comment below in percpu_down_read() but no dice.
 
->                                 udiv_qrnnd(qp[i], n1, n1, np[i], d);
->                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-> lib/mpi/longlong.h:423:20: note: expanded from macro 'udiv_qrnnd'
->         : "=a" ((USItype)(q)), \
->                 ~~~~~~~~~~^~
->
-> There is no point in doing a type cast for the output of an inline assembler
-> statement, so just remove the cast here, as we have done for other architectures
-> in the past.
->
-> See-also: dea632cadd12 ("lib/mpi: fix build with clang")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+I do understand how rcu sync and percpu rwsem works, however the comment
+below didn't make much sense to me. For one, there's no readers_fast anymore
+so I did not follow what readers_fast means. Could the comment be updated to
+reflect latest changes?
+Also could you help understand how is a writer not able to change
+sem->state and count the per-cpu read counters at the same time as the
+comment tries to say?
+
+	/*
+	 * We are in an RCU-sched read-side critical section, so the writer
+	 * cannot both change sem->state from readers_fast and start checking
+	 * counters while we are here. So if we see !sem->state, we know that
+	 * the writer won't be checking until we're past the preempt_enable()
+	 * and that once the synchronize_rcu() is done, the writer will see
+	 * anything we did within this RCU-sched read-size critical section.
+	 */
+
+Also,
+I guess we could get rid of all of the gp_ops struct stuff now that since all
+the callbacks are the same now. I will post that as a follow-up patch to this
+series.
+
+thanks!
+
+ - Joel
+
+
 > ---
->  lib/mpi/longlong.h | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/lib/mpi/longlong.h b/lib/mpi/longlong.h
-> index 08c60d10747f..3bb6260d8f42 100644
-> --- a/lib/mpi/longlong.h
-> +++ b/lib/mpi/longlong.h
-> @@ -397,8 +397,8 @@ do { \
->  #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
->         __asm__ ("addl %5,%1\n" \
->            "adcl %3,%0" \
-> -       : "=r" ((USItype)(sh)), \
-> -            "=&r" ((USItype)(sl)) \
-> +       : "=r" (sh), \
-> +            "=&r" (sl) \
->         : "%0" ((USItype)(ah)), \
->              "g" ((USItype)(bh)), \
->              "%1" ((USItype)(al)), \
-> @@ -406,22 +406,22 @@ do { \
->  #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
->         __asm__ ("subl %5,%1\n" \
->            "sbbl %3,%0" \
-> -       : "=r" ((USItype)(sh)), \
-> -            "=&r" ((USItype)(sl)) \
-> +       : "=r" (sh), \
-> +            "=&r" (sl) \
->         : "0" ((USItype)(ah)), \
->              "g" ((USItype)(bh)), \
->              "1" ((USItype)(al)), \
->              "g" ((USItype)(bl)))
->  #define umul_ppmm(w1, w0, u, v) \
->         __asm__ ("mull %3" \
-> -       : "=a" ((USItype)(w0)), \
-> -            "=d" ((USItype)(w1)) \
-> +       : "=a" (w0), \
-> +            "=d" (w1) \
->         : "%0" ((USItype)(u)), \
->              "rm" ((USItype)(v)))
->  #define udiv_qrnnd(q, r, n1, n0, d) \
->         __asm__ ("divl %4" \
-> -       : "=a" ((USItype)(q)), \
-> -            "=d" ((USItype)(r)) \
-> +       : "=a" (q), \
-> +            "=d" (r) \
-
--- 
-Thanks,
-~Nick Desaulniers
+> Please note: Only build and boot tested this particular patch so far.
+> 
+>  include/linux/rcu_sync.h |  5 ++---
+>  kernel/rcu/sync.c        | 22 ----------------------
+>  2 files changed, 2 insertions(+), 25 deletions(-)
+> 
+> diff --git a/include/linux/rcu_sync.h b/include/linux/rcu_sync.h
+> index 6fc53a1345b3..c954f1efc919 100644
+> --- a/include/linux/rcu_sync.h
+> +++ b/include/linux/rcu_sync.h
+> @@ -39,9 +39,8 @@ extern void rcu_sync_lockdep_assert(struct rcu_sync *);
+>   */
+>  static inline bool rcu_sync_is_idle(struct rcu_sync *rsp)
+>  {
+> -#ifdef CONFIG_PROVE_RCU
+> -	rcu_sync_lockdep_assert(rsp);
+> -#endif
+> +	RCU_LOCKDEP_WARN(!rcu_read_lock_any_held(),
+> +			 "suspicious rcu_sync_is_idle() usage");
+>  	return !rsp->gp_state; /* GP_IDLE */
+>  }
+>  
+> diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+> index a8304d90573f..535e02601f56 100644
+> --- a/kernel/rcu/sync.c
+> +++ b/kernel/rcu/sync.c
+> @@ -10,37 +10,25 @@
+>  #include <linux/rcu_sync.h>
+>  #include <linux/sched.h>
+>  
+> -#ifdef CONFIG_PROVE_RCU
+> -#define __INIT_HELD(func)	.held = func,
+> -#else
+> -#define __INIT_HELD(func)
+> -#endif
+> -
+>  static const struct {
+>  	void (*sync)(void);
+>  	void (*call)(struct rcu_head *, void (*)(struct rcu_head *));
+>  	void (*wait)(void);
+> -#ifdef CONFIG_PROVE_RCU
+> -	int  (*held)(void);
+> -#endif
+>  } gp_ops[] = {
+>  	[RCU_SYNC] = {
+>  		.sync = synchronize_rcu,
+>  		.call = call_rcu,
+>  		.wait = rcu_barrier,
+> -		__INIT_HELD(rcu_read_lock_held)
+>  	},
+>  	[RCU_SCHED_SYNC] = {
+>  		.sync = synchronize_rcu,
+>  		.call = call_rcu,
+>  		.wait = rcu_barrier,
+> -		__INIT_HELD(rcu_read_lock_sched_held)
+>  	},
+>  	[RCU_BH_SYNC] = {
+>  		.sync = synchronize_rcu,
+>  		.call = call_rcu,
+>  		.wait = rcu_barrier,
+> -		__INIT_HELD(rcu_read_lock_bh_held)
+>  	},
+>  };
+>  
+> @@ -49,16 +37,6 @@ enum { CB_IDLE = 0, CB_PENDING, CB_REPLAY };
+>  
+>  #define	rss_lock	gp_wait.lock
+>  
+> -#ifdef CONFIG_PROVE_RCU
+> -void rcu_sync_lockdep_assert(struct rcu_sync *rsp)
+> -{
+> -	RCU_LOCKDEP_WARN(!gp_ops[rsp->gp_type].held(),
+> -			 "suspicious rcu_sync_is_idle() usage");
+> -}
+> -
+> -EXPORT_SYMBOL_GPL(rcu_sync_lockdep_assert);
+> -#endif
+> -
+>  /**
+>   * rcu_sync_init() - Initialize an rcu_sync structure
+>   * @rsp: Pointer to rcu_sync structure to be initialized
+> -- 
+> 2.22.0.510.g264f2c817a-goog
+> 
