@@ -2,93 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 287276691F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1806693F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbfGLI1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:27:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33150 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfGLI1k (ORCPT
+        id S1726273AbfGLIiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:38:24 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38837 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725877AbfGLIiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:27:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g2so4003413pfq.0;
-        Fri, 12 Jul 2019 01:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hZ8XQcqFPiBgKnC9B3u3J7ZO1DNl4k/Ar4Bg2fpOBFk=;
-        b=ALfhC6m44wKGFkOBKD8GefYMIEHZd/i4kpqkHV7sELvOgFNGfnbbzj6oHuAltng+he
-         AG0qyfbgmGNEe+ra92PRQ5Z1/meB/K87KLjtRJsLkGr3Lgijr+Ld5chPcmxmZcKi22iK
-         NeSP9XxEYXoNqwgmgWO3o1PE4RG9f3Nw0na5qw16WODApyKYZh9oBfi3z/o9mCDugvSs
-         dc6u1AJe+kvXzoSwouzr7z2EZbhBzzdrnJTz6ouMLahrTiQ/8En+7ySBO3o9P6tRN2a2
-         /W0K61bounkFiRtSkjas1o885NCV8YNnSBIWgZmega5Spfl2VQVZ6fnyc8d4d1YAbeQz
-         fWKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hZ8XQcqFPiBgKnC9B3u3J7ZO1DNl4k/Ar4Bg2fpOBFk=;
-        b=AL8VpcqlaSgXjpSd8yhjtc8OgYF1HBZnLc5dPhI7Ic+JGT8hn0x6Z2BMNavT0tOmIA
-         mBFy2i7gv1XYwsCkG7iTOKeqM92FmjLeefOsfb2YgOfLzZBipeHkhL995jdqGX0fYa2x
-         cPdOhQ9PeBrYuFQb6hC1R+5ABFf7M4NvNczlW7VxCoh2tgNdSMdqkTQAgwnfVz+ASHss
-         izAl1oFz35PkvuapRHvSJCuzJUYhze5OC77TATs5ZRO0y9H7iCWbZdleeddoY603ti6M
-         pJJkDh+2D5cw+PpT/Kwaji9QldMi6nmWt5NdI0WHVFw3RP33B7ZTObPXuCGl47myYGgd
-         +MRw==
-X-Gm-Message-State: APjAAAV9EZ+t0iAiLi3sMu//UEREVfOKhA17/EYVAg3rouFLtRJMvvMK
-        rbum1x0K9F4+/1l0TWvJz6PO9ejojRIuCQ==
-X-Google-Smtp-Source: APXvYqxonCLjfrokyrAVOBWC/q01LGs7wcdrgVS/OXZZhdP3H7d0IBGzolaTtQZrkHunsms/ZKWvlg==
-X-Received: by 2002:a17:90a:2305:: with SMTP id f5mr10738884pje.128.1562920059465;
-        Fri, 12 Jul 2019 01:27:39 -0700 (PDT)
-Received: from maya190711 ([52.250.118.122])
-        by smtp.gmail.com with ESMTPSA id x25sm7938074pfa.90.2019.07.12.01.27.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 12 Jul 2019 01:27:39 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 08:27:38 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/5] HID: hv: Remove dependencies on PAGE_SIZE for ring
- buffer
-Message-ID: <5cfa6f8ded52ee709ede57a97fc71e8671b1ceb1.1562916939.git.m.maya.nakamura@gmail.com>
-References: <cover.1562916939.git.m.maya.nakamura@gmail.com>
+        Fri, 12 Jul 2019 04:38:23 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id B749D2230E;
+        Fri, 12 Jul 2019 04:38:22 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Fri, 12 Jul 2019 04:38:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=/UVl1SfI1iLqkTsHe3vvfHE6leW
+        BQBCgm2DrQ+AZhuk=; b=FeDvb65jzKh9ghvM1HCsSOXtn9CnPAhANSHh0STjxKD
+        LbVqaYAd0KVoB5qZZdIwkrYK5cVDnAdF530XhX5ilO0wLC5pFmk52uYD+SvqMJKV
+        ZZH4nZvyDhCT1qjICj/a5Or0rQZ0C4a0IutgIgLZnYd5Bc7B3PwMskEmsXVLak22
+        7hO8ITIpH9OAhYveSIU90xbIya6AU7l7o0NvPKCghF7DCVhBILG19UL3n6mi9Zp5
+        UH4UE+I2m5YmckXxlpHiYGMq6uggaOCxik9XWvewRl65z8KPpkOHLS1vJ8H/QNfY
+        g8rSAjVBgWO9A5Ub6CYHJvZUA0l+6S5MEi5mV/8CPbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/UVl1S
+        fI1iLqkTsHe3vvfHE6leWBQBCgm2DrQ+AZhuk=; b=FqbO97DBs5/ZTmPDcD3Glf
+        PjagPJr1GioWza5EKp4nmjemeHczqP6PwpZl1nJHbgnrK4O58rCZf1LBB+6sB/Tt
+        O1wHgnLiMtn3ZoEdGQmbVFT7A9sFWb9sJETPzA88ISCsgVllmWma67BQPF7Iggc0
+        wNxVX1JVFefj5sMs7u8QHBI0GjuRDbp/jit8Th3kDcw+AlJJXKYkjDNBg+GzlctN
+        UpCPaBE6VIWA7iqW0tCAVSmmLl7d8SLYb0467AEAlJtjzjOXCVVH28lhHprteyHt
+        tY9S6cWAHmE+z5q/vfNLNgnkhyzxkHCLdX5gJPBPqC8ztL8/p2caPhWsH3bwf6rA
+        ==
+X-ME-Sender: <xms:_UYoXQOguVlUqK9-SN_uHhS74SotEOGASz3FDsfw2VH2IQl14bHgrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrhedtgddtgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
+    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
+    lhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:_UYoXf1E8-HxayeYP4JppO4Fch5OtgdS7fUCYwM2yUA2DQGZM6ay3Q>
+    <xmx:_UYoXWNeGIB9dO34uvdzCfjag_yrN0R1yq5MrikjNymKVtDZima6Aw>
+    <xmx:_UYoXSzWxYDvkc7nxMVp8KXBYR8xCHhZycLfpK4ZwUESSpVCuqUcVA>
+    <xmx:_kYoXUm_cxfpVqtNQEmLoQHqY7nywqV1nNhZHftTD3PZOgbSIPUVng>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5F2E480061;
+        Fri, 12 Jul 2019 04:38:21 -0400 (EDT)
+Date:   Fri, 12 Jul 2019 09:59:20 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Message-ID: <20190712075920.GA18592@kroah.com>
+References: <20190708192345.53fce4cf@canb.auug.org.au>
+ <20190712104430.739f1b61@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1562916939.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190712104430.739f1b61@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the ring buffer size as a constant expression because it should
-not depend on the guest page size.
+On Fri, Jul 12, 2019 at 10:44:30AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 8 Jul 2019 19:23:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > After merging the char-misc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/misc/vmw_balloon.c: In function 'vmballoon_mount':
+> > drivers/misc/vmw_balloon.c:1736:14: error: 'simple_dname' undeclared (first use in this function); did you mean 'simple_rename'?
+> >    .d_dname = simple_dname,
+> >               ^~~~~~~~~~~~
+> >               simple_rename
+> > drivers/misc/vmw_balloon.c:1736:14: note: each undeclared identifier is reported only once for each function it appears in
+> > drivers/misc/vmw_balloon.c:1739:9: error: implicit declaration of function 'mount_pseudo'; did you mean 'mount_bdev'? [-Werror=implicit-function-declaration]
+> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+> >          ^~~~~~~~~~~~
+> >          mount_bdev
+> > drivers/misc/vmw_balloon.c:1739:9: warning: returning 'int' from a function with return type 'struct dentry *' makes pointer from integer without a cast [-Wint-conversion]
+> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >         BALLOON_VMW_MAGIC);
+> >         ~~~~~~~~~~~~~~~~~~
+> > 
+> > Caused by commit
+> > 
+> >   83a8afa72e9c ("vmw_balloon: Compaction support")
+> > 
+> > interacting with commits
+> > 
+> >   7e5f7bb08b8c ("unexport simple_dname()")
+> >   8d9e46d80777 ("fold mount_pseudo_xattr() into pseudo_fs_get_tree()")
+> > 
+> > from the vfs tree.
+> > 
+> > I applied the following merge fix patch:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 8 Jul 2019 19:17:56 +1000
+> > Subject: [PATCH] convert vmwballoon to use the new mount API
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/misc/vmw_balloon.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+> > index 91fa43051535..e8c0f7525f13 100644
+> > --- a/drivers/misc/vmw_balloon.c
+> > +++ b/drivers/misc/vmw_balloon.c
+> > @@ -29,6 +29,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/spinlock.h>
+> >  #include <linux/mount.h>
+> > +#include <linux/pseudo_fs.h>
+> >  #include <linux/balloon_compaction.h>
+> >  #include <linux/vmw_vmci_defs.h>
+> >  #include <linux/vmw_vmci_api.h>
+> > @@ -1728,21 +1729,14 @@ static inline void vmballoon_debugfs_exit(struct vmballoon *b)
+> >  
+> >  #ifdef CONFIG_BALLOON_COMPACTION
+> >  
+> > -static struct dentry *vmballoon_mount(struct file_system_type *fs_type,
+> > -				      int flags, const char *dev_name,
+> > -				      void *data)
+> > +static int vmballoon_init_fs_context(struct fs_context *fc)
+> >  {
+> > -	static const struct dentry_operations ops = {
+> > -		.d_dname = simple_dname,
+> > -	};
+> > -
+> > -	return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
+> > -			    BALLOON_VMW_MAGIC);
+> > +	return init_pseudo(fc, BALLOON_VMW_MAGIC) ? 0 : -ENOMEM;
+> >  }
+> >  
+> >  static struct file_system_type vmballoon_fs = {
+> >  	.name           = "balloon-vmware",
+> > -	.mount          = vmballoon_mount,
+> > +	.init_fs_context          = vmballoon_init_fs_context,
+> >  	.kill_sb        = kill_anon_super,
+> >  };
+> >  
+> 
+> This is now a conflict between the vfs tree and Linus' tree.
 
-Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/hid/hid-hyperv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looks good to me, I'll watch out for this when Al's tree is merged.
 
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index 7795831d37c2..cc5b09b87ab0 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -104,8 +104,8 @@ struct synthhid_input_report {
- 
- #pragma pack(pop)
- 
--#define INPUTVSC_SEND_RING_BUFFER_SIZE		(10*PAGE_SIZE)
--#define INPUTVSC_RECV_RING_BUFFER_SIZE		(10*PAGE_SIZE)
-+#define INPUTVSC_SEND_RING_BUFFER_SIZE		(40 * 1024)
-+#define INPUTVSC_RECV_RING_BUFFER_SIZE		(40 * 1024)
- 
- 
- enum pipe_prot_msg_type {
--- 
-2.17.1
+thanks,
 
+greg k-h
