@@ -2,69 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E98167144
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF3D67146
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfGLOWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 10:22:08 -0400
-Received: from mail-io1-f51.google.com ([209.85.166.51]:44315 "EHLO
-        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfGLOWI (ORCPT
+        id S1727354AbfGLOWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 10:22:45 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43608 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfGLOWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 10:22:08 -0400
-Received: by mail-io1-f51.google.com with SMTP id s7so20615195iob.11
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 07:22:07 -0700 (PDT)
+        Fri, 12 Jul 2019 10:22:45 -0400
+Received: by mail-io1-f66.google.com with SMTP id k20so20646843ios.10;
+        Fri, 12 Jul 2019 07:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=AC+JysO1v7hiMPuJ82baaEu63vs9RmmoelhSWD247e8=;
-        b=RURDfEOtpS/7j4qIKtchdQBoBeEbenoRHoOfXWlUQyxKaKg7HuOOgVArD/HKOGYlt3
-         IFxmN5nVnjHvvFZiin+NmHso5Ieq2Shfw685aI4HTom46cRnmrMPwKC+2yoUrzMUmXDr
-         qlAQM73Pc+9rzN5qCgKJqr4fv2dN45Vmlnzv2h+E4A/Ry1PJivO5pbvuDwIhizC0k9HE
-         2ViUC/yXfitgQ5nGcanI7GRZYkGeY4lFcv95KsfvPMHAcDbG4RHmhKQLrtWs7pW/BjeQ
-         5nOmI3d/ng8V7LQCJTOmdtrSp+ZYDtppmVNrYt1wtVo0DBstoTNlYJqdGLyTZHE7S3lW
-         gLKA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nGPJaLLrwimgpDuREnLtjr8F7xnTIflmgbQ9hHlyOpQ=;
+        b=h9jOcluIb6ww2CKPkNW/sCP5MUssFNFfo0eU3XK9p5+YpV+7emWd40fuQ0aguUlM9O
+         SfMrf+m/5YOcM1qa0dWndBpgkz4Qf9EGlyTiqz+6Y7JfRFAgXKOiqXiCzMj/UING1hQK
+         scP1RFCeJ3R4/WI+CNFRDFjyahtAk+rWVWR0IuQj7nPfOfOJ66wZq62M+xb3Dc8zqLHh
+         7OKh5uoWtjoEXRLbSMp+jHa1EJkzjK5EAf3zVnOt4gap7JtE0RNtC7abt3UjoaIXQZKZ
+         9vyQ3Ys5NMV/5OAzKCJeNjBwZ+sbQ1MsrhJazHGjIncJuDsrADav8uSg9bJTbg3Z6slp
+         LwRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=AC+JysO1v7hiMPuJ82baaEu63vs9RmmoelhSWD247e8=;
-        b=F7R7d7svp/p40xjQOwheEMYpNp5wynLYKsgm+64Qykl8E8P8sCoKwZZYg3YqaMnBig
-         /sOTgArhwk8g6c7ehZfG1oIE6NPp05Wrwl+vihc9jgazGRoHXIFwBaGij3HkWBcFJYR/
-         M7gmKr01p0LSYH3No5Kq0T45tS9npDJysULdo07WtxqYLTcH+Mw6A/xd6Cjojltzlk4r
-         Dv0cr/Nio57riiPnzPoZ9UwuMFik58GuPHAP9RzJGIHC8W+bXr41je/aClxBUvup96Gz
-         3MwINSG+cURtVCsZUShKyVr0PkyA/yMwsh+qP5GKHGBukJ2+qKmLxbQYxxCfLR3bDMgC
-         J+Lw==
-X-Gm-Message-State: APjAAAXUV5iV9uAcuDcvEoXfH0UbQd8XPElSFz68k5wKVa9PO5OiyY0R
-        vL3xgUmCK34UZbQcivf6AKLpvYu6pDr2RLdMBRs=
-X-Google-Smtp-Source: APXvYqxIY/fc7aMD1Ci9GnXpOBBaP84amFMwVtyk6FwA1NuUAGIrzemQah6G7zAgrADiBjmNknd3a2mmTbeSTr9RRYE=
-X-Received: by 2002:a02:a595:: with SMTP id b21mr12227704jam.28.1562941327279;
- Fri, 12 Jul 2019 07:22:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nGPJaLLrwimgpDuREnLtjr8F7xnTIflmgbQ9hHlyOpQ=;
+        b=oZ+oPpzLAOR3A+9KAikTmIFIC3wdZz6Hv7CwnwHEjwMHmpa3pPffGEHJk5ejPpiAwq
+         bBokLNdTyrVa2Z+w++qllOOFUd7hbYBm41lAEwH/cvgN6Ud23h0QCEYjz7mOJQp9awHU
+         5xNalTFxXgrb8ddPFr4z/sW8Q07jY/DU/PokwbjxWkGWOCKDqCo+eu1CUUKirzLTocpC
+         rKKQ7QuaF62o6hbdRFgL6SzhixkgMbXhoj6fr8XRMppkwv+n5cFF9bFuOf7v/qlYqz7Z
+         oXnKIRcv1O4rZ9EycjvaLwL8AmxCARN0ZVxHOisagXlCKlVQ9zMPB6993drf0voUMlgr
+         ShHQ==
+X-Gm-Message-State: APjAAAW4TT3qdQJM/w5w7ZO3MW8MYAMSOwdgI5SyL6WWU9M6Htgr2ZC6
+        ZJKXoBYH0LgX/F/wOscvkX7K2TCvQx4AM5lcYrg=
+X-Google-Smtp-Source: APXvYqyd1oIXsBnzN7dG75lZKkuN70UrVbbdWWU17WfiRt880v2QjEESBBiu9clKHIbyAFlTaHjA8LuvFTEITgzhLUI=
+X-Received: by 2002:a6b:3b89:: with SMTP id i131mr10329306ioa.33.1562941364182;
+ Fri, 12 Jul 2019 07:22:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5e:8810:0:0:0:0:0 with HTTP; Fri, 12 Jul 2019 07:22:06
- -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <davisemm6@gmail.com>
-Date:   Fri, 12 Jul 2019 16:22:06 +0200
-Message-ID: <CAKAY_3WrO9r0F23Pp_2jBKW=6Dzk3wTbioUwMmYRWkrMRGf68w@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
+References: <20190703214326.41269-1-jeffrey.l.hugo@gmail.com>
+ <20190703214512.41319-1-jeffrey.l.hugo@gmail.com> <CGME20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7@epcas2p3.samsung.com>
+ <20190706010604.GG20625@sirena.org.uk> <64ca3a74-374f-d4f3-bee6-a607cc5c0fc5@samsung.com>
+ <CAF6AEGtGjKRA3A8v6pgaXLgpeiLZuz6HuDSFRjKrNp4iQNVZtA@mail.gmail.com> <10b1313f-7a60-df04-a9e3-76649b74f2f0@samsung.com>
+In-Reply-To: <10b1313f-7a60-df04-a9e3-76649b74f2f0@samsung.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 12 Jul 2019 08:22:33 -0600
+Message-ID: <CAOCk7NoyCmPQF3s4GWD1Oa4t5hdqi6vdcOdHyJpo3Gc1JQqXcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] regmap: Add DSI bus support
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Rob Clark <robdclark@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Fri, Jul 12, 2019 at 7:01 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> On 11.07.2019 15:56, Rob Clark wrote:
+> > On Thu, Jul 11, 2019 at 6:11 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> >> On 06.07.2019 03:06, Mark Brown wrote:
+> >>> On Wed, Jul 03, 2019 at 02:45:12PM -0700, Jeffrey Hugo wrote:
+> >>>> Add basic support with a simple implementation that utilizes the generic
+> >>>> read/write commands to allow device registers to be configured.
+> >>> This looks good to me but I really don't know anything about DSI,
+> >>> I'd appreciate some review from other people who do.  I take it
+> >>> there's some spec thing in DSI that says registers and bytes must
+> >>> both be 8 bit?
+> >>
+> >> I am little bit confused about regmap usage here. On the one hand it
+> >> nicely fits to this specific driver, probably because it already uses
+> >> regmap_i2c.
+> >>
+> >> On the other it will be unusable for almost all current DSI drivers and
+> >> probably for most new drivers. Why?
+> >>
+> >> 1. DSI protocol defines actually more than 30 types of transactions[1],
+> >> but this patchset implements only few of them (dsi generic write/read
+> >> family). Is it possible to implement multiple types of transactions in
+> >> regmap?
+> >>
+> >> 2. There is already some set of helpers which uses dsi bus, rewriting it
+> >> on regmap is possible or driver could use of regmap and direct access
+> >> together, the question is if it is really necessary.
+> >>
+> >> 3. DSI devices are no MFDs so regmap abstraction has no big value added
+> >> (correct me, if there are other significant benefits).
+> >>
+> > I assume it is not *just* this one bridge that can be programmed over
+> > either i2c or dsi, depending on how things are wired up on the board.
+> > It certainly would be nice for regmap to support this case, so we
+> > don't have to write two different bridge drivers for the same bridge.
+> > I wouldn't expect a panel that is only programmed via dsi to use this.
+>
+>
+> On the other side supporting DSI and I2C in one driver is simply matter
+> of writing proper accesors.
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+To me, this reads like your counter argument to not using regmap, is
+to reinvent regmap.  Maybe I don't understand what you are proposing
+here, but it sounds like remove the regmap support, define sn65
+specific accessors that just before sending the write to the bus does
+a check if the access needs to go over i2c or DSI.  Feels like a
+clunky version of regmap to me.  Why not use the existing "generic"
+framework?
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0003gmail.com
-
-Many thanks in advance,
-Mr.Eddy William ,
+To your point that DSI defines over 30 message types, yes it does, but
+that seems to be outside of the scope.  How many of those are actually
+for doing register access?  I'm thinking just 4 (technically a hair
+more than that because of the multiple version of the same message) -
+generic read, generic write, dcs read, dcs write.  I don't view regmap
+as a generic abstraction layer over a particular mechanism, and thus
+needs to support everything that mechanism does.  Sending sync
+commands, or pixel data over DSI is outside the scope of regmap to me.
