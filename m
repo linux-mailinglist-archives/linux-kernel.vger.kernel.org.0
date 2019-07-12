@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25CAF66DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5082066E44
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfGLMc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51466 "EHLO mail.kernel.org"
+        id S1728588AbfGLMaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:30:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728842AbfGLMcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:54 -0400
+        id S1728624AbfGLMab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:30:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 389C321019;
-        Fri, 12 Jul 2019 12:32:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B41652166E;
+        Fri, 12 Jul 2019 12:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934773;
-        bh=nkZ6Tz3khAsmsQ82x8OX7tgmPnhebC4vG3Vhlk1ApSY=;
+        s=default; t=1562934630;
+        bh=LBmyqgbnBKkr9u56Jmv6B6Cb4CS4Txs8SH1cF9sv1D0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q6fc5PN8GA1ib/l3X3u8M/DeS+Q+oZJ677XIHpmbz7LoDP13qPjlzb6FmarB/5iEG
-         WShvcQefqmD8FDQomBM/P2XELxKjuYbzIXoa97hTcdJOH8C/0cKNg7+j5yNQohwi3B
-         Qin3bbRTO/vFXhcrvE4UdnJ0IMX2ntzx7i8G0IdY=
+        b=Hj54K/jjRyPiCnlds1FnVCS9mL4CnyGbErP8MBMPVqrwlZA4qqZJwwFYn4snNoTz+
+         tbIhgUKZ6jIaV2hgDuSEr+TpqvRxQy1YDrtERL8i6dokWcZ8nOR46ufhEkRMt5022I
+         fhQgr6MX5WveZ+ZPTsZCOKJjMT0eq3ebGst5O9+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Barta <o.barta89@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.2 26/61] Revert "serial: 8250: Dont service RX FIFO if interrupts are disabled"
-Date:   Fri, 12 Jul 2019 14:19:39 +0200
-Message-Id: <20190712121622.030062321@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 5.1 116/138] drivers/usb/typec/tps6598x.c: fix portinfo width
+Date:   Fri, 12 Jul 2019 14:19:40 +0200
+Message-Id: <20190712121633.200574579@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Barta <o.barta89@gmail.com>
+From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 
-commit 3f2640ed7be838c3f05c0d2b0f7c7508e7431e48 upstream.
+commit 05da75fc651138e51ff74ace97174349910463f5 upstream.
 
-This reverts commit 2e9fe539108320820016f78ca7704a7342788380.
+Portinfo bit field is 3 bits wide, not 2 bits. This led to
+a wrong driver configuration for some tps6598x configurations.
 
-Reading LSR unconditionally but processing the error flags only if
-UART_IIR_RDI bit was set before in IIR may lead to a loss of transmission
-error information on UARTs where the transmission error flags are cleared
-by a read of LSR. Information are lost in case an error is detected right
-before the read of LSR while processing e.g. an UART_IIR_THRI interrupt.
-
-Signed-off-by: Oliver Barta <o.barta89@gmail.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Fixes: 2e9fe5391083 ("serial: 8250: Don't service RX FIFO if interrupts are disabled")
+Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_port.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/typec/tps6598x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1869,8 +1869,7 @@ int serial8250_handle_irq(struct uart_po
+--- a/drivers/usb/typec/tps6598x.c
++++ b/drivers/usb/typec/tps6598x.c
+@@ -41,7 +41,7 @@
+ #define TPS_STATUS_VCONN(s)		(!!((s) & BIT(7)))
  
- 	status = serial_port_in(port, UART_LSR);
+ /* TPS_REG_SYSTEM_CONF bits */
+-#define TPS_SYSCONF_PORTINFO(c)		((c) & 3)
++#define TPS_SYSCONF_PORTINFO(c)		((c) & 7)
  
--	if (status & (UART_LSR_DR | UART_LSR_BI) &&
--	    iir & UART_IIR_RDI) {
-+	if (status & (UART_LSR_DR | UART_LSR_BI)) {
- 		if (!up->dma || handle_rx_dma(up, iir))
- 			status = serial8250_rx_chars(up, status);
- 	}
+ enum {
+ 	TPS_PORTINFO_SINK,
 
 
