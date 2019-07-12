@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A9967707
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 01:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE27676FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 01:53:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfGLXxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 19:53:39 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:39928 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728648AbfGLXxM (ORCPT
+        id S1728696AbfGLXxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 19:53:20 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:37646 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728665AbfGLXxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 19:53:12 -0400
-Received: by mail-pl1-f202.google.com with SMTP id r7so6011365plo.6
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 16:53:11 -0700 (PDT)
+        Fri, 12 Jul 2019 19:53:15 -0400
+Received: by mail-pg1-f202.google.com with SMTP id n9so3216824pgq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 16:53:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=u0aCbzfqst+D0QpebqfgPDDHqeCzNETI6rpepbYOqAg=;
-        b=NuFa6cXOZ03xsdBH/ZfK+iY9xs3bPy/PkCnlYauhFuo7hp8ItcNakBHm6+e4a6FW2/
-         Qy9eIPHN9QVYImgGz3vPgOgEL1Rh9APmS9LNzfVQyfr6nhAZXkcaPKv770hkuZ4I7FQo
-         mPmItCpQQAy5CB2VrS/cMO2g4JsLM8S1emnd+9zU3+Xe0k044I2r6InPphZxx4momvaj
-         7uKzqvPnB8g0uXab+/biy4Ex+MSTlHVndbwTeKi+rsrxW1L6kkIj29IQXCIfhS160bMb
-         o/0MTn6NSnijj7JgBcEIScY75jodS+cD0NP6BucvNliohtB+o9sS3ZOoYnFmDXIwDtgE
-         sliw==
+        bh=tt/DTeQs0nvo9WoetVmfSZpmCFMdgz1aG+kJun8yGvM=;
+        b=wLKRVzokAdZ+sOZ0EVqWDmF2WSFfl0Zd8n3dg5gXkMxXk/VYBMY8xoip1vQBsOqGK1
+         L3tmmFkecXTHq2Cj/pVkI19ndx+Bm3ubtU6NNRwx0F/GMZhL2N41YsAXN7ZKdLJwRO1D
+         frvCfjf0kwJzgFMVwxW8/7IeeBlYXuvPdavLaEooB2dcPkg3UJqNc/T8rrimZncvq48r
+         Rd+wBiVcfOQGrmjhOZkYjXnDgZxH1OnUOiUkm+bLKE8ts4ANN8bIkYfW/N4mmvzdh1p3
+         OikGbOms/olMsbXXw6IURWCCqsY3Ycth21WtvF+YGiZ7aV56f9f2tj11s7FJf3gFMxaz
+         gDWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=u0aCbzfqst+D0QpebqfgPDDHqeCzNETI6rpepbYOqAg=;
-        b=kQLvCaoN9t0MN/NDkAfTQLU9IHMLK03RiGPUGreLmrZrrOnMQPpNvLh8LfCEUzEAdF
-         pdPvx3aLQ2JI9lak6q9E93UuF0jCCfXMXj6Jt0aA3VHfVieyhcU9UUohjwRBPOlRzKV1
-         JBa+evjMfoe8GRJoqGu4RXo6nRHgW2/+PA25adQ49vYx9JRdEwEIy9ShA2MTIXGAq04F
-         ncdYne+Gu/MLR1I9U48rJGHJO0F4O0oaVvJUKTvRr1LDdMPcRbhE8u3cb3FBY6sxGMi9
-         BHqtjGvJ5UUPidVdIXDs+7iHi5iSonzN7HMl0tSngd4vgLxZgN2rswOhdnum4j0qQZJz
-         S8Jw==
-X-Gm-Message-State: APjAAAXf5hnR9WcU/X20nvj1uTxeYdvhv0i4qub2A3LV6NA5NKeYeRqN
-        RaTwBkh2++8Or/GKovFdln2ZlARrq0DxaTU=
-X-Google-Smtp-Source: APXvYqyWvabAfyxvg6UIJqiHNYu3Re+Ps/dXojaoKmsWOUDI0X+STCObr0nnDdxk3G7ga5ZyPciHY8ModRXmB94=
-X-Received: by 2002:a63:e90b:: with SMTP id i11mr14217259pgh.351.1562975591373;
- Fri, 12 Jul 2019 16:53:11 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 16:52:40 -0700
+        bh=tt/DTeQs0nvo9WoetVmfSZpmCFMdgz1aG+kJun8yGvM=;
+        b=Xl3Y8aJlHviS9aD+WG+Ii2B3AuCtM7jB7ASy63HbWiAze83FnBdjAS3GFihLXcS0Hs
+         88iaBmHeQbJORGtW1tD1nFCP36ENDnT2YSTrQHYcruivy5qzw29KUEWT2pSYZO3+nBzP
+         jJlS9oEOCjoB9ARXQbFWCrd3DYl+7Nz87raGWaDvvV/rrCfcSTZ4GeMsXV96JhgX3Tom
+         MMQKIuWlrS2wcIRAgAC4V9XH2OTY9sH0Rs6gb8+D83dwi45+9FXBjzeECXMxryntywkk
+         /NM1LQBSz32Nv1FKQeO54dOCHHoQdOn3Q1umA30dWnKtFT9CeCAoT+Otp6qEp0irmJlj
+         luCw==
+X-Gm-Message-State: APjAAAXzTYljFaQv1PbftvWTFKNALH/+JXnLCDzmi72iAxFB1p6cnim8
+        EowECeKzCp8pUPZTHtVgLGfHIeF8UJKDml4=
+X-Google-Smtp-Source: APXvYqw00/nq1o/MSeTmkRBVcKK4DJpRz0GCa3SIEHTE3wNs9/3sBfq4wk1F7KycCoDZgeiaLwfs3cKq1BglehE=
+X-Received: by 2002:a63:1658:: with SMTP id 24mr14469351pgw.167.1562975594316;
+ Fri, 12 Jul 2019 16:53:14 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 16:52:41 -0700
 In-Reply-To: <20190712235245.202558-1-saravanak@google.com>
-Message-Id: <20190712235245.202558-8-saravanak@google.com>
+Message-Id: <20190712235245.202558-9-saravanak@google.com>
 Mime-Version: 1.0
 References: <20190712235245.202558-1-saravanak@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH v5 07/11] of/platform: Sanity check DT bindings before
- creating device links
+Subject: [PATCH v5 08/11] of/platform: Make sure supplier DT node is device
+ when creating device links
 From:   Saravana Kannan <saravanak@google.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -65,51 +65,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a common DT binding is pointing to a child DT node of a particular
-parent DT node, don't add device links for such DT references. This is
-because, by definition, a child node can't be a functional dependency for
-the parent node.
+While most phandle references in common bindings point to the supplier
+device node, there are also common bindings where the phandle can
+pointing to a child node of the supplier device node.
+
+Therefore, when trying to find the supplier device that corresponds to a
+supplier phandle, we need to make sure we are using the supplier's
+device node. Otherwise, we'll never find the supplier device.
 
 Signed-off-by: Saravana Kannan <saravanak@google.com>
 ---
- drivers/of/platform.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/of/platform.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index dba962a0ee50..98414ba53b1f 100644
+index 98414ba53b1f..cf8625abe30c 100644
 --- a/drivers/of/platform.c
 +++ b/drivers/of/platform.c
-@@ -512,6 +512,19 @@ int of_platform_default_populate(struct device_node *root,
- }
- EXPORT_SYMBOL_GPL(of_platform_default_populate);
- 
-+bool of_link_is_valid(struct device_node *con, struct device_node *sup)
-+{
-+	of_node_get(sup);
-+	while (sup) {
-+		if (sup == con) {
-+			of_node_put(sup);
-+			return false;
-+		}
-+		sup = of_get_next_parent(sup);
-+	}
-+	return true;
-+}
-+
- static int of_link_binding(struct device *dev,
+@@ -529,19 +529,33 @@ static int of_link_binding(struct device *dev,
  			   const char *binding, const char *cell)
  {
-@@ -522,6 +535,10 @@ static int of_link_binding(struct device *dev,
+ 	struct of_phandle_args sup_args;
++	struct device_node *sup_np;
+ 	struct platform_device *sup_dev;
+ 	unsigned int i = 0, links = 0;
+ 	u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
  
  	while (!of_parse_phandle_with_args(dev->of_node, binding, cell, i,
  					   &sup_args)) {
-+		if (!of_link_is_valid(dev->of_node, sup_args.np)) {
-+			of_node_put(sup_args.np);
+-		if (!of_link_is_valid(dev->of_node, sup_args.np)) {
+-			of_node_put(sup_args.np);
++		sup_np = sup_args.np;
++		/*
++		 * Since we are trying to create device links, we need to find
++		 * the actual device node that owns this supplier phandle.
++		 * Often times it's the same node, but sometimes it can be one
++		 * of the parents. So walk up the parent till you find a
++		 * device.
++		 */
++		while (sup_np && !of_find_property(sup_np, "compatible", NULL))
++			sup_np = of_get_next_parent(sup_np);
++		if (!sup_np)
 +			continue;
-+		}
++
++		if (!of_link_is_valid(dev->of_node, sup_np)) {
++			of_node_put(sup_np);
+ 			continue;
+ 		}
  		i++;
- 		sup_dev = of_find_device_by_node(sup_args.np);
- 		of_node_put(sup_args.np);
+-		sup_dev = of_find_device_by_node(sup_args.np);
+-		of_node_put(sup_args.np);
++		sup_dev = of_find_device_by_node(sup_np);
++		of_node_put(sup_np);
+ 		if (!sup_dev)
+ 			continue;
+ 		if (device_link_add(dev, &sup_dev->dev, dl_flags))
 -- 
 2.22.0.510.g264f2c817a-goog
 
