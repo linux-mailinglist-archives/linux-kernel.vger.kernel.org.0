@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5560F66E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7820E66E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfGLMip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:38:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42970 "EHLO mail.kernel.org"
+        id S1728648AbfGLMih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:38:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728868AbfGLM2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:28:43 -0400
+        id S1728886AbfGLM2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:28:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16E1321721;
-        Fri, 12 Jul 2019 12:28:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C653A21019;
+        Fri, 12 Jul 2019 12:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934522;
-        bh=/Jar8IeLznHx4REKRYSjt26qWLrEXBuOcKDnIMhnuzw=;
+        s=default; t=1562934531;
+        bh=H6I2/ksPnVbn5p9q6Yu9BDSMuPFeLGvZrFTXPm23iHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mio2sbqWBGMuSMYYtD0bQZ+8GonKNbF7pc9uXb5BjJUWphiEXEL58CMxu7MlwqKXA
-         qf9yqgZJ006NfXIXg5mQfiI7PT/0Ismf91bLJK89l02duqpLZO5YFukqOn7z4Ov07R
-         nFrlGmdr4//xrBdM1vU9FMTuZx3zN7dUsQZoenUw=
+        b=QDiwCvCCSvqjPhpAMYTHeXueHCp7rur69PL6OLZmwzmWp8LfTfrwZArLQ0+ZzU+LB
+         1aEHyJw990XA+CQ1KXMT0n3QFI9QkuamOeopEwOpZrenF4tZCCEPzXI9N/0E/TCYo9
+         rp1Cn+9GzaVispXgViki3Lz1TUb2sO2Qc5Ps/OM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 084/138] quota: fix a problem about transfer quota
-Date:   Fri, 12 Jul 2019 14:19:08 +0200
-Message-Id: <20190712121631.963580721@linuxfoundation.org>
+        stable@vger.kernel.org, Trond Myklebust <trondmy@hammerspace.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 087/138] NFS4: Only set creation opendata if O_CREAT
+Date:   Fri, 12 Jul 2019 14:19:11 +0200
+Message-Id: <20190712121632.082259484@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -43,41 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c6d9c35d16f1bafd3fec64b865e569e48cbcb514 ]
+[ Upstream commit 909105199a682cb09c500acd443d34b182846c9c ]
 
-Run below script as root, dquot_add_space will return -EDQUOT since
-__dquot_transfer call dquot_add_space with flags=0, and dquot_add_space
-think it's a preallocation. Fix it by set flags as DQUOT_SPACE_WARN.
+We can end up in nfs4_opendata_alloc during task exit, in which case
+current->fs has already been cleaned up.  This leads to a crash in
+current_umask().
 
-mkfs.ext4 -O quota,project /dev/vdb
-mount -o prjquota /dev/vdb /mnt
-setquota -P 23 1 1 0 0 /dev/vdb
-dd if=/dev/zero of=/mnt/test-file bs=4K count=1
-chattr -p 23 test-file
+Fix this by only setting creation opendata if we are actually doing an open
+with O_CREAT.  We can drop the check for NULL nfs4_open_createattrs, since
+O_CREAT will never be set for the recovery path.
 
-Fixes: 7b9ca4c61bc2 ("quota: Reduce contention on dq_data_lock")
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Suggested-by: Trond Myklebust <trondmy@hammerspace.com>
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/quota/dquot.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/nfs4proc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index fc20e06c56ba..dd1783ea7003 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -1993,8 +1993,8 @@ int __dquot_transfer(struct inode *inode, struct dquot **transfer_to)
- 				       &warn_to[cnt]);
- 		if (ret)
- 			goto over_quota;
--		ret = dquot_add_space(transfer_to[cnt], cur_space, rsv_space, 0,
--				      &warn_to[cnt]);
-+		ret = dquot_add_space(transfer_to[cnt], cur_space, rsv_space,
-+				      DQUOT_SPACE_WARN, &warn_to[cnt]);
- 		if (ret) {
- 			spin_lock(&transfer_to[cnt]->dq_dqb_lock);
- 			dquot_decr_inodes(transfer_to[cnt], inode_usage);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index eeee100785a5..fd2c19eea647 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1234,10 +1234,20 @@ static struct nfs4_opendata *nfs4_opendata_alloc(struct dentry *dentry,
+ 	atomic_inc(&sp->so_count);
+ 	p->o_arg.open_flags = flags;
+ 	p->o_arg.fmode = fmode & (FMODE_READ|FMODE_WRITE);
+-	p->o_arg.umask = current_umask();
+ 	p->o_arg.claim = nfs4_map_atomic_open_claim(server, claim);
+ 	p->o_arg.share_access = nfs4_map_atomic_open_share(server,
+ 			fmode, flags);
++	if (flags & O_CREAT) {
++		p->o_arg.umask = current_umask();
++		p->o_arg.label = nfs4_label_copy(p->a_label, label);
++		if (c->sattr != NULL && c->sattr->ia_valid != 0) {
++			p->o_arg.u.attrs = &p->attrs;
++			memcpy(&p->attrs, c->sattr, sizeof(p->attrs));
++
++			memcpy(p->o_arg.u.verifier.data, c->verf,
++					sizeof(p->o_arg.u.verifier.data));
++		}
++	}
+ 	/* don't put an ACCESS op in OPEN compound if O_EXCL, because ACCESS
+ 	 * will return permission denied for all bits until close */
+ 	if (!(flags & O_EXCL)) {
+@@ -1261,7 +1271,6 @@ static struct nfs4_opendata *nfs4_opendata_alloc(struct dentry *dentry,
+ 	p->o_arg.server = server;
+ 	p->o_arg.bitmask = nfs4_bitmask(server, label);
+ 	p->o_arg.open_bitmap = &nfs4_fattr_bitmap[0];
+-	p->o_arg.label = nfs4_label_copy(p->a_label, label);
+ 	switch (p->o_arg.claim) {
+ 	case NFS4_OPEN_CLAIM_NULL:
+ 	case NFS4_OPEN_CLAIM_DELEGATE_CUR:
+@@ -1274,13 +1283,6 @@ static struct nfs4_opendata *nfs4_opendata_alloc(struct dentry *dentry,
+ 	case NFS4_OPEN_CLAIM_DELEG_PREV_FH:
+ 		p->o_arg.fh = NFS_FH(d_inode(dentry));
+ 	}
+-	if (c != NULL && c->sattr != NULL && c->sattr->ia_valid != 0) {
+-		p->o_arg.u.attrs = &p->attrs;
+-		memcpy(&p->attrs, c->sattr, sizeof(p->attrs));
+-
+-		memcpy(p->o_arg.u.verifier.data, c->verf,
+-				sizeof(p->o_arg.u.verifier.data));
+-	}
+ 	p->c_arg.fh = &p->o_res.fh;
+ 	p->c_arg.stateid = &p->o_res.stateid;
+ 	p->c_arg.seqid = p->o_arg.seqid;
 -- 
 2.20.1
 
