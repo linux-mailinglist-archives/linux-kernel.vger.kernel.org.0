@@ -2,135 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DE367563
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 21:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EDDF67572
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 21:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfGLTbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 15:31:32 -0400
-Received: from mxserver5-out5.masterweb.com ([103.25.223.54]:53897 "EHLO
-        mxserver5-out5.masterweb.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726976AbfGLTbc (ORCPT
+        id S1727474AbfGLTkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 15:40:45 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41292 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727277AbfGLTko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 15:31:32 -0400
-X-Greylist: delayed 12718 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 15:31:29 EDT
-Received: from [45.64.1.95] (helo=cl46075x.maintenis.com)
-        by mxserver5.masterweb.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <infoagywest@ptkbspro.com>)
-        id 1hlxx7-00042D-Cd; Fri, 12 Jul 2019 22:59:25 +0700
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=ptkbspro.com; s=default; h=MIME-Version:Content-Type:Subject:To:From:
-        Message-ID:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mX8m69JJS9POGuCwnYwM5p8xiCDpNnfsgHOzo/kb9NE=; b=L/b+MHYaMZX2h1ZyVh4DxdM/7q
-        BtpBZu0rL4fDDeR5Qn7n2EiE93h280AkWzkjt2bfY704IfxyvDFk2hgEWZ/3XvtkmkHY0jx0oFylO
-        bub1WgWn1QB2qpLbusBkNxD9KIPjwQPpIyKOj0hE2/VqdpHYZrEsSsjaxYtMfRQ0XSf/2wZrgABzS
-        zjLRrDzIomV5DKNzKGxv6ugZH8j0PU+50tUy9jomIPmRu057FWKIU4wxtQwY3QhEvx7uBcHVLwuft
-        esEquVTj14oxz8IYrpVkQlgBbmv/ahH1rUSGYX98mANJnwibs9Iu+NkhrShrh4j9uE0LFYZ5wj7Wq
-        PMqv2Bsw==;
-Received: from [::1] (port=42752 helo=cl46075x.maintenis.com)
-        by cl46075x.maintenis.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <infoagywest@ptkbspro.com>)
-        id 1hlxwu-0008Hq-SA; Fri, 12 Jul 2019 11:59:04 -0400
-Received: from [41.203.78.21] ([41.203.78.21]) by demo.ptkbspro.com (Horde
- Framework) with HTTPS; Fri, 12 Jul 2019 11:59:04 -0400
-Date:   Fri, 12 Jul 2019 11:59:04 -0400
-Message-ID: <20190712115904.Horde.oFkixyY6jXHgkjjBC5niJCy@demo.ptkbspro.com>
-From:   infoagywest@ptkbspro.com
-Subject: Your Over-due Fund
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Fri, 12 Jul 2019 15:40:44 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m30so4729287pff.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 12:40:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nAJsR7QXwSJc647spM+sQunAoBzpCrSmQsX27huBu+o=;
+        b=bmxPnZXFh5gOCfuOus2gHM6f6oGNgMKP/ji63JlI+bwUXl3Gpe3vjP96TTAKXaJCZC
+         zj7Y8eFA2XvcXUe8SUv1NKdUvs12xq4vmo946+SPEoJfJYl3KKJWKjnEQtWp8b/06x77
+         32gH3YSvwVXKePdbdirKmPWfh8K3q8ksM+3uI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nAJsR7QXwSJc647spM+sQunAoBzpCrSmQsX27huBu+o=;
+        b=X9Wdyd1dhk1AKfNaYwwYfHL+cbZR5BasKucUe2TJlZT5gELwVCPviUk/doiEwWQKI9
+         XZCItkAqxlovrXD/oqpqey/3a7kwWNznvEgcnsPx7gOmrIvrjxVwiF4/KL3ASf3C365S
+         toqu8PdxXiHDz8bir1vbeilmByuNjPGGclGG7FBaihh5JEtBY+IDNKkMheEDn1jPTFOZ
+         zTalZhjtFNTWknxKrOXb7LJYktYoyFq7uw5NAjw8DXqdf5W/5FYl0vLYWD/dw89pHXuY
+         bH8fIuCXTXC+jDzeyjSTChILn3tedZDVCioMiPCKpSx2M3+ppftunJLyOa1W8LuVTso2
+         GsPA==
+X-Gm-Message-State: APjAAAUcT6bkiiqvzjsLGYRTsouGoT1VLZEaWIAaEyxUQU9Q+vvD5rN/
+        tr2Mel4uZbJC3VGfURpwb2Y=
+X-Google-Smtp-Source: APXvYqxvgkL0vpDAZ6Hy5r4mm056ssuxGSXpd+iPIILPiTDSys89aOnq2iGFem/k4lcJZbyW+r6SIQ==
+X-Received: by 2002:a63:2246:: with SMTP id t6mr12863936pgm.209.1562960443485;
+        Fri, 12 Jul 2019 12:40:43 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id bo20sm7308552pjb.23.2019.07.12.12.40.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 12 Jul 2019 12:40:42 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 15:40:40 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH v1 1/6] rcu: Add support for consolidated-RCU reader
+ checking
+Message-ID: <20190712194040.GA150253@google.com>
+References: <20190711234401.220336-1-joel@joelfernandes.org>
+ <20190711234401.220336-2-joel@joelfernandes.org>
+ <20190712111125.GT3402@hirez.programming.kicks-ass.net>
+ <20190712151051.GB235410@google.com>
+ <20190712164531.GW26519@linux.ibm.com>
+ <20190712170631.GA111598@google.com>
+ <20190712174630.GX26519@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Originating-IP: 45.64.1.95
-X-MasterWebNetwork-Domain: cl46075x.maintenis.com
-X-MasterWebNetwork-Username: 45.64.1.95
-Authentication-Results: masterweb.com; auth=pass smtp.auth=45.64.1.95@cl46075x.maintenis.com
-X-MasterWebNetwork-Outgoing-Class: unsure
-X-MasterWebNetwork-Outgoing-Evidence: Combined (0.73)
-X-Recommended-Action: accept
-X-Filter-ID: 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
-X-Report-Abuse-To: spam@mxserver1.masterweb.com
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20190712174630.GX26519@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 12, 2019 at 10:46:30AM -0700, Paul E. McKenney wrote:
+> On Fri, Jul 12, 2019 at 01:06:31PM -0400, Joel Fernandes wrote:
+> > On Fri, Jul 12, 2019 at 09:45:31AM -0700, Paul E. McKenney wrote:
+> > > On Fri, Jul 12, 2019 at 11:10:51AM -0400, Joel Fernandes wrote:
+> > > > On Fri, Jul 12, 2019 at 01:11:25PM +0200, Peter Zijlstra wrote:
+> > > > > On Thu, Jul 11, 2019 at 07:43:56PM -0400, Joel Fernandes (Google) wrote:
+> > > > > > +int rcu_read_lock_any_held(void)
+> > > > > > +{
+> > > > > > +	int lockdep_opinion = 0;
+> > > > > > +
+> > > > > > +	if (!debug_lockdep_rcu_enabled())
+> > > > > > +		return 1;
+> > > > > > +	if (!rcu_is_watching())
+> > > > > > +		return 0;
+> > > > > > +	if (!rcu_lockdep_current_cpu_online())
+> > > > > > +		return 0;
+> > > > > > +
+> > > > > > +	/* Preemptible RCU flavor */
+> > > > > > +	if (lock_is_held(&rcu_lock_map))
+> > > > > 
+> > > > > you forgot debug_locks here.
+> > > > 
+> > > > Actually, it turns out debug_locks checking is not even needed. If
+> > > > debug_locks == 0, then debug_lockdep_rcu_enabled() returns 0 and we would not
+> > > > get to this point.
+> > > > 
+> > > > > > +		return 1;
+> > > > > > +
+> > > > > > +	/* BH flavor */
+> > > > > > +	if (in_softirq() || irqs_disabled())
+> > > > > 
+> > > > > I'm not sure I'd put irqs_disabled() under BH, also this entire
+> > > > > condition is superfluous, see below.
+> > > > > 
+> > > > > > +		return 1;
+> > > > > > +
+> > > > > > +	/* Sched flavor */
+> > > > > > +	if (debug_locks)
+> > > > > > +		lockdep_opinion = lock_is_held(&rcu_sched_lock_map);
+> > > > > > +	return lockdep_opinion || !preemptible();
+> > > > > 
+> > > > > that !preemptible() turns into:
+> > > > > 
+> > > > >   !(preempt_count()==0 && !irqs_disabled())
+> > > > > 
+> > > > > which is:
+> > > > > 
+> > > > >   preempt_count() != 0 || irqs_disabled()
+> > > > > 
+> > > > > and already includes irqs_disabled() and in_softirq().
+> > > > > 
+> > > > > > +}
+> > > > > 
+> > > > > So maybe something lke:
+> > > > > 
+> > > > > 	if (debug_locks && (lock_is_held(&rcu_lock_map) ||
+> > > > > 			    lock_is_held(&rcu_sched_lock_map)))
+> > > > > 		return true;
+> > > > 
+> > > > Agreed, I will do it this way (without the debug_locks) like:
+> > > > 
+> > > > ---8<-----------------------
+> > > > 
+> > > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > > > index ba861d1716d3..339aebc330db 100644
+> > > > --- a/kernel/rcu/update.c
+> > > > +++ b/kernel/rcu/update.c
+> > > > @@ -296,27 +296,15 @@ EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
+> > > >  
+> > > >  int rcu_read_lock_any_held(void)
+> > > >  {
+> > > > -	int lockdep_opinion = 0;
+> > > > -
+> > > >  	if (!debug_lockdep_rcu_enabled())
+> > > >  		return 1;
+> > > >  	if (!rcu_is_watching())
+> > > >  		return 0;
+> > > >  	if (!rcu_lockdep_current_cpu_online())
+> > > >  		return 0;
+> > > > -
+> > > > -	/* Preemptible RCU flavor */
+> > > > -	if (lock_is_held(&rcu_lock_map))
+> > > > -		return 1;
+> > > > -
+> > > > -	/* BH flavor */
+> > > > -	if (in_softirq() || irqs_disabled())
+> > > > -		return 1;
+> > > > -
+> > > > -	/* Sched flavor */
+> > > > -	if (debug_locks)
+> > > > -		lockdep_opinion = lock_is_held(&rcu_sched_lock_map);
+> > > > -	return lockdep_opinion || !preemptible();
+> > > > +	if (lock_is_held(&rcu_lock_map) || lock_is_held(&rcu_sched_lock_map))
+> > > 
+> > > OK, I will bite...  Why not also lock_is_held(&rcu_bh_lock_map)?
+> > 
+> > Hmm, I was borrowing the strategy from rcu_read_lock_bh_held() which does not
+> > check for a lock held in this map.
+> > 
+> > Honestly, even  lock_is_held(&rcu_sched_lock_map) seems unnecessary per-se
+> > since !preemptible() will catch that? rcu_read_lock_sched() disables
+> > preemption already, so lockdep's opinion of the matter seems redundant there.
+> 
+> Good point!  At least as long as the lockdep splats list RCU-bh among
+> the locks held, which they did last I checked.
+> 
+> Of course, you could make the same argument for getting rid of
+> rcu_sched_lock_map.  Does it make sense to have the one without
+> the other?
 
-Sir/Ma,
+It probably makes it inconsistent in the least. I will add the check for
+the rcu_bh_lock_map in a separate patch, if that's Ok with you - since I also
+want to update the rcu_read_lock_bh_held() logic in the same patch.
 
-This is to notify you that your long awaited funds is ready for claim.
-Your name attached to claim file Code HBLK-027-FB06/19 has been  
-approved and ready for disbursement.
+That rcu_read_lock_bh_held() could also just return !preemptible as Peter
+suggested for the bh case.
 
-To process your funds you are expected to reply with the attached file  
-code: HBLK-027-FB06/19, your name, contact address and telephone  
-number for quick attestation of your file within the next 72 hours as  
-the payment rules stipulates to avoid penalty.
+> > Sorry I already sent out patches again before seeing your comment but I can
+> > rework and resend them based on any other suggestions.
+> 
+> Not a problem!
 
-CONTACT PAYMENT OFFICER: Rev. John Bettison via his official E-mail:  
-rev.johnbettison@outlook.com
+Thanks. Depending on whether there is any other feedback, I will work on the
+bh_ stuff as a separate patch on top of this series, or work it into the next
+series revision if I'm reposting. Hopefully that sounds Ok to you.
 
-Yours truly,
+thanks,
 
-Mrs. Agnes Westman
-
-Head Of United Nations Under-Secretary-
-General For Internal Oversight Services.
-
-
+ - Joel
 
 
