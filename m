@@ -2,196 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E10E66F6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 432A866F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 15:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfGLNBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 09:01:48 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53128 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfGLNBr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 09:01:47 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190712130145euoutp01b189cc16ce3ea8cec806bac4843feed5~wqnircuZX0163101631euoutp01D
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 13:01:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190712130145euoutp01b189cc16ce3ea8cec806bac4843feed5~wqnircuZX0163101631euoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1562936505;
-        bh=0Ph+jlbDFqlic9RlOSrcIKz2JKpU+ek5a4NYj/6z2ys=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=miJbyZskVcrhDa7qC19aY2wpoji1Zut2W5q0JrcBpNRHyldTkyYHYqWH9PLjiAjJc
-         fhhA4rx7RGbhWG3f3fEPnbAQGNFzaAU4AssBelYNr9Qw7bOxdG7URf2/yw8T+ZcrhZ
-         mkqCCs+nj2vOIPdxz25AvYSDKvXqT0XdwFqOl8zA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190712130145eucas1p23e4e0971a626de5b7a229d1c81566fb2~wqniAROjQ3006530065eucas1p2O;
-        Fri, 12 Jul 2019 13:01:45 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 82.33.04325.8B4882D5; Fri, 12
-        Jul 2019 14:01:44 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190712130144eucas1p18e10379bdec5a07d218f775495cd3db1~wqnhHqbG30135501355eucas1p1D;
-        Fri, 12 Jul 2019 13:01:44 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190712130144eusmtrp1748cf5233b9a72a42c4c4e27528dbdc5~wqng5kBYx1905319053eusmtrp1o;
-        Fri, 12 Jul 2019 13:01:44 +0000 (GMT)
-X-AuditID: cbfec7f5-b8fff700000010e5-fc-5d2884b8ca55
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 21.A4.04140.7B4882D5; Fri, 12
-        Jul 2019 14:01:43 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190712130143eusmtip254e80d709661cfbfe69a4e165de522ff~wqngdl3Db0500405004eusmtip2d;
-        Fri, 12 Jul 2019 13:01:43 +0000 (GMT)
-Subject: Re: [PATCH 1/2] regmap: Add DSI bus support
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <10b1313f-7a60-df04-a9e3-76649b74f2f0@samsung.com>
-Date:   Fri, 12 Jul 2019 15:01:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.0
-MIME-Version: 1.0
-In-Reply-To: <CAF6AEGtGjKRA3A8v6pgaXLgpeiLZuz6HuDSFRjKrNp4iQNVZtA@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+        id S1727341AbfGLNC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 09:02:29 -0400
+Received: from mail-eopbgr60042.outbound.protection.outlook.com ([40.107.6.42]:15169
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727045AbfGLNC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 09:02:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0phNepfyJlON2igMCuCnLBhgeo1BHj/eZEaOI2FPzqQ=;
+ b=Ne1Ixsc6onMGSRbbY9F8eU1EGPvoKpLjbounaat+rQ75+dwMBcSUm5VlAb9Mu/y1D6J89+jp9GcQxw5R/JJdzxy+wpJG/sl+ELBAocdAdwRB+vFawpiN5uZu8aoahrhk0aqtGBEeeCGBoyS/eopnsmXQFP8nJ6iTlVgcXH77Zeg=
+Received: from VI1PR0402MB3918.eurprd04.prod.outlook.com (52.134.17.31) by
+ VI1PR0402MB3791.eurprd04.prod.outlook.com (52.134.15.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Fri, 12 Jul 2019 13:02:24 +0000
+Received: from VI1PR0402MB3918.eurprd04.prod.outlook.com
+ ([fe80::a4cb:fecc:3079:494]) by VI1PR0402MB3918.eurprd04.prod.outlook.com
+ ([fe80::a4cb:fecc:3079:494%4]) with mapi id 15.20.2052.022; Fri, 12 Jul 2019
+ 13:02:24 +0000
+From:   Mirela Rabulea <mirela.rabulea@nxp.com>
+To:     "paul.kocialkowski@bootlin.com" <paul.kocialkowski@bootlin.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+        "boris.brezillon@collabora.com" <boris.brezillon@collabora.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "niklas.soderlund+renesas@ragnatech.se" 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>
+Subject: Re: [EXT] Re: Re: [PATCH] media: v4l: Add packed YUV444 24bpp pixel
+ format
+Thread-Topic: [EXT] Re: Re: [PATCH] media: v4l: Add packed YUV444 24bpp pixel
+ format
+Thread-Index: AQHVN/CgZoYCDAU+vEW4YJIYV1JwU6bGtnSAgAA9wwA=
+Date:   Fri, 12 Jul 2019 13:02:24 +0000
+Message-ID: <1562936544.9511.25.camel@nxp.com>
+References: <1562166911-27454-1-git-send-email-mirela.rabulea@nxp.com>
+         <20190711081808.GA15389@aptenodytes> <1562853469.9511.6.camel@nxp.com>
+         <20190712092121.GF15882@aptenodytes>
+In-Reply-To: <20190712092121.GF15882@aptenodytes>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFKsWRmVeSWpSXmKPExsWy7djP87o7WjRiDebeNrfoPXeSyeL0/ncs
-        FlMfPmGz+L9tIrPFla/v2Szaln9jtuicuITdYuL+s+wWl3fNYbN4vvAHswOXx95vC1g8ds66
-        y+4xu2Mmq8emVZ1sHneu7WHz2P7tAavH/e7jTB6fN8kFcERx2aSk5mSWpRbp2yVwZXx/dJ+l
-        YKFExax/rSwNjGeFuhg5OSQETCSuXLnO3sXIxSEksIJR4u+XdVDOF0aJm783QDmfGSVWTrnN
-        AtPy8P06FojEckaJz5uuskE4bxklfs6bwwhSJQxUtW7pAWYQW0RAWWLV1v1gHcwCU5gldl+9
-        AlbEJqAp8XfzTTYQm1fATqK/aQtYnEVAVWL21YPsILaoQJjEzwWdUDWCEidnPgE7g1MgUGLh
-        7WtgcWYBeYntb+cwQ9jiEreezGcCWSYhcI9d4ureNiaIu10k7v9+xQ5hC0u8Or4FypaROD25
-        B+q3eon7K1qYIZo7GCW2btjJDJGwljh8/CJrFyMH0AZNifW79CHCjhKLvi9mAQlLCPBJ3Hgr
-        CHEDn8SkbdOZIcK8Eh1t0MBWlLh/divUQHGJpRe+sk1gVJqF5LNZSL6ZheSbWQh7FzCyrGIU
-        Ty0tzk1PLTbOSy3XK07MLS7NS9dLzs/dxAhMYaf/Hf+6g3Hfn6RDjAIcjEo8vDcs1WOFWBPL
-        iitzDzFKcDArifCu+g8U4k1JrKxKLcqPLyrNSS0+xCjNwaIkzlvN8CBaSCA9sSQ1OzW1ILUI
-        JsvEwSnVwKiqkVr8/0XocR+elcc1bHo29RxYvuqx2Y2Ab7JXrnrvirI1lXhwX9Pb10FXL1ju
-        Rn94/7TjUqv7G2y+Mj+I63rqoMh3vJw1xXfLna3BS364rz768N6FvUVrSw6fSDvsZGSTeO43
-        Z/2SpberhBI/mbLbf/pRkh2j5y79ZOM03p/vv+S6hfQ5eiqxFGckGmoxFxUnAgA3HWjfXQMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7rbWzRiDTre21j0njvJZHF6/zsW
-        i6kPn7BZ/N82kdniytf3bBZty78xW3ROXMJuMXH/WXaLy7vmsFk8X/iD2YHLY++3BSweO2fd
-        ZfeY3TGT1WPTqk42jzvX9rB5bP/2gNXjfvdxJo/Pm+QCOKL0bIryS0tSFTLyi0tslaINLYz0
-        DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mr4/us9SsFCiYta/VpYGxrNCXYycHBIC
-        JhIP369j6WLk4hASWMoo8frkHSaIhLjE7vlvmSFsYYk/17rYIIpeM0o0TdjNApIQBupet/QA
-        WJGIgLLEqq37wSYxC0xhlpj56iwzRMcrJom3sx+xglSxCWhK/N18kw3E5hWwk+hv2sIIYrMI
-        qErMvnqQvYuRg0NUIEzi6Ik8iBJBiZMzn4At4xQIlFh4+xpYK7OAusSfeZeYIWx5ie1v50DZ
-        4hK3nsxnmsAoNAtJ+ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYMxu
-        O/Zzyw7GrnfBhxgFOBiVeHhvWKrHCrEmlhVX5h5ilOBgVhLhXfUfKMSbklhZlVqUH19UmpNa
-        fIjRFOi3icxSosn5wHSSVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mD
-        U6qB8SYjz/U+Z5E/WjFcktxKD5eeXbPg4KtJecLpC9RDd2/n9I+/5F/ouzCg1/dVuc3iwAnz
-        5cRFldauXSH9o+SoJfNjm81dyaw9i7Y2y9Zfs2ZaGKn1MMQnVf6VzfrdEel9U8UrfzREbtzB
-        9I+9OIlVavfSOdbrXr4zjD5086V4vMK3O5xcxpv+KLEUZyQaajEXFScCANMElHPvAgAA
-X-CMS-MailID: 20190712130144eucas1p18e10379bdec5a07d218f775495cd3db1
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mirela.rabulea@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 592b0de1-e234-4166-92d6-08d706c92f2a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3791;
+x-ms-traffictypediagnostic: VI1PR0402MB3791:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1PR0402MB3791535DE7CE0473320215898FF20@VI1PR0402MB3791.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 00963989E5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(136003)(396003)(366004)(199004)(189003)(36756003)(2351001)(476003)(7416002)(6436002)(66476007)(14454004)(26005)(486006)(2616005)(25786009)(2501003)(11346002)(966005)(5660300002)(478600001)(81156014)(99286004)(81166006)(8936002)(44832011)(91956017)(229853002)(66556008)(8676002)(54906003)(6506007)(102836004)(76116006)(64756008)(86362001)(186003)(6246003)(6486002)(66946007)(76176011)(2906002)(66446008)(316002)(3846002)(68736007)(256004)(6116002)(446003)(103116003)(53936002)(50226002)(71190400001)(5640700003)(4326008)(6916009)(7736002)(19627235002)(6306002)(305945005)(71200400001)(66066001)(6512007)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3791;H:VI1PR0402MB3918.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 75cOLT3cEBsCOJ2yQIyhxZlkLdpwzaf4WhLViuem20MFzNAI51MD5Ncg/3lF9cJ/HYJL6cWoQSQY6RV9bsNFvAxbqYMWYiZ3o0E/NlUECnCTEeMeOXZGUycm+ewXLHgVJaZ91Qw8i5eCXrqGznZfaJde6JXeaHlxIToozy2r5dTntR3JNE+uW77dVwzckpwQUOE8bUf6my+lg88ZWag53vxhaH5uTvBmD4XEuUkKdaGXF9wsWBnIZJbBT4FPTqLpCBQUrnG+yHuX2xIHyRDp8CNOhU1iaiiOLMi1s6e2yOCydQ2kAOlLkG18sV/RbGCNW4rYmFy5Bn/95qxhvoSZbbwFXxk0TXUNOHtBomw/X4BoQ4rYmKpUMOG3pW/lDiTaxG72FGkfcYzThXa4G5fjJ3pzfRaOlGgipSPrdW6D6aA=
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7
-References: <20190703214326.41269-1-jeffrey.l.hugo@gmail.com>
-        <20190703214512.41319-1-jeffrey.l.hugo@gmail.com>
-        <CGME20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7@epcas2p3.samsung.com>
-        <20190706010604.GG20625@sirena.org.uk>
-        <64ca3a74-374f-d4f3-bee6-a607cc5c0fc5@samsung.com>
-        <CAF6AEGtGjKRA3A8v6pgaXLgpeiLZuz6HuDSFRjKrNp4iQNVZtA@mail.gmail.com>
+Content-ID: <D75569C1F0B6BE44B6BE039BB4CDBE19@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 592b0de1-e234-4166-92d6-08d706c92f2a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2019 13:02:24.4767
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mirela.rabulea@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3791
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.07.2019 15:56, Rob Clark wrote:
-> On Thu, Jul 11, 2019 at 6:11 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->> On 06.07.2019 03:06, Mark Brown wrote:
->>> On Wed, Jul 03, 2019 at 02:45:12PM -0700, Jeffrey Hugo wrote:
->>>> Add basic support with a simple implementation that utilizes the generic
->>>> read/write commands to allow device registers to be configured.
->>> This looks good to me but I really don't know anything about DSI,
->>> I'd appreciate some review from other people who do.  I take it
->>> there's some spec thing in DSI that says registers and bytes must
->>> both be 8 bit?
->>
->> I am little bit confused about regmap usage here. On the one hand it
->> nicely fits to this specific driver, probably because it already uses
->> regmap_i2c.
->>
->> On the other it will be unusable for almost all current DSI drivers and
->> probably for most new drivers. Why?
->>
->> 1. DSI protocol defines actually more than 30 types of transactions[1],
->> but this patchset implements only few of them (dsi generic write/read
->> family). Is it possible to implement multiple types of transactions in
->> regmap?
->>
->> 2. There is already some set of helpers which uses dsi bus, rewriting it
->> on regmap is possible or driver could use of regmap and direct access
->> together, the question is if it is really necessary.
->>
->> 3. DSI devices are no MFDs so regmap abstraction has no big value added
->> (correct me, if there are other significant benefits).
->>
-> I assume it is not *just* this one bridge that can be programmed over
-> either i2c or dsi, depending on how things are wired up on the board.
-> It certainly would be nice for regmap to support this case, so we
-> don't have to write two different bridge drivers for the same bridge.
-> I wouldn't expect a panel that is only programmed via dsi to use this.
-
-
-On the other side supporting DSI and I2C in one driver is simply matter
-of writing proper accesors.
-
-
-Regards
-
-Andrzej
-
-
->
-> BR,
-> -R
->
->> [1]:
->> https://elixir.bootlin.com/linux/latest/source/include/video/mipi_display.h#L15
->>
->>
->> Regards
->>
->> Andrzej
->>
->>
->>> A couple of minor comments, no need to resend just for these:
->>>
->>>> +       payload[0] = (char)reg;
->>>> +       payload[1] = (char)val;
->>> Do you need the casts?
->>>
->>>> +    ret = mipi_dsi_generic_write(dsi, payload, 2);
->>>> +    return ret < 0 ? ret : 0;
->>> Please just write an if statement, it helps with legibility.
->>>
->>>> +struct regmap *__regmap_init_dsi(struct mipi_dsi_device *dsi,
->>>> +                             const struct regmap_config *config,
->>>> +                             struct lock_class_key *lock_key,
->>>> +                             const char *lock_name)
->>>> +{
->>>> +    return __regmap_init(&dsi->dev, &dsi_bus, &dsi->dev, config,
->>>> +                         lock_key, lock_name);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(__regmap_init_dsi);
->>> Perhaps validate that the config is OK (mainly the register/value
->>> sizes)?  Though I'm not sure it's worth it so perhaps not - up to
->>> you.
->>
-
+T24gVmksIDIwMTktMDctMTIgYXQgMTE6MjEgKzAyMDAsIHBhdWwua29jaWFsa293c2tpQGJvb3Rs
+aW4uY29tIHdyb3RlOg0KPiBIaSwNCj4gDQo+IE9uIFRodSAxMSBKdWwgMTksIDEzOjU3LCBNaXJl
+bGEgUmFidWxlYSB3cm90ZToNCj4gPiANCj4gPiBPbiBKbywgMjAxOS0wNy0xMSBhdCAxMDoxOCAr
+MDIwMCwgUGF1bCBLb2NpYWxrb3dza2kgd3JvdGU6DQo+ID4gPiANCj4gPiA+IENhdXRpb246IEVY
+VCBFbWFpbA0KPiA+ID4gDQo+ID4gPiBIaSwNCj4gPiA+IA0KPiA+ID4gT24gV2VkIDAzIEp1bCAx
+OSwgMTg6MTUsIE1pcmVsYSBSYWJ1bGVhIHdyb3RlOg0KPiA+ID4gPiANCj4gPiA+ID4gDQo+ID4g
+PiA+IFRoZSBhZGRlZCBmb3JtYXQgaXMgVjRMMl9QSVhfRk1UX1lVVjI0LCB0aGlzIGlzIGEgcGFj
+a2VkDQo+ID4gPiA+IFlVViA0OjQ6NCBmb3JtYXQsIHdpdGggOCBiaXRzIGZvciBlYWNoIGNvbXBv
+bmVudCwgMjQgYml0cw0KPiA+ID4gPiBwZXIgc2FtcGxlLg0KPiA+ID4gPiANCj4gPiA+ID4gVGhp
+cyBmb3JtYXQgaXMgdXNlZCBieSB0aGUgaS5NWCA4UXVhZE1heCBhbmQgaS5NWA0KPiA+ID4gPiA4
+RHVhbFhQbHVzLzhRdWFkWFBsdXMNCj4gPiA+ID4gSlBFRyBlbmNvZGVyL2RlY29kZXIuDQo+ID4g
+PiBTbyB0aGlzIGZvcm1hdCBpcyBub3QgYWxpZ25lZCB0byAzMi1iaXQgd29yZHMgYXQgYWxsIGFu
+ZCB3ZSBjYW4NCj4gPiA+IGV4cGVjdA0KPiA+ID4gdG8gc2VlIGNhc2VzIHdoZXJlIGEgc2luZ2xl
+IDMyLWJpdCB3b3JkIGNvbnRhaW5zIGRhdGEgZm9yIHR3bw0KPiA+ID4gcGl4ZWxzPw0KPiA+ID4g
+DQo+ID4gPiBOb3RoaW5nIHdyb25nIHdpdGggdGhhdCwganVzdCBjaGVja2luZyB3aGV0aGVyIEkg
+dW5kZXJzdG9vZCB0aGlzDQo+ID4gPiByaWdodCA6KQ0KPiA+ID4gDQo+ID4gSGkgUGF1bCwNCj4g
+PiB5ZXMsIHlvdXIgdW5kZXJzdGFuZGluZyBpcyBjb3JyZWN0Lg0KPiBPdXQgb2YgY3VyaW9zaXR5
+LCBpcyB0aGUgSlBFRyBibG9jayBhc3NtaWxpYXRlZCB0byAob25lIG9mKSB0aGUNCj4gSGFudHJv
+IFZQVXMNCj4gb3IgaXMgaXQgYSB0b3RhbGx5IGRpZmZlcmVudCBhbmQgdW5yZWxhdGVkIGhhcmR3
+YXJlIGJsb2NrPw0KPiANCj4gQW55d2F5IHRoZSBjaGFuZ2UgbG9va3MgZ29vZCB0byBtZToNCj4g
+UmV2aWV3ZWQtYnk6IFBhdWwgS29jaWFsa293c2tpIDxwYXVsLmtvY2lhbGtvd3NraUBib290bGlu
+LmNvbT4NCj4gDQo+IENoZWVycywNCj4gDQo+IFBhdWwNCg0KSGkgUGF1bCwNCnRoYW5rcyBmb3Ig
+dGFraW5nIHRoZSB0aW1lIHRvIHJldmlldy4NClRoZSBKUEVHIGRlY29kZXIgaXMgYSBzdGFuZGFs
+b25lIGNvcmUgJiB3cmFwcGVyLCBub3QgYXNzaW1pbGF0ZWQgdG8gdGhlDQpWUFUuIEl0IGlzIGRl
+c2NyaWJlZCBpbiB0aGUgcmVmZXJlbmNlIG1hbnVhbCBoZXJlOg0KaHR0cHM6Ly93d3cubnhwLmNv
+bS9kb2NzL2VuL3JlZmVyZW5jZS1tYW51YWwvSU1YOERRWFBSTS5wZGYNCmluIGNoYXB0ZXJzICIx
+NS42LjMgSlBFRyBEZWNvZGVyIChKUEVHREVDKSIgYW5kICIxNS42LjUgSlBFRyBEZWNvZGVyDQpX
+cmFwcGVyIi4NClRoZSBKUEVHIGNvcmUgaXMgZnJvbSBhIHRoaXJkIHBhcnR5LCBhbmQgdGhlIHdy
+YXBwZXIgZnJvbSBOWFAuDQoNClJlZ2FyZHMsDQpNaXJlbGENCg==
