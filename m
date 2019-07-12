@@ -2,82 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 137F367262
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B33C967272
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfGLPbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 11:31:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34808 "EHLO mail.kernel.org"
+        id S1727268AbfGLPde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 11:33:34 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:10600 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfGLPbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 11:31:12 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726930AbfGLPdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 11:33:33 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FB1F208E4;
-        Fri, 12 Jul 2019 15:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562945471;
-        bh=3t+6wjpJFOQt0JVl6oztKApAO9yZH1Bl74JWDDgu/kk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OY22DrZk1GEUN/LX3LkHcHgRDlZdhb565nA0K6nQyluWxpdrUnF1G6g25c1GP/MN2
-         mtuXWyd0UJMXvuBrt6XGtRpIE+Rjzg5LfpxBiv7/QVawXu+RYmnmwCXgiVJgaz0dJN
-         G7+ZtPLT4QjwEWRUtU1sR7pVqFCVoopac3030Fys=
-Date:   Fri, 12 Jul 2019 17:31:08 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.2 00/61] 5.2.1-stable review
-Message-ID: <20190712153108.GD13940@kroah.com>
-References: <20190712121620.632595223@linuxfoundation.org>
- <a1ae16a7-e8f7-b6fc-df4e-46079bebf9b3@nvidia.com>
+        by mx1.mailbox.org (Postfix) with ESMTPS id A1467511F2;
+        Fri, 12 Jul 2019 17:33:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id QDRC6RVdbb1k; Fri, 12 Jul 2019 17:33:19 +0200 (CEST)
+Date:   Sat, 13 Jul 2019 01:32:27 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 00/10] namei: openat2(2) path resolution restrictions
+Message-ID: <20190712153227.owkjmx47lzrggweo@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190712151118.GP17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="whm56wbfs3ehouyz"
 Content-Disposition: inline
-In-Reply-To: <a1ae16a7-e8f7-b6fc-df4e-46079bebf9b3@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190712151118.GP17978@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 02:36:29PM +0100, Jon Hunter wrote:
-> 
-> On 12/07/2019 13:19, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.1 release.
-> > There are 61 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.1-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.1-rc1-g61731e8fe278
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-That was fast, thanks for testing all of these.
+--whm56wbfs3ehouyz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:27AM +1000, Aleksa Sarai wrote:
+> > Patch changelog:
+> >   v9:
+> >     * Replace resolveat(2) with openat2(2). [Linus]
+> >     * Output a warning to dmesg if may_open_magiclink() is violated.
+> >     * Add an openat2(O_CREAT) testcase.
+>=20
+> One general note for the future, BTW: for such series it's generally
+> a good idea to put it into a public git tree somewhere and mention that
+> in the announcement...
+
+Sure, I'll mention it next time. For the record the tree is
+  <https://github.com/cyphar/linux/tree/resolveat/master>
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--whm56wbfs3ehouyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSioAwAKCRCdlLljIbnQ
+EgzkAQChn28FqDC8mwoRBSpKSsYawQ4zVuMzbt7zKNknJNg7nQD/cmJDlKpmnt40
+Jbd8FP1RPFVHA8Y7yVeIE+cOpg3nbw4=
+=RciL
+-----END PGP SIGNATURE-----
+
+--whm56wbfs3ehouyz--
