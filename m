@@ -2,154 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC0A66804
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 09:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB6C76680E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 09:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfGLHyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 03:54:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36579 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfGLHym (ORCPT
+        id S1726234AbfGLH6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 03:58:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55250 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfGLH6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 03:54:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so3869580wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 00:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cdSZWK8qKwd5W63S3RZDijkSdQQAmStjw/2ryXw2d6E=;
-        b=Uky+NvlQbBcddHsFAQL2EE3x3aklddkT8WRHQZe+qSCpHFipsWeOQRluRPJ80Mn1jq
-         3xVHbsZ0GJTyLBGUaFq4MdhtyIrCwJcKqpzNJtFiaWn15j+lR1CJl8hhfDGWVjs0ci/A
-         MD/0rmxymRr2xUi2jQXuyvERUSXW9Ywvk/w6sBQXJHo5B0jfZp0R0fpnjWnPZ6qshtM0
-         AdoF2TXruU/CkWFVHEEu6FfyUwUYzW44L9gw6A7EWwVJl11LWo+rO0jlSt1u2i+CHHYs
-         Vv0A7vE+WoaS9gKCtQaJGHz8zoI0WTmKbcu1sZfsU9mn+oNolNdVBt0LzQ3Fw2WYmZDu
-         r24w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cdSZWK8qKwd5W63S3RZDijkSdQQAmStjw/2ryXw2d6E=;
-        b=GEREffdyxs0dpFlpHgwVqJMABycIpRV53+MK+Thr6ULxhzsfkaTQqg0C8XD4uddCCL
-         j3n1gK3bXnaABkcrmpaR40l4wENJiEjQ7Kfz6Y8bX2VrhIomv2Gm1wYhn5IaaZ/LD4CM
-         Z8iBbio/WNorjvPM7CFZylhT3Qf7oEuFKkCwwrNLVwoiDPwCPeOgEG/F9G8NHlAE6guD
-         a1vdFAnzXsOCJe2Ujjt3kUjqyKnUPzxlZcXZQqrysh3MduE0xbsP1Tbhl06ESiX1IMnm
-         KEr++6DTSBbOfzdWNe32HDFLXgx6VxA8vk3Shy1R02m/WeLlvOBkapwpPKNzVnNx0kTl
-         4T5A==
-X-Gm-Message-State: APjAAAVLkRrFnPOIEZ1AQFIP9ZDBFtFcfYtUpQWOx/qI7F+dNgSKZnkH
-        i4EbhgTLYn84OdPu8dkU5yc=
-X-Google-Smtp-Source: APXvYqxVYttLFK58vrQ4Lz5Ag7m6xPi3EX8BUOzTW9L7w9JmHxd7OKQmujv3Gm1M0hiaKAjyzTkByg==
-X-Received: by 2002:a1c:9c8a:: with SMTP id f132mr8352800wme.29.1562918080238;
-        Fri, 12 Jul 2019 00:54:40 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id o20sm18560550wrh.8.2019.07.12.00.54.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 12 Jul 2019 00:54:39 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 00:54:38 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] waitqueue: fix clang -Wuninitialized warnings
-Message-ID: <20190712075438.GA88904@archlinux-threadripper>
-References: <20190703081119.209976-1-arnd@arndb.de>
- <20190711174949.dc74310efd1fd3c8bd4ea276@linux-foundation.org>
- <CAK8P3a2ZRw9B=X76yL-bRzC+01z6VaHDzPAhQQw7V9MXtkp+Jg@mail.gmail.com>
+        Fri, 12 Jul 2019 03:58:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=LtqSlKZWetZ9uGFV2K19vEGagHhsXV8pg3vWp1m725Y=; b=V/iJunfl8ealcixJfAjaVt7Vrd
+        tQUwwlpOMrfElHa7L5+1G8ivCqLA+QLKj++7et5n8GxiXViFsXqzO+QKB50yOVHqQJqPj63zR7Mz/
+        oni9H7rrI0E/MaIPnNyX2MvDdFRFA0l6aIhPXeI0fJroCJs0BvecfAMR6kPmcfRvkfXcoZAJqZv39
+        WH7yKi2rPXVO0Ik5pkgDA4sGvIwc9mD+A2jkIDR21O9JacqiJHxs/qgg/VPYPQB10dOMf4lUH9bDx
+        wAmbgeQC11Xxo56c1HakyQocSdLZdhESnCzqS4A3/c4YMXSo8zEBk+A9qp7YhvUXI29jz1M9lnF0l
+        WR3RRI3g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlqRd-000690-Dz; Fri, 12 Jul 2019 07:58:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A84E320120CB1; Fri, 12 Jul 2019 09:58:15 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 09:58:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
+ statistic
+Message-ID: <20190712075815.GN3402@hirez.programming.kicks-ass.net>
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
+ <20190711134754.GD3402@hirez.programming.kicks-ass.net>
+ <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2ZRw9B=X76yL-bRzC+01z6VaHDzPAhQQw7V9MXtkp+Jg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 09:45:06AM +0200, Arnd Bergmann wrote:
-> On Fri, Jul 12, 2019 at 2:49 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Wed,  3 Jul 2019 10:10:55 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Jul 12, 2019 at 11:43:17AM +0800, 王贇 wrote:
 > 
-> > <scratches head>
-> >
-> > Surely clang is being extraordinarily dumb here?
-> >
-> > DECLARE_WAIT_QUEUE_HEAD_ONSTACK() is effectively doing
-> >
-> >         struct wait_queue_head name = ({ __init_waitqueue_head(&name) ; name; })
-> >
-> > which is perfectly legitimate!  clang has no business assuming that
-> > __init_waitqueue_head() will do any reads from the pointer which it was
-> > passed, nor can clang assume that __init_waitqueue_head() leaves any of
-> > *name uninitialized.
-> >
-> > Does it also warn if code does this?
-> >
-> >         struct wait_queue_head name;
-> >         __init_waitqueue_head(&name);
-> >         name = name;
-> >
-> > which is equivalent, isn't it?
 > 
-> No, it does not warn for this.
+> On 2019/7/11 下午9:47, Peter Zijlstra wrote:
+> [snip]
+> >> +	rcu_read_lock();
+> >> +	memcg = mem_cgroup_from_task(p);
+> >> +	if (idx != -1)
+> >> +		this_cpu_inc(memcg->stat_numa->locality[idx]);
+> > 
+> > I thought cgroups were supposed to be hierarchical. That is, if we have:
+> > 
+> >           R
+> > 	 / \
+> > 	 A
+> > 	/\
+> > 	  B
+> > 	  \
+> > 	   t1
+> > 
+> > Then our task t1 should be accounted to B (as you do), but also to A and
+> > R.
 > 
-> I've tried a few more variants here: https://godbolt.org/z/ykSX0r
+> I get the point but not quite sure about this...
 > 
-> What I think is going on here is a result of clang and gcc fundamentally
-> treating -Wuninitialized warnings differently. gcc tries to make the warnings
-> as helpful as possible, but given the NP-complete nature of this problem
-> it won't always get it right, and it traditionally allowed this syntax as a
-> workaround.
-> 
-> int f(void)
-> {
->     int i = i; // tell gcc not to warn
->     return i;
-> }
-> 
-> clang apparently implements the warnings in a way that is as
-> completely predictable (and won't warn in cases that it
-> doesn't completely understand), but decided as a result that the
-> gcc 'int i = i' syntax is bogus and it always warns about a variable
-> used in its own declaration that is later referenced, without looking
-> at whether the declaration does initialize it or not.
-> 
-> > The proposed solution is, effectively, to open-code
-> > __init_waitqueue_head() at each DECLARE_WAIT_QUEUE_HEAD_ONSTACK()
-> > callsite.  That's pretty unpleasant and calls for an explanatory
-> > comment at the __WAIT_QUEUE_HEAD_INIT_ONSTACK() definition site as well
-> > as a cautionary comment at the __init_waitqueue_head() definition so we
-> > can keep the two versions in sync as code evolves.
-> 
-> Yes, makes sense.
-> 
-> > Hopefully clang will soon be hit with the cluebat (yes?) and this
-> > change becomes obsolete in the quite short term.  Surely 6-12 months
-> > from now nobody will be using the uncluebatted version of clang on
-> > contemporary kernel sources so we get to remove this nastiness again.
-> > Which makes me wonder whether we should merge it at all.
-> 
-> Would it make you feel better to keep the current code but have an alternative
-> version guarded with e.g. "#if defined(__clang__ && (__clang_major__ <= 9)"?
-> 
-> While it is probably a good idea to fix clang here, this is one of the last
-> issues that causes a significant difference between gcc and clang in build
-> testing with kernelci:
-> https://kernelci.org/build/next/branch/master/kernel/next-20190709/
-> I'm trying to get all the warnings fixed there so we can spot build-time
-> regressions more easily.
-> 
->       Arnd
+> Not like pages there are no hierarchical limitation on locality, also tasks
 
-I'm just spitballing here since I am about to go to sleep but could we
-do something like you did for bee20031772a ("disable -Wattribute-alias
-warning for SYSCALL_DEFINEx()") and disable the warning in
-DECLARE_WAIT_QUEUE_HEAD_ONSTACK only since we know it is not going to
-be a problem? That way, if/when Clang is fixed, we can just have the
-warning be disabled for older versions?
+You can use cpusets to affect that.
 
-Cheers,
-Nathan
+> running in a particular group have no influence to others, not to mention the
+> extra overhead, does it really meaningful to account the stuff hierarchically?
+
+AFAIU it's a requirement of cgroups to be hierarchical. All our other
+cgroup accounting is like that.
