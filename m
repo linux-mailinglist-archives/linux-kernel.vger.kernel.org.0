@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6505266C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4FF66D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfGLMUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54402 "EHLO mail.kernel.org"
+        id S1728551AbfGLM1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:27:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbfGLMUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:49 -0400
+        id S1728531AbfGLM1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:27:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E62C208E4;
-        Fri, 12 Jul 2019 12:20:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C19621019;
+        Fri, 12 Jul 2019 12:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934048;
-        bh=zRrVbauX8vmHUnsUzwXp9I3sbDUqFbwzZ38iRRtPzRA=;
+        s=default; t=1562934419;
+        bh=Rq1qE4Q+NB15mQzhFLDDE6hKkM47OvHr+VRz5Ui1n4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=odA6Cci1ztAVEjjePu7S4bAG4A/u5j/FdVBFwUpYx9kRdTDxVptiUKVbMf1NjtJxW
-         +90YC0XB4nIyHAV6AK81D5lzF6YnmGi+60hKCCwDSPDgt6CXu3Sc8uU1MSWgLWgzAq
-         NBXZjt37exV1EOJ+Y/4Q0JCc/bC0B+YUG+iD2l8w=
+        b=WHOKmxoqntiKzBWzqQJrp642TfS/pKrHtdFK+oatXRsXXpkoFHSX0NaW6JOio993f
+         CkDweI0fryafF/m/WhuwY/HJxabf2iVGWnnjDE7sDgz1orTXLXpHE5M5ELF+L0E99V
+         zih9jZyvAFaLBVcKuUm+yzR1OJ/F9IpqvkSuNNis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 29/91] drm/vmwgfx: fix a warning due to missing dma_parms
-Date:   Fri, 12 Jul 2019 14:18:32 +0200
-Message-Id: <20190712121622.951304016@linuxfoundation.org>
+Subject: [PATCH 5.1 049/138] Input: imx_keypad - make sure keyboard can always wake up system
+Date:   Fri, 12 Jul 2019 14:18:33 +0200
+Message-Id: <20190712121630.544937655@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +44,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 39916897cd815a0ee07ba1f6820cf88a63e459fc ]
+[ Upstream commit ce9a53eb3dbca89e7ad86673d94ab886e9bea704 ]
 
-Booting up with DMA_API_DEBUG_SG=y generates a warning due to the driver
-forgot to set dma_parms appropriately. Set it just after vmw_dma_masks()
-in vmw_driver_load().
+There are several scenarios that keyboard can NOT wake up system
+from suspend, e.g., if a keyboard is depressed between system
+device suspend phase and device noirq suspend phase, the keyboard
+ISR will be called and both keyboard depress and release interrupts
+will be disabled, then keyboard will no longer be able to wake up
+system. Another scenario would be, if a keyboard is kept depressed,
+and then system goes into suspend, the expected behavior would be
+when keyboard is released, system will be waked up, but current
+implementation can NOT achieve that, because both depress and release
+interrupts are disabled in ISR, and the event check is still in
+progress.
 
-DMA-API: vmwgfx 0000:00:0f.0: mapping sg segment longer than device
-claims to support [len=2097152] [max=65536]
-WARNING: CPU: 2 PID: 261 at kernel/dma/debug.c:1232
-debug_dma_map_sg+0x360/0x480
-Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop
-Reference Platform, BIOS 6.00 04/13/2018
-RIP: 0010:debug_dma_map_sg+0x360/0x480
-Call Trace:
- vmw_ttm_map_dma+0x3b1/0x5b0 [vmwgfx]
- vmw_bo_map_dma+0x25/0x30 [vmwgfx]
- vmw_otables_setup+0x2a8/0x750 [vmwgfx]
- vmw_request_device_late+0x78/0xc0 [vmwgfx]
- vmw_request_device+0xee/0x4e0 [vmwgfx]
- vmw_driver_load.cold+0x757/0xd84 [vmwgfx]
- drm_dev_register+0x1ff/0x340 [drm]
- drm_get_pci_dev+0x110/0x290 [drm]
- vmw_probe+0x15/0x20 [vmwgfx]
- local_pci_probe+0x7a/0xc0
- pci_device_probe+0x1b9/0x290
- really_probe+0x1b5/0x630
- driver_probe_device+0xa3/0x1a0
- device_driver_attach+0x94/0xa0
- __driver_attach+0xdd/0x1c0
- bus_for_each_dev+0xfe/0x150
- driver_attach+0x2d/0x40
- bus_add_driver+0x290/0x350
- driver_register+0xdc/0x1d0
- __pci_register_driver+0xda/0xf0
- vmwgfx_init+0x34/0x1000 [vmwgfx]
- do_one_initcall+0xe5/0x40a
- do_init_module+0x10f/0x3a0
- load_module+0x16a5/0x1a40
- __se_sys_finit_module+0x183/0x1c0
- __x64_sys_finit_module+0x43/0x50
- do_syscall_64+0xc8/0x606
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+To fix these issues, need to make sure keyboard's depress or release
+interrupt is enabled after noirq device suspend phase, this patch
+moves the suspend/resume callback to noirq suspend/resume phase, and
+enable the corresponding interrupt according to current keyboard status.
 
-Fixes: fb1d9738ca05 ("drm/vmwgfx: Add DRM driver for VMware Virtual GPU")
-Co-developed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/keyboard/imx_keypad.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 82ae68716696..05a800807c26 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -789,6 +789,9 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 	if (unlikely(ret != 0))
- 		goto out_err0;
+diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
+index 539cb670de41..ae9c51cc85f9 100644
+--- a/drivers/input/keyboard/imx_keypad.c
++++ b/drivers/input/keyboard/imx_keypad.c
+@@ -526,11 +526,12 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
-+	dma_set_max_seg_size(dev->dev, min_t(unsigned int, U32_MAX & PAGE_MASK,
-+					     SCATTERLIST_MAX_SEGMENT));
+-static int __maybe_unused imx_kbd_suspend(struct device *dev)
++static int __maybe_unused imx_kbd_noirq_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct imx_keypad *kbd = platform_get_drvdata(pdev);
+ 	struct input_dev *input_dev = kbd->input_dev;
++	unsigned short reg_val = readw(kbd->mmio_base + KPSR);
+ 
+ 	/* imx kbd can wake up system even clock is disabled */
+ 	mutex_lock(&input_dev->mutex);
+@@ -540,13 +541,20 @@ static int __maybe_unused imx_kbd_suspend(struct device *dev)
+ 
+ 	mutex_unlock(&input_dev->mutex);
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(&pdev->dev)) {
++		if (reg_val & KBD_STAT_KPKD)
++			reg_val |= KBD_STAT_KRIE;
++		if (reg_val & KBD_STAT_KPKR)
++			reg_val |= KBD_STAT_KDIE;
++		writew(reg_val, kbd->mmio_base + KPSR);
 +
- 	if (dev_priv->capabilities & SVGA_CAP_GMR2) {
- 		DRM_INFO("Max GMR ids is %u\n",
- 			 (unsigned)dev_priv->max_gmr_ids);
+ 		enable_irq_wake(kbd->irq);
++	}
+ 
+ 	return 0;
+ }
+ 
+-static int __maybe_unused imx_kbd_resume(struct device *dev)
++static int __maybe_unused imx_kbd_noirq_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct imx_keypad *kbd = platform_get_drvdata(pdev);
+@@ -570,7 +578,9 @@ static int __maybe_unused imx_kbd_resume(struct device *dev)
+ 	return ret;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(imx_kbd_pm_ops, imx_kbd_suspend, imx_kbd_resume);
++static const struct dev_pm_ops imx_kbd_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_kbd_noirq_suspend, imx_kbd_noirq_resume)
++};
+ 
+ static struct platform_driver imx_keypad_driver = {
+ 	.driver		= {
 -- 
 2.20.1
 
