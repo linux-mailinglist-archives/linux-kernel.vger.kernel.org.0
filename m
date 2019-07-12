@@ -2,148 +2,413 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 381AC672F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C00672F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfGLQEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 12:04:20 -0400
-Received: from mail-eopbgr820099.outbound.protection.outlook.com ([40.107.82.99]:11408
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727217AbfGLQEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:04:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ft2EL07oMoAyBwO5HWqn/a/zE+yyT7CQB1aPLfnGW/+WNPwlS3KlFxrArfHjOIp4oHP590O9p0g5rH/fsjk2ZOgBbUKZNWz06eKAcl6EAFZ4kCTJdS+fxkHMf0TS0DskD1NRnpsuD1OboBRqN5I1zEUkqX4udwbkHpic6o28cVXt8wfBgKUrVFUa/8RNR7P0U0nypobCjOTwoLE67t2GH9TdkTLUSBFVZE5NfmBHnfkIe6UsOrQjJddYd/dZ2yAvA07p39vrHb3se/3qq37gqAcdXwLEGLzwzXlfyCEMHuFYt25bZvuYIfmv/P75i/dHu+ewKY8VNuS0UWTrO0efrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h7Y7FYwYaMHxVkF16FeA84w/WwHIJmjJ1ipHHu4zqzA=;
- b=BQUwm48rB6omxRBru1ZbYl+Z1tXVLE5r181PYwAhxURchqnFAMB7f2IIQ1Sooe9/K6lmTi3yE4PrmfRvnIbACI9wH8FoKTS8Vxh/sfFWTDcHSAtTKSnktu7BgTArjMlTSCEPYFMHoamj5Vux52xljTQ0nFeLA3b+pS4UMyjxEd5wWsEM7/PIWgUHoGHv5n1pZpNesL55hJn194QCfufgx8OYpp+WmoSIkKp7vqM+ZCVjeiB7m9m7w9c5lL1IGlb0SdrJLJIIbTVeqDlkgHonij4p5t+FaeHwkn8CJ0TgU+MXXyVrEw1yP8HVZ0HzlSsa5Px5EpY8FpD/z0oBuN/UfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microsoft.com;dmarc=pass action=none
- header.from=microsoft.com;dkim=pass header.d=microsoft.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h7Y7FYwYaMHxVkF16FeA84w/WwHIJmjJ1ipHHu4zqzA=;
- b=JDhtoVsPsJKlQouF7SYaRYvaQP3s8tXAKE0LNhdVYW3yl03UGY1X6sgqq19NL007GVgsiWIVCUxu7v6DUKT2TFgwCNNLQd6q6QOGU5yiKiv6eE9BEgxJoZUd9QKe31FyfbOOkefAw++lcw96Xyyd69esrLSJ7NcejWhXDEJzCeA=
-Received: from DM6PR21MB1337.namprd21.prod.outlook.com (20.179.53.80) by
- DM6PR21MB1177.namprd21.prod.outlook.com (20.179.48.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.0; Fri, 12 Jul 2019 16:04:17 +0000
-Received: from DM6PR21MB1337.namprd21.prod.outlook.com
- ([fe80::5067:7dee:544e:6c08]) by DM6PR21MB1337.namprd21.prod.outlook.com
- ([fe80::5067:7dee:544e:6c08%9]) with mapi id 15.20.2094.007; Fri, 12 Jul 2019
- 16:04:17 +0000
-From:   Haiyang Zhang <haiyangz@microsoft.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Jake Oshins <jakeo@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dexuan Cui <decui@microsoft.com>
-Subject: RE: [PATCH] PCI: pci-hyperv: fix build errors on non-SYSFS config
-Thread-Topic: [PATCH] PCI: pci-hyperv: fix build errors on non-SYSFS config
-Thread-Index: AQHVOMnwQQwdVculfkKes1/VgrnBiqbHJRrw
-Date:   Fri, 12 Jul 2019 16:04:17 +0000
-Message-ID: <DM6PR21MB133723E9D1FA8BA0006E06FECAF20@DM6PR21MB1337.namprd21.prod.outlook.com>
-References: <abbe8012-1e6f-bdea-1454-5c59ccbced3d@infradead.org>
-In-Reply-To: <abbe8012-1e6f-bdea-1454-5c59ccbced3d@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=haiyangz@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-07-12T16:04:14.8648345Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=52e98205-6335-4f10-b6e0-640a0ae863ab;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=haiyangz@microsoft.com; 
-x-originating-ip: [96.61.92.94]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3f70f794-bbed-4e5d-7603-08d706e297e6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM6PR21MB1177;
-x-ms-traffictypediagnostic: DM6PR21MB1177:|DM6PR21MB1177:
-x-microsoft-antispam-prvs: <DM6PR21MB1177C8F1E97C6844E4E4628FCAF20@DM6PR21MB1177.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 00963989E5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(136003)(396003)(346002)(376002)(199004)(189003)(13464003)(40224003)(8676002)(81166006)(81156014)(55016002)(7736002)(107886003)(476003)(6246003)(486006)(14444005)(256004)(446003)(11346002)(8936002)(53936002)(5660300002)(4326008)(66476007)(66446008)(64756008)(66556008)(229853002)(66946007)(10090500001)(71200400001)(76116006)(71190400001)(52536014)(6436002)(25786009)(86362001)(66066001)(76176011)(478600001)(53546011)(6506007)(102836004)(316002)(110136005)(8990500004)(54906003)(68736007)(10290500003)(2906002)(74316002)(6116002)(3846002)(305945005)(9686003)(186003)(99286004)(7696005)(26005)(14454004)(22452003)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1177;H:DM6PR21MB1337.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lM4j5T/SkLQfKTdQ0yyPTtxSf+DlDeVgsS+jA9hQ71T8miWtwgf8+Iqrm+fFgUCE249zRPvV6iQSfpXHgDJ+6Snls8wqUElj1ZeyMoaYlgN+aUEPFEFgF3D3UWgh5jh7MWx4x319dErqB9sbN+k9pFDhv7PBD2qQXCgF5FIaB6ceQNMXKReUS95XcqE3GTmfPY0sy+LEAxhsNm5QFH9Y8RYUQDz9yMBO5NYHb2aDouggtLz8lROaiUilQrc9/zNdnaYq7T481Xk5FTM1EB1QcO1QWVNFrJyyxUsXguiwn5zw+ODR1Ek1whT6706M9Ph1iV+Dg7br1rFWLLphdURysRzpLFfoaTw/IF0cuAypCu/rojBwOXW6OvQhzJaPGCumQItkjP6z2Xhz1yuJfyuEOCn+dgmY0gRnfkcAC+/aEoI=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727366AbfGLQEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 12:04:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47935 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727066AbfGLQEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 12:04:43 -0400
+Received: from [IPv6:2601:646:8600:3281:4501:6781:c7ce:2878] ([IPv6:2601:646:8600:3281:4501:6781:c7ce:2878])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x6CG4VhD3484128
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 12 Jul 2019 09:04:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x6CG4VhD3484128
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1562947472;
+        bh=5PPW2vutxKC5VoseGuX+50LhjnKt0Wvb59i0hQHJhGo=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=t2z1wjH+nMlOkNWTK/FWi9wVkMptnEiumxTGGmTfYrKxnkk00QM4ebNmy/Dp/t/9b
+         pfJu9N25mACXVbtVAfKwtuuCic8diCAb3jdLVGdfcn4K+ShK21sA2FU/3KX1XH/bNo
+         linb6LOENxOhZvYPErpbwN7SOikfweBGh4x0b9KntsGec297+oCPCzFiCLHafqhdsX
+         fHCO6ieP17IfGJ+QEuu6XQRA7aSIUUrGnjRh8NkpsZd5EAO8NlJDggNTarUCLBDo+V
+         uUoiscG7BjjIu7zBVorvbEKFhAYazEmEdmLKa1wurPs4REs3AegLBEYb4EPWm6u+vv
+         g+xN4+6qzlrcQ==
+Date:   Fri, 12 Jul 2019 09:04:23 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190704163612.14311-2-daniel.kiper@oracle.com>
+References: <20190704163612.14311-1-daniel.kiper@oracle.com> <20190704163612.14311-2-daniel.kiper@oracle.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f70f794-bbed-4e5d-7603-08d706e297e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2019 16:04:17.5012
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: haiyangz@microsoft.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1177
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] x86/boot: Introduce the kernel_info
+To:     Daniel Kiper <daniel.kiper@oracle.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+CC:     bp@alien8.de, corbet@lwn.net, dpsmith@apertussolutions.com,
+        eric.snowberg@oracle.com, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, mingo@redhat.com,
+        ross.philipson@oracle.com, tglx@linutronix.de
+From:   hpa@zytor.com
+Message-ID: <5633066F-01BE-437D-A564-150FD48B6D92@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFuZHkgRHVubGFwIDxy
-ZHVubGFwQGluZnJhZGVhZC5vcmc+DQo+IFNlbnQ6IEZyaWRheSwgSnVseSAxMiwgMjAxOSAxMTo1
-MyBBTQ0KPiBUbzogbGludXgtcGNpIDxsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnPjsgTEtNTCA8
-bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+DQo+IENjOiBNYXR0aGV3IFdpbGNveCA8
-d2lsbHlAaW5mcmFkZWFkLm9yZz47IEpha2UgT3NoaW5zDQo+IDxqYWtlb0BtaWNyb3NvZnQuY29t
-PjsgS1kgU3Jpbml2YXNhbiA8a3lzQG1pY3Jvc29mdC5jb20+OyBIYWl5YW5nDQo+IFpoYW5nIDxo
-YWl5YW5nekBtaWNyb3NvZnQuY29tPjsgU3RlcGhlbiBIZW1taW5nZXINCj4gPHN0aGVtbWluQG1p
-Y3Jvc29mdC5jb20+OyBTdGVwaGVuIEhlbW1pbmdlcg0KPiA8c3RlcGhlbkBuZXR3b3JrcGx1bWJl
-ci5vcmc+OyBTYXNoYSBMZXZpbiA8c2FzaGFsQGtlcm5lbC5vcmc+OyBCam9ybg0KPiBIZWxnYWFz
-IDxiaGVsZ2Fhc0Bnb29nbGUuY29tPjsgRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT4N
-Cj4gU3ViamVjdDogW1BBVENIXSBQQ0k6IHBjaS1oeXBlcnY6IGZpeCBidWlsZCBlcnJvcnMgb24g
-bm9uLVNZU0ZTIGNvbmZpZw0KPiANCj4gRnJvbTogUmFuZHkgRHVubGFwIDxyZHVubGFwQGluZnJh
-ZGVhZC5vcmc+DQo+IA0KPiBGaXggYnVpbGQgZXJyb3JzIHdoZW4gYnVpbGRpbmcgYWxtb3N0LWFs
-bG1vZGNvbmZpZyBidXQgd2l0aCBTWVNGUw0KPiBub3Qgc2V0IChub3QgZW5hYmxlZCkuICBGaXhl
-cyB0aGVzZSBidWlsZCBlcnJvcnM6DQo+IA0KPiBFUlJPUjogInBjaV9kZXN0cm95X3Nsb3QiIFtk
-cml2ZXJzL3BjaS9jb250cm9sbGVyL3BjaS1oeXBlcnYua29dIHVuZGVmaW5lZCENCj4gRVJST1I6
-ICJwY2lfY3JlYXRlX3Nsb3QiIFtkcml2ZXJzL3BjaS9jb250cm9sbGVyL3BjaS1oeXBlcnYua29d
-IHVuZGVmaW5lZCENCj4gDQo+IGRyaXZlcnMvcGNpL3Nsb3QubyBpcyBvbmx5IGJ1aWx0IHdoZW4g
-U1lTRlMgaXMgZW5hYmxlZCwgc28NCj4gcGNpLWh5cGVydi5vIGhhcyBhbiBpbXBsaWNpdCBkZXBl
-bmRlbmN5IG9uIFNZU0ZTLg0KPiBNYWtlIHRoYXQgZXhwbGljaXQuDQo+IA0KPiBBbHNvLCBkZXBl
-bmRpbmcgb24gWDg2ICYmIFg4Nl82NCBpcyBub3QgbmVlZGVkLCBzbyBqdXN0IGNoYW5nZSB0aGF0
-DQo+IHRvIGRlcGVuZCBvbiBYODZfNjQuDQo+IA0KPiBGaXhlczogYTE1ZjJjMDhjNzA4ICgiUENJ
-OiBodjogc3VwcG9ydCByZXBvcnRpbmcgc2VyaWFsIG51bWJlciBhcyBzbG90DQo+IGluZm9ybWF0
-aW9uIikNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFJhbmR5IER1bmxhcCA8cmR1bmxhcEBpbmZyYWRl
-YWQub3JnPg0KPiBDYzogTWF0dGhldyBXaWxjb3ggPHdpbGx5QGluZnJhZGVhZC5vcmc+DQo+IENj
-OiBKYWtlIE9zaGlucyA8amFrZW9AbWljcm9zb2Z0LmNvbT4NCj4gQ2M6ICJLLiBZLiBTcmluaXZh
-c2FuIiA8a3lzQG1pY3Jvc29mdC5jb20+DQo+IENjOiBIYWl5YW5nIFpoYW5nIDxoYWl5YW5nekBt
-aWNyb3NvZnQuY29tPg0KPiBDYzogU3RlcGhlbiBIZW1taW5nZXIgPHN0aGVtbWluQG1pY3Jvc29m
-dC5jb20+DQo+IENjOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5v
-cmc+DQo+IENjOiBTYXNoYSBMZXZpbiA8c2FzaGFsQGtlcm5lbC5vcmc+DQo+IENjOiBCam9ybiBI
-ZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPg0KPiBDYzogbGludXgtcGNpQHZnZXIua2VybmVs
-Lm9yZw0KPiBDYzogbGludXgtaHlwZXJ2QHZnZXIua2VybmVsLm9yZw0KPiBDYzogRGV4dWFuIEN1
-aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT4NCj4gLS0tDQo+IHYzOiBjb3JyZWN0ZWQgRml4ZXM6IHRh
-ZyBbRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT5dDQo+ICAgICBUaGlzIGlzIHRoZSBN
-aWNyb3NvZnQtcHJlZmVycmVkIHZlcnNpb24gb2YgdGhlIHBhdGNoLg0KPiANCj4gIGRyaXZlcnMv
-cGNpL0tjb25maWcgfCAgICAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
-IDEgZGVsZXRpb24oLSkNCj4gDQo+IC0tLSBsbngtNTIub3JpZy9kcml2ZXJzL3BjaS9LY29uZmln
-DQo+ICsrKyBsbngtNTIvZHJpdmVycy9wY2kvS2NvbmZpZw0KPiBAQCAtMTgxLDcgKzE4MSw3IEBA
-IGNvbmZpZyBQQ0lfTEFCRUwNCj4gDQo+ICBjb25maWcgUENJX0hZUEVSVg0KPiAgICAgICAgICB0
-cmlzdGF0ZSAiSHlwZXItViBQQ0kgRnJvbnRlbmQiDQo+IC0gICAgICAgIGRlcGVuZHMgb24gWDg2
-ICYmIEhZUEVSViAmJiBQQ0lfTVNJICYmIFBDSV9NU0lfSVJRX0RPTUFJTg0KPiAmJiBYODZfNjQN
-Cj4gKyAgICAgICAgZGVwZW5kcyBvbiBYODZfNjQgJiYgSFlQRVJWICYmIFBDSV9NU0kgJiYNCj4g
-UENJX01TSV9JUlFfRE9NQUlOICYmIFNZU0ZTDQo+ICAgICAgICAgIGhlbHANCj4gICAgICAgICAg
-ICBUaGUgUENJIGRldmljZSBmcm9udGVuZCBkcml2ZXIgYWxsb3dzIHRoZSBrZXJuZWwgdG8gaW1w
-b3J0IGFyYml0cmFyeQ0KPiAgICAgICAgICAgIFBDSSBkZXZpY2VzIGZyb20gYSBQQ0kgYmFja2Vu
-ZCB0byBzdXBwb3J0IFBDSSBkcml2ZXIgZG9tYWlucy4NCj4gDQoNClJldmlld2VkLWJ5OiBIYWl5
-YW5nIFpoYW5nIDxoYWl5YW5nekBtaWNyb3NvZnQuY29tPg0KDQo=
+On July 4, 2019 9:36:10 AM PDT, Daniel Kiper <daniel=2Ekiper@oracle=2Ecom> =
+wrote:
+>The relationships between the headers are analogous to the various data
+>sections:
+>
+>  setup_header =3D =2Edata
+>  boot_params/setup_data =3D =2Ebss
+>
+>What is missing from the above list? That's right:
+>
+>  kernel_info =3D =2Erodata
+>
+>We have been (ab)using =2Edata for things that could go into =2Erodata or
+>=2Ebss for
+>a long time, for lack of alternatives and -- especially early on --
+>inertia=2E
+>Also, the BIOS stub is responsible for creating boot_params, so it
+>isn't
+>available to a BIOS-based loader (setup_data is, though)=2E
+>
+>setup_header is permanently limited to 144 bytes due to the reach of
+>the
+>2-byte jump field, which doubles as a length field for the structure,
+>combined
+>with the size of the "hole" in struct boot_params that a protected-mode
+>loader
+>or the BIOS stub has to copy it into=2E It is currently 119 bytes long,
+>which
+>leaves us with 25 very precious bytes=2E This isn't something that can be
+>fixed
+>without revising the boot protocol entirely, breaking backwards
+>compatibility=2E
+>
+>boot_params proper is limited to 4096 bytes, but can be arbitrarily
+>extended
+>by adding setup_data entries=2E It cannot be used to communicate
+>properties of
+>the kernel image, because it is =2Ebss and has no image-provided content=
+=2E
+>
+>kernel_info solves this by providing an extensible place for
+>information about
+>the kernel image=2E It is readonly, because the kernel cannot rely on a
+>bootloader copying its contents anywhere, but that is OK; if it becomes
+>necessary it can still contain data items that an enabled bootloader
+>would be
+>expected to copy into a setup_data chunk=2E
+>
+>This patch does not bump setup_header version in arch/x86/boot/header=2ES
+>because it will be followed by additional changes coming into the
+>Linux/x86 boot protocol=2E
+>
+>Suggested-by: H=2E Peter Anvin <hpa@zytor=2Ecom>
+>Signed-off-by: Daniel Kiper <daniel=2Ekiper@oracle=2Ecom>
+>Reviewed-by: Eric Snowberg <eric=2Esnowberg@oracle=2Ecom>
+>Reviewed-by: Ross Philipson <ross=2Ephilipson@oracle=2Ecom>
+>---
+>v2 - suggestions/fixes:
+>   - rename setup_header2 to kernel_info,
+>     (suggested by H=2E Peter Anvin),
+>   - change kernel_info=2Eheader value to "InfO" (0x4f666e49),
+>   - new kernel_info description in Documentation/x86/boot=2Erst,
+>     (suggested by H=2E Peter Anvin),
+>   - drop kernel_info_offset_update() as an overkill and
+>     update kernel_info offset directly from main(),
+>     (suggested by Eric Snowberg),
+>   - new commit message
+>     (suggested by H=2E Peter Anvin),
+>   - fix some commit message misspellings
+>     (suggested by Eric Snowberg)=2E
+>---
+>Documentation/x86/boot=2Erst             | 89
+>++++++++++++++++++++++++++++++++++
+> arch/x86/boot/Makefile                 |  2 +-
+> arch/x86/boot/compressed/Makefile      |  4 +-
+> arch/x86/boot/compressed/kernel_info=2ES | 12 +++++
+> arch/x86/boot/header=2ES                 |  1 +
+> arch/x86/boot/tools/build=2Ec            |  5 ++
+> arch/x86/include/uapi/asm/bootparam=2Eh  |  1 +
+> 7 files changed, 111 insertions(+), 3 deletions(-)
+> create mode 100644 arch/x86/boot/compressed/kernel_info=2ES
+>
+>diff --git a/Documentation/x86/boot=2Erst b/Documentation/x86/boot=2Erst
+>index 08a2f100c0e6=2E=2Ea934a56f0516 100644
+>--- a/Documentation/x86/boot=2Erst
+>+++ b/Documentation/x86/boot=2Erst
+>@@ -68,8 +68,25 @@ Protocol 2=2E12	(Kernel 3=2E8) Added the xloadflags
+>field and extension fields
+> Protocol 2=2E13	(Kernel 3=2E14) Support 32- and 64-bit flags being set i=
+n
+> 		xloadflags to support booting a 64-bit kernel from 32-bit
+> 		EFI
+>+
+>+Protocol 2=2E14:	BURNT BY INCORRECT COMMIT
+>ae7e1238e68f2a472a125673ab506d49158c1889
+>+		(x86/boot: Add ACPI RSDP address to setup_header)
+>+		DO NOT USE!!! ASSUME SAME AS 2=2E13=2E
+>+
+>+Protocol 2=2E15:	(Kernel 5=2E3) Added the kernel_info=2E
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>+=2E=2E note::
+>+     The protocol version number should be changed only if the setup
+>header
+>+     is changed=2E There is no need to update the version number if
+>boot_params
+>+     or kernel_info are changed=2E Additionally, it is recommended to
+>use
+>+     xloadflags (in this case the protocol version number should not
+>be
+>+     updated either) or kernel_info to communicate supported Linux
+>kernel
+>+     features to the boot loader=2E Due to very limited space available
+>in
+>+     the original setup header every update to it should be considered
+>+     with great care=2E Starting from the protocol 2=2E15 the primary wa=
+y
+>to
+>+     communicate things to the boot loader is the kernel_info=2E
+>+
+>=20
+> Memory Layout
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>@@ -207,6 +224,7 @@ Offset/Size	Proto		Name			Meaning
+> 0258/8		2=2E10+		pref_address		Preferred loading address
+> 0260/4		2=2E10+		init_size		Linear memory required during initialization
+> 0264/4		2=2E11+		handover_offset		Offset of handover entry point
+>+0268/4		2=2E15+		kernel_info_offset	Offset of the kernel_info
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> =2E=2E note::
+>@@ -855,6 +873,77 @@ Offset/size:	0x264/4
+>=20
+>   See EFI HANDOVER PROTOCOL below for more details=2E
+>=20
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+>+Field name:	kernel_info_offset
+>+Type:		read
+>+Offset/size:	0x268/4
+>+Protocol:	2=2E15+
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+>+
+>+  This field is the offset from the beginning of the kernel image to
+>the
+>+  kernel_info=2E It is embedded in the Linux image in the uncompressed
+>+  protected mode region=2E
+>+
+>+
+>+The kernel_info
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+The relationships between the headers are analogous to the various
+>data
+>+sections:
+>+
+>+  setup_header =3D =2Edata
+>+  boot_params/setup_data =3D =2Ebss
+>+
+>+What is missing from the above list? That's right:
+>+
+>+  kernel_info =3D =2Erodata
+>+
+>+We have been (ab)using =2Edata for things that could go into =2Erodata o=
+r
+>=2Ebss for
+>+a long time, for lack of alternatives and -- especially early on --
+>inertia=2E
+>+Also, the BIOS stub is responsible for creating boot_params, so it
+>isn't
+>+available to a BIOS-based loader (setup_data is, though)=2E
+>+
+>+setup_header is permanently limited to 144 bytes due to the reach of
+>the
+>+2-byte jump field, which doubles as a length field for the structure,
+>combined
+>+with the size of the "hole" in struct boot_params that a
+>protected-mode loader
+>+or the BIOS stub has to copy it into=2E It is currently 119 bytes long,
+>which
+>+leaves us with 25 very precious bytes=2E This isn't something that can
+>be fixed
+>+without revising the boot protocol entirely, breaking backwards
+>compatibility=2E
+>+
+>+boot_params proper is limited to 4096 bytes, but can be arbitrarily
+>extended
+>+by adding setup_data entries=2E It cannot be used to communicate
+>properties of
+>+the kernel image, because it is =2Ebss and has no image-provided
+>content=2E
+>+
+>+kernel_info solves this by providing an extensible place for
+>information about
+>+the kernel image=2E It is readonly, because the kernel cannot rely on a
+>+bootloader copying its contents anywhere, but that is OK; if it
+>becomes
+>+necessary it can still contain data items that an enabled bootloader
+>would be
+>+expected to copy into a setup_data chunk=2E
+>+
+>+It is recommended to not store large data chunks, e=2Eg=2E strings,
+>directly in the
+>+kernel_info struct=2E Such data should be placed outside of it and
+>pointed from
+>+the kernel_info structure using offsets from the beginning of the
+>structure,
+>+the kernel_info=2Eheader field=2E
+>+
+>+
+>+Details of the kernel_info Fields
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D
+>+Field name:	header
+>+Offset/size:	0x0000/4
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+  Contains the magic number "InfO" (0x4f666e49)=2E
+>+
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D
+>+Field name:	size
+>+Offset/size:	0x0004/4
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+  This field contains the size of the kernel_info including
+>kernel_info=2Eheader=2E
+>+  It should be used by the boot loader to detect supported fields in
+>the kernel_info=2E
+>+
+>=20
+> The Image Checksum
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+>index e2839b5c246c=2E=2Ec30a9b642a86 100644
+>--- a/arch/x86/boot/Makefile
+>+++ b/arch/x86/boot/Makefile
+>@@ -87,7 +87,7 @@ $(obj)/vmlinux=2Ebin: $(obj)/compressed/vmlinux FORCE
+>=20
+> SETUP_OBJS =3D $(addprefix $(obj)/,$(setup-y))
+>=20
+>-sed-zoffset :=3D -e 's/^\([0-9a-fA-F]*\) [ABCDGRSTVW]
+>\(startup_32\|startup_64\|efi32_stub_entry\|efi64_stub_entry\|efi_pe_entr=
+y\|input_data\|_end\|_ehead\|_text\|z_=2E*\)$$/\#define
+>ZO_\2 0x\1/p'
+>+sed-zoffset :=3D -e 's/^\([0-9a-fA-F]*\) [ABCDGRSTVW]
+>\(startup_32\|startup_64\|efi32_stub_entry\|efi64_stub_entry\|efi_pe_entr=
+y\|input_data\|kernel_info\|_end\|_ehead\|_text\|z_=2E*\)$$/\#define
+>ZO_\2 0x\1/p'
+>=20
+> quiet_cmd_zoffset =3D ZOFFSET $@
+>       cmd_zoffset =3D $(NM) $< | sed -n $(sed-zoffset) > $@
+>diff --git a/arch/x86/boot/compressed/Makefile
+>b/arch/x86/boot/compressed/Makefile
+>index 6b84afdd7538=2E=2Efad3b18e2cc3 100644
+>--- a/arch/x86/boot/compressed/Makefile
+>+++ b/arch/x86/boot/compressed/Makefile
+>@@ -72,8 +72,8 @@ $(obj)/=2E=2E/voffset=2Eh: vmlinux FORCE
+>=20
+> $(obj)/misc=2Eo: $(obj)/=2E=2E/voffset=2Eh
+>=20
+>-vmlinux-objs-y :=3D $(obj)/vmlinux=2Elds $(obj)/head_$(BITS)=2Eo
+>$(obj)/misc=2Eo \
+>-	$(obj)/string=2Eo $(obj)/cmdline=2Eo $(obj)/error=2Eo \
+>+vmlinux-objs-y :=3D $(obj)/vmlinux=2Elds $(obj)/kernel_info=2Eo
+>$(obj)/head_$(BITS)=2Eo \
+>+	$(obj)/misc=2Eo $(obj)/string=2Eo $(obj)/cmdline=2Eo $(obj)/error=2Eo \
+> 	$(obj)/piggy=2Eo $(obj)/cpuflags=2Eo
+>=20
+> vmlinux-objs-$(CONFIG_EARLY_PRINTK) +=3D $(obj)/early_serial_console=2Eo
+>diff --git a/arch/x86/boot/compressed/kernel_info=2ES
+>b/arch/x86/boot/compressed/kernel_info=2ES
+>new file mode 100644
+>index 000000000000=2E=2E3f1cb301b9ff
+>--- /dev/null
+>+++ b/arch/x86/boot/compressed/kernel_info=2ES
+>@@ -0,0 +1,12 @@
+>+/* SPDX-License-Identifier: GPL-2=2E0 */
+>+
+>+	=2Esection "=2Erodata=2Ekernel_info", "a"
+>+
+>+	=2Eglobal kernel_info
+>+
+>+kernel_info:
+>+        /* Header=2E */
+>+	=2Eascii	"InfO"
+>+        /* Size=2E */
+>+	=2Elong	kernel_info_end - kernel_info
+>+kernel_info_end:
+>diff --git a/arch/x86/boot/header=2ES b/arch/x86/boot/header=2ES
+>index 850b8762e889=2E=2Eec6a25a43148 100644
+>--- a/arch/x86/boot/header=2ES
+>+++ b/arch/x86/boot/header=2ES
+>@@ -557,6 +557,7 @@ pref_address:		=2Equad LOAD_PHYSICAL_ADDR	# preferred
+>load addr
+>=20
+> init_size:		=2Elong INIT_SIZE		# kernel initialization size
+> handover_offset:	=2Elong 0			# Filled in by build=2Ec
+>+kernel_info_offset:	=2Elong 0			# Filled in by build=2Ec
+>=20
+># End of setup header
+>#####################################################
+>=20
+>diff --git a/arch/x86/boot/tools/build=2Ec b/arch/x86/boot/tools/build=2E=
+c
+>index a93d44e58f9c=2E=2E55e669d29e54 100644
+>--- a/arch/x86/boot/tools/build=2Ec
+>+++ b/arch/x86/boot/tools/build=2Ec
+>@@ -56,6 +56,7 @@ u8 buf[SETUP_SECT_MAX*512];
+> unsigned long efi32_stub_entry;
+> unsigned long efi64_stub_entry;
+> unsigned long efi_pe_entry;
+>+unsigned long kernel_info;
+> unsigned long startup_64;
+>=20
+>/*----------------------------------------------------------------------*=
+/
+>@@ -321,6 +322,7 @@ static void parse_zoffset(char *fname)
+> 		PARSE_ZOFS(p, efi32_stub_entry);
+> 		PARSE_ZOFS(p, efi64_stub_entry);
+> 		PARSE_ZOFS(p, efi_pe_entry);
+>+		PARSE_ZOFS(p, kernel_info);
+> 		PARSE_ZOFS(p, startup_64);
+>=20
+> 		p =3D strchr(p, '\n');
+>@@ -410,6 +412,9 @@ int main(int argc, char ** argv)
+>=20
+> 	efi_stub_entry_update();
+>=20
+>+	/* Update kernel_info offset=2E */
+>+	put_unaligned_le32(kernel_info, &buf[0x268]);
+>+
+> 	crc =3D partial_crc32(buf, i, crc);
+> 	if (fwrite(buf, 1, i, dest) !=3D i)
+> 		die("Writing setup failed");
+>diff --git a/arch/x86/include/uapi/asm/bootparam=2Eh
+>b/arch/x86/include/uapi/asm/bootparam=2Eh
+>index 60733f137e9a=2E=2Eb05318112452 100644
+>--- a/arch/x86/include/uapi/asm/bootparam=2Eh
+>+++ b/arch/x86/include/uapi/asm/bootparam=2Eh
+>@@ -86,6 +86,7 @@ struct setup_header {
+> 	__u64	pref_address;
+> 	__u32	init_size;
+> 	__u32	handover_offset;
+>+	__u32	kernel_info_offset;
+> } __attribute__((packed));
+>=20
+> struct sys_desc_table {
+
+I should like to make make things a bit more stringent: additional data sh=
+ould be made offsets from the kernel_info structure *and they should live i=
+n the =2Erodata=2Ekernel_info section*=2E We should add a size field for th=
+e entire =2Ekernel_info section, thus ensuring it is a single self-containe=
+d blob=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
