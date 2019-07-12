@@ -2,103 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BB8669B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5918669B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 11:12:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfGLJNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 05:13:40 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:55529 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfGLJNk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:13:40 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M9Evp-1hsCKR1COV-006PUz; Fri, 12 Jul 2019 11:12:52 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Junaid Shahid <junaids@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Kai Huang <kai.huang@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH 2/2] x86: kvm: avoid constant-conversion warning
-Date:   Fri, 12 Jul 2019 11:12:30 +0200
-Message-Id: <20190712091239.716978-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190712091239.716978-1-arnd@arndb.de>
-References: <20190712091239.716978-1-arnd@arndb.de>
+        id S1726628AbfGLJMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 05:12:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53848 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726282AbfGLJMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:12:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 26689AE20;
+        Fri, 12 Jul 2019 09:12:52 +0000 (UTC)
+Date:   Fri, 12 Jul 2019 11:12:51 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        Vincent Whitchurch <rabinv@axis.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk: Do not lose last line in kmsg buffer dump
+Message-ID: <20190712091251.or4bitunknzhrigf@pathway.suse.cz>
+References: <20190711142937.4083-1-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Lplw8L9pjitxjn8uvfCtJoBisPCqjfQiaYB9KiT+KGN1cMhK+5D
- n/9/tW1nGJzdBVxSoYqav3BS7V4RGgkHR9YN1LINgAaPvva1Qx26lH9nTlTY0zHaSxEilMg
- 7BtKZwd+0GWrh2mAZH3cn8oejeDl9a8Z3+ymWV/e/eayCEFlWogVmsUcdOYdm5qnm+NBhsR
- n2mHbJLBE2Pxwf82SAbNg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2gJTX7oQrfo=:8iwkhuTEo+aTunqSalJZf8
- Q6TlLUW7RDKJjjaEFe/LtwCj+w+S1LIDwMgftl5hzuEmGu78NLrJ6rjNPQ+PCnv3x8M01DBtJ
- kr4jFC1wHR+yZRHhnM1cO/JxZY4WiHPAj4iolh6XhfxmFuBsAH5SustbQ0CTas3HLR2ALH9tZ
- wV3WWWK98AxQbfA4C8/6ZucpZUhlALfb830BGO2VDlJVhIzksURR6aIJnoVTUJ1CBsOzyk8O1
- gdTnbaTyC/pzW0jBPGZQWF3bXlkT7f82LtTKK6+zItWA32Da5/WZKUiaFSkGnReQLZwtgQR2J
- eYo/ybJzbKOWiMxJ7qafwBu//eoIUIE47EMpmM6xk3ePWbYYVGXSWQlJMoQEazPt7et24kda5
- h9rdQMTI5qzrTyPLKIm4SE9K05jqIzfvkEGRrUs0XlUp6KmZYaSXUj3TSu08dNpuQRSUL6ra2
- C/qoXTHIUtajn2IxHWyVRwTlL98MM0ocEzNAW68X9CMNU3Y5crQdfYXGxbbb89nFjow0SmSMo
- IS9pp53s0pu1u/X7zy/lfNDCs5F+7sQgxedbE26LcuBQ4ystfEEsSfQdnzpUPKH3XM6q66aoc
- YyLVPpYXg5CPjZTBhr/XxuupeehfNOZXyvpQvMbzqRQqHHvdoRoGG/ylPLIbYlD0iuCVbkeTr
- QoWLFKMVmb1pNQfR71sQpUzCa7E8YTn/4DH7TvvaqHWcdoMOrCLPwQ7zRADZWuZkoTH0vOSXg
- tLUPwuZbP10mwEDPt4R8TKxhIgimKY9b1Q+pAg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711142937.4083-1-vincent.whitchurch@axis.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang finds a contruct suspicious that converts an unsigned
-character to a signed integer and back, causing an overflow:
+On Thu 2019-07-11 16:29:37, Vincent Whitchurch wrote:
+> kmsg_dump_get_buffer() is supposed to select all the youngest log
+> messages which fit into the provided buffer.  It determines the correct
+> start index by using msg_print_text() with a NULL buffer to calculate
+> the size of each entry.  However, when performing the actual writes,
+> msg_print_text() only writes the entry to the buffer if the written len
+> is lesser than the size of the buffer.  So if the lengths of the
+> selected youngest log messages happen to precisely fill up the provided
+> buffer, the last log message is not included.
+> 
+> We don't want to modify msg_print_text() to fill up the buffer and start
+> returning a length which is equal to the size of the buffer, since
+> callers of its other users, such as kmsg_dump_get_line(), depend upon
+> the current behaviour.
+> 
+> Instead, fix kmsg_dump_get_buffer() to compensate for this.
+> 
+> For example, with the following two final prints:
+> 
+> [    6.427502] AAAAAAAAAAAAA
+> [    6.427769] BBBBBBBB12345
+> 
+> A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
+> patch:
+> 
+>  00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
+>  00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
+>  00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>  00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> 
+> After this patch:
+> 
+>  00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 35 36 36 37 38  <0>[    6.456678
+>  00000010: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
+>  00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>  00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> 
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-arch/x86/kvm/mmu.c:4605:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -205 to 51 [-Werror,-Wconstant-conversion]
-                u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-                   ~~                               ^~
-arch/x86/kvm/mmu.c:4607:38: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -241 to 15 [-Werror,-Wconstant-conversion]
-                u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-                   ~~                              ^~
-arch/x86/kvm/mmu.c:4609:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -171 to 85 [-Werror,-Wconstant-conversion]
-                u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-                   ~~                               ^~
+I think that I need vacation. I have got lost in all the checks
+and got it wrongly in the morning.
 
-Add an explicit cast to tell clang that everything works as
-intended here.
+This patch fixes the calculation of messages that might fit
+into the buffer. It makes sure that the function that writes
+the messages will really allow to write them.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/kvm/mmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It seems to be the correct fix.
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 17ece7b994b1..aea7f969ecb8 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4602,11 +4602,11 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- 		 */
- 
- 		/* Faults from writes to non-writable pages */
--		u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-+		u8 wf = (pfec & PFERR_WRITE_MASK) ? (u8)~w : 0;
- 		/* Faults from user mode accesses to supervisor pages */
--		u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-+		u8 uf = (pfec & PFERR_USER_MASK) ? (u8)~u : 0;
- 		/* Faults from fetches of non-executable pages*/
--		u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-+		u8 ff = (pfec & PFERR_FETCH_MASK) ? (u8)~x : 0;
- 		/* Faults from kernel mode fetches of user pages */
- 		u8 smepf = 0;
- 		/* Faults from kernel mode accesses of user pages */
--- 
-2.20.0
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
+Best Regards,
+Petr
