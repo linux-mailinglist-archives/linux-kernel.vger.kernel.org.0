@@ -2,83 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F2C767382
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4C5767387
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfGLQoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 12:44:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:60020 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfGLQoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:44:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47AF22B;
-        Fri, 12 Jul 2019 09:44:29 -0700 (PDT)
-Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 274553F246;
-        Fri, 12 Jul 2019 09:44:27 -0700 (PDT)
-Subject: Re: [PATCHv8 1/5] arm64: dts: qcom: sdm845: Add Coresight support
-To:     saiprakash.ranjan@codeaurora.org, gregkh@linuxfoundation.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, mike.leach@linaro.org,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, david.brown@linaro.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, vivek.gautam@codeaurora.org,
-        sibis@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        marc.w.gonzalez@free.fr
-References: <cover.1562940244.git.saiprakash.ranjan@codeaurora.org>
- <52550ed9bbc10dca860eb1700aef5c97f644327b.1562940244.git.saiprakash.ranjan@codeaurora.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <06c1a087-53f7-4841-1ae3-07ccbed22a72@arm.com>
-Date:   Fri, 12 Jul 2019 17:44:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <52550ed9bbc10dca860eb1700aef5c97f644327b.1562940244.git.saiprakash.ranjan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727364AbfGLQpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 12:45:11 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42262 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfGLQpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 12:45:10 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s184so7739104oie.9
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 09:45:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6LnAzjOasKxUwXGzTNC0/064h+/s+kUgeRd8GGr+dNc=;
+        b=y+5JhhgmNMeM1wyuwj/XzOeYCh3l6ziC7Q771WlrgOuxNGzdruLij0Bd0bIoG5jM3d
+         Db3yFOQe9oJ72rqInCLv5IT5U/tzZ44PeQK0oBMW4m+IauKOslZy7IC+GgteBJcQrXLS
+         w3h9o5dlT/8wb9rL46HzQKkWKfxY+n/JIPNZ9G2FZIINBpDbDTRFNRtcHxKDRJVpwEqH
+         nipdZSzIaSUQBX0DYu19v+AM+C3QxQZUmy1qXgyaytK38F3Sv+yUnmfjmLiB7/oZYGXu
+         73n0iYnMYyaID7e2Y6q3kyCjzXOYqsuihAlcYX+2cpr0DFcDvSj1C1ys/nJkkUVByenh
+         Fn4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6LnAzjOasKxUwXGzTNC0/064h+/s+kUgeRd8GGr+dNc=;
+        b=ouKyA1pAyS5hBHfvW2RuIKLwB9/DN0L2UeQoXBN/jkiobJqmZAQv7KnDslNY4nfwFZ
+         BPVpluDmBUgXF4I22PPGwF6u20yWIRFTtQowsK3WqF2KBeF+ydv0pzXNqYGZrxVuobPZ
+         tB6YZ1FGBVnVOywED6POcNvuCrm3XQuywC6iyep/5CIBRKoG0de40sONTphszMEcvkvk
+         QB0OQNqi/5qoqR5teTol9nKvCG5X8kDqxcgNB1jeOkXTI7zwxG8amnObP3SUOOVIClTV
+         1IV9N5uuFB6n8oyLcrjKQlaThhGoYq4AkOwrHEJxGOrl08GowSDzOmEIkTuGOytUae4S
+         2lOA==
+X-Gm-Message-State: APjAAAX29QdMt0Ld5eHKzn7g87GjmT2WE9IY7wDCorhiwdXHAhHwaubX
+        NGZCf1eG1sHd7qBRhNm3KkrqFg==
+X-Google-Smtp-Source: APXvYqz43gvQBuChWBqcRDiu2PX0SnPMLctG+UPHeFtjNbnJ7Bi0dOA9Iyg8NVe3bAqg2MsnU8zG+w==
+X-Received: by 2002:aca:cfd0:: with SMTP id f199mr6026297oig.50.1562949909275;
+        Fri, 12 Jul 2019 09:45:09 -0700 (PDT)
+Received: from ?IPv6:2600:100e:b03e:b:3dba:7fb8:8988:ae37? ([2600:100e:b03e:b:3dba:7fb8:8988:ae37])
+        by smtp.gmail.com with ESMTPSA id l5sm3141381otf.53.2019.07.12.09.45.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2019 09:45:08 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC v2 00/27] Kernel Address Space Isolation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <3ca70237-bf8e-57d9-bed5-bc2329d17177@oracle.com>
+Date:   Fri, 12 Jul 2019 10:45:06 -0600
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, kvm@vger.kernel.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
+        liran.alon@oracle.com, jwadams@google.com, graf@amazon.de,
+        rppt@linux.vnet.ibm.com, Paul Turner <pjt@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7FDF08CB-A429-441B-872D-FAE7293858F5@amacapital.net>
+References: <1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com> <5cab2a0e-1034-8748-fcbe-a17cf4fa2cd4@intel.com> <alpine.DEB.2.21.1907120911160.11639@nanos.tec.linutronix.de> <61d5851e-a8bf-e25c-e673-b71c8b83042c@oracle.com> <20190712125059.GP3419@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1907121459180.1788@nanos.tec.linutronix.de> <3ca70237-bf8e-57d9-bed5-bc2329d17177@oracle.com>
+To:     Alexandre Chartre <alexandre.chartre@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sai,
-
-On 12/07/2019 15:16, Sai Prakash Ranjan wrote:
-> Add coresight components found on Qualcomm SDM845 SoC.
-
-> 
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arch/arm64/boot/dts/qcom/sdm845.dtsi | 451 +++++++++++++++++++++++++++
->   1 file changed, 451 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 4babff5f19b5..5d7e3f8e0f91 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1815,6 +1815,457 @@
->   			clock-names = "xo";
->   		};
->   
-> +		stm@6002000 {
-> +			compatible = "arm,coresight-stm", "arm,primecell";
-> +			reg = <0 0x06002000 0 0x1000>,
-> +			      <0 0x16280000 0 0x180000>;
-> +			reg-names = "stm-base", "stm-stimulus-base";
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb_pclk";
 
 
-Which tree is this based on ? I can't see aoss_qmp anywhere under dts/qcom
-on 5.2-rc7.
+> On Jul 12, 2019, at 10:37 AM, Alexandre Chartre <alexandre.chartre@oracle.=
+com> wrote:
+>=20
+>=20
+>=20
+>> On 7/12/19 5:16 PM, Thomas Gleixner wrote:
+>>> On Fri, 12 Jul 2019, Peter Zijlstra wrote:
+>>>> On Fri, Jul 12, 2019 at 01:56:44PM +0200, Alexandre Chartre wrote:
+>>>>=20
+>>>> I think that's precisely what makes ASI and PTI different and independe=
+nt.
+>>>> PTI is just about switching between userland and kernel page-tables, wh=
+ile
+>>>> ASI is about switching page-table inside the kernel. You can have ASI w=
+ithout
+>>>> having PTI. You can also use ASI for kernel threads so for code that wo=
+n't
+>>>> be triggered from userland and so which won't involve PTI.
+>>>=20
+>>> PTI is not mapping         kernel space to avoid             speculation=
+ crap (meltdown).
+>>> ASI is not mapping part of kernel space to avoid (different) speculation=
+ crap (MDS).
+>>>=20
+>>> See how very similar they are?
+>>>=20
+>>> Furthermore, to recover SMT for userspace (under MDS) we not only need
+>>> core-scheduling but core-scheduling per address space. And ASI was
+>>> specifically designed to help mitigate the trainwreck just described.
+>>>=20
+>>> By explicitly exposing (hopefully harmless) part of the kernel to MDS,
+>>> we reduce the part that needs core-scheduling and thus reduce the rate
+>>> the SMT siblngs need to sync up/schedule.
+>>>=20
+>>> But looking at it that way, it makes no sense to retain 3 address
+>>> spaces, namely:
+>>>=20
+>>>   user / kernel exposed / kernel private.
+>>>=20
+>>> Specifically, it makes no sense to expose part of the kernel through MDS=
 
+>>> but not through Meltdow. Therefore we can merge the user and kernel
+>>> exposed address spaces.
+>>>=20
+>>> And then we've fully replaced PTI.
+>>>=20
+>>> So no, they're not orthogonal.
+>> Right. If we decide to expose more parts of the kernel mappings then that=
+'s
+>> just adding more stuff to the existing user (PTI) map mechanics.
+>=20
+> If we expose more parts of the kernel mapping by adding them to the existi=
+ng
+> user (PTI) map, then we only control the mapping of kernel sensitive data b=
+ut
+> we don't control user mapping (with ASI, we exclude all user mappings).
+>=20
+> How would you control the mapping of userland sensitive data and exclude t=
+hem
+> from the user map?
 
-Cheers
-Suzuki
+As I see it, if we think part of the kernel is okay to leak to VM guests, th=
+en it should think it=E2=80=99s okay to leak to userspace and versa. At the e=
+nd of the day, this may just have to come down to an administrator=E2=80=99s=
+ choice of how careful the mitigations need to be.
+
+> Would you have the application explicitly identify sensitive
+> data (like Andy suggested with a /dev/xpfo device)?
+
+That=E2=80=99s not really the intent of my suggestion. I was suggesting that=
+ maybe we don=E2=80=99t need ASI at all if we allow VMs to exclude their mem=
+ory from the kernel mapping entirely.  Heck, in a setup like this, we can ma=
+ybe even get away with turning PTI off under very, very controlled circumsta=
+nces.  I=E2=80=99m not quite sure what to do about the kernel random pools, t=
+hough.=
