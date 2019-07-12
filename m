@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4525566E94
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 374AE66F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfGLMj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:39:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37134 "EHLO mail.kernel.org"
+        id S1727125AbfGLMT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:19:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728419AbfGLM0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:26:13 -0400
+        id S1726266AbfGLMTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:19:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7034A2084B;
-        Fri, 12 Jul 2019 12:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE083208E4;
+        Fri, 12 Jul 2019 12:19:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934372;
-        bh=a1KIzy7Wcu8S/Fm6g0S8WiJ+h5aYZSnv4ONmq40IDoA=;
+        s=default; t=1562933991;
+        bh=KDTG7xZKVJcTtm5E/Es0e9jl8s29jm+e702fFtM9XwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UjfeXsYlmAY8W4whSqS44vR9GIL9IgHPA171XTXK6L0Sx9fQgl5KLzc/h6TM4SW3R
-         TT3GGKC22QJcfjDK7jydKk0xX5B0jWFwrRu+CYh1bBsgFN1Cf/P+Tv0k/miXPva1TV
-         P6ijyt3phONyew3N50w/TIZMs81bp9HqSJjsZ1Ow=
+        b=NORqzYcD+d4l1p1AdXJ0kx58ZUUDrCoxEa5pqr6dyAPsl6leSFpREPdnLd3VVUn+6
+         za4Azgkpky3Se3uwTv7M1hivps97L/cOpygI9MBrD73XwCr1458Pug4w0ohyLHLbal
+         39/V/I36jIxURyu9/4+yqq0L0q/yU/0MPM6Iug4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Melissa Wen <melissa.srw@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 027/138] iwlwifi: Fix double-free problems in iwl_req_fw_callback()
-Date:   Fri, 12 Jul 2019 14:18:11 +0200
-Message-Id: <20190712121629.743065819@linuxfoundation.org>
+Subject: [PATCH 4.19 11/91] staging:iio:ad7150: fix threshold mode config bit
+Date:   Fri, 12 Jul 2019 14:18:14 +0200
+Message-Id: <20190712121622.013346601@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8627176b0de7ba3f4524f641ddff4abf23ae4e4 ]
+[ Upstream commit df4d737ee4d7205aaa6275158aeebff87fd14488 ]
 
-In the error handling code of iwl_req_fw_callback(), iwl_dealloc_ucode()
-is called to free data. In iwl_drv_stop(), iwl_dealloc_ucode() is called
-again, which can cause double-free problems.
+According to the AD7150 configuration register description, bit 7 assumes
+value 1 when the threshold mode is fixed and 0 when it is adaptive,
+however, the operation that identifies this mode was considering the
+opposite values.
 
-To fix this bug, the call to iwl_dealloc_ucode() in
-iwl_req_fw_callback() is deleted.
+This patch renames the boolean variable to describe it correctly and
+properly replaces it in the places where it is used.
 
-This bug is found by a runtime fuzzing tool named FIZZER written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 531efd6aa0991 ("staging:iio:adc:ad7150: chan_spec conv + i2c_smbus commands + drop unused poweroff timeout control.")
+Signed-off-by: Melissa Wen <melissa.srw@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/iwl-drv.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/iio/cdc/ad7150.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index 689a65b11cc3..4fd1737d768b 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -1579,7 +1579,6 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
- 	goto free;
+diff --git a/drivers/staging/iio/cdc/ad7150.c b/drivers/staging/iio/cdc/ad7150.c
+index d16084d7068c..a354ce6b2b7b 100644
+--- a/drivers/staging/iio/cdc/ad7150.c
++++ b/drivers/staging/iio/cdc/ad7150.c
+@@ -6,6 +6,7 @@
+  * Licensed under the GPL-2 or later.
+  */
  
-  out_free_fw:
--	iwl_dealloc_ucode(drv);
- 	release_firmware(ucode_raw);
-  out_unbind:
- 	complete(&drv->request_firmware_complete);
++#include <linux/bitfield.h>
+ #include <linux/interrupt.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
+@@ -130,7 +131,7 @@ static int ad7150_read_event_config(struct iio_dev *indio_dev,
+ {
+ 	int ret;
+ 	u8 threshtype;
+-	bool adaptive;
++	bool thrfixed;
+ 	struct ad7150_chip_info *chip = iio_priv(indio_dev);
+ 
+ 	ret = i2c_smbus_read_byte_data(chip->client, AD7150_CFG);
+@@ -138,21 +139,23 @@ static int ad7150_read_event_config(struct iio_dev *indio_dev,
+ 		return ret;
+ 
+ 	threshtype = (ret >> 5) & 0x03;
+-	adaptive = !!(ret & 0x80);
++
++	/*check if threshold mode is fixed or adaptive*/
++	thrfixed = FIELD_GET(AD7150_CFG_FIX, ret);
+ 
+ 	switch (type) {
+ 	case IIO_EV_TYPE_MAG_ADAPTIVE:
+ 		if (dir == IIO_EV_DIR_RISING)
+-			return adaptive && (threshtype == 0x1);
+-		return adaptive && (threshtype == 0x0);
++			return !thrfixed && (threshtype == 0x1);
++		return !thrfixed && (threshtype == 0x0);
+ 	case IIO_EV_TYPE_THRESH_ADAPTIVE:
+ 		if (dir == IIO_EV_DIR_RISING)
+-			return adaptive && (threshtype == 0x3);
+-		return adaptive && (threshtype == 0x2);
++			return !thrfixed && (threshtype == 0x3);
++		return !thrfixed && (threshtype == 0x2);
+ 	case IIO_EV_TYPE_THRESH:
+ 		if (dir == IIO_EV_DIR_RISING)
+-			return !adaptive && (threshtype == 0x1);
+-		return !adaptive && (threshtype == 0x0);
++			return thrfixed && (threshtype == 0x1);
++		return thrfixed && (threshtype == 0x0);
+ 	default:
+ 		break;
+ 	}
 -- 
 2.20.1
 
