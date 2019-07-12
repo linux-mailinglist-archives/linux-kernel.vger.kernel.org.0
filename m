@@ -2,109 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2F266C0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C755166C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfGLMGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:06:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:56428 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726155AbfGLMGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:06:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B4DD28;
-        Fri, 12 Jul 2019 05:06:34 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DEBC3F71F;
-        Fri, 12 Jul 2019 05:06:31 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
-        linux@armlinux.org.uk, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, salyzyn@android.com, pcc@google.com,
-        0x7f454c46@gmail.com, linux@rasmusvillemoes.dk,
-        huw@codeweavers.com, sthotton@marvell.com, andre.przywara@arm.com,
-        luto@kernel.org, john.stultz@linaro.org, naohiro.aota@wdc.com,
-        yamada.masahiro@socionext.com, Will Deacon <will@kernel.org>
-Subject: [PATCH] arm64: compat: Fix flip/flop vdso building bug
-Date:   Fri, 12 Jul 2019 13:06:18 +0100
-Message-Id: <20190712120618.6207-1-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712101556.17833-2-naohiro.aota@wdc.com>
-References: <20190712101556.17833-2-naohiro.aota@wdc.com>
+        id S1727149AbfGLMGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:06:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33508 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfGLMGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:06:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ntU8oMPY07ayUBkHvLSDuYCv3bfOAchf1eGcoqpdijs=; b=2QOMxlXA+8126DIzk43azdjz/
+        HTxF5vVgRNoK7eXeV7hS7V1jAf9WCS4q5WVvukltI89jL/68fcRWkkChom0D0Qs+ySTAPkDKhAcMW
+        KIkwVCJddWmGDBwJEK/alumUxLK56Wp69kd2oqoMRl6rDT5yLxTGmVWGBe3tzhytayu293pbe063L
+        XvB/wtMNFB/+jRyFzmVKAw4Evgb2W+hew33DVW73HwjR5X4oDsI19z5ZJYTqT51PkP3owlZFnQG7m
+        Df0O4cQXW6b1je3YygrtUIK9fFrflY8grdrrsB/d5uUX2BncLqs+0dqdGgY/UJB0FZP4ZUUQnTGWh
+        ZwFO7rzKQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hluJn-0004ys-JF; Fri, 12 Jul 2019 12:06:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2C84620A4087D; Fri, 12 Jul 2019 14:06:26 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 14:06:26 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, srinivas.eeda@oracle.com,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v2] xen/pv: Fix a boot up hang revealed by int3 self test
+Message-ID: <20190712120626.GW3402@hirez.programming.kicks-ass.net>
+References: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running "make" on an already compiled kernel tree will rebuild the
-vdso32 library even if this has not been modified.
+On Thu, Jul 11, 2019 at 04:15:21PM +0800, Zhenzhong Duan wrote:
+> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> index 4722ba2..2138d69 100644
+> --- a/arch/x86/xen/enlighten_pv.c
+> +++ b/arch/x86/xen/enlighten_pv.c
+> @@ -596,7 +596,7 @@ struct trap_array_entry {
+>  
+>  static struct trap_array_entry trap_array[] = {
+>  	{ debug,                       xen_xendebug,                    true },
+> -	{ int3,                        xen_xenint3,                     true },
+> +	{ int3,                        xen_int3,                        true },
+>  	{ double_fault,                xen_double_fault,                true },
+>  #ifdef CONFIG_X86_MCE
+>  	{ machine_check,               xen_machine_check,               true },
 
-$ make
-  GEN     Makefile
-  Using linux as source for kernel
-  CALL    linux/scripts/atomic/check-atomics.sh
-  CALL    linux/scripts/checksyscalls.sh
-  VDSOCHK arch/arm64/kernel/vdso32/vdso.so.raw
-  VDSOSYM include/generated/vdso32-offsets.h
-  CHK     include/generated/compile.h
-  CC      arch/arm64/kernel/signal.o
-  CC      arch/arm64/kernel/vdso.o
-  CC      arch/arm64/kernel/signal32.o
-  VDSOL   arch/arm64/kernel/vdso32/vdso.so.raw
-  MUNGE   arch/arm64/kernel/vdso32/vdso.so.dbg
-  OBJCOPY arch/arm64/kernel/vdso32/vdso.so
-  AS      arch/arm64/kernel/vdso32/vdso.o
-  AR      arch/arm64/kernel/vdso32/built-in.a
-  AR      arch/arm64/kernel/built-in.a
-  GEN     .version
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/version.o
-  AR      init/built-in.a
-  LD      vmlinux.o
-  MODPOST vmlinux.o
+I'm confused on the purpose of trap_array[], could you elucidate me?
 
-The issue is generated by the fact that "if_changed" is called twice
-in a single target.
-
-Fix the build bug merging the two commands into a single function.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Fixes: a7f71a2c8903 ("arm64: compat: Add vDSO")
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- arch/arm64/kernel/vdso32/Makefile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-index 288c14d30b45..fb572b6f1bf5 100644
---- a/arch/arm64/kernel/vdso32/Makefile
-+++ b/arch/arm64/kernel/vdso32/Makefile
-@@ -144,8 +144,7 @@ $(obj)/vdso.so.dbg: $(obj)/vdso.so.raw $(obj)/$(munge) FORCE
- 
- # Link rule for the .so file, .lds has to be first
- $(obj)/vdso.so.raw: $(src)/vdso.lds $(obj-vdso) FORCE
--	$(call if_changed,vdsold)
--	$(call if_changed,vdso_check)
-+	$(call if_changed,vdsold_and_vdso_check)
- 
- # Compilation rules for the vDSO sources
- $(c-obj-vdso): %.o: %.c FORCE
-@@ -156,6 +155,9 @@ $(asm-obj-vdso): %.o: %.S FORCE
- 	$(call if_changed_dep,vdsoas)
- 
- # Actual build commands
-+quiet_cmd_vdsold_and_vdso_check = LD   $@
-+      cmd_vdsold_and_vdso_check = $(cmd_vdsold); $(cmd_vdso_check)
-+
- quiet_cmd_vdsold = VDSOL   $@
-       cmd_vdsold = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_LDFLAGS) \
-                    -Wl,-T $(filter %.lds,$^) $(filter %.o,$^) -o $@
--- 
-2.22.0
-
+The sole user seems to be get_trap_addr() and that talks about ISTs, but
+#BP isn't an IST anymore, so why does it have ist_okay=true?
