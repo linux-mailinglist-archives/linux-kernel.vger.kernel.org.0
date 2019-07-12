@@ -2,92 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E495C6734E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D9467363
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfGLQcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 12:32:39 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51270 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfGLQcj (ORCPT
+        id S1727315AbfGLQeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 12:34:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40149 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfGLQeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:32:39 -0400
-Received: from pc-381.home (2a01cb0c80061e00e835b5cf688fec09.ipv6.abo.wanadoo.fr [IPv6:2a01:cb0c:8006:1e00:e835:b5cf:688f:ec09])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 3D11028BBD0;
-        Fri, 12 Jul 2019 17:32:38 +0100 (BST)
-Date:   Fri, 12 Jul 2019 18:32:34 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Nicolas.Ferre@microchip.com,
-        Joshua Henderson <joshua.henderson@microchip.com>,
-        bbrezillon@kernel.org, airlied@linux.ie,
-        alexandre.belloni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/atmel-hlcdc: set layer REP bit to enable
- replication logic
-Message-ID: <20190712183234.35427352@pc-381.home>
-In-Reply-To: <20190712162117.GB18990@ravnborg.org>
-References: <1562686509-8747-1-git-send-email-joshua.henderson@microchip.com>
-        <13aa50e4-a726-3f82-b186-79b452199a02@microchip.com>
-        <20190712162117.GB18990@ravnborg.org>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 12 Jul 2019 12:34:36 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so4764962pgj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 09:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxxOs+WHCN8yYkzCsPdgx/BKilpEGbNbxFs4VxLjJ2g=;
+        b=DB9nrgDcMI6Oxw7g0G5qgE+YfDLCtL5YMm1MsmimFl+ntc+vS7rbj6LPaNpSrC7Vpr
+         z/s4BskP50NzM8fMIcx1kjb4elWF5laVPt8idXtYmoRiCF/NAF0ps6Yk077kQSY7KDXi
+         O+DE5PpPU3o/dhoWtgz4BIeO0MBBNGCRYtzlc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxxOs+WHCN8yYkzCsPdgx/BKilpEGbNbxFs4VxLjJ2g=;
+        b=tmr7NX9eS70yAjzJwAGlGueEols1N72N6W98fWYciYi+WWQZ4rNLlzW3bANc5obso9
+         6Q+GpXnp+DOKr/fA++ywVb20eExuNtjjGD2y6zOsZWCYZLB6wKcaPOijhqe/tzasFx0M
+         zpFTOfItYpW9JEvKolGGrVTWRlvaV7L9v6fEeW3piEZ6N8yKNq2DbiefbN9HviVFaHbY
+         qy2pF8cBvrmoPFYv0aujqF93rKcTfOS76ewSYRJRWxRp0zTgrA1x+X/5mSKbWbURIaEU
+         ZozIHl9lhYF5/GLPZRP3uyp0mPNU7Iv/DRPhAcsHdUFa/sQCiD78f8aAbZdV8YT7jyMr
+         /2+g==
+X-Gm-Message-State: APjAAAW8FcCu7sxzn27W4i4ud5CEmz9P/aClEW+6jWc0+D+lTeURTOF6
+        +c3egBNM0MLsy3AvfmF5g87lCw==
+X-Google-Smtp-Source: APXvYqzatfDOusSPBh1WqKakLZc0DpjwdDToWjQSECc6hYoF0HYaCY+/Mnn4NcckBdYDj4y7irbB9Q==
+X-Received: by 2002:a63:fa57:: with SMTP id g23mr11522684pgk.75.1562949275764;
+        Fri, 12 Jul 2019 09:34:35 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id d15sm21571604pjc.8.2019.07.12.09.34.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 12 Jul 2019 09:34:35 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm/panel: simple: Doxygenize 'struct panel_desc'; rename a few functions
+Date:   Fri, 12 Jul 2019 09:33:33 -0700
+Message-Id: <20190712163333.231884-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Jul 2019 18:21:17 +0200
-Sam Ravnborg <sam@ravnborg.org> wrote:
+This attempts to address outstanding review feedback from commit
+b8a2948fa2b3 ("drm/panel: simple: Add ability to override typical
+timing").  Specifically:
 
-> Hi Joshua.
-> 
-> On Tue, Jul 09, 2019 at 04:24:49PM +0000, Nicolas.Ferre@microchip.com wrote:
-> > On 09/07/2019 at 17:35, Joshua Henderson wrote:  
-> > > This bit enables replication logic to expand an RGB color less than 24
-> > > bits, to 24 bits, which is used internally for all formats.  Otherwise,
-> > > the least significant bits are always set to zero and the color may not
-> > > be what is expected.
-> > > 
-> > > Signed-off-by: Joshua Henderson <joshua.henderson@microchip.com>  
-> > 
-> > Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> > 
-> > Here is patchwork entry:
-> > https://patchwork.kernel.org/patch/11037167/
-> > 
-> > Thanks, best regards,
-> >    Nicolas
-> >   
-> > > ---
-> > >   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > > index eb7c4cf..6f6cf61 100644
-> > > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > > @@ -389,7 +389,7 @@ atmel_hlcdc_plane_update_general_settings(struct atmel_hlcdc_plane *plane,
-> > >   	atmel_hlcdc_layer_write_cfg(&plane->layer, ATMEL_HLCDC_LAYER_DMA_CFG,
-> > >   				    cfg);
-> > >   
-> > > -	cfg = ATMEL_HLCDC_LAYER_DMA;
-> > > +	cfg = ATMEL_HLCDC_LAYER_DMA | ATMEL_HLCDC_LAYER_REP;
-> > >   
-> > >   	if (plane->base.type != DRM_PLANE_TYPE_PRIMARY) {
-> > >   		cfg |= ATMEL_HLCDC_LAYER_OVR | ATMEL_HLCDC_LAYER_ITER2BL |  
-> 
-> Thanks - this gave me an opportunity to read a bit more in the datasheet
-> of the controller.
-> Applied to drm-misc-next with Ack from Nicolas.
+* It was requested that I document (in the structure definition) that
+  the device tree override had no effect if 'struct drm_display_mode'
+  was used in the panel description.  I have provided full Doxygen
+  comments for 'struct panel_desc' to accomplish that.
+* panel_simple_get_fixed_modes() was thought to be a confusing name,
+  so it has been renamed to panel_simple_get_display_modes().
+* panel_simple_parse_override_mode() was thought to be better named as
+  panel_simple_parse_panel_timing_node().
 
-Was about to add my R-b and ask you to apply the patch. I'm glad you
-didn't wait for my feedback though, that means I'll soon be able to
-remove my name from the Atmel HLCDC entry in MAINTAINERS ;-).
+Suggested-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+NOTES:
+- I have not addressed the suggestion of doing 'bool has_override =
+  panel->override_mode.type != 0;'.  As per my reply on the mailing
+  list I think the convention in this file is to rely on implicit
+  conversions from int to bool.
+- Sam said that there was still something that he didn't understand
+  with regards to the flags.  Sam: if this is something that needs to
+  be addressed, please yell.
+
+ drivers/gpu/drm/panel/panel-simple.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index a50871c6836b..f3c0e203f40f 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -38,6 +38,22 @@
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_panel.h>
+ 
++/**
++ * @modes: Pointer to array of fixed modes appropriate for this panel.  If
++ *         only one mode then this can just be the address of this the mode.
++ *         NOTE: cannot be used with "timings" and also if this is specified
++ *         then you cannot override the mode in the device tree.
++ * @num_modes: Number of elements in modes array.
++ * @timings: Pointer to array of display timings.  NOTE: cannot be used with
++ *           "modes" and also these will be used to validate a device tree
++ *           override if one is present.
++ * @num_timings: Number of elements in timings array.
++ * @bpc: Bits per color.
++ * @size: Structure containing the physical size of this panel.
++ * @delay: Structure containing various delay values for this panel.
++ * @bus_format: See MEDIA_BUS_FMT_... defines.
++ * @bus_flags: See DRM_BUS_FLAG_... defines.
++ */
+ struct panel_desc {
+ 	const struct drm_display_mode *modes;
+ 	unsigned int num_modes;
+@@ -135,7 +151,7 @@ static unsigned int panel_simple_get_timings_modes(struct panel_simple *panel)
+ 	return num;
+ }
+ 
+-static unsigned int panel_simple_get_fixed_modes(struct panel_simple *panel)
++static unsigned int panel_simple_get_display_modes(struct panel_simple *panel)
+ {
+ 	struct drm_connector *connector = panel->base.connector;
+ 	struct drm_device *drm = panel->base.drm;
+@@ -199,7 +215,7 @@ static int panel_simple_get_non_edid_modes(struct panel_simple *panel)
+ 	 */
+ 	WARN_ON(panel->desc->num_timings && panel->desc->num_modes);
+ 	if (num == 0)
+-		num = panel_simple_get_fixed_modes(panel);
++		num = panel_simple_get_display_modes(panel);
+ 
+ 	connector->display_info.bpc = panel->desc->bpc;
+ 	connector->display_info.width_mm = panel->desc->size.width;
+@@ -351,9 +367,9 @@ static const struct drm_panel_funcs panel_simple_funcs = {
+ #define PANEL_SIMPLE_BOUNDS_CHECK(to_check, bounds, field) \
+ 	(to_check->field.typ >= bounds->field.min && \
+ 	 to_check->field.typ <= bounds->field.max)
+-static void panel_simple_parse_override_mode(struct device *dev,
+-					     struct panel_simple *panel,
+-					     const struct display_timing *ot)
++static void panel_simple_parse_panel_timing_node(struct device *dev,
++						 struct panel_simple *panel,
++						 const struct display_timing *ot)
+ {
+ 	const struct panel_desc *desc = panel->desc;
+ 	struct videomode vm;
+@@ -446,7 +462,7 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ 	}
+ 
+ 	if (!of_get_display_timing(dev->of_node, "panel-timing", &dt))
+-		panel_simple_parse_override_mode(dev, panel, &dt);
++		panel_simple_parse_panel_timing_node(dev, panel, &dt);
+ 
+ 	drm_panel_init(&panel->base);
+ 	panel->base.dev = dev;
+-- 
+2.22.0.510.g264f2c817a-goog
+
