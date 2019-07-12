@@ -2,87 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD2C663A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80796663B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 04:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbfGLCCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 11 Jul 2019 22:02:14 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45600 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728861AbfGLCCO (ORCPT
+        id S1729049AbfGLCPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 11 Jul 2019 22:15:48 -0400
+Received: from smtprelay0216.hostedemail.com ([216.40.44.216]:41189 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726505AbfGLCPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Jul 2019 22:02:14 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r1so3570655pfq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2019 19:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IytNEniq3sMnByAGgXf0cRvqrc82SOfcIoRvX/hkdvM=;
-        b=UvlCPM1C+T6ixM31KUt6lyU57sA6wLZKv2eEgvTgo0gzUgc7tjxMbBZtXHVtmgS5oT
-         2jey3NXwEXMUl145GeSxp/k6eJgXpS2PzALrxnXdvrE0Lio8AlAK7LAwLv5jR7zunOs3
-         suL8YfxlBlg8T2YtynpSyPb8WFVPufg6aC1JDdl41/bCyDkjiI+dtmxKnILU/y7ZDSTc
-         ImKs+3lG/m6rx7bpuIoGkKOt0/wucD7FeE6SbGhfmnHLxDZxVqn0ZrbqODVZh/yfhDJ0
-         xkG8ybrk4fpcCps+J7fLbcbcWuo4cohF1/wpGQmWhDmrVstBNATAIE2qVUHczdTgI7Vd
-         Grpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IytNEniq3sMnByAGgXf0cRvqrc82SOfcIoRvX/hkdvM=;
-        b=phNUe9npz76bxOi7ik8EaDKoCD0JsmBla6rRfLNU/al4gnaLxAFGg9iY1CAjFr4Nw9
-         +mwqNZjiJ+L4Ao5zrSJXxkMNwIlu40LJ40YXwAJFozK5IKbjmca0jPXT6jW2U9xAaDe1
-         BnugRTgcqE38gHPM8Sm2hUsvxtq9P04VdCU0vhf7QDtV/tPLk2blRen0Sk5mN6RiUtUj
-         foB0NYhdjSqjXfia2KifRVhyEzWKiqA/9u/+nv+jhUrJAaug8bC0k52ASWyHBjhEibrK
-         lSvOUrS7Tvsw6OaF2BfWDFQAoZTzOMtRxHASkuGxxzqKhgPtjI7tKVihX6KY/8NE3b8E
-         /vSw==
-X-Gm-Message-State: APjAAAXiat+79yxEA6kHFz4ucE2jH7Ekhiufms1zG6VOZzY7zttjgN2q
-        dyGQU4sS2qQNVgw5Ia035iNp1ACa9ak=
-X-Google-Smtp-Source: APXvYqwFIeNRVSnQCRPaIfPzZ7zCi0J96LN0zfRue3sASUXmw83nN/z9MxwYKR57U91yUUjzVbgSpw==
-X-Received: by 2002:a63:f118:: with SMTP id f24mr8000722pgi.322.1562896932792;
-        Thu, 11 Jul 2019 19:02:12 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id k16sm6410180pfa.87.2019.07.11.19.02.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2019 19:02:11 -0700 (PDT)
-Subject: Re: [PATCH v2] block/bio-integrity: fix a memory leak bug
-To:     Wenwen Wang <wang6495@umn.edu>, Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1562872923-2463-1-git-send-email-wang6495@umn.edu>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <956286e2-06fc-4d43-e78e-8f2059292aab@kernel.dk>
-Date:   Thu, 11 Jul 2019 20:02:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 11 Jul 2019 22:15:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8CD04181D33FB;
+        Fri, 12 Jul 2019 02:15:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1535:1544:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2564:2682:2685:2692:2828:2859:2899:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:6742:7514:7807:7875:7901:7903:8957:9025:9707:10004:10848:11026:11232:11473:11657:11658:11914:12043:12297:12438:12555:12698:12737:12740:12760:12895:13132:13231:13255:13439:14181:14659:14721:21080:21325:21433:21451:21627:21740:30012:30029:30054:30055:30069:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: list61_6c0723a6be725
+X-Filterd-Recvd-Size: 5469
+Received: from XPS-9350 (unknown [172.58.27.57])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 12 Jul 2019 02:15:42 +0000 (UTC)
+Message-ID: <b219cf41933b2f965572af515cf9d3119293bfba.camel@perches.com>
+Subject: Re: [PATCH -next] iwlwifi: dbg: work around clang bug by marking
+ debug strings static
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, kvalo@codeaurora.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Sara Sharon <sara.sharon@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+In-Reply-To: <20190712001708.170259-1-ndesaulniers@google.com>
+References: <20190712001708.170259-1-ndesaulniers@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <1562872923-2463-1-git-send-email-wang6495@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Date:   Thu, 11 Jul 2019 19:01:14 -0700
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/11/19 1:22 PM, Wenwen Wang wrote:
-> From: Wenwen Wang <wenwen@cs.uga.edu>
+On Thu, 2019-07-11 at 17:17 -0700, Nick Desaulniers wrote:
+> Commit r353569 in prerelease Clang-9 is producing a linkage failure:
 > 
-> In bio_integrity_prep(), a kernel buffer is allocated through kmalloc() to
-> hold integrity metadata. Later on, the buffer will be attached to the bio
-> structure through bio_integrity_add_page(), which returns the number of
-> bytes of integrity metadata attached. Due to unexpected situations,
-> bio_integrity_add_page() may return 0. As a result, bio_integrity_prep()
-> needs to be terminated with 'false' returned to indicate this error.
-> However, the allocated kernel buffer is not freed on this execution path,
-> leading to a memory leak.
+> ld: drivers/net/wireless/intel/iwlwifi/fw/dbg.o:
+> in function `_iwl_fw_dbg_apply_point':
+> dbg.c:(.text+0x827a): undefined reference to `__compiletime_assert_2387'
 > 
-> To fix this issue, free the allocated buffer before returning from
-> bio_integrity_prep().
+> when the following configs are enabled:
+> - CONFIG_IWLWIFI
+> - CONFIG_IWLMVM
+> - CONFIG_KASAN
+> 
+> Work around the issue for now by marking the debug strings as `static`,
+> which they probably should be any ways.
+> 
+> Link: https://bugs.llvm.org/show_bug.cgi?id=42580
+> Link: https://github.com/ClangBuiltLinux/linux/issues/580
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+> index e411ac98290d..f8c90ea4e9b4 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+> @@ -2438,7 +2438,7 @@ static void iwl_fw_dbg_info_apply(struct iwl_fw_runtime *fwrt,
+>  {
+>  	u32 img_name_len = le32_to_cpu(dbg_info->img_name_len);
+>  	u32 dbg_cfg_name_len = le32_to_cpu(dbg_info->dbg_cfg_name_len);
+> -	const char err_str[] =
+> +	static const char err_str[] =
+>  		"WRT: ext=%d. Invalid %s name length %d, expected %d\n";
 
-Applied, thanks.
+Better still would be to use the format string directly
+in both locations instead of trying to deduplicate it
+via storing it into a separate pointer.
 
--- 
-Jens Axboe
+Let the compiler/linker consolidate the format.
+It's smaller object code, allows format/argument verification,
+and is simpler for humans to understand.
+
+---
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+index e411ac98290d..25e6712932b8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+@@ -2438,17 +2438,17 @@ static void iwl_fw_dbg_info_apply(struct iwl_fw_runtime *fwrt,
+ {
+ 	u32 img_name_len = le32_to_cpu(dbg_info->img_name_len);
+ 	u32 dbg_cfg_name_len = le32_to_cpu(dbg_info->dbg_cfg_name_len);
+-	const char err_str[] =
+-		"WRT: ext=%d. Invalid %s name length %d, expected %d\n";
+ 
+ 	if (img_name_len != IWL_FW_INI_MAX_IMG_NAME_LEN) {
+-		IWL_WARN(fwrt, err_str, ext, "image", img_name_len,
++		IWL_WARN(fwrt, "WRT: ext=%d. Invalid %s name length %d, expected %d\n",
++			 ext, "image", img_name_len,
+ 			 IWL_FW_INI_MAX_IMG_NAME_LEN);
+ 		return;
+ 	}
+ 
+ 	if (dbg_cfg_name_len != IWL_FW_INI_MAX_DBG_CFG_NAME_LEN) {
+-		IWL_WARN(fwrt, err_str, ext, "debug cfg", dbg_cfg_name_len,
++		IWL_WARN(fwrt, "WRT: ext=%d. Invalid %s name length %d, expected %d\n",
++			 ext, "debug cfg", dbg_cfg_name_len,
+ 			 IWL_FW_INI_MAX_DBG_CFG_NAME_LEN);
+ 		return;
+ 	}
+@@ -2775,8 +2775,6 @@ static void _iwl_fw_dbg_apply_point(struct iwl_fw_runtime *fwrt,
+ 		struct iwl_ucode_tlv *tlv = iter;
+ 		void *ini_tlv = (void *)tlv->data;
+ 		u32 type = le32_to_cpu(tlv->type);
+-		const char invalid_ap_str[] =
+-			"WRT: ext=%d. Invalid apply point %d for %s\n";
+ 
+ 		switch (type) {
+ 		case IWL_UCODE_TLV_TYPE_DEBUG_INFO:
+@@ -2786,8 +2784,8 @@ static void _iwl_fw_dbg_apply_point(struct iwl_fw_runtime *fwrt,
+ 			struct iwl_fw_ini_allocation_data *buf_alloc = ini_tlv;
+ 
+ 			if (pnt != IWL_FW_INI_APPLY_EARLY) {
+-				IWL_ERR(fwrt, invalid_ap_str, ext, pnt,
+-					"buffer allocation");
++				IWL_ERR(fwrt, "WRT: ext=%d. Invalid apply point %d for %s\n",
++					ext, pnt, "buffer allocation");
+ 				goto next;
+ 			}
+ 
+@@ -2797,8 +2795,8 @@ static void _iwl_fw_dbg_apply_point(struct iwl_fw_runtime *fwrt,
+ 		}
+ 		case IWL_UCODE_TLV_TYPE_HCMD:
+ 			if (pnt < IWL_FW_INI_APPLY_AFTER_ALIVE) {
+-				IWL_ERR(fwrt, invalid_ap_str, ext, pnt,
+-					"host command");
++				IWL_ERR(fwrt, "WRT: ext=%d. Invalid apply point %d for %s\n",
++					ext, pnt, "host command");
+ 				goto next;
+ 			}
+ 			iwl_fw_dbg_send_hcmd(fwrt, tlv, ext);
+
 
