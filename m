@@ -2,173 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1D0666B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 08:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B0A666C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 08:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725929AbfGLGBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 02:01:19 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:58537 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfGLGBT (ORCPT
+        id S1725993AbfGLGIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 02:08:43 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:42652 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfGLGIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 02:01:19 -0400
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.51 with ESMTP; 12 Jul 2019 15:01:16 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.151 with ESMTP; 12 Jul 2019 15:01:16 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Fri, 12 Jul 2019 15:00:19 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Message-ID: <20190712060019.GC7702@X58A-UD3R>
-References: <1562565609-12482-1-git-send-email-byungchul.park@lge.com>
- <20190708125013.GG26519@linux.ibm.com>
- <20190708130359.GA42888@google.com>
- <20190709055815.GA19459@X58A-UD3R>
- <20190709124102.GR26519@linux.ibm.com>
- <20190710012025.GA20711@X58A-UD3R>
- <20190711123052.GI26519@linux.ibm.com>
- <20190711130849.GA212044@google.com>
- <20190711150215.GK26519@linux.ibm.com>
+        Fri, 12 Jul 2019 02:08:42 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x6C67CGj006351;
+        Fri, 12 Jul 2019 15:07:13 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x6C67CGj006351
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562911633;
+        bh=DNuQzHn+OIKUIOau4E/Lk/DJbbhem5IcUbtMTebzYys=;
+        h=From:To:Cc:Subject:Date:From;
+        b=njop8InNKgrhUWeNEiLlitdYGHFbavRnEoEQcMaiP5MNjiH4JD48I/rK7M5zch6KE
+         eRE+Rp58omN412mkPEZZI1uQrwpnlatT0uh7k14YdhFfOhSBV5U/tjMF4eElfPGH5d
+         j0Dy+A9ze1wmEXnEecZS8Wastnd/xM7dQIdoftowzq5K8fpZAjzOanoY2rfpd6za6s
+         0qtA+rEkodL9x/VoAVwc1gZbCFPEIyvUHQfJencJjasSM0cpMFxhYYfwmDSBoNXodA
+         odqfqq/LfffTsAcSS0tR/1bGWcxOL65AzRbjwbXl7hRbl8rVThMoXOwurJrKwflb0Z
+         tLxH0s0hCZO4g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     =?UTF-8?q?Joonas=20Kylm=8F=AB=A3l=8F=AB=A3?= 
+        <joonas.kylmala@iki.fi>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-stable <stable@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: fix missing choice values in auto.conf
+Date:   Fri, 12 Jul 2019 15:07:09 +0900
+Message-Id: <20190712060709.20609-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711150215.GK26519@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 08:02:15AM -0700, Paul E. McKenney wrote:
-> These would be the tunables controlling how quickly RCU takes its
-> various actions to encourage the current grace period to end quickly.
+Since commit 00c864f8903d ("kconfig: allow all config targets to write
+auto.conf if missing"), Kconfig creates include/config/auto.conf in the
+defconfig stage when it is missing.
 
-Seriously one of the most interesting thing over all kernel works.
+Joonas Kylmälä reported incorrect auto.conf generation under some
+circumstances.
 
-> I would be happy to give you the exact list if you wish, but most of
-> them have appeared in this thread.
+Apply the following diff:
 
-Thank you. :)
+| --- a/arch/arm/configs/imx_v6_v7_defconfig
+| +++ b/arch/arm/configs/imx_v6_v7_defconfig
+| @@ -345,14 +345,7 @@ CONFIG_USB_CONFIGFS_F_MIDI=y
+|  CONFIG_USB_CONFIGFS_F_HID=y
+|  CONFIG_USB_CONFIGFS_F_UVC=y
+|  CONFIG_USB_CONFIGFS_F_PRINTER=y
+| -CONFIG_USB_ZERO=m
+| -CONFIG_USB_AUDIO=m
+| -CONFIG_USB_ETH=m
+| -CONFIG_USB_G_NCM=m
+| -CONFIG_USB_GADGETFS=m
+| -CONFIG_USB_FUNCTIONFS=m
+| -CONFIG_USB_MASS_STORAGE=m
+| -CONFIG_USB_G_SERIAL=m
+| +CONFIG_USB_FUNCTIONFS=y
+|  CONFIG_MMC=y
+|  CONFIG_MMC_SDHCI=y
+|  CONFIG_MMC_SDHCI_PLTFM=y
 
-> The experiments should be designed to work out whether the current
-> default settings have configurations where they act badly.  This might
-> also come up with advice for people attempting hand-tuning, or proposed
-> parameter-checking code to avoid bad combinations.
+And then, run:
 
-Great.
+$ make ARCH=arm mrproper imx_v6_v7_defconfig
 
-> For one example, setting the RCU CPU stall timeout too low will definitely
-> cause some unwanted splats.  (Yes, one could argue that other things in
-> the kernel should change to allow this value to decrease, but things
-> like latency tracer and friends are probably more useful and important.)
+CONFIG_USB_FUNCTIONFS=y is correctly contained in the .config, but not
+in the auto.conf.
 
-Agree.
+Please note drivers/usb/gadget/legacy/Kconfig is included from a choice
+block in drivers/usb/gadget/Kconfig. So USB_FUNCTIONFS is a choice value.
 
-Thanks,
-Byungchul
+This is probably a similar situation described in commit beaaddb62540
+("kconfig: tests: test defconfig when two choices interact").
 
-> 
-> 							Thanx, Paul
-> 
-> > thanks,
-> > 
-> > - Joel
-> > 
-> > 
-> > 
-> > > > Thanks,
-> > > > Byungchul
-> > > > 
-> > > > ---8<---
-> > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > > > index e72c184..94b58f5 100644
-> > > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > > @@ -3792,10 +3792,6 @@
-> > > >  			a value based on the most recent settings
-> > > >  			of rcutree.jiffies_till_first_fqs
-> > > >  			and rcutree.jiffies_till_next_fqs.
-> > > > -			This calculated value may be viewed in
-> > > > -			rcutree.jiffies_to_sched_qs.  Any attempt to set
-> > > > -			rcutree.jiffies_to_sched_qs will be cheerfully
-> > > > -			overwritten.
-> > > >  
-> > > >  	rcutree.kthread_prio= 	 [KNL,BOOT]
-> > > >  			Set the SCHED_FIFO priority of the RCU per-CPU
-> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > > index a2f8ba2..ad9dc86 100644
-> > > > --- a/kernel/rcu/tree.c
-> > > > +++ b/kernel/rcu/tree.c
-> > > > @@ -421,10 +421,8 @@ static int rcu_is_cpu_rrupt_from_idle(void)
-> > > >   * How long the grace period must be before we start recruiting
-> > > >   * quiescent-state help from rcu_note_context_switch().
-> > > >   */
-> > > > -static ulong jiffies_till_sched_qs = ULONG_MAX;
-> > > > +static ulong jiffies_till_sched_qs = ULONG_MAX; /* See adjust_jiffies_till_sched_qs(). */
-> > > >  module_param(jiffies_till_sched_qs, ulong, 0444);
-> > > > -static ulong jiffies_to_sched_qs; /* See adjust_jiffies_till_sched_qs(). */
-> > > > -module_param(jiffies_to_sched_qs, ulong, 0444); /* Display only! */
-> > > >  
-> > > >  /*
-> > > >   * Make sure that we give the grace-period kthread time to detect any
-> > > > @@ -436,18 +434,13 @@ static void adjust_jiffies_till_sched_qs(void)
-> > > >  {
-> > > >  	unsigned long j;
-> > > >  
-> > > > -	/* If jiffies_till_sched_qs was specified, respect the request. */
-> > > > -	if (jiffies_till_sched_qs != ULONG_MAX) {
-> > > > -		WRITE_ONCE(jiffies_to_sched_qs, jiffies_till_sched_qs);
-> > > > -		return;
-> > > > -	}
-> > > >  	/* Otherwise, set to third fqs scan, but bound below on large system. */
-> > > >  	j = READ_ONCE(jiffies_till_first_fqs) +
-> > > >  		      2 * READ_ONCE(jiffies_till_next_fqs);
-> > > >  	if (j < HZ / 10 + nr_cpu_ids / RCU_JIFFIES_FQS_DIV)
-> > > >  		j = HZ / 10 + nr_cpu_ids / RCU_JIFFIES_FQS_DIV;
-> > > >  	pr_info("RCU calculated value of scheduler-enlistment delay is %ld jiffies.\n", j);
-> > > > -	WRITE_ONCE(jiffies_to_sched_qs, j);
-> > > > +	WRITE_ONCE(jiffies_till_sched_qs, j);
-> > > >  }
-> > > >  
-> > > >  static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
-> > > > @@ -1033,16 +1026,16 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
-> > > >  
-> > > >  	/*
-> > > >  	 * A CPU running for an extended time within the kernel can
-> > > > -	 * delay RCU grace periods: (1) At age jiffies_to_sched_qs,
-> > > > -	 * set .rcu_urgent_qs, (2) At age 2*jiffies_to_sched_qs, set
-> > > > +	 * delay RCU grace periods: (1) At age jiffies_till_sched_qs,
-> > > > +	 * set .rcu_urgent_qs, (2) At age 2*jiffies_till_sched_qs, set
-> > > >  	 * both .rcu_need_heavy_qs and .rcu_urgent_qs.  Note that the
-> > > >  	 * unsynchronized assignments to the per-CPU rcu_need_heavy_qs
-> > > >  	 * variable are safe because the assignments are repeated if this
-> > > >  	 * CPU failed to pass through a quiescent state.  This code
-> > > > -	 * also checks .jiffies_resched in case jiffies_to_sched_qs
-> > > > +	 * also checks .jiffies_resched in case jiffies_till_sched_qs
-> > > >  	 * is set way high.
-> > > >  	 */
-> > > > -	jtsq = READ_ONCE(jiffies_to_sched_qs);
-> > > > +	jtsq = READ_ONCE(jiffies_till_sched_qs);
-> > > >  	ruqp = per_cpu_ptr(&rcu_data.rcu_urgent_qs, rdp->cpu);
-> > > >  	rnhqp = &per_cpu(rcu_data.rcu_need_heavy_qs, rdp->cpu);
-> > > >  	if (!READ_ONCE(*rnhqp) &&
-> > > > @@ -3383,7 +3376,8 @@ static void __init rcu_init_geometry(void)
-> > > >  		jiffies_till_first_fqs = d;
-> > > >  	if (jiffies_till_next_fqs == ULONG_MAX)
-> > > >  		jiffies_till_next_fqs = d;
-> > > > -	adjust_jiffies_till_sched_qs();
-> > > > +	if (jiffies_till_sched_qs == ULONG_MAX)
-> > > > +		adjust_jiffies_till_sched_qs();
-> > > >  
-> > > >  	/* If the compile-time values are accurate, just leave. */
-> > > >  	if (rcu_fanout_leaf == RCU_FANOUT_LEAF &&
-> > > 
+When sym_calc_choice() is called, the choice symbol forgets the
+SYMBOL_DEF_USER unless all of its choice values are explicitly set by
+the user.
+
+The choice symbol is given just one chance to recall it because
+set_all_choice_values() is called if SYMBOL_NEED_SET_CHOICE_VALUES
+is set.
+
+When sym_calc_choice() is called again, the choice symbol forgets it
+forever, since SYMBOL_NEED_SET_CHOICE_VALUES is a one-time aid.
+Hence, we cannot call sym_clear_all_valid() again and again.
+
+It is crazy to set and clear internal flags. However, we cannot simply
+get rid of "sym->flags &= flags | ~SYMBOL_DEF_USER;" Doing so would
+re-introduce the problem solved by commit 5d09598d488f ("kconfig: fix
+new choices being skipped upon config update").
+
+To work around the issue, conf_write_autoconf() stopped calling
+sym_clear_all_valid().
+
+conf_write() must be changed accordingly. Currently, it clears
+SYMBOL_WRITE after the symbol is written into the .config file. This
+is needed to prevent it from writing the same symbol multiple times in
+case the symbol is declared in two or more locations. I added the new
+flag SYMBOL_WRITTEN, to track the symbols that have been written.
+
+Anyway, this is a cheesy workaround in order to suppress the issue
+as far as defconfig is concerned.
+
+Handling of choices is totally broken. sym_clear_all_valid() is called
+every time a user touches a symbol from the GUI interface. To reproduce
+it, just add a new symbol drivers/usb/gadget/legacy/Kconfig, then touch
+around unrelated symbols from menuconfig. USB_FUNCTIONFS will disappear
+from the .config file.
+
+I added the Fixes tag since it is more fatal than before. But, this
+has been broken since long long time before, and still it is.
+We should take a closer look to fix this correctly somehow.
+
+Fixes: 00c864f8903d ("kconfig: allow all config targets to write auto.conf if missing")
+Cc: linux-stable <stable@vger.kernel.org> # 4.19+
+Reported-by: Joonas Kylmälä <joonas.kylmala@iki.fi>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/confdata.c | 7 +++----
+ scripts/kconfig/expr.h     | 1 +
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index cbb6efa4a5a6..e0972b255aac 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -895,7 +895,8 @@ int conf_write(const char *name)
+ 				     "# %s\n"
+ 				     "#\n", str);
+ 			need_newline = false;
+-		} else if (!(sym->flags & SYMBOL_CHOICE)) {
++		} else if (!(sym->flags & SYMBOL_CHOICE) &&
++			   !(sym->flags & SYMBOL_WRITTEN)) {
+ 			sym_calc_value(sym);
+ 			if (!(sym->flags & SYMBOL_WRITE))
+ 				goto next;
+@@ -903,7 +904,7 @@ int conf_write(const char *name)
+ 				fprintf(out, "\n");
+ 				need_newline = false;
+ 			}
+-			sym->flags &= ~SYMBOL_WRITE;
++			sym->flags |= SYMBOL_WRITTEN;
+ 			conf_write_symbol(out, sym, &kconfig_printer_cb, NULL);
+ 		}
+ 
+@@ -1063,8 +1064,6 @@ int conf_write_autoconf(int overwrite)
+ 	if (!overwrite && is_present(autoconf_name))
+ 		return 0;
+ 
+-	sym_clear_all_valid();
+-
+ 	conf_write_dep("include/config/auto.conf.cmd");
+ 
+ 	if (conf_touch_deps())
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index 8dde65bc3165..017843c9a4f4 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -141,6 +141,7 @@ struct symbol {
+ #define SYMBOL_OPTIONAL   0x0100  /* choice is optional - values can be 'n' */
+ #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFIG) */
+ #define SYMBOL_CHANGED    0x0400  /* ? */
++#define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to .config */
+ #define SYMBOL_NO_WRITE   0x1000  /* Symbol for internal use only; it will not be written */
+ #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
+ #define SYMBOL_WARNED     0x8000  /* warning has been issued */
+-- 
+2.17.1
+
