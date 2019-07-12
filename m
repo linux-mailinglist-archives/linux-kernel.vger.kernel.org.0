@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB25D66E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA6466E78
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbfGLM1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:27:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39464 "EHLO mail.kernel.org"
+        id S1728441AbfGLMjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:39:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728557AbfGLM1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:27:15 -0400
+        id S1728654AbfGLM1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:27:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D26E216C4;
-        Fri, 12 Jul 2019 12:27:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2452084B;
+        Fri, 12 Jul 2019 12:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934434;
-        bh=b44Im4yuvraejeHtjxj2xoFfQZtu0cWcfXBhkj1k270=;
+        s=default; t=1562934459;
+        bh=q8PERZs6v5ab/KUl9cYj5n7IxDxsOhsvzGU0Y4jTa6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YknI4Je5Yq6u9CfzCSKu1kWbB1uMe1Vm2THJ4bAkw9MCKHd2z3qgCInBIsFFSeqIO
-         oid+pRnxI3qrwwDC2UZv3JfaeP1lWYTBY6yDkd4p7oG9ajuNMRL3dAznb69YTk1sPY
-         RqK0z+kyuoDs2+KHvpuSWpwZN1HaMljpKjZD/NNo=
+        b=a2MD2DK15LFiOZwZUFDowDGgA6If76S5+/wlXFK6+8j22HWUaCkEF8BxjIudTNw4X
+         4470da92/Wj/SG/5WGWti2kOjJ6/YY97QERZKXA/8zMEQHqBFlUijwxH/n4O2I7IYf
+         EVCe5roZuZ8Q6BKbiUeF9g7CjUgIFrHO7veIv7x4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Naftali Goldstein <naftali.goldstein@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 054/138] bpf: fix div64 overflow tests to properly detect errors
-Date:   Fri, 12 Jul 2019 14:18:38 +0200
-Message-Id: <20190712121630.742274478@linuxfoundation.org>
+Subject: [PATCH 5.1 061/138] mac80211: do not start any work during reconfigure flow
+Date:   Fri, 12 Jul 2019 14:18:45 +0200
+Message-Id: <20190712121631.018684037@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -45,51 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3e0682695199bad51dd898fe064d1564637ff77a ]
+[ Upstream commit f8891461a277ec0afc493fd30cd975a38048a038 ]
 
-If the result of the division is LLONG_MIN, current tests do not detect
-the error since the return value is truncated to a 32-bit value and ends
-up being 0.
+It is not a good idea to try to perform any work (e.g. send an auth
+frame) during reconfigure flow.
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Prevent this from happening, and at the end of the reconfigure flow
+requeue all the works.
+
+Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../testing/selftests/bpf/verifier/div_overflow.c  | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ net/mac80211/ieee80211_i.h | 7 +++++++
+ net/mac80211/util.c        | 4 ++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/verifier/div_overflow.c b/tools/testing/selftests/bpf/verifier/div_overflow.c
-index bd3f38dbe796..acab4f00819f 100644
---- a/tools/testing/selftests/bpf/verifier/div_overflow.c
-+++ b/tools/testing/selftests/bpf/verifier/div_overflow.c
-@@ -29,8 +29,11 @@
- 	"DIV64 overflow, check 1",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_1, -1),
--	BPF_LD_IMM64(BPF_REG_0, LLONG_MIN),
--	BPF_ALU64_REG(BPF_DIV, BPF_REG_0, BPF_REG_1),
-+	BPF_LD_IMM64(BPF_REG_2, LLONG_MIN),
-+	BPF_ALU64_REG(BPF_DIV, BPF_REG_2, BPF_REG_1),
-+	BPF_MOV32_IMM(BPF_REG_0, 0),
-+	BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_2, 1),
-+	BPF_MOV32_IMM(BPF_REG_0, 1),
- 	BPF_EXIT_INSN(),
- 	},
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
-@@ -40,8 +43,11 @@
+diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
+index 4118704cb0e7..6708c1640207 100644
+--- a/net/mac80211/ieee80211_i.h
++++ b/net/mac80211/ieee80211_i.h
+@@ -2034,6 +2034,13 @@ void __ieee80211_flush_queues(struct ieee80211_local *local,
+ 
+ static inline bool ieee80211_can_run_worker(struct ieee80211_local *local)
  {
- 	"DIV64 overflow, check 2",
- 	.insns = {
--	BPF_LD_IMM64(BPF_REG_0, LLONG_MIN),
--	BPF_ALU64_IMM(BPF_DIV, BPF_REG_0, -1),
-+	BPF_LD_IMM64(BPF_REG_1, LLONG_MIN),
-+	BPF_ALU64_IMM(BPF_DIV, BPF_REG_1, -1),
-+	BPF_MOV32_IMM(BPF_REG_0, 0),
-+	BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_1, 1),
-+	BPF_MOV32_IMM(BPF_REG_0, 1),
- 	BPF_EXIT_INSN(),
- 	},
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
++	/*
++	 * It's unsafe to try to do any work during reconfigure flow.
++	 * When the flow ends the work will be requeued.
++	 */
++	if (local->in_reconfig)
++		return false;
++
+ 	/*
+ 	 * If quiescing is set, we are racing with __ieee80211_suspend.
+ 	 * __ieee80211_suspend flushes the workers after setting quiescing,
+diff --git a/net/mac80211/util.c b/net/mac80211/util.c
+index 447a55ae9df1..3400e2da7297 100644
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@ -2442,6 +2442,10 @@ int ieee80211_reconfig(struct ieee80211_local *local)
+ 		mutex_lock(&local->mtx);
+ 		ieee80211_start_next_roc(local);
+ 		mutex_unlock(&local->mtx);
++
++		/* Requeue all works */
++		list_for_each_entry(sdata, &local->interfaces, list)
++			ieee80211_queue_work(&local->hw, &sdata->work);
+ 	}
+ 
+ 	ieee80211_wake_queues_by_reason(hw, IEEE80211_MAX_QUEUE_MAP,
 -- 
 2.20.1
 
