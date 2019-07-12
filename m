@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C14466E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5FB66F00
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfGLMjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:39:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37588 "EHLO mail.kernel.org"
+        id S1727342AbfGLMUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:20:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727546AbfGLM0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:26:25 -0400
+        id S1727319AbfGLMU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:20:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E8A62084B;
-        Fri, 12 Jul 2019 12:26:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2D702166E;
+        Fri, 12 Jul 2019 12:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934385;
-        bh=KeNf6QfzbHhC0UdjC81omhs6P0360g1qsMqo+/TFbD8=;
+        s=default; t=1562934026;
+        bh=lNIW06PdV4Mggwnkyoq5rXknBfOd4SwzD8KlbvSXEMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wt6CqTcnHkNmV6FfG+kkMs7NpGcC0622dV/AN47HIP244oqhHUbhdVt+HL+ysDnJ3
-         LD0AJ4iZ6QEUZ6qqPQDuO2HLcors4sI0akSXuLuvdd2nthpKlAkUF2R7vAnN1//3Oj
-         fHkvTyO0QVodDP90vToPMmEuN17ZXR8ZSuywV81o=
+        b=gv7eYgn5hp3SLFevFWLZKEpxp1X5pt2G0lO8DUoT80Vq+f4/mRTRoZ2YKVCUTeB2H
+         OSdzhLR+YjihRzxwVXPDrV1WnuV4gnHqjBnizQn0DmeCZGvgsYK3tMfZYp84P9WNKx
+         IrNFOxlDW30dSaChKGqgehCN98QdY0ptjLYuNwLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 039/138] net: phy: rename Asix Electronics PHY driver
-Date:   Fri, 12 Jul 2019 14:18:23 +0200
-Message-Id: <20190712121630.179102388@linuxfoundation.org>
+Subject: [PATCH 4.19 22/91] net: phy: rename Asix Electronics PHY driver
+Date:   Fri, 12 Jul 2019 14:18:25 +0200
+Message-Id: <20190712121622.586366470@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -87,10 +87,10 @@ index f2f0264c58ba..443b34e2725f 100644
  	  This driver is for the Individual Computers X-Surf 100 Ethernet
  	  card (based on the Asix AX88796 chip). If you have such a card,
 diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 520657945b82..b0c13f8c2b62 100644
+index 82070792edbb..1f5fd24cd749 100644
 --- a/drivers/net/phy/Kconfig
 +++ b/drivers/net/phy/Kconfig
-@@ -242,7 +242,7 @@ config AQUANTIA_PHY
+@@ -227,7 +227,7 @@ config AQUANTIA_PHY
  	---help---
  	  Currently supports the Aquantia AQ1202, AQ2104, AQR105, AQR405
  
@@ -100,12 +100,12 @@ index 520657945b82..b0c13f8c2b62 100644
  	help
  	  Currently supports the Asix Electronics PHY found in the X-Surf 100
 diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-index ece5dae67174..6d44ab91fbf6 100644
+index 5805c0b7d60e..f21cda9d865e 100644
 --- a/drivers/net/phy/Makefile
 +++ b/drivers/net/phy/Makefile
-@@ -51,7 +51,7 @@ ifdef CONFIG_HWMON
- aquantia-objs			+= aquantia_hwmon.o
- endif
+@@ -46,7 +46,7 @@ obj-y				+= $(sfp-obj-y) $(sfp-obj-m)
+ 
+ obj-$(CONFIG_AMD_PHY)		+= amd.o
  obj-$(CONFIG_AQUANTIA_PHY)	+= aquantia.o
 -obj-$(CONFIG_ASIX_PHY)		+= asix.o
 +obj-$(CONFIG_AX88796B_PHY)	+= ax88796b.o
