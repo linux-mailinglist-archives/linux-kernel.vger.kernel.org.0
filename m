@@ -2,78 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608B1671E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C930671F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 17:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbfGLPBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 11:01:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726724AbfGLPBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 11:01:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC43AAE84;
-        Fri, 12 Jul 2019 15:01:28 +0000 (UTC)
-Date:   Fri, 12 Jul 2019 17:01:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
-        hdanton@sina.com, lizeb@google.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 4/4] mm: introduce MADV_PAGEOUT
-Message-ID: <20190712150127.GV29483@dhcp22.suse.cz>
-References: <20190711012528.176050-1-minchan@kernel.org>
- <20190711012528.176050-5-minchan@kernel.org>
- <20190711184223.GD20341@cmpxchg.org>
- <20190712051828.GA128252@google.com>
- <20190712135809.GB31107@cmpxchg.org>
+        id S1727031AbfGLPJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 11:09:13 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35772 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfGLPJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 11:09:12 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a127so7526296oii.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 08:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MJ8/wMSygZBfB3wNzWuYzcvp2/BWwETDvXU2IK3PdxQ=;
+        b=i30lgvwLkeVpXQsVjPYonpEPiGWlUBv2z2qDgJQMxrpKENxTorJSehxeqy+LUhfYzv
+         VtQK7axqN3W8U1LkXDuWZF1uP/L2p5KuLxKw4qI6wW++8B5fsIOnjjNBcW6teOiQ7tII
+         mzaCC2ZUY+uYaRDsXXA4s9KcaDlBUAOOWLZdYfvJUEAQEBDrP1cVZ7aiVZqE4JPjLspM
+         gGX5Sxlw25a4BwETR5XcKtZkSZrIlIkMg/I5T2vbeOKWQ6GxTtCPuP3CCKEjJvhuAnNI
+         gUc8VfcZTZNpYUjORWUUYKbazILP48oH1baF5oAlWmAp2Iq73gk63PjeR6tPL6TgX/5n
+         EdVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MJ8/wMSygZBfB3wNzWuYzcvp2/BWwETDvXU2IK3PdxQ=;
+        b=pmO/InhCSjoSmH2w/HL68DRYlAR71Qso8YU+l1+bNzLI/1Ml2WwiKLMu3kIvcNlxOo
+         gR/D7fYz3EvBQ4iehjPmBwt9vC0V4Z8wNwjRpBZ/nQzah2rzfkFGwb8YXn4GJ3pjsGxB
+         7QUnBGax79Ham6WiqXmBmpqt27hizYmPP54AxWE1JihRHPlEmaLrN/tO5NBa2SdiaJkQ
+         H7oTwxdEYqHFoXrQ0XQi5OcRvn4Ag0DQ8WIM4BjHUz2fwGcLmIXIMZi3x0BPJpgbvPG6
+         xQstEB/HFICY+4hZ21g/LK84NpyhSKfIsx4PwiRZAIf7TX/UJQuhT7nllUt3Pz8TzbND
+         +kbA==
+X-Gm-Message-State: APjAAAWUn6hNtoVDMfZ9aoNNnMHuK4vb2YAyQQjotAfGk0VhC/RVGL35
+        NCW7IuTCzFvmpP0VKwKVL6Mb4YrUu8VQM5YMpMNdinImxmQjiA==
+X-Google-Smtp-Source: APXvYqx6mGiQZVnuJ8vBdqFSeKXfLAml4k5LUaP7pbQDRWmiFpLAtMv5q6hcSKqWv8vY99TgvNNCYqHMtYCIHspx+74=
+X-Received: by 2002:a05:6808:4d:: with SMTP id v13mr6048794oic.22.1562944151822;
+ Fri, 12 Jul 2019 08:09:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712135809.GB31107@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190712120213.2825-1-lpf.vector@gmail.com> <20190712120213.2825-3-lpf.vector@gmail.com>
+ <20190712134955.GV32320@bombadil.infradead.org>
+In-Reply-To: <20190712134955.GV32320@bombadil.infradead.org>
+From:   Pengfei Li <lpf.vector@gmail.com>
+Date:   Fri, 12 Jul 2019 23:09:00 +0800
+Message-ID: <CAD7_sbEoGRUOJdcHnfUTzP7GfUhCdhfo8uBpUFZ9HGwS36VkSg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] mm/vmalloc.c: Modify struct vmap_area to reduce
+ its size
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>, rpenyaev@suse.de,
+        peterz@infradead.org, guro@fb.com, rick.p.edgecombe@intel.com,
+        rppt@linux.ibm.com, aryabinin@virtuozzo.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 12-07-19 09:58:09, Johannes Weiner wrote:
-[...]
-> > @@ -423,6 +445,12 @@ static int madvise_cold_pte_range(pmd_t *pmd, unsigned long addr,
-> >  
-> >  		VM_BUG_ON_PAGE(PageTransCompound(page), page);
-> >  
-> > +		if (pageout) {
-> > +			if (isolate_lru_page(page))
-> > +				continue;
-> > +			list_add(&page->lru, &page_list);
-> > +		}
-> > +
-> >  		if (pte_young(ptent)) {
-> >  			ptent = ptep_get_and_clear_full(mm, addr, pte,
-> >  							tlb->fullmm);
-> 
-> One thought on the ordering here.
-> 
-> When LRU isolation fails, it would still make sense to clear the young
-> bit: we cannot reclaim the page as we wanted to, but the user still
-> provided a clear hint that the page is cold and she won't be touching
-> it for a while. MADV_PAGEOUT is basically MADV_COLD + try_to_reclaim.
-> So IMO isolation should go to the end next to deactivate_page().
+On Fri, Jul 12, 2019 at 9:49 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Jul 12, 2019 at 08:02:13PM +0800, Pengfei Li wrote:
+>
+> I don't think you need struct union struct union.  Because llist_node
+> is just a pointer, you can get the same savings with just:
+>
+>         union {
+>                 struct llist_node purge_list;
+>                 struct vm_struct *vm;
+>                 unsigned long subtree_max_size;
+>         };
+>
 
-Make sense to me
+Thanks for your comments.
 
--- 
-Michal Hocko
-SUSE Labs
+As you said, I did this in v3.
+https://patchwork.kernel.org/patch/11031507/
+
+The reason why I use struct union struct in v4 is that I want to
+express "in the tree" and "in the purge list" are two completely
+isolated cases.
+
+struct vmap_area {
+        union {
+                struct {        /* Case A: In the tree */
+                        ...
+                };
+
+                struct {        /* Case B: In the purge list */
+                        ...
+                };
+        };
+};
+
+The "rb_node" and "list" should also not be used when va is in
+the purge list
+
+what do you think of this idea?
