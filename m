@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD8B66D46
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3810C66CF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfGLM2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:28:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41592 "EHLO mail.kernel.org"
+        id S1727754AbfGLMYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:24:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728747AbfGLM2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:28:08 -0400
+        id S1728160AbfGLMYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:24:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 583D4208E4;
-        Fri, 12 Jul 2019 12:28:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA46B2084B;
+        Fri, 12 Jul 2019 12:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934487;
-        bh=VsZms4Ebu41p9h8mUbbIv4O/kyaymEWAYms16wI9iH4=;
+        s=default; t=1562934277;
+        bh=GGVAeyUW5TCw69UXQh9EgpgOs9SzBn7k9zjPgxJ/r1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMayZfphThhVfXcm2N0ZL1U7NdsMzYvyLT8L+5ySlN8+BuzKFHh9Bu9EJXIR+4n2m
-         rCRwBFSRyf83516cNB7nvuMMF4PWGVQfeAQMwMnVniDHYyI0khWRkRElSI5dg+r53T
-         JbtAN3S6iy17E0Jzav5A1wZFB7gO9tuSeadBcMpw=
+        b=xXDgXZZcRBrxg3n9FJLpeBBEKXT+P8FA/qrQ8WNpsOQzVjzj5YKRjrofk2YoSmY4d
+         zABLBNRPE/77h+RMnhQawPvn/b1TN7zizP9JA2YgCv1gIQm4cXCJRfrd2fJ36iSL1P
+         i54ycK8/R28frUbZ5p0bJstfBzOqrt9hVDFDIaBM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
-        Reinhard Speyerer <rspmn@arcor.de>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 069/138] qmi_wwan: avoid RCU stalls on device disconnect when in QMAP mode
+Subject: [PATCH 4.19 50/91] net: lio_core: fix potential sign-extension overflow on large shift
 Date:   Fri, 12 Jul 2019 14:18:53 +0200
-Message-Id: <20190712121631.315837239@linuxfoundation.org>
+Message-Id: <20190712121624.331932688@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+References: <20190712121621.422224300@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8fdde1cb830e560208af42b6c10750137f53eb3 ]
+[ Upstream commit 9476274093a0e79b905f4cd6cf6d149f65e02c17 ]
 
-Switch qmimux_unregister_device() and qmi_wwan_disconnect() to
-use unregister_netdevice_queue() and unregister_netdevice_many()
-instead of unregister_netdevice(). This avoids RCU stalls which
-have been observed on device disconnect in certain setups otherwise.
+Left shifting the signed int value 1 by 31 bits has undefined behaviour
+and the shift amount oq_no can be as much as 63.  Fix this by using
+BIT_ULL(oq_no) instead.
 
-Fixes: c6adf77953bc ("net: usb: qmi_wwan: add qmap mux protocol support")
-Cc: Daniele Palmas <dnlplm@gmail.com>
-Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
+Addresses-Coverity: ("Bad shift operation")
+Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/lio_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 090227118d3d..44ada5c38756 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -247,13 +247,14 @@ static int qmimux_register_device(struct net_device *real_dev, u8 mux_id)
- 	return err;
- }
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+index 8093c5eafea2..781814835a4f 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+@@ -985,7 +985,7 @@ static void liquidio_schedule_droq_pkt_handlers(struct octeon_device *oct)
  
--static void qmimux_unregister_device(struct net_device *dev)
-+static void qmimux_unregister_device(struct net_device *dev,
-+				     struct list_head *head)
- {
- 	struct qmimux_priv *priv = netdev_priv(dev);
- 	struct net_device *real_dev = priv->real_dev;
- 
- 	netdev_upper_dev_unlink(real_dev, dev);
--	unregister_netdevice(dev);
-+	unregister_netdevice_queue(dev, head);
- 
- 	/* Get rid of the reference to real_dev */
- 	dev_put(real_dev);
-@@ -424,7 +425,7 @@ static ssize_t del_mux_store(struct device *d,  struct device_attribute *attr, c
- 		ret = -EINVAL;
- 		goto err;
- 	}
--	qmimux_unregister_device(del_dev);
-+	qmimux_unregister_device(del_dev, NULL);
- 
- 	if (!qmimux_has_slaves(dev))
- 		info->flags &= ~QMI_WWAN_FLAG_MUX;
-@@ -1434,6 +1435,7 @@ static void qmi_wwan_disconnect(struct usb_interface *intf)
- 	struct qmi_wwan_state *info;
- 	struct list_head *iter;
- 	struct net_device *ldev;
-+	LIST_HEAD(list);
- 
- 	/* called twice if separate control and data intf */
- 	if (!dev)
-@@ -1446,8 +1448,9 @@ static void qmi_wwan_disconnect(struct usb_interface *intf)
- 		}
- 		rcu_read_lock();
- 		netdev_for_each_upper_dev_rcu(dev->net, ldev, iter)
--			qmimux_unregister_device(ldev);
-+			qmimux_unregister_device(ldev, &list);
- 		rcu_read_unlock();
-+		unregister_netdevice_many(&list);
- 		rtnl_unlock();
- 		info->flags &= ~QMI_WWAN_FLAG_MUX;
- 	}
+ 			if (droq->ops.poll_mode) {
+ 				droq->ops.napi_fn(droq);
+-				oct_priv->napi_mask |= (1 << oq_no);
++				oct_priv->napi_mask |= BIT_ULL(oq_no);
+ 			} else {
+ 				tasklet_schedule(&oct_priv->droq_tasklet);
+ 			}
 -- 
 2.20.1
 
