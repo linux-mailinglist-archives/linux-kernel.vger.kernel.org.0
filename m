@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FEB66E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D1E66DD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbfGLMbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:31:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47404 "EHLO mail.kernel.org"
+        id S1729680AbfGLMdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:33:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728925AbfGLMbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:31:05 -0400
+        id S1728879AbfGLMdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:33:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9D462166E;
-        Fri, 12 Jul 2019 12:31:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4912B216E3;
+        Fri, 12 Jul 2019 12:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934664;
-        bh=QaG2Xvm2G6eZQNV9BGAb4s4cN88lVMswx2BQRGp8/4s=;
+        s=default; t=1562934829;
+        bh=6gxEAhsO1HLcQtZavycbTcyuT3ldIhrjwIC4kk7XOas=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cg8l/ihB4uvyMjnjbcAS5YR0YxljtvnSucUglvC2Ert+23r9LjYAum9bQg2S3Ud33
-         lfuYZstRUcK4gWw036kIWQGpZB2rhHqykLxhS0LPbyb/BBNYHlKiQS6VEFKfpeub2C
-         Khs7A707tvvSIarlghL5PcS4jhv5G+5FG32wNYiI=
+        b=TV280/KZEw6edpQP94ONo1kDjs3lcRO70qoAfQ78P0QAjRaimB8Qx5Oo7QSCt2fQ1
+         /7EhjU5Xx/yrPA5+iURZ8H42wNEC6+omcULvPW7frcP1lbwZHACw0Va0o/1zJ/B3yp
+         2au8grp5QIS2mIdOG+fFySi1JBUr+qK2IP1t0dko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 5.1 130/138] staging: vchiq_2835_arm: revert "quit using custom down_interruptible()"
-Date:   Fri, 12 Jul 2019 14:19:54 +0200
-Message-Id: <20190712121633.711116469@linuxfoundation.org>
+        syzbot+182ce46596c3f2e1eb24@syzkaller.appspotmail.com,
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH 5.2 42/61] binder: fix memory leak in error path
+Date:   Fri, 12 Jul 2019 14:19:55 +0200
+Message-Id: <20190712121622.886842397@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
-References: <20190712121628.731888964@linuxfoundation.org>
+In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
+References: <20190712121620.632595223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Todd Kjos <tkjos@android.com>
 
-commit 061ca1401f96c254e7f179bf97a1fc5c7f47e1e1 upstream.
+commit 1909a671dbc3606685b1daf8b22a16f65ea7edda upstream.
 
-The killable version of down() is meant to be used on situations where
-it should not fail at all costs, but still have the convenience of being
-able to kill it if really necessary. VCHIQ doesn't fit this criteria, as
-it's mainly used as an interface to V4L2 and ALSA devices.
+syzkallar found a 32-byte memory leak in a rarely executed error
+case. The transaction complete work item was not freed if put_user()
+failed when writing the BR_TRANSACTION_COMPLETE to the user command
+buffer. Fixed by freeing it before put_user() is called.
 
-Fixes: ff5979ad8636 ("staging: vchiq_2835_arm: quit using custom down_interruptible()")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reported-by: syzbot+182ce46596c3f2e1eb24@syzkaller.appspotmail.com
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/android/binder.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -553,7 +553,7 @@ create_pagelist(char __user *buf, size_t
- 		(g_cache_line_size - 1)))) {
- 		char *fragments;
- 
--		if (down_killable(&g_free_fragments_sema)) {
-+		if (down_interruptible(&g_free_fragments_sema) != 0) {
- 			cleanup_pagelistinfo(pagelistinfo);
- 			return NULL;
- 		}
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4268,6 +4268,8 @@ retry:
+ 		case BINDER_WORK_TRANSACTION_COMPLETE: {
+ 			binder_inner_proc_unlock(proc);
+ 			cmd = BR_TRANSACTION_COMPLETE;
++			kfree(w);
++			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
+ 			if (put_user(cmd, (uint32_t __user *)ptr))
+ 				return -EFAULT;
+ 			ptr += sizeof(uint32_t);
+@@ -4276,8 +4278,6 @@ retry:
+ 			binder_debug(BINDER_DEBUG_TRANSACTION_COMPLETE,
+ 				     "%d:%d BR_TRANSACTION_COMPLETE\n",
+ 				     proc->pid, thread->pid);
+-			kfree(w);
+-			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
+ 		} break;
+ 		case BINDER_WORK_NODE: {
+ 			struct binder_node *node = container_of(w, struct binder_node, work);
 
 
