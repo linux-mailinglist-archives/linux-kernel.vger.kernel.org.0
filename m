@@ -2,135 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16C466CEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5B866C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfGLMYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33222 "EHLO mail.kernel.org"
+        id S1727436AbfGLMUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:20:46 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:28646 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbfGLMYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727377AbfGLMUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:20:41 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3CA7208E4;
-        Fri, 12 Jul 2019 12:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934271;
-        bh=spKQvzBkCz2p7uUyWcQ59xxgGjgybE/oLIuwZnEgBBg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vBOrYqNO7r8hqpT1ObMqn54NS7Qx9rVtgdP5lOtkL5toWNIfQavMjRUcY9093Suyj
-         ufM5NoiVclKbCUlQQ+3vw5P8Evo4cK8OT3ZEt2rwRDbWTSVLfP3xkwYfvN1CjBQckL
-         LTjExfmTh8BCdiDF0P8cB3Wocjvukxiq7DX/jKNQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 90/91] staging: bcm2835-camera: Handle empty EOS buffers whilst streaming
-Date:   Fri, 12 Jul 2019 14:19:33 +0200
-Message-Id: <20190712121626.527633294@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mx2.mailbox.org (Postfix) with ESMTPS id 2AA0EA217D;
+        Fri, 12 Jul 2019 14:20:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id Fg_RUaFCSZVH; Fri, 12 Jul 2019 14:20:26 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 22:20:17 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
+Message-ID: <20190712122017.xkowq2cjreylpotm@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-2-cyphar@cyphar.com>
+ <20190712041454.GG17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zhpexfjxcruxolbk"
+Content-Disposition: inline
+In-Reply-To: <20190712041454.GG17978@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-commit a26be06d6d96c10a9ab005e99d93fbb5d3babd98 upstream.
+--zhpexfjxcruxolbk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The change to mapping V4L2 to MMAL buffers 1:1 didn't handle
-the condition we get with raw pixel buffers (eg YUV and RGB)
-direct from the camera's stills port. That sends the pixel buffer
-and then an empty buffer with the EOS flag set. The EOS buffer
-wasn't handled and returned an error up the stack.
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
+> > @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p, int=
+ dfd, struct filename *name)
+> >  	p->stack =3D p->internal;
+> >  	p->dfd =3D dfd;
+> >  	p->name =3D name;
+> > -	p->total_link_count =3D old ? old->total_link_count : 0;
+> > +	p->total_link_count =3D 0;
+> > +	p->acc_mode =3D 0;
+> > +	p->opath_mask =3D FMODE_PATH_READ | FMODE_PATH_WRITE;
+> > +	if (old) {
+> > +		p->total_link_count =3D old->total_link_count;
+> > +		p->acc_mode =3D old->acc_mode;
+> > +		p->opath_mask =3D old->opath_mask;
+> > +	}
+>=20
+> Huh?  Could somebody explain why traversals of NFS4 referrals should inhe=
+rit
+> ->acc_mode and ->opath_mask?
 
-Handle the condition correctly by returning it to the component
-if streaming, or returning with an error if stopping streaming.
+I'll be honest -- I don't understand what set_nameidata() did so I just
+did what I thought would be an obvious change (to just copy the
+contents). I thought it was related to some aspect of the symlink stack
+handling.
 
-Fixes: 938416707071 ("staging: bcm2835-camera: Remove V4L2/MMAL buffer remapping")
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In that case, should they both be set to 0 on set_nameidata()? This will
+mean that fd re-opening (or magic-link opening) through a
+set_nameidata() would always fail.
 
----
- drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c |   21 +++++-----
- drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c     |    5 +-
- 2 files changed, 15 insertions(+), 11 deletions(-)
+> >  static __always_inline
+> > -const char *get_link(struct nameidata *nd)
+> > +const char *get_link(struct nameidata *nd, bool trailing)
+> >  {
+> >  	struct saved *last =3D nd->stack + nd->depth - 1;
+> >  	struct dentry *dentry =3D last->link.dentry;
+> > @@ -1081,6 +1134,44 @@ const char *get_link(struct nameidata *nd)
+> >  		} else {
+> >  			res =3D get(dentry, inode, &last->done);
+> >  		}
+> > +		/* If we just jumped it was because of a magic-link. */
+> > +		if (unlikely(nd->flags & LOOKUP_JUMPED)) {
+> [...]
+> In any case, this "bool trailing" is completely wrong; whether that
+> check belongs in trailing_symlink() or (some of) its callers, putting
+> it into get_link() is a mistake, forced by kludgy check for procfs-style
+> symlinks.
 
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -342,16 +342,13 @@ static void buffer_cb(struct vchiq_mmal_
- 		return;
- 	} else if (length == 0) {
- 		/* stream ended */
--		if (buf) {
--			/* this should only ever happen if the port is
--			 * disabled and there are buffers still queued
-+		if (dev->capture.frame_count) {
-+			/* empty buffer whilst capturing - expected to be an
-+			 * EOS, so grab another frame
- 			 */
--			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
--			pr_debug("Empty buffer");
--		} else if (dev->capture.frame_count) {
--			/* grab another frame */
- 			if (is_capturing(dev)) {
--				pr_debug("Grab another frame");
-+				v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
-+					 "Grab another frame");
- 				vchiq_mmal_port_parameter_set(
- 					instance,
- 					dev->capture.camera_port,
-@@ -359,8 +356,14 @@ static void buffer_cb(struct vchiq_mmal_
- 					&dev->capture.frame_count,
- 					sizeof(dev->capture.frame_count));
- 			}
-+			if (vchiq_mmal_submit_buffer(instance, port, buf))
-+				v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
-+					 "Failed to return EOS buffer");
- 		} else {
--			/* signal frame completion */
-+			/* stopping streaming.
-+			 * return buffer, and signal frame completion
-+			 */
-+			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
- 			complete(&dev->capture.frame_cmplt);
- 		}
- 	} else {
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -291,8 +291,6 @@ static int bulk_receive(struct vchiq_mma
- 
- 	/* store length */
- 	msg_context->u.bulk.buffer_used = rd_len;
--	msg_context->u.bulk.mmal_flags =
--	    msg->u.buffer_from_host.buffer_header.flags;
- 	msg_context->u.bulk.dts = msg->u.buffer_from_host.buffer_header.dts;
- 	msg_context->u.bulk.pts = msg->u.buffer_from_host.buffer_header.pts;
- 
-@@ -453,6 +451,9 @@ static void buffer_to_host_cb(struct vch
- 		return;
- 	}
- 
-+	msg_context->u.bulk.mmal_flags =
-+				msg->u.buffer_from_host.buffer_header.flags;
-+
- 	if (msg->h.status != MMAL_MSG_STATUS_SUCCESS) {
- 		/* message reception had an error */
- 		pr_warn("error %d in reply\n", msg->h.status);
+The error path for LOOKUP_JUMPED comes from the old O_BENEATH patchset,
+but all of the "bool trailing" logic is definitely my gaff (I was
+quietly hoping you'd have a much better solution than the whole
+get_link() thing -- it definitely felt very kludgey to write).
 
+I will work on the suggestion in your follow-up email. Thanks!
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--zhpexfjxcruxolbk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh6/QAKCRCdlLljIbnQ
+EjDMAQCLRtfrI0y8gA2T7fw18G0cU799E+TMMczEIjU79f+8jQD/UcfSgUsZT0h6
+7dVpliYNzOl4Uou0Y4Kln5It6iq5aAc=
+=74oH
+-----END PGP SIGNATURE-----
+
+--zhpexfjxcruxolbk--
