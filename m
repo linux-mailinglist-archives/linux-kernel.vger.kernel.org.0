@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0864666E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3F2A66E7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfGLM0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:26:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
+        id S1728000AbfGLM0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbfGLM03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:26:29 -0400
+        id S1728030AbfGLM0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:26:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E1BD2084B;
-        Fri, 12 Jul 2019 12:26:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 798E22166E;
+        Fri, 12 Jul 2019 12:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934388;
-        bh=jnfapKDAJb2wo6tU6rPlft0yXV1aRdTj1hfyQPk7CqE=;
+        s=default; t=1562934410;
+        bh=5gkJJ5R8e4wrPwmocAUVJJYM+67wBshn7GOo+aQGpTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nq5BPMrbWw/pTsbGFhXg43jktsWGbgbMduSQRkpefTWraGJHSThhwSDbPf7wAOBsD
-         cFdy0USIR7UUPatNG5MGbJzZTioaDCm4sFfXpa1IhAdFjMABicv/Hz3Onl03r/pfQG
-         InkhWv11DyCp2yYwSD7g78PW+MjR2n8x3nDCQFYU=
+        b=XiJGjxKjo1ZCcNr6cxS5xbTxv7cw0JZyiILyviv85rEXc4EbzW53x9lkXnWwVSyiM
+         sbGRYqvT3YTMWkRnxBT1DIQ5fmTvA4DUbsJUov+9iS6z9nVV51g53QhhfikEV70pWC
+         O3V9iWyS3vnZ3b7LFmcGUXg/p8Ic5/n3vUcC/bCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
+        Deepak Rawat <drawat@vmware.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 040/138] ibmvnic: Do not close unopened driver during reset
-Date:   Fri, 12 Jul 2019 14:18:24 +0200
-Message-Id: <20190712121630.214132491@linuxfoundation.org>
+Subject: [PATCH 5.1 046/138] drm/vmwgfx: Honor the sg list segment size limitation
+Date:   Fri, 12 Jul 2019 14:18:30 +0200
+Message-Id: <20190712121630.435232349@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
 References: <20190712121628.731888964@linuxfoundation.org>
@@ -44,33 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1f94608b0ce141be5286dde31270590bdf35b86a ]
+[ Upstream commit bde15555ba61c7f664f40fd3c6fdbdb63f784c9b ]
 
-Check driver state before halting it during a reset. If the driver is
-not running, do nothing. Otherwise, a request to deactivate a down link
-can cause an error and the reset will fail.
+When building sg tables, honor the device sg list segment size limitation.
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Deepak Rawat <drawat@vmware.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index 3dfb2d131eb7..71bf895409a1 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1751,7 +1751,8 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+index a3357ff7540d..97adee1f0575 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+@@ -454,11 +454,11 @@ static int vmw_ttm_map_dma(struct vmw_ttm_tt *vmw_tt)
+ 		if (unlikely(ret != 0))
+ 			return ret;
  
- 	ibmvnic_cleanup(netdev);
+-		ret = sg_alloc_table_from_pages(&vmw_tt->sgt, vsgt->pages,
+-						vsgt->num_pages, 0,
+-						(unsigned long)
+-						vsgt->num_pages << PAGE_SHIFT,
+-						GFP_KERNEL);
++		ret = __sg_alloc_table_from_pages
++			(&vmw_tt->sgt, vsgt->pages, vsgt->num_pages, 0,
++			 (unsigned long) vsgt->num_pages << PAGE_SHIFT,
++			 dma_get_max_seg_size(dev_priv->dev->dev),
++			 GFP_KERNEL);
+ 		if (unlikely(ret != 0))
+ 			goto out_sg_alloc_fail;
  
--	if (adapter->reset_reason != VNIC_RESET_MOBILITY &&
-+	if (reset_state == VNIC_OPEN &&
-+	    adapter->reset_reason != VNIC_RESET_MOBILITY &&
- 	    adapter->reset_reason != VNIC_RESET_FAILOVER) {
- 		rc = __ibmvnic_close(netdev);
- 		if (rc)
 -- 
 2.20.1
 
