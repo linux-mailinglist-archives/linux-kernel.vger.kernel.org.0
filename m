@@ -2,176 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75702671B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56ABE671BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 16:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfGLOxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 10:53:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726318AbfGLOxq (ORCPT
+        id S1727330AbfGLOz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 10:55:27 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:39764 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfGLOz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 10:53:46 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6CEoq6m032789
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 10:53:45 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tpu7w35qw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 10:53:45 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 12 Jul 2019 15:53:44 +0100
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 12 Jul 2019 15:53:40 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6CErdX850397476
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 14:53:39 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E5BCB2065;
-        Fri, 12 Jul 2019 14:53:39 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEAAEB206B;
-        Fri, 12 Jul 2019 14:53:38 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.195.235])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 12 Jul 2019 14:53:38 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 63D8E16C39C0; Fri, 12 Jul 2019 07:53:38 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 07:53:38 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Byungchul Park <byungchul.park@lge.com>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Reply-To: paulmck@linux.ibm.com
-References: <20190710012025.GA20711@X58A-UD3R>
- <20190711123052.GI26519@linux.ibm.com>
- <20190711130849.GA212044@google.com>
- <20190711150215.GK26519@linux.ibm.com>
- <20190711164818.GA260447@google.com>
- <20190711195839.GA163275@google.com>
- <20190712063240.GD7702@X58A-UD3R>
- <20190712125116.GB92297@google.com>
- <20190712130242.GM26519@linux.ibm.com>
- <20190712134311.GE92297@google.com>
+        Fri, 12 Jul 2019 10:55:26 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6CEtD9g020921
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 23:55:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6CEtD9g020921
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562943314;
+        bh=2pCn3yeZu/5Q2TZ7hwyekTh8gaDXfLpUYTMHRaRKfZ0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vbwJLkfhAyD6kysrcM2dBwlzd9/P4agKISRgG1KHBDsnjLPSxtMJUFtDQxXVdjrYd
+         2lxM2g9nOjmUdc+25f1RYKJ/VItylPv4CwCO6XIgja3x+fYuuQs778NbE9NaQDCzeC
+         XpoKcrITF+VnVhLgp8J0J0512FNW7m98T2gpzWcxMGFvviv4UfZWtwKm111aH5/Haz
+         LLVS7B7vrH6riB0/bS3OE7mqUCKrj1weGoyGF7BqgwlUQ3Ys8D7LUP7/NoA4WpjMMt
+         kfr8GktKxBofKDSOtN6T7mWeBwNn22iiBIo0SRHZsuVFfLRavSwZQxZK/Ef0bDrtdn
+         9rg8xTtQ71hBQ==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id y16so6869036vsc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 07:55:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAXXf9yFwta+1AsmOC3VsP6Uxc3n2dXMUOEIlhyPOkNKergbFZVT
+        0yvPwIywlGMBs4TV51dtyc+8cIkOMkqdbZjx760=
+X-Google-Smtp-Source: APXvYqyOblEoxiyJtJYBVHt1jiVIyAbvLUdk4h6mGGG8agisxPfBXzNJ9vXVUD4fHABlfzzua3TIhyZa7QPG+rEnIVM=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr8670685vsd.215.1562943313188;
+ Fri, 12 Jul 2019 07:55:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712134311.GE92297@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19071214-2213-0000-0000-000003ADAEAB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011415; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01231139; UDB=6.00648525; IPR=6.01012424;
- MB=3.00027692; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-12 14:53:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071214-2214-0000-0000-00005F34B79D
-Message-Id: <20190712145338.GR26519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907120161
+References: <20190712101556.17833-1-naohiro.aota@wdc.com>
+In-Reply-To: <20190712101556.17833-1-naohiro.aota@wdc.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 12 Jul 2019 23:54:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARBunev7O3k06hv22aPh9DuW53CKbuvM1TwscuM_5uOUg@mail.gmail.com>
+Message-ID: <CAK7LNARBunev7O3k06hv22aPh9DuW53CKbuvM1TwscuM_5uOUg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] x86/vdso: fix flip/flop vdso build bug
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Collingbourne <pcc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 09:43:11AM -0400, Joel Fernandes wrote:
-> On Fri, Jul 12, 2019 at 06:02:42AM -0700, Paul E. McKenney wrote:
-> > On Fri, Jul 12, 2019 at 08:51:16AM -0400, Joel Fernandes wrote:
-> > > On Fri, Jul 12, 2019 at 03:32:40PM +0900, Byungchul Park wrote:
-> > > > On Thu, Jul 11, 2019 at 03:58:39PM -0400, Joel Fernandes wrote:
-> > > > > Hmm, speaking of grace period durations, it seems to me the maximum grace
-> > > > > period ever is recorded in rcu_state.gp_max. However it is not read from
-> > > > > anywhere.
-> > > > > 
-> > > > > Any idea why it was added but not used?
-> > > > > 
-> > > > > I am interested in dumping this value just for fun, and seeing what I get.
-> > > > > 
-> > > > > I wonder also it is useful to dump it in rcutorture/rcuperf to find any
-> > > > > issues, or even expose it in sys/proc fs to see what worst case grace periods
-> > > > > look like.
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > 	commit ae91aa0adb14dc33114d566feca2f7cb7a96b8b7
-> > > > 	rcu: Remove debugfs tracing
-> > > > 
-> > > > removed all debugfs tracing, gp_max also included.
-> > > > 
-> > > > And you sounds great. And even looks not that hard to add it like,
-> > > > 
-> > > > :)
-> > > > 
-> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > > index ad9dc86..86095ff 100644
-> > > > --- a/kernel/rcu/tree.c
-> > > > +++ b/kernel/rcu/tree.c
-> > > > @@ -1658,8 +1658,10 @@ static void rcu_gp_cleanup(void)
-> > > >  	raw_spin_lock_irq_rcu_node(rnp);
-> > > >  	rcu_state.gp_end = jiffies;
-> > > >  	gp_duration = rcu_state.gp_end - rcu_state.gp_start;
-> > > > -	if (gp_duration > rcu_state.gp_max)
-> > > > +	if (gp_duration > rcu_state.gp_max) {
-> > > >  		rcu_state.gp_max = gp_duration;
-> > > > +		trace_rcu_grace_period(something something);
-> > > > +	}
-> > > 
-> > > Yes, that makes sense. But I think it is much better off as a readable value
-> > > from a virtual fs. The drawback of tracing for this sort of thing are:
-> > >  - Tracing will only catch it if tracing is on
-> > >  - Tracing data can be lost if too many events, then no one has a clue what
-> > >    the max gp time is.
-> > >  - The data is already available in rcu_state::gp_max so copying it into the
-> > >    trace buffer seems a bit pointless IMHO
-> > >  - It is a lot easier on ones eyes to process a single counter than process
-> > >    heaps of traces.
-> > > 
-> > > I think a minimal set of RCU counters exposed to /proc or /sys should not
-> > > hurt and could do more good than not. The scheduler already does this for
-> > > scheduler statistics. I have seen Peter complain a lot about new tracepoints
-> > > but not much (or never) about new statistics.
-> > > 
-> > > Tracing has its strengths but may not apply well here IMO. I think a counter
-> > > like this could be useful for tuning of things like the jiffies_*_sched_qs,
-> > > the stall timeouts and also any other RCU knobs. What do you think?
-> > 
-> > Is this one of those cases where eBPF is the answer, regardless of
-> > the question?  ;-)
-> 
-> It could be. Except that people who fancy busybox still could benefit from
-> the counter ;-)
+On Fri, Jul 12, 2019 at 7:16 PM Naohiro Aota <naohiro.aota@wdc.com> wrote:
+>
+> Two consecutive "make" on an already compiled kernel tree will show
+> different behavior:
+>
+> $ make
+>   CALL    scripts/checksyscalls.sh
+>   CALL    scripts/atomic/check-atomics.sh
+>   DESCEND  objtool
+>   CHK     include/generated/compile.h
+>   VDSOCHK arch/x86/entry/vdso/vdso64.so.dbg
+>   VDSOCHK arch/x86/entry/vdso/vdso32.so.dbg
+> Kernel: arch/x86/boot/bzImage is ready  (#3)
+>   Building modules, stage 2.
+>   MODPOST 12 modules
+>
+> $ make
+> make
+>   CALL    scripts/checksyscalls.sh
+>   CALL    scripts/atomic/check-atomics.sh
+>   DESCEND  objtool
+>   CHK     include/generated/compile.h
+>   VDSO    arch/x86/entry/vdso/vdso64.so.dbg
+>   OBJCOPY arch/x86/entry/vdso/vdso64.so
+>   VDSO2C  arch/x86/entry/vdso/vdso-image-64.c
+>   CC      arch/x86/entry/vdso/vdso-image-64.o
+>   VDSO    arch/x86/entry/vdso/vdso32.so.dbg
+>   OBJCOPY arch/x86/entry/vdso/vdso32.so
+>   VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
+>   CC      arch/x86/entry/vdso/vdso-image-32.o
+>   AR      arch/x86/entry/vdso/built-in.a
+>   AR      arch/x86/entry/built-in.a
+>   AR      arch/x86/built-in.a
+>   GEN     .version
+>   CHK     include/generated/compile.h
+>   UPD     include/generated/compile.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   LD      vmlinux.o
+> <snip>
+>
+> This is causing "LD vmlinux" once every two times even without any
+> modifications. This is the same bug fixed in commit 92a4728608a8
+> ("x86/boot: Fix if_changed build flip/flop bug"). We cannot use two
+> "if_changed" in one target. Fix this build bug by merging two commands into
+> one function.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Fixes: 7ac870747988 ("x86/vdso: Switch to generic vDSO implementation")
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
 
-;-)
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Another approach might be for RCU to dump statistics, including this
-one, to the console every so often, for example, maybe every minute for
-the first hour, every hour for the first day, and every day after that.
-What else might work?
 
-(I am not a huge fan of bringing back RCU's debugfs due to testability
-concerns and due to the fact that very few people ever used it.)
-
-Plus the busybox people could always add a trace_printk() or similar.
-
-> And also, eBPF uses RCU itself heavily, so it would help if the debug related
-> counter itself didn't depend on it. ;-)
-
-I would think that eBPF printing a statistical counter from RCU wouldn't
-pose danger even given that eBPF uses RCU, so I suspect that your point
-about busybox carries more force in this argument.  ;-)
-
-							Thanx, Paul
-
+-- 
+Best Regards
+Masahiro Yamada
