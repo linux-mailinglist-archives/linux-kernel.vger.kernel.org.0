@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA1766C95
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A6466D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfGLMVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55656 "EHLO mail.kernel.org"
+        id S1728655AbfGLM1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:27:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727574AbfGLMV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:21:29 -0400
+        id S1728629AbfGLM1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:27:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64E91216E3;
-        Fri, 12 Jul 2019 12:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 646B82084B;
+        Fri, 12 Jul 2019 12:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934088;
-        bh=RGqaMnUl8fu5VGTAT/EWM2D/EJZuaOJplXwUWrI4ww0=;
+        s=default; t=1562934456;
+        bh=WlUI2zBQ37TDeNkfKHsamyvVlp/7aovcYPTzZDhUYwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q4kxAfcammzUKPyjruQB+SosiMiJ6mdLTTiWrc3n9/EiuU0Y6R8HP+bARvhwrDd/1
-         QfNn7IZ4+V+HtIDKOX+cWSvTmW1gYOO5L4iJMOSTCRb/tYhKCNhJnI8Q4BveU42wpo
-         p4X8gyYgM/4kFvCv0H3r5TCrtE3MHdTDVfQqLM/k=
+        b=qyZWZjRwClSGHrSrxXliiJd4b4AWBbwRu/2pBRGRHOiirAIxF/9cfP/1w9ZnsBfQh
+         aXCkjXZprqFUMgNEwRV7P481hCepgu+JjZOIU669hKJ2i95+8hXF30nHZp4WtraHu0
+         rnszobMS9BYKJBt98fbzegdqFL5CWAvD1JjBHrEw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        Toshiaki Makita <toshiaki.makita1@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
+        Yibo Zhao <yiboz@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/91] bpf, devmap: Add missing RCU read lock on flush
-Date:   Fri, 12 Jul 2019 14:18:43 +0200
-Message-Id: <20190712121623.602025258@linuxfoundation.org>
+Subject: [PATCH 5.1 060/138] mac80211: only warn once on chanctx_conf being NULL
+Date:   Fri, 12 Jul 2019 14:18:44 +0200
+Message-Id: <20190712121630.981021750@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 86723c8640633bee4b4588d3c7784ee7a0032f65 ]
+[ Upstream commit 563572340173865a9a356e6bb02579e6998a876d ]
 
-.ndo_xdp_xmit() assumes it is called under RCU. For example virtio_net
-uses RCU to detect it has setup the resources for tx. The assumption
-accidentally broke when introducing bulk queue in devmap.
+In multiple SSID cases, it takes time to prepare every AP interface
+to be ready in initializing phase. If a sta already knows everything it
+needs to join one of the APs and sends authentication to the AP which
+is not fully prepared at this point of time, AP's channel context
+could be NULL. As a result, warning message occurs.
 
-Fixes: 5d053f9da431 ("bpf: devmap prepare xdp frames for bulking")
-Reported-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Toshiaki Makita <toshiaki.makita1@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Even worse, if the AP is under attack via tools such as MDK3 and massive
+authentication requests are received in a very short time, console will
+be hung due to kernel warning messages.
+
+WARN_ON_ONCE() could be a better way for indicating warning messages
+without duplicate messages to flood the console.
+
+Johannes: We still need to address the underlying problem, but we
+          don't really have a good handle on it yet. Suppress the
+          worst side-effects for now.
+
+Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
+Signed-off-by: Yibo Zhao <yiboz@codeaurora.org>
+[johannes: add note, change subject]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/devmap.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/mac80211/ieee80211_i.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 357d456d57b9..fc500ca464d0 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -282,6 +282,7 @@ void __dev_map_flush(struct bpf_map *map)
- 	unsigned long *bitmap = this_cpu_ptr(dtab->flush_needed);
- 	u32 bit;
+diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
+index c875d45f1e1d..4118704cb0e7 100644
+--- a/net/mac80211/ieee80211_i.h
++++ b/net/mac80211/ieee80211_i.h
+@@ -1434,7 +1434,7 @@ ieee80211_get_sband(struct ieee80211_sub_if_data *sdata)
+ 	rcu_read_lock();
+ 	chanctx_conf = rcu_dereference(sdata->vif.chanctx_conf);
  
-+	rcu_read_lock();
- 	for_each_set_bit(bit, bitmap, map->max_entries) {
- 		struct bpf_dtab_netdev *dev = READ_ONCE(dtab->netdev_map[bit]);
- 		struct xdp_bulk_queue *bq;
-@@ -297,6 +298,7 @@ void __dev_map_flush(struct bpf_map *map)
- 
- 		__clear_bit(bit, bitmap);
+-	if (WARN_ON(!chanctx_conf)) {
++	if (WARN_ON_ONCE(!chanctx_conf)) {
+ 		rcu_read_unlock();
+ 		return NULL;
  	}
-+	rcu_read_unlock();
- }
- 
- /* rcu_read_lock (from syscall and BPF contexts) ensures that if a delete and/or
-@@ -389,6 +391,7 @@ static void dev_map_flush_old(struct bpf_dtab_netdev *dev)
- 
- 		int cpu;
- 
-+		rcu_read_lock();
- 		for_each_online_cpu(cpu) {
- 			bitmap = per_cpu_ptr(dev->dtab->flush_needed, cpu);
- 			__clear_bit(dev->bit, bitmap);
-@@ -396,6 +399,7 @@ static void dev_map_flush_old(struct bpf_dtab_netdev *dev)
- 			bq = per_cpu_ptr(dev->bulkq, cpu);
- 			bq_xmit_all(dev, bq, XDP_XMIT_FLUSH, false);
- 		}
-+		rcu_read_unlock();
- 	}
- }
- 
 -- 
 2.20.1
 
