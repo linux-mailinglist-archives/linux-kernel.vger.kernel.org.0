@@ -2,109 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF1E668BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D5C6690C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 10:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfGLISp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 04:18:45 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:36473 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbfGLISn (ORCPT
+        id S1726685AbfGLIVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 04:21:36 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:31655 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfGLIVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:18:43 -0400
-Received: by mail-qt1-f201.google.com with SMTP id q26so6350729qtr.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 01:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=LDQmGV1sXKMjUeOhPKTnD5bP1+GpH11oHwNBh3L4XLs=;
-        b=ajMvr06ssanFu9RH2ulwsIFgwcP3l/5lqWEJ4esAE7iplXyXRdoSrlII6lIzkciV9c
-         8fS3nAoGa/HEi4KQyyTUBP5BR7yF3M+y9W97hSaSVNMs7BQDT5O+1ViXKXfznttmHdA4
-         kZj77gRl1AQhpyhVrBktIROAMxvXbx6avdgvMOr4xBoGYGhyUIqfYD/dLpvgaPFXSOWO
-         xbcNYLSdxlgrhAxlcEUApm2APOEsny1ZyIbfB8sr4BAZx09pOkCoMJnlgMX+1V3SASYs
-         BSMIHfLGoKRYl/0WYsLgnjKM0J6KWHxKs/rp+Dqs7J9PUiYp83sE3bi0Q56vLyTXyarh
-         dgxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=LDQmGV1sXKMjUeOhPKTnD5bP1+GpH11oHwNBh3L4XLs=;
-        b=IetSRa+A350l9oG2KFRaq0QLmz194YYwCTDD8e2loQTH+3RagIXvgPAbjjMlWmTzGl
-         w0ncnjS67lQhzwU+zAyExoZmo32Bdh/RJeFdXcf1Miap1koCVa+yhiLsfTBq9Z7BrW9l
-         y1ho04e1Q/B+fhYDcKo0DovY2qMOKYwwtCufFTNLG+Y3VXGNojs/7yTwHAPAxPnAW3ia
-         fNFFO64V8uyr63XYZ9syZaNqqysWn6q00eQWvZACvxunNqdisdq6/eHwio3FEDdPvEc+
-         g4uiIIb/QN/jVK3qIBEmQxFu83P0jlUflqm+TkPqhfnzacy+uSvo2TxZ0rdW7uz0oOxC
-         N0Tw==
-X-Gm-Message-State: APjAAAUS9NXIfvvEj3UQhEdCEDF6J8jgFrdavEtq92OJEu3d6FAMdBTN
-        y9S+BHL57fdvRmUTofyP0oz3fA+uA185t48DEhqHfQ==
-X-Google-Smtp-Source: APXvYqzC+SZLS5J+4fhjs10zmFF3ZVskrEEqUdAP/3LUu2LLwXYMIIoYM0ZhbtGFlpH7G417ya7cYZF2uvns6Cyv43rpDw==
-X-Received: by 2002:a37:9a8b:: with SMTP id c133mr4814616qke.261.1562919522167;
- Fri, 12 Jul 2019 01:18:42 -0700 (PDT)
-Date:   Fri, 12 Jul 2019 01:17:44 -0700
-In-Reply-To: <20190712081744.87097-1-brendanhiggins@google.com>
-Message-Id: <20190712081744.87097-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190712081744.87097-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v9 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 12 Jul 2019 04:21:35 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 0nKJFzhFvuZ347cB/1iiOa0gusRvfdBglhNi2o0z9N/fIyHAPcTdgecYmTmIkYUI0QIejHKQnG
+ +f+1HheYLXKArKACJuXk7O2Uhe86jslFjq2mI57IY0bNjUxlg1tw2eCrM5ZmUUcF5ccyiU5giF
+ gmrGI4Ne4wsOcSl9iMxQ9cRI+UaJ7jEMD+4oxeIVy+JBNiGrVxRQSwpBrRpKH6To1dDo9+3TFP
+ ehkXFDSs9lCGlYq9Tf260yBnuier1zs8uLlkU4Z/LtPRITUYb3LuxVU0QLiupiyuj27Vkfr6wz
+ tf8=
+X-IronPort-AV: E=Sophos;i="5.63,481,1557212400"; 
+   d="scan'208";a="41053477"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Jul 2019 01:21:34 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 12 Jul 2019 01:21:33 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Fri, 12 Jul 2019 01:21:31 -0700
+Date:   Fri, 12 Jul 2019 10:20:44 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>
+CC:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pierre-yves.mordret@st.com" <pierre-yves.mordret@st.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v3 0/9] i2c: add support for filters
+Message-ID: <20190712082044.6eteunzehyptsibk@M43218.corp.atmel.com>
+Mail-Followup-To: Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pierre-yves.mordret@st.com" <pierre-yves.mordret@st.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+References: <1562678049-17581-1-git-send-email-eugen.hristev@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1562678049-17581-1-git-send-email-eugen.hristev@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section,
-and add Iurii as a maintainer.
+On Tue, Jul 09, 2019 at 03:19:26PM +0200, Eugen Hristev - M18282 wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
+> 
+> Hello,
+> 
+> This series adds support for analog and digital filters for i2c controllers
+> 
+> This series is based on the series:
+> [PATCH v2 0/9] i2c: at91: filters support for at91 SoCs
+> and enhanced to add the bindings for all controllers plus an extra binding
+> for the width of the spikes in nanoseconds.
+> 
+> First, bindings are created for
+> 'i2c-ana-filter'
+> 'i2c-dig-filter'
+> 'i2c-filter-width-ns'
+> 
+> The support is added in the i2c core to retrieve filter width and add it
+> to the timings structure.
+> Next, the at91 driver is enhanced for supporting digital filter, advanced
+> digital filter (with selectable spike width) and the analog filter.
+> 
+> Finally the device tree for two boards are modified to make use of the
+> new properties.
+> 
+> This series is the result of the comments on the ML in the direction
+> requested: to make the bindings globally available for i2c drivers.
+> 
+> Changes in v3:
+> - made bindings global for i2c controllers and modified accordingly
+> - gave up PADFCDF bit because it's a lack in datasheet
+> - the computation on the width of the spike is based on periph clock as it
+> is done for hold time.
+> 
+> Changes in v2:
+> - added device tree bindings and support for enable-ana-filt and
+> enable-dig-filt
+> - added the new properties to the DT for sama5d4_xplained/sama5d2_xplained
+> 
+> Eugen Hristev (9):
+>   dt-bindings: i2c: at91: add new compatible
+>   dt-bindings: i2c: add bindings for i2c analog and digital filter
+>   i2c: add support for filter-width-ns optional property
+>   i2c: at91: add new platform support for sam9x60
+>   i2c: at91: add support for digital filtering
+>   i2c: at91: add support for advanced digital filtering
+>   i2c: at91: add support for analog filtering
+>   ARM: dts: at91: sama5d2_xplained: add analog and digital filter for
+>     i2c
+>   ARM: dts: at91: sama5d4_xplained: add analog filter for i2c
+> 
+>  Documentation/devicetree/bindings/i2c/i2c-at91.txt |  3 +-
+>  Documentation/devicetree/bindings/i2c/i2c.txt      | 11 +++++
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  6 +++
+>  arch/arm/boot/dts/at91-sama5d4_xplained.dts        |  1 +
+>  drivers/i2c/busses/i2c-at91-core.c                 | 38 +++++++++++++++++
+>  drivers/i2c/busses/i2c-at91-master.c               | 49 ++++++++++++++++++++--
+>  drivers/i2c/busses/i2c-at91.h                      | 13 ++++++
+>  drivers/i2c/i2c-core-base.c                        |  2 +
+>  include/linux/i2c.h                                |  2 +
+>  9 files changed, 121 insertions(+), 4 deletions(-)
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Hi,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 48d04d180a988..f8204c75114da 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12721,12 +12721,14 @@ F:	Documentation/filesystems/proc.txt
- PROC SYSCTL
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Kees Cook <keescook@chromium.org>
-+M:	Iurii Zaikin <yzaikin@google.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.22.0.410.gd8fdbe21b5-goog
+I don't know if it will fit other vendors need concerning the binding
+but for Microchip it sounds good.
 
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+for the whole serie.
+
+Regards
+
+Ludovic
