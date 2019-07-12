@@ -2,173 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B9336667E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 07:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 763C366683
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 07:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfGLFlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 01:41:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24442 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725791AbfGLFlo (ORCPT
+        id S1726155AbfGLFmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 01:42:02 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37330 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfGLFmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 01:41:44 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6C5bSUp054419;
-        Fri, 12 Jul 2019 01:41:22 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tpjb7um4m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 Jul 2019 01:41:22 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6C5dFgD059786;
-        Fri, 12 Jul 2019 01:41:21 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tpjb7um47-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 Jul 2019 01:41:21 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6C5dogC024556;
-        Fri, 12 Jul 2019 05:41:20 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma01wdc.us.ibm.com with ESMTP id 2tjk971ewv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 Jul 2019 05:41:20 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6C5fJh148562568
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jul 2019 05:41:19 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A821112069;
-        Fri, 12 Jul 2019 05:41:19 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60687112067;
-        Fri, 12 Jul 2019 05:41:15 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.85.149.188])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 12 Jul 2019 05:41:15 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     x86@kernel.org
-Cc:     iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86 arch code
-Date:   Fri, 12 Jul 2019 02:36:31 -0300
-Message-Id: <20190712053631.9814-4-bauerman@linux.ibm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190712053631.9814-1-bauerman@linux.ibm.com>
-References: <20190712053631.9814-1-bauerman@linux.ibm.com>
+        Fri, 12 Jul 2019 01:42:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g15so4021498pgi.4;
+        Thu, 11 Jul 2019 22:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=k8kXXqEUeontmH32jxhFa7j9uFZa9yhZzdE08uh6b8I=;
+        b=eBggFk3faNJcyYcxxwYJiS8NKST3j86xRB0LAxZrxkruACA6hGQwKMyETNe8Buu6cV
+         1TYKxDk7ZOW+hq6q7RIIzq1gGukgu/tFYRIkF2Uv37foUL/5nnV4r6kN2/Z7+b02IkJt
+         +sttay0nDRo8VbLg9hsYbK0132kGc5qnODVwPeRwU8NgzxiiyoJyK2GL+9D8pkoLKG7f
+         WaAfTWWT3FQhGOxLfnLVuNSki8LiHMQPEgqPkzwE20DZSFdbBPvkzuxMSECk4l8827kz
+         xF+iSaogQaYwQoeq7hqs9w+PAeYe72QAEyvwZoOC34Ue5GElw3zVRUCo9lmoARZwAmQb
+         +Hgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=k8kXXqEUeontmH32jxhFa7j9uFZa9yhZzdE08uh6b8I=;
+        b=OwmtVjroTQsQ9WURbo2GpWNQ+CALVGRPwCVltT1yIcH+ojDJRoldsURQGMpHEQemXh
+         VdrKgd7YIuT8XCXyp49cB9U7HPvXbiTVgeGu5Miy4X2grG0b6Kd6+cSuGrOqrvKxrH7v
+         AWz8OBnFAolnq7smN0AgyHYZ2uJXlikI1aMEsMjIofYHUp876vRnHKitFviAVGG0XPxA
+         E1idZYn3pkzhTWXa/pW8FjZuhH4ksIW3p5ufAk3Tzxfdi/wOnIBJvQ/O+KCRbAcmC13n
+         TAtIwyWwdc2PnpP0mGwPzQe9sWYA3eG8MO58PNZmTgEFMG/irkdKRQRnGmCoFZHxNWIo
+         rYJQ==
+X-Gm-Message-State: APjAAAX4sRDkQsP03Ltt1XXcSzoaQsLvxUtL6SxskIud3RRX4wn7eyzs
+        7wE+2rnDF6Wokdym2272vTw=
+X-Google-Smtp-Source: APXvYqxSfMr0l/mOBclf58hl6ZTWqt6FlE2mVP5EZZgGtCDkUJyQXB7YBalnh5v00QsEOCC6VUzV2A==
+X-Received: by 2002:a63:755e:: with SMTP id f30mr8744416pgn.246.1562910120797;
+        Thu, 11 Jul 2019 22:42:00 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id u16sm8539111pjb.2.2019.07.11.22.42.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 22:42:00 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 22:41:58 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v5.3-rc0
+Message-ID: <20190712052744.GA138448@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-12_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=38 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907120058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
-appear in generic kernel code because it forces non-x86 architectures to
-define the sev_active() function, which doesn't make a lot of sense.
+Hi Linus,
 
-To solve this problem, add an x86 elfcorehdr_read() function to override
-the generic weak implementation. To do that, it's necessary to make
-read_from_oldmem() public so that it can be used outside of vmcore.c.
+Please pull from:
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/x86/kernel/crash_dump_64.c |  5 +++++
- fs/proc/vmcore.c                |  8 ++++----
- include/linux/crash_dump.h      | 14 ++++++++++++++
- include/linux/mem_encrypt.h     |  1 -
- 4 files changed, 23 insertions(+), 5 deletions(-)
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 
-diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-index 22369dd5de3b..045e82e8945b 100644
---- a/arch/x86/kernel/crash_dump_64.c
-+++ b/arch/x86/kernel/crash_dump_64.c
-@@ -70,3 +70,8 @@ ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
- {
- 	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, true);
- }
-+
-+ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-+{
-+	return read_from_oldmem(buf, count, ppos, 0, sev_active());
-+}
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 57957c91c6df..ca1f20bedd8c 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -100,9 +100,9 @@ static int pfn_is_ram(unsigned long pfn)
- }
- 
- /* Reads a page from the oldmem device from given offset. */
--static ssize_t read_from_oldmem(char *buf, size_t count,
--				u64 *ppos, int userbuf,
--				bool encrypted)
-+ssize_t read_from_oldmem(char *buf, size_t count,
-+			 u64 *ppos, int userbuf,
-+			 bool encrypted)
- {
- 	unsigned long pfn, offset;
- 	size_t nr_bytes;
-@@ -166,7 +166,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0, sev_active());
-+	return read_from_oldmem(buf, count, ppos, 0, false);
- }
- 
- /*
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index f774c5eb9e3c..4664fc1871de 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -115,4 +115,18 @@ static inline int vmcore_add_device_dump(struct vmcoredd_data *data)
- 	return -EOPNOTSUPP;
- }
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-+
-+#ifdef CONFIG_PROC_VMCORE
-+ssize_t read_from_oldmem(char *buf, size_t count,
-+			 u64 *ppos, int userbuf,
-+			 bool encrypted);
-+#else
-+static inline ssize_t read_from_oldmem(char *buf, size_t count,
-+				       u64 *ppos, int userbuf,
-+				       bool encrypted)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif /* CONFIG_PROC_VMCORE */
-+
- #endif /* LINUX_CRASHDUMP_H */
-diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
-index f2e399fb626b..a3747fcae466 100644
---- a/include/linux/mem_encrypt.h
-+++ b/include/linux/mem_encrypt.h
-@@ -21,7 +21,6 @@
- 
- #else	/* !CONFIG_ARCH_HAS_MEM_ENCRYPT */
- 
--static inline bool sev_active(void) { return false; }
- static inline bool mem_encrypt_active(void) { return false; }
- 
- #endif	/* CONFIG_ARCH_HAS_MEM_ENCRYPT */
+to receive updates for the input subsystem. You will get:
+
+- an update to Elan touchpad SMBus driver to fetch device parameters
+  (size, resolution) while it is still in PS/2 mode, before switching
+  over to SMBus, as in that mode some devices return garbage dimensions
+- update to iforce joystick driver
+- miscellaneous driver fixes
+
+Note that there will be a conflict in drivers/input/misc/da9063_onkey.c
+regarding SPDX header, please keep SPDX annotation that is already in
+your tree.
+
+Also, I am still hoping to merge applespi keyboard and trackpad driver
+in the 2nd pass for this merge window.
+
+Changelog:
+---------
+
+Alexander Tsoy (1):
+      Input: joydev - extend absolute mouse detection
+
+Anson Huang (2):
+      Input: imx_keypad - use devm_platform_ioremap_resource() to simplify code
+      Input: imx6ul_tsc - use devm_platform_ioremap_resource() to simplify code
+
+Axel Lin (1):
+      Input: iqs5xx - remove redundant dev_set_drvdata call
+
+Bartosz Golaszewski (1):
+      Input: max77650-onkey - add MODULE_ALIAS()
+
+Benjamin Tissoires (8):
+      Input: elantech - query the min/max information beforehand too
+      Input: elantech - add helper function elantech_is_buttonpad()
+      Input: elantech - detect middle button based on firmware version
+      dt-bindings: add more optional properties for elan_i2c touchpads
+      Input: elan_i2c - do not query the info if they are provided
+      Input: elantech/SMBus - export all capabilities from the PS/2 node
+      Input: elan_i2c - handle physical middle button
+      Input: elantech - remove P52 and P72 from SMBus blacklist
+
+Cole Rogers (1):
+      Input: synaptics - enable SMBUS on T480 thinkpad trackpad
+
+Daniel Mack (1):
+      Input: eeti_ts -  read hardware state once after wakeup
+
+Dmitry Torokhov (21):
+      Input: iforce - remove "being used" silliness
+      Input: iforce - introduce transport ops
+      Input: iforce - move get_id to the transport operations
+      Input: iforce - move command completion handling to serio code
+      Input: iforce - introduce start and stop io transport ops
+      Input: iforce - add bus type and parent arguments to iforce_init_device()
+      Input: iforce - move transport data into transport modules
+      Input: iforce - split into core and transport modules
+      Input: iforce - use DMA-safe buffer when getting IDs from USB
+      Input: iforce - update formatting of switch statements
+      Input: iforce - factor out hat handling when parsing packets
+      Input: iforce - do not combine arguments for iforce_process_packet()
+      Input: iforce - signal command completion from transport code
+      Input: iforce - only call iforce_process_packet() if initialized
+      Input: iforce - allow callers supply data buffer when fetching device IDs
+      Input: iforce - use DMA-safe buffores for USB transfers
+      Input: iforce - drop bus type from iforce structure
+      Input: iforce - drop couple of temps from transport code
+      Input: iforce - use unaligned accessors, where appropriate
+      Input: edt-ft5x06 - use get_unaligned_be16()
+      Input: edt-ft5x06 - simplify event reporting code
+
+Enrico Weigelt, metux IT consult (1):
+      Input: gpio_keys_polled - allow specifying name of input device
+
+Gustavo A. R. Silva (2):
+      Input: gpio_keys_polled - use struct_size() in devm_kzalloc()
+      Input: gpio_keys - use struct_size() in devm_kzalloc()
+
+Ian Ray (1):
+      Input: atmel_mxt_ts - fix leak in mxt_update_cfg()
+
+Jeffrey Hugo (2):
+      Input: elan_i2c - export the device id whitelist
+      HID: quirks: Refactor ELAN 400 and 401 handling
+
+Nathan Huckleberry (1):
+      Input: atmel_mxt_ts - fix -Wunused-const-variable
+
+Tim Schumacher (1):
+      Input: iforce - add the Saitek R440 Force Wheel
+
+Wolfram Sang (2):
+      Input: da9063_onkey - remove platform_data support
+      Input: da9063_onkey - convert header to SPDX
+
+YueHaibing (2):
+      Input: synaptics-rmi4 - remove set but not used variable 'sensor_flags'
+      Input: tca8418 - remove set but not used variable 'max_keys'
+
+Diffstat:
+--------
+
+ .../devicetree/bindings/input/elan_i2c.txt         |  11 +
+ drivers/hid/hid-quirks.c                           |  22 +-
+ drivers/input/joydev.c                             |  24 +-
+ drivers/input/joystick/iforce/Kconfig              |   8 +-
+ drivers/input/joystick/iforce/Makefile             |   7 +-
+ drivers/input/joystick/iforce/iforce-ff.c          |  18 +-
+ drivers/input/joystick/iforce/iforce-main.c        | 178 ++++--------
+ drivers/input/joystick/iforce/iforce-packets.c     | 215 +++++---------
+ drivers/input/joystick/iforce/iforce-serio.c       | 161 ++++++++---
+ drivers/input/joystick/iforce/iforce-usb.c         | 192 ++++++++----
+ drivers/input/joystick/iforce/iforce.h             |  55 ++--
+ drivers/input/keyboard/gpio_keys.c                 |   6 +-
+ drivers/input/keyboard/gpio_keys_polled.c          |  10 +-
+ drivers/input/keyboard/imx_keypad.c                |   4 +-
+ drivers/input/keyboard/tca8418_keypad.c            |   3 +-
+ drivers/input/misc/da9063_onkey.c                  |  11 +-
+ drivers/input/misc/max77650-onkey.c                |   1 +
+ drivers/input/mouse/elan_i2c_core.c                | 122 ++++----
+ drivers/input/mouse/elantech.c                     | 322 +++++++++++----------
+ drivers/input/mouse/elantech.h                     |   8 +
+ drivers/input/mouse/synaptics.c                    |   1 +
+ drivers/input/rmi4/rmi_f12.c                       |   6 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c           |  23 +-
+ drivers/input/touchscreen/edt-ft5x06.c             |  18 +-
+ drivers/input/touchscreen/eeti_ts.c                |  71 ++++-
+ drivers/input/touchscreen/imx6ul_tsc.c             |   8 +-
+ drivers/input/touchscreen/iqs5xx.c                 |   2 -
+ include/linux/input/elan-i2c-ids.h                 |  76 +++++
+ 28 files changed, 872 insertions(+), 711 deletions(-)
+ create mode 100644 include/linux/input/elan-i2c-ids.h
+
+Thanks.
+
+
+-- 
+Dmitry
