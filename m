@@ -2,245 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 560D066EAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7848866EF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfGLMY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:24:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbfGLMYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:24:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFF3B21019;
-        Fri, 12 Jul 2019 12:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934292;
-        bh=jsEf85U9RQPk6zjAwVpuSjiPjd7dfdaqi7vkN8W13ko=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EbiLRYpNo8C21VntfURrl+P5Cuf984BhXx1zfR8JonhH45GiB4NinFtCmi0ZZEg5c
-         kCVtKIHB2870QJGh1l0whQ1pvrzo1lnXf0bMRS/cG4ROo+HnVEsfBucq04kO1o9a1o
-         E2GoGHyYA5e7pFK+YfeFXsknWZ9zq73pJQnUnFPQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.19 91/91] staging: rtl8712: reduce stack usage, again
-Date:   Fri, 12 Jul 2019 14:19:34 +0200
-Message-Id: <20190712121626.572431972@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727701AbfGLMmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:42:18 -0400
+Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:51060 "EHLO
+        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727426AbfGLMUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:20:47 -0400
+Received: from pps.filterd (m0102629.ppops.net [127.0.0.1])
+        by mx08-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6CC8jQU026848
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 13:20:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
+ cc : references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp;
+ bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
+ b=X0/EeCNVGCx2yyWuvvn3LkdGbOr9KPiTlxdyR3E0+v5B1nOSKzMq6LGMnVP2gjBsJWCj
+ gX+o8gyEe9rEhuYqzX2A41ZObSk0XFX5jtziXchzJD5U4jNACl2yJZDu/cdpeMS+ZmhH
+ fGZ6agpByAwjFGxcLfL2pWaV4A/P8bTJgJZ9Xa3G8e1faX3WACWw3UysqcKBiext+Jb2
+ Cx0enGru3H6xH5o++YNKiOsgvfvybM9gF7wdJsrG+HxsicvK6xZL2gKojjkRwb8LkK68
+ Tb6KASf9bOr+x8YHiaGxI31oP+w5ZnKSsWLSLzRDFK/uf9/nEr/aYtjO2qOheRfrCnnf TQ== 
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        by mx08-00252a01.pphosted.com with ESMTP id 2tmd5x1ugu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 13:20:44 +0100
+Received: by mail-wr1-f71.google.com with SMTP id p13so4209101wru.17
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 05:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
+        b=bG5Ya8kLRPKQnc0IcMH7KDpOAIKl/HryHVEWznwsV4N6m3Q4fAYqMGkytOPUtdpNnU
+         RDmUN3EDhwNu9GzR+0TkJCHbjNq0Ezf3ADfEQ5rXPLaH2O0dQ4VhQWkyr+/23rdcgfAR
+         fVOjisc6FWm7uAq6vaI5K9UQVVRUvbM6k90M18f09aniuIbkUMEJuq6q2c2CmN32dI15
+         QbOxkV5S1xzrp7Tj4FSG7vwaRBiEUwBY4hvX8D7KxbfSus/CsrIouN47G1ZT1/hc3qwp
+         BzW+O+OlHXY0uo/57Tv9ri4OU0v9y/ZZyddpZhkhGrO3jUBnWnBMRBgH7OS0RPcqSfqh
+         7rNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aYvRadL6yw0BOyQsAWmctpKAqep0lNQg7LKzEYkgp68=;
+        b=LOVnBFuuHDrIbNEsBkh3Qg/5p4bDX9JY1ZcFiAg30iH9Qcu2WHcmypZLuWpuK2hkIc
+         dlPPmsTYk/b/H38s0osZMZaziedwlWIx/lO33mMkgnZl16uK8yTDdf//JgcStzR9tojU
+         a8JiMXMbY3Bh3wvJHT8BF1aCYbODzhem3WwiipeAoXxuw0rlZR+9981kbsvEQausxp9c
+         SeHg+cHNperiZhFMYHEH8fAJoPJO1x7/ksbpXUGvrmhjTxb20yy2tR53S0ENmMBMxCm1
+         TgIduFv6P48dctf94QU/xEP/VAyE7U+7JiSyJcQ8YfLn0pKPvSelB9QZPVebvJb9zLtz
+         U0oA==
+X-Gm-Message-State: APjAAAXt/BADsMbpmcB35QVeJisAQcPbDgtTBc1O6Zp4oePLo/gKpKID
+        V+p762QGhXqf7LDw8fKfCCeXkITlJCrbsZn7hesaRnreujijpx2e9RyWn2ihCwRXeQj5Mo1rjae
+        0mxXypx69t/Xyz5UYyjq3C1LZ
+X-Received: by 2002:a1c:c14b:: with SMTP id r72mr9642225wmf.166.1562934042981;
+        Fri, 12 Jul 2019 05:20:42 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy0QMAasKV533r2hf9StmKuUCmGS/yGnfCIYPi04R0ntO5GVjUL0ujM4e8C6vp2r9XeajybuQ==
+X-Received: by 2002:a1c:c14b:: with SMTP id r72mr9642203wmf.166.1562934042677;
+        Fri, 12 Jul 2019 05:20:42 -0700 (PDT)
+Received: from ?IPv6:2a00:1098:3142:14:3df0:c4c3:bb86:e0f3? ([2a00:1098:3142:14:3df0:c4c3:bb86:e0f3])
+        by smtp.gmail.com with ESMTPSA id k17sm5800070wrq.83.2019.07.12.05.20.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2019 05:20:41 -0700 (PDT)
+Subject: Re: [PATCH] tty: amba-pl011: Make TX optimisation conditional
+To:     Rogier Wolff <R.E.Wolff@BitWizard.nl>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     Russell King <linux@arm.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1562852732-123411-1-git-send-email-phil@raspberrypi.org>
+ <20190712112105.GH2790@e103592.cambridge.arm.com>
+ <20190712121000.GK11350@BitWizard.nl>
+From:   Phil Elwell <phil@raspberrypi.org>
+Message-ID: <5bf03345-6a36-1b87-ca0c-e918b6030a74@raspberrypi.org>
+Date:   Fri, 12 Jul 2019 13:20:42 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190712121000.GK11350@BitWizard.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
+ definitions=2019-07-12_04:2019-07-12,2019-07-12 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Rogier,
 
-commit fbd6b25009ac76b2034168cd21d5e01f8c2d83d1 upstream.
+On 12/07/2019 13:10, Rogier Wolff wrote:
+> On Fri, Jul 12, 2019 at 12:21:05PM +0100, Dave Martin wrote:
+>> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+>> index 89ade21..1902071 100644
+>> --- a/drivers/tty/serial/amba-pl011.c
+>> +++ b/drivers/tty/serial/amba-pl011.c
+>> @@ -1307,6 +1307,13 @@ static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
+>>  /* Start TX with programmed I/O only (no DMA) */
+>>  static void pl011_start_tx_pio(struct uart_amba_port *uap)
+>>  {
+>> +	/*
+>> +	 * Avoid FIFO overfills if the TX IRQ is active:
+>> +	 * pl011_int() will comsume chars waiting in the xmit queue anyway.
+>> +	 */
+>> +	if (uap->im & UART011_TXIM)
+>> +		return;
+>> +
+> 
+> I'm no expert on PL011, have no knowledge of the current bug, but have
+> programmed serial drivers in the past.
+> 
+> This looks "dangerous" to me.
+> 
+> The normal situation is that you push the first few characters into
+> the FIFO with PIO and then the interrupt will trigger once the FIFO
+> empties and then you can refil the FIFO until the buffer empties.
+> 
+> The danger in THIS fix is that you might have a race that causes those
+> first few PIO-ed characters not to be put in the hardware resulting in
+> the interrupt never triggering.... If you can software-trigger the
+> interrupt just before the "return" here that'd be a way to fix things.
 
-An earlier patch I sent reduced the stack usage enough to get
-below the warning limit, and I could show this was safe, but with
-GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, it gets worse again because large stack
-variables in the same function no longer overlap:
+I'm also not a serial driver expert, but I think this simplified patch is safe.
+The reason is that the UART011_TXIM flag is only set after the pio thread has failed
+to write some data into the FIFO because it is full, which would guarantee that
+an interrupt is generated once the fill level drops below the half-way mark.
 
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c: In function 'translate_scan.isra.2':
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:322:1: error: the frame size of 1200 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+> I'm ok with a reaction like "I've thought about this, it's not a
+> problem, now shut up".
 
-Split out the largest two blocks in the affected function into two
-separate functions and mark those noinline_for_stack.
+I don't think that reaction would be justified - these things are difficult, and having
+many minds on the problem helps to avoid bugs like this.
 
-Fixes: 8c5af16f7953 ("staging: rtl8712: reduce stack usage")
-Fixes: 81a56f6dcd20 ("gcc-plugins: structleak: Generalize to all variable types")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/staging/rtl8712/rtl871x_ioctl_linux.c |  159 ++++++++++++++------------
- 1 file changed, 89 insertions(+), 70 deletions(-)
-
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -141,10 +141,91 @@ static inline void handle_group_key(stru
- 	}
- }
- 
--static noinline_for_stack char *translate_scan(struct _adapter *padapter,
--				   struct iw_request_info *info,
--				   struct wlan_network *pnetwork,
--				   char *start, char *stop)
-+static noinline_for_stack char *translate_scan_wpa(struct iw_request_info *info,
-+						   struct wlan_network *pnetwork,
-+						   struct iw_event *iwe,
-+						   char *start, char *stop)
-+{
-+	/* parsing WPA/WPA2 IE */
-+	u8 buf[MAX_WPA_IE_LEN];
-+	u8 wpa_ie[255], rsn_ie[255];
-+	u16 wpa_len = 0, rsn_len = 0;
-+	int n, i;
-+
-+	r8712_get_sec_ie(pnetwork->network.IEs,
-+			 pnetwork->network.IELength, rsn_ie, &rsn_len,
-+			 wpa_ie, &wpa_len);
-+	if (wpa_len > 0) {
-+		memset(buf, 0, MAX_WPA_IE_LEN);
-+		n = sprintf(buf, "wpa_ie=");
-+		for (i = 0; i < wpa_len; i++) {
-+			n += snprintf(buf + n, MAX_WPA_IE_LEN - n,
-+						"%02x", wpa_ie[i]);
-+			if (n >= MAX_WPA_IE_LEN)
-+				break;
-+		}
-+		memset(iwe, 0, sizeof(*iwe));
-+		iwe->cmd = IWEVCUSTOM;
-+		iwe->u.data.length = (u16)strlen(buf);
-+		start = iwe_stream_add_point(info, start, stop,
-+			iwe, buf);
-+		memset(iwe, 0, sizeof(*iwe));
-+		iwe->cmd = IWEVGENIE;
-+		iwe->u.data.length = (u16)wpa_len;
-+		start = iwe_stream_add_point(info, start, stop,
-+			iwe, wpa_ie);
-+	}
-+	if (rsn_len > 0) {
-+		memset(buf, 0, MAX_WPA_IE_LEN);
-+		n = sprintf(buf, "rsn_ie=");
-+		for (i = 0; i < rsn_len; i++) {
-+			n += snprintf(buf + n, MAX_WPA_IE_LEN - n,
-+						"%02x", rsn_ie[i]);
-+			if (n >= MAX_WPA_IE_LEN)
-+				break;
-+		}
-+		memset(iwe, 0, sizeof(*iwe));
-+		iwe->cmd = IWEVCUSTOM;
-+		iwe->u.data.length = strlen(buf);
-+		start = iwe_stream_add_point(info, start, stop,
-+			iwe, buf);
-+		memset(iwe, 0, sizeof(*iwe));
-+		iwe->cmd = IWEVGENIE;
-+		iwe->u.data.length = rsn_len;
-+		start = iwe_stream_add_point(info, start, stop, iwe,
-+			rsn_ie);
-+	}
-+
-+	return start;
-+}
-+
-+static noinline_for_stack char *translate_scan_wps(struct iw_request_info *info,
-+						   struct wlan_network *pnetwork,
-+						   struct iw_event *iwe,
-+						   char *start, char *stop)
-+{
-+	/* parsing WPS IE */
-+	u8 wps_ie[512];
-+	uint wps_ielen;
-+
-+	if (r8712_get_wps_ie(pnetwork->network.IEs,
-+	    pnetwork->network.IELength,
-+	    wps_ie, &wps_ielen)) {
-+		if (wps_ielen > 2) {
-+			iwe->cmd = IWEVGENIE;
-+			iwe->u.data.length = (u16)wps_ielen;
-+			start = iwe_stream_add_point(info, start, stop,
-+				iwe, wps_ie);
-+		}
-+	}
-+
-+	return start;
-+}
-+
-+static char *translate_scan(struct _adapter *padapter,
-+			    struct iw_request_info *info,
-+			    struct wlan_network *pnetwork,
-+			    char *start, char *stop)
- {
- 	struct iw_event iwe;
- 	struct ieee80211_ht_cap *pht_capie;
-@@ -257,73 +338,11 @@ static noinline_for_stack char *translat
- 	/* Check if we added any event */
- 	if ((current_val - start) > iwe_stream_lcp_len(info))
- 		start = current_val;
--	/* parsing WPA/WPA2 IE */
--	{
--		u8 buf[MAX_WPA_IE_LEN];
--		u8 wpa_ie[255], rsn_ie[255];
--		u16 wpa_len = 0, rsn_len = 0;
--		int n;
--
--		r8712_get_sec_ie(pnetwork->network.IEs,
--				 pnetwork->network.IELength, rsn_ie, &rsn_len,
--				 wpa_ie, &wpa_len);
--		if (wpa_len > 0) {
--			memset(buf, 0, MAX_WPA_IE_LEN);
--			n = sprintf(buf, "wpa_ie=");
--			for (i = 0; i < wpa_len; i++) {
--				n += snprintf(buf + n, MAX_WPA_IE_LEN - n,
--							"%02x", wpa_ie[i]);
--				if (n >= MAX_WPA_IE_LEN)
--					break;
--			}
--			memset(&iwe, 0, sizeof(iwe));
--			iwe.cmd = IWEVCUSTOM;
--			iwe.u.data.length = (u16)strlen(buf);
--			start = iwe_stream_add_point(info, start, stop,
--				&iwe, buf);
--			memset(&iwe, 0, sizeof(iwe));
--			iwe.cmd = IWEVGENIE;
--			iwe.u.data.length = (u16)wpa_len;
--			start = iwe_stream_add_point(info, start, stop,
--				&iwe, wpa_ie);
--		}
--		if (rsn_len > 0) {
--			memset(buf, 0, MAX_WPA_IE_LEN);
--			n = sprintf(buf, "rsn_ie=");
--			for (i = 0; i < rsn_len; i++) {
--				n += snprintf(buf + n, MAX_WPA_IE_LEN - n,
--							"%02x", rsn_ie[i]);
--				if (n >= MAX_WPA_IE_LEN)
--					break;
--			}
--			memset(&iwe, 0, sizeof(iwe));
--			iwe.cmd = IWEVCUSTOM;
--			iwe.u.data.length = strlen(buf);
--			start = iwe_stream_add_point(info, start, stop,
--				&iwe, buf);
--			memset(&iwe, 0, sizeof(iwe));
--			iwe.cmd = IWEVGENIE;
--			iwe.u.data.length = rsn_len;
--			start = iwe_stream_add_point(info, start, stop, &iwe,
--				rsn_ie);
--		}
--	}
- 
--	{ /* parsing WPS IE */
--		u8 wps_ie[512];
--		uint wps_ielen;
--
--		if (r8712_get_wps_ie(pnetwork->network.IEs,
--		    pnetwork->network.IELength,
--		    wps_ie, &wps_ielen)) {
--			if (wps_ielen > 2) {
--				iwe.cmd = IWEVGENIE;
--				iwe.u.data.length = (u16)wps_ielen;
--				start = iwe_stream_add_point(info, start, stop,
--					&iwe, wps_ie);
--			}
--		}
--	}
-+	start = translate_scan_wpa(info, pnetwork, &iwe, start, stop);
-+
-+	start = translate_scan_wps(info, pnetwork, &iwe, start, stop);
-+
- 	/* Add quality statistics */
- 	iwe.cmd = IWEVQUAL;
- 	rssi = r8712_signal_scale_mapping(pnetwork->network.Rssi);
-
-
+Phil
