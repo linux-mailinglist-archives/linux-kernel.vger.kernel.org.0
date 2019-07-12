@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C7F6769F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 00:42:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655486769D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 00:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfGLWmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 18:42:36 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:43716 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfGLWmf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 18:42:35 -0400
-Received: by mail-qt1-f201.google.com with SMTP id e14so8390151qtq.10
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 15:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=GPlldc1uUCaMqKOlqd707RfJFmN0vdU2ggLjnOu2mQQ=;
-        b=Uvull8JsmAlDemDoFeLo0l6LKR9FI9L6JGngRgKyRPvHsDs77REgPEHGJVhR7epI3+
-         vm1KXehBkmrPa2LG3Yd5SlHjnZ4bY1nXgoj1C07P8j2MJtPOKX+gfQnqO9tqwyN7n71/
-         vHrqzKjVZRVy9zhIGHYo1Hjo/l5xY1ws6FKUAJoZ8x3hxkwAINDVgUf/oYF8d86EDMwv
-         d71nKBNpdZRP5EDJ3CBPRaO5n4ygyG+0a3KX5hPap0QuZqFIfjA0EXIbQ7KCiC/Lh2R8
-         bpS4K29r+e4qow1a9R14IOzU+YZet83p4gP3NyVVL0Y1kWAzHWgZ0pVlg3DC+OKSS/Vb
-         z/nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=GPlldc1uUCaMqKOlqd707RfJFmN0vdU2ggLjnOu2mQQ=;
-        b=bIzzFkArVzBwLmuLRdBw9452wAA3HaXIdDqqgq33HcTk+yCmvP2iYtDetJZ5D3wmsK
-         lF1K0xauEJDZSb41WyDvYAnnhjOU6tcO1J2XCoDqFP3Uw9hYg/Qui9jFq0l0inLHWf6B
-         Rea312KkdvKQ7PsrH89+oHv7mNiwsFrS5eid1jp1qGpN29R1sC7/kN/buZTED0fgZ7LM
-         0oMuZIBQ5FgnSPvzQ1JX7VKYPDlkDGKENKgjtw4z/y2Uy8FqkWn5KC3Tqf6ZpjizaF6K
-         ih1Pes6Ql0mdvlFhmocoLBm6QIbdfdZifqaqXHp6t6lGMjDFCzMqTtc1FHj1QmKS2A35
-         YRUw==
-X-Gm-Message-State: APjAAAWEz1bh0TBloklu3WvQiv1p1fAQqMSalrhbJockr/KoaHieQmH7
-        NSjLBSgXzlYlQGiEzSLT4qXYQbVoAw==
-X-Google-Smtp-Source: APXvYqx29k+eyzx3OqMKqjQWf0f4JOSEoTZz20Pa8EdvWRvAEPlpyUcqBPDVKy3YURgXPlZlKgTsuLPZmg==
-X-Received: by 2002:ae9:f016:: with SMTP id l22mr8313268qkg.51.1562971354608;
- Fri, 12 Jul 2019 15:42:34 -0700 (PDT)
-Date:   Sat, 13 Jul 2019 00:41:52 +0200
-Message-Id: <20190712224152.13129-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH] x86/process: Delete useless check for dead process with LDT
-From:   Jann Horn <jannh@google.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        jannh@google.com
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1728132AbfGLWmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 18:42:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:58840 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727994AbfGLWmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 18:42:16 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hm4F5-00030h-4I; Fri, 12 Jul 2019 16:42:15 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hm4F3-0005kX-9Q; Fri, 12 Jul 2019 16:42:13 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Date:   Fri, 12 Jul 2019 16:42:07 -0600
+Message-Id: <20190712224207.22061-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, logang@deltatee.com, chaitanya.kulkarni@wdc.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [PATCH] nvmet-file: fix nvmet_file_flush() always returning an error
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At release_thread(), ->mm is NULL; and it is fine for the former mm to
-still have an LDT. Delete this check in process_64.c, similar to
-commit 2684927c6b93 ("[PATCH] x86: Deprecate useless bug"), which did the
-same in process_32.c.
+errno_to_nvme_status() doesn't take into account the case
+when errno=0, all other use cases only call it if there is actually
+an error.
 
-Signed-off-by: Jann Horn <jannh@google.com>
+Presently, nvmet_file_flush() always returns a call to
+errno_to_nvme_status() so, even if it is successful, it will
+return NVME_SC_INTERNAL.
+
+This bug was found while trying to get the existing blktests to pass.
+
+Fixes: c6aa3542e010 ("nvmet: add error log support for file backend")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- arch/x86/kernel/process_64.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/nvme/target/io-cmd-file.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 250e4c4ac6d9..af64519b2695 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -143,17 +143,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index 05453f5d1448..fec17c66b8cd 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -261,7 +261,13 @@ static void nvmet_file_execute_rw(struct nvmet_req *req)
  
- void release_thread(struct task_struct *dead_task)
+ u16 nvmet_file_flush(struct nvmet_req *req)
  {
--	if (dead_task->mm) {
--#ifdef CONFIG_MODIFY_LDT_SYSCALL
--		if (dead_task->mm->context.ldt) {
--			pr_warn("WARNING: dead process %s still has LDT? <%p/%d>\n",
--				dead_task->comm,
--				dead_task->mm->context.ldt->entries,
--				dead_task->mm->context.ldt->nr_entries);
--			BUG();
--		}
--#endif
--	}
-+	WARN_ON(dead_task->mm);
+-	return errno_to_nvme_status(req, vfs_fsync(req->ns->file, 1));
++	int ret;
++
++	ret = vfs_fsync(req->ns->file, 1);
++	if (ret)
++		return errno_to_nvme_status(req, ret);
++
++	return NVME_SC_SUCCESS;
  }
  
- enum which_selector {
+ static void nvmet_file_flush_work(struct work_struct *w)
 -- 
-2.22.0.510.g264f2c817a-goog
+2.20.1
 
