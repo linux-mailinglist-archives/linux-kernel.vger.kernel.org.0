@@ -2,144 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5B866C83
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 287D766E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 14:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfGLMUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 08:20:46 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:28646 "EHLO mx2.mailbox.org"
+        id S1728876AbfGLM2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 08:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbfGLMUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:20:41 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1728831AbfGLM2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:28:34 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 2AA0EA217D;
-        Fri, 12 Jul 2019 14:20:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id Fg_RUaFCSZVH; Fri, 12 Jul 2019 14:20:26 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 22:20:17 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
-Message-ID: <20190712122017.xkowq2cjreylpotm@yavin>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-2-cyphar@cyphar.com>
- <20190712041454.GG17978@ZenIV.linux.org.uk>
+        by mail.kernel.org (Postfix) with ESMTPSA id 03950216E3;
+        Fri, 12 Jul 2019 12:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562934514;
+        bh=tfB0Yjzx+vKSU/qmFD3zv4coZikWMkBZyaZVhmcmguU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R0ycGOlGBNZENjJO883CVXq7H9v7ufRUJvxbWiqRTlcXBQuTZE7iSdM2GANnWzYdQ
+         Ah5sVbEMMBNnk9HEQqPUBnSdlanyJAOVr162Zt/OMfaBCz/ZJl/pwHC7GJp0FkWfya
+         R+oXZf2Uxt7wEBb9ZVcudUVI2bjMCXxp9uRKYJ58=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matt Chen <matt.chen@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 026/138] iwlwifi: fix AX201 killer sku loading firmware issue
+Date:   Fri, 12 Jul 2019 14:18:10 +0200
+Message-Id: <20190712121629.706800471@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190712121628.731888964@linuxfoundation.org>
+References: <20190712121628.731888964@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zhpexfjxcruxolbk"
-Content-Disposition: inline
-In-Reply-To: <20190712041454.GG17978@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ Upstream commit b17dc0632a17fbfe66b34ee7c24e1cc10cfc503e ]
 
---zhpexfjxcruxolbk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When try to bring up the AX201 2 killer sku, we
+run into:
+[81261.392463] iwlwifi 0000:01:00.0: loaded firmware version 46.8c20f243.0 op_mode iwlmvm
+[81261.407407] iwlwifi 0000:01:00.0: Detected Intel(R) Dual Band Wireless AX 22000, REV=0x340
+[81262.424778] iwlwifi 0000:01:00.0: Collecting data: trigger 16 fired.
+[81262.673359] iwlwifi 0000:01:00.0: Start IWL Error Log Dump:
+[81262.673365] iwlwifi 0000:01:00.0: Status: 0x00000000, count: -906373681
+[81262.673368] iwlwifi 0000:01:00.0: Loaded firmware version: 46.8c20f243.0
+[81262.673371] iwlwifi 0000:01:00.0: 0x507C015D | ADVANCED_SYSASSERT
 
-On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
-> > @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p, int=
- dfd, struct filename *name)
-> >  	p->stack =3D p->internal;
-> >  	p->dfd =3D dfd;
-> >  	p->name =3D name;
-> > -	p->total_link_count =3D old ? old->total_link_count : 0;
-> > +	p->total_link_count =3D 0;
-> > +	p->acc_mode =3D 0;
-> > +	p->opath_mask =3D FMODE_PATH_READ | FMODE_PATH_WRITE;
-> > +	if (old) {
-> > +		p->total_link_count =3D old->total_link_count;
-> > +		p->acc_mode =3D old->acc_mode;
-> > +		p->opath_mask =3D old->opath_mask;
-> > +	}
->=20
-> Huh?  Could somebody explain why traversals of NFS4 referrals should inhe=
-rit
-> ->acc_mode and ->opath_mask?
+Fix this issue by adding 2 more cfg to avoid modifying the
+original cfg configuration.
 
-I'll be honest -- I don't understand what set_nameidata() did so I just
-did what I thought would be an obvious change (to just copy the
-contents). I thought it was related to some aspect of the symlink stack
-handling.
+Signed-off-by: Matt Chen <matt.chen@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-In that case, should they both be set to 0 on set_nameidata()? This will
-mean that fd re-opening (or magic-link opening) through a
-set_nameidata() would always fail.
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index 2a03d34afa3b..80695584e406 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -3585,7 +3585,9 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+ 		}
+ 	} else if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
+ 		   CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR) &&
+-		   (trans->cfg != &iwl_ax200_cfg_cc ||
++		   ((trans->cfg != &iwl_ax200_cfg_cc &&
++		    trans->cfg != &killer1650x_2ax_cfg &&
++		    trans->cfg != &killer1650w_2ax_cfg) ||
+ 		    trans->hw_rev == CSR_HW_REV_TYPE_QNJ_B0)) {
+ 		u32 hw_status;
+ 
+-- 
+2.20.1
 
-> >  static __always_inline
-> > -const char *get_link(struct nameidata *nd)
-> > +const char *get_link(struct nameidata *nd, bool trailing)
-> >  {
-> >  	struct saved *last =3D nd->stack + nd->depth - 1;
-> >  	struct dentry *dentry =3D last->link.dentry;
-> > @@ -1081,6 +1134,44 @@ const char *get_link(struct nameidata *nd)
-> >  		} else {
-> >  			res =3D get(dentry, inode, &last->done);
-> >  		}
-> > +		/* If we just jumped it was because of a magic-link. */
-> > +		if (unlikely(nd->flags & LOOKUP_JUMPED)) {
-> [...]
-> In any case, this "bool trailing" is completely wrong; whether that
-> check belongs in trailing_symlink() or (some of) its callers, putting
-> it into get_link() is a mistake, forced by kludgy check for procfs-style
-> symlinks.
 
-The error path for LOOKUP_JUMPED comes from the old O_BENEATH patchset,
-but all of the "bool trailing" logic is definitely my gaff (I was
-quietly hoping you'd have a much better solution than the whole
-get_link() thing -- it definitely felt very kludgey to write).
 
-I will work on the suggestion in your follow-up email. Thanks!
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---zhpexfjxcruxolbk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh6/QAKCRCdlLljIbnQ
-EjDMAQCLRtfrI0y8gA2T7fw18G0cU799E+TMMczEIjU79f+8jQD/UcfSgUsZT0h6
-7dVpliYNzOl4Uou0Y4Kln5It6iq5aAc=
-=74oH
------END PGP SIGNATURE-----
-
---zhpexfjxcruxolbk--
