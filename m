@@ -2,54 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC29672F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D7E672FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2019 18:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfGLQEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 12:04:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44341 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbfGLQEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:04:42 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hly2F-0004Jo-Pr; Fri, 12 Jul 2019 18:04:35 +0200
-Date:   Fri, 12 Jul 2019 18:04:35 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH 1/3] x86/Kconfig: Move ARCH_HAS_MEM_ENCRYPT to
- arch/Kconfig
-In-Reply-To: <20190712053631.9814-2-bauerman@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1907121804230.1788@nanos.tec.linutronix.de>
-References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-2-bauerman@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727375AbfGLQFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 12:05:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726811AbfGLQFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Jul 2019 12:05:09 -0400
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E911D2080A;
+        Fri, 12 Jul 2019 16:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562947508;
+        bh=630KwTu7whk9xQreq+knRFfY8HS/p1vIvfAA5HYv2bQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SBQv8BgGvlsplpPqa3vXR86qoo3OvJIQBWuAHCfxpNKKemMmDPjGrLS0TI2gtJfoh
+         ZmzvWPzzwJ6ZXyNlM3BNEDoQWXfj/sltAF/SWj2EiLkP/tV1uMf1ZkAOkk1MBxvaAL
+         Mn9biD9MHtPx5XxQS6ljnc69ZwP3wgSGQZn+Qxuo=
+Message-ID: <1562947506.12920.0.camel@kernel.org>
+Subject: Re: [PATCH v3] trace:Add "gfp_t" support in synthetic_events
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Zhengjun Xing <zhengjun.xing@linux.intel.com>, rostedt@goodmis.org,
+        mingo@redhat.com, tom.zanussi@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 12 Jul 2019 11:05:06 -0500
+In-Reply-To: <20190712015308.9908-1-zhengjun.xing@linux.intel.com>
+References: <20190712015308.9908-1-zhengjun.xing@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Jul 2019, Thiago Jung Bauermann wrote:
+Hi Zhengjun,
 
-> powerpc and s390 are going to use this feature as well, so put it in a
-> generic location.
+On Fri, 2019-07-12 at 09:53 +0800, Zhengjun Xing wrote:
+> Add "gfp_t" support in synthetic_events, then the "gfp_t" type
+> parameter in some functions can be traced.
 > 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Prints the gfp flags as hex in addition to the human-readable flag
+> string.  Example output:
+> 
+>   whoopsie-630 [000] ...1 78.969452: testevent: bar=b20
+> (GFP_ATOMIC|__GFP_ZERO)
+>     rcuc/0-11  [000] ...1 81.097555: testevent: bar=a20 (GFP_ATOMIC)
+>     rcuc/0-11  [000] ...1 81.583123: testevent: bar=a20 (GFP_ATOMIC)
+> 
+> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+> Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Looks good to me, thanks!
+
+Tom
+
+> ---
+>  kernel/trace/trace_events_hist.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_events_hist.c
+> b/kernel/trace/trace_events_hist.c
+> index ca6b0dff60c5..30f0f32aca62 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -13,6 +13,10 @@
+>  #include <linux/rculist.h>
+>  #include <linux/tracefs.h>
+>  
+> +/* for gfp flag names */
+> +#include <linux/trace_events.h>
+> +#include <trace/events/mmflags.h>
+> +
+>  #include "tracing_map.h"
+>  #include "trace.h"
+>  #include "trace_dynevent.h"
+> @@ -752,6 +756,8 @@ static int synth_field_size(char *type)
+>  		size = sizeof(unsigned long);
+>  	else if (strcmp(type, "pid_t") == 0)
+>  		size = sizeof(pid_t);
+> +	else if (strcmp(type, "gfp_t") == 0)
+> +		size = sizeof(gfp_t);
+>  	else if (synth_field_is_string(type))
+>  		size = synth_field_string_size(type);
+>  
+> @@ -792,6 +798,8 @@ static const char *synth_field_fmt(char *type)
+>  		fmt = "%lu";
+>  	else if (strcmp(type, "pid_t") == 0)
+>  		fmt = "%d";
+> +	else if (strcmp(type, "gfp_t") == 0)
+> +		fmt = "%x";
+>  	else if (synth_field_is_string(type))
+>  		fmt = "%s";
+>  
+> @@ -834,9 +842,20 @@ static enum print_line_t
+> print_synth_event(struct trace_iterator *iter,
+>  					 i == se->n_fields - 1 ? ""
+> : " ");
+>  			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
+>  		} else {
+> +			struct trace_print_flags __flags[] = {
+> +			    __def_gfpflag_names, {-1, NULL} };
+> +
+>  			trace_seq_printf(s, print_fmt, se-
+> >fields[i]->name,
+>  					 entry->fields[n_u64],
+>  					 i == se->n_fields - 1 ? ""
+> : " ");
+> +
+> +			if (strcmp(se->fields[i]->type, "gfp_t") ==
+> 0) {
+> +				trace_seq_puts(s, " (");
+> +				trace_print_flags_seq(s, "|",
+> +						      entry-
+> >fields[n_u64],
+> +						      __flags);
+> +				trace_seq_putc(s, ')');
+> +			}
+>  			n_u64++;
+>  		}
+>  	}
