@@ -2,114 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3245D67C7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 01:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA1267C87
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 02:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfGMXmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 19:42:07 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39690 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbfGMXmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 19:42:07 -0400
-Received: by mail-io1-f67.google.com with SMTP id f4so28130907ioh.6
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 16:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Xg9+KAq8bABDugNLZEIH/iMJUpgv2wNj/umMCDFN6OA=;
-        b=FyWUA0VLW/ZPVB5OGW16go0DFytpmAWRUVyEo52hMemUxyZ0JMHDvFpvtQZ2YBtulm
-         3uqJadRC+1pg+8EdrhLWkoI9UGisDeLO7ahShTz+js9M2zUdcbRtIAlPlGE82TBJ0dJw
-         PpfkBQW7uWDogAZ8GXmBoi2DVMnjqtTIR9rukdhll5sVKspSGa8VVLnJ4ovppAsP3mid
-         IyYNF2dCChie83abDaHLD593n+D+q5nQWPlsc8peUoibDRVETsKWL6EfjVlRdw89p5bm
-         RzCX3bCbMcoSk6IipO1H9h+kCEVB4wSVMrhxY3QIwKAMI+JxiMjNYBb0yTYPMaQfcEHk
-         d20g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Xg9+KAq8bABDugNLZEIH/iMJUpgv2wNj/umMCDFN6OA=;
-        b=gohe7DYTZgiCBxV8scW5Q3fyaCeicmWAYvgx/LJ8kFIB4KBmeL7zJC/7q7rX0atzHX
-         iBmUslka3Cfp9g5aeQ7wuenlqaTkP4DdFV+wvL28w9V+7BEF/OI1zBtNlg9PA5P3RmNt
-         ScsiGEUG8OhkcOznK3UQuIqdvgGN2U+bYErLfwrYJDbAnsouHOpmUEGXzLOq3MQ+39+n
-         uU1Lz+M63dUHGqxvNCWjkUOln/nNjJrGpuF3NbCyVMz4hYlgqUOOnX9FQccjQJ6PMN/4
-         VDvkSGC2C7IpICZAsgOxv9SM8Gk8gWB6w6PYjgwil4qyQB8nmNvwG44BmRe5zjNeW2ry
-         ANVQ==
-X-Gm-Message-State: APjAAAUG2RQxgzhI/AgpVhuEkQp7IuWKUz3BqRY7HoSHK0OUp3AMFp3D
-        JExfj+S6ArZZastoZLr0ihEyKk+IRtCSlTHqVlPkiMNc
-X-Google-Smtp-Source: APXvYqyqn7N2j2lxBylpO+u1VcxSnVYdyq3ITclCY9g+i2y1cTyPn0jJpCpu66HrOATrpA/2hHcphckza5dR78amC8M=
-X-Received: by 2002:a6b:3b89:: with SMTP id i131mr16969776ioa.33.1563061326127;
- Sat, 13 Jul 2019 16:42:06 -0700 (PDT)
-MIME-Version: 1.0
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Sat, 13 Jul 2019 18:41:55 -0500
-Message-ID: <CABb+yY2RWBW0054fPLyNMAFX4BQ2FqV2NeAvHe7aHhAuH46dcA@mail.gmail.com>
-Subject: [GIT PULL] Mailbox changes for v5.3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728767AbfGMXy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 19:54:56 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59585 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728733AbfGMXyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 19:54:55 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6DNsWTI006207;
+        Sat, 13 Jul 2019 18:54:32 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x6DNsUHe006206;
+        Sat, 13 Jul 2019 18:54:30 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Sat, 13 Jul 2019 18:54:30 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] powerpc: remove meaningless KBUILD_ARFLAGS addition
+Message-ID: <20190713235430.GZ14074@gate.crashing.org>
+References: <20190713032106.8509-1-yamada.masahiro@socionext.com> <20190713124744.GS14074@gate.crashing.org> <20190713131642.GU14074@gate.crashing.org> <CAK7LNASBmZxX+U=LS+dgvet96cA3T6Tf_tiAa2vduUV81DEnBw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASBmZxX+U=LS+dgvet96cA3T6Tf_tiAa2vduUV81DEnBw@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sun, Jul 14, 2019 at 07:45:15AM +0900, Masahiro Yamada wrote:
+> On Sat, Jul 13, 2019 at 10:17 PM Segher Boessenkool
+> <segher@kernel.crashing.org> wrote:
+> > On Sat, Jul 13, 2019 at 07:47:44AM -0500, Segher Boessenkool wrote:
+> > > On Sat, Jul 13, 2019 at 12:21:06PM +0900, Masahiro Yamada wrote:
+> > > > The KBUILD_ARFLAGS addition in arch/powerpc/Makefile has never worked
+> > > > in a useful way because it is always overridden by the following code
+> > > > in the top Makefile:
+> > > >
+> > > >   # use the deterministic mode of AR if available
+> > > >   KBUILD_ARFLAGS := $(call ar-option,D)
+> > > >
+> > > > The code in the top Makefile was added in 2011, by commit 40df759e2b9e
+> > > > ("kbuild: Fix build with binutils <= 2.19").
+> > > >
+> > > > The KBUILD_ARFLAGS addition for ppc has always been dead code from the
+> > > > beginning.
+> > >
+> > > That was added in 43c9127d94d6 to replace my 8995ac870273 from 2007.
+> > >
+> > > Is it no longer supported to build a 64-bit kernel with a toolchain
+> > > that defaults to 32-bit, or the other way around?  And with non-native
+> > > toolchains (this one didn't run on Linux, even).
+> >
+> > It was an --enable-targets=all toolchain, somewhat common for crosses,
+> > if that matters.
+> 
+> I always use the same toolchain
+> for compile-testing PPC32/64.
+> 
+> I have never been hit by the issue you mention.
+> Somebody would have reported it if it were still a problem.
 
-The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
+But did you use --enable-targets=all?
 
-  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
+The problem was empty archives IIRC.  Not a problem anymore with thin
+archives, maybe?
 
-are available in the Git repository at:
+> Moreover, commit 43c9127d94d6
+> translated the environment variable "GNUTARGET"
+> into the command option "--target="
+> 
+> My powerpc-linux-ar does not know it:
+> 
+> powerpc-linux-ar: -t: No such file or directory
 
-  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
-tags/mailbox-v5.3
+Yes, that is why I used the environment variable, all binutils work
+with that.  There was no --target option in GNU ar before 2.22.
 
-for you to fetch changes up to 25777e5784a7b417967460d4fcf9660d05a0c320:
 
-  mailbox: handle failed named mailbox channel request (2019-07-11
-10:19:00 -0500)
-
-----------------------------------------------------------------
-- stm32: race fix by adding a spinlock
-- mhu: trim included headers
-- omap: add support for K3 SoCs
-- imx: Irq disable fix
-- bcm: tidy up extracting driver data
-- tegra: make resume 'noirq'
-- api: fix error handling
-
-----------------------------------------------------------------
-Arnaud Pouliquen (1):
-      mailbox: stm32_ipcc: add spinlock to fix channels concurrent access
-
-Bitan Biswas (2):
-      mailbox: tegra: hsp: add noirq resume
-      mailbox: tegra: avoid resume NULL mailboxes
-
-Daniel Baluta (1):
-      mailbox: imx: Clear GIEn bit at shutdown
-
-Fuqian Huang (1):
-      mailbox: bcm-flexrm-mailbox: using dev_get_drvdata directly
-
-Sudeep Holla (1):
-      mailbox: arm_mhu: reorder header inclusion and drop unneeded ones
-
-Suman Anna (2):
-      dt-bindings: mailbox: omap: Update bindings for TI K3 SoCs
-      mailbox: omap: Add support for TI K3 SoCs
-
-morten petersen (1):
-      mailbox: handle failed named mailbox channel request
-
- .../devicetree/bindings/mailbox/omap-mailbox.txt   | 59 ++++++++++++++++++----
- drivers/mailbox/Kconfig                            |  2 +-
- drivers/mailbox/arm_mhu.c                          | 11 ++--
- drivers/mailbox/bcm-flexrm-mailbox.c               |  6 +--
- drivers/mailbox/imx-mailbox.c                      |  4 +-
- drivers/mailbox/mailbox.c                          |  6 ++-
- drivers/mailbox/omap-mailbox.c                     | 43 +++++++++-------
- drivers/mailbox/stm32-ipcc.c                       | 37 ++++++++++----
- drivers/mailbox/tegra-hsp.c                        | 20 ++++++--
- include/linux/omap-mailbox.h                       |  4 +-
- 10 files changed, 134 insertions(+), 58 deletions(-)
+Segher
