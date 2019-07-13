@@ -2,127 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8266B676FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 01:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 550066772C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 02:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfGLXxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 19:53:10 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51928 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728599AbfGLXxG (ORCPT
+        id S1727474AbfGMAOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 20:14:10 -0400
+Received: from smtprelay0104.hostedemail.com ([216.40.44.104]:48302 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727118AbfGMAOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 19:53:06 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so10286543wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 16:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=AS78fkGwPznrOvf/DrMdaP9ctBPtIVJwOugMvrmJs4c=;
-        b=fwj5TEDemEpyWBqtQq3+jA8lBHtoGdEc58oA7J/G2sFnVoXcFQiYIN5a3Ez08/bTZk
-         aWjxlPR3Ml3tqBy9ChhD8/hyTUKrrkJKMt/G2jYIndBlsqYrf8Cw9ls/S6Tg8fnydl3w
-         F0BD8Sxs1dlQcFXCts/I/8djE+q67q8xTrCk923RwtO5Ueq6zRHnwi8dNTbWU5VeHEQL
-         m0RhttWyRD8u1PFKBH4FewGDn++vUQS9c+56a+DJh8Ucq6L0xVLwaQjjVUsfIQE2hRNz
-         uXA7ZxftngIWDusXeOdFcx2jDQg4iGt0UJGbDq1hh9FX7QPIXxbslXZgqYjFgqJZN+Ap
-         5kTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=AS78fkGwPznrOvf/DrMdaP9ctBPtIVJwOugMvrmJs4c=;
-        b=tJJzpOKtY/JWOPES3yiKJb/76mAO2D4WZoJkW74lmB/CB8OtvQobWd5b56gypJ4raw
-         GQ/WS7FEExDDSqGMy9ezTXtax0a3IvnUfZf0y9e9p1Fm2yMsZU28Wv85qiZQnTblaSp+
-         urJz6ruZ6GKmfAy4qsMKr5LER85Gt+mXSS5pC7poBYe4/SToOP7DAq8W1IrzE9hHeal6
-         wkkOF9pcYvOtiMtCKnH/SKuZxGERhS8dkMopSTcOT2XTUT9XwaT7tXr3ZOfP7SheqeVh
-         hZ0eWeYTY6lPjxSfESLd60AHxNc749GcIR8VmfRIEeylCryZ6ohYPAqA/moBOcuyW9RC
-         c/Kw==
-X-Gm-Message-State: APjAAAXYT6HUHDfhtAa0A2zEwRTgXqH6FXbH6aFEpY+/rTWL8jZawmK4
-        kc9rQ32V0bBV7hAacrXMTC4=
-X-Google-Smtp-Source: APXvYqy6F7KeeoYQq36of+L4xIICXeDHFQZtRhLC/q0YB0+36Q4D3e+h2JCbn68XR2bAKUYRpOdQBg==
-X-Received: by 2002:a1c:f018:: with SMTP id a24mr11198037wmb.66.1562975584601;
-        Fri, 12 Jul 2019 16:53:04 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id 2sm12182171wrn.29.2019.07.12.16.53.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Jul 2019 16:53:04 -0700 (PDT)
-Message-ID: <5d291d60.1c69fb81.ba0a4.8774@mx.google.com>
-Date:   Fri, 12 Jul 2019 16:53:04 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 12 Jul 2019 20:14:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 26E19100E86C6;
+        Sat, 13 Jul 2019 00:14:08 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3868:4321:5007:7576:10004:10400:10848:10967:11026:11232:11658:11914:12114:12297:12438:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:21080:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: step13_7b009126cd010
+X-Filterd-Recvd-Size: 1404
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 13 Jul 2019 00:14:05 +0000 (UTC)
+Message-ID: <82ccdd83d2a18912bb8cf75585e751c0bd39a215.camel@perches.com>
+Subject: Re: [PATCH] [net-next] cxgb4: reduce kernel stack usage in
+ cudbg_collect_mem_region()
+From:   Joe Perches <joe@perches.com>
+To:     David Miller <davem@davemloft.net>, arnd@arndb.de
+Cc:     vishal@chelsio.com, rahul.lakkireddy@chelsio.com,
+        ganeshgr@chelsio.com, alexios.zavras@intel.com, arjun@chelsio.com,
+        surendra@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Date:   Fri, 12 Jul 2019 17:14:03 -0700
+In-Reply-To: <20190712.153632.1007215196498198399.davem@davemloft.net>
+References: <20190712090700.317887-1-arnd@arndb.de>
+         <20190712.153632.1007215196498198399.davem@davemloft.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.19.58-92-gd66f8e7f112f
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.19.y
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-References: <20190712121621.422224300@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 00/91] 4.19.59-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 122 boots: 4 failed, 117 passed with 1 offline=
- (v4.19.58-92-gd66f8e7f112f)
+On Fri, 2019-07-12 at 15:36 -0700, David Miller wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Fri, 12 Jul 2019 11:06:33 +0200
+> 
+> > The cudbg_collect_mem_region() and cudbg_read_fw_mem() both use several
+> > hundred kilobytes of kernel stack space.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.58-92-gd66f8e7f112f/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.58-92-gd66f8e7f112f/
+Several hundred 'kilo' bytes?
+I hope not.
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.58-92-gd66f8e7f112f
-Git Commit: d66f8e7f112fefe0c1d2a0f77da022a56ccde6dc
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 70 unique boards, 27 SoC families, 17 builds out of 206
-
-Boot Regressions Detected:
-
-arm64:
-
-    defconfig:
-        gcc-8:
-          meson-gxbb-nanopi-k2:
-              lab-baylibre: new failure (last pass: v4.19.58)
-
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-arm64:
-    defconfig:
-        gcc-8:
-            meson-gxbb-nanopi-k2: 1 failed lab
-
-arc:
-    hsdk_defconfig:
-        gcc-8:
-            hsdk: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            meson-gxl-s905d-p230: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
