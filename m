@@ -2,143 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1335267751
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 02:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECEDF6775E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 02:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfGMAtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 20:49:25 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46939 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbfGMAtZ (ORCPT
+        id S1727850AbfGMAxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 20:53:05 -0400
+Received: from vserver.gregn.net ([174.136.110.154]:46576 "EHLO
+        vserver.gregn.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbfGMAxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 20:49:25 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d4so10618589edr.13;
-        Fri, 12 Jul 2019 17:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SyqVAgQMOHYXey7EnkAylgSqwsoD6phOjM6qtdZ4mNw=;
-        b=qCl3ma6CyklmWDLlR3q/xIlLZoVBiD9DmK8Y9WaGemh0o9qNRjqZTzHmJ3eFCAPTN8
-         YlrlYwBw7Xn5sK9INOZX9VpMfClNM/AcDFUSvmpvwPrcV8bKHWgcMrHKnwNZJ/4M/TYP
-         XQueTm7VyWhkf8SlUBudIVxfxYDsGG153oobZgRYKIOxZ/j2Px189vGz30Xpls/gHtwk
-         AXhO1SRUHspmO1N2c619aD+utfQedV8vNrePHMXQoCw1m4EJHYDQDnQKLDh2mYDV7tdv
-         QRe9tuGfk1+hMAv+5EJqJNJSsOwwKCLtGBoEiOrV8M8W3KSY0IIICfHJrCtgBqJ6TWzx
-         KTCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SyqVAgQMOHYXey7EnkAylgSqwsoD6phOjM6qtdZ4mNw=;
-        b=aRDLdFvWxHKWTPreHM4yqedRkBsA4A68E1iQXyOoExOExqkJku0v9rH11Rf/83wQBN
-         KUD4qTV591osddzY+w3t1HT11hDKhWqVxnpMTsV1G8vY3woDx+VG9cDAbV9pgA31X5oa
-         P+UbjU2fEVt8hifN/l9A+MaaI9USrMbhf3gzJtm9sOEaFB5LsaRrFxqu/WJxCEY2JmZN
-         cZA2FUu7mAoous+Sfh76U/u4P4ZHbhUxOsHvQBBT4wrqDxzq/6CY0Yl1su6gnZjaTktT
-         t3AoxZ0zIB8mlfbUp6soG9fn7x9W1D4CqxzmkgXZtbYGf12+frGdRqPdcpgiPXSCpnlM
-         erKg==
-X-Gm-Message-State: APjAAAWFEpm7wpcwz6/w7uAlTj6mlwfHRoL9rBSp1Nk24iiUIIGELDE1
-        +gDA1vJRl9+TdoYQQbqKrdj85ZHARvyBpdcquf8=
-X-Google-Smtp-Source: APXvYqyDnrpj8iAQ6BNq+8gwo2b3Md7G97ZUOdYET+TJa+t9rbuRiFvlgq0grhmuNKjhyvRktnY5DBaQMrRBZYG2t2Q=
-X-Received: by 2002:a17:906:3f87:: with SMTP id b7mr10538910ejj.164.1562978962599;
- Fri, 12 Jul 2019 17:49:22 -0700 (PDT)
+        Fri, 12 Jul 2019 20:53:05 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 20:53:05 EDT
+Received: from vbox.gregn.net (unknown [IPv6:2001:470:d:6c5:1c66:a9af:c229:a6c8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vserver.gregn.net (Postfix) with ESMTPSA id 4CF4A29AF;
+        Fri, 12 Jul 2019 17:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gregn.net; s=default;
+        t=1562978903; bh=W1cDxqPtwaYUSqAPJJNEkGyGvwtv7TWpa9b1CyQ5Qfo=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=VgxNgp8TpKiCwy+Rt52B2M5V5Ze5WsvyewxpEBKeMWWH5AstiAXDgsfwHG9Ey+HyV
+         gJvLwz3Nr4SHm4iLaUhsvHaIUP5dtWPcERiKA87dapqVX8AunH2Yr9jvo2FFj2rNz/
+         JTqbJAeSW1OrUNMLRw/xJCWTmscpegDuCQviArk8ka26qYmPXICtA/G38TQ3NzgNXj
+         iEY+b1itQ3ztZ0WT5gP0ZwfH9s/IzI1fDqd02KjjWFxS6QyecBHkCWe8qPqKmxQp9p
+         c0Oh8w+iRnpMah3PKuS/DH6ubSs9bcT6UnzbuDub8Sdbyalqeik0ZlMy19yE4zm4nc
+         UfOTw2hZt6fqA==
+Received: from greg by vbox.gregn.net with local (Exim 4.84_2)
+        (envelope-from <greg@gregn.net>)
+        id 1hm6BD-0002cY-QK; Fri, 12 Jul 2019 17:46:23 -0700
+Date:   Fri, 12 Jul 2019 17:46:23 -0700
+From:   Gregory Nowak <greg@gregn.net>
+To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        speakup@linux-speakup.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Okash Khawaja <okash.khawaja@gmail.com>,
+        devel@driverdev.osuosl.org, Kirk Reiser <kirk@reisers.ca>,
+        Simon Dickson <simonhdickson@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Christopher Brannon <chris@the-brannons.com>
+Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
+ speakup
+Message-ID: <20190713004623.GA9159@gregn.net>
+References: <20190315130035.6a8f16e9@narunkot>
+ <20190316031831.GA2499@kroah.com>
+ <20190706200857.22918345@narunkot>
+ <20190707065710.GA5560@kroah.com>
+ <20190712083819.GA8862@kroah.com>
+ <20190712092319.wmke4i7zqzr26tly@function>
 MIME-Version: 1.0
-References: <20190703214326.41269-1-jeffrey.l.hugo@gmail.com>
- <20190703214512.41319-1-jeffrey.l.hugo@gmail.com> <CGME20190706010615epcas2p343102f858a7fadaf6785f7ece105f1a7@epcas2p3.samsung.com>
- <20190706010604.GG20625@sirena.org.uk> <64ca3a74-374f-d4f3-bee6-a607cc5c0fc5@samsung.com>
- <CAF6AEGtGjKRA3A8v6pgaXLgpeiLZuz6HuDSFRjKrNp4iQNVZtA@mail.gmail.com>
- <10b1313f-7a60-df04-a9e3-76649b74f2f0@samsung.com> <CAOCk7NoyCmPQF3s4GWD1Oa4t5hdqi6vdcOdHyJpo3Gc1JQqXcw@mail.gmail.com>
-In-Reply-To: <CAOCk7NoyCmPQF3s4GWD1Oa4t5hdqi6vdcOdHyJpo3Gc1JQqXcw@mail.gmail.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Fri, 12 Jul 2019 17:49:11 -0700
-Message-ID: <CAF6AEGu8NY14qkzO1qU1TGX4VrUvQU3vZbDXjA_UNBqqODGucQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regmap: Add DSI bus support
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712092319.wmke4i7zqzr26tly@function>
+X-PGP-Key: http://www.gregn.net/pubkey.asc
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Virus-Scanned: clamav-milter 0.100.3 at vserver
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 7:22 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
->
-> On Fri, Jul 12, 2019 at 7:01 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >
-> > On 11.07.2019 15:56, Rob Clark wrote:
-> > > On Thu, Jul 11, 2019 at 6:11 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> > >> On 06.07.2019 03:06, Mark Brown wrote:
-> > >>> On Wed, Jul 03, 2019 at 02:45:12PM -0700, Jeffrey Hugo wrote:
-> > >>>> Add basic support with a simple implementation that utilizes the generic
-> > >>>> read/write commands to allow device registers to be configured.
-> > >>> This looks good to me but I really don't know anything about DSI,
-> > >>> I'd appreciate some review from other people who do.  I take it
-> > >>> there's some spec thing in DSI that says registers and bytes must
-> > >>> both be 8 bit?
-> > >>
-> > >> I am little bit confused about regmap usage here. On the one hand it
-> > >> nicely fits to this specific driver, probably because it already uses
-> > >> regmap_i2c.
-> > >>
-> > >> On the other it will be unusable for almost all current DSI drivers and
-> > >> probably for most new drivers. Why?
-> > >>
-> > >> 1. DSI protocol defines actually more than 30 types of transactions[1],
-> > >> but this patchset implements only few of them (dsi generic write/read
-> > >> family). Is it possible to implement multiple types of transactions in
-> > >> regmap?
-> > >>
-> > >> 2. There is already some set of helpers which uses dsi bus, rewriting it
-> > >> on regmap is possible or driver could use of regmap and direct access
-> > >> together, the question is if it is really necessary.
-> > >>
-> > >> 3. DSI devices are no MFDs so regmap abstraction has no big value added
-> > >> (correct me, if there are other significant benefits).
-> > >>
-> > > I assume it is not *just* this one bridge that can be programmed over
-> > > either i2c or dsi, depending on how things are wired up on the board.
-> > > It certainly would be nice for regmap to support this case, so we
-> > > don't have to write two different bridge drivers for the same bridge.
-> > > I wouldn't expect a panel that is only programmed via dsi to use this.
-> >
-> >
-> > On the other side supporting DSI and I2C in one driver is simply matter
-> > of writing proper accesors.
->
-> To me, this reads like your counter argument to not using regmap, is
-> to reinvent regmap.  Maybe I don't understand what you are proposing
-> here, but it sounds like remove the regmap support, define sn65
-> specific accessors that just before sending the write to the bus does
-> a check if the access needs to go over i2c or DSI.  Feels like a
-> clunky version of regmap to me.  Why not use the existing "generic"
-> framework?
->
-> To your point that DSI defines over 30 message types, yes it does, but
-> that seems to be outside of the scope.  How many of those are actually
-> for doing register access?  I'm thinking just 4 (technically a hair
-> more than that because of the multiple version of the same message) -
-> generic read, generic write, dcs read, dcs write.  I don't view regmap
-> as a generic abstraction layer over a particular mechanism, and thus
-> needs to support everything that mechanism does.  Sending sync
-> commands, or pixel data over DSI is outside the scope of regmap to me.
+On Fri, Jul 12, 2019 at 11:23:19AM +0200, Samuel Thibault wrote:
+> Hello,
+> 
+> To readers of the linux-speakup: could you help on this so we can get
+> Speakup in mainline?  Neither Okash or I completely know what user
+> consequences the files in /sys/accessibility/speakup/ have, so could
+> people give brief explanations for each file (something like 3-6 lines
+> of explanation)?
 
-I'm w/ jhugo on this one.. if you are working w/ a device that can be
-programmed via i2c or dsi, regmap and limiting yourself to the small
-subset of dsi cmds which map to i2c reads/writes, makes a ton of
-sense.  (And I'm almost certain this bridge isn't the only such
-device.)
+I have a recollection of documenting most of this on the speakup list
+in response to a similar query a number of years ago. Unfortunately,
+the speakup mailing list archives aren't easily searchable, and I
+don't have a local copy of that mail.
 
-That isn't to say you should use regmap for devices that are only
-programmed over dsi.  That would be silly.  The original argument
-about this not being usable by most DSI devices is really a
-non-sequitur.
+Kirk, doing grep with a few of the file names in
+/sys/accessibility/speakup against the list's mbox file archive should
+find that message if it's in fact there. If you can please find it,
+and post the date when it was sent, we can provide a URL to that
+thread as a starting point. If my recollection is wrong, and such a
+message isn't in the archives, I'll write up what I know about.
 
-BR,
--R
+Greg
+
+
+-- 
+web site: http://www.gregn.net
+gpg public key: http://www.gregn.net/pubkey.asc
+skype: gregn1
+(authorization required, add me to your contacts list first)
+If we haven't been in touch before, e-mail me before adding me to your contacts.
+
+--
+Free domains: http://www.eu.org/ or mail dns-manager@EU.org
