@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1232679CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 12:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02DCA679CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 13:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfGMK7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 06:59:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60513 "EHLO
+        id S1727794AbfGMLA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 07:00:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58883 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfGMK7j (ORCPT
+        with ESMTP id S1726460AbfGMLAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 06:59:39 -0400
+        Sat, 13 Jul 2019 07:00:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6DAxVWj3838411
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6DB0ITD3838650
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 13 Jul 2019 03:59:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6DAxVWj3838411
+        Sat, 13 Jul 2019 04:00:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6DB0ITD3838650
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1563015572;
-        bh=TwEt+HjLj1gx1nGoHmPpyQ0E+MzuVElfEyp9hSo/RU4=;
+        s=2019061801; t=1563015619;
+        bh=iu89fW5us/SMJemQhCaKfZJ9R6H53fK7iUWH3fQWux8=;
         h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=I5IynX6uFJC/02WQKYbqieqgHY20W09n3QkiGoC52cIdYVfvG0NaAF6ufv6uu2XoN
-         4ztKzs3gGdUSOHs3Cio9OFfCTqCd9HQj/2ljpOSyTMWaI/E5kD9HeeNtDqkEmutbef
-         Ev4NJo0z7bwbhUGXU5zbYCRzqOFWOYRDgH1dFwnc1CUjw0qghWORqIvzs3lGeI/Hcp
-         BVUFzjIM8MBNPc5tFvrJToGjTLjyf+LruTgc9xdqlbJDBR4D4uYOar0SzwD99k67+q
-         55H+hagKjy3/vt5nthU83t5GLplL67CAJvMSqlA1RCgt7NRZWw7NC48piZEz6Rj9vO
-         O0g5BvTaKVF9w==
+        b=f8DoR9S3l2wNUU3IIoEdJeMlbOew3lKNmFE2dcJ2gKyy3G28fkI/Gjscp7L7L/OX6
+         mQL9mu4UA4b9fbCh43LwLChZe0zdsbcPwxQBuynUG17Ot5H28n2c/HbKv5/YVXTRwG
+         o0tVc3kvYxfMN/7ojGYytC3kfsNqD1LOoPj0qfeDyjR4aHN4KSvF/BueNCA2IlSPnC
+         HOAtc7hXypUWrFqy9+PoKTfWR3y3O8MCu1SQS9g4uBbVlMWAOOZAYgPuZ3AcKQmnYY
+         iN/OwWPu2IzAmfD8w9Jmbk+lkbXv+53fvQsSCy38BgN31I6SkrdnJAfeKZKOx6NhAk
+         2Do/Jya0DucQQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6DAxVww3838406;
-        Sat, 13 Jul 2019 03:59:31 -0700
-Date:   Sat, 13 Jul 2019 03:59:31 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6DB0Ifl3838647;
+        Sat, 13 Jul 2019 04:00:18 -0700
+Date:   Sat, 13 Jul 2019 04:00:18 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-zlu81bbtccuzygh7m8nmgybc@git.kernel.org>
-Cc:     namhyung@kernel.org, jolsa@kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: jolsa@kernel.org, namhyung@kernel.org, mingo@kernel.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-          adrian.hunter@intel.com, tglx@linutronix.de
+Message-ID: <tip-xpzvuu9d0gei9jl9bkzgobln@git.kernel.org>
+Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        jolsa@kernel.org, hpa@zytor.com, mingo@kernel.org
+Reply-To: namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
+          tglx@linutronix.de, acme@redhat.com, mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf namespaces: Move the conditional setns()
- prototype to namespaces.h
-Git-Commit-ID: 245aec7f7f4ca95b924f005d604bab9d838b5eb1
+Subject: [tip:perf/urgent] perf tools: Move get_current_dir_name() cond
+ prototype out of util.h
+Git-Commit-ID: e5653eb82ddc71ad8ffcbb3c74dd6f0c0230ab4c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,68 +61,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  245aec7f7f4ca95b924f005d604bab9d838b5eb1
-Gitweb:     https://git.kernel.org/tip/245aec7f7f4ca95b924f005d604bab9d838b5eb1
+Commit-ID:  e5653eb82ddc71ad8ffcbb3c74dd6f0c0230ab4c
+Gitweb:     https://git.kernel.org/tip/e5653eb82ddc71ad8ffcbb3c74dd6f0c0230ab4c
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 5 Jul 2019 13:59:06 -0300
+AuthorDate: Fri, 5 Jul 2019 14:16:15 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 9 Jul 2019 10:13:26 -0300
 
-perf namespaces: Move the conditional setns() prototype to namespaces.h
+perf tools: Move get_current_dir_name() cond prototype out of util.h
 
-Out of util.h, to reduce its scope, and since we have a namespaces.h
-header, much better to have it there, where it is related to.
+And in a separate header, so that we erode util.h a bit more.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-zlu81bbtccuzygh7m8nmgybc@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-xpzvuu9d0gei9jl9bkzgobln@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/namespaces.h | 4 ++++
- tools/perf/util/setns.c      | 4 +++-
- tools/perf/util/util.h       | 4 ----
- 3 files changed, 7 insertions(+), 5 deletions(-)
+ tools/perf/util/get_current_dir_name.c | 6 +++---
+ tools/perf/util/get_current_dir_name.h | 8 ++++++++
+ tools/perf/util/namespaces.c           | 1 +
+ tools/perf/util/util.h                 | 4 ----
+ 4 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-index 15a5a276c478..004430c0de93 100644
---- a/tools/perf/util/namespaces.h
-+++ b/tools/perf/util/namespaces.h
-@@ -13,6 +13,10 @@
- #include <linux/refcount.h>
- #include <linux/types.h>
- 
-+#ifndef HAVE_SETNS_SUPPORT
-+int setns(int fd, int nstype);
-+#endif
-+
- struct namespaces_event;
- 
- struct namespaces {
-diff --git a/tools/perf/util/setns.c b/tools/perf/util/setns.c
-index ce8fc290fce8..48f9c0af63b2 100644
---- a/tools/perf/util/setns.c
-+++ b/tools/perf/util/setns.c
-@@ -1,4 +1,6 @@
--#include "util.h"
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+index 267aa609a582..01f32f26552d 100644
+--- a/tools/perf/util/get_current_dir_name.c
++++ b/tools/perf/util/get_current_dir_name.c
+@@ -1,8 +1,8 @@
+-// SPDX-License-Identifier: GPL-2.0
+-// Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
 +// SPDX-License-Identifier: LGPL-2.1
-+
-+#include "namespaces.h"
++// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+ //
+ #ifndef HAVE_GET_CURRENT_DIR_NAME
+-#include "util.h"
++#include "get_current_dir_name.h"
  #include <unistd.h>
- #include <sys/syscall.h>
- 
+ #include <stdlib.h>
+ #include <stdlib.h>
+diff --git a/tools/perf/util/get_current_dir_name.h b/tools/perf/util/get_current_dir_name.h
+new file mode 100644
+index 000000000000..69f7d5537d32
+--- /dev/null
++++ b/tools/perf/util/get_current_dir_name.h
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: LGPL-2.1
++// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
++//
++#ifndef __PERF_GET_CURRENT_DIR_NAME_H
++#ifndef HAVE_GET_CURRENT_DIR_NAME
++char *get_current_dir_name(void);
++#endif // HAVE_GET_CURRENT_DIR_NAME
++#endif // __PERF_GET_CURRENT_DIR_NAME_H
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index 023c4efd788d..fda2fa1e8819 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -7,6 +7,7 @@
+ #include "namespaces.h"
+ #include "util.h"
+ #include "event.h"
++#include "get_current_dir_name.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
 diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 125e215dd3d8..59fe33708090 100644
+index 59fe33708090..cfc4d85bbd42 100644
 --- a/tools/perf/util/util.h
 +++ b/tools/perf/util/util.h
-@@ -67,10 +67,6 @@ char *get_current_dir_name(void);
- int sched_getcpu(void);
- #endif
+@@ -59,10 +59,6 @@ int fetch_kernel_version(unsigned int *puint,
  
--#ifndef HAVE_SETNS_SUPPORT
--int setns(int fd, int nstype);
+ const char *perf_tip(const char *dirpath);
+ 
+-#ifndef HAVE_GET_CURRENT_DIR_NAME
+-char *get_current_dir_name(void);
 -#endif
 -
- extern bool perf_singlethreaded;
- 
- void perf_set_singlethreaded(void);
+ #ifndef HAVE_SCHED_GETCPU_SUPPORT
+ int sched_getcpu(void);
+ #endif
