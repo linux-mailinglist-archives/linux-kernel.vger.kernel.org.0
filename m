@@ -2,50 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5405679C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 12:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63346679C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 12:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfGMK4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 06:56:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55567 "EHLO
+        id S1727734AbfGMK57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 06:57:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44617 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbfGMK4v (ORCPT
+        with ESMTP id S1726460AbfGMK57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 06:56:51 -0400
+        Sat, 13 Jul 2019 06:57:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6DAugcv3837980
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6DAvPCt3838264
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 13 Jul 2019 03:56:42 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6DAugcv3837980
+        Sat, 13 Jul 2019 03:57:25 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6DAvPCt3838264
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1563015402;
-        bh=oqD7Zy5Kc1UyPtvkgt9bJ8ZUgA6N0u40gnlH7Jj048o=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=SUITRGJR/yZjfM9+Ix6vNLxiAr+cA/P1g2j0lGkxF5UJZgFAosuQBW3VR5oKeeo0I
-         JuTPgShS5M9XVsdrBRZF0e7JCJhAa5c1SjMbrJ2k9y/WYdEeGM5p8YtElyEEvfqi0n
-         bTP9C8sc8ldO/mv1F8+HqHotv8kBSPX4ZNe68EseVAHVxW3+KRhjvOicgWBIUx5Lcy
-         Mf+N0LqksLusxihHIzWPxV9aLyUePeJYHPyc5deuKdWad0dFZoySrPTmfqbeWFcpWG
-         xTQLUp0hSIKlwFrcczb5aTIUjaOTUkJCSNUsulnsUsE0lBilUZguUWRT01JnP/TXtx
-         QTaaTVSiygCZg==
+        s=2019061801; t=1563015446;
+        bh=9FSHObF2QSFz47oCnmhPYTvWg8SJodez9gOW3yVagno=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=PlABL9m2+4xSMnz4Yj4Oih60hvce8KRsKivC5zX+JQ4bIZa8eskg2fDTSbdVVOmP3
+         CcwS0VMtGymLCCrXpsk2ClvvZLi0N/uZjKrqU2Ilck6Uwz0o00HK5jDwgjDPijGQSt
+         qrCp0IyFjcrPmAO3J4BHvp82Jiamu1aIctev3ZSij8IbaQvB8QSsPS/LAL8iEWLSnK
+         8XTeAB4+6+fuMskJ6YUCkmBQM/NNE7cYi4XsIdaH0yGwlOj47x7D7XiRbtXI4bZjya
+         RLDo8PTdz7LVmKmJVP5eQm1CoUNDuyipA9nNfYMXc5Lv4X/evor8fA5dYdA3koLpuh
+         q8c8vtlmCkrlw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6DAufHH3837977;
-        Sat, 13 Jul 2019 03:56:41 -0700
-Date:   Sat, 13 Jul 2019 03:56:41 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6DAvOj83838261;
+        Sat, 13 Jul 2019 03:57:24 -0700
+Date:   Sat, 13 Jul 2019 03:57:24 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-muvb8xqyh0gysgfjfq35w642@git.kernel.org>
-Cc:     tglx@linutronix.de, jolsa@kernel.org, namhyung@kernel.org,
-        acme@redhat.com, leo.yan@linaro.org, hpa@zytor.com,
+From:   tip-bot for Leo Yan <tipbot@zytor.com>
+Message-ID: <tip-f3c8d90757724982e5f07cd77d315eb64ca145ac@git.kernel.org>
+Cc:     suzuki.poulose@arm.com, songliubraving@fb.com, hpa@zytor.com,
+        eric.saint.etienne@oracle.com, alexey.budankov@linux.intel.com,
+        namhyung@kernel.org, jolsa@kernel.org, tmricht@linux.ibm.com,
+        mathieu.poirier@linaro.org, changbin.du@intel.com,
+        adrian.hunter@intel.com, dave@stgolabs.net,
         linux-kernel@vger.kernel.org, mingo@kernel.org,
-        adrian.hunter@intel.com
-Reply-To: adrian.hunter@intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
-          tglx@linutronix.de, acme@redhat.com, leo.yan@linaro.org,
-          namhyung@kernel.org
+        alexander.shishkin@linux.intel.com, linux@rasmusvillemoes.dk,
+        acme@redhat.com, ak@linux.intel.com, davem@davemloft.net,
+        peterz@infradead.org, yao.jin@linux.intel.com, tglx@linutronix.de,
+        alexios.zavras@intel.com, leo.yan@linaro.org,
+        khlebnikov@yandex-team.ru
+Reply-To: changbin.du@intel.com, mathieu.poirier@linaro.org,
+          alexander.shishkin@linux.intel.com, linux@rasmusvillemoes.dk,
+          adrian.hunter@intel.com, mingo@kernel.org, dave@stgolabs.net,
+          linux-kernel@vger.kernel.org, songliubraving@fb.com,
+          suzuki.poulose@arm.com, tmricht@linux.ibm.com, hpa@zytor.com,
+          eric.saint.etienne@oracle.com, namhyung@kernel.org,
+          jolsa@kernel.org, alexey.budankov@linux.intel.com,
+          leo.yan@linaro.org, khlebnikov@yandex-team.ru,
+          ak@linux.intel.com, davem@davemloft.net, acme@redhat.com,
+          alexios.zavras@intel.com, peterz@infradead.org,
+          yao.jin@linux.intel.com, tglx@linutronix.de
+In-Reply-To: <20190702103420.27540-9-leo.yan@linaro.org>
+References: <20190702103420.27540-9-leo.yan@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf inject: The tool->read() call may pass a
- NULL evsel, handle it
-Git-Commit-ID: 40978e9bf2137223993e70921de2731201788049
+Subject: [tip:perf/urgent] perf session: Fix potential NULL pointer
+ dereference found by the smatch tool
+Git-Commit-ID: f3c8d90757724982e5f07cd77d315eb64ca145ac
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,42 +79,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  40978e9bf2137223993e70921de2731201788049
-Gitweb:     https://git.kernel.org/tip/40978e9bf2137223993e70921de2731201788049
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 3 Jul 2019 16:02:09 -0300
+Commit-ID:  f3c8d90757724982e5f07cd77d315eb64ca145ac
+Gitweb:     https://git.kernel.org/tip/f3c8d90757724982e5f07cd77d315eb64ca145ac
+Author:     Leo Yan <leo.yan@linaro.org>
+AuthorDate: Tue, 2 Jul 2019 18:34:17 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 9 Jul 2019 09:33:55 -0300
 
-perf inject: The tool->read() call may pass a NULL evsel, handle it
+perf session: Fix potential NULL pointer dereference found by the smatch tool
 
-Check first, as machines__deliver_event() may have
-perf_evlist__id2evsel() returning NULL.
+Based on the following report from Smatch, fix the potential
+NULL pointer dereference check.
 
-This was found while checking a report from Leo Yan that used the smatch
-tool to find places where a pointer is checked before use and then,
-later in the same function gets used without checking.
+  tools/perf/util/session.c:1252
+  dump_read() error: we previously assumed 'evsel' could be null
+  (see line 1249)
 
+  tools/perf/util/session.c
+  1240 static void dump_read(struct perf_evsel *evsel, union perf_event *event)
+  1241 {
+  1242         struct read_event *read_event = &event->read;
+  1243         u64 read_format;
+  1244
+  1245         if (!dump_trace)
+  1246                 return;
+  1247
+  1248         printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
+  1249                evsel ? perf_evsel__name(evsel) : "FAIL",
+  1250                event->read.value);
+  1251
+  1252         read_format = evsel->attr.read_format;
+                             ^^^^^^^
+
+'evsel' could be NULL pointer, for this case this patch directly bails
+out without dumping read_event.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Alexios Zavras <alexios.zavras@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Changbin Du <changbin.du@intel.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-muvb8xqyh0gysgfjfq35w642@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190702103420.27540-9-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-inject.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/session.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 8e0e06d3edfc..f4591a1438b4 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -224,7 +224,7 @@ static int perf_event__repipe_sample(struct perf_tool *tool,
- 				     struct perf_evsel *evsel,
- 				     struct machine *machine)
- {
--	if (evsel->handler) {
-+	if (evsel && evsel->handler) {
- 		inject_handler f = evsel->handler;
- 		return f(tool, event, sample, evsel, machine);
- 	}
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 54cf163347f7..2e61dd6a3574 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1249,6 +1249,9 @@ static void dump_read(struct perf_evsel *evsel, union perf_event *event)
+ 	       evsel ? perf_evsel__name(evsel) : "FAIL",
+ 	       event->read.value);
+ 
++	if (!evsel)
++		return;
++
+ 	read_format = evsel->attr.read_format;
+ 
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
