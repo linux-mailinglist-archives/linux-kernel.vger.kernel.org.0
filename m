@@ -2,132 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF3267A39
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 15:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0609D67A3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 15:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbfGMNRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 09:17:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35023 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfGMNRB (ORCPT
+        id S1727837AbfGMNUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 09:20:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32916 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfGMNUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 09:17:01 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s27so5759457pgl.2;
-        Sat, 13 Jul 2019 06:17:00 -0700 (PDT)
+        Sat, 13 Jul 2019 09:20:06 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so5512984pfq.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 06:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CW90fCbZ/nThnMYxrh09PMSuih7U5TFwDcD0corZhW4=;
-        b=SxwFSNKtcdCJRzh8ZlyCU8dNqUL/e5hQ0rkvg/HRa7rugMaaLP58/f770K+TL1mQSj
-         AwpuoDQn6MoB9LqeCjQdXtTrsMNO2znsfluvyd3eErqnf3wUsV8Z9Cs9aMFWTlKum+Dc
-         hUYfTRV9JZtyAGIS/rRVewR9QFvf8xpeada8LnnPAbZ6FrurX0eI9vNJYu9Kbbd/ixrY
-         NI0DembArWo7csBzH+/87Je5F+Bz60VaKoYw5I0Ki9x2BMhIg4ntJM1q04cENBdOf8F/
-         V8YnGkBCJFPUukDurlsVcvXBp5OXzx8fqg92CLky49xM+AurDNlenRiMCCsD66bShtYy
-         Zqkg==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=t3ZLqWcrgfhZARjYVG38FnXLowWxYFGSUF90TwdQKak=;
+        b=LhMmDJexwpmDvlUUqG9AZ0eqr/cR9BbdJh9N8GK2wc3brzk6sE81mzT865WRFJC5ig
+         4XoBn7Hao9QwObCiDCbQy5q+VsiGlhPQxgj7SKIf2Co5fnsByjhAdHXUUZCrT1kSpIWO
+         nSTX+ekBk/4KuYgTvPGeRkgtTBGreqHZtjGRY1tNQNvzzo5yFedlkzbtgNYT1hZicUVz
+         CJdQCUVpsnPDNRSmNILCWnrC1XFydlpAdLN/6yn/bp80DkTg9Qrqkbs+ul3JLHKknp+Q
+         7bJf6JDHG6Vtf05dIXwK5a44rMDmI6sAoRMvuSrJ9KH9nGC+fpuOYG9E5bH27x/nxWnK
+         DPBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CW90fCbZ/nThnMYxrh09PMSuih7U5TFwDcD0corZhW4=;
-        b=NC49Elsas5sSGR37lc68IsVpWc/63cy60bd+36atGVnwyiQfCEgKzgluM5F2h+gDYh
-         CFNhMuKQ3Oa7ruqm038n0v2+Dxdp57TWc+i0TjtTfvN5rAzJf7Oeum7HUuSs/ee1M5jq
-         IenoKnNN+cQSRvJivPRBdwP++HTmYBLGlog8zkPdNQP4UrnSEmlS88wQKN4Pol4Xs5xp
-         HbBFYq8V8xscRIC4DnDexx7gs0pszeRaYPTJm4djyik9/veKsmPmNyD1BAoPJzmFUdMm
-         2bZskMcBFGfCxPDiCdpTa8eJnE3mpNdGWVTjnLjWfdnX3PrSkBTo2FeKpWt/ixNHrdnR
-         ROzA==
-X-Gm-Message-State: APjAAAVWjxVPle2lCFAPaMZIdg51QPwRmszUDt+Ifo5D9DPSEJcdwYC2
-        Rk24qtCv0044ZNxurKSSKhw+dlrb
-X-Google-Smtp-Source: APXvYqxVOO38nSrFEivs7+SOHK7Hbnr+EIGWTW6odmHCeSRUxn7o5k671L2wfW2IynGXKLuXkVlL6w==
-X-Received: by 2002:a63:4e60:: with SMTP id o32mr17173954pgl.68.1563023820318;
-        Sat, 13 Jul 2019 06:17:00 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f12sm10989384pgo.85.2019.07.13.06.16.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Jul 2019 06:16:59 -0700 (PDT)
-Subject: Re: [PATCH 5.1 000/138] 5.1.18-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>,
-        j-keerthy@ti.com
-References: <20190712121628.731888964@linuxfoundation.org>
- <4dae64c8-046e-3647-52d6-43362e986d21@nvidia.com>
- <20190712153035.GC13940@kroah.com> <20190712202141.GA18698@roeck-us.net>
- <20190713082233.GA28657@kroah.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <9871ef1a-ea5d-e9cb-2eff-a0a1a93ad44f@roeck-us.net>
-Date:   Sat, 13 Jul 2019 06:16:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t3ZLqWcrgfhZARjYVG38FnXLowWxYFGSUF90TwdQKak=;
+        b=o7FIj9UP9z6Nfysc1K4q7rEnAMSbxN2ZoMWMHoGDGstoOft6l3tkB4CW/kv+JGrpL3
+         XTxERccd9iD2DFzZlvcKOPUSfCMf6xUOUuIJQLDCiejpiBl9qkFjmAzHzA8AmSk3TsVb
+         2sphm3MjMsNjFi9trMmq16Tj6VfRA152uILRaP/syoLXML4wFGLgkIaRi3SMJFL0Dr6w
+         G/lKCwwbVMJFphAVeq4yg69JxN/XTyKCeBNV0K14pIloiNp30S9qwj3lViSR9ssXG56k
+         jCP7JE0D2jksoUiGnxIa1ZW87Z9FuwUbk8VF7l3+C4Xylm9KUYcFlSWfWJuPLXjHKtrP
+         T65A==
+X-Gm-Message-State: APjAAAX1cMTsBndk4l98/IS51oF7+3KMJTd9kiW/NqQbCOfPBcJPDduZ
+        Pjwq7kzrkWxkt+VuO2V8Gyo=
+X-Google-Smtp-Source: APXvYqyOee2O8F1rFI8E7UGw7sE8Lvg3la871hAMyIz1mfS4821xEZYdOCJlIJbUsCl7TPstC3rhnw==
+X-Received: by 2002:a63:f118:: with SMTP id f24mr17344644pgi.322.1563024005191;
+        Sat, 13 Jul 2019 06:20:05 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id t29sm14383786pfq.156.2019.07.13.06.20.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 13 Jul 2019 06:20:03 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Sat, 13 Jul 2019 22:19:47 +0900
+To:     Konstantin Khlebnikov <koct9i@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] kernel/printk: prevent deadlock at calling kmsg_dump
+ from NMI context
+Message-ID: <20190713131947.GA4464@tigerII.localdomain>
+References: <156294329676.1745.2620297516210526183.stgit@buzz>
+ <20190713060929.GB1038@tigerII.localdomain>
+ <CALYGNiPedT3wyZ3CrvJra=382g6ETUvrhirHJMb29XkBA3uMyg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190713082233.GA28657@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALYGNiPedT3wyZ3CrvJra=382g6ETUvrhirHJMb29XkBA3uMyg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/13/19 1:22 AM, Greg Kroah-Hartman wrote:
-> On Fri, Jul 12, 2019 at 01:21:41PM -0700, Guenter Roeck wrote:
->> On Fri, Jul 12, 2019 at 05:30:35PM +0200, Greg Kroah-Hartman wrote:
->>> On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
->>>> Hi Greg,
->>>>
->>>> On 12/07/2019 13:17, Greg Kroah-Hartman wrote:
->>>>> This is the start of the stable review cycle for the 5.1.18 release.
->>>>> There are 138 patches in this series, all will be posted as a response
->>>>> to this one.  If anyone has any issues with these being applied, please
->>>>> let me know.
->>>>>
->>>>> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
->>>>> Anything received after that time might be too late.
->>>>>
->>>>> The whole patch series can be found in one patch at:
->>>>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.18-rc1.gz
->>>>> or in the git tree and branch at:
->>>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
->>>>> and the diffstat can be found below.
->>>>>
->>>>> thanks,
->>>>>
->>>>> greg k-h
->>>>>
->>>>> -------------
->>>>> Pseudo-Shortlog of commits:
->>>>
->>> Both are now dropped, thanks.  I'll push out a -rc2 with that changed.
->>>
->>
->> Can you push that update into the git repository ?
->> v5.1.17-137-gde182b90f76d still has the problem.
+On (07/13/19 09:46), Konstantin Khlebnikov wrote:
+> > On (07/12/19 17:54), Konstantin Khlebnikov wrote:
 > 
-> Odd, I thought I did this.  Pushed out again just to be sure.
-> 
-Problem is still seen in -rc2.
+> Yep printk() can deal with NMI, but kmsg_dump() is a different beast.
+> It reads printk buffer and saves content into persistent storage like ACPI ERST.
 
->> Also:
->>
->> Building powerpc:ppc6xx_defconfig ... failed
->>
->> drivers/crypto/talitos.c: In function ‘get_request_hdr’:
->> include/linux/kernel.h:979:51: error:
->> 	dereferencing pointer to incomplete type ‘struct talitos_edesc’
->>
->> Seen with both v4.19.58-92-gd66f8e7 and v5.1.17-137-gde182b90f76d.
->>
->> This problem is caused by "crypto: talitos - fix hash on SEC1.", which will
->> need a proper backport - struct talitos_edesc is declared later in the
->> source file.
-> 
-> Ick, let me go drop this one after breakfast...
-> 
+Ah, sorry! I misread your patch. Yeah, I see what you are doing.
 
-Turns out this affects all three branches (v4.19. v5.1, and v5.2).
+OK. So, I guess that for kmsg_dump(KMSG_DUMP_PANIC) we should be
+fine in general.
 
-Guenter
+We call kmsg_dump(KMSG_DUMP_PANIC) after smp_send_stop() and after
+printk_safe_flush_on_panic(). printk_safe_flush_on_panic() resets
+the state of logbuf_lock, so logbuf_lock, in general case, should
+be unlocked by the time we call kmsg_dump(KMSG_DUMP_PANIC).
+Even for nested contexts.
+
+	CPU0
+	printk()
+	 logbuf_lock_irqsave(flags)
+	  -> NMI
+	   panic()
+	    smp_send_stop()
+	     printk_safe_flush_on_panic()
+	      raw_spin_lock_init(&logbuf_lock) << reinit >>
+	    kmsg_dump(KMSG_DUMP_PANIC)
+	     logbuf_lock_irqsave(flags)        << expected to be OK >>
+
+So do we have strong reasons to disable NMI->panic->kmsg_dump(DUMP_PANIC)?
+
+Other kmsg_dump(), maybe, can experience some troubles sometimes,
+need to check that.
+
+	-ss
