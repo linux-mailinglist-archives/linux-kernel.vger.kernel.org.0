@@ -2,106 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D97F267A28
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 14:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB37567A2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 14:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfGMMpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 08:45:03 -0400
-Received: from [175.207.13.126] ([175.207.13.126]:60180 "EHLO
-        localhost.localdomain" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727489AbfGMMpD (ORCPT
+        id S1727866AbfGMMtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 08:49:18 -0400
+Received: from forward102j.mail.yandex.net ([5.45.198.243]:35525 "EHLO
+        forward102j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727504AbfGMMtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 08:45:03 -0400
-X-Greylist: delayed 20910 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 08:45:01 EDT
-Received: from Shop01 (localhost [127.0.0.1])
-        by localhost.localdomain (Postfix) with SMTP id D12E6A648C5;
-        Sat, 13 Jul 2019 11:41:58 +0900 (KST)
-Received: from [15.13.233.234] by Shop01 id 1jdPM16Wa2g7; Sat, 13 Jul 2019 06:41:24 +0400
-Message-ID: <81-614$61g6olu6-4xf9@c8w1l>
-From:   "CYBER GATES LTD" <gameza@taekwondo.com>
-Reply-To: "CYBER GATES LTD" <gameza@taekwondo.com>
-To:     pine.lnx.4.10.10505101415590.14786-100000@limpet.umeoce.maine.edu
-Subject: FRESH & NEW EMAIL LEADS TOOLS, RDP,EMAILS, SPYWARES, SMTP, MAILER, CVV
-Date:   Sat, 13 Jul 19 06:41:24 GMT
-X-Mailer: Microsoft Outlook Express 5.50.4133.2400
+        Sat, 13 Jul 2019 08:49:18 -0400
+X-Greylist: delayed 388 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 08:49:15 EDT
+Received: from mxback18o.mail.yandex.net (mxback18o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::69])
+        by forward102j.mail.yandex.net (Yandex) with ESMTP id 23991F20A68;
+        Sat, 13 Jul 2019 15:42:45 +0300 (MSK)
+Received: from smtp4p.mail.yandex.net (smtp4p.mail.yandex.net [2a02:6b8:0:1402::15:6])
+        by mxback18o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id nYnhEFJwaK-ghTuSjZB;
+        Sat, 13 Jul 2019 15:42:45 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1563021765;
+        bh=M6u5ifgvcKCDiMoAtaCSx9r5NE6GN+qLFbSlRYQjToU=;
+        h=In-Reply-To:Cc:To:Subject:From:References:Date:Message-Id;
+        b=Rd0v5fl/cErza2qfKkWjKo56n9FvSM26gKiTItCOV/vqBOM/5vHa6qBwhZsHp52ep
+         FDDHQ9rnoIp5CNFBkSaS89R4oCtwyNMmlcyXmfCzFlrhu0GSmcTAx5hX3gxhZQwbJN
+         qnwv1QUJQIBV9wdi0qavSIwCT7QAup1Rl0Tg95cA=
+Authentication-Results: mxback18o.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by smtp4p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id yuTssl00fg-ggTuFJco;
+        Sat, 13 Jul 2019 15:42:42 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+Date:   Sat, 13 Jul 2019 15:42:40 +0300
+From:   Konstantin Kharlamov <hi-angel@yandex.ru>
+Subject: Re: [PATCH 4/8] perf evsel: Do not rely on errno values for
+ precise_ip fallback
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Message-Id: <1563021760.12557.0@yandex.ru>
+In-Reply-To: <20190708154207.11403-5-acme@kernel.org>
+References: <20190708154207.11403-1-acme@kernel.org>
+        <20190708154207.11403-5-acme@kernel.org>
+X-Mailer: geary/3.33.1
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="4_DEB.D_E5B4526BAA"
-X-Priority: 3
-X-MSMail-Priority: Normal
+Content-Type: text/plain; charset=koi8-r; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thank you very much! Just wondering, would it maybe worth to backport=20
+the fix to stable kernel too?
 
---4_DEB.D_E5B4526BAA
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+=F7 =F0=CE, =C9=C0=CC 8, 2019 at 12:42, Arnaldo Carvalho de Melo=20
+<acme@kernel.org> =CE=C1=D0=C9=D3=C1=CC:
+> From: Jiri Olsa <jolsa@kernel.org>
+>=20
+> Konstantin reported problem with default perf record command, which
+> fails on some AMD servers, because of the default maximum precise
+> config.
+>=20
+> The current fallback mechanism counts on getting ENOTSUP errno for
+> precise_ip fails, but that's not the case on some AMD servers.
+>=20
+> We can fix this by removing the errno check completely, because the
+> precise_ip fallback is separated. We can just try  (if requested by
+> evsel->precise_max) all possible precise_ip, and if one succeeds we=20
+> win,
+> if not, we continue with standard fallback.
+>=20
+> Reported-by: Konstantin Kharlamov <Hi-Angel@yandex.ru>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Quentin Monnet <quentin.monnet@netronome.com>
+> Cc: Kim Phillips <kim.phillips@amd.com>
+> Link: http://lkml.kernel.org/r/20190703080949.10356-1-jolsa@kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/evsel.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 4a5947625c5c..69beb9f80f07 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1785,14 +1785,8 @@ static int perf_event_open(struct perf_evsel=20
+> *evsel,
+>  		if (fd >=3D 0)
+>  			break;
+>=20
+> -		/*
+> -		 * Do quick precise_ip fallback if:
+> -		 *  - there is precise_ip set in perf_event_attr
+> -		 *  - maximum precise is requested
+> -		 *  - sys_perf_event_open failed with ENOTSUP error,
+> -		 *    which is associated with wrong precise_ip
+> -		 */
+> -		if (!precise_ip || !evsel->precise_max || (errno !=3D ENOTSUP))
+> +		/* Do not try less precise if not requested. */
+> +		if (!evsel->precise_max)
+>  			break;
+>=20
+>  		/*
+> --
+> 2.20.1
+>=20
 
-DEAR CUSTOMERS
-We are happy to inform you about our new SMTP SERVER
-today I would like to introduce you to a page that provides services for U=
-NLIMITED SENDER
-We offer all the services that you desire now? 15x Domain Inbox SMTP  
-please check  http://www.cybergatesltd.net/index.php?route=3Dproduct/produ=
-ct&product_id=3D458
-
-    Unlimited SMTP (Cheap and Inbox)
-    Unlimited PHP Mailer (Cheap and Inbox)
-    Unlimited WebMail Sever ( Cheap And Inbox)
-    RDP With AMS 4.3 (Warranty Full Time and On Sales)
-    Email Leads (New and Fresh)
-    Unlimited Cpanel Hosting (Use For Scampage, botnet,etc...)
-    VPN
-    Linux Root
-    Hacking Tools
-    zeus trojan Hacking
-    ScamPage
-    CVV,
-    BANK LOGINS,
-    DATING SITES LOGIN
-    SPYWARES
-    ETC
-
-Top Services  http://www.cybergatesltd.net
-To impress the customers, so we decided to discout  price all products wit=
-h 10% discount code: http://www.cybergatesltd.net
-
-You can see more
-Sale OFF 10% All Product
-How can I enter discount code?
-We also have 100 RDP WITH AMS program discounts to customers
-Click here to Order Now, be quick, limited    http://www.cybergatesltd.net=
-/index.php?route=3Dproduct/category&path=3D93
-Why is trusted by our customers?
-We always provide the best service for our customers, we guarantee custome=
-rs will be happy to have what they want, the first priority is to treat ou=
-r customers as god
-How to Order?
-Payment Method?
-We accept payment Via PerfectMoney
-We will try to accept multiple payment gateways to serve customers better
-Deliver
-We Delivered Via Email Within 0-2 hour
-You have any questions Other?
-Click here for see more //
-http://www.cybergatesltd.net/index.php?route=3D=
-product/category&path=3D59
-Are you ready to experience?
-READY TO GET STARTED?
-With us, you will not be disappointed, currently on the market there are m=
-any scam sites, selling quality goods, come to us, we will show you, Our s=
-ervice is best
-Customer Care Services
-Thank you for choosing cyber gates Store!
-chat with the admin for more information
-Perfect Money payments will be accepted using our LIVE CHAT payment proces=
-sor. 
-
-skype( skytunnel1 
-chat ( rsmtp@yahoo.com
-www.cybergatesltd.net
-
---4_DEB.D_E5B4526BAA--
+=
 
