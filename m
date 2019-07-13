@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2B667B20
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE9E67B29
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 18:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfGMP7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 11:59:31 -0400
-Received: from 072-190-080-237.res.spectrum.com ([72.190.80.237]:39621 "EHLO
-        trixbox1.localdomain" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727638AbfGMP7b (ORCPT
+        id S1728054AbfGMQFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 12:05:40 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40960 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbfGMQFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 11:59:31 -0400
-X-Greylist: delayed 7120 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 11:59:30 EDT
-Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
-        by trixbox1.localdomain (Postfix) with SMTP id 3B55638788F4;
-        Sat, 13 Jul 2019 09:00:11 -0500 (CDT)
-Received: from [131.241.72.253] by Shop01 with SMTP; Sat, 13 Jul 2019 17:57:18 +0400
-Message-ID: <a50z$7-p4--bhw-$$1e$c4$$4@uwhcbhb>
-From:   "CYBER GATES LTD" <gameza@taekwondo.com>
-Reply-To: "CYBER GATES LTD" <gameza@taekwondo.com>
-To:     20050516132745.GA23430@frasco.org.uk
-Subject: FRESH & NEW EMAIL LEADS TOOLS, RDP,EMAILS, SPYWARES, SMTP, MAILER, CVV
-Date:   Sat, 13 Jul 19 17:57:18 GMT
-X-Mailer: Microsoft Outlook, Build 10.0.2616
+        Sat, 13 Jul 2019 12:05:40 -0400
+Received: by mail-yw1-f66.google.com with SMTP id i138so6026627ywg.8
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 09:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7mk75n+FUSNUhfgNLft7JljlbXBUa7UOYFFMLEx7Ozk=;
+        b=Ke7ejz/mT3GEgJN7v5rXdKwDCBjN3gI3AqIh2t3dAPhMi1tnB4DK9+xAh2bGEj87DO
+         rxxRS3AJMRuw4LR41VnOligTxXk/T19Ijnvu09+BkEHY1n5xCxJvKJfzDH0BgVXcNZ6T
+         mzcNez1i5WrwxW/9eeJgRRwyin8scGj1bIXKiZKcWXCKnld5Tqu37+Fs7ygYRKgHCoBf
+         WZXUTvuYWLyojeuWyB4UpfZHfYEEiy7m2bFzcJh8VYB5MRdRpBhWqJcZqI8mvEwo4F2A
+         ajjjKT58t0Mcrl6hEkZiWAnhtZoCuwscYs4FkPqbHOhSgFEB3O4Tyv6TlNA+7ewxGb0f
+         RzWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7mk75n+FUSNUhfgNLft7JljlbXBUa7UOYFFMLEx7Ozk=;
+        b=dWP2BTjnaqvvu8FNQEwu0eFE0JDuqDLEtT79DhE2XB4t3829Fu15e+Nx43Rmc+2tR6
+         i1aRq30WE8+uIYPnqROvyB4tryXSmOu8XwrvBpMfJQNPLaJhpSMefh9N3MC8+/p7kjO/
+         4vfePy/RXXaf4zogjy//Z+WPmQyaQ5laEZ6fzJqncLfbhCFIq+ugYown6Os+LL2XkB/7
+         rbC1xx215k/tWYI6xFs0XXwxdqF5HfF+W6Jf/dg9WUV9KJOzav8jliv3F8mQrfPs/1aV
+         T5bfjM4WSZmXvuvNGFUUS6i4KcO5jatqW9nIAF2DCd7g0Hiyzi8OY24dC5yA8tl+1Huy
+         hkzw==
+X-Gm-Message-State: APjAAAXq9/SlJoQgn5tYTLqFeGy0FnsR7P+vguN9gPUNGYG352IGCYCj
+        /+QAYCwcHSMPjWS2Spe9JcAxVgzhf3ctzqDm2FYHzA==
+X-Google-Smtp-Source: APXvYqxMlQFJR0h8Qeriyc5l0gq+QA9nZ7IroV8xzvAcGnoKo6g6GsAEfb1wbrBSXDFB1s2MHWcP5eHRiALUf/y1g14=
+X-Received: by 2002:a0d:c345:: with SMTP id f66mr9597066ywd.10.1563033938757;
+ Sat, 13 Jul 2019 09:05:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="F8.E37.A6_8ACA"
-X-Priority: 3
-X-MSMail-Priority: Normal
+References: <20190712222118.108192-1-henryburns@google.com>
+In-Reply-To: <20190712222118.108192-1-henryburns@google.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sat, 13 Jul 2019 09:05:27 -0700
+Message-ID: <CALvZod68Ktd3m7p4MFgLdpqku3UucwEGrTVHdMPgi4cOpUOk6A@mail.gmail.com>
+Subject: Re: [PATCH] mm/z3fold.c: Allow __GFP_HIGHMEM in z3fold_alloc
+To:     Henry Burns <henryburns@google.com>
+Cc:     Vitaly Wool <vitalywool@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vitaly Vul <vitaly.vul@sony.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Snild Dolkow <snild@sony.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 12, 2019 at 3:22 PM Henry Burns <henryburns@google.com> wrote:
+>
+> One of the gfp flags used to show that a page is movable is
+> __GFP_HIGHMEM.  Currently z3fold_alloc() fails when __GFP_HIGHMEM is
+> passed.  Now that z3fold pages are movable, we allow __GFP_HIGHMEM. We
+> strip the movability related flags from the call to kmem_cache_alloc()
+> for our slots since it is a kernel allocation.
+>
+> Signed-off-by: Henry Burns <henryburns@google.com>
 
---F8.E37.A6_8ACA
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-DEAR CUSTOMERS
-We are happy to inform you about our new SMTP SERVER
-today I would like to introduce you to a page that provides services for U=
-NLIMITED SENDER
-We offer all the services that you desire now? 15x Domain Inbox SMTP  
-please check  http://www.cybergatesltd.net/index.php?route=3Dproduct/produ=
-ct&product_id=3D458
-
-    Unlimited SMTP (Cheap and Inbox)
-    Unlimited PHP Mailer (Cheap and Inbox)
-    Unlimited WebMail Sever ( Cheap And Inbox)
-    RDP With AMS 4.3 (Warranty Full Time and On Sales)
-    Email Leads (New and Fresh)
-    Unlimited Cpanel Hosting (Use For Scampage, botnet,etc...)
-    VPN
-    Linux Root
-    Hacking Tools
-    zeus trojan Hacking
-    ScamPage
-    CVV,
-    BANK LOGINS,
-    DATING SITES LOGIN
-    SPYWARES
-    ETC
-
-Top Services  http://www.cybergatesltd.net
-To impress the customers, so we decided to discout  price all products wit=
-h 10% discount code: http://www.cybergatesltd.net
-
-You can see more
-Sale OFF 10% All Product
-How can I enter discount code?
-We also have 100 RDP WITH AMS program discounts to customers
-Click here to Order Now, be quick, limited    http://www.cybergatesltd.net=
-/index.php?route=3Dproduct/category&path=3D93
-Why is trusted by our customers?
-We always provide the best service for our customers, we guarantee custome=
-rs will be happy to have what they want, the first priority is to treat ou=
-r customers as god
-How to Order?
-Payment Method?
-We accept payment Via PerfectMoney
-We will try to accept multiple payment gateways to serve customers better
-Deliver
-We Delivered Via Email Within 0-2 hour
-You have any questions Other?
-Click here for see more //
-http://www.cybergatesltd.net/index.php?route=3D=
-product/category&path=3D59
-Are you ready to experience?
-READY TO GET STARTED?
-With us, you will not be disappointed, currently on the market there are m=
-any scam sites, selling quality goods, come to us, we will show you, Our s=
-ervice is best
-Customer Care Services
-Thank you for choosing cyber gates Store!
-chat with the admin for more information
-Perfect Money payments will be accepted using our LIVE CHAT payment proces=
-sor. 
-
-skype( skytunnel1 
-chat ( rsmtp@yahoo.com
-www.cybergatesltd.net
-
---F8.E37.A6_8ACA--
-
+> ---
+>  mm/z3fold.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/z3fold.c b/mm/z3fold.c
+> index e78f95284d7c..cb567ddf051c 100644
+> --- a/mm/z3fold.c
+> +++ b/mm/z3fold.c
+> @@ -193,7 +193,8 @@ static inline struct z3fold_buddy_slots *alloc_slots(struct z3fold_pool *pool,
+>                                                         gfp_t gfp)
+>  {
+>         struct z3fold_buddy_slots *slots = kmem_cache_alloc(pool->c_handle,
+> -                                                           gfp);
+> +                                                           (gfp & ~(__GFP_HIGHMEM
+> +                                                                  | __GFP_MOVABLE)));
+>
+>         if (slots) {
+>                 memset(slots->slot, 0, sizeof(slots->slot));
+> @@ -844,7 +845,7 @@ static int z3fold_alloc(struct z3fold_pool *pool, size_t size, gfp_t gfp,
+>         enum buddy bud;
+>         bool can_sleep = gfpflags_allow_blocking(gfp);
+>
+> -       if (!size || (gfp & __GFP_HIGHMEM))
+> +       if (!size)
+>                 return -EINVAL;
+>
+>         if (size > PAGE_SIZE)
+> --
+> 2.22.0.510.g264f2c817a-goog
+>
