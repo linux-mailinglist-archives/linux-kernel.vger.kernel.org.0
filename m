@@ -2,106 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 644F3677CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 05:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A918E677CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 05:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfGMDgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 12 Jul 2019 23:36:14 -0400
-Received: from mail.win4net.com ([211.115.213.199]:53789 "EHLO
-        ftpsvr.win4net.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbfGMDgN (ORCPT
+        id S1727538AbfGMDWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 12 Jul 2019 23:22:47 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:52676 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbfGMDWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Jul 2019 23:36:13 -0400
-X-Greylist: delayed 18566 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 23:36:13 EDT
-Received: from Shop01 (localhost [127.0.0.1])
-        by ftpsvr.win4net.com (Postfix) with SMTP id ADCACE064D4;
-        Sat, 13 Jul 2019 01:26:37 +0900 (KST)
-Received: from [10.69.146.14] by Shop01 with SMTP; Fri, 12 Jul 2019 11:26:48 -0500
-Message-ID: <b$c8$ilj-8ht3g@epi649gl>
-From:   "CYBER GATES LTD" <gameza@taekwondo.com>
-Reply-To: "CYBER GATES LTD" <gameza@taekwondo.com>
-To:     20050517204816.GA13426@cse.ucdavis.edu
-Subject: FRESH & NEW EMAIL LEADS TOOLS, RDP,EMAILS, SPYWARES, SMTP, MAILER, CVV
-Date:   Fri, 12 Jul 19 11:26:48 GMT
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="E549FAD7E5"
-X-Priority: 3
-X-MSMail-Priority: Normal
+        Fri, 12 Jul 2019 23:22:46 -0400
+Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x6D3LCS2001105;
+        Sat, 13 Jul 2019 12:21:13 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6D3LCS2001105
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562988073;
+        bh=1IdPDx4QX0euUr4uIRn/uQ11mnE9aURyo1Zm0ZEzzSs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=H+3dgelzRhySedQpLwoncmnFJlhOAC6smKw42tgxGW66g4TX+fG+zinNh4AGqdkBV
+         sDGCcJP/3jlpIUG+9H4jbL5ashVrZTqBN9PoDIP1bG9kY/0MaTaWYJ4vBpWTxX4Omf
+         RqW5HPyA59GEjvtFZ1wcuentYVv5NNZkFEWlYZ9ZehokwLXXZUshr7g+PqbMuvcy50
+         SzPi5sTmajRUbguE4yWfcNru+V6pjhCXQaux7lpKlKU9UnUp/SKGF9Fj6AQYfpeOG8
+         YIUYRITsvVlb8B8NQYEZJcn7roPqrgX41eu2sOvXQ7hqe6g0yNBm2702TTuTtq5KU+
+         bWX8tcpizGxbg==
+X-Nifty-SrcIP: [126.26.94.249]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: remove meaningless KBUILD_ARFLAGS addition
+Date:   Sat, 13 Jul 2019 12:21:06 +0900
+Message-Id: <20190713032106.8509-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The KBUILD_ARFLAGS addition in arch/powerpc/Makefile has never worked
+in a useful way because it is always overridden by the following code
+in the top Makefile:
 
---E549FAD7E5
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+  # use the deterministic mode of AR if available
+  KBUILD_ARFLAGS := $(call ar-option,D)
 
-DEAR CUSTOMERS
-We are happy to inform you about our new SMTP SERVER
-today I would like to introduce you to a page that provides services for U=
-NLIMITED SENDER
-We offer all the services that you desire now? 15x Domain Inbox SMTP  
-please check  http://www.cybergatesltd.net/index.php?route=3Dproduct/produ=
-ct&product_id=3D458
+The code in the top Makefile was added in 2011, by commit 40df759e2b9e
+("kbuild: Fix build with binutils <= 2.19").
 
-    Unlimited SMTP (Cheap and Inbox)
-    Unlimited PHP Mailer (Cheap and Inbox)
-    Unlimited WebMail Sever ( Cheap And Inbox)
-    RDP With AMS 4.3 (Warranty Full Time and On Sales)
-    Email Leads (New and Fresh)
-    Unlimited Cpanel Hosting (Use For Scampage, botnet,etc...)
-    VPN
-    Linux Root
-    Hacking Tools
-    zeus trojan Hacking
-    ScamPage
-    CVV,
-    BANK LOGINS,
-    DATING SITES LOGIN
-    SPYWARES
-    ETC
+The KBUILD_ARFLAGS addition for ppc has always been dead code from the
+beginning.
 
-Top Services  http://www.cybergatesltd.net
-To impress the customers, so we decided to discout  price all products wit=
-h 10% discount code: http://www.cybergatesltd.net
+Nobody has reported a problem since 43c9127d94d6 ("powerpc: Add option
+to use thin archives"), so this code was unneeded.
 
-You can see more
-Sale OFF 10% All Product
-How can I enter discount code?
-We also have 100 RDP WITH AMS program discounts to customers
-Click here to Order Now, be quick, limited    http://www.cybergatesltd.net=
-/index.php?route=3Dproduct/category&path=3D93
-Why is trusted by our customers?
-We always provide the best service for our customers, we guarantee custome=
-rs will be happy to have what they want, the first priority is to treat ou=
-r customers as god
-How to Order?
-Payment Method?
-We accept payment Via PerfectMoney
-We will try to accept multiple payment gateways to serve customers better
-Deliver
-We Delivered Via Email Within 0-2 hour
-You have any questions Other?
-Click here for see more //
-http://www.cybergatesltd.net/index.php?route=3D=
-product/category&path=3D59
-Are you ready to experience?
-READY TO GET STARTED?
-With us, you will not be disappointed, currently on the market there are m=
-any scam sites, selling quality goods, come to us, we will show you, Our s=
-ervice is best
-Customer Care Services
-Thank you for choosing cyber gates Store!
-chat with the admin for more information
-Perfect Money payments will be accepted using our LIVE CHAT payment proces=
-sor. 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-skype( skytunnel1 
-chat ( rsmtp@yahoo.com
-www.cybergatesltd.net
+ arch/powerpc/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
---E549FAD7E5--
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index c345b79414a9..46ed198a3aa3 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -112,7 +112,6 @@ ifeq ($(HAS_BIARCH),y)
+ KBUILD_CFLAGS	+= -m$(BITS)
+ KBUILD_AFLAGS	+= -m$(BITS) -Wl,-a$(BITS)
+ KBUILD_LDFLAGS	+= -m elf$(BITS)$(LDEMULATION)
+-KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
+ endif
+ 
+ cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
+-- 
+2.17.1
 
