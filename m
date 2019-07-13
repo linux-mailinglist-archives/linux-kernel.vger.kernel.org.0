@@ -2,104 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A724267A6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 16:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB4D67A68
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 16:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfGMOU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 10:20:56 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39310 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727504AbfGMOU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 10:20:56 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BFC91A0048;
-        Sat, 13 Jul 2019 16:20:53 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 906351A002B;
-        Sat, 13 Jul 2019 16:20:49 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 74BC5402E3;
-        Sat, 13 Jul 2019 22:20:44 +0800 (SGT)
-From:   Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, l.subrahmanya@mobiveil.co.in,
-        leoyang.li@nxp.com, lorenzo.pieralisi@arm.com
-Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCHv7] PCI: mobiveil: Fix the CPU base address setup in inbound window
-Date:   Sat, 13 Jul 2019 22:11:29 +0800
-Message-Id: <20190713141129.32249-1-Zhiqiang.Hou@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727768AbfGMOTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 10:19:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30726 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727504AbfGMOTg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 10:19:36 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6DEHvId021437;
+        Sat, 13 Jul 2019 10:18:54 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq86bm8ft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 10:18:53 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6DEIrwh023291;
+        Sat, 13 Jul 2019 10:18:53 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq86bm8fk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 10:18:53 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6DEErnG020195;
+        Sat, 13 Jul 2019 14:18:52 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01dal.us.ibm.com with ESMTP id 2tq6x62vmk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 14:18:52 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6DEIpjY46661898
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 13 Jul 2019 14:18:51 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 387EDB2065;
+        Sat, 13 Jul 2019 14:18:51 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 00F2AB2064;
+        Sat, 13 Jul 2019 14:18:50 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.158.189])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 13 Jul 2019 14:18:50 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id ABD1116C8E80; Sat, 13 Jul 2019 07:18:50 -0700 (PDT)
+Date:   Sat, 13 Jul 2019 07:18:50 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Byungchul Park <byungchul.park@lge.com>,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH] rcuperf: Make rcuperf kernel test more robust for
+ !expedited mode
+Message-ID: <20190713141850.GC26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190704043431.208689-1-joel@joelfernandes.org>
+ <20190704174044.GK26519@linux.ibm.com>
+ <20190705035231.GA31088@X58A-UD3R>
+ <20190705122450.GA82532@google.com>
+ <20190705150932.GO26519@linux.ibm.com>
+ <20190705200003.GB134527@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190705200003.GB134527@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907130175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code erroneously sets-up the CPU base address with
-parameter 'pci_addr', which is passed to initialize the PCI
-base address of the inbound window, and the upper 32-bit of the
-CPU base address of the inbound window is not initialized. This
-results in the current code only support 1:1 inbound window
-with limitation that the base address must be < 4GB.
+On Fri, Jul 05, 2019 at 04:00:03PM -0400, Joel Fernandes wrote:
+> On Fri, Jul 05, 2019 at 08:09:32AM -0700, Paul E. McKenney wrote:
+> > On Fri, Jul 05, 2019 at 08:24:50AM -0400, Joel Fernandes wrote:
+> > > On Fri, Jul 05, 2019 at 12:52:31PM +0900, Byungchul Park wrote:
+> > > > On Thu, Jul 04, 2019 at 10:40:44AM -0700, Paul E. McKenney wrote:
+> > > > > On Thu, Jul 04, 2019 at 12:34:30AM -0400, Joel Fernandes (Google) wrote:
+> > > > > > It is possible that the rcuperf kernel test runs concurrently with init
+> > > > > > starting up.  During this time, the system is running all grace periods
+> > > > > > as expedited.  However, rcuperf can also be run for normal GP tests.
+> > > > > > Right now, it depends on a holdoff time before starting the test to
+> > > > > > ensure grace periods start later. This works fine with the default
+> > > > > > holdoff time however it is not robust in situations where init takes
+> > > > > > greater than the holdoff time to finish running. Or, as in my case:
+> > > > > > 
+> > > > > > I modified the rcuperf test locally to also run a thread that did
+> > > > > > preempt disable/enable in a loop. This had the effect of slowing down
+> > > > > > init. The end result was that the "batches:" counter in rcuperf was 0
+> > > > > > causing a division by 0 error in the results. This counter was 0 because
+> > > > > > only expedited GPs seem to happen, not normal ones which led to the
+> > > > > > rcu_state.gp_seq counter remaining constant across grace periods which
+> > > > > > unexpectedly happen to be expedited. The system was running expedited
+> > > > > > RCU all the time because rcu_unexpedited_gp() would not have run yet
+> > > > > > from init.  In other words, the test would concurrently with init
+> > > > > > booting in expedited GP mode.
+> > > > > > 
+> > > > > > To fix this properly, let us check if system_state if SYSTEM_RUNNING
+> > > > > > is set before starting the test. The system_state approximately aligns
+> > > > 
+> > > > Just minor typo..
+> > > > 
+> > > > To fix this properly, let us check if system_state if SYSTEM_RUNNING
+> > > > is set before starting the test. ...
+> > > > 
+> > > > Should be
+> > > > 
+> > > > To fix this properly, let us check if system_state is set to
+> > > > SYSTEM_RUNNING before starting the test. ...
+> > > 
+> > > That's a fair point. I wonder if Paul already fixed it up in his tree,
+> > > however I am happy to resend if he hasn't. Paul, how would you like to handle
+> > > this commit log nit?
+> > > 
+> > > it is just 'if ..' to 'is SYSTEM_RUNNING'
+> > 
+> > It now reads as follows:
+> > 
+> > 	To fix this properly, this commit waits until system_state is
+> > 	set to SYSTEM_RUNNING before starting the test.  This change is
+> > 	made just before kernel_init() invokes rcu_end_inkernel_boot(),
+> > 	and this latter is what turns off boot-time expediting of RCU
+> > 	grace periods.
+> 
+> Ok, looks good to me, thanks.
+> 
+> And for below patch,
+> 
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-This patch introduces a new parameter 'u64 cpu_addr' to initialize
-both lower 32-bit and upper 32-bit of the CPU base address to make
-it can support non 1:1 inbound window and fix the base address must
-be < 4GB limitation.
+Applied, thank you!
 
-Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
----
-V7:
- - This patch is #25 of V6 patches, rewrote the changelog.
+							Thnax, Paul
 
- drivers/pci/controller/pcie-mobiveil.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 672e633..a45a644 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -88,6 +88,7 @@
- #define  AMAP_CTRL_TYPE_MASK		3
- 
- #define PAB_EXT_PEX_AMAP_SIZEN(win)	PAB_EXT_REG_ADDR(0xbef0, win)
-+#define PAB_EXT_PEX_AMAP_AXI_WIN(win)	PAB_EXT_REG_ADDR(0xb4a0, win)
- #define PAB_PEX_AMAP_AXI_WIN(win)	PAB_REG_ADDR(0x4ba4, win)
- #define PAB_PEX_AMAP_PEX_WIN_L(win)	PAB_REG_ADDR(0x4ba8, win)
- #define PAB_PEX_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x4bac, win)
-@@ -462,7 +463,7 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
- }
- 
- static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
--			       u64 pci_addr, u32 type, u64 size)
-+			       u64 cpu_addr, u64 pci_addr, u32 type, u64 size)
- {
- 	u32 value;
- 	u64 size64 = ~(size - 1);
-@@ -482,7 +483,10 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
- 	csr_writel(pcie, upper_32_bits(size64),
- 		   PAB_EXT_PEX_AMAP_SIZEN(win_num));
- 
--	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
-+	csr_writel(pcie, lower_32_bits(cpu_addr),
-+		   PAB_PEX_AMAP_AXI_WIN(win_num));
-+	csr_writel(pcie, upper_32_bits(cpu_addr),
-+		   PAB_EXT_PEX_AMAP_AXI_WIN(win_num));
- 
- 	csr_writel(pcie, lower_32_bits(pci_addr),
- 		   PAB_PEX_AMAP_PEX_WIN_L(win_num));
-@@ -624,7 +628,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
- 			   CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
- 
- 	/* memory inbound translation window */
--	program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
-+	program_ib_windows(pcie, WIN_NUM_0, 0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
- 
- 	/* Get the I/O and memory ranges from DT */
- 	resource_list_for_each_entry(win, &pcie->resources) {
--- 
-2.9.5
-
+> > I dropped the last paragraph about late_initcall().  And I suspect that
+> > the last clause from rcu_gp_is_expedited() can be dropped:
+> > 
+> > bool rcu_gp_is_expedited(void)
+> > {
+> > 	return rcu_expedited || atomic_read(&rcu_expedited_nesting) ||
+> > 	       rcu_scheduler_active == RCU_SCHEDULER_INIT;
+> > }
+> > 
+> > This is because rcu_expedited_nesting is initialized to 1, and is
+> > decremented in rcu_end_inkernel_boot(), which is called long after
+> > rcu_scheduler_active has been set to RCU_SCHEDULER_RUNNING, which
+> > happens at core_initcall() time.  So if the last clause says "true",
+> > so does the second-to-last clause.
+> > 
+> > The similar check in rcu_gp_is_normal() is still need, however, to allow
+> > the power-management subsystem to invoke synchronize_rcu() just after
+> > the scheduler has been initialized, but before RCU is aware of this.
+> > 
+> > So, how about the commit shown below?
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit 1f7e72efe3c761c2b34da7b59e01ad69c657db10
+> > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > Date:   Fri Jul 5 08:05:10 2019 -0700
+> > 
+> >     rcu: Remove redundant "if" condition from rcu_gp_is_expedited()
+> >     
+> >     Because rcu_expedited_nesting is initialized to 1 and not decremented
+> >     until just before init is spawned, rcu_expedited_nesting is guaranteed
+> >     to be non-zero whenever rcu_scheduler_active == RCU_SCHEDULER_INIT.
+> >     This commit therefore removes this redundant "if" equality test.
+> >     
+> >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > 
+> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > index 249517058b13..64e9cc8609e7 100644
+> > --- a/kernel/rcu/update.c
+> > +++ b/kernel/rcu/update.c
+> > @@ -136,8 +136,7 @@ static atomic_t rcu_expedited_nesting = ATOMIC_INIT(1);
+> >   */
+> >  bool rcu_gp_is_expedited(void)
+> >  {
+> > -	return rcu_expedited || atomic_read(&rcu_expedited_nesting) ||
+> > -	       rcu_scheduler_active == RCU_SCHEDULER_INIT;
+> > +	return rcu_expedited || atomic_read(&rcu_expedited_nesting);
+> >  }
+> >  EXPORT_SYMBOL_GPL(rcu_gp_is_expedited);
+> >  
+> > 
+> 
