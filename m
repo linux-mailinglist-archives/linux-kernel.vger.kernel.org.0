@@ -2,60 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2A367AEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B37267B03
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfGMPXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 11:23:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbfGMPXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 11:23:32 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC6B120838;
-        Sat, 13 Jul 2019 15:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563031411;
-        bh=3yUUiXWyEH3+u7g2EzA96kovIvW9lH64zCa2zJ1DuwM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RICAk2OC01mAfI1oKPWZ2ELtKibQfP00fYE6gye1Ni3N8yTpzUeqCc/GrkVr37OEg
-         T4qoYBI2/mHgEC2F5KGBcIw+6R/TQgAK6vGHV9yFqgI3BGXwfPogNbUeBg2D+Z2zvR
-         zuAadUd3VZObKMpODfZLvFwDnz+KytECD610xLMw=
-Date:   Sat, 13 Jul 2019 17:23:28 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] Driver core patches for 5.3-rc1
-Message-ID: <20190713152328.GC10284@kroah.com>
-References: <20190712073623.GA16253@kroah.com>
- <20190712074023.GD16253@kroah.com>
- <20190712210922.GA102096@archlinux-threadripper>
- <CAHk-=wh0XHkcLYh+pMPJrf8WmD6zOgXfq7HuLi7gmzb8aPEOvQ@mail.gmail.com>
- <CAHk-=wimmESHGRKNnZV0TfNStqNrruxzXaT_S=8g6K4G84p54w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wimmESHGRKNnZV0TfNStqNrruxzXaT_S=8g6K4G84p54w@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1728080AbfGMPio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 11:38:44 -0400
+Received: from cmccmta1.chinamobile.com ([221.176.66.79]:2107 "EHLO
+        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfGMPio (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 11:38:44 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee35d29f763725-3a85a; Sat, 13 Jul 2019 23:23:16 +0800 (CST)
+X-RM-TRANSID: 2ee35d29f763725-3a85a
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost (unknown[223.105.0.241])
+        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5d29f7641cf-8262e;
+        Sat, 13 Jul 2019 23:23:16 +0800 (CST)
+X-RM-TRANSID: 2eea5d29f7641cf-8262e
+From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Simon Horman <horms@verge.net.au>
+Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Subject: [net-next 0/2] ipvs: speedup ipvs netns dismantle
+Date:   Sat, 13 Jul 2019 23:19:44 +0800
+Message-Id: <1563031186-2101-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 02:43:28PM -0700, Linus Torvalds wrote:
-> On Fri, Jul 12, 2019 at 2:37 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > My bad. Will apply the fix properly.
-> 
-> Ok, _now_ your fix is finally in my tree. D'oh.
+Implement exit_batch() method to dismantle more ipvs netns
+per round.
 
-Thanks for fixing this up, sorry for the pain, this was a tough merge
-for some reason...
+Haishuang Yan (2):
+  ipvs: batch __ip_vs_cleanup
+  ipvs: batch __ip_vs_dev_cleanup
 
-greg k-h
+ include/net/ip_vs.h             |  2 +-
+ net/netfilter/ipvs/ip_vs_core.c | 49 +++++++++++++++++++++++++----------------
+ net/netfilter/ipvs/ip_vs_ctl.c  | 13 ++++++++---
+ 3 files changed, 41 insertions(+), 23 deletions(-)
+
+-- 
+1.8.3.1
+
+
+
