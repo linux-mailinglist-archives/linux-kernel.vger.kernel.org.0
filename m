@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F348067AFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970A367AEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfGMPia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 11:38:30 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2141 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbfGMPia (ORCPT
+        id S1727951AbfGMPfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 11:35:02 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46960 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfGMPfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 11:38:30 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.5]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85d29f77052c-3a621; Sat, 13 Jul 2019 23:23:28 +0800 (CST)
-X-RM-TRANSID: 2ee85d29f77052c-3a621
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost (unknown[223.105.0.241])
-        by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee35d29f76f5a8-83a47;
-        Sat, 13 Jul 2019 23:23:28 +0800 (CST)
-X-RM-TRANSID: 2ee35d29f76f5a8-83a47
-From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Simon Horman <horms@verge.net.au>
-Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Subject: [net-next 2/2] ipvs: batch __ip_vs_dev_cleanup
-Date:   Sat, 13 Jul 2019 23:19:46 +0800
-Message-Id: <1563031186-2101-3-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1563031186-2101-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1563031186-2101-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+        Sat, 13 Jul 2019 11:35:02 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h21so11326583qtn.13;
+        Sat, 13 Jul 2019 08:35:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/VYOF52fJvexeKbOu9BKHZH1XPWQ9fg20nK1W0PVBPU=;
+        b=N6ZDCY84nmzm9o9fc7+bE+lRW3ZudNjOdihqZm35ZDybQ2EK7Uw+a5GsYJII3bHlrU
+         EsfdA3RToVDtZqZbfMEcpsSVGZGv3CFPjk5YjDp13LsuKbz9eemIVTH6NKm4i8kmKHPZ
+         aLrdI0Pnl71pTcafFbqwq+CpgyDNsglyHeIoPkfhPWe8QVxQwc1XXvC4fc/aUJcfQ7we
+         mIWm0vTPRSfRxvCOtxr+MlZUmokd8d48ZeY9KeN74APgzxN38aNcVdFAYeY8ANyj/V/F
+         wO2RLlZIzC499COdaI9tI+cLPuTOsZ3ZR/q/ejSog28ZoUGuPfvy/EADynjoElSFbeEG
+         iOfA==
+X-Gm-Message-State: APjAAAVONo95XOuRy1gfwTtFQVEPStdc49UQMkHJQWFN0KwKpVxjKHXY
+        v7KzCqCvVOORi14AwRJmfGgnW6xn4HyY/b9lJ44=
+X-Google-Smtp-Source: APXvYqx27JWKTE5WBop/U7bMtyQP/Kzr2bIFkryE+f5lOFq7JP5QSUbQfKs8QOW9ZjZHS4O4f+3uLloLQ3C7fGXHhRU=
+X-Received: by 2002:a0c:b88e:: with SMTP id y14mr11211808qvf.93.1563032100815;
+ Sat, 13 Jul 2019 08:35:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190712085437.4007720-1-arnd@arndb.de> <fb36b507-e637-e4d9-fdd4-2947eb7faf14@metux.net>
+In-Reply-To: <fb36b507-e637-e4d9-fdd4-2947eb7faf14@metux.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 13 Jul 2019 17:34:44 +0200
+Message-ID: <CAK8P3a3SPpQAbXu5+rHjEaF-MSVxVmG9sWy9hxu844HKn8JgLg@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: pcengines-apu2 needs gpiolib
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's better to batch __ip_vs_cleanup to speedup ipvs
-devices dismantle.
+On Sat, Jul 13, 2019 at 4:36 PM Enrico Weigelt, metux IT consult
+<lkml@metux.net> wrote:
+> On 12.07.19 10:54, Arnd Bergmann wrote:
+> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> > index e869a5c760b6..cf48b9068843 100644
+> > --- a/drivers/platform/x86/Kconfig
+> > +++ b/drivers/platform/x86/Kconfig
+> > @@ -1324,8 +1324,8 @@ config PCENGINES_APU2
+> >       tristate "PC Engines APUv2/3 front button and LEDs driver"
+> >       depends on INPUT && INPUT_KEYBOARD
+> >       depends on LEDS_CLASS
+> > -     select GPIO_AMD_FCH
+> > -     select KEYBOARD_GPIO_POLLED
+> > +     select GPIO_AMD_FCH if GPIOLIB
+> > +     select KEYBOARD_GPIO_POLLED if GPIOLIB
+> >       select LEDS_GPIO
+> >       help
+> >         This driver provides support for the front button and LEDs on
+>
+> That might compile but the driver won't work, if KEYBOARD_GPIO_POLLED
+> or GPIO_AMD_FCH isn't there.
 
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
----
- net/netfilter/ipvs/ip_vs_core.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Right, I agree it's a bit inconsistent. A better way would probably
+be to turn all of the 'select' statements into 'depends on' here, or
+possibly just remove them and document in the help text what others
+are required.
 
-diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-index b4d79b7..58af24a 100644
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -2434,14 +2434,20 @@ static int __net_init __ip_vs_dev_init(struct net *net)
- 	return ret;
- }
- 
--static void __net_exit __ip_vs_dev_cleanup(struct net *net)
-+static void __net_exit __ip_vs_dev_cleanup_batch(struct list_head *net_list)
- {
--	struct netns_ipvs *ipvs = net_ipvs(net);
-+	struct netns_ipvs *ipvs;
-+	struct net *net;
-+	LIST_HEAD(list);
-+
- 	EnterFunction(2);
--	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
--	ipvs->enable = 0;	/* Disable packet reception */
--	smp_wmb();
--	ip_vs_sync_net_cleanup(ipvs);
-+	list_for_each_entry(net, net_list, exit_list) {
-+		ipvs = net_ipvs(net);
-+		nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
-+		ipvs->enable = 0;	/* Disable packet reception */
-+		smp_wmb();
-+		ip_vs_sync_net_cleanup(ipvs);
-+	}
- 	LeaveFunction(2);
- }
- 
-@@ -2454,7 +2460,7 @@ static void __net_exit __ip_vs_dev_cleanup(struct net *net)
- 
- static struct pernet_operations ipvs_core_dev_ops = {
- 	.init = __ip_vs_dev_init,
--	.exit = __ip_vs_dev_cleanup,
-+	.exit_batch = __ip_vs_dev_cleanup_batch,
- };
- 
- /*
--- 
-1.8.3.1
+Generally using 'select' in order to save users from thinking causes
+more problems than it helps, as the build problems in this driver
+have already illustrated.
 
-
-
+      Arnd
