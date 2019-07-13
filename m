@@ -2,117 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8E7678B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 08:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30746678B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 08:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfGMGDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 02:03:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43184 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727580AbfGMGDo (ORCPT
+        id S1726804AbfGMGDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 02:03:20 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44036 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfGMGDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 02:03:44 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6D5uQUO087423;
-        Sat, 13 Jul 2019 02:01:27 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq3k2rpky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 13 Jul 2019 02:01:27 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6D5vA1T088448;
-        Sat, 13 Jul 2019 02:01:27 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq3k2rpkk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 13 Jul 2019 02:01:27 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6D60957001006;
-        Sat, 13 Jul 2019 06:01:26 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma04dal.us.ibm.com with ESMTP id 2tq6x68t9j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 13 Jul 2019 06:01:26 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6D61Oop49938878
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 13 Jul 2019 06:01:24 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7BDF3C6055;
-        Sat, 13 Jul 2019 06:01:24 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 511EAC6059;
-        Sat, 13 Jul 2019 06:01:21 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.85.135.203])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sat, 13 Jul 2019 06:01:20 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Ryan Grimm <grimm@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v2 13/13] powerpc/configs: Enable secure guest support in pseries and ppc64 defconfigs
-Date:   Sat, 13 Jul 2019 03:00:23 -0300
-Message-Id: <20190713060023.8479-14-bauerman@linux.ibm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190713060023.8479-1-bauerman@linux.ibm.com>
-References: <20190713060023.8479-1-bauerman@linux.ibm.com>
+        Sat, 13 Jul 2019 02:03:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so5462194pgl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2019 23:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kQgRg0T5PdVfnE425hM/hCSmyQkNW7o2UlEkrx8jKco=;
+        b=jUkhRRVrPqbfiTENoKWmRTf3OZ0c9oTwX3IQCL4AVARSk5yB9wVJGwyp9aPkf67hPu
+         oAev4A3Fpl+9yaePMTVh7T5x5fjziCa8fuFkJ5HX4zoRw4H0vFacq8rivG30PbLtJE+G
+         vgEEa2DY3YVxnsLEIgIslMnzDrhAkJCXpJ4jIY2aoJohr1CRJyQQlxZ5Nh1jtd+Kx3v4
+         +B4EeYwRxOjLoTi9ugbNcEt/OYL878qYVCbVL2XOTt4vvpRp5eCv7EH2rfW691gnFxWS
+         BvzHUMKHoAwUnyWB70SjVCDm23w9NY2UBZta/E9jYUFRQ7DbkbsCB1hXqsH/w2PCyJV1
+         xfLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kQgRg0T5PdVfnE425hM/hCSmyQkNW7o2UlEkrx8jKco=;
+        b=OQGyZt8hKtaKkK6w0bNZDkTBdSbDQDN0+G2wDQSGYN6uCxklycSBtTFGdqBQ/giBJ9
+         Y0Gwf8TSE4zC7J9lFuowFYXZGpPOPyiujPi9llX8+PbQk7W0NqPaIKMfBFVs6HkN8d1Y
+         S4OC6i6C/Hxrw6F41rk5zYordRE+d/Dk/XXPv5c8hxYilh5UFudzs6PaDEV30r8K8CtH
+         szgiI9OgjxraNkgUUfvBZsS+C1TX4WJWMnJJGN79QzbT1QDBbMLVPnaGldVyIal/BecD
+         K90ubWNmORbxkPWA1HbiAivgWfsU5kYIUX/HG2OXsGtgP7builVQQpWswRmcvf2Yh2hZ
+         cJ2g==
+X-Gm-Message-State: APjAAAVJ6m4Pi8ULT7LIEKBWhs5Ca+S/hzbfKBy20D6ZSLMf98dJB1/A
+        kMF72SXyr7wvsEonXJaFTcWZ/JBT
+X-Google-Smtp-Source: APXvYqxIDTIiPCcRJ4OhNzUxwyOYufjAvQ5hxq/4tKWI2GkMk1IsykR29xkpJUbqA5xepELpcu7sNA==
+X-Received: by 2002:a63:784c:: with SMTP id t73mr15725145pgc.268.1562997798075;
+        Fri, 12 Jul 2019 23:03:18 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id 3sm11384614pfg.186.2019.07.12.23.03.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 12 Jul 2019 23:03:17 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Sat, 13 Jul 2019 15:03:00 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Vincent Whitchurch <rabinv@axis.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk: Do not lose last line in kmsg buffer dump
+Message-ID: <20190713060300.GA1038@tigerII.localdomain>
+References: <20190711142937.4083-1-vincent.whitchurch@axis.com>
+ <20190712091251.or4bitunknzhrigf@pathway.suse.cz>
+ <20190712092253.GA7922@jagdpanzerIV>
+ <20190712131158.5wgy5wxjtqn6uqly@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-13_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907130070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712131158.5wgy5wxjtqn6uqly@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ryan Grimm <grimm@linux.vnet.ibm.com>
+On (07/12/19 15:11), Petr Mladek wrote:
+> > Looks correct to me as well.
+> > 
+> > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> 
+> The patch has been committed into printk.git, branch for-5.3-fixes.
+> 
+> I am still a bit undecided whether to send pull request the following
+> week or wait for 5.4. On one hand, it is very old bug (since 3.5).
+> On the other hand, I think that it was not reported/fixed earlier
+> only because it was hard to notice. And loosing the very last message
+> is quite pity.
 
-Enables running as a secure guest in platforms with an Ultravisor.
+My call would be - let's wait till next merge window.
 
-Signed-off-by: Ryan Grimm <grimm@linux.vnet.ibm.com>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/powerpc/configs/ppc64_defconfig   | 1 +
- arch/powerpc/configs/pseries_defconfig | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/arch/powerpc/configs/ppc64_defconfig b/arch/powerpc/configs/ppc64_defconfig
-index c63b019ba753..0b04c5ca9e13 100644
---- a/arch/powerpc/configs/ppc64_defconfig
-+++ b/arch/powerpc/configs/ppc64_defconfig
-@@ -31,6 +31,7 @@ CONFIG_DTL=y
- CONFIG_SCANLOG=m
- CONFIG_PPC_SMLPAR=y
- CONFIG_IBMEBUS=y
-+CONFIG_PPC_SVM=y
- CONFIG_PPC_MAPLE=y
- CONFIG_PPC_PASEMI=y
- CONFIG_PPC_PASEMI_IOMMU=y
-diff --git a/arch/powerpc/configs/pseries_defconfig b/arch/powerpc/configs/pseries_defconfig
-index 38abc9c1770a..26126b4d4de3 100644
---- a/arch/powerpc/configs/pseries_defconfig
-+++ b/arch/powerpc/configs/pseries_defconfig
-@@ -42,6 +42,7 @@ CONFIG_DTL=y
- CONFIG_SCANLOG=m
- CONFIG_PPC_SMLPAR=y
- CONFIG_IBMEBUS=y
-+CONFIG_PPC_SVM=y
- # CONFIG_PPC_PMAC is not set
- CONFIG_RTAS_FLASH=m
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+	-ss
