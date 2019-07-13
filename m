@@ -2,95 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D5867AB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B3D67AC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2019 17:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfGMO7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 10:59:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46444 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727626AbfGMO7g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 10:59:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z1so12697547wru.13
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 07:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fireburn-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xmdUDnhWJVovmByVoh8W0nHbRzDTU6bE3u0Nvyxwtbo=;
-        b=1yJBr/TlTwB1USdmoac+6WLgPef4V0EyO1yqmAUzf/v6NSbsTlyC8AxCM3llEYRMoZ
-         cQt0gZkJ6hA97c3/Wi1y+hol4ja7bQ2t4/Apc51k+HrF5GZyzsBaDDo6TgBOiuK5LTnS
-         2dqayVAQyc36Y6vrjUuNsuWUthwoOr9uhffFyUXdXjYKV4m2+2rmrM+7c2DUGfJhJdjz
-         XJHt2wima4MV/K/KIR+tfOZvtvSmnVyxaMAZRVbtaNQFY2eLaXuAeNM7+ipwaBcsSWrx
-         zOkE345L/fPOGwZ3EmdFKTszdW0Qis/Q4B3b/lRlcBzFe/80asztlmnA2C92QovMTGys
-         PnsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xmdUDnhWJVovmByVoh8W0nHbRzDTU6bE3u0Nvyxwtbo=;
-        b=N14U2eYBfvwrFR/vo+o0UKjgd21dB+mLeuPAFETsat8a72wFaG9SXTWczppYDS6WfP
-         NGwAhCgqvpC3D64T2jbHlMJ9jMo3bewHoJOoJlDmV8lDJcRMueZHaVpcW3n3qwpPPcun
-         pNfFUehcPdymPtZeVV+4YN43ux7ZSFKtpI/Q6zR+Nmlv3YFh4MNRL2TFu9qHAr9feNEU
-         Ib9Yx6DbCwOtiLbnyZT9NutqJcMK2ff+UVI5Q7ZpQjR+zoLjuQjUyHErXU5b5YcbiFaQ
-         ReAKfBtoBk+SjLrL9tVrc/wIF6Tc0T5I8C5ocwDRotkuJ8vo2LJfX+lc3bgLfqk4Dhtp
-         GlSQ==
-X-Gm-Message-State: APjAAAXfSRGBo2EzxxSnTQ5Ipgi6nBBZx5LZFg63KF72JYBKSiwX+XyT
-        jgHRCmczQTbi3mG+rG7xKMqW2T6tnqM=
-X-Google-Smtp-Source: APXvYqyuOTqDDaoRk/O+sKZuJHRXrxGoEJ+hMe/XYFAiQn+mjCGhYrKXmOxmEzJnevFQQufSIxqIGA==
-X-Received: by 2002:a5d:42c5:: with SMTP id t5mr17378161wrr.5.1563029973866;
-        Sat, 13 Jul 2019 07:59:33 -0700 (PDT)
-Received: from axion.fireburn.co.uk ([2a01:4b00:f40e:900::64c])
-        by smtp.gmail.com with ESMTPSA id g12sm16148820wrv.9.2019.07.13.07.59.32
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 13 Jul 2019 07:59:33 -0700 (PDT)
-From:   Mike Lothian <mike@fireburn.co.uk>
-To:     thomas.lendacky@amd.com
-Cc:     bhe@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        lijiang@redhat.com, linux-kernel@vger.kernel.org, luto@kernel.org,
-        mingo@redhat.com, peterz@infradead.org, tglx@linutronix.de,
-        x86@kernel.org
-Subject: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to be reserved
-Date:   Sat, 13 Jul 2019 15:59:08 +0100
-Message-Id: <20190713145909.30749-1-mike@fireburn.co.uk>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
-References: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
+        id S1727900AbfGMPD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 11:03:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727626AbfGMPD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 11:03:56 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C832F20830;
+        Sat, 13 Jul 2019 15:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563030235;
+        bh=rhgzDBUt9BwMxq+kcRcec6QPbDI11qibjcUAURXIaPY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WPt6oRaJ5kTRyGlNDrlZ/GflHZ4spBWudBFrnHFoXTH3eRJpAHq9wU02ulORAnSPn
+         r1bn+A0jfbR15ra+hVS2N2gQSBz7uM8iERiEtO3sXaYczPMU/yYdWF3gHn4p2QysR4
+         U5ennukmaVUWYktXX6S31jWL3IH6lWCZYgVZ7zfQ=
+Date:   Sat, 13 Jul 2019 11:03:53 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Haiyang Zhang <haiyangz@microsoft.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jake Oshins <jakeo@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH] PCI: pci-hyperv: fix build errors on non-SYSFS config
+Message-ID: <20190713150353.GF10104@sasha-vm>
+References: <abbe8012-1e6f-bdea-1454-5c59ccbced3d@infradead.org>
+ <DM6PR21MB133723E9D1FA8BA0006E06FECAF20@DM6PR21MB1337.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <DM6PR21MB133723E9D1FA8BA0006E06FECAF20@DM6PR21MB1337.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Fri, Jul 12, 2019 at 04:04:17PM +0000, Haiyang Zhang wrote:
+>
+>
+>> -----Original Message-----
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>> Sent: Friday, July 12, 2019 11:53 AM
+>> To: linux-pci <linux-pci@vger.kernel.org>; LKML <linux-
+>> kernel@vger.kernel.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>; Jake Oshins
+>> <jakeo@microsoft.com>; KY Srinivasan <kys@microsoft.com>; Haiyang
+>> Zhang <haiyangz@microsoft.com>; Stephen Hemminger
+>> <sthemmin@microsoft.com>; Stephen Hemminger
+>> <stephen@networkplumber.org>; Sasha Levin <sashal@kernel.org>; Bjorn
+>> Helgaas <bhelgaas@google.com>; Dexuan Cui <decui@microsoft.com>
+>> Subject: [PATCH] PCI: pci-hyperv: fix build errors on non-SYSFS config
+>>
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix build errors when building almost-allmodconfig but with SYSFS
+>> not set (not enabled).  Fixes these build errors:
+>>
+>> ERROR: "pci_destroy_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+>> ERROR: "pci_create_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+>>
+>> drivers/pci/slot.o is only built when SYSFS is enabled, so
+>> pci-hyperv.o has an implicit dependency on SYSFS.
+>> Make that explicit.
+>>
+>> Also, depending on X86 && X86_64 is not needed, so just change that
+>> to depend on X86_64.
+>>
+>> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot
+>> information")
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Jake Oshins <jakeo@microsoft.com>
+>> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+>> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+>> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+>> Cc: Stephen Hemminger <stephen@networkplumber.org>
+>> Cc: Sasha Levin <sashal@kernel.org>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: linux-pci@vger.kernel.org
+>> Cc: linux-hyperv@vger.kernel.org
+>> Cc: Dexuan Cui <decui@microsoft.com>
+>> ---
+>> v3: corrected Fixes: tag [Dexuan Cui <decui@microsoft.com>]
+>>     This is the Microsoft-preferred version of the patch.
+>>
+>>  drivers/pci/Kconfig |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> --- lnx-52.orig/drivers/pci/Kconfig
+>> +++ lnx-52/drivers/pci/Kconfig
+>> @@ -181,7 +181,7 @@ config PCI_LABEL
+>>
+>>  config PCI_HYPERV
+>>          tristate "Hyper-V PCI Frontend"
+>> -        depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN
+>> && X86_64
+>> +        depends on X86_64 && HYPERV && PCI_MSI &&
+>> PCI_MSI_IRQ_DOMAIN && SYSFS
+>>          help
+>>            The PCI device frontend driver allows the kernel to import arbitrary
+>>            PCI devices from a PCI backend to support PCI driver domains.
+>>
+>
+>Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-This appears to be causing issues with gold again:
+Queued up for hyperv-fixes, thank you!
 
-axion /usr/src/linux # make
-  CALL    scripts/checksyscalls.sh
-  CALL    scripts/atomic/check-atomics.sh
-  DESCEND  objtool
-  CHK     include/generated/compile.h
-  VDSOCHK arch/x86/entry/vdso/vdso64.so.dbg
-  VDSOCHK arch/x86/entry/vdso/vdso32.so.dbg
-  CHK     kernel/kheaders_data.tar.xz
-  CC      arch/x86/boot/compressed/misc.o
-  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
-make[2]: *** [arch/x86/boot/compressed/Makefile:130: arch/x86/boot/compressed/vmlinux.relocs] Error 1
-make[2]: *** Deleting file 'arch/x86/boot/compressed/vmlinux.relocs'
-make[1]: *** [arch/x86/boot/Makefile:112: arch/x86/boot/compressed/vmlinux] Error 2
-make: *** [arch/x86/Makefile:316: bzImage] Error 2
-
-Here's the version I'm running:
-
-sys-devel/gcc-9.1.0-r1 
-sys-libs/glibc-2.29-r2 
-sys-devel/binutils-2.32-r1
-
-Cheers
-
-Mike
-
+--
+Thanks,
+Sasha
