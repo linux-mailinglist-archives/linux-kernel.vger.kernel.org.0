@@ -2,457 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A5567FB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C342967FBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfGNPKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 11:10:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45584 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbfGNPKY (ORCPT
+        id S1728398AbfGNPVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 11:21:09 -0400
+Received: from out4437.biz.mail.alibaba.com ([47.88.44.37]:40350 "EHLO
+        out4437.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726403AbfGNPVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 11:10:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OuafK/TTQcFkrbP+suIfTDa/h6nPmDJ0gGHTBNIInGY=; b=jjROjiZP+3rwyeSYZ6JEiszuF8
-        5aEsyAB6fuiTSYLDPcKQcpfhT0IFhoL4uP1dD9Sd/Clwo54TJ5f5IoHgrykOHLeHHj3PNj1p2wxWY
-        VKHRrD+HVGaWoVQG0aCpMj/VrzIwImUUrNaDfGl0kOTnAMKfDyHmf1czNfJPz60cdHS9oxjD6wPVC
-        4M/OC1Hv+smewROLfFszjHNXAJY4VGS9iy7xV/bdXElszIZLt01N8tXkZuBZBK8nhJMzxaefGTWIK
-        SpLRtegO4RjZ8X8bNrCBl2wPPmSQPwVucShppOwUeR+M1aCc3phOQMjZzHmUSnijU2c6CiSs3X8pu
-        Y3OA2A/A==;
-Received: from 201.86.163.160.dynamic.adsl.gvt.net.br ([201.86.163.160] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hmg8o-0004f8-Dm; Sun, 14 Jul 2019 15:10:18 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hmg8l-0007TS-4k; Sun, 14 Jul 2019 12:10:15 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-input@vger.kernel.org, netdev@vger.kernel.org,
-        linux-sh@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [PATCH 8/8] docs: remove extra conf.py files
-Date:   Sun, 14 Jul 2019 12:10:13 -0300
-Message-Id: <12a160afc9e70156f671010bd4ccff9311acdc5e.1563115732.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1563115732.git.mchehab+samsung@kernel.org>
-References: <cover.1563115732.git.mchehab+samsung@kernel.org>
+        Sun, 14 Jul 2019 11:21:09 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0TWrpoRa_1563117663;
+Received: from IT-FVFX43SYHV2H.lan(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TWrpoRa_1563117663)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 14 Jul 2019 23:21:03 +0800
+Subject: Re: [PATCH 01/12] Documentation: move architectures together
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-sh@vger.kernel.org
+References: <20190712022018.27989-1-alex.shi@linux.alibaba.com>
+ <20190712113427.62fa7ffc@lwn.net>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <36c522c5-975e-e38e-daad-0f3d9f93b186@linux.alibaba.com>
+Date:   Sun, 14 Jul 2019 23:21:03 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190712113427.62fa7ffc@lwn.net>
+Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the latex_documents are handled automatically, we can
-remove those extra conf.py files.
+Hi Jon,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/admin-guide/conf.py      | 10 ----------
- Documentation/core-api/conf.py         | 10 ----------
- Documentation/crypto/conf.py           | 10 ----------
- Documentation/dev-tools/conf.py        | 10 ----------
- Documentation/doc-guide/conf.py        | 10 ----------
- Documentation/driver-api/80211/conf.py | 10 ----------
- Documentation/driver-api/conf.py       | 10 ----------
- Documentation/driver-api/pm/conf.py    | 10 ----------
- Documentation/filesystems/conf.py      | 10 ----------
- Documentation/gpu/conf.py              | 10 ----------
- Documentation/input/conf.py            | 10 ----------
- Documentation/kernel-hacking/conf.py   | 10 ----------
- Documentation/maintainer/conf.py       | 10 ----------
- Documentation/media/conf.py            | 12 ------------
- Documentation/networking/conf.py       | 10 ----------
- Documentation/process/conf.py          | 10 ----------
- Documentation/sh/conf.py               | 10 ----------
- Documentation/sound/conf.py            | 10 ----------
- Documentation/userspace-api/conf.py    | 10 ----------
- Documentation/vm/conf.py               | 10 ----------
- Documentation/x86/conf.py              | 10 ----------
- 21 files changed, 212 deletions(-)
- delete mode 100644 Documentation/admin-guide/conf.py
- delete mode 100644 Documentation/core-api/conf.py
- delete mode 100644 Documentation/crypto/conf.py
- delete mode 100644 Documentation/dev-tools/conf.py
- delete mode 100644 Documentation/doc-guide/conf.py
- delete mode 100644 Documentation/driver-api/80211/conf.py
- delete mode 100644 Documentation/driver-api/conf.py
- delete mode 100644 Documentation/driver-api/pm/conf.py
- delete mode 100644 Documentation/filesystems/conf.py
- delete mode 100644 Documentation/gpu/conf.py
- delete mode 100644 Documentation/input/conf.py
- delete mode 100644 Documentation/kernel-hacking/conf.py
- delete mode 100644 Documentation/maintainer/conf.py
- delete mode 100644 Documentation/media/conf.py
- delete mode 100644 Documentation/networking/conf.py
- delete mode 100644 Documentation/process/conf.py
- delete mode 100644 Documentation/sh/conf.py
- delete mode 100644 Documentation/sound/conf.py
- delete mode 100644 Documentation/userspace-api/conf.py
- delete mode 100644 Documentation/vm/conf.py
- delete mode 100644 Documentation/x86/conf.py
+Thanks for quick response!
 
-diff --git a/Documentation/admin-guide/conf.py b/Documentation/admin-guide/conf.py
-deleted file mode 100644
-index 86f738953799..000000000000
---- a/Documentation/admin-guide/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = 'Linux Kernel User Documentation'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'linux-user.tex', 'Linux Kernel User Documentation',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/core-api/conf.py b/Documentation/core-api/conf.py
-deleted file mode 100644
-index db1f7659f3da..000000000000
---- a/Documentation/core-api/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Core-API Documentation"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'core-api.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/crypto/conf.py b/Documentation/crypto/conf.py
-deleted file mode 100644
-index 4335d251ddf3..000000000000
---- a/Documentation/crypto/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = 'Linux Kernel Crypto API'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'crypto-api.tex', 'Linux Kernel Crypto API manual',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/dev-tools/conf.py b/Documentation/dev-tools/conf.py
-deleted file mode 100644
-index 7faafa3f7888..000000000000
---- a/Documentation/dev-tools/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Development tools for the kernel"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'dev-tools.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/doc-guide/conf.py b/Documentation/doc-guide/conf.py
-deleted file mode 100644
-index fd3731182d5a..000000000000
---- a/Documentation/doc-guide/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = 'Linux Kernel Documentation Guide'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'kernel-doc-guide.tex', 'Linux Kernel Documentation Guide',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/driver-api/80211/conf.py b/Documentation/driver-api/80211/conf.py
-deleted file mode 100644
-index 4424b4b0b9c3..000000000000
---- a/Documentation/driver-api/80211/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux 802.11 Driver Developer's Guide"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', '80211.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/driver-api/conf.py b/Documentation/driver-api/conf.py
-deleted file mode 100644
-index 202726d20088..000000000000
---- a/Documentation/driver-api/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "The Linux driver implementer's API guide"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'driver-api.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/driver-api/pm/conf.py b/Documentation/driver-api/pm/conf.py
-deleted file mode 100644
-index a89fac11272f..000000000000
---- a/Documentation/driver-api/pm/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Device Power Management"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'pm.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/filesystems/conf.py b/Documentation/filesystems/conf.py
-deleted file mode 100644
-index ea44172af5c4..000000000000
---- a/Documentation/filesystems/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux Filesystems API"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'filesystems.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/gpu/conf.py b/Documentation/gpu/conf.py
-deleted file mode 100644
-index 1757b040fb32..000000000000
---- a/Documentation/gpu/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux GPU Driver Developer's Guide"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'gpu.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/input/conf.py b/Documentation/input/conf.py
-deleted file mode 100644
-index d2352fdc92ed..000000000000
---- a/Documentation/input/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "The Linux input driver subsystem"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'linux-input.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/kernel-hacking/conf.py b/Documentation/kernel-hacking/conf.py
-deleted file mode 100644
-index 3d8acf0f33ad..000000000000
---- a/Documentation/kernel-hacking/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Kernel Hacking Guides"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'kernel-hacking.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/maintainer/conf.py b/Documentation/maintainer/conf.py
-deleted file mode 100644
-index 81e9eb7a7884..000000000000
---- a/Documentation/maintainer/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = 'Linux Kernel Development Documentation'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'maintainer.tex', 'Linux Kernel Development Documentation',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/media/conf.py b/Documentation/media/conf.py
-deleted file mode 100644
-index 1f194fcd2cae..000000000000
---- a/Documentation/media/conf.py
-+++ /dev/null
-@@ -1,12 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--# SPDX-License-Identifier: GPL-2.0
--
--project = 'Linux Media Subsystem Documentation'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'media.tex', 'Linux Media Subsystem Documentation',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/networking/conf.py b/Documentation/networking/conf.py
-deleted file mode 100644
-index 40f69e67a883..000000000000
---- a/Documentation/networking/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux Networking Documentation"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'networking.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/process/conf.py b/Documentation/process/conf.py
-deleted file mode 100644
-index 1b01a80ad9ce..000000000000
---- a/Documentation/process/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = 'Linux Kernel Development Documentation'
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'process.tex', 'Linux Kernel Development Documentation',
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/sh/conf.py b/Documentation/sh/conf.py
-deleted file mode 100644
-index 1eb684a13ac8..000000000000
---- a/Documentation/sh/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "SuperH architecture implementation manual"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'sh.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/sound/conf.py b/Documentation/sound/conf.py
-deleted file mode 100644
-index 3f1fc5e74e7b..000000000000
---- a/Documentation/sound/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux Sound Subsystem Documentation"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'sound.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/userspace-api/conf.py b/Documentation/userspace-api/conf.py
-deleted file mode 100644
-index 2eaf59f844e5..000000000000
---- a/Documentation/userspace-api/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "The Linux kernel user-space API guide"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'userspace-api.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/vm/conf.py b/Documentation/vm/conf.py
-deleted file mode 100644
-index 3b0b601af558..000000000000
---- a/Documentation/vm/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "Linux Memory Management Documentation"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'memory-management.tex', project,
--     'The kernel development community', 'manual'),
--]
-diff --git a/Documentation/x86/conf.py b/Documentation/x86/conf.py
-deleted file mode 100644
-index 33c5c3142e20..000000000000
---- a/Documentation/x86/conf.py
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# -*- coding: utf-8; mode: python -*-
--
--project = "X86 architecture specific documentation"
--
--tags.add("subproject")
--
--latex_documents = [
--    ('index', 'x86.tex', project,
--     'The kernel development community', 'manual'),
--]
--- 
-2.21.0
+ÔÚ 2019/7/13 ÉÏÎç1:34, Jonathan Corbet Ð´µÀ:
+> On Fri, 12 Jul 2019 10:20:07 +0800
+> Alex Shi <alex.shi@linux.alibaba.com> wrote:
+> 
+>> There are many different archs in Documentation/ dir, it's better to
+>> move them together in 'Documentation/arch' which follows from kernel source.
+> 
+> So this seems certain to collide badly with Mauro's RST-conversion monster
+> patch set.
 
+I don't mean that, sorry, and we can figure out if both of them are worthy to be picked up.
+
+> 
+> More to the point, though...if we are going to thrash up things this
+> badly, we want to be sure that we're doing it right so we don't end up
+> renaming everything again.  Grouping stuff into a new arch/ subdirectory
+> adds a bit of order, but it doesn't do much toward trying to organize our
+> documentation for its readers, and it doesn't help us to modernize the
+> docs and get rid of the old, useless stuff.  A quick check shows that many
+> of these files have seen no changes other than typo fixes since the
+> beginning of the Git era.
+
+Right, there is some docs which need to be update or even drop, and a reorder would be a timing to push each of arch maintainer to do something, isn't it? Anyway, reordering  documents like kernel source dir could be one of choices. :)
+
+> 
+> So, in my mind, this needs some thought.  Maybe we want a
+> Documentation/arch in the end, but I'm not convinced that we should just
+> create it and fill it with a snow shovel.  This might be a good thing to
+> discuss at the kernel summit in September.
+
+Thanks for considering, anyway, it could be a good start to get hands dirty whether the arch dir is needed. 
+
+Thanks
+Alex
