@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E985467FA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:13:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6CBD67F9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbfGNPKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 11:10:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45530 "EHLO
+        id S1728650AbfGNPKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 11:10:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45528 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbfGNPKT (ORCPT
+        with ESMTP id S1726783AbfGNPKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Jul 2019 11:10:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=E27+dMUle7zU70UZTJBvQbjZ+QD96HjO9TYX+WMTsMo=; b=GMy/Inawjl7gMdYXGFjROurtNH
-        LZ36I5HnSv0C6vatShRcrpxe3VaINwcmeP7fk6wi0hdtFqCDU+gaoXguCP44AZuy3zB2xRhujS/N0
-        l4xDAevBTbNfjZU70RPMMvbRoCcjAsFQ+MfEMZFkZ+6GsjgnXfSgrDSQVCebjIlAYqkaI4pqLS+1W
-        ntVMV9QbBn12b67yHn0um0LtDrmFCNNOvzywucKWZpCEuHrbRLDLoY1s10+J+cKMrdC+0UyJ5owbB
-        qbSmouS214cH+4D0Fc3Lz/NT+6WM+ugFqFVsEp3pZYz3M3U3YxV5spBl1cn9cTPxyI0aRXTbeQhFU
-        yKcAwLSQ==;
+        bh=WaTHXnanHUyA+63XriQfQq8umJVikepy1D3atlAnVJY=; b=rADDdUC8TE1XXDn1kAFniDjW1z
+        zQteU5ILYgbHdgJIUobdskOYjEJb3miRoZYzr+9mZBGWTy4SAlQ7/D55io1F9FIvRsBUGs5pTZ1JA
+        Y3ElNCrDpymkZy/qdsDkfWEpWcy1bmvXFvEdq41MwcVP8NuH7AH6zYf4YQtBIjye7xAc2KYlo9AC1
+        5+H6CU6l2T8ESb26fE3OrFyJQu9YBH3rUdkFfeS32JEPy2zpuNOcjb/lz4kgvOXLniEXQZKDAM/fw
+        l7uwHGHW88mdsSFRhj9ziUEzK2KO0r6KMLfJdOHVlqlfaXYsaiY0N1OOpER5TFafsCnnksCvnxrSK
+        nv+9t0wA==;
 Received: from 201.86.163.160.dynamic.adsl.gvt.net.br ([201.86.163.160] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hmg8o-0004f3-Du; Sun, 14 Jul 2019 15:10:18 +0000
+        id 1hmg8o-0004f7-Df; Sun, 14 Jul 2019 15:10:18 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hmg8l-0007TK-33; Sun, 14 Jul 2019 12:10:15 -0300
+        id 1hmg8l-0007TO-3s; Sun, 14 Jul 2019 12:10:15 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 6/8] scripts/sphinx-pre-install: seek for Noto CJK fonts for pdf output
-Date:   Sun, 14 Jul 2019 12:10:11 -0300
-Message-Id: <ca1aefc49ae2e44eaa8ad70d8801c962427a2a68.1563115732.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 7/8] docs: load_config.py: avoid needing a conf.py just due to LaTeX docs
+Date:   Sun, 14 Jul 2019 12:10:12 -0300
+Message-Id: <8076229480bdec3e86489d43b10a5afcfd88a75e.1563115732.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1563115732.git.mchehab+samsung@kernel.org>
 References: <cover.1563115732.git.mchehab+samsung@kernel.org>
@@ -48,99 +48,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The translations guide need Noto CJK fonts. So, add a logic that
-would suggest its install for distros.
+Right now, for every directory that we need to have LaTeX output,
+a conf.py file is required.
 
-It also fix a few other issues while testing the script
-with several distributions.
+That causes an extra overhead and it is actually a hack, as
+the latex_documents line there are usually a copy of the ones
+that are there already at the main conf.py.
+
+So, instead, re-use the global latex_documents var, just
+adjusting the path to be relative ones.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/sphinx-pre-install | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/sphinx/load_config.py | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
-index 0a5c83aa5f44..3b638c0e1a4f 100755
---- a/scripts/sphinx-pre-install
-+++ b/scripts/sphinx-pre-install
-@@ -345,6 +345,9 @@ sub give_debian_hints()
- 	if ($pdf) {
- 		check_missing_file("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
- 				   "fonts-dejavu", 2);
+diff --git a/Documentation/sphinx/load_config.py b/Documentation/sphinx/load_config.py
+index 301a21aa4f63..75f527ff4c95 100644
+--- a/Documentation/sphinx/load_config.py
++++ b/Documentation/sphinx/load_config.py
+@@ -21,6 +21,29 @@ def loadConfig(namespace):
+         and os.path.normpath(namespace["__file__"]) != os.path.normpath(config_file) ):
+         config_file = os.path.abspath(config_file)
+ 
++        # Let's avoid one conf.py file just due to latex_documents
++        start = config_file.find('Documentation/')
++	if start >= 0:
++	    start = config_file.find('/', start + 1)
 +
-+		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
-+				   "fonts-noto-cjk", 2);
- 	}
- 
- 	check_program("dvipng", 2) if ($pdf);
-@@ -374,6 +377,7 @@ sub give_redhat_hints()
- 	my @fedora_tex_pkgs = (
- 		"texlive-collection-fontsrecommended",
- 		"texlive-collection-latex",
-+		"texlive-xecjk",
- 		"dejavu-sans-fonts",
- 		"dejavu-serif-fonts",
- 		"dejavu-sans-mono-fonts",
-@@ -408,6 +412,11 @@ sub give_redhat_hints()
- 		$pdf = 0;
- 	}
- 
-+	if ($pdf) {
-+		check_missing_file("/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc",
-+				   "google-noto-sans-cjk-ttc-fonts", 2);
-+	}
++        end = config_file.rfind('/')
++        if start >= 0 and end > 0:
++            dir = config_file[start + 1:end]
 +
- 	check_rpm_missing(\@fedora26_opt_pkgs, 2) if ($pdf && !$old);
- 	check_rpm_missing(\@fedora_tex_pkgs, 2) if ($pdf);
- 	check_missing_tex(2) if ($pdf);
-@@ -456,6 +465,11 @@ sub give_opensuse_hints()
- 
- 	$map{"latexmk"} = "texlive-latexmk-bin";
- 
-+	# FIXME: add support for installing CJK fonts
-+	#
-+	# I tried hard, but was unable to find a way to install
-+	# "Noto Sans CJK SC" on openSUSE
++            print("source directory: %s" % dir)
++            new_latex_docs = []
++            latex_documents = namespace['latex_documents']
 +
- 	check_rpm_missing(\@suse_tex_pkgs, 2) if ($pdf);
- 	check_missing_tex(2) if ($pdf);
- 	check_missing(\%map);
-@@ -483,6 +497,11 @@ sub give_mageia_hints()
- 
- 	$map{"latexmk"} = "texlive-collection-basic";
- 
-+	if ($pdf) {
-+		check_missing_file("/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc",
-+				   "google-noto-sans-cjk-ttc-fonts", 2);
-+	}
++            for l in latex_documents:
++                if l[0].find(dir) == 0:
++                    has = True
++                    fn = l[0][len(dir) + 1:]
++                    new_latex_docs.append((fn, l[1], l[2], l[3], l[4]))
++                    break
 +
- 	check_rpm_missing(\@tex_pkgs, 2) if ($pdf);
- 	check_missing(\%map);
- 
-@@ -508,6 +527,11 @@ sub give_arch_linux_hints()
- 	);
- 	check_pacman_missing(\@archlinux_tex_pkgs, 2) if ($pdf);
- 
-+	if ($pdf) {
-+		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
-+				   "noto-fonts-cjk", 2);
-+	}
++            namespace['latex_documents'] = new_latex_docs
 +
- 	check_missing(\%map);
- 
- 	return if (!$need && !$optional);
-@@ -528,6 +552,11 @@ sub give_gentoo_hints()
- 	check_missing_file("/usr/share/fonts/dejavu/DejaVuSans.ttf",
- 			   "media-fonts/dejavu", 2) if ($pdf);
- 
-+	if ($pdf) {
-+		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJKsc-Regular.otf",
-+				   "media-fonts/noto-cjk", 2);
-+	}
-+
- 	check_missing(\%map);
- 
- 	return if (!$need && !$optional);
++        # If there is an extra conf.py file, load it
+         if os.path.isfile(config_file):
+             sys.stdout.write("load additional sphinx-config: %s\n" % config_file)
+             config = namespace.copy()
+@@ -28,5 +51,3 @@ def loadConfig(namespace):
+             execfile_(config_file, config)
+             del config['__file__']
+             namespace.update(config)
+-        else:
+-            sys.stderr.write("WARNING: additional sphinx-config not found: %s\n" % config_file)
 -- 
 2.21.0
 
