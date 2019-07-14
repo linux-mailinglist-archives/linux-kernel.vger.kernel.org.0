@@ -2,133 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECDEE67F39
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 16:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4DD67F48
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 16:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfGNOKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 10:10:11 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:34800 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728126AbfGNOKL (ORCPT
+        id S1728461AbfGNO2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 10:28:49 -0400
+Received: from mail133-22.atl131.mandrillapp.com ([198.2.133.22]:64923 "EHLO
+        mail133-22.atl131.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728146AbfGNO2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 10:10:11 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 605F772CA65;
-        Sun, 14 Jul 2019 17:10:08 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 3C70B7CCE3A; Sun, 14 Jul 2019 17:10:08 +0300 (MSK)
-Date:   Sun, 14 Jul 2019 17:10:08 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Anatoly Pugachev <matorola@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clone: fix CLONE_PIDFD support
-Message-ID: <20190714141007.GA9131@altlinux.org>
-References: <20190714120206.GC6773@altlinux.org>
- <20190714121724.mwg2t3di6goha7yq@brauner.io>
+        Sun, 14 Jul 2019 10:28:48 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Sun, 14 Jul 2019 10:28:48 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=OkdXMsKChIXf9sKU+iNJjSMcEzWlygaeee1sm+U5lN8=;
+ b=hI0eo4pXQR7WcCdkgceq06PJv1FnDQSfHzpSP+X1mDAx3a6YXoynN3MF+p4YL6vmvx+iiI9yJOlE
+   a5Gj1rrfUKThLSiv94cxAcSg6uUQWz/wg/NZMqjFCBwCHJ8xzbTBtAFqKYY8PsYobcQTWleXn471
+   PdYNYbf/Eq44iF4bPic=
+Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-22.atl131.mandrillapp.com id h5cu201sar80 for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 14:13:46 +0000 (envelope-from <bounce-md_31050260.5d2b389a.v1-e6694e65523f4296bd3ba94a5f0e745c@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1563113626; h=From : 
+ Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
+ Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
+ List-Unsubscribe; bh=OkdXMsKChIXf9sKU+iNJjSMcEzWlygaeee1sm+U5lN8=; 
+ b=RFfjU491ulfpFu5evYLVgEiYJ+CXHsUtgW5fXS4I52GRBPDLo3a+KVwyvSaHNS6nh522vu
+ e+NGwA+A2KAxp4jx9w+LN913IPjL8BhX45OK9kB2kSv/CswCRQ8ERJA1jVrZTV649SP9p5wA
+ kSCYWFJUS1tupfWAbZEVntDlGLKsM=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PULL] stream_open bits for Linux 5.3
+Received: from [87.98.221.171] by mandrillapp.com id e6694e65523f4296bd3ba94a5f0e745c; Sun, 14 Jul 2019 14:13:46 +0000
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>, Jan Blunck <jblunck@suse.de>,
+        Arnd Bergmann <arnd@arndb.de>, Jiri Kosina <jikos@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <cocci@systeme.lip6.fr>, <linux-input@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Message-Id: <20190714141317.GA20277@deco.navytux.spb.ru>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.e6694e65523f4296bd3ba94a5f0e745c
+X-Mandrill-User: md_31050260
+Date:   Sun, 14 Jul 2019 14:13:46 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
-Content-Disposition: inline
-In-Reply-To: <20190714121724.mwg2t3di6goha7yq@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please consider pulling the following stream_open related bits:
 
-On Sun, Jul 14, 2019 at 02:17:25PM +0200, Christian Brauner wrote:
-> On Sun, Jul 14, 2019 at 03:02:06PM +0300, Dmitry V. Levin wrote:
-> > The introduction of clone3 syscall accidentally broke CLONE_PIDFD
-> > support in traditional clone syscall on compat x86 and those
-> > architectures that use do_fork to implement clone syscall.
-> >=20
-> > This bug was found by strace test suite.
-> >=20
-> > Link: https://strace.io/logs/strace/2019-07-12
-> > Fixes: 7f192e3cd316 ("fork: add clone3")
-> > Bisected-and-tested-by: Anatoly Pugachev <matorola@gmail.com>
-> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
->=20
-> Good catch! Thank you Dmitry.
->=20
-> One change request below.
->=20
-> > ---
-> >  arch/x86/ia32/sys_ia32.c | 1 +
-> >  kernel/fork.c            | 1 +
-> >  2 files changed, 2 insertions(+)
-> >=20
-> > diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-> > index 64a6c952091e..98754baf411a 100644
-> > --- a/arch/x86/ia32/sys_ia32.c
-> > +++ b/arch/x86/ia32/sys_ia32.c
-> > @@ -239,6 +239,7 @@ COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, cl=
-one_flags,
-> >  {
-> >  	struct kernel_clone_args args =3D {
-> >  		.flags		=3D (clone_flags & ~CSIGNAL),
-> > +		.pidfd		=3D parent_tidptr,
-> >  		.child_tid	=3D child_tidptr,
-> >  		.parent_tid	=3D parent_tidptr,
-> >  		.exit_signal	=3D (clone_flags & CSIGNAL),
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 8f3e2d97d771..2c3cbad807b6 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -2417,6 +2417,7 @@ long do_fork(unsigned long clone_flags,
-> >  {
-> >  	struct kernel_clone_args args =3D {
-> >  		.flags		=3D (clone_flags & ~CSIGNAL),
-> > +		.pidfd		=3D parent_tidptr,
-> >  		.child_tid	=3D child_tidptr,
-> >  		.parent_tid	=3D parent_tidptr,
-> >  		.exit_signal	=3D (clone_flags & CSIGNAL),
-> > --=20
->=20
-> Both of these legacy clone helpers need to make CLONE_PIDFD and
-> CLONE_PARENT_SETTID incompatible, i.e. could you please add a helper to
-> kernel/fork.c:
->=20
-> bool legacy_clone_args_valid(const struct kernel_clone_args *kargs)
-> {
-> 	/* clone(CLONE_PIDFD) uses parent_tidptr to return a pidfd */
-> 	if ((kargs->flags & CLONE_PIDFD) && (kargs->flags & CLONE_PARENT_SETTID))
-> 		return false;
-> }
->=20
-> and export it and use it in ia32 too?
+This time on stream_open front it is only two small changes:
 
-copy_process already performs the check, isn't this enough?
-Also, the check in sys_clone looks redundant and I was going to suggest
-its removal.
+- the first one converts stream_open.cocci to treat all functions that
+  start with wait_.* as blocking. Previously it was only wait_event_.*
+  functions that were considered as blocking, but this was falsely
+  reporting deadlock cases as only warning. The patch was picked by
+  linux-kbuild and already entered your tree as 0c4ab18fc33b.
+  It is thus omitted from hereby pull-request.
+
+- the second one teaches stream_open.cocci to consider files as being
+  stream-like even if they use noop_llseek. I posted this patch for
+  review 3 weeks ago[1], but got neither feedback nor complaints.
+
+  [1] https://lore.kernel.org/lkml/20190623072838.31234-2-kirr@nexedi.com/
 
 
---=20
-ldv
+The changes are available for pulling from here:
 
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
+	https://lab.nexedi.com/kirr/linux.git stream_open-5.3
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJdKze/AAoJEAVFT+BVnCUIIaQP/RtgRfoyaDZT9i/PEHjdNOus
-ni5nRr2a/I9Q7wT9KjX9ywSnLf33UooFR/cRd4YW5TsTzwjldM2LmJQz0FU76/C2
-fGzmWAj6YGCy40KxDnKT20vtuOZij+OxLEW02qIhKN0OcSJgZ9wOVBdo9l+Rhz5A
-dnTIr5feKqZhfuQ/j0Q5/vpEOs61muOHuWSigKdkZB2YGLxPv1QH+0Qtc6z9wdNb
-X8WEU7xhEDVF5Iksx2YDgSkUzFr52cTPJcUnJeoEfAkVkgmvHYUa0+1Uv1Yrmjqp
-yzb6zdLvRSMsV/depkvyf91vPrM+3HuLahGcq3SwTT5Z7WkZkgfFhifP1FT7eUZb
-44y6EHBWg1pWSrGP2nsyw5ZuO/JSWjtVzMhjGJSkVXRGqZlQWSOijlS5sLkINXAP
-UYGohnYJyrhc6tI7oRz11SC8cnELBWD36Vn7dn9N/WeAzyJj8ksucETEaaU0JlCx
-523fK1O0ou7VKL+WCEtQfnHulWWvWq7pJl04p713Uvz5velOzOKnoqztkIuw7hTP
-HgHC3f/EUHN/dPXOmrF2AGfYYV0DKnViMyIDm5NbrzYYRFHuvq//g6Aqe2jARc8u
-HMODrPQbXYCNzpz5UlrZGiqhh0m1dnSIIWAF1Cx+aQE95ghD+2QyVZQK40m0piLk
-Tv/l/GbhUTxHULTPYrJm
-=xKje
------END PGP SIGNATURE-----
+Thanks beforehand,
+Kirill
 
---/9DWx/yDrRhgMJTb--
+
+Kirill Smelkov (1):
+      *: convert stream-like files -> stream_open, even if they use noop_llseek
+
+ drivers/hid/hid-sensor-custom.c          | 2 +-
+ drivers/input/mousedev.c                 | 2 +-
+ scripts/coccinelle/api/stream_open.cocci | 9 ++++++++-
+ 3 files changed, 10 insertions(+), 3 deletions(-)
