@@ -2,114 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62BEF67ED4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 13:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56B7067ED6
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 13:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfGNLg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 07:36:26 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34240 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728259AbfGNLgZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 07:36:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so12263184wmd.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 04:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=rf5iSFO1KGeSGMDdAu8Z9f2JnlMejUYjd5sd/s9I7i4=;
-        b=DGY8fbzUy0ceXz4XK73bwycVAzWAWPdN1mB+qfycnoZlnXSM4VYoHUjkKsmgb9BAU0
-         7w+6EuZArdli3Hzt8t3Fhk2or1bUBGV/l0g61sGJg+AGRTGB1Qz5/tqWoaqEpLnXSqOi
-         /Q5qorJJ7cfVIBRhQHdCrVnueHPKrmlluXSENsPLR7BvQeYfrb67XZ3QWd+inufH90cf
-         S6fP8zDVJQutHRwowg1Lwg+5Z4zMSY0Pmg2qKOUv91xcxCGwhPCYPQ0pTI6zNgt96evf
-         9/Pk78c1yy3u2MineBNtR9TlxFst+Q/aavgyecWHucNEwFlIy8M89FkevAB0Jgp5OKDK
-         o8Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=rf5iSFO1KGeSGMDdAu8Z9f2JnlMejUYjd5sd/s9I7i4=;
-        b=mIAdRS4PAWa793kHdVDvwDZ5XPPxJAa/hFQsqUd3VTfiQffzVzV38Y+bwo7yLIZLpH
-         Yj27glg7DaYR1oKXu+5K4Wxl5MRDqQtS8B4/+kgcriPqK4QbBEBynnVU8l0WzUwm/Bpw
-         8fGCCCIjn9N+8IxLnO6fVuuF6IE2ctJWMmbi6ppqrOzWdeqIRkgXuw+nV8ibbfeQVGmX
-         ssJbzdHpw2KUW0Mo1avXR9H3W5H5qnHn9MeOsKaWRDHrllylJ3y6doolXOZzskeLU8se
-         lxS8k3MYBvdxOmsjIJwaRqIVT1J+SgnU0AG2WULKkRTKIUHn38Ail4ui3KDZu8WNMbux
-         3c2g==
-X-Gm-Message-State: APjAAAU+FOPB+KIS5hpGhBvgMCwWSD/2Biwg29qY/4XSge3aOfvHz5bi
-        nSmv48stSkrK2cHzVpckh3NDggxz
-X-Google-Smtp-Source: APXvYqy1YSF6YX1xN0jOwfl3xGLGLJlTuYbveVkdggE2KWvRxbrxrwTQ2YFXAHjlH18LS2/ZAkQ06A==
-X-Received: by 2002:a1c:c545:: with SMTP id v66mr19624581wmf.51.1563104183620;
-        Sun, 14 Jul 2019 04:36:23 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c1sm27693770wrh.1.2019.07.14.04.36.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 14 Jul 2019 04:36:23 -0700 (PDT)
-Date:   Sun, 14 Jul 2019 13:36:21 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] locking fix
-Message-ID: <20190714113621.GA58788@gmail.com>
+        id S1728378AbfGNLg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 07:36:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728259AbfGNLg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 07:36:28 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDA8E2064A;
+        Sun, 14 Jul 2019 11:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563104188;
+        bh=W4U+Fsz7R3sfNoE3Q3aO+4TTc5f+VydY3EMLwP3cwHI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SyHwIGcOCHEoQRvBwCtCTi73AZrRZ9D46yECHXIDagfatAZzLys7t7elA/ShxXhqs
+         PYtbohXeqCT/1SKw+vH33Sv5jULg6PVw7iBiFp6vJ5xB0JTGVJXvtIgP5awyrn30Xl
+         KNgq1pnB7H6wvC+c0abro/aJqYE76NlLqRfB/HNQ=
+Date:   Sun, 14 Jul 2019 12:36:23 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Tomasz Duszynski <tduszyns@gmail.com>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: chemical: pms7003: convert
+ bindings to yaml
+Message-ID: <20190714123623.680c3827@archlinux>
+In-Reply-To: <CAL_JsqJ8iLuif-UqVzpgwOLafVYr9aOo38EMeUnmYJ0a9aQ5DQ@mail.gmail.com>
+References: <20190710192155.11489-1-tduszyns@gmail.com>
+        <20190710192155.11489-2-tduszyns@gmail.com>
+        <CAL_JsqJ8iLuif-UqVzpgwOLafVYr9aOo38EMeUnmYJ0a9aQ5DQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Wed, 10 Jul 2019 14:12:26 -0600
+Rob Herring <robh+dt@kernel.org> wrote:
 
-Please pull the latest locking-urgent-for-linus git tree from:
+> On Wed, Jul 10, 2019 at 1:22 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:
+> >
+> > Convert existing device tree bindings to yaml.
+> >
+> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> > ---
+> >  .../iio/chemical/plantower,pms7003.txt        | 26 ----------
+> >  .../iio/chemical/plantower,pms7003.yaml       | 51 +++++++++++++++++++
+> >  2 files changed, 51 insertions(+), 26 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.yaml  
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+Thanks,
 
-   # HEAD: 68d41d8c94a31dfb8233ab90b9baf41a2ed2da68 locking/lockdep: Fix lock used or unused stats error
-
-A single fix for a locking statistics bug.
-
- Thanks,
-
-	Ingo
-
------------------->
-Yuyang Du (1):
-      locking/lockdep: Fix lock used or unused stats error
+Jonathan
 
 
- kernel/locking/lockdep_proc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 9c49ec645d8b..65b6a1600c8f 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -210,6 +210,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		      nr_hardirq_read_safe = 0, nr_hardirq_read_unsafe = 0,
- 		      sum_forward_deps = 0;
- 
-+#ifdef CONFIG_PROVE_LOCKING
- 	list_for_each_entry(class, &all_lock_classes, lock_entry) {
- 
- 		if (class->usage_mask == 0)
-@@ -241,12 +242,12 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_READ)
- 			nr_hardirq_read_unsafe++;
- 
--#ifdef CONFIG_PROVE_LOCKING
- 		sum_forward_deps += lockdep_count_forward_deps(class);
--#endif
- 	}
- #ifdef CONFIG_DEBUG_LOCKDEP
- 	DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused);
-+#endif
-+
- #endif
- 	seq_printf(m, " lock-classes:                  %11lu [max: %lu]\n",
- 			nr_lock_classes, MAX_LOCKDEP_KEYS);
