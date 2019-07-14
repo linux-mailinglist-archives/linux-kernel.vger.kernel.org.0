@@ -2,98 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 986B36803C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 18:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07A9E68047
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 18:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfGNQa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 12:30:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728106AbfGNQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 12:30:57 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BB7C2089C;
-        Sun, 14 Jul 2019 16:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563121856;
-        bh=3B4TvzJE5x1tLkpsdLUDGRNudIhb22g/3330h2LrM6U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pnAf4ftXKOZDLj0MwK503NBE0xySOj4mlmEX4S8nMUlEc4IJoWT85vnYIBFJDwTQZ
-         64YZq3/3zv2IHDirEgmXq+SZnDKSN3wdO//6OBj0tm9gKnfYXnlpiJP5CDaiMzh/HD
-         OUVT07tcoup6GIIFGHW5ccE+2AWdVaMkMWbBBUpE=
-Date:   Sun, 14 Jul 2019 17:30:50 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     =?UTF-8?B?QsOhcmJhcmE=?= Fernandes <barbara.fernandes@usp.br>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com,
-        stefan.popa@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
-        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com, Wilson Sales <spoonm@spoonm.org>
-Subject: Re: [PATCH v2] staging: iio: ad7192: create of_device_id array
-Message-ID: <20190714173050.2b6306a0@archlinux>
-In-Reply-To: <20190628194922.13277-1-barbara.fernandes@usp.br>
-References: <20190628194922.13277-1-barbara.fernandes@usp.br>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728631AbfGNQmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 12:42:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42291 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbfGNQmD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 12:42:03 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h18so13269128qtm.9
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 09:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=17NxJyOTQqneQKqILFL+Kfh800SL9vsxcwn5ys2+a/0=;
+        b=azYm/S4FEqrQmVAbcBXUA6zpmF8+qsRMlb0Iw/3XhUBI11liAps/povLyoAK4mhhAO
+         AYQcFmhCNtupDtAkM8O1WAPqT0Bc+Jqzmk3MT7a1+ZnQCvj9xY2JMvBs38Yhh+XOzzGf
+         S32xdtCs1ZtfnwVGeXmzX+GOUIt4+4jN5O/Poo2fMrrJpoDg31kaKvA4C7JoMFycAYRO
+         PpiA+gp/vyXUIoZ3Mr5wYktb3ROFHzUa6df8XB8hm+KYiXFXCdJAFLQqWrFCU1FzM1en
+         6KY9Jc/K4Vsu4C1pe9/8vaWB9UiiFF0rmekTWiKb7TAtx5DNGHtSHeDIVurmpR8OpAmk
+         INig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=17NxJyOTQqneQKqILFL+Kfh800SL9vsxcwn5ys2+a/0=;
+        b=rmh601o88lcWIYRbh4yjBxyTF/e7qLSjO+Aj4G/JUb9yrsGbsotTh9/Wr9P5ji7Omp
+         hmRIO7k68xW5ccK6afZUtDKgi8eVc6ovnUz4KuQne2hUCfbohyQEoGlm4XER4NY3Y1zf
+         7gtC8kIXXu5ESBVLg+4F+jPQVk2BTZDTGdb1NQytGAyoNkb7q9F8VM8fZ18aMmDyMUnZ
+         IsRLk4+6tuGYabrBL7ModEVb4MO2rKeMKoEyho5kbKejSbyMBShiICxGjWL+JqfWl/00
+         g8aR/DPMwsrUMnMgrA68llDsqaNdhu0iQvf+W+Z63dFLV6HsabKA4DrdHdZnnw81ldOt
+         jnlA==
+X-Gm-Message-State: APjAAAUgE4EO6jF6HteubT3JU/5O4Ik6mAou0AkIEJFjnyCHSO7ji4gb
+        popgd8MZ9OjOodwIlCvTXg==
+X-Google-Smtp-Source: APXvYqzAUvUcaEQydKd/FSJDHy6MdU8Yh5n5z/RNVzU41mdnfWQLZBZNa5viueSs61UMYMViwDn4Lg==
+X-Received: by 2002:ac8:2bdc:: with SMTP id n28mr14811226qtn.197.1563122522773;
+        Sun, 14 Jul 2019 09:42:02 -0700 (PDT)
+Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.googlemail.com with ESMTPSA id h18sm5704034qkk.93.2019.07.14.09.42.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 14 Jul 2019 09:42:02 -0700 (PDT)
+From:   Keyur Patel <iamkeyur96@gmail.com>
+Cc:     markus.elfring@web.de, Keyur Patel <iamkeyur96@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] staging: most: Delete an error message for a failed memory allocation
+Date:   Sun, 14 Jul 2019 12:41:23 -0400
+Message-Id: <20190714164126.3159-1-iamkeyur96@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190711175055.25157-1-iamkeyur96@gmail.com>
+References: <20190711175055.25157-1-iamkeyur96@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 16:49:22 -0300
-B=C3=A1rbara Fernandes <barbara.fernandes@usp.br> wrote:
+This error message for a failed memory allocation is redundant as 
+kfifo_alloc just calls kmalloc_array without the __GFP_NOWARN flag,
+already does a dump_stack().
 
-> Create list of compatible device ids to be matched with those stated in
-> the device tree.
->=20
-> Signed-off-by: B=C3=A1rbara Fernandes <barbara.fernandes@usp.br>
-> Signed-off-by: Wilson Sales <spoonm@spoonm.org>
-> Co-developed by: Wilson Sales <spoonm@spoonm.org>
-> ---
-Patch is fine and applied to the togreg branch of iio.git.
+Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
+---
+Changes in v4:
+- change subject line
+- improve commit description
+- fix checkpatch warning
 
-Only thing to note is that reviewers and maintainers often have
-poor memories (or are jet lagged which is my excuse today!)
-so it helps to put a change log here under the ---
+ drivers/staging/most/cdev/cdev.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks,
-
-Jonathan
-
->  drivers/staging/iio/adc/ad7192.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/a=
-d7192.c
-> index 3d74da9d37e7..70118db98d94 100644
-> --- a/drivers/staging/iio/adc/ad7192.c
-> +++ b/drivers/staging/iio/adc/ad7192.c
-> @@ -810,11 +810,23 @@ static const struct spi_device_id ad7192_id[] =3D {
->  	{"ad7195", ID_AD7195},
->  	{}
->  };
-> +
->  MODULE_DEVICE_TABLE(spi, ad7192_id);
-> =20
-> +static const struct of_device_id ad7192_of_match[] =3D {
-> +	{ .compatible =3D "adi,ad7190" },
-> +	{ .compatible =3D "adi,ad7192" },
-> +	{ .compatible =3D "adi,ad7193" },
-> +	{ .compatible =3D "adi,ad7195" },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, ad7192_of_match);
-> +
->  static struct spi_driver ad7192_driver =3D {
->  	.driver =3D {
->  		.name	=3D "ad7192",
-> +		.of_match_table =3D ad7192_of_match,
->  	},
->  	.probe		=3D ad7192_probe,
->  	.remove		=3D ad7192_remove,
+diff --git a/drivers/staging/most/cdev/cdev.c b/drivers/staging/most/cdev/cdev.c
+index d0cc0b746107..724d098aeef0 100644
+--- a/drivers/staging/most/cdev/cdev.c
++++ b/drivers/staging/most/cdev/cdev.c
+@@ -463,10 +463,8 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ 	spin_lock_init(&c->unlink);
+ 	INIT_KFIFO(c->fifo);
+ 	retval = kfifo_alloc(&c->fifo, cfg->num_buffers, GFP_KERNEL);
+-	if (retval) {
+-		pr_info("failed to alloc channel kfifo");
++	if (retval)
+ 		goto err_del_cdev_and_free_channel;
+-	}
+ 	init_waitqueue_head(&c->wq);
+ 	mutex_init(&c->io_mutex);
+ 	spin_lock_irqsave(&ch_list_lock, cl_flags);
+-- 
+2.22.0
 
