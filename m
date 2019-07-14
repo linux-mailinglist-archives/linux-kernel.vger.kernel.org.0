@@ -2,99 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29DFA67FE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35D3F67FF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbfGNPkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 11:40:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbfGNPkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 11:40:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D17A3084288;
-        Sun, 14 Jul 2019 15:40:08 +0000 (UTC)
-Received: from krava (ovpn-204-80.brq.redhat.com [10.40.204.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 75A345D772;
-        Sun, 14 Jul 2019 15:40:07 +0000 (UTC)
-Date:   Sun, 14 Jul 2019 17:40:06 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, acme@kernel.org,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [RFC] Fix python feature detection
-Message-ID: <20190714154006.GB16802@krava>
-References: <20190707144417.237913-1-joel@joelfernandes.org>
+        id S1728565AbfGNPpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 11:45:46 -0400
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:39454 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbfGNPpp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 11:45:45 -0400
+Received: by mail-qt1-f171.google.com with SMTP id l9so13210580qtu.6;
+        Sun, 14 Jul 2019 08:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=E5z7oN8eXDsJazaisWgOSWc761LOcc1vVCseZvXLOYAnkh44h7hMeVg547CwpwFqtu
+         kSuAAHJfEEyvvHBYdrHf8eIfG0Nc8eVpUXfK3UMiyFj0+nbVim8TqGKJmHk0U6Df5Twv
+         v4KETET19Dw7i1hkghhdlBgKXT1/8y0QPAoGpD+5QmI326KuEx4uE2FTCCb6tQiWK5vM
+         6lhsNq/IipQ5Ipf+x+KwKSx96zvF9xV6iTL4K+NhmL4Y6bNdnjxRETUQ3KIMOkL1dUpM
+         7K4CYEqdb9aqVqP51d5P2K4HujIZphdMFb0o9WLnF2DctWeyJ9jJeRy/1448qO7tjOKc
+         kuSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=FtFaX7Mn+dmXbda2lWip6peZeIElnVfhVNif3K2ddnriugE9Xk32wNQRcKf/DxOWon
+         kbNZnIHXlUVQo+hLwHt7Mw02+AlRer5vVrQGTFfhU8dVEJY9kCG108o29ZUU1GUpqbDo
+         FIt+KFA9cTKqDMTUM1egdvYNM9nX36ZyX8+Tnq7+tMdIs86FQy4Q4NXKdr6/JXgtBG6h
+         +xiionYP7VCHThjaOM07qLlydKs1NEgLdYeSEZdWTX6O/0PJ7A88QHSGKODHXeE3oLSK
+         PBN4fKBrzxmW1YQWP7ohYAbdHthbHcpMjqWVO5jq2cM8Ck6hlMmRlQI9in5VlwwkJ0+4
+         ZvAA==
+X-Gm-Message-State: APjAAAWkD9oKJt2NRoGbFJIFIDsNcm7HbfBcoRsgLeZHxVMYFMG6vzKF
+        exGYppKgboDZsW//px8COQ==
+X-Google-Smtp-Source: APXvYqzVUPL7VLBkz9cKAYiAlrBnLY/LGPJtrGG6gLQQ7avpVDwEtWG0VddyEZSMzmAXO/NhhUV4+A==
+X-Received: by 2002:ac8:1c4:: with SMTP id b4mr14249229qtg.42.1563119144780;
+        Sun, 14 Jul 2019 08:45:44 -0700 (PDT)
+Received: from keyur-pc (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.gmail.com with ESMTPSA id d123sm7127907qkb.94.2019.07.14.08.45.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 14 Jul 2019 08:45:44 -0700 (PDT)
+Date:   Sun, 14 Jul 2019 11:45:41 -0400
+From:   Keyur Patel <iamkeyur96@gmail.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v4] staging: most: remove redundant print statement when
+ kfifo_alloc fails
+Message-ID: <20190714154541.GA32464@keyur-pc>
+References: <20190714150546.31836-1-iamkeyur96@gmail.com>
+ <06fc2495-dda5-61d2-17e8-0c385e02da1e@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190707144417.237913-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sun, 14 Jul 2019 15:40:08 +0000 (UTC)
+In-Reply-To: <06fc2495-dda5-61d2-17e8-0c385e02da1e@web.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 07, 2019 at 10:44:17AM -0400, Joel Fernandes (Google) wrote:
-> I am having a hard time building BPF samples by doing a make in
-> samples/bpf. While I am debugging that, I ran into the Python issue.
-> Even though the system has libpython2.7-dev:
-> 
-> If I just do a 'make' inside tools/build/feature/ I get:
-> Python.h: No such file or directory
-
-because you don't have FLAGS_PYTHON_EMBED set?
-
-> 
-> This led me to this patch which fixes Python feature detection for me.
-> I am not sure if it is the right fix for Python since it is hardcoded
-> for Python version 2, but I thought it could be useful.
-
-we detect python in tools/perf/Makefile.config and
-set FLAGS_PYTHON_EMBED properly
-
-it's supposed to be set by a project using tools/build
-for feature detection.. what are you building? AFAICS
-samples/bpf do not use tools/build
-
-jirka
-
-> 
-> My system is a Debian buster release.
-> 
-> Cc: acme@kernel.org
-> Cc: jolsa@redhat.com
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  tools/build/feature/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index 4b8244ee65ce..cde44cb38a5e 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -83,7 +83,7 @@ __BUILDXX = $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.cpp,$(
->  ###############################
->  
->  $(OUTPUT)test-all.bin:
-> -	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -laudit -I/usr/include/slang -lslang $(shell $(PKG_CONFIG) --libs --cflags gtk+-2.0 2>/dev/null) $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma
-> +	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -laudit -I/usr/include/slang -lslang $(shell $(PKG_CONFIG) --libs --cflags gtk+-2.0 2>/dev/null) $(shell $(PKG_CONFIG) --libs --cflags python2 2>/dev/null) $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma
->  
->  $(OUTPUT)test-hello.bin:
->  	$(BUILD)
-> @@ -205,7 +205,7 @@ $(OUTPUT)test-libperl.bin:
->  	$(BUILD) $(FLAGS_PERL_EMBED)
->  
->  $(OUTPUT)test-libpython.bin:
-> -	$(BUILD) $(FLAGS_PYTHON_EMBED)
-> +	$(BUILD) $(shell $(PKG_CONFIG) --libs --cflags python2 2>/dev/null) $(FLAGS_PYTHON_EMBED)
->  
->  $(OUTPUT)test-libpython-version.bin:
->  	$(BUILD)
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
