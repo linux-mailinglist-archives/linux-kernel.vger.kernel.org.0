@@ -2,172 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A2A68034
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 18:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D090E68026
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 18:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfGNQ0c convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 14 Jul 2019 12:26:32 -0400
-Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:45462 "EHLO
-        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728065AbfGNQ0b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 12:26:31 -0400
-X-Greylist: delayed 1511 seconds by postgrey-1.27 at vger.kernel.org; Sun, 14 Jul 2019 12:26:30 EDT
-Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.190) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
- Sun, 14 Jul 2019 16:26:29 +0000
-Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
- M9W0067.microfocus.com (2002:f79:be::f79:be) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Sun, 14 Jul 2019 15:52:55 +0000
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (15.124.72.14) by
- M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Sun, 14 Jul 2019 15:52:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EGZqwYLRzzJZ1a6QGd8df7QDseWzHZEJFdumhByF4TjhcO3oXxN/GUHGC6FMq37gs8nBazyLVsjxKl0l7p2ZnN4sfUHahCFpUuwuDy3D8kw3A89/TUoxSUM8/J/mEfoHQbBO2kahEE0N46OVtBUaYQyyqUavRqLCxXBGU9pC6/MZB91Gt/wX0Ga+1XMWxr1nOLnhzJi+soi9GkAsUgVFUKurP0o9qyMJPL8QFE9TWYCo6eUrHNDZG89FzVFn61Nd2iDqIx6UKDuuv4nkvPtkhZWacbIg6082nZZTYUecZx4WVO/JNlGLulKjRE2GcFiDz/6ZrtdpjhDi8P+qSfdEmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GmNyBgEjsYtHU3O+MhVNioVLvnBdFJ+mRNvORPeqmFw=;
- b=aW9dV2yL8aBYs+ZjEyej1L+HapEnI0vnF8L7+4/ZaLfEH2RMVPL0/wvsAkOyUi7rkAxF5xpRs5Di5DySJcpr8DqTMU/OTd9n/NkeASKHeRzTs5bMP81VZuQbDLE2zbJD46LYR+7JYG4NgJ/KJcsZQ6QjvXKWQHP+EcsrzPZ0bluhcz5HGt41b0KnMrTgRmZGcn7rrgDxHxepEDm15qna9q8l8Tb/wbuA6ox/pu4nOZfrdUMtqHE0phmVkaVQAKPKI8YIygFPgitShB/reGBs/VC6spprKzz5lszYIPE+jWRRe2OIv9tuQDAYldPfeTO/rY3c6mBA0tX3ioGySMyCmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
- header.d=suse.com;arc=none
-Received: from MN2PR18MB2846.namprd18.prod.outlook.com (20.179.21.147) by
- MN2PR18MB3373.namprd18.prod.outlook.com (10.255.238.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Sun, 14 Jul 2019 15:52:52 +0000
-Received: from MN2PR18MB2846.namprd18.prod.outlook.com
- ([fe80::307c:8422:7d8c:8ac6]) by MN2PR18MB2846.namprd18.prod.outlook.com
- ([fe80::307c:8422:7d8c:8ac6%3]) with mapi id 15.20.2073.012; Sun, 14 Jul 2019
- 15:52:52 +0000
-From:   Petr Tesarik <PTesarik@suse.com>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-CC:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Philipp Rudo" <prudo@linux.ibm.com>,
+        id S1728607AbfGNQVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 12:21:11 -0400
+Received: from mout.web.de ([217.72.192.78]:49269 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728095AbfGNQVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 12:21:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1563121232;
+        bh=ojBi/XpmMFn0sdEoIQUyl/H2bxFYbME+lLlXjuicgsM=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=siPkxUnbDriftMrNvioMMsRB4ID2nA4EKMUJFmfRopavP4QauyqMrQBG2qVlykn54
+         lw9BjtdS9yGfqcVAKJQC7/fN2zObxzIlXZUuXQRJNFBS1QtKNSNZBNZl3l0yDiH44r
+         scjQIUxVH/ELX+p3rqPq87p7EzRmruT2fnmbw28o=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.49.159.144]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lrs70-1iT9KA32fG-013am7; Sun, 14
+ Jul 2019 18:20:32 +0200
+Subject: Re: [v4] staging: most: remove redundant print statement when
+ kfifo_alloc fails
+To:     Keyur Patel <iamkeyur96@gmail.com>, devel@driverdev.osuosl.org,
+        kernel-janitors@vger.kernel.org
+Cc:     Christian Gromm <christian.gromm@microchip.com>,
+        Colin Ian King <colin.king@canonical.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Raymund Will <rw@suse.com>
-Subject: Re: [PATCH 2/2] s390: add Linux banner to the compressed image
-Thread-Topic: [PATCH 2/2] s390: add Linux banner to the compressed image
-Thread-Index: AQHVONZG6fQxJFf0Tk2aYjq5NUSgEKbKMUg4gAAVCgA=
-Date:   Sun, 14 Jul 2019 15:52:52 +0000
-Message-ID: <20190714175041.194c98be@ezekiel.suse.cz>
-References: <cover.1562950641.git.ptesarik@suse.com>
-        <aa477dd145aa2beb37fe813619b0723744a22a0a.1562950641.git.ptesarik@suse.com>
-        <your-ad-here.call-01563114933-ext-9422@work.hours>
-In-Reply-To: <your-ad-here.call-01563114933-ext-9422@work.hours>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0802CA0047.eurprd08.prod.outlook.com
- (2603:10a6:800:a9::33) To MN2PR18MB2846.namprd18.prod.outlook.com
- (2603:10b6:208:3e::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=PTesarik@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-x-originating-ip: [2a00:1028:83b8:1e7a:5a6e:d5af:320a:e57]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b04d1f83-d494-4478-9f94-08d7087353ec
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB3373;
-x-ms-traffictypediagnostic: MN2PR18MB3373:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MN2PR18MB3373FE8D166CC299E1F16CDDA6CC0@MN2PR18MB3373.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0098BA6C6C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(346002)(376002)(396003)(39850400004)(199004)(189003)(66946007)(66446008)(64756008)(66556008)(66476007)(8936002)(8676002)(76176011)(6306002)(6512007)(80792005)(52116002)(386003)(478600001)(186003)(6116002)(102836004)(50226002)(6506007)(14454004)(68736007)(6486002)(476003)(486006)(1076003)(9686003)(6436002)(81156014)(81166006)(53936002)(256004)(305945005)(7736002)(99286004)(71190400001)(2906002)(71200400001)(6246003)(107886003)(5660300002)(446003)(229853002)(11346002)(6916009)(966005)(4326008)(86362001)(316002)(54906003)(7416002)(46003)(25786009)(39210200001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB3373;H:MN2PR18MB2846.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LJNV6ZL2VfwY5ohkstu3Pm3XJwYHJewEuCAKEPdO3p5H2XQ/Zkz+SrlQAGyqmPY27eFh08xzn3kNG5vU1ia8S4oH11NqLEatwt0z/n3IqE/M3U9gOvxoKx78CERGdunEDEUkR/GoBx6gyhUiQr9kpl811+LI4ukJIEeibclmYHPFW11tTZKvMFnKKh2QftRbsIMkDaZnTsAXLzp4d6a2NH2lgDhUIGtHQTYFSDMtwWd8v8CVCnjsm31CqFFl3xDWtdil7RpmB/pPLvt7Z5NrELfaXc1mEaLtdzPZGOJERi9uvxGMU63FECHyc20WwiZ/xPPcXyeYSbiBQYFIb53LPX7Xdc3nOEmL3BALtEXW6Df06VwohvpxT+PE3jw3XsD7109W8fO1KVcktIBMtRtZKfM1MePtyEn0+kYgquKgC+M=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2E90DAA65F4A33468644BAEFA921F303@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        linux-kernel@vger.kernel.org
+References: <20190714150546.31836-1-iamkeyur96@gmail.com>
+ <06fc2495-dda5-61d2-17e8-0c385e02da1e@web.de>
+ <20190714154737.GB32464@keyur-pc>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <ffe057b9-390c-c3c0-a7d2-f0187585377c@web.de>
+Date:   Sun, 14 Jul 2019 18:20:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: b04d1f83-d494-4478-9f94-08d7087353ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2019 15:52:52.1850
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PTesarik@suse.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3373
-X-OriginatorOrg: suse.com
+In-Reply-To: <20190714154737.GB32464@keyur-pc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZluLrUm5hhFTbII/ptf7OCIj3yen1WeI3BPnFX+ZtvdVCsjCX/N
+ 0tWCv2P1aqKJEAftwLqvi8NrGkIvHcMuG74kTsNO5cAaQGU/h9ahNj075QigYuc4uCg2cAk
+ dIZeqH/76M+crw4/b4+/X7sVK+v6N2AIgGE5UkyajPaZTqtThnac8d2XjTZraEFAO4r3Pzg
+ Ze+F4dvFpnrKjHq05fUWw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:b3ZtDy0Sndo=:3uesOBXhP7afgZBxBUJE7B
+ nHV4kZKT16LIEPMxoZqIS6ZXfCN6ShUO6ZAnmQXUM88Kfv8o3jdGC0j9eYyAePeNmDvQZ6mHx
+ 8dbT+9jiLAkKiMDW3XYWgD85HcCaPCvKIYfeIBdiv2nj2Lr3m7nVh9ek48udrKCTX1qOuv3PS
+ 0r7vFpFiMu9U5Enj9sIfZqzSPRcYrpXn714U0FG7yXA8kOrrNNLTl7L35WX0xt5ifkcQh569t
+ uFug8EIB82/kVw7BOIPZpkkvfBc6hzf3vZdFjjjJ3/l4ewn6TyUDuml8IVGNaC7r4/vrNmfOl
+ YO8Tiyr0//9nB7Z+BffQhr0KzCd8VaZKv27E8wVT3iB5VkEYzCgKPMAZSWfwP//A45sVUw4Yq
+ w3EGPDL7xvP0LAEdvonvzMk7Mwx1wd4PVKJle6oz6grANZM7YxUU0sTZ/Z7jJbajJBmwkk/h9
+ I92v9V0iYhzGibC9tqL7nufFejo5l2dotzO+kO678Kc1kqHFwT2U+z3zK4D0+pEhIYeTiFiVd
+ RMVE5/sZ28JESW+pm+pIpcngs8Bqh7HfugyS7cR4/Ia3Z++ZzjiFn43jHVKLjNfiCcPUc4NrU
+ aTKKxY1m8za8OIlTnA2nPX8vDUn8H+RwhdYM0qd7T/+LMfJM6+FKE7BrwqN1pD7Ekfg4/rbJh
+ QJKPOtTkXwXuGpBAqYiSym811H5s/Nc8EJG2OvS+WxmCRUYOcxl5GdnzO4ePTZE9FE3yjtR6s
+ g+e0nBDJws/yWD0qnrIxVAIt0tW2SoyliFj2KbUuRPiAwTmE3r+aBEQTRbMW5pvhhDqWue7H1
+ 69Gq/SZfzzmzhBB0xS7cf28V92RRNLkWh7RNapiOWSUwtUe87P5soiT82g/u41dXLdMQBjr4b
+ MldS9iHWdE74ybAsqgYdz0CRLwkKKIc0oIPAYM6CihUmRIgR2zQ3xOZfHf6X6q5PgwHhVyGTv
+ 6APCZLbAQzD7X11qdwdpTDXKd91vqf7EL3kaC2g+1sxRDrAP+6wKMGXzvsWRop/pXpF1QpxjO
+ wEoc10elWbbRjJ3wqwYby8jUXVad3poIWB+wecKICBTke4sOwIGYFp/omuzanR2vgbSS6D/Ya
+ Wvz+t1tJ7tYm4mWhHSf1pHClek3Zqtm33EW
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 14 Jul 2019 16:35:33 +0200
-Vasily Gorbik <gor@linux.ibm.com> wrote:
+> I didn't get you. I stiil need to update changelog
 
-> On Fri, Jul 12, 2019 at 07:21:01PM +0200, Petr Tesarik wrote:
-> > Various tools determine the kernel version from a given binary by
-> > scanning for the Linux banner string. This does not work if the
-> > banner string is compressed, but we can link it once more into the
-> > uncompressed portion of bzImage.
-> > 
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > ---
-> >  arch/s390/boot/compressed/Makefile | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/s390/boot/compressed/Makefile b/arch/s390/boot/compressed/Makefile
-> > index fa529c5b4486..9bc4685477c5 100644
-> > --- a/arch/s390/boot/compressed/Makefile
-> > +++ b/arch/s390/boot/compressed/Makefile
-> > @@ -11,6 +11,7 @@ UBSAN_SANITIZE := n
-> >  KASAN_SANITIZE := n
-> >  
-> >  obj-y	:= $(if $(CONFIG_KERNEL_UNCOMPRESSED),,decompressor.o) piggy.o info.o
-> > +obj-y   += ../../../../init/banner.o  
-> 
-> We don't reuse objects from another build stage, we rebuild them with
-> distinct decompressor's build flags.
-> $ git grep "ctype.[oc]" -- arch/s390/boot
-> arch/s390/boot/Makefile:obj-y   += ctype.o text_dma.o
-> arch/s390/boot/ctype.c:#include "../../../lib/ctype.c"
+I would appreciate the completion of the listing for V2 till V4.
+I guess that a message resend could be sufficient for these adjustments.
 
-Those flags do not make a difference for a simple object file like the
-Linux banner, but I get your point, and I cannot see an issues with
-rebuilding the banner for the decompressor.
 
-> Besides that, there is a special CONFIG_KERNEL_UNCOMPRESSED mode, with
-> which "strings vmlinuz | grep 'Linux version'" I assume you are using
-> would still yield result. Adding the second version of banner would
-> produce duplicated result in this case.
+> and send more version
 
-Sure, and AFAICT that's not a problem. But the point here is that the
-production kernel should be compressed for all those well-known
-reasons, but such image is then not recognized.
+This could be another opportunity if you would like to improve
+the commit description considerably.
+How do you think about previous clarification attempts on a topic like
+=E2=80=9CDelete an error message for a failed memory allocation=E2=80=9D?
 
-> But even before discussing solutions I would like to understand the
-> problem first. Which specific tools are you referring to? What are they
-> good for? And how do they get the kernel version from other architectures
-> compressed images?
-
-The tool I'm aware of is called get_kernel_version. It's built as part
-of openSUSE aaa_base and is used at install time. I'm not quite sure
-how it is used, but I have added Raymund Will to Cc; he can provide
-more information. There's also an open bug for it:
-
-  https://bugzilla.opensuse.org/show_bug.cgi?id=1139939
-
-As for other architectures, I only know about x86. The x86 compressed
-binary contains a header with various pointers, among them a pointer to
-the kernel version string, so it must be added to the decompressor (cf.
-arch/x86/boot/version.c).
-
-If you prefer to have a similar header for other architectures, then
-that would be fine with me, but it's a bit more involved, because it
-would set up a new ABI...
-
-HTH,
-Petr T
+Regards,
+Markus
