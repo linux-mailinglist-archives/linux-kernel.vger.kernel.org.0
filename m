@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC63567D81
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 07:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDAD67D7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 07:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfGNFeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 01:34:20 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34945 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfGNFeT (ORCPT
+        id S1726297AbfGNFeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 01:34:07 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42976 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfGNFeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 01:34:19 -0400
-Received: by mail-io1-f67.google.com with SMTP id m24so28911720ioo.2;
-        Sat, 13 Jul 2019 22:34:18 -0700 (PDT)
+        Sun, 14 Jul 2019 01:34:06 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h18so12405339qtm.9;
+        Sat, 13 Jul 2019 22:34:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hXh5ozn74UN4XShEgpOQmsoJF+KG3lfR0vzGIYzOL6s=;
-        b=pFO1zgjOmiZiFIfX4piXBvSxDJrFr5YafzNr5HTnZ+HdIgtNt4cIbQ4gdKwQNcHWsd
-         Ok0iYCEiDxbaBqetJUHE26ewW+2PYGUm2ca8B8v4IDoiWmrBjIi8/v9YiP70T78rmM6d
-         pAB8L59+ZORg160CFJ+X//2L7mmVaqKAlgNs3IRh9B9Cn/ybu2ZZUQe4xCu755HXVLen
-         rd2pKsjeBz5SOaVkpT4TecB3m5PFyhGRuuJmlp2xvtxODP4uTNIlO+egr138cmKmldbU
-         s/qoo5Dv/vCmC3zJ7BMOpJmLY1fKm3SKxNHtVGnUEF9x40xjlX70EQMEcysJyMkVb67j
-         mmZg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JcxZa3PK4xaiIgro1FXc0ErVGK5s8PduFW4m6QbB2jM=;
+        b=SlbxGbJOjQfVtrx5ZyUuVmFB18tMvPtSLoImo3Ut9GDM1BShR8Mml77e/RyfWvvSO4
+         z4Ns0H/nsjAAQjLaSU19OH4Twe/XVoooY6ejAMauOXbGQvzAcq2xyhbnEkBB7vcNpzq7
+         10RTBWk8JxyZVLns8jRWT7w1Rvyar4XQtnZvQbOtgjV3tSytVeCzxxXsCW3eBSavEf5l
+         W8XXzmlXXN9iwdoPr8r15Y6sf2uwBXi4k2r0SkLR9OgOupkSNDZ03xW8ChxnQqf+U8or
+         6HdyhHFZlKGIVoPZharDx9155a+aNxnXzRBYWTgDtxNqkTw/HDCB739+Muz9N8hkFImi
+         EDlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hXh5ozn74UN4XShEgpOQmsoJF+KG3lfR0vzGIYzOL6s=;
-        b=G9AUcBEdo1bYczKIt6TZHVqtCfipAQwm12+AA7NrT2jclLIaAtr/c1eAQpqHxHaIsO
-         U8ciiofH9DEWAym3/ocFfJJXmGSppQlt/f/6m2mx1qa5by2j2rZ4NEA7PGTggxh0FVgX
-         GGzXfJQIibq+afcath5u4d9h/f5TzxPSSx8yMAT3Nll2GHO82+GpEOZ8VoZeqjjyDKNy
-         KirxKVNsWjQbWd2uDOUX+GFL4nIKGY5kN7tjSZS1sZdmA/Q+0aF1yfsl0AxramzD+E7W
-         MzyYu+ISloOfHalw+H2Lm0czF1/WtvHdJIRr96pQahcSLtsEb832v5r8egVffe7s88i3
-         lCIA==
-X-Gm-Message-State: APjAAAXrOEwi83w6gXX7IbejZKSyx6ljd8mmL9Id08+KcIoFLD4hEcyB
-        unaTy8alt2Ze/+XTfRvhPtZXCC7sAbINzw==
-X-Google-Smtp-Source: APXvYqyhODjDVvOHrF+myPaHIjjWaMJFt7PbHKAQh5Cgj2ZJ0cPYzxf0lOhaB5LmxFnlNs+CRF1khw==
-X-Received: by 2002:a6b:7311:: with SMTP id e17mr19998203ioh.112.1563082458534;
-        Sat, 13 Jul 2019 22:34:18 -0700 (PDT)
-Received: from JATN (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id q13sm12271158ioh.36.2019.07.13.22.34.16
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JcxZa3PK4xaiIgro1FXc0ErVGK5s8PduFW4m6QbB2jM=;
+        b=HkXzWIoMblTb54onu5yKzU8WJ65hoczzBMfqaPnanm94w7EUWIggQTP8d84Sr9xBRb
+         0ekb+/0mkf+eGqO71maYq7ep02D4Sic+HCOdw3URpoVjic3NPJNUOO7/+Z9mBJbLH5Z0
+         T1220tMpvcdBvamk0t/bInnvmiRjopzht/qUOfy5UUZdEuk/LmvOg+B0ltA5SkRDMfQD
+         NEI3obouLqii+ocTWfZFD5LE+RO1K0zzf504fc1/Jhujw3FuL/qR4NcZ6r0GlReLhwUu
+         dpfiiK/XzlWH5ujMIayCMTgafkmIfYT1OcpeCGnX8urX62R7JtmNlZLNUkNqksgtiCQW
+         0c7w==
+X-Gm-Message-State: APjAAAUOc65AVRzFF6jVwh1EVV0DkuLtv+rV2YD18+rqdYE4YxVWvklv
+        lGrZ9d8+UdU4K0EKaivyzc6qQTBzh7c=
+X-Google-Smtp-Source: APXvYqxQMHuYzUllXWtp8bAfXQKxoCq4/t/Qi6Naf7Nno+oY5FVfNNhualk2ElwmMqOH9V7fB/K2rA==
+X-Received: by 2002:a0c:a8d2:: with SMTP id h18mr13794451qvc.16.1563082445155;
+        Sat, 13 Jul 2019 22:34:05 -0700 (PDT)
+Received: from localhost.localdomain ([191.35.237.35])
+        by smtp.gmail.com with ESMTPSA id f133sm6308808qke.62.2019.07.13.22.34.01
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 13 Jul 2019 22:34:17 -0700 (PDT)
-Date:   Sat, 13 Jul 2019 23:34:16 -0600
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/91] 4.19.59-stable review
-Message-ID: <20190714053416.GB2385@JATN>
-References: <20190712121621.422224300@linuxfoundation.org>
+        Sat, 13 Jul 2019 22:34:04 -0700 (PDT)
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Subject: [PATCH 0/4] Remove elevator kernel parameter
+Date:   Sun, 14 Jul 2019 02:34:49 -0300
+Message-Id: <20190714053453.1655-1-marcos.souza.org@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 02:18:03PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.59 release.
-> There are 91 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+After the first patch sent[1], together with some background from Jens[2], this
+patchset aims to remove completely elevator kernel parameter, since it is not
+being used since blk-mq was set by default.
 
+Along with elevator code, some documentation was also updated to remove elevator
+references.
 
-Compiled and booted with no regressions on my system.
+Please review, thanks.
 
-Cheers,
-Kelsey
+[1]: https://lkml.org/lkml/2019/7/12/1008
+[2]: https://lkml.org/lkml/2019/7/13/232
+
+Marcos Paulo de Souza (4):
+  block: elevator.c: Remove now unused elevator= argument
+  kernel-parameters.txt: Remove elevator argument
+  Documenation: switching-sched: Remove notes about elevator argument
+  Documentation:kernel-per-CPU-kthreads.txt: Remove reference to
+    elevator=
+
+ Documentation/admin-guide/kernel-parameters.txt |  6 ------
+ Documentation/block/switching-sched.txt         |  4 ----
+ Documentation/kernel-per-CPU-kthreads.txt       |  8 +++-----
+ block/elevator.c                                | 14 --------------
+ 4 files changed, 3 insertions(+), 29 deletions(-)
+
+-- 
+2.22.0
+
