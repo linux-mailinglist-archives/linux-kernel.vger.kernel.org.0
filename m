@@ -2,91 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA1267C87
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 02:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F7E67C93
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 02:57:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbfGMXy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 19:54:56 -0400
-Received: from gate.crashing.org ([63.228.1.57]:59585 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728733AbfGMXyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 19:54:55 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6DNsWTI006207;
-        Sat, 13 Jul 2019 18:54:32 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x6DNsUHe006206;
-        Sat, 13 Jul 2019 18:54:30 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Sat, 13 Jul 2019 18:54:30 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] powerpc: remove meaningless KBUILD_ARFLAGS addition
-Message-ID: <20190713235430.GZ14074@gate.crashing.org>
-References: <20190713032106.8509-1-yamada.masahiro@socionext.com> <20190713124744.GS14074@gate.crashing.org> <20190713131642.GU14074@gate.crashing.org> <CAK7LNASBmZxX+U=LS+dgvet96cA3T6Tf_tiAa2vduUV81DEnBw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASBmZxX+U=LS+dgvet96cA3T6Tf_tiAa2vduUV81DEnBw@mail.gmail.com>
-User-Agent: Mutt/1.4.2.3i
+        id S1728116AbfGNA53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 20:57:29 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44616 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbfGNA53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Jul 2019 20:57:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k8so12230576edr.11
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 17:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=to3I6/jGZtF8uGnnlXnah+C0kJgiuo/O383MEhyWwi8=;
+        b=XJOIec8i32FCH6OV+fUfg95zVzK42TW70zQ2bj0YaANH0104tjMtGrIxH/jPYmoODD
+         7o3vYZlLmaMAvhyUPe9Ba5baqXnOrCB9Gki18UUTd+7o4m4d1OLJRupHiZdYVQg6AOS2
+         UK2d/4NjiLh6slg8299m6pRpqVPhhIOjLuylcBuUoLhBTp5f9kCXQJrYEfW29oah7eLq
+         OfX+AVQ8zTcWvOj7TmEELxjNT1b2gbgCwsy2W7blzzccrTW41VW4PWnsApoHc/C5BDaH
+         u3Ch/0AsuFsHsDfSWAF4eBeKri9N4+a3W7u3KEEsR40ugiTdjzo/0h8lw1jtNl21RWSz
+         np3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=to3I6/jGZtF8uGnnlXnah+C0kJgiuo/O383MEhyWwi8=;
+        b=MfdA0UrlB9FFePEA61EFHJoweN8+PRNGUhEeG8wPpnYRE3wT7NMqaC472C47k/cp8K
+         yIcjm/76921cP4EhZ0X6s/DAM68zRRCccYiEtjW8ZvibVMwo5c4qz9TY1+CQod0z2Y+7
+         jkKyIWNmQlhUTI4kXO9mjN8ZlNa5HzLByHpBO+tpIiEhsWBnkPCmNiFRZM7FEIkkK/+K
+         Wr7Ixtn1l0uZxuEL6fYjQ1OtvOhF9RO+XtKc1dzDqas5Nwa2tm7o0jbWvTK3niOGZrAm
+         PYLWWn1u3R3CCdd5BTYHtvwA/+Y40clzy2QMs+8/mJ6sVtVhafRqbK1mykidBDJ73xN5
+         bIng==
+X-Gm-Message-State: APjAAAXVIw7zr6EqjpHgkb/rcW3AR5NsDDu1YudWj6AXtdxyM1A5Y+CC
+        m/0UPvmU9+ReucqLUJHLmmjOcRIwZOciDWk83Sg=
+X-Google-Smtp-Source: APXvYqw6i70rcQhetrmJpQPgtVVgBgJkGElIsrXxmU+vRDriyHBXjwJWz0aBK9WHqLnS1Zd+SQx8IihxyWtonVxS0Us=
+X-Received: by 2002:a17:906:fcb8:: with SMTP id qw24mr14490425ejb.239.1563065847697;
+ Sat, 13 Jul 2019 17:57:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a50:ba31:0:0:0:0:0 with HTTP; Sat, 13 Jul 2019 17:57:26
+ -0700 (PDT)
+Reply-To: dr.bukolasaraki09@gmail.com
+From:   "Dr. Bukola Saraki" <annajohnson1999@gmail.com>
+Date:   Sun, 14 Jul 2019 01:57:26 +0100
+Message-ID: <CAEo6XHO1XVup4dabFYzvh-OWE7ZQty_V1ppstq8JdQskKZh=RQ@mail.gmail.com>
+Subject: GOOD DAY
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 14, 2019 at 07:45:15AM +0900, Masahiro Yamada wrote:
-> On Sat, Jul 13, 2019 at 10:17 PM Segher Boessenkool
-> <segher@kernel.crashing.org> wrote:
-> > On Sat, Jul 13, 2019 at 07:47:44AM -0500, Segher Boessenkool wrote:
-> > > On Sat, Jul 13, 2019 at 12:21:06PM +0900, Masahiro Yamada wrote:
-> > > > The KBUILD_ARFLAGS addition in arch/powerpc/Makefile has never worked
-> > > > in a useful way because it is always overridden by the following code
-> > > > in the top Makefile:
-> > > >
-> > > >   # use the deterministic mode of AR if available
-> > > >   KBUILD_ARFLAGS := $(call ar-option,D)
-> > > >
-> > > > The code in the top Makefile was added in 2011, by commit 40df759e2b9e
-> > > > ("kbuild: Fix build with binutils <= 2.19").
-> > > >
-> > > > The KBUILD_ARFLAGS addition for ppc has always been dead code from the
-> > > > beginning.
-> > >
-> > > That was added in 43c9127d94d6 to replace my 8995ac870273 from 2007.
-> > >
-> > > Is it no longer supported to build a 64-bit kernel with a toolchain
-> > > that defaults to 32-bit, or the other way around?  And with non-native
-> > > toolchains (this one didn't run on Linux, even).
-> >
-> > It was an --enable-targets=all toolchain, somewhat common for crosses,
-> > if that matters.
-> 
-> I always use the same toolchain
-> for compile-testing PPC32/64.
-> 
-> I have never been hit by the issue you mention.
-> Somebody would have reported it if it were still a problem.
+The President of Nigeria MUHAMMADU BUHARI and SENATORS have agree to
+compensate all the foreign investors that has business with Nigerians
+or the other but didn't receive their fund,they have decide to
+compensate the person with sum one million seven hundred thousand
+united states dollars if you are one of the victim get back to us with
+your full information to show that you are the rightful person.
 
-But did you use --enable-targets=all?
-
-The problem was empty archives IIRC.  Not a problem anymore with thin
-archives, maybe?
-
-> Moreover, commit 43c9127d94d6
-> translated the environment variable "GNUTARGET"
-> into the command option "--target="
-> 
-> My powerpc-linux-ar does not know it:
-> 
-> powerpc-linux-ar: -t: No such file or directory
-
-Yes, that is why I used the environment variable, all binutils work
-with that.  There was no --target option in GNU ar before 2.22.
-
-
-Segher
+President of the Senate
+Dr. Bukola Saraki
+Email:dr.bukolasaraki09@gmail.com
