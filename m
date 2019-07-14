@@ -2,204 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B8A67F85
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8155D67F88
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 17:08:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfGNPFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 11:05:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728380AbfGNPFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 11:05:17 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E90520820;
-        Sun, 14 Jul 2019 15:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563116715;
-        bh=oEqxwlRgnMQnJ0L8hZhvcyjU0+Zl974rXfhYP6hhfR8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R8Nu9LW9FmqDWy+oiepbPSrml3RlI1319nta0Uck6XLniMh50KL1xm81qcmZVxjbf
-         X5OEH4He3AKllSb47B0sswkKaDJ/gHA/WrAv3em7+OU3tSs1IntzQRzzX3ERtu5Dmx
-         YQdB2JwUVj7Y2QochHSl9f/YKBP1G3JqO87I8eS4=
-Date:   Sun, 14 Jul 2019 16:04:59 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Artur Rojek <contact@artur-rojek.eu>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2] IIO: Ingenic JZ47xx: Set clock divider on probe
-Message-ID: <20190714160459.19bc3209@archlinux>
-In-Reply-To: <20190704173656.6617-1-contact@artur-rojek.eu>
-References: <20190704173656.6617-1-contact@artur-rojek.eu>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728519AbfGNPF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 11:05:59 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36795 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbfGNPF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 11:05:59 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z4so13164743qtc.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 08:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GY7ijCnNWcBvJMmPhDv2XxWebBv+To4DFqmhVG/7aUM=;
+        b=jTWAvb0fl37zIZkVPv1RAR37KIV/mp/d6+o0pxsEi87doRmhLwRcCsDVYBrxcHIpGo
+         fNg19AmqP4Qr53oDVXkbQw5aTUfzm+2y+YGfGD2WIAIsOuex6Kxa7aGAkCLqP2wv/d1i
+         DcYGC9dhxirto1kBpmhE2jbBfYqayG5RgdhhITSXv1EsIJ2gLy+3PDHvvxVpUWCchFp0
+         Wwq2KuAdlc175fk+9yhVfnTtxiR6g1AwFbqr5gIIgFHLYmTr0i4Gg438f5wuTSCej7s+
+         cj6gTyotLJ6kuwqdZgT0fZtH4aGAfUt59OFTirl/UMZzMBD3XZI12c38esrAdKdbiwL4
+         do3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GY7ijCnNWcBvJMmPhDv2XxWebBv+To4DFqmhVG/7aUM=;
+        b=uHzrDnMPfR+Zsi1VCXjIPyWfrDWkVW2gXyc1mGPJ/pD1Si1ouB6UIxEt2QEXXAwdAa
+         sXJ3C4JdqtzeGbuq/6+6ntnJLDynbv19/oHlivdqNz2TxGc6WwXENWewNQY2UL5QLwWt
+         gaRmPGN+dl26FtX8BLO20Cq98VM93fAhpBFaJl+JMowsA8fWKk5YwHLp20KZiT7DTGay
+         hWu5SzBOcWnd6HIoYs9Su7uCm9nmTSQ4zo8BOl1LypHM4e+bvhi9LroTlAV5J20QEuUU
+         K5kfZTHjRZ26jKyyzG0jWgJ7GIkErVULni/cM2lgdw5iaNmZMregmiLyaIn7bSOjjEy8
+         eeuQ==
+X-Gm-Message-State: APjAAAV6Vqm39pAlTGojvpSLLnSCApDPK5Rru8r0XnzomTywitHyLeDI
+        PS4QMNF02c0wy/ATwe+QBA==
+X-Google-Smtp-Source: APXvYqysavumyVN2h4oAbEKhfcef9Kl5JjN5h4k30a9tgMEjAuaX67r3+aXdh2jYd7NuYskVJagNGA==
+X-Received: by 2002:a05:6214:185:: with SMTP id q5mr14837425qvr.213.1563116758160;
+        Sun, 14 Jul 2019 08:05:58 -0700 (PDT)
+Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.googlemail.com with ESMTPSA id o18sm8973139qtb.53.2019.07.14.08.05.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 14 Jul 2019 08:05:57 -0700 (PDT)
+From:   Keyur Patel <iamkeyur96@gmail.com>
+Cc:     markus.elfring@web.de, Keyur Patel <iamkeyur96@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] staging: most: remove redundant print statement when
+ kfifo_alloc fails
+Date:   Sun, 14 Jul 2019 11:05:43 -0400
+Message-Id: <20190714150546.31836-1-iamkeyur96@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190711175055.25157-1-iamkeyur96@gmail.com>
+References: <20190711175055.25157-1-iamkeyur96@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  4 Jul 2019 19:36:56 +0200
-Artur Rojek <contact@artur-rojek.eu> wrote:
-
-> From: Maarten ter Huurne <maarten@treewalker.org>
-> 
-> The SADC component can run at up to 8 MHz on JZ4725B, but is fed
-> a 12 MHz input clock (EXT). Divide it by two to get 6 MHz, then
-> set up another divider to match, to produce a 10us clock.
-> 
-> If the clock dividers are left on their power-on defaults (a divider
-> of 1), the SADC mostly works, but will occasionally produce erroneous
-> readings. This led to button presses being detected out of nowhere on
-> the RS90 every few minutes. With this change, no ghost button presses
-> were logged in almost a day worth of testing.
-> 
-> The ADCLK register for configuring clock dividers doesn't exist on
-> JZ4740, so avoid writing it there.
-> 
-> A function has been introduced rather than a flag because there is a lot
-> of variation between the ADCLK registers on JZ47xx SoCs, both in
-> the internal layout of the register and in the frequency range
-> supported by the SADC. So this solution should make it easier
-> to add support for other JZ47xx SoCs later.
-> 
-> Fixes: 1a78daea107d ("iio: adc: probe should set clock divider")
-> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-Applied to the fixes-togreg branch of iio.git and marked for
-stable.
-
-Thanks,
-
-Jonathan
-
-> ---
-> 
->  Changes:
-> 
->  v2: Add the fixes tag.
-> 
->  drivers/iio/adc/ingenic-adc.c | 54 +++++++++++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
-> index 92b1d5037ac9..e234970b7150 100644
-> --- a/drivers/iio/adc/ingenic-adc.c
-> +++ b/drivers/iio/adc/ingenic-adc.c
-> @@ -11,6 +11,7 @@
->  #include <linux/iio/iio.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/platform_device.h>
-> @@ -22,8 +23,11 @@
->  #define JZ_ADC_REG_ADTCH		0x18
->  #define JZ_ADC_REG_ADBDAT		0x1c
->  #define JZ_ADC_REG_ADSDAT		0x20
-> +#define JZ_ADC_REG_ADCLK		0x28
->  
->  #define JZ_ADC_REG_CFG_BAT_MD		BIT(4)
-> +#define JZ_ADC_REG_ADCLK_CLKDIV_LSB	0
-> +#define JZ_ADC_REG_ADCLK_CLKDIV10US_LSB	16
->  
->  #define JZ_ADC_AUX_VREF				3300
->  #define JZ_ADC_AUX_VREF_BITS			12
-> @@ -34,6 +38,8 @@
->  #define JZ4740_ADC_BATTERY_HIGH_VREF		(7500 * 0.986)
->  #define JZ4740_ADC_BATTERY_HIGH_VREF_BITS	12
->  
-> +struct ingenic_adc;
-> +
->  struct ingenic_adc_soc_data {
->  	unsigned int battery_high_vref;
->  	unsigned int battery_high_vref_bits;
-> @@ -41,6 +47,7 @@ struct ingenic_adc_soc_data {
->  	size_t battery_raw_avail_size;
->  	const int *battery_scale_avail;
->  	size_t battery_scale_avail_size;
-> +	int (*init_clk_div)(struct device *dev, struct ingenic_adc *adc);
->  };
->  
->  struct ingenic_adc {
-> @@ -151,6 +158,42 @@ static const int jz4740_adc_battery_scale_avail[] = {
->  	JZ_ADC_BATTERY_LOW_VREF, JZ_ADC_BATTERY_LOW_VREF_BITS,
->  };
->  
-> +static int jz4725b_adc_init_clk_div(struct device *dev, struct ingenic_adc *adc)
-> +{
-> +	struct clk *parent_clk;
-> +	unsigned long parent_rate, rate;
-> +	unsigned int div_main, div_10us;
-> +
-> +	parent_clk = clk_get_parent(adc->clk);
-> +	if (!parent_clk) {
-> +		dev_err(dev, "ADC clock has no parent\n");
-> +		return -ENODEV;
-> +	}
-> +	parent_rate = clk_get_rate(parent_clk);
-> +
-> +	/*
-> +	 * The JZ4725B ADC works at 500 kHz to 8 MHz.
-> +	 * We pick the highest rate possible.
-> +	 * In practice we typically get 6 MHz, half of the 12 MHz EXT clock.
-> +	 */
-> +	div_main = DIV_ROUND_UP(parent_rate, 8000000);
-> +	div_main = clamp(div_main, 1u, 64u);
-> +	rate = parent_rate / div_main;
-> +	if (rate < 500000 || rate > 8000000) {
-> +		dev_err(dev, "No valid divider for ADC main clock\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* We also need a divider that produces a 10us clock. */
-> +	div_10us = DIV_ROUND_UP(rate, 100000);
-> +
-> +	writel(((div_10us - 1) << JZ_ADC_REG_ADCLK_CLKDIV10US_LSB) |
-> +	       (div_main - 1) << JZ_ADC_REG_ADCLK_CLKDIV_LSB,
-> +	       adc->base + JZ_ADC_REG_ADCLK);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct ingenic_adc_soc_data jz4725b_adc_soc_data = {
->  	.battery_high_vref = JZ4725B_ADC_BATTERY_HIGH_VREF,
->  	.battery_high_vref_bits = JZ4725B_ADC_BATTERY_HIGH_VREF_BITS,
-> @@ -158,6 +201,7 @@ static const struct ingenic_adc_soc_data jz4725b_adc_soc_data = {
->  	.battery_raw_avail_size = ARRAY_SIZE(jz4725b_adc_battery_raw_avail),
->  	.battery_scale_avail = jz4725b_adc_battery_scale_avail,
->  	.battery_scale_avail_size = ARRAY_SIZE(jz4725b_adc_battery_scale_avail),
-> +	.init_clk_div = jz4725b_adc_init_clk_div,
->  };
->  
->  static const struct ingenic_adc_soc_data jz4740_adc_soc_data = {
-> @@ -167,6 +211,7 @@ static const struct ingenic_adc_soc_data jz4740_adc_soc_data = {
->  	.battery_raw_avail_size = ARRAY_SIZE(jz4740_adc_battery_raw_avail),
->  	.battery_scale_avail = jz4740_adc_battery_scale_avail,
->  	.battery_scale_avail_size = ARRAY_SIZE(jz4740_adc_battery_scale_avail),
-> +	.init_clk_div = NULL, /* no ADCLK register on JZ4740 */
->  };
->  
->  static int ingenic_adc_read_avail(struct iio_dev *iio_dev,
-> @@ -317,6 +362,15 @@ static int ingenic_adc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	/* Set clock dividers. */
-> +	if (soc_data->init_clk_div) {
-> +		ret = soc_data->init_clk_div(dev, adc);
-> +		if (ret) {
-> +			clk_disable_unprepare(adc->clk);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	/* Put hardware in a known passive state. */
->  	writeb(0x00, adc->base + JZ_ADC_REG_ENABLE);
->  	writeb(0xff, adc->base + JZ_ADC_REG_CTRL);
-
+This print statement is redundant as kfifo_alloc just calls kmalloc_array=0D
+without the __GFP_NOWARN flag, already does a dump_stack().=0D
+=0D
+Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>=0D
+---=0D
+Changes in v3:=0D
+- fix checkpatch warning=0D
+=0D
+ drivers/staging/most/cdev/cdev.c | 4 +---=0D
+ 1 file changed, 1 insertion(+), 3 deletions(-)=0D
+=0D
+diff --git a/drivers/staging/most/cdev/cdev.c b/drivers/staging/most/cdev/c=
+dev.c=0D
+index d0cc0b746107..724d098aeef0 100644=0D
+--- a/drivers/staging/most/cdev/cdev.c=0D
++++ b/drivers/staging/most/cdev/cdev.c=0D
+@@ -463,10 +463,8 @@ static int comp_probe(struct most_interface *iface, in=
+t channel_id,=0D
+ 	spin_lock_init(&c->unlink);=0D
+ 	INIT_KFIFO(c->fifo);=0D
+ 	retval =3D kfifo_alloc(&c->fifo, cfg->num_buffers, GFP_KERNEL);=0D
+-	if (retval) {=0D
+-		pr_info("failed to alloc channel kfifo");=0D
++	if (retval)=0D
+ 		goto err_del_cdev_and_free_channel;=0D
+-	}=0D
+ 	init_waitqueue_head(&c->wq);=0D
+ 	mutex_init(&c->io_mutex);=0D
+ 	spin_lock_irqsave(&ch_list_lock, cl_flags);=0D
+-- =0D
+2.22.0=0D
+=0D
