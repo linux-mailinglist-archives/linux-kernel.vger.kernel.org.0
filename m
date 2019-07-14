@@ -2,54 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7EF467E65
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 11:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7938667E6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 11:57:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfGNJe5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 14 Jul 2019 05:34:57 -0400
-Received: from mail.reincar.com.co ([190.0.12.190]:55898 "EHLO
-        emailgateway.skillnet.com.co" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726799AbfGNJe5 (ORCPT
+        id S1728243AbfGNJwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 05:52:03 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37883 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfGNJwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 05:34:57 -0400
-X-Greylist: delayed 39179 seconds by postgrey-1.27 at vger.kernel.org; Sun, 14 Jul 2019 05:34:56 EDT
-Received: from emailgateway.skillnet.com.co (localhost.localdomain [127.0.0.1])
-        by localhost (Email Security Appliance) with SMTP id 838DF22B035_D29E924B;
-        Sat, 13 Jul 2019 14:22:27 +0000 (GMT)
-Received: from mail.projectbpo.co (mail.projectbpo.co [192.175.105.61])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by emailgateway.skillnet.com.co (Sophos Email Appliance) with ESMTPS id C607F1FDC8F_D29E921F;
-        Sat, 13 Jul 2019 14:22:25 +0000 (GMT)
-Received: from mail.projectbpo.co (localhost [127.0.0.1])
-        by mail.projectbpo.co (Postfix) with ESMTPS id EF9EC6EF8A6CF;
-        Sat, 13 Jul 2019 09:29:52 -0500 (-05)
-Received: from mail.projectbpo.co (localhost [127.0.0.1])
-        by mail.projectbpo.co (Postfix) with ESMTPS id CB3D16EF8A6F1;
-        Sat, 13 Jul 2019 09:29:52 -0500 (-05)
-Received: from [192.168.43.155] (ip168.ip-91-134-219.eu [91.134.219.168])
-        by mail.projectbpo.co (Postfix) with ESMTPSA id 1B6DD6EF8A6CF;
-        Sat, 13 Jul 2019 09:29:36 -0500 (-05)
-Content-Type: text/plain; charset="iso-8859-1"
+        Sun, 14 Jul 2019 05:52:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f17so12398511wme.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 02:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/SqU2gFVMBbWyLJOkiidaC1t9EiWVorSKt8/qeakt/M=;
+        b=pfit/EM7wrr88HzT2SnkIejcUSxurAVRXBuC529YfAeQ7jrFbenEqOe8z7XQmVFRSO
+         aFiOoRF4zzIvHNkMaREz8eMn7g2NGBmMl28b2Aoqp2oPyurfuNwyltSNovk/JRiBMVim
+         gmVRWXd2xypNmS4xQbc3sTm+l15sMiUlzZp6ayA46Vjgxa807fuSv33Ha7drReVJZvwT
+         oLtHQsQepoxP0Rgh/8tQoimqcVXEC2hgomR3ipKj/ZV90PvceUONNBJdEMnBdM0MYm3n
+         JknLDoKAatsEbdDQJRjvlFyM+rFPRkDF0SPOEIobHs04Q7jQsTtQlrHGJgIsjLthVY0t
+         RM0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/SqU2gFVMBbWyLJOkiidaC1t9EiWVorSKt8/qeakt/M=;
+        b=O0KKT9SKCSeTxUpZ9aw6YpDRI7NiPvzcAToI+FDnw6/Nby8xzEdYsvMji1PuOJMprC
+         A5yuAx/R/sQ1C5ExQugmvMzNRfgczPoiwrvrgMFVVCawerUkWbPqsg5Aho1gjZ4ocxaB
+         3zR4brULHCzDoJMnaCf4hF7j1hMaEmjNn5W5XFkS86WX3zKjv76s5jhryTTXIV4Bedbz
+         BfXegdCGdmI0zX3y3rcu3NhFLyrjxHDT9BT3zPWUunT+q+RqhnpYOLpQmoSeuD8IidkR
+         YBwCdryRog/IdZOFdwMId2hywBayjLlRM3Q74XGrud3dhPNaRD9p6MYP73Bp9ITzcRmr
+         CrrA==
+X-Gm-Message-State: APjAAAWV5+uSLyGHWrB3eETawwIc61siXCVTOUY7hGMvtlYHF276pZRR
+        1Diq4IYWrVZQ8xMUpEooY9Y3H4w=
+X-Google-Smtp-Source: APXvYqyg5kF3L2Tbl+LIpyWp0IPVfnjfDoxPe66saiIJxJrMWHWhtKi30Z89o6Z4jYvgxOv2uiAZFg==
+X-Received: by 2002:a7b:cbc6:: with SMTP id n6mr19402838wmi.14.1563097920485;
+        Sun, 14 Jul 2019 02:52:00 -0700 (PDT)
+Received: from avx2 ([46.53.254.7])
+        by smtp.gmail.com with ESMTPSA id z6sm9606950wrw.2.2019.07.14.02.51.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Jul 2019 02:51:59 -0700 (PDT)
+Date:   Sun, 14 Jul 2019 12:51:57 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, izbyshev@ispras.ru,
+        Oleg Nesterov <oleg@redhat.com>,
+        Michal Kubecek <mkubecek@suse.cz>, shasta@toxcorp.com,
+        linux-kernel@vger.kernel.org, security@kernel.org
+Subject: Re: [PATCH] proc: revert /proc/*/cmdline rewrite
+Message-ID: <20190714095157.GA2276@avx2>
+References: <20190713072855.GB23167@avx2>
+ <CAHk-=wj_mrNnM-q_z95GcNB=Ab4LaUC6Bi6Q-+3Q9u9NC=3iDA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: OFFER
-To:     Recipients <avargasm.andina@gempresarial.co>
-From:   "Ms.Ella Gola" <avargasm.andina@gempresarial.co>
-Date:   Sat, 13 Jul 2019 15:21:53 +0100
-Reply-To: msgolaan615@gmail.com
-Message-Id: <20190713142937.1B6DD6EF8A6CF@mail.projectbpo.co>
-X-SASI-RCODE: 200
-X-SEA-Spam: Gauge=XXXXXXXXXX, Probability=100%, Report='
- SXL_IP_PROXY 8, SXL_PARA_SIG 8, FRAUD_LITTLE_BODY 2, FRAUD_X3_WEB_REPLYTO 1, WEBMAIL_REPLYTO_NOT_FROM 0.5, FRAUD_WEBMAIL_R_NOT_F 0.1, FROM_CO_TLD 0.1, REPLYTO_FROM_DIFF_ADDY 0.1, SUBJ_1WORD 0.1, FROM_SAME_AS_TO 0.05, HTML_00_01 0.05, HTML_00_10 0.05, SUPERLONG_LINE 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODYTEXTP_SIZE_400_LESS 0, BODY_SIZE_1000_LESS 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_300_399 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, FRAUD_HIGH_X3 0, FROM_SAME_AS_TO_DOMAIN 0, NO_CTA_URI_FOUND 0, NO_URI_FOUND 0, NO_URI_HTTPS 0, SPF_SOFTFAIL 0, __BODY_NO_MAILTO 0, __CT 0, __CTE 0, __CT_TEXT_PLAIN 0, __FRAUD_COMMON 0, __FRAUD_DPTCOMPNY 0, __FRAUD_SUBJ_ALLCAPS 0, __FRAUD_WEBMAIL 0, __FRAUD_WEBMAIL_REPLYTO 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_REPLYTO 0, __INT_PROD_LOC 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MIME_VERSION 0, __NO_HTML_TAG_RAW 0,
- __PHISH_SPEAR_STRUCTURE_1 0, __PHISH_SPEAR_STRUCTURE_2 0, __REPLYTO_GMAIL 0, __SANE_MSGID 0, __SUBJECT_ALLCAPS 0, __SUBJECT_NOLC 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0'
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj_mrNnM-q_z95GcNB=Ab4LaUC6Bi6Q-+3Q9u9NC=3iDA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am Ms.Ella Golan, I am the Executive Vice President Banking Division with FIRST INTERNATIONAL BANK OF ISRAEL LTD (FIBI). I am getting in touch with you regarding an extremely important and urgent matter. If you would oblige me the opportunity, I shall provide you with details upon your response.
+	[re-add lists]
 
-Faithfully,
-Ms.Ella Gola
+On Sat, Jul 13, 2019 at 10:50:20AM -0700, Linus Torvalds wrote:
+> On Sat, Jul 13, 2019 at 12:29 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >
+> > /proc/*/cmdline continues to cause problems:
+> 
+> If we're reverting this, then we should revert all the way back to the
+> original fixed-length one that had the original semantics and was
+> simple.
+
+No, because all those Java applications have command lines measured in
+dozens of kilobytes.
+
+> What was the problem with the one-line fix instead?
+
+The problem is that I can't even drag this trivia in out of _fear_ that
+it is userspace observable:
+
+	https://marc.info/?t=155863429700002&r=1&w=4
+	[PATCH] elf: fix "start_code" evaluation
+
+and yet the patch which did a regression and an infoleak continues
+to be papered over and for which the only justification was
+"simplify and clarify".
