@@ -2,113 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD4367F51
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 16:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2A467F58
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 16:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbfGNOfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 10:35:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6342 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728146AbfGNOfo (ORCPT
+        id S1728539AbfGNOg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 10:36:56 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42092 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbfGNOgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 10:35:44 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6EEWdKC185230
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 10:35:42 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tqvnpqpw0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 10:35:42 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Sun, 14 Jul 2019 15:35:40 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 14 Jul 2019 15:35:37 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6EEZaQ035389884
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 14 Jul 2019 14:35:36 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2AF71AE04D;
-        Sun, 14 Jul 2019 14:35:36 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C0E6AE045;
-        Sun, 14 Jul 2019 14:35:35 +0000 (GMT)
-Received: from localhost (unknown [9.145.65.183])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sun, 14 Jul 2019 14:35:35 +0000 (GMT)
-Date:   Sun, 14 Jul 2019 16:35:33 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Petr Tesarik <ptesarik@suse.com>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] s390: add Linux banner to the compressed image
-References: <cover.1562950641.git.ptesarik@suse.com>
- <aa477dd145aa2beb37fe813619b0723744a22a0a.1562950641.git.ptesarik@suse.com>
+        Sun, 14 Jul 2019 10:36:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hmfbz-00010j-Kc; Sun, 14 Jul 2019 14:36:23 +0000
+Date:   Sun, 14 Jul 2019 15:36:23 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
+Message-ID: <20190714143623.GR17978@ZenIV.linux.org.uk>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-6-cyphar@cyphar.com>
+ <20190712043341.GI17978@ZenIV.linux.org.uk>
+ <20190712105745.nruaftgeat6irhzr@yavin>
+ <20190712123924.GK17978@ZenIV.linux.org.uk>
+ <20190712125552.GL17978@ZenIV.linux.org.uk>
+ <20190712132553.GN17978@ZenIV.linux.org.uk>
+ <20190712150026.GO17978@ZenIV.linux.org.uk>
+ <20190713024153.GA3817@ZenIV.linux.org.uk>
+ <20190714070029.m53etvm3y4etidxt@yavin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa477dd145aa2beb37fe813619b0723744a22a0a.1562950641.git.ptesarik@suse.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19071414-0020-0000-0000-000003537F01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071414-0021-0000-0000-000021A741FD
-Message-Id: <your-ad-here.call-01563114933-ext-9422@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907140180
+In-Reply-To: <20190714070029.m53etvm3y4etidxt@yavin>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 07:21:01PM +0200, Petr Tesarik wrote:
-> Various tools determine the kernel version from a given binary by
-> scanning for the Linux banner string. This does not work if the
-> banner string is compressed, but we can link it once more into the
-> uncompressed portion of bzImage.
-> 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> ---
->  arch/s390/boot/compressed/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/s390/boot/compressed/Makefile b/arch/s390/boot/compressed/Makefile
-> index fa529c5b4486..9bc4685477c5 100644
-> --- a/arch/s390/boot/compressed/Makefile
-> +++ b/arch/s390/boot/compressed/Makefile
-> @@ -11,6 +11,7 @@ UBSAN_SANITIZE := n
->  KASAN_SANITIZE := n
->  
->  obj-y	:= $(if $(CONFIG_KERNEL_UNCOMPRESSED),,decompressor.o) piggy.o info.o
-> +obj-y   += ../../../../init/banner.o
+On Sun, Jul 14, 2019 at 05:00:29PM +1000, Aleksa Sarai wrote:
 
-We don't reuse objects from another build stage, we rebuild them with
-distinct decompressor's build flags.
-$ git grep "ctype.[oc]" -- arch/s390/boot
-arch/s390/boot/Makefile:obj-y   += ctype.o text_dma.o
-arch/s390/boot/ctype.c:#include "../../../lib/ctype.c"
+> The basic property being guaranteed by LOOKUP_IN_ROOT is that it will
+> not result in resolution of a path component which was not inside the
+> root of the dirfd tree at some point during resolution (and that all
+> absolute symlink and ".." resolution will be done relative to the
+> dirfd). This may smell slightly of chroot(2), because unfortunately it
+> is a similar concept -- the reason for this is to allow for a more
+> efficient way to safely resolve paths inside a rootfs than spawning a
+> separate process to then pass back the fd to the caller.
 
-Besides that, there is a special CONFIG_KERNEL_UNCOMPRESSED mode, with
-which "strings vmlinuz | grep 'Linux version'" I assume you are using
-would still yield result. Adding the second version of banner would
-produce duplicated result in this case.
-
-But even before discussing solutions I would like to understand the
-problem first. Which specific tools are you referring to? What are they
-good for? And how do they get the kernel version from other architectures
-compressed images?
-
+IDGI...  If attacker can modify your subtree, you have already lost -
+after all, they can make anything appear inside that tree just before
+your syscall is made and bring it back out immediately afterwards.
+And if they can't, what is the race you are trying to protect against?
+Confused...
