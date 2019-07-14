@@ -2,66 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F7E67C93
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 02:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 020F167C9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 03:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfGNA53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 20:57:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44616 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbfGNA53 (ORCPT
+        id S1728191AbfGNBSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 21:18:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35154 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbfGNBSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 20:57:29 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k8so12230576edr.11
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 17:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=to3I6/jGZtF8uGnnlXnah+C0kJgiuo/O383MEhyWwi8=;
-        b=XJOIec8i32FCH6OV+fUfg95zVzK42TW70zQ2bj0YaANH0104tjMtGrIxH/jPYmoODD
-         7o3vYZlLmaMAvhyUPe9Ba5baqXnOrCB9Gki18UUTd+7o4m4d1OLJRupHiZdYVQg6AOS2
-         UK2d/4NjiLh6slg8299m6pRpqVPhhIOjLuylcBuUoLhBTp5f9kCXQJrYEfW29oah7eLq
-         OfX+AVQ8zTcWvOj7TmEELxjNT1b2gbgCwsy2W7blzzccrTW41VW4PWnsApoHc/C5BDaH
-         u3Ch/0AsuFsHsDfSWAF4eBeKri9N4+a3W7u3KEEsR40ugiTdjzo/0h8lw1jtNl21RWSz
-         np3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=to3I6/jGZtF8uGnnlXnah+C0kJgiuo/O383MEhyWwi8=;
-        b=MfdA0UrlB9FFePEA61EFHJoweN8+PRNGUhEeG8wPpnYRE3wT7NMqaC472C47k/cp8K
-         yIcjm/76921cP4EhZ0X6s/DAM68zRRCccYiEtjW8ZvibVMwo5c4qz9TY1+CQod0z2Y+7
-         jkKyIWNmQlhUTI4kXO9mjN8ZlNa5HzLByHpBO+tpIiEhsWBnkPCmNiFRZM7FEIkkK/+K
-         Wr7Ixtn1l0uZxuEL6fYjQ1OtvOhF9RO+XtKc1dzDqas5Nwa2tm7o0jbWvTK3niOGZrAm
-         PYLWWn1u3R3CCdd5BTYHtvwA/+Y40clzy2QMs+8/mJ6sVtVhafRqbK1mykidBDJ73xN5
-         bIng==
-X-Gm-Message-State: APjAAAXVIw7zr6EqjpHgkb/rcW3AR5NsDDu1YudWj6AXtdxyM1A5Y+CC
-        m/0UPvmU9+ReucqLUJHLmmjOcRIwZOciDWk83Sg=
-X-Google-Smtp-Source: APXvYqw6i70rcQhetrmJpQPgtVVgBgJkGElIsrXxmU+vRDriyHBXjwJWz0aBK9WHqLnS1Zd+SQx8IihxyWtonVxS0Us=
-X-Received: by 2002:a17:906:fcb8:: with SMTP id qw24mr14490425ejb.239.1563065847697;
- Sat, 13 Jul 2019 17:57:27 -0700 (PDT)
+        Sat, 13 Jul 2019 21:18:09 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6E1EoEl079200;
+        Sun, 14 Jul 2019 01:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=gnStV7SBtyBELVgdhWru5ZF/zwLQRRjtxakJR6QK8O4=;
+ b=LEjRHErOUwlLHTSiY35a9/RWgVlntWcQEXHjz41W6JsOj1fltQqrqIidgrzVOp4pHh+6
+ oJu2jP99ATK1ItUm55tSIWIDhSwIHgyzB4bxR/Zc/4n+rKDgdQuhBLFUY/r5dXvReqwO
+ nN7pTUZnim4bbV2ABiPjxnAcdiy/GJiEAGM2Ex0a7BhIrXp0T1dhvQGKBaJbrCYfEeP0
+ cVsN29inpLK7+vPi/6/hm3e9V6fbHTFnga8rFqbvjw5JfWd/MlGFE0pZujhYy2RgoyYq
+ aSCy24tFdUiGBZN8lzBaCN5NcOhfcfj3PorxoraCvWgelXEsOHh0kvu9Unsu9BOq4sz2 yQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2tq7xqhu07-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 14 Jul 2019 01:16:19 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6E1EJt4138593;
+        Sun, 14 Jul 2019 01:16:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2tq4dstp55-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 14 Jul 2019 01:16:18 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6E1GAde016937;
+        Sun, 14 Jul 2019 01:16:10 GMT
+Received: from Subhras-MacBook-Pro.local (/103.87.143.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 13 Jul 2019 18:16:10 -0700
+Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
+To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-6-subhra.mazumdar@oracle.com>
+ <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
+ <59ab08d5-8b7c-00b9-230b-7c0b307a675f@oracle.com>
+ <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
+ <12402fea-7b87-8c4d-9485-53f973c38654@oracle.com>
+ <aac9f826-ab73-2754-4a7b-7d948f1edf92@linux.ibm.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <b3c238bc-c094-bbdf-5273-0de9e55f7a15@oracle.com>
+Date:   Sun, 14 Jul 2019 06:46:01 +0530
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a50:ba31:0:0:0:0:0 with HTTP; Sat, 13 Jul 2019 17:57:26
- -0700 (PDT)
-Reply-To: dr.bukolasaraki09@gmail.com
-From:   "Dr. Bukola Saraki" <annajohnson1999@gmail.com>
-Date:   Sun, 14 Jul 2019 01:57:26 +0100
-Message-ID: <CAEo6XHO1XVup4dabFYzvh-OWE7ZQty_V1ppstq8JdQskKZh=RQ@mail.gmail.com>
-Subject: GOOD DAY
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <aac9f826-ab73-2754-4a7b-7d948f1edf92@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9317 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907140013
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9317 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907140014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The President of Nigeria MUHAMMADU BUHARI and SENATORS have agree to
-compensate all the foreign investors that has business with Nigerians
-or the other but didn't receive their fund,they have decide to
-compensate the person with sum one million seven hundred thousand
-united states dollars if you are one of the victim get back to us with
-your full information to show that you are the rightful person.
 
-President of the Senate
-Dr. Bukola Saraki
-Email:dr.bukolasaraki09@gmail.com
+On 7/4/19 6:04 PM, Parth Shah wrote:
+> Same experiment with hackbench and with perf analysis shows increase in L1
+> cache miss rate with these patches
+> (Lower is better)
+>                            Baseline(%)   Patch(%)
+>   ----------------------- ------------- -----------
+>    Total Cache miss rate         17.01   19(-11%)
+>    L1 icache miss rate            5.45   6.7(-22%)
+>
+>
+>
+> So is is possible for idle_cpu search to try checking target_cpu first and
+> then goto sliding window if not found.
+> Below diff works as expected in IBM POWER9 system and resolves the problem
+> of far wakeup upto large extent.
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index ff2e9b5c3ac5..fae035ce1162 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6161,6 +6161,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>          u64 time, cost;
+>          s64 delta;
+>          int cpu, limit, floor, target_tmp, nr = INT_MAX;
+> +       struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+>   
+>          this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
+>          if (!this_sd)
+> @@ -6198,16 +6199,22 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>   
+>          time = local_clock();
+>   
+> -       for_each_cpu_wrap(cpu, sched_domain_span(sd), target_tmp) {
+> +       cpumask_and(cpus, sched_domain_span(sd), &p->cpus_allowed);
+> +       for_each_cpu_wrap(cpu, cpu_smt_mask(target), target) {
+> +               __cpumask_clear_cpu(cpu, cpus);
+> +               if (available_idle_cpu(cpu))
+> +                       goto idle_cpu_exit;
+> +       }
+> +
+> +       for_each_cpu_wrap(cpu, cpus, target_tmp) {
+>                  per_cpu(next_cpu, target) = cpu;
+>                  if (!--nr)
+>                          return -1;
+> -               if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+> -                       continue;
+>                  if (available_idle_cpu(cpu))
+>                          break;
+>          }
+>   
+> +idle_cpu_exit:
+>          time = local_clock() - time;
+>          cost = this_sd->avg_scan_cost;
+>          delta = (s64)(time - cost) / 8;
+>
+>
+>
+> Best,
+> Parth
+How about calling select_idle_smt before select_idle_cpu from
+select_idle_sibling? That should have the same effect.
