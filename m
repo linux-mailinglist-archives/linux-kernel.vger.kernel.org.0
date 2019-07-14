@@ -2,131 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D94B68052
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 18:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA9CD6805E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 19:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfGNQ4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 12:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728065AbfGNQ4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 12:56:16 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EA9E20820;
-        Sun, 14 Jul 2019 16:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563123375;
-        bh=RMTijD8j9u04o0QzWP550yYZV06xE3DmWn/pI7xYJjI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h4CN5Ficqw0s9B95r2mqkdyY3Fs3BllXbpzSGaDJaANjdw6QxUvTXOEPM6dzIaFg3
-         bQO5hUHH/JnuV3/Q2tZZuDiz5qsrQpii9uOXVXisMrZDNPtyCo1XB4TYGWJOc3nd1O
-         51hGALe9NWvPlZzyR2uAlT0WU3oDXRCUwNynbqmA=
-Date:   Sun, 14 Jul 2019 17:56:10 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Gwendal Grignou <gwendal@chromium.org>
-Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, fabien.lahoudere@collabora.com,
-        dianders@chromium.org, linux-iio@vger.kernel.org,
+        id S1728645AbfGNRE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 13:04:28 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34663 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbfGNRE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 13:04:28 -0400
+Received: by mail-qk1-f195.google.com with SMTP id t8so10011038qkt.1;
+        Sun, 14 Jul 2019 10:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fifFmsPpP77u9wn9Bi+cLuzl2ooK3wT2NlpPGgetbqQ=;
+        b=GWHJnzpPem/cjvGASatoRSaiAB9BBZFDIYvrmGgVj2u5IOKLS6oWeaISk08IcyXBqr
+         u+3X/iaGGriix4NneQL2oDn9JKSyTy15JV7A9NhDJKZ+oj67U/227zpPqvi+TXct1iIh
+         JFjt2dX7sHcmuYAaXIGD8TH6tLu/MQyfBjAocsUbLGTFuVpXZBCo+nPJTvqrJ7bzSgiO
+         dfYfixQcRyMWvp0Ka/SDYKi9lYzXIexKhqIBbfvvz3c6UWmC1zbm76ShVCLsTwojrlwR
+         3TXKawqgYJXO0PJzlFc2AvoMyLX0fmsopvn1ISzgRhZBOhW/BFFgMfdnpSHebLz1OPfh
+         Q9RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fifFmsPpP77u9wn9Bi+cLuzl2ooK3wT2NlpPGgetbqQ=;
+        b=Pusu7WrQ4K9nJR4ljncRbjnrue9FFpPNh+xJ2SDRPm4SSDwLQBdcNDHYOuh4GvZe89
+         opDOh1Bam5pYkfy9YmSbBoRIU/0tFUBCgqZery5EaSAaPdcqFX+0WOnQ6Zsl/WqZ8wpb
+         mu9AoVgOX9rO/beYX9KFE35DQRwVYAFUuQuvMqceqP5j8GlIWVBMRP2iaCaJV7uLnpU+
+         PWYIQG1/GqAFsxoxwVL25YOQXKSkJJNh+aRvrZvidoJBmT7Hf0+bCAYLS5TfnVep2CHh
+         ZdZ96s863vcrkUX3kpio0mg1/snvO0E1rDjU0SVcpHBsJ+WaH2qkANy+KV3nkAnCGcw5
+         rpQA==
+X-Gm-Message-State: APjAAAVTYHAFDiSLe8RxUbUCwRoE8iiGpvIN0MkvMRvD/pL9m2Z++vM/
+        PhbmZwZ1mKkFXbd9XuvJ/A==
+X-Google-Smtp-Source: APXvYqwRcksKUUflgv6z/92SVoaC+5Bz+I7zLvAWB4U35H7rkxhjCawisbZ7vv2azG2VmUgQ+kl/Ow==
+X-Received: by 2002:ae9:ed4b:: with SMTP id c72mr13633944qkg.400.1563123867212;
+        Sun, 14 Jul 2019 10:04:27 -0700 (PDT)
+Received: from keyur-pc (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
+        by smtp.gmail.com with ESMTPSA id c45sm8017047qte.70.2019.07.14.10.04.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 14 Jul 2019 10:04:26 -0700 (PDT)
+Date:   Sun, 14 Jul 2019 13:04:24 -0400
+From:   Keyur Patel <iamkeyur96@gmail.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        Colin Ian King <colin.king@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] iio: cros_ec_accel_legacy: Add support for
- veyron-minnie
-Message-ID: <20190714175610.63db089e@archlinux>
-In-Reply-To: <20190628191711.23584-5-gwendal@chromium.org>
-References: <20190628191711.23584-1-gwendal@chromium.org>
-        <20190628191711.23584-5-gwendal@chromium.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [v4] staging: most: Delete an error message for a failed memory
+ allocation
+Message-ID: <20190714170424.GA3615@keyur-pc>
+References: <20190711175055.25157-1-iamkeyur96@gmail.com>
+ <20190714164126.3159-1-iamkeyur96@gmail.com>
+ <dd7867db-1089-7366-165f-6accba233c38@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd7867db-1089-7366-165f-6accba233c38@web.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 12:17:11 -0700
-Gwendal Grignou <gwendal@chromium.org> wrote:
+I think commit message is clear enough to understand why this is needed.
+You can send me what should I include in commit description and I will
+add and send it again. Otherwise, Greg can comment on this.
 
-> Veyron minnie embedded controller presents 2 accelerometers using an
-> older interface. Add function to query the data in cros_ec_accel.
+Thanks.
+
+
+On Sun, Jul 14, 2019 at 06:55:30PM +0200, Markus Elfring wrote:
+> > ---
+> > Changes in v4:
 > 
-> Verify accelerometers on veyron-minnie are presented and working.
+> I find this change log still incomplete.
 > 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/accel/cros_ec_accel_legacy.c | 40 ++++++++++++++++++++++--
->  1 file changed, 38 insertions(+), 2 deletions(-)
+> You have chosen to adjust the commit message once more.
+> (Some contributors might be also not satisfied with this variant.)
 > 
-> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-> index 2399f0cbdf2b..2c6196446d90 100644
-> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
-> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-> @@ -5,7 +5,7 @@
->   * Copyright 2017 Google, Inc
->   *
->   * This driver uses the memory mapper cros-ec interface to communicate
-> - * with the Chrome OS EC about accelerometer data.
-> + * with the Chrome OS EC about accelerometer data or older commands.
->   * Accelerometer access is presented through iio sysfs.
->   */
->  
-> @@ -33,6 +33,39 @@
->   */
->  #define ACCEL_LEGACY_NSCALE 9586168
->  
-> +static int cros_ec_accel_legacy_read_cmd(struct iio_dev *indio_dev,
-> +				  unsigned long scan_mask, s16 *data)
-> +{
-> +	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +	unsigned int i;
-> +	u8 sensor_num;
-> +
-> +	/*
-> +	 * Read all sensor data through a command.
-> +	 * Save sensor_num, it is assumed to stay.
-> +	 */
-> +	sensor_num = st->param.info.sensor_num;
-> +	st->param.cmd = MOTIONSENSE_CMD_DUMP;
-> +	st->param.dump.max_sensor_count = CROS_EC_SENSOR_LEGACY_NUM;
-> +	ret = cros_ec_motion_send_host_cmd(st,
-> +			sizeof(st->resp->dump) + CROS_EC_SENSOR_LEGACY_NUM *
-> +			sizeof(struct ec_response_motion_sensor_data));
-> +	st->param.info.sensor_num = sensor_num;
-> +	if (ret != 0) {
-> +		dev_warn(&indio_dev->dev, "Unable to read sensor data\n");
-> +		return ret;
-> +	}
-> +
-> +	for_each_set_bit(i, &scan_mask, indio_dev->masklength) {
-> +		*data = st->resp->dump.sensor[sensor_num].data[i] *
-> +			st->sign[i];
-> +		data++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int cros_ec_accel_legacy_read(struct iio_dev *indio_dev,
->  				     struct iio_chan_spec const *chan,
->  				     int *val, int *val2, long mask)
-> @@ -149,7 +182,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
->  	indio_dev->info = &cros_ec_accel_legacy_info;
->  	state = iio_priv(indio_dev);
->  
-> -	state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-> +	if (state->ec->cmd_readmem != NULL)
-> +		state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-> +	else
-> +		state->read_ec_sensors_data = cros_ec_accel_legacy_read_cmd;
->  
->  	indio_dev->channels = cros_ec_accel_legacy_channels;
->  	indio_dev->num_channels = ARRAY_SIZE(cros_ec_accel_legacy_channels);
-
+> Such a change requires to increase the corresponding patch version number,
+> doesn't it?
+> 
+> Regards,
+> Markus
