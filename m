@@ -2,225 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D3567D73
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 07:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC63567D81
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 07:34:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbfGNFCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 01:02:37 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46866 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfGNFCh (ORCPT
+        id S1727181AbfGNFeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 01:34:20 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34945 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfGNFeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 01:02:37 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v24so12977588ljg.13
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 22:02:35 -0700 (PDT)
+        Sun, 14 Jul 2019 01:34:19 -0400
+Received: by mail-io1-f67.google.com with SMTP id m24so28911720ioo.2;
+        Sat, 13 Jul 2019 22:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S+CLR//OyzM+aYJU6s+9PqtlXqSsNWfyLe2vWBf5AFs=;
-        b=MjE58dCrdguAUpOtUkl/U/NSXmQDiCHjFHuxcdtbD7ta0zup4jZpz0IAQVBfVA6kpf
-         V+VT+h7mQ+tMcmzLdabkCFPuen8WrxlT9Qeah1NFYVatiCTv/bARuUlzJzO+jUIuIRZu
-         nRut479R733DMsKhXl7DDGc8bgL1cXkE2SOB4=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hXh5ozn74UN4XShEgpOQmsoJF+KG3lfR0vzGIYzOL6s=;
+        b=pFO1zgjOmiZiFIfX4piXBvSxDJrFr5YafzNr5HTnZ+HdIgtNt4cIbQ4gdKwQNcHWsd
+         Ok0iYCEiDxbaBqetJUHE26ewW+2PYGUm2ca8B8v4IDoiWmrBjIi8/v9YiP70T78rmM6d
+         pAB8L59+ZORg160CFJ+X//2L7mmVaqKAlgNs3IRh9B9Cn/ybu2ZZUQe4xCu755HXVLen
+         rd2pKsjeBz5SOaVkpT4TecB3m5PFyhGRuuJmlp2xvtxODP4uTNIlO+egr138cmKmldbU
+         s/qoo5Dv/vCmC3zJ7BMOpJmLY1fKm3SKxNHtVGnUEF9x40xjlX70EQMEcysJyMkVb67j
+         mmZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S+CLR//OyzM+aYJU6s+9PqtlXqSsNWfyLe2vWBf5AFs=;
-        b=uBIHEWHSB/GigR/8kkqOY/BacNpUDE99pQiWQMl1mxqCANWOHrFOW3xtTLwIrrN3h/
-         sZTeJ0c/U/LBb22v+7gH9QJruagveczmwHRO27u1g8ZDww6dnvnqPsoBnW5/qPXfDCA4
-         s4cj6FNN9Br+7R5V4Qwil5UtkVbrECfd/vRVhpdOvgQT4s/yaSpIOE1e0sTd4+8Yb3xI
-         Wp9p7/K+jc9RzCCyNydRYEaL/dUcG64NdO+whCR2+M8W4quwL/iaZnQzVqpnkdMxPGIs
-         bjA1e5BfF43jI7A6Qz7OX2KqU2iT9nz5fRslp4hlnWqrPu1Nem4sz/IpIjLJv2VQ3Mgq
-         YKkw==
-X-Gm-Message-State: APjAAAXy3tq/1m1H76cONa4ol/aLONFD/MmRVBKN2Bny6crhGrIbBnoS
-        LTclz/+i5c1zNsqcerbyeNL5AsyV9FI=
-X-Google-Smtp-Source: APXvYqwlhQDQ9EAqrTT8NF6Rm+5/t3COkL76NM4NkIAqt0s31CEQtt/5Gv0AOGiuc0+e0tZdPHNuKw==
-X-Received: by 2002:a2e:85d7:: with SMTP id h23mr10435467ljj.53.1563080554094;
-        Sat, 13 Jul 2019 22:02:34 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id t63sm2326008lje.65.2019.07.13.22.02.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Jul 2019 22:02:32 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id d24so12966415ljg.8
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 22:02:32 -0700 (PDT)
-X-Received: by 2002:a2e:9b83:: with SMTP id z3mr9894882lji.84.1563080551761;
- Sat, 13 Jul 2019 22:02:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hXh5ozn74UN4XShEgpOQmsoJF+KG3lfR0vzGIYzOL6s=;
+        b=G9AUcBEdo1bYczKIt6TZHVqtCfipAQwm12+AA7NrT2jclLIaAtr/c1eAQpqHxHaIsO
+         U8ciiofH9DEWAym3/ocFfJJXmGSppQlt/f/6m2mx1qa5by2j2rZ4NEA7PGTggxh0FVgX
+         GGzXfJQIibq+afcath5u4d9h/f5TzxPSSx8yMAT3Nll2GHO82+GpEOZ8VoZeqjjyDKNy
+         KirxKVNsWjQbWd2uDOUX+GFL4nIKGY5kN7tjSZS1sZdmA/Q+0aF1yfsl0AxramzD+E7W
+         MzyYu+ISloOfHalw+H2Lm0czF1/WtvHdJIRr96pQahcSLtsEb832v5r8egVffe7s88i3
+         lCIA==
+X-Gm-Message-State: APjAAAXrOEwi83w6gXX7IbejZKSyx6ljd8mmL9Id08+KcIoFLD4hEcyB
+        unaTy8alt2Ze/+XTfRvhPtZXCC7sAbINzw==
+X-Google-Smtp-Source: APXvYqyhODjDVvOHrF+myPaHIjjWaMJFt7PbHKAQh5Cgj2ZJ0cPYzxf0lOhaB5LmxFnlNs+CRF1khw==
+X-Received: by 2002:a6b:7311:: with SMTP id e17mr19998203ioh.112.1563082458534;
+        Sat, 13 Jul 2019 22:34:18 -0700 (PDT)
+Received: from JATN (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id q13sm12271158ioh.36.2019.07.13.22.34.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 13 Jul 2019 22:34:17 -0700 (PDT)
+Date:   Sat, 13 Jul 2019 23:34:16 -0600
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/91] 4.19.59-stable review
+Message-ID: <20190714053416.GB2385@JATN>
+References: <20190712121621.422224300@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190713072855.GB23167@avx2> <20190713073209.GC23167@avx2> <87sgr9gsiq.fsf@xmission.com>
-In-Reply-To: <87sgr9gsiq.fsf@xmission.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 13 Jul 2019 22:02:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjTmLQuByQmd1-bqN+piBaEMiJCjwLQOXqO5A+mffTwpQ@mail.gmail.com>
-Message-ID: <CAHk-=wjTmLQuByQmd1-bqN+piBaEMiJCjwLQOXqO5A+mffTwpQ@mail.gmail.com>
-Subject: Re: [PATCH] proc: revert /proc/*/cmdline rewrite
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Izbyshev <izbyshev@ispras.ru>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Michal Kubecek <mkubecek@suse.cz>, shasta@toxcorp.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Security Officers <security@kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000000b394a058d9d0db5"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712121621.422224300@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000000b394a058d9d0db5
-Content-Type: text/plain; charset="UTF-8"
+On Fri, Jul 12, 2019 at 02:18:03PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.59 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.59-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-[ Apparently this thread wasn't on the lists, and I didn't even
-notice. So re-sending the patches ]
 
-On Sat, Jul 13, 2019 at 9:16 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Given that this fixes a regression and a bug.
->
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Compiled and booted with no regressions on my system.
 
-I'd much rather start from scratch. Like the attached.
-
-Alexey Izbyshev has a third patch that then limits the setproctitle()
-case to only allow looking into the env[] area, which looks
-reasonable.
-
-           Linus
-
---0000000000000b394a058d9d0db5
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-proc-pid-cmdline-remove-all-the-special-cases.patch"
-Content-Disposition: attachment; 
-	filename="0001-proc-pid-cmdline-remove-all-the-special-cases.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jy2hrimq0>
-X-Attachment-Id: f_jy2hrimq0
-
-RnJvbSA1NTYzYTJmYjM5ZmUwYWQ0MmYyMzlkMmY1ODMxMjhkNTAxNTUwMDJiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFNhdCwgMTMgSnVsIDIwMTkgMTM6NDA6MTMgLTA3MDAKU3ViamVjdDog
-W1BBVENIIDEvMl0gL3Byb2MvPHBpZD4vY21kbGluZTogcmVtb3ZlIGFsbCB0aGUgc3BlY2lhbCBj
-YXNlcwoKU3RhcnQgb2ZmIHdpdGggYSBjbGVhbiBzbGF0ZSB0aGF0IG9ubHkgcmVhZHMgZXhhY3Rs
-eSBmcm9tIGFyZ19zdGFydCB0bwphcmdfZW5kLCB3aXRob3V0IGFueSBvZGRpdGllcy4KCldlJ2xs
-IGFkZCBiYWNrIHRoZSBzZXRwcm9jdGl0bGUoKSBzcGVjaWFsIGNhc2UgdmVyeSBkaWZmZXJlbnRs
-eSBpbiB0aGUKbmV4dCBjb21taXQuCgpTaWduZWQtb2ZmLWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9y
-dmFsZHNAbGludXgtZm91bmRhdGlvbi5vcmc+Ci0tLQogZnMvcHJvYy9iYXNlLmMgfCA3MSArKysr
-KystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNo
-YW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgNjMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMv
-cHJvYy9iYXNlLmMgYi9mcy9wcm9jL2Jhc2UuYwppbmRleCAyNTVmNjc1NGM3MGQuLjgwNDBmOWQx
-Y2YwNyAxMDA2NDQKLS0tIGEvZnMvcHJvYy9iYXNlLmMKKysrIGIvZnMvcHJvYy9iYXNlLmMKQEAg
-LTIxMiw3ICsyMTIsNyBAQCBzdGF0aWMgaW50IHByb2Nfcm9vdF9saW5rKHN0cnVjdCBkZW50cnkg
-KmRlbnRyeSwgc3RydWN0IHBhdGggKnBhdGgpCiBzdGF0aWMgc3NpemVfdCBnZXRfbW1fY21kbGlu
-ZShzdHJ1Y3QgbW1fc3RydWN0ICptbSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAkJCSAgICAgIHNpemVf
-dCBjb3VudCwgbG9mZl90ICpwcG9zKQogewotCXVuc2lnbmVkIGxvbmcgYXJnX3N0YXJ0LCBhcmdf
-ZW5kLCBlbnZfc3RhcnQsIGVudl9lbmQ7CisJdW5zaWduZWQgbG9uZyBhcmdfc3RhcnQsIGFyZ19l
-bmQ7CiAJdW5zaWduZWQgbG9uZyBwb3MsIGxlbjsKIAljaGFyICpwYWdlOwogCkBAIC0yMjMsMzYg
-KzIyMywxOCBAQCBzdGF0aWMgc3NpemVfdCBnZXRfbW1fY21kbGluZShzdHJ1Y3QgbW1fc3RydWN0
-ICptbSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlzcGluX2xvY2soJm1tLT5hcmdfbG9jayk7CiAJYXJn
-X3N0YXJ0ID0gbW0tPmFyZ19zdGFydDsKIAlhcmdfZW5kID0gbW0tPmFyZ19lbmQ7Ci0JZW52X3N0
-YXJ0ID0gbW0tPmVudl9zdGFydDsKLQllbnZfZW5kID0gbW0tPmVudl9lbmQ7CiAJc3Bpbl91bmxv
-Y2soJm1tLT5hcmdfbG9jayk7CiAKIAlpZiAoYXJnX3N0YXJ0ID49IGFyZ19lbmQpCiAJCXJldHVy
-biAwOwogCi0JLyoKLQkgKiBXZSBoYXZlIHRyYWRpdGlvbmFsbHkgYWxsb3dlZCB0aGUgdXNlciB0
-byByZS13cml0ZQotCSAqIHRoZSBhcmd1bWVudCBzdHJpbmdzIGFuZCBvdmVyZmxvdyB0aGUgZW5k
-IHJlc3VsdAotCSAqIGludG8gdGhlIGVudmlyb25tZW50IHNlY3Rpb24uIEJ1dCBvbmx5IGRvIHRo
-YXQgaWYKLQkgKiB0aGUgZW52aXJvbm1lbnQgYXJlYSBpcyBjb250aWd1b3VzIHRvIHRoZSBhcmd1
-bWVudHMuCi0JICovCi0JaWYgKGVudl9zdGFydCAhPSBhcmdfZW5kIHx8IGVudl9zdGFydCA+PSBl
-bnZfZW5kKQotCQllbnZfc3RhcnQgPSBlbnZfZW5kID0gYXJnX2VuZDsKLQotCS8qIC4uIGFuZCBs
-aW1pdCBpdCB0byBhIG1heGltdW0gb2Ygb25lIHBhZ2Ugb2Ygc2xvcCAqLwotCWlmIChlbnZfZW5k
-ID49IGFyZ19lbmQgKyBQQUdFX1NJWkUpCi0JCWVudl9lbmQgPSBhcmdfZW5kICsgUEFHRV9TSVpF
-IC0gMTsKLQogCS8qIFdlJ3JlIG5vdCBnb2luZyB0byBjYXJlIGlmICIqcHBvcyIgaGFzIGhpZ2gg
-Yml0cyBzZXQgKi8KLQlwb3MgPSBhcmdfc3RhcnQgKyAqcHBvczsKLQogCS8qIC4uIGJ1dCB3ZSBk
-byBjaGVjayB0aGUgcmVzdWx0IGlzIGluIHRoZSBwcm9wZXIgcmFuZ2UgKi8KLQlpZiAocG9zIDwg
-YXJnX3N0YXJ0IHx8IHBvcyA+PSBlbnZfZW5kKQorCXBvcyA9IGFyZ19zdGFydCArICpwcG9zOwor
-CWlmIChwb3MgPCBhcmdfc3RhcnQgfHwgcG9zID49IGFyZ19lbmQpCiAJCXJldHVybiAwOwotCi0J
-LyogLi4gYW5kIHdlIG5ldmVyIGdvIHBhc3QgZW52X2VuZCAqLwotCWlmIChlbnZfZW5kIC0gcG9z
-IDwgY291bnQpCi0JCWNvdW50ID0gZW52X2VuZCAtIHBvczsKKwlpZiAoY291bnQgPiBhcmdfZW5k
-IC0gcG9zKQorCQljb3VudCA9IGFyZ19lbmQgLSBwb3M7CiAKIAlwYWdlID0gKGNoYXIgKilfX2dl
-dF9mcmVlX3BhZ2UoR0ZQX0tFUk5FTCk7CiAJaWYgKCFwYWdlKQpAQCAtMjYyLDQ4ICsyNDQsMTEg
-QEAgc3RhdGljIHNzaXplX3QgZ2V0X21tX2NtZGxpbmUoc3RydWN0IG1tX3N0cnVjdCAqbW0sIGNo
-YXIgX191c2VyICpidWYsCiAJd2hpbGUgKGNvdW50KSB7CiAJCWludCBnb3Q7CiAJCXNpemVfdCBz
-aXplID0gbWluX3Qoc2l6ZV90LCBQQUdFX1NJWkUsIGNvdW50KTsKLQkJbG9uZyBvZmZzZXQ7CiAK
-LQkJLyoKLQkJICogQXJlIHdlIGFscmVhZHkgc3RhcnRpbmcgcGFzdCB0aGUgb2ZmaWNpYWwgZW5k
-PwotCQkgKiBXZSBhbHdheXMgaW5jbHVkZSB0aGUgbGFzdCBieXRlIHRoYXQgaXMgKnN1cHBvc2Vk
-KgotCQkgKiB0byBiZSBOVUwKLQkJICovCi0JCW9mZnNldCA9IChwb3MgPj0gYXJnX2VuZCkgPyBw
-b3MgLSBhcmdfZW5kICsgMSA6IDA7Ci0KLQkJZ290ID0gYWNjZXNzX3JlbW90ZV92bShtbSwgcG9z
-IC0gb2Zmc2V0LCBwYWdlLCBzaXplICsgb2Zmc2V0LCBGT0xMX0FOT04pOwotCQlpZiAoZ290IDw9
-IG9mZnNldCkKKwkJZ290ID0gYWNjZXNzX3JlbW90ZV92bShtbSwgcG9zLCBwYWdlLCBzaXplLCBG
-T0xMX0FOT04pOworCQlpZiAoZ290IDw9IDApCiAJCQlicmVhazsKLQkJZ290IC09IG9mZnNldDsK
-LQotCQkvKiBEb24ndCB3YWxrIHBhc3QgYSBOVUwgY2hhcmFjdGVyIG9uY2UgeW91IGhpdCBhcmdf
-ZW5kICovCi0JCWlmIChwb3MgKyBnb3QgPj0gYXJnX2VuZCkgewotCQkJaW50IG4gPSAwOwotCi0J
-CQkvKgotCQkJICogSWYgd2Ugc3RhcnRlZCBiZWZvcmUgJ2FyZ19lbmQnIGJ1dCBlbmRlZCB1cAot
-CQkJICogYXQgb3IgYWZ0ZXIgaXQsIHdlIHN0YXJ0IHRoZSBOVUwgY2hhcmFjdGVyCi0JCQkgKiBj
-aGVjayBhdCBhcmdfZW5kLTEgKHdoZXJlIHdlIGV4cGVjdCB0aGUgbm9ybWFsCi0JCQkgKiBFT0Yg
-dG8gYmUpLgotCQkJICoKLQkJCSAqIE5PVEUhIFRoaXMgaXMgc21hbGxlciB0aGFuICdnb3QnLCBi
-ZWNhdXNlCi0JCQkgKiBwb3MgKyBnb3QgPj0gYXJnX2VuZAotCQkJICovCi0JCQlpZiAocG9zIDwg
-YXJnX2VuZCkKLQkJCQluID0gYXJnX2VuZCAtIHBvcyAtIDE7Ci0KLQkJCS8qIEN1dCBvZmYgYXQg
-Zmlyc3QgTlVMIGFmdGVyICduJyAqLwotCQkJZ290ID0gbiArIHN0cm5sZW4ocGFnZStuLCBvZmZz
-ZXQrZ290LW4pOwotCQkJaWYgKGdvdCA8IG9mZnNldCkKLQkJCQlicmVhazsKLQkJCWdvdCAtPSBv
-ZmZzZXQ7Ci0KLQkJCS8qIEluY2x1ZGUgdGhlIE5VTCBpZiBpdCBleGlzdGVkICovCi0JCQlpZiAo
-Z290IDwgc2l6ZSkKLQkJCQlnb3QrKzsKLQkJfQotCi0JCWdvdCAtPSBjb3B5X3RvX3VzZXIoYnVm
-LCBwYWdlK29mZnNldCwgZ290KTsKKwkJZ290IC09IGNvcHlfdG9fdXNlcihidWYsIHBhZ2UsIGdv
-dCk7CiAJCWlmICh1bmxpa2VseSghZ290KSkgewogCQkJaWYgKCFsZW4pCiAJCQkJbGVuID0gLUVG
-QVVMVDsKLS0gCjIuMjIuMC4xOTMuZzA4MzkzNWY5YTIKCg==
---0000000000000b394a058d9d0db5
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0002-proc-pid-cmdline-add-back-the-setproctitle-special-c.patch"
-Content-Disposition: attachment; 
-	filename="0002-proc-pid-cmdline-add-back-the-setproctitle-special-c.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jy2hrlpn1>
-X-Attachment-Id: f_jy2hrlpn1
-
-RnJvbSA2M2RkMTQ5OTljNmIyMTBmYmUzM2Y3ODBmZWM1M2ZhZWZhODY3ZDk1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFNhdCwgMTMgSnVsIDIwMTkgMTQ6Mjc6MTQgLTA3MDAKU3ViamVjdDog
-W1BBVENIIDIvMl0gL3Byb2MvPHBpZD4vY21kbGluZTogYWRkIGJhY2sgdGhlIHNldHByb2N0aXRs
-ZSgpIHNwZWNpYWwKIGNhc2UKClRoaXMgbWFrZXMgdGhlIHNldHByb2N0aXRsZSgpIHNwZWNpYWwg
-Y2FzZSB2ZXJ5IGV4cGxpY2l0IGluZGVlZCwgYW5kCmhhbmRsZXMgaXQgd2l0aCBhIHNlcGFyYXRl
-IGhlbHBlciBmdW5jdGlvbiBlbnRpcmVseS4KClRoaXMgbWFrZXMgdGhlIGxvZ2ljIGFib3V0IHdo
-ZW4gd2UgdXNlIHRoZSBzdHJpbmcgbGVuZ3RocyBldGMgbXVjaCBtb3JlCm9idmlvdXMsIGFuZCBt
-YWtlcyBpdCBlYXN5IHRvIHNlZSB3aGF0IHdlIGRvLgoKWyBGaXhlZCBmb3IgbWlzc2luZyAnY291
-bnQnIGNoZWNrIG5vdGVkIGJ5IEFsZXhleSBJemJ5c2hldiBdClNpZ25lZC1vZmYtYnk6IExpbnVz
-IFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCiBmcy9wcm9jL2Jh
-c2UuYyB8IDU0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KystCiAxIGZpbGUgY2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlm
-ZiAtLWdpdCBhL2ZzL3Byb2MvYmFzZS5jIGIvZnMvcHJvYy9iYXNlLmMKaW5kZXggODA0MGY5ZDFj
-ZjA3Li4zYWQzZmY0Y2MxMmMgMTAwNjQ0Ci0tLSBhL2ZzL3Byb2MvYmFzZS5jCisrKyBiL2ZzL3By
-b2MvYmFzZS5jCkBAIC0yMDksMTIgKzIwOSw1NCBAQCBzdGF0aWMgaW50IHByb2Nfcm9vdF9saW5r
-KHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgc3RydWN0IHBhdGggKnBhdGgpCiAJcmV0dXJuIHJlc3Vs
-dDsKIH0KIAorLyoKKyAqIElmIHRoZSB1c2VyIHVzZWQgc2V0cHJvY3RpdGxlKCksIHdlIGp1c3Qg
-Z2V0IHRoZSBzdHJpbmcgZnJvbQorICogdXNlciBzcGFjZSBhdCBhcmdfc3RhcnQsIGFuZCBsaW1p
-dCBpdCB0byBhIG1heGltdW0gb2Ygb25lIHBhZ2UuCisgKi8KK3N0YXRpYyBzc2l6ZV90IGdldF9t
-bV9wcm9jdGl0bGUoc3RydWN0IG1tX3N0cnVjdCAqbW0sIGNoYXIgX191c2VyICpidWYsCisJCQkJ
-c2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3MsCisJCQkJdW5zaWduZWQgbG9uZyBhcmdfc3RhcnQp
-Cit7CisJdW5zaWduZWQgbG9uZyBwb3MgPSAqcHBvczsKKwljaGFyICpwYWdlOworCWludCByZXQs
-IGdvdDsKKworCWlmIChwb3MgPj0gUEFHRV9TSVpFKQorCQlyZXR1cm4gMDsKKworCXBhZ2UgPSAo
-Y2hhciAqKV9fZ2V0X2ZyZWVfcGFnZShHRlBfS0VSTkVMKTsKKwlpZiAoIXBhZ2UpCisJCXJldHVy
-biAtRU5PTUVNOworCisJcmV0ID0gMDsKKwlnb3QgPSBhY2Nlc3NfcmVtb3RlX3ZtKG1tLCBhcmdf
-c3RhcnQsIHBhZ2UsIFBBR0VfU0laRSwgRk9MTF9BTk9OKTsKKwlpZiAoZ290ID4gMCkgeworCQlp
-bnQgbGVuID0gc3RybmxlbihwYWdlLCBnb3QpOworCisJCS8qIEluY2x1ZGUgdGhlIE5VTCBjaGFy
-YWN0ZXIgaWYgaXQgd2FzIGZvdW5kICovCisJCWlmIChsZW4gPCBnb3QpCisJCQlsZW4rKzsKKwor
-CQlpZiAobGVuID4gcG9zKSB7CisJCQlsZW4gLT0gcG9zOworCQkJaWYgKGxlbiA+IGNvdW50KQor
-CQkJCWxlbiA9IGNvdW50OworCQkJbGVuIC09IGNvcHlfdG9fdXNlcihidWYsIHBhZ2UrcG9zLCBs
-ZW4pOworCQkJaWYgKCFsZW4pCisJCQkJbGVuID0gLUVGQVVMVDsKKwkJCXJldCA9IGxlbjsKKwkJ
-fQorCX0KKwlmcmVlX3BhZ2UoKHVuc2lnbmVkIGxvbmcpcGFnZSk7CisJcmV0dXJuIHJldDsKK30K
-Kwogc3RhdGljIHNzaXplX3QgZ2V0X21tX2NtZGxpbmUoc3RydWN0IG1tX3N0cnVjdCAqbW0sIGNo
-YXIgX191c2VyICpidWYsCiAJCQkgICAgICBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcykKIHsK
-IAl1bnNpZ25lZCBsb25nIGFyZ19zdGFydCwgYXJnX2VuZDsKIAl1bnNpZ25lZCBsb25nIHBvcywg
-bGVuOwotCWNoYXIgKnBhZ2U7CisJY2hhciAqcGFnZSwgYzsKIAogCS8qIENoZWNrIGlmIHByb2Nl
-c3Mgc3Bhd25lZCBmYXIgZW5vdWdoIHRvIGhhdmUgY21kbGluZS4gKi8KIAlpZiAoIW1tLT5lbnZf
-ZW5kKQpAQCAtMjI4LDYgKzI3MCwxNiBAQCBzdGF0aWMgc3NpemVfdCBnZXRfbW1fY21kbGluZShz
-dHJ1Y3QgbW1fc3RydWN0ICptbSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoYXJnX3N0YXJ0ID49
-IGFyZ19lbmQpCiAJCXJldHVybiAwOwogCisJLyoKKwkgKiBNYWdpY2FsIHNwZWNpYWwgY2FzZTog
-aWYgdGhlIGFyZ3ZbXSBlbmQgYnl0ZSBpcyBub3QKKwkgKiB6ZXJvLCB0aGUgdXNlciBoYXMgb3Zl
-cndyaXR0ZW4gaXQgd2l0aCBzZXRwcm9jdGl0bGUoMykuCisJICoKKwkgKiBQb3NzaWJsZSBmdXR1
-cmUgZW5oYW5jZW1lbnQ6IGRvIHRoaXMgb25seSBvbmNlIHdoZW4KKwkgKiBwb3MgaXMgMCwgYW5k
-IHNldCBhIGZsYWcgaW4gdGhlICdzdHJ1Y3QgZmlsZScuCisJICovCisJaWYgKGFjY2Vzc19yZW1v
-dGVfdm0obW0sIGFyZ19lbmQtMSwgJmMsIDEsIEZPTExfQU5PTikgPT0gMSAmJiBjKQorCQlyZXR1
-cm4gZ2V0X21tX3Byb2N0aXRsZShtbSwgYnVmLCBjb3VudCwgcHBvcywgYXJnX3N0YXJ0KTsKKwog
-CS8qIFdlJ3JlIG5vdCBnb2luZyB0byBjYXJlIGlmICIqcHBvcyIgaGFzIGhpZ2ggYml0cyBzZXQg
-Ki8KIAkvKiAuLiBidXQgd2UgZG8gY2hlY2sgdGhlIHJlc3VsdCBpcyBpbiB0aGUgcHJvcGVyIHJh
-bmdlICovCiAJcG9zID0gYXJnX3N0YXJ0ICsgKnBwb3M7Ci0tIAoyLjIyLjAuMTkzLmcwODM5MzVm
-OWEyCgo=
---0000000000000b394a058d9d0db5--
+Cheers,
+Kelsey
