@@ -2,144 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 020F167C9C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 03:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E5A67C99
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2019 03:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfGNBSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 13 Jul 2019 21:18:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35154 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbfGNBSJ (ORCPT
+        id S1728132AbfGNBRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 13 Jul 2019 21:17:51 -0400
+Received: from mail-lf1-f51.google.com ([209.85.167.51]:44711 "EHLO
+        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbfGNBRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Jul 2019 21:18:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6E1EoEl079200;
-        Sun, 14 Jul 2019 01:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=gnStV7SBtyBELVgdhWru5ZF/zwLQRRjtxakJR6QK8O4=;
- b=LEjRHErOUwlLHTSiY35a9/RWgVlntWcQEXHjz41W6JsOj1fltQqrqIidgrzVOp4pHh+6
- oJu2jP99ATK1ItUm55tSIWIDhSwIHgyzB4bxR/Zc/4n+rKDgdQuhBLFUY/r5dXvReqwO
- nN7pTUZnim4bbV2ABiPjxnAcdiy/GJiEAGM2Ex0a7BhIrXp0T1dhvQGKBaJbrCYfEeP0
- cVsN29inpLK7+vPi/6/hm3e9V6fbHTFnga8rFqbvjw5JfWd/MlGFE0pZujhYy2RgoyYq
- aSCy24tFdUiGBZN8lzBaCN5NcOhfcfj3PorxoraCvWgelXEsOHh0kvu9Unsu9BOq4sz2 yQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2tq7xqhu07-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 14 Jul 2019 01:16:19 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6E1EJt4138593;
-        Sun, 14 Jul 2019 01:16:18 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2tq4dstp55-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 14 Jul 2019 01:16:18 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6E1GAde016937;
-        Sun, 14 Jul 2019 01:16:10 GMT
-Received: from Subhras-MacBook-Pro.local (/103.87.143.145)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 13 Jul 2019 18:16:10 -0700
-Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
-To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
- <20190627012919.4341-6-subhra.mazumdar@oracle.com>
- <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
- <59ab08d5-8b7c-00b9-230b-7c0b307a675f@oracle.com>
- <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
- <12402fea-7b87-8c4d-9485-53f973c38654@oracle.com>
- <aac9f826-ab73-2754-4a7b-7d948f1edf92@linux.ibm.com>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <b3c238bc-c094-bbdf-5273-0de9e55f7a15@oracle.com>
-Date:   Sun, 14 Jul 2019 06:46:01 +0530
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Sat, 13 Jul 2019 21:17:50 -0400
+Received: by mail-lf1-f51.google.com with SMTP id r15so3847798lfm.11
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 18:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f/ZbMKpaeDfR0c6CluIR2RGEThcJc265Nfb8zCnn6MQ=;
+        b=JFAS9tE4paeCtL/HDO7+w783I/1T0SiLhmNcOpTVr2Heh5JE7iPzUXsY4VP8KwcaKM
+         vJSrnpHsO4JGdgNhGCw7jHJlrdrLuxe4RT9O3WBDvxWv1nJ1lG1Jl8Vaz51tC0c8rjCR
+         ewi9P8bFkO1yo+gtxWxrpgluzYMFNaW7/h1r8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f/ZbMKpaeDfR0c6CluIR2RGEThcJc265Nfb8zCnn6MQ=;
+        b=LhrkHc8UcV9bPmxSTcWCptR1C4w3NIn9AWZKo1jbOfTbxLW/1wcaJd7UevwwnLUz8C
+         LGqObFOokMMjQIHe+UYkUZ0ZuJ33Z2+oLtQdwIuhh2/CAYdsrhaB2zvmKtDrpzWSk1Ic
+         sg97iCt1p6JdYIaYAvZ5cogWuY0jVGWeJma/+/17sDWXh08rGEPiJa8wzXdDAs+YwdJT
+         SHDOJJEQx8kiMRxVnWM6bYus3dtyA5aDZgWQZ2HFH/xFmTF17ka9dptaBh7+HMFM4GcV
+         ZV7Rlb5BDYjfMNYltV3FPTwnUpNPuQTfXV9pD3nsEIpekwsRoytSIdzobQEmAvjG7CbN
+         TP9Q==
+X-Gm-Message-State: APjAAAVH7qzrWO/dxKO37GKWZiwokMtjFQT2HXWTRH+mB/ayGd1mdWYT
+        w+P0sqGxPlA6najgZaMmPZK5NZ7cQwc=
+X-Google-Smtp-Source: APXvYqxppTKl8MniKuoUjZ6ppyAq7WvWKY2W1AgQW8a+FC8tRT2Dxl9Hu1rTH+yq6/IT9rnsqWPaQQ==
+X-Received: by 2002:a19:2297:: with SMTP id i145mr7980190lfi.97.1563067067435;
+        Sat, 13 Jul 2019 18:17:47 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id h129sm1684196lfd.74.2019.07.13.18.17.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 13 Jul 2019 18:17:46 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id z28so12810138ljn.4
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2019 18:17:46 -0700 (PDT)
+X-Received: by 2002:a2e:9ec9:: with SMTP id h9mr9461591ljk.90.1563067065731;
+ Sat, 13 Jul 2019 18:17:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <aac9f826-ab73-2754-4a7b-7d948f1edf92@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9317 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907140013
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9317 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907140014
+References: <20190712180205.GA5347@magnolia> <CAHk-=wiK8_nYEM2B8uvPELdUziFhp_+DqPN=cNSharQqpBZ6qg@mail.gmail.com>
+ <20190713040728.GB5347@magnolia>
+In-Reply-To: <20190713040728.GB5347@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 13 Jul 2019 18:17:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEsUC1uLdYCX6rxGxRcgzKS64e3Y8h5HVLvnpGSj5pJA@mail.gmail.com>
+Message-ID: <CAHk-=wgEsUC1uLdYCX6rxGxRcgzKS64e3Y8h5HVLvnpGSj5pJA@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: new features for 5.3
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 12, 2019 at 9:07 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> Doh, it turns out I was merging against the same HEAD as my last two
+> pull requests because I forgot to re-pull.  Sorry about that.  It's been
+> too long of a week. :/
 
-On 7/4/19 6:04 PM, Parth Shah wrote:
-> Same experiment with hackbench and with perf analysis shows increase in L1
-> cache miss rate with these patches
-> (Lower is better)
->                            Baseline(%)   Patch(%)
->   ----------------------- ------------- -----------
->    Total Cache miss rate         17.01   19(-11%)
->    L1 icache miss rate            5.45   6.7(-22%)
->
->
->
-> So is is possible for idle_cpu search to try checking target_cpu first and
-> then goto sliding window if not found.
-> Below diff works as expected in IBM POWER9 system and resolves the problem
-> of far wakeup upto large extent.
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index ff2e9b5c3ac5..fae035ce1162 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6161,6 +6161,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->          u64 time, cost;
->          s64 delta;
->          int cpu, limit, floor, target_tmp, nr = INT_MAX;
-> +       struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
->   
->          this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
->          if (!this_sd)
-> @@ -6198,16 +6199,22 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->   
->          time = local_clock();
->   
-> -       for_each_cpu_wrap(cpu, sched_domain_span(sd), target_tmp) {
-> +       cpumask_and(cpus, sched_domain_span(sd), &p->cpus_allowed);
-> +       for_each_cpu_wrap(cpu, cpu_smt_mask(target), target) {
-> +               __cpumask_clear_cpu(cpu, cpus);
-> +               if (available_idle_cpu(cpu))
-> +                       goto idle_cpu_exit;
-> +       }
-> +
-> +       for_each_cpu_wrap(cpu, cpus, target_tmp) {
->                  per_cpu(next_cpu, target) = cpu;
->                  if (!--nr)
->                          return -1;
-> -               if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-> -                       continue;
->                  if (available_idle_cpu(cpu))
->                          break;
->          }
->   
-> +idle_cpu_exit:
->          time = local_clock() - time;
->          cost = this_sd->avg_scan_cost;
->          delta = (s64)(time - cost) / 8;
->
->
->
-> Best,
-> Parth
-How about calling select_idle_smt before select_idle_cpu from
-select_idle_sibling? That should have the same effect.
+Heh, no problem, I was just surprised when my merge result didn't
+match expectations.
+
+As mentioned, it wasn't like the conflict was complicated, only unexpected.
+
+                     Linus
