@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC4068C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3BB268C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731739AbfGONte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:49:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33350 "EHLO mail.kernel.org"
+        id S1731004AbfGONtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:49:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731221AbfGONtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:49:31 -0400
+        id S1731768AbfGONtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:49:39 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52A4220651;
-        Mon, 15 Jul 2019 13:49:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C2420651;
+        Mon, 15 Jul 2019 13:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198570;
-        bh=54ZnzL+8SoVLe/3MINZAGUUkJbufwS1/sDAcJ5LYoUc=;
+        s=default; t=1563198579;
+        bh=5ctXPbqLhnzjA82zzM+P5ypMCtc2pbYr38HOAX2NH6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qviSsH0lPzMk8hXVStTrAWCcnTtmn2VdyRh8DbH0YfyJ+X75wj9oGWvQOyXGLmoia
-         nwbxyzJIb8+n+ld0PZxKEKBcARCqh/8uNP4UMdZNYbYasV7MoUX/JxWk7NtB1eZHoy
-         RaW5AfH5tM/Lq/+e31aWiyv/yR/j4nPCLJLXjcCQ=
+        b=Rr56TrdvRQCg8CcJFkJaoa5CR/I70yI8e8LFBQ0bw1Dc1K8MPFvJtijGv/0FGNOuv
+         W1jaT3zHBhV1cJug3zE8k13gXjUfHT18sSvPy0Tg7PKHCYB+Ub8uUPl81s81qTgliq
+         8YtuDmxxP6gGUDv/srelPPRpsvEGec7brlVwTlpw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Joseph Yasi <joe.yasi@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 047/249] Revert "e1000e: fix cyclic resets at link up with active tx"
-Date:   Mon, 15 Jul 2019 09:43:32 -0400
-Message-Id: <20190715134655.4076-47-sashal@kernel.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 050/249] media: mc-device.c: don't memset __user pointer contents
+Date:   Mon, 15 Jul 2019 09:43:35 -0400
+Message-Id: <20190715134655.4076-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -46,82 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit caff422ea81e144842bc44bab408d85ac449377b ]
+[ Upstream commit 518fa4e0e0da97ea2e17c95ab57647ce748a96e2 ]
 
-This reverts commit 0f9e980bf5ee1a97e2e401c846b2af989eb21c61.
+You can't memset the contents of a __user pointer. Instead, call copy_to_user to
+copy links.reserved (which is zeroed) to the user memory.
 
-That change cased false-positive warning about hardware hang:
+This fixes this sparse warning:
 
-e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
-IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
-e1000e 0000:00:1f.6 eth0: Detected Hardware Unit Hang:
-   TDH                  <0>
-   TDT                  <1>
-   next_to_use          <1>
-   next_to_clean        <0>
-buffer_info[next_to_clean]:
-   time_stamp           <fffba7a7>
-   next_to_watch        <0>
-   jiffies              <fffbb140>
-   next_to_watch.status <0>
-MAC Status             <40080080>
-PHY Status             <7949>
-PHY 1000BASE-T Status  <0>
-PHY Extended Status    <3000>
-PCI Status             <10>
-e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
+SPARSE:drivers/media/mc/mc-device.c drivers/media/mc/mc-device.c:521:16:  warning: incorrect type in argument 1 (different address spaces)
 
-Besides warning everything works fine.
-Original issue will be fixed property in following patch.
+Fixes: f49308878d720 ("media: media_device_enum_links32: clean a reserved field")
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reported-by: Joseph Yasi <joe.yasi@gmail.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203175
-Tested-by: Joseph Yasi <joe.yasi@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/media/media-device.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 0e09bede42a2..e21b2ffd1e92 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -5308,13 +5308,8 @@ static void e1000_watchdog_task(struct work_struct *work)
- 			/* 8000ES2LAN requires a Rx packet buffer work-around
- 			 * on link down event; reset the controller to flush
- 			 * the Rx packet buffer.
--			 *
--			 * If the link is lost the controller stops DMA, but
--			 * if there is queued Tx work it cannot be done.  So
--			 * reset the controller to flush the Tx packet buffers.
- 			 */
--			if ((adapter->flags & FLAG_RX_NEEDS_RESTART) ||
--			    e1000_desc_unused(tx_ring) + 1 < tx_ring->count)
-+			if (adapter->flags & FLAG_RX_NEEDS_RESTART)
- 				adapter->flags |= FLAG_RESTART_NOW;
- 			else
- 				pm_schedule_suspend(netdev->dev.parent,
-@@ -5337,6 +5332,14 @@ static void e1000_watchdog_task(struct work_struct *work)
- 	adapter->gotc_old = adapter->stats.gotc;
- 	spin_unlock(&adapter->stats64_lock);
+diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+index b9bb4904bba1..e19df5165e78 100644
+--- a/drivers/media/media-device.c
++++ b/drivers/media/media-device.c
+@@ -510,8 +510,9 @@ static long media_device_enum_links32(struct media_device *mdev,
+ 	if (ret)
+ 		return ret;
  
-+	/* If the link is lost the controller stops DMA, but
-+	 * if there is queued Tx work it cannot be done.  So
-+	 * reset the controller to flush the Tx packet buffers.
-+	 */
-+	if (!netif_carrier_ok(netdev) &&
-+	    (e1000_desc_unused(tx_ring) + 1 < tx_ring->count))
-+		adapter->flags |= FLAG_RESTART_NOW;
-+
- 	/* If reset is necessary, do it outside of interrupt context. */
- 	if (adapter->flags & FLAG_RESTART_NOW) {
- 		schedule_work(&adapter->reset_task);
+-	memset(ulinks->reserved, 0, sizeof(ulinks->reserved));
+-
++	if (copy_to_user(ulinks->reserved, links.reserved,
++			 sizeof(ulinks->reserved)))
++		return -EFAULT;
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
