@@ -2,87 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F8C695D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B856E6960F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389866AbfGOPBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:01:05 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36006 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389567AbfGOPBD (ORCPT
+        id S2390473AbfGOPCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:02:06 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43696 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389254AbfGOPCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:01:03 -0400
-Received: by mail-io1-f65.google.com with SMTP id o9so34624969iom.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:01:02 -0700 (PDT)
+        Mon, 15 Jul 2019 11:02:03 -0400
+Received: by mail-io1-f66.google.com with SMTP id k20so34528369ios.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=9illoX/lgZgRmB149QSdUSTaY6vK5Drr6t7JdhNt6/U=;
-        b=DYrtLb7sMB46zxNRJnG85/ftn6zE7TFfjTN+5wQYTnY+QHAqScIXon2svnkersHAFM
-         1Xt023H9TNITyB9es+v0i3uxdSBQs7k/aSgH77UYwxi+alo1MNWQswVKqQ6eopKF1LIZ
-         NT8URj+mVL/DFnYl/Muz3CQgjN2adCpdRSD5HnjTDZV6yQNc0gnUu5nr7umVAlbVymQI
-         csKl3kN6GiwinqBddVagShTG9XJfDZupWVw3FPLpe3iCiJsqmuOMxAVttKeN4Xmw0gE4
-         gG8FPB2e8OvvZYz4/qQ9JYMCpEkbX4+WHPbgqrdMjGi6V80YGO6hytcCGvr356uZf0fh
-         Rz8Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+kIXA8GU85p3Yokp73M6SuuvQd6PpNvvlT7z0N2F4io=;
+        b=uwOKluNFh794Wb7BC3FTX0afdBMT1OJ6kZ7FACFrFkihCtoLPhrfNIgoArARcCPDoC
+         B7SsB+3pXOpcJNCX5VZFyh7ssMJLqdrKjI4z/4SL/JNj4id4zVwuQA0/OPDFcXc+SVC6
+         CcXxEqZce5f7qQkJnzx4Z4rxuJ1phGq1YbxhwUPnIrO3PfJlF9iaPS7dgpegpkJZ6+Sn
+         U2nrDtUxdhBMhUX7ejnCMJRIbEefmz8JIfWoMbxZzEusfuYZNCLygcBGtVCeFwqZhg2Y
+         yI+NHqRKLMZBLE6Isp5g8Eh0PrCBT01MCHMONSs+p/5ECGqihpPOenvXW6wYUIlU7xen
+         +BYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=9illoX/lgZgRmB149QSdUSTaY6vK5Drr6t7JdhNt6/U=;
-        b=kTsMfW5Z4/18sarS1FjnmUo4hAfP8mJN/l1bWuidwVgja/BGgcne9tQga3xCjkXh1d
-         ZzCMNQ+hZKJDE0O2Yucnfgff6ctgg/As8PNRkRTrc7YTRS53Zr6tvcniIOCeAeYlyzzB
-         WbSb8dBu5RTmHxy1z8lBNrOaQUhXVMVldKCyTpIcBLdiKWDJRjgCdV2H4x7RpZrr54bb
-         IP2x20V8WNbRJThHznJa/g5zICjIQsUXYZ3UT53TW3ZmIGNBbNNcgPtr+/T54ZtTIFmM
-         wTqprfrPrQZBHap3C0UMVxK4sOvK7hzu172DyfLqBoM1Yz2bmHMUg5GikCDaO0OrPgda
-         p+vQ==
-X-Gm-Message-State: APjAAAXCWX4XZAb/6QFTsUO5sjWPOm+0bW621KBcw+n6ZdCSk9jO/ead
-        LeqSw9BNfVYXxjhE6wYrvf4=
-X-Google-Smtp-Source: APXvYqw5kBdwEgrkIu0ycndJ5NQWWHs1lfEtl9tiXRzValvEj283Zhs4c5zmyc8yumSoqEQ1yFRoWA==
-X-Received: by 2002:a5e:c803:: with SMTP id y3mr25041911iol.308.1563202862289;
-        Mon, 15 Jul 2019 08:01:02 -0700 (PDT)
-Received: from [192.168.1.249] ([67.167.44.43])
-        by smtp.gmail.com with ESMTPSA id m25sm10511707ion.35.2019.07.15.08.01.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 08:01:01 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] mm: page_alloc: document kmemleak's non-blockable __GFP_NOFAIL case
-From:   Catalin Marinas <catalin.marinas@gmail.com>
-X-Mailer: iPhone Mail (16F203)
-In-Reply-To: <20190715131732.GX29483@dhcp22.suse.cz>
-Date:   Mon, 15 Jul 2019 10:01:00 -0500
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
-        "dvyukov@google.com" <dvyukov@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F89E7123-C21C-41AA-8084-1DB4C832D7BD@gmail.com>
-References: <1562964544-59519-1-git-send-email-yang.shi@linux.alibaba.com> <20190715131732.GX29483@dhcp22.suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+kIXA8GU85p3Yokp73M6SuuvQd6PpNvvlT7z0N2F4io=;
+        b=CsTReTCkLtJH1tYKD6ORYPv/U8gFuY1bRhR9F6r1la/15nRX0AjTY79bnitSePU0bV
+         7rgspOKXgGKuRLfT7NRMNlXqQxQSqw83rBCkC/1biYrclALr32e2falGWda/zbzAWL5T
+         QNRCJJuqERZnICx4U4pfQueHRRLYDNynyCV2AqtykLR8g/J05Y5lNx++M3snmL6rxET4
+         KDz6gP3gjZJCz68blTrRw4ZoIPg2wDfQHKVlpPjkaYPy/B2Zc9CmdERdU28CKYSgrk9i
+         0I8c3weMnRuQNXJhK7lFErX/zaOq/CGBt7zc2M2fdP41QN2f8ifZE62D3g2r//CCCL8+
+         As0Q==
+X-Gm-Message-State: APjAAAXvHiETZExde9UhumDRGJUDFEn1uTUYpoheH9NbWis4RzcSESMm
+        gjG2lZSyCILppGhCb8WZYovFrWeVXxqKW7xV3A==
+X-Google-Smtp-Source: APXvYqyMX9ckVpVhNYM/AuXYFCF+2UwsWazz6PKm86ZZd+MuqhjC0agMegN0ch2fUPa5Yx29/GiwkCPyBstMZuWFB2M=
+X-Received: by 2002:a6b:b756:: with SMTP id h83mr25547012iof.147.1563202922237;
+ Mon, 15 Jul 2019 08:02:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAKKbWA6S7KotAFtLO=ow=XYnLL2Ny5Mz2kcgM1cs+j=5mHQNmw@mail.gmail.com>
+ <alpine.DEB.2.21.1907151435080.1722@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907151435080.1722@nanos.tec.linutronix.de>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Mon, 15 Jul 2019 18:01:15 +0300
+Message-ID: <CAKKbWA4jBMG8v4unqWEpGWgRm9CH+EJvojsOwMWTvnQH15HWdQ@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/npcm: fix GENMASK and timer operation
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 Jul 2019, at 08:17, Michal Hocko <mhocko@kernel.org> wrote:
-> On Sat 13-07-19 04:49:04, Yang Shi wrote:
->> When running ltp's oom test with kmemleak enabled, the below warning was
->> triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
->> passed in:
->=20
-> kmemleak is broken and this is a long term issue. I thought that
-> Catalin had something to address this.
+Hi Thomas,
 
-What needs to be done in the short term is revert commit d9570ee3bd1d4f20ce6=
-3485f5ef05663866fe6c0. Longer term the solution is to embed kmemleak metadat=
-a into the slab so that we don=E2=80=99t have the situation where the primar=
-y slab allocation success but the kmemleak metadata fails.=20
+Thanks,
+Avi
 
-I=E2=80=99m on holiday for one more week with just a phone to reply from but=
- feel free to revert the above commit. I=E2=80=99ll follow up with a better s=
-olution.=20
+On Mon, Jul 15, 2019 at 3:37 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Avi,
+>
+> On Mon, 15 Jul 2019, Avi Fishman wrote:
+>
+> > NPCM7XX_Tx_OPER GENMASK was wrong,
+>
+> That part is already fixed upstream:
+>
+>   9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK macro")
 
-Catalin
+The automatic fix changed from
+GENMASK(3, 27) to
+GENMASK(27, 3)
+I reviewd again the code to check how it worked so far and saw that it
+should have been
+GENMASK(28, 27) - this is a different value than 9bdd7bb3a844
+For our fortune this wrong value didn't effect the our final write to
+the register.
+But still this should be fixed.
+
+>
+> > npcm7xx_timer_oneshot() did wrong calculation
+>
+> That changelog is pretty unspecific. It does not tell what is wrong and
+> which consequences that has. Please be a bit more specific.
+
+OK I will fix
+
+>
+> Thanks,
+>
+>         tglx
+
+
+
+-- 
+Regards,
+Avi
