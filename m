@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FE368D3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3658E68D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732951AbfGON5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:57:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33948 "EHLO mail.kernel.org"
+        id S1732627AbfGON5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:57:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732926AbfGON44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:56:56 -0400
+        id S1732713AbfGON5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:57:01 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C06620C01;
-        Mon, 15 Jul 2019 13:56:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AE7220C01;
+        Mon, 15 Jul 2019 13:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199015;
-        bh=6JvuEJ2jZQoAtrlOQ/pl0yGKBrjDFLIlyVotuHAJdKM=;
+        s=default; t=1563199020;
+        bh=qiWEQsMoOF8CbECWiUS/CREgaxAk21F8tOV41lwaEsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=npakiStCQIDmrxpaMzK+TCuBBsy9axYl8FHNsQkp/32hMew+JWVwERaIa5dnFF7As
-         47rxPtdNenIs8JuK/2Hun0DX32Ig/H4Dwfc1f0eOidcnmhp7FrHRDIV95X2ahSd1ea
-         i8QAUNHzOLeaf+EeGHNicaqfRuXG1xdHF94TriW0=
+        b=PzHNayi6bgwmI2tJ6gd7RWldIZDP+m9PBDZZsrl2+4MmzqcHy1O3PoBu2G5F7YTJw
+         XyMZXMo5kwtOJXS8G4BBhFJL8Rnz40rHPYZ3JS3drAYJ37tE2GBhxxf2T6oE2t7EFQ
+         HW1t/46ESLvDTm9keKNbBZo8BaOeSQHQ1noelcLQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Kyle Meyer <kyle.meyer@hpe.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 166/249] ALSA: hdac: Fix codec name after machine driver is unloaded and reloaded
-Date:   Mon, 15 Jul 2019 09:45:31 -0400
-Message-Id: <20190715134655.4076-166-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 167/249] perf tools: Increase MAX_NR_CPUS and MAX_CACHES
+Date:   Mon, 15 Jul 2019 09:45:32 -0400
+Message-Id: <20190715134655.4076-167-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,56 +47,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+From: Kyle Meyer <kyle.meyer@hpe.com>
 
-[ Upstream commit 8a5b0177a7f6099ff534a4d9ce72673af5c3cade ]
+[ Upstream commit 9f94c7f947e919c343b30f080285af53d0fa9902 ]
 
-Currently on each driver reload internal counter is being increased. It
-causes failure to enumerate driver devices, as they have hardcoded:
-.codec_name = "ehdaudio0D2",
-As there is currently no devices with multiple hda codecs and there is
-currently no established way to reliably differentiate, between them,
-always assign bus->idx = 0;
+Attempting to profile 1024 or more CPUs with perf causes two errors:
 
-This fixes a problem when we unload and reload machine driver idx gets
-incremented, so .codec_name would've needed to be set to "ehdaudio1D2"
-after first reload and so on.
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  way too many cpu caches..
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
-Acked-by: Takashi Iwai <tiwai@suse.de>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+  perf report -C 1024
+  Error: failed to set  cpu bitmap
+  Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
+
+  Increasing MAX_NR_CPUS from 1024 to 2048 and redefining MAX_CACHES as
+  MAX_NR_CPUS * 4 returns normal functionality to perf:
+
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
+
+  perf report -C 1024
+  ...
+
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190620193630.154025-1-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/hda/ext/hdac_ext_bus.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/perf.h        | 2 +-
+ tools/perf/util/header.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/hda/ext/hdac_ext_bus.c b/sound/hda/ext/hdac_ext_bus.c
-index a3a113ef5d56..4f9f1d2a2ec5 100644
---- a/sound/hda/ext/hdac_ext_bus.c
-+++ b/sound/hda/ext/hdac_ext_bus.c
-@@ -85,7 +85,6 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
- 			const struct hdac_ext_bus_ops *ext_ops)
- {
- 	int ret;
--	static int idx;
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index d59dee61b64d..a26555baf692 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -26,7 +26,7 @@ static inline unsigned long long rdclock(void)
+ }
  
- 	/* check if io ops are provided, if not load the defaults */
- 	if (io_ops == NULL)
-@@ -96,7 +95,12 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
- 		return ret;
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS			1024
++#define MAX_NR_CPUS			2048
+ #endif
  
- 	bus->ext_ops = ext_ops;
--	bus->idx = idx++;
-+	/* FIXME:
-+	 * Currently only one bus is supported, if there is device with more
-+	 * buses, bus->idx should be greater than 0, but there needs to be a
-+	 * reliable way to always assign same number.
-+	 */
-+	bus->idx = 0;
- 	bus->cmd_dma_state = true;
- 
+ extern const char *input_name;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index fb0aa661644b..b82d4577d969 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1100,7 +1100,7 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
  	return 0;
+ }
+ 
+-#define MAX_CACHES 2000
++#define MAX_CACHES (MAX_NR_CPUS * 4)
+ 
+ static int write_cache(struct feat_fd *ff,
+ 		       struct perf_evlist *evlist __maybe_unused)
 -- 
 2.20.1
 
