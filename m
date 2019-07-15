@@ -2,86 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F84468FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE7D68F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389832AbfGOORz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:17:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389233AbfGOORv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:17:51 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20637206B8;
-        Mon, 15 Jul 2019 14:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200271;
-        bh=jHBoahBIMCEqzHHAdyXBu+NzeIwefRJZKUWcMn7yxDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E91ST+uqKhYnv6UMP+7MKNVYj9SIsdMlmxkScHjPuEGmnpOLxkdIbjQEzK8ZLAO0+
-         hgbCxeBPJs9hltKVXbeYOIppGHw/DOdqukNFTZoxJ28UsMdDpoK0QTD++VnHf/HgdR
-         vHyH5j4gd2TS0yg431SkwXRw1yfbt9CkSiL52k2E=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 219/219] net: mvmdio: defer probe of orion-mdio if a clock is not ready
-Date:   Mon, 15 Jul 2019 10:03:40 -0400
-Message-Id: <20190715140341.6443-219-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
-References: <20190715140341.6443-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S2388709AbfGOOL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:11:27 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:62962 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388773AbfGOOLX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:11:23 -0400
+Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x6FEB56R023840;
+        Mon, 15 Jul 2019 23:11:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x6FEB56R023840
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563199866;
+        bh=6ahhx3PJmA/BwoDm6PuFYIOPIG5ur1Y4DX5ZBBhGcl8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vGTwxi5yDwmMpe3N3VaawBXJoFH1huFqGXTg5YFvHNDG+Ppr5uqjyDbCGqyJHQQV/
+         osB2EqOXty7jCfprPUe56VPxI6Z52oUV/zLZpR7b9VpwG2exNUvnmHVC4/tTvdUZKW
+         LJ5+J9nj9FikYy3e+p0BPOGx1HC4S2j3hNMeZKaRggJUnqh69afYxxXebQVrKJw4wT
+         i6HO21PRK2PsBrE7KWtZMD1qnsOO89Klam0LdU+7aHTDl/ltBIU0Fl+9cB1MtpZOJj
+         rBNv9U/4Z8R8eBIgzLUQ42+usSGnHlq9dh6bTZ74VDN1konx7S/1t5A6jPOVNPvdRi
+         J5XX5l0nPUSeA==
+X-Nifty-SrcIP: [126.26.94.249]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: remove unused hostcc-option
+Date:   Mon, 15 Jul 2019 23:11:03 +0900
+Message-Id: <20190715141103.22278-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josua Mayer <josua@solid-run.com>
+We can re-add this whenever it is needed. At this moment, it is unused.
 
-[ Upstream commit 433a06d7d74e677c40b1148c70c48677ff62fb6b ]
-
-Defer probing of the orion-mdio interface when getting a clock returns
-EPROBE_DEFER. This avoids locking up the Armada 8k SoC when mdio is used
-before all clocks have been enabled.
-
-Signed-off-by: Josua Mayer <josua@solid-run.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/net/ethernet/marvell/mvmdio.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index c5dac6bd2be4..903836e334d8 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -321,6 +321,10 @@ static int orion_mdio_probe(struct platform_device *pdev)
+ scripts/Kbuild.include | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 73e80b917f12..77c742fa4fb1 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -125,11 +125,6 @@ CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
+ cc-option = $(call __cc-option, $(CC),\
+ 	$(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS),$(1),$(2))
  
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
-+		if (PTR_ERR(dev->clk[i]) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto out_clk;
-+		}
- 		if (IS_ERR(dev->clk[i]))
- 			break;
- 		clk_prepare_enable(dev->clk[i]);
-@@ -362,6 +366,7 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 	if (dev->err_interrupt > 0)
- 		writel(0, dev->regs + MVMDIO_ERR_INT_MASK);
- 
-+out_clk:
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		if (IS_ERR(dev->clk[i]))
- 			break;
+-# hostcc-option
+-# Usage: cflags-y += $(call hostcc-option,-march=winchip-c6,-march=i586)
+-hostcc-option = $(call __cc-option, $(HOSTCC),\
+-	$(KBUILD_HOSTCFLAGS) $(HOST_EXTRACFLAGS),$(1),$(2))
+-
+ # cc-option-yn
+ # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
+ cc-option-yn = $(call try-run,\
 -- 
-2.20.1
+2.17.1
 
