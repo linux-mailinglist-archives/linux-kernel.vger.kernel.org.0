@@ -2,84 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784356987D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3234D69889
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfGOPoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:44:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36618 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730257AbfGOPoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:44:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3A3D5AF78;
-        Mon, 15 Jul 2019 15:44:21 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 17:44:18 +0200
-From:   Joerg Roedel <jroedel@suse.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/3] x86/mm: Check for pfn instead of page in
- vmalloc_sync_one()
-Message-ID: <20190715154418.GA13091@suse.de>
-References: <20190715110212.18617-1-joro@8bytes.org>
- <20190715110212.18617-2-joro@8bytes.org>
- <alpine.DEB.2.21.1907151508210.1722@nanos.tec.linutronix.de>
+        id S1730813AbfGOPqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:46:53 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34637 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731913AbfGOPpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 11:45:07 -0400
+Received: by mail-io1-f66.google.com with SMTP id k8so34900846iot.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=indeed.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ScxfIM+hKDT1VQaIZy4BKqol+JPqVs71rTa7fK4KN1M=;
+        b=gnHK+c2cwZGKOdspduqrUgKCh6lVrsKIInyhuuavEpiiOcbGli77C58lcIXgh934gd
+         X+tLt3k+Ik4aenfsxG9NFO2TPCD832u+KzaI36GcEuU2FPeWtzF+N76i6iSHvlttqWsR
+         k+frcRdRsmUd5oRFAvWQ9JfUk8UTM29DlkBao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ScxfIM+hKDT1VQaIZy4BKqol+JPqVs71rTa7fK4KN1M=;
+        b=VUmBSbLEu/p7F579gatqTQX1G1uA6tCaBR03ugbwoX40I0NDnGutvjRjBFGlGPS6aL
+         qszHbwyv9b4rQYU2s1SBx0jxEaXaTsWL1llXtH/e8+QyMuHF7/atP4MIF9i5LOfhL8fr
+         88rOpU0R7n/MOpc8AP/31pTyrQ20UrSwUCIxf/j8yMime5QNBbKLpTNgMgeqQZSJnmjy
+         Bh/q+wsjllBy6k/SOqAUYPk8/6SB8XCCjeGLrvJf6nEji0w3HhQv5397zeal5if5mU5l
+         H6I2dBbhfjtygV3zvlHXpkz8lGIMNQs/e9UzVOE6FpdV24aLcJg1E/7zXI3tWy+R5Jsq
+         0uzQ==
+X-Gm-Message-State: APjAAAXb48COBUTxYlQRgE2hsa8RFmIvdZbQiNt9qxF/lDvaeweHEk15
+        DkLQ3XJ6t5HeOyk4qCYzfxwDqOFCkwPGuJ436xMLlw==
+X-Google-Smtp-Source: APXvYqzbMN6ZWpAf5P2ZPcRYCxnKHbAAGVINWdGhBwNhv+b97qeWrnWhIxrRo/FNE6Q1bMyE5Gf6q1fus5Od5lXuuKQ=
+X-Received: by 2002:a6b:790a:: with SMTP id i10mr24067436iop.150.1563205505726;
+ Mon, 15 Jul 2019 08:45:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907151508210.1722@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
+ <1561664970-1555-1-git-send-email-chiluk+linux@indeed.com>
+ <1561664970-1555-2-git-send-email-chiluk+linux@indeed.com>
+ <xm26lfxhwlxr.fsf@bsegall-linux.svl.corp.google.com> <20190711095102.GX3402@hirez.programming.kicks-ass.net>
+ <xm26v9w8jwgl.fsf@bsegall-linux.svl.corp.google.com> <CAC=E7cV4sO50NpYOZ06n_BkZTcBqf1KQp83prc+oave3ircBrw@mail.gmail.com>
+ <xm26muhikiq2.fsf@bsegall-linux.svl.corp.google.com>
+In-Reply-To: <xm26muhikiq2.fsf@bsegall-linux.svl.corp.google.com>
+From:   Dave Chiluk <chiluk+linux@indeed.com>
+Date:   Mon, 15 Jul 2019 10:44:39 -0500
+Message-ID: <CAC=E7cVSVqg8raXgVC8f7wB+BJO8TAjSU=0UN-M+Oxuo2raXAw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] sched/fair: Fix low cpu usage with high throttling
+ by removing expiration of cpu-local slices
+To:     Ben Segall <bsegall@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Pqhil Auld <pauld@redhat.com>, Peter Oskolkov <posk@posk.io>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Kyle Anderson <kwa@yelp.com>,
+        Gabriel Munos <gmunoz@netflix.com>,
+        John Hammond <jhammond@indeed.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Paul Turner <pjt@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 03:08:42PM +0200, Thomas Gleixner wrote:
-> On Mon, 15 Jul 2019, Joerg Roedel wrote:
-> 
-> > From: Joerg Roedel <jroedel@suse.de>
-> > 
-> > Do not require a struct page for the mapped memory location
-> > because it might not exist. This can happen when an
-> > ioremapped region is mapped with 2MB pages.
-> > 
-> > Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> 
-> Lacks a Fixes tag, hmm?
+On Fri, Jul 12, 2019 at 5:10 PM <bsegall@google.com> wrote:
+> Ugh. Maybe we /do/ just give up and say that most people don't seem to
+> be using cfs_b in a way that expiration of the leftover 1ms matters.
 
-Yeah, right, the question is, which commit to put in there. The problem
-results from two changes:
-
-	1) Introduction of !SHARED_KERNEL_PMD path in x86-32. In itself
-	   this is not a problem, and the path was only enabled for
-	   Xen-PV.
-
-	2) Huge IORemapings which use the PMD level. Also not a problem
-	   by itself, but together with !SHARED_KERNEL_PMD problematic
-	   because it requires to sync the PMD entries between all
-	   page-tables, and that was not implemented.
-
-Before PTI-x32 was merged this problem did not show up, maybe because
-the 32-bit Xen-PV users did not trigger it. But with PTI-x32 all PAE
-users run with !SHARED_KERNEL_PMD and the problem popped up.
-
-For the last patch I put the PTI-x32 enablement commit in the fixes tag,
-because that was the one that showed up during bisection. But more
-correct would probably be
-
-	5d72b4fba40e ('x86, mm: support huge I/O mapping capability I/F')
-
-Or do I miss something?
-
-Regards,
-
-	Joerg
-
-
+That was my conclusion as well.  Does this mean you want to proceed
+with my patch set?  Do you have any changes you want made to the
+proposed documentation changes, or any other changes for that matter?
