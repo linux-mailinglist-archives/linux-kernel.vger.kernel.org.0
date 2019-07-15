@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A404694C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E7C694C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbfGOO3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:29:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39986 "EHLO mail.kernel.org"
+        id S2391419AbfGOO3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:29:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389334AbfGOO3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:29:05 -0400
+        id S2391346AbfGOO3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:29:11 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4405F2086C;
-        Mon, 15 Jul 2019 14:29:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15E1120868;
+        Mon, 15 Jul 2019 14:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200944;
-        bh=cQnQ6JVQxl+9ImpfiG/lnyZwnK4VP0BO4OxM6qtO480=;
+        s=default; t=1563200950;
+        bh=XekN5yNdI6d8WL9nQDronZerRlpkwx+eGTn6Je99fWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YyD1MBA7LUq0XaU4/kpzQ+DPgsrKZ818BA6Jy/p+6HWL7PtLIimGOhZhot9TFc1Yb
-         kN8xfAJ+/gY89cfpKR8jISFu1mSik/7gzAJ5q22/qq2LHEhtn+4hYz5y1Ih144VCEl
-         v7p+5pjHimVVpt1s7iTMcClZtbfmHesJfi3Ra6XY=
+        b=sdJKOrlX2Xb/5MQawwaEZGzsAmQ7uJeVzMmkqpwcBfN1Fo6imDWCUV5Shd7qlT/Tp
+         TCMQoS3mUu8YFis5IVKGqI2oYyLN74um4vV4EvHBoXJaVBBHzp8Yf9cNe36MKHbO0G
+         pjRi2JHs1/o/y5CCDywfZzxBYVsTwuUqvhP748gY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeremy Sowden <jeremy@azazel.net>,
-        syzbot+d454a826e670502484b8@syzkaller.appspotmail.com,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 007/105] batman-adv: fix for leaked TVLV handler.
-Date:   Mon, 15 Jul 2019 10:27:01 -0400
-Message-Id: <20190715142839.9896-7-sashal@kernel.org>
+Cc:     Oliver Neukum <oneukum@suse.com>,
+        syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 008/105] media: dvb: usb: fix use after free in dvb_usb_device_exit
+Date:   Mon, 15 Jul 2019 10:27:02 -0400
+Message-Id: <20190715142839.9896-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
 References: <20190715142839.9896-1-sashal@kernel.org>
@@ -44,36 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Sowden <jeremy@azazel.net>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 17f78dd1bd624a4dd78ed5db3284a63ee807fcc3 ]
+[ Upstream commit 6cf97230cd5f36b7665099083272595c55d72be7 ]
 
-A handler for BATADV_TVLV_ROAM was being registered when the
-translation-table was initialized, but not unregistered when the
-translation-table was freed.  Unregister it.
+dvb_usb_device_exit() frees and uses the device name in that order.
+Fix by storing the name in a buffer before freeing it.
 
-Fixes: 122edaa05940 ("batman-adv: tvlv - convert roaming adv packet to use tvlv unicast packets")
-Reported-by: syzbot+d454a826e670502484b8@syzkaller.appspotmail.com
-Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/translation-table.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/usb/dvb-usb/dvb-usb-init.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 020a8adc4cce..2c2670b85fa9 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -3750,6 +3750,8 @@ static void batadv_tt_purge(struct work_struct *work)
- 
- void batadv_tt_free(struct batadv_priv *bat_priv)
+diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+index 84308569e7dc..b3413404f91a 100644
+--- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+@@ -287,12 +287,15 @@ EXPORT_SYMBOL(dvb_usb_device_init);
+ void dvb_usb_device_exit(struct usb_interface *intf)
  {
-+	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_ROAM, 1);
-+
- 	batadv_tvlv_container_unregister(bat_priv, BATADV_TVLV_TT, 1);
- 	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_TT, 1);
+ 	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-	const char *name = "generic DVB-USB module";
++	const char *default_name = "generic DVB-USB module";
++	char name[40];
+ 
+ 	usb_set_intfdata(intf, NULL);
+ 	if (d != NULL && d->desc != NULL) {
+-		name = d->desc->name;
++		strscpy(name, d->desc->name, sizeof(name));
+ 		dvb_usb_exit(d);
++	} else {
++		strscpy(name, default_name, sizeof(name));
+ 	}
+ 	info("%s successfully deinitialized and disconnected.", name);
  
 -- 
 2.20.1
