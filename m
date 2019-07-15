@@ -2,46 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2903368EB2
+	by mail.lfdr.de (Postfix) with ESMTP id 980D968EB3
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388610AbfGOOIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:08:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59674 "EHLO mail.kernel.org"
+        id S2388621AbfGOOIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:08:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388592AbfGOOIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:08:52 -0400
+        id S2388601AbfGOOIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:08:53 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4862C2081C;
-        Mon, 15 Jul 2019 14:08:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DB4A206B8;
+        Mon, 15 Jul 2019 14:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199731;
-        bh=lk6I4aH5+0b+VVVofMZ3cbJ7lsWFwa2u5jH2KKaaD+A=;
+        s=default; t=1563199733;
+        bh=5KpwBiolgatbtUkN/plbwqIBH7FRPYA+Rb8GfzJyAIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LCNUV+dLemhzamwpKhRy+dbEgZVdePTAlrw8dSJC4mD0MNCFrEFKo/bFdVLXj/PfA
-         yXDT4BonW7QmBqMasHaCeto2/y9Z3XOfY9beMT/tZbFwey39BGpsB3gcap113Eu6yg
-         jc0KHuE9GEffVYPkBCoG5sFQTZK7lTBzYbKQoe2E=
+        b=J6jKx/McLJmqFNphOt07cZg3HGaldw4lawm+uK0UEF/kjB4sdAQCJbqwMeZIhcuF+
+         mUkgXRjzjNgYbNZvAeUBca6JYi2BqVzPbYT0B7dPgt3rzKOBf+bokP5r6wG0AhuWK6
+         fPL78CeHPc3sInJXY6pDTUqPfql01PKcZTu9K4EQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@suse.de,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 087/219] x86/cpu: Add Ice Lake NNPI to Intel family
-Date:   Mon, 15 Jul 2019 10:01:28 -0400
-Message-Id: <20190715140341.6443-87-sashal@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.1 088/219] ASoC: meson: axg-tdm: fix sample clock inversion
+Date:   Mon, 15 Jul 2019 10:01:29 -0400
+Message-Id: <20190715140341.6443-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -54,46 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit e32d045cd4ba06b59878323e434bad010e78e658 ]
+[ Upstream commit cb36ff785e868992e96e8b9e5a0c2822b680a9e2 ]
 
-Add the CPUID model number of Ice Lake Neural Network Processor for Deep
-Learning Inference (ICL-NNPI) to the Intel family list. Ice Lake NNPI uses
-model number 0x9D and this will be documented in a future version of Intel
-Software Development Manual.
+The content of SND_SOC_DAIFMT_FORMAT_MASK is a number, not a bitfield,
+so the test to check if the format is i2s is wrong. Because of this the
+clock setting may be wrong. For example, the sample clock gets inverted
+in DSP B mode, when it should not.
 
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@suse.de
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com
+Fix the lrclk invert helper function
+
+Fixes: 1a11d88f499c ("ASoC: meson: add tdm formatter base driver")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/intel-family.h | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/meson/axg-tdm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 310118805f57..f60ddd655c78 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -56,6 +56,7 @@
- #define INTEL_FAM6_ICELAKE_XEON_D	0x6C
- #define INTEL_FAM6_ICELAKE_DESKTOP	0x7D
- #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
-+#define INTEL_FAM6_ICELAKE_NNPI		0x9D
+diff --git a/sound/soc/meson/axg-tdm.h b/sound/soc/meson/axg-tdm.h
+index e578b6f40a07..5774ce0916d4 100644
+--- a/sound/soc/meson/axg-tdm.h
++++ b/sound/soc/meson/axg-tdm.h
+@@ -40,7 +40,7 @@ struct axg_tdm_iface {
  
- /* "Small Core" Processors (Atom) */
+ static inline bool axg_tdm_lrclk_invert(unsigned int fmt)
+ {
+-	return (fmt & SND_SOC_DAIFMT_I2S) ^
++	return ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) == SND_SOC_DAIFMT_I2S) ^
+ 		!!(fmt & (SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_NB_IF));
+ }
  
 -- 
 2.20.1
