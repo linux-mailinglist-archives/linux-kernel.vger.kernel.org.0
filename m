@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC6A696B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68170696E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387914AbfGOOEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50054 "EHLO mail.kernel.org"
+        id S2389405AbfGOPG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387865AbfGOOER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:04:17 -0400
+        id S2387954AbfGOOEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:04:38 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33FF206B8;
-        Mon, 15 Jul 2019 14:04:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F496217F9;
+        Mon, 15 Jul 2019 14:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199456;
-        bh=tAtuICIV1U+7yLjSH6QQHcFpIEFMJc06cGhrtThDr/g=;
+        s=default; t=1563199477;
+        bh=4EzUqz8VEanhcqiMXOvPEr7zr+gp3i1tR7nSD7Be9rQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EXBrSoZYdnq9NNLdGdofLndSvzyqs+y6Qia4rBakFIa5sx3TBZ099CT1nwSi+bKwW
-         aO7tqCsu/y4BgMIwl99cyYnd1WCuRsS0tXaZz40IasjYRiJGSpdUvDKFNc9UST6mGA
-         hW/uIBmMhtH6W2i0X2rroW5mNT97wPkf7DlkdGqk=
+        b=wxstxdQKuAkIy6Ta/J+YcaEkRE5ETOj3q2ml0hx5v34TdZ8OAzbLcz8YHBnd6DOGw
+         1hUpbGIp+Va1AJ0d1G1QEnpqE+Ow48s6tmW9OVENV/Wc3SSeuNvpYPitqSUho664Gc
+         qRr2mCylwuRivvaLSef2asV/bUppHWOavrwM8VgI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maya Erez <merez@codeaurora.org>,
+Cc:     Anilkumar Kolli <akolli@codeaurora.org>,
+        Tamizh chelvam <tamizhr@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 010/219] wil6210: fix missed MISC mbox interrupt
-Date:   Mon, 15 Jul 2019 10:00:11 -0400
-Message-Id: <20190715140341.6443-10-sashal@kernel.org>
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 015/219] ath: DFS JP domain W56 fixed pulse type 3 RADAR detection
+Date:   Mon, 15 Jul 2019 10:00:16 -0400
+Message-Id: <20190715140341.6443-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -45,43 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maya Erez <merez@codeaurora.org>
+From: Anilkumar Kolli <akolli@codeaurora.org>
 
-[ Upstream commit 7441be71ba7e07791fd4fa2b07c932dff14ff4d9 ]
+[ Upstream commit d8792393a783158cbb2c39939cb897dc5e5299b6 ]
 
-When MISC interrupt is triggered due to HALP bit, in parallel
-to mbox events handling by the MISC threaded IRQ, new mbox
-interrupt can be missed in the following scenario:
-1. MISC ICR is read in the IRQ handler
-2. Threaded IRQ is completed and all MISC interrupts are unmasked
-3. mbox interrupt is set by FW
-4. HALP is masked
-The mbox interrupt in step 3 can be missed due to constant high level
-of ICM.
-Masking all MISC IRQs instead of masking only HALP bit in step 4
-will guarantee that ICM will drop to 0 and interrupt will be triggered
-once MISC interrupts will be unmasked.
+Increase pulse width range from 1-2usec to 0-4usec.
+During data traffic HW occasionally fails detecting radar pulses,
+so that SW cannot get enough radar reports to achieve the success rate.
 
-Signed-off-by: Maya Erez <merez@codeaurora.org>
+Tested ath10k hw and fw:
+	* QCA9888(10.4-3.5.1-00052)
+	* QCA4019(10.4-3.2.1.1-00017)
+	* QCA9984(10.4-3.6-00104)
+	* QCA988X(10.2.4-1.0-00041)
+
+Tested ath9k hw: AR9300
+
+Tested-by: Tamizh chelvam <tamizhr@codeaurora.org>
+Signed-off-by: Tamizh chelvam <tamizhr@codeaurora.org>
+Signed-off-by: Anilkumar Kolli <akolli@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/interrupt.c | 2 +-
+ drivers/net/wireless/ath/dfs_pattern_detector.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/wil6210/interrupt.c b/drivers/net/wireless/ath/wil6210/interrupt.c
-index 3f5bd177d55f..e41ba24011d8 100644
---- a/drivers/net/wireless/ath/wil6210/interrupt.c
-+++ b/drivers/net/wireless/ath/wil6210/interrupt.c
-@@ -580,7 +580,7 @@ static irqreturn_t wil6210_irq_misc(int irq, void *cookie)
- 			/* no need to handle HALP ICRs until next vote */
- 			wil->halp.handle_icr = false;
- 			wil_dbg_irq(wil, "irq_misc: HALP IRQ invoked\n");
--			wil6210_mask_halp(wil);
-+			wil6210_mask_irq_misc(wil, true);
- 			complete(&wil->halp.comp);
- 		}
- 	}
+diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
+index d52b31b45df7..a274eb0d1968 100644
+--- a/drivers/net/wireless/ath/dfs_pattern_detector.c
++++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
+@@ -111,7 +111,7 @@ static const struct radar_detector_specs jp_radar_ref_types[] = {
+ 	JP_PATTERN(0, 0, 1, 1428, 1428, 1, 18, 29, false),
+ 	JP_PATTERN(1, 2, 3, 3846, 3846, 1, 18, 29, false),
+ 	JP_PATTERN(2, 0, 1, 1388, 1388, 1, 18, 50, false),
+-	JP_PATTERN(3, 1, 2, 4000, 4000, 1, 18, 50, false),
++	JP_PATTERN(3, 0, 4, 4000, 4000, 1, 18, 50, false),
+ 	JP_PATTERN(4, 0, 5, 150, 230, 1, 23, 50, false),
+ 	JP_PATTERN(5, 6, 10, 200, 500, 1, 16, 50, false),
+ 	JP_PATTERN(6, 11, 20, 200, 500, 1, 12, 50, false),
 -- 
 2.20.1
 
