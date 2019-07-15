@@ -2,134 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDD9685D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9706685E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbfGOJA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 05:00:26 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37654 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729377AbfGOJA0 (ORCPT
+        id S1729526AbfGOJBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 05:01:43 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54558 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729257AbfGOJBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 05:00:26 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190715090024euoutp01a1be92244d918a28908f9c08ac8627ff~xiQqzZMZT1307213072euoutp01c
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 09:00:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190715090024euoutp01a1be92244d918a28908f9c08ac8627ff~xiQqzZMZT1307213072euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563181224;
-        bh=4Pc+fO1+/ZMl5J0ti/1yRmjXong6iDuRO9je3QCE9Q0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=u3ZMvk7jnxyJLVLbr/+tv1MzHMvram7blahiR5CjL73c+nCMzAGpq/VqSdAa+cBLz
-         xynNOxsr1UPT+hvgwI6ob0cVPnl5LNxhSn5WP/awFnkqgTzgEb5DWIaQRzMMkDcMA2
-         eX5DOSc1UTWVu+VeN3Tl7lfkwTadrzLZO5EyXrZI=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190715090024eucas1p26e6f7a1817078948ccb0674890a12909~xiQqMM2wy1153111531eucas1p2e;
-        Mon, 15 Jul 2019 09:00:24 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 05.B3.04325.7A04C2D5; Mon, 15
-        Jul 2019 10:00:23 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190715090023eucas1p2ab541c5d4b4debe766295d3c6efbd1cd~xiQpaqaWs2765727657eucas1p2T;
-        Mon, 15 Jul 2019 09:00:23 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190715090023eusmtrp1f100dd8f1e965e9836e58ab0e75d3a31~xiQpMgm-i2192721927eusmtrp1R;
-        Mon, 15 Jul 2019 09:00:23 +0000 (GMT)
-X-AuditID: cbfec7f5-b75ff700000010e5-a4-5d2c40a78be5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FE.E3.04146.6A04C2D5; Mon, 15
-        Jul 2019 10:00:22 +0100 (BST)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190715090022eusmtip2c2db709b559c4ac92afa9b8002fb0a03~xiQoxN0U10255602556eusmtip2U;
-        Mon, 15 Jul 2019 09:00:22 +0000 (GMT)
-Subject: Re: [PATCH v3 15/24] media: exynos4-is: Remove call to memset after
- dma_alloc_coherent
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <37046e7b-fdde-c10f-4850-0b3efd4a00cd@samsung.com>
-Date:   Mon, 15 Jul 2019 11:01:21 +0200
+        Mon, 15 Jul 2019 05:01:42 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6F91V4E000433;
+        Mon, 15 Jul 2019 04:01:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563181291;
+        bh=Vgec3YipuZlqqGgrSePE6j0bV70XqvcU2iKl1RnanuM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=i4HDAvC50s+CNzWcbiepojB2gOZ8mdLH4IxinvbkZfQCQi7ztHSTgM5vc8wDkjcPq
+         AULYgjdoPSWuu2kQ/tpJAcDMp54o1rhJB26n5a8RJenyT3zaIaXXdkRmCGLDSfWglU
+         1IQA9xMyspmNSpCfz/TNDDYmpq8duB5j2h518s/I=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6F91VfU026771
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 15 Jul 2019 04:01:31 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 15
+ Jul 2019 04:01:31 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 15 Jul 2019 04:01:31 -0500
+Received: from [10.250.97.31] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6F91TYw052539;
+        Mon, 15 Jul 2019 04:01:29 -0500
+Subject: Re: [PATCH 1/2] leds: Add control of the voltage/current regulator to
+ the LED core
+To:     Dan Murphy <dmurphy@ti.com>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <daniel.thompson@linaro.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20190708103547.23528-1-jjhiblot@ti.com>
+ <20190708103547.23528-2-jjhiblot@ti.com>
+ <56d16260-ff82-3439-4c1f-2a3a1552bc7d@ti.com>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <ab4818c0-bc7a-13e1-c6ce-e977b0234de0@ti.com>
+Date:   Mon, 15 Jul 2019 11:01:29 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.2
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190715031851.6890-1-huangfq.daxian@gmail.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7djPc7rLHXRiDVbOMbBYduokq0X/49fM
-        FufPb2C3ONv0ht1i0+NrrBaXd81hs+jZsJXVYsb5fUwWyzb9YXLg9Ng56y67x6ZVnWwem5fU
-        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAlfGmatXmAtmcVR0bXnD3MD4i62LkZNDQsBE4u71
-        y6xdjFwcQgIrGCWWrrsO5XxhlNg6azUjhPOZUWLGvbeMMC2f1i5lg0gsZ5T4uPs3E4TzllFi
-        cU8rK0iVsECiRM+0L0wgtoiAtsTH0y3MIEXMAquZJDYeWA+2nU3AUKL3aB/YWF4BO4kJzdtY
-        QGwWAVWJXdP/g8VFBSIkTh2ZxwJRIyhxcuYTIJuDg1PAVuL+RwuQMLOAuETTl5WsELa8xPa3
-        c8B2SQgcYpd4vegc1NkuEj29TSwQtrDEq+Nb2CFsGYnTk3tYIBqaGSV6dt9mh3AmMErcP74A
-        qtta4vDxi6wgm5kFNCXW79IHMSUEHCWu3DKBMPkkbrwVhLiBT2LStunMEGFeiY42IYgZKhK/
-        V01ngrClJLqf/GeZwKg0C8ljs5B8MwvJN7MQ1i5gZFnFKJ5aWpybnlpsnJdarlecmFtcmpeu
-        l5yfu4kRmJZO/zv+dQfjvj9JhxgFOBiVeHgdUrRjhVgTy4orcw8xSnAwK4nw2n4FCvGmJFZW
-        pRblxxeV5qQWH2KU5mBREuetZngQLSSQnliSmp2aWpBaBJNl4uCUamCUVkw/tnjF35jmrImr
-        zCJEjQ8dqpgaqJNVe+NY1zJh4dq126yMtp6R1ln5/rqS0kw/3wX6r6ofb34bJsCXLGTRs0z6
-        8vf+Q/GrTzyYcJaB60GA4zmG9EVNslaRr4oiry1eecn/QMLiO4o/U/WV9mz/81h57ob1p+b8
-        V2tKW+H8cEbu6pvVCVNblViKMxINtZiLihMBUmnC3UcDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xe7rLHHRiDRoOWFosO3WS1aL/8Wtm
-        i/PnN7BbnG16w26x6fE1VovLu+awWfRs2MpqMeP8PiaLZZv+MDlweuycdZfdY9OqTjaPzUvq
-        Pfq2rGL0+LxJLoA1Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUn
-        syy1SN8uQS/jzNUrzAWzOCq6trxhbmD8xdbFyMkhIWAi8WntUiCbi0NIYCmjxNojk9i7GDmA
-        ElIS81uUIGqEJf5c64Kqec0osX/HH1aQhLBAokTPtC9MILaIgLbEx9MtzCBFzAKrmSRWLFrN
-        BDJISMBG4tgbLpAaNgFDid6jfYwgNq+AncSE5m0sIDaLgKrErun/weKiAhESk67tZIGoEZQ4
-        OfMJC8gYTgFbifsfLUDCzALqEn/mXWKGsMUlmr6sZIWw5SW2v53DPIFRaBaS7llIWmYhaZmF
-        pGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwBjcduzn5h2MlzYGH2IU4GBU4uF1SNGO
-        FWJNLCuuzD3EKMHBrCTCa/sVKMSbklhZlVqUH19UmpNafIjRFOi3icxSosn5wPSQVxJvaGpo
-        bmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qBkf/Ym/VskxWjrjHe2x/S4prB
-        HL1gYVX77W1lG8r/KBp7VjFs23rlW1Rroeketabd53huBTU/XlU6LZfLJrT8/fyCSylWH+fq
-        1AcWzaqI37lsu1r0hdoXAi/KNsatSE9ekTzre4jXgcVqlo9DX72PDNohJ/N3ddfD8oxP3BkT
-        3nnvFsw+862nS4mlOCPRUIu5qDgRAKgQjlbXAgAA
-X-CMS-MailID: 20190715090023eucas1p2ab541c5d4b4debe766295d3c6efbd1cd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190715090023eucas1p2ab541c5d4b4debe766295d3c6efbd1cd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190715090023eucas1p2ab541c5d4b4debe766295d3c6efbd1cd
-References: <20190715031851.6890-1-huangfq.daxian@gmail.com>
-        <CGME20190715090023eucas1p2ab541c5d4b4debe766295d3c6efbd1cd@eucas1p2.samsung.com>
+In-Reply-To: <56d16260-ff82-3439-4c1f-2a3a1552bc7d@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/15/19 05:18, Fuqian Huang wrote:
-> In commit 518a2f1925c3
-> ("dma-mapping: zero memory returned from dma_alloc_*"),
-> dma_alloc_coherent has already zeroed the memory.
-> So memset is not needed
+Hi Dan,
 
-I can't see any changes in the above mentioned commit that would
-make dma_alloc_coherent() (arm_coherent_dma_alloc()) zeroing its
-returned memory. Maybe you need to add a reference to some other
-instead?
+On 12/07/2019 20:49, Dan Murphy wrote:
+> JJ
+>
+> On 7/8/19 5:35 AM, Jean-Jacques Hiblot wrote:
+>> A LED is usually powered by a voltage/current regulator. Let the LED 
+>> core
+> Let the LED core know
+>> about it. This allows the LED core to turn on or off the power supply
+>> as needed.
+>
+>>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> ---
+>>   drivers/leds/led-class.c | 10 ++++++++
+>>   drivers/leds/led-core.c  | 53 +++++++++++++++++++++++++++++++++++++---
+>>   include/linux/leds.h     |  4 +++
+>>   3 files changed, 64 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> index 4793e77808e2..e01b2d982564 100644
+>> --- a/drivers/leds/led-class.c
+>> +++ b/drivers/leds/led-class.c
+>> @@ -17,6 +17,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/spinlock.h>
+>>   #include <linux/timer.h>
+>> +#include <linux/regulator/consumer.h>
+>
+> What if you move this to leds.h so core and class can both include it.
+>
+>
+>>   #include <uapi/linux/uleds.h>
+>>   #include "leds.h"
+>>   @@ -272,6 +273,15 @@ int of_led_classdev_register(struct device 
+>> *parent, struct device_node *np,
+>>           dev_warn(parent, "Led %s renamed to %s due to name collision",
+>>                   led_cdev->name, dev_name(led_cdev->dev));
+>>   +    led_cdev->regulator = devm_regulator_get(led_cdev->dev, "power");
+>
+> Is the regulator always going to be called power?
 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+Actually in the dts, that will be "power-supply". I lacked the 
+imagination to come up with a better name.
 
->  drivers/media/platform/exynos4-is/fimc-is.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-> index e043d55133a3..77633e356305 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-is.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-is.c
-> @@ -341,7 +341,6 @@ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
->  		return -ENOMEM;
->  
->  	is->memory.size = FIMC_IS_CPU_MEM_SIZE;
-> -	memset(is->memory.vaddr, 0, is->memory.size);
---
-Thanks, 
-Sylwester
+
+
+>
+>> +    if (IS_ERR(led_cdev->regulator)) {
+>> +        dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
+>> +            led_cdev->name);
+>> +        device_unregister(led_cdev->dev);
+>> +        mutex_unlock(&led_cdev->led_access);
+>> +        return PTR_ERR(led_cdev->regulator);
+>
+> This is listed as optional in the DT doc.  This appears to be required.
+
+The regulator core will provide a dummy regulator if none is given in 
+the device tree. I would rather have an error in that case, but that is 
+not how it works.
+
+
+>
+> I prefer to keep it optional.  Many LED drivers are connected to fixed 
+> non-managed supplies.
+>
+>> +    }
+>> +
+>>       if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
+>>           ret = led_add_brightness_hw_changed(led_cdev);
+>>           if (ret) {
+>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> index 7107cd7e87cf..139de6b08cad 100644
+>> --- a/drivers/leds/led-core.c
+>> +++ b/drivers/leds/led-core.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/rwsem.h>
+>>   #include <linux/slab.h>
+>>   #include "leds.h"
+>> +#include <linux/regulator/consumer.h>
+>>     DECLARE_RWSEM(leds_list_lock);
+>>   EXPORT_SYMBOL_GPL(leds_list_lock);
+>> @@ -23,6 +24,31 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+>>   LIST_HEAD(leds_list);
+>>   EXPORT_SYMBOL_GPL(leds_list);
+>>   +static bool __led_need_regulator_update(struct led_classdev 
+>> *led_cdev,
+>> +                    int brightness)
+>> +{
+>> +    bool new_regulator_state = (brightness != LED_OFF);
+>> +
+>> +    return led_cdev->regulator_state != new_regulator_state;
+>> +}
+>> +
+>> +static int __led_handle_regulator(struct led_classdev *led_cdev,
+>> +                int brightness)
+>> +{
+>> +    if (__led_need_regulator_update(led_cdev, brightness)) {
+>> +        int ret;
+>
+> Prefer to this to be moved up.
+ok
+>
+>> +
+>> +        if (brightness != LED_OFF)
+>> +            ret = regulator_enable(led_cdev->regulator);
+>> +        else
+>> +            ret = regulator_disable(led_cdev->regulator);
+>> +        if (ret)
+>> +            return ret;
+> new line
+>> +        led_cdev->regulator_state = (brightness != LED_OFF);
+>> +    }
+>> +    return 0;
+>> +}
+>> +
+>>   static int __led_set_brightness(struct led_classdev *led_cdev,
+>>                   enum led_brightness value)
+>>   {
+>> @@ -80,6 +106,7 @@ static void led_timer_function(struct timer_list *t)
+>>       }
+>>         led_set_brightness_nosleep(led_cdev, brightness);
+>> +    __led_handle_regulator(led_cdev, brightness);
+>
+> Again this seems to indicate that the regulator is a required property 
+> for the LEDs
+>
+> This needs to be made optional.  And the same comment through out for 
+> every call.
+>
+>
+>>         /* Return in next iteration if led is in one-shot mode and we 
+>> are in
+>>        * the final blink state so that the led is toggled each 
+>> delay_on +
+>> @@ -115,6 +142,8 @@ static void set_brightness_delayed(struct 
+>> work_struct *ws)
+>>       if (ret == -ENOTSUPP)
+>>           ret = __led_set_brightness_blocking(led_cdev,
+>>                       led_cdev->delayed_set_value);
+>> +    __led_handle_regulator(led_cdev, led_cdev->delayed_set_value);
+>> +
+>>       if (ret < 0 &&
+>>           /* LED HW might have been unplugged, therefore don't warn */
+>>           !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
+>> @@ -141,6 +170,7 @@ static void led_set_software_blink(struct 
+>> led_classdev *led_cdev,
+>>       /* never on - just set to off */
+>>       if (!delay_on) {
+>>           led_set_brightness_nosleep(led_cdev, LED_OFF);
+>> +        __led_handle_regulator(led_cdev, LED_OFF);
+>>           return;
+>>       }
+>>   @@ -148,6 +178,7 @@ static void led_set_software_blink(struct 
+>> led_classdev *led_cdev,
+>>       if (!delay_off) {
+>>           led_set_brightness_nosleep(led_cdev,
+>>                          led_cdev->blink_brightness);
+>> +        __led_handle_regulator(led_cdev, led_cdev->blink_brightness);
+>>           return;
+>>       }
+>>   @@ -256,8 +287,14 @@ void led_set_brightness_nopm(struct 
+>> led_classdev *led_cdev,
+>>                     enum led_brightness value)
+>>   {
+>>       /* Use brightness_set op if available, it is guaranteed not to 
+>> sleep */
+>> -    if (!__led_set_brightness(led_cdev, value))
+>> -        return;
+>> +    if (!__led_set_brightness(led_cdev, value)) {
+>> +        /*
+>> +         * if regulator state doesn't need to be changed, that is all/
+>> +         * Otherwise delegate the change to a work queue
+>> +         */
+>> +        if (!__led_need_regulator_update(led_cdev, value))
+>> +            return;
+>> +    }
+>>         /* If brightness setting can sleep, delegate it to a work 
+>> queue task */
+>>       led_cdev->delayed_set_value = value;
+>> @@ -280,6 +317,8 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nosleep);
+>>   int led_set_brightness_sync(struct led_classdev *led_cdev,
+>>                   enum led_brightness value)
+>>   {
+>> +    int ret;
+>> +
+>>       if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
+>>           return -EBUSY;
+>>   @@ -288,7 +327,15 @@ int led_set_brightness_sync(struct 
+>> led_classdev *led_cdev,
+>>       if (led_cdev->flags & LED_SUSPENDED)
+>>           return 0;
+>>   -    return __led_set_brightness_blocking(led_cdev, 
+>> led_cdev->brightness);
+>> +    ret = __led_set_brightness_blocking(led_cdev, 
+>> led_cdev->brightness);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = __led_handle_regulator(led_cdev, led_cdev->brightness);
+>
+> Can't you just return here?
+
+ok
+
+
+thanks for the review
+
+JJ
+
+>
+> Dan
+>
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(led_set_brightness_sync);
+>>   diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 9b2bf574a17a..bee8e3f8dddd 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -123,6 +123,10 @@ struct led_classdev {
+>>         /* Ensures consistent access to the LED Flash Class device */
+>>       struct mutex        led_access;
+>> +
+>> +    /* regulator */
+>> +    struct regulator    *regulator;
+>> +    bool            regulator_state;
+>>   };
+>>     extern int of_led_classdev_register(struct device *parent,
