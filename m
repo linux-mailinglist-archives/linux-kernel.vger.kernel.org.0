@@ -2,82 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A71F681F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B197B681FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 03:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfGOAkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 20:40:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46885 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728997AbfGOAkA (ORCPT
+        id S1728987AbfGOBIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 21:08:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59744 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbfGOBIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 20:40:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z1so15182549wru.13
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 17:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=hhEoiGFqVtqimvpJuyj1EbEX4DfbGhbQvq8njm/v6eFi+XvarC8aUrUP5igj/qXzqW
-         CfvzM3A0u5yGko7wbXAKXpaR9YsAi8Hqy8QSvpyaSPfCgC1FRjbWE3l/RS5x93Dj6XsM
-         VsllFeDtatqUwVvpeIR8KbJRh79rwenN2aCVhvKffhpCAJG368k0s/AqfUK+263lgpKY
-         Dbsr9/r6nk1Fgzh5wv7dlyyDS8yxSjjCoSjzXX27h5vxLXCUFy6dMDBXJ6iRnV4WpX+6
-         7S2GlXlHIm3D/Dd7jip3c8eyKj6NPPdWh1yq0uVS6wbWztgEmS8yqNP1mHcTAv5+bP+Q
-         ICcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=dTnmDhfho/4fqgONlnMqmPTf/GzcW/rtk2wOUJp/0h2DFJp01F0P+rsbOUROeXXkIF
-         1w5fyJF0OXUtJkI4jbZa+wb7CGWW5dQAR/70EPXUGkWlt9AsbM7Yu3m+ysU+r9tbhUPg
-         WEbCrkRBf53GXl0092DppN7NlEf2JGKNsD5Llfbxee7kHYlxpTQwtrmmAx1/cjxOouhv
-         KvdoL7+mqNvyKGQMuNlinDycsMdQF6t9NnsjKsZl3Behb8xrOZUkePiarKHGCK3FdmJ3
-         oBLzLuC4rbFOU3SzJ62xa3U2Mnc/yj1l58ytMr3AxeS/iy4DZFikM98hVG8Y5/fNbhtl
-         B7Xg==
-X-Gm-Message-State: APjAAAWjro3hjR5JFcTfAkXbZ5LQHjomp898HxMpDmPC+MlPya+waFPt
-        N1hqmQBAUa8KFL49q5TRl8ro7D/x8TtujRE7LE4=
-X-Google-Smtp-Source: APXvYqy5oGOZ+mfDYXqgYvlIzvFtpyI0rJ29XthOUYtzbQGjNGHljWsirnpUjEv+GyGmZko3ZZEuYxBPjHUxMAZsH1k=
-X-Received: by 2002:a5d:564e:: with SMTP id j14mr24243874wrw.1.1563151198518;
- Sun, 14 Jul 2019 17:39:58 -0700 (PDT)
+        Sun, 14 Jul 2019 21:08:47 -0400
+Received: from 2.general.tyhicks.us.vpn ([10.172.64.53] helo=sec)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1hmpTx-00013t-W9; Mon, 15 Jul 2019 01:08:46 +0000
+Date:   Mon, 15 Jul 2019 01:08:43 +0000
+From:   Tyler Hicks <tyhicks@canonical.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org
+Subject: [GIT PULL] eCryptfs fixes for 5.3-rc1
+Message-ID: <20190715010612.GA13363@sec>
 MIME-Version: 1.0
-Received: by 2002:a5d:69cf:0:0:0:0:0 with HTTP; Sun, 14 Jul 2019 17:39:58
- -0700 (PDT)
-Reply-To: ayishagddafio@mail.com
-From:   AISHA GADDAFI <ayishagadafi1@gmail.com>
-Date:   Sun, 14 Jul 2019 17:39:58 -0700
-Message-ID: <CAKmdXwsE33L0SSGvsb7bxapnkZikxpz94CGSzPqkUcoPzXMJpA@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Dear Friend (Assalamu Alaikum),
+Hi Linus,
 
-I came across your e-mail contact prior a private search while in need of
-your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
-with three Children. I am the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi).
+The following changes since commit 5ded5871030eb75017639148da0a58931dfbfc25:
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand
-United State Dollar ($27.500.000.00 ) and i need a trusted investment
-Manager/Partner because of my current refugee status, however, I am
-interested in you for investment project assistance in your country, may be
-from there, we can build business relationship in the nearest future.
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2019-02-15 13:36:43 -0800)
 
-I am willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits.
+are available in the git repository at:
 
-If you are willing to handle this project on my behalf kindly reply urgent
-to enable me provide you more information about the investment funds.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git tags/ecryptfs-5.3-rc1-fixes
 
-Your Urgent Reply Will Be Appreciated. write me at this email address(
-ayishagddafio@mail.com ) for further discussion.
+for you to fetch changes up to 7451c54abc9139585492605d9e91dec2d26c6457:
 
-Best Regards
-Mrs Aisha Al-Qaddafi
-Reply to: ayishagddafio@mail.com
+  ecryptfs: Change return type of ecryptfs_process_flags (2019-07-02 19:28:02 +0000)
+
+----------------------------------------------------------------
+- Fix error handling when ecryptfs_read_lower() encounters an error
+- Fix read-only file creation when the eCryptfs mount is configured to
+  store metadata in xattrs
+- Minor code cleanups
+
+----------------------------------------------------------------
+Dan Carpenter (2):
+      eCryptfs: fix a couple type promotion bugs
+      ecryptfs: re-order a condition for static checkers
+
+Hariprasad Kelam (1):
+      ecryptfs: Change return type of ecryptfs_process_flags
+
+Robbie Ko (1):
+      eCryptfs: fix permission denied with ecryptfs_xattr mount option when create readonly file
+
+Sascha Hauer (1):
+      ecryptfs: use print_hex_dump_bytes for hexdump
+
+YueHaibing (2):
+      ecryptfs: remove unnessesary null check in ecryptfs_keyring_auth_tok_for_sig
+      ecryptfs: Make ecryptfs_xattr_handler static
+
+ fs/ecryptfs/crypto.c   | 42 +++++++++++++++++++++++++-----------------
+ fs/ecryptfs/debug.c    | 22 +++-------------------
+ fs/ecryptfs/inode.c    |  2 +-
+ fs/ecryptfs/keystore.c |  9 +++++----
+ 4 files changed, 34 insertions(+), 41 deletions(-)
