@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1536949B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87BE269491
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391672AbfGOOaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:30:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42614 "EHLO mail.kernel.org"
+        id S2391022AbfGOOao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403862AbfGOOaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:30:11 -0400
+        id S1732596AbfGOOal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:30:41 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A7520868;
-        Mon, 15 Jul 2019 14:30:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C58521537;
+        Mon, 15 Jul 2019 14:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201010;
-        bh=iriXb7Yr7STtE0UEoL34YAtg0DlrF7jdrQaf243Fz/U=;
+        s=default; t=1563201040;
+        bh=iEm+teuS33iZnnbykkyHG72+fGcBQ6+kaoeVAH4pEKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cd3Mz5DwIi3TPNlNkaCFB/ZtEG6lIywo2dLbVU/cBb/rLXdjcY7qlv/DIKRqer4ej
-         IdEK8j38UUZUzPZt26aiXuB8jc8noMvzkhM6FcVGqMFvgT9O46F5qNO8J1b9bQpugO
-         eXchmDjKWOAO6+7pKVxQSLqfURRE4D9gqMD6qzFQ=
+        b=bRg6HBMWIQWiZ79/Mkh4xZBbM0q/z0A+kJCPkdGebQ0ayxZZd9Lw7q8TQSRYKk4ui
+         BMsGaKxMydMfSIru+8NPLAWOnKvCDk/9EG6a0n4zw27AVcytxlnlZUMPe1NzUpVH/m
+         Etwn6UVhbFZXMo9oiyDBEi8bWOhaYy6Zv6apfOcw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Biao Huang <biao.huang@mediatek.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 026/105] net: phy: Check against net_device being NULL
-Date:   Mon, 15 Jul 2019 10:27:20 -0400
-Message-Id: <20190715142839.9896-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 033/105] net: stmmac: dwmac4: fix flow control issue
+Date:   Mon, 15 Jul 2019 10:27:27 -0400
+Message-Id: <20190715142839.9896-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
 References: <20190715142839.9896-1-sashal@kernel.org>
@@ -45,48 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Biao Huang <biao.huang@mediatek.com>
 
-[ Upstream commit 82c76aca81187b3d28a6fb3062f6916450ce955e ]
+[ Upstream commit ee326fd01e79dfa42014d55931260b68b9fa3273 ]
 
-In general, we don't want MAC drivers calling phy_attach_direct with the
-net_device being NULL. Add checks against this in all the functions
-calling it: phy_attach() and phy_connect_direct().
+Current dwmac4_flow_ctrl will not clear
+GMAC_RX_FLOW_CTRL_RFE/GMAC_RX_FLOW_CTRL_RFE bits,
+so MAC hw will keep flow control on although expecting
+flow control off by ethtool. Add codes to fix it.
 
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 477286b53f55 ("stmmac: add GMAC4 core support")
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index c433be573e0d..ed7e3c70b511 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -729,6 +729,9 @@ int phy_connect_direct(struct net_device *dev, struct phy_device *phydev,
- {
- 	int rc;
- 
-+	if (!dev)
-+		return -EINVAL;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index ed5fcd4994f2..8445af580cb6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -474,8 +474,9 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 	if (fc & FLOW_RX) {
+ 		pr_debug("\tReceive Flow-Control ON\n");
+ 		flow |= GMAC_RX_FLOW_CTRL_RFE;
+-		writel(flow, ioaddr + GMAC_RX_FLOW_CTRL);
+ 	}
++	writel(flow, ioaddr + GMAC_RX_FLOW_CTRL);
 +
- 	rc = phy_attach_direct(dev, phydev, phydev->dev_flags, interface);
- 	if (rc)
- 		return rc;
-@@ -1067,6 +1070,9 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
- 	struct device *d;
- 	int rc;
+ 	if (fc & FLOW_TX) {
+ 		pr_debug("\tTransmit Flow-Control ON\n");
  
-+	if (!dev)
-+		return ERR_PTR(-EINVAL);
-+
- 	/* Search the list of PHY devices on the mdio bus for the
- 	 * PHY with the requested name
- 	 */
+@@ -483,7 +484,7 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 			pr_debug("\tduplex mode: PAUSE %d\n", pause_time);
+ 
+ 		for (queue = 0; queue < tx_cnt; queue++) {
+-			flow |= GMAC_TX_FLOW_CTRL_TFE;
++			flow = GMAC_TX_FLOW_CTRL_TFE;
+ 
+ 			if (duplex)
+ 				flow |=
+@@ -491,6 +492,9 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 
+ 			writel(flow, ioaddr + GMAC_QX_TX_FLOW_CTRL(queue));
+ 		}
++	} else {
++		for (queue = 0; queue < tx_cnt; queue++)
++			writel(0, ioaddr + GMAC_QX_TX_FLOW_CTRL(queue));
+ 	}
+ }
+ 
 -- 
 2.20.1
 
