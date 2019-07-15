@@ -2,73 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF1868FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 715006902C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389737AbfGOOQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:16:40 -0400
-Received: from mga07.intel.com ([134.134.136.100]:1226 "EHLO mga07.intel.com"
+        id S2390102AbfGOOT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:19:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731676AbfGOOQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:16:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2019 07:16:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,493,1557212400"; 
-   d="scan'208";a="167347987"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Jul 2019 07:16:36 -0700
-Date:   Mon, 15 Jul 2019 07:16:36 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Tao Xu <tao3.xu@intel.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
-        jingqi.liu@intel.com
-Subject: Re: [PATCH v7 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
-Message-ID: <20190715141636.GB442@linux.intel.com>
-References: <20190712082907.29137-1-tao3.xu@intel.com>
- <20190712082907.29137-3-tao3.xu@intel.com>
- <20190712155202.GC29659@linux.intel.com>
- <8ed3cec5-8ba9-b2ed-f0e4-eefb0a988bc8@intel.com>
+        id S2390095AbfGOOTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:19:24 -0400
+Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2254F20651;
+        Mon, 15 Jul 2019 14:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563200364;
+        bh=pg4WlU+3txAJbba2GoG2aTCtf742K7MnlsaLR4ncgVk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nbr8u71gKl86mQ5gw8zTq8HoGkIFClnlMQVH7+b9+aMOeaizxgBJGr7oKAIIRyUFC
+         WqIo9B0Bth8fOF0mTRgzom1dcp2Uzb6VkThW1lHdkJrzcT/5SXSYmumZ9y4NlggdXU
+         21iJ1ks1V0RYhMFrgEOI/Z+AXyapcZVf62OaesI4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 026/158] perf annotate TUI browser: Do not use member from variable within its own initialization
+Date:   Mon, 15 Jul 2019 10:15:57 -0400
+Message-Id: <20190715141809.8445-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
+References: <20190715141809.8445-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ed3cec5-8ba9-b2ed-f0e4-eefb0a988bc8@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 09:22:14AM +0800, Tao Xu wrote:
-> On 7/12/2019 11:52 PM, Sean Christopherson wrote:
-> >The SDM only defines bits 31:0, and the kernel uses a u32 to cache its
-> >value.  I assume bits 63:32 are reserved?  I'm guessing we also need an
-> >SDM update...
-> >
-> 
-> The SDM define IA32_UMWAIT_CONTROL is a 32bit MSR. So need me to set 63:32
-> reserved?
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Huh, I didn't realize the SDM allows 32 bit MSRs, I assumed all bits
-needed to be explicitly defined even if the underlying implementation only
-tracked 32 bits.
+[ Upstream commit da2019633f0b5c105ce658aada333422d8cb28fe ]
 
-RDMSR:
+Some compilers will complain when using a member of a struct to
+initialize another member, in the same struct initialization.
 
-  If fewer than 64 bits are implemented in the MSR being read, the values
-  return in EDX:EAX in unimplemented bit locations are undefined.
+For instance:
 
-WRMSR:
+  debian:8      Debian clang version 3.5.0-10 (tags/RELEASE_350/final) (based on LLVM 3.5.0)
+  oraclelinux:7 clang version 3.4.2 (tags/RELEASE_34/dot2-final)
 
-  Undefined or reserved bits in an MSR should be set to values previously
-  read.
+Produce:
 
-From KVM's perspective, bits 63:32 should be treated as reserved-to-zero.
-This also means that struct vcpu_vmx can track a u32 instead of a u64
-for msr_ia32_umwait_control.
+  ui/browsers/annotate.c:104:12: error: variable 'ops' is uninitialized when used within its own initialization [-Werror,-Wuninitialized]
+                                              (!ops.current_entry ||
+                                                ^~~
+  1 error generated.
+
+So use an extra variable, initialized just before that struct, to have
+the value used in the expressions used to init two of the struct
+members.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: c298304bd747 ("perf annotate: Use a ops table for annotation_line__write()")
+Link: https://lkml.kernel.org/n/tip-f9nexro58q62l3o9hez8hr0i@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/ui/browsers/annotate.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 1d00e5ec7906..a3c255228d62 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -96,11 +96,12 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 	struct annotate_browser *ab = container_of(browser, struct annotate_browser, b);
+ 	struct annotation *notes = browser__annotation(browser);
+ 	struct annotation_line *al = list_entry(entry, struct annotation_line, node);
++	const bool is_current_entry = ui_browser__is_current_entry(browser, row);
+ 	struct annotation_write_ops ops = {
+ 		.first_line		 = row == 0,
+-		.current_entry		 = ui_browser__is_current_entry(browser, row),
++		.current_entry		 = is_current_entry,
+ 		.change_color		 = (!notes->options->hide_src_code &&
+-					    (!ops.current_entry ||
++					    (!is_current_entry ||
+ 					     (browser->use_navkeypressed &&
+ 					      !browser->navkeypressed))),
+ 		.width			 = browser->width,
+-- 
+2.20.1
+
