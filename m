@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDBDE6937E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C10869373
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404171AbfGOOoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:44:32 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41932 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404704AbfGOOhb (ORCPT
+        id S2404397AbfGOOoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:44:17 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35163 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391857AbfGOOhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:37:31 -0400
-Received: by mail-pl1-f194.google.com with SMTP id m9so8357587pls.8
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:37:31 -0700 (PDT)
+        Mon, 15 Jul 2019 10:37:39 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so7523842pfn.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:37:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/gvD5L3W4khYlR/j02/LMhetLZkkRNPQ8EPkwaYb/Yo=;
-        b=WUpb9JKsXzIHcxew1wAVQiWwZ+kaf0Ww3b9i/phqeK6eGSyIkMrGlEABg1JgP/N6a7
-         XI3TNv1vdpFEoUyT+MAAdsh6eiTQV1SZjNnbyXSh4bYq6H3Gz7K8UhzDuVF/rfbp1RTm
-         xNeitgRKD2kv4LjyEJgK6S9GJGZvS2JWmOhuM=
+        bh=UMymzQWyTMjq6dLEXUYHnnYNVQu32eRzbAFgwnIdCTM=;
+        b=sb4sRCBHFXSE2cPqMR4+T5ZCDTZOXkYZvOefdmVbThG07/8ujO+ZMUI1qi0RzfQNtk
+         L2SG3O8Wv6tkY7NUfEU97Sodrr0ncVViDxOuD+Tu+lrXlmz95G5bFlD4Z39OvL7tmZa8
+         r01KC9K2ZD2d1/zC/71KGiI4hO6ZU/NWudwNw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/gvD5L3W4khYlR/j02/LMhetLZkkRNPQ8EPkwaYb/Yo=;
-        b=iOO3xw78VKc3997s5WbE6ofJohH0h01SrcgX/IgDXrFxIZrvlkZVGOhH6bDSnoQ957
-         LsTSUd9JMte+8chXAxztyM+507j35sl0ifgahFT/9wPoa4iA4q9rSLeoCNqy7Rh3gRNh
-         fZSYpvR2KoDWJFjEqJA0GH/QQXJc5rzur99h6VMOj7UrPX/vqnDBvgYvC4veEroP19DY
-         DzP52okj3vz2nQGsQttzUAMzgyFZWw0iGSHHeU9HaHHvGxFyFIEoya0zCbmtMowZssck
-         aJt6dJhvFpJq3RDGH6UXQTvyKXnDM4hHWxGi2NfpP8iuigsPRt1bFEmY+cOGlVqOxvOK
-         BR7A==
-X-Gm-Message-State: APjAAAUGe+70yEZg5QjOBeJfdI6lIEdp22ome2EPMFNVt26WWajBRIPf
-        qk8ml8O2URkPenIFM75TWDJqzIc8
-X-Google-Smtp-Source: APXvYqySJr0Y1QIzNUIj9NJwd+Rw22u3LGJjXHmBidac39lx3Xu00PxoUZgolCbZ3bk0iovIh+UXIw==
-X-Received: by 2002:a17:902:1003:: with SMTP id b3mr29244590pla.172.1563201450419;
-        Mon, 15 Jul 2019 07:37:30 -0700 (PDT)
+        bh=UMymzQWyTMjq6dLEXUYHnnYNVQu32eRzbAFgwnIdCTM=;
+        b=ZQKqBnUynp1XZa4NSUewf7x8932f7mCZYzv/c3+DyaFuoY+T4zC+YapHF4ClefJnbO
+         7clA8zwCIPutuuVD34QqPOlkeHjwZOOCRW6gqYf0oe1piECH7GvN1id7h/wTVDvx4Nwy
+         lGVcqGCpo8eYNmcnUtcv9QhyBjbN4UbEtlupVUIgDjaIzuJsVCNWgs5n0lESZw/09ake
+         +G8LQviEkJjfB0ieipOuLNdJmMY4N5WnC2UT5iuvftH/KMqfTIsBMCqbHmTWR+yaFjaa
+         5jz1XClnGst8EUgjy02trI0noNvhA90iv0gahpHNqUc/IOeTHmqk2n+A5TIogHliyakO
+         Fa9w==
+X-Gm-Message-State: APjAAAVHkAUnM1XujlHp6kaniG6dBKkN/erWbTPhUFsjEH8OLcQ427dE
+        6P7FJRAJ+GqNkAgzKjAJaimN4WEg
+X-Google-Smtp-Source: APXvYqwREOPm8jU5KaBh/4wpCriK+UOZQMzbDI3ea0SFjpipVn94p6ZbCr/TlFhUWr/4kL8J5e58FQ==
+X-Received: by 2002:a17:90a:3270:: with SMTP id k103mr28578111pjb.54.1563201458425;
+        Mon, 15 Jul 2019 07:37:38 -0700 (PDT)
 Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id s66sm18381852pfs.8.2019.07.15.07.37.26
+        by smtp.gmail.com with ESMTPSA id s66sm18381852pfs.8.2019.07.15.07.37.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 07:37:29 -0700 (PDT)
+        Mon, 15 Jul 2019 07:37:37 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -70,9 +70,9 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Tejun Heo <tj@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
         x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Subject: [PATCH 4/9] ipv4: add lockdep condition to fix for_each_entry (v1)
-Date:   Mon, 15 Jul 2019 10:37:00 -0400
-Message-Id: <20190715143705.117908-5-joel@joelfernandes.org>
+Subject: [PATCH 6/9] workqueue: Convert for_each_wq to use built-in list check (v2)
+Date:   Mon, 15 Jul 2019 10:37:02 -0400
+Message-Id: <20190715143705.117908-7-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
 In-Reply-To: <20190715143705.117908-1-joel@joelfernandes.org>
 References: <20190715143705.117908-1-joel@joelfernandes.org>
@@ -83,28 +83,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the previous support added, use it for adding lockdep conditions
-to list usage here.
+list_for_each_entry_rcu now has support to check for RCU reader sections
+as well as lock. Just use the support in it, instead of explictly
+checking in the caller.
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- net/ipv4/fib_frontend.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/workqueue.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/net/ipv4/fib_frontend.c b/net/ipv4/fib_frontend.c
-index 317339cd7f03..26b0fb24e2c2 100644
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -124,7 +124,8 @@ struct fib_table *fib_get_table(struct net *net, u32 id)
- 	h = id & (FIB_TABLE_HASHSZ - 1);
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 601d61150b65..e882477ebf6e 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -364,11 +364,6 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
+ 			 !lockdep_is_held(&wq_pool_mutex),		\
+ 			 "RCU or wq_pool_mutex should be held")
  
- 	head = &net->ipv4.fib_table_hash[h];
--	hlist_for_each_entry_rcu(tb, head, tb_hlist) {
-+	hlist_for_each_entry_rcu(tb, head, tb_hlist,
-+				 lockdep_rtnl_is_held()) {
- 		if (tb->tb_id == id)
- 			return tb;
- 	}
+-#define assert_rcu_or_wq_mutex(wq)					\
+-	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
+-			 !lockdep_is_held(&wq->mutex),			\
+-			 "RCU or wq->mutex should be held")
+-
+ #define assert_rcu_or_wq_mutex_or_pool_mutex(wq)			\
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
+ 			 !lockdep_is_held(&wq->mutex) &&		\
+@@ -425,9 +420,8 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
+  * ignored.
+  */
+ #define for_each_pwq(pwq, wq)						\
+-	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node)		\
+-		if (({ assert_rcu_or_wq_mutex(wq); false; })) { }	\
+-		else
++	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node,		\
++				 lock_is_held(&(wq->mutex).dep_map))
+ 
+ #ifdef CONFIG_DEBUG_OBJECTS_WORK
+ 
 -- 
 2.22.0.510.g264f2c817a-goog
 
