@@ -2,88 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E47068C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05E668BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfGONsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58584 "EHLO mail.kernel.org"
+        id S1730827AbfGONnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:43:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:49374 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731506AbfGONsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:48:30 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 243992081C;
-        Mon, 15 Jul 2019 13:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198509;
-        bh=k5w3Rb8LTpYRJ8/wcLaaSo1jqW/XMldTBQh29tfXPqo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZVG+2lGc1YnXO2hCvnDJj5tTW4Gb/Z5zfaJHTKU+9MEAbu4EsjEdL7sVfozzQkyLq
-         mqoYfMFWMN+kCxD2u/QykVKPb5zMy6A3a6IAGISX7cMGu39x6Wvii6MmLYEziT1tau
-         Ox5smIONSugMgTTuuQwcLb0wwQzRpIzieaYXowJg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 030/249] net: stmmac: dwmac1000: Clear unused address entries
-Date:   Mon, 15 Jul 2019 09:43:15 -0400
-Message-Id: <20190715134655.4076-30-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
+        id S1730286AbfGONnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:43:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 720C228;
+        Mon, 15 Jul 2019 06:43:20 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E77153F71F;
+        Mon, 15 Jul 2019 06:43:17 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 0/3] Support CPU hotplug for ARM64
+To:     Maran Wilson <maran.wilson@oracle.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        guohanjun@huawei.com, john.garry@huawei.com, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        huawei.libin@huawei.com, jonathan.cameron@huawei.com,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+References: <1561776155-38975-1-git-send-email-wangxiongfeng2@huawei.com>
+ <82879258-46a7-a6e9-ee54-fc3692c1cdc3@arm.com>
+ <51cc9a5c-9968-c4b1-0bc7-870f44a3a761@oracle.com>
+ <06ef13e1-fffe-d4a2-721e-f666f331fb3c@arm.com>
+ <d65c2aca-470f-177d-57cf-6375c989054c@oracle.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <5f1cba3d-d9aa-b17c-8e10-721ac69b921f@arm.com>
+Date:   Mon, 15 Jul 2019 14:43:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d65c2aca-470f-177d-57cf-6375c989054c@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+Hi Maran,
 
-[ Upstream commit 9463c445590091202659cdfdd44b236acadfbd84 ]
+On 10/07/2019 17:05, Maran Wilson wrote:
+> On 7/10/2019 2:15 AM, Marc Zyngier wrote:
+>> On 09/07/2019 20:06, Maran Wilson wrote:
+>>> On 7/5/2019 3:12 AM, James Morse wrote:
+>>>> On 29/06/2019 03:42, Xiongfeng Wang wrote:
+>>>>> This patchset mark all the GICC node in MADT as possible CPUs even though it
+>>>>> is disabled. But only those enabled GICC node are marked as present CPUs.
+>>>>> So that kernel will initialize some CPU related data structure in advance before
+>>>>> the CPU is actually hot added into the system. This patchset also implement
+>>>>> 'acpi_(un)map_cpu()' and 'arch_(un)register_cpu()' for ARM64. These functions are
+>>>>> needed to enable CPU hotplug.
+>>>>>
+>>>>> To support CPU hotplug, we need to add all the possible GICC node in MADT
+>>>>> including those CPUs that are not present but may be hot added later. Those
+>>>>> CPUs are marked as disabled in GICC nodes.
+>>>> ... what do you need this for?
+>>>>
+>>>> (The term cpu-hotplug in the arm world almost never means hot-adding a new package/die to
+>>>> the platform, we usually mean taking CPUs online/offline for power management. e.g.
+>>>> cpuhp_offline_cpu_device())
+>>>>
+>>>> It looks like you're adding support for hot-adding a new package/die to the platform ...
+>>>> but only for virtualisation.
+>>>>
+>>>> I don't see why this is needed for virtualisation. The in-kernel irqchip needs to know
+>>>> these vcpu exist before you can enter the guest for the first time. You can't create them
+>>>> late. At best you're saving the host scheduling a vcpu that is offline. Is this really a
+>>>> problem?
+>>>>
+>>>> If we moved PSCI support to user-space, you could avoid creating host vcpu threads until
+>>>> the guest brings the vcpu online, which would solve that problem, and save the host
+>>>> resources for the thread too. (and its acpi/dt agnostic)
+>>>>
+>>>> I don't see the difference here between booting the guest with 'maxcpus=1', and bringing
+>>>> the vcpu online later. The only real difference seems to be moving the can-be-online
+>>>> policy into the hypervisor/VMM...
 
-In case we don't use a given address entry we need to clear it because
-it could contain previous values that are no longer valid.
+>>> Isn't that an important distinction from a cloud service provider's
+>>> perspective?
 
-Found out while running stmmac selftests.
+Host cpu-time is. Describing this as guest vcpu's is a bit weird.
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I'd expect the statement be something like "you're paying for 50% of one Xeon v-whatever".
+It shouldn't make a difference if I run 8 vcpus or 2, the amount of cpu-time would still
+be constrained by the cloud provider.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-index 9fff81170163..54f4ffb36d60 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-@@ -206,6 +206,12 @@ static void dwmac1000_set_filter(struct mac_device_info *hw,
- 					    GMAC_ADDR_LOW(reg));
- 			reg++;
- 		}
-+
-+		while (reg <= perfect_addr_number) {
-+			writel(0, ioaddr + GMAC_ADDR_HIGH(reg));
-+			writel(0, ioaddr + GMAC_ADDR_LOW(reg));
-+			reg++;
-+		}
- 	}
- 
- #ifdef FRAME_FILTER_DEBUG
--- 
-2.20.1
 
+>>> As far as I understand it, you also need CPU hotplug capabilities to
+>>> support things like Kata runtime under Kubernetes. i.e. when
+>>> implementing your containers in the form of light weight VMs for the
+>>> additional security ... and the orchestration layer cannot determine
+>>> ahead of time how much CPU/memory resources are going to be needed to
+>>> run the pod(s).
+
+>> Why would it be any different? You can pre-allocate your vcpus, leave
+>> them parked until some external agent decides to signal the container
+>> that it it can use another bunch of CPUs. At that point, the container
+>> must actively boot these vcpus (they aren't going to come up by magic).
+>>
+>> Given that you must have sized your virtual platform to deal with the
+>> maximum set of resources you anticipate (think of the GIC
+>> redistributors, for example), I really wonder what you gain here.
+
+> Maybe I'm not following the alternative proposal completely, but wouldn't a guest VM (who
+> happens to be in control of its OS) be able to add/online vCPU resources without approval
+> from the VMM this way?
+
+The in-kernel PSCI implementation will allow all CPUs to be online/offline. If we moved
+that support to the VMM, it could apply some policy as to whether a cpu-online call
+succeeds or fails.
+
+
+Thanks,
+
+James
