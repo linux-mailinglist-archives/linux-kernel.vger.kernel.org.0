@@ -2,491 +2,373 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB79069991
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AFF0699A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731576AbfGORJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:09:02 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43139 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730782AbfGORJB (ORCPT
+        id S1731666AbfGORXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:23:02 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:23282 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730566AbfGORXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:09:01 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so35241700ios.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NnoZ4/HFhj2UbNdbGL5aDJZT5s20+EkEZMM07AUmzTk=;
-        b=icAaogfiaMOh2TbeD51vIbWHEWwDaX5V/JeMzJRRR4rUyoGleaQFWR+KKjI6yQ0Ebi
-         GANtulF/OCXC2iP2veMJkSRS+Mk+Mc1xccTbXzd/Gbf2B7O227sbKPL4Olhr20+pkEB/
-         UVPZ3tWxuaiuwCciPg4SICLz9sTZG+iSDMLSE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NnoZ4/HFhj2UbNdbGL5aDJZT5s20+EkEZMM07AUmzTk=;
-        b=OoDDF7BWpf7VesjR8lMjarDsGmNPLnqPAj114Fd/h1T0N1Eb6+V3RsGCxoMtEZNgbE
-         5+14PLuHNTT89k7hdTRdfuuL62G25FHkldoOxjLiBZ82fzjfCcRMk92VChZzvLpLmfLo
-         EM73SL0nCuKqFxawFkSv9UUZNzaU2/iw5cRMTPCT2HArt9gjSUgC8CRh8QBVfEPaZhYW
-         u8SuawAcREhTiRaSMEMAOx5RV7j0wSRFQpqyRB9sbkqLgp1/00ZTvh8Pl/E6d30pS3rC
-         azVV66p2JYL2UNVxR9UPxY3LdxVAfGBWjhrZe21gNbjBLHIj4tUD2NCfvo3rp27nlnph
-         +7bw==
-X-Gm-Message-State: APjAAAUn46D2TuhgmgOmnGMjP5opg0QG0ys+71m4j80WZzicKIp1UZL0
-        w9m9/3+BsnopbQZcEPGeDuDTj/Lna7Xr1boUtdfgUw==
-X-Google-Smtp-Source: APXvYqz6gVGNMNgIejnLcoxmlRYUjAA+otNiSEmQ6jYHENvTg4INzu+VPSUulDAhN39/+u62zUUT/fP+RiUPjwyEBlI=
-X-Received: by 2002:a6b:8bd1:: with SMTP id n200mr26733724iod.134.1563210540403;
- Mon, 15 Jul 2019 10:09:00 -0700 (PDT)
+        Mon, 15 Jul 2019 13:23:02 -0400
+X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 13:22:55 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1563211374;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:References:To:Subject:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=K+lgMZKk2yr3MCRwh1L0ByrryPoo2B6V3LCHHOjriuk=;
+        b=hxV1NHolc5AVtbkrgFaB6YiN9u0pRrlhkwCdVbkk3mYE04apY0IR+H8eMmX3xh4ii6
+        z3boMwiBgGvxZFkG9gxusVt4P9se9cugOE/NqdxK+JP1132xbWYihslLS10vlcyOSnnW
+        PKEknSwc4I+PGvj3ZR8L6X+ALhKqrwvfwfD86VNnReIAx8SlF0G4TkpfNn70NXZSFOZI
+        rQ8zB1OkUV46lOVsYCVLrTekcTmJFxXe2vGz0uNVYbD80stwFPtxc0SnyfBK26dM1m1F
+        oOeNbnQ0oe3Rg16L59Ehanz+nTecOvXIjm1/fBm1HvTcc9WJjlYU1I9E0W9vLPqExfpp
+        wTGw==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJVch5lUg5"
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.1.200]
+        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
+        with ESMTPSA id k05d3bv6FHGpIfM
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 15 Jul 2019 19:16:51 +0200 (CEST)
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Subject: Re: INFO: task hung in unregister_netdevice_notifier (3)
+To:     syzbot <syzbot+0f1827363a305f74996f@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mkl@pengutronix.de,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Kirill Tkhai <ktkhai@virtuozzo.com>
+References: <000000000000d018ea058d9c46e3@google.com>
+Message-ID: <be6c249e-3b99-8388-5b13-547645b2fac9@hartkopp.net>
+Date:   Mon, 15 Jul 2019 19:16:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <20190627104039.26285-1-enric.balletbo@collabora.com> <20190627104039.26285-4-enric.balletbo@collabora.com>
-In-Reply-To: <20190627104039.26285-4-enric.balletbo@collabora.com>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Mon, 15 Jul 2019 10:08:49 -0700
-Message-ID: <CAPUE2utn8+0kF63JAh=JHLrOahrAHAhKUQFUM9w+eAtj5hM_mQ@mail.gmail.com>
-Subject: Re: [PATCH v4 03/11] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Collabora kernel ML <kernel@collabora.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <000000000000d018ea058d9c46e3@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 3:40 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> That's a driver to talk with the ChromeOS Embedded Controller via a
-> miscellaneous character device, it creates an entry in /dev for every
-> instance and implements basic file operations for communicating with the
-> Embedded Controller with an userspace application. The API is moved to
-> the uapi folder, which is supposed to contain the user space API of the
-> kernel.
->
-> Note that this will replace current character device interface
-> implemented in the cros-ec-dev driver in the MFD subsystem. The idea is
-> to move all the functionality that extends the bounds of what MFD was
-> designed to platform/chrome subsystem.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> ---
->
-> Changes in v4: None
-> Changes in v3:
-> - Fix 'linux/mfd/cros_ec.h' is not exported (reported by lkp)
->
-> Changes in v2:
-> - Remove the list, and the lock, as are not needed (Greg Kroah-Hartman)
-> - Remove dev_info in probe, anyway we will see the chardev or not if the
->   probe fails (Greg Kroah-Hartman)
->
->  Documentation/ioctl/ioctl-number.txt          |   2 +-
->  drivers/mfd/cros_ec_dev.c                     |   4 +-
->  drivers/platform/chrome/Kconfig               |  11 +
->  drivers/platform/chrome/Makefile              |   1 +
->  drivers/platform/chrome/cros_ec_chardev.c     | 253 ++++++++++++++++++
->  .../uapi/linux/cros_ec_chardev.h              |  21 +-
->  6 files changed, 273 insertions(+), 19 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_ec_chardev.c
->  rename drivers/mfd/cros_ec_dev.h => include/uapi/linux/cros_ec_chardev.h (50%)
->
-> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-> index c9558146ac58..8bd7907ee36d 100644
-> --- a/Documentation/ioctl/ioctl-number.txt
-> +++ b/Documentation/ioctl/ioctl-number.txt
-> @@ -340,7 +340,7 @@ Code  Seq#(hex)     Include File            Comments
->  0xDD   00-3F   ZFCP device driver      see drivers/s390/scsi/
->                                         <mailto:aherrman@de.ibm.com>
->  0xE5   00-3F   linux/fuse.h
-> -0xEC   00-01   drivers/platform/chrome/cros_ec_dev.h   ChromeOS EC driver
-> +0xEC   00-01   include/uapi/linux/cros_ec_chardev.h    ChromeOS EC driver
->  0xF3   00-3F   drivers/usb/misc/sisusbvga/sisusb.h     sisfb (in development)
->                                         <mailto:thomas@winischhofer.net>
->  0xF4   00-1F   video/mbxfb.h           mbxfb
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index eb77bf6406f3..3334bc4e42ee 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -19,6 +19,8 @@
->
->  #include <linux/fs.h>
->  #include <linux/mfd/core.h>
-> +#include <linux/mfd/cros_ec.h>
-> +#include <linux/mfd/cros_ec_commands.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/of_platform.h>
-> @@ -27,7 +29,7 @@
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
->
-> -#include "cros_ec_dev.h"
-> +#include <uapi/linux/cros_ec_chardev.h>
->
->  #define DRV_NAME "cros-ec-dev"
->
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 1e7a10500b3f..221e709358c0 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -133,6 +133,17 @@ config CROS_KBD_LED_BACKLIGHT
->           To compile this driver as a module, choose M here: the
->           module will be called cros_kbd_led_backlight.
->
-> +config CROS_EC_CHARDEV
-> +       tristate "ChromeOS EC miscdevice"
-> +       depends on MFD_CROS_EC_CHARDEV
-> +       default MFD_CROS_EC_CHARDEV
-> +       help
-> +         This driver adds file operations support to talk with the
-> +         ChromeOS EC from userspace via a character device.
-> +
-> +         To compile this driver as a module, choose M here: the
-> +         module will be called cros_ec_chardev.
-> +
->  config CROS_EC_LIGHTBAR
->         tristate "Chromebook Pixel's lightbar support"
->         depends on MFD_CROS_EC_CHARDEV
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> index f69e0be98bd6..e6758e967ac5 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -15,6 +15,7 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)        += cros_ec_lpc_mec.o
->  obj-$(CONFIG_CROS_EC_LPC)              += cros_ec_lpcs.o
->  obj-$(CONFIG_CROS_EC_PROTO)            += cros_ec_proto.o cros_ec_trace.o
->  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)   += cros_kbd_led_backlight.o
-> +obj-$(CONFIG_CROS_EC_CHARDEV)          += cros_ec_chardev.o
->  obj-$(CONFIG_CROS_EC_LIGHTBAR)         += cros_ec_lightbar.o
->  obj-$(CONFIG_CROS_EC_VBC)              += cros_ec_vbc.o
->  obj-$(CONFIG_CROS_EC_DEBUGFS)          += cros_ec_debugfs.o
-> diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-> new file mode 100644
-> index 000000000000..ce77839b0dcb
-> --- /dev/null
-> +++ b/drivers/platform/chrome/cros_ec_chardev.c
-> @@ -0,0 +1,253 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Miscellaneous character driver for ChromeOS Embedded Controller
-> + *
-> + * Copyright 2014 Google, Inc.
-> + * Copyright 2019 Google LLC
-> + *
-> + * This file is a rework and part of the code is ported from
-> + * drivers/mfd/cros_ec_dev.c that was originally written by
-> + * Bill Richardson.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/device.h>
-> +#include <linux/fs.h>
-> +#include <linux/mfd/cros_ec.h>
-> +#include <linux/mfd/cros_ec_commands.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +#include <linux/uaccess.h>
-> +
-> +#include <uapi/linux/cros_ec_chardev.h>
-> +
-> +#define DRV_NAME               "cros-ec-chardev"
-> +
-> +struct chardev_data {
-> +       struct cros_ec_dev *ec_dev;
-> +       struct miscdevice misc;
-> +};
-> +
-> +static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
-> +{
-> +       static const char * const current_image_name[] = {
-> +               "unknown", "read-only", "read-write", "invalid",
-> +       };
-> +       struct ec_response_get_version *resp;
-> +       struct cros_ec_command *msg;
-> +       int ret;
-> +
-> +       msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
-> +       if (!msg)
-> +               return -ENOMEM;
-> +
-> +       msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
-> +       msg->insize = sizeof(*resp);
-> +
-> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-> +       if (ret < 0) {
-> +               snprintf(str, maxlen,
-> +                        "Unknown EC version, returned error: %d\n",
-> +                        msg->result);
-> +               goto exit;
-> +       }
-> +
-> +       resp = (struct ec_response_get_version *)msg->data;
-> +       if (resp->current_image >= ARRAY_SIZE(current_image_name))
-> +               resp->current_image = 3; /* invalid */
-> +
-> +       snprintf(str, maxlen, "%s\n%s\n%s\n",
-We need to keep the same output as it was implemented in
-ec_get_version in cros_ec_dev.c [See "mfd: cros_ec: Switch to use the
-new cros-ec-chardev driver"]:
-In particular, we need to prefix the versions strings with
-CROS_EC_DEV_VERSION ["1.0.0"], as user space tools are relying on that
-marker to keep going.
-> +                resp->version_string_ro,
-> +                resp->version_string_rw,
-> +                current_image_name[resp->current_image]);
-> +
-> +       ret = 0;
-> +exit:
-> +       kfree(msg);
-> +       return ret;
-> +}
-> +
-> +/*
-> + * Device file ops
-> + */
-> +static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
-> +{
-> +       struct miscdevice *mdev = filp->private_data;
-> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(mdev->parent);
-> +
-> +       filp->private_data = ec_dev;
-> +       nonseekable_open(inode, filp);
-> +
-> +       return 0;
-> +}
-> +
-> +static ssize_t cros_ec_chardev_read(struct file *filp, char __user *buffer,
-> +                                    size_t length, loff_t *offset)
-> +{
-> +       char msg[sizeof(struct ec_response_get_version) +
-> +                sizeof(CROS_EC_DEV_VERSION)];
-> +       struct cros_ec_dev *ec = filp->private_data;
-> +       size_t count;
-> +       int ret;
-> +
-> +       if (*offset != 0)
-> +               return 0;
-> +
-> +       ret = ec_get_version(ec, msg, sizeof(msg));
-> +       if (ret)
-> +               return ret;
-> +
-> +       count = min(length, strlen(msg));
-> +
-> +       if (copy_to_user(buffer, msg, count))
-> +               return -EFAULT;
-> +
-> +       *offset = count;
-> +       return count;
-> +}
-> +
-> +/*
-> + * Ioctls
-> + */
-> +static long cros_ec_chardev_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
-> +{
-> +       struct cros_ec_command *s_cmd;
-> +       struct cros_ec_command u_cmd;
-> +       long ret;
-> +
-> +       if (copy_from_user(&u_cmd, arg, sizeof(u_cmd)))
-> +               return -EFAULT;
-> +
-> +       if (u_cmd.outsize > EC_MAX_MSG_BYTES ||
-> +           u_cmd.insize > EC_MAX_MSG_BYTES)
-> +               return -EINVAL;
-> +
-> +       s_cmd = kmalloc(sizeof(*s_cmd) + max(u_cmd.outsize, u_cmd.insize),
-> +                       GFP_KERNEL);
-> +       if (!s_cmd)
-> +               return -ENOMEM;
-> +
-> +       if (copy_from_user(s_cmd, arg, sizeof(*s_cmd) + u_cmd.outsize)) {
-> +               ret = -EFAULT;
-> +               goto exit;
-> +       }
-> +
-> +       if (u_cmd.outsize != s_cmd->outsize ||
-> +           u_cmd.insize != s_cmd->insize) {
-> +               ret = -EINVAL;
-> +               goto exit;
-> +       }
-> +
-> +       s_cmd->command += ec->cmd_offset;
-> +       ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
-> +       /* Only copy data to userland if data was received. */
-> +       if (ret < 0)
-> +               goto exit;
-> +
-> +       if (copy_to_user(arg, s_cmd, sizeof(*s_cmd) + s_cmd->insize))
-> +               ret = -EFAULT;
-> +exit:
-> +       kfree(s_cmd);
-> +       return ret;
-> +}
-> +
-> +static long cros_ec_chardev_ioctl_readmem(struct cros_ec_dev *ec,
-> +                                          void __user *arg)
-> +{
-> +       struct cros_ec_device *ec_dev = ec->ec_dev;
-> +       struct cros_ec_readmem s_mem = { };
-> +       long num;
-> +
-> +       /* Not every platform supports direct reads */
-> +       if (!ec_dev->cmd_readmem)
-> +               return -ENOTTY;
-> +
-> +       if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
-> +               return -EFAULT;
-> +
-> +       num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
-> +                                 s_mem.buffer);
-> +       if (num <= 0)
-> +               return num;
-> +
-> +       if (copy_to_user((void __user *)arg, &s_mem, sizeof(s_mem)))
-> +               return -EFAULT;
-> +
-> +       return num;
-> +}
-> +
-> +static long cros_ec_chardev_ioctl(struct file *filp, unsigned int cmd,
-> +                                  unsigned long arg)
-> +{
-> +       struct cros_ec_dev *ec = filp->private_data;
-> +
-> +       if (_IOC_TYPE(cmd) != CROS_EC_DEV_IOC)
-> +               return -ENOTTY;
-> +
-> +       switch (cmd) {
-> +       case CROS_EC_DEV_IOCXCMD:
-> +               return cros_ec_chardev_ioctl_xcmd(ec, (void __user *)arg);
-> +       case CROS_EC_DEV_IOCRDMEM:
-> +               return cros_ec_chardev_ioctl_readmem(ec, (void __user *)arg);
-> +       }
-> +
-> +       return -ENOTTY;
-> +}
-> +
-> +static const struct file_operations chardev_fops = {
-> +       .open           = cros_ec_chardev_open,
-> +       .read           = cros_ec_chardev_read,
-> +       .unlocked_ioctl = cros_ec_chardev_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +       .compat_ioctl   = cros_ec_chardev_ioctl,
-> +#endif
-> +};
-> +
-> +static int cros_ec_chardev_probe(struct platform_device *pdev)
-> +{
-> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
-> +       struct cros_ec_platform *ec_platform = dev_get_platdata(ec_dev->dev);
-> +       struct chardev_data *data;
-> +
-> +       /* Create a char device: we want to create it anew */
-> +       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       data->ec_dev = ec_dev;
-> +       data->misc.minor = MISC_DYNAMIC_MINOR;
-> +       data->misc.fops = &chardev_fops;
-> +       data->misc.name = ec_platform->ec_name;
-> +       data->misc.parent = pdev->dev.parent;
-> +
-> +       dev_set_drvdata(&pdev->dev, data);
-> +
-> +       return misc_register(&data->misc);
-> +}
-> +
-> +static int cros_ec_chardev_remove(struct platform_device *pdev)
-> +{
-> +       struct chardev_data *data = dev_get_drvdata(&pdev->dev);
-> +
-> +       misc_deregister(&data->misc);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver cros_ec_chardev_driver = {
-> +       .driver = {
-> +               .name = DRV_NAME,
-> +       },
-> +       .probe = cros_ec_chardev_probe,
-> +       .remove = cros_ec_chardev_remove,
-> +};
-> +
-> +module_platform_driver(cros_ec_chardev_driver);
-> +
-> +MODULE_ALIAS("platform:" DRV_NAME);
-> +MODULE_AUTHOR("Enric Balletbo i Serra <enric.balletbo@collabora.com>");
-> +MODULE_DESCRIPTION("ChromeOS EC Miscellaneous Character Driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/mfd/cros_ec_dev.h b/include/uapi/linux/cros_ec_chardev.h
-> similarity index 50%
-> rename from drivers/mfd/cros_ec_dev.h
-> rename to include/uapi/linux/cros_ec_chardev.h
-> index ec750433455a..8aceb4ac8ec5 100644
-> --- a/drivers/mfd/cros_ec_dev.h
-> +++ b/include/uapi/linux/cros_ec_chardev.h
-> @@ -1,28 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->  /*
-> - * cros_ec_dev - expose the Chrome OS Embedded Controller to userspace
-> + * ChromeOS EC device interface.
->   *
->   * Copyright (C) 2014 Google, Inc.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program. If not, see <http://www.gnu.org/licenses/>.
->   */
->
-> -#ifndef _CROS_EC_DEV_H_
-> -#define _CROS_EC_DEV_H_
-> +#ifndef _UAPI_LINUX_CROS_EC_DEV_H_
-> +#define _UAPI_LINUX_CROS_EC_DEV_H_
->
->  #include <linux/ioctl.h>
->  #include <linux/types.h>
-> -#include <linux/mfd/cros_ec.h>
->
->  #define CROS_EC_DEV_VERSION "1.0.0"
->
-> --
-> 2.20.1
->
+Hello all,
+
+On 14.07.19 06:07, syzbot wrote:
+> syzbot has found a reproducer for the following crash on:
+
+the internal users of the CAN networking subsystem like CAN_BCM and 
+CAN_RAW hold a number of CAN identifier subscriptions ('filters') for 
+CAN netdevices (only type ARPHRD_CAN) in their socket data structures.
+
+The per-socket netdevice notifier is used to manage the ad-hoc removal 
+of these filters at netdevice removal time.
+
+What I can see in the console output at
+
+https://syzkaller.appspot.com/x/log.txt?x=10e45f0fa00000
+
+seems to be a race between an unknown register_netdevice_notifier() call 
+("A") and the unregister_netdevice_notifier() ("B") likely invoked by 
+bcm_release() ("C"):
+
+[ 1047.294207][ T1049]  schedule+0xa8/0x270
+[ 1047.318401][ T1049]  rwsem_down_write_slowpath+0x70a/0xf70
+[ 1047.324114][ T1049]  ? downgrade_write+0x3c0/0x3c0
+[ 1047.438644][ T1049]  ? mark_held_locks+0xf0/0xf0
+[ 1047.443483][ T1049]  ? lock_acquire+0x190/0x410
+[ 1047.448191][ T1049]  ? unregister_netdevice_notifier+0x7e/0x390
+[ 1047.547227][ T1049]  down_write+0x13c/0x150
+[ 1047.579535][ T1049]  ? down_write+0x13c/0x150
+[ 1047.584106][ T1049]  ? __down_timeout+0x2d0/0x2d0
+[ 1047.635356][ T1049]  ? mark_held_locks+0xf0/0xf0
+[ 1047.640721][ T1049]  unregister_netdevice_notifier+0x7e/0x390  <- "B"
+[ 1047.646667][ T1049]  ? __sock_release+0x89/0x280
+[ 1047.709126][ T1049]  ? register_netdevice_notifier+0x630/0x630 <- "A"
+[ 1047.715203][ T1049]  ? __kasan_check_write+0x14/0x20
+[ 1047.775138][ T1049]  bcm_release+0x93/0x5e0                    <- "C"
+[ 1047.795337][ T1049]  __sock_release+0xce/0x280
+[ 1047.829016][ T1049]  sock_close+0x1e/0x30
+
+The question to me is now:
+
+Is the problem located in an (un)register_netdevice_notifier race OR is 
+it generally a bad idea to call unregister_netdevice_notifier() in a 
+sock release?
+
+I've never seen that kind of problem in the wild. But if it would be the 
+latter case wouldn't it be the same problem when someone unloads the 
+kernel module at the 'wrong' time?
+
+In commit 328fbe747ad46 ("net: Close race between {un, 
+}register_netdevice_notifier() and setup_net()/cleanup_net()") Kirill 
+Tkhai reviewed the calling site in CAN_RAW raw_release() which points to 
+the same situation. Therefore added him to the recipient list.
+
+Should down_write() be replaced with something like 
+rwsem_down_write_slowpath()??
+
+Regards,
+Oliver
+
+> HEAD commit:    a2d79c71 Merge tag 'for-5.3/io_uring-20190711' of 
+> git://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10e45f0fa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3539b1747f03988e
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=0f1827363a305f74996f
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1765c52fa00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0f1827363a305f74996f@syzkaller.appspotmail.com
+> 
+> INFO: task syz-executor.4:9527 blocked for more than 143 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.4  D28136  9527   9356 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 
+> 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 
+> 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> INFO: task syz-executor.2:9528 blocked for more than 145 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.2  D28136  9528   9354 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 5f fe ff ff 31 c9 31 f6 41 b9 b0 20 41 00 41 b8 8c d6 65 00 ba 02 
+> 00 00 00 bf 28 38 44 00 ff 15 7d a1 24 00 85 c0 0f 85 37 fe <ff> ff 31 
+> c9 31 f6 41 b9 b0 20 41 00 41 b8 90 d6 65 00 ba 03 00 00
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> INFO: task syz-executor.0:9529 blocked for more than 147 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.0  D28136  9529   9353 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 
+> 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 
+> 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> INFO: task syz-executor.5:9533 blocked for more than 148 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.5  D28136  9533   9358 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 5f fe ff ff 31 c9 31 f6 41 b9 b0 20 41 00 41 b8 8c d6 65 00 ba 02 
+> 00 00 00 bf 28 38 44 00 ff 15 7d a1 24 00 85 c0 0f 85 37 fe <ff> ff 31 
+> c9 31 f6 41 b9 b0 20 41 00 41 b8 90 d6 65 00 ba 03 00 00
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> INFO: task syz-executor.1:9534 blocked for more than 148 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.1  D28136  9534   9359 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 
+> 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 
+> 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> INFO: task syz-executor.3:9535 blocked for more than 150 seconds.
+>        Not tainted 5.2.0+ #80
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor.3  D28136  9535   9351 0x00000004
+> Call Trace:
+>   context_switch kernel/sched/core.c:3252 [inline]
+>   __schedule+0x755/0x1580 kernel/sched/core.c:3878
+>   schedule+0xa8/0x270 kernel/sched/core.c:3942
+>   rwsem_down_write_slowpath+0x70a/0xf70 kernel/locking/rwsem.c:1198
+>   __down_write kernel/locking/rwsem.c:1349 [inline]
+>   down_write+0x13c/0x150 kernel/locking/rwsem.c:1485
+>   unregister_netdevice_notifier+0x7e/0x390 net/core/dev.c:1713
+>   bcm_release+0x93/0x5e0 net/can/bcm.c:1525
+>   __sock_release+0xce/0x280 net/socket.c:586
+>   sock_close+0x1e/0x30 net/socket.c:1264
+>   __fput+0x2ff/0x890 fs/file_table.c:280
+>   ____fput+0x16/0x20 fs/file_table.c:313
+>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>   do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x413501
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 
+> 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 
+> 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:0000000000a6fbc0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413501
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+> R10: 0000000000a6fca0 R11: 0000000000000293 R12: 000000000075c9a0
+> R13: 000000000075c9a0 R14: 00000000007619c8 R15: ffffffffffffffff
+> 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/1049:
+>   #0: 00000000ede263b0 (rcu_read_lock){....}, at: 
+> debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5257
+> 1 lock held by rsyslogd/9208:
+>   #0: 00000000da20b59a (&f->f_pos_lock){+.+.}, at: 
+> __fdget_pos+0xee/0x110 fs/file.c:801
+> 2 locks held by getty/9298:
+>   #0: 00000000e9efae0d (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 0000000007287a12 (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9299:
+>   #0: 00000000ad0733b0 (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 0000000094dd5193 (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9300:
+>   #0: 00000000692c340f (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 00000000538c7d7d (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9301:
+>   #0: 00000000116ea6c7 (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 00000000a908a9f7 (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9302:
+>   #0: 0000000042704f01 (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 0000000041cc8671 (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9303:
+>   #0: 000000001ef3b293 (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+>   #1: 000000008b703302 (&ldata->atomic_read_lock){+.+.}, at: 
+> n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9304:
+>   #0: 0000000095601bb0 (&tty->ldisc_sem){++++}, at: 
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+> 
