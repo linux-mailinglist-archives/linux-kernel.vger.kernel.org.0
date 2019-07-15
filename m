@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A666868CEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D4968CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732706AbfGONzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:55:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55766 "EHLO mail.kernel.org"
+        id S1732582AbfGONyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:54:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbfGONys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:54:48 -0400
+        id S1732553AbfGONyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:54:50 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 711362067C;
-        Mon, 15 Jul 2019 13:54:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0CDC212F5;
+        Mon, 15 Jul 2019 13:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198887;
-        bh=mIXy/baeiCUevcbT8ICaqwiWfI0GcGSI9r1KMsyruEw=;
+        s=default; t=1563198889;
+        bh=gj0zBDm52IIackDZtC7KVsYGiEuhEY9qeD30u0iD1ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cz1BxpaGTmoQapdi9dsPoWtPj1y7yYEOT3K/6LCgrnjgkAGv4BKdiTNOAGNAPolMN
-         5g6gs56FV9Gop51naOODpam18OR7du17Xcu4xBqQ7p85bhnHqTOuTsEGVcJ+7SeM8X
-         S1iUI5fVTH7HjBPkbaL8itUwYOK/KwGj/Ck54eoI=
+        b=Xbf/oMhPRWW5zjmncl0vn6JnaOBfY86I2kZ3gcFcavEfYx5V/JCO1WA6w+sFS4PDR
+         4dGFtuHaNlj+gSQlLZa/1qz+oH8uG2oFcZySelpq1/TiFd27ASqTUL8cELlLdhxEuS
+         tgg2DR2Gfjhf6O438IXn0v4QYfGdr7jIL//d1dso=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Borislav Petkov <bp@suse.de>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Pu Wen <puwen@hygon.cn>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 128/249] x86/cacheinfo: Fix a -Wtype-limits warning
-Date:   Mon, 15 Jul 2019 09:44:53 -0400
-Message-Id: <20190715134655.4076-128-sashal@kernel.org>
+Cc:     Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 129/249] blk-iolatency: only account submitted bios
+Date:   Mon, 15 Jul 2019 09:44:54 -0400
+Message-Id: <20190715134655.4076-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -49,53 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Dennis Zhou <dennis@kernel.org>
 
-[ Upstream commit 1b7aebf0487613033aff26420e32fa2076d52846 ]
+[ Upstream commit a3fb01ba5af066521f3f3421839e501bb2c71805 ]
 
-cpuinfo_x86.x86_model is an unsigned type, so comparing against zero
-will generate a compilation warning:
+As is, iolatency recognizes done_bio and cleanup as ending paths. If a
+request is marked REQ_NOWAIT and fails to get a request, the bio is
+cleaned up via rq_qos_cleanup() and ended in bio_wouldblock_error().
+This results in underflowing the inflight counter. Fix this by only
+accounting bios that were actually submitted.
 
-  arch/x86/kernel/cpu/cacheinfo.c: In function 'cacheinfo_amd_init_llc_id':
-  arch/x86/kernel/cpu/cacheinfo.c:662:19: warning: comparison is always true \
-    due to limited range of data type [-Wtype-limits]
-
-Remove the unnecessary lower bound check.
-
- [ bp: Massage. ]
-
-Fixes: 68091ee7ac3c ("x86/CPU/AMD: Calculate last level cache ID from number of sharing threads")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1560954773-11967-1-git-send-email-cai@lca.pw
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ block/blk-iolatency.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 395d46f78582..c7503be92f35 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -658,8 +658,7 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
- 	if (c->x86 < 0x17) {
- 		/* LLC is at the node level. */
- 		per_cpu(cpu_llc_id, cpu) = node_id;
--	} else if (c->x86 == 0x17 &&
--		   c->x86_model >= 0 && c->x86_model <= 0x1F) {
-+	} else if (c->x86 == 0x17 && c->x86_model <= 0x1F) {
- 		/*
- 		 * LLC is at the core complex level.
- 		 * Core complex ID is ApicId[3] for these processors.
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index d22e61bced86..c91b84bb9d0a 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -600,6 +600,10 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
+ 	if (!blkg || !bio_flagged(bio, BIO_TRACKED))
+ 		return;
+ 
++	/* We didn't actually submit this bio, don't account it. */
++	if (bio->bi_status == BLK_STS_AGAIN)
++		return;
++
+ 	iolat = blkg_to_lat(bio->bi_blkg);
+ 	if (!iolat)
+ 		return;
 -- 
 2.20.1
 
