@@ -2,86 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7306915E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F1E369036
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390983AbfGOO20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:28:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391253AbfGOO2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:28:21 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FA0C2064B;
-        Mon, 15 Jul 2019 14:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200899;
-        bh=jHBoahBIMCEqzHHAdyXBu+NzeIwefRJZKUWcMn7yxDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GvmbMMEEDYgRhckBkEw3qscTWV7lYWLUsjGAHsh8LxqCmlftZXSUVFJyowk6u9EoO
-         PYBIzH3a33W5jBAsA5BERLdLijmtPNesG2MFpkygvrTHbN7grXgSIrhSlfH8RPeDXM
-         fvWJ0y0HHAQAw6vqsFY2Ze8bw/TE/zhivMpG1gcQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 158/158] net: mvmdio: defer probe of orion-mdio if a clock is not ready
-Date:   Mon, 15 Jul 2019 10:18:09 -0400
-Message-Id: <20190715141809.8445-158-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
-References: <20190715141809.8445-1-sashal@kernel.org>
+        id S2389276AbfGOOTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:19:42 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43071 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389784AbfGOOTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:19:39 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w79so12754180oif.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=74LWTKonskxRfxiDYwVD7OpNsKbfOfYFfTZAvmrPFJg=;
+        b=kiTItl6xyrG9FywIDRfcy4DIFgA9n5FQMjm2wL9mdgzuKSnbt3nESPsNKfqPBueZBs
+         RaocmVPDYXFtDrI4ysRzoObj0qDrpjOvB+wDyHYfLEV64FkHNR3uH95XLhXfJ6ufu+HZ
+         p8X+m5T0N8pujQ2DcVZL1lXs5oJQY92Qy3HYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=74LWTKonskxRfxiDYwVD7OpNsKbfOfYFfTZAvmrPFJg=;
+        b=ilJaMVzI9jgIXqMFOcJLKFQwIoHJabfQuvSz+3vc6RkV8//+oTMXaRLVolFeYnfl2t
+         DngMgk1zxQ8MhXa/W8Et9hVMzZbSpvp++9lp976v4QiaB6HQBJq7r+z/uLjPmI/+O/nm
+         wWnaJ6uqpaEiXJThHUt7A4pcBKE1Afd/fWx4q+jBhLZ2m3fX39BuDUc6d8D3T2HyuASm
+         /giisC9JJghyCTvu11wr6/j1hYnoUxlvnpdr2x+y4VdUpNqxBWrw/upjk9n7LhztOWFJ
+         Jw95csgmB1z8TPnEjB3SipRjBFY2O2pZRqEy5epULY9xOW8BofrFyZsUPqc4fAXd7dZv
+         evdw==
+X-Gm-Message-State: APjAAAWr3DmI5+PMw5M7FWybZo1p11wJkPp9A0P5C0MNvBo4wLr9X7kR
+        1E28jNX/MnrtLwlaUDB91vYzPvVYEDzfGkNqh70=
+X-Google-Smtp-Source: APXvYqx9+tVgh5v+w5/XYZec+gr4t4ZX0LQfnl+mzXMZ66oi07oxVvsNmRa3kHVSBsjT45GtQ+mVBCop0D+NIq3ehcA=
+X-Received: by 2002:aca:b2d5:: with SMTP id b204mr11927663oif.101.1563200378969;
+ Mon, 15 Jul 2019 07:19:38 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
+ <CAPM=9tx+CEkzmLZ-93GZmde9xzJ_rw3PJZxFu_pjZJc7KM5f-w@mail.gmail.com> <20190715122924.GA15202@mellanox.com>
+In-Reply-To: <20190715122924.GA15202@mellanox.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Mon, 15 Jul 2019 16:19:26 +0200
+Message-ID: <CAKMK7uHvjuQ5Dqm0LPrtQxdHh5Z6Pt2mg4AnpRRR0gWb1Wp05g@mail.gmail.com>
+Subject: Re: DRM pull for v5.3-rc1
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josua Mayer <josua@solid-run.com>
+On Mon, Jul 15, 2019 at 2:29 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> [urk, html email.. forgive the mess]
+>
+> On Mon, Jul 15, 2019 at 04:59:39PM +1000, Dave Airlie wrote:
+>
+> >      VMware had some mm helpers go in via my tree (looking back I'm
+> >      not sure Thomas really secured enough acks on these, but I'm
+>
+> I saw those patches, honestly I couldn't entirely understand what
+> problem they were trying to address..
+>
+> >      going with it for now until I get push back). They conflicted
+> >      with one of the mm cleanups in the hmm tree, I've pushed a
+> >      patch to the top of my next to fix most of the fallout in my
+> >      tree, and the resulting fixup is to pick the closure->ptefn
+> >      hunk and apply something like in mm/memory.c
+>
+> Did I mess a notification from StephenR in linux-next? I was unwaware
+> of this conflict?
+>
+> The 'hmm' tree is something I ran to try and help workflow issues like
+> this, as it could be merged to DRM as a topic branch - maybe consider
+> this flow in future?
+>
+> Linus, do you have any advice on how best to handle sharing mm
+> patches? The hmm.git was mildly painful as it sits between quilt on
+> the -mm side and what seems like 'a world of interesting git things'
+> on the DRM side (but maybe I just don't know enough about DRM).
 
-[ Upstream commit 433a06d7d74e677c40b1148c70c48677ff62fb6b ]
+I think the approach in this merge window worked fairly well:
+- refactor/rework core mm stuff in (h)mm.git
+- handle all the gpu stuff in drm.git
+- make the clashes workable through some clever prep patches like
+we've done this time around
 
-Defer probing of the orion-mdio interface when getting a clock returns
-EPROBE_DEFER. This avoids locking up the Armada 8k SoC when mdio is used
-before all clocks have been enabled.
+I think Linus wants to be able to look through core mm stuff quite
+closely, so not a good idea if we deeply intertwin it with one of the
+biggest subsystems there is. And I don't think there will be a real
+conflict like this every merge window, this should be the exception.
+Worst case we have to stage some work 1 release cycle apart, i.e.
+merge mm stuff first, then drm 3 months later. Usually that's not
+going to slow things down noticeable given average merge latency for
+core mm features :-)
+-Daniel
 
-Signed-off-by: Josua Mayer <josua@solid-run.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/marvell/mvmdio.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> > @@ -2201,7 +2162,7 @@ static int apply_to_page_range_wrapper(pte_t
+> >      *pte,
+> >              struct page_range_apply *pra =
+> >                      container_of(pter, typeof(*pra), pter);
+> >      -       return pra->fn(pte, NULL, addr, pra->data);
+> >      +       return pra->fn(pte, addr, pra->data);
+> >       }
+>
+> I looked through this and it looks OK to me, thanks
+>
+> Jason
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index c5dac6bd2be4..903836e334d8 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -321,6 +321,10 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
-+		if (PTR_ERR(dev->clk[i]) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto out_clk;
-+		}
- 		if (IS_ERR(dev->clk[i]))
- 			break;
- 		clk_prepare_enable(dev->clk[i]);
-@@ -362,6 +366,7 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 	if (dev->err_interrupt > 0)
- 		writel(0, dev->regs + MVMDIO_ERR_INT_MASK);
- 
-+out_clk:
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		if (IS_ERR(dev->clk[i]))
- 			break;
+
+
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
