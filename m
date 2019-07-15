@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA9C696F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B6A696EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfGOOCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:02:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41232 "EHLO mail.kernel.org"
+        id S2387477AbfGOPHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:07:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730235AbfGOOAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:00:05 -0400
+        id S1730529AbfGOOCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:02:11 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4296B2083D;
-        Mon, 15 Jul 2019 14:00:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104672083D;
+        Mon, 15 Jul 2019 14:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199204;
-        bh=8/6cGbemBxBgbQEs4ZYCF9p5eQXSdOQ7wFxbD9VUR10=;
+        s=default; t=1563199330;
+        bh=Ya15vNmJip0ViZuCYfhbLO7ndMH7ISKRJohDp8qmOKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2hxhRBzmqiCY4FAHRHYnxhFNZHrr6nUlood5ufnGV9T5XO3axbKFWhG3q16g/opZ
-         VO8kkGScJsIoJ1GFNSNBCI3+bE1lGNyKqi2h68YtuUFq4635gJP4tQ4vPd9Vs7mhSH
-         8gRf+Bo1aEBxXJFYC865cmBsHpsA8s1ZL5vAXsKA=
+        b=cfwi4ihssNUgjREVO/5AQRdp+nq6bz+f+23QEN3KbPXprbV99IVg3gXh+1ulmOgBe
+         KadoxWLGwRLh+eeZGBwGMX7KETFHGl2orkyJY0HOsnnjIbzVbAaqqO1ECAUgL4KwVW
+         xJWJQiOTHqFGuwU4dev2dFOE+tjIhpbt7d5imsBg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rander Wang <rander.wang@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 215/249] ALSA: hda: Fix a headphone detection issue when using SOF
-Date:   Mon, 15 Jul 2019 09:46:20 -0400
-Message-Id: <20190715134655.4076-215-sashal@kernel.org>
+Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 235/249] Bluetooth: Add new 13d3:3491 QCA_ROME device
+Date:   Mon, 15 Jul 2019 09:46:40 -0400
+Message-Id: <20190715134655.4076-235-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -42,57 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rander Wang <rander.wang@linux.intel.com>
+From: João Paulo Rechi Vita <jprvita@gmail.com>
 
-[ Upstream commit 7c2b3629d09ddec810dc4c1d3a6657c32def8f71 ]
+[ Upstream commit 44d34af2e4cfd0c5357182f8b43f3e0a1fe30a2e ]
 
-To save power, the hda hdmi driver in ASoC invokes snd_hdac_ext_bus_link_put
-to disable CORB/RIRB buffers DMA if there is no user of bus and invokes
-snd_hdac_ext_bus_link_get to set up CORB/RIRB buffers when it is used.
-Unsolicited responses is disabled in snd_hdac_bus_stop_cmd_io called by
-snd_hdac_ext_bus_link_put , but it is not enabled in snd_hdac_bus_init_cmd_io
-called by snd_hdac_ext_bus_link_get. So for put-get sequence, Unsolicited
-responses is disabled and headphone can't be detected by hda codecs.
+Without the QCA ROME setup routine this adapter fails to establish a SCO
+connection.
 
-Now unsolicited responses is only enabled in snd_hdac_bus_reset_link
-which resets controller. The function is only called for setup of
-controller. This patch enables Unsolicited responses after RIRB is
-initialized in snd_hdac_bus_init_cmd_io which works together with
-snd_hdac_bus_reset_link to set up controller.
+T:  Bus=01 Lev=01 Prnt=01 Port=08 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3491 Rev=00.01
+C:  #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
 
-Tested legacy hda driver and SOF driver on intel whiskeylake.
-
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/hda/hdac_controller.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
-index b02f74528b66..812dc144fb5b 100644
---- a/sound/hda/hdac_controller.c
-+++ b/sound/hda/hdac_controller.c
-@@ -79,6 +79,8 @@ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
- 	snd_hdac_chip_writew(bus, RINTCNT, 1);
- 	/* enable rirb dma and response irq */
- 	snd_hdac_chip_writeb(bus, RIRBCTL, AZX_RBCTL_DMA_EN | AZX_RBCTL_IRQ_EN);
-+	/* Accept unsolicited responses */
-+	snd_hdac_chip_updatel(bus, GCTL, AZX_GCTL_UNSOL, AZX_GCTL_UNSOL);
- 	spin_unlock_irq(&bus->reg_lock);
- }
- EXPORT_SYMBOL_GPL(snd_hdac_bus_init_cmd_io);
-@@ -415,9 +417,6 @@ int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset)
- 		return -EBUSY;
- 	}
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 50aed5259c2b..21fa5c889857 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -264,6 +264,7 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x04ca, 0x3015), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x3016), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x301a), .driver_info = BTUSB_QCA_ROME },
++	{ USB_DEVICE(0x13d3, 0x3491), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x13d3, 0x3496), .driver_info = BTUSB_QCA_ROME },
  
--	/* Accept unsolicited responses */
--	snd_hdac_chip_updatel(bus, GCTL, AZX_GCTL_UNSOL, AZX_GCTL_UNSOL);
--
- 	/* detect codecs */
- 	if (!bus->codec_mask) {
- 		bus->codec_mask = snd_hdac_chip_readw(bus, STATESTS);
+ 	/* Broadcom BCM2035 */
 -- 
 2.20.1
 
