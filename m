@@ -2,77 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D9C6948F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 590346947D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391745AbfGOOav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:30:51 -0400
-Received: from verein.lst.de ([213.95.11.211]:33049 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391714AbfGOOaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:30:46 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C945368B05; Mon, 15 Jul 2019 16:30:39 +0200 (CEST)
-Date:   Mon, 15 Jul 2019 16:30:39 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, x86@kernel.org,
-        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>
-Subject: Re: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86
- arch code
-Message-ID: <20190715143039.GA6892@lst.de>
-References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-4-bauerman@linux.ibm.com> <20190712150912.3097215e.pasic@linux.ibm.com> <87tvbqgboc.fsf@morokweng.localdomain> <20190715160317.7e3dfb33.pasic@linux.ibm.com>
+        id S2404836AbfGOOvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:51:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40457 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732151AbfGOObg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:31:36 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r1so17329565wrl.7
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/kOuHIwdV1cmMgDdELPfBrpuX2BOQd/yGACKLJjUP3M=;
+        b=e4FGYwqAaI4jLb4Z0KPbQ0yK1YMlM/CILrvUEl+SG3ooRm6VM2lnqwzf3NldmberP9
+         6HwinXj0gqjPCOxdGUz2/1FKdYuIESyshiEu8Dda6Egk0TaNUelDsdVp/b/O+vuqQ/Sh
+         lFafZYsYtewywPdAPJ/xnWCBhy05gJuEptPRhYuUWvKA8A3tk9+ULP4AhQk4pHND7FyP
+         kt9rvOZpBhkYH3EaxEjHKiR3btyAx9dfJE1M9KvSP5GfyFAZ5nnFon+X7brtFooBjw7r
+         xYjLFO+GcbP22eIB4t2rSTyO0iioQXbWkj+EWs0j1OL4Mc5seuzg2xcGvywE603taiho
+         eQtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/kOuHIwdV1cmMgDdELPfBrpuX2BOQd/yGACKLJjUP3M=;
+        b=TcU9XZ1D/orsWzHnx/gtUkXP5JgIuk5gfL6dLxCmHvjiCErrequ+amBNo362DZAsws
+         3FxHb2ouz2+glhr7ZCE5OfLfRobGYdBvSCZtOG3ke3Jxc+jzuRzptri3gTDfa7i/xlhW
+         0USg8yDnca6/lOvvrmHFbKW/sUOjm/FWWY5JU21Fk1r3kRUw11Tn5lNQB+Rj4Y2VIC7h
+         6inJswNyLBDCovonblB77lL4IBQhkdh50PpaWwYiOOwTWxijzRprxIH1/u7/+MYPI62s
+         sXz8OygZflR/owZJ6+QLhVABTeaBjqLj0+qYt4oX7lJK6G/FNUe/2TxfN1GWQ7xpFXuh
+         UEUA==
+X-Gm-Message-State: APjAAAVj4gbnBKb0iQW+IjBrbWKof42ChGI43O10pop0tvgPE3T1qVnt
+        eSPP4QxG7vmqJhzBB8tStjXO11vWZJ/Kq+9hsGjwnw==
+X-Google-Smtp-Source: APXvYqxEFYaVkFCKSYyYJRZ9VyyeeGht77z9ZnbIbaqpGuILzPfl5OBcTvCYx1mkWojen86iw2roVhpWZPHBCOougv0=
+X-Received: by 2002:adf:f28a:: with SMTP id k10mr30519437wro.343.1563201095116;
+ Mon, 15 Jul 2019 07:31:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715160317.7e3dfb33.pasic@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190715142109.3063-1-ubizjak@gmail.com>
+In-Reply-To: <20190715142109.3063-1-ubizjak@gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 15 Jul 2019 07:31:23 -0700
+Message-ID: <CALCETrXQaayeV-6n_2dycMo7ienQPizTqYQDEAy1C2KLPrCt8Q@mail.gmail.com>
+Subject: Re: [PATCH] x86/cpu/intel: Skip CPA cache flush on CPUs with cache self-snooping
+To:     Uros Bizjak <ubizjak@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 04:03:17PM +0200, Halil Pasic wrote:
-> > I thought about that but couldn't put my finger on a general concept.
-> > Is it "guest with memory inaccessible to the host"?
-> > 
-> 
-> Well, force_dma_unencrypted() is a much better name thatn sev_active():
-> s390 has no AMD SEV, that is sure, but for virtio to work we do need to
-> make our dma accessible to the hypervisor. Yes, your "guest with memory
-> inaccessible to the host" shows into the right direction IMHO.
-> Unfortunately I don't have too many cycles to spend on this right now.
+On Mon, Jul 15, 2019 at 7:21 AM Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> CPUs which have self-snooping capability can handle conflicting
+> memory type across CPUs by snooping its own cache. Commit #fd329f276ecaa
+> ("x86/mtrr: Skip cache flushes on CPUs with cache self-snooping")
+> avoids cache flushes when MTRR registers are programmed. The Page
+> Attribute Table (PAT) is a companion feature to the MTRRs, and according
+> to section 11.12.4 of the Intel 64 and IA 32 Architectures Software
+> Developer's Manual, if the CPU supports cache self-snooping, it is not
+> necessary to flush caches when remapping a page that was previously
+> mapped as a different memory type.
+>
+> Note that commit #1e03bff360010
+> ("x86/cpu/intel: Clear cache self-snoop capability in CPUs with known errata")
+> cleared cache self-snoop capability for CPUs where conflicting memory types
+> lead to unpredictable behavior, machine check errors, or hangs.
 
-In x86 it means that we need to remove dma encryption using
-set_memory_decrypted before using it for DMA purposes.  In the SEV
-case that seems to be so that the hypervisor can access it, in the SME
-case that Tom just fixes it is because there is an encrypted bit set
-in the physical address, and if the device doesn't support a large
-enough DMA address the direct mapping code has to encrypt the pages
-used for the contigous allocation.
+It looks like this won't affect the SEV code paths, so I'm not
+thinking of anything that this will break.  But Dave and Peter are
+much, much more familiar with the messes this could cause than I am.
 
-> Being on cc for your patch made me realize that things got broken on
-> s390. Thanks! I've sent out a patch that fixes protvirt, but we are going
-> to benefit from your cleanups. I think with your cleanups and that patch
-> of mine both sev_active() and sme_active() can be removed. Feel free to
-> do so. If not, I can attend to it as well.
-
-Yes, I think with the dma-mapping fix and this series sme_active and
-sev_active should be gone from common code.  We should also be able
-to remove the exports x86 has for them.
-
-I'll wait a few days and will then feed the dma-mapping fix to Linus,
-it might make sense to either rebase Thiagos series on top of the
-dma-mapping for-next branch, or wait a few days before reposting.
+--Andy
