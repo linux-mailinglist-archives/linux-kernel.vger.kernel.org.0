@@ -2,127 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E507469B94
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BE969B98
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731062AbfGOTm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:42:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43493 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbfGOTm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:42:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so18338735wru.10;
-        Mon, 15 Jul 2019 12:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ivvcy3jSvKNh7AY9v8j4FaWyMteFu4efIhrDaMrTgs0=;
-        b=JL9pwKdRfzEgQuz6M6l0NwkbxKsmHvoTFiGXAoBw5hEY/u/A2CWfoFq4gSYEBLld9g
-         q3soQgGUYTyf1DraKl/IE5xRYQDP1TM4ILvxl/QLYJlsqshYqTPe4LwIYeK/zOUoPf3T
-         brFPEi/dN9AwVD16cam4NX6uSaA+amRANhulK4YLsyrl3Nfi72K/MAWB9QLpcG6/5BdV
-         C8MdsU7YlJRANavLjtdxRK1P6SSoylaq3Pn2ta6g04BIlUQLXHEWNVTUYpV5jch7FXqP
-         dvJzPPAqH/CL1THPIXbAstmhpppc4BhBtb68CwOpD5Iw1dqccwKrREre8FnPNMgxEerw
-         jyHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ivvcy3jSvKNh7AY9v8j4FaWyMteFu4efIhrDaMrTgs0=;
-        b=QdxgFJU56+JMymZd9PFSIFNUNS+wVH9qCoA3VYGPo6s7vpeo7BxVGFGTiSObLG+Do7
-         sj7mgTc+wrA9nIYExO2jDGVUTD6XkqJMa98tlMl9X677cMsgZWq32ncOrxQLwMCzuDrC
-         tZezbHYYcR2GSrE84K+7ru0JgOWIU2+bU2ikh5SZ4LOL6EX8f0546HbYfWcoSKdd+raL
-         9oZqAwfI8NlZbpGXs2m4n24nAoj3clwDNELwEgC09yzarigEUjCVed6vA/H8D2wovO0+
-         k9e/Nj8ZafZWMYybXDyBTZ7v3lKaeybTGNgXk7ALtDWaWKhNFqPnBbL3xCHrCtTbOVrF
-         RpPQ==
-X-Gm-Message-State: APjAAAUUDMzWmfwA1HbtW+rF0tPUQbfzCMYV34mTuE0Gt1J/0AQQNS4U
-        GhffK7D80A2LAN25NK6rgWI=
-X-Google-Smtp-Source: APXvYqyEqpA1gOpTfq3syYAte0jdi7inc52XAxENBCxOvBZo2HSaroz6fSIklIcvS96/1smIuGr9tw==
-X-Received: by 2002:adf:efc8:: with SMTP id i8mr721555wrp.220.1563219776662;
-        Mon, 15 Jul 2019 12:42:56 -0700 (PDT)
-Received: from felia ([2001:16b8:2dc5:2000:cd36:d602:4f2d:7917])
-        by smtp.gmail.com with ESMTPSA id y1sm15121414wma.32.2019.07.15.12.42.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 12:42:55 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Mon, 15 Jul 2019 21:42:47 +0200 (CEST)
-X-X-Sender: lukas@felia
-To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
-cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [Linux-kernel-mentees] [PATCH v2] PCI: Remove functions not
- called in include/linux/pci.h
-In-Reply-To: <20190715181312.31403-1-skunberg.kelsey@gmail.com>
-Message-ID: <alpine.DEB.2.21.1907152138120.2564@felia>
-References: <20190715175658.29605-1-skunberg.kelsey@gmail.com> <20190715181312.31403-1-skunberg.kelsey@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1731791AbfGOTo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:44:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729598AbfGOTo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:44:57 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D9952173B
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 19:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563219896;
+        bh=eR7tQFCtsIZZKhV6oeIXYXLEwaZdSRmOV4XGxmJFXSY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IXBGoqnwfx6gH4+R7zihNHPWlDyRp6A32ettpPl9uP5usiof27oZQ2CZTffpc8DgE
+         WJLmcCzB4jdBz7uCznSI3hSGpm4GXMCCLdxwc7G96S7l2UzUK65oDwiATwlm2Mx8/3
+         nGODe1obul03Hj2tDBIR0Yk36jMpDI4ihpjRLNc4=
+Received: by mail-wr1-f43.google.com with SMTP id n9so18390121wrr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:44:56 -0700 (PDT)
+X-Gm-Message-State: APjAAAXfZvARqqSDCZLiKS/5Pkw+QJvcVvmwKCDAUrrP7q6OLlNMTnCA
+        sn/Vji8AuGAmfz4Oh74gY5+0fVvV8GmjefclKVwEkg==
+X-Google-Smtp-Source: APXvYqyP5Axlqzykr7dAlNKuZWGUt5mky/R05HlYWR+XEesdGn3879zXtuswSqnZK2d5yZmvNBT76Mxtb4pzaacfFAs=
+X-Received: by 2002:a5d:4309:: with SMTP id h9mr29584933wrq.221.1563219894946;
+ Mon, 15 Jul 2019 12:44:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com>
+ <8736j7gsza.fsf@linux.intel.com> <alpine.DEB.2.21.1907152033020.1767@nanos.tec.linutronix.de>
+ <20190715193938.GG32439@tassilo.jf.intel.com>
+In-Reply-To: <20190715193938.GG32439@tassilo.jf.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 15 Jul 2019 12:44:42 -0700
+X-Gmail-Original-Message-ID: <CALCETrW1VobMKcDU_zbvgy1DBe5j=iZUp165_q_NHS7+ZffG4g@mail.gmail.com>
+Message-ID: <CALCETrW1VobMKcDU_zbvgy1DBe5j=iZUp165_q_NHS7+ZffG4g@mail.gmail.com>
+Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop targets
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 15, 2019 at 12:39 PM Andi Kleen <ak@linux.intel.com> wrote:
+>
+> > Right, we don't know where the PAT invocation comes from and whether they
+> > are safe to omit flushing the cache. The module load code would be one
+> > obvious candidate.
+>
+> Module load just changes the writable/executable status, right? That shouldn't
+> need to flush in any case because it doesn't change the caching attributes.
+>
 
-
-On Mon, 15 Jul 2019, Kelsey Skunberg wrote:
-
-> Remove the following uncalled functions from include/linux/pci.h:
-> 
->         pci_block_cfg_access()
->         pci_block_cfg_access_in_atomic()
->         pci_unblock_cfg_access()
-> 
-> Functions were added in patch fb51ccbf217c "PCI: Rework config space
-> blocking services", though no callers were added. Code continues to be
-> unused and should be removed.
-> 
-> Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> ---
-> 
-
-Nice finding. How did you discover this issue? Did you use a tool to find 
-this ununsed code or stumble over it during your code review?
-
-Also note that commits are referred to with this format:
-
-commit <12-character sha prefix> ("<commit message>")
-
-So, you need to change patch to commit and include brackets around your
-quoted commit message.
-
-Lukas
-
-> Changes since v1:
->   - Fixed Signed-off-by line to show full name
-> 
->  include/linux/pci.h | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index cf380544c700..3c9ba6133bea 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1656,11 +1656,6 @@ static inline void pci_release_regions(struct pci_dev *dev) { }
->  
->  static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
->  
-> -static inline void pci_block_cfg_access(struct pci_dev *dev) { }
-> -static inline int pci_block_cfg_access_in_atomic(struct pci_dev *dev)
-> -{ return 0; }
-> -static inline void pci_unblock_cfg_access(struct pci_dev *dev) { }
-> -
->  static inline struct pci_bus *pci_find_next_bus(const struct pci_bus *from)
->  { return NULL; }
->  static inline struct pci_dev *pci_get_slot(struct pci_bus *bus,
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> Linux-kernel-mentees mailing list
-> Linux-kernel-mentees@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/linux-kernel-mentees
-> 
+Indeed.  module load should require a single TLB flush and no cache
+flushes.  I don't think we're currently efficient enough to do it with
+a single TLB flush, but we should be able to...
