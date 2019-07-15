@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9880769652
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A74D69657
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388324AbfGOOIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58324 "EHLO mail.kernel.org"
+        id S2388287AbfGOOI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:08:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388474AbfGOOIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:08:17 -0400
+        id S2387523AbfGOOI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:08:26 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27BEB2081C;
-        Mon, 15 Jul 2019 14:08:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A311E2083D;
+        Mon, 15 Jul 2019 14:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199696;
-        bh=DFKCF5t4ld05/ZNuT6Ta+3nNlNLCVq+XxwCK4tQ93jU=;
+        s=default; t=1563199705;
+        bh=68ScEvktkTHuDCQtIpXk9OQdL+BA622ZWtuFDxAsm+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vMoRC+v1wtZuxXslxq0CNQhz5Adxl0cPbfzf7EVu3M2g791wsUxllO/uQ7D+eMjwt
-         PBE0nuNHqYhp09VQlGIiJEtlgkgfNSwL7YcnIpAzTLNYxjr2mh2NTj890L1D/DGaRH
-         q5DhL5/R5cYOWnOmJ8D377LlBC+FyaQra5SBwUJ8=
+        b=qfF2QWNJAVvab9vteTrkiDg/45a71rfyLg9KHcp3eqPqlobYYdYKmTsA+G1NgsoKN
+         yQtQw6w6m6ECS3iKuCDOfr1//9q1tzu8jkVYIlqnl30g+iOU4x4Ku+HgnSba1A11eH
+         uK4Y//pdyGfMq2alhwcln1EYypkWKRXcOqMqtsPE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oliver Neukum <oneukum@suse.com>,
-        syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 075/219] media: uvcvideo: Fix access to uninitialized fields on probe error
-Date:   Mon, 15 Jul 2019 10:01:16 -0400
-Message-Id: <20190715140341.6443-75-sashal@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 078/219] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
+Date:   Mon, 15 Jul 2019 10:01:19 -0400
+Message-Id: <20190715140341.6443-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -45,37 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 11a087f484bf15ff65f0a9f277aa5a61fd07ed2a ]
+[ Upstream commit 64ea3e9094a1f13b96c33244a3fb3a0f45690bd2 ]
 
-We need to check whether this work we are canceling actually is
-initialized.
+Commit 384ebe1c2849 ("gpio/omap: Add DT support to GPIO driver") added
+the register definition tables to the gpio-omap driver. Subsequently to
+that commit, commit 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx()
+checks from *_runtime_resume()") added definitions for irqstatus_raw*
+registers to the legacy OMAP4 definitions, but missed the DT
+definitions.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This causes an unintentional change of behaviour for the 1.101 errata
+workaround on OMAP4 platforms. Fix this oversight.
+
+Fixes: 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx() checks from *_runtime_resume()")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-omap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 14cff91b7aea..aa021498036a 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -2350,7 +2350,9 @@ void uvc_ctrl_cleanup_device(struct uvc_device *dev)
- 	struct uvc_entity *entity;
- 	unsigned int i;
- 
--	cancel_work_sync(&dev->async_ctrl.work);
-+	/* Can be uninitialized if we are aborting on probe error. */
-+	if (dev->async_ctrl.work.func)
-+		cancel_work_sync(&dev->async_ctrl.work);
- 
- 	/* Free controls and control mappings for all entities. */
- 	list_for_each_entry(entity, &dev->entities, list) {
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index fafd79438bbf..0708e50a27f0 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1728,6 +1728,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
+ 	.clr_dataout =		OMAP4_GPIO_CLEARDATAOUT,
+ 	.irqstatus =		OMAP4_GPIO_IRQSTATUS0,
+ 	.irqstatus2 =		OMAP4_GPIO_IRQSTATUS1,
++	.irqstatus_raw0 =	OMAP4_GPIO_IRQSTATUSRAW0,
++	.irqstatus_raw1 =	OMAP4_GPIO_IRQSTATUSRAW1,
+ 	.irqenable =		OMAP4_GPIO_IRQSTATUSSET0,
+ 	.irqenable2 =		OMAP4_GPIO_IRQSTATUSSET1,
+ 	.set_irqenable =	OMAP4_GPIO_IRQSTATUSSET0,
 -- 
 2.20.1
 
