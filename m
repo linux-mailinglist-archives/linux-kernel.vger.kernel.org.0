@@ -2,80 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89CE7694C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D9C6948F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392221AbfGOOxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:53:48 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35284 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391543AbfGOO3T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:29:19 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j19so17201952otq.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6QkSbJ8pehcPJsEqSW/0Jw3Kj7WtEh8gEc9PVJH1CrA=;
-        b=YDX5Cni69En7Hnte+J3OlCSJ0HlBPkTtUerLm+TEt90UKpDUfDuJvjCxyA/xsbdN+4
-         NlM28WRfcpu6byVaPN4oE7VH4s3k0vd1hEb+a57aabIHxBzldliL2Htoq2btKjK4n7AS
-         dEk3INMwrusBqXJOHjVd5y+1ZYzs3lAeIPfrwgpru+b49OUDLgXf6+CpcsZ6fG8itG0F
-         1l0rPwOFa7qBIOGncKcrTTI0b32v3jNfOV6b+s6CSQAQGdFNyL4RrykbWCb0WlSmG84g
-         rPg2y0ELpTG/hNU8ek2ztwI6ffWkYO0HuhjiHpT2javBLichO07Q+0RuqzlaxnSebk5a
-         7e7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6QkSbJ8pehcPJsEqSW/0Jw3Kj7WtEh8gEc9PVJH1CrA=;
-        b=WxEbnyG9Zm0vVyWAsbEeia1sGY30bi2iS3qMr/53VdiMte7ou95Q8g8YbcgPVAMnUd
-         7j6KdrKeDp38/816Rqcd4+fPKoad8OvvTvrugRd+to5Ohe/YR/4UHTQu2u4HvuzP668Q
-         uwBp/kvDRXv+ap1Km31qoPJsgG79TjWfWGWSqHE9RL/a4fPUYEPy1mBvair/kRuRM4aa
-         iDl5mjfLLD321uO+JY9WNhZ2ZSZJQSK9esfOUvFTbIpu0oVTxgnMV+11DmWuhDZJhHv9
-         4tLkQAoKLyyMWRIDyauN73ij0IkrbJrzSmAVV8wdTsxAT7yRHsB53frVXltM1zvOfmMO
-         oixA==
-X-Gm-Message-State: APjAAAVXTpI3d8+LmhdlDtY5KizEqUAxN3xZvW5RYdytC6xy0FrCeyJ3
-        /r2o9eeztba/fZDhHsFyWrU=
-X-Google-Smtp-Source: APXvYqyjL0Ot/+YneSRjZE4d+NlwotmvVCLCkSyihKbIEGxxfUrBUzxa4ggVFEdDWrNvLtFCu+w3cQ==
-X-Received: by 2002:a05:6830:193:: with SMTP id q19mr20811013ota.187.1563200957973;
-        Mon, 15 Jul 2019 07:29:17 -0700 (PDT)
-Received: from brauner.io ([208.54.86.135])
-        by smtp.gmail.com with ESMTPSA id a94sm6577090otb.15.2019.07.15.07.29.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 07:29:16 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 16:29:09 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        id S2391745AbfGOOav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:30:51 -0400
+Received: from verein.lst.de ([213.95.11.211]:33049 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391714AbfGOOaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:30:46 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C945368B05; Mon, 15 Jul 2019 16:30:39 +0200 (CEST)
+Date:   Mon, 15 Jul 2019 16:30:39 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH 1/2] arch: mark syscall number 435 reserved for clone3
-Message-ID: <20190715142907.7p43dgmx5sz5oouz@brauner.io>
-References: <20190714192205.27190-1-christian@brauner.io>
- <20190714192205.27190-2-christian@brauner.io>
- <e14eb2f9-43cb-0b9d-dec4-b7e7dcd62091@de.ibm.com>
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86
+ arch code
+Message-ID: <20190715143039.GA6892@lst.de>
+References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-4-bauerman@linux.ibm.com> <20190712150912.3097215e.pasic@linux.ibm.com> <87tvbqgboc.fsf@morokweng.localdomain> <20190715160317.7e3dfb33.pasic@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e14eb2f9-43cb-0b9d-dec4-b7e7dcd62091@de.ibm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190715160317.7e3dfb33.pasic@linux.ibm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 03:56:04PM +0200, Christian Borntraeger wrote:
-> I think Vasily already has a clone3 patch for s390x with 435. 
+On Mon, Jul 15, 2019 at 04:03:17PM +0200, Halil Pasic wrote:
+> > I thought about that but couldn't put my finger on a general concept.
+> > Is it "guest with memory inaccessible to the host"?
+> > 
+> 
+> Well, force_dma_unencrypted() is a much better name thatn sev_active():
+> s390 has no AMD SEV, that is sure, but for virtio to work we do need to
+> make our dma accessible to the hypervisor. Yes, your "guest with memory
+> inaccessible to the host" shows into the right direction IMHO.
+> Unfortunately I don't have too many cycles to spend on this right now.
 
-Excellent. I'll leave the # 435 reserved for clone3 on s390x in until
-this patch has landed. It shouldn't be a merge conflict and if so it
-should be trivial.
+In x86 it means that we need to remove dma encryption using
+set_memory_decrypted before using it for DMA purposes.  In the SEV
+case that seems to be so that the hypervisor can access it, in the SME
+case that Tom just fixes it is because there is an encrypted bit set
+in the physical address, and if the device doesn't support a large
+enough DMA address the direct mapping code has to encrypt the pages
+used for the contigous allocation.
 
-Christian
+> Being on cc for your patch made me realize that things got broken on
+> s390. Thanks! I've sent out a patch that fixes protvirt, but we are going
+> to benefit from your cleanups. I think with your cleanups and that patch
+> of mine both sev_active() and sme_active() can be removed. Feel free to
+> do so. If not, I can attend to it as well.
+
+Yes, I think with the dma-mapping fix and this series sme_active and
+sev_active should be gone from common code.  We should also be able
+to remove the exports x86 has for them.
+
+I'll wait a few days and will then feed the dma-mapping fix to Linus,
+it might make sense to either rebase Thiagos series on top of the
+dma-mapping for-next branch, or wait a few days before reposting.
