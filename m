@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1576569037
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6488C69046
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389784AbfGOOTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:19:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41910 "EHLO mail.kernel.org"
+        id S2390395AbfGOOUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:20:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390154AbfGOOTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:19:41 -0400
+        id S2390169AbfGOOTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:19:44 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC34521530;
-        Mon, 15 Jul 2019 14:19:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBB5D206B8;
+        Mon, 15 Jul 2019 14:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200381;
-        bh=h5Hu998g97hcNXSmjTljqkWcR9/8vHHR6+g6JUfiGec=;
+        s=default; t=1563200383;
+        bh=RYrGBCO24OZWvrQxwop4I/ta7IVGY9R0HWwt9l2BfBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gAlnIPgGi6cLWtsAu7jdAGWjlxD3c8shETLlLzKOofIiVWx8yzqlHwKn+fJL5Whcn
-         PSPDItTyQRwBkXzPoBxsvX41iXQN8BPTcrLJqSJJOD2CRWrgQZQc9OWSR0oAyOkX42
-         RgEN/hiO5lLFlEA04wv7ArPWb9mmtevhPeG2AuVw=
+        b=le5b0LKqVK/7WMaFvpZh2oCD9EPBRCWN/WIiOj/xCXcaresfMPy/6qKMZWxX6Gm3f
+         Mux5pZRVNbPjtA7Ut6LYquB/np5Kzu7DDTfD4i8/cPmPyM4XTZMHAV+GQSqWep/82a
+         /cHagP8jMK+aj/gLtoNzqSIGpObitzrPHygfkRs0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shailendra Verma <shailendra.v@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 031/158] media: staging: media: davinci_vpfe: - Fix for memory leak if decoder initialization fails.
-Date:   Mon, 15 Jul 2019 10:16:02 -0400
-Message-Id: <20190715141809.8445-31-sashal@kernel.org>
+Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 032/158] net: phy: Check against net_device being NULL
+Date:   Mon, 15 Jul 2019 10:16:03 -0400
+Message-Id: <20190715141809.8445-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -44,35 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shailendra Verma <shailendra.v@samsung.com>
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-[ Upstream commit 6995a659101bd4effa41cebb067f9dc18d77520d ]
+[ Upstream commit 82c76aca81187b3d28a6fb3062f6916450ce955e ]
 
-Fix to avoid possible memory leak if the decoder initialization
-got failed.Free the allocated memory for file handle object
-before return in case decoder initialization fails.
+In general, we don't want MAC drivers calling phy_attach_direct with the
+net_device being NULL. Add checks against this in all the functions
+calling it: phy_attach() and phy_connect_direct().
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/davinci_vpfe/vpfe_video.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/phy/phy_device.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 1269a983455e..13b890b9ef18 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -422,6 +422,9 @@ static int vpfe_open(struct file *file)
- 	/* If decoder is not initialized. initialize it */
- 	if (!video->initialized && vpfe_update_pipe_state(video)) {
- 		mutex_unlock(&video->lock);
-+		v4l2_fh_del(&handle->vfh);
-+		v4l2_fh_exit(&handle->vfh);
-+		kfree(handle);
- 		return -ENODEV;
- 	}
- 	/* Increment device users counter */
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 8a96d985a52f..6144146aec29 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -757,6 +757,9 @@ int phy_connect_direct(struct net_device *dev, struct phy_device *phydev,
+ {
+ 	int rc;
+ 
++	if (!dev)
++		return -EINVAL;
++
+ 	rc = phy_attach_direct(dev, phydev, phydev->dev_flags, interface);
+ 	if (rc)
+ 		return rc;
+@@ -1098,6 +1101,9 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
+ 	struct device *d;
+ 	int rc;
+ 
++	if (!dev)
++		return ERR_PTR(-EINVAL);
++
+ 	/* Search the list of PHY devices on the mdio bus for the
+ 	 * PHY with the requested name
+ 	 */
 -- 
 2.20.1
 
