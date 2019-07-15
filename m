@@ -2,422 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFB169AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 20:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1F869AF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 20:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbfGOSjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 14:39:15 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33674 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729735AbfGOSjP (ORCPT
+        id S1729898AbfGOSlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 14:41:31 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42489 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729503AbfGOSlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 14:39:15 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so18253939wru.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 11:39:12 -0700 (PDT)
+        Mon, 15 Jul 2019 14:41:31 -0400
+Received: by mail-oi1-f196.google.com with SMTP id s184so13455363oie.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 11:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2Pu9jEeEMBlE3FFfJDwBAAR3JyOiDHCZwpmnVW6F2jk=;
+        b=D0O6nEvu/MDqMzpd4wWrUrH4m6jf8mBS7NBQ2xZKl6vUmoM53KA51Qs80BCrfTZdLP
+         UYuPwPjACcc8+7tOIxZ8eXxEPv1QjmTdIWa1xRNbUZn82Oc2uDOHA6PtjEnXJWfI8EOM
+         dVdVJ1PkahKfdrGXWo9mNg8L88F1kQJiLqnH5u88yJvGC4c9oEGsEq1+lZnSCcmMPGha
+         Pn0foO3PSYL9DGFpXq9tgZ2FleXvSiEI16dKDh/9U3PH35VC8u2FOrHxzadHUwh6yLry
+         2gPk7red3tN0ucQBuFKNpESUCi4brY2OvG034/bphTe99UppoR7K6GgAYys6q4XCp5xO
+         nCDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TktIcPzdYgxt1tcMK8awiyl2KH5a2rCru6fqp+AQ4Pg=;
-        b=iUO/K9MK3dLgzU1cXPpu2wIsEAMwBR08DXmKr4uU/O9z+uJW1JPhITgmKhZWWc8Nlh
-         axHQqoNzFSn7bCwwih5OZcnbZOvnjAPhQ96JuiasALA8pdrYoot988rQNpLwCvdOjNkF
-         vI1TFCv98jAYzX0RtVhTJLnqCMHnqMz2HnuS72geXG5Q7dH7A2Y2gz/XE0OywDFVbZuN
-         0wtX2IqxFJXLV4kRLd3mNlTBjuNCv4RVdikI857/ZetVl05cccHpXD9DZJ7m9GhEPlMJ
-         oNCvW0UV3u5+Dw7DcZ1saVrGRMNRtZVpUaxjmsFTxRq+VNZB2I1wFIU7ZvbgbJiYCtp0
-         frvw==
-X-Gm-Message-State: APjAAAX+BUxtcuGt5qioduQJzZ94JJpuMYh1rTGkPpP4qH/HydOWernj
-        owmtwLFB7zQQ7MbGkF2pL4H5qg==
-X-Google-Smtp-Source: APXvYqxVf+CvC/eB90uTHqcEBcxUxerWDPZaWVFbFZFHBwWcKJ4PeoAWCvyebjgTqiUSujc0hm9Ljw==
-X-Received: by 2002:adf:f544:: with SMTP id j4mr30672241wrp.150.1563215951356;
-        Mon, 15 Jul 2019 11:39:11 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:bca4:e0e3:13b4:ec4? ([2001:b07:6468:f312:bca4:e0e3:13b4:ec4])
-        by smtp.gmail.com with ESMTPSA id a6sm13125843wmj.15.2019.07.15.11.39.10
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 11:39:10 -0700 (PDT)
-Subject: Re: [PATCH] kvm: x86: ioapic and apic debug macros cleanup
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        up2wing@gmail.com, wang.liang82@zte.com.cn
-References: <1562346528-840-1-git-send-email-wang.yi59@zte.com.cn>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <cf360184-fdf6-bd64-ae17-71aabd2b1472@redhat.com>
-Date:   Mon, 15 Jul 2019 20:39:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2Pu9jEeEMBlE3FFfJDwBAAR3JyOiDHCZwpmnVW6F2jk=;
+        b=BIKkLNYf4VH+EyDlW2lJ5AbyV6wE9KojGIHl7RkyewixAUKVses/fqF5GFVfuVu7+3
+         6GnYqmx293uIe0YJHDZoUPhiTRtBN6WSTHrvWjBf4EacSxymq4glqZa+4dyEUtVY8dYN
+         FMdXnOg8wNnb6n2J4ai9GDpGWYsIt6wfnK0A/KjVOn+kVXuIHOAdGl0ihcLitooRIlIN
+         dyzdiQWgbealWKP31Cn8vbSFpKuYLfwSDcAkIOZYGW1UmAoRPa/oUD9RbZ45i2bvHg5P
+         S6XLo4QzmFfP3IrKEyNyxtmhB1Ib8vvjurnWQAOaySvYdiEghx+s7b03Pa0TEvUrq53X
+         pT4w==
+X-Gm-Message-State: APjAAAX/rJQ+goblXV5IBQtgRm+HDiMT+7YF739+rtZkR5ypyr94k2SX
+        GLI15S+rUpu9rVFyfaZUHr1BajIsKCue7N9LTE4/lw==
+X-Google-Smtp-Source: APXvYqwGcwHVHrCp7SdDV1RLDY4MkmCMG2ORzzkghzUIlu2jhT/0clB3rg2mZardKDz1khcGGLDs4jwDoSK/JpqfK1A=
+X-Received: by 2002:aca:6104:: with SMTP id v4mr14234264oib.172.1563216089632;
+ Mon, 15 Jul 2019 11:41:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1562346528-840-1-git-send-email-wang.yi59@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190702004811.136450-1-saravanak@google.com> <20190702004811.136450-3-saravanak@google.com>
+ <CAL_JsqLdvDpKB=iV6x3eTr2F4zY0bxU-Wjb+JeMjj5rdnRc-OQ@mail.gmail.com>
+ <CAGETcx_i9353aRFbJXNS78EvqwmU-2-xSBJ+ySZX1gjjHpz_cg@mail.gmail.com>
+ <9e75b3dd-380b-c868-728f-46379e53bc11@gmail.com> <07812739-0e6b-6598-ac58-8e0ea74a3331@gmail.com>
+In-Reply-To: <07812739-0e6b-6598-ac58-8e0ea74a3331@gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 15 Jul 2019 11:40:53 -0700
+Message-ID: <CAGETcx8YCCGxgXnByenVUb+q8pHPPTjwAjK3L_+9mwoCe=9SbA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] of/platform: Add functional dependency link from
+ DT bindings
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/19 19:08, Yi Wang wrote:
-> The ioapic_debug and apic_debug have been not used
-> for years, and kvm tracepoints are enough for debugging,
-> so remove them as Paolo suggested.
-> 
-> However, there may be something wrong when pv evi get/put
-> user, so it's better to retain some log there.
-> 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> ---
->  arch/x86/kvm/ioapic.c | 15 --------
->  arch/x86/kvm/lapic.c  | 98 +++++----------------------------------------------
->  2 files changed, 9 insertions(+), 104 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-> index 1add1bc..d859ae8 100644
-> --- a/arch/x86/kvm/ioapic.c
-> +++ b/arch/x86/kvm/ioapic.c
-> @@ -45,11 +45,6 @@
->  #include "lapic.h"
->  #include "irq.h"
->  
-> -#if 0
-> -#define ioapic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg)
-> -#else
-> -#define ioapic_debug(fmt, arg...)
-> -#endif
->  static int ioapic_service(struct kvm_ioapic *vioapic, int irq,
->  		bool line_status);
->  
-> @@ -294,7 +289,6 @@ static void ioapic_write_indirect(struct kvm_ioapic *ioapic, u32 val)
->  	default:
->  		index = (ioapic->ioregsel - 0x10) >> 1;
->  
-> -		ioapic_debug("change redir index %x val %x\n", index, val);
->  		if (index >= IOAPIC_NUM_PINS)
->  			return;
->  		e = &ioapic->redirtbl[index];
-> @@ -343,12 +337,6 @@ static int ioapic_service(struct kvm_ioapic *ioapic, int irq, bool line_status)
->  	    entry->fields.remote_irr))
->  		return -1;
->  
-> -	ioapic_debug("dest=%x dest_mode=%x delivery_mode=%x "
-> -		     "vector=%x trig_mode=%x\n",
-> -		     entry->fields.dest_id, entry->fields.dest_mode,
-> -		     entry->fields.delivery_mode, entry->fields.vector,
-> -		     entry->fields.trig_mode);
-> -
->  	irqe.dest_id = entry->fields.dest_id;
->  	irqe.vector = entry->fields.vector;
->  	irqe.dest_mode = entry->fields.dest_mode;
-> @@ -515,7 +503,6 @@ static int ioapic_mmio_read(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
->  	if (!ioapic_in_range(ioapic, addr))
->  		return -EOPNOTSUPP;
->  
-> -	ioapic_debug("addr %lx\n", (unsigned long)addr);
->  	ASSERT(!(addr & 0xf));	/* check alignment */
->  
->  	addr &= 0xff;
-> @@ -558,8 +545,6 @@ static int ioapic_mmio_write(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
->  	if (!ioapic_in_range(ioapic, addr))
->  		return -EOPNOTSUPP;
->  
-> -	ioapic_debug("ioapic_mmio_write addr=%p len=%d val=%p\n",
-> -		     (void*)addr, len, val);
->  	ASSERT(!(addr & 0xf));	/* check alignment */
->  
->  	switch (len) {
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 4dabc31..0f3b57e 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -52,9 +52,6 @@
->  #define PRIu64 "u"
->  #define PRIo64 "o"
->  
-> -/* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
-> -#define apic_debug(fmt, arg...) do {} while (0)
-> -
->  /* 14 is the version for Xeon and Pentium 8.4.8*/
->  #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
->  #define LAPIC_MMIO_LENGTH		(1 << 12)
-> @@ -631,7 +628,7 @@ static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
->  {
->  	u8 val;
->  	if (pv_eoi_get_user(vcpu, &val) < 0)
-> -		apic_debug("Can't read EOI MSR value: 0x%llx\n",
-> +		printk(KERN_WARNING "Can't read EOI MSR value: 0x%llx\n",
->  			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
->  	return val & 0x1;
->  }
-> @@ -639,7 +636,7 @@ static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
->  static void pv_eoi_set_pending(struct kvm_vcpu *vcpu)
->  {
->  	if (pv_eoi_put_user(vcpu, KVM_PV_EOI_ENABLED) < 0) {
-> -		apic_debug("Can't set EOI MSR value: 0x%llx\n",
-> +		printk(KERN_WARNING "Can't set EOI MSR value: 0x%llx\n",
->  			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
->  		return;
->  	}
-> @@ -649,7 +646,7 @@ static void pv_eoi_set_pending(struct kvm_vcpu *vcpu)
->  static void pv_eoi_clr_pending(struct kvm_vcpu *vcpu)
->  {
->  	if (pv_eoi_put_user(vcpu, KVM_PV_EOI_DISABLED) < 0) {
-> -		apic_debug("Can't clear EOI MSR value: 0x%llx\n",
-> +		printk(KERN_WARNING "Can't clear EOI MSR value: 0x%llx\n",
->  			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
->  		return;
->  	}
-> @@ -683,9 +680,6 @@ static bool __apic_update_ppr(struct kvm_lapic *apic, u32 *new_ppr)
->  	else
->  		ppr = isrv & 0xf0;
->  
-> -	apic_debug("vlapic %p, ppr 0x%x, isr 0x%x, isrv 0x%x",
-> -		   apic, ppr, isr, isrv);
-> -
->  	*new_ppr = ppr;
->  	if (old_ppr != ppr)
->  		kvm_lapic_set_reg(apic, APIC_PROCPRI, ppr);
-> @@ -762,8 +756,6 @@ static bool kvm_apic_match_logical_addr(struct kvm_lapic *apic, u32 mda)
->  		return ((logical_id >> 4) == (mda >> 4))
->  		       && (logical_id & mda & 0xf) != 0;
->  	default:
-> -		apic_debug("Bad DFR vcpu %d: %08x\n",
-> -			   apic->vcpu->vcpu_id, kvm_lapic_get_reg(apic, APIC_DFR));
->  		return false;
->  	}
->  }
-> @@ -802,10 +794,6 @@ bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
->  	struct kvm_lapic *target = vcpu->arch.apic;
->  	u32 mda = kvm_apic_mda(vcpu, dest, source, target);
->  
-> -	apic_debug("target %p, source %p, dest 0x%x, "
-> -		   "dest_mode 0x%x, short_hand 0x%x\n",
-> -		   target, source, dest, dest_mode, short_hand);
-> -
->  	ASSERT(target);
->  	switch (short_hand) {
->  	case APIC_DEST_NOSHORT:
-> @@ -820,8 +808,6 @@ bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
->  	case APIC_DEST_ALLBUT:
->  		return target != source;
->  	default:
-> -		apic_debug("kvm: apic: Bad dest shorthand value %x\n",
-> -			   short_hand);
->  		return false;
->  	}
->  }
-> @@ -1097,15 +1083,10 @@ static int __apic_accept_irq(struct kvm_lapic *apic, int delivery_mode,
->  			smp_wmb();
->  			kvm_make_request(KVM_REQ_EVENT, vcpu);
->  			kvm_vcpu_kick(vcpu);
-> -		} else {
-> -			apic_debug("Ignoring de-assert INIT to vcpu %d\n",
-> -				   vcpu->vcpu_id);
->  		}
->  		break;
->  
->  	case APIC_DM_STARTUP:
-> -		apic_debug("SIPI to vcpu %d vector 0x%02x\n",
-> -			   vcpu->vcpu_id, vector);
->  		result = 1;
->  		apic->sipi_vector = vector;
->  		/* make sure sipi_vector is visible for the receiver */
-> @@ -1223,14 +1204,6 @@ static void apic_send_ipi(struct kvm_lapic *apic)
->  
->  	trace_kvm_apic_ipi(icr_low, irq.dest_id);
->  
-> -	apic_debug("icr_high 0x%x, icr_low 0x%x, "
-> -		   "short_hand 0x%x, dest 0x%x, trig_mode 0x%x, level 0x%x, "
-> -		   "dest_mode 0x%x, delivery_mode 0x%x, vector 0x%x, "
-> -		   "msi_redir_hint 0x%x\n",
-> -		   icr_high, icr_low, irq.shorthand, irq.dest_id,
-> -		   irq.trig_mode, irq.level, irq.dest_mode, irq.delivery_mode,
-> -		   irq.vector, irq.msi_redir_hint);
-> -
->  	kvm_irq_delivery_to_apic(apic->vcpu->kvm, apic, &irq, NULL);
->  }
->  
-> @@ -1284,7 +1257,6 @@ static u32 __apic_read(struct kvm_lapic *apic, unsigned int offset)
->  
->  	switch (offset) {
->  	case APIC_ARBPRI:
-> -		apic_debug("Access APIC ARBPRI register which is for P6\n");
->  		break;
->  
->  	case APIC_TMCCT:	/* Timer CCR */
-> @@ -1321,17 +1293,11 @@ int kvm_lapic_reg_read(struct kvm_lapic *apic, u32 offset, int len,
->  	/* this bitmask has a bit cleared for each reserved register */
->  	static const u64 rmask = 0x43ff01ffffffe70cULL;
->  
-> -	if ((alignment + len) > 4) {
-> -		apic_debug("KVM_APIC_READ: alignment error %x %d\n",
-> -			   offset, len);
-> +	if ((alignment + len) > 4)
->  		return 1;
-> -	}
->  
-> -	if (offset > 0x3f0 || !(rmask & (1ULL << (offset >> 4)))) {
-> -		apic_debug("KVM_APIC_READ: read reserved register %x\n",
-> -			   offset);
-> +	if (offset > 0x3f0 || !(rmask & (1ULL << (offset >> 4))))
->  		return 1;
-> -	}
->  
->  	result = __apic_read(apic, offset & ~0xf);
->  
-> @@ -1389,9 +1355,6 @@ static void update_divide_count(struct kvm_lapic *apic)
->  	tmp1 = tdcr & 0xf;
->  	tmp2 = ((tmp1 & 0x3) | ((tmp1 & 0x8) >> 1)) + 1;
->  	apic->divide_count = 0x1 << (tmp2 & 0x7);
-> -
-> -	apic_debug("timer divide count is 0x%x\n",
-> -				   apic->divide_count);
->  }
->  
->  static void limit_periodic_timer_frequency(struct kvm_lapic *apic)
-> @@ -1616,16 +1579,6 @@ static bool set_target_expiration(struct kvm_lapic *apic)
->  
->  	limit_periodic_timer_frequency(apic);
->  
-> -	apic_debug("%s: bus cycle is %" PRId64 "ns, now 0x%016"
-> -		   PRIx64 ", "
-> -		   "timer initial count 0x%x, period %lldns, "
-> -		   "expire @ 0x%016" PRIx64 ".\n", __func__,
-> -		   APIC_BUS_CYCLE_NS, ktime_to_ns(now),
-> -		   kvm_lapic_get_reg(apic, APIC_TMICT),
-> -		   apic->lapic_timer.period,
-> -		   ktime_to_ns(ktime_add_ns(now,
-> -				apic->lapic_timer.period)));
-> -
->  	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
->  		nsec_to_cycles(apic->vcpu, apic->lapic_timer.period);
->  	apic->lapic_timer.target_expiration = ktime_add_ns(now, apic->lapic_timer.period);
-> @@ -1828,8 +1781,6 @@ static void apic_manage_nmi_watchdog(struct kvm_lapic *apic, u32 lvt0_val)
->  	if (apic->lvt0_in_nmi_mode != lvt0_in_nmi_mode) {
->  		apic->lvt0_in_nmi_mode = lvt0_in_nmi_mode;
->  		if (lvt0_in_nmi_mode) {
-> -			apic_debug("Receive NMI setting on APIC_LVT0 "
-> -				   "for cpu %d\n", apic->vcpu->vcpu_id);
->  			atomic_inc(&apic->vcpu->kvm->arch.vapics_in_nmi_mode);
->  		} else
->  			atomic_dec(&apic->vcpu->kvm->arch.vapics_in_nmi_mode);
-> @@ -1943,8 +1894,6 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->  	case APIC_TDCR: {
->  		uint32_t old_divisor = apic->divide_count;
->  
-> -		if (val & 4)
-> -			apic_debug("KVM_WRITE:TDCR %x\n", val);
->  		kvm_lapic_set_reg(apic, APIC_TDCR, val);
->  		update_divide_count(apic);
->  		if (apic->divide_count != old_divisor &&
-> @@ -1956,10 +1905,8 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->  		break;
->  	}
->  	case APIC_ESR:
-> -		if (apic_x2apic_mode(apic) && val != 0) {
-> -			apic_debug("KVM_WRITE:ESR not zero %x\n", val);
-> +		if (apic_x2apic_mode(apic) && val != 0)
->  			ret = 1;
-> -		}
->  		break;
->  
->  	case APIC_SELF_IPI:
-> @@ -1972,8 +1919,7 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->  		ret = 1;
->  		break;
->  	}
-> -	if (ret)
-> -		apic_debug("Local APIC Write to read-only register %x\n", reg);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(kvm_lapic_reg_write);
-> @@ -2001,19 +1947,11 @@ static int apic_mmio_write(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
->  	 * 32/64/128 bits registers must be accessed thru 32 bits.
->  	 * Refer SDM 8.4.1
->  	 */
-> -	if (len != 4 || (offset & 0xf)) {
-> -		/* Don't shout loud, $infamous_os would cause only noise. */
-> -		apic_debug("apic write: bad size=%d %lx\n", len, (long)address);
-> +	if (len != 4 || (offset & 0xf))
->  		return 0;
-> -	}
->  
->  	val = *(u32*)data;
->  
-> -	/* too common printing */
-> -	if (offset != APIC_EOI)
-> -		apic_debug("%s: offset 0x%x with length 0x%x, and value is "
-> -			   "0x%x\n", __func__, offset, len, val);
-> -
->  	kvm_lapic_reg_write(apic, offset & 0xff0, val);
->  
->  	return 0;
-> @@ -2146,11 +2084,6 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
->  	if ((value & MSR_IA32_APICBASE_ENABLE) &&
->  	     apic->base_address != APIC_DEFAULT_PHYS_BASE)
->  		pr_warn_once("APIC base relocation is unsupported by KVM");
-> -
-> -	/* with FSB delivery interrupt, we can restart APIC functionality */
-> -	apic_debug("apic base msr is 0x%016" PRIx64 ", and base address is "
-> -		   "0x%lx.\n", apic->vcpu->arch.apic_base, apic->base_address);
-> -
->  }
->  
->  void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
-> @@ -2161,8 +2094,6 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	if (!apic)
->  		return;
->  
-> -	apic_debug("%s\n", __func__);
-> -
->  	/* Stop the timer in case it's a reset to an active apic */
->  	hrtimer_cancel(&apic->lapic_timer.timer);
->  
-> @@ -2215,11 +2146,6 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->  
->  	vcpu->arch.apic_arb_prio = 0;
->  	vcpu->arch.apic_attention = 0;
-> -
-> -	apic_debug("%s: vcpu=%p, id=0x%x, base_msr="
-> -		   "0x%016" PRIx64 ", base_address=0x%0lx.\n", __func__,
-> -		   vcpu, kvm_lapic_get_reg(apic, APIC_ID),
-> -		   vcpu->arch.apic_base, apic->base_address);
->  }
->  
->  /*
-> @@ -2291,7 +2217,6 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
->  	struct kvm_lapic *apic;
->  
->  	ASSERT(vcpu != NULL);
-> -	apic_debug("apic_init %d\n", vcpu->vcpu_id);
->  
->  	apic = kzalloc(sizeof(*apic), GFP_KERNEL_ACCOUNT);
->  	if (!apic)
-> @@ -2645,11 +2570,8 @@ int kvm_x2apic_msr_read(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
->  	if (!lapic_in_kernel(vcpu) || !apic_x2apic_mode(apic))
->  		return 1;
->  
-> -	if (reg == APIC_DFR || reg == APIC_ICR2) {
-> -		apic_debug("KVM_APIC_READ: read x2apic reserved register %x\n",
-> -			   reg);
-> +	if (reg == APIC_DFR || reg == APIC_ICR2)
->  		return 1;
-> -	}
->  
->  	if (kvm_lapic_reg_read(apic, reg, 4, &low))
->  		return 1;
-> @@ -2747,8 +2669,6 @@ void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
->  		/* evaluate pending_events before reading the vector */
->  		smp_rmb();
->  		sipi_vector = apic->sipi_vector;
-> -		apic_debug("vcpu %d received sipi with vector # %x\n",
-> -			 vcpu->vcpu_id, sipi_vector);
->  		kvm_vcpu_deliver_sipi_vector(vcpu, sipi_vector);
->  		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
->  	}
-> 
+Replying again because the previous email accidentally included HTML.
 
-Queued, thanks.
+Thanks for taking the time to reconsider the wording Frank. Your
+intention was clear to me in the first email too.
 
-Paolo
+A kernel command line option can also completely disable this
+functionality easily and cleanly. Can we pick that as an option? I've
+an implementation of that in the v5 series I sent out last week.
+
+-Saravana
+
+On Mon, Jul 15, 2019 at 7:39 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 7/15/19 7:26 AM, Frank Rowand wrote:
+> > HiRob,
+> >
+> > Sorry for such a late reply...
+> >
+> >
+> > On 7/1/19 8:25 PM, Saravana Kannan wrote:
+> >> On Mon, Jul 1, 2019 at 6:32 PM Rob Herring <robh+dt@kernel.org> wrote:
+> >>>
+> >>> On Mon, Jul 1, 2019 at 6:48 PM Saravana Kannan <saravanak@google.com> wrote:
+> >>>>
+> >>>> Add device-links after the devices are created (but before they are
+> >>>> probed) by looking at common DT bindings like clocks and
+> >>>> interconnects.
+> >>>>
+> >>>> Automatically adding device-links for functional dependencies at the
+> >>>> framework level provides the following benefits:
+> >>>>
+> >>>> - Optimizes device probe order and avoids the useless work of
+> >>>>   attempting probes of devices that will not probe successfully
+> >>>>   (because their suppliers aren't present or haven't probed yet).
+> >>>>
+> >>>>   For example, in a commonly available mobile SoC, registering just
+> >>>>   one consumer device's driver at an initcall level earlier than the
+> >>>>   supplier device's driver causes 11 failed probe attempts before the
+> >>>>   consumer device probes successfully. This was with a kernel with all
+> >>>>   the drivers statically compiled in. This problem gets a lot worse if
+> >>>>   all the drivers are loaded as modules without direct symbol
+> >>>>   dependencies.
+> >>>>
+> >>>> - Supplier devices like clock providers, interconnect providers, etc
+> >>>>   need to keep the resources they provide active and at a particular
+> >>>>   state(s) during boot up even if their current set of consumers don't
+> >>>>   request the resource to be active. This is because the rest of the
+> >>>>   consumers might not have probed yet and turning off the resource
+> >>>>   before all the consumers have probed could lead to a hang or
+> >>>>   undesired user experience.
+> >>>>
+> >>>>   Some frameworks (Eg: regulator) handle this today by turning off
+> >>>>   "unused" resources at late_initcall_sync and hoping all the devices
+> >>>>   have probed by then. This is not a valid assumption for systems with
+> >>>>   loadable modules. Other frameworks (Eg: clock) just don't handle
+> >>>>   this due to the lack of a clear signal for when they can turn off
+> >>>>   resources. This leads to downstream hacks to handle cases like this
+> >>>>   that can easily be solved in the upstream kernel.
+> >>>>
+> >>>>   By linking devices before they are probed, we give suppliers a clear
+> >>>>   count of the number of dependent consumers. Once all of the
+> >>>>   consumers are active, the suppliers can turn off the unused
+> >>>>   resources without making assumptions about the number of consumers.
+> >>>>
+> >>>> By default we just add device-links to track "driver presence" (probe
+> >>>> succeeded) of the supplier device. If any other functionality provided
+> >>>> by device-links are needed, it is left to the consumer/supplier
+> >>>> devices to change the link when they probe.
+> >>>>
+> >>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >>>> ---
+> >>>>  drivers/of/Kconfig    |  9 ++++++++
+> >>>>  drivers/of/platform.c | 52 +++++++++++++++++++++++++++++++++++++++++++
+> >>>>  2 files changed, 61 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> >>>> index 37c2ccbefecd..7c7fa7394b4c 100644
+> >>>> --- a/drivers/of/Kconfig
+> >>>> +++ b/drivers/of/Kconfig
+> >>>> @@ -103,4 +103,13 @@ config OF_OVERLAY
+> >>>>  config OF_NUMA
+> >>>>         bool
+> >>>>
+> >>>> +config OF_DEVLINKS
+> >>>
+> >>> I'd prefer this not be a config option. After all, we want one kernel
+> >>> build that works for all platforms.
+> >>
+> >> We need a lot more changes before one kernel build can work for all
+> >> platforms. At least until then, I think we need this. Lot less chance
+> >> of breaking existing platforms before all the missing pieces are
+> >> created.
+> >>
+> >>> A kernel command line option to disable might be useful for debugging.
+> >>
+> >> Or we can have a command line to enable this for platforms that want
+> >> to use it and have it default off.
+> >
+>
+> > Given the fragility of the current boot sequence (without this patch set)
+> > and the potential breakage of existing systems, I think that if we choose
+> > to accept this patch set that it should first bake in the -next tree for
+> > at least one major release cycle.  Maybe even two major release cycles.
+>
+> I probably didn't state that very well.  I was trying to not sound like
+> I was accusing this patch series of being fragile.  The issue is that
+> adding the patches to systems that weren't expecting the new ordering
+> may cause boot problems for some systems.  I'm not concerned with
+> pointing fingers, just want to make sure that we proceed cautiously
+> until we know that the resulting system is robust.
+>
+> -Frank
+>
+> >
+> > -Frank
+> >
+> >
+> >>
+> >>>> +       bool "Device links from DT bindings"
+> >>>> +       help
+> >>>> +         Common DT bindings like clocks, interconnects, etc represent a
+> >>>> +         consumer device's dependency on suppliers devices. This option
+> >>>> +         creates device links from these common bindings so that consumers are
+> >>>> +         probed only after all their suppliers are active and suppliers can
+> >>>> +         tell when all their consumers are active.
+> >>>> +
+> >>>>  endif # OF
+> >>>> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> >>>> index 04ad312fd85b..a53717168aca 100644
+> >>>> --- a/drivers/of/platform.c
+> >>>> +++ b/drivers/of/platform.c
+> >>>> @@ -61,6 +61,57 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
+> >>>>  EXPORT_SYMBOL(of_find_device_by_node);
+> >>>>
+> >>>>  #ifdef CONFIG_OF_ADDRESS
+> >>>> +static int of_link_binding(struct device *dev, char *binding, char *cell)
+> >>>
+> >>> Under CONFIG_OF_ADDRESS seems like a strange location.
+> >>
+> >> Yeah, but the rest of the file seems to be under this. So I'm not
+> >> touching that. I can probably move this function further down (close
+> >> to platform populate) if you want that.
+> >>>
+> >>>> +{
+> >>>> +       struct of_phandle_args sup_args;
+> >>>> +       struct platform_device *sup_dev;
+> >>>> +       unsigned int i = 0, links = 0;
+> >>>> +       u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+> >>>> +
+> >>>> +       while (!of_parse_phandle_with_args(dev->of_node, binding, cell, i,
+> >>>> +                                          &sup_args)) {
+> >>>> +               i++;
+> >>>> +               sup_dev = of_find_device_by_node(sup_args.np);
+> >>>> +               if (!sup_dev)
+> >>>> +                       continue;
+> >>>> +               if (device_link_add(dev, &sup_dev->dev, dl_flags))
+> >>>> +                       links++;
+> >>>> +               put_device(&sup_dev->dev);
+> >>>> +       }
+> >>>> +       if (links < i)
+> >>>> +               return -ENODEV;
+> >>>> +       return 0;
+> >>>> +}
+> >>>> +
+> >>>> +/*
+> >>>> + * List of bindings and their cell names (use NULL if no cell names) from which
+> >>>> + * device links need to be created.
+> >>>> + */
+> >>>> +static char *link_bindings[] = {
+> >>>
+> >>> const
+> >>
+> >> Ack
+> >>
+> >>>
+> >>>> +#ifdef CONFIG_OF_DEVLINKS
+> >>>> +       "clocks", "#clock-cells",
+> >>>> +       "interconnects", "#interconnect-cells",
+> >>>
+> >>> Planning to add others?
+> >>
+> >> Not in this patch.
+> >>
+> >> Regulators are the other big missing piece that I'm aware of now but
+> >> they need a lot of discussion (see email from David and my reply).
+> >>
+> >> Not sure what other resources are shared where they can be "turned
+> >> off" and cause devices set up at boot to fail. For example, I don't
+> >> think interrupts need functional dependency tracking because they
+> >> aren't really turned off by consumer 1 in a way that breaks things for
+> >> consumer 2. Just masked and the consumer 2 can unmask and use it once
+> >> it probes.
+> >>
+> >> I'm only intimately familiar with clocks, interconnects and regulators
+> >> (to some extent). I'm open to adding other supplier categories in
+> >> future patches as I educate myself of those or if other people want to
+> >> add support for more categories.
+> >>
+> >> -Saravana
+> >>
+> >>>> +#endif
+> >>>> +};
+> >>>> +
+> >>>> +static int of_link_to_suppliers(struct device *dev)
+> >>>> +{
+> >>>> +       unsigned int i = 0;
+> >>>> +       bool done = true;
+> >>>> +
+> >>>> +       if (unlikely(!dev->of_node))
+> >>>> +               return 0;
+> >>>> +
+> >>>> +       for (i = 0; i < ARRAY_SIZE(link_bindings) / 2; i++)
+> >>>> +               if (of_link_binding(dev, link_bindings[i * 2],
+> >>>> +                                       link_bindings[i * 2 + 1]))
+> >>>> +                       done = false;
+> >>>> +
+> >>>> +       if (!done)
+> >>>> +               return -ENODEV;
+> >>>> +       return 0;
+> >>>> +}
+> >>>> +
+> >>>>  /*
+> >>>>   * The following routines scan a subtree and registers a device for
+> >>>>   * each applicable node.
+> >>>> @@ -524,6 +575,7 @@ static int __init of_platform_default_populate_init(void)
+> >>>>         if (!of_have_populated_dt())
+> >>>>                 return -ENODEV;
+> >>>>
+> >>>> +       platform_bus_type.add_links = of_link_to_suppliers;
+> >>>>         /*
+> >>>>          * Handle certain compatibles explicitly, since we don't want to create
+> >>>>          * platform_devices for every node in /reserved-memory with a
+> >>>> --
+> >>>> 2.22.0.410.gd8fdbe21b5-goog
+> >>>>
+> >>
+> >
+> >
+>
