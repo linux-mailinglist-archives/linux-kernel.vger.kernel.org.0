@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B766695F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B12E695E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388995AbfGOOMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:12:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50414 "EHLO mail.kernel.org"
+        id S2389293AbfGOOOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387931AbfGOOMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:12:13 -0400
+        id S1731356AbfGOONw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:13:52 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFD57206B8;
-        Mon, 15 Jul 2019 14:12:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8449206B8;
+        Mon, 15 Jul 2019 14:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199933;
-        bh=Kt7BcCS8y0HPbDKyGiyQBD+74w3LqOFCaaM41qDhzp0=;
+        s=default; t=1563200031;
+        bh=oiFz2NTIZMbWcBgnnWQwMU4e1+RSkgJOnzytLtRJPzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hL97L2DvQPfKhA1XhvAt2igkgrvZ/MczH0C40q3XtW+VkZ88uJRcyK9UiKQg4M3I
-         qj9m3PCiT37vZcFQiUHT+DxRtQhfYl/NfGSgNc4HBB9mUeqix4Oc7E6bGQ/VxqcJOH
-         tsB5NvpBzrHZ1+577zKpdAmy22uvNck6EI1hpkGY=
+        b=eFu21eClbnjr2A/mWVk2SRxGxEkb1n1ciDJ73hH+/3RGmdOQZE2jXN1bwlyUj9NqG
+         NzbCnKCcjXIWHmD8gQVUjph6INezPhbptreXkPOd+upcJhcLZcf+78m4qyq2NQQEy4
+         gVoZZJ3q/BQZJpMx3D8W5ed26+vVUQzR85a13jfM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 141/219] x86/build: Add 'set -e' to mkcapflags.sh to delete broken capflags.c
-Date:   Mon, 15 Jul 2019 10:02:22 -0400
-Message-Id: <20190715140341.6443-141-sashal@kernel.org>
+Cc:     Zefir Kurtisi <zefir.kurtisi@neratec.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 164/219] ath9k: correctly handle short radar pulses
+Date:   Mon, 15 Jul 2019 10:02:45 -0400
+Message-Id: <20190715140341.6443-164-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -44,52 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Zefir Kurtisi <zefir.kurtisi@neratec.com>
 
-[ Upstream commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1 ]
+[ Upstream commit df5c4150501ee7e86383be88f6490d970adcf157 ]
 
-Without 'set -e', shell scripts continue running even after any
-error occurs. The missed 'set -e' is a typical bug in shell scripting.
+In commit 3c0efb745a17 ("ath9k: discard undersized packets")
+the lower bound of RX packets was set to 10 (min ACK size) to
+filter those that would otherwise be treated as invalid at
+mac80211.
 
-For example, when a disk space shortage occurs while this script is
-running, it actually ends up with generating a truncated capflags.c.
+Alas, short radar pulses are reported as PHY_ERROR frames
+with length set to 3. Therefore their detection stopped
+working after that commit.
 
-Yet, mkcapflags.sh continues running and exits with 0. So, the build
-system assumes it has succeeded.
+NOTE: ath9k drivers built thereafter will not pass DFS
+certification.
 
-It will not be re-generated in the next invocation of Make since its
-timestamp is newer than that of any of the source files.
+This extends the criteria for short packets to explicitly
+handle PHY_ERROR frames.
 
-Add 'set -e' so that any error in this script is caught and propagated
-to the build system.
-
-Since 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special target"),
-make automatically deletes the target on any failure. So, the broken
-capflags.c will be deleted automatically.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20190625072622.17679-1-yamada.masahiro@socionext.com
+Fixes: 3c0efb745a17 ("ath9k: discard undersized packets")
+Signed-off-by: Zefir Kurtisi <zefir.kurtisi@neratec.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mkcapflags.sh | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ath/ath9k/recv.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/mkcapflags.sh b/arch/x86/kernel/cpu/mkcapflags.sh
-index d0dfb892c72f..aed45b8895d5 100644
---- a/arch/x86/kernel/cpu/mkcapflags.sh
-+++ b/arch/x86/kernel/cpu/mkcapflags.sh
-@@ -4,6 +4,8 @@
- # Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeatures.h
- #
+diff --git a/drivers/net/wireless/ath/ath9k/recv.c b/drivers/net/wireless/ath/ath9k/recv.c
+index 4e97f7f3b2a3..06e660858766 100644
+--- a/drivers/net/wireless/ath/ath9k/recv.c
++++ b/drivers/net/wireless/ath/ath9k/recv.c
+@@ -815,6 +815,7 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
+ 	struct ath_common *common = ath9k_hw_common(ah);
+ 	struct ieee80211_hdr *hdr;
+ 	bool discard_current = sc->rx.discard_next;
++	bool is_phyerr;
  
-+set -e
-+
- IN=$1
- OUT=$2
+ 	/*
+ 	 * Discard corrupt descriptors which are marked in
+@@ -827,8 +828,11 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
  
+ 	/*
+ 	 * Discard zero-length packets and packets smaller than an ACK
++	 * which are not PHY_ERROR (short radar pulses have a length of 3)
+ 	 */
+-	if (rx_stats->rs_datalen < 10) {
++	is_phyerr = rx_stats->rs_status & ATH9K_RXERR_PHY;
++	if (!rx_stats->rs_datalen ||
++	    (rx_stats->rs_datalen < 10 && !is_phyerr)) {
+ 		RX_STAT_INC(sc, rx_len_err);
+ 		goto corrupt;
+ 	}
 -- 
 2.20.1
 
