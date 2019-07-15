@@ -2,56 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9263C69B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B50669B8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730792AbfGOTii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:38:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28806 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730362AbfGOTih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:38:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2019 12:38:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,494,1557212400"; 
-   d="scan'208";a="318771531"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga004.jf.intel.com with ESMTP; 15 Jul 2019 12:38:36 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id AA1BA301AE9; Mon, 15 Jul 2019 12:38:36 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:38:36 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Uros Bizjak <ubizjak@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop targets
-Message-ID: <20190715193836.GF32439@tassilo.jf.intel.com>
-References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com>
- <8736j7gsza.fsf@linux.intel.com>
- <alpine.DEB.2.21.1907152033020.1767@nanos.tec.linutronix.de>
- <CAFULd4bcB8tsgZuxZJm_ksp5zyDQXjO=v_Ov622Bmhx=fr7KuA@mail.gmail.com>
- <alpine.DEB.2.21.1907152129350.1767@nanos.tec.linutronix.de>
+        id S1731308AbfGOTjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:39:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33948 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730362AbfGOTjA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:39:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uEtSh3X6xQ1lITiuNz9x5IdXNtqfNQ17vMJkyrNs1LY=; b=xhH0p1EXjiOkPBx2ciKgSWD71
+        u82dCi2hbyODuxO1uD0AIUppV8S/kASktp6GzA0pvZVBIBRjSO0Y0JF7eT/71rL66NWAZSpUCPURZ
+        Fn4rq67eYTNi5AjqGx17ZndeOaQtXV3j/YS/R78oQwOof/eNXxXEHD+jPULJP+irjSSCI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hn6o6-0002Mz-PI; Mon, 15 Jul 2019 19:38:42 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 3C51B2742A1F; Mon, 15 Jul 2019 20:38:42 +0100 (BST)
+Date:   Mon, 15 Jul 2019 20:38:42 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: Re: [PATCH v4 0/7] Allwinner H6 SPDIF support
+Message-ID: <20190715193842.GC4503@sirena.org.uk>
+References: <20190527200627.8635-1-peron.clem@gmail.com>
+ <CAJiuCcfUhBxEr=o7VVpPROQZadQh7z1QC0SkWSYt-53Sj3H2qw@mail.gmail.com>
+ <CAJiuCcc3_1jZWV7G3+fFQYRZ8b6qcAbnH+K6pkRvww6_D=OMAw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aT9PWwzfKXlsBJM1"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907152129350.1767@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAJiuCcc3_1jZWV7G3+fFQYRZ8b6qcAbnH+K6pkRvww6_D=OMAw@mail.gmail.com>
+X-Cookie: Fremen add life to spice!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> That does not answer the question whether it's worthwhile to do that.
 
-It's likely worthwhile for (Intel integrated) graphics. 
+--aT9PWwzfKXlsBJM1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There was also a recent issue with 3dxp/dax, which uses ioremap in some
-cases.
+On Mon, Jul 15, 2019 at 09:21:01PM +0200, Cl=E9ment P=E9ron wrote:
+> Hi,
+>=20
+> I'm missing ACK from ASoC Maintainers patch 2-3-4.
+>=20
+> It's really small paches, if you could have a look at it.
 
--Andi
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
+
+--aT9PWwzfKXlsBJM1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0s1kEACgkQJNaLcl1U
+h9Cw6Af+Lg1FCdunvHuQWgM9lkfW1yDRebhjo8R5qhgUtQE295gHjgjdqQ8xh6eM
+ZK1py52Bhvt7DJsJFZfrEBSzhkvLbYMENjj17tSpW3A6H7wHzkyGUOKq3FRIzG6m
+WciJzBWDsDtHEO6OUcrPDjvDJWOPeF8h2O+TOgsqOAGMDUPYG3l1iBozqVsFhwGA
+b79wc9pIIKvVsp71cE9ZF/m9Y9JTsIyf6Omq4m0zx7KD7nEP0oqnmtg+8AI+lkrC
+VEvioUOv9swbYdTsuPP+lwPqI/Wun1n4XDmppLD81iaZn8oHhW0FlU35PjoPRgGK
+oPWiRnOfQWTiKTZ5PFdwsicKK9ZQYg==
+=tPgX
+-----END PGP SIGNATURE-----
+
+--aT9PWwzfKXlsBJM1--
