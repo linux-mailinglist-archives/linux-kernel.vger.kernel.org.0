@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 025B9698D6
+	by mail.lfdr.de (Postfix) with ESMTP id 20A33698D7
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 18:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729864AbfGOQFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 12:05:00 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42961 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbfGOQFA (ORCPT
+        id S1730171AbfGOQFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 12:05:32 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38644 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729603AbfGOQFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:05:00 -0400
-Received: by mail-io1-f66.google.com with SMTP id e20so4603164iob.9
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 09:04:59 -0700 (PDT)
+        Mon, 15 Jul 2019 12:05:31 -0400
+Received: by mail-oi1-f193.google.com with SMTP id v186so13062355oie.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 09:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=abd3MzgGdND+mibf+9QP7+SAzCXmIg9aBJBUAlhxoSE=;
-        b=Vx5UHmP4FSl+2sW2xSMATHmt/TstgDDB2D2BYOmRytxQn8jrzjv9CHvBN6ziokACKV
-         yzABsXIgYMdyMShtxK0HrEeZ6yqmlt1ErRBouLjdWGCgNDX8nI3gIQGZ6TbZfGsRZAHQ
-         G91t8osAi33e15JefGOz/Q8Tfy03uYvccBxHc=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
+        b=jHtJHg4nWVKRE7aDoL+KdPg2xX7aweYwjGzM3XLYToK6JpuFQi6TTW7C1zm7KcgAe2
+         7dwKPbOeneZD16AEv+3tWyYL9pXKL7aXTclbzteq/OD7W6q0egseDvsb9Sk2ui8kYHwi
+         mhSS+EStn8xAgmAt/C8XStXq+FtiqUugf7I71/3/QzBLKawW+hTnOn6mex1JJRy27HI6
+         u4dBccvfOLk32I04FxFD5rrYaRmig9xvQ0VVJ3AeFDuF9cx7ZjxSarG2hzZ6ioh/nM/b
+         0l+BDjF0yOf67+Qbar3wivkLX3lcnF0R1fVK789LemdzwNX3CfKsdqn2Vflr+7CL/46R
+         VK+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=abd3MzgGdND+mibf+9QP7+SAzCXmIg9aBJBUAlhxoSE=;
-        b=bdTGJlfNNCcdr1SHPNc96CVXfROyD+H+uln81kNP6OXqlEC9xY8LlVHVKwvez5Xqng
-         LMeF89tpaMUyj8qOR6HMPr6ueANWnW6axSxyrqrumvHkSngdYSsCSxovRN5Av4yp2b4X
-         AjuTXDQkI5Go9uso9h85jkomchxcPC7Il8OC1NftHsF2qB6z+kt+P3vmJeJVhSju9F5d
-         UrVrzy5yK00gmx7rRYiY9XQOvKK0IF2nMni8Ta2iq0cTeqGSiG0RW4aLnk1wCKWlxlKy
-         uL18GgEnYeFnrNI5RPXPKgbks1ysedTm2dOSqZMoCApLfwSEYcXQmiWNdro28QX0omU/
-         /8hQ==
-X-Gm-Message-State: APjAAAUw7hc2IwVWepZIGe+phulf0dNNfzEKWpH4x1gHXp+g7crMJuN4
-        cFmNpGSCmPvD6LjqccjbXgmV56csf8znXR7YV9oHKA==
-X-Google-Smtp-Source: APXvYqxIWrDZQA5aJHb2ZwP6MlOqQQByu0F7zWYD236UlUTqOmdsc6Xfpir6+WTeVaRUAFknNlgvqiYC7RyKKDGoS4g=
-X-Received: by 2002:a05:6638:81:: with SMTP id v1mr27332807jao.72.1563206699374;
- Mon, 15 Jul 2019 09:04:59 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
+        b=BqBl1z82+IIerHHbDIaAr/5eAAlgRfH1okFLbBJnOw4/DW3XbuE975T7qKFJbzT/id
+         1TEdAs2xuBS83jEoD11dgn5iAyTm14C/vZRqba6Yzbg8RdKasUXHoFDnsv1bPbzncNaB
+         qSxeSk8wQDIlzo3vsaDBLGAxylGIpYuap17jmPKItO9jgBymf5AMHYGT/AlLMrZYgOgB
+         0rxis87U0Z6da/7AFTWvHmvxWHaSeE4SOJz1104/9bEUQInLClANGd3v3PER8VYFEoVl
+         7RIeZqAj+VQpUsPwCh5egAxOB9IWFVhMK1mdi52SFlNLlZ84zsTyhlHJa42xBhEEkAg/
+         OaVg==
+X-Gm-Message-State: APjAAAWARihlHu+EEudIihtlUQUIx79sIiuLQZPzrPcfZshpSN2Cwko4
+        Ah+n2L1PmM25bU9+M991de7CLHduciOaPTJxrjU=
+X-Google-Smtp-Source: APXvYqwQnGIrT+GPnmjLOngyHPYte5pfdqtvmuQclmvqFkIWUgRFNBc4+yhZDkeQef2Qww8844NbT7cDe1ADqr9TzJk=
+X-Received: by 2002:aca:da44:: with SMTP id r65mr13281192oig.89.1563206730923;
+ Mon, 15 Jul 2019 09:05:30 -0700 (PDT)
 MIME-Version: 1.0
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Mon, 15 Jul 2019 09:04:48 -0700
-Message-ID: <CAJ-EccPGqp4PmRkFk505QhDKHWn-ajxS0__Nk9VS32jV_+3Y2A@mail.gmail.com>
-Subject: [GIT PULL] SafeSetID LSM changes for 5.3
-To:     torvalds@linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+Reply-To: mrsaishag502@gmail.com
+Received: by 2002:a9d:6382:0:0:0:0:0 with HTTP; Mon, 15 Jul 2019 09:05:29
+ -0700 (PDT)
+From:   "Mrs. Aisha" <agaddafl080@gmail.com>
+Date:   Mon, 15 Jul 2019 09:05:29 -0700
+X-Google-Sender-Auth: oMvzgjJaCAsBNd1Q9UHmCorcrE0
+Message-ID: <CAMc0+sV8JMZqd8eH-HAuy1t93Dai0z2yc62MdQJ4N9cmJECbUQ@mail.gmail.com>
+Subject: GOOD AFTERNOON FROM HERE
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Dear Friend,
 
-I'm maintaining the new SafeSetID LSM and was told to set up my own
-tree for sending pull requests rather than sending my changes through
-James Morris and the security subsystem tree.
+I came across your e-mail contact prior a private search whilst in
+need of your partnership for investment assistance in your country. I
+am opportune to use this medium to exhibit my legal intentions towards
+investing to your country under your management. I am fully convinced
+that you will really be of help as a business partner.
 
-This is my first time doing one of these pull requests so hopefully I
-didn't screw something up.
+My name is Aisha  Gaddafi a single Mother and a Widow and i have three
+Children. I am the only biological Daughter of late Libyan President
+(Late Colonel Muammar Gaddafi).
 
-Thanks,
-Micah
----
-The following changes since commit fec88ab0af9706b2201e5daf377c5031c62d11f7:
-Merge tag 'for-linus-hmm' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-07-14
-19:42:11 -0700)
-are available in the Git repository at:
-https://github.com/micah-morton/linux.git tags/safesetid-5.3
-for you to fetch changes up to e10337daefecb47209fd2af5f4fab0d1a370737f:
-LSM: SafeSetID: fix use of literal -1 in capable hook (2019-07-15
-08:08:03 -0700)
-----------------------------------------------------------------
-SafeSetID patches for 5.3
-These changes from Jann Horn fix a couple issues in the recently added
-SafeSetID LSM:
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
+investment Manager/Partner.  I am planning to go into investment
+projects in your country of origin or present country of Location to
+assist me establish the investments project.
 
-(1) There was a simple logic bug in one of the hooks for the LSM where
-the code was incorrectly returning early in some cases before all
-security checks had been passed.
-(2) There was a more high level issue with how this LSM gets configured
-that could allow for a program to bypass the security restrictions
-by switching to an allowed UID and then again to any other UID on
-the system if the target UID of the first transition is
-unconstrained on the system. Luckily this is an easy fix that we now
-enforce at the time the LSM gets configured.
+ I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits.
 
-There are also some changes from Jann that make policy updates for this
-LSM atomic. Kees Cook, Jann and myself have reviewed these changes and they
-look good from our point of view.
-Signed-off-by: Micah Morton <mortonm@chromium.org>
-----------------------------------------------------------------
-Jann Horn (10):
-LSM: SafeSetID: fix pr_warn() to include newline
-LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
-LSM: SafeSetID: refactor policy hash table
-LSM: SafeSetID: refactor safesetid_security_capable()
-LSM: SafeSetID: refactor policy parsing
-LSM: SafeSetID: fix userns handling in securityfs
-LSM: SafeSetID: rewrite userspace API to atomic updates
-LSM: SafeSetID: add read handler
-LSM: SafeSetID: verify transitive constrainedness
-LSM: SafeSetID: fix use of literal -1 in capable hook
-security/safesetid/lsm.c | 276 +++++++++++++-----------------------------
-security/safesetid/lsm.h | 34 ++++--
-security/safesetid/securityfs.c | 307
-+++++++++++++++++++++++++++++------------------
-tools/testing/selftests/safesetid/safesetid-test.c | 18 ++-
-4 files changed, 306 insertions(+), 329 deletions(-)
+If you are willing to handle this project on my behalf kindly reply
+urgent to enable me provide you tell you more details about myself and
+more information about the release of the investment funds.
+
+I appreciate Your Urgent Reply to my email address:
+
+Best Regards
+Mrs Aisha Gaddafi
