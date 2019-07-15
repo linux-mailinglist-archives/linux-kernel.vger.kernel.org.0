@@ -2,74 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF4C69EEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEBA869EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbfGOW1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 18:27:40 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35993 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730641AbfGOW1k (ORCPT
+        id S1731400AbfGOWaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 18:30:20 -0400
+Received: from smtprelay0087.hostedemail.com ([216.40.44.87]:43720 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730676AbfGOWaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 18:27:40 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n4so18786219wrs.3;
-        Mon, 15 Jul 2019 15:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ECYx0jsV+D2Iazgclzflkc4muWvvwa0oB+OeJMfrxNw=;
-        b=pwppsN3L9kuzdYqL/Hk8FrQ6wEyBCQEY+N90+P8znBQtI/XrQPru0xamWj8oEFR4c7
-         4XjR14JFihsSVCnURiLAoOtyF4JeU6zoIL172W9E60jNFpTWmLcE+z/x1YT60oDxLplJ
-         9hlPa0aRDsewD3T2DSVaoLNw7mkebLxC8sfJjOa56K+rGxdWT4kFD7azdAX33EoqdUc0
-         tgmyuE6HzSL3TbPy3Mu1UlWr6VfCaWqoq+9uCT6aVyzyb6ppk8ah+Y1iwTWInO+rcswl
-         9mcaGjVu/zL6bP0NpEQxlo/fum1IBvAtOX/YouIo6t3TVVz3C7bJ+ryooZhLysvRoAu/
-         agWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ECYx0jsV+D2Iazgclzflkc4muWvvwa0oB+OeJMfrxNw=;
-        b=DrGss6Tro6oGH/PZsxTZlKamTaLMspW0fzh2GyBs0Z5dVOnq65gJzrdzWAsH9a2JBB
-         aeHpK73bSA7KKWqYE4UB6wm2MiQjsObz9UBP0G6xvKcYgs6ct0dP1z0tDQ4zAHsolFdu
-         xlcKv9EznPL5jxCKKa0vaHlwosSViivxUX8Jf6Ys5zVvatBumd+ovO/GOLQ8/STa5rei
-         /wPtGcR0WrhSUaIw0/kffgbqHrnJqOO2pPgwZtFtbmFte3SnmrT/C/9bwJTmY3MsJHHU
-         w6AJ7OpdiMbGbvPq6Y0Tg5Vqmp8nBRZyzLl4ERvMQL/sZTN+iqg9GDot1jMv54GzicFK
-         wqBw==
-X-Gm-Message-State: APjAAAXzPcMJUvja0Z4jfkGxeythJtLjKgHdMuTzniHouxt+ZP+BwBfB
-        /a4M3Atxq8eV2Yp0AKXHG1WBP01Y
-X-Google-Smtp-Source: APXvYqwPZe9+pCh6pNbklAuTnU6e9FptAFF+GkM+NMQDd/uPpAFrwKjY712W6Rc6UWuXAyNPMPy4/w==
-X-Received: by 2002:a5d:438e:: with SMTP id i14mr27907304wrq.122.1563229657629;
-        Mon, 15 Jul 2019 15:27:37 -0700 (PDT)
-Received: from sheriff-Aspire-5735 ([129.205.112.210])
-        by smtp.gmail.com with ESMTPSA id z7sm15309691wrh.67.2019.07.15.15.27.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Jul 2019 15:27:37 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 23:27:31 +0100
-From:   Sheriff Esseson <sheriffesseson@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     skhan@linuxfoundation.org, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v8] Documentation: filesystem: Convert xfs.txt to ReST
-Message-ID: <20190715222727.GA27635@sheriff-Aspire-5735>
-References: <20190714125831.GA19200@localhost>
+        Mon, 15 Jul 2019 18:30:19 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave06.hostedemail.com (Postfix) with ESMTP id B473A8122D75
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 22:21:52 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 898708015544;
+        Mon, 15 Jul 2019 22:21:52 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:1963:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3872:3874:4250:4321:4605:4823:5007:6119:7514:7576:7903:9121:10004:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12683:12740:12760:12895:13439:14096:14097:14181:14659:14721:21080:21324:21433:21451:21627:30030:30046:30054:30064:30091,0,RBL:172.58.35.237:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: push41_2d0a2f6b72544
+X-Filterd-Recvd-Size: 5512
+Received: from XPS-9350 (unknown [172.58.35.237])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 15 Jul 2019 22:21:49 +0000 (UTC)
+Message-ID: <5f8d2f42d770a11e1331605fb3f22df44c74574f.camel@perches.com>
+Subject: Re: [PATCH] staging: kpc2000: whitespace and line length cleanup
+From:   Joe Perches <joe@perches.com>
+To:     john.hubbard@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon =?ISO-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>,
+        Geordan Neukum <gneukum1@gmail.com>,
+        Jeremy Sowden <jeremy@azazel.net>,
+        Vandana BN <bnvandana@gmail.com>, devel@driverdev.osuosl.org,
+        Bharath Vedartham <linux.bhar@gmail.com>
+Date:   Mon, 15 Jul 2019 15:21:18 -0700
+In-Reply-To: <20190715212123.432-2-jhubbard@nvidia.com>
+References: <20190715212123.432-1-jhubbard@nvidia.com>
+         <20190715212123.432-2-jhubbard@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190714125831.GA19200@localhost>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 14, 2019 at 01:58:31PM +0100, Sheriff Esseson wrote:
-> Move xfs.txt to admin-guide, convert xfs.txt to ReST and broken references
+On Mon, 2019-07-15 at 14:21 -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
 > 
-> Signed-off-by: Sheriff Esseson <sheriffesseson@gmail.com>
+> This commit was created by running indent(1):
+>     `indent -linux`
+> 
+> ...and then applying some manual corrections and
+> cleanup afterward, to keep it sane. No functional changes
+> were made.
 
->Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+I don't find many of these whitespace changes "better".
 
-Sorry, I missed something. Will fix in v9.
+Sometimes, it's just fine to have > 80 char lines.
+
+Alignment formatting was OK before this and now has
+many odd uses that make reading for a human harder
+rather than simpler or easier.
+
+> diff --git a/drivers/staging/kpc2000/kpc2000_i2c.c b/drivers/staging/kpc2000/kpc2000_i2c.c
+[]
+> @@ -33,9 +33,9 @@ MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Matt.Sickler@Daktronics.com");
+>  
+>  struct i2c_device {
+> -	unsigned long           smba;
+> -	struct i2c_adapter      adapter;
+> -	unsigned int            features;
+> +	unsigned long		smba;
+> +	struct i2c_adapter	adapter;
+> +	unsigned int		features;
+
+Here the spaces before the identifier are converted to tab aligned 
+
+>  };
+>  
+>  /*****************************
+> @@ -52,9 +52,9 @@ struct i2c_device {
+>  #define SMBHSTDAT0(p)   ((5  * REG_SIZE) + (p)->smba)
+>  #define SMBHSTDAT1(p)   ((6  * REG_SIZE) + (p)->smba)
+>  #define SMBBLKDAT(p)    ((7  * REG_SIZE) + (p)->smba)
+> -#define SMBPEC(p)       ((8  * REG_SIZE) + (p)->smba)   /* ICH3 and later */
+> -#define SMBAUXSTS(p)    ((12 * REG_SIZE) + (p)->smba)   /* ICH4 and later */
+> -#define SMBAUXCTL(p)    ((13 * REG_SIZE) + (p)->smba)   /* ICH4 and later */
+> +#define SMBPEC(p)       ((8  * REG_SIZE) + (p)->smba)	/* ICH3 and later */
+> +#define SMBAUXSTS(p)    ((12 * REG_SIZE) + (p)->smba)	/* ICH4 and later */
+> +#define SMBAUXCTL(p)    ((13 * REG_SIZE) + (p)->smba)	/* ICH4 and later */
+
+But here the #define value still has spaces but the comment uses tabs.
+Why tab align the comments but not the #define value?
+
+> @@ -136,17 +138,21 @@ static int i801_check_pre(struct i2c_device *priv)
+[]
+>  	status &= STATUS_FLAGS;
+>  	if (status) {
+> -		//dev_dbg(&priv->adapter.dev, "Clearing status flags (%02x)\n", status);
+> +		//dev_dbg(&priv->adapter.dev,
+> +		//"Clearing status flags (%02x)\n", status);
+
+This was better before.
+
+An improvement might be to add more macros like:
+
+#define i2c_err(priv, fmt, ...)
+	dev_err(&(priv)->adapter.dev, fmt, ##__VA_ARGS__)
+#define i2c_dbg(priv, fmt, ...)
+	dev_dbg(&(priv)->adapter.dev, fmt, ##__VA_ARGS__)
+
+So all these uses of dev_<level>(&priv->adapter.dev, ...)
+become much shorter visually and the line wrapping becomes
+rather better.
+
+>  		outb_p(status, SMBHSTSTS(priv));
+>  		status = inb_p(SMBHSTSTS(priv)) & STATUS_FLAGS;
+>  		if (status) {
+> -			dev_err(&priv->adapter.dev, "Failed clearing status flags (%02x)\n", status);
+> +			dev_err(&priv->adapter.dev,
+> +				"Failed clearing status flags (%02x)\n",
+> +				status);
+
+e.g.:
+			i2c_err(priv, "Failed clearing status flags (%02x)\n",
+				status);
+
+etc...
+
+
+[]
+
+> @@ -301,7 +322,8 @@ static int i801_block_transaction_byte_by_byte(struct i2c_device *priv, union i2
+>  			else
+>  				smbcmd = I801_BLOCK_LAST;
+>  		} else {
+> -			if (command == I2C_SMBUS_I2C_BLOCK_DATA && read_write == I2C_SMBUS_READ)
+> +			if (command == I2C_SMBUS_I2C_BLOCK_DATA
+> +			    && read_write == I2C_SMBUS_READ)
+
+logic continuations should be at EOL.
+
+			if (command == I2C_SMBUS_I2C_BLOCK_DATA &&
+			    read_write == I2C_SMBUS_READ)
+
+[]
+> @@ -558,13 +614,14 @@ static u32 i801_func(struct i2c_adapter *adapter)
+>  		I2C_FUNC_SMBUS_WORD_DATA         | /* _READ_WORD_DATA  _WRITE_WORD_DATA */
+>  		I2C_FUNC_SMBUS_BLOCK_DATA        | /* _READ_BLOCK_DATA  _WRITE_BLOCK_DATA */
+>  		!I2C_FUNC_SMBUS_I2C_BLOCK        | /* _READ_I2C_BLOCK  _WRITE_I2C_BLOCK */
+> -		!I2C_FUNC_SMBUS_EMUL;              /* _QUICK  _BYTE  _BYTE_DATA  _WORD_DATA  _PROC_CALL  _WRITE_BLOCK_DATA  _I2C_BLOCK _PEC */
+> +		/* _QUICK  _BYTE  _BYTE_DATA  _WORD_DATA  _PROC_CALL  _WRITE_BLOCK_DATA  _I2C_BLOCK _PEC : */
+> +		!I2C_FUNC_SMBUS_EMUL;
+>  	return f;
+>  }
+>  
+>  static const struct i2c_algorithm smbus_algorithm = {
+> -	.smbus_xfer     = i801_access,
+> -	.functionality  = i801_func,
+> +	.smbus_xfer = i801_access,
+> +	.functionality = i801_func,
+
+Many people prefer the aligned function names.
+
+etc...
+
+
