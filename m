@@ -2,62 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A9A69C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C08F69C20
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732669AbfGOUA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:00:56 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:45464 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732577AbfGOUAs (ORCPT
+        id S1732852AbfGOUBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:01:53 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:42270 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732601AbfGOUAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:00:48 -0400
-Received: by mail-vs1-f73.google.com with SMTP id v20so3632407vsi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:00:47 -0700 (PDT)
+        Mon, 15 Jul 2019 16:00:50 -0400
+Received: by mail-pg1-f201.google.com with SMTP id d3so11095423pgc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Q3+BJ8wFVQ84xOQmot2tpofx7ZuUIMeG+qiO4R/dTeo=;
-        b=s833uP+L4ndInqcO7GVUrtgYxpgQOxfcIAJuNg943dQtpHD4E7hXQVRZIOTd/uawj4
-         oGrfRyVmCzlmicBOw8BCgIkPXsIDf+ypqYFhmPvrrMlqnNtGWmGgVwyZyOK1H6yJJrW/
-         yxuUI5haFcN1zNzVHLsgTO40BkwD4a39tTybSR/DO6gs16AfVekX1ErS+jiAorl/zBgN
-         yBfcVfvuEoWE0ID5D806uCdbO7eGnhgmI0FZtO8nm1o+inQ+qcg6HVifHrKKdy+TqkgZ
-         zrixfylqxM4OOf22PAN+y2BHGtyZsmZOZchbtYK+107UyAgxlPT1NnZpHeBeHWgEXXcQ
-         VPvw==
+        bh=27bG30v551PCUw49w0IhwfwVjWUxHkMd+OR3VLoSFAQ=;
+        b=TtALnbKpnTpmzFXbZcyThBpPXUD2vVMXHLz9/K8WCJZcT3sMigJcUb/tqieCDmJYOh
+         LKx1gN0TYA3+pZ4/kF+qHhWNB06etdiDXdmEYNb/MtNPes8oGYvUJlPhfR4z8qXd4ldc
+         q3cHPE6KMeWpAwlHSonpn/7Li7o6pH7n3SRDWVXWy0KDhxAewWkmSChbNmDmbAwsy+OO
+         m/KF6f0nDfVKtyBESrNNS6tPtxph9XndwqSrxe5fJU3pbkhLrN14ZuxLHqMZ6DVhzq3x
+         Ll+p9sRpyRcNcxXNlcvQmuSwnxf+IIPUZzC2PZ56UEdGVoIGdscmmb0Tqyh/yQPbDJ0N
+         HL/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=Q3+BJ8wFVQ84xOQmot2tpofx7ZuUIMeG+qiO4R/dTeo=;
-        b=h3iApMm/AsActgq95Oa0jMZbUaRAYrr3GC0Y8uGLLcVMVlY62G1tWOiKD3XFcjbPaf
-         InLtSzZZWsGiPNT8NE7mCrJQ27e+DuXhI22X/EwnTBTauBDiS6KHafK3ppZklQ/QI632
-         k7RG/JkznT/+RseI8fII30KOo4670KwjLzUpY64OjtD6f1s1MSf/NH0/pk0EcrfzAYoF
-         fq5M8Ba8XnTvV0BrUWbT8IedVsh3oG7Hdk285KQHXLMFo7EhSiqUIaGO7vzefCWfGy1O
-         dRMnVqndsFn+qItGXrwxXD54C6O1OFNRbzUyOPFV/sEaV4JAMt3YhkNm/NnKqmKCTyHJ
-         YKeg==
-X-Gm-Message-State: APjAAAUayv83+qSsNXIIfKLsaeCsC5w+kLOuXhwegGrcP+e5XinwAEwp
-        Mc0J0xhG37cc3E9jyQ8WYv+3+81/BSnHrWfT71hbQA==
-X-Google-Smtp-Source: APXvYqzrPvNGN/I7uy3eU578IGNHpPaFnCI2yCyyv/JO/KlFVh2mCOEzjvCze1/gjfsCrqwBlwaAgvlfBrtyCtyysV9DWA==
-X-Received: by 2002:a1f:a887:: with SMTP id r129mr10860627vke.75.1563220846821;
- Mon, 15 Jul 2019 13:00:46 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:59:37 -0700
+        bh=27bG30v551PCUw49w0IhwfwVjWUxHkMd+OR3VLoSFAQ=;
+        b=N6WSd/JDggobGUkTdu0awGVXEZG48NI93PV0XUgdHnVTbcNAesPUHoupyoDHZB/lbu
+         ZiawLShhTOGpNAmzM7tken5qdjp7KxTHaQrmznb7XjyFg6oZG23PXzHWUtv4cnI2QJ9J
+         34dmIoE+QAeBlOrg454wLOZmTC+3MAs2T4SWCluV0SFACOv+XeZOrFKc3rTlNlCYC3t3
+         BHyS0ptv09tzV02LQplUcd4lXYXCn4cHEzLkRS3uQ13QS0J0SsD13wokqFe3QhdSilU7
+         AEUCDzAfp7vBDEk9R8EEJtBPQC8AgY1HGjjUCBQfiuhh+Ib1o41bWsMZSPR4N+ZF/Sot
+         Jorg==
+X-Gm-Message-State: APjAAAU2YJC2KGA8mEYmEcHvU5XcB/tQWis5jiPO185fTq2nADd32Zu9
+        F8ZH+6sXcUdkFUuhFxJetOvntXowxJ+9O0gZLi5gUg==
+X-Google-Smtp-Source: APXvYqzkGmLJbJxcjs2hj9aWPl3QD/H1QcvcXF5PeHJYQdVT4P2+EUPV+l8kcWG1CRmP7Y/ux0sv82HRaOS4eeckdgZiew==
+X-Received: by 2002:a63:4522:: with SMTP id s34mr28567890pga.362.1563220849269;
+ Mon, 15 Jul 2019 13:00:49 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 12:59:38 -0700
 In-Reply-To: <20190715195946.223443-1-matthewgarrett@google.com>
-Message-Id: <20190715195946.223443-21-matthewgarrett@google.com>
+Message-Id: <20190715195946.223443-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190715195946.223443-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V35 20/29] x86/mmiotrace: Lock down the testmmiotrace module
+Subject: [PATCH V35 21/29] Lock down /proc/kcore
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Matthew Garrett <mjg59@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -66,74 +63,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-The testmmiotrace module shouldn't be permitted when the kernel is locked
-down as it can be used to arbitrarily read and write MMIO space. This is
-a runtime check rather than buildtime in order to allow configurations
-where the same kernel may be run in both locked down or permissive modes
-depending on local policy.
+Disallow access to /proc/kcore when the kernel is locked down to prevent
+access to cryptographic data. This is limited to lockdown
+confidentiality mode and is still permitted in integrity mode.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Howells <dhowells@redhat.com
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-cc: Thomas Gleixner <tglx@linutronix.de>
-cc: Steven Rostedt <rostedt@goodmis.org>
-cc: Ingo Molnar <mingo@kernel.org>
-cc: "H. Peter Anvin" <hpa@zytor.com>
-cc: x86@kernel.org
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/mm/testmmiotrace.c  | 5 +++++
+ fs/proc/kcore.c              | 5 +++++
  include/linux/security.h     | 1 +
  security/lockdown/lockdown.c | 1 +
  3 files changed, 7 insertions(+)
 
-diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-index 0881e1ff1e58..a8bd952e136d 100644
---- a/arch/x86/mm/testmmiotrace.c
-+++ b/arch/x86/mm/testmmiotrace.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/mmiotrace.h>
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index f5834488b67d..ee2c576cc94e 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -31,6 +31,7 @@
+ #include <linux/ioport.h>
+ #include <linux/memory.h>
+ #include <linux/sched/task.h>
 +#include <linux/security.h>
+ #include <asm/sections.h>
+ #include "internal.h"
  
- static unsigned long mmio_address;
- module_param_hw(mmio_address, ulong, iomem, 0);
-@@ -115,6 +116,10 @@ static void do_test_bulk_ioremapping(void)
- static int __init init(void)
+@@ -545,6 +546,10 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 
+ static int open_kcore(struct inode *inode, struct file *filp)
  {
- 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
-+	int ret = security_locked_down(LOCKDOWN_MMIOTRACE);
++	int ret = security_locked_down(LOCKDOWN_KCORE);
 +
 +	if (ret)
 +		return ret;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
  
- 	if (mmio_address == 0) {
- 		pr_err("you have to use the module argument mmio_address.\n");
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 43fa3486522b..3f7b6a4cd65a 100644
+index 3f7b6a4cd65a..f0cffd0977d3 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -114,6 +114,7 @@ enum lockdown_reason {
- 	LOCKDOWN_PCMCIA_CIS,
- 	LOCKDOWN_TIOCSSERIAL,
+@@ -116,6 +116,7 @@ enum lockdown_reason {
  	LOCKDOWN_MODULE_PARAMETERS,
-+	LOCKDOWN_MMIOTRACE,
+ 	LOCKDOWN_MMIOTRACE,
  	LOCKDOWN_INTEGRITY_MAX,
++	LOCKDOWN_KCORE,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
+ 
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 065432f9e218..e725f63c29d2 100644
+index e725f63c29d2..9c097240a3a6 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -29,6 +29,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
- 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+@@ -31,6 +31,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
  	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
-+	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
+ 	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_KCORE] = "/proc/kcore access",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
+ 
 -- 
 2.22.0.510.g264f2c817a-goog
 
