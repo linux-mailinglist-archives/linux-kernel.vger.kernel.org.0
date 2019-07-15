@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04BA469182
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6812769188
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391502AbfGOOaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:30:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42110 "EHLO mail.kernel.org"
+        id S2391681AbfGOOaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:30:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403897AbfGOO36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:29:58 -0400
+        id S2391663AbfGOOaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:30:13 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F997216C4;
-        Mon, 15 Jul 2019 14:29:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30FB9205ED;
+        Mon, 15 Jul 2019 14:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200996;
-        bh=FE7lZ5WC/f/erkdTV8rx7P7aFcaoA3r7/+nEiPql+Kk=;
+        s=default; t=1563201012;
+        bh=J/oByyn60QUD/e/82Ke5a6mlvNsmDHvOy3T68N0PlYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHmQrEFafuSBsaiLJKrDkSkioWce4UARfrjZmxwEz76IsiQZ2BGOOZbAUkcphKnGT
-         OmNbF4NoSkitGWl8rHgbvjlrZWAlVZsfIVsTs/kSbEnD2n4APptbX7jrWdmM91PvkJ
-         /UgLPk/DEm1LKfYR0uZrXfUNI+oGS7KPQIXcdqvM=
+        b=0/5dlDkHfpfFTlDcnfIErMEBQ2JsqaVBR3VppGFGf38dUdNSMGiQJgytWDJy6ygbM
+         TXXTg2O7MZd/m0MKCnAzhd0Ef5oHBQFGGOryDBs7ExICd8JZ6/jQWxMDrjEd4zKSp2
+         Ot7016q0Dq69/B4wdeJk3Ri1oQY4DlWD5LbYhMGA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Joseph Yasi <joe.yasi@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 023/105] e1000e: start network tx queue only when link is up
-Date:   Mon, 15 Jul 2019 10:27:17 -0400
-Message-Id: <20190715142839.9896-23-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 027/105] crypto: talitos - properly handle split ICV.
+Date:   Mon, 15 Jul 2019 10:27:21 -0400
+Message-Id: <20190715142839.9896-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
 References: <20190715142839.9896-1-sashal@kernel.org>
@@ -47,76 +43,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit d17ba0f616a08f597d9348c372d89b8c0405ccf3 ]
+[ Upstream commit eae55a586c3c8b50982bad3c3426e9c9dd7a0075 ]
 
-Driver does not want to keep packets in Tx queue when link is lost.
-But present code only reset NIC to flush them, but does not prevent
-queuing new packets. Moreover reset sequence itself could generate
-new packets via netconsole and NIC falls into endless reset loop.
+The driver assumes that the ICV is as a single piece in the last
+element of the scatterlist. This assumption is wrong.
 
-This patch wakes Tx queue only when NIC is ready to send packets.
+This patch ensures that the ICV is properly handled regardless of
+the scatterlist layout.
 
-This is proper fix for problem addressed by commit 0f9e980bf5ee
-("e1000e: fix cyclic resets at link up with active tx").
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
-Tested-by: Joseph Yasi <joe.yasi@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/talitos.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 5c364321d3c6..1ad345796e80 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -4228,7 +4228,7 @@ void e1000e_up(struct e1000_adapter *adapter)
- 		e1000_configure_msix(adapter);
- 	e1000_irq_enable(adapter);
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index 33fcedeb5f9f..ec9473ddfbb3 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -984,7 +984,6 @@ static void ipsec_esp_encrypt_done(struct device *dev,
+ 	struct crypto_aead *authenc = crypto_aead_reqtfm(areq);
+ 	unsigned int authsize = crypto_aead_authsize(authenc);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	void *icvdata;
  
--	netif_start_queue(adapter->netdev);
-+	/* Tx queue started by watchdog timer when link is up */
+ 	edesc = container_of(desc, struct talitos_edesc, desc);
+@@ -998,9 +997,8 @@ static void ipsec_esp_encrypt_done(struct device *dev,
+ 		else
+ 			icvdata = &edesc->link_tbl[edesc->src_nents +
+ 						   edesc->dst_nents + 2];
+-		sg = sg_last(areq->dst, edesc->dst_nents);
+-		memcpy((char *)sg_virt(sg) + sg->length - authsize,
+-		       icvdata, authsize);
++		sg_pcopy_from_buffer(areq->dst, edesc->dst_nents ? : 1, icvdata,
++				     authsize, areq->assoclen + areq->cryptlen);
+ 	}
  
- 	e1000e_trigger_lsc(adapter);
+ 	kfree(edesc);
+@@ -1016,7 +1014,6 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
+ 	struct crypto_aead *authenc = crypto_aead_reqtfm(req);
+ 	unsigned int authsize = crypto_aead_authsize(authenc);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	char *oicv, *icv;
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+@@ -1026,9 +1023,18 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
+ 	ipsec_esp_unmap(dev, edesc, req);
+ 
+ 	if (!err) {
++		char icvdata[SHA512_DIGEST_SIZE];
++		int nents = edesc->dst_nents ? : 1;
++		unsigned int len = req->assoclen + req->cryptlen;
++
+ 		/* auth check */
+-		sg = sg_last(req->dst, edesc->dst_nents ? : 1);
+-		icv = (char *)sg_virt(sg) + sg->length - authsize;
++		if (nents > 1) {
++			sg_pcopy_to_buffer(req->dst, nents, icvdata, authsize,
++					   len - authsize);
++			icv = icvdata;
++		} else {
++			icv = (char *)sg_virt(req->dst) + len - authsize;
++		}
+ 
+ 		if (edesc->dma_len) {
+ 			if (is_sec1)
+@@ -1458,7 +1464,6 @@ static int aead_decrypt(struct aead_request *req)
+ 	struct talitos_ctx *ctx = crypto_aead_ctx(authenc);
+ 	struct talitos_private *priv = dev_get_drvdata(ctx->dev);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	void *icvdata;
+ 
+ 	req->cryptlen -= authsize;
+@@ -1493,9 +1498,8 @@ static int aead_decrypt(struct aead_request *req)
+ 	else
+ 		icvdata = &edesc->link_tbl[0];
+ 
+-	sg = sg_last(req->src, edesc->src_nents ? : 1);
+-
+-	memcpy(icvdata, (char *)sg_virt(sg) + sg->length - authsize, authsize);
++	sg_pcopy_to_buffer(req->src, edesc->src_nents ? : 1, icvdata, authsize,
++			   req->assoclen + req->cryptlen - authsize);
+ 
+ 	return ipsec_esp(edesc, req, ipsec_esp_decrypt_swauth_done);
  }
-@@ -4604,6 +4604,7 @@ int e1000e_open(struct net_device *netdev)
- 	pm_runtime_get_sync(&pdev->dev);
- 
- 	netif_carrier_off(netdev);
-+	netif_stop_queue(netdev);
- 
- 	/* allocate transmit descriptors */
- 	err = e1000e_setup_tx_resources(adapter->tx_ring);
-@@ -4664,7 +4665,6 @@ int e1000e_open(struct net_device *netdev)
- 	e1000_irq_enable(adapter);
- 
- 	adapter->tx_hang_recheck = false;
--	netif_start_queue(netdev);
- 
- 	hw->mac.get_link_status = true;
- 	pm_runtime_put(&pdev->dev);
-@@ -5286,6 +5286,7 @@ static void e1000_watchdog_task(struct work_struct *work)
- 			if (phy->ops.cfg_on_link_up)
- 				phy->ops.cfg_on_link_up(hw);
- 
-+			netif_wake_queue(netdev);
- 			netif_carrier_on(netdev);
- 
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
-@@ -5299,6 +5300,7 @@ static void e1000_watchdog_task(struct work_struct *work)
- 			/* Link status message must follow this format */
- 			pr_info("%s NIC Link is Down\n", adapter->netdev->name);
- 			netif_carrier_off(netdev);
-+			netif_stop_queue(netdev);
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
- 				mod_timer(&adapter->phy_info_timer,
- 					  round_jiffies(jiffies + 2 * HZ));
 -- 
 2.20.1
 
