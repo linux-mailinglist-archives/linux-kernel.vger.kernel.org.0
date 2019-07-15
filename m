@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B46469629
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33CA869643
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:03:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388664AbfGOOJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:09:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
+        id S1732962AbfGOPDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:03:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388645AbfGOOJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:09:08 -0400
+        id S2388226AbfGOOJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:09:14 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64C35217F4;
-        Mon, 15 Jul 2019 14:09:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1541206B8;
+        Mon, 15 Jul 2019 14:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199747;
-        bh=5H8U7i/tEl0qTeXs4KMUUMiPG1zl2dOe992Ac7Uqr8c=;
+        s=default; t=1563199753;
+        bh=hpTUL1n6ca/sLrxuDcdi0iMWrpYvhUX7CzDXpyVWs9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rPiPdheekSKypibdEy7E1p/62uPyozSVo1xg7GiEMdcBPVedRM8K5PPr6tnsze6fS
-         Ku5bw1ajUMaWBP8GhkiV7yp56sh4RUc4eLH+hfEePsDX+3Cf4UJ1rX+GlveRw3vsnf
-         br5ym/0YvMcs+DKUINRxZcdKP81joNa8Z1tdnWds=
+        b=vdSSI9N3Rjp00M2i3BCwoDqiE5V/eSzOh0i6w4aDf9WoEZAm+3W8KFIi/fMoCEA+p
+         eaLLhY2DoAB2BqgLdXxRMw7DwSiCbyibraXD5HOKtdZI/DDBYGEAYnV2CyS3th9K41
+         8TA9mYXZas9K/0oJHXF+K3U5kgX1CefFVEncarJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 093/219] net: hns3: fix for skb leak when doing selftest
-Date:   Mon, 15 Jul 2019 10:01:34 -0400
-Message-Id: <20190715140341.6443-93-sashal@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 096/219] blkcg, writeback: dead memcgs shouldn't contribute to writeback ownership arbitration
+Date:   Mon, 15 Jul 2019 10:01:37 -0400
+Message-Id: <20190715140341.6443-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -45,48 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 8f9eed1a8791b83eb1c54c261d68424717e4111e ]
+[ Upstream commit 6631142229005e1b1c311a09efe9fb3cfdac8559 ]
 
-If hns3_nic_net_xmit does not return NETDEV_TX_BUSY when doing
-a loopback selftest, the skb is not freed in hns3_clean_tx_ring
-or hns3_nic_net_xmit, which causes skb not freed problem.
+wbc_account_io() collects information on cgroup ownership of writeback
+pages to determine which cgroup should own the inode.  Pages can stay
+associated with dead memcgs but we want to avoid attributing IOs to
+dead blkcgs as much as possible as the association is likely to be
+stale.  However, currently, pages associated with dead memcgs
+contribute to the accounting delaying and/or confusing the
+arbitration.
 
-This patch fixes it by freeing skb when hns3_nic_net_xmit does
-not return NETDEV_TX_OK.
+Fix it by ignoring pages associated with dead memcgs.
 
-Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/fs-writeback.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index ea94b5152963..cf20fa6768d7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -241,11 +241,13 @@ static int hns3_lp_run_test(struct net_device *ndev, enum hnae3_loop mode)
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index b16645b417d9..bd9474e82f38 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -714,6 +714,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
+ void wbc_account_io(struct writeback_control *wbc, struct page *page,
+ 		    size_t bytes)
+ {
++	struct cgroup_subsys_state *css;
+ 	int id;
  
- 		skb_get(skb);
- 		tx_ret = hns3_nic_net_xmit(skb, ndev);
--		if (tx_ret == NETDEV_TX_OK)
-+		if (tx_ret == NETDEV_TX_OK) {
- 			good_cnt++;
--		else
-+		} else {
-+			kfree_skb(skb);
- 			netdev_err(ndev, "hns3_lb_run_test xmit failed: %d\n",
- 				   tx_ret);
-+		}
- 	}
- 	if (good_cnt != HNS3_NIC_LB_TEST_PKT_NUM) {
- 		ret_val = HNS3_NIC_LB_TEST_TX_CNT_ERR;
+ 	/*
+@@ -725,7 +726,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
+ 	if (!wbc->wb)
+ 		return;
+ 
+-	id = mem_cgroup_css_from_page(page)->id;
++	css = mem_cgroup_css_from_page(page);
++	/* dead cgroups shouldn't contribute to inode ownership arbitration */
++	if (!(css->flags & CSS_ONLINE))
++		return;
++
++	id = css->id;
+ 
+ 	if (id == wbc->wb_id) {
+ 		wbc->wb_bytes += bytes;
 -- 
 2.20.1
 
