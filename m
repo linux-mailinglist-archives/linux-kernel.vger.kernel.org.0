@@ -2,86 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A33698D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 18:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9DD698E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 18:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbfGOQFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 12:05:32 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38644 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbfGOQFb (ORCPT
+        id S1730315AbfGOQMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 12:12:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48273 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729533AbfGOQMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:05:31 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v186so13062355oie.5
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 09:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
-        b=jHtJHg4nWVKRE7aDoL+KdPg2xX7aweYwjGzM3XLYToK6JpuFQi6TTW7C1zm7KcgAe2
-         7dwKPbOeneZD16AEv+3tWyYL9pXKL7aXTclbzteq/OD7W6q0egseDvsb9Sk2ui8kYHwi
-         mhSS+EStn8xAgmAt/C8XStXq+FtiqUugf7I71/3/QzBLKawW+hTnOn6mex1JJRy27HI6
-         u4dBccvfOLk32I04FxFD5rrYaRmig9xvQ0VVJ3AeFDuF9cx7ZjxSarG2hzZ6ioh/nM/b
-         0l+BDjF0yOf67+Qbar3wivkLX3lcnF0R1fVK789LemdzwNX3CfKsdqn2Vflr+7CL/46R
-         VK+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
-        b=BqBl1z82+IIerHHbDIaAr/5eAAlgRfH1okFLbBJnOw4/DW3XbuE975T7qKFJbzT/id
-         1TEdAs2xuBS83jEoD11dgn5iAyTm14C/vZRqba6Yzbg8RdKasUXHoFDnsv1bPbzncNaB
-         qSxeSk8wQDIlzo3vsaDBLGAxylGIpYuap17jmPKItO9jgBymf5AMHYGT/AlLMrZYgOgB
-         0rxis87U0Z6da/7AFTWvHmvxWHaSeE4SOJz1104/9bEUQInLClANGd3v3PER8VYFEoVl
-         7RIeZqAj+VQpUsPwCh5egAxOB9IWFVhMK1mdi52SFlNLlZ84zsTyhlHJa42xBhEEkAg/
-         OaVg==
-X-Gm-Message-State: APjAAAWARihlHu+EEudIihtlUQUIx79sIiuLQZPzrPcfZshpSN2Cwko4
-        Ah+n2L1PmM25bU9+M991de7CLHduciOaPTJxrjU=
-X-Google-Smtp-Source: APXvYqwQnGIrT+GPnmjLOngyHPYte5pfdqtvmuQclmvqFkIWUgRFNBc4+yhZDkeQef2Qww8844NbT7cDe1ADqr9TzJk=
-X-Received: by 2002:aca:da44:: with SMTP id r65mr13281192oig.89.1563206730923;
- Mon, 15 Jul 2019 09:05:30 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: mrsaishag502@gmail.com
-Received: by 2002:a9d:6382:0:0:0:0:0 with HTTP; Mon, 15 Jul 2019 09:05:29
- -0700 (PDT)
-From:   "Mrs. Aisha" <agaddafl080@gmail.com>
-Date:   Mon, 15 Jul 2019 09:05:29 -0700
-X-Google-Sender-Auth: oMvzgjJaCAsBNd1Q9UHmCorcrE0
-Message-ID: <CAMc0+sV8JMZqd8eH-HAuy1t93Dai0z2yc62MdQJ4N9cmJECbUQ@mail.gmail.com>
-Subject: GOOD AFTERNOON FROM HERE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 15 Jul 2019 12:12:00 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hn3Zw-0000Hc-8z; Mon, 15 Jul 2019 18:11:52 +0200
+Message-Id: <20190715150402.798499167@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 15 Jul 2019 17:04:02 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <clark.williams@gmail.com>,
+        Julia Cartwright <julia@ni.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [patch 0/1] Kconfig: Introduce CONFIG_PREEMPT_RT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Linus,
 
-I came across your e-mail contact prior a private search whilst in
-need of your partnership for investment assistance in your country. I
-am opportune to use this medium to exhibit my legal intentions towards
-investing to your country under your management. I am fully convinced
-that you will really be of help as a business partner.
+please consider to apply the following patch, which introduces the Kconfig
+symbol CONFIG_PREEMPT_RT.
 
-My name is Aisha  Gaddafi a single Mother and a Widow and i have three
-Children. I am the only biological Daughter of late Libyan President
-(Late Colonel Muammar Gaddafi).
+Rationale:
 
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner.  I am planning to go into investment
-projects in your country of origin or present country of Location to
-assist me establish the investments project.
+The real-time preemption patch set exists for almost 15 years now and while
+the vast majority of infrastructure and enhancements have found their way
+into the mainline kernel, the final integration of RT is still missing.
 
- I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits.
+Over the course of the last few years, we have worked on reducing the
+intrusivenness of the RT patches by refactoring kernel infrastructure to be
+more real-time friendly. Almost all of these changes were benefitial to
+the mainline kernel on their own, so there was no objection to integrate
+them.
 
-If you are willing to handle this project on my behalf kindly reply
-urgent to enable me provide you tell you more details about myself and
-more information about the release of the investment funds.
+Though except for the still ongoing printk refactoring, the remaining
+changes which are required to make RT a first class mainline citizen are
+not longer arguable as immediately beneficial for the mainline kernel. Most
+of them are either reordering code flows or adding RT specific functionality.
+But this now has hit a wall and turned into a classic hen and egg problem:
 
-I appreciate Your Urgent Reply to my email address:
+  Maintainers are rightfully wary vs. these changes as they make only
+  sense if the final integration of RT into the mainline kernel takes
+  place.
 
-Best Regards
-Mrs Aisha Gaddafi
+Adding CONFIG_PREEMPT_RT aims to solve this as a clear sign that RT will be
+fully integrated into the mainline kernel. The final integration of the
+missing bits and pieces will be of course done with the same careful
+approach as we have used in the past.
+
+While I'm aware that you are not entirely enthusiastic about that, I think
+that RT should receive the same treatment as any other widely used out of
+tree functionality, which we have accepted into mainline over the years.
+
+RT has become the de-facto standard real-time enhancement and is shipped by
+enterprise, embedded and community distros. It's in use throughout a wide
+range of industries: telecommunications, industrial automation, professional
+audio, medical devices, data acquisition, automotive - just to name a
+few major use cases.
+
+RT development is backed by a Linuxfoundation project which is supported
+by major stakeholders of this technology. The funding will continue over
+the actual inclusion into mainline to make sure that the functionality is
+neither introducing regressions, regressing itself, nor becomes subject
+to bitrot. There is also a lifely user community around RT as well, so
+contrary to the grim situation 5 years ago, it's a healthy project.
+
+As RT is still a good vehicle to exercise rarely used code paths and to
+detect hard to trigger issues, you could at least view it as a QA tool if
+nothing else.
+
+The current state of the RT patches against 5.2 is:
+
+   365 files changed, 9396 insertions(+), 3209 deletions(-)
+
+When the already queued changes, agreed on changes and the ongoing printk
+work is taken out then the diffstat is reduced to:
+
+   311 files changed, 6567 insertions(+), 1352 deletions(-)
+
+Out of the 6567 insertions about 4000 lines are the self contained RT
+infrastructure (lock substitutions, scheduler addons, etc.).
+
+The remaining bits and pieces are smallish changes to places which need to
+be slightly modified to cope with the RT semantics.
+
+The current full RT set can be found here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git linux-5.2.y-rt
+
+Note that aside of the printk changes (which are under flux due to the
+ongoing review/design discussions) also a large part of the rest is
+not the final state as these changes still need to be discussed with
+the relevant maintainers and we are still working hard on refinining
+them and reducing the impact. So while the big picture is probably
+good reflected, please take the details with a grain of salt.
+
+Thanks,
+
+	Thomas
+
+
+
