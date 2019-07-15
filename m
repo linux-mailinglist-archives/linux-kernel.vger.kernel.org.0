@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F7B690AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9228690B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390763AbfGOOXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:23:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54562 "EHLO mail.kernel.org"
+        id S2389973AbfGOOXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389914AbfGOOXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:23:25 -0400
+        id S2390775AbfGOOXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:23:39 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B125206B8;
-        Mon, 15 Jul 2019 14:23:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 857982053B;
+        Mon, 15 Jul 2019 14:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200605;
-        bh=/GBaJwWr7QbG9u2r/1OoxTqEQVwojfvfWP5xHSwTCFA=;
+        s=default; t=1563200618;
+        bh=BC+5+EfGjcckXIt691p/1Wj4d2L7CEhTbjAFZuwaiqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T4iJNOIoqdyzWsDi10lzBnOGPzspo+2BDjeWouK8HxzN3XBm01xEuM/Y/Hh6c9P96
-         Ots/AcFtmQM02chotOxmmkXuKH8vgViq+S3dHbAeZGUaz64AwrQfphzsLgYAONgRUg
-         S5HDFH8TedYzOTaZGEXi9LlemYpQ6odG2WkMDCtw=
+        b=qciBdAGYKTTlPbkos7XoDpuf3DVLrOBjI7frL2tgpeymV6op1CCni1D4MUj/qAsXq
+         Wjsji3aR7aZykd3DE6viktQHxmOxDDJJe7qsCk8k6wekcE4kPq/f1LDeD9qaADokgm
+         Xmx7OTQRrLWzfV9Ssg0IX5zNPAnNbA/QFwqWZ50s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 090/158] ipsec: select crypto ciphers for xfrm_algo
-Date:   Mon, 15 Jul 2019 10:17:01 -0400
-Message-Id: <20190715141809.8445-90-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 093/158] media: i2c: fix warning same module names
+Date:   Mon, 15 Jul 2019 10:17:04 -0400
+Message-Id: <20190715141809.8445-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -44,43 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 597179b0ba550bd83fab1a9d57c42a9343c58514 ]
+[ Upstream commit b2ce5617dad254230551feda3599f2cc68e53ad8 ]
 
-kernelci.org reports failed builds on arc because of what looks
-like an old missed 'select' statement:
+When building with CONFIG_VIDEO_ADV7511 and CONFIG_DRM_I2C_ADV7511
+enabled as loadable modules, we see the following warning:
 
-net/xfrm/xfrm_algo.o: In function `xfrm_probe_algs':
-xfrm_algo.c:(.text+0x1e8): undefined reference to `crypto_has_ahash'
+  drivers/gpu/drm/bridge/adv7511/adv7511.ko
+  drivers/media/i2c/adv7511.ko
 
-I don't see this in randconfig builds on other architectures, but
-it's fairly clear we want to select the hash code for it, like we
-do for all its other users. As Herbert points out, CRYPTO_BLKCIPHER
-is also required even though it has not popped up in build tests.
+Rework so that the file is named adv7511-v4l2.c.
 
-Fixes: 17bc19702221 ("ipsec: Use skcipher and ahash when probing algorithms")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/i2c/Makefile                      | 2 +-
+ drivers/media/i2c/{adv7511.c => adv7511-v4l2.c} | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+ rename drivers/media/i2c/{adv7511.c => adv7511-v4l2.c} (99%)
 
-diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
-index 4a9ee2d83158..372c91faa283 100644
---- a/net/xfrm/Kconfig
-+++ b/net/xfrm/Kconfig
-@@ -14,6 +14,8 @@ config XFRM_ALGO
- 	tristate
- 	select XFRM
- 	select CRYPTO
-+	select CRYPTO_HASH
-+	select CRYPTO_BLKCIPHER
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index a94eb03d10d4..520b3c3bf48c 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -36,7 +36,7 @@ obj-$(CONFIG_VIDEO_ADV748X) += adv748x/
+ obj-$(CONFIG_VIDEO_ADV7604) += adv7604.o
+ obj-$(CONFIG_VIDEO_ADV7842) += adv7842.o
+ obj-$(CONFIG_VIDEO_AD9389B) += ad9389b.o
+-obj-$(CONFIG_VIDEO_ADV7511) += adv7511.o
++obj-$(CONFIG_VIDEO_ADV7511) += adv7511-v4l2.o
+ obj-$(CONFIG_VIDEO_VPX3220) += vpx3220.o
+ obj-$(CONFIG_VIDEO_VS6624)  += vs6624.o
+ obj-$(CONFIG_VIDEO_BT819) += bt819.o
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511-v4l2.c
+similarity index 99%
+rename from drivers/media/i2c/adv7511.c
+rename to drivers/media/i2c/adv7511-v4l2.c
+index 88349b5053cc..6869bb593a68 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511-v4l2.c
+@@ -5,6 +5,11 @@
+  * Copyright 2013 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
+  */
  
- config XFRM_USER
- 	tristate "Transformation user configuration interface"
++/*
++ * This file is named adv7511-v4l2.c so it doesn't conflict with the Analog
++ * Device ADV7511 (config fragment CONFIG_DRM_I2C_ADV7511).
++ */
++
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
 -- 
 2.20.1
 
