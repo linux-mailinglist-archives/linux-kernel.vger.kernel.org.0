@@ -2,104 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 396F068A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B585D68A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbfGONS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:18:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50252 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730071AbfGONS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:18:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F30B1AFFE;
-        Mon, 15 Jul 2019 13:18:56 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 15:18:56 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, dvyukov@google.com,
-        catalin.marinas@arm.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: page_alloc: document kmemleak's non-blockable
- __GFP_NOFAIL case
-Message-ID: <20190715131856.GY29483@dhcp22.suse.cz>
-References: <1562964544-59519-1-git-send-email-yang.shi@linux.alibaba.com>
- <alpine.DEB.2.21.1907131230280.246128@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907131230280.246128@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730389AbfGON0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:26:10 -0400
+Received: from comms.puri.sm ([159.203.221.185]:53310 "EHLO comms.puri.sm"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730124AbfGON0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:26:09 -0400
+X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 09:26:08 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 52D00E01EB;
+        Mon, 15 Jul 2019 06:20:14 -0700 (PDT)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NX4mBcKjbY7F; Mon, 15 Jul 2019 06:20:13 -0700 (PDT)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     lorenzo.bianconi83@gmail.com, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: [PATCH 1/3] iio: imu: st_lsm6sdx: move some register definitions to sensor_settings struct
+Date:   Mon, 15 Jul 2019 15:19:17 +0200
+Message-Id: <20190715131919.31938-1-martin.kepplinger@puri.sm>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 13-07-19 12:39:16, David Rientjes wrote:
-> On Sat, 13 Jul 2019, Yang Shi wrote:
-> 
-> > When running ltp's oom test with kmemleak enabled, the below warning was
-> > triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
-> > passed in:
-> > 
-> > WARNING: CPU: 105 PID: 2138 at mm/page_alloc.c:4608 __alloc_pages_nodemask+0x1c31/0x1d50
-> > Modules linked in: loop dax_pmem dax_pmem_core
-> > ip_tables x_tables xfs virtio_net net_failover virtio_blk failover
-> > ata_generic virtio_pci virtio_ring virtio libata
-> > CPU: 105 PID: 2138 Comm: oom01 Not tainted 5.2.0-next-20190710+ #7
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.10.2-0-g5f4c7b1-prebuilt.qemu-project.org 04/01/2014
-> > RIP: 0010:__alloc_pages_nodemask+0x1c31/0x1d50
-> > ...
-> >  kmemleak_alloc+0x4e/0xb0
-> >  kmem_cache_alloc+0x2a7/0x3e0
-> >  ? __kmalloc+0x1d6/0x470
-> >  ? ___might_sleep+0x9c/0x170
-> >  ? mempool_alloc+0x2b0/0x2b0
-> >  mempool_alloc_slab+0x2d/0x40
-> >  mempool_alloc+0x118/0x2b0
-> >  ? __kasan_check_read+0x11/0x20
-> >  ? mempool_resize+0x390/0x390
-> >  ? lock_downgrade+0x3c0/0x3c0
-> >  bio_alloc_bioset+0x19d/0x350
-> >  ? __swap_duplicate+0x161/0x240
-> >  ? bvec_alloc+0x1b0/0x1b0
-> >  ? do_raw_spin_unlock+0xa8/0x140
-> >  ? _raw_spin_unlock+0x27/0x40
-> >  get_swap_bio+0x80/0x230
-> >  ? __x64_sys_madvise+0x50/0x50
-> >  ? end_swap_bio_read+0x310/0x310
-> >  ? __kasan_check_read+0x11/0x20
-> >  ? check_chain_key+0x24e/0x300
-> >  ? bdev_write_page+0x55/0x130
-> >  __swap_writepage+0x5ff/0xb20
-> > 
-> > The mempool_alloc_slab() clears __GFP_DIRECT_RECLAIM, kmemleak has
-> > __GFP_NOFAIL set all the time due to commit
-> > d9570ee3bd1d4f20ce63485f5ef05663866fe6c0 ("kmemleak: allow to coexist
-> > with fault injection").
-> > 
-> 
-> It only clears __GFP_DIRECT_RECLAIM provisionally to see if the allocation 
-> would immediately succeed before falling back to the elements in the 
-> mempool.  If that fails, and the mempool is empty, mempool_alloc() 
-> attempts the allocation with __GFP_DIRECT_RECLAIM.  So for the problem 
-> described here, I think what we really want is this:
-> 
-> diff --git a/mm/mempool.c b/mm/mempool.c
-> --- a/mm/mempool.c
-> +++ b/mm/mempool.c
-> @@ -386,7 +386,7 @@ void *mempool_alloc(mempool_t *pool, gfp_t gfp_mask)
->  	gfp_mask |= __GFP_NORETRY;	/* don't loop in __alloc_pages */
->  	gfp_mask |= __GFP_NOWARN;	/* failures are OK */
->  
-> -	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
-> +	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO|__GFP_NOFAIL);
->  
->  repeat_alloc:
+Move some register definitions to the per-device array of struct
+st_lsm6dsx_sensor_settings in order to simplify adding new sensor
+devices to the driver.
 
-No, I do not think we should make mempool allocator more complex for
-something that is an implementation problem the kmemleak.
+Also, remove completely unused register definitions.
+
+Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  6 ++++
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 31 ++++++++++++++------
+ 2 files changed, 28 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+index c14bf533b66b..f072ac14f213 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+@@ -196,6 +196,9 @@ struct st_lsm6dsx_ext_dev_settings {
+ /**
+  * struct st_lsm6dsx_settings - ST IMU sensor settings
+  * @wai: Sensor WhoAmI default value.
++ * @reg_int1_addr: Control Register address for INT1
++ * @reg_int2_addr: Control Register address for INT2
++ * @reg_reset_addr: register address for reset/reboot
+  * @max_fifo_size: Sensor max fifo length in FIFO words.
+  * @id: List of hw id/device name supported by the driver configuration.
+  * @decimator: List of decimator register info (addr + mask).
+@@ -206,6 +209,9 @@ struct st_lsm6dsx_ext_dev_settings {
+  */
+ struct st_lsm6dsx_settings {
+ 	u8 wai;
++	u8 reg_int1_addr;
++	u8 reg_int2_addr;
++	u8 reg_reset_addr;
+ 	u16 max_fifo_size;
+ 	struct {
+ 		enum st_lsm6dsx_hw_id hw_id;
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+index a6702a74570e..7a4fe70a8f20 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -49,17 +49,12 @@
+ 
+ #include "st_lsm6dsx.h"
+ 
+-#define ST_LSM6DSX_REG_INT1_ADDR		0x0d
+-#define ST_LSM6DSX_REG_INT2_ADDR		0x0e
+ #define ST_LSM6DSX_REG_FIFO_FTH_IRQ_MASK	BIT(3)
+ #define ST_LSM6DSX_REG_WHOAMI_ADDR		0x0f
+-#define ST_LSM6DSX_REG_RESET_ADDR		0x12
+ #define ST_LSM6DSX_REG_RESET_MASK		BIT(0)
+ #define ST_LSM6DSX_REG_BOOT_MASK		BIT(7)
+ #define ST_LSM6DSX_REG_BDU_ADDR			0x12
+ #define ST_LSM6DSX_REG_BDU_MASK			BIT(6)
+-#define ST_LSM6DSX_REG_INT2_ON_INT1_ADDR	0x13
+-#define ST_LSM6DSX_REG_INT2_ON_INT1_MASK	BIT(5)
+ 
+ #define ST_LSM6DSX_REG_ACC_OUT_X_L_ADDR		0x28
+ #define ST_LSM6DSX_REG_ACC_OUT_Y_L_ADDR		0x2a
+@@ -122,6 +117,9 @@ static const struct st_lsm6dsx_fs_table_entry st_lsm6dsx_fs_table[] = {
+ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	{
+ 		.wai = 0x69,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 1365,
+ 		.id = {
+ 			{
+@@ -172,6 +170,9 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	},
+ 	{
+ 		.wai = 0x69,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 682,
+ 		.id = {
+ 			{
+@@ -222,6 +223,9 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	},
+ 	{
+ 		.wai = 0x6a,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 682,
+ 		.id = {
+ 			{
+@@ -278,6 +282,9 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	},
+ 	{
+ 		.wai = 0x6c,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 512,
+ 		.id = {
+ 			{
+@@ -349,6 +356,9 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	},
+ 	{
+ 		.wai = 0x6b,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 512,
+ 		.id = {
+ 			{
+@@ -391,6 +401,9 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 	},
+ 	{
+ 		.wai = 0x6b,
++		.reg_int1_addr = 0x0d,
++		.reg_int2_addr = 0x0e,
++		.reg_reset_addr = 0x12,
+ 		.max_fifo_size = 512,
+ 		.id = {
+ 			{
+@@ -873,10 +886,10 @@ static int st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw, u8 *drdy_reg)
+ 
+ 	switch (drdy_pin) {
+ 	case 1:
+-		*drdy_reg = ST_LSM6DSX_REG_INT1_ADDR;
++		*drdy_reg = hw->settings->reg_int1_addr;
+ 		break;
+ 	case 2:
+-		*drdy_reg = ST_LSM6DSX_REG_INT2_ADDR;
++		*drdy_reg = hw->settings->reg_int2_addr;
+ 		break;
+ 	default:
+ 		dev_err(hw->dev, "unsupported data ready pin\n");
+@@ -976,7 +989,7 @@ static int st_lsm6dsx_init_device(struct st_lsm6dsx_hw *hw)
+ 	int err;
+ 
+ 	/* device sw reset */
+-	err = regmap_update_bits(hw->regmap, ST_LSM6DSX_REG_RESET_ADDR,
++	err = regmap_update_bits(hw->regmap, hw->settings->reg_reset_addr,
+ 				 ST_LSM6DSX_REG_RESET_MASK,
+ 				 FIELD_PREP(ST_LSM6DSX_REG_RESET_MASK, 1));
+ 	if (err < 0)
+@@ -985,7 +998,7 @@ static int st_lsm6dsx_init_device(struct st_lsm6dsx_hw *hw)
+ 	msleep(50);
+ 
+ 	/* reload trimming parameter */
+-	err = regmap_update_bits(hw->regmap, ST_LSM6DSX_REG_RESET_ADDR,
++	err = regmap_update_bits(hw->regmap, hw->settings->reg_reset_addr,
+ 				 ST_LSM6DSX_REG_BOOT_MASK,
+ 				 FIELD_PREP(ST_LSM6DSX_REG_BOOT_MASK, 1));
+ 	if (err < 0)
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
