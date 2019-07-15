@@ -2,134 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BAB46886C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5098C6887E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbfGOME3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 08:04:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41763 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729827AbfGOME2 (ORCPT
+        id S1730021AbfGOMEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 08:04:42 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35546 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729988AbfGOMEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 08:04:28 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p15so15198398eds.8
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 05:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=siKrRVKRpx7RpKSTXYP2AWsLiceVEcAiCzz2p78ubgQ=;
-        b=a1N4c1NtrSMBmRxyDN1bt+aTDEXwAEcei9NMSHaK04P0PCKhOuIH5Rpew/9/xRWm23
-         Js79ou5nQuSpYL2Uv1qlCrixRaHPYiWh9me97FNMBPo44li0Mw8G508ONYsF6C1rcpiq
-         KAgn0CbtK+Q+ZetNMzH5J2QSfmcp2viSOMtgFq8zHeD04TiIQFVJJT7Z6rykkYLxLsi/
-         nStP3afTeB3MmiAnfjsqtd4CzuiawatGLjQxhloRHnsklUW5PyPaU9+F3dOrYJiHbjWK
-         iUN59zVgLNhIQK/7QMVFl5C8PWNoGqp72CB0gHxiVb7ax2bqGx6LLj79R3ENL18ksSbp
-         y4CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=siKrRVKRpx7RpKSTXYP2AWsLiceVEcAiCzz2p78ubgQ=;
-        b=XROjsRiLjfGNY3XCTKUPbZqgpMrvDNtbB7ciQsuHd6JMZj89HEYetyQp8BwQp17ajt
-         THGQXPkKp+31Y/YSVEh3tpet3gBCKVTB6wm84TBb/kMzijPkaN9jyD1lem99G0DYM2Q7
-         zBNQtlb8ZzQpzOapie4yX7mZFvwL+f29TDNgdvP+k3tmVhPNNkv6saQxDmQnjDDWAcyp
-         7FAeIdvsZdIomDBLHBW2l6IwuUD+JpvYQAljLclAoxyXGEdPKiONqN4tL0hDo83H4fLD
-         pKlxEmyGYxu+7V/gEP+T2yTruqbeT5hZO4msWDPeHDV61yMLCT6o+oIhPIboWfmz1SJy
-         idkQ==
-X-Gm-Message-State: APjAAAX3Saz7tckn5z4NWg50S3SsnU14v2pb/fT3OPYNxfWfRPaeZ1LZ
-        eV7fP82TDf6ajSGevWHVwzMBS5Xucc1V/vf8ScynnuHd7xM=
-X-Google-Smtp-Source: APXvYqxYOkBm5l+PzyLYC3OqADqTZgk+BGzUavRdvCPRgVE2Mz+iQK9V2RgZatHrYNkJ7UJkZR7pLKzfiPvQ0XuzAUE=
-X-Received: by 2002:a17:906:fac7:: with SMTP id lu7mr19649721ejb.109.1563192266966;
- Mon, 15 Jul 2019 05:04:26 -0700 (PDT)
+        Mon, 15 Jul 2019 08:04:36 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190715120434euoutp02d05edb7eacf85a96e247c18f88259609~xkxeFX3GE1777717777euoutp02H
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:04:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190715120434euoutp02d05edb7eacf85a96e247c18f88259609~xkxeFX3GE1777717777euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563192274;
+        bh=deotDvwiJ++2V78OBDhY7WFJ0ymM0V5ehFlhjHIxNPI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rhnmGs02kFaqDJ4fEtycKDaexICyGjj1xCkXiMkhQ3d+Jxo1MgUylYD2gLm+DTb5R
+         Cv4lIyKO1fK4iT86RlAO7rLKap1zJSYjZ0wPBnJkDWEwImjpdA0rlxlRWWPZVLIiEp
+         BxFxYuABngeGEIijYCNuJWXhegPf1pvHrwttvVWY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190715120434eucas1p1e024921be76cc7d59315ae4a6a2e6585~xkxdWg48o1093110931eucas1p10;
+        Mon, 15 Jul 2019 12:04:34 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2C.6B.04325.1DB6C2D5; Mon, 15
+        Jul 2019 13:04:33 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190715120433eucas1p26681c5c2d87423253b651d88446c538c~xkxcnaVvN1882118821eucas1p2Q;
+        Mon, 15 Jul 2019 12:04:33 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190715120433eusmtrp175e23c4f93d7b1731465914b6bf58341~xkxcZNt5N1141311413eusmtrp1Z;
+        Mon, 15 Jul 2019 12:04:33 +0000 (GMT)
+X-AuditID: cbfec7f5-b8fff700000010e5-b1-5d2c6bd13a44
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id DD.12.04140.1DB6C2D5; Mon, 15
+        Jul 2019 13:04:33 +0100 (BST)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190715120432eusmtip105676d3b9da5c82d3ba5d1d79e6dc7ce~xkxbow_MF1803018030eusmtip1O;
+        Mon, 15 Jul 2019 12:04:32 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+To:     k.konieczny@partner.samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 4/4] dt-bindings: devfreq: exynos-bus: remove unused
+ property
+Date:   Mon, 15 Jul 2019 14:04:16 +0200
+Message-Id: <20190715120416.3561-5-k.konieczny@partner.samsung.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
-References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com>
- <alpine.DEB.2.21.1907151020320.1669@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907151020320.1669@nanos.tec.linutronix.de>
-From:   Uros Bizjak <ubizjak@gmail.com>
-Date:   Mon, 15 Jul 2019 14:04:15 +0200
-Message-ID: <CAFULd4aHwv9+dkTtNLtNGHu=wmt62cZDkjr-vbCVzYftJbOpEg@mail.gmail.com>
-Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop targets
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1dWY6A1ozVBKu1iVWTQQVF1Re4hKNJs6HH0R/UEJ0lBEMi6al
+        VDARFEUlggKJ1KIoIovsW4FUhVgaGhCtiAGMoiAQg1DFVKJEY207Rfk797xz7nnn5TGE/AO1
+        iDkZFy+o4vgYpdSbbGyftq7rjl4bvmHy8iZcq6umcN/3TxS+a35B4cwWB8LXh8cJbLXW0Pj5
+        hQka1w33UrjHeFuK7RlmhHXWFgmuNA/QuKivW4Lfni+V4omfzyX40hMzjf/01pK4frBdukvO
+        VeRXIK6u7KqUq3+QzD398ljCZTaUIc7S3yTh7HVLQ+jD3tsjhJiTCYJq/c6j3lEZA53U6Urm
+        zI2sQiIF6eh05MUAuxk6G+woHXkzcrYUgW48jRKH7wgah+ol4mBHMGbUUzOW1tyHHksJgvGO
+        MfqfJaetx62SssHwsalL4sK+7ArIeZ9LuEQEO01CTU+tO30BewBe1vRIXZhkV0FXicVtlrF7
+        IMP4Aolxy+Bq8yPShb3YvdD8oZ0WNT7QcWvEzRNOTaohzx0ArI2G8l/FzkWMc9gLU3os7lkA
+        ny0NntaL4VnONVLEWhgtyKRF70UEg5e/eQ62QZul272HYP2h2rhepHfDWFmeZ/186Lf5iFeY
+        D9mNro4uWgZX0uSieh3kO7o8D6eAdEeVB3NQkJpN3EDL9bPK6GeV0f/PvYeIMuQnaNSxkYI6
+        KE7QBqr5WLUmLjLw+KnYOuT8ds/+WKaaUcvvYybEMkg5T7YrYk24nOIT1ImxJgQMofSV7Zhy
+        UrIIPjFJUJ06otLECGoTUjCk0k92ds5gmJyN5OOFaEE4LahmTiWM16IUpDU4hgw1+5Omgzhd
+        WlVrCVkYErovkN+iKh0KePVm689O7fmir6O8sNL/txaWFOAgzYllwsHHm9fU90+GEfLJH3pj
+        wrvX+aFQGW4rvlCuCGnl2+4voX+tTiUEQ7Ipub1puyGs487IIdtcxa0Bf3Lhcp82GdwMjwoO
+        CE7JOvdESaqj+I0BhErN/wXPEl1ucgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsVy+t/xu7oXs3ViDT7eZ7bYOGM9q8X1L89Z
+        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
+        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
+        o2/LKkaP4ze2M3l83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
+        Z5OSmpNZllqkb5egl9F79xRrwVqOigkTFzM3MM5g72Lk5JAQMJHYP30lYxcjF4eQwFJGiVN/
+        JjBBJKQlGk+vhrKFJf5c62KDKPrEKPFk8UJWkASbgLnEo+1nwIpEBJQlJt+bzgxSxCzQySqx
+        4skRNpCEsECAxOWjE1lAbBYBVYkzy4+DNfMKOEv07jrHCLFBXqJzx26wGk4BF4kd94+BnScE
+        VNPyqp8Fol5Q4uTMJ2A2M1B989bZzBMYBWYhSc1CklrAyLSKUSS1tDg3PbfYSK84Mbe4NC9d
+        Lzk/dxMjMC63Hfu5ZQdj17vgQ4wCHIxKPLwOKdqxQqyJZcWVuYcYJTiYlUR4bb8ChXhTEiur
+        Uovy44tKc1KLDzGaAj0xkVlKNDkfmDLySuINTQ3NLSwNzY3Njc0slMR5OwQOxggJpCeWpGan
+        phakFsH0MXFwSjUwLluwO8WdmWH/Nq54eb6HBxQfvrPpvxHItVk2e9miVRtmz899F3Th7OpL
+        uX0LvOZmLm5JvGLM0ukc0GRlfW3Ki+MVC3vlrh8+kvRXz+xzhoqgEsvhef3c5om7UuuDHf9v
+        WnOzdEl0lnfknd+cgSeWBjfIh33fxsruvmTVN2m9O7sZJeYYaLe1KrEUZyQaajEXFScCAIxj
+        LBPhAgAA
+X-CMS-MailID: 20190715120433eucas1p26681c5c2d87423253b651d88446c538c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190715120433eucas1p26681c5c2d87423253b651d88446c538c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190715120433eucas1p26681c5c2d87423253b651d88446c538c
+References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+        <CGME20190715120433eucas1p26681c5c2d87423253b651d88446c538c@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 10:24 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Uros,
->
-> On Thu, 11 Jul 2019, Uros Bizjak wrote:
-> > Recent patch [1] disabled a self-snoop feature on a list of processor
-> > models with a known errata, so we are confident that the feature
-> > should work on remaining models also for other purposes than to speed
-> > up MTRR programming.
-> >
-> > I would like to resurrect an old patch [2] that avoids calling clflush
-> > and wbinvd
-> > to invalidate caches when CPU supports selfsnoop.
->
-> Please do not attach patches, send them inline and please add a proper
-> changelog. Just saying 'Disable CPA cache flush for selfsnoop targets' in
-> the subject line then nada gives absolutely zero information.
+Remove unused DT property "exynos,voltage-tolerance".
 
-Thanks for your remarks and instructions!
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 2 --
+ 1 file changed, 2 deletions(-)
 
-I'll send a new revision of the patch with expanded ChangeLog later today,
-saying something along the lines of:
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+index f8e946471a58..e71f752cc18f 100644
+--- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -50,8 +50,6 @@ Required properties only for passive bus device:
+ Optional properties only for parent bus device:
+ - exynos,saturation-ratio: the percentage value which is used to calibrate
+ 			the performance count against total cycle count.
+-- exynos,voltage-tolerance: the percentage value for bus voltage tolerance
+-			which is used to calculate the max voltage.
+ 
+ Detailed correlation between sub-blocks and power line according to Exynos SoC:
+ - In case of Exynos3250, there are two power line as following:
+-- 
+2.22.0
 
-"CPUs which have self-snooping capability can handle conflicting
-memory type across CPUs by snooping its own cache. Commit #fd329f276ecaa
-("x86/mtrr: Skip cache flushes on CPUs with cache self-snooping")
-avoids cache flushes when MTRR registers are programmed. The Page
-Attribute Table (PAT) is a companion feature to the MTRRs, and according
-to section 11.12.4 of the Intel 64 and IA 32 Architectures Software
-Developer's Manual, if the CPU supports cache self-snooping, it is not
-necessary to flush caches when remapping a page that was previously
-mapped as a different memory type.
-
-Note that commit #1e03bff360010
-("x86/cpu/intel: Clear cache self-snoop capability in CPUs with known errata")
-cleared cache self-snoop capability for CPUs where conflicting memory types
-lead to unpredictable behavior, machine check errors, or hangs."
-
-> > The patch was ported to latest Fedora kernel (5.1.16) and tested with
-> > CONFIG_CPA_DEBUG on INTEL_FAM6_IVYBRIDGE_X. The relevant ports of
-> > dmesg show:
-> >
-> > ...
-> > < hundreds of CPA protect messages, resulting from set_memory_rw CPA
-> > undo test in mm/init_64.c >
-> > CPA  protect  Rodata RO: 0xffffffffbd1fe000 - 0xffffffffbd1fefff PFN
-> > 1461fe req 8000000000000063 prevent 0000000000000002
-> > CPA  protect  Rodata RO: 0xffff889c461fe000 - 0xffff889c461fefff PFN
-> > 1461fe req 8000000000000063 prevent 0000000000000002
-> > Testing CPA: again
-> > Freeing unused kernel image memory: 2016K
-> > Freeing unused kernel image memory: 4K
-> > x86/mm: Checked W+X mappings: passed, no W+X pages found.
-> > rodata_test: all tests were successful
-> > x86/mm: Checking user space page tables
-> > x86/mm: Checked W+X mappings: passed, no W+X pages found.
-> >
-> > and from CPA selftest:
-> >
-> > CPA self-test:
-> >  4k 36352 large 4021 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
-> >  4k 180224 large 3740 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
-> >  4k 180224 large 3740 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
-> > ok.
->
-> These outputs are pretty useless simply because the selftest only verifies
-> the inner workings of CPA itself, but has nothing to do with the
-> correctness vs. cache flushing.
-
-Please note that CONFIG_CPA_DEBUG also spawns a pageattr-test kthread
-which remaps a memory page every 30 seconds. I was confident enough to
-run the patched kernel (with CONFIG_CPA_DEBUG) on my main workstation
-(Ivybridge-X, Fedora 30), already for a week without a single problem.
-
-Uros.
