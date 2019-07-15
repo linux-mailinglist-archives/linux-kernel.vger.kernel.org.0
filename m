@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 679116908D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06F569090
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390627AbfGOOWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:22:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51416 "EHLO mail.kernel.org"
+        id S2390651AbfGOOWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:22:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390619AbfGOOWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:22:32 -0400
+        id S2390619AbfGOOWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:22:38 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60444217F4;
-        Mon, 15 Jul 2019 14:22:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C97B21842;
+        Mon, 15 Jul 2019 14:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200551;
-        bh=YYKYl2U1p4d4MUGPn3teo51qyjn35udvZQC6noSgQyk=;
+        s=default; t=1563200557;
+        bh=C4C7ZWtiH5b36KR2Ei6KkuthZpWGvvl1dmWtAfSRCc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sL7nKswutQOBRy6hqiABPBvegtd2YFKU85LChYbIN6Xw/KbaUJeWOheTBFx3xz5DP
-         AGM0RweuKfuekqSwX3vO5B/CXglM3ttBeBIOjNOzDDVIXYTT7NTJKQHZkoHCNWxyml
-         sees/oUhpWBkzo+6q3tKYEoVhve90doHp4a1nglI=
+        b=nriQOpwAMxIHmtbXet7wvKpHu2wy8ZFDHSfWfaYVDgxBNEx6242+8w9eLJJM8bkWG
+         5/7dUw5rBsX55TMFw/GpcQEGzQC2/NmyCl7aS2i1L18oAx2KS+dFVscyr+zIfEU0KX
+         YfrHDEe4ROV4F5e47VOaOoZnrJQ7lWHtcGqyX5NA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
-        eranian@google.com, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 076/158] perf/x86/intel/uncore: Handle invalid event coding for free-running counter
-Date:   Mon, 15 Jul 2019 10:16:47 -0400
-Message-Id: <20190715141809.8445-76-sashal@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 077/158] x86/atomic: Fix smp_mb__{before,after}_atomic()
+Date:   Mon, 15 Jul 2019 10:16:48 -0400
+Message-Id: <20190715141809.8445-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -46,69 +46,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 543ac280b3576c0009e8c0fcd4d6bfc9978d7bd0 ]
+[ Upstream commit 69d927bba39517d0980462efc051875b7f4db185 ]
 
-Counting with invalid event coding for free-running counter may cause
-OOPs, e.g. uncore_iio_free_running_0/event=1/.
+Recent probing at the Linux Kernel Memory Model uncovered a
+'surprise'. Strongly ordered architectures where the atomic RmW
+primitive implies full memory ordering and
+smp_mb__{before,after}_atomic() are a simple barrier() (such as x86)
+fail for:
 
-Current code only validate the event with free-running event format,
-event=0xff,umask=0xXY. Non-free-running event format never be checked
-for the PMU with free-running counters.
+	*x = 1;
+	atomic_inc(u);
+	smp_mb__after_atomic();
+	r0 = *y;
 
-Add generic hw_config() to check and reject the invalid event coding
-for free-running PMU.
+Because, while the atomic_inc() implies memory order, it
+(surprisingly) does not provide a compiler barrier. This then allows
+the compiler to re-order like so:
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+	atomic_inc(u);
+	*x = 1;
+	smp_mb__after_atomic();
+	r0 = *y;
+
+Which the CPU is then allowed to re-order (under TSO rules) like:
+
+	atomic_inc(u);
+	r0 = *y;
+	*x = 1;
+
+And this very much was not intended. Therefore strengthen the atomic
+RmW ops to include a compiler barrier.
+
+NOTE: atomic_{or,and,xor} and the bitops already had the compiler
+barrier.
+
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@kernel.org
-Cc: eranian@google.com
-Fixes: 0f519f0352e3 ("perf/x86/intel/uncore: Support IIO free-running counters on SKX")
-Link: https://lkml.kernel.org/r/1556672028-119221-2-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore.h       | 10 ++++++++++
- arch/x86/events/intel/uncore_snbep.c |  1 +
- 2 files changed, 11 insertions(+)
+ Documentation/atomic_t.txt         | 3 +++
+ arch/x86/include/asm/atomic.h      | 8 ++++----
+ arch/x86/include/asm/atomic64_64.h | 8 ++++----
+ arch/x86/include/asm/barrier.h     | 4 ++--
+ 4 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index cc6dd4f78158..42fa3974c421 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -402,6 +402,16 @@ static inline bool is_freerunning_event(struct perf_event *event)
- 	       (((cfg >> 8) & 0xff) >= UNCORE_FREERUNNING_UMASK_START);
+diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
+index 913396ac5824..ed0d814df7e0 100644
+--- a/Documentation/atomic_t.txt
++++ b/Documentation/atomic_t.txt
+@@ -177,6 +177,9 @@ These helper barriers exist because architectures have varying implicit
+ ordering on their SMP atomic primitives. For example our TSO architectures
+ provide full ordered atomics and these barriers are no-ops.
+ 
++NOTE: when the atomic RmW ops are fully ordered, they should also imply a
++compiler barrier.
++
+ Thus:
+ 
+   atomic_fetch_add();
+diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
+index ce84388e540c..d266a4066289 100644
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -54,7 +54,7 @@ static __always_inline void arch_atomic_add(int i, atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
  }
  
-+/* Check and reject invalid config */
-+static inline int uncore_freerunning_hw_config(struct intel_uncore_box *box,
-+					       struct perf_event *event)
-+{
-+	if (is_freerunning_event(event))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static inline void uncore_disable_box(struct intel_uncore_box *box)
+ /**
+@@ -68,7 +68,7 @@ static __always_inline void arch_atomic_sub(int i, atomic_t *v)
  {
- 	if (box->pmu->type->ops->disable_box)
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index b10e04387f38..8e4e8e423839 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3585,6 +3585,7 @@ static struct uncore_event_desc skx_uncore_iio_freerunning_events[] = {
+ 	asm volatile(LOCK_PREFIX "subl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
+ }
  
- static struct intel_uncore_ops skx_uncore_iio_freerunning_ops = {
- 	.read_counter		= uncore_msr_read_counter,
-+	.hw_config		= uncore_freerunning_hw_config,
- };
+ /**
+@@ -95,7 +95,7 @@ static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
+ static __always_inline void arch_atomic_inc(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ #define arch_atomic_inc arch_atomic_inc
  
- static struct attribute *skx_uncore_iio_freerunning_formats_attr[] = {
+@@ -108,7 +108,7 @@ static __always_inline void arch_atomic_inc(atomic_t *v)
+ static __always_inline void arch_atomic_dec(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ #define arch_atomic_dec arch_atomic_dec
+ 
+diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
+index 5f851d92eecd..55ca027f8c1c 100644
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -45,7 +45,7 @@ static __always_inline void arch_atomic64_add(long i, atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "addq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -59,7 +59,7 @@ static inline void arch_atomic64_sub(long i, atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "subq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -87,7 +87,7 @@ static __always_inline void arch_atomic64_inc(atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ #define arch_atomic64_inc arch_atomic64_inc
+ 
+@@ -101,7 +101,7 @@ static __always_inline void arch_atomic64_dec(atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ #define arch_atomic64_dec arch_atomic64_dec
+ 
+diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
+index 14de0432d288..84f848c2541a 100644
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -80,8 +80,8 @@ do {									\
+ })
+ 
+ /* Atomic operations are already serializing on x86 */
+-#define __smp_mb__before_atomic()	barrier()
+-#define __smp_mb__after_atomic()	barrier()
++#define __smp_mb__before_atomic()	do { } while (0)
++#define __smp_mb__after_atomic()	do { } while (0)
+ 
+ #include <asm-generic/barrier.h>
+ 
 -- 
 2.20.1
 
