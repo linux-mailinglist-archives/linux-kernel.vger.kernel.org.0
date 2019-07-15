@@ -2,29 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CD168702
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED1A68703
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbfGOK0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 06:26:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:46830 "EHLO foss.arm.com"
+        id S1729770AbfGOK0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 06:26:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:46844 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729452AbfGOK0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 06:26:13 -0400
+        id S1729452AbfGOK0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 06:26:16 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE99D2B;
-        Mon, 15 Jul 2019 03:26:12 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CA94344;
+        Mon, 15 Jul 2019 03:26:16 -0700 (PDT)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BC1DF3F59C;
-        Mon, 15 Jul 2019 03:26:11 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 235103F59C;
+        Mon, 15 Jul 2019 03:26:15 -0700 (PDT)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, peterz@infradead.org, mgorman@suse.de,
         riel@surriel.com
-Subject: [PATCH 0/3] sched/fair: Init NUMA task_work in sched_fork()
-Date:   Mon, 15 Jul 2019 11:25:05 +0100
-Message-Id: <20190715102508.32434-1-valentin.schneider@arm.com>
+Subject: [PATCH 1/3] sched/fair: Move init_numa_balancing() below task_numa_work()
+Date:   Mon, 15 Jul 2019 11:25:06 +0100
+Message-Id: <20190715102508.32434-2-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190715102508.32434-1-valentin.schneider@arm.com>
+References: <20190715102508.32434-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,23 +34,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A TODO has been sitting in task_tick_numa() regarding init'ing the
-task_numa_work() task_work in sched_fork() rather than in task_tick_numa(),
-so I figured I'd have a go at it.
+To reference task_numa_work() from within init_numa_balancing(), we
+need the former to be declared before the latter. Do just that.
 
-Patches 1 & 2 do that, and patch 3 is a freebie cleanup.
+This is a pure code movement.
 
-Briefly tested on a 2 * (Xeon E5-2690) system, didn't see any obvious
-breakage.
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+---
+ kernel/sched/fair.c | 82 ++++++++++++++++++++++-----------------------
+ 1 file changed, 41 insertions(+), 41 deletions(-)
 
-Valentin Schneider (3):
-  sched/fair: Move init_numa_balancing() below task_numa_work()
-  sched/fair: Move task_numa_work() init to init_numa_balancing()
-  sched/fair: Change task_numa_work() storage to static
-
- kernel/sched/fair.c | 93 +++++++++++++++++++++++----------------------
- 1 file changed, 47 insertions(+), 46 deletions(-)
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 036be95a87e9..476b0201a8fb 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1169,47 +1169,6 @@ static unsigned int task_scan_max(struct task_struct *p)
+ 	return max(smin, smax);
+ }
+ 
+-void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
+-{
+-	int mm_users = 0;
+-	struct mm_struct *mm = p->mm;
+-
+-	if (mm) {
+-		mm_users = atomic_read(&mm->mm_users);
+-		if (mm_users == 1) {
+-			mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
+-			mm->numa_scan_seq = 0;
+-		}
+-	}
+-	p->node_stamp			= 0;
+-	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
+-	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
+-	p->numa_work.next		= &p->numa_work;
+-	p->numa_faults			= NULL;
+-	p->numa_group			= NULL;
+-	p->last_task_numa_placement	= 0;
+-	p->last_sum_exec_runtime	= 0;
+-
+-	/* New address space, reset the preferred nid */
+-	if (!(clone_flags & CLONE_VM)) {
+-		p->numa_preferred_nid = NUMA_NO_NODE;
+-		return;
+-	}
+-
+-	/*
+-	 * New thread, keep existing numa_preferred_nid which should be copied
+-	 * already by arch_dup_task_struct but stagger when scans start.
+-	 */
+-	if (mm) {
+-		unsigned int delay;
+-
+-		delay = min_t(unsigned int, task_scan_max(current),
+-			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
+-		delay += 2 * TICK_NSEC;
+-		p->node_stamp = delay;
+-	}
+-}
+-
+ static void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ {
+ 	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_NODE);
+@@ -2611,6 +2570,47 @@ void task_numa_work(struct callback_head *work)
+ 	}
+ }
+ 
++void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
++{
++	int mm_users = 0;
++	struct mm_struct *mm = p->mm;
++
++	if (mm) {
++		mm_users = atomic_read(&mm->mm_users);
++		if (mm_users == 1) {
++			mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
++			mm->numa_scan_seq = 0;
++		}
++	}
++	p->node_stamp			= 0;
++	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
++	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
++	p->numa_work.next		= &p->numa_work;
++	p->numa_faults			= NULL;
++	p->numa_group			= NULL;
++	p->last_task_numa_placement	= 0;
++	p->last_sum_exec_runtime	= 0;
++
++	/* New address space, reset the preferred nid */
++	if (!(clone_flags & CLONE_VM)) {
++		p->numa_preferred_nid = NUMA_NO_NODE;
++		return;
++	}
++
++	/*
++	 * New thread, keep existing numa_preferred_nid which should be copied
++	 * already by arch_dup_task_struct but stagger when scans start.
++	 */
++	if (mm) {
++		unsigned int delay;
++
++		delay = min_t(unsigned int, task_scan_max(current),
++			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
++		delay += 2 * TICK_NSEC;
++		p->node_stamp = delay;
++	}
++}
++
+ /*
+  * Drive the periodic memory faults..
+  */
 --
 2.22.0
 
