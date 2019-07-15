@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93F868508
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AA06850A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfGOIP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 04:15:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54278 "EHLO mx1.suse.de"
+        id S1729447AbfGOIQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 04:16:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54308 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729351AbfGOIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729360AbfGOIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 15 Jul 2019 04:15:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 72429AFE0;
+        by mx1.suse.de (Postfix) with ESMTP id DB217AFDB;
         Mon, 15 Jul 2019 08:15:57 +0000 (UTC)
 From:   Oscar Salvador <osalvador@suse.de>
 To:     akpm@linux-foundation.org
@@ -21,56 +21,64 @@ Cc:     dan.j.williams@intel.com, david@redhat.com,
         pasha.tatashin@soleen.com, mhocko@suse.com,
         aneesh.kumar@linux.ibm.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 0/2] Fixes for sub-section hotplug
-Date:   Mon, 15 Jul 2019 10:15:47 +0200
-Message-Id: <20190715081549.32577-1-osalvador@suse.de>
+Subject: [PATCH 1/2] mm,sparse: Fix deactivate_section for early sections
+Date:   Mon, 15 Jul 2019 10:15:48 +0200
+Message-Id: <20190715081549.32577-2-osalvador@suse.de>
 X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20190715081549.32577-1-osalvador@suse.de>
+References: <20190715081549.32577-1-osalvador@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+deactivate_section checks whether a section is early or not
+in order to either call free_map_bootmem() or depopulate_section_memmap().
+Being the former for sections added at boot time, and the latter for
+sections hotplugged.
 
-these two patches address a couple of issues I found while working on my
-vmemmap-patchset.
-The issues are:
+The problem is that we zero section_mem_map, so the last early_section()
+will always report false and the section will not be removed.
 
-	1) section_deactivate mistakenly zeroes ms->section_mem_map and then
-	   tries to check whether the section is an early section, but since
-	   section_mem_map might have been zeroed, we will return false
-	   when it is really an early section.
-	   In order to fix this, let us check whether the section is early
-	   at function entry, so we do not neet check it again later.
+Fix this checking whether a section is early or not at function
+entry.
 
-	2) shrink_{node,zone}_span work on sub-section granularity now.
-	   The problem is that deactivation of the section occurs later on
-	   in sparse_remove_section, so the pfn_valid()->pfn_section_valid()
-	   check will always return true.
-	   The user visible effect of this is that we are always left with,
-	   at least, PAGES_PER_SECTION spanned, even if we got to remove all
-	   memory linked to a zone.
-	   In order to fix this, decouple section_deactivate() from
-	   sparse_remove_section, and let __remove_section first call
-	   section_deactivate(), so then __remove_zone()->shrink_{zone,node}
-	   will find the right information.
+Fixes: mmotm ("mm/sparsemem: Support sub-section hotplug")
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/sparse.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Actually, both patches could be merged in one, but I went this way to make it
-more smooth.
-
-Once this have been merged (unless there is a major controvery), I plan to send
-out a patch refactoring shrink_{node,zone}_span, since right now it is a bit
-messy.
-
-Oscar Salvador (2):
-  mm,sparse: Fix deactivate_section for early sections
-  mm,memory_hotplug: Fix shrink_{zone,node}_span
-
- include/linux/memory_hotplug.h |  7 ++--
- mm/memory_hotplug.c            |  6 +++-
- mm/sparse.c                    | 76 +++++++++++++++++++++++++++++-------------
- 3 files changed, 62 insertions(+), 27 deletions(-)
-
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 3267c4001c6d..1e224149aab6 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -738,6 +738,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+ 	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+ 	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
+ 	struct mem_section *ms = __pfn_to_section(pfn);
++	bool section_is_early = early_section(ms);
+ 	struct page *memmap = NULL;
+ 	unsigned long *subsection_map = ms->usage
+ 		? &ms->usage->subsection_map[0] : NULL;
+@@ -772,7 +773,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+ 	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
+ 		unsigned long section_nr = pfn_to_section_nr(pfn);
+ 
+-		if (!early_section(ms)) {
++		if (!section_is_early) {
+ 			kfree(ms->usage);
+ 			ms->usage = NULL;
+ 		}
+@@ -780,7 +781,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+ 		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
+ 	}
+ 
+-	if (early_section(ms) && memmap)
++	if (section_is_early && memmap)
+ 		free_map_bootmem(memmap);
+ 	else
+ 		depopulate_section_memmap(pfn, nr_pages, altmap);
 -- 
 2.12.3
 
