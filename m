@@ -2,142 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3544C69F66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 01:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8705E69F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 01:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732869AbfGOXPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 19:15:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35925 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732587AbfGOXPE (ORCPT
+        id S1732432AbfGOXRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 19:17:37 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33822 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731933AbfGOXRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 19:15:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r7so8129515pfl.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 16:15:04 -0700 (PDT)
+        Mon, 15 Jul 2019 19:17:36 -0400
+Received: by mail-io1-f68.google.com with SMTP id k8so37007097iot.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 16:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=95zav6grseWZlB55rYMe1avGcB9A1CdUR4SMteoPOQk=;
-        b=c1MQCqUnnNg3DCw0Ne/s/GDCleAEVC8w0E2ADnJ4NI8y3nxxc18UqY2V7ROGq4ydat
-         ai1oIh6w753X3Dp/C8ZlSAO08/pAbligCkxJD3/G5aO6vFIVUBesxN0aDintueDCJWls
-         fThykplek+CpCicT2XDt2snKbKC7Sv8JA1p4U=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yn8VlLNQyAd5j32lIivn24k9NKqobex1p7VQed0BPHA=;
+        b=EHH94aTDP0PnzaA0s5AjWTBU1xGlGD/LFZOledR+cH7MWGzDmdPqP/rCo4wxmhAZbv
+         A21vq14fsMhyq2qEGMmb+aQ6HDb9tKyvTcwAm9EOfWA3tqa6gGQwGEIDPeeIn2YxupSK
+         vx272qaWSFrCAzF583n1nUqKBQ6CeW5/lc4OA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=95zav6grseWZlB55rYMe1avGcB9A1CdUR4SMteoPOQk=;
-        b=AXb3qU+MsFNme28d1OwNjKhx3Pww8+1BKA0WHrco2oCmmpwQ2oT8W8+KOaT9Z92mZ2
-         TRL2kk6VQuLKXAmnwBW22nhYyUzHqq1LNa1pFDwPhYExhVYsOd3+b2+T/y+ZBpUdpeoN
-         PEHayiUsV9FjEVtGO6BimHj9s2F+FX2l+fXwMiiZZG8ZOCBJB5EYEiVJukAwA1BuPsc6
-         WSlx1YKmc62ycEephQNqC8T/USGhOdSMq3DiGHOzns3QL1jv6Xqpa5PIdJ4UL+vbQm3B
-         xpWMw8bjEEnx0NrSx81ckNRMPi6DXVKd5xsF6AiBYlHjf+u5BrhW6in44XQd7gMMk/x6
-         R5OQ==
-X-Gm-Message-State: APjAAAWpIJCT53se3eSW41lxqwhOoPjPvSzsoOQLylo8fhL1AJkLv50f
-        RYzt3wzLSlOxLRXXsklUitV5Yg==
-X-Google-Smtp-Source: APXvYqwDiHVpdD7BMNhYS2bnVXoM1q/slqOFnsU6otxntMAQv6kTSfBuPo9oiodL5AvGFY6i5kqTTw==
-X-Received: by 2002:a17:90a:c58e:: with SMTP id l14mr31848801pjt.104.1563232504058;
-        Mon, 15 Jul 2019 16:15:04 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id b29sm36007239pfr.159.2019.07.15.16.15.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 16:15:03 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     jic23@kernel.org, bleung@chromium.org,
-        enric.balletbo@collabora.com, groeck@chromium.org,
-        fabien.lahoudere@collabora.com, dianders@chromium.org
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v6 4/4] iio: cros_ec_accel_legacy: Add support for veyron-minnie
-Date:   Mon, 15 Jul 2019 16:14:54 -0700
-Message-Id: <20190715231454.189459-5-gwendal@chromium.org>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-In-Reply-To: <20190715231454.189459-1-gwendal@chromium.org>
-References: <20190715231454.189459-1-gwendal@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yn8VlLNQyAd5j32lIivn24k9NKqobex1p7VQed0BPHA=;
+        b=q/sBldqaSmoVmp2mW1piaffg0oGFS4TH8Usf9rMDAYTeYVVGlXMVAIv1hnxpKjxdM3
+         9xs7gO+lxJcy9SUZ+xXn7u0j0Ju3gPDFfba8oQPQP7leBII35ErOlbg9xIrTAfydny7p
+         K5UxBTwkXXfNahCq353H1AJQtZYGj/FrN2VOOL1oS3GeXU3gRbvP4LSQ+lBXa6RYx/q9
+         xOIZHJle0Nh6bDkCEWZlIU7vf8y34KARCZpFr21z9/QyBfn9p8jHicRjc+GPHqIm71+r
+         6yTB7glj15e/x1MfV1sxLhypNQ37QEbG6CSyv6EfXgW7TE5T+25z5td/DJMHziXG05rL
+         lSpA==
+X-Gm-Message-State: APjAAAWU7vOcebI8+CE/mLDaGZsqdidjMqqo5KFhJidUDIORptOvLjoz
+        dCzO3Et0of9rNMPYexBy4p/3FvQaLpHtTkPyBxfQKg==
+X-Google-Smtp-Source: APXvYqxCc4h//SlHxeX+EOOYxEHHm0Snz000w2zAi+ors9FXY+qRFFztl7vx0QzshzEbHiv4+phwJRFw642plHNUPi4=
+X-Received: by 2002:a05:6602:2256:: with SMTP id o22mr2598615ioo.95.1563232655885;
+ Mon, 15 Jul 2019 16:17:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190715191017.98488-1-mka@chromium.org> <20190715195557.GA29926@google.com>
+ <20190715200447.GT250418@google.com>
+In-Reply-To: <20190715200447.GT250418@google.com>
+From:   Gwendal Grignou <gwendal@chromium.org>
+Date:   Mon, 15 Jul 2019 16:17:24 -0700
+Message-ID: <CAPUE2us7HZvSbpCddx4u_5KcdxedNd43-o=MZDiNfcpbzt9aXA@mail.gmail.com>
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Always release lock when
+ returning from _read()
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Benson Leung <bleung@google.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Veyron minnie embedded controller presents 2 accelerometers using an
-older interface. Add function to query the data in cros_ec_accel.
+Sorry for the original mistake. I upload a patch at
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1702884.
 
-Verify accelerometers on veyron-minnie are presented and working.
-
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/iio/accel/cros_ec_accel_legacy.c | 40 ++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-index f65578c65a1c..39002cb5605d 100644
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -5,7 +5,7 @@
-  * Copyright 2017 Google, Inc
-  *
-  * This driver uses the memory mapper cros-ec interface to communicate
-- * with the Chrome OS EC about accelerometer data.
-+ * with the Chrome OS EC about accelerometer data or older commands.
-  * Accelerometer access is presented through iio sysfs.
-  */
- 
-@@ -33,6 +33,39 @@
-  */
- #define ACCEL_LEGACY_NSCALE 9586168
- 
-+static int cros_ec_accel_legacy_read_cmd(struct iio_dev *indio_dev,
-+				  unsigned long scan_mask, s16 *data)
-+{
-+	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-+	int ret;
-+	unsigned int i;
-+	u8 sensor_num;
-+
-+	/*
-+	 * Read all sensor data through a command.
-+	 * Save sensor_num, it is assumed to stay.
-+	 */
-+	sensor_num = st->param.info.sensor_num;
-+	st->param.cmd = MOTIONSENSE_CMD_DUMP;
-+	st->param.dump.max_sensor_count = CROS_EC_SENSOR_LEGACY_NUM;
-+	ret = cros_ec_motion_send_host_cmd(st,
-+			sizeof(st->resp->dump) + CROS_EC_SENSOR_LEGACY_NUM *
-+			sizeof(struct ec_response_motion_sensor_data));
-+	st->param.info.sensor_num = sensor_num;
-+	if (ret != 0) {
-+		dev_warn(&indio_dev->dev, "Unable to read sensor data\n");
-+		return ret;
-+	}
-+
-+	for_each_set_bit(i, &scan_mask, indio_dev->masklength) {
-+		*data = st->resp->dump.sensor[sensor_num].data[i] *
-+			st->sign[i];
-+		data++;
-+	}
-+
-+	return 0;
-+}
-+
- static int cros_ec_accel_legacy_read(struct iio_dev *indio_dev,
- 				     struct iio_chan_spec const *chan,
- 				     int *val, int *val2, long mask)
-@@ -150,7 +183,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
- 	indio_dev->info = &cros_ec_accel_legacy_info;
- 	state = iio_priv(indio_dev);
- 
--	state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-+	if (state->ec->cmd_readmem != NULL)
-+		state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-+	else
-+		state->read_ec_sensors_data = cros_ec_accel_legacy_read_cmd;
- 
- 	indio_dev->channels = cros_ec_accel_legacy_channels;
- 	indio_dev->num_channels = ARRAY_SIZE(cros_ec_accel_legacy_channels);
--- 
-2.22.0.510.g264f2c817a-goog
-
+On Mon, Jul 15, 2019 at 1:04 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Hi Benson,
+>
+> On Mon, Jul 15, 2019 at 12:55:57PM -0700, Benson Leung wrote:
+> > Hi Matthias,
+> >
+> > On Mon, Jul 15, 2019 at 12:10:17PM -0700, Matthias Kaehlcke wrote:
+> > > Before doing any actual work cros_ec_accel_legacy_read() acquires
+> > > a mutex, which is released at the end of the function. However for
+> > > 'calibbias' channels the function returns directly, without releasing
+> > > the lock. The next attempt to acquire the lock blocks forever. Instead
+> > > of an explicit return statement use the common return path, which
+> > > releases the lock.
+> > >
+> > > Fixes: 11b86c7004ef1 ("platform/chrome: Add cros_ec_accel_legacy driver")
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > >  drivers/iio/accel/cros_ec_accel_legacy.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
+> > > index 46bb2e421bb9..27ca4a64dddf 100644
+> > > --- a/drivers/iio/accel/cros_ec_accel_legacy.c
+> > > +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+> > > @@ -206,7 +206,8 @@ static int cros_ec_accel_legacy_read(struct iio_dev *indio_dev,
+> > >     case IIO_CHAN_INFO_CALIBBIAS:
+> > >             /* Calibration not supported. */
+> > >             *val = 0;
+> > > -           return IIO_VAL_INT;
+> > > +           ret = IIO_VAL_INT;
+> > > +           break;
+> >
+> > The value of ret is not used below this. It seems to be only used in
+> > case IIO_CHAN_INFO_RAW. In fact, with your change,
+> > there's no return value at all and we just reach the end of
+> > cros_ec_accel_legacy_read.
+> >
+> > >     default:
+> > >             return -EINVAL;
+> > >     }
+> >
+>
+> I messed up. I was over-confident that a FROMLIST patch in our 4.19
+> kernel + this patch applying on upstream means that upstream uses the
+> same code. I should have double-checked that the upstream context is
+> actually the same.
+>
+> Sorry for the noise.
