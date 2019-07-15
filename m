@@ -2,102 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C86569C97
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 822E969CB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732822AbfGOUUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:20:20 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45577 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732717AbfGOUUJ (ORCPT
+        id S1731724AbfGOUXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:23:01 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40107 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731055AbfGOUXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:20:09 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so7928319pfq.12;
-        Mon, 15 Jul 2019 13:20:08 -0700 (PDT)
+        Mon, 15 Jul 2019 16:23:01 -0400
+Received: by mail-io1-f67.google.com with SMTP id h6so36234930iom.7
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UVGDbnDZoiJbze/gsED6nUiGqLN0PdSlW4EjZ/iEn8Y=;
-        b=Bs6KDxjMwwKo9sMDuaIaCzeCmMopb97Wg59oJk83xQOuXvepgI1Mz8VTdtp9eGbmSn
-         7uAy3xtcveS8ZJWLK2iwmuPMM6KOjaQ7LZ4USAAVsB0j/G4e9u/3XUsQbDK7q/4to8nV
-         bRHySKognbcYLUmeD7IQi7a+fvKjmPB+Mm5Y42iHC6QHQNzRYqlFZfEbAi0XFD9SxH8J
-         31JRhhIfxT+4g17/bWSNSQ53JZQjVu1QlFpokyN9xjY/UeRB8hUCBkSc5EIITPFVH2ak
-         8aRRQu+70g3to6odeMink2/jqoFg4fBxCgKyr5ER1Jq7kaiNY8Eoiow7AWpFaQTtdeju
-         mutw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P4sgcLOMbyXJn+TV7zW0h6BmBF+H1WzQkFZRqrEO1yk=;
+        b=x8qRxSKXM/VFrSA9MdVLx5KR/z6b3iDcECgXoECDoiVev6JVwoSBGpwetlt5thhq44
+         mY09gs1r9IhHQVndWTzDlOjvOu4KG8gL+sgLdJSxK3igsH2XG067Hzry6zF87XPqWHOM
+         FXCowuUymmjDVWwzpv9J229PtLmL00goBLAvK1tzs2m+j1JcuKhz7xvFk+Yyw2PimOpZ
+         E4dmSDWdV7RfrlmV5Su2W3xFWcWHZKi/SnrW+emDui2uJNr0Injpf6LZ9IUBS75tkPBF
+         fUduPlI1iZUSCdklu3x/8fULWTmd4CjtfS9AKA6puwH6vHNJdgA3zPnQAxdEZxG1TjI0
+         JfxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UVGDbnDZoiJbze/gsED6nUiGqLN0PdSlW4EjZ/iEn8Y=;
-        b=OgBiuHTgdEtzHxEQNSVbXQfnQKOaafGbs5WYwMVjiaxR5dYNBbrA7K/stfu8SIaVpu
-         2mSOVcgUhF3uV9vdXQ5iZ5m+XZ02P3/nEf9bFsIyYOrYUyemhd3jbG64WWBPkdASIH+E
-         gAAnNufv//b1bdyv8SbRQfq4SjSknSvxSC1p0eXBKs9MqezkG8tY6Mcs1CrXY7Jw0oi5
-         qInZXJ/P0uII0h7U97EPyoZjbIVLlt8oPg2y5AMP3W13MPBWpCJ6p/5dp1iieK/dF/19
-         +i1APdjUTkI1zaLknRyuZDelt0O4VQQFuoTizXV2NE0PT4B1RPt4C/VN2rHLE0vi9NDP
-         G5zw==
-X-Gm-Message-State: APjAAAVVErj7X7p+2EjLwY9bRVgCnrr0FQ+/EePFwzDrch6KvVPRhnKi
-        RKB2PZDzAAm7RMbLSofnDCb0vxwe
-X-Google-Smtp-Source: APXvYqyMxK3+wHuKzD0wQsLzOEBTynHBpoPadS9g+K9lkLUbh1rJaZC35neZ9fgA4+HemSuELlTfuQ==
-X-Received: by 2002:a17:90a:8b98:: with SMTP id z24mr31684666pjn.77.1563222008265;
-        Mon, 15 Jul 2019 13:20:08 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id h1sm22730534pfg.55.2019.07.15.13.20.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 13:20:07 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 14/14] crypto: caam - add clock entry for i.MX8MQ
-Date:   Mon, 15 Jul 2019 13:19:42 -0700
-Message-Id: <20190715201942.17309-15-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190715201942.17309-1-andrew.smirnov@gmail.com>
-References: <20190715201942.17309-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P4sgcLOMbyXJn+TV7zW0h6BmBF+H1WzQkFZRqrEO1yk=;
+        b=P9Ces+fZheBDYsCJe4BKGnso4AyOATGsRtiycenbfUsT9+1fC48/84KjAzDLt5xF4p
+         hwcJTroqknOoK3kXz09fw8aADP+Q1eYLYZB2yz0mk2wMJ9bdUUhX9QMF+F6CLSRORQq0
+         zrrzbqdH9qEdiQlvJR3uJ84+AQdDHM++tvo4ZqMT5mepv/YmI3ShQWgGIY1dIkbyl8x+
+         yGD6OySdPL5ULe4Sh60jrCok5U7CemitVLBrcEyoxgaKcZjzpGzV6fSHe5pF0p5skH1q
+         vUPrQQYyB5tOr8G79dyHQ/citCG87iaxdbD7gfaGFgCmhMAvN+saKLBEAqu6sIbXflt7
+         XwbA==
+X-Gm-Message-State: APjAAAW+bid0xvtcDjOw06v/rz75e9Y7NjTkoo+BJvXdnQ+OvtGGiaQs
+        Bp7UCybotsXhmVO1XZUxLyRa44gCf4IYQn2nsegYqQ==
+X-Google-Smtp-Source: APXvYqxUdBXLkQNSTCf6BXUxQvwj8MwgN2wmZfnscGiL9J14U4GCW3ly/hYqzCTiXdS6t7GAf8gb6+fDRIEbeN5DQq4=
+X-Received: by 2002:a5d:8e08:: with SMTP id e8mr28360386iod.139.1563222180157;
+ Mon, 15 Jul 2019 13:23:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190701190940.7f23ac15@canb.auug.org.au> <20190712105340.1520bce0@canb.auug.org.au>
+In-Reply-To: <20190712105340.1520bce0@canb.auug.org.au>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 15 Jul 2019 14:22:49 -0600
+Message-ID: <CANLsYkwNM7c6d-3+jpf+V=HppQ9cnA-RDmam_6qUuKC_g_Tq7A@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock entry needed to support i.MX8MQ.
+Hi Stephen,
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Spencer <christopher.spencer@sea.co.uk>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/ctrl.c | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 11 Jul 2019 at 18:53, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> On Mon, 1 Jul 2019 19:09:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the char-misc tree got a conflict in:
+> >
+> >   drivers/hwtracing/coresight/of_coresight.c
+> >
+> > between commit:
+> >
+> >   418e3ea157ef ("bus_find_device: Unify the match callback with class_find_device")
+> >
+> > from the driver-core tree and commits:
+> >
+> >   22aa495a6477 ("coresight: Rename of_coresight to coresight-platform")
+> >   20961aea982e ("coresight: platform: Use fwnode handle for device search")
+> >
+> > from the char-misc tree.
+> >
+> > I fixed it up (I removed the file and added the following merge fix patch)
+> > and can carry the fix as necessary. This is now fixed as far as linux-next
+> > is concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 1 Jul 2019 19:07:20 +1000
+> > Subject: [PATCH] coresight: fix for "bus_find_device: Unify the match callback
+> >  with class_find_device"
+> >
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/hwtracing/coresight/coresight-platform.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> > index 3c5ceda8db24..fc67f6ae0b3e 100644
+> > --- a/drivers/hwtracing/coresight/coresight-platform.c
+> > +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> > @@ -37,7 +37,7 @@ static int coresight_alloc_conns(struct device *dev,
+> >       return 0;
+> >  }
+> >
+> > -int coresight_device_fwnode_match(struct device *dev, void *fwnode)
+> > +int coresight_device_fwnode_match(struct device *dev, const void *fwnode)
+> >  {
+> >       return dev_fwnode(dev) == fwnode;
+> >  }
+>
+> This is now a conflict between the driver-core tree and Linus' tree.
+>
+> The declaration of coresight_device_fwnode_match() also needs fixing up
+> in drivers/hwtracing/coresight/coresight-priv.h (as done in the patch
+> below supplied by Nathan Chancellor).
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index ad6ff4040bab..6f3b4405dcba 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -527,6 +527,7 @@ static const struct soc_device_attribute caam_imx_soc_table[] = {
- 	{ .soc_id = "i.MX6UL", .data = &caam_imx6ul_data },
- 	{ .soc_id = "i.MX6*",  .data = &caam_imx6_data },
- 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_data },
-+	{ .soc_id = "i.MX8MQ", .data = &caam_imx7_data },
- 	{ .family = "Freescale i.MX" },
- 	{ /* sentinel */ }
- };
--- 
-2.21.0
+I have updated my next branch and you shouldn't see this again.
 
+Thanks,
+Mathieu
+
+>
+> From: Nathan Chancellor <natechancellor@gmail.com>
+> Date: Mon, 1 Jul 2019 11:28:08 -0700
+> Subject: [PATCH] coresight: Make the coresight_device_fwnode_match declaration's fwnode parameter const
+>
+> drivers/hwtracing/coresight/coresight.c:1051:11: error: incompatible pointer types passing 'int (struct device *, void *)' to parameter of type 'int (*)(struct device *, const void *)' [-Werror,-Wincompatible-pointer-types]
+>                                       coresight_device_fwnode_match);
+>                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/device.h:173:17: note: passing argument to parameter 'match' here
+>                                int (*match)(struct device *dev, const void *data));
+>                                      ^
+> 1 error generated.
+>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-priv.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+> index 8b07fe55395a..7d401790dd7e 100644
+> --- a/drivers/hwtracing/coresight/coresight-priv.h
+> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+> @@ -202,6 +202,6 @@ static inline void *coresight_get_uci_data(const struct amba_id *id)
+>
+>  void coresight_release_platform_data(struct coresight_platform_data *pdata);
+>
+> -int coresight_device_fwnode_match(struct device *dev, void *fwnode);
+> +int coresight_device_fwnode_match(struct device *dev, const void *fwnode);
+>
+>  #endif
+> --
+> 2.22.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
