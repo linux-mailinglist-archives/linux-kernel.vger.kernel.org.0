@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACED568EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32CF768EA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388477AbfGOOIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:08:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58206 "EHLO mail.kernel.org"
+        id S2388503AbfGOOIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:08:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387438AbfGOOIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:08:14 -0400
+        id S2387532AbfGOOIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:08:20 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 052B42083D;
-        Mon, 15 Jul 2019 14:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E32D52083D;
+        Mon, 15 Jul 2019 14:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199693;
-        bh=uD0iJ8pg9FMGfYsCPPx6lt0Ci+QLueRNLz1NcRGd82I=;
+        s=default; t=1563199699;
+        bh=1HKtzX5MtKJ+4vkqsLa8JHD2FiqDViQ4LpJYuUZL4vk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WDikP0q5qkRBcK2//7E7LlEv21Bjm/jPkVO8jDxbuAv8/TPfeOGuj5ev8qs48pNsc
-         A5C1Q7dO1z3aipWzrC7WJfJUeB6NSkycRMLDjbu0p2caRzh2f9IRbSVDZAhM4jBLMd
-         Hwa5aGlzg3WG19PZ8Sp2Qkjlp4Pt28NClDcNfFYw=
+        b=Yg/B4cyMDbAahlVztmcRPCPBiPNT7Z0gS5yw7t+5vKvhqnW0Yy3gbKNVPndFm9Q7o
+         6Cn+cJgAuJY12lyUnt24JoGzDUq4dD1tP/v2I4E4azzMXEdUyQz9m4/sLQaoBQOj2B
+         bFauRw2m2IBlf9qhL8ZBXQrmfgtahZ9xU6BaEjeY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.1 074/219] irqchip/meson-gpio: Add support for Meson-G12A SoC
-Date:   Mon, 15 Jul 2019 10:01:15 -0400
-Message-Id: <20190715140341.6443-74-sashal@kernel.org>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 076/219] media: fdp1: Support M3N and E3 platforms
+Date:   Mon, 15 Jul 2019 10:01:17 -0400
+Message-Id: <20190715140341.6443-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -46,44 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-[ Upstream commit c64a9e804ccf86eb202bfd1c6a8c5233c75a0431 ]
+[ Upstream commit 4e8c120de9268fc26f583268b9d22e7d37c4595f ]
 
-The Meson-G12A SoC uses the same GPIO interrupt controller IP block as the
-other Meson SoCs, A totle of 100 pins can be spied on, which is the sum of:
+New Gen3 R-Car platforms incorporate the FDP1 with an updated version
+register. No code change is required to support these targets, but they
+will currently report an error stating that the device can not be
+identified.
 
-- 223:100 undefined (no interrupt)
-- 99:97   3 pins on bank GPIOE
-- 96:77   20 pins on bank GPIOX
-- 76:61   16 pins on bank GPIOA
-- 60:53   8 pins on bank GPIOC
-- 52:37   16 pins on bank BOOT
-- 36:28   9 pins on bank GPIOH
-- 27:12   16 pins on bank GPIOZ
-- 11:0    12 pins in the AO domain
+Update the driver to match against the new device types.
 
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-meson-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar_fdp1.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index 7b531fd075b8..7599b10ecf09 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -73,6 +73,7 @@ static const struct of_device_id meson_irq_gpio_matches[] = {
- 	{ .compatible = "amlogic,meson-gxbb-gpio-intc", .data = &gxbb_params },
- 	{ .compatible = "amlogic,meson-gxl-gpio-intc", .data = &gxl_params },
- 	{ .compatible = "amlogic,meson-axg-gpio-intc", .data = &axg_params },
-+	{ .compatible = "amlogic,meson-g12a-gpio-intc", .data = &axg_params },
- 	{ }
- };
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index 6bda1eee9170..4f103be215d3 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -257,6 +257,8 @@ MODULE_PARM_DESC(debug, "activate debug info");
+ #define FD1_IP_H3_ES1			0x02010101
+ #define FD1_IP_M3W			0x02010202
+ #define FD1_IP_H3			0x02010203
++#define FD1_IP_M3N			0x02010204
++#define FD1_IP_E3			0x02010205
  
+ /* LUTs */
+ #define FD1_LUT_DIF_ADJ			0x1000
+@@ -2365,6 +2367,12 @@ static int fdp1_probe(struct platform_device *pdev)
+ 	case FD1_IP_H3:
+ 		dprintk(fdp1, "FDP1 Version R-Car H3\n");
+ 		break;
++	case FD1_IP_M3N:
++		dprintk(fdp1, "FDP1 Version R-Car M3N\n");
++		break;
++	case FD1_IP_E3:
++		dprintk(fdp1, "FDP1 Version R-Car E3\n");
++		break;
+ 	default:
+ 		dev_err(fdp1->dev, "FDP1 Unidentifiable (0x%08x)\n",
+ 				hw_version);
 -- 
 2.20.1
 
