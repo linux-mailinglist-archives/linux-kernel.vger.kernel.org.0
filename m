@@ -2,126 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77CB699BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3579699B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbfGOR3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:29:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35004 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730774AbfGOR3u (ORCPT
+        id S1731671AbfGOR2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:28:18 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44353 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731244AbfGOR2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:29:50 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x25so17126918ljh.2;
-        Mon, 15 Jul 2019 10:29:48 -0700 (PDT)
+        Mon, 15 Jul 2019 13:28:18 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b7so17813593otl.11;
+        Mon, 15 Jul 2019 10:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RatHWh+WSZJO51BDaAO/tJPgTyTi6HlHiiIlwIODHqM=;
-        b=YCxjBQ0dgT+LIdjwWrqKjoEqsb1bDymfKP3kPV6zR9IjEopiAu0/EqlOebUUfHDX5w
-         zz+4Tvgg0oDcoZ2pVEGcgghbm0LXuJN142WjlGSdRDdgrpRvwAHQ+jNjbsKkhyhGAElY
-         P5D6/38/7GcB1LVFXGCNkSLfs8eLXr/pIwRbh9lm2+HvDzYK7mbn2snTjQ3+5J8GR5aV
-         ehv5RjiXuc74y3AEAXMa0yBTmOWtGeGLlqc6pUj+A2YfHTXnM/GHXjEadwLyUBrDK3le
-         x1JgQS5hd85AZzGH0WxnyNnEuxnGNW8PEbDcWM1IxSjE9cnDlr4lViHNlTq8LPkQ+bWu
-         oZig==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HnnOnZBQP1Cav/Lz0tbA/DG3A9QQlkvslSRS75Fhsp8=;
+        b=OhdNkyY8F0PXWv8P8vpcWJ1/uZjniPOJJO12nWFstF1crz+Go6ZWpzhmhsqGqgMI7H
+         GBbRrLzsr1K6JootoUSnz9ALtYvHGWNc1uDqSbOxj+XzbsoSBaxRXnC7oohtIZ+eUMtL
+         sxTrX0lHSd1txyA4gVJe+lZs9Mbre+AfuUDBdxda7/DnqrYb/eFP8T33gVIlTVuC/g3D
+         r1MdgWrUJ0UB2HC3dCENzq+hBIzWWrmAIpAxbECVS7OVCMCbp4A/8SSSKy8xgd+UD7qH
+         5ygpFKVYzehTLvfJr5dxc8mEdmeuJy7eWQHqyPG+swLpm2FS9YyE2YXfpLgRmcD/cyYW
+         zkFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RatHWh+WSZJO51BDaAO/tJPgTyTi6HlHiiIlwIODHqM=;
-        b=BPjXXAHQWmtj9Aryjy+qx6ijFkxaYkxVg1Y2Y+0KfMzJMpyP9JKH29/V4R7/FtFAD9
-         w9gYp9yKornjpniRpZzrx6IcD617CMxeQ8q8z1tqiYlEBv0WuE5w9zPOME5bqzjzs8Lc
-         aPPNARBfU9PqrcDypqVvJ8b7MwaU1vJdWEAR3Ys5WFZiv+NYGI9RQooEBbhZ7V5lM9S+
-         gD9jY41UATjy/LEmtz6DzAq2UryAHqsxi9GShdkxcCePvG9ZnYjAF7nGCZ8iPtuWXuiJ
-         oy4Esk3JkAiCjW4BSp5e3rsvnhjxxKlkRcTGN+b+au/PE+Cr33BSXhUAqfRjwkLCZzqU
-         BUkw==
-X-Gm-Message-State: APjAAAUrIOMcAHaPcniJWXYfojYrEZq+SppsMlwF/yMf20/j7x7hXfUB
-        nc2R6K3d4aSEAk9UD9OresI=
-X-Google-Smtp-Source: APXvYqybrC/BDz0zU8yBa2W+gs2MV9KsGr77hQlEYneiZ1tKRQSVHKyXIgKDtPbQLztrw5DYuoDAWA==
-X-Received: by 2002:a2e:80d6:: with SMTP id r22mr14795572ljg.83.1563211787757;
-        Mon, 15 Jul 2019 10:29:47 -0700 (PDT)
-Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id b17sm3248765ljf.34.2019.07.15.10.29.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 10:29:47 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 03/13] ARM: tegra: Propagate error from tegra_idle_lp2_last()
-Date:   Mon, 15 Jul 2019 20:26:19 +0300
-Message-Id: <20190715172629.4437-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190715172629.4437-1-digetx@gmail.com>
-References: <20190715172629.4437-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HnnOnZBQP1Cav/Lz0tbA/DG3A9QQlkvslSRS75Fhsp8=;
+        b=cjTS9V4HD+EscteRgcM9WkK7AQIfFNA38xgodD1vaJ149vS1BM3m7AxuLudKrFB5f7
+         OR71Il+ckHdzqPGi2vMWz3EdMYrIIkaXRiXOLGNWe2yNFfM4RWxrZNt8/mHvNQdcuxXG
+         PA1VIyMb2BpT8lRcSardRerycqyfWCQix7pBSheD+zi0HgSC2StQ2sLv66oXcIp9IByl
+         05N1woo/ziKqq5odH6akll501kNsWxyW7et3KHmHqxICNzFuYV85fgfGqrndZEw2+ktk
+         cnAP5ZdZEkwA1R5n5gtW7rhHc5SewB/+Lu+BMoWs1Z6t5Eti1E1cFLS9RHDK4Tarodxa
+         HHMA==
+X-Gm-Message-State: APjAAAX+7hoPo/1AGXHuKTmTFZulTu2Z0YBcbJ19xi+pZ+VKaKoEeKTz
+        p7qc45hpi6OsBoWtvwTuzewQNvOJcGI8XrYUW50kBA==
+X-Google-Smtp-Source: APXvYqw8ll09WKFXUcoLvj+kqijbMcBE40SbDOOHBrCFaNGDKzQpjnlCkR0xQKyZyyMOqdqLLBFmiPBnH4g0HsOcTa0=
+X-Received: by 2002:a9d:222c:: with SMTP id o41mr21287254ota.278.1563211695910;
+ Mon, 15 Jul 2019 10:28:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190715144848.4cc41e07@canb.auug.org.au> <ccb5b818-c191-2d9e-311f-b2c79b7f6823@infradead.org>
+In-Reply-To: <ccb5b818-c191-2d9e-311f-b2c79b7f6823@infradead.org>
+From:   Laura Garcia <nevola@gmail.com>
+Date:   Mon, 15 Jul 2019 19:28:04 +0200
+Message-ID: <CAF90-WirEMg7arNOTmo+tyJ20rt_zeN=nr0OO6Qk0Ss8J4QrUA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jul 15 (HEADERS_TEST w/ netfilter tables offload)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Netfilter Development Mailing list 
+        <netfilter-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpu_suspend() may fail, it's never good to lose information about
-failure because it may become very useful for the caller. The new CPUIDLE
-driver will handle all of possible error cases, including the case of
-tegra_idle_lp2_last() failure.
+CC'ing netfilter.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/mach-tegra/pm.c | 8 ++++++--
- arch/arm/mach-tegra/pm.h | 2 +-
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 2f6fb54be9f8..f9c9bce9e15d 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
- 	tegra_pmc_enter_suspend_mode(mode);
- }
- 
--void tegra_idle_lp2_last(void)
-+int tegra_idle_lp2_last(void)
- {
-+	int err;
-+
- 	tegra_pm_set(TEGRA_SUSPEND_LP2);
- 
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
- 
--	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-+	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
- 	/*
- 	 * Resume L2 cache if it wasn't re-enabled early during resume,
-@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
- 
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
-+
-+	return err;
- }
- 
- enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 3f3164ad04b7..ae68fc7db576 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
- 
- void tegra_clear_cpu_in_lp2(void);
- void tegra_set_cpu_in_lp2(void);
--void tegra_idle_lp2_last(void);
-+int tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.22.0
-
+On Mon, Jul 15, 2019 at 6:45 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 7/14/19 9:48 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Please do not add v5.4 material to your linux-next included branches
+> > until after v5.3-rc1 has been released.
+> >
+> > Changes since 20190712:
+> >
+>
+> Hi,
+>
+> I am seeing these build errors from HEADERS_TEST (or KERNEL_HEADERS_TEST)
+> for include/net/netfilter/nf_tables_offload.h.s:
+>
+>   CC      include/net/netfilter/nf_tables_offload.h.s
+> In file included from ./../include/net/netfilter/nf_tables_offload.h:5:0,
+>                  from <command-line>:0:
+> ../include/net/netfilter/nf_tables.h: In function =E2=80=98nft_gencursor_=
+next=E2=80=99:
+> ../include/net/netfilter/nf_tables.h:1223:14: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return net->nft.gencursor + 1 =3D=3D 1 ? 1 : 0;
+>               ^~~
+>               nf
+> In file included from ../include/linux/kernel.h:11:0,
+>                  from ../include/net/flow_offload.h:4,
+>                  from ./../include/net/netfilter/nf_tables_offload.h:4,
+>                  from <command-line>:0:
+> ../include/net/netfilter/nf_tables.h: In function =E2=80=98nft_genmask_cu=
+r=E2=80=99:
+> ../include/net/netfilter/nf_tables.h:1234:29: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>                              ^
+> ../include/linux/compiler.h:261:17: note: in definition of macro =E2=80=
+=98__READ_ONCE=E2=80=99
+>   union { typeof(x) __val; char __c[1]; } __u;   \
+>                  ^
+> ../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro=
+ =E2=80=98READ_ONCE=E2=80=99
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>               ^~~~~~~~~
+> ../include/net/netfilter/nf_tables.h:1234:29: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>                              ^
+> ../include/linux/compiler.h:263:22: note: in definition of macro =E2=80=
+=98__READ_ONCE=E2=80=99
+>    __read_once_size(&(x), __u.__c, sizeof(x));  \
+>                       ^
+> ../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro=
+ =E2=80=98READ_ONCE=E2=80=99
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>               ^~~~~~~~~
+> ../include/net/netfilter/nf_tables.h:1234:29: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>                              ^
+> ../include/linux/compiler.h:263:42: note: in definition of macro =E2=80=
+=98__READ_ONCE=E2=80=99
+>    __read_once_size(&(x), __u.__c, sizeof(x));  \
+>                                           ^
+> ../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro=
+ =E2=80=98READ_ONCE=E2=80=99
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>               ^~~~~~~~~
+> ../include/net/netfilter/nf_tables.h:1234:29: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>                              ^
+> ../include/linux/compiler.h:265:30: note: in definition of macro =E2=80=
+=98__READ_ONCE=E2=80=99
+>    __read_once_size_nocheck(&(x), __u.__c, sizeof(x)); \
+>                               ^
+> ../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro=
+ =E2=80=98READ_ONCE=E2=80=99
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>               ^~~~~~~~~
+> ../include/net/netfilter/nf_tables.h:1234:29: error: =E2=80=98const struc=
+t net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
+=80=98nf=E2=80=99?
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>                              ^
+> ../include/linux/compiler.h:265:50: note: in definition of macro =E2=80=
+=98__READ_ONCE=E2=80=99
+>    __read_once_size_nocheck(&(x), __u.__c, sizeof(x)); \
+>                                                   ^
+> ../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro=
+ =E2=80=98READ_ONCE=E2=80=99
+>   return 1 << READ_ONCE(net->nft.gencursor);
+>               ^~~~~~~~~
+> make[2]: *** [../scripts/Makefile.build:304: include/net/netfilter/nf_tab=
+les_offload.h.s] Error 1
+>
+>
+> Should this header file not be tested?
+>
+> thanks.
+> --
+> ~Randy
