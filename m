@@ -2,116 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F5268623
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E006863F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbfGOJRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 05:17:02 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:32947 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729496AbfGOJRB (ORCPT
+        id S1729638AbfGOJYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 05:24:07 -0400
+Received: from smtp180.sjtu.edu.cn ([202.120.2.180]:49552 "EHLO
+        smtp180.sjtu.edu.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbfGOJYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 05:17:01 -0400
-Received: by mail-wm1-f67.google.com with SMTP id h19so13824718wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 02:16:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=v5fo+uSi73xpR+4ETmGVl9w7fmYmhPooNofZwTaxS60=;
-        b=QOf8IFQxzTHXVZqAIBKh81bJKzMUCaOE2Oi3BhpMd1Vz9RavscY08HhcPN2O7C3NpO
-         bURFfmHYTM53qw+HTZ9BssdEmPPBHhoKxmZw/5P9KmbpgxQzpRUJ3Ij+vtcFfUjjl5bG
-         TbfaC3Ynt6tXL6NEAIjT4P3M/fLLMsnY/SrOitF+NNh0r1tvUk8+fsDm2kyzHQKX/Wit
-         /LzH+PEdkiChcVAeZhISj7fzs+m1FwjCbtEzwfx1BfYlbbMRHNjU3g6CPQnoh1y4tKwd
-         nPJE1x7ty0PwA8X1y+aUAVP8WafNB1YZzf34hVG/NXpSS6O04RurSYc6ViOzxZYuDvc2
-         39Uw==
-X-Gm-Message-State: APjAAAXpjzhUEZ0SEQ/CMrJhAaA+vjkuInzxsp2PqzfREOo9kgif9//q
-        LtQMA55D4TQCZU6/wVbwAMftIQ==
-X-Google-Smtp-Source: APXvYqx/8fS4DHovqQrXPURh4GRC5n8Wt1AN2V3TGuiwf2O7Uf1HvdjxSGYzf+fWQVXcWRo5LGl0GA==
-X-Received: by 2002:a1c:20c3:: with SMTP id g186mr11970612wmg.15.1563182219160;
-        Mon, 15 Jul 2019 02:16:59 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:e983:8394:d6:a612? ([2001:b07:6468:f312:e983:8394:d6:a612])
-        by smtp.gmail.com with ESMTPSA id x20sm12605163wmc.1.2019.07.15.02.16.58
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 02:16:58 -0700 (PDT)
-Subject: Re: [PATCH RESEND] i386/kvm: support guest access CORE cstate
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-References: <1563154124-18579-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <ba3ae595-7f82-d17b-e8ed-6e86e9195ce5@redhat.com>
-Date:   Mon, 15 Jul 2019 11:16:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <1563154124-18579-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Jul 2019 05:24:06 -0400
+Received: from proxy01.sjtu.edu.cn (unknown [202.112.26.54])
+        by smtp180.sjtu.edu.cn (Postfix) with ESMTPS id C132D1009AC14;
+        Mon, 15 Jul 2019 17:14:34 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by proxy01.sjtu.edu.cn (Postfix) with ESMTP id B8A0E201B4B7F;
+        Mon, 15 Jul 2019 16:59:07 +0800 (CST)
+X-Virus-Scanned: amavisd-new at proxy01.sjtu.edu.cn
+Received: from proxy01.sjtu.edu.cn ([127.0.0.1])
+        by localhost (proxy01.sjtu.edu.cn [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id JT3smSJvExNG; Mon, 15 Jul 2019 16:59:07 +0800 (CST)
+Received: from xywang-pc.ipads-lab.se.sjtu.edu.cn (unknown [202.120.40.82])
+        (Authenticated sender: xywang.sjtu@sjtu.edu.cn)
+        by proxy01.sjtu.edu.cn (Postfix) with ESMTPA id 9165820424204;
+        Mon, 15 Jul 2019 16:59:07 +0800 (CST)
+From:   xywang.sjtu@sjtu.edu.cn
+To:     rostedt@goodmis.org, mingo@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+Subject: [PATCH 1/2] tracing: replace simple_strtol() by kstrtoint()
+Date:   Mon, 15 Jul 2019 16:58:55 +0800
+Message-Id: <20190715085856.5664-1-xywang.sjtu@sjtu.edu.cn>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/07/19 03:28, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Allow guest reads CORE cstate when exposing host CPU power management capabilities 
-> to the guest. PKG cstate is restricted to avoid a guest to get the whole package 
-> information in multi-tenant scenario.
-> 
-> Cc: Eduardo Habkost <ehabkost@redhat.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+From: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
 
-Hi,
+The simple_strtol() function is deprecated. kstrto[l,int]() are
+the correct replacements as they can properly handle overflows.
 
-QEMU is in hard freeze now.  This will be applied after the release.
+This patch replaces the deprecated simple_strtol() use introduced recently.
+As skip_entries is actually int-typed, we are safe to use kstrtoint() here.
 
-Thanks,
+Same as before, set 0 to skip_entries on string parsing error.
 
-Paolo
+Fixes: dbfe67334a17 ("tracing: kdb: The skip_lines parameter should have been skip_entries")
+Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+---
+ kernel/trace/trace_kdb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->  linux-headers/linux/kvm.h | 4 +++-
->  target/i386/kvm.c         | 3 ++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/linux-headers/linux/kvm.h b/linux-headers/linux/kvm.h
-> index b53ee59..d648fde 100644
-> --- a/linux-headers/linux/kvm.h
-> +++ b/linux-headers/linux/kvm.h
-> @@ -696,9 +696,11 @@ struct kvm_ioeventfd {
->  #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
->  #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
->  #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
-> +#define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
->  #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
->                                                KVM_X86_DISABLE_EXITS_HLT | \
-> -                                              KVM_X86_DISABLE_EXITS_PAUSE)
-> +                                              KVM_X86_DISABLE_EXITS_PAUSE | \
-> +                                              KVM_X86_DISABLE_EXITS_CSTATE)
->  
->  /* for KVM_ENABLE_CAP */
->  struct kvm_enable_cap {
-> diff --git a/target/i386/kvm.c b/target/i386/kvm.c
-> index 3b29ce5..49a0cc1 100644
-> --- a/target/i386/kvm.c
-> +++ b/target/i386/kvm.c
-> @@ -1645,7 +1645,8 @@ int kvm_arch_init(MachineState *ms, KVMState *s)
->          if (disable_exits) {
->              disable_exits &= (KVM_X86_DISABLE_EXITS_MWAIT |
->                                KVM_X86_DISABLE_EXITS_HLT |
-> -                              KVM_X86_DISABLE_EXITS_PAUSE);
-> +                              KVM_X86_DISABLE_EXITS_PAUSE |
-> +                              KVM_X86_DISABLE_EXITS_CSTATE);
->          }
->  
->          ret = kvm_vm_enable_cap(s, KVM_CAP_X86_DISABLE_EXITS, 0,
-> 
+diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
+index cca65044c14c..5d9dd4c3f23f 100644
+--- a/kernel/trace/trace_kdb.c
++++ b/kernel/trace/trace_kdb.c
+@@ -104,8 +104,7 @@ static int kdb_ftdump(int argc, const char **argv)
+ 		return KDB_ARGCOUNT;
+ 
+ 	if (argc) {
+-		skip_entries = simple_strtol(argv[1], &cp, 0);
+-		if (*cp)
++		if (kstrtoint(argv[1], 0, &skip_entries))
+ 			skip_entries = 0;
+ 	}
+ 
+-- 
+2.11.0
 
