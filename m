@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B2469B95
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1154869B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:41:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731020AbfGOTos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:44:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729598AbfGOTos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:44:48 -0400
-Received: from localhost (unknown [88.128.80.139])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B1D520659;
-        Mon, 15 Jul 2019 19:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563219887;
-        bh=oQj6Q2Yz9cXpmNLaOyHdKv66gt1/MQq7sOD0zHWZ/W4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hKwDwB7SbQEXh2CssSpDmxo/fQYxnXFtKXqdkf5B5vQKo5TfBSrcwvciknaszoTal
-         HAKUOvAQ8yJMFljsBENv6+pwHubByMlh4WtqjFjRoeKlDxR6r9dmaChxOYhzUZN45S
-         HmWqKH1zt7Puxk4qZ6s/m2+rfBUd0803N6TRojMI=
-Date:   Mon, 15 Jul 2019 21:19:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Gromm <christian.gromm@microchip.com>,
-        tglx@linutronix.de
-Subject: Re: [PATCH 4/7] staging: most: Use spinlock_t instead of struct
- spinlock
-Message-ID: <20190715191933.GA10934@kroah.com>
-References: <20190704153803.12739-1-bigeasy@linutronix.de>
- <20190704153803.12739-5-bigeasy@linutronix.de>
+        id S1731089AbfGOTk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:40:57 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43472 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729598AbfGOTk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:40:56 -0400
+Received: by mail-io1-f68.google.com with SMTP id k20so36014677ios.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o8RepNcMBA34lIipd4aTy/F+kZlm41FUuqckkYbpx70=;
+        b=Tt3NTf3AABd1b8nrlASZqZEkaCYO9iSkuwDUefXej4OQzSnylihsL4UZi0wG5PC1iA
+         8PVYrNjv5nNFLKaafOELrJ55qrpvArBrE9wukxZ88piEJbA7bNs3hsIfAQjvTRRfdVL8
+         Mw75yZ35V1mg1HI2Tpt3kM/gMf8ElRNkM4lRk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o8RepNcMBA34lIipd4aTy/F+kZlm41FUuqckkYbpx70=;
+        b=lOB0V5lkDAk5zD1wXs655HQtwGLPrGktcIGM4p79e5KW1ghUbGCAP+1D9fLL6v94Z6
+         8WFhx5fy7jciv8HVv89aowrCBESvCgceU29J7S6e1swPwLx2T1OegPpUf8fP3yG8XXiC
+         DpRO+jlQ/Tpx4v2f0XN8pCaspqb02n9X3uNncEDBHNt+ME78+lGjK0zJwlMTe/wob/bS
+         Ln4t54c8mjPQgNL7+jYMM0QuLRRfGkox83fC3P61pLKgjLNMLigbGlCRqjT4tchzGLo5
+         UxjLfqS7Ct/Pf7/lBKM2GZ5TjmNHjviNB4wByCYOaMQsYrwYnvcuuB9UjFr/7MLCVcyx
+         /MYw==
+X-Gm-Message-State: APjAAAUiQLS+am8RH3kGVQMOZiaZSd49WTYrJx9ftue8NpkR83a9RL3s
+        iZiWI1iNgymhPej4NNkJftZazLROhio=
+X-Google-Smtp-Source: APXvYqztcGmK/AwVTClgCvMJ8Wex+CeyLAlZA83A8OP/exWAq5DqCqWmwc/JdmYAWFHheboyEdghVw==
+X-Received: by 2002:a5d:8a06:: with SMTP id w6mr8203058iod.267.1563219655961;
+        Mon, 15 Jul 2019 12:40:55 -0700 (PDT)
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com. [209.85.166.51])
+        by smtp.gmail.com with ESMTPSA id v13sm16214196ioq.13.2019.07.15.12.40.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 12:40:55 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id q22so36052472iog.4
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:40:55 -0700 (PDT)
+X-Received: by 2002:a02:ac03:: with SMTP id a3mr30679998jao.132.1563219654968;
+ Mon, 15 Jul 2019 12:40:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704153803.12739-5-bigeasy@linutronix.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190715191017.98488-1-mka@chromium.org>
+In-Reply-To: <20190715191017.98488-1-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 15 Jul 2019 12:40:42 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WT6TT+iyGVNUhNcmAsVJip6X4mytuNJPGwMkk4F4i75g@mail.gmail.com>
+Message-ID: <CAD=FV=WT6TT+iyGVNUhNcmAsVJip6X4mytuNJPGwMkk4F4i75g@mail.gmail.com>
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Always release lock when
+ returning from _read()
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 05:38:00PM +0200, Sebastian Andrzej Siewior wrote:
-> For spinlocks the type spinlock_t should be used instead of "struct
-> spinlock".
-> 
-> Use spinlock_t for spinlock's definition.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Christian Gromm <christian.gromm@microchip.com>
-> Cc: devel@driverdev.osuosl.org
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Hi,
+
+On Mon, Jul 15, 2019 at 12:10 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Before doing any actual work cros_ec_accel_legacy_read() acquires
+> a mutex, which is released at the end of the function. However for
+> 'calibbias' channels the function returns directly, without releasing
+> the lock. The next attempt to acquire the lock blocks forever. Instead
+> of an explicit return statement use the common return path, which
+> releases the lock.
+>
+> Fixes: 11b86c7004ef1 ("platform/chrome: Add cros_ec_accel_legacy driver")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  drivers/staging/most/net/net.c     | 3 +--
->  drivers/staging/most/video/video.c | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/most/net/net.c b/drivers/staging/most/net/net.c
-> index c8a64e2090273..09b604df45e63 100644
-> --- a/drivers/staging/most/net/net.c
-> +++ b/drivers/staging/most/net/net.c
-> @@ -69,7 +69,7 @@ struct net_dev_context {
->  
->  static struct list_head net_devices = LIST_HEAD_INIT(net_devices);
->  static struct mutex probe_disc_mt; /* ch->linked = true, most_nd_open */
-> -static struct spinlock list_lock; /* list_head, ch->linked = false, dev_hold */
-> +static DEFINE_SPINLOCK(list_lock); /* list_head, ch->linked = false, dev_hold */
->  static struct core_component comp;
->  
->  static int skb_to_mamac(const struct sk_buff *skb, struct mbo *mbo)
-> @@ -507,7 +507,6 @@ static struct core_component comp = {
->  
->  static int __init most_net_init(void)
->  {
-> -	spin_lock_init(&list_lock);
->  	mutex_init(&probe_disc_mt);
->  	return most_register_component(&comp);
->  }
-> diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
-> index adca250062e1b..fcd9e111e8bd0 100644
-> --- a/drivers/staging/most/video/video.c
-> +++ b/drivers/staging/most/video/video.c
-> @@ -54,7 +54,7 @@ struct comp_fh {
->  };
->  
->  static struct list_head video_devices = LIST_HEAD_INIT(video_devices);
-> -static struct spinlock list_lock;
-> +static DEFINE_SPINLOCK(list_lock);
->  
->  static inline bool data_ready(struct most_video_dev *mdev)
->  {
-> @@ -540,7 +540,6 @@ static struct core_component comp = {
->  
->  static int __init comp_init(void)
->  {
-> -	spin_lock_init(&list_lock);
->  	return most_register_component(&comp);
->  }
->  
+>  drivers/iio/accel/cros_ec_accel_legacy.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Does not apply on top of Linus's tree right now :(
+See also <https://lkml.kernel.org/r/39403a4c-bf7f-6a98-890c-57397fa66493@collabora.com>
 
-Can you rebase and resend once 5.3-rc1 is out?
+Actually, the "Fixes" tag is wrong here, though.  The problem only
+exists because we have <https://crrev.com/c/1632659> in our tree, AKA
+("FROMLIST: iio: cros_ec : Extend legacy support to ARM device").
+Before that there was no mutex.  For upstream purposes this could
+probably be squashed into the original patch.
 
-thanks,
-
-greg k-h
+-Doug
