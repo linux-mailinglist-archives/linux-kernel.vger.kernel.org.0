@@ -2,120 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08AB669BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5C269BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731735AbfGOTw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:52:58 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44622 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfGOTw6 (ORCPT
+        id S1730903AbfGOT4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:56:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43170 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729525AbfGOT4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:52:58 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i18so8211178pgl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:52:57 -0700 (PDT)
+        Mon, 15 Jul 2019 15:56:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so8214140pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=VvTFFsjpspmxJg0Zk+lQCOkMvx372OdaubqDPGmaJoo=;
-        b=Y0+6yg5uqNAPdQD+ah/uXtJodBiOu7qXGUZsamO3dQTNlZJzjg4Ek26PN9sH6cPymb
-         yvR0TfhEiZSxvEWJREY4WRbKyM9hxRYvEyrRK+nFIVTjd5wGPQeM30hJAvFss33qjOr6
-         a5lf0Z0h0i0GZU8VbvfaF5gPmTNLiJIByg5+vUiVbxaIVScuLtuDWJCmBENGOlV8KHVP
-         myqNj9DcwuUhbVYJHd/itZBOFC97cVLWqm1lHnGNzPoaLmMwYpW6KTiRNUSyzsRHwMI3
-         QJzx5hp785DtFA36ySOTX7rwRUUC/c5ya6BCZiOXxIALW7dYtFG/We6ISxZhV9/cZeit
-         dtwg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LcjZDPgdL7DrGBvMmJVL7aqjwkNf4gUG0/jK3NFbFQU=;
+        b=hrf+T3xib0rwcl64f3eIU+EwrwfrXUdPQ26av7rw/B4o18aGkqFo6P01Iofzv92Mpc
+         OQrSZ8JoDrEcf9yyDqvPS7vCZY8J8b33Fr3K6WW9GMF+DC9uVHy+2HFlBuzSTjEkA5Jr
+         vc7SiXyV7bLfQ1MSgA0w5g8PEK4KpdsZgP7RpOzjcaIc+Lkr5WHyYJnlbAQLKBVSklY0
+         qO4rOrNL4eAi2YZTbdrmLj0aNZmY9QiJnPJQ718NoAeMh/zSaeslzjjD6x9qA77pSbEu
+         7sW3stgc1yfa1PUQAZuqVpiUWO9X1jSb3oZWnK9o62qaKIjJmPbY2WsIEcvihUIjfPm2
+         NtDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=VvTFFsjpspmxJg0Zk+lQCOkMvx372OdaubqDPGmaJoo=;
-        b=uoaGCteYa6dFKZaMV6+/tJ/OKO4m/UW6UtNkEFcpl00IYQwpdgujiGXw3UQLt9eHHP
-         gqUAiV0NgAmsycf8tsyyc6r/yWrz/nJ+wXHh5kz6NmcfJZkRpirsETUNn/bRV9V6dWDA
-         I+JhKUnWvTL948Pzsr6rG1ZqVrNsX35smr3PxGLdDh3xWsAWC0X7rbvcmTZbKcdhG1v2
-         yA5YFv4a/rNLXlyCpMfUTiQenGyUreUZSaUfzJp1SNUqSjYAd7MPSjmsMYtEDX3GItTO
-         5/Tdp6hyfIS/zBISCMS5kjDTclYF1zwDyCCPw5GjFiCiSnOzFFOFMXz/ls5UjVFbZG3t
-         c1Vg==
-X-Gm-Message-State: APjAAAWFV6ZJPeEFfvTa4w0XMWXaywMiaVWtf8U/vzXEUp1f14kmkwa4
-        KCC360NzuNfqwqF9yomYbso=
-X-Google-Smtp-Source: APXvYqxtbt1CwITtkPLgUNHbiaJHv2JbNvwx/AC2tPpYW32s+HW5FL1w8utKSmIMyppuIpJFC7FuGg==
-X-Received: by 2002:a17:90a:5288:: with SMTP id w8mr31337291pjh.61.1563220377447;
-        Mon, 15 Jul 2019 12:52:57 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.33])
-        by smtp.gmail.com with ESMTPSA id u3sm15869368pjn.5.2019.07.15.12.52.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 12:52:56 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 01:22:48 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     ira.weiny@intel.com, jhubbard@nvidia.com,
-        gregkh@linuxfoundation.org, Matt.Sickler@daktronics.com,
-        jglisse@redhat.com
-Cc:     devel@driverdev.osuosl.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: kpc2000: Convert put_page() to put_user_page*()
-Message-ID: <20190715195248.GA22495@bharath12345-Inspiron-5559>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LcjZDPgdL7DrGBvMmJVL7aqjwkNf4gUG0/jK3NFbFQU=;
+        b=EWeLryl5ecQOCuYUNgon+enSUnFHIEgGRCeXYt7w8NemANMPwPYsTHRWMfEiGMiMae
+         CQv/7C3Tefj8VavQxdxCwBgwNaMQu59SJS94dPz3UCap6iWZHkIiBkppJN+KvEvMdbKB
+         Ngj+CFKm+bWQ2Oi/3TdPY/+Q1f7IsO64E9EYZ5YvjaIiJYWWUf425EOSKONRMxceTnB3
+         oJeZLnYizFhFhNWpl1N/659blrNbugutvdRgQ5MSp46DrG+p153PRZ1yOQFk6csMyIFI
+         OlvaW3zVG4EGMfyNDlDMZX47f0J32vZmen2kZUbGur3Ilg1c94klc5eKuDoSD1+FWXA/
+         6Yqg==
+X-Gm-Message-State: APjAAAXzHEj4R6xy/AeRKpy9VxkbCs8zbeo9SwxbzaowP091cZGctcxe
+        xEgD5VGRBa4sX0P/FkZetzHksA==
+X-Google-Smtp-Source: APXvYqxB9Cq3Zi+SN8ixEnppL8O5MrNd4YnvwkmIbrtsv5YUv51Z4sqECdVIJlbifY1uB8cDY1vtBg==
+X-Received: by 2002:a63:f118:: with SMTP id f24mr29576121pgi.322.1563220563511;
+        Mon, 15 Jul 2019 12:56:03 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
+        by smtp.gmail.com with ESMTPSA id i6sm18347978pgi.40.2019.07.15.12.56.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 12:56:02 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 12:55:57 -0700
+From:   Benson Leung <bleung@google.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Always release lock when
+ returning from _read()
+Message-ID: <20190715195557.GA29926@google.com>
+References: <20190715191017.98488-1-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190715191017.98488-1-mka@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There have been issues with get_user_pages and filesystem writeback.
-The issues are better described in [1].
 
-The solution being proposed wants to keep track of gup_pinned pages which will allow to take furthur steps to coordinate between subsystems using gup.
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-put_user_page() simply calls put_page inside for now. But the implementation will change once all call sites of put_page() are converted.
+Hi Matthias,
 
-I currently do not have the driver to test. Could I have some suggestions to test this code? The solution is currently implemented in [2] and
-it would be great if we could apply the patch on top of [2] and run some tests to check if any regressions occur.
+On Mon, Jul 15, 2019 at 12:10:17PM -0700, Matthias Kaehlcke wrote:
+> Before doing any actual work cros_ec_accel_legacy_read() acquires
+> a mutex, which is released at the end of the function. However for
+> 'calibbias' channels the function returns directly, without releasing
+> the lock. The next attempt to acquire the lock blocks forever. Instead
+> of an explicit return statement use the common return path, which
+> releases the lock.
+>=20
+> Fixes: 11b86c7004ef1 ("platform/chrome: Add cros_ec_accel_legacy driver")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/iio/accel/cros_ec_accel_legacy.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel=
+/cros_ec_accel_legacy.c
+> index 46bb2e421bb9..27ca4a64dddf 100644
+> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
+> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+> @@ -206,7 +206,8 @@ static int cros_ec_accel_legacy_read(struct iio_dev *=
+indio_dev,
+>  	case IIO_CHAN_INFO_CALIBBIAS:
+>  		/* Calibration not supported. */
+>  		*val =3D 0;
+> -		return IIO_VAL_INT;
+> +		ret =3D IIO_VAL_INT;
+> +		break;
 
-[1] https://lwn.net/Articles/753027/
-[2] https://github.com/johnhubbard/linux/tree/gup_dma_core
+The value of ret is not used below this. It seems to be only used in
+case IIO_CHAN_INFO_RAW. In fact, with your change,
+there's no return value at all and we just reach the end of
+cros_ec_accel_legacy_read.
 
-Cc: Matt Sickler <Matt.Sickler@daktronics.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: linux-mm@kvack.org
-Cc: devel@driverdev.osuosl.org
+>  	default:
+>  		return -EINVAL;
+>  	}
+> --=20
+> 2.22.0.510.g264f2c817a-goog
+>=20
 
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
----
- drivers/staging/kpc2000/kpc_dma/fileops.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index 6166587..82c70e6 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -198,9 +198,7 @@ int  kpc_dma_transfer(struct dev_private_data *priv, struct kiocb *kcb, unsigned
- 	sg_free_table(&acd->sgt);
-  err_dma_map_sg:
-  err_alloc_sg_table:
--	for (i = 0 ; i < acd->page_count ; i++){
--		put_page(acd->user_pages[i]);
--	}
-+	put_user_pages(acd->user_pages, acd->page_count);
-  err_get_user_pages:
- 	kfree(acd->user_pages);
-  err_alloc_userpages:
-@@ -229,9 +227,7 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
- 	
- 	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
- 	
--	for (i = 0 ; i < acd->page_count ; i++){
--		put_page(acd->user_pages[i]);
--	}
-+	put_user_pages(acd->user_pages, acd->page_count);
- 	
- 	sg_free_table(&acd->sgt);
- 	
--- 
-1.8.3.1
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXSzaTQAKCRBzbaomhzOw
+wk+uAQC2kr7TrcEA7sZDr1CfCnwy7ezLa1KBU1fssk52WQk7rgD+Nq9rH2+JjQUQ
+TbnpM4wbsH86aDwIx3uwf6xGtfGxnAc=
+=C/Ao
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
