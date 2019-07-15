@@ -2,171 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C2AB683FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 09:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66FA868466
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 09:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbfGOHPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 03:15:45 -0400
-Received: from mail-eopbgr690040.outbound.protection.outlook.com ([40.107.69.40]:43015
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728933AbfGOHPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 03:15:45 -0400
+        id S1729225AbfGOHcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 03:32:09 -0400
+Received: from m9a0003g.houston.softwaregrp.com ([15.124.64.68]:42794 "EHLO
+        m9a0003g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726748AbfGOHcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 03:32:09 -0400
+X-Greylist: delayed 1510 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 03:32:08 EDT
+Received: FROM m9a0003g.houston.softwaregrp.com (15.121.0.191) BY m9a0003g.houston.softwaregrp.com WITH ESMTP;
+ Mon, 15 Jul 2019 07:32:07 +0000
+Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Mon, 15 Jul 2019 06:54:29 +0000
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (15.124.72.11) by
+ M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Mon, 15 Jul 2019 06:54:29 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mBwdYZRvUHjxJpdruqdAPS5Wbbh2R9C2OoVfopWerpOa21U1JnJcVJX6kQQ3gb5CahiXr79KroWqmUSII4QVOovuaWmC0PpCTzEibLTh/P/0zBMHlKtRWqfOkYIn3e4Zeoegv7rtDZU/9p5DVqnc8MpDc/oIfYXLk5sV9/fRmWTN2G/Yosjd7KhC5DRp81udqGhfDcNqjTVgu7LDD8StUxUrxvb2YEjdjXbJv8M6GgcGlJbQgBs0mP8RdKf+Xs8L0Tp7XlyB5iVx6xVeS5KQs/3pgMAjMOHa7lxcpIkTu/zgTq0v4GVC3frnhZa0SfnlOE6cQMw1gGghqZqi+iqtzg==
+ b=jEMqq86toZ0NrdI0MBpKkLJ7Hueg2loUV3F4ZO57PHqJHr23h0G/1iDIgIcnG6ezan4+HCZff9OYlE/jeyJzm087Cm2rbqV+MtISAkxa8Y6BONmcujdNIGngqC924pLnlunZwC1PuhMQfpuiSTidXCobDTdvlRZqDyQ/1C+7SPESLpT3RLGqEXq2r7chhAjZHrMaQ1KaX643csH2IOXjWTZOaGOcoLB6G47NV4WeYalUVcqaxsQ5sDYGCj9A1c9L73AwvsIpzyAMJtWPYOfuzdLk37QXL6DdjEbfa5R8O1N3fv3FY1vZAKfx3cwNgnpNuYvoXSmRAeZ9wBfDHyNgxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pt1v+D/mAg5s/jufp9Hzjv2LUo2ZEXnPHpSXW05B5JI=;
- b=mJFIlRC2wRdBwboamED7WLGh6MuwPC6DiFN5G1qIASgJsFowgKR8a7XrIJzBVpEo99AKZM6TsVM9me74eKTKL2LVgWN0KxUNQxhG29cDnPOTqTniJvc+aph/Yagvb/r4CdEq3ikRz3WY8sIrwS5Iv2h7zuLWUQtDI370TzveKLg9eYoPMgGuwny86oFpgG64rjra2gY4KXnBssIT7H/+Gai6XH75uTkDLLp60w/w5Yxri1hQUJVITvhtZpjd1IeH2TYQ7w0QwWTsoJWOwWYvQzJzquZS1UraL21rjpEqWeu4X3LUN8UTFuc7Lub7HmN47AIifrCIdRAZ5uktx02WBg==
+ bh=VcPacChXb77rQUIpw8yDJPWQJgxYibaSDcb/JLWQdM0=;
+ b=SgnQuCDnKUolIdrtpxznlXQ+MRGHP8NYNql77KcZgT9cGgvE2C2Z/z50XWb0Qpi1DVhu8uBNA6fGHIKxO7nCOc865C6a2bnQ78lLOBmfB7mQ66yMztVQsqhDS09SxD42FiYluxoCQ7U05PXrromWZLzSTglCiv0yHARc9fxKcRP2nI5b0obkOCKOLlRhy/QSijOlK3A+q+yWmfEHX96agAcgmeSjWegHEDoq80T9LyLnpjCqiVSn+C6nH3TVa9UbMXD9IZmMDaRoh/oBtCRxIYG+eBA6Vii4vX+gsG9emjpxJvdb5KARfpG0x4migNVfg6XGbecQbFwlcK4y5FWJbg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=xilinx.com;dmarc=pass action=none
- header.from=xilinx.com;dkim=pass header.d=xilinx.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pt1v+D/mAg5s/jufp9Hzjv2LUo2ZEXnPHpSXW05B5JI=;
- b=YuQ/nBK+b52JdgELKXmRJczAp1qog5SiE2RHPXHQ1NulSICtCmedwM/28J+OKSija3Y7ltr1E14oQmspng7Z30SnvDeyWIYStZlv3+kcRF0Vm+oR81n8PfKGYuxVgLi83dDQsv5QoX8c6b5IqyHJOKl+HecZCF5I5ySTt/yO6Gc=
-Received: from MN2PR02MB6029.namprd02.prod.outlook.com (10.255.7.10) by
- MN2PR02MB6174.namprd02.prod.outlook.com (52.132.173.203) with Microsoft SMTP
+ smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
+ header.d=suse.com;arc=none
+Received: from DM6PR18MB3401.namprd18.prod.outlook.com (10.255.174.218) by
+ DM6PR18MB2457.namprd18.prod.outlook.com (20.179.104.152) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Mon, 15 Jul 2019 07:15:40 +0000
-Received: from MN2PR02MB6029.namprd02.prod.outlook.com
- ([fe80::e880:6205:6aac:21a3]) by MN2PR02MB6029.namprd02.prod.outlook.com
- ([fe80::e880:6205:6aac:21a3%7]) with mapi id 15.20.2073.012; Mon, 15 Jul 2019
- 07:15:40 +0000
-From:   Manish Narani <MNARANI@xilinx.com>
-To:     Manish Narani <MNARANI@xilinx.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        Michal Simek <michals@xilinx.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "christoph.muellner@theobroma-systems.com" 
-        <christoph.muellner@theobroma-systems.com>,
-        "philipp.tomsich@theobroma-systems.com" 
-        <philipp.tomsich@theobroma-systems.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
-        "ayaka@soulik.info" <ayaka@soulik.info>,
-        "kernel@esmil.dk" <kernel@esmil.dk>,
-        "tony.xie@rock-chips.com" <tony.xie@rock-chips.com>,
-        "mdf@kernel.org" <mdf@kernel.org>,
-        "olof@lixom.net" <olof@lixom.net>
-CC:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ 15.20.2073.10; Mon, 15 Jul 2019 06:54:27 +0000
+Received: from DM6PR18MB3401.namprd18.prod.outlook.com
+ ([fe80::1fe:35f6:faf3:78c7]) by DM6PR18MB3401.namprd18.prod.outlook.com
+ ([fe80::1fe:35f6:faf3:78c7%7]) with mapi id 15.20.2073.012; Mon, 15 Jul 2019
+ 06:54:27 +0000
+From:   Jan Beulich <JBeulich@suse.com>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+CC:     Andrew Cooper <andrew.cooper3@citrix.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>
-Subject: RE: [PATCH v2 00/11] Arasan SDHCI enhancements and ZynqMP Tap Delays
- Handling
-Thread-Topic: [PATCH v2 00/11] Arasan SDHCI enhancements and ZynqMP Tap Delays
- Handling
-Thread-Index: AQHVL84SOR9L6OedtU+uS2U+bXPHK6bLWgfg
-Date:   Mon, 15 Jul 2019 07:15:39 +0000
-Message-ID: <MN2PR02MB602959626A4F6E462A321F35C1CF0@MN2PR02MB6029.namprd02.prod.outlook.com>
-References: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
-In-Reply-To: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
+        Borislav Petkov <bp@alien8.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Stefano Stabellini" <sstabellini@kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, Juergen Gross <JGross@suse.com>
+Subject: Re: [Xen-devel] [PATCH v2] xen/pv: Fix a boot up hang revealed by
+ int3 self test
+Thread-Topic: [Xen-devel] [PATCH v2] xen/pv: Fix a boot up hang revealed by
+ int3 self test
+Thread-Index: AQHVOImcjcwxoNt5ZUKNkWkdaGDt/qbHCyGugAQaD5iAAB39AA==
+Date:   Mon, 15 Jul 2019 06:54:27 +0000
+Message-ID: <18619ecb-108a-0d89-812c-7525a566e805@suse.com>
+References: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
+ <ebf9657b-7d97-87a0-e32e-af8453ee7bba@citrix.com>
+ <b9702975-dd2d-cf0b-e47f-a1c4361db18f@oracle.com>
+In-Reply-To: <b9702975-dd2d-cf0b-e47f-a1c4361db18f@oracle.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: DB6P191CA0006.EURP191.PROD.OUTLOOK.COM (2603:10a6:6:28::16)
+ To DM6PR18MB3401.namprd18.prod.outlook.com (2603:10b6:5:1cc::26)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=MNARANI@xilinx.com; 
-x-originating-ip: [149.199.50.133]
+ smtp.mailfrom=JBeulich@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [87.234.252.170]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7fa7630a-e385-4190-04a3-08d708f43e2d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR02MB6174;
-x-ms-traffictypediagnostic: MN2PR02MB6174:
-x-microsoft-antispam-prvs: <MN2PR02MB6174B1D5149C444667584FBCC1CF0@MN2PR02MB6174.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-ms-office365-filtering-correlation-id: 2a2295bf-fe38-4111-a5b6-08d708f14751
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM6PR18MB2457;
+x-ms-traffictypediagnostic: DM6PR18MB2457:
+x-microsoft-antispam-prvs: <DM6PR18MB245741770A007D379924D6B1B3CF0@DM6PR18MB2457.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 00997889E7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(376002)(366004)(396003)(189003)(13464003)(199004)(478600001)(7696005)(68736007)(55016002)(66946007)(76116006)(64756008)(66446008)(5660300002)(66476007)(53546011)(6436002)(66556008)(6506007)(6246003)(4326008)(2201001)(7416002)(99286004)(8936002)(9686003)(316002)(2906002)(81156014)(81166006)(53936002)(229853002)(6116002)(52536014)(3846002)(25786009)(446003)(11346002)(7736002)(305945005)(476003)(2501003)(102836004)(8676002)(486006)(186003)(256004)(86362001)(33656002)(74316002)(76176011)(54906003)(14444005)(66066001)(14454004)(71200400001)(110136005)(71190400001)(26005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6174;H:MN2PR02MB6029.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(136003)(39860400002)(376002)(396003)(199004)(189003)(186003)(26005)(7736002)(8936002)(14454004)(64756008)(3846002)(31696002)(66446008)(80792005)(305945005)(7416002)(5660300002)(6436002)(6116002)(86362001)(81166006)(31686004)(4326008)(81156014)(66476007)(66556008)(66946007)(8676002)(25786009)(2906002)(71200400001)(71190400001)(316002)(6506007)(6916009)(68736007)(99286004)(54906003)(107886003)(53936002)(14444005)(256004)(6512007)(478600001)(486006)(66066001)(76176011)(229853002)(446003)(11346002)(2616005)(36756003)(476003)(6246003)(52116002)(102836004)(6486002)(386003)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR18MB2457;H:DM6PR18MB3401.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: D1LD/QGoFGvFUhf0krEX85WRz7p9MOY30b/rX29HgAxisVoeBtfE7GUMRp6+7mluMEESWFYyydqN2MdOEPDsh79CtOhRoQoyZEpD8VK7XPUSfoMUL7KpYJZsd/LpPZMeSaduXbbURmblHYE4q1wtBT/SIQe3GiGyUwWNFa1jPKXtfVP44RYky4MAsZwb2dGKSDoNVDTnobvVYW8/6rl0/AST9b8txZekgcZUwMe9ogGHUphQXIQvM7X07dADosXOnHpluKOnlJlpE7Iuw4dvsUhR17KPPcpqRl8xWQKZtGuZueQsYF6cJn91Sic95sY/057jMnKjIx9i3HxzEYjOSs25a+ne85+CRaLydFK0s0pMPOpV7PbBFNi2V5eulnA8W8eyRSeM61C3/hSlMIuc05MJfGnX1akencDQLi0VHa0=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: bWFob7XQdx8Rd1m+9ToMA6Lr1cLuAlh01W1jxTU6XqYkDbdpTC2o8a7uWPy35z8KsHgn9sdgvyHt85/V1amCWC+dPnW3gej0iLogQW5UmGWrkDyubnmaUypAqQfpZdzGBAwu8HlSJ3pTV50ObYlcBuWl1XaF9ZG9QRWueAafqCoIXCnHVxvtvOk8rhzx/y3kDdnN+zBmRi//yvFRyKjYG2VqH7HFnm8pirPLeZGz3x0uXkCFiD/wsHvBZlt2xe7mk9/62I77djek/7C0DBTcLyw6nDr9FkFLD32ABkjKNctDhdunx5tvRv8i9I5rHZrQ9t3YZvX3iu+0aj4ZUxotS/GlSQvaZn+lCD4EFywaCIT6DbI17D4/9KPR9N1bbp+VehRy/G9eAEnZxCY07QE3T7jm74DfUOHO56g/D/TqcxA=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CC86C020B0C53845B03D74E58CC62742@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fa7630a-e385-4190-04a3-08d708f43e2d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2019 07:15:40.1096
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a2295bf-fe38-4111-a5b6-08d708f14751
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2019 06:54:27.4117
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mnarani@xilinx.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6174
+X-MS-Exchange-CrossTenant-userprincipalname: JBeulich@suse.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR18MB2457
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping!
-
-> -----Original Message-----
-> From: Manish Narani <manish.narani@xilinx.com>
-> Sent: Monday, July 1, 2019 11:00 AM
-> To: ulf.hansson@linaro.org; robh+dt@kernel.org; mark.rutland@arm.com;
-> heiko@sntech.de; Michal Simek <michals@xilinx.com>;
-> adrian.hunter@intel.com; christoph.muellner@theobroma-systems.com;
-> philipp.tomsich@theobroma-systems.com; viresh.kumar@linaro.org;
-> scott.branden@broadcom.com; ayaka@soulik.info; kernel@esmil.dk;
-> tony.xie@rock-chips.com; Rajan Vaja <RAJANV@xilinx.com>; Jolly Shah
-> <JOLLYS@xilinx.com>; Nava kishore Manne <navam@xilinx.com>;
-> mdf@kernel.org; Manish Narani <MNARANI@xilinx.com>; olof@lixom.net
-> Cc: linux-mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> rockchip@lists.infradead.org
-> Subject: [PATCH v2 00/11] Arasan SDHCI enhancements and ZynqMP Tap
-> Delays Handling
->=20
-> This patch series does the following:
->  - Reorganize the Clock Handling in Arasan SD driver
->  - Adds new sampling clock in Arasan SD driver
->  - Adds support to set Clock Delays in SD Arasan Driver
->  - Add SDIO Tap Delay handling in ZynqMP firmware driver
->  - Add support for ZynqMP Tap Delays setting in Arasan SD driver
->=20
-> Changes in v2:
-> 	- Replaced the deprecated calls to clock framework APIs
-> 	- Added support for dev_clk_get() call to work for SD card clock
-> 	- Separated the clock data struct
-> 	- Fragmented the patch series in smaller patches to make it more
-> 	  readable
->=20
-> This patch series contains a DT patch, which I think should be there to
-> maintain the order of commits.
->=20
-> Manish Narani (11):
->   dt-bindings: mmc: arasan: Update documentation for SD Card Clock
->   arm64: dts: rockchip: Add optional clock property indicating sdcard
->     clock
->   mmc: sdhci-of-arasan: Replace deprecated clk API calls
->   mmc: sdhci-of-arasan: Separate out clk related data to another
->     structure
->   dt-bindings: mmc: arasan: Update Documentation for the input clock
->   mmc: sdhci-of-arasan: Add sampling clock for a phy to use
->   dt-bindings: mmc: arasan: Add optional properties for Arasan SDHCI
->   mmc: sdhci-of-arasan: Add support to set clock phase delays for SD
->   firmware: xilinx: Add SDIO Tap Delay APIs
->   dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
->   mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
->=20
->  .../devicetree/bindings/mmc/arasan,sdhci.txt       |  49 ++-
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi           |   4 +-
->  drivers/firmware/xilinx/zynqmp.c                   |  48 +++
->  drivers/mmc/host/sdhci-of-arasan.c                 | 453 +++++++++++++++=
-+++++-
->  include/linux/firmware/xlnx-zynqmp.h               |  15 +-
->  5 files changed, 540 insertions(+), 29 deletions(-)
->=20
-> --
-> 2.1.1
-
+T24gMTUuMDcuMjAxOSAwNzowNSwgWmhlbnpob25nIER1YW4gd3JvdGU6DQo+IA0KPiBPbiAyMDE5
+LzcvMTIgMjI6MDYsIEFuZHJldyBDb29wZXIgd3JvdGU6DQo+PiBPbiAxMS8wNy8yMDE5IDAzOjE1
+LCBaaGVuemhvbmcgRHVhbiB3cm90ZToNCj4+PiBDb21taXQgNzQ1N2MwZGEwMjRiICgieDg2L2Fs
+dGVybmF0aXZlczogQWRkIGludDNfZW11bGF0ZV9jYWxsKCkNCj4+PiBzZWxmdGVzdCIpIGlzIHVz
+ZWQgdG8gZW5zdXJlIHRoZXJlIGlzIGEgZ2FwIHNldHVwIGluIGV4Y2VwdGlvbiBzdGFjaw0KPj4+
+IHdoaWNoIGNvdWxkIGJlIHVzZWQgZm9yIGluc2VydGluZyBjYWxsIHJldHVybiBhZGRyZXNzLg0K
+Pj4+DQo+Pj4gVGhpcyBnYXAgaXMgbWlzc2VkIGluIFhFTiBQViBpbnQzIGV4Y2VwdGlvbiBlbnRy
+eSBwYXRoLCB0aGVuIGJlbG93IHBhbmljDQo+Pj4gdHJpZ2dlcmVkOg0KPj4+DQo+Pj4gW8KgwqDC
+oCAwLjc3Mjg3Nl0gZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0OiAwMDAwIFsjMV0gU01QIE5PUFRJ
+DQo+Pj4gW8KgwqDCoCAwLjc3Mjg4Nl0gQ1BVOiAwIFBJRDogMCBDb21tOiBzd2FwcGVyLzAgTm90
+IHRhaW50ZWQgNS4yLjArICMxMQ0KPj4+IFvCoMKgwqAgMC43NzI4OTNdIFJJUDogZTAzMDppbnQz
+X21hZ2ljKzB4MC8weDcNCj4+PiBbwqDCoMKgIDAuNzcyOTA1XSBSU1A6IDM1MDc6ZmZmZmZmZmY4
+MjIwM2U5OCBFRkxBR1M6IDAwMDAwMjQ2DQo+Pj4gW8KgwqDCoCAwLjc3MzMzNF0gQ2FsbCBUcmFj
+ZToNCj4+PiBbwqDCoMKgIDAuNzczMzM0XcKgIGFsdGVybmF0aXZlX2luc3RydWN0aW9ucysweDNk
+LzB4MTJlDQo+Pj4gW8KgwqDCoCAwLjc3MzMzNF3CoCBjaGVja19idWdzKzB4N2M5LzB4ODg3DQo+
+Pj4gW8KgwqDCoCAwLjc3MzMzNF3CoCA/IF9fZ2V0X2xvY2tlZF9wdGUrMHgxNzgvMHgxZjANCj4+
+PiBbwqDCoMKgIDAuNzczMzM0XcKgIHN0YXJ0X2tlcm5lbCsweDRmZi8weDUzNQ0KPj4+IFvCoMKg
+wqAgMC43NzMzMzRdwqAgPyBzZXRfaW5pdF9hcmcrMHg1NS8weDU1DQo+Pj4gW8KgwqDCoCAwLjc3
+MzMzNF3CoCB4ZW5fc3RhcnRfa2VybmVsKzB4NTcxLzB4NTdhDQo+Pj4NCj4+PiBBcyB4ZW5pbnQz
+IGFuZCBpbnQzIGVudHJ5IGNvZGUgYXJlIHNhbWUgZXhjZXB0IHhlbmludDMgZG9lc24ndCBnZW5l
+cmF0ZQ0KPj4+IGEgZ2FwLCB3ZSBjYW4gZml4IGl0IGJ5IHVzaW5nIGludDMgYW5kIGRyb3AgdXNl
+bGVzcyB4ZW5pbnQzLg0KPj4gRm9yIDY0Yml0IFBWIGd1ZXN0cywgWGVuJ3MgQUJJIGVudGVycyB0
+aGUga2VybmVsIHdpdGggdXNpbmcgU1lTUkVULCB3aXRoDQo+PiAlcmN4LyVyMTEgb24gdGhlIHN0
+YWNrLg0KPj4NCj4+IFRvIGNvbnZlcnQgYmFjayB0byAibm9ybWFsIiBsb29raW5nIGV4Y2VwdGlv
+bnMsIHRoZSB4ZW4gdGh1bmtzIGRvIGBwb3ANCj4+ICVyY3g7IHBvcCAlcjExOyBqbXAgZG9fKmAu
+Li4NCj4gSSB3aWxsIGFkZCB0aGlzIHRvIGNvbW1pdCBtZXNzYWdlLg0KPj4NCj4+PiBkaWZmIC0t
+Z2l0IGEvYXJjaC94ODYvZW50cnkvZW50cnlfNjQuUyBiL2FyY2gveDg2L2VudHJ5L2VudHJ5XzY0
+LlMNCj4+PiBpbmRleCAwZWE0ODMxLi4zNWE2NmZjIDEwMDY0NA0KPj4+IC0tLSBhL2FyY2gveDg2
+L2VudHJ5L2VudHJ5XzY0LlMNCj4+PiArKysgYi9hcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TDQo+
+Pj4gQEAgLTExNzYsNyArMTE3Niw2IEBAIGlkdGVudHJ5IHN0YWNrX3NlZ21lbnTCoMKgwqDCoMKg
+wqDCoCBkb19zdGFja19zZWdtZW50wqDCoMKgIGhhc19lcnJvcl9jb2RlPTENCj4+PiDCoCAjaWZk
+ZWYgQ09ORklHX1hFTl9QVg0KPj4+IMKgIGlkdGVudHJ5IHhlbm5tacKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgZG9fbm1pwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBoYXNfZXJyb3JfY29kZT0wDQo+Pj4g
+wqAgaWR0ZW50cnkgeGVuZGVidWfCoMKgwqDCoMKgwqDCoCBkb19kZWJ1Z8KgwqDCoMKgwqDCoMKg
+IGhhc19lcnJvcl9jb2RlPTANCj4+PiAtaWR0ZW50cnkgeGVuaW50M8KgwqDCoMKgwqDCoMKgIGRv
+X2ludDPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhhc19lcnJvcl9jb2RlPTANCj4+PiDCoCAjZW5k
+aWYNCj4+IFdoYXQgaXMgY29uZnVzaW5nIGlzIHdoeSB0aGVyZSBhcmUgMyBleHRyYSBtYWdpYyB2
+ZXJzaW9ucyBoZXJlLsKgIEF0IGENCj4+IGd1ZXNzLCBJJ2Qgc2F5IHNvbWV0aGluZyB0byBkbyB3
+aXRoIElTVCBzZXR0aW5ncyAoZ2l2ZW4gdGhlIHZlY3RvcnMpLA0KPj4gYnV0IEkgZG9uJ3Qgc2Vl
+IHdoeSAjREIvI0JQIHdvdWxkIG5lZWQgdG8gYmUgZGlmZmVyZW50IGluIHRoZSBmaXJzdA0KPj4g
+cGxhY2UuwqAgKE5NSSBzdXJlLCBidXQgdGhhdCBpcyBtb3JlIHRvIGRvIHdpdGggdGhlIGNyYXp5
+IGhvb3BzIG5lZWRpbmcNCj4+IHRvIGJlIGp1bXBlZCB0aHJvdWdoIHRvIGtlZXAgbmF0aXZlIGZ1
+bmN0aW9uaW5nIHNhZmVseS4pDQo+IA0KPiB4ZW5pbnQzIHdpbGwgYmUgcmVtb3ZlZCBpbiB0aGlz
+IHBhdGNoIHNhZmVseSBhcyBpdCBkb24ndCB1c2UgSVNUIG5vdy4NCj4gDQo+IEJ1dCBkZWJ1ZyBh
+bmQgbm1pIG5lZWQgcGFyYW5vaWRfZW50cnkgd2hpY2ggd2lsbCByZWFkIE1TUl9HU19CQVNFIHRv
+IGRldGVybWluZQ0KPiANCj4gaWYgc3dhcGdzIGlzIG5lZWRlZC4gSSBndWVzcyBQViBndWVzdGlu
+ZyBydW5uaW5nIGluIHJpbmczIHdpbGwgI0dQIHdpdGggc3dhcGdzPw0KDQpOb3Qgb25seSB0aGF0
+IChYZW4gY291bGQgdHJhcCBhbmQgZW11bGF0ZSBzd2FwZ3MgaWYgdGhhdCB3YXMgbmVlZGVkKSAt
+IDY0LWJpdA0KUFYga2VybmVsIG1vZGUgYWx3YXlzIGdldHMgZW50ZXJlZCB3aXRoIGtlcm5lbCBH
+UyBiYXNlIGFscmVhZHkgc2V0LiBIZW5jZQ0KZmluZGluZyBvdXQgd2hldGhlciB0byBzd2l0Y2gg
+dGhlIEdTIGJhc2UgaXMgc3BlY2lmaWNhbGx5IG5vdCBzb21ldGhpbmcgdGhhdA0KYW55IGV4Y2Vw
+dGlvbiBlbnRyeSBwb2ludCB3b3VsZCBuZWVkIHRvIGRvIChhbmQgaXQgc2hvdWxkIGFjdGl2ZWx5
+IHRyeSB0bw0KYXZvaWQgaXQsIGZvciBwZXJmb3JtYW5jZSByZWFzb25zKS4NCg0KSmFuDQo=
