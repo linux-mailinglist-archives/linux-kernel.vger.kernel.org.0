@@ -2,31 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 477A969AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 20:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E4269AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 20:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfGOSlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 14:41:10 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48507 "EHLO
+        id S1729838AbfGOSpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 14:45:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48538 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729503AbfGOSlK (ORCPT
+        with ESMTP id S1729568AbfGOSpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 14:41:10 -0400
+        Mon, 15 Jul 2019 14:45:10 -0400
 Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hn5uN-0003zm-5u; Mon, 15 Jul 2019 20:41:07 +0200
-Date:   Mon, 15 Jul 2019 20:41:01 +0200 (CEST)
+        id 1hn5wy-00041l-3l; Mon, 15 Jul 2019 20:43:48 +0200
+Date:   Mon, 15 Jul 2019 20:43:46 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andrew Lutomirski <luto@kernel.org>
-Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop
- targets
-In-Reply-To: <8736j7gsza.fsf@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1907152033020.1767@nanos.tec.linutronix.de>
-References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com> <8736j7gsza.fsf@linux.intel.com>
+To:     Hoan Tran OS <hoan@os.amperecomputing.com>
+cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Open Source Submission <patches@amperecomputing.com>
+Subject: Re: [PATCH v2 3/5] x86: Kconfig: Remove
+ CONFIG_NODES_SPAN_OTHER_NODES
+In-Reply-To: <1562887528-5896-4-git-send-email-Hoan@os.amperecomputing.com>
+Message-ID: <alpine.DEB.2.21.1907152042110.1767@nanos.tec.linutronix.de>
+References: <1562887528-5896-1-git-send-email-Hoan@os.amperecomputing.com> <1562887528-5896-4-git-send-email-Hoan@os.amperecomputing.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -38,28 +63,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Jul 2019, Andi Kleen wrote:
-> Uros Bizjak <ubizjak@gmail.com> writes:
-> 
-> > Recent patch [1] disabled a self-snoop feature on a list of processor
-> > models with a known errata, so we are confident that the feature
-> > should work on remaining models also for other purposes than to speed
-> > up MTRR programming.
-> 
-> MTRR is very different than TLBs.
-> 
-> >From my understanding not flushing with PAT is only safe everywhere when
-> the memory is only used for coherent devices (like the Internal GPU on
-> Intel CPUs). We don't have any infrastructure to track or enforce
-> this unfortunately.
+On Thu, 11 Jul 2019, Hoan Tran OS wrote:
 
-Right, we don't know where the PAT invocation comes from and whether they
-are safe to omit flushing the cache. The module load code would be one
-obvious candidate.
+> Remove CONFIG_NODES_SPAN_OTHER_NODES as it's enabled
+> by default with NUMA.
 
-But unless there is some really worthwhile speedup, e.g. for boot, then
-adding some flag to let CPA know about the safe 'no flush' operation might
-be not worth it.
+As I told you before this does not mention that the option is now enabled
+even for x86(32bit) configurations which did not enable it before and does
+not longer depend on X86_64_ACPI_NUMA.
+
+And there is still no rationale why this makes sense.
 
 Thanks,
 
