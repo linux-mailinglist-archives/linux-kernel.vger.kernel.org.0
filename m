@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2AE868EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 432D268EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388648AbfGOOJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:09:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60324 "EHLO mail.kernel.org"
+        id S2388337AbfGOOJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:09:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388165AbfGOOJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:09:04 -0400
+        id S2388652AbfGOOJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:09:10 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5127212F5;
-        Mon, 15 Jul 2019 14:09:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2DFB212F5;
+        Mon, 15 Jul 2019 14:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199744;
-        bh=WWSyR7ZkWOULUbOIOZcSxR4qgjOH/WofWi+q0Fjb8OU=;
+        s=default; t=1563199749;
+        bh=oLHMVyDyR9D/eTUhXbuQSLHOw8Bnlk5PSTnPXqxZkc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KzQvDIj3zfqOA+g/FGrPdj1AYpQ3HgU5d9RukjBY4/QI3LRKuapErFcvDKH+Knt83
-         DSO08gdWOepY4S1XRdJF8ERsDaelkpSp7TccK//Su2BTA+EwG9jWG/7mTETizFuZq5
-         p+csxAkK3pkH2P8BtK8mdhtY/tLKGh//cOy5pP98=
+        b=pL5//F3DmfgfJ5Pfgtup0TfMdYtqC3iSfwQR4MFCAJrRantYyLFV9qLbsJr2flu3j
+         O98+FS1NlxqKk9kcoY2yhnLZQszCo9RfP25x2JERRP28qRtBxYOzYsH2cPJGwk7pap
+         8SBtJ2RQ9iI6NkQEQ5J4Ylowj+wUVjWhpclk8fnk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Kalderon <michal.kalderon@marvell.com>,
-        Ariel Elior <ariel.elior@marvell.com>,
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 091/219] qed: iWARP - Fix tc for MPA ll2 connection
-Date:   Mon, 15 Jul 2019 10:01:32 -0400
-Message-Id: <20190715140341.6443-91-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 094/219] net: hns3: delay ring buffer clearing during reset
+Date:   Mon, 15 Jul 2019 10:01:35 -0400
+Message-Id: <20190715140341.6443-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -44,36 +45,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kalderon <michal.kalderon@marvell.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit cb94d52b93c74fe1f2595734fabeda9f8ae891ee ]
+[ Upstream commit 3a30964a2eef6aabd3ab18b979ea0eacf1147731 ]
 
-The driver needs to assign a lossless traffic class for the MPA ll2
-connection to ensure no packets are dropped when returning from the
-driver as they will never be re-transmitted by the peer.
+The driver may not be able to disable the ring through firmware
+when downing the netdev during reset process, which may cause
+hardware accessing freed buffer problem.
 
-Fixes: ae3488ff37dc ("qed: Add ll2 connection for processing unaligned MPA packets")
-Signed-off-by: Ariel Elior <ariel.elior@marvell.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
+This patch delays the ring buffer clearing to reset uninit
+process because hardware will not access the ring buffer after
+hardware reset is completed.
+
+Fixes: bb6b94a896d4 ("net: hns3: Add reset interface implementation in client")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-index ded556b7bab5..eeea8683d99b 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -2708,6 +2708,8 @@ qed_iwarp_ll2_start(struct qed_hwfn *p_hwfn,
- 	data.input.rx_num_desc = n_ooo_bufs * 2;
- 	data.input.tx_num_desc = data.input.rx_num_desc;
- 	data.input.tx_max_bds_per_packet = QED_IWARP_MAX_BDS_PER_FPDU;
-+	data.input.tx_tc = PKT_LB_TC;
-+	data.input.tx_dest = QED_LL2_TX_DEST_LB;
- 	data.p_connection_handle = &iwarp_info->ll2_mpa_handle;
- 	data.input.secondary_queue = true;
- 	data.cbs = &cbs;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 6afdd376bc03..7e7c10513d2c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -28,7 +28,7 @@
+ #define hns3_tx_bd_count(S)	DIV_ROUND_UP(S, HNS3_MAX_BD_SIZE)
+ 
+ static void hns3_clear_all_ring(struct hnae3_handle *h);
+-static void hns3_force_clear_all_rx_ring(struct hnae3_handle *h);
++static void hns3_force_clear_all_ring(struct hnae3_handle *h);
+ static void hns3_remove_hw_addr(struct net_device *netdev);
+ 
+ static const char hns3_driver_name[] = "hns3";
+@@ -484,7 +484,12 @@ static void hns3_nic_net_down(struct net_device *netdev)
+ 	/* free irq resources */
+ 	hns3_nic_uninit_irq(priv);
+ 
+-	hns3_clear_all_ring(priv->ae_handle);
++	/* delay ring buffer clearing to hns3_reset_notify_uninit_enet
++	 * during reset process, because driver may not be able
++	 * to disable the ring through firmware when downing the netdev.
++	 */
++	if (!hns3_nic_resetting(netdev))
++		hns3_clear_all_ring(priv->ae_handle);
+ }
+ 
+ static int hns3_nic_net_stop(struct net_device *netdev)
+@@ -3737,7 +3742,7 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
+ 
+ 	hns3_del_all_fd_rules(netdev, true);
+ 
+-	hns3_force_clear_all_rx_ring(handle);
++	hns3_force_clear_all_ring(handle);
+ 
+ 	hns3_uninit_phy(netdev);
+ 
+@@ -3909,7 +3914,7 @@ static void hns3_force_clear_rx_ring(struct hns3_enet_ring *ring)
+ 	}
+ }
+ 
+-static void hns3_force_clear_all_rx_ring(struct hnae3_handle *h)
++static void hns3_force_clear_all_ring(struct hnae3_handle *h)
+ {
+ 	struct net_device *ndev = h->kinfo.netdev;
+ 	struct hns3_nic_priv *priv = netdev_priv(ndev);
+@@ -3917,6 +3922,9 @@ static void hns3_force_clear_all_rx_ring(struct hnae3_handle *h)
+ 	u32 i;
+ 
+ 	for (i = 0; i < h->kinfo.num_tqps; i++) {
++		ring = priv->ring_data[i].ring;
++		hns3_clear_tx_ring(ring);
++
+ 		ring = priv->ring_data[i + h->kinfo.num_tqps].ring;
+ 		hns3_force_clear_rx_ring(ring);
+ 	}
+@@ -4145,7 +4153,8 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
+ 		return 0;
+ 	}
+ 
+-	hns3_force_clear_all_rx_ring(handle);
++	hns3_clear_all_ring(handle);
++	hns3_force_clear_all_ring(handle);
+ 
+ 	hns3_nic_uninit_vector_data(priv);
+ 
 -- 
 2.20.1
 
