@@ -2,184 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6571068A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A70E68A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbfGONYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:24:12 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35236 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730198AbfGONYL (ORCPT
+        id S1730298AbfGONYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:24:45 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:6220 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730093AbfGONYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:24:11 -0400
-Received: by mail-lf1-f68.google.com with SMTP id p197so10983408lfa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 06:24:09 -0700 (PDT)
+        Mon, 15 Jul 2019 09:24:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WAAXdPfvBtMOFdHC12T8O6g/xwGXPT4OLR0giQWXBHs=;
-        b=ZeN5hXMVWByQHXmIl3lNNWHgq/quaKKWUHLtPlJ991iiaXG7cCNKrkUrLhlKWh62Zu
-         wGEa6Z8uQLmuifbiujek4yvUUHybaGxw7Frp5JebiWFkLeqgAhuqU+HYWcEi+shp4ahZ
-         jChaAYPJmCakSFmZbrjYSFdM/JkmO3B6dWURshTo6zr/1h01XUSJgx50nxbbRtpTUK92
-         ngHdlAnSsRTEBYrZiVK+SJXPMFwHjn0l5BeRFgyNQCytzQa5jgibIm+pdfxojooWqXRG
-         a0+rshY0N9JBf8s2Zr8jbGs4oloq+Rj/8Mws92rqbpbfnKWj21brhJS2qS9KW7GxFdds
-         xz0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WAAXdPfvBtMOFdHC12T8O6g/xwGXPT4OLR0giQWXBHs=;
-        b=NLSsY3OsEpPx19kReCpbl7v8UIOdt6LNJOx7Z18YIJQlUqFwu2POqtXOaHHW+5pjq0
-         grAetDZMrb9PFPxS5NUdXJz+PhPsnJbgI8bZIhIUoNdNM7odQqMVYPRCHO45qdykA33C
-         ngdUzKUHE+DFWY/C5QsdYZfRT96xCKtt8++NhsV6KzIk3BiMQtZlTc4H/MwUwF6dWhJl
-         v03I7oSbrJzNfZMFdQSUWUF2OaY/ySB+C0yzo1qtVT9i7orJm8G5nqodgGRMkRISPrYs
-         BA8plWyHkMnmiYcMkj9c3b0yeRQmcGlr2FirNijBcTGLpYe+k7O8Pmu+cQMdDA9TXhp2
-         OWew==
-X-Gm-Message-State: APjAAAXeSsKcpdftJJ+Ww2dqk0YUCKXvFvocZ33VKONQLFmeWMf/9MSu
-        8CMJAFJpBcTq3tiJz3p4Iktsjw==
-X-Google-Smtp-Source: APXvYqyMkuU4RxekOy7UQ3tzp1JSzua2w50VcgWv5EMQZ8H8oK9ddCNJWjdGC2/aKK1jtE911ufOmg==
-X-Received: by 2002:a19:c503:: with SMTP id w3mr10188554lfe.139.1563197048550;
-        Mon, 15 Jul 2019 06:24:08 -0700 (PDT)
-Received: from centauri (ua-83-226-229-61.bbcust.telenor.se. [83.226.229.61])
-        by smtp.gmail.com with ESMTPSA id v22sm2358945lfe.49.2019.07.15.06.24.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 06:24:07 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 15:24:05 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] arm64: dts: qcom: qcs404: Add CPR and populate OPP
- table
-Message-ID: <20190715132405.GA5040@centauri>
-References: <20190705095726.21433-1-niklas.cassel@linaro.org>
- <20190705095726.21433-12-niklas.cassel@linaro.org>
- <20190710090303.tb5ue3wq6r7ofyev@vireshk-i7>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1563197084; x=1594733084;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=7Csmm4toitSG7pULM58RwQRjc3PcTsUBc9OzWJg0DuM=;
+  b=hWyLYNd3bzeNF8Pp68dx9i3BdJlMNVHmy0g81XbDe+3a7y0gqU5bi79a
+   H7CY2054E0U5NqVsXIuEN7OnR9qdvViIFWrv5t2gmWkCGiYjfYWnB8ctI
+   o2oewj5+ja1O9Pr450N+QerjfqPnGCcZU6GPmHtHtfH6XzieUSMh64+q9
+   8=;
+X-IronPort-AV: E=Sophos;i="5.62,493,1554768000"; 
+   d="scan'208";a="685555081"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 15 Jul 2019 13:24:41 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id 103C8A275B;
+        Mon, 15 Jul 2019 13:24:36 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 15 Jul 2019 13:24:36 +0000
+Received: from ub6d44c9ce3e25c.ant.amazon.com (10.43.162.137) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 15 Jul 2019 13:24:27 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
+        <mchehab@kernel.org>, <james.morse@arm.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <linus.walleij@linaro.org>,
+        <Jonathan.Cameron@huawei.com>, <nicolas.ferre@microchip.com>,
+        <paulmck@linux.ibm.com>
+CC:     <dwmw@amazon.co.uk>, <benh@amazon.com>, <ronenk@amazon.com>,
+        <talel@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>, <hhhawa@amazon.com>
+Subject: [PATCH v3 1/4] dt-bindings: EDAC: Add Amazon's Annapurna Labs L1 EDAC
+Date:   Mon, 15 Jul 2019 16:24:06 +0300
+Message-ID: <1563197049-12679-2-git-send-email-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1563197049-12679-1-git-send-email-hhhawa@amazon.com>
+References: <1563197049-12679-1-git-send-email-hhhawa@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710090303.tb5ue3wq6r7ofyev@vireshk-i7>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.137]
+X-ClientProxiedBy: EX13D05UWC003.ant.amazon.com (10.43.162.226) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 02:33:03PM +0530, Viresh Kumar wrote:
-> On 05-07-19, 11:57, Niklas Cassel wrote:
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> >  	cpu_opp_table: cpu-opp-table {
-> > -		compatible = "operating-points-v2";
-> > +		compatible = "operating-points-v2-kryo-cpu";
-> >  		opp-shared;
-> >  
-> >  		opp-1094400000 {
-> >  			opp-hz = /bits/ 64 <1094400000>;
-> > -			opp-microvolt = <1224000 1224000 1224000>;
-> > +			required-opps = <&cpr_opp1>;
-> >  		};
-> >  		opp-1248000000 {
-> >  			opp-hz = /bits/ 64 <1248000000>;
-> > -			opp-microvolt = <1288000 1288000 1288000>;
-> > +			required-opps = <&cpr_opp2>;
-> >  		};
-> >  		opp-1401600000 {
-> >  			opp-hz = /bits/ 64 <1401600000>;
-> > -			opp-microvolt = <1384000 1384000 1384000>;
-> > +			required-opps = <&cpr_opp3>;
-> > +		};
-> > +	};
-> > +
-> > +	cpr_opp_table: cpr-opp-table {
-> > +		compatible = "operating-points-v2-qcom-level";
-> > +
-> > +		cpr_opp1: opp1 {
-> > +			opp-level = <1>;
-> > +			qcom,opp-fuse-level = <1>;
-> > +			opp-hz = /bits/ 64 <1094400000>;
-> > +		};
-> > +		cpr_opp2: opp2 {
-> > +			opp-level = <2>;
-> > +			qcom,opp-fuse-level = <2>;
-> > +			opp-hz = /bits/ 64 <1248000000>;
-> > +		};
-> > +		cpr_opp3: opp3 {
-> > +			opp-level = <3>;
-> > +			qcom,opp-fuse-level = <3>;
-> > +			opp-hz = /bits/ 64 <1401600000>;
-> >  		};
-> >  	};
-> 
-> - Do we ever have cases more complex than this for this version of CPR ?
+Document Amazon's Annapurna Labs L1 EDAC SoC binding.
 
-For e.g. CPR on msm8916, we will have 7 different frequencies in the CPU
-OPP table, but only 3 OPPs in the CPR OPP table.
+Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
+---
+ .../devicetree/bindings/edac/amazon,al-l1-edac.txt         | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-l1-edac.txt
 
-Each of the 7 OPPs in the CPU OPP table will have a required-opps that
-points to an OPP in the CPR OPP table.
+diff --git a/Documentation/devicetree/bindings/edac/amazon,al-l1-edac.txt b/Documentation/devicetree/bindings/edac/amazon,al-l1-edac.txt
+new file mode 100644
+index 0000000..2ae8370
+--- /dev/null
++++ b/Documentation/devicetree/bindings/edac/amazon,al-l1-edac.txt
+@@ -0,0 +1,14 @@
++* Amazon's Annapurna Labs L1 EDAC
++
++Amazon's Annapurna Labs SoCs supports L1 single bit correction and
++two bits detection capability based on ARM implementation.
++
++Required properties:
++- compatible:
++	should be "amazon,al-l1-edac".
++
++Example:
++
++	al_l1_edac {
++		compatible = "amazon,al-l1-edac";
++	};
+-- 
+2.7.4
 
-On certain msm8916:s, the speedbin efuse will limit us to only have 6
-OPPs in the CPU OPP table, but the required-opps are still the same.
-
-So I would say that it is just slightly more complex..
-
-> 
-> - What about multiple devices with same CPR table, not big LITTLE
->   CPUs, but other devices like two different type of IO devices ? What
->   will we do with opp-hz in those cases ?
-
-On all SoCs where there is a CPR for e.g. GPU, there is an additional
-CPR hardware block, so then there will also be an additional CPR OPP
-table. So I don't think that this will be a problem.
-
-> 
-> - If there are no such cases, can we live without opp-hz being used
->   here and reverse-engineer the highest frequency by looking directly
->   at CPUs OPP table ? i.e. by looking at required-opps field.
-
-This was actually my initial thought when talking to you 6+ months ago.
-However, the problem was that, from the CPR drivers' perspective, it
-only sees the CPR OPP table.
-
-
-So this is the order things are called,
-from qcom-cpufreq-nvmem.c perspective:
-
-1) dev_pm_opp_set_supported_hw()
-
-2) dev_pm_opp_attach_genpd() ->
-which results in
-int cpr_pd_attach_dev(struct generic_pm_domain *domain,
-		      struct device *dev)
-being called.
-This callback is inside the CPR driver, and here we have the
-CPU's (genpd virtual) struct device, and this is where we would like to
-know the opp-hz.
-The problem here is that:
-[    3.114979] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: genpd:0:cpu0: -19
-[    3.119610] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: cpu0: 0
-[    3.126489] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: cpr@b018000: 3
-
-While we have the CPR OPP table in the attach callback, we don't
-have the CPU OPP table, neither in the CPU struct device or the genpd virtual
-struct device.
-
-Since we have called dev_pm_opp_attach_genpd(.., .., &virt_devs) which
-attaches an OPP table to the CPU, I would have expected one of them to
-be >= 0.
-Especially since dev_name(virt_devs[0]) == genpd:0:cpu0
-
-I guess it should still be possible to parse the required-opps manually here,
-by iterating the OF nodes, however, we won't be able to use the CPU's struct
-opp_table (which is the nice representation of the OF nodes).
-
-Any suggestions?
-
-
-Kind regards,
-Niklas
