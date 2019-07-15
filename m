@@ -2,98 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95ED69A08
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A8369A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731803AbfGORiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:38:17 -0400
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:36677 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731574AbfGORiQ (ORCPT
+        id S1731881AbfGORjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:39:10 -0400
+Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:45942 "EHLO
+        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731574AbfGORjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:38:16 -0400
-Received: by mail-lj1-f173.google.com with SMTP id i21so17128360ljj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H6yNHPalLHo3z6IzaHCO2qZtNfkK2KJ2qqTjNmniu54=;
-        b=BMTEzJWxu5YNZrJEeeLrPq3cQEjHlHqr5u1wTXl6opOudhFi4mrDX8+E2dclQMKPL7
-         VnVp9+95dZdzFQPT/3ycgygH4u55U41uLPhkUO4rag68ecl9FwOHBK5kttZVDCz/dO+V
-         GjZwH8J5cuRxjRMcDIk3PXkECfVKdthlQme/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H6yNHPalLHo3z6IzaHCO2qZtNfkK2KJ2qqTjNmniu54=;
-        b=QjHQtf58Ho/BX7Y+NpHh/DBLHXV+xq4dwqIXvj8x0MivBoLBXt7xfi4JP0iE8ocazg
-         g/yUVuKPV7geg6uxg+Z+q0xojVCRZxOgJ7c9v/+BUfldImrlCGvpJivHxuhy8Sh8U2gp
-         xWmdkQ7bxROdKDQXUPyOuqW3dDdbdYlZyHDVEwlfSjpAP+VwzOICksoCpu1EcozkuO9R
-         8vhdQ3evBYG6ypfVJMF5nY99VOcznTSZAXRlbOOIpXINxiylsUZbW3IYq3wLmwDDJJ1l
-         GvozbRE5bBouN6DJW/X0Ds+Mfo0+acwq27bdS8vKPBWNJwAgIyTR3w9XkC6e/I2gGNLA
-         kx1Q==
-X-Gm-Message-State: APjAAAWRrJvUaP28QQCovUS5cV94T4s4IvmrqfyV0pyphlNPqRmRgseb
-        ZA+09CeY0XrQwb33ZP7VajHY4wiwOas=
-X-Google-Smtp-Source: APXvYqzCD4HcaERDWg1ekYGk3rtg8BNRieWqv1VMGooWdlSOOn8SeY/gH6zWwEG70eXHG1YrZ751PA==
-X-Received: by 2002:a2e:2993:: with SMTP id p19mr14359446ljp.202.1563212293722;
-        Mon, 15 Jul 2019 10:38:13 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id v4sm3247705lji.103.2019.07.15.10.38.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 10:38:12 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id h10so17130135ljg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:38:12 -0700 (PDT)
-X-Received: by 2002:a2e:9192:: with SMTP id f18mr14594812ljg.52.1563212292312;
- Mon, 15 Jul 2019 10:38:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
- <CAPM=9twvwhm318btWy_WkQxOcpRCzjpok52R8zPQxQrnQ8QzwQ@mail.gmail.com>
-In-Reply-To: <CAPM=9twvwhm318btWy_WkQxOcpRCzjpok52R8zPQxQrnQ8QzwQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 15 Jul 2019 10:37:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjC3VX5hSeGRA1SCLjT+hewPbbG4vSJPFK7iy26z4QAyw@mail.gmail.com>
-Message-ID: <CAHk-=wjC3VX5hSeGRA1SCLjT+hewPbbG4vSJPFK7iy26z4QAyw@mail.gmail.com>
-Subject: Re: drm pull for v5.3-rc1
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Mon, 15 Jul 2019 13:39:10 -0400
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: u/JBkRit5XP7yvl74tHg1kfCvEnm5OePMdaR6Tzg2LTzdDM/p4lGc1p5B+l956932N7gRRLXiN
+ pGUGxuh8B8SEKu1RcWNoFdYFuM1pkNrP2uSHXq0DoBA/IbQ7bZHqAIo2TR8fGuD7UDAsBJtwpm
+ RcTWq0bnkIfGGeSlUGAFRRQbkPLjJmMh9u/MQCKMuDrOS8hRRcAks5MO+33iUWXkQJh3QRoSEd
+ 0VUecKmccu2B4Uq+4NFzFaQcxQ7O5IWEAciw29BSc/JI83RDDPameeoRRAvpXzg+HsOBmJ4zPm
+ OB8=
+X-SBRS: 2.7
+X-MesageID: 2995352
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.63,493,1557201600"; 
+   d="scan'208";a="2995352"
+Subject: Re: [Xen-devel] [PATCH 0/2] Remove 32-bit Xen PV guest support
+To:     Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>
+CC:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        X86 ML <x86@kernel.org>, Alok Kataria <akataria@vmware.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Linux Virtualization" <virtualization@lists.linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190715113739.17694-1-jgross@suse.com>
+ <87y30zfe9z.fsf@linux.intel.com>
+ <CALCETrUn=gho5Oug-yYvF2d1WYCe7gvtx+bXuhJ8LTjb9guvuA@mail.gmail.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <bbf1ea2d-1206-eb54-3611-4c9b9fad4aa4@citrix.com>
+Date:   Mon, 15 Jul 2019 18:39:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <CALCETrUn=gho5Oug-yYvF2d1WYCe7gvtx+bXuhJ8LTjb9guvuA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 12:08 AM Dave Airlie <airlied@gmail.com> wrote:
+On 15/07/2019 18:28, Andy Lutomirski wrote:
+> On Mon, Jul 15, 2019 at 9:34 AM Andi Kleen <ak@linux.intel.com> wrote:
+>> Juergen Gross <jgross@suse.com> writes:
+>>
+>>> The long term plan has been to replace Xen PV guests by PVH. The first
+>>> victim of that plan are now 32-bit PV guests, as those are used only
+>>> rather seldom these days. Xen on x86 requires 64-bit support and with
+>>> Grub2 now supporting PVH officially since version 2.04 there is no
+>>> need to keep 32-bit PV guest support alive in the Linux kernel.
+>>> Additionally Meltdown mitigation is not available in the kernel running
+>>> as 32-bit PV guest, so dropping this mode makes sense from security
+>>> point of view, too.
+>> Normally we have a deprecation period for feature removals like this.
+>> You would make the kernel print a warning for some releases, and when
+>> no user complains you can then remove. If a user complains you can't.
+>>
+> As I understand it, the kernel rules do allow changes like this even
+> if there's a complaint: this is a patch that removes what is
+> effectively hardware support.  If the maintenance cost exceeds the
+> value, then removal is fair game.  (Obviously we weight the value to
+> preserving compatibility quite highly, but in this case, Xen dropped
+> 32-bit hardware support a long time ago.  If the Xen hypervisor says
+> that 32-bit PV guest support is deprecated, it's deprecated.)
 >
-> VMware had some mm helpers go in via my tree (looking back I'm not
-> sure Thomas really secured enough acks on these, but I'm going with it
-> for now until I get push back).
+> That being said, a warning might not be a bad idea.  What's the
+> current status of this in upstream Xen?
 
-Yeah, this is the kind of completely unacceptable stuff that I was
-_afraid_ I'd get from the hmm tree, but didn't.
+So personally, I'd prefer to see support stay, but at the end of the day
+it is Juergen's choice as the maintainer of the code.
 
-It's not just "mm helpers". It's core changes like changing how
-do_page_mkwrite() works. With not a single ack or review from any of
-the VM people.
+Xen itself has been exclusively 64-bit since Xen 4.3 (released in 2013).
 
-Maybe that commit is fine. But there's a whole slew of questionable
-core VM changes there, and absolutely none of them look obvious, and
-none of them hack acks from any of the VM people.
+Over time, various features like SMEP/SMAP have been making 32bit PV
+guests progressively slower, because ring 1 is supervisor rather than
+user.  Things have got even worse with IBRS, to the point at which 32bit
+PV guests are starting to run like treacle.
 
-The hmm tree looked like good cleanups that largely removed broken code.
+There are no current plans to remove support for 32bit PV guests from
+Xen, but it is very much in the category of "you shouldn't be using this
+mode any more".
 
-This looks like it *adds* broken code, or at least adds code that had
-absolutely no real review outside of vmware.
+~Andrew
 
-I'm not pulling this. Why did you merge it into your tree, when
-apparently you were aware of how questionable it is judging by the drm
-pull request.
-
-                 Linus
+P.S. I don't see 64bit PV guest support going anywhere, because there
+are still a number of open performance questions due to the inherent
+differences between syscall and vmexit, and the difference EPT/NPT
+tables make on cross-domain mappings.
