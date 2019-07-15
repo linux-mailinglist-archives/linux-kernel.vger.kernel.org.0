@@ -2,122 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E0569C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D3F69BF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732807AbfGOUBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:01:18 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:38309 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732764AbfGOUBK (ORCPT
+        id S1732493AbfGOUAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:00:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23222 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732446AbfGOUAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:01:10 -0400
-Received: by mail-pl1-f201.google.com with SMTP id s22so8830205plp.5
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=dW3mrZIEp1awhdhw/Gqc2hqiwmL3xRsZmPf/kk0Pt2o=;
-        b=QgsOBiTZ0JhGodLW/2DddiolYVh1/RB2P89soOifvOkQAzAzj6aYj874inMcQbf3VF
-         xIIB2u2IJscrI0ajrGL9OY7tvtGZ2dRmXXPfodDUx8Tc2cRd3DS3+JRzX6JPu5ld1fiq
-         ktIEGLvBlrPjHXVdJZU5GlDhxSfY/1VeW1AWBneKr1dmb/b8/ToFzQieChyjqVJy2rct
-         T1oAJMJFnipJ6mKvQ43tWK4kMMM7LgHioVLczeGji5iBUo6NUPumV98PLuxE9R7R+m+r
-         Y+b3mu0fnGkey7EA1KW2dWvIVqjz7n2nY+aaqtE34JAljTplN395F2YnFoxko5GiYLNg
-         b53g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=dW3mrZIEp1awhdhw/Gqc2hqiwmL3xRsZmPf/kk0Pt2o=;
-        b=F3lWZqwV9QDbqg2TYZlaJM9laCF5seNUh3GZ//x76vcvwEtFQWf3NrOal+xuy1tQVK
-         PAi1RaF+q+8AlKTTIL7BmltvLWiY7KrJFSZKe2GLAruSBwrw7S1gA1Vlxv4Pg5Wm4oln
-         WYUgexehbo99kAugnRrVwaWmmmDM7LADAYEvV7QrMd91NdgzK94Sq1YPbaoKef0iBgIc
-         2xfzVjHZvhlt3iWEBy7tey7Cz3OrvLiYcKwjJNkMkH+PRhzDPN3Klvbp0TnhqAnyXqC6
-         EIMUExHmLTz/LSw/ZQIWHCbT4zgAO1fy8ccStIpBe+KmXgaIRLV87UljvVQTWcJ4niQx
-         jCvw==
-X-Gm-Message-State: APjAAAW2IgcBQdAf3SiiBiH44oB/aNXEqvoYeauFBLXGzFZ7efkMtAQD
-        VYorVk/F5PxxwKHCn78AaGD+FQvnlvkFD1hbX+akow==
-X-Google-Smtp-Source: APXvYqxyIbjo/rprP2+a3LVCiD9lzTGJMTCQXA9mBfowhfTZ5DAkTI1aTkwiyc4SG4vQGr0LCsXl7VoQfC/s7XMPlfaSAw==
-X-Received: by 2002:a63:c748:: with SMTP id v8mr12746095pgg.418.1563220869628;
- Mon, 15 Jul 2019 13:01:09 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:59:46 -0700
-In-Reply-To: <20190715195946.223443-1-matthewgarrett@google.com>
-Message-Id: <20190715195946.223443-30-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190715195946.223443-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V35 29/29] lockdown: Print current->comm in restriction messages
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 15 Jul 2019 16:00:32 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FJwik5138055
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 16:00:31 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2trw8kfuk9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 16:00:31 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Mon, 15 Jul 2019 21:00:30 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 15 Jul 2019 21:00:24 +0100
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FK0N5m46334460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 20:00:24 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC61C112065;
+        Mon, 15 Jul 2019 20:00:23 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6DBEF112069;
+        Mon, 15 Jul 2019 20:00:14 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.238.93])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 15 Jul 2019 20:00:13 +0000 (GMT)
+References: <20190713044554.28719-1-bauerman@linux.ibm.com> <20190713044554.28719-2-bauerman@linux.ibm.com> <3dc137a99c73b1b6582fc854844a417e@linux.vnet.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     janani@linux.ibm.com
+Cc:     x86@kernel.org, linux-s390@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Halil Pasic" <pasic@linux.ibm.com>,
+        iommu@lists.linux-foundation.org, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-fsdevel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
+        "Marek Szyprowski" <m.szyprowski@samsung.com>,
+        Linuxppc-dev 
+        <linuxppc-dev-bounces+janani=linux.ibm.com@lists.ozlabs.org>
+Subject: Re: [PATCH 1/3] x86, s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig
+In-reply-to: <3dc137a99c73b1b6582fc854844a417e@linux.vnet.ibm.com>
+Date:   Mon, 15 Jul 2019 17:00:01 -0300
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19071520-0060-0000-0000-0000035EAD79
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011434; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01232664; UDB=6.00649448; IPR=6.01013966;
+ MB=3.00027729; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-15 20:00:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071520-0061-0000-0000-00004A26C337
+Message-Id: <877e8jnk5a.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907150227
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Print the content of current->comm in messages generated by lockdown to
-indicate a restriction that was hit.  This makes it a bit easier to find
-out what caused the message.
 
-The message now patterned something like:
+Hello Janani,
 
-        Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
+Thanks for reviewing the patch.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
- fs/proc/kcore.c              | 5 +++--
- security/lockdown/lockdown.c | 8 ++++++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
+janani <janani@linux.ibm.com> writes:
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index ee2c576cc94e..e2ed8e08cc7a 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -548,11 +548,12 @@ static int open_kcore(struct inode *inode, struct file *filp)
- {
- 	int ret = security_locked_down(LOCKDOWN_KCORE);
- 
--	if (ret)
--		return ret;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
- 
-+	if (ret)
-+		return ret;
-+
- 	filp->private_data = kmalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!filp->private_data)
- 		return -ENOMEM;
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index fd7cdbddd814..bbf30d34542c 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -81,10 +81,14 @@ early_param("lockdown", lockdown_param);
-  */
- static int lockdown_is_locked_down(enum lockdown_reason what)
- {
-+	if (WARN(what >= LOCKDOWN_CONFIDENTIALITY_MAX,
-+		 "Invalid lockdown reason"))
-+		return -EPERM;
-+
- 	if (kernel_locked_down >= what) {
- 		if (lockdown_reasons[what])
--			pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
--				  lockdown_reasons[what]);
-+			pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-+				  current->comm, lockdown_reasons[what]);
- 		return -EPERM;
- 	}
- 
+> On 2019-07-12 23:45, Thiago Jung Bauermann wrote:
+>> powerpc is also going to use this feature, so put it in a generic location.
+>>
+>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>>  arch/Kconfig      | 3 +++
+>>  arch/s390/Kconfig | 3 ---
+>>  arch/x86/Kconfig  | 4 +---
+>>  3 files changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/Kconfig b/arch/Kconfig
+>> index c47b328eada0..4ef3499d4480 100644
+>> --- a/arch/Kconfig
+>> +++ b/arch/Kconfig
+>> @@ -927,6 +927,9 @@ config LOCK_EVENT_COUNTS
+>>  	  the chance of application behavior change because of timing
+>>  	  differences. The counts are reported via debugfs.
+>>
+>> +config ARCH_HAS_MEM_ENCRYPT
+>> +	bool
+>> +
+>>  source "kernel/gcov/Kconfig"
+>>
+>>  source "scripts/gcc-plugins/Kconfig"
+>> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+>> index 5d8570ed6cab..f820e631bf89 100644
+>> --- a/arch/s390/Kconfig
+>> +++ b/arch/s390/Kconfig
+>> @@ -1,7 +1,4 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>> -config ARCH_HAS_MEM_ENCRYPT
+>> -        def_bool y
+>> -
+>
+>  Since you are removing the "def_bool y" when ARCH_HAS_MEM_ENCRYPT is moved to
+> arch/Kconfig, does the s390/Kconfig need "select ARCH_HAS_MEM_ENCRYPT" added
+> like you do for x86/Kconfig?
+
+Indeed, I missed that. Thanks for spotting it!
+
+>
+>  - Janani
+>
+>>  config MMU
+>>  	def_bool y
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index c9f331bb538b..5d3295f2df94 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -68,6 +68,7 @@ config X86
+>>  	select ARCH_HAS_FORTIFY_SOURCE
+>>  	select ARCH_HAS_GCOV_PROFILE_ALL
+>>  	select ARCH_HAS_KCOV			if X86_64
+>> +	select ARCH_HAS_MEM_ENCRYPT
+>>  	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+>>  	select ARCH_HAS_PMEM_API		if X86_64
+>>  	select ARCH_HAS_PTE_SPECIAL
+>> @@ -1520,9 +1521,6 @@ config X86_CPA_STATISTICS
+>>  	  helps to determine the effectiveness of preserving large and huge
+>>  	  page mappings when mapping protections are changed.
+>>
+>> -config ARCH_HAS_MEM_ENCRYPT
+>> -	def_bool y
+>> -
+>>  config AMD_MEM_ENCRYPT
+>>  	bool "AMD Secure Memory Encryption (SME) support"
+>>  	depends on X86_64 && CPU_SUP_AMD
+
+
 -- 
-2.22.0.510.g264f2c817a-goog
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
