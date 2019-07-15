@@ -2,73 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D89E66948B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB1969575
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404896AbfGOOwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:52:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36524 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391784AbfGOOwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:52:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6CA2B0B8;
-        Mon, 15 Jul 2019 14:52:12 +0000 (UTC)
-Subject: Re: [PATCH] x86/paravirt: Drop {read,write}_cr8() hooks
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        FengTang <feng.tang@intel.com>, X86 ML <x86@kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Rafael J.Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-References: <20190715130056.10627-1-andrew.cooper3@citrix.com>
- <a04918d1-975e-5869-1ecd-c9df4ae5b1c1@suse.com>
- <CALCETrX0T=vzyN8gqoBmA72xwzS45d5bDTfcZQJayht9n9ijPA@mail.gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <f51ce980-599b-cae3-e3fa-4a67443ea128@suse.com>
-Date:   Mon, 15 Jul 2019 16:52:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CALCETrX0T=vzyN8gqoBmA72xwzS45d5bDTfcZQJayht9n9ijPA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        id S2391410AbfGOO5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:57:46 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:39271 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391156AbfGOO5n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:57:43 -0400
+Received: from orion.localdomain ([95.118.111.244]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MD9Kp-1heY5r1xHV-0099xY; Mon, 15 Jul 2019 16:57:38 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        linux-leds@vger.kernel.org
+Subject: leds: apu: drop obsolete support for apu>=2
+Date:   Mon, 15 Jul 2019 16:57:27 +0200
+Message-Id: <1563202653-20994-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:bjFr0P34zwiwycyYooXN3gJkPyUMnzKh8TAai8QjjD7P+jPKx2y
+ WyKnPaduPkTjD8w6/TIxmlobgiDmXFHOT8h9wdFt/oZwF7WxTUNrspQjz+P2jrMyir7Suy8
+ KI+IDFa1BKa+EfmK/h/AE/sEmU6/EM1Q6eCstSEtXOFO3wVRSdFfx9PP6R1gnMlfZkloJOr
+ kHWimJpwyN9TrpKaKuhiA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:brXsJ+7J2ag=:2Hrh3GyFKmNSrBJg7E8a4q
+ 31jgTlWMxMfuJDca2c/SDY4UME51Eb10rP7k5uv2H7Z3HgpTSCkTnD8DCJ/sDETOx6GeaFDDl
+ YFCB59of1eEO2OB8lO/ucdtlC2CbndegoYCEJ6dpL2kqwRyqRmC7h+50UdF2CKGwX0svHLpg7
+ kFk4TbnEnU4e2S+hCAVcqWfM/qbSAAgEJYDJphahDJFe+ttVwoc16To2UBpG8pvtI737NKEx/
+ jGDFAD75aOd/Rm0fCZsfgtopDTO/O4p+4Wtu1CUbaurB2OsQihFskYpLRAfwBsQT251D4soPp
+ 6zeLk62VBrCb6b9yHdpwgb9+d7Tw6HWITEl+DqRwr31i+9Ne6mQq9BBWXB6yrSZ3E8Hp5mOvp
+ 1HV3RVm3tAfrHMkIPdcEsbkgqzKOnNiM040LWZu8fGTPrUGIktnbWdRWhwhvACkbtJMCxNWWL
+ lF7C69uSsBlW4Xy2DySzrbBJIRliRDDaiG5fziYiS5YBqYaUv0GPoME6qtPxJ9bJp9emugzyZ
+ rE/EJ4xEYSJhRXCDALU7R0kNBDNFjfvM7/rJeLnlipfadZJmaOjkyEsX/l9KNxkHCxf+d2Vhy
+ 1Ibpq0VWp9NhDIO5JvyUYma8CZ+hdKadr3DarT19RXrZsQPYE39TvNZx5NkviduppU/tMubnC
+ jB+k/49L824fPF5+hno9evc5XGLVoz/97TDdHDLfZhf0e1djMWNAaG7BbwKoe2drmOEk0Eaw0
+ SAtKm9fSIvkwCEj1gKIcndoNFF4s7hweWOcpbQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.07.19 16:26, Andy Lutomirski wrote:
-> On Mon, Jul 15, 2019 at 6:23 AM Juergen Gross <jgross@suse.com> wrote:
->>
->> On 15.07.19 15:00, Andrew Cooper wrote:
->>> There is a lot of infrastructure for functionality which is used
->>> exclusively in __{save,restore}_processor_state() on the suspend/resume
->>> path.
->>>
->>> cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored
->>> independently by lapic_{suspend,resume}().
->>
->> Aren't those called only with CONFIG_PM set?
->>
-> 
-> 
-> Unless I'm missing something, we only build any of the restore code
-> (including the write_cr8() call) if CONFIG_PM_SLEEP is set, and that
-> selects CONFIG_PM, so we should be fine, I think.
-> 
-
-Okay, in that case I'd suggest to remove "cr8" from struct saved_context
-as it won't be used any longer.
+Hi folks,
 
 
-Juergen
+the legacy apu LEDs driver has been superseded by the more complete
+pcengines-apu2 platform driver, for APU >= 2. It only supports
+the three front LEDs, but lacks all the other GPIOs (eg. button
+or simsw), and conflicts with the pcengines-apu2 driver.
+
+Old APUv1 has a very different chipset.
+
+Therefore I propose dropping the apu>=2 support from the legacy
+driver, reducing it to only the old (obsolete) APUv1 boards.
+
+
+--mtx
+
+
