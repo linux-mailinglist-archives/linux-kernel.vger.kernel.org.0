@@ -2,111 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F93F6864E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:28:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDBC968650
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbfGOJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 05:28:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729487AbfGOJ2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 05:28:08 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE24085376;
-        Mon, 15 Jul 2019 09:28:07 +0000 (UTC)
-Received: from maximlenovopc.usersys.redhat.com (unknown [10.35.206.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 09B10608CD;
-        Mon, 15 Jul 2019 09:28:05 +0000 (UTC)
-Message-ID: <4caeb954b2fa91445e02bac7ac9610ca886b4dd8.camel@redhat.com>
-Subject: Re: [PATCH] nvme: Add support for Apple 2018+ models
-From:   Maxim Levitsky <mlevitsk@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Paul Pawlowski <paul@mrarm.io>
-Date:   Mon, 15 Jul 2019 12:28:05 +0300
-In-Reply-To: <25c3813ab1c2943658d7e79756803801b14a34db.camel@kernel.crashing.org>
-References: <71b009057582cd9c82cff2b45bc1af846408bcf7.camel@kernel.crashing.org>
-         <20190715081041.GB31791@lst.de>
-         <c088cb27f99adbcc1f8faf8e86167903f11593b8.camel@kernel.crashing.org>
-         <25c3813ab1c2943658d7e79756803801b14a34db.camel@kernel.crashing.org>
+        id S1729613AbfGOJ21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 05:28:27 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41400 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729487AbfGOJ21 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 05:28:27 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g7so12106149oia.8
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 02:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ZESu1hs7DKrdTYzlJ+91Jjl7ynlzUmW1qsOfOpkX7oU=;
+        b=XN9cfj9lcirzNgOxzk1q1HObdbxI4BCgIXwkYe1QlsAo/SrRJbCSmCCk1Oiq2QiOdl
+         OKi3oiVKtC0QM4GHhqTKEuFuhkV3a3ZFBCzcblsLkHufvNAFZVrMEBS3tDw0NkmZzmzT
+         5l9ckzGLAUET+6AAdEnS0E8K5hhzwVmP0QR5A2W29fAN2/SUPMfIa+UMVksLi3STz12w
+         4erXtZCglWEXFpzT5KXc40G+w5bF6R/oKdwGAenb/I0HvkR6rqF7UOAePT85JzuA2Qfr
+         z69q4OMKHawmFefWkA8oWLHRlia4jo/OWCLuf3teQc0a8chOcdbfhaGiyoVw46YM2RAi
+         roGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ZESu1hs7DKrdTYzlJ+91Jjl7ynlzUmW1qsOfOpkX7oU=;
+        b=t4G2phhSsL5qYAvsxG0hb80f/bDH7CuUbewWHxKm1356Zd4NHfyvtlbdzUpaBh5dJN
+         p2qd12Uq+Ox0kB8j6OA2bQzURA1khHhND0JIu12FOsc6rbmrdk2EZsguqN+PqQhS92rV
+         j7m8L9O+/OcWPSsjf5xtURrruaoH7s8KuhxL0mN/ZeP4VqTqnutt4AZJEyLrFeK6cxz5
+         GQIX+3nm3SbjqODOckwDmUrE5rI6xfQk5w+IO7yYczT5Kq4uB5/5p3K1GWL5PaiEmh5B
+         gDeJLgkEQRkEdhRVOh5E5hMoeN8HhN5qDDI+KPJU3X6du5rV1FThCfZHJw3oUF5rmGWF
+         Thqw==
+X-Gm-Message-State: APjAAAXav/q1zkx5DIv1ftCytApVFwhaN3I7VnK+BpGHs3wgwTMfeHpC
+        AaB1tRTOyl0yGs25s1iQJsvn2m0LsEsuCee8IME=
+X-Google-Smtp-Source: APXvYqxXeuaYoxB2B++5aE9AHYYDbhAd0c2QT1DRM2FMAqGSs8XCriu3YSbKi2G3u3r0pUFeou9wcarFbXAQCFgxhts=
+X-Received: by 2002:aca:4806:: with SMTP id v6mr12898470oia.133.1563182906150;
+ Mon, 15 Jul 2019 02:28:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4a:2f02:0:0:0:0:0 with HTTP; Mon, 15 Jul 2019 02:28:25
+ -0700 (PDT)
+Reply-To: elodieantoine76578@yahoo.com
+From:   Mrs Elodie Antoine <marianmiche754@gmail.com>
+Date:   Mon, 15 Jul 2019 02:28:25 -0700
+Message-ID: <CAND8_neGAySEM+P=PTQOhcr=rT6TSvKUzShU51-iwq1VZkU+xA@mail.gmail.com>
+Subject: Greetings From Mrs Elodie,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 15 Jul 2019 09:28:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-07-15 at 19:03 +1000, Benjamin Herrenschmidt wrote:
-> On Mon, 2019-07-15 at 18:43 +1000, Benjamin Herrenschmidt wrote:
-> > On Mon, 2019-07-15 at 10:10 +0200, Christoph Hellwig wrote:
-> > > > +	/*
-> > > > +	 * Apple 2018 and latter variant has a few issues
-> > > > +	 */
-> > > > +	NVME_QUIRK_APPLE_2018			= (1 << 10),
-> > > 
-> > > We try to have quirks for the actual issue, so this should be one quirk
-> > > for the irq vectors issues, and another for the sq entry size.  Note that
-> > > NVMe actually has the concept of an I/O queue entry size (IOSQES in the
-> > > Cc register based on values reported in the SQES field in Identify
-> > > Controller.  Do these controllers report anything interesting there?
-> > 
-> > Ah good to know, I'll dig.
-> 
-> Interesting... so SQES is 0x76, indicating that it supports the larger
-> entry size but not that it mandates it.
-> 
-> However, we configure CC:IOSQES with 6 and the HW fails unless we have
-> the 128 bytes entry size.
-> 
-> So the HW is bogus, but we can probably sort that by doing a better job
-> at fixing up SQES in the identify on the Apple HW, and then actually
-> using it for the SQ.
-> 
-> I checked and CC is 0x00460001 so it takes our write of "6" fine. I
-> think they just ignore the value.
-> 
-> How do you want to proceed here ? Should I go all the way at attempting
-> to honor sqes "mandatory" size field (and quirk *that*) or just I go
-> the simpler way and stick to shift 6 unless Apple ?
-> 
-> If I go the complicated path, should I do the same with cq size
-> (knowing that no known HW has a non-4 mandatory size there and we don't
-> know of a HW bug... yet).
-> 
-> Cheers,
-> Ben.
-> 
+Greetings From Mrs Elodie,
 
-To be honest, the spec explicitly states that minimum submission queue entry size is 64 
-and minimum completion entry size should be is 16 bytes for NVM command set:
+Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
+CHRIST the giver of every good thing. Good day,i know this letter will
+definitely come to you as a huge surprise, but I implore you to take
+the time to go through it carefully as the decision you make will go
+off a long way to determine my future and continued existence. I am
+Mrs Elodie Antoine
+aging widow of 59 years old suffering from long time illness. I have
+some funds I inherited from my late husband,
 
-"Bits 3:0 define the required (i.e., minimum) Submission Queue Entry size when
-using the NVM Command Set. This is the minimum entry size that may be used.
-The value is in bytes and is reported as a power of two (2^n). The required value
-shall be 6, corresponding to 64."
+The sum of (US$4.5 Million Dollars) and I needed a very honest and God
+fearing  who can withdraw this money then use the funds for Charity
+works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found
+your email address from the internet after honest prayers  to the LORD
+to bring me a helper and i decided to contact you if you may be
+willing and interested to handle these trust funds in good faith
+before anything happens to me.
+I accept this decision because I do not have any child who will
+inherit this money after I die. I want your urgent reply to me so that
+I will give you the deposit receipt which the  COMPANY issued to me as
+next of kin for immediate transfer of the money to your account in
+your country, to start the good work of God, I want you to use the
+15/percent of the total amount to help yourself in doing the project.
 
-"Bits 3:0 define the required (i.e., minimum) Completion Queue entry size when using
-the NVM Command Set. This is the minimum entry size that may be used. The value
-is in bytes and is reported as a power of two (2^n). The required value shall be 4,
-corresponding to 16."
+I am desperately in keen need of assistance and I have summoned up
+courage to contact you for this task, you must not fail me and the
+millions of the poor people in our todays WORLD. This is no stolen
+money and there are no dangers involved,100% RISK FREE with full legal
+proof. Please if you would be able to use the funds for the Charity
+works kindly let me know immediately.I will appreciate your utmost
+confidentiality and trust in this matter to accomplish my heart
+desire, as I don't want anything that will jeopardize my last wish. I
+want you to take 15 percent of the total money for your personal use
+while 85% of the money will go to charity.I will appreciate your
+utmost confidentiality and trust in this matter to accomplish my heart
+desire, as I don't want anything that will jeopardize my last wish.
 
-Pages 136/137, NVME 1.3d.
-
-In theory the spec allows for non NVM IO command set, and for which the sq/cq entry sizes can be of any size,
-as indicated in SQES/CQES and set in CC.IOCQES/CC.IOSQES, but than most of the spec won't apply to it.
+kindly respond for further details. reply to my private E-mail:(
+elodieantoine76578@yahoo.com )
 
 
-Also FYI, values in CC (IOCQES/IOSQES) are for I/O queues, which kind of implies that admin queue,
-should always use the 64/16 bytes entries, although I haven't found any explicit mention of that.
+Thanks and God bless you,
 
-Best regards,
-	Maxim Levitsky
-
-
+Mrs Elodie Antoine
