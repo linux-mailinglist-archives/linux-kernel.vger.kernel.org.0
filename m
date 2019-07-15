@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1A126966E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9880769652
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389108AbfGOPE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:04:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57050 "EHLO mail.kernel.org"
+        id S2388324AbfGOOIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:08:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388219AbfGOOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:07:52 -0400
+        id S2388474AbfGOOIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:08:17 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A88D020868;
-        Mon, 15 Jul 2019 14:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27BEB2081C;
+        Mon, 15 Jul 2019 14:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199671;
-        bh=oPD6bOUlXEdTcnSJVgy5DPQWInMIKIvhk3WyIgRbzfs=;
+        s=default; t=1563199696;
+        bh=DFKCF5t4ld05/ZNuT6Ta+3nNlNLCVq+XxwCK4tQ93jU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tuoeG2Il32KuIThAUFzci446jxEmRqd+lxB1GhGq8r9KaaEBG/+94VwiRaOk1t49V
-         dLDK2AsNqUabELA5WTwbrcEATmtwVJcVRueklRiYzGEE/cdNqOzVCq9y6wvvbqbJOP
-         fxZ36kkfQUydIodiniFnhslmUU67NGQjna3Gt0iM=
+        b=vMoRC+v1wtZuxXslxq0CNQhz5Adxl0cPbfzf7EVu3M2g791wsUxllO/uQ7D+eMjwt
+         PBE0nuNHqYhp09VQlGIiJEtlgkgfNSwL7YcnIpAzTLNYxjr2mh2NTj890L1D/DGaRH
+         q5DhL5/R5cYOWnOmJ8D377LlBC+FyaQra5SBwUJ8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 068/219] RAS/CEC: Fix pfn insertion
-Date:   Mon, 15 Jul 2019 10:01:09 -0400
-Message-Id: <20190715140341.6443-68-sashal@kernel.org>
+Cc:     Oliver Neukum <oneukum@suse.com>,
+        syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 075/219] media: uvcvideo: Fix access to uninitialized fields on probe error
+Date:   Mon, 15 Jul 2019 10:01:16 -0400
+Message-Id: <20190715140341.6443-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -43,56 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 6d8e294bf5f0e85c34e8b14b064e2965f53f38b0 ]
+[ Upstream commit 11a087f484bf15ff65f0a9f277aa5a61fd07ed2a ]
 
-When inserting random PFNs for debugging the CEC through
-(debugfs)/ras/cec/pfn, depending on the return value of pfn_set(),
-multiple values get inserted per a single write.
+We need to check whether this work we are canceling actually is
+initialized.
 
-That is because simple_attr_write() interprets a retval of 0 as
-success and claims the whole input. However, pfn_set() returns the
-cec_add_elem() value, which, if > 0 and smaller than the whole input
-length, makes glibc continue issuing the write syscall until there's
-input left:
-
-  pfn_set
-  simple_attr_write
-  debugfs_attr_write
-  full_proxy_write
-  vfs_write
-  ksys_write
-  do_syscall_64
-  entry_SYSCALL_64_after_hwframe
-
-leading to those repeated calls.
-
-Return 0 to fix that.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ras/cec.c | 4 +++-
+ drivers/media/usb/uvc/uvc_ctrl.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index f85d6b7a1984..5d2b2c02cbbe 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -369,7 +369,9 @@ static int pfn_set(void *data, u64 val)
- {
- 	*(u64 *)data = val;
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index 14cff91b7aea..aa021498036a 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -2350,7 +2350,9 @@ void uvc_ctrl_cleanup_device(struct uvc_device *dev)
+ 	struct uvc_entity *entity;
+ 	unsigned int i;
  
--	return cec_add_elem(val);
-+	cec_add_elem(val);
-+
-+	return 0;
- }
+-	cancel_work_sync(&dev->async_ctrl.work);
++	/* Can be uninitialized if we are aborting on probe error. */
++	if (dev->async_ctrl.work.func)
++		cancel_work_sync(&dev->async_ctrl.work);
  
- DEFINE_DEBUGFS_ATTRIBUTE(pfn_ops, u64_get, pfn_set, "0x%llx\n");
+ 	/* Free controls and control mappings for all entities. */
+ 	list_for_each_entry(entity, &dev->entities, list) {
 -- 
 2.20.1
 
