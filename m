@@ -2,40 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C137769534
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41BC69589
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390477AbfGOOVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42634 "EHLO mail.kernel.org"
+        id S2391677AbfGOO6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:58:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390196AbfGOOT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:19:57 -0400
+        id S2390437AbfGOOUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:20:25 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F83B217D8;
-        Mon, 15 Jul 2019 14:19:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B72820868;
+        Mon, 15 Jul 2019 14:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200396;
-        bh=zvVaimIqmMtPFymMmSVC+XhJocKCIfsY7KZqvrpIHFU=;
+        s=default; t=1563200424;
+        bh=dMS4IlMtitQta4w5eymfq+mTgMKszYDZ+A8Kxy3G5DA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhrcpfRhsfVjnxWHWQz4taafQhMW7v259EEWm2Yc24naecVz2zRupe8m+7+hEGPkv
-         /9dTNr3Sme3rNPbReoPvFFta6G4iNJTYFHW9aKoFVGTTz43NwIQU62dAL4gMZ8qrqu
-         9k6KiJD4DzCPb9nSNhz6mR25B6AB3n2qohKN1KkU=
+        b=Z6OlgDTYlt1S7HVVcgvohklsHj1zlNx0ZUaETOOzohvIDg1e1emgvISf8OreffpUb
+         gTyv6471lJt6Xq4of37WtxB084qe4piuI2IYaPTwnJq0xyNJwGg1L/ThCVYJi6789n
+         gj/S+QS8ZrKp159GBPLYaV0ckaOwhT2ZMzBSswhA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Imre Deak <imre.deak@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 037/158] locking/lockdep: Fix merging of hlocks with non-zero references
-Date:   Mon, 15 Jul 2019 10:16:08 -0400
-Message-Id: <20190715141809.8445-37-sashal@kernel.org>
+Cc:     Biao Huang <biao.huang@mediatek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 043/158] net: stmmac: dwmac4: fix flow control issue
+Date:   Mon, 15 Jul 2019 10:16:14 -0400
+Message-Id: <20190715141809.8445-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -48,102 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Imre Deak <imre.deak@intel.com>
+From: Biao Huang <biao.huang@mediatek.com>
 
-[ Upstream commit d9349850e188b8b59e5322fda17ff389a1c0cd7d ]
+[ Upstream commit ee326fd01e79dfa42014d55931260b68b9fa3273 ]
 
-The sequence
+Current dwmac4_flow_ctrl will not clear
+GMAC_RX_FLOW_CTRL_RFE/GMAC_RX_FLOW_CTRL_RFE bits,
+so MAC hw will keep flow control on although expecting
+flow control off by ethtool. Add codes to fix it.
 
-	static DEFINE_WW_CLASS(test_ww_class);
-
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct ww_mutex ww_lock_c;
-	struct mutex lock_c;
-
-	ww_acquire_init(&ww_ctx, &test_ww_class);
-
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-	ww_mutex_init(&ww_lock_c, &test_ww_class);
-
-	mutex_init(&lock_c);
-
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
-
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-	ww_mutex_lock(&ww_lock_c, &ww_ctx);
-
-	mutex_unlock(&lock_c);	(*)
-
-	ww_mutex_unlock(&ww_lock_c);
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx); (**)
-
-will trigger the following error in __lock_release() when calling
-mutex_release() at **:
-
-	DEBUG_LOCKS_WARN_ON(depth <= 0)
-
-The problem is that the hlock merging happening at * updates the
-references for test_ww_class incorrectly to 3 whereas it should've
-updated it to 4 (representing all the instances for ww_ctx and
-ww_lock_[abc]).
-
-Fix this by updating the references during merging correctly taking into
-account that we can have non-zero references (both for the hlock that we
-merge into another hlock or for the hlock we are merging into).
-
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/r/20190524201509.9199-2-imre.deak@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 477286b53f55 ("stmmac: add GMAC4 core support")
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 26b57e24476f..e810e8cb17e1 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3326,17 +3326,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (depth) {
- 		hlock = curr->held_locks + depth - 1;
- 		if (hlock->class_idx == class_idx && nest_lock) {
--			if (hlock->references) {
--				/*
--				 * Check: unsigned int references:12, overflow.
--				 */
--				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
--					return 0;
-+			if (!references)
-+				references++;
- 
-+			if (!hlock->references)
- 				hlock->references++;
--			} else {
--				hlock->references = 2;
--			}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index a2f3db39221e..d0e6e1503581 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -475,8 +475,9 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 	if (fc & FLOW_RX) {
+ 		pr_debug("\tReceive Flow-Control ON\n");
+ 		flow |= GMAC_RX_FLOW_CTRL_RFE;
+-		writel(flow, ioaddr + GMAC_RX_FLOW_CTRL);
+ 	}
++	writel(flow, ioaddr + GMAC_RX_FLOW_CTRL);
 +
-+			hlock->references += references;
-+
-+			/* Overflow */
-+			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
-+				return 0;
+ 	if (fc & FLOW_TX) {
+ 		pr_debug("\tTransmit Flow-Control ON\n");
  
- 			return 1;
+@@ -484,7 +485,7 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 			pr_debug("\tduplex mode: PAUSE %d\n", pause_time);
+ 
+ 		for (queue = 0; queue < tx_cnt; queue++) {
+-			flow |= GMAC_TX_FLOW_CTRL_TFE;
++			flow = GMAC_TX_FLOW_CTRL_TFE;
+ 
+ 			if (duplex)
+ 				flow |=
+@@ -492,6 +493,9 @@ static void dwmac4_flow_ctrl(struct mac_device_info *hw, unsigned int duplex,
+ 
+ 			writel(flow, ioaddr + GMAC_QX_TX_FLOW_CTRL(queue));
  		}
++	} else {
++		for (queue = 0; queue < tx_cnt; queue++)
++			writel(0, ioaddr + GMAC_QX_TX_FLOW_CTRL(queue));
+ 	}
+ }
+ 
 -- 
 2.20.1
 
