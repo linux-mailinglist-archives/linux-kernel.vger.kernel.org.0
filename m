@@ -2,82 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E01A692BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03EBA692C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391831AbfGOOiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:38:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:51010 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392113AbfGOOiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:38:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C80BF28;
-        Mon, 15 Jul 2019 07:38:44 -0700 (PDT)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1A613F59C;
-        Mon, 15 Jul 2019 07:38:43 -0700 (PDT)
-Subject: Re: [RFC v2 12/14] arm64/lib: asid: Allow user to update the context
- under the lock
-To:     James Morse <james.morse@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        julien.thierry@arm.com, suzuki.poulose@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <20190620130608.17230-1-julien.grall@arm.com>
- <20190620130608.17230-13-julien.grall@arm.com>
- <c5d1257c-b522-152f-cb2f-d23fd8110609@arm.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <446cfa1a-71be-3ae2-4107-02dd0f164843@arm.com>
-Date:   Mon, 15 Jul 2019 15:38:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S2392234AbfGOOjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:39:02 -0400
+Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:42280
+        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731051AbfGOOix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:38:53 -0400
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+        by mail.dev.tdt.de (Postfix) with ESMTP id 6F67D2197C;
+        Mon, 15 Jul 2019 14:38:51 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <c5d1257c-b522-152f-cb2f-d23fd8110609@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 15 Jul 2019 16:38:51 +0200
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Eckert.Florian@googlemail.com, info@metux.net,
+        dvhart@infradead.org, andy@infradead.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] platform/x86/pcengines-apuv2: add mpcie reset gpio
+ export
+In-Reply-To: <3e98bbd8-c051-4996-fc5a-88a58a2fa2d4@metux.net>
+References: <20190704090205.19400-1-fe@dev.tdt.de>
+ <20190704090205.19400-2-fe@dev.tdt.de>
+ <3e98bbd8-c051-4996-fc5a-88a58a2fa2d4@metux.net>
+Message-ID: <10c574cd0dfb1c607536c68fc1c60c06@dev.tdt.de>
+X-Sender: fe@dev.tdt.de
+User-Agent: Roundcube Webmail/1.1.5
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 03/07/2019 18:35, James Morse wrote:
-> Hi Julien,
-
-Hi James,
-
-> On 20/06/2019 14:06, Julien Grall wrote:
->> Some users of the ASID allocator (e.g VMID) will require to update the
->> context when a new ASID is generated. This has to be protected by a lock
->> to prevent concurrent modification.
->>
->> Rather than introducing yet another lock, it is possible to re-use the
->> allocator lock for that purpose. This patch introduces a new callback
->> that will be call when updating the context.
+>> On APUx we have also mpcie2/mpcie3 reset pins. To make it possible to 
+>> reset
+>> the ports from the userspace, add the definition to this platform
+>> device. The gpio can then be exported by the legancy gpio subsystem to
+>> toggle the mpcie reset pin.
+>> 
 > 
-> You're using this later in the series to mask out the generation from the atomic64 to
-> leave just the vmid.
-
-You are right.
-
+> Just tested your patch on an apu3. The driver itself seems to work,
+> but the pins don't seem to actually do anything.
 > 
-> Where does this concurrent modification happen? The value is only written if we have a
-> rollover, and while its active the only bits that could change are the generation.
-> (subsequent vCPUs that take the slow path for the same VM will see the updated generation
-> and skip the new_context call)
-> 
-> If we did the generation filtering in update_vmid() after the call to
-> asid_check_context(), what would go wrong?
-> It happens more often than is necessary and would need a WRITE_ONCE(), but the vmid can't
-> change until we become preemptible and another vCPU gets a chance to make its vmid active.
+> How exactly did you test it ? Do you have some test case ?
 
-I think I was over cautious. Pre-filtering after asid_check_context() is equally 
-fine as long as update_vttbr() is called from preemptible context.
+I plugged in a mpcie  usb modem.
+In my test case it was a EC25 from Quectel in mpcie2 port.
+After that I did a reboot and exported the gpio via "/sys/class/gpio"
+Then I executed the command "echo 0 > /sys/class/gpio/<name>/value" and 
+"echo 1 > /sys/class/gpio/<name>/value".
+Then I have seen the log message in the kernel that the device did an 
+unregistration/registration
+.
+-- Florian
 
-Cheers,
-
--- 
-Julien Grall
