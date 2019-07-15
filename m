@@ -2,103 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6259269065
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3146906A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390283AbfGOOVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:21:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42221 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390004AbfGOOVS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:21:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x1so2308776wrr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wP59Gx3m7Jou+yXtjCzXvgdV35CA8Lfqjz/4jKFq3O4=;
-        b=pCEYP/PvfZqosCmkP7JoAmOtLKbETj/1CU/2OxY7E/V6SyHtYpTGre2MQHMm7D4dmb
-         7cVZllfkUiXxDvsjyyJLbkiH30aJzUdCYTni2ka/NVOm+TH22/U3EbR0cEtT/a5DqnWp
-         m076BIqncH37M37LT84LcisvJJYkklw8N2F1Ql2F9MIc9SLe6zgF3DqjXIooeBfQRt2j
-         qG7O+Tw7C7gn0in0Ac4pYb+Wrqa7ZmFIRN8QeQHru9ruLEuQcnTC1Bj7+fdf31KUZ774
-         855dHOt/2hp4gueVyvNC42RE+SIIVxeRkWFu5/6tWnRchaj1H0VYVGlcDg0pyXMpiNCd
-         Edyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wP59Gx3m7Jou+yXtjCzXvgdV35CA8Lfqjz/4jKFq3O4=;
-        b=MT0+j9ARdoVFsKLF+5JDBEij6ggUBZmXT+1eh+qxyYdKfzIzCqFvV9+m6Sxnexf3ZL
-         cGTWyvNjce370hgPC6Nn/6PX2/Ar8i40Lh/kHJOgNNR7XY6aVxpM9BA4h302Px/5aZbl
-         CSeCiXXkcHnSjRdhu7+hNTJcoL/We34DeeSIuk3Wq4UqgULXwgKeN1TwJBrqCXUetkiA
-         HLOa0omQgD1aYKtsjCyUJR/I27UDSbUuqpgUtLk3Z1EAkcaP5uXdMAFLxlN8R8xf5uf4
-         lD4TpcU1XB7rbTHgoju+CLO8getn815zIdUSLof77YLpMqbwA8AWiJLmzoh8gRX1GD02
-         4ngw==
-X-Gm-Message-State: APjAAAVFBAUKeBty/lNaqS0CIJK0xnB45VcBEHGHKPfFr/qVrlWU6hPQ
-        I6eStn95FIrXNsD2eHI40fQ=
-X-Google-Smtp-Source: APXvYqz72sz0aUW74u06qoXBxafELDcjaFP4f7IgKBlvWIkJvCMqUbPEdmj93TOma02OuZWVJHfTbQ==
-X-Received: by 2002:adf:db8e:: with SMTP id u14mr5420843wri.314.1563200476039;
-        Mon, 15 Jul 2019 07:21:16 -0700 (PDT)
-Received: from localhost.localdomain.com (93-103-18-160.static.t-2.net. [93.103.18.160])
-        by smtp.gmail.com with ESMTPSA id i18sm19986388wrp.91.2019.07.15.07.21.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 07:21:15 -0700 (PDT)
-From:   Uros Bizjak <ubizjak@gmail.com>
-To:     tglx@linutronix.de, luto@amacapital.net, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH] x86/cpu/intel: Skip CPA cache flush on CPUs with cache self-snooping
-Date:   Mon, 15 Jul 2019 16:21:09 +0200
-Message-Id: <20190715142109.3063-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S2390012AbfGOOVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:21:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53628 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390043AbfGOOVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:21:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A3AE308621E;
+        Mon, 15 Jul 2019 14:21:25 +0000 (UTC)
+Received: from krava (unknown [10.40.205.8])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5D5B75B681;
+        Mon, 15 Jul 2019 14:21:22 +0000 (UTC)
+Date:   Mon, 15 Jul 2019 16:21:21 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>, mbd@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ian Rogers <irogers@google.com>
+Subject: [PATCH] perf stat: Fix segfault for event group in repeat mode
+Message-ID: <20190715142121.GC6032@krava>
+References: <20190710204540.176495-1-nums@google.com>
+ <20190714204432.GA8120@krava>
+ <20190714205505.GB8120@krava>
+ <CABPqkBSq35HZVk2CNi8xy9j7eb3EWRXSdgPKd+fmv2XaKPjOqA@mail.gmail.com>
+ <20190715075912.GA2821@krava>
+ <CABPqkBR=arE==2H2H0t1uAU2aTgPOr6Yucgh16J0rKughf_=CQ@mail.gmail.com>
+ <20190715083105.GB2821@krava>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190715083105.GB2821@krava>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 15 Jul 2019 14:21:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPUs which have self-snooping capability can handle conflicting
-memory type across CPUs by snooping its own cache. Commit #fd329f276ecaa
-("x86/mtrr: Skip cache flushes on CPUs with cache self-snooping")
-avoids cache flushes when MTRR registers are programmed. The Page
-Attribute Table (PAT) is a companion feature to the MTRRs, and according
-to section 11.12.4 of the Intel 64 and IA 32 Architectures Software
-Developer's Manual, if the CPU supports cache self-snooping, it is not
-necessary to flush caches when remapping a page that was previously
-mapped as a different memory type.
+Numfor Mbiziwo-Tiapo reported segfault on stat of event
+group in repeat mode:
 
-Note that commit #1e03bff360010
-("x86/cpu/intel: Clear cache self-snoop capability in CPUs with known errata")
-cleared cache self-snoop capability for CPUs where conflicting memory types
-lead to unpredictable behavior, machine check errors, or hangs.
+  # perf stat -e '{cycles,instructions}' -r 10 ls
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+It's caused by memory corruption due to not cleaned
+evsel's id array and index, which needs to be rebuilt
+in every stat iteration. Currently the ids index grows,
+while the array (which is also not freed) has the same
+size.
+
+Fixing this by releasing id array and zeroing ids index
+in perf_evsel__close function.
+
+We also need to keep the evsel_list alive for stat
+record (which is disabled in repeat mode).
+
+Reported-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Link: http://lkml.kernel.org/n/tip-07t75chgdhcr00uerh51hb6j@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ tools/perf/builtin-stat.c | 9 ++++++++-
+ tools/perf/util/evsel.c   | 2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 6a9a77a403c9..e2704996f9c5 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -1725,10 +1725,11 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
- 		goto out;
- 
- 	/*
--	 * No need to flush, when we did not set any of the caching
--	 * attributes:
-+	 * No need to flush when CPU supports self-snoop or
-+	 * when we did not set any of the caching attributes:
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index b55a534b4de0..352cf39d7c2f 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -607,7 +607,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 	 * group leaders.
  	 */
--	cache = !!pgprot2cachemode(mask_set);
-+	cache = !static_cpu_has(X86_FEATURE_SELFSNOOP) &&
-+		pgprot2cachemode(mask_set);
+ 	read_counters(&(struct timespec) { .tv_nsec = t1-t0 });
+-	perf_evlist__close(evsel_list);
++
++	/*
++	 * We need to keep evsel_list alive, because it's processed
++	 * later the evsel_list will be closed after.
++	 */
++	if (!STAT_RECORD)
++		perf_evlist__close(evsel_list);
  
- 	/*
- 	 * On error; flush everything to be sure.
+ 	return WEXITSTATUS(status);
+ }
+@@ -1997,6 +2003,7 @@ int cmd_stat(int argc, const char **argv)
+ 			perf_session__write_header(perf_stat.session, evsel_list, fd, true);
+ 		}
+ 
++		perf_evlist__close(evsel_list);
+ 		perf_session__delete(perf_stat.session);
+ 	}
+ 
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ebb46da4dfe5..52459dd5ad0c 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
+ 	xyarray__delete(evsel->sample_id);
+ 	evsel->sample_id = NULL;
+ 	zfree(&evsel->id);
++	evsel->ids = 0;
+ }
+ 
+ static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
+@@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
+ 
+ 	perf_evsel__close_fd(evsel);
+ 	perf_evsel__free_fd(evsel);
++	perf_evsel__free_id(evsel);
+ }
+ 
+ int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
 -- 
 2.21.0
 
