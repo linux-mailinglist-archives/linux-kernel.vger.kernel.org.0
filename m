@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 930E26970A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F7D69705
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733091AbfGON6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37192 "EHLO mail.kernel.org"
+        id S2387897AbfGOPIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:08:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732131AbfGON6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:58:06 -0400
+        id S1733095AbfGON6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:58:16 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10C5A20651;
-        Mon, 15 Jul 2019 13:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32D2121530;
+        Mon, 15 Jul 2019 13:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199085;
-        bh=oiFz2NTIZMbWcBgnnWQwMU4e1+RSkgJOnzytLtRJPzo=;
+        s=default; t=1563199095;
+        bh=CpcmPpFCIP763ND42Q8No0jtLg2Te8t6IKHrz6e9t60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GUPYduky1gIJ6EYhtmr0z9MfLm1Z6rYEnDwKIUQAFoLp/cM4JDrJWvzwa+yQ0FNiK
-         +O6t5CuAFS+S2Ju423n8fc/pDORgNoyHSMR30EauUcETNCsk+N2BPyXGHPD6F8iEq9
-         P+1Askpewg8NcoOK9c9QtFHXrQZcadI5BmEYST+M=
+        b=n2ZRVlqOtAEa0RqrlsHDUi4i3DBXBCraZepD+nK1S+iwPNn5B1nbH9+BmexSRiWez
+         iXhf3hCjt2zczplz+eFoln5Hi0sTZMECFIZnjqR/mJL3JoAlxNl9a7JKaOFHZ8M8nZ
+         4HPR0+bUQC9FRP5uNVqIrRGhI0jWmEEiaF9USu9Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zefir Kurtisi <zefir.kurtisi@neratec.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 186/249] ath9k: correctly handle short radar pulses
-Date:   Mon, 15 Jul 2019 09:45:51 -0400
-Message-Id: <20190715134655.4076-186-sashal@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 190/249] cpufreq: Avoid calling cpufreq_verify_current_freq() from handle_update()
+Date:   Mon, 15 Jul 2019 09:45:55 -0400
+Message-Id: <20190715134655.4076-190-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -44,58 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zefir Kurtisi <zefir.kurtisi@neratec.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit df5c4150501ee7e86383be88f6490d970adcf157 ]
+[ Upstream commit 70a59fde6e69d1d8579f84bf4555bfffb3ce452d ]
 
-In commit 3c0efb745a17 ("ath9k: discard undersized packets")
-the lower bound of RX packets was set to 10 (min ACK size) to
-filter those that would otherwise be treated as invalid at
-mac80211.
+On some occasions cpufreq_verify_current_freq() schedules a work whose
+callback is handle_update(), which further calls cpufreq_update_policy()
+which may end up calling cpufreq_verify_current_freq() again.
 
-Alas, short radar pulses are reported as PHY_ERROR frames
-with length set to 3. Therefore their detection stopped
-working after that commit.
+On the other hand, when cpufreq_update_policy() is called from
+handle_update(), the pointer to the cpufreq policy is already
+available, but cpufreq_cpu_acquire() is still called to get it in
+cpufreq_update_policy(), which should be avoided as well.
 
-NOTE: ath9k drivers built thereafter will not pass DFS
-certification.
+To fix these issues, create a new helper, refresh_frequency_limits(),
+and make both handle_update() call it cpufreq_update_policy().
 
-This extends the criteria for short packets to explicitly
-handle PHY_ERROR frames.
-
-Fixes: 3c0efb745a17 ("ath9k: discard undersized packets")
-Signed-off-by: Zefir Kurtisi <zefir.kurtisi@neratec.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Rename reeval_frequency_limits() as refresh_frequency_limits() ]
+[ rjw: Changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/recv.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/recv.c b/drivers/net/wireless/ath/ath9k/recv.c
-index 4e97f7f3b2a3..06e660858766 100644
---- a/drivers/net/wireless/ath/ath9k/recv.c
-+++ b/drivers/net/wireless/ath/ath9k/recv.c
-@@ -815,6 +815,7 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
- 	struct ath_common *common = ath9k_hw_common(ah);
- 	struct ieee80211_hdr *hdr;
- 	bool discard_current = sc->rx.discard_next;
-+	bool is_phyerr;
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index e84bf0eb7239..876a4cb09de3 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1114,13 +1114,25 @@ static int cpufreq_add_policy_cpu(struct cpufreq_policy *policy, unsigned int cp
+ 	return ret;
+ }
  
- 	/*
- 	 * Discard corrupt descriptors which are marked in
-@@ -827,8 +828,11 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
++static void refresh_frequency_limits(struct cpufreq_policy *policy)
++{
++	struct cpufreq_policy new_policy = *policy;
++
++	pr_debug("updating policy for CPU %u\n", policy->cpu);
++
++	new_policy.min = policy->user_policy.min;
++	new_policy.max = policy->user_policy.max;
++
++	cpufreq_set_policy(policy, &new_policy);
++}
++
+ static void handle_update(struct work_struct *work)
+ {
+ 	struct cpufreq_policy *policy =
+ 		container_of(work, struct cpufreq_policy, update);
+-	unsigned int cpu = policy->cpu;
+-	pr_debug("handle_update for cpu %u called\n", cpu);
+-	cpufreq_update_policy(cpu);
++
++	pr_debug("handle_update for cpu %u called\n", policy->cpu);
++	refresh_frequency_limits(policy);
+ }
  
- 	/*
- 	 * Discard zero-length packets and packets smaller than an ACK
-+	 * which are not PHY_ERROR (short radar pulses have a length of 3)
- 	 */
--	if (rx_stats->rs_datalen < 10) {
-+	is_phyerr = rx_stats->rs_status & ATH9K_RXERR_PHY;
-+	if (!rx_stats->rs_datalen ||
-+	    (rx_stats->rs_datalen < 10 && !is_phyerr)) {
- 		RX_STAT_INC(sc, rx_len_err);
- 		goto corrupt;
- 	}
+ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
+@@ -2392,7 +2404,6 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
+ void cpufreq_update_policy(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_acquire(cpu);
+-	struct cpufreq_policy new_policy;
+ 
+ 	if (!policy)
+ 		return;
+@@ -2405,12 +2416,7 @@ void cpufreq_update_policy(unsigned int cpu)
+ 	    (cpufreq_suspended || WARN_ON(!cpufreq_update_current_freq(policy))))
+ 		goto unlock;
+ 
+-	pr_debug("updating policy for CPU %u\n", cpu);
+-	memcpy(&new_policy, policy, sizeof(*policy));
+-	new_policy.min = policy->user_policy.min;
+-	new_policy.max = policy->user_policy.max;
+-
+-	cpufreq_set_policy(policy, &new_policy);
++	refresh_frequency_limits(policy);
+ 
+ unlock:
+ 	cpufreq_cpu_release(policy);
 -- 
 2.20.1
 
