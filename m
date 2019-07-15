@@ -2,125 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1C2699B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8AE369A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbfGOR3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:29:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51708 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730774AbfGOR3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:29:37 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ED72A4E93D;
-        Mon, 15 Jul 2019 17:29:36 +0000 (UTC)
-Received: from treble (ovpn-120-170.rdu2.redhat.com [10.10.120.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F1DDB1001925;
-        Mon, 15 Jul 2019 17:29:35 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 12:29:34 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 20/22] objtool: Fix seg fault on bad switch table entry
-Message-ID: <20190715172934.4uinmu3ba65vcphv@treble>
-References: <cover.1563150885.git.jpoimboe@redhat.com>
- <9f67aa11794e9eebe5a3249529d1ecf60abf370f.1563150885.git.jpoimboe@redhat.com>
- <CAKwvOdmUX31KcvDpdzOkrO=Jw+FFQ8MuiQkVFFnNeG9n28k5Aw@mail.gmail.com>
+        id S1731834AbfGORgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:36:50 -0400
+Received: from server-4i-r6.ipv4.lon01.ds.network ([176.74.29.162]:54814 "EHLO
+        vs-william2019.uk.syrahost.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731574AbfGORgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 13:36:50 -0400
+X-Greylist: delayed 18291 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 13:36:49 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=gblinternational.asia; s=default; h=MIME-Version:Content-Type:Reply-to:
+        Subject:To:From:Message-ID:Date:Sender:Cc:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=30AmmWjfSqByUdzQVoN+LkQNSXkYCzHw1oPP7sH0rpU=; b=t9SwhatKDy0rAFaxmVVLxIL0b
+        EYbwEWhCe9rJnWwfuVrA00jK22JTy0D8zHBMYP0umOE/8nSjyX64e31ISHMoG/V4a5zwrWA7h63+3
+        u6snR6sNAq+y+rmqD1e2qaYxOHV99oX/fmBIniUqAlPlQvD+esyBADJ1V612mG0kl3PO1WTT8d40I
+        YbsT95qAvzdodKeX6/luiZH/3w/KDJA6TOKMDTfnXU8EWoHrkOM0KVs0HrduRb1aMlajKlL9kKzfi
+        ZnHPGhjnR6Kx+s18RZ+/LwQdHni9yBEyfmPGZihYNj4Kef9ARTGRGtAtCg7gANPYnELw/bco572X7
+        D29CNn+Sw==;
+Received: from [::1] (port=39848 helo=vs-william2019.uk.syrahost.com)
+        by vs-william2019.uk.syrahost.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gbl@gblinternational.asia>)
+        id 1hn08k-0008ML-N4; Mon, 15 Jul 2019 12:31:34 +0000
+Received: from [102.176.65.211] ([102.176.65.211]) by
+ vs-william2019.uk.syrahost.com (Horde Framework) with HTTPS; Mon, 15 Jul
+ 2019 13:31:34 +0100
+Date:   Mon, 15 Jul 2019 13:31:34 +0100
+Message-ID: <20190715133134.Horde.taOlDJfKyXArIfzXxFeuN7f@vs-william2019.uk.syrahost.com>
+From:   Mills & Mills LLP <gbl@gblinternational.asia>
+Subject: Hello, Good day!
+Reply-to: pmillschambers@outlook.com
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdmUX31KcvDpdzOkrO=Jw+FFQ8MuiQkVFFnNeG9n28k5Aw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 15 Jul 2019 17:29:37 +0000 (UTC)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vs-william2019.uk.syrahost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - gblinternational.asia
+X-Get-Message-Sender-Via: vs-william2019.uk.syrahost.com: authenticated_id: gbl@gblinternational.asia
+X-Authenticated-Sender: vs-william2019.uk.syrahost.com: gbl@gblinternational.asia
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 10:24:24AM -0700, Nick Desaulniers wrote:
-> On Sun, Jul 14, 2019 at 5:37 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > In one rare case, Clang generated the following code:
-> >
-> >  5ca:       83 e0 21                and    $0x21,%eax
-> >  5cd:       b9 04 00 00 00          mov    $0x4,%ecx
-> >  5d2:       ff 24 c5 00 00 00 00    jmpq   *0x0(,%rax,8)
-> >                     5d5: R_X86_64_32S       .rodata+0x38
-> >
-> > which uses the corresponding jump table relocations:
-> >
-> >   000000000038  000200000001 R_X86_64_64       0000000000000000 .text + 834
-> >   000000000040  000200000001 R_X86_64_64       0000000000000000 .text + 5d9
-> >   000000000048  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000050  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000058  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000060  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000068  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000070  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000078  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000080  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000088  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000090  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000098  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000a0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000a8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000b0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000b8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000c0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000c8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000d0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000d8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000e0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000e8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000f0  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   0000000000f8  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000100  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000108  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000110  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000118  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000120  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000128  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000130  000200000001 R_X86_64_64       0000000000000000 .text + b96
-> >   000000000138  000200000001 R_X86_64_64       0000000000000000 .text + 82f
-> >   000000000140  000200000001 R_X86_64_64       0000000000000000 .text + 828
-> >
-> > Since %eax was masked with 0x21, only the first two and the last two
-> > entries are possible.
-> >
-> > Objtool doesn't actually emulate all the code, so it isn't smart enough
-> > to know that all the middle entries aren't reachable.  They point to the
-> > NOP padding area after the end of the function, so objtool seg faulted
-> > when it tried to dereference a NULL insn->func.
-> >
-> > After this fix, objtool still gives an "unreachable" error because it
-> > stops reading the jump table when it encounters the bad addresses:
-> >
-> >   /home/jpoimboe/objtool-tests/adm1275.o: warning: objtool: adm1275_probe()+0x828: unreachable instruction
-> >
-> > While the above code is technically correct, it's very wasteful of
-> > memory -- it uses 34 jump table entries when only 4 are needed.  It's
-> > also not possible for objtool to validate this type of switch table
-> > because the unused entries point outside the function and objtool has no
-> > way of determining if that's intentional.  Hopefully the Clang folks can
-> > fix it.
-> 
-> So this came from
-> drivers/hwmon/pmbus/adm1275.c ?
-> Any special configuration?
 
-Arnd shared the config and the .o file here:
 
-  https://lkml.kernel.org/r/CAK8P3a2beBPP+KX4zTfSfFPwo+7ksWZLqZzpP9BJ80iPecg3zA@mail.gmail.com
 
-I used Arnd's .o file for testing.
+I am sorry for using this medium to contact you. I am contacting you  
+on a very confidential business proposal. I like you to represent as  
+next of kin/business partner to my late Client. I will not be able to  
+provide much details and information until I get your response. Please  
+contact me and indicate your interest in other for me to furnish with  
+all information and details.
 
--- 
-Josh
+I anticipate your prompt response.
+Thanks and Best regard.
+Bar. Patrick Mills, LLM
+
