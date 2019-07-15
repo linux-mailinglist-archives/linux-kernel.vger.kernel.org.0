@@ -2,84 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257A1683E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 09:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DBC8683FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 09:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbfGOHKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 03:10:52 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34836 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfGOHKw (ORCPT
+        id S1729214AbfGOHSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 03:18:48 -0400
+Received: from smtpauth.rollernet.us ([208.79.240.5]:48342 "EHLO
+        smtpauth.rollernet.us" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728933AbfGOHSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 03:10:52 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s1so946875pgr.2;
-        Mon, 15 Jul 2019 00:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZKdTjc8KBUPXXzOQggqXZL8HabvXh/rPTtBXZzOt6Mg=;
-        b=BTOsOS95ytg9fiZmPjbqDerEGdWiVZ4JUuAX9Y+H9YLhmIJhbeKua9uB7Tcgj3Ww3y
-         dQz/UTIsGfiBuVqtKjHU49vy4hXSavF6NTr/bxFI51qTCyfCQx0nqa8IOQOdXvCEK2Yd
-         pI6VKO73bxYWDp8hfBakcTYE9E1bu1cS90tq2gdQ6twc9z9Dx08AsAc6hPdnTGnIYqz/
-         S12Ian6rO1JoJ/w2N3UrOCo4f93S+Ri8zCtmMhuJwKCB4cB/SauFY5rnCm7Xr3MSlxQG
-         aNcrzxYUThZYTDEWtYPQA5SJnQLqPWcA/5mbfvttjKochjoDxznM5+wEq+vJpJd0G5BS
-         EuJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZKdTjc8KBUPXXzOQggqXZL8HabvXh/rPTtBXZzOt6Mg=;
-        b=lTrB3uD6S1zbp6hpmOGmzh8IEFgsxAdchybBhirtL+fOgObnoo7V4vpcB7zTAdnQO+
-         LBS0b1XUcdbGgZLZH1qaTdSd433+thV1IK3fWa2rF38TZCxfNYOJMU0DqKspFFTlMS3V
-         OV1gundWhFPdVjic1G86dV+GitHSzoUC2yCoOIDWIXmRBdNUouVgDqqztQntmLdYmU78
-         dIbFL6IZGze+1Y08KMKDKESwtA9mPCycOPlsliXVZxqyirKEGOvswzI1+xkm21ojNmNP
-         4H1CUBIVjQhVSVslRJtg87KVqjD38GthFkX87SQNPPY1OlXSaHAHHxduDdKCcwn3oVHH
-         43og==
-X-Gm-Message-State: APjAAAW12U3p1VGtFF4MngBbaaR+fYPGFQk7MRFFDJKV8ffyATmEFXc3
-        93yN3VgZDBTr4J4Qx3konoo=
-X-Google-Smtp-Source: APXvYqz070Aox+gMTy1nSal/+R2lUbCNQZy/yMqAZLaeAee+FjC6pHogtdgyQic/euKJm00w6GUU8A==
-X-Received: by 2002:a63:520f:: with SMTP id g15mr22110217pgb.28.1563174651270;
-        Mon, 15 Jul 2019 00:10:51 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id b26sm20620292pfo.129.2019.07.15.00.10.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 00:10:50 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 00:10:48 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] input: touchscreen mc13xxx: Make platform data
- optional
-Message-ID: <20190715071048.GB153485@dtor-ws>
-References: <20190711222346.5245-1-lukma@denx.de>
- <20190711222346.5245-3-lukma@denx.de>
+        Mon, 15 Jul 2019 03:18:47 -0400
+X-Greylist: delayed 407 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 03:18:47 EDT
+Received: from smtpauth.rollernet.us (localhost [127.0.0.1])
+        by smtpauth.rollernet.us (Postfix) with ESMTP id 6731F280004A;
+        Mon, 15 Jul 2019 00:11:59 -0700 (PDT)
+Received: from nasledov.com (nasledov.com [75.144.249.93])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by smtpauth.rollernet.us (Postfix) with ESMTPSA;
+        Mon, 15 Jul 2019 00:11:49 -0700 (PDT)
+Received: by nasledov.com (Postfix, from userid 1000)
+        id A807C14829BD; Mon, 15 Jul 2019 00:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nasledov.com; s=mail;
+        t=1563174709; bh=TtNNBwEpjBsBg6ISjw7/qkj3/mPcz2YfzwhjRZvZjPM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Pa5C7HU/YCGNsub8ChHmDuu+7DgMi5nmstTWfGH/IGIHJD56/NYLRzfowIYMaf7kU
+         F95nvH40wfIcc279lmjt0G+DsrK+ycExG35cxceu3VP+W8acMcGs9ZQFAdIso+NEkO
+         yRAmnEeJ8uAIIzrTgoT17T/itlNVvH0DsKg/S96A2wAQkWaYaUuSJ6367dnCd6w26M
+         8oWYG2zVu2TdCACAATzpVROm8sxEWqe8bVEyMFZlZquZUqrtS9/xhBHIuBxjq2V9RN
+         VFQP9HJDdtt+M4Yf9jXZJLdsItwVT25OZ3enDD5Kod01YItFBJGhneV6kAuoXCQmmd
+         gzyC3FEcHIWZw==
+Date:   Mon, 15 Jul 2019 00:11:49 -0700
+From:   Misha Nasledov <misha@nasledov.com>
+To:     kbusch@kernel.org, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] NVME: ignore subnqn for ADATA SX6000LNP
+Message-ID: <20190715071149.GA24206@nasledov.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190711222346.5245-3-lukma@denx.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Rollernet-Abuse: Processed by Roller Network Mail Services. Contact abuse@rollernet.us to report violations. Abuse policy: http://www.rollernet.us/policy
+X-Rollernet-Submit: Submit ID 4097.5d2c2735.e998b.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 12:23:45AM +0200, Lukasz Majewski wrote:
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> The platform data once was optional, make it optional again. This
-> is a first step towards device tree support for the mc13xxx touchscreen
-> driver.
+The ADATA SX6000LNP NVMe SSDs have the same subnqn and, due to this,
+a system with more than one of these SSDs will only have one usable.
 
-I would prefer seeing it together with patches introducing device tree
-support.
+[ 0.942706] nvme nvme1: ignoring ctrl due to duplicate subnqn (nqn.2018-05.com.example:nvme:nvm-subsystem-OUI00E04C).
+[ 0.943017] nvme nvme1: Removing after probe failure status: -22
 
-Thanks.
+# lspci | grep Non-Volatile
+02:00.0 Non-Volatile memory controller [0108]: Realtek Semiconductor Co., Ltd. Device [10ec:5762] (rev 01)
+71:00.0 Non-Volatile memory controller [0108]: Realtek Semiconductor Co., Ltd. Device [10ec:5762] (rev 01)
+
+There are no firmware updates available from the vendor,
+unfortunately. Applying the NVME_QUIRK_IGNORE_DEV_SUBNQN quirk for
+these SSDs resolves the issue, and they all work after this patch:
+
+# nvme list
+/dev/nvme0n1     2J1120050420         ADATA SX6000LNP [...]
+/dev/nvme1n1     2J1120050540         ADATA SX6000LNP [...]
+
+Signed-off-by: Misha Nasledov <misha@nasledov.com>
+---
+ drivers/nvme/host/pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 189352081994..762ae6927689 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3005,6 +3005,8 @@ static const struct pci_device_id nvme_id_table[] = {
+        { PCI_VDEVICE(INTEL, 0x5845),   /* Qemu emulated controller */
+                .driver_data = NVME_QUIRK_IDENTIFY_CNS |
+                                NVME_QUIRK_DISABLE_WRITE_ZEROES, },
++       { PCI_DEVICE(0x10ec, 0x5762),   /* ADATA SX6000LNP */
++               .driver_data = NVME_QUIRK_IGNORE_DEV_SUBNQN, },
+        { PCI_DEVICE(0x1bb1, 0x0100),   /* Seagate Nytro Flash Storage */
+                .driver_data = NVME_QUIRK_DELAY_BEFORE_CHK_RDY, },
+        { PCI_DEVICE(0x1c58, 0x0003),   /* HGST adapter */
 
 -- 
-Dmitry
+Misha Nasledov <misha@nasledov.com>
+GPG: A063 B99A 2BD3 2D48 F2D7 8E68 0F27 4D21 948F 8F06
