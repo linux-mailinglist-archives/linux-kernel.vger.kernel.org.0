@@ -2,142 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FDDD69826
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82FF969833
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732225AbfGOPPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:15:25 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40033 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731171AbfGOPPY (ORCPT
+        id S1731338AbfGOPQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:16:51 -0400
+Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:9642 "EHLO
+        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730221AbfGOPQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:15:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id y20so1423057otk.7
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uOUynfjLcHpt+teu5Q4MrB30ERL83K6Jaz1qy9l5WbI=;
-        b=IrZ1gJSObvjnw7y2sImbAer1PjNNFfAvKq5VKmSQtLFoQpkoakyYnD9bT5UkOu3OKm
-         LiDBt+V/VQCeZb41B0b/67wv0SpXOLBk/Ouk68VjPCpdxwlng5KPiA7QaigenNFh8R3y
-         aHnq7vtCLbbmzIA/Wo1yzEMK3Jii8WS4SZ0Cz0AveB24A52wSH1MXAqrNtWYxhLBFQVM
-         bzJvSU8KXXrbhXN7Qyo+Z12OVphBrBlGsdvT7YiXB8r1dObH4XbaLj0IKibDU7N/txlw
-         CRMcvOK8PK8yqM9PLViUwQD63g1VCJTZ9V+OXio5pB4MjP74ZJGsAquQ3RyQaBZWi+yc
-         DajA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uOUynfjLcHpt+teu5Q4MrB30ERL83K6Jaz1qy9l5WbI=;
-        b=Zy30yb+xXda75zah1+7SjsGNJtsk8SKege1VvPxiFp3qpRZ4IX09gCmN6YGACqqjkO
-         iN52GCiM6AD+kTFdukIv8qwe4RwvrA+uSwwlo4WnQd+Krqp24w0T3x2KAcMF6XIqmXw6
-         wUGo8iuBwguAswOpk4iQPdKKc0Kizs62rKoEepL8XtH6Ve5VZyvZrpCQmxJym5LlT+uB
-         ZUwCNg9QCfUXYwyti1esdOrq/+OQ0aMIbL3fW6NV6TD0XPmDEOc0nwX1qv5avZHELDbz
-         0aP/8S6203gEF2u7ULhtIkpd1xw7y06aTdWEURnKtUQi+Tx4XhPoztSdq+AvpPGLlzH7
-         uM7w==
-X-Gm-Message-State: APjAAAURk0fiOMpbl9YyJFS2EDKKohO3aj72aSbWURoWu/PS3VJgc2WP
-        vgSJ0xj9/1IuEWTFe7emd5U=
-X-Google-Smtp-Source: APXvYqxI1FJM9g7M4T7J6MoEz+4BjZv+PMwOaktJ1io1blCI6WddVCwaIFwtNtijlQ7Aln2+8SwbDA==
-X-Received: by 2002:a9d:170b:: with SMTP id i11mr20238541ota.60.1563203723455;
-        Mon, 15 Jul 2019 08:15:23 -0700 (PDT)
-Received: from localhost.localdomain ([208.54.86.135])
-        by smtp.gmail.com with ESMTPSA id p126sm6286865oia.10.2019.07.15.08.15.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 08:15:22 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, ldv@altlinux.org
-Subject: [GIT PULL] pidfd and clone3 fixes
-Date:   Mon, 15 Jul 2019 17:15:09 +0200
-Message-Id: <20190715151509.3151-1-christian@brauner.io>
-X-Mailer: git-send-email 2.22.0
+        Mon, 15 Jul 2019 11:16:50 -0400
+Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: l9OPAd6qskqt/fZMa6dv8Hp73Rl5OlOh7AzJZZ687tl7VWm+xCIWBW+xMMGDPUaxtR2EHfIwMj
+ S9B8lKNjnBPgzm/CNYSRASVK49D1v0vczwBHy2YW7EUVrUevHGwhL69UC1EXaPqbcS+Lzk0tsa
+ cN4KDMSIOerfROzuw60w1iIxo0Y5hPmmZh9GcTrNgjgzH+lCkCfS59YUjideuTAFLYYxPXoAwf
+ lAZFtg64XbaJPocGk2yXFZ2W0bRqNu1OqV5WKQ6ztHIMBZT03C8AFlAajQ3TwXi44OxyUtDG5x
+ fY8=
+X-SBRS: 2.7
+X-MesageID: 2967596
+X-Ironport-Server: esa2.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.63,493,1557201600"; 
+   d="scan'208";a="2967596"
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+CC:     Andrew Cooper <andrew.cooper3@citrix.com>, <x86@kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Stephane Eranian <eranian@google.com>,
+        "Feng Tang" <feng.tang@intel.com>, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Pavel Machek" <pavel@ucw.cz>
+Subject: [PATCH v2] x86/paravirt: Drop {read,write}_cr8() hooks
+Date:   Mon, 15 Jul 2019 16:16:41 +0100
+Message-ID: <20190715151641.29210-1-andrew.cooper3@citrix.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+There is a lot of infrastructure for functionality which is used
+exclusively in __{save,restore}_processor_state() on the suspend/resume
+path.
 
-This contains a bugfix for CLONE_PIDFD when used with the legacy clone
-syscall. two fixes to ensure that syscall numbering and clone3
-entrypoint implementations will stay consistent, and an update for the
-maintainers file:
+cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored by
+lapic_{suspend,resume}().  Saving and restoring cr8 independently of the
+rest of the Local APIC state isn't a clever thing to be doing.
 
-The following changes since commit 964a4eacef67503a1154f7e0a75f52fbdce52022:
+Delete the suspend/resume cr8 handling, which shrinks the size of struct
+saved_context, and allows for the removal of both PVOPS.
 
-  Merge tag 'dlm-5.3' of git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm (2019-07-12 17:37:53 -0700)
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+---
+CC: x86@kernel.org
+CC: virtualization@lists.linux-foundation.org
+CC: Borislav Petkov <bp@alien8.de>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Nadav Amit <namit@vmware.com>
+CC: Stephane Eranian <eranian@google.com>
+CC: Feng Tang <feng.tang@intel.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Pavel Machek <pavel@ucw.cz>
 
-are available in the Git repository at:
+Spotted while reviewing "x86/apic: Initialize TPR to block interrupts 16-31"
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190715
+https://lore.kernel.org/lkml/dc04a9f8b234d7b0956a8d2560b8945bcd9c4bf7.1563117760.git.luto@kernel.org/
 
-for you to fetch changes up to 69b53720e92c1bdea854a2fc204477ddabfa902b:
+v2:
+ * Drop saved_context.cr8 as well (Juergen)
+ * Remove akataria@vmware.com from the CC list due to bounces
+---
+ arch/x86/include/asm/paravirt.h       | 12 ------------
+ arch/x86/include/asm/paravirt_types.h |  5 -----
+ arch/x86/include/asm/special_insns.h  | 24 ------------------------
+ arch/x86/include/asm/suspend_64.h     |  2 +-
+ arch/x86/kernel/asm-offsets_64.c      |  1 -
+ arch/x86/kernel/paravirt.c            |  4 ----
+ arch/x86/power/cpu.c                  |  4 ----
+ arch/x86/xen/enlighten_pv.c           | 15 ---------------
+ 8 files changed, 1 insertion(+), 66 deletions(-)
 
-  MAINTAINERS: add new entry for pidfd api (2019-07-15 12:59:44 +0200)
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index c25c38a05c1c..0e4a0539c353 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -139,18 +139,6 @@ static inline void __write_cr4(unsigned long x)
+ 	PVOP_VCALL1(cpu.write_cr4, x);
+ }
+ 
+-#ifdef CONFIG_X86_64
+-static inline unsigned long read_cr8(void)
+-{
+-	return PVOP_CALL0(unsigned long, cpu.read_cr8);
+-}
+-
+-static inline void write_cr8(unsigned long x)
+-{
+-	PVOP_VCALL1(cpu.write_cr8, x);
+-}
+-#endif
+-
+ static inline void arch_safe_halt(void)
+ {
+ 	PVOP_VCALL0(irq.safe_halt);
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 946f8f1f1efc..3c775fb5524b 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -119,11 +119,6 @@ struct pv_cpu_ops {
+ 
+ 	void (*write_cr4)(unsigned long);
+ 
+-#ifdef CONFIG_X86_64
+-	unsigned long (*read_cr8)(void);
+-	void (*write_cr8)(unsigned long);
+-#endif
+-
+ 	/* Segment descriptor handling */
+ 	void (*load_tr_desc)(void);
+ 	void (*load_gdt)(const struct desc_ptr *);
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 219be88a59d2..6d37b8fcfc77 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -73,20 +73,6 @@ static inline unsigned long native_read_cr4(void)
+ 
+ void native_write_cr4(unsigned long val);
+ 
+-#ifdef CONFIG_X86_64
+-static inline unsigned long native_read_cr8(void)
+-{
+-	unsigned long cr8;
+-	asm volatile("movq %%cr8,%0" : "=r" (cr8));
+-	return cr8;
+-}
+-
+-static inline void native_write_cr8(unsigned long val)
+-{
+-	asm volatile("movq %0,%%cr8" :: "r" (val) : "memory");
+-}
+-#endif
+-
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ static inline u32 rdpkru(void)
+ {
+@@ -200,16 +186,6 @@ static inline void wbinvd(void)
+ 
+ #ifdef CONFIG_X86_64
+ 
+-static inline unsigned long read_cr8(void)
+-{
+-	return native_read_cr8();
+-}
+-
+-static inline void write_cr8(unsigned long x)
+-{
+-	native_write_cr8(x);
+-}
+-
+ static inline void load_gs_index(unsigned selector)
+ {
+ 	native_load_gs_index(selector);
+diff --git a/arch/x86/include/asm/suspend_64.h b/arch/x86/include/asm/suspend_64.h
+index a7af9f53c0cb..35bb35d28733 100644
+--- a/arch/x86/include/asm/suspend_64.h
++++ b/arch/x86/include/asm/suspend_64.h
+@@ -34,7 +34,7 @@ struct saved_context {
+ 	 */
+ 	unsigned long kernelmode_gs_base, usermode_gs_base, fs_base;
+ 
+-	unsigned long cr0, cr2, cr3, cr4, cr8;
++	unsigned long cr0, cr2, cr3, cr4;
+ 	u64 misc_enable;
+ 	bool misc_enable_saved;
+ 	struct saved_msrs saved_msrs;
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index d3d075226c0a..8b54d8e3a561 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -62,7 +62,6 @@ int main(void)
+ 	ENTRY(cr2);
+ 	ENTRY(cr3);
+ 	ENTRY(cr4);
+-	ENTRY(cr8);
+ 	ENTRY(gdt_desc);
+ 	BLANK();
+ #undef ENTRY
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 98039d7fb998..de4d4e8a54c1 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -311,10 +311,6 @@ struct paravirt_patch_template pv_ops = {
+ 	.cpu.read_cr0		= native_read_cr0,
+ 	.cpu.write_cr0		= native_write_cr0,
+ 	.cpu.write_cr4		= native_write_cr4,
+-#ifdef CONFIG_X86_64
+-	.cpu.read_cr8		= native_read_cr8,
+-	.cpu.write_cr8		= native_write_cr8,
+-#endif
+ 	.cpu.wbinvd		= native_wbinvd,
+ 	.cpu.read_msr		= native_read_msr,
+ 	.cpu.write_msr		= native_write_msr,
+diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
+index 24b079e94bc2..1c58d8982728 100644
+--- a/arch/x86/power/cpu.c
++++ b/arch/x86/power/cpu.c
+@@ -122,9 +122,6 @@ static void __save_processor_state(struct saved_context *ctxt)
+ 	ctxt->cr2 = read_cr2();
+ 	ctxt->cr3 = __read_cr3();
+ 	ctxt->cr4 = __read_cr4();
+-#ifdef CONFIG_X86_64
+-	ctxt->cr8 = read_cr8();
+-#endif
+ 	ctxt->misc_enable_saved = !rdmsrl_safe(MSR_IA32_MISC_ENABLE,
+ 					       &ctxt->misc_enable);
+ 	msr_save_context(ctxt);
+@@ -207,7 +204,6 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
+ #else
+ /* CONFIG X86_64 */
+ 	wrmsrl(MSR_EFER, ctxt->efer);
+-	write_cr8(ctxt->cr8);
+ 	__write_cr4(ctxt->cr4);
+ #endif
+ 	write_cr3(ctxt->cr3);
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 4722ba2966ac..27aba18f30e8 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -877,16 +877,6 @@ static void xen_write_cr4(unsigned long cr4)
+ 
+ 	native_write_cr4(cr4);
+ }
+-#ifdef CONFIG_X86_64
+-static inline unsigned long xen_read_cr8(void)
+-{
+-	return 0;
+-}
+-static inline void xen_write_cr8(unsigned long val)
+-{
+-	BUG_ON(val);
+-}
+-#endif
+ 
+ static u64 xen_read_msr_safe(unsigned int msr, int *err)
+ {
+@@ -1022,11 +1012,6 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
+ 
+ 	.write_cr4 = xen_write_cr4,
+ 
+-#ifdef CONFIG_X86_64
+-	.read_cr8 = xen_read_cr8,
+-	.write_cr8 = xen_write_cr8,
+-#endif
+-
+ 	.wbinvd = native_wbinvd,
+ 
+ 	.read_msr = xen_read_msr,
+-- 
+2.11.0
 
-/* Summary */
-The addition of clone3 broke CLONE_PIDFD for legacy clone on all
-architectures that use do_fork() directly instead of calling the clone
-syscall itself. (Fwiw, cleaning do_fork() up is on my todo.)
-The reason this happened was that during conversion of  _do_fork() to use
-struct kernel_clone_args we missed that do_fork() is called directly by
-various architectures. This is fixed by making sure that the pidfd argument
-in struct kernel_clone_args is correctly initialized with the parent_tidptr
-argument passed down from do_fork(). Additionally, do_fork() missed a check
-to make CLONE_PIDFD and CLONE_PARENT_SETTID mutually exclusive just a
-clone() does. This is now fixed too.
-
-When clone3() was introduced we skipped architectures that require special
-handling for fork-like syscalls. Their syscall tables did not contain any
-mention of clone3(). To make sure that Arnd's work to make syscall numbers
-on all architectures identical (minus alpha) was not for naught we are
-placing a comment in all syscall tables that do not yet implement clone3().
-The comment makes it clear that 435 is reserved for clone3 and should not
-be used.
-
-Also, this PR contains a patch to make the clone3() syscall definition in
-asm-generic/unist.h conditional on __ARCH_WANT_SYS_CLONE3. This lets us
-catch new architectures that implicitly make use of clone3 without setting
-__ARCH_WANT_SYS_CLONE3 which is a good indicator that they did not check
-whether it needs special treatment or not.
-
-Last, this contains a patch to add me as maintainer for pidfd stuff so
-people can start blaming me (more).
-
-Please consider pulling from the signed for-linus-20190715 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-for-linus-20190715
-
-----------------------------------------------------------------
-Christian Brauner (3):
-      arch: mark syscall number 435 reserved for clone3
-      unistd: protect clone3 via __ARCH_WANT_SYS_CLONE3
-      MAINTAINERS: add new entry for pidfd api
-
-Dmitry V. Levin (1):
-      clone: fix CLONE_PIDFD support
-
- MAINTAINERS                               | 11 +++++++++++
- arch/alpha/kernel/syscalls/syscall.tbl    |  1 +
- arch/ia64/kernel/syscalls/syscall.tbl     |  1 +
- arch/m68k/kernel/syscalls/syscall.tbl     |  1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl |  1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl |  1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl |  1 +
- arch/parisc/kernel/syscalls/syscall.tbl   |  1 +
- arch/powerpc/kernel/syscalls/syscall.tbl  |  1 +
- arch/s390/kernel/syscalls/syscall.tbl     |  1 +
- arch/sh/kernel/syscalls/syscall.tbl       |  1 +
- arch/sparc/kernel/syscalls/syscall.tbl    |  1 +
- arch/x86/ia32/sys_ia32.c                  |  4 ++++
- include/linux/sched/task.h                |  1 +
- include/uapi/asm-generic/unistd.h         |  2 ++
- kernel/fork.c                             | 17 +++++++++++++++--
- 16 files changed, 44 insertions(+), 2 deletions(-)
