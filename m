@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B12E695E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3BE9695F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbfGOOOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:14:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54644 "EHLO mail.kernel.org"
+        id S2390306AbfGOPBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:01:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731356AbfGOONw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:13:52 -0400
+        id S2389277AbfGOOOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:14:04 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8449206B8;
-        Mon, 15 Jul 2019 14:13:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA33D206B8;
+        Mon, 15 Jul 2019 14:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200031;
-        bh=oiFz2NTIZMbWcBgnnWQwMU4e1+RSkgJOnzytLtRJPzo=;
+        s=default; t=1563200043;
+        bh=HB0QchJTclaI1AaR+DYkMuk+3q8igeEzPd6lClLogWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eFu21eClbnjr2A/mWVk2SRxGxEkb1n1ciDJ73hH+/3RGmdOQZE2jXN1bwlyUj9NqG
-         NzbCnKCcjXIWHmD8gQVUjph6INezPhbptreXkPOd+upcJhcLZcf+78m4qyq2NQQEy4
-         gVoZZJ3q/BQZJpMx3D8W5ed26+vVUQzR85a13jfM=
+        b=0kC/UNmP5Y5ohBodM2DGhIYinUsM6bLpb7h9h/bb+qphd+DOXho5o+q2EdnSf2VVm
+         Rop7/aosm70MnNxTOoPX3pIQAD+vN4+BtL6scYeBFmCWWBRTzHDLl5ccxG18BO7eAL
+         dYxlmjb8Qv8jNrp0uwUa0tWK69JivQmrwUqox58E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zefir Kurtisi <zefir.kurtisi@neratec.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 164/219] ath9k: correctly handle short radar pulses
-Date:   Mon, 15 Jul 2019 10:02:45 -0400
-Message-Id: <20190715140341.6443-164-sashal@kernel.org>
+Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 168/219] bcache: check CACHE_SET_IO_DISABLE in allocator code
+Date:   Mon, 15 Jul 2019 10:02:49 -0400
+Message-Id: <20190715140341.6443-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -44,58 +42,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zefir Kurtisi <zefir.kurtisi@neratec.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit df5c4150501ee7e86383be88f6490d970adcf157 ]
+[ Upstream commit e775339e1ae1205b47d94881db124c11385e597c ]
 
-In commit 3c0efb745a17 ("ath9k: discard undersized packets")
-the lower bound of RX packets was set to 10 (min ACK size) to
-filter those that would otherwise be treated as invalid at
-mac80211.
+If CACHE_SET_IO_DISABLE of a cache set flag is set by too many I/O
+errors, currently allocator routines can still continue allocate
+space which may introduce inconsistent metadata state.
 
-Alas, short radar pulses are reported as PHY_ERROR frames
-with length set to 3. Therefore their detection stopped
-working after that commit.
+This patch checkes CACHE_SET_IO_DISABLE bit in following allocator
+routines,
+- bch_bucket_alloc()
+- __bch_bucket_alloc_set()
+Once CACHE_SET_IO_DISABLE is set on cache set, the allocator routines
+may reject allocation request earlier to avoid potential inconsistent
+metadata.
 
-NOTE: ath9k drivers built thereafter will not pass DFS
-certification.
-
-This extends the criteria for short packets to explicitly
-handle PHY_ERROR frames.
-
-Fixes: 3c0efb745a17 ("ath9k: discard undersized packets")
-Signed-off-by: Zefir Kurtisi <zefir.kurtisi@neratec.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/recv.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/md/bcache/alloc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/recv.c b/drivers/net/wireless/ath/ath9k/recv.c
-index 4e97f7f3b2a3..06e660858766 100644
---- a/drivers/net/wireless/ath/ath9k/recv.c
-+++ b/drivers/net/wireless/ath/ath9k/recv.c
-@@ -815,6 +815,7 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
- 	struct ath_common *common = ath9k_hw_common(ah);
- 	struct ieee80211_hdr *hdr;
- 	bool discard_current = sc->rx.discard_next;
-+	bool is_phyerr;
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index f8986effcb50..6f776823b9ba 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -393,6 +393,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 	struct bucket *b;
+ 	long r;
  
- 	/*
- 	 * Discard corrupt descriptors which are marked in
-@@ -827,8 +828,11 @@ static int ath9k_rx_skb_preprocess(struct ath_softc *sc,
++
++	/* No allocation if CACHE_SET_IO_DISABLE bit is set */
++	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &ca->set->flags)))
++		return -1;
++
+ 	/* fastpath */
+ 	if (fifo_pop(&ca->free[RESERVE_NONE], r) ||
+ 	    fifo_pop(&ca->free[reserve], r))
+@@ -484,6 +489,10 @@ int __bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+ {
+ 	int i;
  
- 	/*
- 	 * Discard zero-length packets and packets smaller than an ACK
-+	 * which are not PHY_ERROR (short radar pulses have a length of 3)
- 	 */
--	if (rx_stats->rs_datalen < 10) {
-+	is_phyerr = rx_stats->rs_status & ATH9K_RXERR_PHY;
-+	if (!rx_stats->rs_datalen ||
-+	    (rx_stats->rs_datalen < 10 && !is_phyerr)) {
- 		RX_STAT_INC(sc, rx_len_err);
- 		goto corrupt;
- 	}
++	/* No allocation if CACHE_SET_IO_DISABLE bit is set */
++	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags)))
++		return -1;
++
+ 	lockdep_assert_held(&c->bucket_lock);
+ 	BUG_ON(!n || n > c->caches_loaded || n > MAX_CACHES_PER_SET);
+ 
 -- 
 2.20.1
 
