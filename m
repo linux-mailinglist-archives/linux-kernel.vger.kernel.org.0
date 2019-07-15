@@ -2,229 +2,450 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F1668509
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 100CE6850E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfGOIQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 04:16:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54326 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729423AbfGOIQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 04:16:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 788A2AD1E;
-        Mon, 15 Jul 2019 08:15:58 +0000 (UTC)
-From:   Oscar Salvador <osalvador@suse.de>
-To:     akpm@linux-foundation.org
-Cc:     dan.j.williams@intel.com, david@redhat.com,
-        pasha.tatashin@soleen.com, mhocko@suse.com,
-        aneesh.kumar@linux.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 2/2] mm,memory_hotplug: Fix shrink_{zone,node}_span
-Date:   Mon, 15 Jul 2019 10:15:49 +0200
-Message-Id: <20190715081549.32577-3-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190715081549.32577-1-osalvador@suse.de>
-References: <20190715081549.32577-1-osalvador@suse.de>
+        id S1729463AbfGOIQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 04:16:47 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:36304 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729275AbfGOIQr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 04:16:47 -0400
+Received: by mail-lf1-f46.google.com with SMTP id q26so10366609lfc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 01:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8GP2jIezyNp1GQZADOOhLImbjY3V7BGymB2Hk9+qyOo=;
+        b=EiVYl6jOJSLF7eVbdhPvYT53QPVHpzBqPg7A25aBiuOcojAuvgZ16CC8lB4BthpkwE
+         6+sDMHOVVcAKgLv5Pg/BLcWwMqdD63L3Ad5r+TI/slgnm5OUiazKAMIczjpvDcxb9Twn
+         FP7KUXWgrAvfTKy1m4N9nhni64cm98ZJS/ITqOI0dq02KhWKVl1ed6bxi+K1K26c2coZ
+         N+U+X1jcTv5orh5IQSHr49OpZL688RDCqT5lOvGZHY6wbYG2rrMjk6NCN9SXimwL2Vnu
+         iyrCPUgFsbBWs8ZG/4ekOAgdbr/eO5BR/l+7kOj5BFFkcp/E/J6wQ5vrUQfvgFAd4Zyp
+         /shg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8GP2jIezyNp1GQZADOOhLImbjY3V7BGymB2Hk9+qyOo=;
+        b=rKUDqV1Yu6dySSmg0VSodhTCoP3sJcaigx7YvkyOe3LZ02fYZzD2Pc6vr/dKu/4so+
+         3A8B9ZWBSeQzAa2riTAWE0Ha+ty6U9qBJ0tSCSIfW/+nxOLkc/9HuphZX/k4q4IcEEd4
+         X5vzu0HpZx/LJjbukXb/uhw6urPF1hTnhYZgcovlFuh19t/UQyzRTAYQu8lwrKpeVJV1
+         3VB/2K7d8LHf5StKst19wuPT0d2JjxJVLWEn/SAW+TAXEMBsp7XbtkO4gsa5D2VUntb7
+         GaFnFQKOX784y+cG91WImgBGuDlqCbCUnaZjBDfRZ9c8/B2rN4Er/8pxSmPq0qTdrxh9
+         mRYw==
+X-Gm-Message-State: APjAAAVCDyVGJGkn4L4/tsUlYgQ2mt0lX8n+PrCHKOBa4fFeu21BJEQo
+        N52NLdB10NQyAaqIx7ZddhhCf6It79PGhbARFhaIdQ==
+X-Google-Smtp-Source: APXvYqyZ4JR1nNhdCl8qbNewXkIa+wP56Dsy6upNiAIhmBHy0dr2DXf7QNG7DeH+s2YYwlzza6iKK753ivnfsZWhodA=
+X-Received: by 2002:ac2:5337:: with SMTP id f23mr11016022lfh.15.1563178603747;
+ Mon, 15 Jul 2019 01:16:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190703011020.151615-1-saravanak@google.com> <20190703011020.151615-7-saravanak@google.com>
+ <CAKfTPtCJFaEfvu3Dnp9WSxQEwSfY=VS+xsoQ+4P+vg7_WL0BAQ@mail.gmail.com>
+ <CAGETcx_5gu84FOVmELPnK5uJTE0NEhxYKtdFigoXGyFtjehQvw@mail.gmail.com>
+ <CAKfTPtBHrXG1QZzcaStWCtL3nx+vE_-WKtOhjiHbjFQiw9Yk8w@mail.gmail.com>
+ <CAGETcx912kpi9DejPCoWMUF5AMm4=o1C0C45zwMfUy6aX_jcYg@mail.gmail.com>
+ <CAKfTPtBngOT__TfmHXmmim-b9YhExOOvwVRaxYM9g9M6ffr_zQ@mail.gmail.com> <CAGETcx90WC2o+ZmkyhOPp1xJbfSk1wpAv2RA-4VgnhJfcsmJiA@mail.gmail.com>
+In-Reply-To: <CAGETcx90WC2o+ZmkyhOPp1xJbfSk1wpAv2RA-4VgnhJfcsmJiA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 15 Jul 2019 10:16:32 +0200
+Message-ID: <CAKfTPtBE7e+hc55TY43JC0XPONvrS4FBPkZcRZ4EbzyCJKNhfg@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] interconnect: Add OPP table support for interconnects
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        daidavid1@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        sibis@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since [1], shrink_{zone,node}_span work on PAGES_PER_SUBSECTION granularity.
-The problem is that deactivation of the section occurs later on in
-sparse_remove_section, so pfn_valid()->pfn_section_valid() will always return
-true before we deactivate the {sub}section.
+On Tue, 9 Jul 2019 at 21:03, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Tue, Jul 9, 2019 at 12:25 AM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Sun, 7 Jul 2019 at 23:48, Saravana Kannan <saravanak@google.com> wrote:
+> > >
+> > > On Thu, Jul 4, 2019 at 12:12 AM Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > >
+> > > > On Wed, 3 Jul 2019 at 23:33, Saravana Kannan <saravanak@google.com> wrote:
+> > > > >
+> > > > > On Tue, Jul 2, 2019 at 11:45 PM Vincent Guittot
+> > > > > <vincent.guittot@linaro.org> wrote:
+> > > > > >
+> > > > > > On Wed, 3 Jul 2019 at 03:10, Saravana Kannan <saravanak@google.com> wrote:
+> > > > > > >
+> > > > > > > Interconnect paths can have different performance points. Now that OPP
+> > > > > > > framework supports bandwidth OPP tables, add OPP table support for
+> > > > > > > interconnects.
+> > > > > > >
+> > > > > > > Devices can use the interconnect-opp-table DT property to specify OPP
+> > > > > > > tables for interconnect paths. And the driver can obtain the OPP table for
+> > > > > > > an interconnect path by calling icc_get_opp_table().
+> > > > > >
+> > > > > > The opp table of a path must come from the aggregation of OPP tables
+> > > > > > of the interconnect providers.
+> > > > >
+> > > > > The aggregation of OPP tables of the providers is certainly the
+> > > > > superset of what a path can achieve, but to say that OPPs for
+> > > > > interconnect path should match that superset is an oversimplification
+> > > > > of the reality in hardware.
+> > > > >
+> > > > > There are lots of reasons an interconnect path might not want to use
+> > > > > all the available bandwidth options across all the interconnects in
+> > > > > the route.
+> > > > >
+> > > > > 1. That particular path might not have been validated or verified
+> > > > >    during the HW design process for some of the frequencies/bandwidth
+> > > > >    combinations of the providers.
+> > > >
+> > > > All these constraint are provider's constraints and not consumer's one
+> > > >
+> > > > The consumer asks for a bandwidth according to its needs and then the
+> > > > providers select the optimal bandwidth of each interconnect after
+> > > > aggregating all the request and according to what OPP have been
+> > > > validated
+> > >
+> > > Not really. The screening can be a consumer specific issue. The
+> > > consumer IP itself might have some issue with using too low of a
+> > > bandwidth or bandwidth that's not within some range. It should not be
+> >
+> > How can an IP ask for not enough bandwidth ?
+> > It asks the needed bandwidth based on its requirements
+>
+> The "enough bandwidth" is not always obvious. It's only for very
+> simple cases that you can calculate the required bandwidth. Even for
+> cases that you think might be "obvious/easy" aren't always easy.
+>
+> For example, you'd think a display IP would have a fixed bandwidth
+> requirement for a fixed resolution screen. But that's far from the
+> truth. It can also change as the number of layers change per frame.
+> For video decoder/encoder, it depends on how well the frames compress
+> with a specific compression scheme.
+> So the "required" bandwidth is often a heuristic based on the IP
+> frequency or traffic measurement.
+>
+> But that's not even the point I was making in this specific "bullet".
+>
+> A hardware IP might be screen/verified with only certain bandwidth
+> levels. Or it might have hardware bugs that prevent it from using
+> lower bandwidths even though it's technically sufficient. We need a
+> way to capture that per path. This is not even a fictional case. This
+> has been true multiple times over widely used IPs.
 
-I spotted this during hotplug hotremove tests, there I always saw that
-spanned_pages was, at least, left with PAGES_PER_SECTION, even if we
-removed all memory linked to that zone.
+here you are mixing HW constraint on the soc and OPP screening with
+bandwidth request from consumer
+ICC framework is about getting bandwidth request not trying to fix
+some HW/voltage dependency of the SoC
 
-Fix this by decoupling section_deactivate from sparse_remove_section, and
-re-order the function calls.
+>
+> > > the provider's job to take into account all the IP that might be
+> > > connected to the interconnects. If the interconnect HW itself didn't
+> >
+> > That's not what I'm saying. The provider knows which bandwidth the
+> > interconnect can provide as it is the ones which configures it. So if
+> > the interconnect has a finite number of bandwidth point based probably
+> > on the possible clock frequency and others config of the interconnect,
+> > it selects the best final config after aggregating the request of the
+> > consumer.
+>
+> I completely agree with this. What you are stating above is how it
+> should work and that's the whole point of the interconnect framework.
+>
+> But this is orthogonal to the point I'm making.
 
-Now, __remove_section will:
+It's not orthogonal because you want to add a OPP table pointer in the
+ICC path structure to fix your platform HW constraint whereas it's not
+the purpose of the framework IMO
 
-1) deactivate section
-2) shrink {zone,node}'s pages
-3) remove section
+>
+> > > change, the provider driver shouldn't need to change. By your
+> > > definition, a provider driver will have to account for all the
+> > > possible bus masters that might be connected to it across all SoCs.
+> >
+> > you didn't catch my point
+>
+> Same. I think we are talking over each other. Let me try again.
+>
+> You are trying to describe how and interconnect provider and framework
+> should work. There's no disagreement there.
+>
+> My point is that consumers might not want to or can not always use all
+> the available bandwidth levels offered by the providers. There can be
+> many reasons for that (which is what I listed in my earlier emails)
+> and we need a good and generic way to capture that so that everyone
+> isn't trying to invent their own property.
 
-[1] https://patchwork.kernel.org/patch/11003467/
+And my point is that you want to describe some platform or even UCs
+specific constraint in the ICC framework which is not the place to do.
 
-Fixes: mmotm ("mm/hotplug: prepare shrink_{zone, pgdat}_span for sub-section removal")
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- include/linux/memory_hotplug.h |  7 ++--
- mm/memory_hotplug.c            |  6 +++-
- mm/sparse.c                    | 77 +++++++++++++++++++++++++++++-------------
- 3 files changed, 62 insertions(+), 28 deletions(-)
+If the consumers might not want to use all available bandwidth because
+this is not power efficient as an example, this should be describe
+somewhere else to express  that there is a shared power domain
+between some devices and we shoudl ensure that all devices in this
+power domain should use the  Optimal Operating Point (optimal freq for
+a voltage)
+ICC framework describes the bandwidth request that are expressed by
+the consumers for the current running state of their IP but it doesn't
+reflect the fact that on platform A, the consumer should use bandwidth
+X because it will select a voltage level of a shared power domain that
+is optimized for the other devices B, C ... . It's up to the provider
+to know HW details of the bus that it drives and to make such
+decision;  the consumer should always request the same
 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index f46ea71b4ffd..d2eb917aad5f 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -348,9 +348,10 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- extern bool is_memblock_offlined(struct memory_block *mem);
- extern int sparse_add_section(int nid, unsigned long pfn,
- 		unsigned long nr_pages, struct vmem_altmap *altmap);
--extern void sparse_remove_section(struct mem_section *ms,
--		unsigned long pfn, unsigned long nr_pages,
--		unsigned long map_offset, struct vmem_altmap *altmap);
-+int sparse_deactivate_section(unsigned long pfn, unsigned long nr_pages);
-+void sparse_remove_section(unsigned long pfn, unsigned long nr_pages,
-+                           unsigned long map_offset, struct vmem_altmap *altmap,
-+                           int section_empty);
- extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
- 					  unsigned long pnum);
- extern bool allow_online_pfn_range(int nid, unsigned long pfn, unsigned long nr_pages,
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index b9ba5b85f9f7..03d535eee60d 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -517,12 +517,16 @@ static void __remove_section(struct zone *zone, unsigned long pfn,
- 		struct vmem_altmap *altmap)
- {
- 	struct mem_section *ms = __nr_to_section(pfn_to_section_nr(pfn));
-+	int ret;
- 
- 	if (WARN_ON_ONCE(!valid_section(ms)))
- 		return;
- 
-+	ret = sparse_deactivate_section(pfn, nr_pages);
- 	__remove_zone(zone, pfn, nr_pages);
--	sparse_remove_section(ms, pfn, nr_pages, map_offset, altmap);
-+	if (ret >= 0)
-+		sparse_remove_section(pfn, nr_pages, map_offset, altmap,
-+				      ret);
- }
- 
- /**
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 1e224149aab6..d4953ee1d087 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -732,16 +732,47 @@ static void free_map_bootmem(struct page *memmap)
- }
- #endif /* CONFIG_SPARSEMEM_VMEMMAP */
- 
--static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
--		struct vmem_altmap *altmap)
-+static void section_remove(unsigned long pfn, unsigned long nr_pages,
-+			   struct vmem_altmap *altmap, int section_empty)
-+{
-+	struct mem_section *ms = __pfn_to_section(pfn);
-+	bool section_early = early_section(ms);
-+	struct page *memmap = NULL;
-+
-+	if (section_empty) {
-+		unsigned long section_nr = pfn_to_section_nr(pfn);
-+
-+		if (!section_early) {
-+			kfree(ms->usage);
-+			ms->usage = NULL;
-+		}
-+		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-+		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
-+	}
-+
-+        if (section_early && memmap)
-+		free_map_bootmem(memmap);
-+        else
-+		depopulate_section_memmap(pfn, nr_pages, altmap);
-+}
-+
-+/**
-+ * section_deactivate: Deactivate a {sub}section.
-+ *
-+ * Return:
-+ * * -1         - {sub}section has already been deactivated.
-+ * * 0          - Section is not empty
-+ * * 1          - Section is empty
-+ */
-+
-+static int section_deactivate(unsigned long pfn, unsigned long nr_pages)
- {
- 	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
- 	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
- 	struct mem_section *ms = __pfn_to_section(pfn);
--	bool section_is_early = early_section(ms);
--	struct page *memmap = NULL;
- 	unsigned long *subsection_map = ms->usage
- 		? &ms->usage->subsection_map[0] : NULL;
-+	int section_empty = 0;
- 
- 	subsection_mask_set(map, pfn, nr_pages);
- 	if (subsection_map)
-@@ -750,7 +781,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
- 				"section already deactivated (%#lx + %ld)\n",
- 				pfn, nr_pages))
--		return;
-+		return -1;
- 
- 	/*
- 	 * There are 3 cases to handle across two configurations
-@@ -770,21 +801,10 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
- 	 */
- 	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
--	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
--		unsigned long section_nr = pfn_to_section_nr(pfn);
--
--		if (!section_is_early) {
--			kfree(ms->usage);
--			ms->usage = NULL;
--		}
--		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
--		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
--	}
-+	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
-+		section_empty = 1;
- 
--	if (section_is_early && memmap)
--		free_map_bootmem(memmap);
--	else
--		depopulate_section_memmap(pfn, nr_pages, altmap);
-+	return section_empty;
- }
- 
- static struct page * __meminit section_activate(int nid, unsigned long pfn,
-@@ -834,7 +854,11 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
- 
- 	memmap = populate_section_memmap(pfn, nr_pages, nid, altmap);
- 	if (!memmap) {
--		section_deactivate(pfn, nr_pages, altmap);
-+		int ret;
-+
-+		ret = section_deactivate(pfn, nr_pages);
-+		if (ret >= 0)
-+			section_remove(pfn, nr_pages, altmap, ret);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-@@ -919,12 +943,17 @@ static inline void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
- }
- #endif
- 
--void sparse_remove_section(struct mem_section *ms, unsigned long pfn,
--		unsigned long nr_pages, unsigned long map_offset,
--		struct vmem_altmap *altmap)
-+int sparse_deactivate_section(unsigned long pfn, unsigned long nr_pages)
-+{
-+	return section_deactivate(pfn, nr_pages);
-+}
-+
-+void sparse_remove_section(unsigned long pfn, unsigned long nr_pages,
-+			   unsigned long map_offset, struct vmem_altmap *altmap,
-+			   int section_empty)
- {
- 	clear_hwpoisoned_pages(pfn_to_page(pfn) + map_offset,
- 			nr_pages - map_offset);
--	section_deactivate(pfn, nr_pages, altmap);
-+	section_remove(pfn, nr_pages, altmap, section_empty);
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
--- 
-2.12.3
 
+>
+> > > That's not good design nor is it scalable.
+> > >
+> > > > >
+> > > > > 2. Similarly during parts screening in the factory, some of the
+> > > > >    combinations might not have been screened and can't be guaranteed
+> > > > >    to work.
+> > > >
+> > > > As above, it's the provider's job to select the final bandwidth
+> > > > according to its constraint
+> > >
+> > > Same reply as above.
+> > >
+> > > > >
+> > > > > 3. Only a certain set of bandwidth levels might make sense to use from
+> > > > >    a power/performance balance given the device using it. For example:
+> > > > >    - The big CPU might not want to use some of the lower bandwidths
+> > > > >      but the little CPU might want to.
+> > > > >    - The big CPU might not want to use some intermediate bandwidth
+> > > > >      points if they don't save a lot of power compared to a higher
+> > > > >      bandwidth levels, but the little CPU might want to.
+> > > > >    - The little CPU might never want to use the higher set of
+> > > > >      bandwidth levels since they won't be power efficient for the use
+> > > > >      cases that might run on it.
+> > > >
+> > > > These example are quite vague about the reasons why little might never
+> > > > want to use higher bandwidth.
+> > >
+> > > How is it vague? I just said because of power/performance balance.
+> > >
+> > > > But then, if little doesn't ask high bandwidth it will not use them.
+> > >
+> > > If you are running a heuristics based algorithm to pick bandwidth,
+> > > this is how it'll know NOT to use some of the bandwidth levels.
+> >
+> > so you want to set a bandwidth according to the cpu frequency which is
+> > what has been proposed in other thread
+>
+> Nope, that's just one heuristic. Often times it's based on hardware
+> monitors measuring interconnect activity. If you go look at the SDM845
+> in a Pixel 3, almost nothing is directly tied to the CPU frequency.
+>
+> Even if you are scaling bandwidth based on other hardware
+> measurements, you might want to avoid some bandwidth level provided by
+> the interconnect providers because it's suboptimal.
+>
+> For example, when making bandwidth votes to accommodate the big CPUs,
+> you might never want to use some of the lower bandwidth levels because
+> they are not power efficient for any CPU frequency or any bandwidth
+> level. Because at those levels the memory/interconnect is so slow that
+> it has a non-trivial utilization increase (because the CPU is
+> stalling) of the big CPUs.
+>
+> Again, this is completely different from what the providers/icc
+> framework does. Which is, once the request is made, they aggregate and
+> set the actual interconnect frequencies correctly.
+>
+> > >
+> > > > >
+> > > > > 4. It might not make sense from a system level power perspective.
+> > > > > Let's take an example of a path S (source) -> A -> B -> C -> D
+> > > > > (destination).
+> > > > >    - A supports only 2, 5, 7 and 10 GB/s. B supports 1, 2 ... 10 GB/s.
+> > > > >      C supports 5 and 10 GB/s
+> > > > >    - If you combine and list the superset of bandwidth levels
+> > > > >      supported in that path, that'd be 1, 2, 3, ... 10 GB/s.
+> > > > >    - Which set of bandwidth levels make sense will depend on the
+> > > > >      hardware characteristics of the interconnects.
+> > > > >    - If B is the biggest power sink, then you might want to use all 10
+> > > > >      levels.
+> > > > >    - If A is the biggest power sink, then you might want to use all 2,
+> > > > >      5 and 10 GB/s of the levels.
+> > > > >    - If C is the biggest power sink then you might only want to use 5
+> > > > >      and 10 GB/s
+> > > > >    - The more hops and paths you get the more convoluted this gets.
+> > > > >
+> > > > > 5. The design of the interconnects themselves might have an impact on
+> > > > > which bandwidth levels are used.
+> > > > >    - For example, the FIFO depth between two specific interconnects
+> > > > >      might affect the valid bandwidth levels for a specific path.
+> > > > >    - Say S1 -> A -> B -> D1, S2 -> C -> B -> D1 and S2 -> C -> D2 are
+> > > > >      three paths.
+> > > > >    - If C <-> B FIFO depth is small, then there might be a requirement
+> > > > >      that C and B be closely performance matched to avoid system level
+> > > > >      congestion due to back pressure.
+> > > > >    - So S2 -> D1 path can't use all the bandwidth levels supported by
+> > > > >      C-B combination.
+> > > > >    - But S2 -> D2 can use all the bandwidth levels supported by C.
+> > > > >    - And S1 -> D1 can use all the levels supported by A-B combination.
+> > > > >
+> > > >
+> > > > All the examples above makes sense but have to be handle by the
+> > > > provider not the consumer. The consumer asks for a bandwidth according
+> > > > to its constraints. Then the provider which is the driver that manages
+> > > > the interconnect IP, should manage all this hardware and platform
+> > > > specific stuff related to the interconnect IP in order to set the
+> > > > optimal bandwidth that fit both consumer constraint and platform
+> > > > specific configuration.
+> > >
+> > > Sure, but the provider itself can have interconnect properties to
+> > > indicate which other interconnects it's tied to. And the provider will
+> > > still need the interconnect-opp-table to denote which bandwidth levels
+> > > are sensible to use with each of its connections.
+>
+> You seem to have missed this comment.
+>
+> Thanks,
+> Saravana
+>
+> > > So in some instances the interconnect-opp-table covers the needs of
+> > > purely consumers and in some instances purely providers. But in either
+> > > case, it's still needed to describe the hardware properly.
+> > >
+> > > -Saravana
+> > >
+> > > > > These are just some of the reasons I could recollect in a few minutes.
+> > > > > These are all real world cases I had to deal with in the past several
+> > > > > years of dealing with scaling interconnects. I'm sure vendors and SoCs
+> > > > > I'm not familiar with have other good reasons I'm not aware of.
+> > > > >
+> > > > > Trying to figure this all out by aggregating OPP tables of
+> > > > > interconnect providers just isn't feasible nor is it efficient. The
+> > > > > OPP tables for an interconnect path is describing the valid BW levels
+> > > > > supported by that path and verified in hardware and makes a lot of
+> > > > > sense to capture it clearly in DT.
+> > > > >
+> > > > > > So such kind of OPP table should be at
+> > > > > > provider level but not at path level.
+> > > > >
+> > > > > They can also use it if they want to, but they'll probably want to use
+> > > > > a frequency OPP table.
+> > > > >
+> > > > >
+> > > > > -Saravana
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > > > > > > ---
+> > > > > > >  drivers/interconnect/core.c  | 27 ++++++++++++++++++++++++++-
+> > > > > > >  include/linux/interconnect.h |  7 +++++++
+> > > > > > >  2 files changed, 33 insertions(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> > > > > > > index 871eb4bc4efc..881bac80bc1e 100644
+> > > > > > > --- a/drivers/interconnect/core.c
+> > > > > > > +++ b/drivers/interconnect/core.c
+> > > > > > > @@ -47,6 +47,7 @@ struct icc_req {
+> > > > > > >   */
+> > > > > > >  struct icc_path {
+> > > > > > >         size_t num_nodes;
+> > > > > > > +       struct opp_table *opp_table;
+> > > > > > >         struct icc_req reqs[];
+> > > > > > >  };
+> > > > > > >
+> > > > > > > @@ -313,7 +314,7 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+> > > > > > >  {
+> > > > > > >         struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
+> > > > > > >         struct icc_node *src_node, *dst_node;
+> > > > > > > -       struct device_node *np = NULL;
+> > > > > > > +       struct device_node *np = NULL, *opp_node;
+> > > > > > >         struct of_phandle_args src_args, dst_args;
+> > > > > > >         int idx = 0;
+> > > > > > >         int ret;
+> > > > > > > @@ -381,10 +382,34 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+> > > > > > >                 dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
+> > > > > > >         mutex_unlock(&icc_lock);
+> > > > > > >
+> > > > > > > +       opp_node = of_parse_phandle(np, "interconnect-opp-table", idx);
+> > > > > > > +       if (opp_node) {
+> > > > > > > +               path->opp_table = dev_pm_opp_of_find_table_from_node(opp_node);
+> > > > > > > +               of_node_put(opp_node);
+> > > > > > > +       }
+> > > > > > > +
+> > > > > > > +
+> > > > > > >         return path;
+> > > > > > >  }
+> > > > > > >  EXPORT_SYMBOL_GPL(of_icc_get);
+> > > > > > >
+> > > > > > > +/**
+> > > > > > > + * icc_get_opp_table() - Get the OPP table that corresponds to a path
+> > > > > > > + * @path: reference to the path returned by icc_get()
+> > > > > > > + *
+> > > > > > > + * This function will return the OPP table that corresponds to a path handle.
+> > > > > > > + * If the interconnect API is disabled, NULL is returned and the consumer
+> > > > > > > + * drivers will still build. Drivers are free to handle this specifically, but
+> > > > > > > + * they don't have to.
+> > > > > > > + *
+> > > > > > > + * Return: opp_table pointer on success. NULL is returned when the API is
+> > > > > > > + * disabled or the OPP table is missing.
+> > > > > > > + */
+> > > > > > > +struct opp_table *icc_get_opp_table(struct icc_path *path)
+> > > > > > > +{
+> > > > > > > +       return path->opp_table;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >  /**
+> > > > > > >   * icc_set_bw() - set bandwidth constraints on an interconnect path
+> > > > > > >   * @path: reference to the path returned by icc_get()
+> > > > > > > diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+> > > > > > > index dc25864755ba..0c0bc55f0e89 100644
+> > > > > > > --- a/include/linux/interconnect.h
+> > > > > > > +++ b/include/linux/interconnect.h
+> > > > > > > @@ -9,6 +9,7 @@
+> > > > > > >
+> > > > > > >  #include <linux/mutex.h>
+> > > > > > >  #include <linux/types.h>
+> > > > > > > +#include <linux/pm_opp.h>
+> > > > > > >
+> > > > > > >  /* macros for converting to icc units */
+> > > > > > >  #define Bps_to_icc(x)  ((x) / 1000)
+> > > > > > > @@ -28,6 +29,7 @@ struct device;
+> > > > > > >  struct icc_path *icc_get(struct device *dev, const int src_id,
+> > > > > > >                          const int dst_id);
+> > > > > > >  struct icc_path *of_icc_get(struct device *dev, const char *name);
+> > > > > > > +struct opp_table *icc_get_opp_table(struct icc_path *path);
+> > > > > > >  void icc_put(struct icc_path *path);
+> > > > > > >  int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+> > > > > > >
+> > > > > > > @@ -49,6 +51,11 @@ static inline void icc_put(struct icc_path *path)
+> > > > > > >  {
+> > > > > > >  }
+> > > > > > >
+> > > > > > > +static inline struct opp_table *icc_get_opp_table(struct icc_path *path)
+> > > > > > > +{
+> > > > > > > +       return NULL;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >  static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+> > > > > > >  {
+> > > > > > >         return 0;
+> > > > > > > --
+> > > > > > > 2.22.0.410.gd8fdbe21b5-goog
+> > > > > > >
+> > > >
+> > > > --
+> > > > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+> > > >
