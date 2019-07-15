@@ -2,88 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CD36942A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3BB569479
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392282AbfGOOsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:48:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392267AbfGOOr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:47:59 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E72C720861;
-        Mon, 15 Jul 2019 14:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563202078;
-        bh=8YcXw0niz+6WuN+SPHBfEf9YKvNfEfOcWw0rDR0CvJE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iBQHH92K7xarcLSvzuCH+kZ5n7mISAH3a2uVaFy71e9K4KmCCVLwDF6WovqOrfwSA
-         /tDUE/3Nvksi1omYTWd9uE449Q8Ma3FeWPELuTXIWttkiT1yUhsb4dXOYUb1JAOt1d
-         DRC4oxN1sT+TkfgfXn+HVTBm1dI99R5uTEv02cIU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 39/53] media: coda: fix mpeg2 sequence number handling
-Date:   Mon, 15 Jul 2019 10:45:21 -0400
-Message-Id: <20190715144535.11636-39-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715144535.11636-1-sashal@kernel.org>
-References: <20190715144535.11636-1-sashal@kernel.org>
+        id S2404886AbfGOOvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:51:42 -0400
+Received: from mail-pl1-f176.google.com ([209.85.214.176]:42388 "EHLO
+        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404198AbfGOOvj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:51:39 -0400
+Received: by mail-pl1-f176.google.com with SMTP id ay6so8411026plb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:51:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=BKSJgT6whNkC5IhAzvavX76L682ogf/O2G93SLLSkJU=;
+        b=b0d2J4xCCm0KNw/qj3HIU8dYECM7kBb774a2roV1NDXUzy40acvViTNPkLvMpoeVy1
+         CFSHyq1ZWedJfp86ClW84qNkq1AjRgF+v+RZqi0+inn2UabmAyUxV8qNJIZC6G4oO26n
+         w29BK0hVtBXD4LwjALyTVznYtlCg3Qm/ZEq7o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=BKSJgT6whNkC5IhAzvavX76L682ogf/O2G93SLLSkJU=;
+        b=BymwSr4b9coygjgXJ79BF2yx3Y9yhuWoiLWjgR3iY2Wir/QZbmlaFAMvTrHSxxzfq2
+         GwR8w+YUAeJS7+ShDDjGXQXlTs/mcLcGTvKKlJeItzfMDEKNLQvxPySg9QnqaK3i3ZE1
+         vakYitxrrTzYbc1F5wDBuOUdv0uaXmAyqt32VSO413FRVyuzgvJq1jFUlxq0vNpOt96o
+         AYvdX66B+IDl4BZwFj9/PurKW1vAmpRH6+aueL7Mc4xQCnOD8519Z3MjdVU+3uD4SCBo
+         qRbYWt61Tp8hduGcqeGzHtnn92Slat150x6kJdtLj9g44H/MIMa0wC6YylN8LBJUurJU
+         5keQ==
+X-Gm-Message-State: APjAAAVgEUgxoA+dE6uP7yDZfR+QVGQqeGlKYHlvK2k8qU8dZqPXBIkI
+        SVf7E+ZOgQPS8MhGfXtrjUXB1A==
+X-Google-Smtp-Source: APXvYqzs6mlTcK+ml7tdLCyuJNk2RhWR6UrxxN4jOQP+aclPWgn+HI40YmyK+mAZDxd/IftfWFnwrg==
+X-Received: by 2002:a17:902:968d:: with SMTP id n13mr29180895plp.257.1563202298366;
+        Mon, 15 Jul 2019 07:51:38 -0700 (PDT)
+Received: from [10.69.69.102] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 30sm47698095pjk.17.2019.07.15.07.51.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 07:51:37 -0700 (PDT)
+Subject: Re: [PATCH -next] scsi: lpfc: Remove unnecessary null check before
+ kfree
+To:     YueHaibing <yuehaibing@huawei.com>, dick.kennedy@broadcom.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20190711141037.57880-1-yuehaibing@huawei.com>
+From:   James Smart <james.smart@broadcom.com>
+Message-ID: <3a56b01a-27e4-6ebc-0e99-8a06a2f2f75f@broadcom.com>
+Date:   Mon, 15 Jul 2019 07:51:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190711141037.57880-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
 
-[ Upstream commit 56d159a4ec6d8da7313aac6fcbb95d8fffe689ba ]
 
-Sequence number handling assumed that the BIT processor frame number
-starts counting at 1, but this is not true for the MPEG-2 decoder,
-which starts at 0. Fix the sequence counter offset detection to handle
-this.
+On 7/11/2019 7:10 AM, YueHaibing wrote:
+> A null check before a kfree is redundant, so remove it.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_bsg.c | 4 +---
+>
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/platform/coda/coda-bit.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Reviewed-by: James Smart <james.smart@broadcom.com>
 
-diff --git a/drivers/media/platform/coda/coda-bit.c b/drivers/media/platform/coda/coda-bit.c
-index a4639813cf35..a7ed2dba7a0e 100644
---- a/drivers/media/platform/coda/coda-bit.c
-+++ b/drivers/media/platform/coda/coda-bit.c
-@@ -1581,6 +1581,7 @@ static int __coda_start_decoding(struct coda_ctx *ctx)
- 		coda_write(dev, 0, CODA_REG_BIT_BIT_STREAM_PARAM);
- 		return -ETIMEDOUT;
- 	}
-+	ctx->sequence_offset = ~0U;
- 	ctx->initialized = 1;
- 
- 	/* Update kfifo out pointer from coda bitstream read pointer */
-@@ -1971,7 +1972,9 @@ static void coda_finish_decode(struct coda_ctx *ctx)
- 		v4l2_err(&dev->v4l2_dev,
- 			 "decoded frame index out of range: %d\n", decoded_idx);
- 	} else {
--		val = coda_read(dev, CODA_RET_DEC_PIC_FRAME_NUM) - 1;
-+		val = coda_read(dev, CODA_RET_DEC_PIC_FRAME_NUM);
-+		if (ctx->sequence_offset == -1)
-+			ctx->sequence_offset = val;
- 		val -= ctx->sequence_offset;
- 		spin_lock_irqsave(&ctx->buffer_meta_lock, flags);
- 		if (!list_empty(&ctx->buffer_meta_list)) {
--- 
-2.20.1
-
+-- james
