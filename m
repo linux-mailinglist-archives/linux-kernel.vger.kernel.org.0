@@ -2,171 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5047169324
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B646934A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403847AbfGOOmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:42:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41278 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404541AbfGOOkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:40:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92433309175E;
-        Mon, 15 Jul 2019 14:40:45 +0000 (UTC)
-Received: from [10.36.118.52] (unknown [10.36.118.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 781AD5D9C8;
-        Mon, 15 Jul 2019 14:40:31 +0000 (UTC)
-Subject: Re: [RFC][Patch v11 1/2] mm: page_hinting: core infrastructure
-From:   David Hildenbrand <david@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        mst@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
-        dhildenb@redhat.com, aarcange@redhat.com,
-        alexander.duyck@gmail.com, john.starks@microsoft.com,
-        mhocko@suse.com
-References: <20190710195158.19640-1-nitesh@redhat.com>
- <20190710195158.19640-2-nitesh@redhat.com>
- <f9bca947-f88e-51a7-fdaf-4403fda1b783@intel.com>
- <46336efb-3243-0083-1d20-7e8578131679@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <c978542a-6535-634f-b07a-0a158993bada@redhat.com>
-Date:   Mon, 15 Jul 2019 16:40:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2392061AbfGOOnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:43:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50778 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391753AbfGOOnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:43:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so15479887wml.0;
+        Mon, 15 Jul 2019 07:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X/BMY7zzwOav0m72UIxct/q6KfFqA8uXilpppT8A16E=;
+        b=FyNlaoh6KzGIfcneFIP0S8aPVZjlzGYNylLqlX2tUvlGGmTf7lyZS029GCvtGo8ENq
+         ju4TUCvMFLdvwYlT/VRrY6srviBZopHL4DH8Eyld/n4OixSOwAE3TkKD9fBKYWJQ/Ggl
+         6nVl/QcPsr9jVLaZhMwnfDVzVh41pwQm0aPgs2mFAJBacEj0xdqREUAdBSQaBqnKZoXg
+         I7I42ahXjyiiWIWcR+7ev9OmmfFiHF+zz43hOqF27FqjtWODa3DqELNG7t4UV5yWzyC3
+         KhbkCeG0swdVamt147KVH+6pInGKj2wMyLiwHynr1hjb3ZbE7zdNdvOTrjUCEp/2qRaa
+         twQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X/BMY7zzwOav0m72UIxct/q6KfFqA8uXilpppT8A16E=;
+        b=ABmdp04y9VVXQGvcARK/7NpLOlnk5x42IcfjJ4BoI+Y7hirguQKM1LTlIMcx62eu0K
+         vVnb+H/qts+9AvjAV7vl7dBd8zsZlfaJzD0F/ak8n5TCN1zWfcZxy++pNMdGOFuJwp9x
+         V1WhLPOq1bQKBMQPdYWX3FXve5okK6db86JwT2yXbd3qAoTqJhMyufi355KZKyWmrSr2
+         QJ+Dy2uk2fKJtupvwUB2VidVBYHKpldYJKtMjgT78uhgGfhTXiELK9cXZYpxaN21ztbX
+         gTuiyQb1EvDdGnlVo5QH5m80T8yKHwQAUjY0aCDLHlCBOu+T0Xih8w35BNFefXWn7jYI
+         tNjw==
+X-Gm-Message-State: APjAAAUPlAZLhpl6+DDwrfrDDDOFtP8zfSTfqC3MAwhlCjUKgSjRhSk9
+        JoLFmkEB/he/ome38jArTLnAulTb
+X-Google-Smtp-Source: APXvYqzSKyoVikQPwCxk8zlZVwWFm3fjsUNrV+8j4Zfhhz8UByhySKR4NSIed5Kfi+h866uogV6dTQ==
+X-Received: by 2002:a1c:acc8:: with SMTP id v191mr25765820wme.177.1563201788572;
+        Mon, 15 Jul 2019 07:43:08 -0700 (PDT)
+Received: from arch-x1c3 ([2a00:5f00:102:0:9665:9cff:feee:aa4d])
+        by smtp.gmail.com with ESMTPSA id y16sm36938898wrg.85.2019.07.15.07.43.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 07:43:07 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 15:43:06 +0100
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] modpost: check for static EXPORT_SYMBOL* functions
+Message-ID: <20190715144306.GA24120@arch-x1c3>
+References: <20190714152817.24693-1-efremov@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <46336efb-3243-0083-1d20-7e8578131679@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 15 Jul 2019 14:40:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190714152817.24693-1-efremov@linux.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.07.19 11:33, David Hildenbrand wrote:
-> On 11.07.19 20:21, Dave Hansen wrote:
->> On 7/10/19 12:51 PM, Nitesh Narayan Lal wrote:
->>> +static void bm_set_pfn(struct page *page)
->>> +{
->>> +	struct zone *zone = page_zone(page);
->>> +	int zone_idx = page_zonenum(page);
->>> +	unsigned long bitnr = 0;
->>> +
->>> +	lockdep_assert_held(&zone->lock);
->>> +	bitnr = pfn_to_bit(page, zone_idx);
->>> +	/*
->>> +	 * TODO: fix possible underflows.
->>> +	 */
->>> +	if (free_area[zone_idx].bitmap &&
->>> +	    bitnr < free_area[zone_idx].nbits &&
->>> +	    !test_and_set_bit(bitnr, free_area[zone_idx].bitmap))
->>> +		atomic_inc(&free_area[zone_idx].free_pages);
->>> +}
->>
->> Let's say I have two NUMA nodes, each with ZONE_NORMAL and ZONE_MOVABLE
->> and each zone with 1GB of memory:
->>
->> Node:         0        1
->> NORMAL   0->1GB   2->3GB
->> MOVABLE  1->2GB   3->4GB
->>
->> This code will allocate two bitmaps.  The ZONE_NORMAL bitmap will
->> represent data from 0->3GB and the ZONE_MOVABLE bitmap will represent
->> data from 1->4GB.  That's the result of this code:
->>
->>> +			if (free_area[zone_idx].base_pfn) {
->>> +				free_area[zone_idx].base_pfn =
->>> +					min(free_area[zone_idx].base_pfn,
->>> +					    zone->zone_start_pfn);
->>> +				free_area[zone_idx].end_pfn =
->>> +					max(free_area[zone_idx].end_pfn,
->>> +					    zone->zone_start_pfn +
->>> +					    zone->spanned_pages);
->>
->> But that means that both bitmaps will have space for PFNs in the other
->> zone type, which is completely bogus.  This is fundamental because the
->> data structures are incorrectly built per zone *type* instead of per zone.
->>
+Hi Denis,
+
+On 2019/07/14, Denis Efremov wrote:
+> This patch adds a check to warn about static EXPORT_SYMBOL* functions
+> during the modpost. In most of the cases, a static symbol marked for
+> exporting is an odd combination that should be fixed either by deleting
+> the exporting mark or by removing the static attribute and adding the
+> appropriate declaration to headers.
 > 
-> I don't think it's incorrect, it's just not optimal in all scenarios.
-> E.g., in you example, this approach would "waste" 2 * 1GB of tracking
-> data for the wholes (2* 64bytes when using 1 bit for 2MB).
+> If this check will be considered useful, I will resend the patch with
+> review fixes.
 > 
-> FWIW, this is not a numa-specific thingy. We can have sparse zones
-> easily on single-numa systems.
+> Currently, this check emits the warnings on the following symbols, most
+> of which are accepted to be fixed:
+> 1. "sas_wait_eh" [drivers/scsi/libsas/libsas]
+>    Patch: https://lkml.org/lkml/2019/7/8/970 (accepted)
+> 2. "torture_onoff_cleanup" [kernel/torture]
+>    "torture_shuffle_cleanup" [kernel/torture]
+>    Patch: https://lkml.org/lkml/2019/7/4/411 (accepted)
+> 3. "LZ4HC_setExternalDict" [lib/lz4/lz4hc_compress]
+>    Patch: https://lkml.org/lkml/2019/7/8/842
+> 4. "drm_client_close" [drivers/gpu/drm/drm]
+>    Patch: https://lkml.org/lkml/2019/7/3/758 (accepted)
+> 5. "gve_probe" [drivers/net/ethernet/google/gve/gve]
+>    Patch: https://lkml.org/lkml/2019/7/14/65
+> 6. "i2c_new_client_device" [vmlinux]
+>    "i2c_new_dummy_device" [vmlinux]
+>    Patch: https://lkml.org/lkml/2019/7/7/226 (fixed in a different patch)
+> 7. "ahci_em_messages" [drivers/ata/libahci]
+>    Patch: https://lkml.org/lkml/2019/7/10/550 (reviwed)
+> 8. "ftrace_set_clr_event" [vmlinux]
+>    Patch: https://lkml.org/lkml/2019/7/4/609 (reviwed)
+> 9. "rmi_2d_sensor_set_input_params" [drivers/input/rmi4/rmi_core]
+>    Patch: https://lkml.org/lkml/2019/7/8/999
+> 10. "empty_zero_page" [vmlinux]
+> 11. "phys_base" [vmlinux]
+> 12. "hypercall_page" [vmlinux]
 > 
-> Node:                 0
-> NORMAL   0->1GB, 2->3GB
-> MOVABLE  1->2GB, 3->4GB
+> Similar commits:
+> 1. 54638c6eaf44 ("net: phy: make exported variables non-static")
+> 2. 98ef2046f28b ("mm: remove the exporting of totalram_pages")
+> 3. 73df167c819e ("s390/zcrypt: remove the exporting of ap_query_configuration")
+> 4. a57caf8c527f ("sunrpc/cache: remove the exporting of cache_seq_next")
+> 5. e4e4730698c9 ("crypto: skcipher - remove the exporting of skcipher_walk_next")
 > 
-> So tracking it per zones instead instead of zone type is only one part
-> of the story.
+> Build time impact, allmodconfig, Dell XPS 15 9570 (measurements 3x):
+> $ make mrproper; make allmodconfig; time make -j12; \
+>   git checkout HEAD~1; \
+>   make mrproper; make allmodconfig; time make -j12
+> 1.
+>    (with patch) 17635,94s user 1895,54s system 1085% cpu 29:59,22 total
+>    (w/o  patch) 17275,42s user 1803,87s system 1112% cpu 28:35,66 total
+> 2.
+>    (with patch) 17369,51s user 1763,28s system 1111% cpu 28:41,47 total
+>    (w/o  patch) 16880,50s user 1670,93s system 1113% cpu 27:46,56 total
+> 3.
+>    (with patch) 17937,88s user 1842,53s system 1109% cpu 29:42,26 total
+>    (w/o  patch) 17267,55s user 1725,09s system 1111% cpu 28:28,17 total
+> 
+> Thus, the current implementation adds approx. 1 min for allmodconfig.
+> However, it's possible to do the check in a more optimal way if it will
+> be considered useful.
+> 
+> Also, this kind of check could be implemented as a separate script instead.
+> Here is the implementation:
+> https://gist.github.com/evdenis/bf2322d094f0c02c0f60fe0a225848b2
 > 
 
-Oh, and FWIW,
+Personally I think this is a pretty good feature.
 
-in setups like
+If I did my numbers correctly, the above numbers show ~2% increase.
+Although one should be able to reduce that if people feel too strongly.
 
-Node:                 0               1
-NORMAL   4->5GB, 6->7GB  5->6GB, 8->9GB
+That said, the patch is:
+Acked-by: Emil Velikov <emil.l.velikov@gmail.com>
 
-What Nitesh proposes is actually better. So it really depends on the use
-case - but in general sparsity is the issue.
+Can we make sure that patches for all issues are out (on the respective
+mailing lists, or merged) before this lands.
 
--- 
 
-Thanks,
-
-David / dhildenb
+HTH
+Emil
