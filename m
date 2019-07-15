@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A00F6697E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB91697DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731673AbfGONtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60318 "EHLO mail.kernel.org"
+        id S1731180AbfGONth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:49:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730790AbfGONtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:49:03 -0400
+        id S1731711AbfGONte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:49:34 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86EBF21537;
-        Mon, 15 Jul 2019 13:49:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AE372067C;
+        Mon, 15 Jul 2019 13:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198543;
-        bh=ky5Arb6mRM6jsE1pVWlG83hj4T4rBiXsqCh53rxahyg=;
+        s=default; t=1563198573;
+        bh=9unr0oExGQYABSqs3yU8LUSnyf51wPpBs5EHGSM7ljM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gbb1TqmkV3dpu6/yc+AtkcZ8/fSZ75F6wNtdI5AuJwPQoWW8WYCdK2+uXg1DZNNB5
-         BEOK3OXsI/tMktRLeP6eXOsgNAPhMA7jNgvjX5d5I6MaxQKv013Z73CgcFyWZ7ig3h
-         R9JMkQpfDv/577UaTvu0hX4vKHKXfIfSgK0wXvvk=
+        b=WX+pY2LIwmJqzaqS+vHwUbYv9L4x1M5v91x1vpwAD9+Alzm7b0mPSrv+MdHFGnkCV
+         LJCQC6nJrqOdAwCfVea1MrfWk1w4PdM8XpbsYVYvOPF+v4HQACql3xBCwvwoCmzgcd
+         Xhg/Vwa+urppB7acLqc2gyi1CRZgTK/PihvTf+No=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeremy Sowden <jeremy@azazel.net>,
-        syzbot+4f0529365f7f2208d9f0@syzkaller.appspotmail.com,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Joseph Yasi <joe.yasi@gmail.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 040/249] af_key: fix leaks in key_pol_get_resp and dump_sp.
-Date:   Mon, 15 Jul 2019 09:43:25 -0400
-Message-Id: <20190715134655.4076-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 048/249] e1000e: start network tx queue only when link is up
+Date:   Mon, 15 Jul 2019 09:43:33 -0400
+Message-Id: <20190715134655.4076-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -44,50 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Sowden <jeremy@azazel.net>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit 7c80eb1c7e2b8420477fbc998971d62a648035d9 ]
+[ Upstream commit d17ba0f616a08f597d9348c372d89b8c0405ccf3 ]
 
-In both functions, if pfkey_xfrm_policy2msg failed we leaked the newly
-allocated sk_buff.  Free it on error.
+Driver does not want to keep packets in Tx queue when link is lost.
+But present code only reset NIC to flush them, but does not prevent
+queuing new packets. Moreover reset sequence itself could generate
+new packets via netconsole and NIC falls into endless reset loop.
 
-Fixes: 55569ce256ce ("Fix conversion between IPSEC_MODE_xxx and XFRM_MODE_xxx.")
-Reported-by: syzbot+4f0529365f7f2208d9f0@syzkaller.appspotmail.com
-Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This patch wakes Tx queue only when NIC is ready to send packets.
+
+This is proper fix for problem addressed by commit 0f9e980bf5ee
+("e1000e: fix cyclic resets at link up with active tx").
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
+Tested-by: Joseph Yasi <joe.yasi@gmail.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/key/af_key.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index a50dd6f34b91..fe5fc4bab7ee 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -2438,8 +2438,10 @@ static int key_pol_get_resp(struct sock *sk, struct xfrm_policy *xp, const struc
- 		goto out;
- 	}
- 	err = pfkey_xfrm_policy2msg(out_skb, xp, dir);
--	if (err < 0)
-+	if (err < 0) {
-+		kfree_skb(out_skb);
- 		goto out;
-+	}
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index e21b2ffd1e92..b081a1ef6859 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4208,7 +4208,7 @@ void e1000e_up(struct e1000_adapter *adapter)
+ 		e1000_configure_msix(adapter);
+ 	e1000_irq_enable(adapter);
  
- 	out_hdr = (struct sadb_msg *) out_skb->data;
- 	out_hdr->sadb_msg_version = hdr->sadb_msg_version;
-@@ -2690,8 +2692,10 @@ static int dump_sp(struct xfrm_policy *xp, int dir, int count, void *ptr)
- 		return PTR_ERR(out_skb);
+-	netif_start_queue(adapter->netdev);
++	/* Tx queue started by watchdog timer when link is up */
  
- 	err = pfkey_xfrm_policy2msg(out_skb, xp, dir);
--	if (err < 0)
-+	if (err < 0) {
-+		kfree_skb(out_skb);
- 		return err;
-+	}
+ 	e1000e_trigger_lsc(adapter);
+ }
+@@ -4606,6 +4606,7 @@ int e1000e_open(struct net_device *netdev)
+ 	pm_runtime_get_sync(&pdev->dev);
  
- 	out_hdr = (struct sadb_msg *) out_skb->data;
- 	out_hdr->sadb_msg_version = pfk->dump.msg_version;
+ 	netif_carrier_off(netdev);
++	netif_stop_queue(netdev);
+ 
+ 	/* allocate transmit descriptors */
+ 	err = e1000e_setup_tx_resources(adapter->tx_ring);
+@@ -4666,7 +4667,6 @@ int e1000e_open(struct net_device *netdev)
+ 	e1000_irq_enable(adapter);
+ 
+ 	adapter->tx_hang_recheck = false;
+-	netif_start_queue(netdev);
+ 
+ 	hw->mac.get_link_status = true;
+ 	pm_runtime_put(&pdev->dev);
+@@ -5288,6 +5288,7 @@ static void e1000_watchdog_task(struct work_struct *work)
+ 			if (phy->ops.cfg_on_link_up)
+ 				phy->ops.cfg_on_link_up(hw);
+ 
++			netif_wake_queue(netdev);
+ 			netif_carrier_on(netdev);
+ 
+ 			if (!test_bit(__E1000_DOWN, &adapter->state))
+@@ -5301,6 +5302,7 @@ static void e1000_watchdog_task(struct work_struct *work)
+ 			/* Link status message must follow this format */
+ 			pr_info("%s NIC Link is Down\n", adapter->netdev->name);
+ 			netif_carrier_off(netdev);
++			netif_stop_queue(netdev);
+ 			if (!test_bit(__E1000_DOWN, &adapter->state))
+ 				mod_timer(&adapter->phy_info_timer,
+ 					  round_jiffies(jiffies + 2 * HZ));
 -- 
 2.20.1
 
