@@ -2,129 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3146906A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7691C69078
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390012AbfGOOVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:21:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53628 "EHLO mx1.redhat.com"
+        id S2390557AbfGOOV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:21:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390043AbfGOOVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:21:25 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2390004AbfGOOVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:21:51 -0400
+Received: from localhost (d192-24-91-215.try.wideopenwest.com [24.192.215.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A3AE308621E;
-        Mon, 15 Jul 2019 14:21:25 +0000 (UTC)
-Received: from krava (unknown [10.40.205.8])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5D5B75B681;
-        Mon, 15 Jul 2019 14:21:22 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 16:21:21 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>,
-        Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>, mbd@fb.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ian Rogers <irogers@google.com>
-Subject: [PATCH] perf stat: Fix segfault for event group in repeat mode
-Message-ID: <20190715142121.GC6032@krava>
-References: <20190710204540.176495-1-nums@google.com>
- <20190714204432.GA8120@krava>
- <20190714205505.GB8120@krava>
- <CABPqkBSq35HZVk2CNi8xy9j7eb3EWRXSdgPKd+fmv2XaKPjOqA@mail.gmail.com>
- <20190715075912.GA2821@krava>
- <CABPqkBR=arE==2H2H0t1uAU2aTgPOr6Yucgh16J0rKughf_=CQ@mail.gmail.com>
- <20190715083105.GB2821@krava>
+        by mail.kernel.org (Postfix) with ESMTPSA id C5D342184C;
+        Mon, 15 Jul 2019 14:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563200510;
+        bh=8aMhZObp+OV6R+0Pf2IC4tAtq3tomyGvUrXruWhPUoI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CHG6tDR6ScJFj8bAHpOx7eMShmwPYizVnXpdP8cPQMLJgnbg+mW0KuTbNiAWfnT4D
+         ypqe+rM31ZHkrPTu5UGXO42Ag5E2swcKWLFQ4/gguFge9pwJ8TGdHCEfZ40jFmPore
+         8RXk3um9of4WsBsU6mrxx7af7igpveBwmmqRQaag=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] Revert "x86/ptrace: Prevent ptrace from clearing the FS/GS selector" and fix the test
+Date:   Mon, 15 Jul 2019 07:21:44 -0700
+Message-Id: <fca39c478ea7fb15bc76fe8a36bd180810a067f6.1563200250.git.luto@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715083105.GB2821@krava>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 15 Jul 2019 14:21:25 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Numfor Mbiziwo-Tiapo reported segfault on stat of event
-group in repeat mode:
+This reverts commit 48f5e52e916b55fb73754833efbacc7f8081a159.
 
-  # perf stat -e '{cycles,instructions}' -r 10 ls
+The ptrace ABI change was a prerequisite to the proposed design for
+FSGSBASE.  Since FSGSBASE support has been reverted, and since I'm
+not convinced that the ABI was ever adequately tested, revert the
+ABI change as well.
 
-It's caused by memory corruption due to not cleaned
-evsel's id array and index, which needs to be rebuilt
-in every stat iteration. Currently the ids index grows,
-while the array (which is also not freed) has the same
-size.
+This also modifies the test case so that it tests the preexisting
+behavior.
 
-Fixing this by releasing id array and zeroing ids index
-in perf_evsel__close function.
-
-We also need to keep the evsel_list alive for stat
-record (which is disabled in repeat mode).
-
-Reported-by: Numfor Mbiziwo-Tiapo <nums@google.com>
-Link: http://lkml.kernel.org/n/tip-07t75chgdhcr00uerh51hb6j@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- tools/perf/builtin-stat.c | 9 ++++++++-
- tools/perf/util/evsel.c   | 2 ++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/kernel/ptrace.c               | 14 ++++++++++++--
+ tools/testing/selftests/x86/fsgsbase.c | 22 ++++------------------
+ 2 files changed, 16 insertions(+), 20 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index b55a534b4de0..352cf39d7c2f 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -607,7 +607,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	 * group leaders.
- 	 */
- 	read_counters(&(struct timespec) { .tv_nsec = t1-t0 });
--	perf_evlist__close(evsel_list);
-+
-+	/*
-+	 * We need to keep evsel_list alive, because it's processed
-+	 * later the evsel_list will be closed after.
-+	 */
-+	if (!STAT_RECORD)
-+		perf_evlist__close(evsel_list);
- 
- 	return WEXITSTATUS(status);
- }
-@@ -1997,6 +2003,7 @@ int cmd_stat(int argc, const char **argv)
- 			perf_session__write_header(perf_stat.session, evsel_list, fd, true);
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 3108cdc00b29..a166c960bc9e 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -397,12 +397,22 @@ static int putreg(struct task_struct *child,
+ 	case offsetof(struct user_regs_struct,fs_base):
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+-		x86_fsbase_write_task(child, value);
++		/*
++		 * When changing the FS base, use do_arch_prctl_64()
++		 * to set the index to zero and to set the base
++		 * as requested.
++		 */
++		if (child->thread.fsbase != value)
++			return do_arch_prctl_64(child, ARCH_SET_FS, value);
+ 		return 0;
+ 	case offsetof(struct user_regs_struct,gs_base):
++		/*
++		 * Exactly the same here as the %fs handling above.
++		 */
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+-		x86_gsbase_write_task(child, value);
++		if (child->thread.gsbase != value)
++			return do_arch_prctl_64(child, ARCH_SET_GS, value);
+ 		return 0;
+ #endif
+ 	}
+diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
+index 5ab4c60c100e..15a329da59fa 100644
+--- a/tools/testing/selftests/x86/fsgsbase.c
++++ b/tools/testing/selftests/x86/fsgsbase.c
+@@ -489,25 +489,11 @@ static void test_ptrace_write_gsbase(void)
+ 		 * selector value is changed or not by the GSBASE write in
+ 		 * a ptracer.
+ 		 */
+-		if (gs != *shared_scratch) {
+-			nerrs++;
+-			printf("[FAIL]\tGS changed to %lx\n", gs);
+-
+-			/*
+-			 * On older kernels, poking a nonzero value into the
+-			 * base would zero the selector.  On newer kernels,
+-			 * this behavior has changed -- poking the base
+-			 * changes only the base and, if FSGSBASE is not
+-			 * available, this may have no effect.
+-			 */
+-			if (gs == 0)
+-				printf("\tNote: this is expected behavior on older kernels.\n");
+-		} else if (have_fsgsbase && (base != 0xFF)) {
+-			nerrs++;
+-			printf("[FAIL]\tGSBASE changed to %lx\n", base);
++		if (gs == 0 && base == 0xFF) {
++			printf("[OK]\tGS was reset as expected\n");
+ 		} else {
+-			printf("[OK]\tGS remained 0x%hx%s", *shared_scratch, have_fsgsbase ? " and GSBASE changed to 0xFF" : "");
+-			printf("\n");
++			nerrs++;
++			printf("[FAIL]\tGS=0x%lx, GSBASE=0x%lx (should be 0, 0xFF)\n", gs, base);
  		}
- 
-+		perf_evlist__close(evsel_list);
- 		perf_session__delete(perf_stat.session);
  	}
  
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ebb46da4dfe5..52459dd5ad0c 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
- 	xyarray__delete(evsel->sample_id);
- 	evsel->sample_id = NULL;
- 	zfree(&evsel->id);
-+	evsel->ids = 0;
- }
- 
- static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
-@@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
- 
- 	perf_evsel__close_fd(evsel);
- 	perf_evsel__free_fd(evsel);
-+	perf_evsel__free_id(evsel);
- }
- 
- int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
 -- 
 2.21.0
 
