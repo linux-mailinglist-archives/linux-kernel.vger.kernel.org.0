@@ -2,126 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 300C1684FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97209684FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfGOIMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 04:12:39 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:60452 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729257AbfGOIMj (ORCPT
+        id S1729335AbfGOIPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 04:15:12 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33945 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfGOIPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 04:12:39 -0400
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 6B4E02E0E47;
-        Mon, 15 Jul 2019 11:12:35 +0300 (MSK)
-Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id bY44Bou3DU-CY4qvewE;
-        Mon, 15 Jul 2019 11:12:35 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1563178355; bh=5cuUVGpOKjEZE2zEyOt2pCBdqAx98lYW54gZVsRcm3M=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=U42euZjcfMleJ11bS6fI0HsLyRDy+E4n7PUvELcF8Z4i01C6Uvz6z/cKhGX43dAr4
-         1bxWZ/z0s3g/OJRIWfqPTDog6Jenk0Z7I5ShKB2xpFrs5axy1uzicmVWyR9D+MMhz/
-         dFcfROpk5PX9kBqt2krQKIKjBIvfUbhMNYh953TQ=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38c5:1c4f:8e20:cf1b])
-        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id zz1WwJWmSJ-CYQCqQb5;
-        Mon, 15 Jul 2019 11:12:34 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] kernel/printk: prevent deadlock at calling kmsg_dump from
- NMI context
-To:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Konstantin Khlebnikov <koct9i@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <156294329676.1745.2620297516210526183.stgit@buzz>
- <20190713060929.GB1038@tigerII.localdomain>
- <CALYGNiPedT3wyZ3CrvJra=382g6ETUvrhirHJMb29XkBA3uMyg@mail.gmail.com>
- <20190713131947.GA4464@tigerII.localdomain>
- <CALYGNiPp8546yGcC-TYSVq5X9tnPmrQsDecZxZ2smex9zKB5wg@mail.gmail.com>
- <20190715023338.GB3653@jagdpanzerIV>
- <20190715075444.fzxnf3iduqj6dkgp@pathway.suse.cz>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <45b818b7-045d-2d65-327f-217b752accee@yandex-team.ru>
-Date:   Mon, 15 Jul 2019 11:12:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 15 Jul 2019 04:15:12 -0400
+Received: by mail-io1-f66.google.com with SMTP id k8so32784805iot.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 01:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y/4K6BJlwFivH7Ck0WyKZuYNHVyNBlGAg0jTOaxVGec=;
+        b=t2uJanJrunb0Uuy0yhxSMKu6j/iphXKM8Z4f+DEMvY3/Rx3gc4O2PgEaVthRsFZTdQ
+         BqM+lTQnkdXVDO28ZTVbzhQMXPRYdypFIo4uIYyYUNmENquYSh6hfRUke0PNFK92tZRO
+         60YiVpGsgJueKZeLxI+039nXiHhsdjG3vv7PPWeGRFCKeHckYxahA1gUSOb4xnHmSmHT
+         Q1PPuLAT1QActFlRSHPR13lbA+/6w5qFsfLS+5XZcqDC5ple3cAujbr0n6tXRPekLxre
+         72Qa8JD6Bwscq9p+KiOLgYTs2KSKEUJLKF0wjctq9c9Bmh3zOR2H1bNTyAt5V/hZqwWL
+         OLJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y/4K6BJlwFivH7Ck0WyKZuYNHVyNBlGAg0jTOaxVGec=;
+        b=O34O/B8aCQWF9gG6ZH5b+Zux2YcqFmk4//IR289nKwfZe6FRBGY5PJMkAiEmHcuZqB
+         pevUnui5h3LQgwgrZv7XqerD1sRvcQdBvH8gpWeZLS9mglTTjQCOkY+X+nHUCIExKhoi
+         vb1P6t7acH5FJih4uyQXy1mtFQhwd5ylKrH3sB32BZJ/jdPtG9SF/19bc7Jf5mt4ettV
+         emNYJ1vyau7wwrMzdT5RNi1584N7u0j0KmRhhJDV3/gGW2urpCPo2cqYnVqeLW7rEzpd
+         jI6MgCBizoYpDJQPJcP22aKpEs8ixOp78zdoTaJkR+D+koQhJ4Z/tHGvUrtGxDs7kmQz
+         T0Kw==
+X-Gm-Message-State: APjAAAWirGfwtFm5OH0FDMMSpVF/wGwWRoMBDGrad9sKwWgr5jM+XhpQ
+        ortO/yAh7lFusEKMIUL7f0axpsfA8b+uYkwsoGaGlA==
+X-Google-Smtp-Source: APXvYqyuWdfTit/8FMurTyyFeufwY1doN8ppaCij/ekUqnJLnNRo5mHlUMXqsQkCRuCkuFC/sgGoq0ccoQ/YsIl9tjs=
+X-Received: by 2002:a02:5a02:: with SMTP id v2mr25578264jaa.124.1563178511096;
+ Mon, 15 Jul 2019 01:15:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190715075444.fzxnf3iduqj6dkgp@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <20190710204540.176495-1-nums@google.com> <20190714204432.GA8120@krava>
+ <20190714205505.GB8120@krava> <CABPqkBSq35HZVk2CNi8xy9j7eb3EWRXSdgPKd+fmv2XaKPjOqA@mail.gmail.com>
+ <20190715075912.GA2821@krava>
+In-Reply-To: <20190715075912.GA2821@krava>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Mon, 15 Jul 2019 01:14:59 -0700
+Message-ID: <CABPqkBR=arE==2H2H0t1uAU2aTgPOr6Yucgh16J0rKughf_=CQ@mail.gmail.com>
+Subject: Re: [PATCH] Fix perf stat repeat segfault
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>, mbd@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.07.2019 10:54, Petr Mladek wrote:
-> On Mon 2019-07-15 11:33:38, Sergey Senozhatsky wrote:
->> On (07/13/19 17:03), Konstantin Khlebnikov wrote:
->>>> We call kmsg_dump(KMSG_DUMP_PANIC) after smp_send_stop()
->>>
->>> Indeed, panic is especially handled and looks fine.
-> 
-> Just to get a picture. What other situations are we talking about,
-> please?
-> 
-> oops_exit() is one candidate. The other callers seem to be working
-> in normal context.
+On Mon, Jul 15, 2019 at 12:59 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Sun, Jul 14, 2019 at 02:36:42PM -0700, Stephane Eranian wrote:
+> > On Sun, Jul 14, 2019 at 1:55 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> > >
+> > > On Sun, Jul 14, 2019 at 10:44:36PM +0200, Jiri Olsa wrote:
+> > > > On Wed, Jul 10, 2019 at 01:45:40PM -0700, Numfor Mbiziwo-Tiapo wrote:
+> > > > > When perf stat is called with event groups and the repeat option,
+> > > > > a segfault occurs because the cpu ids are stored on each iteration
+> > > > > of the repeat, when they should only be stored on the first iteration,
+> > > > > which causes a buffer overflow.
+> > > > >
+> > > > > This can be replicated by running (from the tip directory):
+> > > > >
+> > > > > make -C tools/perf
+> > > > >
+> > > > > then running:
+> > > > >
+> > > > > tools/perf/perf stat -e '{cycles,instructions}' -r 10 ls
+> > > > >
+> > > > > Since run_idx keeps track of the current iteration of the repeat,
+> > > > > only storing the cpu ids on the first iteration (when run_idx < 1)
+> > > > > fixes this issue.
+> > > > >
+> > > > > Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+> > > > > ---
+> > > > >  tools/perf/builtin-stat.c | 7 ++++---
+> > > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > > > > index 63a3afc7f32b..92d6694367e4 100644
+> > > > > --- a/tools/perf/builtin-stat.c
+> > > > > +++ b/tools/perf/builtin-stat.c
+> > > > > @@ -378,9 +378,10 @@ static void workload_exec_failed_signal(int signo __maybe_unused, siginfo_t *inf
+> > > > >     workload_exec_errno = info->si_value.sival_int;
+> > > > >  }
+> > > > >
+> > > > > -static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+> > > > > +static bool perf_evsel__should_store_id(struct perf_evsel *counter, int run_idx)
+> > > > >  {
+> > > > > -   return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
+> > > > > +   return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID
+> > > > > +           && run_idx < 1;
+> > > >
+> > > > we create counters for every iteration, so this can't be
+> > > > based on iteration
+> > > >
+> > > > I think that's just a workaround for memory corruption,
+> > > > that's happening for repeating groupped events stats,
+> > > > I'll check on this
+> > >
+> > > how about something like this? we did not cleanup
+> > > ids on evlist close, so it kept on raising and
+> > > causing corruption in next iterations
+> > >
+> > not sure, that would realloc on each iteration of the repeats.
+>
+> well, we need new ids, because we create new events every iteration
+>
+If you recreate them, then agreed.
+It is not clear to me why you need ids when not running is STAT_RECORD mode.
 
-Oops in NMI mostly. Also I've screwed up several times with NMI watchdog
-and dumping log at setting taint.
-
-> 
-> 
->>> Sanity check in my patch could be relaxed:
->>>
->>>         if (WARN_ON_ONCE(reason != KMSG_DUMP_PANIC && in_nmi()))
->>>                 return;
->>
->> How critical kmsg_dump() is? We deadlock only if NMI->kmsg_dump()
->> happens on the CPU which already holds the logbuf_lock; in any
->> other case logbuf_lock is owned by another CPU which is expected
->> to unlock it eventually. So it doesn't look like disabling all
->> NMI->kmsg_dump() is the only way to fix it.
->>
->> When we lock logbuf_lock we increment per-CPU printk_context
->> (PRINTK_SAFE_CONTEXT_MASK bits); when we unlock logbuf_lock
->> we decrement printk_context. Thus we always can tell if the
->> logbuf_lock was locked on the very same CPU - this_cpu printk_context
->> has PRINTK_SAFE_CONTEXT_MASK bits sets - and we are about to deadlock
->> in a nested context (NMI), or the lock was locked on another CPU and
->> it's "safe" to spin on logbuf_lock and wait for logbuf_lock to become
->> available.
-> 
-> This sounds familiar. I think that we did not consider it safe in the
-> end, see the commit 03fc7f9c99c1e7ae29 ("printk/nmi: Prevent deadlock
-> when accessing the main log buffer in NMI").
-> 
-> If the problem is only with Oops then the 2nd propose might be
-> acceptable. The system will either try to continue or it will end
-> up in panic() anyway.
-> 
-> Well, WARN() looks like an overkill, especially if there is only
-> one possible caller that prints the stack anyway. I would personally
-> do not print any message and do just:
-> 
-> 	/*
-> 	 * Prevent deadlock on logbuf_lock. It is safe only
-> 	 * in panic() after smp_send_stop() and resetting
-> 	 * the lock.
-> 	 */
-> 	if (in_nmi() && reason != KMSG_DUMP_PANIC)
-> 		return;
-> 
-
-WARN_ON_ONCE is useful timesaver in debugging.
-It's better to know when happens something that shouldn't.
-
-> Best Regards,
-> Petr
-> 
+> jirka
+>
+> >
+> > >
+> > > jirka
+> > >
+> > >
+> > > ---
+> > > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > > index ebb46da4dfe5..52459dd5ad0c 100644
+> > > --- a/tools/perf/util/evsel.c
+> > > +++ b/tools/perf/util/evsel.c
+> > > @@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
+> > >         xyarray__delete(evsel->sample_id);
+> > >         evsel->sample_id = NULL;
+> > >         zfree(&evsel->id);
+> > > +       evsel->ids = 0;
+> > >  }
+> > >
+> > >  static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
+> > > @@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
+> > >
+> > >         perf_evsel__close_fd(evsel);
+> > >         perf_evsel__free_fd(evsel);
+> > > +       perf_evsel__free_id(evsel);
+> > >  }
+> > >
+> > >  int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
