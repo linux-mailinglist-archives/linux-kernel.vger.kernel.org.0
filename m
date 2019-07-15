@@ -2,36 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D3E6979B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B505C69795
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbfGONwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:52:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47124 "EHLO mail.kernel.org"
+        id S1731503AbfGONxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:53:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732248AbfGONwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:52:42 -0400
+        id S1731699AbfGONxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:53:03 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A1BD206B8;
-        Mon, 15 Jul 2019 13:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C30882083D;
+        Mon, 15 Jul 2019 13:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198761;
-        bh=dbZ9UkTc8jQ7thfAA7TdTEU2rDgk8mjNAe28LtjKQ68=;
+        s=default; t=1563198783;
+        bh=xreHO6Z6IC8Sp8Jv8DN16vrGkDA9QP35HThQbNuZKdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qYvdasqGPDKX13yqgjBtK13rhhxyYSAac4dMWe6xc83Waw5zi3z7hG/Zs3UbG/NP5
-         yf8XRzjJuhoLjMHh/bnu/4IKjKPE85hGNtIoCNu2QL35wVI7edPc9rMYBlPYqKah4P
-         JIDRtDJgOA0NM21K6olNtW3mjLOnebQmLcTy9eWk=
+        b=n3emwXzZO9+3XDljZFIV6JrWRTsYp40/bU1QHWDFaceWfRYHMrDvzGDdJaMnTozKB
+         KiHOP1cTLFnZpDcKkwd5FfdEwne04i3fRd1YLZeS7+qOfFpR6mbE2lII40B8WjgZkU
+         U6aR5AWBJXycBeTcfK2KwDuu0XDX3e7Pa2h0DVwU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 098/249] crypto: testmgr - add some more preemption points
-Date:   Mon, 15 Jul 2019 09:44:23 -0400
-Message-Id: <20190715134655.4076-98-sashal@kernel.org>
+Cc:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        alexander.shishkin@linux.intel.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 102/249] perf/x86: Add Intel Ice Lake NNPI uncore support
+Date:   Mon, 15 Jul 2019 09:44:27 -0400
+Message-Id: <20190715134655.4076-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -44,76 +53,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-[ Upstream commit e63e1b0dd0003dc31f73d875907432be3a2abe5d ]
+[ Upstream commit 5f4318c1b1d23a9290e4def78ee76017c288bf60 ]
 
-Call cond_resched() after each fuzz test iteration.  This avoids stall
-warnings if fuzz_iterations is set very high for testing purposes.
+Intel Ice Lake uncore support already included IMC PCI ID but ICL-NNPI
+CPUID is missing so add it to fix the probe function.
 
-While we're at it, also call cond_resched() after finishing testing each
-test vector.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: e39875d15ad6 ("perf/x86: add Intel Icelake uncore support")
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: alexander.shishkin@linux.intel.com
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190614081701.13828-1-rajneesh.bhardwaj@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/testmgr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/events/intel/uncore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 658a7eeebab2..292d28caf00f 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1279,6 +1279,7 @@ static int test_hash_vec(const char *driver, const struct hash_testvec *vec,
- 						req, tsgl, hashstate);
- 			if (err)
- 				return err;
-+			cond_resched();
- 		}
- 	}
- #endif
-@@ -1493,6 +1494,7 @@ static int __alg_test_hash(const struct hash_testvec *vecs,
- 		err = test_hash_vec(driver, &vecs[i], i, req, tsgl, hashstate);
- 		if (err)
- 			goto out;
-+		cond_resched();
- 	}
- 	err = test_hash_vs_generic_impl(driver, generic_driver, maxkeysize, req,
- 					tsgl, hashstate);
-@@ -1755,6 +1757,7 @@ static int test_aead_vec(const char *driver, int enc,
- 						&cfg, req, tsgls);
- 			if (err)
- 				return err;
-+			cond_resched();
- 		}
- 	}
- #endif
-@@ -1994,6 +1997,7 @@ static int test_aead(const char *driver, int enc,
- 				    tsgls);
- 		if (err)
- 			return err;
-+		cond_resched();
- 	}
- 	return 0;
- }
-@@ -2336,6 +2340,7 @@ static int test_skcipher_vec(const char *driver, int enc,
- 						    &cfg, req, tsgls);
- 			if (err)
- 				return err;
-+			cond_resched();
- 		}
- 	}
- #endif
-@@ -2535,6 +2540,7 @@ static int test_skcipher(const char *driver, int enc,
- 					tsgls);
- 		if (err)
- 			return err;
-+		cond_resched();
- 	}
- 	return 0;
- }
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 9e3fbd47cb56..089bfcdf2f7f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -1400,6 +1400,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_MOBILE, skl_uncore_init),
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_DESKTOP, skl_uncore_init),
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE, icl_uncore_init),
++	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_NNPI, icl_uncore_init),
+ 	{},
+ };
+ 
 -- 
 2.20.1
 
