@@ -2,363 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63876887D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BAB46886C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfGOMEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 08:04:41 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35533 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729981AbfGOMEg (ORCPT
+        id S1729925AbfGOME3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 08:04:29 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41763 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729827AbfGOME2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 08:04:36 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190715120434euoutp0228aeeb1630ed6c0ea1024641783474cb~xkxdaq9G21711217112euoutp02O
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:04:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190715120434euoutp0228aeeb1630ed6c0ea1024641783474cb~xkxdaq9G21711217112euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563192274;
-        bh=mqVTzlYZzhDe6QFr7ZLnNYgy70dHGnRuuHI2qFzhuXI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f8hutmT/IZrX+v+5QnxnpTL93fIOo8hEjRMM457h81zanzxVu184pKhUuiil4M182
-         BI+JlmbCVZ5D/p9k1cflqTVfWrmg4BbZa/JxjQaJpdlyUXhJypBb01Dw5XUFSNOrwZ
-         GkEoqy0kfiqd1cbpdBgrfgFVipWi/1AlxaS8lrW8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190715120433eucas1p13e84f8d9d71cdf4f501f9cb30f061a83~xkxcqCtA12398923989eucas1p11;
-        Mon, 15 Jul 2019 12:04:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id DE.DC.04377.1DB6C2D5; Mon, 15
-        Jul 2019 13:04:33 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d~xkxb3qKeK1777317773eucas1p1P;
-        Mon, 15 Jul 2019 12:04:32 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190715120432eusmtrp12e5b61de6ca92629e38715fbd654bd6f~xkxbpfqRi1141311413eusmtrp1Y;
-        Mon, 15 Jul 2019 12:04:32 +0000 (GMT)
-X-AuditID: cbfec7f4-12dff70000001119-e7-5d2c6bd19e1c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id AC.12.04140.0DB6C2D5; Mon, 15
-        Jul 2019 13:04:32 +0100 (BST)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190715120431eusmtip18ae61336a03b3ee29ebec16557b18d63~xkxa4ufrr1792317923eusmtip1M;
-        Mon, 15 Jul 2019 12:04:31 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-To:     k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 3/4] ARM: dts: exynos: add initial data for coupled
- regulators for Exynos5422/5800
-Date:   Mon, 15 Jul 2019 14:04:15 +0200
-Message-Id: <20190715120416.3561-4-k.konieczny@partner.samsung.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+        Mon, 15 Jul 2019 08:04:28 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p15so15198398eds.8
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 05:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=siKrRVKRpx7RpKSTXYP2AWsLiceVEcAiCzz2p78ubgQ=;
+        b=a1N4c1NtrSMBmRxyDN1bt+aTDEXwAEcei9NMSHaK04P0PCKhOuIH5Rpew/9/xRWm23
+         Js79ou5nQuSpYL2Uv1qlCrixRaHPYiWh9me97FNMBPo44li0Mw8G508ONYsF6C1rcpiq
+         KAgn0CbtK+Q+ZetNMzH5J2QSfmcp2viSOMtgFq8zHeD04TiIQFVJJT7Z6rykkYLxLsi/
+         nStP3afTeB3MmiAnfjsqtd4CzuiawatGLjQxhloRHnsklUW5PyPaU9+F3dOrYJiHbjWK
+         iUN59zVgLNhIQK/7QMVFl5C8PWNoGqp72CB0gHxiVb7ax2bqGx6LLj79R3ENL18ksSbp
+         y4CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=siKrRVKRpx7RpKSTXYP2AWsLiceVEcAiCzz2p78ubgQ=;
+        b=XROjsRiLjfGNY3XCTKUPbZqgpMrvDNtbB7ciQsuHd6JMZj89HEYetyQp8BwQp17ajt
+         THGQXPkKp+31Y/YSVEh3tpet3gBCKVTB6wm84TBb/kMzijPkaN9jyD1lem99G0DYM2Q7
+         zBNQtlb8ZzQpzOapie4yX7mZFvwL+f29TDNgdvP+k3tmVhPNNkv6saQxDmQnjDDWAcyp
+         7FAeIdvsZdIomDBLHBW2l6IwuUD+JpvYQAljLclAoxyXGEdPKiONqN4tL0hDo83H4fLD
+         pKlxEmyGYxu+7V/gEP+T2yTruqbeT5hZO4msWDPeHDV61yMLCT6o+oIhPIboWfmz1SJy
+         idkQ==
+X-Gm-Message-State: APjAAAX3Saz7tckn5z4NWg50S3SsnU14v2pb/fT3OPYNxfWfRPaeZ1LZ
+        eV7fP82TDf6ajSGevWHVwzMBS5Xucc1V/vf8ScynnuHd7xM=
+X-Google-Smtp-Source: APXvYqxYOkBm5l+PzyLYC3OqADqTZgk+BGzUavRdvCPRgVE2Mz+iQK9V2RgZatHrYNkJ7UJkZR7pLKzfiPvQ0XuzAUE=
+X-Received: by 2002:a17:906:fac7:: with SMTP id lu7mr19649721ejb.109.1563192266966;
+ Mon, 15 Jul 2019 05:04:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRmVeSWpSXmKPExsWy7djP87oXs3ViDS6vZ7PYOGM9q8X1L89Z
-        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
-        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
-        o2/LKkaP4ze2M3l83iQXwB7FZZOSmpNZllqkb5fAlfHx2ge2gk3WFR/PvWZpYLyi28XIySEh
-        YCKxcu9uxi5GLg4hgRWMEsf3/2ODcL4wStybfJoJwvnMKLFl50X2LkYOsJZv+5Mh4ssZJU5O
-        bWOC61g94QU7yFw2AXOJR9vPMIHYIgLKEpPvTWcGKWIW+MkiseHyRrAiYYF0ifP7PrCA2CwC
-        qhI7Lx4Ai/MKOEu8mrKECeJAeYnOHbvBajgFXCR23D8GVSMocXLmE7A4M1BN89bZzBD1H9kl
-        vuzOgbBdJO5c2MkOYQtLvDq+BcqWkTg9uYcFwi6XeLqwjx3kOAmBFkaJB+0foRLWEoePX2QF
-        eZlZQFNi/S59iLCjxIrF05kgIcEnceOtIMQJfBKTtoH8CBLmlehoE4Ko1pWY9/8MK4QtLdH1
-        fx2U7SFx+OpKpgmMirOQPDMLyTOzEPYuYGRexSieWlqcm55abJSXWq5XnJhbXJqXrpecn7uJ
-        EZjqTv87/mUH464/SYcYBTgYlXh4HVK0Y4VYE8uKK3MPMUpwMCuJ8Np+BQrxpiRWVqUW5ccX
-        leakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgSTZeLglGpgZNxhw2XvJmNuOYVtm1pa97MG
-        8Uui9mYPJ3zXCp2QIPN1zyGDz6f27Xh33ZzHfO+ts2eXTyricPL/OSHl8ZPO3w4psY2ix2fy
-        Xf3owy6X6d40e+IiswRf6UXb5fckVVRnbWFWFFCeUtvKNDHnb/uR20uMrZdv9rfnWfm1iVNQ
-        auaBBXGZflLKSizFGYmGWsxFxYkA38QOlHEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xu7oXsnViDfa+4bPYOGM9q8X1L89Z
-        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
-        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
-        o2/LKkaP4ze2M3l83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
-        Z5OSmpNZllqkb5egl/Hx2ge2gk3WFR/PvWZpYLyi28XIwSEhYCLxbX9yFyMXh5DAUkaJ+Yev
-        s3UxcgLFpSUaT69mgrCFJf5c62KDKPrEKNHQtp0ZJMEmYC7xaPsZsCIRAWWJyfemM4MUMQt0
-        skqseHIEbJKwQKrEtG1djCA2i4CqxM6LB9hBbF4BZ4lXU5ZAbZCX6NyxmwXE5hRwkdhx/xhY
-        jRBQTcurfhaIekGJkzOfgNnMQPXNW2czT2AUmIUkNQtJagEj0ypGkdTS4tz03GIjveLE3OLS
-        vHS95PzcTYzAqNx27OeWHYxd74IPMQpwMCrx8DqkaMcKsSaWFVfmHmKU4GBWEuG1/QoU4k1J
-        rKxKLcqPLyrNSS0+xGgK9MREZinR5HxgwsgriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliS
-        mp2aWpBaBNPHxMEp1cAYvKBLYPGxKC3lD8JJG2axTBO89CilObF6SeBJddOYr161c9ZJyIp5
-        rPFdLOgUsOH6i6pHuyaflZstkSiVt2Bh3bHvQY96foVPWXJgRrv/Nf88zeKDGz8yCIr6LE1f
-        81tLxXF/x2uJ/KQPyYue7wyuEz869c43R9FGZfY/bsaNatOO3iiIPK+pxFKckWioxVxUnAgA
-        LP4dZeACAAA=
-X-CMS-MailID: 20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d
-References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
-        <CGME20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d@eucas1p1.samsung.com>
+References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com>
+ <alpine.DEB.2.21.1907151020320.1669@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907151020320.1669@nanos.tec.linutronix.de>
+From:   Uros Bizjak <ubizjak@gmail.com>
+Date:   Mon, 15 Jul 2019 14:04:15 +0200
+Message-ID: <CAFULd4aHwv9+dkTtNLtNGHu=wmt62cZDkjr-vbCVzYftJbOpEg@mail.gmail.com>
+Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop targets
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
-bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
-be in 300mV range.
+On Mon, Jul 15, 2019 at 10:24 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Uros,
+>
+> On Thu, 11 Jul 2019, Uros Bizjak wrote:
+> > Recent patch [1] disabled a self-snoop feature on a list of processor
+> > models with a known errata, so we are confident that the feature
+> > should work on remaining models also for other purposes than to speed
+> > up MTRR programming.
+> >
+> > I would like to resurrect an old patch [2] that avoids calling clflush
+> > and wbinvd
+> > to invalidate caches when CPU supports selfsnoop.
+>
+> Please do not attach patches, send them inline and please add a proper
+> changelog. Just saying 'Disable CPA cache flush for selfsnoop targets' in
+> the subject line then nada gives absolutely zero information.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi             | 34 +++++++++----------
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  4 +++
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |  4 +++
- arch/arm/boot/dts/exynos5800.dtsi             | 32 ++++++++---------
- 4 files changed, 41 insertions(+), 33 deletions(-)
+Thanks for your remarks and instructions!
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5fb2326875dc..0cbf74750553 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -48,62 +48,62 @@
- 			opp-shared;
- 			opp-1800000000 {
- 				opp-hz = /bits/ 64 <1800000000>;
--				opp-microvolt = <1250000>;
-+				opp-microvolt = <1250000 1250000 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1700000000 {
- 				opp-hz = /bits/ 64 <1700000000>;
--				opp-microvolt = <1212500>;
-+				opp-microvolt = <1212500 1212500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1600000000 {
- 				opp-hz = /bits/ 64 <1600000000>;
--				opp-microvolt = <1175000>;
-+				opp-microvolt = <1175000 1175000 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1500000000 {
- 				opp-hz = /bits/ 64 <1500000000>;
--				opp-microvolt = <1137500>;
-+				opp-microvolt = <1137500 1137500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1400000000 {
- 				opp-hz = /bits/ 64 <1400000000>;
--				opp-microvolt = <1112500>;
-+				opp-microvolt = <1112500 1112500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1300000000 {
- 				opp-hz = /bits/ 64 <1300000000>;
--				opp-microvolt = <1062500>;
-+				opp-microvolt = <1062500 1062500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1200000000 {
- 				opp-hz = /bits/ 64 <1200000000>;
--				opp-microvolt = <1037500>;
-+				opp-microvolt = <1037500 1037500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1100000000 {
- 				opp-hz = /bits/ 64 <1100000000>;
--				opp-microvolt = <1012500>;
-+				opp-microvolt = <1012500 1012500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1000000000 {
- 				opp-hz = /bits/ 64 <1000000000>;
--				opp-microvolt = < 987500>;
-+				opp-microvolt = < 987500 987500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-900000000 {
- 				opp-hz = /bits/ 64 <900000000>;
--				opp-microvolt = < 962500>;
-+				opp-microvolt = < 962500 962500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-800000000 {
- 				opp-hz = /bits/ 64 <800000000>;
--				opp-microvolt = < 937500>;
-+				opp-microvolt = < 937500 937500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-700000000 {
- 				opp-hz = /bits/ 64 <700000000>;
--				opp-microvolt = < 912500>;
-+				opp-microvolt = < 912500 912500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 		};
-@@ -1100,23 +1100,23 @@
- 
- 			opp00 {
- 				opp-hz = /bits/ 64 <84000000>;
--				opp-microvolt = <925000>;
-+				opp-microvolt = <925000 925000 1400000>;
- 			};
- 			opp01 {
- 				opp-hz = /bits/ 64 <111000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp02 {
- 				opp-hz = /bits/ 64 <222000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp03 {
- 				opp-hz = /bits/ 64 <333000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp04 {
- 				opp-hz = /bits/ 64 <400000000>;
--				opp-microvolt = <987500>;
-+				opp-microvolt = <987500 987500 1400000>;
- 			};
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 25d95de15c9b..65d094256b54 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -428,6 +428,8 @@
- 				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-coupled-with = <&buck3_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 			};
- 
- 			buck3_reg: BUCK3 {
-@@ -436,6 +438,8 @@
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-coupled-with = <&buck2_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 			};
- 
- 			buck4_reg: BUCK4 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e0f470fe54c8..5c1e965ed7e9 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -257,6 +257,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-coupled-with = <&buck3_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-@@ -269,6 +271,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-coupled-with = <&buck2_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 57d3b319fd65..2a74735d161c 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -22,61 +22,61 @@
- 
- &cluster_a15_opp_table {
- 	opp-1700000000 {
--		opp-microvolt = <1250000>;
-+		opp-microvolt = <1250000 1250000 1500000>;
- 	};
- 	opp-1600000000 {
--		opp-microvolt = <1250000>;
-+		opp-microvolt = <1250000 1250000 1500000>;
- 	};
- 	opp-1500000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1400000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1300000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1200000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-1100000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-1000000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-900000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-800000000 {
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 	};
- 	opp-700000000 {
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 	};
- 	opp-600000000 {
- 		opp-hz = /bits/ 64 <600000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-500000000 {
- 		opp-hz = /bits/ 64 <500000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-400000000 {
- 		opp-hz = /bits/ 64 <400000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-300000000 {
- 		opp-hz = /bits/ 64 <300000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-200000000 {
- 		opp-hz = /bits/ 64 <200000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- };
--- 
-2.22.0
+I'll send a new revision of the patch with expanded ChangeLog later today,
+saying something along the lines of:
 
+"CPUs which have self-snooping capability can handle conflicting
+memory type across CPUs by snooping its own cache. Commit #fd329f276ecaa
+("x86/mtrr: Skip cache flushes on CPUs with cache self-snooping")
+avoids cache flushes when MTRR registers are programmed. The Page
+Attribute Table (PAT) is a companion feature to the MTRRs, and according
+to section 11.12.4 of the Intel 64 and IA 32 Architectures Software
+Developer's Manual, if the CPU supports cache self-snooping, it is not
+necessary to flush caches when remapping a page that was previously
+mapped as a different memory type.
+
+Note that commit #1e03bff360010
+("x86/cpu/intel: Clear cache self-snoop capability in CPUs with known errata")
+cleared cache self-snoop capability for CPUs where conflicting memory types
+lead to unpredictable behavior, machine check errors, or hangs."
+
+> > The patch was ported to latest Fedora kernel (5.1.16) and tested with
+> > CONFIG_CPA_DEBUG on INTEL_FAM6_IVYBRIDGE_X. The relevant ports of
+> > dmesg show:
+> >
+> > ...
+> > < hundreds of CPA protect messages, resulting from set_memory_rw CPA
+> > undo test in mm/init_64.c >
+> > CPA  protect  Rodata RO: 0xffffffffbd1fe000 - 0xffffffffbd1fefff PFN
+> > 1461fe req 8000000000000063 prevent 0000000000000002
+> > CPA  protect  Rodata RO: 0xffff889c461fe000 - 0xffff889c461fefff PFN
+> > 1461fe req 8000000000000063 prevent 0000000000000002
+> > Testing CPA: again
+> > Freeing unused kernel image memory: 2016K
+> > Freeing unused kernel image memory: 4K
+> > x86/mm: Checked W+X mappings: passed, no W+X pages found.
+> > rodata_test: all tests were successful
+> > x86/mm: Checking user space page tables
+> > x86/mm: Checked W+X mappings: passed, no W+X pages found.
+> >
+> > and from CPA selftest:
+> >
+> > CPA self-test:
+> >  4k 36352 large 4021 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
+> >  4k 180224 large 3740 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
+> >  4k 180224 large 3740 gb 0 x 81[ffff889b00098000-ffff889bdf7ff000] miss 133120
+> > ok.
+>
+> These outputs are pretty useless simply because the selftest only verifies
+> the inner workings of CPA itself, but has nothing to do with the
+> correctness vs. cache flushing.
+
+Please note that CONFIG_CPA_DEBUG also spawns a pageattr-test kthread
+which remaps a memory page every 30 seconds. I was confident enough to
+run the patched kernel (with CONFIG_CPA_DEBUG) on my main workstation
+(Ivybridge-X, Fedora 30), already for a week without a single problem.
+
+Uros.
