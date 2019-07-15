@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9AB69732
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 756066971B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732193AbfGON5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:57:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35652 "EHLO mail.kernel.org"
+        id S1732776AbfGON55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:57:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732966AbfGON5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:57:36 -0400
+        id S1731845AbfGON5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:57:54 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C65112083D;
-        Mon, 15 Jul 2019 13:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E709621537;
+        Mon, 15 Jul 2019 13:57:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199055;
-        bh=ZAfC2BdUPmM5ghEIJn/MUgbjJZjPlBS0RDiZJpaogD4=;
+        s=default; t=1563199073;
+        bh=VZ5dWzfU6DSYKWxr1/oUs1EfkFOuTXkKsTHfV3kSy6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QIpcGis+RkpAo/Duap6ffipRfuqN2VxZV0AziAqzjK/PtSUuL7FVlKogQ4Abp3EgQ
-         0ShdO/cckDW5xzWDRGqBLvZP4fcnLmlFnJ1whjryWHysImqItihduLljA7QxBeimiI
-         cvJR6JrPPDSlVjwRzb5iiTw11xuURN8ubp9MkzJ8=
+        b=bByhmE0Oobrh4dDymk3I6KpP/uK4sJ1CwolFfwxqBomof7zKDZNTK+kESYWua7yqD
+         mW2LWm0dgtkNpoyU70d41GtXudZ1beleMAHTkJhIR38tS7TPBqWVw3ibbnL9GFvxT7
+         MkeaBXToZidQ977/Cgv2ulb3aN+Ai/omQ4+mh5/A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 176/249] rslib: Fix decoding of shortened codes
-Date:   Mon, 15 Jul 2019 09:45:41 -0400
-Message-Id: <20190715134655.4076-176-sashal@kernel.org>
+Cc:     Jianbo Liu <jianbol@mellanox.com>, Oz Shlomo <ozsh@mellanox.com>,
+        Eli Britstein <elibr@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>, Mark Bloch <markb@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 181/249] net/mlx5: Get vport ACL namespace by vport index
+Date:   Mon, 15 Jul 2019 09:45:46 -0400
+Message-Id: <20190715134655.4076-181-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -43,44 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+From: Jianbo Liu <jianbol@mellanox.com>
 
-[ Upstream commit 2034a42d1747fc1e1eeef2c6f1789c4d0762cb9c ]
+[ Upstream commit f53297d67800feb5fafd94abd926c889aefee690 ]
 
-The decoding of shortenend codes is broken. It only works as expected if
-there are no erasures.
+The ingress and egress ACL root namespaces are created per vport and
+stored into arrays. However, the vport number is not the same as the
+index. Passing the array index, instead of vport number, to get the
+correct ingress and egress acl namespace.
 
-When decoding with erasures, Lambda (the error and erasure locator
-polynomial) is initialized from the given erasure positions. The pad
-parameter is not accounted for by the initialisation code, and hence
-Lambda is initialized from incorrect erasure positions.
-
-The fix is to adjust the erasure positions by the supplied pad.
-
-Signed-off-by: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190620141039.9874-3-ferdinand.blomqvist@gmail.com
+Fixes: 9b93ab981e3b ("net/mlx5: Separate ingress/egress namespaces for each vport")
+Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
+Reviewed-by: Oz Shlomo <ozsh@mellanox.com>
+Reviewed-by: Eli Britstein <elibr@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/reed_solomon/decode_rs.c | 4 ++--
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
-index 1db74eb098d0..3313bf944ff1 100644
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -99,9 +99,9 @@
- 	if (no_eras > 0) {
- 		/* Init lambda to be the erasure locator polynomial */
- 		lambda[1] = alpha_to[rs_modnn(rs,
--					      prim * (nn - 1 - eras_pos[0]))];
-+					prim * (nn - 1 - (eras_pos[0] + pad)))];
- 		for (i = 1; i < no_eras; i++) {
--			u = rs_modnn(rs, prim * (nn - 1 - eras_pos[i]));
-+			u = rs_modnn(rs, prim * (nn - 1 - (eras_pos[i] + pad)));
- 			for (j = i + 1; j > 0; j--) {
- 				tmp = index_of[lambda[j - 1]];
- 				if (tmp != nn) {
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index 6a921e24cd5e..acab26b88261 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -939,7 +939,7 @@ int esw_vport_enable_egress_acl(struct mlx5_eswitch *esw,
+ 		  vport->vport, MLX5_CAP_ESW_EGRESS_ACL(dev, log_max_ft_size));
+ 
+ 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_EGRESS,
+-						    vport->vport);
++			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
+ 	if (!root_ns) {
+ 		esw_warn(dev, "Failed to get E-Switch egress flow namespace for vport (%d)\n", vport->vport);
+ 		return -EOPNOTSUPP;
+@@ -1057,7 +1057,7 @@ int esw_vport_enable_ingress_acl(struct mlx5_eswitch *esw,
+ 		  vport->vport, MLX5_CAP_ESW_INGRESS_ACL(dev, log_max_ft_size));
+ 
+ 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_INGRESS,
+-						    vport->vport);
++			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
+ 	if (!root_ns) {
+ 		esw_warn(dev, "Failed to get E-Switch ingress flow namespace for vport (%d)\n", vport->vport);
+ 		return -EOPNOTSUPP;
 -- 
 2.20.1
 
