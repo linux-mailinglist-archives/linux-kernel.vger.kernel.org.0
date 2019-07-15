@@ -2,134 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE035699AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4FE699BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbfGORYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:24:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36266 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731677AbfGORYh (ORCPT
+        id S1731738AbfGOR3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:29:48 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42218 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730774AbfGOR3r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:24:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so8035812pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:24:36 -0700 (PDT)
+        Mon, 15 Jul 2019 13:29:47 -0400
+Received: by mail-lf1-f65.google.com with SMTP id s19so11578545lfb.9;
+        Mon, 15 Jul 2019 10:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kuoYNxM5h1ZEPhER25qr5iln50lzVJav2rjE6dpCcQ4=;
-        b=Za/EnM8eqdtjLue+0U3+kmxaKT9n/1aJEBMXNNGdzJcDlyCJ8lxRIPH7ZknsmloEcN
-         jYCOua2QiM5MO63jtQKoBiJhODIc91YK5NdPnvm6DqbZm7gG3+uKOggHWvGcX6ovKeZV
-         xx4bSc+FStFIWFrSD4AbpHzcfZWJ8s1TswAPIlpfoGMz8ErD1R4/Jmkxad7YCbPEUEkH
-         dnSJXScId1wX3o1/MYToJQFODB0nUMKoDeAAtAof+GB/aEhj3NfXZkQQZl4Y4lJoLopq
-         6mUXZhWiMqO5V/nza7c6p/hzNAeIKL6e5qFaVUvAEP4knxAcZSkprkyO282s/ez4NpEv
-         qyew==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=14LUvsDt1gvon+wQxuZkucZPfWNvGtdLSK5zNw+y+rA=;
+        b=ixrxfkci5dK+hglsPn5hYVamBJtCPCa0nsBEWDUI0EpA8GFehnCmVFI9GCfedQbpUu
+         FDTHVi3tV5sA67WmYGwasXnB3ivKrzwVNMy6/bWmDKs1XZOXtq1nTdETXmdcQPgyNfUk
+         1MA2KKVN1yaehff8y0asY8lIZ/lmYp5WycT4JNS2YfiaxTGM6K72tIpyqEOMrvljCxL8
+         23jzXHSLjHS0rfkSWtcqybyVS5dVDUVGziUOEgfy2SED+fBIQBxi4DSwau29FKuaqJSr
+         OaiFWePa0lYtnFBJ398YLihSjmxlSfB8wloB8tY0h+58x8eLb2FxgA2/zAOgdlO3qHJU
+         +Vxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kuoYNxM5h1ZEPhER25qr5iln50lzVJav2rjE6dpCcQ4=;
-        b=pLWcigW3+b82jiKmiIWFNdEsijY5zv6XgXY0DpJAmGPe2q/isdcIsv3n7BETV64dyP
-         2djjdA00Cnhbx7eMFzbtGZQ59SB8q69UnB+h0ppvZx9BHUFRCRy0jyDMcV6XFSjkLbV6
-         tEFLDKxb03PQJF7dJD2AG7+05TqQ7SZQkliysIiB+bqyM5381rPVw4wW3cfxqeKWRoNw
-         xelv1yYbw3YF0a8ZAxNuhB4efP707ugt+loQRI4gMt5tSq7+vuJLJJM0S4sPl4/0pgRy
-         b/kXezdVCwTEr7Jk5ZvVG4CfhVqS73sf2ZLo3oHfxef5LFvJYtcMYR0whM36hP666cAC
-         csAw==
-X-Gm-Message-State: APjAAAVVYSKotLaR87fc9pVGbQ25HTJ/kq/32SNVVTXPDNos994akheh
-        7iewBJGIlNw+QAwgLVAU3JL3EnZpPP2WtmleMOqWyA==
-X-Google-Smtp-Source: APXvYqxh1wATVMvkRbc1YKRvHz4VxagIxPekxI/WQvU7LVyiBf5wKJ0Nt/oy+MV+v04tzDlesM1FGiM0DNO5Lc6BlR8=
-X-Received: by 2002:a63:52:: with SMTP id 79mr27785478pga.381.1563211476053;
- Mon, 15 Jul 2019 10:24:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=14LUvsDt1gvon+wQxuZkucZPfWNvGtdLSK5zNw+y+rA=;
+        b=b8uV0SnHUrjl/B1iLLh1MHDExQdRymjJm+9wh9zjHRKgdrkFngFz1b5OO3XmoqnpzW
+         toluuc4RuAAy1MwKj6AdBUbQ/W1pfAs+ZgQenfjCwIl9QpmtgMxcFEkh5UPjg9TwW32j
+         wSkcuVmnnbFvwKmVoczLplCOx4VjW7iSOSlDv8qc9iKJj2yNuwU9f1DlIdUAfw/ZHcUc
+         LRASDJdBHdsIPwJeHXsiyfOD5gvXcwcY/oaFv+3G7GbhPHSftuQlqJWX6Am0hbYmOskS
+         VQhmJ0GpbHWZ0Md8UxCnbd7JA7Mr0ZBP8a4IMkJBEUQLWOMZV60wYh+varncYjojfggy
+         at3w==
+X-Gm-Message-State: APjAAAUkHK9ih7hyYXx3bjCGh2vxgGcJwvpsGXzGzd6svTh/UmwpWI7w
+        9jhW7oEA9xAMpq0VzUWGg4Y=
+X-Google-Smtp-Source: APXvYqz03+U5F5T79TCqUrDKPWa9pW7113bB7WL9Hu2ZaUcqUgWSXnsTbG6w0fLEJMAFg3WfQLZ3lQ==
+X-Received: by 2002:ac2:5bc7:: with SMTP id u7mr12198271lfn.167.1563211784616;
+        Mon, 15 Jul 2019 10:29:44 -0700 (PDT)
+Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id b17sm3248765ljf.34.2019.07.15.10.29.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 10:29:43 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/13] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
+Date:   Mon, 15 Jul 2019 20:26:16 +0300
+Message-Id: <20190715172629.4437-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <cover.1563150885.git.jpoimboe@redhat.com> <9f67aa11794e9eebe5a3249529d1ecf60abf370f.1563150885.git.jpoimboe@redhat.com>
-In-Reply-To: <9f67aa11794e9eebe5a3249529d1ecf60abf370f.1563150885.git.jpoimboe@redhat.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 15 Jul 2019 10:24:24 -0700
-Message-ID: <CAKwvOdmUX31KcvDpdzOkrO=Jw+FFQ8MuiQkVFFnNeG9n28k5Aw@mail.gmail.com>
-Subject: Re: [PATCH 20/22] objtool: Fix seg fault on bad switch table entry
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 14, 2019 at 5:37 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> In one rare case, Clang generated the following code:
->
->  5ca:       83 e0 21                and    $0x21,%eax
->  5cd:       b9 04 00 00 00          mov    $0x4,%ecx
->  5d2:       ff 24 c5 00 00 00 00    jmpq   *0x0(,%rax,8)
->                     5d5: R_X86_64_32S       .rodata+0x38
->
-> which uses the corresponding jump table relocations:
->
->   000000000038  000200000001 R_X86_64_64       0000000000000000 .text + 834
->   000000000040  000200000001 R_X86_64_64       0000000000000000 .text + 5d9
->   000000000048  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000050  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000058  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000060  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000068  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000070  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000078  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000080  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000088  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000090  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000098  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000a0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000a8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000b0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000b8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000c0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000c8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000d0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000d8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000e0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000e8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000f0  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   0000000000f8  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000100  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000108  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000110  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000118  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000120  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000128  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000130  000200000001 R_X86_64_64       0000000000000000 .text + b96
->   000000000138  000200000001 R_X86_64_64       0000000000000000 .text + 82f
->   000000000140  000200000001 R_X86_64_64       0000000000000000 .text + 828
->
-> Since %eax was masked with 0x21, only the first two and the last two
-> entries are possible.
->
-> Objtool doesn't actually emulate all the code, so it isn't smart enough
-> to know that all the middle entries aren't reachable.  They point to the
-> NOP padding area after the end of the function, so objtool seg faulted
-> when it tried to dereference a NULL insn->func.
->
-> After this fix, objtool still gives an "unreachable" error because it
-> stops reading the jump table when it encounters the bad addresses:
->
->   /home/jpoimboe/objtool-tests/adm1275.o: warning: objtool: adm1275_probe()+0x828: unreachable instruction
->
-> While the above code is technically correct, it's very wasteful of
-> memory -- it uses 34 jump table entries when only 4 are needed.  It's
-> also not possible for objtool to validate this type of switch table
-> because the unused entries point outside the function and objtool has no
-> way of determining if that's intentional.  Hopefully the Clang folks can
-> fix it.
+Hello,
 
-So this came from
-drivers/hwmon/pmbus/adm1275.c ?
-Any special configuration?
+I was spending quite some time recently trying to hunt down CPU-suspend
+bug on Tegra30 SoC and in the end it was nailed. During that time I
+realized that the CPU Idle drivers could get some polish and gain new
+features, thus that's what this series does:
+
+  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+     into common drivers/cpuidle/ directory.
+
+  2. Enables CPU cluster power-down idling state on Tegra30.
+
+In the end there is a quite nice clean up of the Tegra CPUIDLE driver(s)
+and of the Tegra's arch code in general. Please review, thanks!
+
+Changelog:
+
+v3: - Addressed review comments that were made by Jon Hunter to v2 by
+      splitting patches into smaller (and simpler) chunks, better
+      documenting changes in the commit messages and using proper error
+      codes in the code.
+
+      Warnings are replaced with a useful error messages in the code of
+      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
+
+      Secondary CPUs parking timeout increased to 100ms because I found
+      that it actually may happen to take more than 1ms if CPU is running
+      on a *very* low frequency.
+
+      Added diagnostic messages that are reporting Flow Controller state
+      when CPU parking fails.
+
+      Further polished cpuidle driver's code.
+
+      The coupled state entering is now aborted if there is a pending SGI
+      (Software Generated Interrupt) because it will be lost after GIC's
+      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
+
+v2: - Added patches to enable the new cpuidle driver in the defconfigs:
+
+        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
+      states because that flag actually doesn't have any negative effects,
+      but still is correct for the case of a local CPU timer on older Tegra
+      SoCs:
+
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
+
+    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
+      Tegra30 and Terga114 states are now squashed into a single common C7
+      state (following Parker TRM terminology, see 17.2.2.2 Power Management
+      States), more comments added, etc minor changes.
+
+Dmitry Osipenko (13):
+  ARM: tegra: Remove cpuidle drivers to replace them with a new driver
+  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
+  ARM: tegra: Propagate error from tegra_idle_lp2_last()
+  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
+  ARM: tegra: Expose PM functions required for new cpuidle driver
+  ARM: tegra: Rename some of the newly exposed PM functions
+  ARM: tegra: Add tegra_pm_park_secondary_cpu()
+  clk: tegra: Add missing stubs for the case of !CONFIG_PM_SLEEP
+  cpuidle: Introduce unified driver for NVIDIA Tegra SoCs
+  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
+  ARM: tegra: Create simple platform device for cpuidle driver
+  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm/configs/tegra_defconfig              |   1 +
+ arch/arm/mach-tegra/Makefile                  |  23 +-
+ arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 -----
+ arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 -----------
+ arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 -------
+ arch/arm/mach-tegra/cpuidle.c                 |  50 ---
+ arch/arm/mach-tegra/cpuidle.h                 |  21 --
+ arch/arm/mach-tegra/irq.c                     |   3 +-
+ arch/arm/mach-tegra/pm.c                      |  47 +--
+ arch/arm/mach-tegra/pm.h                      |   4 -
+ arch/arm/mach-tegra/reset-handler.S           |  11 -
+ arch/arm/mach-tegra/reset.h                   |   9 +-
+ arch/arm/mach-tegra/sleep-tegra20.S           | 170 ---------
+ arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
+ arch/arm/mach-tegra/sleep.h                   |  15 -
+ arch/arm/mach-tegra/tegra.c                   |   7 +-
+ drivers/cpuidle/Kconfig.arm                   |   8 +
+ drivers/cpuidle/Makefile                      |   1 +
+ drivers/cpuidle/cpuidle-tegra.c               | 348 ++++++++++++++++++
+ drivers/soc/tegra/Kconfig                     |   1 -
+ include/linux/clk/tegra.h                     |  13 +
+ include/soc/tegra/cpuidle.h                   |   2 +-
+ .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
+ include/soc/tegra/pm.h                        |  31 ++
+ 25 files changed, 450 insertions(+), 763 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.h
+ create mode 100644 drivers/cpuidle/cpuidle-tegra.c
+ rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
+
 -- 
-Thanks,
-~Nick Desaulniers
+2.22.0
+
