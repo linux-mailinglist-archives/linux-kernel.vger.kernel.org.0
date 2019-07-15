@@ -2,101 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B654687A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 13:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA41687D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 13:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbfGOLCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 07:02:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38354 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729922AbfGOLCb (ORCPT
+        id S1729963AbfGOLEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 07:04:25 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37987 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbfGOLER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 07:02:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g17so16597034wrr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 04:02:30 -0700 (PDT)
+        Mon, 15 Jul 2019 07:04:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y15so7259013pfn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 04:04:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hukSDBvejCeRA/4yqIF2pUsY8MeiMorK9iH41/yECWE=;
-        b=WVAJvThDlrUR1PjmbcoQBsJgIoTLsiFGlMMJBhFmzAqQ4fz7gq23nw8IsmAL4OLRvB
-         rGZ33j+7jr/gAXiShpPdenl2kOWKzf4bkQVOYcvLLsaRD5+kONM6zp4VekvriKYw4mh0
-         GJYv9/nOo4Nf5LyGib1GZQRqbpMfjwJLdBPG6oLSU1pJkNAgnt+6PvGpm9oj21LUUM3x
-         z3SvHGe4lccKkwNUuioSOITAFgwRG4un6LY04ufhxs/0muhucWhucj3ojNMEVpCxH3lY
-         8pQmmjbmAABsnw4BFSSf7uS83iy0IF71yahblNeP3ZGpnpduf4zjrGmv1KUyAkkFyCQj
-         Uu1Q==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=at1U0zLzNGQlxAxn9clrRSHSPpGB2zlKGmciYViXmzQ=;
+        b=Iux65787KeJtZlk/UWQ8a71sdq3L+JuOBHwZwxVHUOu0Hal0brUmaUtWDT+1EakAhq
+         MtJF/vbEQagCDLqdjzXV0tE8x5YNwPsclB57z/jA+URpkAaidKGibNAiJ897B2Q2rv9p
+         uYOBtZylJRmtRio8wDP4GwRiBknU84/FmWsMFw620mFEJwR9vSM1QlmEIUdghWeLiQPg
+         3/o6A/ASY/U2XQTJeOVMsZoeyZcCfYvLw2Rbw2pE/fk67uX5NyEzWB6tv7TG5MeHZvc/
+         X3yp2nduS0Os162TiWKhkMGOmC5wMIt1cVEoe4V7hwUEXyYLehvgYaVidvFk20QbqjFn
+         kL9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hukSDBvejCeRA/4yqIF2pUsY8MeiMorK9iH41/yECWE=;
-        b=TrygItSags4dkUBvO67mQlxgujN0PdSBHbzfsAvS7NkDbju24DyFKnBq2LbyGwDMj8
-         JQbfAJYJFAj3xhILQACa3vQwJBGWNo5bWyGDthlh1He+m2grWfnJ0ryQzdl6qGGIveWL
-         Dq+wyHKlrfET7jYvjcUXu8C8uF8osW44RdPHfT0PcuMF+pjK9/Rhan5GethHYydJb9Ld
-         xxma/YqantS36Z0+oSN0ZufheKqY2EsNgdr07UTCJndN6L3k/36T7AKFoF4IdrLGMnOC
-         ltBt/m9ykeRj0CxTx/f+EH0pgLQhSrB9cZtHN681Sa0t3ni2iZt0KNO6tDZJCkh0+qZu
-         mpXA==
-X-Gm-Message-State: APjAAAVWU0LEEOZO2IT3mKh4iMt6OwDEW3XpQ4VCSV8l73IXoC7EvtOd
-        rcWWeEMja0IkUS5o+FI2K6s=
-X-Google-Smtp-Source: APXvYqyDpmRiJ4rUoNj4baDQxpZ5k4SeUDsKZbZ5q6B2B2SNT0sa1BsSAQXMsvyv0I1v3koYaRYD6Q==
-X-Received: by 2002:a5d:52c5:: with SMTP id r5mr9964536wrv.146.1563188550205;
-        Mon, 15 Jul 2019 04:02:30 -0700 (PDT)
-Received: from arch-x1c3 ([2a00:5f00:102:0:9665:9cff:feee:aa4d])
-        by smtp.gmail.com with ESMTPSA id y18sm16255024wmi.23.2019.07.15.04.02.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 04:02:29 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:02:28 +0100
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, corbet@lwn.net, airlied@linux.ie,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, rfontana@redhat.com,
-        gregkh@linuxfoundation.org, joe@perches.com,
-        linux-spdx@archiver.kernel.org, tglx@linutronix.de, sean@poorly.run
-Subject: Re: [PATCH v3] gpu/drm_memory: fix a few warnings
-Message-ID: <20190715110228.GD20839@arch-x1c3>
-References: <1562685190-1353-1-git-send-email-cai@lca.pw>
- <1562960735.8510.30.camel@lca.pw>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=at1U0zLzNGQlxAxn9clrRSHSPpGB2zlKGmciYViXmzQ=;
+        b=mpLPBmpqiKCuQEm1gPyhYSa82Fehbb9IjLFWol3p5q6Z8kJfKWK4D1NUoIcK0RY1BI
+         eGr0v00+v5IO5c4YJs6DLKfrJQwq9BpaZcCzy7jrPokOC81gY+XBc0CzqUaYAXJTWp3k
+         ebhaah8MV+QqIIsCfXVFKpLiyYWWLmqA/MKr5kDSMuwOmluUAG5H+5/5ZsGSqAj1Q+vy
+         zFbfO2w9kOoMVaUkAiKa3LBfTAuJs2JAF2RJsBObi5q9G9n5TNwy3Kt+t4VHfV+0fFwm
+         OnCqCUKeHGXq+H52wFNz4Uy7wD5ST9xWZ4VrFJKhEpxPypKYQMoWxc7b7Tgd+JnelLrc
+         v4Ww==
+X-Gm-Message-State: APjAAAWc5Z2rUl7ELse0q5LEHCbvracX+rTmRcCBLZkryEk/BT9ZuF3r
+        e++Q/G3vL+6VGWJocQIPDifgHsKctHJjsAp7zaI=
+X-Google-Smtp-Source: APXvYqwI9SCHvCHLnvHckfwL+oW1shcNAvZVS/wk3iQ3LTmyEMELfYQBoBiEv/cUvggIHp2fQao9ul2L5mSBnKj2EDA=
+X-Received: by 2002:a63:ad07:: with SMTP id g7mr24480194pgf.405.1563188657092;
+ Mon, 15 Jul 2019 04:04:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562960735.8510.30.camel@lca.pw>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Received: by 2002:a17:90a:b78d:0:0:0:0 with HTTP; Mon, 15 Jul 2019 04:04:16
+ -0700 (PDT)
+From:   Donald Douglas <ddouglasng@gmail.com>
+Date:   Mon, 15 Jul 2019 04:04:16 -0700
+Message-ID: <CALVR28EP4VMYZDqzau6uFTJmxHs6we+nYre3JstaZ5qSsvppFQ@mail.gmail.com>
+Subject: Kindly Respond
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
+Hello,
+I am Barr Fredrick Mbogo a business consultant i have a lucrative
+business to discuss with you from the Eastern part of Africa Uganda to
+be precise aimed at agreed percentage upon your acceptance of my hand
+in business and friendship. Kindly respond to me if you are interested
+to partner with me for an update. Very important.
 
-On 2019/07/12, Qian Cai wrote:
-> Maybe one of the non-DRM maintainers (Andrew, Thomas or Greg) who cares a bit
-> about SPDX can pick this up. It occurs to me none of DRM maintainers cares about
-> this as there is no feedback from any of them for months since v1.
-> 
-AFAICT there are a couple of reasons why this has gone unnoticed:
- - summary is the pretty ambiguous
- - commit does two thigs
-
-Another thing to consider is that this patch touches a single file,
-while the exact same issue is also present in many other files.
-
-Quick look at the following lists:
-head -n2 drivers/gpu/drm/drm_*[ch]  | less
-
-drm_agpsupport.c
-drm_dma.c
-drm_legacy_misc.c
-drm_lock.c
-drm_memory.c
-drm_scatter.c
-drm_vm.c
-
-If you can fixup the s|/**|/*| in the above, I'd gladly merge the patch.
-
-On the topic of SPDX - no objection on my end, but it should be a
-separate patch, which replaces the explicit verbose license text with
-the tag.
-
-Thanks
-Emil
+Yours Sincerely,
+Donald Douglas,
+For,
+Barr Frederick Mbogo
+Legal Consultant.
+Reply to: barrfredmbogo@consultant.com
