@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A8B69817
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 706626981C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbfGONrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:47:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55554 "EHLO mail.kernel.org"
+        id S1730969AbfGONrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:47:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730012AbfGONrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:47:13 -0400
+        id S1730890AbfGONrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:47:20 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 102622086C;
-        Mon, 15 Jul 2019 13:47:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6B7E212F5;
+        Mon, 15 Jul 2019 13:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198432;
-        bh=KCYLOsGoG359+oREF2v3J7YYuSkQnjbjlMV7bKPIiJQ=;
+        s=default; t=1563198440;
+        bh=ItdIf+SpfcLyABhkX8V/kialrW2/Lw/Qt/bX3sAzwgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hDLwQA6sTmNq5rRDVDHpvgAdfKAN7MB02YIpkNBOHUTL5nEXDsbjSX9KlsV5AgrGR
-         7RP3dOrk/I3KaW83PKzceXPXreGk6GNA1L/WcSzdZyfkkxukZfmW2w4yfGxHv0ZYnz
-         cGv6HK2Ydbb1tXCxS9o+bARNwCpOxffJkU3yAXN0=
+        b=SPdNAavHZmVnGB2kbi48xxdSi+NJ6wAAp2dyzLALteWhBj+cwl+KRn2I68crcRJLn
+         KnY7lRLzLIwaumG2amuJ6oBqa2DT1N5rtd4CuU2WoOF0rk5QbGtyvnLAO27oaPsFRK
+         ydAx1ZJI7LkhAA+6zczf+5WPCkDWUaiOxBvuTiv4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-        Miguel Catalan Cid <miguel.catalan@i2cat.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 004/249] ath9k: Don't trust TX status TID number when reporting airtime
-Date:   Mon, 15 Jul 2019 09:42:49 -0400
-Message-Id: <20190715134655.4076-4-sashal@kernel.org>
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.2 007/249] spi: rockchip: turn down tx dma bursts
+Date:   Mon, 15 Jul 2019 09:42:52 -0400
+Message-Id: <20190715134655.4076-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,59 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Toke Høiland-Jørgensen <toke@redhat.com>
+From: Emil Renner Berthing <kernel@esmil.dk>
 
-[ Upstream commit 389b72e58259336c2d56d58b660b79cf4b9e0dcb ]
+[ Upstream commit 47300728fb213486a830565d2af49da967c9d16a ]
 
-As already noted a comment in ath_tx_complete_aggr(), the hardware will
-occasionally send a TX status with the wrong tid number. If we trust the
-value, airtime usage will be reported to the wrong AC, which can cause the
-deficit on that AC to become very low, blocking subsequent attempts to
-transmit.
+This fixes tx and bi-directional dma transfers on rk3399-gru-kevin.
 
-To fix this, account airtime usage to the TID number from the original skb,
-instead of the one in the hardware TX status report.
+It seems the SPI fifo must have room for 2 bursts when the dma_tx_req
+signal is generated or it might skip some words. This in turn makes
+the rx dma channel never complete for bi-directional transfers.
 
-Reported-by: Miguel Catalan Cid <miguel.catalan@i2cat.net>
-Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fix it by setting tx burst length to fifo_len / 4 and the dma
+watermark to fifo_len / 2.
+
+However the rk3399 TRM says (sic):
+"DMAC support incrementing-address burst and fixed-address burst. But in
+the case of access SPI and UART at byte or halfword size, DMAC only
+support fixed-address burst and the address must be aligned to word."
+
+So this relies on fifo_len being a multiple of 16 such that the
+burst length (= fifo_len / 4) is a multiple of 4 and the addresses
+will be word-aligned.
+
+Fixes: dcfc861d24ec ("spi: rockchip: adjust dma watermark and burstlen")
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/xmit.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/spi/spi-rockchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
-index b17e1ca40995..3be0aeedb9b5 100644
---- a/drivers/net/wireless/ath/ath9k/xmit.c
-+++ b/drivers/net/wireless/ath/ath9k/xmit.c
-@@ -668,7 +668,8 @@ static bool bf_is_ampdu_not_probing(struct ath_buf *bf)
- static void ath_tx_count_airtime(struct ath_softc *sc,
- 				 struct ieee80211_sta *sta,
- 				 struct ath_buf *bf,
--				 struct ath_tx_status *ts)
-+				 struct ath_tx_status *ts,
-+				 u8 tid)
- {
- 	u32 airtime = 0;
- 	int i;
-@@ -679,7 +680,7 @@ static void ath_tx_count_airtime(struct ath_softc *sc,
- 		airtime += rate_dur * bf->rates[i].count;
- 	}
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index 9b91188a85f9..2cc6d9951b52 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -417,7 +417,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ 			.direction = DMA_MEM_TO_DEV,
+ 			.dst_addr = rs->dma_addr_tx,
+ 			.dst_addr_width = rs->n_bytes,
+-			.dst_maxburst = rs->fifo_len / 2,
++			.dst_maxburst = rs->fifo_len / 4,
+ 		};
  
--	ieee80211_sta_register_airtime(sta, ts->tid, airtime, 0);
-+	ieee80211_sta_register_airtime(sta, tid, airtime, 0);
- }
+ 		dmaengine_slave_config(master->dma_tx, &txconf);
+@@ -518,7 +518,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 	else
+ 		writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
  
- static void ath_tx_process_buffer(struct ath_softc *sc, struct ath_txq *txq,
-@@ -709,7 +710,7 @@ static void ath_tx_process_buffer(struct ath_softc *sc, struct ath_txq *txq,
- 	if (sta) {
- 		struct ath_node *an = (struct ath_node *)sta->drv_priv;
- 		tid = ath_get_skb_tid(sc, an, bf->bf_mpdu);
--		ath_tx_count_airtime(sc, sta, bf, ts);
-+		ath_tx_count_airtime(sc, sta, bf, ts, tid->tidno);
- 		if (ts->ts_status & (ATH9K_TXERR_FILT | ATH9K_TXERR_XRETRY))
- 			tid->clear_ps_filter = true;
- 	}
+-	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_DMATDLR);
++	writel_relaxed(rs->fifo_len / 2, rs->regs + ROCKCHIP_SPI_DMATDLR);
+ 	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_DMARDLR);
+ 	writel_relaxed(dmacr, rs->regs + ROCKCHIP_SPI_DMACR);
+ 
 -- 
 2.20.1
 
