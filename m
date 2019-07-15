@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D695E696E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07904696BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389454AbfGOPGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:06:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50554 "EHLO mail.kernel.org"
+        id S2387535AbfGOOFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387958AbfGOOEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:04:41 -0400
+        id S2387969AbfGOOEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:04:54 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A6DE21842;
-        Mon, 15 Jul 2019 14:04:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52BA02086C;
+        Mon, 15 Jul 2019 14:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199480;
-        bh=FMLCJaIguW6YWjuMGHKMm+W18reEkOZbzo2vwzvBfvM=;
+        s=default; t=1563199494;
+        bh=VRgrytHTVCFlT5csoh3aKEF0uzbhluzYmPoRtKfok/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uG9OSQCRsFiXy9YOPQBXOezyQVvKZZEs4mVgeNrItxy05g5gaf6LTGHN3wnMlFkDZ
-         AneCgBM2OV50eyPKqxSZW4Dd8XEDfLtNx8jy8i2PVrJcu5tEHDdyirrWeiNl+HNrNW
-         6Jm4as3uln6e/cv95rkniZ69vSTYHwttNLk/wHx8=
+        b=EOSligl1zk2ex/HR3TFRFUxHxiCJwVknqMsa6MlYtwjnnecSokkPlWQOPqivE0Z3J
+         E0IZSp/0SwPVYQSktJuFHRshNqq49DE8+1WjerfdySeN2iUiX7f+uIH5XwcP8/3hp+
+         0wDbpfDkAp+3wlnkvwVRDwQ0XQkEHg7KhhqbQGq0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 016/219] ath10k: Fix encoding for protected management frames
-Date:   Mon, 15 Jul 2019 10:00:17 -0400
-Message-Id: <20190715140341.6443-16-sashal@kernel.org>
+Cc:     Daniel Gomez <dagmcr@gmail.com>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 020/219] media: spi: IR LED: add missing of table registration
+Date:   Mon, 15 Jul 2019 10:00:21 -0400
+Message-Id: <20190715140341.6443-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -44,46 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Daniel Gomez <dagmcr@gmail.com>
 
-[ Upstream commit 42f1bc43e6a97b9ddbe976eba9bd05306c990c75 ]
+[ Upstream commit 24e4cf770371df6ad49ed873f21618d9878f64c8 ]
 
-Currently the protected management frames are
-not appended with the MIC_LEN which results in
-the protected management frames being encoded
-incorrectly.
+MODULE_DEVICE_TABLE(of, <of_match_table> should be called to complete DT
+OF mathing mechanism and register it.
 
-Add the extra space at the end of the protected
-management frames to fix this encoding error for
-the protected management frames.
+Before this patch:
+modinfo drivers/media/rc/ir-spi.ko  | grep alias
 
-Tested HW: WCN3990
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
+After this patch:
+modinfo drivers/media/rc/ir-spi.ko  | grep alias
+alias:          of:N*T*Cir-spi-ledC*
+alias:          of:N*T*Cir-spi-led
 
-Fixes: 1807da49733e ("ath10k: wmi: add management tx by reference support over wmi")
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/rc/ir-spi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-index 582fb11f648a..02709fc99034 100644
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -2840,8 +2840,10 @@ ath10k_wmi_tlv_op_gen_mgmt_tx_send(struct ath10k *ar, struct sk_buff *msdu,
- 	if ((ieee80211_is_action(hdr->frame_control) ||
- 	     ieee80211_is_deauth(hdr->frame_control) ||
- 	     ieee80211_is_disassoc(hdr->frame_control)) &&
--	     ieee80211_has_protected(hdr->frame_control))
-+	     ieee80211_has_protected(hdr->frame_control)) {
-+		skb_put(msdu, IEEE80211_CCMP_MIC_LEN);
- 		buf_len += IEEE80211_CCMP_MIC_LEN;
-+	}
+diff --git a/drivers/media/rc/ir-spi.c b/drivers/media/rc/ir-spi.c
+index 66334e8d63ba..c58f2d38a458 100644
+--- a/drivers/media/rc/ir-spi.c
++++ b/drivers/media/rc/ir-spi.c
+@@ -161,6 +161,7 @@ static const struct of_device_id ir_spi_of_match[] = {
+ 	{ .compatible = "ir-spi-led" },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, ir_spi_of_match);
  
- 	buf_len = min_t(u32, buf_len, WMI_TLV_MGMT_TX_FRAME_MAX_LEN);
- 	buf_len = round_up(buf_len, 4);
+ static struct spi_driver ir_spi_driver = {
+ 	.probe = ir_spi_probe,
 -- 
 2.20.1
 
