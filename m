@@ -2,118 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE5F69C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF0669C58
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731626AbfGOUEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:04:51 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39966 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730872AbfGOUEu (ORCPT
+        id S1732079AbfGOUIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:08:15 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:60173 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729793AbfGOUIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:04:50 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a93so8836952pla.7
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PIPyDfoq1gwRudrbDTccKZudDae1M5NUkYhO13RvCO8=;
-        b=XCnwkJcGTSsbD1QlYvVmmZou9pO4Xdmopodsbu5bDdLcXb4/DppyDYJbW/tNUitYEU
-         VS8CQ+xsSJHdUNFDZijyBQ2+nLJwYnLmA/Lq9qa71ER4SklfCAyGQgfBexBNUWE5yNXD
-         +fCorfXpSGV+QQvSuR2fRaAAPvXyp/Iz8H2Wc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PIPyDfoq1gwRudrbDTccKZudDae1M5NUkYhO13RvCO8=;
-        b=uoaikmnmbOruocbcssYPfH1apBfFcYAb4fMcfXYfGQ8TCkbgv9b/Zmt0JWR1CroqvU
-         SuhalV0nvtnXpwxv+IWr2nSemo3YKqRu/a39fDz1Rs0ap/U2evIHn8zeYLwcZ3alv+Dj
-         QWbIyonM0lkyoZg0saHdkzWs8sFC/oLGdrN3r2eeLvc+UYcE3TP2qcHL66mi3VMXIeD3
-         QQt0HFnBfCmbVVlwN1A6MibJD6V53JOYO93pARldgG5JDi/a5AfWLe3DHn9/TBWEpYqB
-         zWZpdaSjw0FWXpUfnRU0kXCTQ2WxiNrQXPprKAgnF1ZbeB+IZYNAp98nGwL/Jx9weB/M
-         hvXg==
-X-Gm-Message-State: APjAAAUa6u5sYTx4c3K89XFC6yWk8s/m/TKWh1bdUt7mhbyqF2X76fD6
-        EAg2Sjtra71P7ePLOVQwwPwSpZWEOeg=
-X-Google-Smtp-Source: APXvYqzMAJ2wz7SBpHh5twreK8C3CywfrhNKClEHSgK7C7hvFJ2aLckjbJJyjuc4NRQwVyTtmvojFQ==
-X-Received: by 2002:a17:902:3341:: with SMTP id a59mr29800609plc.186.1563221090153;
-        Mon, 15 Jul 2019 13:04:50 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id y12sm20924087pfn.187.2019.07.15.13.04.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 13:04:49 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 13:04:47 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Benson Leung <bleung@google.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Always release lock when
- returning from _read()
-Message-ID: <20190715200447.GT250418@google.com>
-References: <20190715191017.98488-1-mka@chromium.org>
- <20190715195557.GA29926@google.com>
+        Mon, 15 Jul 2019 16:08:14 -0400
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 2BAE9100009;
+        Mon, 15 Jul 2019 20:07:17 +0000 (UTC)
+Date:   Mon, 15 Jul 2019 22:07:17 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        James Grant <jamesg@zaltys.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.1 29/96] usb: gadget: udc: lpc32xx: allocate descriptor
+ with GFP_ATOMIC
+Message-ID: <20190715200717.GI4732@piout.net>
+References: <20190708150526.234572443@linuxfoundation.org>
+ <20190708150528.111562688@linuxfoundation.org>
+ <20190710095910.GA7413@xo-6d-61-c0.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190715195557.GA29926@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190710095910.GA7413@xo-6d-61-c0.localdomain>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benson,
-
-On Mon, Jul 15, 2019 at 12:55:57PM -0700, Benson Leung wrote:
-> Hi Matthias,
-> 
-> On Mon, Jul 15, 2019 at 12:10:17PM -0700, Matthias Kaehlcke wrote:
-> > Before doing any actual work cros_ec_accel_legacy_read() acquires
-> > a mutex, which is released at the end of the function. However for
-> > 'calibbias' channels the function returns directly, without releasing
-> > the lock. The next attempt to acquire the lock blocks forever. Instead
-> > of an explicit return statement use the common return path, which
-> > releases the lock.
+On 10/07/2019 11:59:10+0200, Pavel Machek wrote:
+> On Mon 2019-07-08 17:13:01, Greg Kroah-Hartman wrote:
+> > [ Upstream commit fbc318afadd6e7ae2252d6158cf7d0c5a2132f7d ]
 > > 
-> > Fixes: 11b86c7004ef1 ("platform/chrome: Add cros_ec_accel_legacy driver")
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  drivers/iio/accel/cros_ec_accel_legacy.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > Gadget drivers may queue request in interrupt context. This would lead to
+> > a descriptor allocation in that context. In that case we would hit
+> > BUG_ON(in_interrupt()) in __get_vm_area_node.
 > > 
-> > diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-> > index 46bb2e421bb9..27ca4a64dddf 100644
-> > --- a/drivers/iio/accel/cros_ec_accel_legacy.c
-> > +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-> > @@ -206,7 +206,8 @@ static int cros_ec_accel_legacy_read(struct iio_dev *indio_dev,
-> >  	case IIO_CHAN_INFO_CALIBBIAS:
-> >  		/* Calibration not supported. */
-> >  		*val = 0;
-> > -		return IIO_VAL_INT;
-> > +		ret = IIO_VAL_INT;
-> > +		break;
+> > Also remove the unnecessary cast.
 > 
-> The value of ret is not used below this. It seems to be only used in
-> case IIO_CHAN_INFO_RAW. In fact, with your change,
-> there's no return value at all and we just reach the end of
-> cros_ec_accel_legacy_read.
+> GFP_ATOMIC allocations can and do fail, but I don't see any explicit error handling.
 > 
-> >  	default:
-> >  		return -EINVAL;
-> >  	}
+> Can someone check everything is ok?
 > 
 
-I messed up. I was over-confident that a FROMLIST patch in our 4.19
-kernel + this patch applying on upstream means that upstream uses the
-same code. I should have double-checked that the upstream context is
-actually the same.
+It is checked later on:
 
-Sorry for the noise.
+		dd = udc_dd_alloc(udc);
+		if (!dd) {
+			/* Error allocating DD */
+			return -ENOMEM;
+		}
+
+> Thanks,
+> 									Pavel
+> 
+> 
+> > diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+> > index b0781771704e..eafc2a00c96a 100644
+> > --- a/drivers/usb/gadget/udc/lpc32xx_udc.c
+> > +++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+> > @@ -922,8 +922,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
+> >  	dma_addr_t			dma;
+> >  	struct lpc32xx_usbd_dd_gad	*dd;
+> >  
+> > -	dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
+> > -			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
+> > +	dd = dma_pool_alloc(udc->dd_cache, GFP_ATOMIC | GFP_DMA, &dma);
+> >  	if (dd)
+> >  		dd->this_dma = dma;
+> >  
+> > -- 
+> > 2.20.1
+> > 
+> > 
+> 
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
