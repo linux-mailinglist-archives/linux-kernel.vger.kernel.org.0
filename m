@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7FD69702
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA9C696F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387714AbfGOPID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:08:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37536 "EHLO mail.kernel.org"
+        id S1731200AbfGOOCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:02:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733120AbfGON6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:58:18 -0400
+        id S1730235AbfGOOAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:00:05 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56884217D9;
-        Mon, 15 Jul 2019 13:58:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4296B2083D;
+        Mon, 15 Jul 2019 14:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199097;
-        bh=pZYgTxZBhlV4zkeYOyQJylLILoJ83z/GR/3CqaetBTE=;
+        s=default; t=1563199204;
+        bh=8/6cGbemBxBgbQEs4ZYCF9p5eQXSdOQ7wFxbD9VUR10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=THYyPTgW/obmuU/dPSm99zLcoGYj/DKPrDwyG00o5ddd3R9iMuxAr5DpnlHpOznRc
-         lRNKmvCfR6byhDHs2oNxmgg96oSHD0Sq1bCyDaEh2eVa2MIFury4s8moBdKOu34JBi
-         LmLfLkZYxZ6FacweJHU6ExHLXtTZTXa2L7AmwGzY=
+        b=Z2hxhRBzmqiCY4FAHRHYnxhFNZHrr6nUlood5ufnGV9T5XO3axbKFWhG3q16g/opZ
+         VO8kkGScJsIoJ1GFNSNBCI3+bE1lGNyKqi2h68YtuUFq4635gJP4tQ4vPd9Vs7mhSH
+         8gRf+Bo1aEBxXJFYC865cmBsHpsA8s1ZL5vAXsKA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 191/249] cpufreq: Don't skip frequency validation for has_target() drivers
-Date:   Mon, 15 Jul 2019 09:45:56 -0400
-Message-Id: <20190715134655.4076-191-sashal@kernel.org>
+Cc:     Rander Wang <rander.wang@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 215/249] ALSA: hda: Fix a headphone detection issue when using SOF
+Date:   Mon, 15 Jul 2019 09:46:20 -0400
+Message-Id: <20190715134655.4076-215-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -43,81 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Rander Wang <rander.wang@linux.intel.com>
 
-[ Upstream commit 9801522840cc1073f8064b4c979b7b6995c74bca ]
+[ Upstream commit 7c2b3629d09ddec810dc4c1d3a6657c32def8f71 ]
 
-CPUFREQ_CONST_LOOPS was introduced in a very old commit from pre-2.6
-kernel release by commit 6a4a93f9c0d5 ("[CPUFREQ] Fix 'out of sync'
-issue").
+To save power, the hda hdmi driver in ASoC invokes snd_hdac_ext_bus_link_put
+to disable CORB/RIRB buffers DMA if there is no user of bus and invokes
+snd_hdac_ext_bus_link_get to set up CORB/RIRB buffers when it is used.
+Unsolicited responses is disabled in snd_hdac_bus_stop_cmd_io called by
+snd_hdac_ext_bus_link_put , but it is not enabled in snd_hdac_bus_init_cmd_io
+called by snd_hdac_ext_bus_link_get. So for put-get sequence, Unsolicited
+responses is disabled and headphone can't be detected by hda codecs.
 
-Basically, that commit does two things:
+Now unsolicited responses is only enabled in snd_hdac_bus_reset_link
+which resets controller. The function is only called for setup of
+controller. This patch enables Unsolicited responses after RIRB is
+initialized in snd_hdac_bus_init_cmd_io which works together with
+snd_hdac_bus_reset_link to set up controller.
 
- - It adds the frequency verification code (which is quite similar to
-   what we have today as well).
+Tested legacy hda driver and SOF driver on intel whiskeylake.
 
- - And it sets the CPUFREQ_CONST_LOOPS flag only for setpolicy drivers,
-   rightly so based on the code we had then. The idea was to avoid
-   frequency validation for setpolicy drivers as the cpufreq core doesn't
-   know what frequency the hardware is running at and so no point in
-   doing frequency verification.
-
-The problem happened when we started to use the same CPUFREQ_CONST_LOOPS
-flag for constant loops-per-jiffy thing as well and many has_target()
-drivers started using the same flag and unknowingly skipped the
-verification of frequency. There is no logical reason behind skipping
-frequency validation because of the presence of CPUFREQ_CONST_LOOPS
-flag otherwise.
-
-Fix this issue by skipping frequency validation only for setpolicy
-drivers and always doing it for has_target() drivers irrespective of
-the presence or absence of CPUFREQ_CONST_LOOPS flag.
-
-cpufreq_notify_transition() is only called for has_target() type driver
-and not for set_policy type, and the check is simply redundant. Remove
-it as well.
-
-Also remove () around freq comparison statement as they aren't required
-and checkpatch also warns for them.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/cpufreq.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ sound/hda/hdac_controller.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 876a4cb09de3..7d37efb43621 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -356,12 +356,10 @@ static void cpufreq_notify_transition(struct cpufreq_policy *policy,
- 		 * which is not equal to what the cpufreq core thinks is
- 		 * "old frequency".
- 		 */
--		if (!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
--			if (policy->cur && (policy->cur != freqs->old)) {
--				pr_debug("Warning: CPU frequency is %u, cpufreq assumed %u kHz\n",
--					 freqs->old, policy->cur);
--				freqs->old = policy->cur;
--			}
-+		if (policy->cur && policy->cur != freqs->old) {
-+			pr_debug("Warning: CPU frequency is %u, cpufreq assumed %u kHz\n",
-+				 freqs->old, policy->cur);
-+			freqs->old = policy->cur;
- 		}
+diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
+index b02f74528b66..812dc144fb5b 100644
+--- a/sound/hda/hdac_controller.c
++++ b/sound/hda/hdac_controller.c
+@@ -79,6 +79,8 @@ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
+ 	snd_hdac_chip_writew(bus, RINTCNT, 1);
+ 	/* enable rirb dma and response irq */
+ 	snd_hdac_chip_writeb(bus, RIRBCTL, AZX_RBCTL_DMA_EN | AZX_RBCTL_IRQ_EN);
++	/* Accept unsolicited responses */
++	snd_hdac_chip_updatel(bus, GCTL, AZX_GCTL_UNSOL, AZX_GCTL_UNSOL);
+ 	spin_unlock_irq(&bus->reg_lock);
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_bus_init_cmd_io);
+@@ -415,9 +417,6 @@ int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset)
+ 		return -EBUSY;
+ 	}
  
- 		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
-@@ -1627,8 +1625,7 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
- 	if (policy->fast_switch_enabled)
- 		return ret_freq;
- 
--	if (ret_freq && policy->cur &&
--		!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
-+	if (has_target() && ret_freq && policy->cur) {
- 		/* verify no discrepancy between actual and
- 					saved value exists */
- 		if (unlikely(ret_freq != policy->cur)) {
+-	/* Accept unsolicited responses */
+-	snd_hdac_chip_updatel(bus, GCTL, AZX_GCTL_UNSOL, AZX_GCTL_UNSOL);
+-
+ 	/* detect codecs */
+ 	if (!bus->codec_mask) {
+ 		bus->codec_mask = snd_hdac_chip_readw(bus, STATESTS);
 -- 
 2.20.1
 
