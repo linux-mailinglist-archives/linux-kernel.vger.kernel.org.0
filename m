@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740336963C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B78446961A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389111AbfGOPDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:03:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40074 "EHLO mail.kernel.org"
+        id S2390060AbfGOPCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:02:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731240AbfGOOK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:10:27 -0400
+        id S2388617AbfGOOLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:11:50 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 784CB20651;
-        Mon, 15 Jul 2019 14:10:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 246272081C;
+        Mon, 15 Jul 2019 14:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199826;
-        bh=ZqTUnPmE2V0kl4j3Gt+vLO/8z5fmIXLKw5xY8z418ho=;
+        s=default; t=1563199909;
+        bh=0Bgi0YSXLFbXE7fMMsBZyv5DRfzZzaNOaviqSvdjufA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fe3BymRu7YU/s/oMwubu6HnCPF22X96Hl3mGP8vk5GePkKomtEjam+mFfkq5ZarEr
-         r0+BI4Jjg3JzjRi6G9CgRC3zYri+sekJXs2pyZga414WcjmO26xsWhqTCnqwv5gqcp
-         Wfmo80Pru89yivx6YUrm36T9zqPUPdDukTtzWQck=
+        b=vid3Q2bYufmlNwr1SrMyOSp7NbKQZ5z2VGUoPqPFiLApmILNTIMdnpF7+v4AMjHRG
+         lKlRnz+xgrO94VW7mLvTiwrIZsB3aA4zi8HFxVYFXaWSAJm7LCKfsZbTUuUx1nQ/Tt
+         i+IzDjRpu5mhmolI1LYCFenJXS0kugPdABehyFFM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anton Eidelman <anton@lightbitslabs.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.1 118/219] nvme: fix possible io failures when removing multipathed ns
-Date:   Mon, 15 Jul 2019 10:01:59 -0400
-Message-Id: <20190715140341.6443-118-sashal@kernel.org>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 134/219] media: coda: fix last buffer handling in V4L2_ENC_CMD_STOP
+Date:   Mon, 15 Jul 2019 10:02:15 -0400
+Message-Id: <20190715140341.6443-134-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -44,69 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Eidelman <anton@lightbitslabs.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit 2181e455612a8db2761eabbf126640552a451e96 ]
+[ Upstream commit f3775f89852d167990b0d718587774cf00d22ac2 ]
 
-When a shared namespace is removed, we call blk_cleanup_queue()
-when the device can still be accessed as the current path and this can
-result in submission to a dying queue. Hence, direct_make_request()
-called by our mpath device may fail (propagating the failure to userspace).
-Instead, we want to failover this I/O to a different path if one exists.
-Thus, before we cleanup the request queue, we make sure that the device is
-cleared from the current path nor it can be selected again as such.
+coda_encoder_cmd() is racy, as the last scheduled picture run worker can
+still be in-flight while the ENC_CMD_STOP command is issued. Depending
+on the exact timing the sequence numbers might already be changed, but
+the last buffer might not have been put on the destination queue yet.
 
-Fix this by:
-- clear the ns from the head->list and synchronize rcu to make sure there is
-  no concurrent path search that restores it as the current path
-- clear the mpath current path in order to trigger a subsequent path search
-  and sync srcu to wait for any ongoing request submissions
-- safely continue to namespace removal and blk_cleanup_queue
+In this case the current implementation would prematurely wake the
+destination queue with last_buffer_dequeued=true, causing userspace to
+call streamoff before the last buffer is handled.
 
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Close this race window by synchronizing with the pic_run_worker before
+doing the sequence check.
+
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+[l.stach@pengutronix.de: switch to flush_work, reword commit message]
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/platform/coda/coda-common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 3a390b2c7540..cbbdd3dae5a1 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3341,6 +3341,14 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 		return;
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index fa0b22fb7991..9bf2116ffc76 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -1007,6 +1007,8 @@ static int coda_encoder_cmd(struct file *file, void *fh,
+ 	/* Set the stream-end flag on this context */
+ 	ctx->bit_stream_param |= CODA_BIT_STREAM_END_FLAG;
  
- 	nvme_fault_inject_fini(ns);
++	flush_work(&ctx->pic_run_work);
 +
-+	mutex_lock(&ns->ctrl->subsys->lock);
-+	list_del_rcu(&ns->siblings);
-+	mutex_unlock(&ns->ctrl->subsys->lock);
-+	synchronize_rcu(); /* guarantee not available in head->list */
-+	nvme_mpath_clear_current_path(ns);
-+	synchronize_srcu(&ns->head->srcu); /* wait for concurrent submissions */
-+
- 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
- 		del_gendisk(ns->disk);
- 		blk_cleanup_queue(ns->queue);
-@@ -3348,16 +3356,10 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 			blk_integrity_unregister(ns->disk);
- 	}
- 
--	mutex_lock(&ns->ctrl->subsys->lock);
--	list_del_rcu(&ns->siblings);
--	nvme_mpath_clear_current_path(ns);
--	mutex_unlock(&ns->ctrl->subsys->lock);
--
- 	down_write(&ns->ctrl->namespaces_rwsem);
- 	list_del_init(&ns->list);
- 	up_write(&ns->ctrl->namespaces_rwsem);
- 
--	synchronize_srcu(&ns->head->srcu);
- 	nvme_mpath_check_last_path(ns);
- 	nvme_put_ns(ns);
- }
+ 	/* If there is no buffer in flight, wake up */
+ 	if (!ctx->streamon_out || ctx->qsequence == ctx->osequence) {
+ 		dst_vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
 -- 
 2.20.1
 
