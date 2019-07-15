@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C3F568F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F11268F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388844AbfGOOLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:11:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46672 "EHLO mail.kernel.org"
+        id S2388861AbfGOOLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:11:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733292AbfGOOLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:11:33 -0400
+        id S1730611AbfGOOLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:11:39 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B63E020651;
-        Mon, 15 Jul 2019 14:11:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEFF62083D;
+        Mon, 15 Jul 2019 14:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199892;
-        bh=JoOoM4IFxjgNA5WcvONTNApk+txBBUQJdK/fiktlUp4=;
+        s=default; t=1563199898;
+        bh=N2O9oM/A7UqhhFm9gfJXS9/D20ABDg79x3bi4xecaog=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e8+Si4muJWHLPksVz8VNON/td6TIpnImRdIeR4mGI+oBc3Du8SyIY5ektsAx8epkM
-         kdcWNzEcmUMGzVtMVYU0zNNNJiiw2YEgXrqbUbXmU++P20Io4+RICT3DqMeNtvdOam
-         J6zJzU6E3Z45VMVQYenbm7NEZOPlFs2fkW4ag+QI=
+        b=IJOrRaSvP66oQrQfSmauGtm1IK35tW9tO6OlPKeseHRCInT394AGEU/avotLT37uZ
+         3h9vn6ht0jU6G6+reo7zMMH7hpkih6d66c4OzIWL3Y6bsGkxtmxgpGfRhI00+GCS0X
+         3XrJITSX36UjxJL/gsPXDN39vxO3kJwevZQDZhT8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        john.stultz@linaro.org, sboyd@kernel.org,
-        clang-built-linux@googlegroups.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 129/219] timer_list: Guard procfs specific code
-Date:   Mon, 15 Jul 2019 10:02:10 -0400
-Message-Id: <20190715140341.6443-129-sashal@kernel.org>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 130/219] media: mt9m111: fix fw-node refactoring
+Date:   Mon, 15 Jul 2019 10:02:11 -0400
+Message-Id: <20190715140341.6443-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -45,89 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
-[ Upstream commit a9314773a91a1d3b36270085246a6715a326ff00 ]
+[ Upstream commit 8d4e29a51a954b43e06d916772fa4f50b7e5bbd6 ]
 
-With CONFIG_PROC_FS=n the following warning is emitted:
+In the patch refactoring the fw-node, the mt9m111 was broken for all
+platform_data based platforms, which were the first aim of this
+driver. Only the devicetree platform are still functional, probably
+because the testing was done on these.
 
-kernel/time/timer_list.c:361:36: warning: unused variable
-'timer_list_sops' [-Wunused-const-variable]
-   static const struct seq_operations timer_list_sops = {
+The result is that -EINVAL is systematically return for such platforms,
+what this patch fixes.
 
-Add #ifdef guard around procfs specific code.
+[Sakari Ailus: Rework this to resolve a merge conflict and use dev_fwnode]
 
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: john.stultz@linaro.org
-Cc: sboyd@kernel.org
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/534
-Link: https://lkml.kernel.org/r/20190614181604.112297-1-nhuck@google.com
+Fixes: 98480d65c48c ("media: mt9m111: allow to setup pixclk polarity")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/timer_list.c | 36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+ drivers/media/i2c/mt9m111.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index 98ba50dcb1b2..acb326f5f50a 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -282,23 +282,6 @@ static inline void timer_list_header(struct seq_file *m, u64 now)
- 	SEQ_printf(m, "\n");
- }
+diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
+index 5168bb5880c4..3a543e435e61 100644
+--- a/drivers/media/i2c/mt9m111.c
++++ b/drivers/media/i2c/mt9m111.c
+@@ -1248,9 +1248,11 @@ static int mt9m111_probe(struct i2c_client *client,
+ 	if (!mt9m111)
+ 		return -ENOMEM;
  
--static int timer_list_show(struct seq_file *m, void *v)
--{
--	struct timer_list_iter *iter = v;
--
--	if (iter->cpu == -1 && !iter->second_pass)
--		timer_list_header(m, iter->now);
--	else if (!iter->second_pass)
--		print_cpu(m, iter->cpu, iter->now);
--#ifdef CONFIG_GENERIC_CLOCKEVENTS
--	else if (iter->cpu == -1 && iter->second_pass)
--		timer_list_show_tickdevices_header(m);
--	else
--		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
--#endif
--	return 0;
--}
--
- void sysrq_timer_list_show(void)
- {
- 	u64 now = ktime_to_ns(ktime_get());
-@@ -317,6 +300,24 @@ void sysrq_timer_list_show(void)
- 	return;
- }
+-	ret = mt9m111_probe_fw(client, mt9m111);
+-	if (ret)
+-		return ret;
++	if (dev_fwnode(&client->dev)) {
++		ret = mt9m111_probe_fw(client, mt9m111);
++		if (ret)
++			return ret;
++	}
  
-+#ifdef CONFIG_PROC_FS
-+static int timer_list_show(struct seq_file *m, void *v)
-+{
-+	struct timer_list_iter *iter = v;
-+
-+	if (iter->cpu == -1 && !iter->second_pass)
-+		timer_list_header(m, iter->now);
-+	else if (!iter->second_pass)
-+		print_cpu(m, iter->cpu, iter->now);
-+#ifdef CONFIG_GENERIC_CLOCKEVENTS
-+	else if (iter->cpu == -1 && iter->second_pass)
-+		timer_list_show_tickdevices_header(m);
-+	else
-+		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
-+#endif
-+	return 0;
-+}
-+
- static void *move_iter(struct timer_list_iter *iter, loff_t offset)
- {
- 	for (; offset; offset--) {
-@@ -376,3 +377,4 @@ static int __init init_timer_list_procfs(void)
- 	return 0;
- }
- __initcall(init_timer_list_procfs);
-+#endif
+ 	mt9m111->clk = v4l2_clk_get(&client->dev, "mclk");
+ 	if (IS_ERR(mt9m111->clk))
 -- 
 2.20.1
 
