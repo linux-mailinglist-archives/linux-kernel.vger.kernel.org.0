@@ -2,55 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3185168A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D691568A57
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfGON0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:26:09 -0400
-Received: from comms.puri.sm ([159.203.221.185]:53314 "EHLO comms.puri.sm"
+        id S1730206AbfGONV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:21:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:47433 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730214AbfGON0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:26:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 98EA9E0244;
-        Mon, 15 Jul 2019 06:20:18 -0700 (PDT)
-Received: from comms.puri.sm ([127.0.0.1])
-        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HqFvBNz9Q3mw; Mon, 15 Jul 2019 06:20:18 -0700 (PDT)
-From:   Martin Kepplinger <martin.kepplinger@puri.sm>
-To:     lorenzo.bianconi83@gmail.com, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@puri.sm>
-Subject: [PATCH 3/3] dt-bindings: iio: imu: st_lsm6dsx: add lsm9ds1 device bindings
-Date:   Mon, 15 Jul 2019 15:19:19 +0200
-Message-Id: <20190715131919.31938-3-martin.kepplinger@puri.sm>
-In-Reply-To: <20190715131919.31938-1-martin.kepplinger@puri.sm>
-References: <20190715131919.31938-1-martin.kepplinger@puri.sm>
-Content-Transfer-Encoding: 8bit
+        id S1730111AbfGONVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:21:25 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45nPLT6CQjz9sBF;
+        Mon, 15 Jul 2019 23:21:21 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563196883;
+        bh=AA15GNxzRcD/Gft7h69NVL53UNTyAKxicfRiGRl7Er4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=d80lYJjWekSjCPVKaVb1uWeIQd8a28XjaegeSiFCYBNnxXzfs4MMzPwxNlcWmhPsA
+         8Waycfa9hZgS6vx1btcziQG07IEws3GBoA0GxRHRviISkhB0Ez7HLZagmuHHPhgJTn
+         hP1sX2i/FnrErv6YBCTUIAiMSyxWaEIQclJOi72Nt1k/UBWVE1G76carXeNLZMSzio
+         DZWWxqbbbVh8zx7O452Khr6v6bcoFEd3nAQzWU91LZ2XcdbUVlVM+0nevtUSoz0cN3
+         v53ITbc5XTi4u33Zz4xE5IolqFGD0d8/sk9sExEavxEBYd6c4CyTYrt93gEMv8Zwns
+         T6YKb3rHMPJig==
+Date:   Mon, 15 Jul 2019 23:21:20 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: Re: DRM pull for v5.3-rc1
+Message-ID: <20190715232120.18d2c8c0@canb.auug.org.au>
+In-Reply-To: <20190715122924.GA15202@mellanox.com>
+References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
+        <CAPM=9tx+CEkzmLZ-93GZmde9xzJ_rw3PJZxFu_pjZJc7KM5f-w@mail.gmail.com>
+        <20190715122924.GA15202@mellanox.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VW_C7TdGe9E+EtWOg93jd33"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
----
- Documentation/devicetree/bindings/iio/imu/st_lsm6dsx.txt | 1 +
- 1 file changed, 1 insertion(+)
+--Sig_/VW_C7TdGe9E+EtWOg93jd33
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/iio/imu/st_lsm6dsx.txt b/Documentation/devicetree/bindings/iio/imu/st_lsm6dsx.txt
-index efec9ece034a..c5ac1730ad22 100644
---- a/Documentation/devicetree/bindings/iio/imu/st_lsm6dsx.txt
-+++ b/Documentation/devicetree/bindings/iio/imu/st_lsm6dsx.txt
-@@ -11,6 +11,7 @@ Required properties:
-   "st,asm330lhh"
-   "st,lsm6dsox"
-   "st,lsm6dsr"
-+  "st,lsm9ds1"
- - reg: i2c address of the sensor / spi cs line
- 
- Optional properties:
--- 
-2.20.1
+Hi Jason,
 
+On Mon, 15 Jul 2019 12:29:28 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> On Mon, Jul 15, 2019 at 04:59:39PM +1000, Dave Airlie wrote:
+>=20
+> >      going with it for now until I get push back). They conflicted
+> >      with one of the mm cleanups in the hmm tree, I've pushed a
+> >      patch to the top of my next to fix most of the fallout in my
+> >      tree, and the resulting fixup is to pick the closure->ptefn
+> >      hunk and apply something like in mm/memory.c =20
+>=20
+> Did I mess a notification from StephenR in linux-next? I was unwaware
+> of this conflict?
+
+That conflict was with Andrew's akpm-current tree, not the hmm tree ...
+
+(on June 24)
+
+"Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  mm/memory.c
+
+between commit:
+
+  29875a52915e ("mm: Add an apply_to_pfn_range interface")
+
+from the drm tree and commit:
+
+  e972cea08fb3 ("mm/pgtable: drop pgtable_t variable from pte_fn_t function=
+s")
+
+from the akpm-current tree."
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VW_C7TdGe9E+EtWOg93jd33
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0sfdAACgkQAVBC80lX
+0GwXWQf+JoydCHiGtYJAiKoodhkxfj5Tv12MQFrM61Vj8TXMiH8047YuRQ1/nIRQ
+KgL8i/l6KpXDAkcB3PKqdI8b6Mk2JhDSe5+z4WE2s/dAsHphBsrU+fyqTuByZm5s
+PwHS9nqqK2UzsOOJN+15MH6VDieVzyOqUgAqdZep2EkUaRkstXYkSaWuCfQcOXQF
+yqnB/NPgQ04RZhUTFf9v1JpUhU/LvDMkQz2YWOEL+LemzE9rE3CT++aPXB2zw5EE
+bu9UToeusFqyiEPxIOo937xj+8hbtedzxEZlVs+S1jFpUkLy6wkV13ELG8mWIYOE
+4dqb9BWTXC0xVpvIN/AVo4xYpqKDBA==
+=3QeO
+-----END PGP SIGNATURE-----
+
+--Sig_/VW_C7TdGe9E+EtWOg93jd33--
