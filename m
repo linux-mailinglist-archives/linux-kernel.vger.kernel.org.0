@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC680693B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4089E693B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404583AbfGOOqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:46:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35000 "EHLO mail.kernel.org"
+        id S2404952AbfGOOqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:46:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404813AbfGOOqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:46:07 -0400
+        id S2404643AbfGOOqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:46:15 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B42062067C;
-        Mon, 15 Jul 2019 14:46:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 267E2206B8;
+        Mon, 15 Jul 2019 14:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201966;
-        bh=394QZhcBDh/8/E31jIj293uxy+K5rhXIyIdJ1VMo2n8=;
+        s=default; t=1563201974;
+        bh=/4Xd/ltewCvcElqBpDR3xalQlIQ4dvr0euhh3ljVm6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NtP0JdQ87iGGqvD3r6evM4XGEu4WKThq5PuezIy2NyqvLjcJ2KjBy3Jj5WSfQS7vh
-         uMoJGZVPx6XiB6PMrMBRk0fqC58JGV7EVoL/Ig+52qYTz6SMmZC5AMjsrkQQ6kwQfF
-         XyAlOnX1tb9I8tL61yolfbqV0BK8n3/papxYFWmk=
+        b=I+rPwiADKp+R9OdYazCrDl6xYLqd/8DIheTr+cQvSr8yc8a2aM+HHe5Go76BBsZrO
+         HOGs7vNNo2xopFhob0POmKwfREMsC+7vmfSiXrdTgF8ozI+ZuvnqdrLd2N8WAYQDV6
+         BkIvvRiZZORmeLswspQH6LetGSdYyEMxJgWT/81U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Mukesh Ojha <mojha@codeaurora.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 09/53] media: vpss: fix a potential NULL pointer dereference
-Date:   Mon, 15 Jul 2019 10:44:51 -0400
-Message-Id: <20190715144535.11636-9-sashal@kernel.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Daniel Lezcano <daniel.lezcano@free.fr>,
+        Serge Hallyn <serge@hallyn.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 11/53] signal/pid_namespace: Fix reboot_pid_ns to use send_sig not force_sig
+Date:   Mon, 15 Jul 2019 10:44:53 -0400
+Message-Id: <20190715144535.11636-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715144535.11636-1-sashal@kernel.org>
 References: <20190715144535.11636-1-sashal@kernel.org>
@@ -43,37 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit e08f0761234def47961d3252eac09ccedfe4c6a0 ]
+[ Upstream commit f9070dc94542093fd516ae4ccea17ef46a4362c5 ]
 
-In case ioremap fails, the fix returns -ENOMEM to avoid NULL
-pointer dereference.
+The locking in force_sig_info is not prepared to deal with a task that
+exits or execs (as sighand may change).  The is not a locking problem
+in force_sig as force_sig is only built to handle synchronous
+exceptions.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Further the function force_sig_info changes the signal state if the
+signal is ignored, or blocked or if SIGNAL_UNKILLABLE will prevent the
+delivery of the signal.  The signal SIGKILL can not be ignored and can
+not be blocked and SIGNAL_UNKILLABLE won't prevent it from being
+delivered.
+
+So using force_sig rather than send_sig for SIGKILL is confusing
+and pointless.
+
+Because it won't impact the sending of the signal and and because
+using force_sig is wrong, replace force_sig with send_sig.
+
+Cc: Daniel Lezcano <daniel.lezcano@free.fr>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Fixes: cf3f89214ef6 ("pidns: add reboot_pid_ns() to handle the reboot syscall")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/davinci/vpss.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/pid_namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/davinci/vpss.c b/drivers/media/platform/davinci/vpss.c
-index fce86f17dffc..c2c68988e38a 100644
---- a/drivers/media/platform/davinci/vpss.c
-+++ b/drivers/media/platform/davinci/vpss.c
-@@ -523,6 +523,11 @@ static int __init vpss_init(void)
- 		return -EBUSY;
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 567ecc826bc8..6353372801f2 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -325,7 +325,7 @@ int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+ 	}
  
- 	oper_cfg.vpss_regs_base2 = ioremap(VPSS_CLK_CTRL, 4);
-+	if (unlikely(!oper_cfg.vpss_regs_base2)) {
-+		release_mem_region(VPSS_CLK_CTRL, 4);
-+		return -ENOMEM;
-+	}
-+
- 	writel(VPSS_CLK_CTRL_VENCCLKEN |
- 		     VPSS_CLK_CTRL_DACCLKEN, oper_cfg.vpss_regs_base2);
+ 	read_lock(&tasklist_lock);
+-	force_sig(SIGKILL, pid_ns->child_reaper);
++	send_sig(SIGKILL, pid_ns->child_reaper, 1);
+ 	read_unlock(&tasklist_lock);
  
+ 	do_exit(0);
 -- 
 2.20.1
 
