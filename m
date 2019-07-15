@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B8C695A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA4AA695AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389930AbfGOOSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:18:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38526 "EHLO mail.kernel.org"
+        id S2389398AbfGOOSn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389918AbfGOOSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:18:30 -0400
+        id S2389011AbfGOOSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:18:36 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CBC120651;
-        Mon, 15 Jul 2019 14:18:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 358C220868;
+        Mon, 15 Jul 2019 14:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200309;
-        bh=N20WuRe/6su3kHHw3u1nvHTPlIF8ORwd5mUIXy2zxwI=;
+        s=default; t=1563200316;
+        bh=L+rBLsU0eTw6Z4CMA658MU7OvvvcaxUg30vK9kB/r1w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VM4jzSjnu1nFDdBuCuqiBcR2k9qDpIkEJH5pzq6F4RK72KU65DveZkqLYHYuCy1Hv
-         4FPZ+mtjYUL79z+QEPt2pUTXwOLaZFEikEpEaCz/VtCQqNvIh770t2F8TXlToYUk/2
-         r3hURFyIG+/ZAE0+BWOAtTU9/hwwdgnsjzqD5Quc=
+        b=h8yPotMct9mjuIsHUutawl4WSnboFvOMK14HTfPpn5wwSwEhM2zbBMzUf5plPNxpI
+         vSw0OK+dEj9fiAmejI5z3LwhfbT7pLKohJZAwrRjIPkpLaeBQwRMg4+uho/vatH85Y
+         z7wUhUwFRVo2RcqsCVBfJisWPapLND5vuFzUZ36M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, len.brown@intel.com,
-        linux@endlessm.com, rafael.j.wysocki@intel.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 006/158] x86/tsc: Use CPUID.0x16 to calculate missing crystal frequency
-Date:   Mon, 15 Jul 2019 10:15:37 -0400
-Message-Id: <20190715141809.8445-6-sashal@kernel.org>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 009/158] regmap: debugfs: Fix memory leak in regmap_debugfs_init
+Date:   Mon, 15 Jul 2019 10:15:40 -0400
+Message-Id: <20190715141809.8445-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -49,124 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-[ Upstream commit 604dc9170f2435d27da5039a3efd757dceadc684 ]
+[ Upstream commit 2899872b627e99b7586fe3b6c9f861da1b4d5072 ]
 
-native_calibrate_tsc() had a data mapping Intel CPU families
-and crystal clock speed, but hardcoded tables are not ideal, and this
-approach was already problematic at least in the Skylake X case, as
-seen in commit:
+As detected by kmemleak running on i.MX6ULL board:
 
-  b51120309348 ("x86/tsc: Fix erroneous TSC rate on Skylake Xeon")
+nreferenced object 0xd8366600 (size 64):
+  comm "swapper/0", pid 1, jiffies 4294937370 (age 933.220s)
+  hex dump (first 32 bytes):
+    64 75 6d 6d 79 2d 69 6f 6d 75 78 63 2d 67 70 72  dummy-iomuxc-gpr
+    40 32 30 65 34 30 30 30 00 e3 f3 ab fe d1 1b dd  @20e4000........
+  backtrace:
+    [<b0402aec>] kasprintf+0x2c/0x54
+    [<a6fbad2c>] regmap_debugfs_init+0x7c/0x31c
+    [<9c8d91fa>] __regmap_init+0xb5c/0xcf4
+    [<5b1c3d2a>] of_syscon_register+0x164/0x2c4
+    [<596a5d80>] syscon_node_to_regmap+0x64/0x90
+    [<49bd597b>] imx6ul_init_machine+0x34/0xa0
+    [<250a4dac>] customize_machine+0x1c/0x30
+    [<2d19fdaf>] do_one_initcall+0x7c/0x398
+    [<e6084469>] kernel_init_freeable+0x328/0x448
+    [<168c9101>] kernel_init+0x8/0x114
+    [<913268aa>] ret_from_fork+0x14/0x20
+    [<ce7b131a>] 0x0
 
-By examining CPUID data from http://instlatx64.atw.hu/ and units
-in the lab, we have found that 3 different scenarios need to be dealt
-with, and we can eliminate most of the hardcoded data using an approach a
-little more advanced than before:
+Root cause is that map->debugfs_name is allocated using kasprintf
+and then the pointer is lost by assigning it other memory address.
 
- 1. ApolloLake, GeminiLake, CannonLake (and presumably all new chipsets
-    from this point) report the crystal frequency directly via CPUID.0x15.
-    That's definitive data that we can rely upon.
-
- 2. Skylake, Kabylake and all variants of those two chipsets report a
-    crystal frequency of zero, however we can calculate the crystal clock
-    speed by condidering data from CPUID.0x16.
-
-    This method correctly distinguishes between the two crystal clock
-    frequencies present on different Skylake X variants that caused
-    headaches before.
-
-    As the calculations do not quite match the previously-hardcoded values
-    in some cases (e.g. 23913043Hz instead of 24MHz), TSC refinement is
-    enabled on all platforms where we had to calculate the crystal
-    frequency in this way.
-
- 3. Denverton (GOLDMONT_X) reports a crystal frequency of zero and does
-    not support CPUID.0x16, so we leave this entry hardcoded.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: len.brown@intel.com
-Cc: linux@endlessm.com
-Cc: rafael.j.wysocki@intel.com
-Link: http://lkml.kernel.org/r/20190509055417.13152-1-drake@endlessm.com
-Link: https://lkml.kernel.org/r/20190419083533.32388-1-drake@endlessm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/tsc.c | 47 +++++++++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 20 deletions(-)
+ drivers/base/regmap/regmap-debugfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 03b7529333a6..58a4ac0d20a8 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -628,31 +628,38 @@ unsigned long native_calibrate_tsc(void)
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 87b562e49a43..c9687c8b2347 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -575,6 +575,8 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+ 	}
  
- 	crystal_khz = ecx_hz / 1000;
- 
--	if (crystal_khz == 0) {
--		switch (boot_cpu_data.x86_model) {
--		case INTEL_FAM6_SKYLAKE_MOBILE:
--		case INTEL_FAM6_SKYLAKE_DESKTOP:
--		case INTEL_FAM6_KABYLAKE_MOBILE:
--		case INTEL_FAM6_KABYLAKE_DESKTOP:
--			crystal_khz = 24000;	/* 24.0 MHz */
--			break;
--		case INTEL_FAM6_ATOM_GOLDMONT_X:
--			crystal_khz = 25000;	/* 25.0 MHz */
--			break;
--		case INTEL_FAM6_ATOM_GOLDMONT:
--			crystal_khz = 19200;	/* 19.2 MHz */
--			break;
--		}
--	}
-+	/*
-+	 * Denverton SoCs don't report crystal clock, and also don't support
-+	 * CPUID.0x16 for the calculation below, so hardcode the 25MHz crystal
-+	 * clock.
-+	 */
-+	if (crystal_khz == 0 &&
-+			boot_cpu_data.x86_model == INTEL_FAM6_ATOM_GOLDMONT_X)
-+		crystal_khz = 25000;
- 
--	if (crystal_khz == 0)
--		return 0;
- 	/*
--	 * TSC frequency determined by CPUID is a "hardware reported"
-+	 * TSC frequency reported directly by CPUID is a "hardware reported"
- 	 * frequency and is the most accurate one so far we have. This
- 	 * is considered a known frequency.
- 	 */
--	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
-+	if (crystal_khz != 0)
-+		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+ 	if (!strcmp(name, "dummy")) {
++		kfree(map->debugfs_name);
 +
-+	/*
-+	 * Some Intel SoCs like Skylake and Kabylake don't report the crystal
-+	 * clock, but we can easily calculate it to a high degree of accuracy
-+	 * by considering the crystal ratio and the CPU speed.
-+	 */
-+	if (crystal_khz == 0 && boot_cpu_data.cpuid_level >= 0x16) {
-+		unsigned int eax_base_mhz, ebx, ecx, edx;
-+
-+		cpuid(0x16, &eax_base_mhz, &ebx, &ecx, &edx);
-+		crystal_khz = eax_base_mhz * 1000 *
-+			eax_denominator / ebx_numerator;
-+	}
-+
-+	if (crystal_khz == 0)
-+		return 0;
- 
- 	/*
- 	 * For Atom SoCs TSC is the only reliable clocksource.
+ 		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
+ 						dummy_index);
+ 		name = map->debugfs_name;
 -- 
 2.20.1
 
