@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09B169782
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 781A16976C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732476AbfGONyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:54:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53492 "EHLO mail.kernel.org"
+        id S1731821AbfGONzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:55:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731811AbfGONyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:54:13 -0400
+        id S1732588AbfGONyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:54:54 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0E73206B8;
-        Mon, 15 Jul 2019 13:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45EC7212F5;
+        Mon, 15 Jul 2019 13:54:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198853;
-        bh=5+J+JiR3UfcDNjQLIXc45plyT84o2HFsh9ByO2Sil/Q=;
+        s=default; t=1563198893;
+        bh=MZoTV+b3HU5dLeKehg1HKEB6/ZWx9+HGjcpWGQKcmWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i8xM8Pmew9a+AmgVZvNgv/TzIG6xaxAqoTYDPopj4eCsCZzxY+A0nE7tRVUFTj54P
-         e6zzosWvJcOb8T6+MEMLTbHnrQ4EFL1NWxZypBuZYRk4RQoYM/MfuKKTiq2BeDkhI1
-         IacKhBxLkLqRuF31uq/iea/OlEavfPu9iXALn6R4=
+        b=RHK2nerEL0cDcpawpofrmme+tt2WtkYzgKQNcM4Cgn4L7L5S0jBhyNUA/rGEXXscF
+         o2kdh2zAzyY7DTkoNKCUGPdoCyS/FbATUceBDXZVU1AqK0KQXnUgW1QzEwhpjsqLPm
+         qCS1y8bTb94nnZtQ9P4HyyVxE33D0u4O663FXvpc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Wang <jasowang@redhat.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 119/249] vhost_net: disable zerocopy by default
-Date:   Mon, 15 Jul 2019 09:44:44 -0400
-Message-Id: <20190715134655.4076-119-sashal@kernel.org>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 131/249] spi: fix ctrl->num_chipselect constraint
+Date:   Mon, 15 Jul 2019 09:44:56 -0400
+Message-Id: <20190715134655.4076-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
@@ -45,43 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit 098eadce3c622c07b328d0a43dda379b38cf7c5e ]
+[ Upstream commit f9481b08220d7dc1ff21e296a330ee8b721b44e4 ]
 
-Vhost_net was known to suffer from HOL[1] issues which is not easy to
-fix. Several downstream disable the feature by default. What's more,
-the datapath was split and datacopy path got the support of batching
-and XDP support recently which makes it faster than zerocopy part for
-small packets transmission.
+at91sam9g25ek showed the following error at probe:
+atmel_spi f0000000.spi: Using dma0chan2 (tx) and dma0chan3 (rx)
+for DMA transfers
+atmel_spi: probe of f0000000.spi failed with error -22
 
-It looks to me that disable zerocopy by default is more
-appropriate. It cold be enabled by default again in the future if we
-fix the above issues.
+Commit 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
+moved the calling of spi_get_gpio_descs() after ctrl->dev is set,
+but didn't move the !ctrl->num_chipselect check. When there are
+chip selects in the device tree, the spi-atmel driver lets the
+SPI core discover them when registering the SPI master.
+The ctrl->num_chipselect is thus expected to be set by
+spi_get_gpio_descs().
 
-[1] https://patchwork.kernel.org/patch/3787671/
+Move the !ctlr->num_chipselect after spi_get_gpio_descs() as it was
+before the aforementioned commit. While touching this block, get rid
+of the explicit comparison with 0 and update the commenting style.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index d57ebdd616d9..247e5585af5d 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -35,7 +35,7 @@
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 5e4654032bfa..29916e446143 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2286,11 +2286,6 @@ int spi_register_controller(struct spi_controller *ctlr)
+ 	if (status)
+ 		return status;
  
- #include "vhost.h"
+-	/* even if it's just one always-selected device, there must
+-	 * be at least one chipselect
+-	 */
+-	if (ctlr->num_chipselect == 0)
+-		return -EINVAL;
+ 	if (ctlr->bus_num >= 0) {
+ 		/* devices with a fixed bus num must check-in with the num */
+ 		mutex_lock(&board_lock);
+@@ -2361,6 +2356,13 @@ int spi_register_controller(struct spi_controller *ctlr)
+ 		}
+ 	}
  
--static int experimental_zcopytx = 1;
-+static int experimental_zcopytx = 0;
- module_param(experimental_zcopytx, int, 0444);
- MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
- 		                       " 1 -Enable; 0 - Disable");
++	/*
++	 * Even if it's just one always-selected device, there must
++	 * be at least one chipselect.
++	 */
++	if (!ctlr->num_chipselect)
++		return -EINVAL;
++
+ 	status = device_add(&ctlr->dev);
+ 	if (status < 0) {
+ 		/* free bus id */
 -- 
 2.20.1
 
