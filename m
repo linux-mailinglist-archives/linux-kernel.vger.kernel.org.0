@@ -2,53 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA1A69B99
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AAA69BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbfGOTqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:46:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48688 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbfGOTqh (ORCPT
+        id S1732204AbfGOTrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:47:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55855 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730683AbfGOTrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:46:37 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hn6vj-0005QV-5x; Mon, 15 Jul 2019 21:46:35 +0200
-Date:   Mon, 15 Jul 2019 21:46:33 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andrew Lutomirski <luto@kernel.org>
-Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop
- targets
-In-Reply-To: <20190715193938.GG32439@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1907152146010.1767@nanos.tec.linutronix.de>
-References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com> <8736j7gsza.fsf@linux.intel.com> <alpine.DEB.2.21.1907152033020.1767@nanos.tec.linutronix.de> <20190715193938.GG32439@tassilo.jf.intel.com>
+        Mon, 15 Jul 2019 15:47:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so16349180wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:47:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=oaprakcM0ZsBLgl1WvEc7yTP7kJj1QYuRyXuOP6H0s0=;
+        b=UCcm9G8ClQRhN9otlsYaHWolKg9WD7Bd8Gnz7UUuvOw8AUf3+eza2zLYq1vq938kVB
+         TCcafyovNuIiIdZfemn+yPWhI6mCqPu7GDZre892ubSvc98YV4hgWP7cB29zzJAfI9Ad
+         mXfT2nYbqpw2hIy03yXiiipTWGlZ+3ZCmphI453L4OvyGju0EIAJg9W6ToYI2JLQSgf6
+         vON8JF7AdmqTlBgdng2ZrVFtsZyHeJbGO5U4yLjqrm6dKnk41z4GOt+PmsgPddb8ulN0
+         GM1+VigBvP7C4WIG0mEbWXiukWTEC1X/jmkOiGqqBV2I+z5DyrBlVB0S9gGu/BmC1TuJ
+         4SEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=oaprakcM0ZsBLgl1WvEc7yTP7kJj1QYuRyXuOP6H0s0=;
+        b=KCGS6O1BSvq98350KFVrFnnUkIFqnfiOo6XNdm9Um0dvzHBySc4b//J5NzMrMZNQat
+         pFlXz7LNnTFhQPTZ+7chxLzMAXU2v/JsWzXJ2/hWEriIkZ3rPuIR0HXwaVHqFY3z/k7f
+         O57/IbGTTam6HxRJvWheds8WNX9HvAh31MqrUdNUQoiChoXIepGR9qWb1o/E/CaqRhpg
+         tVG7irgLSPD4AEj5qN42KhqRw7Vz//tqysepOq6psQDG0umZgk2eSwBvCsmJyfrQoSKk
+         f12NMVYgAybeb0zXEhu6YgnSDE+4jFTW0splaE6GjWnSC6Fz8qVGlyqMJWbGKNzeXYse
+         Ixjg==
+X-Gm-Message-State: APjAAAVtBwEXqcR9Ar5zcbEKqJC2O9RFR5NQIMg4SafIanlXR6dcJ2j0
+        aK+A+YDi08a1LJty+KlZE+E=
+X-Google-Smtp-Source: APXvYqycAln9pjBfy0nKk7M4yHfbZosdZAVfzy9a0t6b6joYjqdl9mv5ofnAcvjYD4jtFKDs2FTQAg==
+X-Received: by 2002:a7b:cf3a:: with SMTP id m26mr26794614wmg.6.1563220049215;
+        Mon, 15 Jul 2019 12:47:29 -0700 (PDT)
+Received: from felia ([2001:16b8:2dc5:2000:cd36:d602:4f2d:7917])
+        by smtp.gmail.com with ESMTPSA id q1sm15229393wmq.25.2019.07.15.12.47.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 12:47:28 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
+Date:   Mon, 15 Jul 2019 21:47:27 +0200 (CEST)
+X-X-Sender: lukas@felia
+To:     Thomas Gleixner <tglx@linutronix.de>
+cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <clark.williams@gmail.com>,
+        Julia Cartwright <julia@ni.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [patch 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
+In-Reply-To: <20190715150601.205143057@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1907152144010.2564@felia>
+References: <20190715150402.798499167@linutronix.de> <20190715150601.205143057@linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Jul 2019, Andi Kleen wrote:
 
-> > Right, we don't know where the PAT invocation comes from and whether they
-> > are safe to omit flushing the cache. The module load code would be one
-> > obvious candidate.
+
+On Mon, 15 Jul 2019, Thomas Gleixner wrote:
+
+> Add a new entry to the preemption menu which enables the real-time support
+> for the kernel. The choice is only enabled when an architecture supports
+> it.
 > 
-> Module load just changes the writable/executable status, right? That shouldn't
-> need to flush in any case because it doesn't change the caching attributes.
+> It selects PREEMPT as the RT features depend on it. To achieve that the
+> existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
+> well.
+> 
+> No functional change.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/Kconfig           |    3 +++
+>  kernel/Kconfig.preempt |   25 +++++++++++++++++++++++--
+>  2 files changed, 26 insertions(+), 2 deletions(-)
+> 
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -809,6 +809,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
+>  config ARCH_NO_PREEMPT
+>  	bool
+>  
+> +config ARCH_SUPPORTS_RT
+> +	bool
+> +
+>  config CPU_NO_EFFICIENT_FFS
+>  	def_bool n
+>  
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
+>  
+>  	  Select this if you are building a kernel for a desktop system.
+>  
+> -config PREEMPT
+> +config PREEMPT_LL
+>  	bool "Preemptible Kernel (Low-Latency Desktop)"
+>  	depends on !ARCH_NO_PREEMPT
+> -	select PREEMPT_COUNT
+> +	select PREEMPT
+>  	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
+>  	help
+>  	  This option reduces the latency of the kernel by making
+> @@ -55,7 +55,28 @@ config PREEMPT
+>  	  embedded system with latency requirements in the milliseconds
+>  	  range.
+>  
+> +config PREEMPT_RT
+> +	bool "Fully Preemptible Kernel (Real-Time)"
+> +	depends on EXPERT && ARCH_SUPPORTS_RT
+> +	select PREEMPT
+> +	help
+> +	  This option turns the kernel into a real-time kernel by replacing
+> +	  various locking primitives (spinlocks, rwlocks, etc) with
+> +	  preemptible priority-inheritance aware variants, enforcing
+> +	  interrupt threading and introducing mechanisms to break up long
+> +	  non-preemtible sections. This makes the kernel, except for very
 
-Ah right. We don't flush when the caching attributes are not changed.
+Here is a typo:
 
-Thanks,
+s/non-preemtible/non-preemptible/
 
-	tglx
+Nice to see this feature finally getting very close to being merged :)
+
+Lukas
+
+> +	  low level and critical code pathes (entry code, scheduler, low
+> +	  level interrupt handling) fully preemtible and brings most
+> +	  execution contexts under scheduler control.
+> +
+> +	  Select this if you are building a kernel for systems which
+> +	  require real-time guarantees.
+> +
+>  endchoice
+>  
+>  config PREEMPT_COUNT
+>         bool
+> +
+> +config PREEMPT
+> +       bool
+> +       select PREEMPT_COUNT
+> 
+> 
+> 
