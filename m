@@ -2,142 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371CA69EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71FE69EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733020AbfGOWCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 18:02:19 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36107 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732978AbfGOWCO (ORCPT
+        id S1733017AbfGOWEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 18:04:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44258 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730647AbfGOWEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 18:02:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l21so8363340pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 15:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W/N1OmGfFxQK9nmuC/X+2LE+Tf1HeTL3guKyaeoei5c=;
-        b=ckEXxsinSkMn7214o32ISQ3H5cakf16mWUrXXH3q9Jf1xGwYbbLE7b7AhzLgTej9Rb
-         5Nv9LATKXA2SN+I11BkYRbL27zSKhIMd88AskD23IHjcwPooENlckHZqv5s5Ebbn1Xbw
-         1EkiJurHIRIlYHoKkGx/nAmmViqnFZ4Wv8JJQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W/N1OmGfFxQK9nmuC/X+2LE+Tf1HeTL3guKyaeoei5c=;
-        b=imM065MWWuugE3AHHZyECquEPxDVC+BzC2dqrcZ7ASL9Okx83/ZjtYpOOqwA1U7dsL
-         a9/7qDk1iSE1Ei5UwxBreRLHzg6leS29Kei00oIFiwWxRnyLxF4LcGZhLAwOAm+JSYUF
-         wy/nDs+uSi0yXyxRguHEWCq6VtFNFwYHmKzXCk5H+Otq2XT9ng6XvWVVUgdiEo+aG/GL
-         4wyxvu2WoNpkzzpA4Dyr3Lr7hbAteqwcpIJh+c9PJGbtV+z6ZZBZ+29jXhtXlyxSFgXW
-         E9L+N7vUJIFUXmlcaHnRu0ZAn5/PwEi+DiGovTCQ4pkptcXQo8lV/iwAhex3ltGNQ7Ck
-         1oOA==
-X-Gm-Message-State: APjAAAUOgIUm/BedMrA11IUyft61HYmFvdZNrRR/QFRvrBrPeQW9KBIt
-        89RcrG0yRhJ702+UNPrmZOwrww==
-X-Google-Smtp-Source: APXvYqwjautSSRg34L2Q15aZGrHbSMMDBKwVmSRu2KDpi1SjHi5dChu3Yj+x071FmkMzReGX0JOtAg==
-X-Received: by 2002:a63:e14d:: with SMTP id h13mr29301058pgk.431.1563228134163;
-        Mon, 15 Jul 2019 15:02:14 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id q36sm16218609pgl.23.2019.07.15.15.02.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 15:02:13 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     jic23@kernel.org, bleung@chromium.org,
-        enric.balletbo@collabora.com, groeck@chromium.org,
-        fabien.lahoudere@collabora.com, dianders@chromium.org
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v5 4/4] iio: cros_ec_accel_legacy: Add support for veyron-minnie
-Date:   Mon, 15 Jul 2019 15:01:52 -0700
-Message-Id: <20190715220152.119531-5-gwendal@chromium.org>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-In-Reply-To: <20190715220152.119531-1-gwendal@chromium.org>
-References: <20190715220152.119531-1-gwendal@chromium.org>
+        Mon, 15 Jul 2019 18:04:42 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FLvQSU103955;
+        Mon, 15 Jul 2019 18:04:18 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ts0x82d26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jul 2019 18:04:18 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6FLssOH005937;
+        Mon, 15 Jul 2019 22:04:17 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03dal.us.ibm.com with ESMTP id 2tq6x72cu6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jul 2019 22:04:17 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FM4GoI50331918
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 22:04:16 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE387AE2F0;
+        Mon, 15 Jul 2019 22:04:16 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E60EDAE2C4;
+        Mon, 15 Jul 2019 22:04:06 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.238.93])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 15 Jul 2019 22:04:06 +0000 (GMT)
+References: <20190323165456-mutt-send-email-mst@kernel.org> <87a7go71hz.fsf@morokweng.localdomain> <20190520090939-mutt-send-email-mst@kernel.org> <877ea26tk8.fsf@morokweng.localdomain> <20190603211528-mutt-send-email-mst@kernel.org> <877e96qxm7.fsf@morokweng.localdomain> <20190701092212-mutt-send-email-mst@kernel.org> <87d0id9nah.fsf@morokweng.localdomain> <20190715103411-mutt-send-email-mst@kernel.org> <874l3nnist.fsf@morokweng.localdomain> <20190715163453-mutt-send-email-mst@kernel.org>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Michael Roth <mdroth@linux.vnet.ibm.com>,
+        Mike Anderson <andmike@linux.ibm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+In-reply-to: <20190715163453-mutt-send-email-mst@kernel.org>
+Date:   Mon, 15 Jul 2019 19:03:03 -0300
+Message-ID: <8736j7neg8.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907150246
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Veyron minnie embedded controller presents 2 accelerometers using an
-older interface. Add function to query the data in cros_ec_accel.
 
-Verify accelerometers on veyron-minnie are presented and working.
+Michael S. Tsirkin <mst@redhat.com> writes:
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/iio/accel/cros_ec_accel_legacy.c | 40 ++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+> On Mon, Jul 15, 2019 at 05:29:06PM -0300, Thiago Jung Bauermann wrote:
+>>
+>> Michael S. Tsirkin <mst@redhat.com> writes:
+>>
+>> > On Sun, Jul 14, 2019 at 02:51:18AM -0300, Thiago Jung Bauermann wrote:
+>> >>
+>> >>
+>> >> Michael S. Tsirkin <mst@redhat.com> writes:
+>> >>
+>> >> > So this is what I would call this option:
+>> >> >
+>> >> > VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS
+>> >> >
+>> >> > and the explanation should state that all device
+>> >> > addresses are translated by the platform to identical
+>> >> > addresses.
+>> >> >
+>> >> > In fact this option then becomes more, not less restrictive
+>> >> > than VIRTIO_F_ACCESS_PLATFORM - it's a promise
+>> >> > by guest to only create identity mappings,
+>> >> > and only before driver_ok is set.
+>> >> > This option then would always be negotiated together with
+>> >> > VIRTIO_F_ACCESS_PLATFORM.
+>> >> >
+>> >> > Host then must verify that
+>> >> > 1. full 1:1 mappings are created before driver_ok
+>> >> >     or can we make sure this happens before features_ok?
+>> >> >     that would be ideal as we could require that features_ok fails
+>> >> > 2. mappings are not modified between driver_ok and reset
+>> >> >     i guess attempts to change them will fail -
+>> >> >     possibly by causing a guest crash
+>> >> >     or some other kind of platform-specific error
+>> >>
+>> >> I think VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS is good, but requiring
+>> >> it to be accompanied by ACCESS_PLATFORM can be a problem. One reason is
+>> >> SLOF as I mentioned above, another is that we would be requiring all
+>> >> guests running on the machine (secure guests or not, since we would use
+>> >> the same configuration for all guests) to support it. But
+>> >> ACCESS_PLATFORM is relatively recent so it's a bit early for that. For
+>> >> instance, Ubuntu 16.04 LTS (which is still supported) doesn't know about
+>> >> it and wouldn't be able to use the device.
+>> >
+>> > OK and your target is to enable use with kernel drivers within
+>> > guests, right?
+>>
+>> Right.
+>>
+>> > My question is, we are defining a new flag here, I guess old guests
+>> > then do not set it. How does it help old guests? Or maybe it's
+>> > not designed to ...
+>>
+>> Indeed. The idea is that QEMU can offer the flag, old guests can reject
+>> it (or even new guests can reject it, if they decide not to convert into
+>> secure VMs) and the feature negotiation will succeed with the flag
+>> unset.
+>
+> OK. And then what does QEMU do? Assume guest is not encrypted I guess?
 
-diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-index 4d77472e2f72..545e23f0c033 100644
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -5,7 +5,7 @@
-  * Copyright 2017 Google, Inc
-  *
-  * This driver uses the memory mapper cros-ec interface to communicate
-- * with the Chrome OS EC about accelerometer data.
-+ * with the Chrome OS EC about accelerometer data or older commands.
-  * Accelerometer access is presented through iio sysfs.
-  */
- 
-@@ -33,6 +33,39 @@
-  */
- #define ACCEL_LEGACY_NSCALE 9586168
- 
-+static int cros_ec_accel_legacy_read_cmd(struct iio_dev *indio_dev,
-+				  unsigned long scan_mask, s16 *data)
-+{
-+	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-+	int ret;
-+	unsigned int i;
-+	u8 sensor_num;
-+
-+	/*
-+	 * Read all sensor data through a command.
-+	 * Save sensor_num, it is assumed to stay.
-+	 */
-+	sensor_num = st->param.info.sensor_num;
-+	st->param.cmd = MOTIONSENSE_CMD_DUMP;
-+	st->param.dump.max_sensor_count = CROS_EC_SENSOR_LEGACY_NUM;
-+	ret = cros_ec_motion_send_host_cmd(st,
-+			sizeof(st->resp->dump) + CROS_EC_SENSOR_LEGACY_NUM *
-+			sizeof(struct ec_response_motion_sensor_data));
-+	st->param.info.sensor_num = sensor_num;
-+	if (ret != 0) {
-+		dev_warn(&indio_dev->dev, "Unable to read sensor data\n");
-+		return ret;
-+	}
-+
-+	for_each_set_bit(i, &scan_mask, indio_dev->masklength) {
-+		*data = st->resp->dump.sensor[sensor_num].data[i] *
-+			st->sign[i];
-+		data++;
-+	}
-+
-+	return 0;
-+}
-+
- static int cros_ec_accel_legacy_read(struct iio_dev *indio_dev,
- 				     struct iio_chan_spec const *chan,
- 				     int *val, int *val2, long mask)
-@@ -149,7 +182,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
- 	indio_dev->info = &cros_ec_accel_legacy_info;
- 	state = iio_priv(indio_dev);
- 
--	state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-+	if (state->ec->cmd_readmem != NULL)
-+		state->read_ec_sensors_data = cros_ec_sensors_read_lpc;
-+	else
-+		state->read_ec_sensors_data = cros_ec_accel_legacy_read_cmd;
- 
- 	indio_dev->channels = cros_ec_accel_legacy_channels;
- 	indio_dev->num_channels = ARRAY_SIZE(cros_ec_accel_legacy_channels);
--- 
-2.22.0.510.g264f2c817a-goog
+There's nothing different that QEMU needs to do, with or without the
+flag. the perspective of the host, a secure guest and a regular guest
+work the same way with respect to virtio.
 
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
