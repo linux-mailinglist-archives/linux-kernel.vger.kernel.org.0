@@ -2,86 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB761686C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AE2686CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbfGOKA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 06:00:29 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41516 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729257AbfGOKA3 (ORCPT
+        id S1729750AbfGOKBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 06:01:48 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37836 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729591AbfGOKBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 06:00:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q4so7464466pgj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 03:00:29 -0700 (PDT)
+        Mon, 15 Jul 2019 06:01:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id q22so33111724iog.4
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 03:01:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=5aSldgrUNSK5XytyDzCE2r6IPKJFqEPbYobzHqmxrgk=;
-        b=i86wsPp+N/DWz7EWLy/hkz5gmE1W4UcwoI41T3KH2E2Eduip2LoEakJk2Euy51rqBh
-         VcUrlKtSjyMOa5didb9kkNmMPQedYna2CXJILoC6U2QmO/cJhOgda2uuqaO2DvRyQjWX
-         K3XeZeq/tCKRD/kQf/bloKELfHr8dcbuYAb32ur5F8HhGF1SXs0Hi0MgLF5XsgCVWcSL
-         uKfRbztPVzufskCkwhGjpN3VIVdav6jc/HCizJpR0QKdsgwSanKpHDYd/p8/M4Q7mNOE
-         z43phdtSQndFFgwt5646aW5jw/+WaMVKdjtWI8aAJ9sx51pxmW+EFFKB1cBLk0nXoTxT
-         okdg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r72g4AHaLYsLu+ECpLbOshR1f0RyFtH3KsKDeo19VX4=;
+        b=qenKTZRrwpA3m+Rvbzx7aJwKJ3c6QULx3EbIlYCuUP6y9OJLFfkELnN0GQ/XE2odVL
+         yIB1XSFQnovfhkxpEqaRycjKX3caAYS2FtuVD0eC3YW+pBSrpR/vg8NFSVCrob/4sDGj
+         LPWYOFOa7kC0B21jLpmaGjoKHqFxCK/v2wJUrYC1pqHugJSepfhUAcl//vuILlwm5QPs
+         nSJSnlUEJq1TIeDGRQf9NTu9jzN2mWakvrHwjiZEIUN6bKkJX71XJKOgOG9neBPMM0MR
+         14W9NSRp6O54zRfMj+LUNzA9jNTKwD4Uh4bEP0ZUzkFyhvTDcW4gooJN0X5JFPvNt5Ht
+         PNQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5aSldgrUNSK5XytyDzCE2r6IPKJFqEPbYobzHqmxrgk=;
-        b=bXxv8cmDP34iuotVPeC8b1yki7DnekCPIEYCaxydTysz96mKd9FtyljvPVITfjeV3f
-         JTP1UVtaBB7FCkrl/PcEnAdPLdrzgk3nlNPr750OuEk59a1wEw+w97xcdHhyuo23CXnD
-         ets65oxjVaVyolI7sDBEhkzfm0rrBqeGqus4Tjy7w+hj5wVSrIbWEOBGugXnHU3HaLig
-         LC7+w8yP9JVnmAULc2RaW6rTmqtNlwataZXT/myjCszzZdQitXi4uFk8r6cnncGSPHxV
-         /4O2RBPlnJdOv31Od+Pa2a3at1Fm2ZrJ0sM7CZNuCJuwpfOKo9SrTtDlEmrCG1AMee8V
-         tigQ==
-X-Gm-Message-State: APjAAAWq92SQFnPRG5UU3AJ3sC77PA2iwtQpKHZRxdJttax7YunKNKFI
-        cSHBvXJUPb4Ra0LzVXQqSmDZOQ==
-X-Google-Smtp-Source: APXvYqyjjljxwukQaF3urZseJzTy1AsnzMnYzJjfnyDdNrG7pSlanlxu4i8SlqG9v66BGSqdS8sWQQ==
-X-Received: by 2002:a17:90a:3086:: with SMTP id h6mr28866035pjb.14.1563184828689;
-        Mon, 15 Jul 2019 03:00:28 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id e13sm21971842pff.45.2019.07.15.03.00.25
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Jul 2019 03:00:28 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com
-Cc:     baolin.wang@linaro.org, vincent.guittot@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: host: sdhci-sprd: Fix the missing pm_runtime_put_noidle()
-Date:   Mon, 15 Jul 2019 18:00:14 +0800
-Message-Id: <7bff392d44bf32e9e762ef6e3b53df0d95c22c91.1563184567.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r72g4AHaLYsLu+ECpLbOshR1f0RyFtH3KsKDeo19VX4=;
+        b=FNJtM0u2NaFx1E8SExst1jsTjrQTv9rQoElDYQ4wCXgpobNuaTUzaYERpXStoEDVo9
+         iIjdJpn/FGaNGGPAAmHxxOihXsLvmcbQ/8SpLvLe8OOSffXvbSrjVSuTdPGii0HPwq4S
+         h7ZPNGhu8rk0TwmYMaVmYc2SoNNMLjQvz/o1nQ8AwT+tpdZuMdgzP91vqTDfCX9SjHBX
+         iyiKnq+7yt4W7rpWi4A8HYmxGHWxniI+DLyLGeAYpgDZe7tnDpEeGwhHIP8nc6uCh8SJ
+         davK5T6+mKzo1ASNyIfYg718fXbDSvSxa6IGhH9LOvSMqKvSen+R2PAxCRKseqcUTVZo
+         HDGQ==
+X-Gm-Message-State: APjAAAUORad3vh6epZqok9Zi1911L4qpekO0BbhsefdkOhbiSTIymD/R
+        HdUFoHqh2dPk4tudJ5yAHwOHFsBr4z1cry5msg==
+X-Google-Smtp-Source: APXvYqxSCDk+fzKKVONVjrymqYcqpaN4MvCEPmUU7sSzkNI6vIArrmTZCtALv27QP/IiPqc7dmvqWYaI0ShuCCiXrKw=
+X-Received: by 2002:a5d:9f07:: with SMTP id q7mr22524327iot.21.1563184907080;
+ Mon, 15 Jul 2019 03:01:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1562734889.git.joe@perches.com> <d6a9d49c9837d38816b71d783f5aed7235e8ca94.1562734889.git.joe@perches.com>
+In-Reply-To: <d6a9d49c9837d38816b71d783f5aed7235e8ca94.1562734889.git.joe@perches.com>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Mon, 15 Jul 2019 13:00:59 +0300
+Message-ID: <CAKKbWA4caPMN=h_6bxQ-s9ga+snwsBsMsT05t4vyHWYpLnSH8w@mail.gmail.com>
+Subject: Re: [PATCH 02/12] clocksource/drivers/npcm: Fix misuse of GENMASK macro
+To:     Joe Perches <joe@perches.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the SD host controller tries to probe again due to the derferred
-probe mechanism, it will always keep the SD host device as runtime
-resume state due to missing the runtime put operation in error path
-last time.
+Hi,
+I noticed that this is totaly wrong, so I will fix here.
+If you wan I will put a separate patch.
 
-Thus add the pm_runtime_put_noidle() in error path to make the PM runtime
-counter balance, which can make the SD host device's PM runtime work well.
+On Wed, Jul 10, 2019 at 8:04 AM Joe Perches <joe@perches.com> wrote:
+>
+> Arguments are supposed to be ordered high then low.
+>
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  drivers/clocksource/timer-npcm7xx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
+> index 7a9bb5532d99..8a30da7f083b 100644
+> --- a/drivers/clocksource/timer-npcm7xx.c
+> +++ b/drivers/clocksource/timer-npcm7xx.c
+> @@ -32,7 +32,7 @@
+>  #define NPCM7XX_Tx_INTEN               BIT(29)
+>  #define NPCM7XX_Tx_COUNTEN             BIT(30)
+>  #define NPCM7XX_Tx_ONESHOT             0x0
+> -#define NPCM7XX_Tx_OPER                        GENMASK(3, 27)
+> +#define NPCM7XX_Tx_OPER                        GENMASK(27, 3)
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/mmc/host/sdhci-sprd.c |    1 +
- 1 file changed, 1 insertion(+)
+It should be:
++#define NPCM7XX_Tx_OPER                        GENMASK(28, 27)
+but I need to do another change.
 
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index 6ee340a..603a5d9 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -624,6 +624,7 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 	sdhci_cleanup_host(host);
- 
- pm_runtime_disable:
-+	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
+>  #define NPCM7XX_Tx_MIN_PRESCALE                0x1
+>  #define NPCM7XX_Tx_TDR_MASK_BITS       24
+>  #define NPCM7XX_Tx_MAX_CNT             0xFFFFFF
+> --
+> 2.15.0
+>
+
+
 -- 
-1.7.9.5
-
+Regards,
+Avi
