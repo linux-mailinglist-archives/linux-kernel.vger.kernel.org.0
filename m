@@ -2,111 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCE85686D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 292FD686DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 12:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfGOKGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 06:06:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35469 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbfGOKGj (ORCPT
+        id S1729753AbfGOKLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 06:11:04 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:38479 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729428AbfGOKLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 06:06:39 -0400
-Received: by mail-io1-f68.google.com with SMTP id m24so33182529ioo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 03:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=7BCsDJdR5KYaMX3UQplQ6QtuJPUxTxnY/Qc6vVf7TgQ=;
-        b=GYy92tES6qIGd/FIHRU6kRF7gZ31p54OfCxRbJbYisMyC/+rU33OJmZIF2+efTUmQA
-         GHp9oJGW0ZvI+rDBtptxV+fhyWMBj8rDCYHXlGOH5Q1i9ohJfLEs5Rxg+TNq8MR5fUqL
-         Zm5Z03pX2eIT8pG0HmDf6gvujkAK7Z8YwCm9QsiXxmwsnps2gOc7KhM8VDvPnYQrvj9Z
-         +DEDygP/VQtYtkycxkPHBjbDOjuK8DbUHf2Yy85pghaRqGvCzUOqzycLGo4Kgy+nu+tT
-         aWOGUXSDvF3EVXr8kp407JlZhQzWOKoaG3Hm2Th2ThpVRed+QFUEAHvAKSgXvCvbI0Bq
-         YMvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=7BCsDJdR5KYaMX3UQplQ6QtuJPUxTxnY/Qc6vVf7TgQ=;
-        b=HtK+dZXMNBgY4pivr/XAnaqJldaP/ao+sLiiD4B9RV3gx780l2JEf/RfXzSy9VChNr
-         mcw56LT8CqhGKpuK23Adgrh8ou0EcziahyCin2C5uXSQtIaUiCgymvB6t0Bvyt9BhpMq
-         +OCYsYRSi2sRM+HN0aOs/6Eiz+Oapt9BvR1m3aNcs/RmKtArXLLfkvMH86+B4muZjpQn
-         FO3kEbHL17+JKCix3PKFlkwJY6wjFW6fiutb0rsLgeWUL+WQqyL8K2yJYMURgxy62m50
-         ktu2HjQcnKegj0sX7xJphT8GjpTsO1MWvSqhEUUSHK1Lz1cxgK862n9EVNVNC8ljaeu0
-         ThmQ==
-X-Gm-Message-State: APjAAAXDFsi+HNno9ArSGMpbFiumUjecV/uyUiD3PTm1OpUl1xkQm/1j
-        gjlrEyYzcsMO/18qD9ic2IQphoAktFvccwhdlw==
-X-Google-Smtp-Source: APXvYqzLyQe68of5s4q1xFU+Vjpm9l+XKtN5xcapebvBPyqO7sHkGHN5DoefuGT/Cx93PuqqDhC13MKJ47cNQrcCHU8=
-X-Received: by 2002:a5d:96cc:: with SMTP id r12mr13141421iol.99.1563185198579;
- Mon, 15 Jul 2019 03:06:38 -0700 (PDT)
+        Mon, 15 Jul 2019 06:11:04 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 06:11:02 EDT
+Received: from localhost.localdomain (10.28.8.29) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 15 Jul 2019
+ 17:56:28 +0800
+From:   chunguo feng <chunguo.feng@amlogic.com>
+To:     <lgirdwood@gmail.com>
+CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <RyanS.Lee@maximintegrated.com>, <bleung@chromium.org>,
+        <pierre-louis.bossart@linux.intel.com>, <grundler@chromium.org>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <chunguo.feng@amlogic.com>
+Subject: [PATCH] ASoC: max98383: fix i2c probe failure
+Date:   Mon, 15 Jul 2019 17:55:56 +0800
+Message-ID: <20190715095556.1614-1-chunguo.feng@amlogic.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-From:   Avi Fishman <avifishman70@gmail.com>
-Date:   Mon, 15 Jul 2019 13:05:51 +0300
-Message-ID: <CAKKbWA6S7KotAFtLO=ow=XYnLL2Ny5Mz2kcgM1cs+j=5mHQNmw@mail.gmail.com>
-Subject: [PATCH] clocksource/drivers/npcm: fix GENMASK and timer operation
-To:     Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.29]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NPCM7XX_Tx_OPER GENMASK was wrong,
-npcm7xx_timer_oneshot() did wrong calculation
+From: fengchunguo <chunguo.feng@amlogic.com>
 
-Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+Added reset_gpio configuration for i2c probe successfully.
+If not,i2c address can't be found rightly.
+
+Error information:
+max98373 3-0031: Failed to read: 0x21FF
+
+Fixed:
+[3.761299@3] max98373 3-0031: MAX98373 revisionID: 0x43
+[3.828911@3] asoc-aml-card auge_sound: max98373-aif1 <-> TDM-B mapping ok
+
+Signed-off-by: fengchunguo <chunguo.feng@amlogic.com>
 ---
- drivers/clocksource/timer-npcm7xx.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ sound/soc/codecs/max98373.c | 34 ++++++++++++++++++++++++++++++----
+ sound/soc/codecs/max98373.h |  1 +
+ 2 files changed, 31 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/timer-npcm7xx.c
-b/drivers/clocksource/timer-npcm7xx.c
-index 8a30da7f083b..9780ffd8010e 100644
---- a/drivers/clocksource/timer-npcm7xx.c
-+++ b/drivers/clocksource/timer-npcm7xx.c
-@@ -32,7 +32,7 @@
- #define NPCM7XX_Tx_INTEN               BIT(29)
- #define NPCM7XX_Tx_COUNTEN             BIT(30)
- #define NPCM7XX_Tx_ONESHOT             0x0
--#define NPCM7XX_Tx_OPER                        GENMASK(27, 3)
-+#define NPCM7XX_Tx_OPER                        GENMASK(28, 27)
- #define NPCM7XX_Tx_MIN_PRESCALE                0x1
- #define NPCM7XX_Tx_TDR_MASK_BITS       24
- #define NPCM7XX_Tx_MAX_CNT             0xFFFFFF
-@@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct
-clock_event_device *evt)
-
-        val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-        val &= ~NPCM7XX_Tx_OPER;
--
--       val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-        val |= NPCM7XX_START_ONESHOT_Tx;
-        writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-
-@@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct
-clock_event_device *evt)
-        struct timer_of *to = to_timer_of(evt);
-        u32 val;
-
-+       writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
+diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
+index 528695cd6a1c..9a1eb7222357 100644
+--- a/sound/soc/codecs/max98373.c
++++ b/sound/soc/codecs/max98373.c
+@@ -12,6 +12,7 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <linux/gpio.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <sound/tlv.h>
+ #include "max98373.h"
+@@ -895,6 +896,17 @@ static void max98373_slot_config(struct i2c_client *i2c,
+ 	else
+ 		max98373->i_slot = 1;
+ 
++	max98373->reset_gpio = of_get_named_gpio(dev->of_node,
++						"maxim,reset-gpio", 0);
++	if (!gpio_is_valid(max98373->reset_gpio)) {
++		dev_err(dev, "Looking up %s property in node %s failed %d\n",
++			"maxim,reset-gpio", dev->of_node->full_name,
++			max98373->reset_gpio);
++	} else {
++		dev_dbg(dev, "maxim,reset-gpio=%d",
++			max98373->reset_gpio);
++	}
 +
-        val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-        val &= ~NPCM7XX_Tx_OPER;
+ 	if (!device_property_read_u32(dev, "maxim,spkfb-slot-no", &value))
+ 		max98373->spkfb_slot = value & 0xF;
+ 	else
+@@ -923,7 +935,6 @@ static int max98373_i2c_probe(struct i2c_client *i2c,
+ 	else
+ 		max98373->interleave_mode = false;
+ 
 -
--       writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
-        val |= NPCM7XX_START_PERIODIC_Tx;
+ 	/* regmap initialization */
+ 	max98373->regmap
+ 		= devm_regmap_init_i2c(i2c, &max98373_regmap);
+@@ -934,6 +945,24 @@ static int max98373_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
++	/* voltage/current slot & gpio configuration */
++	max98373_slot_config(i2c, max98373);
++
++	/* Power on device */
++	if (gpio_is_valid(max98373->reset_gpio)) {
++		ret = gpio_request(max98373->reset_gpio, "MAX98373_RESET");
++		if (ret) {
++			dev_err(&i2c->dev, "%s: Failed to request gpio %d\n",
++				__func__, max98373->reset_gpio);
++			gpio_free(max98373->reset_gpio);
++			return -EINVAL;
++		}
++		gpio_direction_output(max98373->reset_gpio, 0);
++		msleep(50);
++		gpio_direction_output(max98373->reset_gpio, 1);
++		msleep(20);
++	}
++
+ 	/* Check Revision ID */
+ 	ret = regmap_read(max98373->regmap,
+ 		MAX98373_R21FF_REV_ID, &reg);
+@@ -944,9 +973,6 @@ static int max98373_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 	dev_info(&i2c->dev, "MAX98373 revisionID: 0x%02X\n", reg);
+ 
+-	/* voltage/current slot configuration */
+-	max98373_slot_config(i2c, max98373);
 -
-        writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-
-        return 0;
-
+ 	/* codec registeration */
+ 	ret = devm_snd_soc_register_component(&i2c->dev, &soc_codec_dev_max98373,
+ 		max98373_dai, ARRAY_SIZE(max98373_dai));
+diff --git a/sound/soc/codecs/max98373.h b/sound/soc/codecs/max98373.h
+index f6a37aa02f26..533d2053f608 100644
+--- a/sound/soc/codecs/max98373.h
++++ b/sound/soc/codecs/max98373.h
+@@ -203,6 +203,7 @@
+ 
+ struct max98373_priv {
+ 	struct regmap *regmap;
++	int reset_gpio;
+ 	unsigned int v_slot;
+ 	unsigned int i_slot;
+ 	unsigned int spkfb_slot;
 -- 
 2.18.0
+
