@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF18F681CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D67D9681CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbfGOAaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 20:30:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52214 "EHLO mail.kernel.org"
+        id S1729105AbfGOAaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 20:30:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbfGOAaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 20:30:16 -0400
-Subject: Re: [GIT PULL] platform-drivers-x86 for 5.3-1
+        id S1728900AbfGOAaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 20:30:17 -0400
+Subject: Re: [GIT PULL] UML changes for 5.3-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563150616;
-        bh=HGZkToVBMiH0lWom0UqDWMRfoSCaV68CgN12j/lo6EE=;
+        s=default; t=1563150617;
+        bh=HZoYn2+uheIa1RwUTP6rzrmJiKVQiN4EHyhGCQR83dc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=x5JkK2dZ6wVyg+/kSWTjhXhfxft4bfeqi0NtvKf2ZQQZiX3VsUGT9OScJgPTU+6WA
-         rhJBikuJD3uHTLVs9qwvdNieNfj9A4fByGgxkwetm/ylwoKGH7nduCmpoecmkJ1O3G
-         9p38JU9Bfoh+p3qtUV47OoMhACBg9jj36ytiL7fc=
+        b=HHCZL7+NmmFjAizwm0Tqe2nxlLviaVBeHdB1y3dRnjTQCnxbLjNmPyR8ttLibHJpo
+         7DECiPIjIScUhbGtbw9F4z3yIt4rRfAVxdGpT7jULPhTBmi3hAjJlFcvxNUutBmden
+         MSzgZrc5yzfOWoKPidVF6EkbSZh5Q4qFPto87I1c=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190714145337.GA15206@smile.fi.intel.com>
-References: <20190714145337.GA15206@smile.fi.intel.com>
+In-Reply-To: <1979519421.38685.1563130920671.JavaMail.zimbra@nod.at>
+References: <1979519421.38685.1563130920671.JavaMail.zimbra@nod.at>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190714145337.GA15206@smile.fi.intel.com>
-X-PR-Tracked-Remote: git://git.infradead.org/linux-platform-drivers-x86.git
- tags/platform-drivers-x86-v5.3-1
-X-PR-Tracked-Commit-Id: 7d67c8ac25fbc66ee254aa3e33329d1c9bc152ce
+X-PR-Tracked-Message-Id: <1979519421.38685.1563130920671.JavaMail.zimbra@nod.at>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
+ tags/for-linus-5.3-rc1
+X-PR-Tracked-Commit-Id: b482e48d29f1461fd0d059a17f32bcfa274127b3
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 55167453111d3a1e600e29ba6c8e63906bb4821b
-Message-Id: <156315061624.32091.17161337811621093872.pr-tracker-bot@kernel.org>
-Date:   Mon, 15 Jul 2019 00:30:16 +0000
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
+X-PR-Merge-Commit-Id: f2772a0e4833d1af1901b6f1a38136fb71d1350c
+Message-Id: <156315061715.32091.3262692367550162371.pr-tracker-bot@kernel.org>
+Date:   Mon, 15 Jul 2019 00:30:17 +0000
+To:     Richard Weinberger <richard@nod.at>
+Cc:     torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 14 Jul 2019 17:53:37 +0300:
+The pull request you sent on Sun, 14 Jul 2019 21:02:00 +0200 (CEST):
 
-> git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.3-1
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git tags/for-linus-5.3-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/55167453111d3a1e600e29ba6c8e63906bb4821b
+https://git.kernel.org/torvalds/c/f2772a0e4833d1af1901b6f1a38136fb71d1350c
 
 Thank you!
 
