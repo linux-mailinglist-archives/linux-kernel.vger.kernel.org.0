@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 789E46962F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 326BD69626
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388698AbfGOOJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:09:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        id S2388851AbfGOOK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:10:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388686AbfGOOJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:09:19 -0400
+        id S1731744AbfGOOKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:10:18 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AE11206B8;
-        Mon, 15 Jul 2019 14:09:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DC572081C;
+        Mon, 15 Jul 2019 14:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199758;
-        bh=xi/noBMkSrMPFD7U27sGGXsfHDXH9x0DMQC/i3sJnoA=;
+        s=default; t=1563199817;
+        bh=5/M9/vcs/yaJ+rSk97Wt73wlP2NREFP4DiFcpbDHYkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yGOBmFQAD5iSNFdJx7hAFVRggyQqf67TjB8xJHs/VS++2LqasgN85z5Mznw+WJt3h
-         GMyEwcMaInSUWzhfdjI5OlQFeddHrTugSEVKMXrh3b2uLLTl5knvxo4QrQynEndazP
-         NLu8Ci61OUMMpPALA8CoZeVoMJSA1yw42rKgn/ak=
+        b=uoUQOCOOMdvS1zZD/UftOGkVUDtSn8W5ZM4r59iw83mCI4NUS7C2QDiJcyG5vFX8T
+         /jihCm5vDsBwZcReK1ZmSenDz76atGVwSRcU/K5I0PdHeBsaWaFQELNEWewv8f2D5H
+         ClXd130EpAjGOv7bzJhQipTB5J7XvIBZLyz+LfNg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Jilong Kou <koujilong@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miao Xie <miaoxie@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 098/219] sched/core: Add __sched tag for io_schedule()
-Date:   Mon, 15 Jul 2019 10:01:39 -0400
-Message-Id: <20190715140341.6443-98-sashal@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Furquan Shaikh <furquan@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
+        devel@acpica.org
+Subject: [PATCH AUTOSEL 5.1 114/219] ACPICA: Clear status of GPEs on first direct enable
+Date:   Mon, 15 Jul 2019 10:01:55 -0400
+Message-Id: <20190715140341.6443-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -49,46 +45,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit e3b929b0a184edb35531153c5afcaebb09014f9d ]
+[ Upstream commit 44758bafa53602f2581a6857bb20b55d4d8ad5b2 ]
 
-Non-inline io_schedule() was introduced in:
+ACPI GPEs (other than the EC one) can be enabled in two situations.
+First, the GPEs with existing _Lxx and _Exx methods are enabled
+implicitly by ACPICA during system initialization.  Second, the
+GPEs without these methods (like GPEs listed by _PRW objects for
+wakeup devices) need to be enabled directly by the code that is
+going to use them (e.g. ACPI power management or device drivers).
 
-  commit 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
+In the former case, if the status of a given GPE is set to start
+with, its handler method (either _Lxx or _Exx) needs to be invoked
+to take care of the events (possibly) signaled before the GPE was
+enabled.  In the latter case, however, the first caller of
+acpi_enable_gpe() for a given GPE should not be expected to care
+about any events that might be signaled through it earlier.  In
+that case, it is better to clear the status of the GPE before
+enabling it, to prevent stale events from triggering unwanted
+actions (like spurious system resume, for example).
 
-Keep in line with io_schedule_timeout(), otherwise "/proc/<pid>/wchan" will
-report io_schedule() rather than its callers when waiting for IO.
+For this reason, modify acpi_ev_add_gpe_reference() to take an
+additional boolean argument indicating whether or not the GPE
+status needs to be cleared when its reference counter changes from
+zero to one and make acpi_enable_gpe() pass TRUE to it through
+that new argument.
 
-Reported-by: Jilong Kou <koujilong@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miao Xie <miaoxie@huawei.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
-Link: https://lkml.kernel.org/r/20190603091338.2695-1-gaoxiang25@huawei.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 18996f2db918 ("ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume")
+Reported-by: Furquan Shaikh <furquan@google.com>
+Tested-by: Furquan Shaikh <furquan@google.com>
+Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpica/acevents.h | 3 ++-
+ drivers/acpi/acpica/evgpe.c    | 8 +++++++-
+ drivers/acpi/acpica/evgpeblk.c | 2 +-
+ drivers/acpi/acpica/evxface.c  | 2 +-
+ drivers/acpi/acpica/evxfgpe.c  | 2 +-
+ 5 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a75ad50b5e2f..242233490a49 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5175,7 +5175,7 @@ long __sched io_schedule_timeout(long timeout)
- }
- EXPORT_SYMBOL(io_schedule_timeout);
+diff --git a/drivers/acpi/acpica/acevents.h b/drivers/acpi/acpica/acevents.h
+index 831660179662..c8652f91054e 100644
+--- a/drivers/acpi/acpica/acevents.h
++++ b/drivers/acpi/acpica/acevents.h
+@@ -69,7 +69,8 @@ acpi_status
+ acpi_ev_mask_gpe(struct acpi_gpe_event_info *gpe_event_info, u8 is_masked);
  
--void io_schedule(void)
-+void __sched io_schedule(void)
+ acpi_status
+-acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info);
++acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info,
++			  u8 clear_on_enable);
+ 
+ acpi_status
+ acpi_ev_remove_gpe_reference(struct acpi_gpe_event_info *gpe_event_info);
+diff --git a/drivers/acpi/acpica/evgpe.c b/drivers/acpi/acpica/evgpe.c
+index 62d3aa74277b..344feba29063 100644
+--- a/drivers/acpi/acpica/evgpe.c
++++ b/drivers/acpi/acpica/evgpe.c
+@@ -146,6 +146,7 @@ acpi_ev_mask_gpe(struct acpi_gpe_event_info *gpe_event_info, u8 is_masked)
+  * FUNCTION:    acpi_ev_add_gpe_reference
+  *
+  * PARAMETERS:  gpe_event_info          - Add a reference to this GPE
++ *              clear_on_enable         - Clear GPE status before enabling it
+  *
+  * RETURN:      Status
+  *
+@@ -155,7 +156,8 @@ acpi_ev_mask_gpe(struct acpi_gpe_event_info *gpe_event_info, u8 is_masked)
+  ******************************************************************************/
+ 
+ acpi_status
+-acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info)
++acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info,
++			  u8 clear_on_enable)
  {
- 	int token;
+ 	acpi_status status = AE_OK;
+ 
+@@ -170,6 +172,10 @@ acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info)
+ 
+ 		/* Enable on first reference */
+ 
++		if (clear_on_enable) {
++			(void)acpi_hw_clear_gpe(gpe_event_info);
++		}
++
+ 		status = acpi_ev_update_gpe_enable_mask(gpe_event_info);
+ 		if (ACPI_SUCCESS(status)) {
+ 			status = acpi_ev_enable_gpe(gpe_event_info);
+diff --git a/drivers/acpi/acpica/evgpeblk.c b/drivers/acpi/acpica/evgpeblk.c
+index 328d1d6123ad..fb15e9e2373b 100644
+--- a/drivers/acpi/acpica/evgpeblk.c
++++ b/drivers/acpi/acpica/evgpeblk.c
+@@ -453,7 +453,7 @@ acpi_ev_initialize_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 				continue;
+ 			}
+ 
+-			status = acpi_ev_add_gpe_reference(gpe_event_info);
++			status = acpi_ev_add_gpe_reference(gpe_event_info, FALSE);
+ 			if (ACPI_FAILURE(status)) {
+ 				ACPI_EXCEPTION((AE_INFO, status,
+ 					"Could not enable GPE 0x%02X",
+diff --git a/drivers/acpi/acpica/evxface.c b/drivers/acpi/acpica/evxface.c
+index 3df00eb6621b..279ef0557aa3 100644
+--- a/drivers/acpi/acpica/evxface.c
++++ b/drivers/acpi/acpica/evxface.c
+@@ -971,7 +971,7 @@ acpi_remove_gpe_handler(acpi_handle gpe_device,
+ 	      ACPI_GPE_DISPATCH_METHOD) ||
+ 	     (ACPI_GPE_DISPATCH_TYPE(handler->original_flags) ==
+ 	      ACPI_GPE_DISPATCH_NOTIFY)) && handler->originally_enabled) {
+-		(void)acpi_ev_add_gpe_reference(gpe_event_info);
++		(void)acpi_ev_add_gpe_reference(gpe_event_info, FALSE);
+ 		if (ACPI_GPE_IS_POLLING_NEEDED(gpe_event_info)) {
+ 
+ 			/* Poll edge triggered GPEs to handle existing events */
+diff --git a/drivers/acpi/acpica/evxfgpe.c b/drivers/acpi/acpica/evxfgpe.c
+index 30a083902f52..710488ec59e9 100644
+--- a/drivers/acpi/acpica/evxfgpe.c
++++ b/drivers/acpi/acpica/evxfgpe.c
+@@ -108,7 +108,7 @@ acpi_status acpi_enable_gpe(acpi_handle gpe_device, u32 gpe_number)
+ 	if (gpe_event_info) {
+ 		if (ACPI_GPE_DISPATCH_TYPE(gpe_event_info->flags) !=
+ 		    ACPI_GPE_DISPATCH_NONE) {
+-			status = acpi_ev_add_gpe_reference(gpe_event_info);
++			status = acpi_ev_add_gpe_reference(gpe_event_info, TRUE);
+ 			if (ACPI_SUCCESS(status) &&
+ 			    ACPI_GPE_IS_POLLING_NEEDED(gpe_event_info)) {
  
 -- 
 2.20.1
