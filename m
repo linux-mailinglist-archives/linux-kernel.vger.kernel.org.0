@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD68681DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB6C681EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbfGOAho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 20:37:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40020 "EHLO mx1.redhat.com"
+        id S1729346AbfGOAip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 20:38:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46646 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbfGOAhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 20:37:35 -0400
+        id S1729093AbfGOAhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 20:37:36 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 900015AFD9;
-        Mon, 15 Jul 2019 00:37:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C791230832E3;
+        Mon, 15 Jul 2019 00:37:36 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-120-170.rdu2.redhat.com [10.10.120.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 876D45D9D2;
-        Mon, 15 Jul 2019 00:37:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BC1AD5D9D2;
+        Mon, 15 Jul 2019 00:37:35 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -27,54 +27,47 @@ Cc:     linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
         Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
         Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 07/22] x86/uaccess: Remove ELF function annotation from copy_user_handle_tail()
-Date:   Sun, 14 Jul 2019 19:37:02 -0500
-Message-Id: <6166ec9ce99e5af2721793eaf4a769aaa881e14d.1563150885.git.jpoimboe@redhat.com>
+Subject: [PATCH 08/22] x86/uaccess: Don't leak AC flag into fentry from mcsafe_handle_tail()
+Date:   Sun, 14 Jul 2019 19:37:03 -0500
+Message-Id: <8353611be174db8d510c890e081bb5e1133b73e3.1563150885.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1563150885.git.jpoimboe@redhat.com>
 References: <cover.1563150885.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 15 Jul 2019 00:37:35 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 15 Jul 2019 00:37:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After an objtool improvement, it's complaining about the CLAC in
-copy_user_handle_tail():
+After adding mcsafe_handle_tail() to the objtool uaccess safe list,
+objtool reports:
 
-  arch/x86/lib/copy_user_64.o: warning: objtool: .altinstr_replacement+0x12: redundant UACCESS disable
-  arch/x86/lib/copy_user_64.o: warning: objtool:   copy_user_handle_tail()+0x6: (alt)
-  arch/x86/lib/copy_user_64.o: warning: objtool:   copy_user_handle_tail()+0x2: (alt)
-  arch/x86/lib/copy_user_64.o: warning: objtool:   copy_user_handle_tail()+0x0: <=== (func)
+  arch/x86/lib/usercopy_64.o: warning: objtool: mcsafe_handle_tail()+0x0: call to __fentry__() with UACCESS enabled
 
-copy_user_handle_tail() is incorrectly marked as a callable function, so
-objtool is rightfully concerned about the CLAC with no corresponding
-STAC.
-
-Remove the ELF function annotation.  The copy_user_handle_tail() code
-path is already verified by objtool because it's jumped to by other
-callable asm code (which does the corresponding STAC).
+With SMAP, this function is called with AC=1, so it needs to be careful
+about which functions it calls.  Disable the ftrace entry hook, which
+can potentially pull in a lot of extra code.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- arch/x86/lib/copy_user_64.S | 2 +-
+ arch/x86/lib/usercopy_64.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
-index 378a1f70ae7d..4fe1601dbc5d 100644
---- a/arch/x86/lib/copy_user_64.S
-+++ b/arch/x86/lib/copy_user_64.S
-@@ -239,7 +239,7 @@ copy_user_handle_tail:
- 	ret
- 
- 	_ASM_EXTABLE_UA(1b, 2b)
--ENDPROC(copy_user_handle_tail)
-+END(copy_user_handle_tail)
- 
- /*
-  * copy_user_nocache - Uncached memory copy with exception handling
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index e0e006f1624e..fff28c6f73a2 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -60,7 +60,7 @@ EXPORT_SYMBOL(clear_user);
+  * but reuse __memcpy_mcsafe in case a new read error is encountered.
+  * clac() is handled in _copy_to_iter_mcsafe().
+  */
+-__visible unsigned long
++__visible notrace unsigned long
+ mcsafe_handle_tail(char *to, char *from, unsigned len)
+ {
+ 	for (; len; --len, to++, from++) {
 -- 
 2.20.1
 
