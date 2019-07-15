@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A74D69657
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 741696965C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388287AbfGOOI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:08:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58730 "EHLO mail.kernel.org"
+        id S2388534AbfGOOIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:08:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387523AbfGOOI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:08:26 -0400
+        id S2388527AbfGOOIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:08:31 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A311E2083D;
-        Mon, 15 Jul 2019 14:08:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42B832083D;
+        Mon, 15 Jul 2019 14:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199705;
-        bh=68ScEvktkTHuDCQtIpXk9OQdL+BA622ZWtuFDxAsm+o=;
+        s=default; t=1563199710;
+        bh=y67MCmEZOFF6iYrH+LgL1a56DjFrmHHGgg0RpfphSqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qfF2QWNJAVvab9vteTrkiDg/45a71rfyLg9KHcp3eqPqlobYYdYKmTsA+G1NgsoKN
-         yQtQw6w6m6ECS3iKuCDOfr1//9q1tzu8jkVYIlqnl30g+iOU4x4Ku+HgnSba1A11eH
-         uK4Y//pdyGfMq2alhwcln1EYypkWKRXcOqMqtsPE=
+        b=iIqmTNyTE/cB+yIdDWwttOn9VKgAeL5xspfFEjvCzI479dmq163tijEAnJTLPpB70
+         SulUvln+pME/ZOVzWILwbwrjdJziUY2vzPcKu7JTduerU22f5Cr3g9R5pIGqY3NHfe
+         ZxxCHKhnu4HAkho+hyvhWSKQtbhHWQy+GB01dCzc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 078/219] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
-Date:   Mon, 15 Jul 2019 10:01:19 -0400
-Message-Id: <20190715140341.6443-78-sashal@kernel.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 080/219] regmap: fix bulk writes on paged registers
+Date:   Mon, 15 Jul 2019 10:01:21 -0400
+Message-Id: <20190715140341.6443-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -46,43 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit 64ea3e9094a1f13b96c33244a3fb3a0f45690bd2 ]
+[ Upstream commit db057679de3e9e6a03c1bcd5aee09b0d25fd9f5b ]
 
-Commit 384ebe1c2849 ("gpio/omap: Add DT support to GPIO driver") added
-the register definition tables to the gpio-omap driver. Subsequently to
-that commit, commit 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx()
-checks from *_runtime_resume()") added definitions for irqstatus_raw*
-registers to the legacy OMAP4 definitions, but missed the DT
-definitions.
+On buses like SlimBus and SoundWire which does not support
+gather_writes yet in regmap, A bulk write on paged register
+would be silently ignored after programming page.
+This is because local variable 'ret' value in regmap_raw_write_impl()
+gets reset to 0 once page register is written successfully and the
+code below checks for 'ret' value to be -ENOTSUPP before linearising
+the write buffer to send to bus->write().
 
-This causes an unintentional change of behaviour for the 1.101 errata
-workaround on OMAP4 platforms. Fix this oversight.
+Fix this by resetting the 'ret' value to -ENOTSUPP in cases where
+gather_writes() is not supported or single register write is
+not possible.
 
-Fixes: 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx() checks from *_runtime_resume()")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-omap.c | 2 ++
+ drivers/base/regmap/regmap.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index fafd79438bbf..0708e50a27f0 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1728,6 +1728,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
- 	.clr_dataout =		OMAP4_GPIO_CLEARDATAOUT,
- 	.irqstatus =		OMAP4_GPIO_IRQSTATUS0,
- 	.irqstatus2 =		OMAP4_GPIO_IRQSTATUS1,
-+	.irqstatus_raw0 =	OMAP4_GPIO_IRQSTATUSRAW0,
-+	.irqstatus_raw1 =	OMAP4_GPIO_IRQSTATUSRAW1,
- 	.irqenable =		OMAP4_GPIO_IRQSTATUSSET0,
- 	.irqenable2 =		OMAP4_GPIO_IRQSTATUSSET1,
- 	.set_irqenable =	OMAP4_GPIO_IRQSTATUSSET0,
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 4f822e087def..61d1a0864dea 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1642,6 +1642,8 @@ static int _regmap_raw_write_impl(struct regmap *map, unsigned int reg,
+ 					     map->format.reg_bytes +
+ 					     map->format.pad_bytes,
+ 					     val, val_len);
++	else
++		ret = -ENOTSUPP;
+ 
+ 	/* If that didn't work fall back on linearising by hand. */
+ 	if (ret == -ENOTSUPP) {
 -- 
 2.20.1
 
