@@ -2,298 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FF969833
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01EB169836
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:17:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbfGOPQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:16:51 -0400
-Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:9642 "EHLO
-        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730221AbfGOPQu (ORCPT
+        id S1731432AbfGOPRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:17:11 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45706 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730221AbfGOPRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:16:50 -0400
-Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: l9OPAd6qskqt/fZMa6dv8Hp73Rl5OlOh7AzJZZ687tl7VWm+xCIWBW+xMMGDPUaxtR2EHfIwMj
- S9B8lKNjnBPgzm/CNYSRASVK49D1v0vczwBHy2YW7EUVrUevHGwhL69UC1EXaPqbcS+Lzk0tsa
- cN4KDMSIOerfROzuw60w1iIxo0Y5hPmmZh9GcTrNgjgzH+lCkCfS59YUjideuTAFLYYxPXoAwf
- lAZFtg64XbaJPocGk2yXFZ2W0bRqNu1OqV5WKQ6ztHIMBZT03C8AFlAajQ3TwXi44OxyUtDG5x
- fY8=
-X-SBRS: 2.7
-X-MesageID: 2967596
-X-Ironport-Server: esa2.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.63,493,1557201600"; 
-   d="scan'208";a="2967596"
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Andrew Cooper <andrew.cooper3@citrix.com>, <x86@kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Stephane Eranian <eranian@google.com>,
-        "Feng Tang" <feng.tang@intel.com>, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Pavel Machek" <pavel@ucw.cz>
-Subject: [PATCH v2] x86/paravirt: Drop {read,write}_cr8() hooks
-Date:   Mon, 15 Jul 2019 16:16:41 +0100
-Message-ID: <20190715151641.29210-1-andrew.cooper3@citrix.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 15 Jul 2019 11:17:10 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x22so11091350qtp.12;
+        Mon, 15 Jul 2019 08:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:subject:to:cc:references:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E/egqeiPmeR+wTmeoTlfpr/9l78nB77vFY1VUyDOmQo=;
+        b=fdAmHhIIQ5M5U7SJWntEaFH5x/7ZSNGV/zJLzvCc6oy4ze5UqIr+ewk8gIlu3LdeuD
+         bSVEyGeFqfynptNWDeMxR39rY9enAHf0Fv1HLodHpi15tfBmQUEXzcug2siLXm7QiiV+
+         nvoFtKO/+CJy9ikan9o/6tAq9hW4sFK4dBkAI48pIMeG2iYFU+HZnSor5brUWCEWjDSW
+         IqydetLko55QSdg+D97dxHsmuqyEdIZtiX2rG9LU3EpWaMWJpfmlcAWAVyFkW3BRMDCt
+         wYMyell5jTZlhr0A5x34LrJqIB+pLUrHN9vlFu3BF4RmKpB8O9BH0bblbyQTl1+semWS
+         Q6Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:subject:to:cc:references:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=E/egqeiPmeR+wTmeoTlfpr/9l78nB77vFY1VUyDOmQo=;
+        b=dFa5nhVHprauNC67XuYkZUsyv9Ot6zcU6BVsiegyz5AdyfXpmzvlQ2qdxwC+Xdl0t+
+         YVTYganwwziYJXgkeyMD18oxbLY8F0PNYl31awfoeMwHIN8Xoh8cbZXPpRv3vWa0R/xC
+         gLUHTYB4Q1OjxunkahfLQn3qDFkk2In4FqU3tputEAw6aLE9gYM9vmsbTO6LcTiPfiA/
+         XFrznnUnVJDEOC38TsNlkQ40951XeIKzPPgRGlU0kN7sObaCI/DF++1rdTRrb7LWDKiO
+         lHLw9GaX/EJPCHHqJTqJppblRFHw0DrGwm/GI0kgdDPKWNneBSL0D1GirIxUdFIY3E6U
+         2SyA==
+X-Gm-Message-State: APjAAAXECgRkddBdwz2IIKCVeCntbN8nZILDRhs8/Nva+Hl4DvHaQB3Z
+        l2Rg3tuT83M4FHfYHCStclc=
+X-Google-Smtp-Source: APXvYqw+Jj/zJuzoP/WabIMtvOAfiFGap4BYM3yfG3iS6kDjoZ16oLEcwXvluS9Yi+h/DsFIMYTcnQ==
+X-Received: by 2002:ac8:1106:: with SMTP id c6mr17077663qtj.332.1563203829090;
+        Mon, 15 Jul 2019 08:17:09 -0700 (PDT)
+Received: from [10.84.150.27] ([167.220.148.27])
+        by smtp.gmail.com with ESMTPSA id q17sm3683624qtl.13.2019.07.15.08.17.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 08:17:08 -0700 (PDT)
+From:   Sinan Kaya <Okaya@kernel.org>
+X-Google-Original-From: Sinan Kaya <okaya@kernel.org>
+Subject: Re: [PATCH v3 04/24] dmaengine: qcom_hidma: Remove call to memset
+ after dmam_alloc_coherent
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@infradead.org>
+References: <20190715031723.6375-1-huangfq.daxian@gmail.com>
+ <72c45b14-f0c0-9d1c-0953-eea70ce513a0@kernel.org>
+ <CABXRUiQXweOLRTpdyhx9xT_B1VBmoSoNm=_+Qr4prmz7u1QRFA@mail.gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=okaya@kernel.org; keydata=
+ mQENBFrnOrUBCADGOL0kF21B6ogpOkuYvz6bUjO7NU99PKhXx1MfK/AzK+SFgxJF7dMluoF6
+ uT47bU7zb7HqACH6itTgSSiJeSoq86jYoq5s4JOyaj0/18Hf3/YBah7AOuwk6LtV3EftQIhw
+ 9vXqCnBwP/nID6PQ685zl3vH68yzF6FVNwbDagxUz/gMiQh7scHvVCjiqkJ+qu/36JgtTYYw
+ 8lGWRcto6gr0eTF8Wd8f81wspmUHGsFdN/xPsZPKMw6/on9oOj3AidcR3P9EdLY4qQyjvcNC
+ V9cL9b5I/Ud9ghPwW4QkM7uhYqQDyh3SwgEFudc+/RsDuxjVlg9CFnGhS0nPXR89SaQZABEB
+ AAG0HVNpbmFuIEtheWEgPG9rYXlhQGtlcm5lbC5vcmc+iQFOBBMBCAA4FiEEYdOlMSE+a7/c
+ ckrQvGF4I+4LAFcFAlztcAoCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQvGF4I+4L
+ AFfidAf/VKHInxep0Z96iYkIq42432HTZUrxNzG9IWk4HN7c3vTJKv2W+b9pgvBF1SmkyQSy
+ 8SJ3Zd98CO6FOHA1FigFyZahVsme+T0GsS3/OF1kjrtMktoREr8t0rK0yKpCTYVdlkHadxmR
+ Qs5xLzW1RqKlrNigKHI2yhgpMwrpzS+67F1biT41227sqFzW9urEl/jqGJXaB6GV+SRKSHN+
+ ubWXgE1NkmfAMeyJPKojNT7ReL6eh3BNB/Xh1vQJew+AE50EP7o36UXghoUktnx6cTkge0ZS
+ qgxuhN33cCOU36pWQhPqVSlLTZQJVxuCmlaHbYWvye7bBOhmiuNKhOzb3FcgT7kBDQRa5zq1
+ AQgAyRq/7JZKOyB8wRx6fHE0nb31P75kCnL3oE+smKW/sOcIQDV3C7mZKLf472MWB1xdr4Tm
+ eXeL/wT0QHapLn5M5wWghC80YvjjdolHnlq9QlYVtvl1ocAC28y43tKJfklhHiwMNDJfdZbw
+ 9lQ2h+7nccFWASNUu9cqZOABLvJcgLnfdDpnSzOye09VVlKr3NHgRyRZa7me/oFJCxrJlKAl
+ 2hllRLt0yV08o7i14+qmvxI2EKLX9zJfJ2rGWLTVe3EJBnCsQPDzAUVYSnTtqELu2AGzvDiM
+ gatRaosnzhvvEK+kCuXuCuZlRWP7pWSHqFFuYq596RRG5hNGLbmVFZrCxQARAQABiQEfBBgB
+ CAAJBQJa5zq1AhsMAAoJELxheCPuCwBX2UYH/2kkMC4mImvoClrmcMsNGijcZHdDlz8NFfCI
+ gSb3NHkarnA7uAg8KJuaHUwBMk3kBhv2BGPLcmAknzBIehbZ284W7u3DT9o1Y5g+LDyx8RIi
+ e7pnMcC+bE2IJExCVf2p3PB1tDBBdLEYJoyFz/XpdDjZ8aVls/pIyrq+mqo5LuuhWfZzPPec
+ 9EiM2eXpJw+Rz+vKjSt1YIhg46YbdZrDM2FGrt9ve3YaM5H0lzJgq/JQPKFdbd5MB0X37Qc+
+ 2m/A9u9SFnOovA42DgXUyC2cSbIJdPWOK9PnzfXqF3sX9Aol2eLUmQuLpThJtq5EHu6FzJ7Y
+ L+s0nPaNMKwv/Xhhm6Y=
+Message-ID: <245ffd79-316c-e985-d1da-2ccea6d29636@kernel.org>
+Date:   Mon, 15 Jul 2019 11:17:07 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CABXRUiQXweOLRTpdyhx9xT_B1VBmoSoNm=_+Qr4prmz7u1QRFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a lot of infrastructure for functionality which is used
-exclusively in __{save,restore}_processor_state() on the suspend/resume
-path.
+On 7/15/2019 1:43 AM, Fuqian Huang wrote:
+> Should I rewrite the commit log? Just mention that dma_alloc_coherent
+> has already
+> zeroed the memory and not to reference the commit?
 
-cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored by
-lapic_{suspend,resume}().  Saving and restoring cr8 independently of the
-rest of the Local APIC state isn't a clever thing to be doing.
-
-Delete the suspend/resume cr8 handling, which shrinks the size of struct
-saved_context, and allows for the removal of both PVOPS.
-
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
----
-CC: x86@kernel.org
-CC: virtualization@lists.linux-foundation.org
-CC: Borislav Petkov <bp@alien8.de>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Nadav Amit <namit@vmware.com>
-CC: Stephane Eranian <eranian@google.com>
-CC: Feng Tang <feng.tang@intel.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: Pavel Machek <pavel@ucw.cz>
-
-Spotted while reviewing "x86/apic: Initialize TPR to block interrupts 16-31"
-
-https://lore.kernel.org/lkml/dc04a9f8b234d7b0956a8d2560b8945bcd9c4bf7.1563117760.git.luto@kernel.org/
-
-v2:
- * Drop saved_context.cr8 as well (Juergen)
- * Remove akataria@vmware.com from the CC list due to bounces
----
- arch/x86/include/asm/paravirt.h       | 12 ------------
- arch/x86/include/asm/paravirt_types.h |  5 -----
- arch/x86/include/asm/special_insns.h  | 24 ------------------------
- arch/x86/include/asm/suspend_64.h     |  2 +-
- arch/x86/kernel/asm-offsets_64.c      |  1 -
- arch/x86/kernel/paravirt.c            |  4 ----
- arch/x86/power/cpu.c                  |  4 ----
- arch/x86/xen/enlighten_pv.c           | 15 ---------------
- 8 files changed, 1 insertion(+), 66 deletions(-)
-
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index c25c38a05c1c..0e4a0539c353 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -139,18 +139,6 @@ static inline void __write_cr4(unsigned long x)
- 	PVOP_VCALL1(cpu.write_cr4, x);
- }
- 
--#ifdef CONFIG_X86_64
--static inline unsigned long read_cr8(void)
--{
--	return PVOP_CALL0(unsigned long, cpu.read_cr8);
--}
--
--static inline void write_cr8(unsigned long x)
--{
--	PVOP_VCALL1(cpu.write_cr8, x);
--}
--#endif
--
- static inline void arch_safe_halt(void)
- {
- 	PVOP_VCALL0(irq.safe_halt);
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 946f8f1f1efc..3c775fb5524b 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -119,11 +119,6 @@ struct pv_cpu_ops {
- 
- 	void (*write_cr4)(unsigned long);
- 
--#ifdef CONFIG_X86_64
--	unsigned long (*read_cr8)(void);
--	void (*write_cr8)(unsigned long);
--#endif
--
- 	/* Segment descriptor handling */
- 	void (*load_tr_desc)(void);
- 	void (*load_gdt)(const struct desc_ptr *);
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 219be88a59d2..6d37b8fcfc77 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -73,20 +73,6 @@ static inline unsigned long native_read_cr4(void)
- 
- void native_write_cr4(unsigned long val);
- 
--#ifdef CONFIG_X86_64
--static inline unsigned long native_read_cr8(void)
--{
--	unsigned long cr8;
--	asm volatile("movq %%cr8,%0" : "=r" (cr8));
--	return cr8;
--}
--
--static inline void native_write_cr8(unsigned long val)
--{
--	asm volatile("movq %0,%%cr8" :: "r" (val) : "memory");
--}
--#endif
--
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- static inline u32 rdpkru(void)
- {
-@@ -200,16 +186,6 @@ static inline void wbinvd(void)
- 
- #ifdef CONFIG_X86_64
- 
--static inline unsigned long read_cr8(void)
--{
--	return native_read_cr8();
--}
--
--static inline void write_cr8(unsigned long x)
--{
--	native_write_cr8(x);
--}
--
- static inline void load_gs_index(unsigned selector)
- {
- 	native_load_gs_index(selector);
-diff --git a/arch/x86/include/asm/suspend_64.h b/arch/x86/include/asm/suspend_64.h
-index a7af9f53c0cb..35bb35d28733 100644
---- a/arch/x86/include/asm/suspend_64.h
-+++ b/arch/x86/include/asm/suspend_64.h
-@@ -34,7 +34,7 @@ struct saved_context {
- 	 */
- 	unsigned long kernelmode_gs_base, usermode_gs_base, fs_base;
- 
--	unsigned long cr0, cr2, cr3, cr4, cr8;
-+	unsigned long cr0, cr2, cr3, cr4;
- 	u64 misc_enable;
- 	bool misc_enable_saved;
- 	struct saved_msrs saved_msrs;
-diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
-index d3d075226c0a..8b54d8e3a561 100644
---- a/arch/x86/kernel/asm-offsets_64.c
-+++ b/arch/x86/kernel/asm-offsets_64.c
-@@ -62,7 +62,6 @@ int main(void)
- 	ENTRY(cr2);
- 	ENTRY(cr3);
- 	ENTRY(cr4);
--	ENTRY(cr8);
- 	ENTRY(gdt_desc);
- 	BLANK();
- #undef ENTRY
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 98039d7fb998..de4d4e8a54c1 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -311,10 +311,6 @@ struct paravirt_patch_template pv_ops = {
- 	.cpu.read_cr0		= native_read_cr0,
- 	.cpu.write_cr0		= native_write_cr0,
- 	.cpu.write_cr4		= native_write_cr4,
--#ifdef CONFIG_X86_64
--	.cpu.read_cr8		= native_read_cr8,
--	.cpu.write_cr8		= native_write_cr8,
--#endif
- 	.cpu.wbinvd		= native_wbinvd,
- 	.cpu.read_msr		= native_read_msr,
- 	.cpu.write_msr		= native_write_msr,
-diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
-index 24b079e94bc2..1c58d8982728 100644
---- a/arch/x86/power/cpu.c
-+++ b/arch/x86/power/cpu.c
-@@ -122,9 +122,6 @@ static void __save_processor_state(struct saved_context *ctxt)
- 	ctxt->cr2 = read_cr2();
- 	ctxt->cr3 = __read_cr3();
- 	ctxt->cr4 = __read_cr4();
--#ifdef CONFIG_X86_64
--	ctxt->cr8 = read_cr8();
--#endif
- 	ctxt->misc_enable_saved = !rdmsrl_safe(MSR_IA32_MISC_ENABLE,
- 					       &ctxt->misc_enable);
- 	msr_save_context(ctxt);
-@@ -207,7 +204,6 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
- #else
- /* CONFIG X86_64 */
- 	wrmsrl(MSR_EFER, ctxt->efer);
--	write_cr8(ctxt->cr8);
- 	__write_cr4(ctxt->cr4);
- #endif
- 	write_cr3(ctxt->cr3);
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 4722ba2966ac..27aba18f30e8 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -877,16 +877,6 @@ static void xen_write_cr4(unsigned long cr4)
- 
- 	native_write_cr4(cr4);
- }
--#ifdef CONFIG_X86_64
--static inline unsigned long xen_read_cr8(void)
--{
--	return 0;
--}
--static inline void xen_write_cr8(unsigned long val)
--{
--	BUG_ON(val);
--}
--#endif
- 
- static u64 xen_read_msr_safe(unsigned int msr, int *err)
- {
-@@ -1022,11 +1012,6 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
- 
- 	.write_cr4 = xen_write_cr4,
- 
--#ifdef CONFIG_X86_64
--	.read_cr8 = xen_read_cr8,
--	.write_cr8 = xen_write_cr8,
--#endif
--
- 	.wbinvd = native_wbinvd,
- 
- 	.read_msr = xen_read_msr,
--- 
-2.11.0
-
+I'd like to hear from Robin Murphy that arm smmu driver follows this as
+well.
