@@ -2,60 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0A7D69186
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD6B69267
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:37:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391662AbfGOOaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:30:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391643AbfGOOaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:30:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 22189B084;
-        Mon, 15 Jul 2019 14:30:07 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     preid@electromag.com.au, nishadkamdar@gmail.com,
-        bhanusreemahesh@gmail.com, leobras.c@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH] Staging: fbtft: Fix wrong check in fbtft_write_wmem16_bus8()
-Date:   Mon, 15 Jul 2019 16:30:02 +0200
-Message-Id: <20190715143003.12819-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.22.0
+        id S2391023AbfGOOgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:36:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731009AbfGOOgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:36:35 -0400
+Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B215F217D8;
+        Mon, 15 Jul 2019 14:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563201395;
+        bh=Ye6y2k07ohqpMfkv2gPc4/NQDp7dZIEQ3bvaamJwXdE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wEulihC1b7izoPyd6N5CZp2S4xHqTYxbDJIsQ+Aalj9zSf2K3QcjhfVzPd9NKWSSr
+         bAFontdj0azjOBE4ut8euO35H1e1o/xCvoJYjdN55T+kbX68XPKjfaY6M4sCCm6WE2
+         z/S/X+Es6qVoGLIhzNS15BSVTR2fA85m4W0D/p74=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Surabhi Vishnoi <svishnoi@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 01/73] ath10k: Do not send probe response template for mesh
+Date:   Mon, 15 Jul 2019 10:35:17 -0400
+Message-Id: <20190715143629.10893-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We actually want to set the gpio pin if it's avilable, not the other way
-around.
+From: Surabhi Vishnoi <svishnoi@codeaurora.org>
 
-Fixes: c440eee1a7a1 ("Staging: fbtft: Switch to the gpio descriptor interface")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+[ Upstream commit 97354f2c432788e3163134df6bb144f4b6289d87 ]
+
+Currently mac80211 do not support probe response template for
+mesh point. When WMI_SERVICE_BEACON_OFFLOAD is enabled, host
+driver tries to configure probe response template for mesh, but
+it fails because the interface type is not NL80211_IFTYPE_AP but
+NL80211_IFTYPE_MESH_POINT.
+
+To avoid this failure, skip sending probe response template to
+firmware for mesh point.
+
+Tested HW: WCN3990/QCA6174/QCA9984
+
+Signed-off-by: Surabhi Vishnoi <svishnoi@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/fbtft/fbtft-bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/mac.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
-index 2ea814d0dca5..63c65dd67b17 100644
---- a/drivers/staging/fbtft/fbtft-bus.c
-+++ b/drivers/staging/fbtft/fbtft-bus.c
-@@ -135,7 +135,7 @@ int fbtft_write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
- 	remain = len / 2;
- 	vmem16 = (u16 *)(par->info->screen_buffer + offset);
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index fb632a454fc2..1588fe8110d0 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -1596,6 +1596,10 @@ static int ath10k_mac_setup_prb_tmpl(struct ath10k_vif *arvif)
+ 	if (arvif->vdev_type != WMI_VDEV_TYPE_AP)
+ 		return 0;
  
--	if (!par->gpio.dc)
-+	if (par->gpio.dc)
- 		gpiod_set_value(par->gpio.dc, 1);
- 
- 	/* non buffered write */
++	 /* For mesh, probe response and beacon share the same template */
++	if (ieee80211_vif_is_mesh(vif))
++		return 0;
++
+ 	prb = ieee80211_proberesp_get(hw, vif);
+ 	if (!prb) {
+ 		ath10k_warn(ar, "failed to get probe resp template from mac80211\n");
 -- 
-2.22.0
+2.20.1
 
