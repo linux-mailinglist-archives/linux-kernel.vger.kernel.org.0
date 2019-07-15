@@ -2,56 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA3F695BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F8C695D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390732AbfGOO7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:59:54 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:56733 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390634AbfGOO7t (ORCPT
+        id S2389866AbfGOPBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:01:05 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36006 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389567AbfGOPBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:59:49 -0400
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 01B4B240005;
-        Mon, 15 Jul 2019 14:56:38 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 16:56:37 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Biwen Li <biwen.li@nxp.com>
-Cc:     a.zummo@towertech.it, leoyang.li@nxp.com, robh+dt@kernel.org,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [v4,1/2] rtc/fsl: add FTM alarm driver as the wakeup source
-Message-ID: <20190715145637.GG4732@piout.net>
-References: <20190715101520.22562-1-biwen.li@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715101520.22562-1-biwen.li@nxp.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Mon, 15 Jul 2019 11:01:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id o9so34624969iom.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:01:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=9illoX/lgZgRmB149QSdUSTaY6vK5Drr6t7JdhNt6/U=;
+        b=DYrtLb7sMB46zxNRJnG85/ftn6zE7TFfjTN+5wQYTnY+QHAqScIXon2svnkersHAFM
+         1Xt023H9TNITyB9es+v0i3uxdSBQs7k/aSgH77UYwxi+alo1MNWQswVKqQ6eopKF1LIZ
+         NT8URj+mVL/DFnYl/Muz3CQgjN2adCpdRSD5HnjTDZV6yQNc0gnUu5nr7umVAlbVymQI
+         csKl3kN6GiwinqBddVagShTG9XJfDZupWVw3FPLpe3iCiJsqmuOMxAVttKeN4Xmw0gE4
+         gG8FPB2e8OvvZYz4/qQ9JYMCpEkbX4+WHPbgqrdMjGi6V80YGO6hytcCGvr356uZf0fh
+         Rz8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=9illoX/lgZgRmB149QSdUSTaY6vK5Drr6t7JdhNt6/U=;
+        b=kTsMfW5Z4/18sarS1FjnmUo4hAfP8mJN/l1bWuidwVgja/BGgcne9tQga3xCjkXh1d
+         ZzCMNQ+hZKJDE0O2Yucnfgff6ctgg/As8PNRkRTrc7YTRS53Zr6tvcniIOCeAeYlyzzB
+         WbSb8dBu5RTmHxy1z8lBNrOaQUhXVMVldKCyTpIcBLdiKWDJRjgCdV2H4x7RpZrr54bb
+         IP2x20V8WNbRJThHznJa/g5zICjIQsUXYZ3UT53TW3ZmIGNBbNNcgPtr+/T54ZtTIFmM
+         wTqprfrPrQZBHap3C0UMVxK4sOvK7hzu172DyfLqBoM1Yz2bmHMUg5GikCDaO0OrPgda
+         p+vQ==
+X-Gm-Message-State: APjAAAXCWX4XZAb/6QFTsUO5sjWPOm+0bW621KBcw+n6ZdCSk9jO/ead
+        LeqSw9BNfVYXxjhE6wYrvf4=
+X-Google-Smtp-Source: APXvYqw5kBdwEgrkIu0ycndJ5NQWWHs1lfEtl9tiXRzValvEj283Zhs4c5zmyc8yumSoqEQ1yFRoWA==
+X-Received: by 2002:a5e:c803:: with SMTP id y3mr25041911iol.308.1563202862289;
+        Mon, 15 Jul 2019 08:01:02 -0700 (PDT)
+Received: from [192.168.1.249] ([67.167.44.43])
+        by smtp.gmail.com with ESMTPSA id m25sm10511707ion.35.2019.07.15.08.01.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 08:01:01 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm: page_alloc: document kmemleak's non-blockable __GFP_NOFAIL case
+From:   Catalin Marinas <catalin.marinas@gmail.com>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <20190715131732.GX29483@dhcp22.suse.cz>
+Date:   Mon, 15 Jul 2019 10:01:00 -0500
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        "dvyukov@google.com" <dvyukov@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F89E7123-C21C-41AA-8084-1DB4C832D7BD@gmail.com>
+References: <1562964544-59519-1-git-send-email-yang.shi@linux.alibaba.com> <20190715131732.GX29483@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/07/2019 18:15:19+0800, Biwen Li wrote:
-> +	device_init_wakeup(&pdev->dev, true);
-> +	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, "ftm-alarm",
-> +							&ftm_rtc_ops,
-> +							THIS_MODULE);
+On 15 Jul 2019, at 08:17, Michal Hocko <mhocko@kernel.org> wrote:
+> On Sat 13-07-19 04:49:04, Yang Shi wrote:
+>> When running ltp's oom test with kmemleak enabled, the below warning was
+>> triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
+>> passed in:
+>=20
+> kmemleak is broken and this is a long term issue. I thought that
+> Catalin had something to address this.
 
-To be clear, I want you to not use devm_rtc_device_register and use
-devm_rtc_allocate_device and rtc_register_device.
+What needs to be done in the short term is revert commit d9570ee3bd1d4f20ce6=
+3485f5ef05663866fe6c0. Longer term the solution is to embed kmemleak metadat=
+a into the slab so that we don=E2=80=99t have the situation where the primar=
+y slab allocation success but the kmemleak metadata fails.=20
 
-> +	if (IS_ERR(rtc->rtc_dev)) {
-> +		dev_err(&pdev->dev, "can't register rtc device\n");
-> +		return PTR_ERR(rtc->rtc_dev);
-> +	}
-> +
+I=E2=80=99m on holiday for one more week with just a phone to reply from but=
+ feel free to revert the above commit. I=E2=80=99ll follow up with a better s=
+olution.=20
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Catalin
