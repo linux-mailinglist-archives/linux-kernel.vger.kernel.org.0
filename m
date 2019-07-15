@@ -2,68 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CCA6889C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCA1688B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbfGOMKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 08:10:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59806 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729827AbfGOMKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 08:10:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D765AF0B;
-        Mon, 15 Jul 2019 12:10:30 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 14:10:25 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, keescook@chromium.org,
-        hannes@cmpxchg.org, vdavydov.dev@gmail.com, mcgrof@kernel.org,
-        mhocko@kernel.org, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>, riel@surriel.com,
-        Mel Gorman <mgorman@suse.de>, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
- statistic
-Message-ID: <20190715121025.GN9035@blackbody.suse.cz>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
- <20190711134754.GD3402@hirez.programming.kicks-ass.net>
- <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
- <20190712075815.GN3402@hirez.programming.kicks-ass.net>
- <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
- <20190712094214.GR3402@hirez.programming.kicks-ass.net>
- <f8020f92-045e-d515-360b-faf9a149ab80@linux.alibaba.com>
+        id S1730017AbfGOMMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 08:12:48 -0400
+Received: from gofer.mess.org ([88.97.38.141]:43089 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729827AbfGOMMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 08:12:48 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 3D79460523; Mon, 15 Jul 2019 13:12:45 +0100 (BST)
+Date:   Mon, 15 Jul 2019 13:12:45 +0100
+From:   Sean Young <sean@mess.org>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v5 04/13] media: rc: sunxi: Add RXSTA bits definition
+Message-ID: <20190715121244.2vrsw6qa4fgp72fn@gofer.mess.org>
+References: <20190607231100.5894-1-peron.clem@gmail.com>
+ <20190607231100.5894-5-peron.clem@gmail.com>
+ <20190610095243.7xwp4xhauds22qzw@flea>
+ <CAJiuCcfyjGTBbsjZQYj2p3KD6O-WaXhFe5NZrnKQwJYACmatUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f8020f92-045e-d515-360b-faf9a149ab80@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJiuCcfyjGTBbsjZQYj2p3KD6O-WaXhFe5NZrnKQwJYACmatUw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yun.
+On Sun, Jul 14, 2019 at 04:32:22PM +0200, Clément Péron wrote:
+> Hi Sean,
+> 
+> You acked the whole v3 series but this patch has been introduced in v5
+> could you ack this one too?
 
-On Fri, Jul 12, 2019 at 06:10:24PM +0800, çŽ‹è´‡  <yun.wang@linux.alibaba.com> wrote:
-> Forgive me but I have no idea on how to combined this
-> with memory cgroup's locality hierarchical update...
-> parent memory cgroup do not have influence on mems_allowed
-> to it's children, correct?
-I'd recommend to look at the v2 of the cpuset controller that implements
-the hierarchical behavior among configured memory node sets.
+Acked-by: Sean Young <sean@mess.org>
 
-(My comment would better fit to 
-    [PATCH 3/4] numa: introduce numa group per task group
-IIUC, you could use cpuset controller to constraint memory nodes.)
+Thanks
 
-For the second part (accessing numa statistics, i.e. this patch), I
-wonder wheter this information wouldn't be better presented under the
-cpuset controller too.
+Sean
 
-HTH,
-Michal
+> 
+> Thanks,
+> Clément
+> 
+> 
+> 
+> 
+> On Mon, 10 Jun 2019 at 11:52, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Sat, Jun 08, 2019 at 01:10:51AM +0200, Clément Péron wrote:
+> > > We are using RXINT bits definition when looking at RXSTA register.
+> > >
+> > > These bits are equal but it's not really proper.
+> > >
+> > > Introduce the RXSTA bits and use them to have coherency.
+> > >
+> > > Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> >
+> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> >
+> > Maxime
+> >
+> > --
+> > Maxime Ripard, Bootlin
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com
